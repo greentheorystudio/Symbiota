@@ -11,7 +11,6 @@ $SECURITY_KEY = '';				//Typically a UUID used to verify access to certain web s
 
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
 $SERVER_ROOT = '';				//Full path to Symbiota project root folder
-$TEMP_DIR_ROOT = $SERVER_ROOT.'/temp';				//Must be writable by Apache; will use system default if not specified
 $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
 //the root for the image directory
@@ -28,16 +27,12 @@ $IPLANT_IMAGE_IMPORT_PATH = '';		//Path used to map/import images uploaded to th
 
 //$USE_IMAGE_MAGICK = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
 $TESSERACT_PATH = ''; 			//Needed for OCR function in the occurrence editor page
-$NLP_LBCC_ACTIVATED = 0;
-$NLP_SALIX_ACTIVATED = 0;
 
 //Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
 $FLORA_MOD_IS_ACTIVE = 1;
 $KEY_MOD_IS_ACTIVE = 1;
 $ETHNOBIOLOGY_MOD_IS_ACTIVE = 0;
-
-$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for specimens
 
 //Configurations for GeoServer integration
 $GEOSERVER_URL = '';   // URL for Geoserver instance serving map data for this portal
@@ -51,8 +46,6 @@ $SOLR_FULL_IMPORT_INTERVAL = 0;   // Number of hours between full imports of SOL
 $GBIF_USERNAME = '';                //GBIF username which portal will use to publish
 $GBIF_PASSWORD = '';                //GBIF password which portal will use to publish
 $GBIF_ORG_KEY = '';                 //GBIF organization key for organization which is hosting this portal
-
-$FP_ENABLED = 0;					//Enable Filtered-Push modules
 
 //Misc variables
 $GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google
@@ -92,44 +85,5 @@ $CSS_VERSION_LOCAL = '20170414';		//Changing this variable will force a refresh 
 //set terms for reproductiveCondition drop-down menu
 //$REPRODUCTIVE_CONDITION_TERMS = array("term1", "term2", "term3", "term4", "term5", "etc..");
 
-//Individual page menu and navigation crumbs
-//Menu variables turn on and off the display of left menu
-//Crumb variables allow the customization of the bread crumbs. A crumb variable with an empty value will cause crumbs to disappear
-//Variable name should include path to file separated by underscores and then the file name ending with "Menu" or "Crumbs"
-//checklists/
-	$checklists_checklistMenu = 0;
-	//$checklists_checklistCrumbs = "<a href='../index.php'>Home</a> &gt;&gt; <a href='index.php'>Checklists</a> &gt;&gt; ";
-//collections/
-	$collections_indexMenu = 0;
-	$collections_harvestparamsMenu = 0;
-	//$collections_harvestparamsCrumbs = "<a href='index.php'>Collections</a> &gt;&gt; ";
-	$collections_listMenu = 0;
-	$collections_checklistMenu = 0;
-	$collections_download_downloadMenu = 0;
-	$collections_maps_indexMenu = 0;
-
-//ident/
-	$ident_keyMenu = 0;
-	$ident_tools_chardeficitMenu = 0;
-	$ident_tools_massupdateMenu = 0;
-	$ident_tools_editorMenu = 0;
-
-//taxa/
-	$taxa_indexMenu = 0;
-	$taxa_admin_tpeditorMenu = 0;
-
-//glossary/
-	$glossary_indexBanner = 0;
-
-//loans/
-	$collections_loans_indexMenu = 0;
-
-//agents/
-    $agents_indexMenu = TRUE;
-    $agent_indexCrumbs = array();
-    array_push($agent_indexCrumbs,"<a href='$CLIENT_ROOT/index.php'>Home</a>");
-    array_push($agent_indexCrumbs,"<a href='$CLIENT_ROOT/agents/index.php'>Agents</a>");
-
-//Base code shared by all pages; leave as is
 include_once("symbbase.php");
-/* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */?>
+/* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */

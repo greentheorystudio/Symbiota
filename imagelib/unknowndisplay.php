@@ -1,14 +1,14 @@
 <?php 
 include_once('../config/symbini.php');
-include_once($serverRoot.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/config/dbconnection.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 $unkid = array_key_exists("unkid",$_REQUEST)?$_REQUEST["unkid"]:"";
 
 $unkDisplayManager = new UnknownDisplayManager();
 ?>
 <html>
 <head>
-<title><?php echo $defaultTitle; ?> - Unknown Display</title>
+<title><?php echo $DEFAULT_TITLE; ?> - Unknown Display</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link rel="stylesheet" href="../css/speciesprofile.css" type="text/css"/>
@@ -18,7 +18,7 @@ $unkDisplayManager = new UnknownDisplayManager();
 <body>
 	<?php
 	$displayLeftMenu = (isset($imagelib_unknowndisplayMenu)?$imagelib_unknowndisplayMenu:"true");
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($imagelib_unknowndisplayCrumbs)){
 		echo "<div class='navpath'>";
 		echo "<a href='../index.php'>Home</a> &gt; ";
@@ -102,7 +102,7 @@ $unkDisplayManager = new UnknownDisplayManager();
 		</div>
 	</div>
 	<?php
-	include($serverRoot.'/footer.php');
+	include($SERVER_ROOT.'/footer.php');
 	?>
 	
 </body>

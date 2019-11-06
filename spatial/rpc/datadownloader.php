@@ -2,7 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-include_once($serverRoot.'/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 
 $solrManager = new SOLRManager();
 $spatialManager = new SpatialModuleManager();

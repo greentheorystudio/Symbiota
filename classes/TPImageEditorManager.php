@@ -4,8 +4,8 @@ include_once("ImageShared.php");
 
 class TPImageEditorManager extends TPEditorManager{
 
-	private $imageRootPath = "";
-	private $imageRootUrl = "";
+	private $IMAGE_ROOT_PATH = "";
+	private $IMAGE_ROOT_URL = "";
 
 	private $tnPixWidth = 200;
 	private $webPixWidth = 1600;

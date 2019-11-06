@@ -107,7 +107,7 @@ $smManager = new SiteMapManager();
 			<fieldset style="margin:30px 0px 10px 10px;padding-left:25px;padding-right:15px;">
 				<legend><b><?php echo $LANG['MANAGTOOL'];?></b></legend>
 				<?php
-				if($symbUid){
+				if($SYMB_UID){
 					if($IS_ADMIN){
 						?>
 						<h3><?php echo $LANG['ADMIN'];?></h3>
@@ -134,11 +134,6 @@ $smManager = new SiteMapManager();
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/admin/guidmapper.php">
                                     <?php echo $LANG['GUIDMAP'];?>
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/specprocessor/salix/salixhandler.php">
-                                    <?php echo $LANG['SALIX'];?>
 								</a>
 							</li>
 						</ul>

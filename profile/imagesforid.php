@@ -1,8 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($serverRoot . '/classes/ImageLibraryManager.php');
-include_once($serverRoot . '/classes/ImageExplorer.php');
-@header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT . '/classes/ImageLibraryManager.php');
+include_once($SERVER_ROOT . '/classes/ImageExplorer.php');
+@header("Content-Type: text/html; charset=".$CHARSET);
 
 $collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
 $formSubmit = array_key_exists("formsubmit",$_REQUEST)?$_REQUEST["formsubmit"]:"";

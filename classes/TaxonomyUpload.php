@@ -1009,10 +1009,10 @@ class TaxonomyUpload{
 			$this->verboseMode = $vMode;
 			if($this->verboseMode == 2){
 				//Create log File
-				$logPath = $SERVER_ROOT;
-				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $logPath .= '/';
-				$logPath .= "content/logs/taxaloader_".date('Ymd').".log";
-				$this->logFH = fopen($logPath, 'a');
+				$LOG_PATH = $SERVER_ROOT;
+				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
+				$LOG_PATH .= "content/logs/taxaloader_".date('Ymd').".log";
+				$this->logFH = fopen($LOG_PATH, 'a');
 				fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
 			}
 		}

@@ -16,12 +16,12 @@ include_once($SERVER_ROOT.'/classes/ImageExplorer.php');
                     $imgTn = $imgArr['thumbnailurl'];
                     if($imgTn){
                         $imgUrl = $imgTn;
-                        if($imageDomain && substr($imgTn,0,1)=='/'){
-                            $imgUrl = $imageDomain.$imgTn;
+                        if($IMAGE_DOMAIN && substr($imgTn,0,1)=='/'){
+                            $imgUrl = $IMAGE_DOMAIN.$imgTn;
                         }
                     }
-                    elseif($imageDomain && substr($imgUrl,0,1)=='/'){
-                        $imgUrl = $imageDomain.$imgUrl;
+                    elseif($IMAGE_DOMAIN && substr($imgUrl,0,1)=='/'){
+                        $imgUrl = $IMAGE_DOMAIN.$imgUrl;
                     }
     ?>
 

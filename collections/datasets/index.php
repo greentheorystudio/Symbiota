@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/OccurrenceDataset.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/index.php?'.$_SERVER['QUERY_STRING']);
 
@@ -22,8 +22,8 @@ if($action == 'Create New Dataset'){
 ?>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>">
-		<title><?php echo $defaultTitle; ?> Occurrence Dataset Manager</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
+		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
@@ -63,7 +63,7 @@ if($action == 'Create New Dataset'){
 	<body>
 	<?php
 	$displayLeftMenu = (isset($collections_datasets_indexMenu)?$collections_datasets_indexMenu:false);
-	include($serverRoot."/header.php");
+	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -193,7 +193,7 @@ if($action == 'Create New Dataset'){
 		</div>
 	</div>
 	<?php
-	include($serverRoot."/footer.php");
+	include($SERVER_ROOT."/footer.php");
 	?>
 	</body>
 </html>

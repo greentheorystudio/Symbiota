@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-include_once($serverRoot.'/classes/ReferenceManager.php');
+include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -67,15 +67,15 @@ else{
 	header("Location: index.php");
 }
 
-header("Content-Type: text/html; charset=".$charset);
+header("Content-Type: text/html; charset=".$CHARSET);
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>">
-	<title><?php echo $defaultTitle; ?> Reference Management</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
+	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -102,7 +102,7 @@ header("Content-Type: text/html; charset=".$charset);
 <body>
 	<?php
 	$displayLeftMenu = (isset($reference_indexMenu)?$reference_indexMenu:false);
-	include($serverRoot."/header.php");
+	include($SERVER_ROOT."/header.php");
 	if(isset($reference_indexCrumbs)){
 		if($reference_indexCrumbs){
 			?>
@@ -126,7 +126,7 @@ header("Content-Type: text/html; charset=".$charset);
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
-		if($symbUid){
+		if($SYMB_UID){
 			if($statusStr){
 				?>
 				<div style="margin:15px;color:red;">
@@ -544,7 +544,7 @@ header("Content-Type: text/html; charset=".$charset);
 			<?php 
 		}
 		else{
-			if(!$symbUid){
+			if(!$SYMB_UID){
 				echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
 			}
 			else{
@@ -554,7 +554,7 @@ header("Content-Type: text/html; charset=".$charset);
 		?>
 	</div>
 	<?php
-	include($serverRoot."/footer.php");
+	include($SERVER_ROOT."/footer.php");
 	?>
 </body>
 </html>

@@ -176,7 +176,7 @@ if(isset($profile_viewprofileCrumbs)){
 		<div id="tabs" style="margin:10px;">
 			<ul>
 				<?php
-				if($floraModIsActive){
+				if($FLORA_MOD_IS_ACTIVE){
 					?>
 					<li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
 					<?php
@@ -188,19 +188,6 @@ if(isset($profile_viewprofileCrumbs)){
 				if ($person->getIsTaxonomyEditor()) {
 					echo '<li><a href="specimenstoid.php?userid='.$userId.'&action='.$action.'">IDs Needed</a></li>';
 					echo '<li><a href="imagesforid.php">Images for ID</a></li>';
-				}
-				if( $fpEnabled) {
-					$userTaxonomy = $person->getUserTaxonomy();
-
-					foreach ($userTaxonomy as $cat => $taxonArr) {
-						foreach ($taxonArr as $tid => $taxon) {
-							$sciName = $taxon['sciname'];
-						}
-					}
-
-					if ($person->getIsHasTaxonInterest()) {
-						echo '<li><a href="taxoninterests.php?scientificName='.$sciName.'">Taxon Interests</a></li>';
-					}
 				}
 				?>
 			</ul>

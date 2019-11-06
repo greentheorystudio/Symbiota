@@ -23,10 +23,10 @@ if($IS_ADMIN){
 $exsManager = new ExsiccatiManager();
 if($isEditor && $formSubmit){
 	if($formSubmit == 'Add Exsiccati Title'){
-		$exsManager->addTitle($_POST,$paramsArr['un']);
+		$exsManager->addTitle($_POST,$PARAMS_ARR['un']);
 	}
 	elseif($formSubmit == 'Save'){
-		$exsManager->editTitle($_POST,$paramsArr['un']);
+		$exsManager->editTitle($_POST,$PARAMS_ARR['un']);
 	}
 	elseif($formSubmit == 'Delete Exsiccati'){
 		$statusStr = $exsManager->deleteTitle($ometId);

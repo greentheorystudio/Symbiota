@@ -1,13 +1,13 @@
 <?php 
 include_once('../config/symbini.php');
-include_once($serverRoot.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/config/dbconnection.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 $showClosedIds = array_key_exists("showclosed",$_REQUEST)?$_REQUEST["showclosed"]:""; 
 
 ?>
 <html>
 <head>
-<title><?php echo $defaultTitle; ?> - Community Identifications</title>
+<title><?php echo $DEFAULT_TITLE; ?> - Community Identifications</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link rel="stylesheet" href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" />
@@ -17,7 +17,7 @@ $showClosedIds = array_key_exists("showclosed",$_REQUEST)?$_REQUEST["showclosed"
 <body>
 	<?php
 	$displayLeftMenu = (isset($imagelib_unknownbrowseMenu)?$imagelib_unknownbrowseMenu:"true");
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($imagelib_unknownbrowseCrumbs)){
 		echo "<div class='navpath'>";
 		echo "<a href='../index.php'>Home</a> &gt; ";
@@ -56,7 +56,7 @@ $showClosedIds = array_key_exists("showclosed",$_REQUEST)?$_REQUEST["showclosed"
 		</div>
 	</div>
 	<?php
-	include($serverRoot.'/footer.php');
+	include($SERVER_ROOT.'/footer.php');
 	?>
 	
 </body>

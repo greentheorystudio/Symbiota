@@ -1,13 +1,13 @@
 <?php
-include_once($serverRoot.'/config/dbconnection.php');
-include_once($serverRoot.'/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 
 class OccurrenceDataset {
 
 	private $conn;
-	private $symbUid;
+	private $SYMB_UID;
 	private $collArr = array();
-	private $isAdmin = 0;
+	private $IS_ADMIN = 0;
 	private $newDatasetId = 0;
 
 	private $errorArr = array();
@@ -343,18 +343,18 @@ class OccurrenceDataset {
 	
 		$redactLocalities = 1;
 		$rareReaderArr = array();
-		if($IS_ADMIN || array_key_exists("CollAdmin", $userRights)){
+		if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS)){
 			$redactLocalities = 0;
 		}
-		elseif(array_key_exists("RareSppAdmin", $userRights) || array_key_exists("RareSppReadAll", $userRights)){
+		elseif(array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
 			$redactLocalities = 0;
 		}
 		else{
-			if(array_key_exists('CollEditor', $userRights)){
-				$rareReaderArr = $userRights['CollEditor'];
+			if(array_key_exists('CollEditor', $USER_RIGHTS)){
+				$rareReaderArr = $USER_RIGHTS['CollEditor'];
 			}
-			if(array_key_exists('RareSppReader', $userRights)){
-				$rareReaderArr = array_unique(array_merge($rareReaderArr,$userRights['RareSppReader']));
+			if(array_key_exists('RareSppReader', $USER_RIGHTS)){
+				$rareReaderArr = array_unique(array_merge($rareReaderArr,$USER_RIGHTS['RareSppReader']));
 			}
 		}
 		$dwcaHandler = new DwcArchiverCore();
@@ -405,10 +405,10 @@ class OccurrenceDataset {
 			header('Content-Type: application/zip');
 		}
 		elseif($format == 'csv'){
-			header('Content-Type: text/csv; charset='.$charset);
+			header('Content-Type: text/csv; charset='.$CHARSET);
 		}
 		else{
-			header('Content-Type: text/html; charset='.$charset);
+			header('Content-Type: text/html; charset='.$CHARSET);
 		}
 		
 		header('Content-Disposition: attachment; filename='.basename($outputFile));
@@ -453,8 +453,8 @@ class OccurrenceDataset {
 		$this->symbUid = $uid;
 	}
 	
-	public function setIsAdmin($isAdmin){
-		$this->isAdmin = $isAdmin;
+	public function setIsAdmin($IS_ADMIN){
+		$this->isAdmin = $IS_ADMIN;
 	}
 	
 	public function getErrorArr(){

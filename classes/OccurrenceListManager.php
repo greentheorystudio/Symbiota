@@ -18,7 +18,7 @@ class OccurrenceListManager extends OccurrenceManager{
 	}
 
     public function getRecordArr($pageRequest,$cntPerPage){
-        global $imageDomain;
+        global $IMAGE_DOMAIN;
 	    $canReadRareSpp = false;
         if($GLOBALS['USER_RIGHTS']){
             if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll", $GLOBALS['USER_RIGHTS'])){
@@ -122,8 +122,8 @@ class OccurrenceListManager extends OccurrenceManager{
             while($r = $rs->fetch_object()){
                 if($r->occid != $previousOccid){
                     $tnUrl = $r->thumbnailurl;
-                    if($imageDomain){
-                        if($tnUrl && substr($tnUrl,0,1)=="/") $tnUrl = $imageDomain.$tnUrl;
+                    if($IMAGE_DOMAIN){
+                        if($tnUrl && substr($tnUrl,0,1)=="/") $tnUrl = $IMAGE_DOMAIN.$tnUrl;
                     }
                     $returnArr[$r->occid]['img'] = $tnUrl;
                 }

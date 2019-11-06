@@ -141,16 +141,6 @@ $(function() {
 											<div style="float:left;margin-left:20px;">
 												<input type="hidden" name="iurl" value="<?php echo $iUrl; ?>" />
 												<input type="hidden" id="cnumber" name="cnumber" value="<?php echo array_key_exists('catalognumber',$occArr)?$occArr['catalognumber']:''; ?>" />
-												<?php
-												if(isset($NLP_SALIX_ACTIVATED) && $NLP_SALIX_ACTIVATED){
-													echo '<input name="salixocr" type="button" value="SALIX Parser" onclick="nlpSalix(this,'.$prlid.')" />';
-													echo '<img id="workingcircle_salix-'.$prlid.'" src="../../images/workingcircle.gif" style="display:none;" />';
-												}
-												if(isset($NLP_LBCC_ACTIVATED) && $NLP_LBCC_ACTIVATED){
-													echo '<input id="nlplbccbutton" name="nlplbccbutton" type="button" value="LBCC Parser" onclick="nlpLbcc(this,'.$prlid.')" />';
-													echo '<img id="workingcircle_lbcc-'.$prlid.'" src="../../images/workingcircle.gif" style="display:none;" />';
-												}
-												?>
 											</div>
 										</form>
 										<div style="float:right;font-weight:bold;margin-right:20px;">

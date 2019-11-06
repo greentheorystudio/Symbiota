@@ -67,7 +67,7 @@ if($isEditor){
 			$statusStr = $loanManager->editSpecimen($_REQUEST);
 		}
 		elseif($formSubmit == 'Add New Determinations'){
-			include_once($serverRoot.'/classes/OccurrenceEditorManager.php');
+			include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 			$occManager = new OccurrenceEditorDeterminations();
 			$occidArr = $_REQUEST['occid'];
 			foreach($occidArr as $k){
@@ -99,7 +99,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 <body>
 	<?php
 	$displayLeftMenu = (isset($collections_loans_indexMenu)?$collections_loans_indexMenu:false);
-	include($serverRoot."/header.php");
+	include($SERVER_ROOT."/header.php");
 	if(isset($collections_loans_indexCrumbs) && $collections_loans_indexCrumbs){
 		?>
 		<div class='navpath'>
@@ -184,7 +184,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 											Entered By:
 										</span><br />
 										<span>
-											<input type="text" autocomplete="off" name="createdbyown" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $paramsArr['un']; ?>" onchange=" " />
+											<input type="text" autocomplete="off" name="createdbyown" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
 										</span>
 									</div>
 									<div style="padding-top:15px;float:right;">
@@ -289,7 +289,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 											Entered By:
 										</span><br />
 										<span>
-											<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $paramsArr['un']; ?>" onchange=" " />
+											<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
 										</span>
 									</div>
 									<div style="padding-top:15px;float:right;">

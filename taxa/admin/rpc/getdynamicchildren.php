@@ -1,13 +1,13 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($serverRoot.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/config/dbconnection.php');
 $con = MySQLiConnectionFactory::getCon("readonly");
 $taxId = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:0;
 $displayAuthor = array_key_exists('authors',$_REQUEST)?$_REQUEST['authors']:0;
 $targetId = array_key_exists('targetid',$_REQUEST)?$_REQUEST['targetid']:0;
 
 $editable = false;
-if($isAdmin || array_key_exists("Taxonomy",$userRights)){
+if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	$editable = true;
 }
 

@@ -19,7 +19,7 @@ class ImageLocalProcessor {
 	private $origPathFrag;
 	private $imgUrlBase;
 	private $symbiotaClassPath = null;
-	protected $serverRoot;
+	protected $SERVER_ROOT;
 	
 	private $matchCatalogNumber = true;
 	private $matchOtherCatalogNumbers = false;
@@ -46,7 +46,7 @@ class ImageLocalProcessor {
 	private $logMode = 0;			//0 = silent, 1 = html, 2 = log file
 	private $logFH;
 	private $mdOutputFH;
-	private $logPath;
+	private $LOG_PATH;
 	private $errorMessage;
 	
 	private $sourceGdImg;
@@ -173,7 +173,7 @@ class ImageLocalProcessor {
 			if(substr($this->imgUrlBase,0,7) != 'http://' && substr($this->imgUrlBase,0,8) != 'https://'){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				$this->imgUrlBase = $urlPrefix.$this->imgUrlBase;
 			}
@@ -317,11 +317,7 @@ class ImageLocalProcessor {
                                     // The loop through collArr can result in same file being processed more than
                                     // once if the same pathFrag is associated with more than one collection.
                                     if (!in_array("$pathFrag$fileName",$this->processedFiles)) { 
-									$this->processXMLFile($fileName,$pathFrag);
-                                         $this->processedFiles[] = "$pathFrag$fileName";
-                                         // TODO: It would seem that adding the collection to collProcessedArr 
-                                         // should accomplish what processedFiles[] is being added above to
-                                         // do, need to investigate further and perhaps use it as a fix.
+									$this->processedFiles[] = "$pathFrag$fileName";
 									if(!in_array($this->activeCollid,$this->collProcessedArr)) $this->collProcessedArr[] = $this->activeCollid;
 								}
 								}
@@ -392,7 +388,6 @@ class ImageLocalProcessor {
 								}
 							}
 							elseif($fileExt=="xml") {
-								$this->processXMLFile($fileName,$pathFrag);
 								if(!in_array($this->activeCollid,$this->collProcessedArr)) $this->collProcessedArr[] = $this->activeCollid;
 							}
 							else{
@@ -411,110 +406,6 @@ class ImageLocalProcessor {
 		else{
 			$this->logOrEcho("Source directory skipped (code ".$codeArr[0].") : ".$this->sourcePathBase.$pathFrag,1);
 			//exit("ABORT: Source path does not exist: ".$this->sourcePathBase.$pathFrag);
-		}
-	}
-
-	/**
-	 * Examine an xml file, and if it conforms to supported expectations, 
-	 * add the data it contains to the Symbiota database.
-	 * Currently supported expectations are: (1) the GPI/ALUKA/LAPI schema
-	 * and (2) RDF/XML containing oa/oad annotations asserting new occurrence
-	 * records in dwcFP, supporting the NEVP TCN.
-	 *  
-	 * @param fileName the name of the xml file to process.
-	 * @param pathFrag the path from sourcePathBase to the file to process. 
-	 */
-	private function processXMLFile($fileName,$pathFrag='') { 
-		if ($this->serverRoot) {
-			$foundSchema = false;
-			$xml = XMLReader::open($this->sourcePathBase.$pathFrag.$fileName);
-			if($xml->read()) {
-				// $this->logOrEcho($fileName." first node: ". $xml->name);
-				if ($xml->name=="DataSet") {
-					$xml = XMLReader::open($this->sourcePathBase.$pathFrag.$fileName);
-					$lapischema = $this->serverRoot . "/collections/admin/schemas/lapi_schema_v2.xsd";
-					$xml->setParserProperty(XMLReader::VALIDATE, true);
-					if (file_exists($lapischema)) {
-						$isLapi = $xml->setSchema($lapischema);
-					}
-					else {
-						$this->logOrEcho("ERROR: Can't find $lapischema",1);
-					}
-					// $this->logOrEcho($fileName." valid lapi xml:" . $xml->isValid() . " [" . $isLapi .  "]");
-					if ($xml->isValid() && $isLapi) {
-						// File complies with the Aluka/LAPI/GPI schema
-						$this->logOrEcho('Processing GPI batch file: '.$pathFrag.$fileName);
-						if (class_exists('GPIProcessor')) {
-							$processor = new GPIProcessor();
-							$result = $processor->process($this->sourcePathBase.$pathFrag.$fileName);
-							$foundSchema = $result->couldparse;
-							if (!$foundSchema || $result->failurecount>0) {
-								$this->logOrEcho("ERROR: Errors processing $fileName: $result->errors.",1);
-							}
-						}
-						else {
-							// fail gracefully if this instalation isn't configured with this parser.
-							$this->logOrEcho("ERROR: SpecProcessorGPI.php not available.",1);
-						}
-					}
-				}
-				elseif ($xml->name=="rdf:RDF") {
-					// $this->logOrEcho($fileName." has oa:" . $xml->lookupNamespace("oa"));
-					// $this->logOrEcho($fileName." has oad:" . $xml->lookupNamespace("oad"));
-					// $this->logOrEcho($fileName." has dwcFP:" . $xml->lookupNamespace("dwcFP"));
-					$hasAnnotation = $xml->lookupNamespace("oa");
-					$hasDataAnnotation = $xml->lookupNamespace("oad");
-					$hasdwcFP = $xml->lookupNamespace("dwcFP");
-					// Note: contra the PHP xmlreader documentation, lookupNamespace
-					// returns the namespace string not a boolean.
-					if ($hasAnnotation && $hasDataAnnotation && $hasdwcFP) {
-						// File is likely an annotation containing DarwinCore data.
-						$this->logOrEcho('Processing RDF/XML annotation file: '.$pathFrag.$fileName);
-						if (class_exists('NEVPProcessor')) {
-							$processor = new NEVPProcessor();
-							$result = $processor->process($this->sourcePathBase.$pathFrag.$fileName);
-							$foundSchema = $result->couldparse;
-							if (!$foundSchema || $result->failurecount>0) {
-								$this->logOrEcho("ERROR: Errors processing $fileName: $result->errors.",1);
-							}
-						}
-						else {
-							// fail gracefully if this instalation isn't configured with this parser.
-							$this->logOrEcho("ERROR: SpecProcessorNEVP.php not available.",1);
-						}
-					}
-				}
-				$xml->close();
-				if ($foundSchema>0) {
-					$this->logOrEcho("Proccessed $pathFrag$fileName, records: $result->recordcount, success: $result->successcount, failures: $result->failurecount, inserts: $result->insertcount, updates: $result->updatecount.");
-					if ($result->imagefailurecount>0) {
-						$this->logOrEcho("ERROR: not moving (".$fileName."), image failure count " . $result->imagefailurecount . " greater than zero.",1);
-					}
-					else {
-						$oldFile = $this->sourcePathBase.$pathFrag.$fileName;
-						if($this->keepOrig){
-							$newFileName = substr($pathFrag,strrpos($pathFrag,'/')).'orig_'.time().'.'.$fileName;
-							if(!file_exists($this->targetPathBase.$this->targetPathFrag.'orig_xml')){
-								mkdir($this->targetPathBase.$this->targetPathFrag.'orig_xml');
-							}
-							if(!rename($oldFile,$this->targetPathBase.$this->targetPathFrag.'orig_xml/'.$newFileName)){
-								$this->logOrEcho("ERROR: unable to move (".$oldFile." =>".$newFileName.") ",1);
-							}
-						}
-						else {
-							if(!unlink($oldFile)){
-								$this->logOrEcho("ERROR: unable to delete file (".$oldFile.") ",1);
-							}
-						}
-					}
-				}
-				else {
-					$this->logOrEcho("ERROR: Unable to match ".$pathFrag.$fileName." to a known schema.",1);
-				}
-			}
-			else {
-				$this->logOrEcho("ERROR: XMLReader couldn't read ".$pathFrag.$fileName,1);
-			}
 		}
 	}
 
@@ -1927,7 +1818,7 @@ class ImageLocalProcessor {
 			else{
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				$url = $urlPrefix.$url;
 			}
@@ -1966,7 +1857,7 @@ class ImageLocalProcessor {
 	}	
 	
 	private function encodeString($inStr){
-		global $charset;
+		global $CHARSET;
 		$retStr = trim($inStr);
 		//Get rid of Windows curly (smart) quotes
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
@@ -1974,13 +1865,13 @@ class ImageLocalProcessor {
 		$inStr= str_replace($search, $replace, $inStr);
 		
 		if($inStr){
-			if(strtolower($charset) == "utf-8" || strtolower($charset) == "utf8"){
+			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
 					$retStr = utf8_encode($inStr);
 					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif(strtolower($charset) == "iso-8859-1"){
+			elseif(strtolower($CHARSET) == "iso-8859-1"){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
 					$retStr = utf8_decode($inStr);
 					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);

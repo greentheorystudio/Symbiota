@@ -68,7 +68,7 @@ $specList = $loanManager->getSpecList($loanId);
 						</select>
 					</span>
 					<?php
-					if($isAdmin){
+					if($IS_ADMIN){
 						?>
 						<span>
 							<a href="../admin/institutioneditor.php?iid=<?php echo $loanArr['iidborrower']; ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
@@ -346,14 +346,6 @@ $specList = $loanManager->getSpecList($loanId);
 									<div style='margin:3px;'>
 										<input type="checkbox" name="printqueue" value="1" /> Add to Annotation Queue
 									</div>
-									<?php 
-									global $fpEnabled;
-									if($fpEnabled){
-										echo '<div style="float:left;margin-left:30px;">';
-										echo '<input type="checkbox" name="fpsubmit" value="1" checked="true" /> Submit determination to Filtered Push network';
-										echo '</div>';
-									}
-									?>
 									<div style='margin:15px;'>
 										<div style="float:left;">
 											<input type="submit" name="formsubmit" onclick="verifyLoanDet();" value="Add New Determinations" />

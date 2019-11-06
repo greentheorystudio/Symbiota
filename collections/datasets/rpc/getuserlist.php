@@ -12,7 +12,7 @@ $sql = 'SELECT CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",l.username,"
 $rs = $con->query($sql);
 while($r = $rs->fetch_object()) {
 	$username = $r->username;
-	if($charset == 'ISO-8859-1'){
+	if($CHARSET == 'ISO-8859-1'){
 		if(mb_detect_encoding($username,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
 			$username = utf8_encode($username);
 		}

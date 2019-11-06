@@ -1,9 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/TPEditorManager.php');
-include_once($serverRoot.'/classes/TPDescEditorManager.php');
-include_once($serverRoot.'/classes/TPImageEditorManager.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/TPEditorManager.php');
+include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
+include_once($SERVER_ROOT.'/classes/TPImageEditorManager.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0;
 $taxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:"";
@@ -20,7 +20,7 @@ if($lang) $tEditor->setLanguage($lang);
 
 $statusStr = "";
 $editable = false;
-if($isAdmin || array_key_exists("TaxonProfile",$userRights)){
+if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 	$editable = true;
 }
 
@@ -42,7 +42,7 @@ if($editable && $action){
 		$editVernArr["notes"] = str_replace("\"","-",$_REQUEST["notes"]);
 		$editVernArr["source"] = $_REQUEST["source"];
 		if($_REQUEST["sortsequence"]) $editVernArr["sortsequence"] = $_REQUEST["sortsequence"];
-		$editVernArr["username"] = $paramsArr["un"];
+		$editVernArr["username"] = $PARAMS_ARR["un"];
 		$statusStr = $tEditor->editVernacular($editVernArr);
 	}
 	elseif($action === "Add Common Name"){
@@ -52,7 +52,7 @@ if($editable && $action){
 		if($_REQUEST["notes"]) $addVernArr["notes"] = str_replace("\"","-",$_REQUEST["notes"]);
 		if($_REQUEST["source"]) $addVernArr["source"] = $_REQUEST["source"];
 		if($_REQUEST["sortsequence"]) $addVernArr["sortsequence"] = $_REQUEST["sortsequence"];
-		$addVernArr["username"] = $paramsArr["un"];
+		$addVernArr["username"] = $PARAMS_ARR["un"];
 		$statusStr = $tEditor->addVernacular($addVernArr);
 	}
 	elseif($action === "Delete Common Name"){
@@ -101,8 +101,8 @@ if($editable && $action){
 ?>
 <html>
 <head>
-	<title><?php echo $defaultTitle." Taxon Editor: ".$tEditor->getSciName(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>" />
+	<title><?php echo $DEFAULT_TITLE." Taxon Editor: ".$tEditor->getSciName(); ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
@@ -162,7 +162,7 @@ if($editable && $action){
 <body>
 	<?php
 	$displayLeftMenu = (isset($taxa_admin_tpeditorMenu)?$taxa_admin_tpeditorMenu:false);
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($taxa_admin_tpeditorCrumbs)){
 		echo "<div class='navpath'>";
 		echo $taxa_admin_tpeditorCrumbs;
@@ -368,7 +368,7 @@ if($editable && $action){
 					<h2>You must be logged in and authorized to taxon data.</h2>
 					<h3>
 						<?php 
-							echo "Click <a href='".$clientRoot."/profile/index.php?tid=".$tEditor->getTid()."&refurl=".$clientRoot."/taxa/admin/tpeditor.php'>here</a> to login";
+							echo "Click <a href='".$CLIENT_ROOT."/profile/index.php?tid=".$tEditor->getTid()."&refurl=".$CLIENT_ROOT."/taxa/admin/tpeditor.php'>here</a> to login";
 						?>
 					</h3>
 				</div>
@@ -400,7 +400,7 @@ if($editable && $action){
 		?>
 	</div>
 	<?php 
-	include($serverRoot.'/footer.php');
+	include($SERVER_ROOT.'/footer.php');
 	?>
 </body>
 </html>

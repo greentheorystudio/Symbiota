@@ -6,8 +6,8 @@ class ImageShared{
 	private $conn;
 	private $sourceGdImg;
 
-	private $imageRootPath = '';
-	private $imageRootUrl = '';
+	private $IMAGE_ROOT_PATH = '';
+	private $IMAGE_ROOT_URL = '';
 
 	private $sourcePath = '';
 	private $targetPath = '';
@@ -234,7 +234,7 @@ class ImageShared{
 				//Use local domain
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				$url = $urlPrefix.$url;
 			}
@@ -416,12 +416,12 @@ class ImageShared{
 	}
 
 	public function createNewImage($subExt, $targetWidth, $qualityRating = 0, $targetPathOverride = ''){
-		global $useImageMagick;
+		global $USE_IMAGE_MAGICK;
 		$status = false;
 		if($this->sourcePath){
 			if(!$qualityRating) $qualityRating = $this->jpgCompression;
 
-			if($useImageMagick) {
+			if($USE_IMAGE_MAGICK) {
 				// Use ImageMagick to resize images
 				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating,$targetPathOverride);
 			}
@@ -621,7 +621,7 @@ class ImageShared{
 				$imgUrl2 = '';
 				$domain = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = "https://";
-				$domain .= $_SERVER["SERVER_NAME"];
+				$domain .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $domain .= ':'.$_SERVER["SERVER_PORT"];
 				if(stripos($imgUrl,$domain) === 0){
 					$imgUrl2 = $imgUrl;
@@ -693,7 +693,7 @@ class ImageShared{
 			if($GLOBALS['imageDomain']){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				if(substr($imgWebUrl,0,1) == '/'){
 					$imgWebUrl = $urlPrefix.$imgWebUrl;
@@ -743,7 +743,7 @@ class ImageShared{
 			if($GLOBALS['imageDomain']){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				if(substr($imgWebUrl,0,1) == '/'){
 					$imgWebUrl = $urlPrefix.$imgWebUrl;
@@ -866,7 +866,7 @@ class ImageShared{
 	 	if($GLOBALS['imageDomain']){
 			$urlPrefix = "http://";
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-			$urlPrefix .= $_SERVER["SERVER_NAME"];
+			$urlPrefix .= $_SERVER['HTTP_HOST'];
 			if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 			$urlBase = $urlPrefix.$urlBase;
 		}
@@ -1119,7 +1119,7 @@ class ImageShared{
 			else{
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-				$urlPrefix .= $_SERVER["SERVER_NAME"];
+				$urlPrefix .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				$uri = $urlPrefix.$uri;
 			}

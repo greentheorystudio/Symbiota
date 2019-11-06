@@ -8,7 +8,7 @@ $clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
 $dynClid = array_key_exists("dynclid",$_REQUEST)?$_REQUEST["dynclid"]:0;
 $taxonFilter = array_key_exists("taxonfilter",$_REQUEST)?$_REQUEST["taxonfilter"]:0; 
 $showCommon = array_key_exists("showcommon",$_REQUEST)?$_REQUEST["showcommon"]:0; 
-$lang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:$defaultLang; 
+$lang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:$DEFAULT_LANG;
 
 $fcManager = new GamesManager();
 $fcManager->setClid($clid);
@@ -214,7 +214,7 @@ $sciArr = array();
 							<div style='margin-top:3px;'>
 								<?php 
 									//Display Common Names: 0 = false, 1 = true 
-									if($displayCommonNames){
+									if($DISPLAY_COMMON_NAMES){
 										echo '<input id="showcommon" name="showcommon" type="checkbox" value="1" '.($showCommon?"checked":"").' onchange="document.getElementById(\'taxonfilterform\').submit();"/> Display Common Names'."\n";
 									}
 								?>

@@ -208,45 +208,6 @@ function ocrImage(ocrButton,imgidVar,imgCnt){
 	});
 }
 
-function nlpLbcc(nlpButton,prlid){
-	document.getElementById("workingcircle_lbcc-"+prlid).style.display = "inline";
-	nlpButton.disabled = true;
-	var f = nlpButton.form;
-	var rawOcr = f.rawtext.innerText;
-	if(!rawOcr) rawOcr = f.rawtext.textContent;
-	var cnumber = f.cnumber.value;
-	var collid = f.collid.value;
-
-	$.ajax({
-		type: "POST",
-		url: "rpc/nlplbcc.php",
-		data: { rawocr: rawOcr, collid: collid, catnum: cnumber }
-	}).done(function( msg ) {
-		pushDwcArrToForm(msg,"lightgreen");
-	});
-
-	nlpButton.disabled = false;
-	document.getElementById("workingcircle_lbcc-"+prlid).style.display = "none";
-}
-
-function nlpSalix(nlpButton,prlid){
-	document.getElementById("workingcircle_salix-"+prlid).style.display = "inline";
-	nlpButton.disabled = true;
-	var f = nlpButton.form;
-	var rawOcr = f.rawtext.innerText;
-	if(!rawOcr) rawOcr = f.rawtext.textContent;
-	$.ajax({
-		type: "POST",
-		url: "rpc/nlpsalix.php",
-		data: { rawocr: rawOcr }
-	}).done(function( msg ) {
-		pushDwcArrToForm(msg,"lightgreen");
-	});
-
-	nlpButton.disabled = false;
-	document.getElementById("workingcircle_salix-"+prlid).style.display = "none";
-}
-
 function pushDwcArrToForm(msg,bgColor){
 	var dwcArr = $.parseJSON(msg);
 	var f = document.fullform;

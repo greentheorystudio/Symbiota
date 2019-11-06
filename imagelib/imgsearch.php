@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/ImageLibraryManager.php');
 include_once($SERVER_ROOT . '/classes/ImageExplorer.php');
-header("Content-Type: text/html; charset=" . $charset);
+header("Content-Type: text/html; charset=" . $CHARSET);
 
 $phUid = array_key_exists("phuid", $_REQUEST) ? $_REQUEST["phuid"] : 0;
 $collId = array_key_exists("collid", $_REQUEST) ? $_REQUEST["collid"] : 0;
@@ -70,7 +70,7 @@ $imageExplorer = new ImageExplorer();
         }
     </style>
     <script type="text/javascript">
-        <?php include_once($serverRoot.'/config/googleanalytics.php'); ?>
+        <?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
     </script>
     <script type="text/javascript">
         <?php

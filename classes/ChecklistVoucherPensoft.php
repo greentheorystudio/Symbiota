@@ -86,7 +86,6 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		//Create ExternalLinks worksheet
 		$spreadsheet->createSheet(2)->setTitle('ExternalLinks');
 
-		//$file = $TEMP_DIR_ROOT.'/downloads/'.$this->getExportFileName().'.xlsx';
 		$file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
 		header('Content-Disposition: attachment; filename='.basename($file));

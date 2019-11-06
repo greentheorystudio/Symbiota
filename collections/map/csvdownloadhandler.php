@@ -1,9 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/OccurrenceDownload.php');
-include_once($serverRoot.'/classes/OccurrenceManager.php');
-include_once($serverRoot.'/classes/MapInterfaceManager.php');
-include_once($serverRoot.'/classes/DwcArchiverCore.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
+include_once($SERVER_ROOT.'/classes/MapInterfaceManager.php');
+include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); 
 
@@ -23,18 +23,18 @@ $extended = (array_key_exists('extended',$_POST)?$_POST['extended']:0);
 
 $redactLocalities = 1;
 $rareReaderArr = array();
-if($IS_ADMIN || array_key_exists("CollAdmin", $userRights)){
+if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS)){
 	$redactLocalities = 0;
 }
-elseif(array_key_exists("RareSppAdmin", $userRights) || array_key_exists("RareSppReadAll", $userRights)){
+elseif(array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
 	$redactLocalities = 0;
 }
 else{
-	if(array_key_exists('CollEditor', $userRights)){
-		$rareReaderArr = $userRights['CollEditor'];
+	if(array_key_exists('CollEditor', $USER_RIGHTS)){
+		$rareReaderArr = $USER_RIGHTS['CollEditor'];
 	}
-	if(array_key_exists('RareSppReader', $userRights)){
-		$rareReaderArr = array_unique(array_merge($rareReaderArr,$userRights['RareSppReader']));
+	if(array_key_exists('RareSppReader', $USER_RIGHTS)){
+		$rareReaderArr = array_unique(array_merge($rareReaderArr,$USER_RIGHTS['RareSppReader']));
 	}
 }
 	
@@ -95,10 +95,10 @@ if($zip){
 	header('Content-Type: application/zip');
 }
 elseif($format == 'csv'){
-	header('Content-Type: text/csv; charset='.$charset);
+	header('Content-Type: text/csv; charset='.$CHARSET);
 }
 else{
-	header('Content-Type: text/html; charset='.$charset);
+	header('Content-Type: text/html; charset='.$CHARSET);
 }
 
 header('Content-Disposition: attachment; filename='.basename($outputFile));

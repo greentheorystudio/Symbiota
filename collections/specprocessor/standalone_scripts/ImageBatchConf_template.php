@@ -4,7 +4,7 @@
 //Server root is needed if scripts are to be run from outside current directory (folder)
 //Leave empty if scripts are triggered from within Symbiota strcuture 
 //This is the path to the base folder of the Symbiota portal 
-$serverRoot = '';
+$SERVER_ROOT = '';
 
 //Path to folder containing source images; read access needed at minimum, write access to remove processed images
 $sourcePathBase = '';

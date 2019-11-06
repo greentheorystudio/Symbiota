@@ -1,0 +1,8 @@
+{
+  "name": "greentheorystudio/symbiota",
+  "description": "Symbiota biodiversity data management system.",
+  "license": "proprietary",
+  "require": {
+    "phpoffice/phpword": "^0.17.0"
+  }
+}

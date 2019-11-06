@@ -1,5 +1,5 @@
 <?php
-include_once($serverRoot.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once('OccurrenceAccessStats.php');
 
 class MappingShared{
@@ -43,7 +43,7 @@ class MappingShared{
 	}
 
 	public function getGeoCoords($mapWhere,$limit=1000,$includeDescr=false){
-		global $userRights;
+		global $USER_RIGHTS;
 		$coordArr = Array();
 		$sql = '';
 		$sql = 'SELECT DISTINCT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
@@ -62,11 +62,11 @@ class MappingShared{
 		if(strpos($mapWhere,'MATCH(f.recordedby)') || strpos($mapWhere,'MATCH(f.locality)')) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		$sql .= $mapWhere;
 		$sql .= " AND (o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 20000) ";
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin",$userRights) || array_key_exists("RareSppAdmin",$userRights) || array_key_exists("RareSppReadAll",$userRights)){
+		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
 			//Is global rare species reader, thus do nothing to sql and grab all records
 		}
-		elseif(array_key_exists("RareSppReader",$userRights)){
-			$sql .= " AND (o.CollId IN (".implode(",",$userRights["RareSppReader"]).") OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ";
+		elseif(array_key_exists("RareSppReader",$USER_RIGHTS)){
+			$sql .= " AND (o.CollId IN (".implode(",",$USER_RIGHTS["RareSppReader"]).") OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ";
 		}
 		else{
 			$sql .= " AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ";
@@ -149,8 +149,8 @@ class MappingShared{
 	}
 
     public function writeKMLFile($coordArr){
-    	global $defaultTitle, $userRights, $clientRoot, $charset;
-		$fileName = $defaultTitle;
+    	global $DEFAULT_TITLE, $USER_RIGHTS, $CLIENT_ROOT, $CHARSET;
+		$fileName = $DEFAULT_TITLE;
 		if($fileName){
 			if(strlen($fileName) > 10) $fileName = substr($fileName,0,10);
 			$fileName = str_replace(".","",$fileName);
@@ -163,10 +163,10 @@ class MappingShared{
     	header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-type: application/vnd.google-earth.kml+xml');
 		header ("Content-Disposition: attachment; filename=\"$fileName\"");
-		echo "<?xml version='1.0' encoding='".$charset."'?>\n";
+		echo "<?xml version='1.0' encoding='".$CHARSET."'?>\n";
         echo "<kml xmlns='http://www.opengis.net/kml/2.2'>\n";
         echo "<Document>\n";
-		echo "<Folder>\n<name>".$defaultTitle." Specimens - ".date('j F Y g:ia')."</name>\n";
+		echo "<Folder>\n<name>".$DEFAULT_TITLE." Specimens - ".date('j F Y g:ia')."</name>\n";
 
 		$cnt = 0;
 		foreach($coordArr as $sciName => $contentArr){
@@ -200,8 +200,8 @@ class MappingShared{
 						echo "<Data name='".$v."'>".$pointArr[$v]."</Data>\n";
 					}
 				}
-				echo "<Data name='DataSource'>Data retrieved from ".$defaultTitle." Data Portal</Data>\n";
-				$url = "http://".$_SERVER["SERVER_NAME"].$clientRoot."/collections/individual/index.php?occid=".$occId;
+				echo "<Data name='DataSource'>Data retrieved from ".$DEFAULT_TITLE." Data Portal</Data>\n";
+				$url = "http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."/collections/individual/index.php?occid=".$occId;
 				echo "<Data name='RecordURL'>".$url."</Data>\n";
 				echo "</ExtendedData>\n";
 				echo "<styleUrl>#".str_replace(" ","_",$sciName)."</styleUrl>\n";

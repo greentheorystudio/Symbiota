@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/SpecLoans.php');
+include_once($SERVER_ROOT.'/classes/SpecLoans.php');
 
 $collId = $_REQUEST['collid'];
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
@@ -48,7 +48,7 @@ else{
 					Entered By:
 				</span><br />
 				<span>
-					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $paramsArr['un']; ?>" onchange=" " />
+					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
 				</span>
 			</div><br />
 			<div style="padding-top:6px;float:left;">

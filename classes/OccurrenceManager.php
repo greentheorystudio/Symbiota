@@ -33,10 +33,8 @@ class OccurrenceManager{
 	}
 
 	public function reset(){
-		global $clientRoot;
 		$domainName = $_SERVER['HTTP_HOST'];
-		if(!$domainName) $domainName = $_SERVER['SERVER_NAME'];
- 		$this->reset = 1;
+		$this->reset = 1;
 		if(isset($this->searchTermsArr['db']) || isset($this->searchTermsArr['oic'])){
 			//reset all other search terms except maintain the db terms
 			$dbsTemp = "";
@@ -924,7 +922,7 @@ class OccurrenceManager{
 	}
 
 	private function readRequestVariables(){
-		global $clientRoot;
+		global $CLIENT_ROOT;
 		//Search will be confinded to a clid vouchers, collid, catid, or will remain open to all collection
 		if(array_key_exists('clid',$_REQUEST)){
 			//Limit by checklist voucher links
@@ -941,7 +939,6 @@ class OccurrenceManager{
 			$this->searchTermsArr["clid"] = $clidStr;
 			//Since checklist vouchers are being searched, clear colldbs
 			$domainName = $_SERVER['HTTP_HOST'];
-			if(!$domainName) $domainName = $_SERVER['SERVER_NAME'];
 		}
 		elseif(array_key_exists("db",$_REQUEST)){
 			//Limit collids and/or catids

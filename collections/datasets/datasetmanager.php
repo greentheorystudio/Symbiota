@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/OccurrenceDataset.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?'.$_SERVER['QUERY_STRING']);
 
@@ -113,8 +113,8 @@ if($isEditor){
 ?>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>">
-		<title><?php echo $defaultTitle; ?> Occurrence Dataset Manager</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
+		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
@@ -386,7 +386,7 @@ if($isEditor){
 												<td>
 													<div style="margin:10px 0px;">
 														<?php 
-														$cSet = strtolower($charset);
+														$cSet = strtolower($CHARSET);
 														?>
 														<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
 														<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
@@ -507,7 +507,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($serverRoot."/footer.php");
+	include($SERVER_ROOT."/footer.php");
 	?>
 	</body>
 </html>

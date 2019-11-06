@@ -311,22 +311,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						<li><a href="#edittab"><span>Edit History</span></a></li>
 						<?php
 					}
-					if (isset($fpEnabled) && $fpEnabled) { // FP Annotations tab
-						$detVars = 'catalognumber='.urlencode($occArr['catalognumber']) .
-						(isset($occArr['secondarycollcode'])?'&collectioncode='.urlencode($occArr['secondarycollcode']):'').
-						(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
-						(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'');
-						echo '<li>';
-						echo '<a href="../editor/includes/findannotations.php?'.$detVars.'"';
-						echo ' style="margin: 0px 20px 0px 20px;"> Annotations </a>';
-						echo '</li>';
-					}
 					?>
 				</ul>
 				<div id="occurtab">
 					<div style="float:right;">
 						<div style="float:right;">
-							<a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$clientRoot.'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
+							<a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
 							<script>
 								window.twttr=(function(d,s,id){
 									var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
@@ -829,7 +819,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						$rightsStr = $collMetadata['rights'];
 						if($collMetadata['rights']){
 							$rightsHeading = '';
-							if(isset($rightsTerms)) $rightsHeading = array_search($rightsStr,$rightsTerms);
+							if(isset($RIGHTS_TERMS)) $rightsHeading = array_search($rightsStr,$RIGHTS_TERMS);
 							if(substr($collMetadata['rights'],0,4) == 'http'){
 								$rightsStr = '<a href="'.$rightsStr.'" target="_blank">'.($rightsHeading?$rightsHeading:$rightsStr).'</a>';
 							}
@@ -873,8 +863,8 @@ header("Content-Type: text/html; charset=".$CHARSET);
 							For additional information on this occurrence, please contact:
 							<?php
 							$emailSubject = $DEFAULT_TITLE.' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
-							$emailBody = 'Specimen being referenced: http://'.$_SERVER['SERVER_NAME'].$clientRoot.'/collections/individual/index.php?occid='.$occArr['occid'];
-							$emailRef = 'subject='.$emailSubject.'&cc='.$adminEmail.'&body='.$emailBody;
+							$emailBody = 'Specimen being referenced: http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
+							$emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
 							?>
 							<a href="mailto:<?php echo $collMetadata['email'].'?'.$emailRef; ?>">
 								<?php echo $collMetadata['contact'].' ('.$collMetadata['email'].')'; ?>

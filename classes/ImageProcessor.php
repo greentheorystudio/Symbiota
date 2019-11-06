@@ -41,17 +41,17 @@ class ImageProcessor {
 		if($this->logFH) fclose($this->logFH);
 		if($this->logMode > 1){
 			//Create log File
-			$logPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) == '/'?'':'/').'content/logs/';
-			if($processorType) $logPath .= $processorType.'/';
-			if(!file_exists($logPath)) mkdir($logPath);
-			if(file_exists($logPath)){
-				$logFile = $logPath.$this->collid.'_'.$this->collArr['instcode'];
+			$LOG_PATH = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) == '/'?'':'/').'content/logs/';
+			if($processorType) $LOG_PATH .= $processorType.'/';
+			if(!file_exists($LOG_PATH)) mkdir($LOG_PATH);
+			if(file_exists($LOG_PATH)){
+				$logFile = $LOG_PATH.$this->collid.'_'.$this->collArr['instcode'];
 				if($this->collArr['collcode']) $logFile .= '-'.$this->collArr['collcode'];
 				$logFile .= '_'.date('Y-m-d').'.log';
 				$this->logFH = fopen($logFile, 'a');
 			}
 			else{
-				echo 'ERROR creating Log file; path not found: '.$logPath."\n";
+				echo 'ERROR creating Log file; path not found: '.$LOG_PATH."\n";
 			}
 		}
 	}

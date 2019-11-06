@@ -183,7 +183,7 @@ if(!$clid){
 					<div>
 						<?php
 						//Display Common Names: 0 = false, 1 = true
-						if($displayCommonNames) echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' ".(($defaultArr&&$defaultArr["dcommon"])?"checked":"")." /> ".$LANG['COMMON'];
+						if($DISPLAY_COMMON_NAMES) echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' ".(($defaultArr&&$defaultArr["dcommon"])?"checked":"")." /> ".$LANG['COMMON'];
 						?>
 					</div>
 					<div>

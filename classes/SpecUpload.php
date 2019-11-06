@@ -436,23 +436,23 @@ class SpecUpload{
 	}
 	
 	public function setVerboseMode($vMode, $logTitle = ''){
-		global $serverRoot;
+		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
 			if($this->verboseMode == 2){
 				//Create log File
-				if($serverRoot){
-					$logPath = $serverRoot;
-					if(substr($serverRoot,-1) != '/' && substr($serverRoot,-1) != '\\') $logPath .= '/';
-					$logPath .= 'temp/logs/';
+				if($SERVER_ROOT){
+					$LOG_PATH = $SERVER_ROOT;
+					if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
+					$LOG_PATH .= 'temp/logs/';
 					if($logTitle){
-						$logPath .= $logTitle;
+						$LOG_PATH .= $logTitle;
 					}
 					else{
-						$logPath .= 'dataupload';
+						$LOG_PATH .= 'dataupload';
 					}
-					$logPath .= '_'.date('Ymd').".log";
-					$this->logFH = fopen($logPath, 'a');
+					$LOG_PATH .= '_'.date('Ymd').".log";
+					$this->logFH = fopen($LOG_PATH, 'a');
 					fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
 				}
 			}

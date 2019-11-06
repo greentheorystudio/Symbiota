@@ -8,7 +8,7 @@ $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($isAdmin || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -195,7 +195,7 @@ if($glossId){
 								else{
 									$urlPrefix = "http://";
 									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-									$urlPrefix .= $_SERVER["SERVER_NAME"];
+									$urlPrefix .= $_SERVER['HTTP_HOST'];
 									if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 									$imgUrl = $urlPrefix.$imgUrl;
 								}

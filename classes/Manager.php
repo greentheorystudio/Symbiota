@@ -30,8 +30,8 @@ class Manager  {
 		}
 	}
 
-	protected function setLogFH($logPath){
-		$this->logFH = fopen($logPath, 'a');
+	protected function setLogFH($LOG_PATH){
+		$this->logFH = fopen($LOG_PATH, 'a');
 	}
 
 	protected function logOrEcho($str, $indexLevel=0, $tag = 'li'){

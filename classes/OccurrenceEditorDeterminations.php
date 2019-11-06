@@ -1,9 +1,4 @@
 <?php
-if(isset($fpEnabled) && $fpEnabled){
-	include_once('fp/FPNetworkFactory.php');
-	include_once('fp/includes/symbiotahelper.php');
-}
-
 class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
 	public function __construct(){
@@ -169,27 +164,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				if(!$this->conn->query($sql)){
 					$status = 'ERROR: Annotation added but failed to remap images to new name';
 					$status .= ': '.$this->conn->error;
-				}
-			}
-			//FP code
-			global $fpEnabled;
-			if(isset($fpEnabled) && $fpEnabled && isset($detArr['fpsubmit']) && $detArr['fpsubmit']) {
-				$status = "Determination added successfully and submitted to Filtered Push!";
-				try {
-					// create an array that the annotation generator can understand from $detArr
-					$annotation = fpNewDetArr($detArr);
-			
-					// generate rdf/xml
-					$generator = FPNetworkFactory::getAnnotationGenerator();
-					$rdf = $generator->generateRdfXml($annotation);
-			
-					// inject annotation into fp
-					$network = FPNetworkFactory::getNetworkFacade();
-					$response = $network->injectIntoFP($rdf);
-				} 
-				catch (Exception $e) {
-					error_log($e->getFile() . '(' . $e->getLine() . '): ' . $e->getMessage());
-					$status = "Determination added successfully but there was an error during submission to Filtered Push!";
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/TPDescEditorManager.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/TPDescEditorManager.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0;
 $lang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:'';
@@ -13,7 +13,7 @@ if($lang) $descEditor->setLanguage($lang);
 
 $statusStr = '';
 $editable = false;
-if($isAdmin || array_key_exists("TaxonProfile",$userRights)){
+if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 	$editable = true;
 }
 
@@ -36,7 +36,7 @@ if($editable){
 			<fieldset style='width:90%;margin:10px;padding:10px;'>
     			<legend><b>New Description Block</b></legend>
 				<div style=''>
-					Language: <input id="language" name="language" type="text" value="<?php echo $defaultLang; ?>" />
+					Language: <input id="language" name="language" type="text" value="<?php echo $DEFAULT_LANG; ?>" />
 				</div>
 				<div style=''>
 					Caption: <input id='caption' name='caption' style='width:300px;' type='text' />

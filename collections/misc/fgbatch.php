@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/FieldGuideManager.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists("action",$_POST)?$_POST["action"]:"";
 $collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
@@ -103,7 +103,7 @@ if($isEditor){
 <body>
 	<?php
 	$displayLeftMenu = (isset($collections_misc_fgbatchMenu)?$collections_misc_fgbatchMenu:true);
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($collections_misc_fgbatchCrumbs)){
 		if($collections_misc_fgbatchCrumbs){
 			echo "<div class='navpath'>";
@@ -245,7 +245,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-		include($serverRoot.'/footer.php');
+		include($SERVER_ROOT.'/footer.php');
 	?>
 
 </body>

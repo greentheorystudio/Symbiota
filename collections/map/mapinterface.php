@@ -147,7 +147,7 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $defaultTitle; ?> - Map Interface</title>
+    <title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>
     <link type="text/css" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
     <link type="text/css" href="../../css/main.css?ver=<?php echo $CSS_VERSION_LOCAL; ?>" rel="stylesheet" />
     <link type="text/css" href="../../css/jquery.mobile-1.4.0.min.css" rel="stylesheet" />
@@ -198,13 +198,13 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
     <script type="text/javascript" src="../../js/symb/infobox.js"></script>
     <script type="text/javascript">
         <?php
-        if($symbUid){
+        if($SYMB_UID){
             ?>
             $(window).bind("load", function() {
-                loadRecordsetList('<?php echo $symbUid; ?>',"loadlist");
+                loadRecordsetList('<?php echo $SYMB_UID; ?>',"loadlist");
             });
 
-            var uid = <?php echo $symbUid; ?>;
+            var uid = <?php echo $SYMB_UID; ?>;
             <?php
         }
         ?>
@@ -1409,7 +1409,7 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
                                         <div id="specobsdiv">
                                             <div style="margin:0px 0px 10px 20px;">
                                                 <input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo (((array_key_exists("db",$previousCriteria)&&in_array("all",$dbArr))||!$dbArr)?'checked':'') ?> />
-                                                Select/Deselect all <a href="<?php echo $clientRoot; ?>/collections/misc/collprofiles.php">Collections</a>
+                                                Select/Deselect all <a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php">Collections</a>
                                             </div>
                                             <?php
                                             if($specArr){
@@ -1770,7 +1770,7 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
                     <h3>Datasets</h3>
                     <div id="tabs3" style="width:379px;padding:0px;">
                         <?php
-                        if($symbUid){
+                        if($SYMB_UID){
                             ?>
                             <ul>
                                 <li><a href='#recordsetselect'><span>Dataset</span></a></li>

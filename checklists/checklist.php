@@ -251,7 +251,7 @@ if($clArray["locality"]){
 		echo '<div class="navpath">';
 		if($pid){
 			echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt; ';
-			echo '<a href="'.$clientRoot.'/projects/index.php?pid='.$pid.'">';
+			echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
 			echo $clManager->getProjName();
 			echo '</a> &gt; ';
 			echo '<b>'.$clManager->getClName().'</b>';
@@ -405,7 +405,7 @@ if($clArray["locality"]){
 									<div>
 										<div style="margin-left:10px;">
 											<?php 
-												if($displayCommonNames){
+												if($DISPLAY_COMMON_NAMES){
 													echo "<input data-role='none' type='checkbox' name='searchcommon' value='1'".($searchCommon?"checked":"")."/>".$LANG['COMMON']."<br/>";
 												}
 											?>
@@ -430,7 +430,7 @@ if($clArray["locality"]){
 								<div>
 									<?php 
 										//Display Common Names: 0 = false, 1 = true 
-									    if($displayCommonNames) echo "<input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' ".($showCommon?"checked":"")."/>".$LANG['COMMON']."";
+									    if($DISPLAY_COMMON_NAMES) echo "<input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' ".($showCommon?"checked":"")."/>".$LANG['COMMON']."";
 									?>
 								</div>
 								<div>

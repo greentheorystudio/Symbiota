@@ -46,8 +46,8 @@ else{
 ?>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset; ?>">
-	<title><?php echo $defaultTitle; ?> Collections Search Results Table</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
+	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results Table</title>
     <style type="text/css">
 		table.styledtable td {
 		    white-space: nowrap;

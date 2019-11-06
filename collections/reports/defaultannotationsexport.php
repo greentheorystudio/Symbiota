@@ -1,8 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/OccurrenceLabel.php');
-require_once $serverRoot.'/classes/PhpWord/Autoloader.php';
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
+require_once $SERVER_ROOT.'/classes/PhpWord/Autoloader.php';
+header("Content-Type: text/html; charset=".$CHARSET);
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
 $ses_id = session_id();
@@ -46,8 +46,8 @@ if($rowsPerPage==3){
 $labelManager->setCollid($collid);
 
 $isEditor = 0;
-if($symbUid){
-	if($isAdmin || (array_key_exists("CollAdmin",$userRights) && in_array($collid,$userRights["CollAdmin"])) || (array_key_exists("CollEditor",$userRights) && in_array($collid,$userRights["CollEditor"]))){
+if($SYMB_UID){
+	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])) || (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"]))){
 		$isEditor = 1;
 	}
 }
@@ -198,7 +198,7 @@ foreach($labelArr as $occid => $occArr){
 	}
 }
 
-$targetFile = $serverRoot.'/temp/report/'.$paramsArr['un'].'_'.date('Ymd').'_annotations_'.$ses_id.'.'.$exportExtension;
+$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_annotations_'.$ses_id.'.'.$exportExtension;
 $phpWord->save($targetFile, $exportEngine);
 
 header('Content-Description: File Transfer');

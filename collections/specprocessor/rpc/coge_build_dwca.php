@@ -3,7 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); 
-header("Content-Type: text/html; charset=".$charset);
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $collid = $_REQUEST["collid"];
 $archiveFile = '';
@@ -57,7 +57,7 @@ if($collid && is_numeric($collid)){
 		//Set URL path to file
 		$urlPrefix = "http://";
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-		$urlPrefix .= $_SERVER["SERVER_NAME"];
+		$urlPrefix .= $_SERVER['HTTP_HOST'];
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 		$urlPath = $urlPrefix.$CLIENT_ROOT;
 		if(substr($urlPath,-1) != '/' && substr($urlPath,-1) != '\\'){

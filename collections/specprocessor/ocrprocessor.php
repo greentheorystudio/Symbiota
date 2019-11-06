@@ -106,7 +106,7 @@ $procManager->setProjVariables('OCR Harvest');
 	<fieldset style="padding:20px;margin-top:20px;">
 		<legend><b>Batch OCR Images using the Tesseract OCR Engine</b></legend>
 		<?php
-		if(isset($tesseractPath) && $tesseractPath){ 
+		if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
 			?>
 			<form name="batchTessform" action="processor.php" method="post" onsubmit="return validateBatchTessForm(this)">
 				<div style="padding:3px;">

@@ -105,7 +105,7 @@ if($isEditor){
 	<body>
 		<?php
 		$displayLeftMenu = false;
-		include($serverRoot.'/header.php');
+		include($SERVER_ROOT.'/header.php');
 		if(isset($collections_specprocessor_indexCrumbs)){
 			if($collections_specprocessor_indexCrumbs){
 				echo "<div class='navpath'>";
@@ -146,9 +146,6 @@ if($isEditor){
 				        <li><a href="imageprocessor.php?collid=<?php echo $collid.'&spprid='.$spprId.'&submitaction='.$action.'&filename='.$fileName; ?>">Image Loading</a></li>
 				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
 				        <li><a href="ocrprocessor.php?collid=<?php echo $collid.'&procstatus='.$procStatus.'&spprid='.$spprId; ?>">OCR</a></li>
-				        <!-- 
-				        <li><a href="nlpprocessor.php?collid=<?php echo $collid.'&spnlpid='.$spNlpId; ?>">NLP</a></li>
-				         -->
 				        <li><a href="reports.php?<?php echo $_SERVER['QUERY_STRING']; ?>">Reports</a></li>
 				        <li><a href="exporter.php?collid=<?php echo $collid.'&displaymode='.$displayMode; ?>">Exporter</a></li>
 				        <?php 

@@ -332,7 +332,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	public function uploadData($finalTransfer){
-		global $charset;
+		global $CHARSET;
 		$fullPath = $this->uploadTargetPath.$this->baseFolderName;
 		if(file_exists($fullPath)){
 
@@ -370,7 +370,7 @@ class SpecUploadDwca extends SpecUploadBase{
 						$this->getRecordArr($fh);
 			 		}
 					
-					$cset = strtolower(str_replace('-','',$charset)); 
+					$cset = strtolower(str_replace('-','',$CHARSET));
 					//Set source array 
 					$this->sourceArr = array();
 					foreach($this->metaArr['occur']['fields'] as $k => $v){
@@ -502,7 +502,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	private function uploadExtension($targetStr,$fieldMap,$sourceArr){
-		global $charset;
+		global $CHARSET;
 		$fullPathExt = '';
 		if($this->metaArr[$targetStr]['name']){
 			$fullPathExt = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.$this->metaArr[$targetStr]['name'];
@@ -534,7 +534,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		 			//Advance one record to go past header
 		 			$this->getRecordArr($fh);
 		 		}
-				$cset = strtolower(str_replace('-','',$charset));
+				$cset = strtolower(str_replace('-','',$CHARSET));
 
 				$fieldMap['dbpk']['field'] = 'coreid';
 				//Load data

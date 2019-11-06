@@ -251,7 +251,7 @@ $clArray = $vManager->getChecklistData();
 					</div>
 					<div id="voucherdiv">
 						<?php 
-						if($occurrenceModIsActive){ 
+						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
 								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName()."&targetclid=".$vManager->getClid()."&targettid=".$tid;?>">

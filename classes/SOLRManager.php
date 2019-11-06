@@ -162,7 +162,7 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRRecList($sArr){
-        global $imageDomain;
+        global $IMAGE_DOMAIN;
  	    $returnArr = Array();
         $canReadRareSpp = false;
         if($GLOBALS['USER_RIGHTS']){
@@ -221,8 +221,8 @@ class SOLRManager extends OccurrenceManager{
             }
             if(isset($k['thumbnailurl'])){
                 $tnUrl = $k['thumbnailurl'][0];
-                if($imageDomain){
-                    if(substr($tnUrl,0,1)=="/") $tnUrl = $imageDomain.$tnUrl;
+                if($IMAGE_DOMAIN){
+                    if(substr($tnUrl,0,1)=="/") $tnUrl = $IMAGE_DOMAIN.$tnUrl;
                 }
                 $returnArr[$occId]["img"] = $tnUrl;
             }
@@ -288,7 +288,7 @@ class SOLRManager extends OccurrenceManager{
                 if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin",$GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin",$GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll",$GLOBALS['USER_RIGHTS'])){
                     $canReadRareSpp = true;
                 }
-                elseif(array_key_exists("RareSppReader",$userRights) && in_array($collid,$GLOBALS['USER_RIGHTS']["RareSppReader"])){
+                elseif(array_key_exists("RareSppReader",$USER_RIGHTS) && in_array($collid,$GLOBALS['USER_RIGHTS']["RareSppReader"])){
                     $canReadRareSpp = true;
                 }
             }
@@ -362,7 +362,7 @@ class SOLRManager extends OccurrenceManager{
                 if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin",$GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin",$GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll",$GLOBALS['USER_RIGHTS'])){
                     $canReadRareSpp = true;
                 }
-                elseif(array_key_exists("RareSppReader",$userRights) && in_array($collid,$GLOBALS['USER_RIGHTS']["RareSppReader"])){
+                elseif(array_key_exists("RareSppReader",$USER_RIGHTS) && in_array($collid,$GLOBALS['USER_RIGHTS']["RareSppReader"])){
                     $canReadRareSpp = true;
                 }
             }

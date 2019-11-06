@@ -308,7 +308,7 @@ include($SERVER_ROOT. '/header.php');
 					echo '</div>';
 				}
 				if($collArr['dwcaurl']){
-					$serverName = $_SERVER["SERVER_NAME"];
+					$serverName = $_SERVER['HTTP_HOST'];
 					if(substr($serverName, 0, 4) == 'www.') $serverName = substr($serverName, 4);
 					if(!strpos($collArr['dwcaurl'],$serverName)){
 						$baseUrl = substr($collArr['dwcaurl'],0,strpos($collArr['dwcaurl'],'/content')).'/collections/datasets/datapublisher.php';
@@ -429,7 +429,7 @@ include($SERVER_ROOT. '/header.php');
 								if(!$v['guid']){
 									$errMsg = 'Missing GUID source';
 								}
-								elseif($v['url'] && !strpos($v['url'],str_replace('www.', '', $_SERVER["SERVER_NAME"]))){
+								elseif($v['url'] && !strpos($v['url'],str_replace('www.', '', $_SERVER['HTTP_HOST']))){
 									$baseUrl = substr($v['url'],0,strpos($v['url'],'/content')).'/collections/datasets/datapublisher.php';
 									$errMsg = 'Already published on different domain (<a href="'.$baseUrl.'" target="_blank">'.substr($baseUrl,0,strpos($baseUrl,'/',10)).'</a>)';
 								}

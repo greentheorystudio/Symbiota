@@ -11,7 +11,7 @@ $projValue = array_key_exists("proj",$_REQUEST)?$_REQUEST["proj"]:0;
 $lang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:$DEFAULT_LANG;
 $descrDisplayLevel = array_key_exists("displaylevel",$_REQUEST)?$_REQUEST["displaylevel"]:"";
 
-//if(!$projValue && !$clValue) $projValue = $defaultProjId;
+//if(!$projValue && !$clValue) $projValue = $DEFAULT_PROJ_ID;
 
 $taxonManager = new TaxonProfileManager();
 if($taxAuthId || $taxAuthId === "0") $taxonManager->setTaxAuthId($taxAuthId);
@@ -51,7 +51,7 @@ if($SYMB_UID){
 	if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 		$isEditor = true;
 	}
-	if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$userRights)){
+	if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
 		$displayLocality = 1;
 	}
 }

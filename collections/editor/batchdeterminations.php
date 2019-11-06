@@ -1,8 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$charset);
+header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?'.$_SERVER['QUERY_STRING']);
 
@@ -22,10 +22,10 @@ $nomTBody = '';
 $catArr = array();
 $jsonCatArr = '';
 $occArr = array();
-if($isAdmin || (array_key_exists("CollAdmin",$userRights) && in_array($collid,$userRights["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
 	$isEditor = 1;
 }
-elseif(array_key_exists("CollEditor",$userRights) && in_array($collid,$userRights["CollEditor"])){
+elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"])){
 	$isEditor = 1;
 }
 if($isEditor){
@@ -56,8 +56,8 @@ if($isEditor){
 
 <html>
 	<head>
-	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>">
-		<title><?php echo $defaultTitle; ?> Batch Determinations/Nomenclatural Adjustments</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
+		<title><?php echo $DEFAULT_TITLE; ?> Batch Determinations/Nomenclatural Adjustments</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
@@ -320,7 +320,7 @@ if($isEditor){
 	<body>
 	<?php
 	$displayLeftMenu = (isset($collections_batchdeterminationsMenu)?$collections_batchdeterminationsMenu:false);
-	include($serverRoot."/header.php");
+	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -430,14 +430,6 @@ if($isEditor){
 									<div style='margin:3px;'>
 										<input type="checkbox" name="printqueue" value="1" /> Add to Annotation Queue
 									</div>
-									<?php 
-									global $fpEnabled;
-									if($fpEnabled){
-										echo '<div style="float:left;margin-left:30px;">';
-										echo '<input type="checkbox" name="fpsubmit" value="1" checked="true" /> Submit determination to Filtered Push network';
-										echo '</div>';
-									}
-									?>
 									<div style='margin:15px;'>
 										<div style="float:left;">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
@@ -515,14 +507,6 @@ if($isEditor){
 									<div style='margin:3px;'>
 										<input type="checkbox" name="printqueue" value="1" /> Add to Annotation Queue
 									</div>
-									<?php 
-									global $fpEnabled;
-									if($fpEnabled){
-										echo '<div style="float:left;margin-left:30px;">';
-										echo '<input type="checkbox" name="fpsubmit" value="1" checked="true" /> Submit determination to Filtered Push network';
-										echo '</div>';
-									}
-									?>
 									<div style='margin:15px;'>
 										<div style="float:left;">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
@@ -550,7 +534,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($serverRoot."/footer.php");
+	include($SERVER_ROOT."/footer.php");
 	?>
 	</body>
 </html>

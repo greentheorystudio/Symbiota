@@ -222,7 +222,9 @@ class EOLManager {
 									$agentCnt++;
 								}
 							}
-							if(isset($agentArr) && $agentArr) $resourceArr['photographer'] = implode('; ',array_unique($agentArr));
+							if(isset($agentArr) && $agentArr) {
+                                $resourceArr['photographer'] = implode('; ', array_unique($agentArr));
+                            }
 						}
 						$noteStr = 'Harvest via EOL on '.date('Y-m-d');
 						if(array_key_exists('description',$objArr)) $noteStr .= '; '.$this->cleanInStr($objArr['description']);

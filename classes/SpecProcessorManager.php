@@ -35,7 +35,7 @@ class SpecProcessorManager {
 	protected $dbMetadata = 1;			//Only used when run as a standalone script
 	protected $processUsingImageMagick = 0;
 
-	protected $logPath;
+	protected $LOG_PATH;
 	protected $logFH;
 	protected $logErrFH;
 	protected $mdOutputFH;
@@ -584,9 +584,9 @@ class SpecProcessorManager {
 	public function getLogListing(){
 		$retArr = array();
 		if($this->collid){
-			$logPathFrag = ($this->projectType == 'local'?'imgProccessing':$this->projectType).'/';
-			if(file_exists($this->logPath.$logPathFrag)){
-				if($fh = opendir($this->logPath.$logPathFrag)){
+			$LOG_PATHFrag = ($this->projectType == 'local'?'imgProccessing':$this->projectType).'/';
+			if(file_exists($this->logPath.$LOG_PATHFrag)){
+				if($fh = opendir($this->logPath.$LOG_PATHFrag)){
 					while($fileName = readdir($fh)){
 						if(strpos($fileName,$this->collid.'_') === 0){
 							$retArr[] = $fileName;

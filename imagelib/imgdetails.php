@@ -50,7 +50,7 @@ if($imgArr){
 		}
 	}
 	if(substr($metaUrl,0,1)=="/"){
-		$metaUrl = 'http://'.$_SERVER['SERVER_NAME'].$metaUrl;
+		$metaUrl = 'http://'.$_SERVER['HTTP_HOST'].$metaUrl;
 	}
 }
 
@@ -67,7 +67,7 @@ if($imgArr){
 		<meta name="twitter:card" content="photo" data-dynamic="true" />
 		<meta name="twitter:title" content="<?php echo $imgArr["sciname"]; ?>" />
 		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['SERVER_NAME'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
+		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
 		<?php
 	}
 	?>
@@ -204,7 +204,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<b>Web Image:</b><br/>
 										<input name="url" type="text" value="<?php echo $imgArr["url"];?>" style="width:90%;" maxlength="150" />
-										<?php if(stripos($imgArr["url"],$imageRootUrl) === 0){ ?>
+										<?php if(stripos($imgArr["url"],$IMAGE_ROOT_URL) === 0){ ?>
 										<div style="margin-left:70px;">
 											<input type="checkbox" name="renameweburl" value="1" />
 											Rename web image file on server to match above edit (web server file editing privileges required)
@@ -215,7 +215,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<b>Thumbnail:</b><br/>
 										<input name="thumbnailurl" type="text" value="<?php echo $imgArr["thumbnailurl"];?>" style="width:90%;" maxlength="150">
-										<?php if(stripos($imgArr["thumbnailurl"],$imageRootUrl) === 0){ ?>
+										<?php if(stripos($imgArr["thumbnailurl"],$IMAGE_ROOT_URL) === 0){ ?>
 										<div style="margin-left:70px;">
 											<input type="checkbox" name="renametnurl" value="1" />
 											Rename thumbnail image file on server to match above edit (web server file editing privileges required)
@@ -226,7 +226,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<b>Large Image:</b><br/>
 										<input name="originalurl" type="text" value="<?php echo $imgArr["originalurl"];?>" style="width:90%;" maxlength="150">
-										<?php if(stripos($imgArr["originalurl"],$imageRootUrl) === 0){ ?>
+										<?php if(stripos($imgArr["originalurl"],$IMAGE_ROOT_URL) === 0){ ?>
 										<div style="margin-left:80px;">
 											<input type="checkbox" name="renameorigurl" value="1" />
 											Rename large image file on server to match above edit (web server file editing privileges required)
@@ -352,12 +352,12 @@ if($imgArr){
 						<div style="margin-top:20px;">
 							Do you see an error or have a comment about this image? <br/>If so, send email to:
 							<?php
-							$emailSubject = $defaultTitle.' Image #'.$imgId;
-							$emailBody = 'Image being referenced: http://'.$_SERVER['SERVER_NAME'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
-							$emailRef = 'subject='.$emailSubject.'&cc='.$adminEmail.'&body='.$emailBody;
+							$emailSubject = $DEFAULT_TITLE.' Image #'.$imgId;
+							$emailBody = 'Image being referenced: http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
+							$emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
 							?>
-							<a href="mailto:<?php echo $adminEmail.'?'.$emailRef; ?>">
-								<?php echo $adminEmail; ?>
+							<a href="mailto:<?php echo $ADMIN_EMAIL.'?'.$emailRef; ?>">
+								<?php echo $ADMIN_EMAIL; ?>
 							</a>
 
 						</div>

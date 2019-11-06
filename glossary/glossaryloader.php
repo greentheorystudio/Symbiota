@@ -1,8 +1,8 @@
 <?php
 include_once('../config/symbini.php');
-include_once($serverRoot.'/classes/GlossaryUpload.php');
-include_once($serverRoot.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/GlossaryUpload.php');
+include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/glossary/glossaryloader.php');
 
 $action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
@@ -12,7 +12,7 @@ $batchTaxaStr = array_key_exists("batchtid",$_REQUEST)?$_REQUEST["batchtid"]:"";
 $batchSource = array_key_exists("batchsources",$_REQUEST)?str_replace("'","&#39;",$_REQUEST["batchsources"]):"";
 
 $isEditor = false;
-if($isAdmin || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -48,8 +48,8 @@ if($isEditor){
 ?>
 <html>
 <head>
-	<title><?php echo $defaultTitle; ?> Glossary Term Loader</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>" />
+	<title><?php echo $DEFAULT_TITLE; ?> Glossary Term Loader</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -118,7 +118,7 @@ if($isEditor){
 <body>
 <?php
 $displayLeftMenu = (isset($glossary_admin_glossaryloaderMenu)?$glossary_admin_glossaryloaderMenu:false);
-include($serverRoot.'/header.php');
+include($SERVER_ROOT.'/header.php');
 if(isset($glossary_admin_glossaryloaderCrumbs)){
 	if($glossary_admin_glossaryloaderCrumbs){
 		echo '<div class="navpath">';
@@ -328,7 +328,7 @@ else{
 }
 
 
-include($serverRoot.'/footer.php');
+include($SERVER_ROOT.'/footer.php');
 ?>
 </body>
 </html>

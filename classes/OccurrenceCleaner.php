@@ -2,7 +2,6 @@
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/AgentManager.php');
 
 class OccurrenceCleaner extends Manager{
 
@@ -187,66 +186,7 @@ class OccurrenceCleaner extends Manager{
 		return $retStatus;
 	}
 
-    /** Populate omoccurrences.recordedbyid using data from omoccurrences.recordedby.
-     */
-	public function indexCollectors(){
-		//Try to populate using already linked names
-		$sql = 'UPDATE omoccurrences o1 INNER JOIN (SELECT DISTINCT recordedbyid, recordedby FROM omoccurrences WHERE recordedbyid IS NOT NULL) o2 ON o1.recordedby = o2.recordedby '.
-			'SET o1.recordedbyid = o2.recordedbyid '.
-			'WHERE o1.recordedbyid IS NULL';
-		$this->conn->query($sql);
-
-		//Query unlinked specimens and try to parse each collector
-		$collArr = array();
-		$sql = 'SELECT occid, recordedby '.
-			'FROM omoccurrences '.
-			'WHERE recordedbyid IS NULL';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$collArr[$r->recordedby][] = $r->occid;
-		}
-		$rs->free();
-
-		foreach($collArr as $collStr => $occidArr){
-            // check to see if collector is listed in agents table.
-            $sql = "select distinct agentid from agentname where name = ? ";
-            if ($stmt = $this->conn->prepare($sql)) {
-               $stmt->bind_param('s',$collStr);
-               $stmt->execute();
-               $stmt->bind_result($agentid);
-               $stmt->store_result();
-               $matches = $stmt->num_rows;
-               $stmt->fetch();
-               $stmt->close();
-               if ($matches>0) {
-                  $recById= $agentid;
-               }
-               else {
-                  // no matches found to collector, add to agent table.
-                  $am = new AgentManager();
-                  $agent = $am->constructAgentDetType($collStr);
-                  if ($agent!=null) {
-                     $am->saveNewAgent($agent);
-                     $agentid = $agent->getagentid();
-                     $recById= $agentid;
-                  }
-               }
-            }
-            else {
-               throw new Exception("Error preparing query $sql " . $this->conn->error);
-            }
-
-			//Add recordedbyid to omoccurrence table
-			if($recById){
-				$sql = 'UPDATE omoccurrences '.
-					'SET recordedbyid = '.$recById.
-					' WHERE occid IN('.implode(',',$occidArr).') AND recordedbyid IS NULL ';
-				$this->conn->query($sql);
-			}
-		}
-	}
-
-	//Geographic functions
+    //Geographic functions
 	public function countryCleanFirstStep(){
 		//Country cleaning
 		echo '<div style="margin-left:15px;">Preparing countries index...</div>';

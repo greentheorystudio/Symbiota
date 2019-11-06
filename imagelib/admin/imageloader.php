@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($serverRoot.'/classes/ImageImport.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/classes/ImageImport.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 
 $action = array_key_exists("action",$_POST)?$_POST["action"]:"";
 $ulFileName = array_key_exists("ulfilename",$_POST)?$_POST["ulfilename"]:"";
@@ -30,8 +30,8 @@ if($isEditor){
 ?>
 <html>
 <head>
-	<title><?php echo $defaultTitle; ?> Image Loader</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset;?>" />
+	<title><?php echo $DEFAULT_TITLE; ?> Image Loader</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
@@ -43,7 +43,7 @@ if($isEditor){
 <body>
 <?php
 $displayLeftMenu = true;
-include($serverRoot.'/header.php');
+include($SERVER_ROOT.'/header.php');
 
 ?>
 <div class="navpath">
@@ -171,7 +171,7 @@ include($serverRoot.'/header.php');
 	</div>
 </div>
 <?php  
-include($serverRoot.'/footer.php');
+include($SERVER_ROOT.'/footer.php');
 ?>
 </body>
 </html>

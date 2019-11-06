@@ -1,7 +1,6 @@
 <?php
 include_once('../../../config/symbini.php'); 
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceActionManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $occId = $_GET['occid'];
@@ -9,7 +8,6 @@ $occIndex = $_GET['occindex'];
 $crowdSourceMode = $_GET['csmode'];
 
 $occManager = new OccurrenceEditorImages();
-$occActionManager = new OccurrenceActionManager();
 
 $occManager->setOccId($occId); 
 $specImgArr = $occManager->getImageMap();
@@ -301,7 +299,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Web URL: </b><br/>
 											<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr["url"],$imageRootUrl) === 0){ ?>
+											<?php if(stripos($imgArr["url"],$IMAGE_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameweburl" value="1" />
 													Rename web image file on server to match above edit
@@ -312,7 +310,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Large Image URL: </b><br/>
 											<input name="origurl" type="text" value="<?php echo $imgArr["origurl"]; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr["origurl"],$imageRootUrl) === 0){ ?>
+											<?php if(stripos($imgArr["origurl"],$IMAGE_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameorigurl" value="1" />
 													Rename large image file on server to match above edit
@@ -323,7 +321,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Thumbnail URL: </b><br/>
 											<input name="tnurl" type="text" value="<?php echo $imgArr["tnurl"]; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr["tnurl"],$imageRootUrl) === 0){ ?>
+											<?php if(stripos($imgArr["tnurl"],$IMAGE_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renametnurl" value="1" />
 													Rename thumbnail file on server to match above edit
@@ -416,16 +414,6 @@ $specImgArr = $occManager->getImageMap();
 				?>
 			</table>
 			<?php 
-		}
-		else{
-			if (isset($RequestTrackingIsActive) && $RequestTrackingIsActive==1) { 
-			     echo "<div style=\"margin-left:15px;\"><button onClick=' requestImage() '>Make an imaging request.</button></div><div id='imagerequestresult'></div>";
-                 echo "<div>"; 
-                 foreach ($occActionManager->listOccurrenceActionRequests($occId) as $request) { 
-                   echo "$request<br/>";
-                 }
-                 echo "</div>";
-			}
 		}
 		?>
 	</div>

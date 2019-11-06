@@ -286,36 +286,36 @@ class KeyCharAdmin{
 		global $PARAMS_ARR;
 		$statusStr = '';
 		if(is_numeric($formArr['cid']) && is_numeric($formArr['cs'])){
-	 		$imageRootPath = $GLOBALS["imageRootPath"];
-			if(substr($imageRootPath,-1) != "/") $imageRootPath .= "/";
-			if(file_exists($imageRootPath)){
-				$imageRootPath .= 'ident/';
-				if(!file_exists($imageRootPath)){
-					if(!mkdir($imageRootPath)){
-						return 'ERROR, unable to create upload directory: '.$imageRootPath;
+	 		$IMAGE_ROOT_PATH = $GLOBALS["imageRootPath"];
+			if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
+			if(file_exists($IMAGE_ROOT_PATH)){
+				$IMAGE_ROOT_PATH .= 'ident/';
+				if(!file_exists($IMAGE_ROOT_PATH)){
+					if(!mkdir($IMAGE_ROOT_PATH)){
+						return 'ERROR, unable to create upload directory: '.$IMAGE_ROOT_PATH;
 					}
 				}
-				$imageRootPath .= 'csimgs/';
-				if(!file_exists($imageRootPath)){
-					if(!mkdir($imageRootPath)){
-						return 'ERROR, unable to create upload directory: '.$imageRootPath;
+				$IMAGE_ROOT_PATH .= 'csimgs/';
+				if(!file_exists($IMAGE_ROOT_PATH)){
+					if(!mkdir($IMAGE_ROOT_PATH)){
+						return 'ERROR, unable to create upload directory: '.$IMAGE_ROOT_PATH;
 					}
 				}
 				//Create url prefix 
-				$imageRootUrl = $GLOBALS["imageRootUrl"];
-				if(substr($imageRootUrl,-1) != "/") $imageRootUrl .= "/";
-				$imageRootUrl .= 'ident/csimgs/';
+				$IMAGE_ROOT_URL = $GLOBALS["imageRootUrl"];
+				if(substr($IMAGE_ROOT_URL,-1) != "/") $IMAGE_ROOT_URL .= "/";
+				$IMAGE_ROOT_URL .= 'ident/csimgs/';
 				
 				//Image is to be downloaded
-				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$imageRootUrl);
-				$imagePath = $imageRootPath.str_replace('.','_temp.',$fileName);
+				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$IMAGE_ROOT_URL);
+				$imagePath = $IMAGE_ROOT_PATH.str_replace('.','_temp.',$fileName);
 				move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
 				if(file_exists($imagePath)){
 					if($this->createNewCsImage($imagePath)){
 						//Add url to database 
 						$notes = $this->cleanInStr($formArr['notes']);
 						$sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
-							'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$imageRootUrl.$fileName.'",'.
+							'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$IMAGE_ROOT_URL.$fileName.'",'.
 							($notes?'"'.$notes.'"':'NULL').','.
 							(is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$PARAMS_ARR['un'].'")';
 						if(!$this->conn->query($sql)){
@@ -330,7 +330,7 @@ class KeyCharAdmin{
 			}
 		}
 		else{
-			$statusStr = 'ERROR: Upload path does not exist (path: '.$imageRootPath.')';
+			$statusStr = 'ERROR: Upload path does not exist (path: '.$IMAGE_ROOT_PATH.')';
 		}
 		return $statusStr;
 	}
@@ -390,15 +390,15 @@ class KeyCharAdmin{
 	public function deleteCsImage($csImgId){
 		$statusStr = 'SUCCESS: image uploaded successful';
 		//Remove image from file system
-	 	$imageRootPath = $GLOBALS["imageRootPath"];
-		if(substr($imageRootPath,-1) != "/") $imageRootPath .= "/";
-		$imageRootPath .= 'ident/csimgs/';
+	 	$IMAGE_ROOT_PATH = $GLOBALS["imageRootPath"];
+		if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
+		$IMAGE_ROOT_PATH .= 'ident/csimgs/';
 		$sql = 'SELECT url FROM kmcsimages WHERE csimgid = '.$csImgId;
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$url = $r->url;
 			$url = substr($url,strrpos($url,'/')+1);
-			unlink($imageRootPath.$url);
+			unlink($IMAGE_ROOT_PATH.$url);
 		}
 		$rs->free();
 		//Remove image record from database

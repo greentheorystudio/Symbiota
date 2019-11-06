@@ -27,8 +27,7 @@ class ProfileManager extends Manager{
 	}
 
 	public function reset(){
-		$domainName = $_SERVER['SERVER_NAME'];
-		if(!$domainName) $domainName = $_SERVER['HTTP_HOST'];
+		$domainName = $_SERVER['HTTP_HOST'];
 		if($domainName == 'localhost') $domainName = false;
         setcookie("SymbiotaCrumb", "", time() - 3600, ($GLOBALS["CLIENT_ROOT"]?$GLOBALS["CLIENT_ROOT"]:'/'),$domainName,false,true);
         setcookie("SymbiotaCrumb", "", time() - 3600, ($GLOBALS["CLIENT_ROOT"]?$GLOBALS["CLIENT_ROOT"]:'/'));
@@ -82,8 +81,7 @@ class ProfileManager extends Manager{
             $tokenArr[] = $this->userName;
             $tokenArr[] = $this->token;
             $cookieExpire = time() + 60 * 60 * 24 * 30;
-            $domainName = $_SERVER['SERVER_NAME'];
-            if (!$domainName) $domainName = $_SERVER['HTTP_HOST'];
+            $domainName = $_SERVER['HTTP_HOST'];
             if ($domainName == 'localhost') $domainName = false;
             setcookie("SymbiotaCrumb", Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS["CLIENT_ROOT"] ? $GLOBALS["CLIENT_ROOT"] : '/'), $domainName, false, true);
         }
@@ -209,7 +207,7 @@ class ProfileManager extends Manager{
 	}
 
 	public function resetPassword($un){
-		global $charset;
+		global $CHARSET;
 		$newPassword = $this->generateNewPassword();
 		$status = false;
 		$returnStr = "";
@@ -233,8 +231,8 @@ class ProfileManager extends Manager{
 
 			//Send email
 			$subject = "Your password";
-			$bodyStr = "Your ".$GLOBALS["defaultTitle"]." (<a href='http://".$_SERVER['SERVER_NAME'].$GLOBALS["CLIENT_ROOT"]."'>http://".$_SERVER['SERVER_NAME'].$GLOBALS["CLIENT_ROOT"]."</a>) password has been reset to: ".$newPassword." ";
-			$bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['SERVER_NAME'].$GLOBALS["CLIENT_ROOT"]."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
+			$bodyStr = "Your ".$GLOBALS["defaultTitle"]." (<a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS["CLIENT_ROOT"]."'>http://".$_SERVER['HTTP_HOST'].$GLOBALS["CLIENT_ROOT"]."</a>) password has been reset to: ".$newPassword." ";
+			$bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS["CLIENT_ROOT"]."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
 			$bodyStr .= "<br/>If you have problems with the new password, contact the System Administrator ";
 			if(array_key_exists("adminEmail",$GLOBALS)){
 				$bodyStr .= "<".$GLOBALS["adminEmail"].">";
@@ -385,7 +383,7 @@ class ProfileManager extends Manager{
 	}
 
 	public function lookupUserName($emailAddr){
-		global $charset;
+		global $CHARSET;
 		$status = false;
 		if(!$this->validateEmailAddress($emailAddr)) return false;
 		$loginStr = '';
@@ -401,8 +399,8 @@ class ProfileManager extends Manager{
 		if($loginStr){
 			//Email login
 			$subject = $GLOBALS['defaultTitle'].' Login Name';
-			$bodyStr = 'Your '.$GLOBALS['defaultTitle'].' (<a href="http://'.$_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'">http://'.
-				$_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'</a>) login name is: '.$loginStr.' ';
+			$bodyStr = 'Your '.$GLOBALS['defaultTitle'].' (<a href="http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'">http://'.
+                $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'</a>) login name is: '.$loginStr.' ';
 			$bodyStr .= "<br/>If you continue to have login issues, contact the System Administrator ";
 			if(array_key_exists("adminEmail",$GLOBALS)){
 				$bodyStr .= "<".$GLOBALS["adminEmail"].">";
@@ -711,10 +709,10 @@ class ProfileManager extends Manager{
 
 	//Functions to be replaced
 	public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
-		global $charset, $paramsArr;
+		global $CHARSET, $PARAMS_ARR;
 
 		$tempPath = $this->getTempPath();
-    	$buFileName = $paramsArr['un'].'_'.time();
+    	$buFileName = $PARAMS_ARR['un'].'_'.time();
  		$zipArchive;
 
     	if($zipFile && class_exists('ZipArchive')){
@@ -722,7 +720,7 @@ class ProfileManager extends Manager{
 			$zipArchive->open($tempPath.$buFileName.'.zip', ZipArchive::CREATE);
  		}
 
-    	$cSet = str_replace('-','',strtolower($charset));
+    	$cSet = str_replace('-','',strtolower($CHARSET));
 		$fileUrl = '';
     	//If zip archive can be created, the occurrences, determinations, and image records will be added to single archive file
     	//If not, then a CSV file containing just occurrence records will be returned
@@ -814,16 +812,16 @@ class ProfileManager extends Manager{
         global $USER_RIGHTS;
 	    //Get Admin Rights
         if($this->uid){
-        	$userRights = array();
+        	$USER_RIGHTS = array();
 			$sql = 'SELECT role, tablepk FROM userroles WHERE (uid = '.$this->uid.') ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$userRights[$r->role][] = $r->tablepk;
+				$USER_RIGHTS[$r->role][] = $r->tablepk;
 			}
 			$rs->free();
-            $_SESSION['userrights'] = $userRights;
-            $USER_RIGHTS = $userRights;
+            $_SESSION['userrights'] = $USER_RIGHTS;
+            $USER_RIGHTS = $USER_RIGHTS;
 		}
 	}
 

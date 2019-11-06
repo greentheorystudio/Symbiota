@@ -1,13 +1,13 @@
 <?php
-include_once($serverRoot.'/classes/OccurrenceEditorManager.php');
-include_once($serverRoot.'/classes/SpecProcessorOcr.php');
-include_once($serverRoot.'/classes/ImageShared.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
+include_once($SERVER_ROOT.'/classes/ImageShared.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
 	private $photographerArr = Array();
-	private $imageRootPath = "";
-	private $imageRootUrl = "";
+	private $IMAGE_ROOT_PATH = "";
+	private $IMAGE_ROOT_URL = "";
 	private $activeImgId = 0;
 
 	public function __construct(){

@@ -173,7 +173,7 @@ class OccurrenceIndividualManager extends Manager{
 	}
 
 	private function loadImages(){
-		global $imageDomain;
+		global $IMAGE_DOMAIN;
 		$sql = 'SELECT imgid, url, thumbnailurl, originalurl, notes, caption FROM images '.
 			'WHERE (occid = '.$this->occid.') ORDER BY sortsequence';
 		$result = $this->conn->query($sql);
@@ -183,10 +183,10 @@ class OccurrenceIndividualManager extends Manager{
 				$url = $row->url;
 				$tnUrl = $row->thumbnailurl;
 				$lgUrl = $row->originalurl;
-				if($imageDomain){
-					if(substr($url,0,1)=="/") $url = $imageDomain.$url;
-					if($lgUrl && substr($lgUrl,0,1)=="/") $lgUrl = $imageDomain.$lgUrl;
-					if($tnUrl && substr($tnUrl,0,1)=="/") $tnUrl = $imageDomain.$tnUrl;
+				if($IMAGE_DOMAIN){
+					if(substr($url,0,1)=="/") $url = $IMAGE_DOMAIN.$url;
+					if($lgUrl && substr($lgUrl,0,1)=="/") $lgUrl = $IMAGE_DOMAIN.$lgUrl;
+					if($tnUrl && substr($tnUrl,0,1)=="/") $tnUrl = $IMAGE_DOMAIN.$tnUrl;
 				}
 				if((!$url || $url == 'empty') && $lgUrl) $url = $lgUrl;
 				//if(!$tnUrl && $url) $tnUrl = $url;
@@ -345,7 +345,7 @@ class OccurrenceIndividualManager extends Manager{
 
 			//Email to portal admin
 			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = 'http://'.$_SERVER['SERVER_NAME'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
+			$comUrl = 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
 			$subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
 			$bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
 			'<a href="'.$comUrl.'">'.$comUrl.'</a>';
@@ -475,13 +475,13 @@ class OccurrenceIndividualManager extends Manager{
 
 	//Voucher management
 	public function getVoucherChecklists(){
-		global $IS_ADMIN, $userRights;
+		global $IS_ADMIN, $USER_RIGHTS;
 		$returnArr = Array();
 		$sql = 'SELECT c.name, c.clid, c.access, v.notes '.
 			'FROM fmchecklists c INNER JOIN fmvouchers v ON c.clid = v.clid '.
 			'WHERE v.occid = '.$this->occid.' ';
-		if(array_key_exists("ClAdmin",$userRights)){
-			$sql .= 'AND (c.access = "public" OR c.clid IN('.implode(',',$userRights['ClAdmin']).')) ';
+		if(array_key_exists("ClAdmin",$USER_RIGHTS)){
+			$sql .= 'AND (c.access = "public" OR c.clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).')) ';
 		}
 		else{
 			$sql .= 'AND (c.access = "public") ';
@@ -587,7 +587,7 @@ class OccurrenceIndividualManager extends Manager{
 		return $retArr;
 	}
 
-	public function linkToDataset($dsid,$dsName,$notes,$symbUid){
+	public function linkToDataset($dsid,$dsName,$notes,$SYMB_UID){
 		$status = true;
 		if(!$this->occid) return false;
 		if($dsid && !is_numeric($dsid)) return false;
@@ -597,7 +597,7 @@ class OccurrenceIndividualManager extends Manager{
 			//Create new dataset
 			if(strlen($dsName) > 100) $dsName = substr($dsName,0,100);
 			$sql1 = 'INSERT INTO omoccurdatasets(name,uid,collid) '.
-					'VALUES("'.$this->cleanInStr($dsName).'",'.$symbUid.','.$this->collid.')';
+					'VALUES("'.$this->cleanInStr($dsName).'",'.$SYMB_UID.','.$this->collid.')';
 			if($con->query($sql1)){
 				$dsid = $con->insert_id;
 			}
@@ -619,10 +619,10 @@ class OccurrenceIndividualManager extends Manager{
 	}
 
 	public function getChecklists($clidExcludeArr){
-		global $userRights;
-		if(!array_key_exists("ClAdmin",$userRights)) return null;
+		global $USER_RIGHTS;
+		if(!array_key_exists("ClAdmin",$USER_RIGHTS)) return null;
 		$returnArr = Array();
-		$targetArr = array_diff($userRights["ClAdmin"],$clidExcludeArr);
+		$targetArr = array_diff($USER_RIGHTS["ClAdmin"],$clidExcludeArr);
 		if($targetArr){
 			$sql = 'SELECT name, clid '.
 				'FROM fmchecklists WHERE clid IN('.implode(",",$targetArr).') '.

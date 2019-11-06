@@ -350,7 +350,7 @@ class OccurrenceLabel{
 	
 	//General functions
 	public function exportCsvFile($postArr, $speciesAuthors){
-		global $charset;
+		global $CHARSET;
 		$occidArr = $postArr['occid'];
 		if($occidArr){
 			$labelArr = $this->getLabelArray($occidArr, $speciesAuthors);
@@ -359,7 +359,7 @@ class OccurrenceLabel{
 				header('Content-Description: Symbiota Label Output File');
 				header ('Content-Type: text/csv');
 				header ('Content-Disposition: attachment; filename="'.$fileName.'"'); 
-				header('Content-Transfer-Encoding: '.strtoupper($charset));
+				header('Content-Transfer-Encoding: '.strtoupper($CHARSET));
 				header('Expires: 0');
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');

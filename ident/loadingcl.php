@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-header("Content-Type: text/html; charset=".$charset);
+header("Content-Type: text/html; charset=".$CHARSET);
 Header("Cache-Control: must-revalidate");
 $offset = 60 * 60 * 24 * 7;
 $ExpStr = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
@@ -15,7 +15,7 @@ Header($ExpStr);
  $action = array_key_exists("submit",$_REQUEST)?$_REQUEST["submit"]:""; 
  $rf = array_key_exists("rf",$_REQUEST)?$_REQUEST["rf"]:""; 
  $projValue = array_key_exists("proj",$_REQUEST)?$_REQUEST["proj"]:""; 
- $defaultLang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:""; 
+ $DEFAULT_LANG = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:"";
  $displayMode = array_key_exists("displaymode",$_REQUEST)?$_REQUEST["displaymode"]:""; 
  $attrsValues = array_key_exists("attr",$_REQUEST)?$_REQUEST["attr"]:"";	//Array of: cid + "-" + cs (ie: 2-3) 
  
@@ -24,7 +24,7 @@ Header($ExpStr);
  $url .= $action?"&submit=".$action:"";
  $url .= $rf?"&rf=".$rf:"";
  $url .= $projValue?"&proj=".$projValue:"";
- $url .= $defaultLang?"&lang=".$defaultLang:"";
+ $url .= $DEFAULT_LANG?"&lang=".$DEFAULT_LANG:"";
  if($attrsValues){
  	foreach($attrsValues as $v){
  		$url .= "&attr=".$v;
@@ -43,7 +43,7 @@ Header($ExpStr);
 <body>
 	<?php
 	$displayLeftMenu = (isset($ident_loadingclMenu)?$ident_loadingclMenu:"true");
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($ident_loadingclCrumbs)) echo "<div class='navpath'>".$ident_loadingclCrumbs."</div>";
 	
 	?>
@@ -79,7 +79,7 @@ Header($ExpStr);
 		</table>
 	</div>
 	<?php
-		include($serverRoot.'/footer.php');
+		include($SERVER_ROOT.'/footer.php');
 	?>
   
   </body>

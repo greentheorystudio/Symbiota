@@ -407,7 +407,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 												Image URL prefix that will access the target folder from the browser.
 												This will be used to create the image URLs that will be stored in the database.
 												If absolute URL is supplied without the domain name, the portal domain will be assumed. 
-												If this field is left blank, the portal's default image url will be used ($imageRootUrl).
+												If this field is left blank, the portal's default image url will be used ($IMAGE_ROOT_URL).
 											</div>
 										</div>
 									</div>
@@ -763,10 +763,10 @@ if($spprid) $specManager->setProjVariables($spprid);
 												<legend><b>Log Files</b></legend>
 												<?php 
 												$logArr = $specManager->getLogListing();
-												$logPath = '../../content/logs/'.($projectType == 'local'?'imgProccessing':$projectType).'/';
+												$LOG_PATH = '../../content/logs/'.($projectType == 'local'?'imgProccessing':$projectType).'/';
 												if($logArr){
 													foreach($logArr as $logFile){
-														echo '<div><a href="'.$logPath.$logFile.'" target="_blank">'.$logFile.'</a></div>';
+														echo '<div><a href="'.$LOG_PATH.$logFile.'" target="_blank">'.$logFile.'</a></div>';
 													}
 												}
 												else{

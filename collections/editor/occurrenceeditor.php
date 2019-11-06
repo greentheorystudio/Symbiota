@@ -85,12 +85,12 @@ if($SYMB_UID){
 	}
 	if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI) $occManager->setExsiccatiMode(true);
 
-	if($isAdmin || ($collId && array_key_exists("CollAdmin",$userRights) && in_array($collId,$userRights["CollAdmin"]))){
+	if($IS_ADMIN || ($collId && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
 		$isEditor = 1;
 	}
 	else{
 		if($isGenObs){
-			if(!$occId && array_key_exists("CollEditor",$userRights) && in_array($collId,$userRights["CollEditor"])){
+			if(!$occId && array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
 				//Approved General Observation editors can add records
 				$isEditor = 2;
 			}
@@ -103,10 +103,10 @@ if($SYMB_UID){
 				$isEditor = 2;
 			}
 		}
-		elseif(array_key_exists("CollEditor",$userRights) && in_array($collId,$userRights["CollEditor"])){
+		elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
 			$isEditor = 2;
 		}
-		elseif(array_key_exists("CollTaxon",$userRights) && $occId){
+		elseif(array_key_exists("CollTaxon",$USER_RIGHTS) && $occId){
 			//Check to see if this user is authorized to edit this occurrence given their taxonomic editing authority
 			//0 = not editor, 2 = full editor, 3 = taxon editor, but not for this specific occurrence
 			$isEditor = $occManager->isTaxonomicEditor();
@@ -285,7 +285,7 @@ if($SYMB_UID){
 		$occId = 0;
 		//Adding new record, override query form and prime for current user's dataentry for the day
 		$today = date('Y-m-d');
-		$occManager->setQueryVariables(array('eb'=>$paramsArr['un'],'dm'=>$today));
+		$occManager->setQueryVariables(array('eb'=>$PARAMS_ARR['un'],'dm'=>$today));
 		if(!$qryCnt){
 			$occManager->setSqlWhere(0);
 			$qryCnt = $occManager->getQueryRecordCount();
@@ -375,7 +375,7 @@ if($SYMB_UID){
 	//Images and other things needed for OCR
 	$specImgArr = $occManager->getImageMap();
 	if($specImgArr){
-		$imgUrlPrefix = (isset($imageDomain)?$imageDomain:'');
+		$imgUrlPrefix = (isset($IMAGE_DOMAIN)?$IMAGE_DOMAIN:'');
 		$imgCnt = 1;
 		foreach($specImgArr as $imgId => $i2){
 			$iUrl = $i2['url'];
@@ -449,19 +449,7 @@ else{
 			echo 'localityAutoLookup = 0';
 		}
 		?>
-
-		function requestImage(){
-            $.ajax({
-                type: "POST",
-                url: 'rpc/makeactionrequest.php',
-                data: { <?php echo " occid: '$occId' , "; ?> requesttype: 'Image' },
-                success: function( response ) {
-                   $('div#imagerequestresult').html(response);
-                }
-            });
-        }
-
-	</script>
+    </script>
 	<script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=170310"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20170503"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=170104"></script>
@@ -608,7 +596,7 @@ else{
 										$anchorVars = 'occid='.$occId.'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
 										$detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
 											'&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
-											'&annotatorname='.urlencode($userDisplayName).'&annotatoremail='.urlencode($userEmail).
+											'&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
 											(isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
 											(isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
 											'&catalognumber='.urlencode($occArr['catalognumber']);
@@ -618,12 +606,6 @@ else{
 												style="">Determination History</a>
 										</li>
 										<?php
-										if (isset($fpEnabled) && $fpEnabled) { // FP Annotations tab
-											echo '<li>';
-											echo '<a href="includes/findannotations.php?'.$anchorVars.'&'.$detVars.'"';
-											echo ' style=""> Annotations </a>';
-											echo '</li>';
-										}
 										if($isEditor == 1 || $isEditor == 2){
 											?>
 											<li id="imgTab">
@@ -1121,7 +1103,7 @@ else{
 												<input type="text" name="substrate" tabindex="82" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
 											</div>
 											<?php
-											if(isset($QuickHostEntryIsActive) && $QuickHostEntryIsActive) { // Quick host field
+											if(isset($QUICK_HOST_ENTRY_IS_ACTIVE) && $QUICK_HOST_ENTRY_IS_ACTIVE) { // Quick host field
 												$quickHostArr = $occManager->getQuickHost($occId);
 												?>
 												<div id="hostDiv">
@@ -1199,13 +1181,13 @@ else{
 													<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
 													<a href="#" onclick="return dwcDoc('reproductiveCondition')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 													<?php
-													if(isset($reproductiveConditionTerms)){
-														if($reproductiveConditionTerms){
+													if(isset($REPRODUCTIVE_CONDITION_TERMS)){
+														if($REPRODUCTIVE_CONDITION_TERMS){
 															?>
 															<select name="reproductivecondition" onchange="fieldChanged('reproductivecondition');" tabindex="99" >
 																<option value="">-----------------</option>
 																<?php
-																foreach($reproductiveConditionTerms as $term){
+																foreach($REPRODUCTIVE_CONDITION_TERMS as $term){
 																	echo '<option value="'.$term.'" '.(isset($occArr['reproductivecondition']) && $term==$occArr['reproductivecondition']?'SELECTED':'').'>'.$term.'</option>';
 																}
 																?>
@@ -1445,7 +1427,7 @@ else{
 												}
 												?>
 												<div id="addButtonDiv">
-													<input type="hidden" name="recordenteredby" value="<?php echo $paramsArr['un']; ?>" />
+													<input type="hidden" name="recordenteredby" value="<?php echo $PARAMS_ARR['un']; ?>" />
 													<input type="button" name="submitaddbutton" value="Add Record" onclick="this.disabled=true;this.form.submit();" style="width:150px;font-weight:bold;margin:10px;" />
 													<input type="hidden" name="submitaction" value="Add Record" />
 													<input type="hidden" name="qrycnt" value="<?php echo $qryCnt?$qryCnt:''; ?>" />

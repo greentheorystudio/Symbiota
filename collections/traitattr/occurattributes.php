@@ -101,7 +101,7 @@ if($traitID){
 			if(!$imgDomain){
 				$imgDomain = 'http://';
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $imgDomain = 'https://';
-				$imgDomain .= $_SERVER['SERVER_NAME'];
+				$imgDomain .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $imgDomain .= ':'.$_SERVER["SERVER_PORT"];
 			}
 			foreach($imgArr as $cnt => $iArr){

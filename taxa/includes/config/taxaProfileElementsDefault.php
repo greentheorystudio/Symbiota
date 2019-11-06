@@ -234,7 +234,7 @@ $descTabsDiv = ob_get_clean();
 
 ob_start();
 $url = ''; $aUrl = ''; $gAnchor = '';
-if($occurrenceModIsActive && $displayLocality){
+if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
     $gAnchor = "openMapPopup('".$taxonManager->getTid()."',".($taxonManager->getClid()?$taxonManager->getClid():0).")";
 }
 if($mapSrc = $taxonManager->getMapArr()){

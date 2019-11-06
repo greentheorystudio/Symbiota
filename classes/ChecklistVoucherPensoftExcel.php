@@ -89,7 +89,6 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 		//Reset first sheet as active so that it opens as the default sheet
 		$objPHPExcel->setActiveSheetIndex(0);
 
-		//$file = $TEMP_DIR_ROOT.'/downloads/'.$this->getExportFileName().'.xlsx';
 		$file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
 		header('Content-Disposition: attachment; filename='.basename($file));

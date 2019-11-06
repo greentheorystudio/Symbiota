@@ -1,7 +1,7 @@
 <?php 
 include_once('../config/symbini.php');
-include_once($serverRoot.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$charset);
+include_once($SERVER_ROOT.'/config/dbconnection.php');
+header("Content-Type: text/html; charset=".$CHARSET);
 $tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:""; 
 $photographer = array_key_exists("photographer",$_REQUEST)?$_REQUEST["photographer"]:""; 
 $owner = array_key_exists("owner",$_REQUEST)?$_REQUEST["owner"]:""; 
@@ -17,7 +17,7 @@ if($tid){
 ?>
 <html>
 <head>
-<title><?php echo $defaultTitle; ?> - Submit to Community Identification</title>
+<title><?php echo $DEFAULT_TITLE; ?> - Submit to Community Identification</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
@@ -26,7 +26,7 @@ if($tid){
 <body>
 	<?php
 	$displayLeftMenu = (isset($imagelib_unknownsubmitMenu)?$imagelib_unknownsubmitMenu:"true");
-	include($serverRoot.'/header.php');
+	include($SERVER_ROOT.'/header.php');
 	if(isset($imagelib_unknownsubmitCrumbs)){
 		echo "<div class='navpath'>";
 		echo "<a href='../index.php'>Home</a> &gt; ";
@@ -39,7 +39,7 @@ if($tid){
 	<div style="margin:15px;">
 		<h1>Submit an Image for Identification</h1>
 		<?php 
-		if(array_key_exists("un",$paramsArr)){
+		if(array_key_exists("un",$PARAMS_ARR)){
 		?>
 		<div style="margin:15px;">
 			Use form below to submit one to several images of an unknown. Enter the family or genus if you know it, or just leave as unknown.
@@ -102,7 +102,7 @@ if($tid){
 			echo "<div style='margin:15px;'>You must <a href='../profile/index.php?refurl=".$_SERVER['PHP_SELF']."'>login</a> before you can submit or comment on an image.</div>";
 			echo "<div style='margin:15px;'>Don't have an account? Create a <a href='../profile/newprofile.php'>new account</a>.</div>";
 		}
-		include($serverRoot.'/footer.php');
+		include($SERVER_ROOT.'/footer.php');
 	?>
 	
 </body>
@@ -157,7 +157,7 @@ class UnknownSubmitManager{
 		$conn = $this->getConnection();
 		$sql = "INSERT INTO unknowns (tid, photographer, owner, latdecimal, longdecimal, notes, username) ".
 			"VALUES (".$unkData["tid"].",".$unkData["photographer"].",".$unkData["owner"].",".$unkData["latdecimal"].",".
-			$unkData["notes"].",".$paramsArr["un"].")";
+			$unkData["notes"].",".$PARAMS_ARR["un"].")";
 		$conn->query($sql);
 		$conn->close();
 	}

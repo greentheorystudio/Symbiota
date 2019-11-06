@@ -679,7 +679,7 @@ class ChecklistVoucherAdmin {
 		$retArr[] = 'g.guid AS recordID';
 		$serverDomain = "http://";
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
-		$serverDomain .= $_SERVER["SERVER_NAME"];
+		$serverDomain .= $_SERVER['HTTP_HOST'];
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
 		$retArr[] = 'CONCAT("'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;

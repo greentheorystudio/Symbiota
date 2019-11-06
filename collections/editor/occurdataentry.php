@@ -26,7 +26,7 @@ if($SYMB_UID){
 
 	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
 	
-	if($isAdmin || ($collid && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+	if($IS_ADMIN || ($collid && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
 		$isEditor = 1;
 	}
 	else{
@@ -44,7 +44,7 @@ if($SYMB_UID){
 ?>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $charset; ?>">
+	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
 	<link href="../../css/jquery-ui.css?<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/occureditor.css?<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
@@ -336,7 +336,7 @@ if($SYMB_UID){
 							</div>
 							<div style="padding:10px;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="hidden" name="userid" value="<?php echo $paramsArr['un']; ?>" />
+								<input type="hidden" name="userid" value="<?php echo $PARAMS_ARR['un']; ?>" />
 								<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
 							</div>
 						</fieldset>
@@ -481,13 +481,13 @@ if($SYMB_UID){
 									<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
 									<a href="#" onclick="return dwcDoc('reproductiveCondition')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 									<?php
-									if(isset($reproductiveConditionTerms)){
-										if($reproductiveConditionTerms){
+									if(isset($REPRODUCTIVE_CONDITION_TERMS)){
+										if($REPRODUCTIVE_CONDITION_TERMS){
 											?>
 											<select name="reproductivecondition" tabindex="99" >
 												<option value="">-----------------</option>
 												<?php
-												foreach($reproductiveConditionTerms as $term){
+												foreach($REPRODUCTIVE_CONDITION_TERMS as $term){
 													echo '<option value="'.$term.'" '.(isset($occArr['reproductivecondition']) && $term==$occArr['reproductivecondition']?'SELECTED':'').'>'.$term.'</option>';
 												}
 												?>

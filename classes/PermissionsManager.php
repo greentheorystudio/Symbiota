@@ -1,5 +1,5 @@
 <?php
-include_once($serverRoot.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/config/dbconnection.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -208,7 +208,7 @@ class PermissionsManager{
 					'VALUES('.$uid.',"'.$role.'",'.($tablePk?$tablePk:'NULL').','.
 					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$SYMB_UID.')';
 				//$sql = 'INSERT INTO userpermissions(uid,pname,assignedby,secondaryVariable) '.
-				//	'VALUES('.$uid.',"'.$pname.'","'.$paramsArr['un'].'")';
+				//	'VALUES('.$uid.',"'.$pname.'","'.$PARAMS_ARR['un'].'")';
 				//echo $sql;
 				if(!$this->conn->query($sql1)){
 					$statusStr = 'ERROR adding user permission: '.$this->conn->error;

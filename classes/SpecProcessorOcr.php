@@ -91,20 +91,20 @@ class SpecProcessorOcr{
 	}
 
 	private function ocrImage($url = ""){
-		global $tesseractPath;
+		global $TESSERACT_PATH;
 		$retStr = '';
 		if(!$url) $url = $this->imgUrlLocal;
 		if($url){
 			//OCR image, result text is output to $outputFile
 			$output = array();
 			$outputFile = substr($url,0,strlen($url)-4);
-			if(isset($tesseractPath) && $tesseractPath){
-				if(substr($tesseractPath,0,2) == 'C:'){
+			if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
+				if(substr($TESSERACT_PATH,0,2) == 'C:'){
 					//Full path to tesseract with quotes needed for Windows
-					exec('"'.$tesseractPath.'" '.$url.' '.$outputFile,$output);
+					exec('"'.$TESSERACT_PATH.'" '.$url.' '.$outputFile,$output);
 				}
 				else{
-					exec($tesseractPath.' '.$url.' '.$outputFile,$output);
+					exec($TESSERACT_PATH.' '.$url.' '.$outputFile,$output);
 				}
 			}
 			else{
@@ -164,7 +164,7 @@ class SpecProcessorOcr{
 					$urlDomain = "http://";
 					if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) 
 						$urlDomain = "https://";
-					$urlDomain .= $_SERVER["SERVER_NAME"];
+					$urlDomain .= $_SERVER['HTTP_HOST'];
 					if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlDomain .= ':'.$_SERVER["SERVER_PORT"];
 					$imgUrl = $urlDomain.$imgUrl;
 				}
@@ -778,8 +778,8 @@ class SpecProcessorOcr{
 		$this->verbose = $s;
 		if($this->verbose == 1 || $this->verbose == 3){
 			if($this->tempPath){
-				$logPath = $this->tempPath.'log_'.date('Ymd').'.log';
-				$this->logFH = fopen($logPath, 'a');
+				$LOG_PATH = $this->tempPath.'log_'.date('Ymd').'.log';
+				$this->logFH = fopen($LOG_PATH, 'a');
 			}
 		}
 	}
@@ -860,7 +860,7 @@ class SpecProcessorOcr{
 	}
 
 	private function encodeString($inStr){
-		global $charset;
+		global $CHARSET;
 		$retStr = $inStr;
 		//Get rid of Windows curly (smart) quotes
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
@@ -878,13 +878,13 @@ class SpecProcessorOcr{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		
 		if($inStr){
-			if(strtolower($charset) == "utf-8" || strtolower($charset) == "utf8"){
+			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
 					$retStr = utf8_encode($inStr);
 					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif(strtolower($charset) == "iso-8859-1"){
+			elseif(strtolower($CHARSET) == "iso-8859-1"){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
 					$retStr = utf8_decode($inStr);
 					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);

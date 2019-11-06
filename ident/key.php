@@ -25,7 +25,7 @@ if(!$action && array_key_exists("attr",$_REQUEST) && is_array($_REQUEST["attr"])
 }
 
 $dataManager = new KeyDataManager();
-//if(!$langValue) $langValue = $defaultLang;
+//if(!$langValue) $langValue = $DEFAULT_LANG;
 $langValue = 'English';
 if($displayMode) $dataManager->setCommonDisplay(true);;  
 $dataManager->setLanguage($langValue);
@@ -72,7 +72,7 @@ if($chars){
 			echo '<div class="navpath">';
 			if($dynClid){
 				if($dataManager->getClType() == 'Specimen Checklist'){
-					echo '<a href="'.$clientRoot.'/collections/list.php?tabindex=0">';
+					echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
 					echo 'Occurrence Checklist';
 					echo '</a> &gt; ';
 				}
@@ -89,18 +89,18 @@ if($chars){
 		echo '<a href="../index.php">'.$LANG['HOME'].'</a> &gt;&gt; ';
 		if($dynClid){
 			if($dataManager->getClType() == 'Specimen Checklist'){
-				echo '<a href="'.$clientRoot.'/collections/list.php?tabindex=0">';
+				echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
 				echo 'Occurrence Checklist';
 				echo '</a> &gt;&gt; ';
 			}
 		}
 		elseif($clid){
-			echo '<a href="'.$clientRoot.'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
+			echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
 			echo 'Checklist: '.$dataManager->getClName();
 			echo '</a> &gt;&gt; ';
 		}
 		elseif($pid){
-			echo '<a href="'.$clientRoot.'/projects/index.php?pid='.$pid.'">';
+			echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
 			echo 'Project Checklists';
 			echo '</a> &gt;&gt; ';
 		}
@@ -152,7 +152,7 @@ if($chars){
                     if(count($languages) > 1){
                         echo "<div id='langlist' style='margin:0.5em;'>Languages: <select name='lang' onchange='setLang(this);'>\n";
                         foreach($languages as $l){
-                            echo "<option value='".$l."' ".($defaultLang == $l?"SELECTED":"").">$l</option>\n";
+                            echo "<option value='".$l."' ".($DEFAULT_LANG == $l?"SELECTED":"").">$l</option>\n";
                         }
                         echo "</select></div>\n";
                     }

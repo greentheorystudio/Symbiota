@@ -1,5 +1,5 @@
 <?php
-include_once($serverRoot.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/config/dbconnection.php');
 
 class GlossaryUpload{
 	
@@ -484,10 +484,10 @@ class GlossaryUpload{
 			$this->verboseMode = $vMode;
 			if($this->verboseMode == 2){
 				//Create log File
-				$logPath = $SERVER_ROOT;
-				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $logPath .= '/';
-				$logPath .= "temp/logs/glossaryloader_".date('Ymd').".log";
-				$this->logFH = fopen($logPath, 'a');
+				$LOG_PATH = $SERVER_ROOT;
+				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
+				$LOG_PATH .= "temp/logs/glossaryloader_".date('Ymd').".log";
+				$this->logFH = fopen($LOG_PATH, 'a');
 				fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
 			}
 		}
@@ -525,7 +525,7 @@ class GlossaryUpload{
 	}
 
 	private function encodeString($inStr){
-		global $charset;
+		global $CHARSET;
 		$retStr = $inStr;
 		//Get rid of Windows curly (smart) quotes
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
@@ -543,14 +543,14 @@ class GlossaryUpload{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		
 		if($inStr){
-			if(strtolower($charset) == "utf-8" || strtolower($charset) == "utf8"){
+			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
 				//$this->outputMsg($inStr.': '.mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true);
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
 					$retStr = utf8_encode($inStr);
 					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif(strtolower($charset) == "iso-8859-1"){
+			elseif(strtolower($CHARSET) == "iso-8859-1"){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
 					$retStr = utf8_decode($inStr);
 					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);

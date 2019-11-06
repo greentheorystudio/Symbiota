@@ -68,7 +68,7 @@ if($action){
 ?>
 <html>
 <head>
-<title><?php echo $defaultTitle; ?> Image Library</title>
+<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
@@ -418,12 +418,12 @@ if($action){
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
 									$imgUrl = $imgTn;
-									if($imageDomain && substr($imgTn,0,1)=='/'){
-										$imgUrl = $imageDomain.$imgTn;
+									if($IMAGE_DOMAIN && substr($imgTn,0,1)=='/'){
+										$imgUrl = $IMAGE_DOMAIN.$imgTn;
 									}
 								}
-								elseif($imageDomain && substr($imgUrl,0,1)=='/'){
-									$imgUrl = $imageDomain.$imgUrl;
+								elseif($IMAGE_DOMAIN && substr($imgUrl,0,1)=='/'){
+									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 								}
 								?>
 								<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">

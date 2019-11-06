@@ -54,7 +54,7 @@ class DwcArchiverCore extends Manager{
 		$this->ts = time();
 		if($this->verboseMode){
 			$logFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/')."temp/logs/DWCA_".date('Y-m-d').".log";
-			$this->setLogFH($logPath);
+			$this->setLogFH($LOG_PATH);
 		}
 
 		//Character set
@@ -2034,7 +2034,7 @@ class DwcArchiverCore extends Manager{
 		elseif(!$this->serverDomain){
 			$this->serverDomain = "http://";
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $this->serverDomain = "https://";
-			$this->serverDomain .= $_SERVER["SERVER_NAME"];
+			$this->serverDomain .= $_SERVER['HTTP_HOST'];
 			if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $this->serverDomain .= ':'.$_SERVER["SERVER_PORT"];
 		}
 	}

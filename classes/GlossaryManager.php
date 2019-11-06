@@ -13,8 +13,8 @@ class GlossaryManager{
 
 	//Image variables
 	private $sourceGdImg;
-	private $imageRootPath = '';
-	private $imageRootUrl = '';
+	private $IMAGE_ROOT_PATH = '';
+	private $IMAGE_ROOT_URL = '';
 	private $sourcePath = '';
 	private $targetPath = '';
 	private $urlBase = '';
@@ -714,7 +714,7 @@ class GlossaryManager{
 	}
 	
 	public function processImage(){
-		global $paramsArr;
+		global $PARAMS_ARR;
 
 		if(!$this->imgName){
 			//trigger_error('Image file name null in processImage function',E_USER_ERROR);
@@ -965,12 +965,12 @@ class GlossaryManager{
 	}
 	
 	public function createNewImage($subExt, $targetWidth, $qualityRating = 0){
-		global $useImageMagick;
+		global $USE_IMAGE_MAGICK;
 		$status = false;
 		if($this->sourcePath && $this->uriExists($this->sourcePath)){
 			if(!$qualityRating) $qualityRating = $this->jpgCompression;
 			
-	        if($useImageMagick) {
+	        if($USE_IMAGE_MAGICK) {
 				// Use ImageMagick to resize images 
 				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating);
 			} 
@@ -1529,7 +1529,7 @@ class GlossaryManager{
 	private function getServerDomain(){
 		$domain = "http://";
 		if(!(empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = "https://";
-		$domain .= $_SERVER["SERVER_NAME"];
+		$domain .= $_SERVER['HTTP_HOST'];
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $domain .= ':'.$_SERVER["SERVER_PORT"];
 		return $domain;
 	}

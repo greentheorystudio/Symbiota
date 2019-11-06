@@ -71,7 +71,7 @@ $collManager->cleanOutArr($collData);
 ?>
 <html>
 <head>
-	<title><?php echo $defaultTitle." ".($collid?$collData["collectionname"]:"") ; ?> Collection Profiles</title>
+	<title><?php echo $DEFAULT_TITLE." ".($collid?$collData["collectionname"]:"") ; ?> Collection Profiles</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -424,12 +424,12 @@ $collManager->cleanOutArr($collData);
 								</td>
 								<td>
 									<?php 
-									if(isset($rightsTerms)){
+									if(isset($RIGHTS_TERMS)){
 										?>
 										<select name="rights">
 											<?php
 											$hasOrphanTerm = true; 
-											foreach($rightsTerms as $k => $v){
+											foreach($RIGHTS_TERMS as $k => $v){
 												$selectedTerm = '';
 												if($collid && strtolower($collData["rights"])==strtolower($v)){
 													$selectedTerm = 'SELECTED';
