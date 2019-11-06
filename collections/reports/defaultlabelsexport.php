@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
-@include_once("Image/Barcode.php");
-@include_once("Image/Barcode2.php");
-require_once $SERVER_ROOT.'/classes/PhpWord/Autoloader.php';
-header("Content-Type: text/html; charset=".$CHARSET);
+@include('Image/Barcode.php');
+@include('Image/Barcode2.php');
+require_once $SERVER_ROOT.'/vendor/autoload.php';
+header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
 $ses_id = session_id();
@@ -17,10 +17,6 @@ elseif(class_exists('Image_Barcode')){
 }
 
 $labelManager = new OccurrenceLabel();
-use PhpOffice\PhpWord\Autoloader;
-use PhpOffice\PhpWord\Settings;
-Autoloader::register();
-Settings::loadConfig();
 
 $collid = $_POST["collid"];
 $hPrefix = $_POST['lhprefix'];

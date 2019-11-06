@@ -1,13 +1,9 @@
 <?php
 include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SpecLoans.php');
-require_once $SERVER_ROOT.'/classes/PhpWord/Autoloader.php';
+require_once $SERVER_ROOT.'/vendor/autoload.php';
 
 $loanManager = new SpecLoans();
-use PhpOffice\PhpWord\Autoloader;
-use PhpOffice\PhpWord\Settings;
-Autoloader::register();
-Settings::loadConfig();
 
 $collId = $_REQUEST['collid'];
 $printMode = $_POST['print'];

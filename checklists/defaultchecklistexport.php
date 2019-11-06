@@ -1,17 +1,13 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-require_once $SERVER_ROOT.'/classes/PhpWord/Autoloader.php';
-header("Content-Type: text/html; charset=".$CHARSET);
+require_once $SERVER_ROOT.'/vendor/autoload.php';
+header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 240); //240 seconds = 4 minutes
 
 $ses_id = session_id();
 
 $clManager = new ChecklistManager();
-use PhpOffice\PhpWord\Autoloader;
-use PhpOffice\PhpWord\Settings;
-Autoloader::register();
-Settings::loadConfig();
 
 $clValue = array_key_exists("cl",$_REQUEST)?$_REQUEST["cl"]:0; 
 $dynClid = array_key_exists("dynclid",$_REQUEST)?$_REQUEST["dynclid"]:0;

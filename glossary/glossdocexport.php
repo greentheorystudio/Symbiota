@@ -1,16 +1,11 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-require_once($SERVER_ROOT.'/classes/PhpWord/Autoloader.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+require_once $SERVER_ROOT.'/vendor/autoload.php';
+header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 3600);
 
 $ses_id = session_id();
-
-use PhpOffice\PhpWord\Autoloader;
-use PhpOffice\PhpWord\Settings;
-Autoloader::register();
-Settings::loadConfig();
 
 $language = array_key_exists('searchlanguage',$_POST)?$_POST['searchlanguage']:'';
 $taxon = array_key_exists('searchtaxa',$_POST)?$_POST['searchtaxa']:'';
