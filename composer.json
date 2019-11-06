@@ -3,6 +3,11 @@
   "description": "Symbiota biodiversity data management system.",
   "license": "proprietary",
   "require": {
-    "phpoffice/phpword": "^0.17.0"
+    "phpoffice/phpword": "^0.17.0",
+    "ext-json": "*"
+  }
+  ,
+  "require-dev": {
+    "roave/security-advisories": "dev-master"
   }
 }
