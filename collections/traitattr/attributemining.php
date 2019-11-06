@@ -81,7 +81,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 	'behavior' => 'Behavior', 'reproductivecondition' => 'Reproductive Condition', 'lifestage' => 'Life Stage', 
 	'sex' => 'Sex');
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Occurrence Attribute Mining Tool</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

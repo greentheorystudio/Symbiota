@@ -20,7 +20,7 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 
 if($spprid) $specManager->setProjVariables($spprid);
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Image Processor</title>
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

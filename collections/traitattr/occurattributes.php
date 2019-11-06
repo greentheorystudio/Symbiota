@@ -83,7 +83,7 @@ if($traitID){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Occurrence Attribute batch Editor</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

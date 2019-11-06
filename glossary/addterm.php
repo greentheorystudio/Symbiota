@@ -51,7 +51,7 @@ if($isEditor){
 	}
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Glossary - Add New Term</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />

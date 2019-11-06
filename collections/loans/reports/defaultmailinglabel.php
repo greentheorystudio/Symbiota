@@ -118,7 +118,7 @@ if($export){
 }
 else{
 	?>
-	<html>
+	<html lang="<?php echo $DEFAULT_LANG; ?>">
 		<head>
 			<title>Mailing Label</title>
 			<style type="text/css">

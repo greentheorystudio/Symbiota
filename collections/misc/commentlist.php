@@ -56,7 +56,7 @@ if($isEditor){
 	$commentArr = $commentManager->getComments($collid, $start, $limit, $tsStart, $tsEnd, $uid, $rs);
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Comments Listing</title>
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

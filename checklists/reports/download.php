@@ -1,10 +1,10 @@
 <?php
 include_once('../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $clid = $_REQUEST['clid'];
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title>Collections Search Download</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
@@ -15,7 +15,7 @@ $clid = $_REQUEST['clid'];
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			var dialogArr = new Array("schemanative","schemadwc");
+			var dialogArr = ["schemanative","schemadwc"];
 			var dialogStr = "";
 			for(i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
@@ -32,13 +32,13 @@ $clid = $_REQUEST['clid'];
 		});
 
 		function extensionSelected(obj){
-			if(obj.checked == true){
+			if(obj.checked === true){
 				obj.form.zip.checked = true;
 			}
 		}
 
 		function zipSelected(obj){
-			if(obj.checked == false){
+			if(obj.checked === false){
 				obj.form.images.checked = false;
 				obj.form.identifications.checked = false;
 			}
@@ -80,7 +80,7 @@ $clid = $_REQUEST['clid'];
 								</div>
 							</td>
 							<td>
-								<div style="margin:10px 0px;">
+								<div style="margin:10px 0;">
 									<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
 									Symbiota Native
 									<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
@@ -111,7 +111,7 @@ $clid = $_REQUEST['clid'];
 								</div>
 							</td>
 							<td>
-								<div style="margin:10px 0px;">
+								<div style="margin:10px 0;">
 									<input type="checkbox" name="identifications" value="1" onchange="extensionSelected(this)" checked /> include Determination History<br/>
 									<input type="checkbox" name="images" value="1" onchange="extensionSelected(this)" checked /> include Image Records<br/>
 									<!--  <input type="checkbox" name="attributes" value="1" onchange="extensionSelected(this)" checked /> include Occurrence Trait Attributes (MeasurementOrFact extension)<br/>  -->
@@ -126,7 +126,7 @@ $clid = $_REQUEST['clid'];
 								</div>
 							</td>
 							<td>
-								<div style="margin:10px 0px;">
+								<div style="margin:10px 0;">
 									<input type="radio" name="format" value="csv" CHECKED /> Comma Delimited (CSV)<br/>
 									<input type="radio" name="format" value="tab" /> Tab Delimited<br/>
 								</div>
@@ -139,13 +139,12 @@ $clid = $_REQUEST['clid'];
 								</div>
 							</td>
 							<td>
-								<div style="margin:10px 0px;">
+								<div style="margin:10px 0;">
 									<?php
-									//$cSet = strtolower($CHARSET);
-									$cSet = 'iso-8859-1';
+									$cSet = strtolower($CHARSET);
 									?>
-									<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-									<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
+									<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet==='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
+									<input type="radio" name="cset" value="utf-8" <?php echo ($cSet==='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
 								</div>
 							</td>
 						</tr>
@@ -156,7 +155,7 @@ $clid = $_REQUEST['clid'];
 								</div>
 							</td>
 							<td>
-								<div style="margin:10px 0px;">
+								<div style="margin:10px 0;">
 									<input type="checkbox" name="zip" value="1" onchange="zipSelected(this)" checked />Compressed ZIP file<br/>
 								</div>
 							</td>

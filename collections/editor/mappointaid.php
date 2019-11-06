@@ -26,7 +26,7 @@ if(is_numeric($errRad)){
 	$err = $errRad; 
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Coordinate Aid</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />

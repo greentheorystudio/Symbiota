@@ -10,7 +10,7 @@ $buildThumbnails = array_key_exists("buildthumbnails",$_REQUEST)?$_REQUEST["buil
 $verifyPathsObj = new VerifyPaths();
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Verify Image Paths</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

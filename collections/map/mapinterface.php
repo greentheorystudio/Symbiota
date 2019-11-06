@@ -144,7 +144,7 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
     $jsonStArr = json_encode($stArr);
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo $DEFAULT_TITLE; ?> - Map Interface</title>

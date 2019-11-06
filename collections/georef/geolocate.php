@@ -47,7 +47,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 }
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>GEOLocate Tool</title>

@@ -3,8 +3,8 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 ini_set('max_execution_time', 300);
 
-$schema = array_key_exists("schema",$_POST)?$_POST["schema"]:"symbiota";
-$cSet = array_key_exists("cset",$_POST)?$_POST["cset"]:'';
+$schema = array_key_exists('schema',$_POST)?$_POST['schema']: 'symbiota';
+$cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
 $zip = (array_key_exists('zip',$_POST)?$_POST['zip']:0);
 $format = $_POST['format'];
 $clid = $_POST['clid'];
@@ -14,10 +14,10 @@ $dwcaHandler = new DwcArchiverCore();
 //Set locality redaction variables
 $redactLocalities = 1;
 $rareReaderArr = array();
-if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)){
 	$redactLocalities = 0;
 }
-elseif(array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+elseif(array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 	$redactLocalities = 0;
 }
 else{
@@ -34,7 +34,9 @@ $dwcaHandler->setSchemaType($schema);
 $dwcaHandler->setCharSetOut($cSet);
 $dwcaHandler->setDelimiter($format);
 $dwcaHandler->setRedactLocalities($redactLocalities);
-if($rareReaderArr) $dwcaHandler->setRareReaderArr($rareReaderArr);
+if($rareReaderArr) {
+    $dwcaHandler->setRareReaderArr($rareReaderArr);
+}
 
 $dwcaHandler->setCustomWhereSql('v.clid='.$clid);
 
@@ -56,9 +58,8 @@ else{
 	$outputFile = $dwcaHandler->getOccurrenceFile();
 }
 if($outputFile){
-	//ob_start();
 	$contentDesc = '';
-	if($schema == 'dwc'){
+	if($schema === 'dwc'){
 		$contentDesc = 'Darwin Core ';
 	}
 	else{
@@ -74,7 +75,7 @@ if($outputFile){
 	if($zip){
 		header('Content-Type: application/zip');
 	}
-	elseif($format == 'csv'){
+	elseif($format === 'csv'){
 		header('Content-Type: text/csv; charset='.$CHARSET);
 	}
 	else{
@@ -83,19 +84,14 @@ if($outputFile){
 
 	header('Content-Disposition: attachment; filename='.basename($outputFile));
 	header('Content-Transfer-Encoding: binary');
-	header('Expires: 0');
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	header('Pragma: public');
 	header('Content-Length: ' . filesize($outputFile));
 	ob_clean();
 	flush();
-	//od_end_clean();
 	readfile($outputFile);
 	unlink($outputFile);
 }
 else{
-	header("Content-type: text/plain");
-	header("Content-Disposition: attachment; filename=NoData.txt");
+	header('Content-type: text/plain');
+	header('Content-Disposition: attachment; filename=NoData.txt');
 	echo 'The query failed to return records. Please modify query criteria and try again.';
 }
-?>

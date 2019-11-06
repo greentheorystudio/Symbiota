@@ -4,7 +4,7 @@ include_once('../../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
  
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Associated Species Entry Aid</title>

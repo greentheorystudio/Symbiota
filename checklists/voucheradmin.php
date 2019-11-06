@@ -39,7 +39,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 $clManager->setCollectionVariables();
 ?>
 
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE; ?> <?php echo $LANG['CHECKADMIN'];?></title>

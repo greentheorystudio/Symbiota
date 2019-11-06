@@ -5,7 +5,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $downloadType = array_key_exists("dltype",$_REQUEST)?$_REQUEST["dltype"]:"specimen"; 
 $taxonFilterCode = array_key_exists("taxonFilterCode",$_REQUEST)?$_REQUEST["taxonFilterCode"]:0;
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title>Collections Search Download</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>

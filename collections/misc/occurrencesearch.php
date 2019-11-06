@@ -22,7 +22,7 @@ if(array_key_exists("CollEditor",$USER_RIGHTS)){
 $occManager = new OccurrenceSupport();
 $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Search Page</title>

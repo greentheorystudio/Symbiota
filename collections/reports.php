@@ -6,7 +6,7 @@ $rm = new ReportsManager();
 
 ?>
 
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title>SCAN Reports</title>
     <style>

@@ -5,9 +5,9 @@ include_once($SERVER_ROOT.'/classes/ChecklistVoucherPensoftExcel.php');
 $clid = $_REQUEST['clid'];
 $rType = $_REQUEST['rtype'];
 
-if($rType == 'pensoftxlsx'){
+if($rType === 'pensoftxlsx'){
 	$vManager = null;
-	if(version_compare(phpversion(), '5.6', '<')) {
+	if(PHP_VERSION_ID < 50600) {
 		$vManager = new ChecklistVoucherPensoftExcel();
 	}
 	else{
@@ -21,17 +21,16 @@ else{
 	$vManager = new ChecklistVoucherAdmin();
 	$vManager->setClid($clid);
 	$vManager->setCollectionVariables();
-	if($rType == 'fullcsv'){
+	if($rType === 'fullcsv'){
 		$vManager->downloadChecklistCsv();
 	}
-	elseif($rType == 'fullvoucherscsv'){
+	elseif($rType === 'fullvoucherscsv'){
 		$vManager->downloadVoucherCsv();
 	}
-	elseif($rType == 'missingoccurcsv'){
+	elseif($rType === 'missingoccurcsv'){
 		$vManager->exportMissingOccurCsv();
 	}
-	elseif($rType == 'problemtaxacsv'){
+	elseif($rType === 'problemtaxacsv'){
 		$vManager->exportProblemTaxaCsv();
 	}
 }
-?>

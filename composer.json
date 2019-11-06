@@ -5,9 +5,17 @@
   "require": {
     "phpoffice/phpword": "^0.17.0",
     "ext-json": "*"
-  }
-  ,
+  },
   "require-dev": {
     "roave/security-advisories": "dev-master"
+  },
+  "scripts": {
+    "pre-update-cmd": [
+      "@php -r \"file_exists('footer.php') || copy('footer_template.php', 'footer.php');\"",
+      "@php -r \"file_exists('header.php') || copy('header_template.php', 'header.php');\"",
+      "@php -r \"file_exists('index.php') || copy('index_template.php', 'index.php');\"",
+      "@php -r \"file_exists('robots.txt') || copy('robots_template.txt', 'robots.txt');\"",
+      "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\""
+    ]
   }
 }

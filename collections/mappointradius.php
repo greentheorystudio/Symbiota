@@ -15,7 +15,7 @@ else{
 	$lngCenter = -97.380979;
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE.' - '.$LANG['MPR_TITLE']; ?></title>
 	</head>

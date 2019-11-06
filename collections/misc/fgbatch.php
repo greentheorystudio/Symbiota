@@ -40,7 +40,7 @@ if($isEditor){
     $currentCount = count($currentJobs);
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $collMetadata['collectionname']; ?> Fieldguide Batch Processing Utility</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

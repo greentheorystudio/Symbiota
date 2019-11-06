@@ -65,7 +65,7 @@ if($editable){
 	$taxonEditorObj->setTaxon();
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE." Taxon Editor: ".$tid; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>

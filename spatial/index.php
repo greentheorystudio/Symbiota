@@ -28,7 +28,7 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 
 $dbArr = Array();
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Spatial Module</title>
     <link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

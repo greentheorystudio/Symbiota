@@ -19,7 +19,7 @@ if($IS_ADMIN
 }
 ?>
 
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<meta http-equiv="X-Frame-Options" content="deny">

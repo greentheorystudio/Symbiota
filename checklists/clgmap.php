@@ -11,7 +11,7 @@ if(!$projValue && isset($DEFAULT_PROJ_ID)) $projValue = $DEFAULT_PROJ_ID;
 $clManager->setProj($projValue);
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> - Species Checklists</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />

@@ -35,7 +35,7 @@ if($isEditor){
 }
 $editorArr = $utManager->getTaxonomyEditors();
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title>Taxonomic Interest User permissions</title>
 	<meta http-equiv="X-Frame-Options" content="deny">

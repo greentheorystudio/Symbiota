@@ -47,7 +47,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include('includes/config/occurVarDefault.php');
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Image Submission</title>

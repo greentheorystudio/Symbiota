@@ -395,7 +395,7 @@ if($export){
 }
 else{
 	?>
-	<html>
+	<html lang="<?php echo $DEFAULT_LANG; ?>">
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
 			<style type="text/css">

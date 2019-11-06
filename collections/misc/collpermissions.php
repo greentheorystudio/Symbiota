@@ -67,7 +67,7 @@ $collMetadata = current($permManager->getCollectionMetadata($collId));
 $isGenObs = 0;
 if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $collMetadata['collectionname']; ?> Collection Permissions</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

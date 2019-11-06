@@ -25,7 +25,7 @@ if($submitAction){
 	$genusAnswer = strtolower($scinameAnswerArr[0]);
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo (isset($ootdGameTitle)?$ootdGameTitle:'Organism of the Day'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

@@ -68,7 +68,7 @@ if($action == "Create Login"){
 }
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - New User Profile</title>
 	<meta http-equiv="X-Frame-Options" content="deny">

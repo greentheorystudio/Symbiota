@@ -8,7 +8,7 @@ $taxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:"";
 $dichoKeyManager = new DichoKeyManager();
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 <title><?php echo $DEFAULT_TITLE; ?> Dichotomous Key</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

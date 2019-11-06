@@ -35,7 +35,7 @@ if($coorArr && count($coorArr) == 4){
 }
 
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Georeference Clone Tool</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />

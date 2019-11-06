@@ -8,7 +8,7 @@ $pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:0;
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Species Lists</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

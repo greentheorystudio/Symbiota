@@ -33,7 +33,7 @@ if(in_array($action, array('dlnoimg','unprocnoimg','noskel','unprocwithdata'))){
 
 $statusStr = "";
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Specimen Processor Control Panel</title>
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />

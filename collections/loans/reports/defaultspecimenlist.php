@@ -101,7 +101,7 @@ if($export){
 }
 else{
 	?>
-	<html>
+	<html lang="<?php echo $DEFAULT_LANG; ?>">
 		<head>
 			<title><?php echo $identifier; ?> Specimen List</title>
 			<style type="text/css">

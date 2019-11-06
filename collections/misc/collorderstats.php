@@ -18,7 +18,7 @@ if($collId){
 }
 $_SESSION['statsOrderArr'] = $orderArr;
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
 		<title><?php echo $DEFAULT_TITLE; ?> Order Distribution</title>

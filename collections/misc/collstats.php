@@ -215,7 +215,7 @@ if($collId){
 }
 if($action != "Update Statistics"){
 	?>
-	<html>
+	<html lang="<?php echo $DEFAULT_LANG; ?>">
 		<head>
 			<meta name="keywords" content="Natural history collections statistics" />
 			<title><?php echo $DEFAULT_TITLE; ?> Collection Statistics</title>

@@ -132,7 +132,7 @@ if($isEditor){
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
-<html>
+<html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - View User Profile</title>
 	<meta http-equiv="X-Frame-Options" content="deny">
