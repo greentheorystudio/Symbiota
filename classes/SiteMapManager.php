@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class SiteMapManager{
 	
@@ -9,7 +9,8 @@ class SiteMapManager{
 	private $genObsArr = array();
 	
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

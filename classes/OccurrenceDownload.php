@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once('OccurrenceAccessStats.php');
 
 class OccurrenceDownload{
@@ -23,7 +23,8 @@ class OccurrenceDownload{
     private $occArr = array();
 
  	public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon('readonly');
+		$connection = new DbConnection();
+ 		$this->conn = $connection->getConnection();
 
 		//Set rare species variables
 		$this->securityArr = Array('locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',

@@ -1,12 +1,14 @@
 <?php
-include_once('../../../config/dbconnection.php');
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 $cid = $_POST['cidinput'];
 $cs = $_POST['csinput'];
 
 $retCnt = 0;
 if(is_numeric($cid) && is_numeric($cs)){
-	$con = MySQLiConnectionFactory::getCon("readonly");
+    $connection = new DbConnection();
+    $con = $connection->getConnection();
 	$sql = 'SELECT count(*) AS cnt FROM kmcslang WHERE cid = '.$cid.' AND cs = '.$cs;
 	//echo $sql;
 	$rs = $con->query($sql);
@@ -17,4 +19,3 @@ if(is_numeric($cid) && is_numeric($cs)){
 	$con->close();
 }
 echo $retCnt;
-?>

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class TaxonProfileManager {
 
@@ -44,7 +44,8 @@ class TaxonProfileManager {
 	private $con;
 
  	public function __construct(){
- 		$this->con = MySQLiConnectionFactory::getCon("readonly");
+		$connection = new DbConnection();
+ 		$this->con = $connection->getConnection();
  		//Default settings
  		$this->taxAuthId = 1;			//0 = do not resolve taxonomy (no thesaurus); 1 = default taxonomy; > 1 = other taxonomies
  	}

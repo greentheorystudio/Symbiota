@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class ChecklistVoucherAdmin {
 
@@ -17,7 +17,8 @@ class ChecklistVoucherAdmin {
 			$this->closeConnOnDestroy = false;
 		}
 		else{
-			$this->conn = MySQLiConnectionFactory::getCon("write");
+			$connection = new DbConnection();
+			$this->conn = $connection->getConnection();
 		}
 	}
 

@@ -1,6 +1,8 @@
 <?php
-include_once('../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retArr = Array();
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
@@ -16,7 +18,7 @@ if($refId) {
 		while($r = $rs->fetch_object()){
 			$retArr['parentRefId'] = $r->refid;
 			$retArr['parentRefId2'] = $r->parentRefId;
-			if($refType == 4 && $r->ReferenceTypeId == 27){
+			if($refType === 4 && $r->ReferenceTypeId === 27){
 				$retArr['tertiarytitle'] = $r->title;
 				$retArr['secondarytitle'] = '';
 			}
@@ -44,7 +46,7 @@ if($refId) {
 		//echo $sql;
 		if($rs = $con->query($sql)){
 			while($r = $rs->fetch_object()){
-				if($refType == 4 && $r->ReferenceTypeId == 27){
+				if($refType === 4 && $r->ReferenceTypeId === 27){
 					$retArr['tertiarytitle'] = $r->title;
 				}
 				else{
@@ -60,4 +62,3 @@ if($refId) {
 	}
 }
 echo json_encode($retArr);
-?>

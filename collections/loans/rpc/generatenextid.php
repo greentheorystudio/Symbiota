@@ -1,5 +1,6 @@
 <?php
-include_once('../../../config/dbconnection.php');
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 	
 $collId = $_REQUEST['collid'];
 $idType = array_key_exists('idtype',$_REQUEST)?$_REQUEST['idtype']:'out';		//in, out, ex 
@@ -7,19 +8,19 @@ $idType = array_key_exists('idtype',$_REQUEST)?$_REQUEST['idtype']:'out';		//in,
 $retMsg = '';
 if($collId && is_numeric($collId)){
 	$sql = '';
-	if($idType == 'out'){
+	if($idType === 'out'){
 		$sqlOut = 'SELECT loanidentifierown AS ids '.
 			'FROM omoccurloans '.
 			'WHERE collidown = '.$collId.' '.
 			'ORDER BY loanid desc LIMIT 3';
 	}
-	elseif($idType == 'in'){
+	elseif($idType === 'in'){
 		$sqlOut = 'SELECT loanidentifierborr AS ids '.
 			'FROM omoccurloans '.
 			'WHERE collidborr = '.$collId.' '.
 			'ORDER BY loanid desc LIMIT 3';
 	}
-	elseif($idType == 'ex'){
+	elseif($idType === 'ex'){
 		$sqlOut = 'SELECT identifier AS ids '.
 			'FROM omoccurexchange '.
 			'WHERE collid = '.$collId.' '.
@@ -29,7 +30,8 @@ if($collId && is_numeric($collId)){
 		return '';
 	}
 
-	$conn = MySQLiConnectionFactory::getCon("readonly");
+    $connection = new DbConnection();
+	$conn = $connection->getConnection();
 	if($rs = $conn->query($sqlOut)){
 		$parsedArr = array();
 		while($r = $rs->fetch_object()){
@@ -47,12 +49,14 @@ if($collId && is_numeric($collId)){
 				if($firstCnt <= count($vArr)){
 					$retMsg = $vArr[0]+1;
 					for($i=1;$i<$firstCnt;$i++){
-						if(($vArr[$i]+1)<>$vArr[$i-1]){
+						if(($vArr[$i]+1) !== $vArr[$i-1]){
 							$retMsg = '';
 							break;
 						}
 					}
-					if($retMsg) break;
+					if($retMsg) {
+                        break;
+                    }
 				}
 			}
 		}
@@ -62,4 +66,3 @@ if($collId && is_numeric($collId)){
 	}
 }
 echo $retMsg;
-?>

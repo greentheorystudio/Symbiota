@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
 include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 
@@ -16,7 +16,8 @@ class OccurrenceManager{
 	private $occurSearchProjectExists = 0;
 
  	public function __construct($readVariables = true){
-		$this->conn = MySQLiConnectionFactory::getCon('readonly');
+        $connection = new DbConnection();
+ 	    $this->conn = $connection->getConnection();
 		if(array_key_exists("reset",$_REQUEST) && $_REQUEST["reset"])  $this->reset();
 		if($readVariables) $this->readRequestVariables();
  	}
@@ -26,10 +27,6 @@ class OccurrenceManager{
  			$this->conn->close();
  			$this->conn = null;
  		}
-	}
-
-	protected function getConnection($conType = "readonly"){
-		return MySQLiConnectionFactory::getCon($conType);
 	}
 
 	public function reset(){

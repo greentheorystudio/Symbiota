@@ -1,6 +1,6 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 $hierObj = new BuildHierarchy();
 $hierObj->buildNulls();
@@ -8,7 +8,8 @@ $hierObj->buildNulls();
 class BuildHierarchy{
 	
 	private function getCollection(){
-		return MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		return $connection->getConnection();
 	}
 	
 	public function buildNulls(){

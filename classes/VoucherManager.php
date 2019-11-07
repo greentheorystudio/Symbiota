@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
  
 class VoucherManager {
 
@@ -11,7 +11,8 @@ class VoucherManager {
 	private $voucherData;
 	
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
  	}
 	
  	function __destruct(){

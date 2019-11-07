@@ -1,12 +1,14 @@
 <?php
-include_once('../../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retArr = Array();
 $occid = $_POST['occid'];
 if(is_numeric($occid)){
-	$sql = "SELECT recordedby, recordnumber, eventdate ". 
-		"FROM omoccurrences ".
-		"WHERE occid = ".$occid;
+	$sql = 'SELECT recordedby, recordnumber, eventdate ' .
+        'FROM omoccurrences ' .
+        'WHERE occid = ' .$occid;
 	//echo $sql;
 	$rs = $con->query($sql);
 	if($row = $rs->fetch_object()){
@@ -18,4 +20,3 @@ if(is_numeric($occid)){
 	$con->close();
 }
 echo json_encode($retArr);
-?>

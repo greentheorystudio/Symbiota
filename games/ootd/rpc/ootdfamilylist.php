@@ -1,16 +1,16 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
-$con = MySQLiConnectionFactory::getCon("readonly");
+$connection = new DbConnection();
+$con = $connection->getConnection();
 
-$retArrRow = Array();
-$retArr = Array();
+$retArrRow = array();
+$retArr = array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 if($queryString) {
-	$sql = "";
-	$sql = "SELECT DISTINCT SciName ".
-		"FROM taxa ".
+	$sql = 'SELECT DISTINCT SciName '.
+		''.
 		"WHERE RankId = 140 AND SciName LIKE '".$queryString."%'";
 	$sql .= 'LIMIT 10';
 	//echo $sql;
@@ -19,11 +19,11 @@ if($queryString) {
 			$retArrRow['id'] = $row->SciName;
 			$retArrRow['label'] = htmlentities($row->SciName);
 			$retArrRow['value'] = $row->SciName;
-			array_push($retArr, $retArrRow);
+			$retArr[] = $retArrRow;
 		}
 	}
 }
 
 $con->close();
 echo json_encode($retArr);
-?>
+

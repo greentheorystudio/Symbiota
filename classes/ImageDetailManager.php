@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT."/classes/ImageShared.php");
 
 class ImageDetailManager {
@@ -8,7 +8,8 @@ class ImageDetailManager {
 	private $imgId;
 
 	public function __construct($id,$conType='readonly'){
- 		$this->conn = MySQLiConnectionFactory::getCon($conType);
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
  		if(is_numeric($id)){
 	 		$this->imgId = $id;
  		}

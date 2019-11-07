@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once('OccurrenceAccessStats.php');
 
 class MappingShared{
@@ -12,7 +12,8 @@ class MappingShared{
 	private $searchTerms = 0;
 
     public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon('readonly');
+		$connection = new DbConnection();
+    	$this->conn = $connection->getConnection();
     	$this->iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
 		$this->googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
 			'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',

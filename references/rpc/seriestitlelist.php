@@ -1,14 +1,14 @@
 <?php
-include_once('../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $returnArr = Array();
 $retArrRow = Array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
-// Is the string length greater than 0?
 if($queryString) {
-	$sql = "";
-	$sql = "SELECT o.refid, o.title, o.edition ".
-		"FROM referenceobject AS o  ".
+	$sql = 'SELECT o.refid, o.title, o.edition ' .
+        'FROM referenceobject AS o  ' .
 		"WHERE o.title LIKE '%".$queryString."%' AND o.ReferenceTypeId = 27 ";
 	$sql .= 'LIMIT 10';
 	$result = $con->query($sql);
@@ -20,9 +20,8 @@ if($queryString) {
 		}
 		$retArrRow['label'] = htmlentities($titleLine);
 		$retArrRow['value'] = $row->refid;
-		array_push($returnArr, $retArrRow);
+		$returnArr[] = $retArrRow;
 	}
 }
 $con->close();
 echo json_encode($returnArr);
-?>

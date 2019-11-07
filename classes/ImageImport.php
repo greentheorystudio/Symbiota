@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once("ImageShared.php");
 
 class ImageImport{
@@ -17,7 +17,8 @@ class ImageImport{
 
 	function __construct() {
 		set_time_limit(2000);
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 		
 		$this->setUploadTargetPath();
 		

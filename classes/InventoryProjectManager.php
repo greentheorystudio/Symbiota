@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
  
 class InventoryProjectManager {
 
@@ -11,7 +11,8 @@ class InventoryProjectManager {
 	private $errorStr;
 
 	public function __construct($connType = 'readonly'){
-		$this->conn = MySQLiConnectionFactory::getCon($connType);
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 		$this->googleUrl = "http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain";
 		if(array_key_exists('GOOGLE_MAP_KEY',$GLOBALS) && $GLOBALS['GOOGLE_MAP_KEY']) $this->googleUrl .= '&key='.$GLOBALS['GOOGLE_MAP_KEY'];
 	}

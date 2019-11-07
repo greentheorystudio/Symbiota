@@ -1,17 +1,16 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$con = MySQLiConnectionFactory::getCon("readonly");
-$ident = $con->real_escape_string($_REQUEST["ident"]);
-$collId = $con->real_escape_string($_REQUEST["collid"]);
+$connection = new DbConnection();
+$con = $connection->getConnection();
+$ident = $con->real_escape_string($_REQUEST['ident']);
+$collId = $con->real_escape_string($_REQUEST['collid']);
 
-$responseStr = "";
-$sql = "SELECT loanid ".
-	"FROM omoccurloans ".
+$responseStr = '';
+$sql = 'SELECT loanid ' .
+	'FROM omoccurloans ' .
 	'WHERE loanIdentifierOwn = "'.$ident.'" AND collidOwn = '.$collId;
 //echo $sql;
 $result = $con->query($sql);
@@ -21,6 +20,4 @@ while ($row = $result->fetch_object()) {
 $result->close();
 if(!($con === false)) $con->close();
 
-//output the response
 echo json_encode($returnArr);
-?>

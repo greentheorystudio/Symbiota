@@ -1,13 +1,14 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $taxId = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:0;
 $displayAuthor = array_key_exists('authors',$_REQUEST)?$_REQUEST['authors']:0;
 $targetId = array_key_exists('targetid',$_REQUEST)?$_REQUEST['targetid']:0;
 
 $editable = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$editable = true;
 }
 
@@ -19,7 +20,7 @@ $taxonRankArr = array(1=>'Organism',10=>'Kingdom',20=>'Subkingdom',30=>'Phylum',
 
 $retArr = Array();
 $childArr = Array();
-if($taxId == 'root'){
+if($taxId === 'root'){
 	$retArr['id'] = 'root';
 	$retArr['label'] = 'root';
 	$retArr['name'] = 'root';
@@ -50,16 +51,20 @@ if($taxId == 'root'){
 	$i = 0;
 	while($row1 = $rs1->fetch_object()){
         $rankName = $row1->rankname;
-        if(!$rankName) $rankName = $taxonRankArr[$row1->rankid];
-        if(!$rankName) $rankName = 'Unknown';
+        if(!$rankName) {
+			$rankName = $taxonRankArr[$row1->rankid];
+		}
+        if(!$rankName) {
+			$rankName = 'Unknown';
+		}
 		$label = '2-'.$row1->rankid.'-'.$rankName.'-'.$row1->sciname;
-		if($row1->tid == $targetId){
+		if($row1->tid === $targetId){
 			$sciName = '<b>'.$row1->sciname.'</b>';
 		}
 		else{
 			$sciName = $row1->sciname;
 		}
-		$sciName = "<span style='font-size:75%;'>".$rankName."</span> ".$sciName.($displayAuthor?" ".$row1->author:"");
+		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row1->author:'');
 		$childArr[$i]['id'] = $row1->tid;
 		$childArr[$i]['label'] = $label;
 		$childArr[$i]['name'] = $sciName;
@@ -80,7 +85,7 @@ if($taxId == 'root'){
 			//echo "<div>".$sql4."</div>";
 			$rs4 = $con->query($sql4);
 			while($row4 = $rs4->fetch_object()){
-				if($row4->tid != $row4->tidaccepted){
+				if($row4->tid !== $row4->tidaccepted){
 					$childArr[$i]['children'] = true;
 				}
 			}
@@ -92,7 +97,6 @@ if($taxId == 'root'){
 	$rs1->free();
 }
 else{
-	//Get children, but only accepted children
 	$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomName = tu.kingdomName AND t.rankid = tu.rankid) '.
@@ -103,8 +107,12 @@ else{
 	$i = 0;
 	while($row2 = $rs2->fetch_object()){
 		$rankName = $row2->rankname;
-		if(!$rankName) $rankName = $taxonRankArr[$row2->rankid];
-        if(!$rankName) $rankName = 'Unknown';
+		if(!$rankName) {
+			$rankName = $taxonRankArr[$row2->rankid];
+		}
+        if(!$rankName) {
+			$rankName = 'Unknown';
+		}
 		$label = '2-'.$row2->rankid.'-'.$rankName.'-'.$row2->sciname;
 		if($row2->rankid >= 180){
 			$sciName = '<i>'.$row2->sciname.'</i>';
@@ -112,11 +120,11 @@ else{
 		else{
 			$sciName = $row2->sciname;
 		}
-		if($row2->tid == $targetId){
+		if($row2->tid === $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
-		$sciName = "<span style='font-size:75%;'>".$rankName."</span> ".$sciName.($displayAuthor?" ".$row2->author:"");
-		if($row2->tid == $taxId){
+		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row2->author:'');
+		if($row2->tid === $taxId){
 			$retArr['id'] = $row2->tid;
 			$retArr['label'] = $label;
 			$retArr['name'] = $sciName;
@@ -149,7 +157,7 @@ else{
 				//echo "<div>".$sql4."</div>";
 				$rs4 = $con->query($sql4);
 				while($row4 = $rs4->fetch_object()){
-					if($row4->tid != $row4->tidaccepted){
+					if($row4->tid !== $row4->tidaccepted){
 						$childArr[$i]['children'] = true;
 					}
 				}
@@ -161,7 +169,6 @@ else{
 	}
 	$rs2->free();
 	
-	//Get synonyms for all accepted taxa
 	$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomName = tu.kingdomName AND t.rankid = tu.rankid) '.
@@ -170,8 +177,12 @@ else{
 	$rsSyns = $con->query($sqlSyns);
 	while($row = $rsSyns->fetch_object()){
         $rankName = $row->rankname;
-        if(!$rankName) $rankName = $taxonRankArr[$row->rankid];
-        if(!$rankName) $rankName = 'Unknown';
+        if(!$rankName) {
+			$rankName = $taxonRankArr[$row->rankid];
+		}
+        if(!$rankName) {
+			$rankName = 'Unknown';
+		}
 		$label = '1-'.$row->rankid.'-'.$rankName.'-'.$row->sciname;
 		if($row->rankid >= 180){
 			$sciName = '<i>'.$row->sciname.'</i>';
@@ -179,11 +190,11 @@ else{
 		else{
 			$sciName = $row->sciname;
 		}
-		if($row->tid == $targetId){
+		if($row->tid === $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = '['.$sciName.']';
-		$sciName = "<span style='font-size:75%;'>".$rankName."</span> ".$sciName.($displayAuthor?" ".$row->author:"");
+		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row->author:'');
 		$childArr[$i]['id'] = $row->tid;
 		$childArr[$i]['label'] = $label;
 		$childArr[$i]['name'] = $sciName;
@@ -199,12 +210,12 @@ else{
 }
 
 function cmp($a,$b){
-	return strnatcmp($a["label"],$b["label"]);
+	return strnatcmp($a['label'],$b['']);
 }
 
-usort($childArr,"cmp");
+usort($childArr,'cmp');
 
 $retArr['children'] = $childArr;
 	
 echo json_encode($retArr);
-?>
+

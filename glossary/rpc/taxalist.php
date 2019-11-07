@@ -1,8 +1,10 @@
 <?php
-include_once('../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $returnArr = Array();
-$queryString = array_key_exists("term",$_REQUEST)?$con->real_escape_string($_REQUEST['term']):$con->real_escape_string($_REQUEST['q']);
+$queryString = array_key_exists('term',$_REQUEST)?$con->real_escape_string($_REQUEST['term']):$con->real_escape_string($_REQUEST['q']);
 $type = $con->real_escape_string($_REQUEST['t']);
 if($queryString) {
 	$sql = 'SELECT DISTINCT ts.tidaccepted, t.SciName, v.VernacularName '.
@@ -11,7 +13,7 @@ if($queryString) {
 		'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.VernacularName LIKE "'.$queryString.'%") AND t.RankId < 185 AND ts.taxauthid = 1 '.
 		'LIMIT 10 ';
 	$result = $con->query($sql);
-	if($type == 'single'){
+	if($type === 'single'){
 		while ($row = $result->fetch_object()) {
 			$sciName = $row->SciName;
 			if($row->VernacularName){
@@ -19,10 +21,10 @@ if($queryString) {
 			}
 			$retArrRow['label'] = htmlentities($sciName);
 			$retArrRow['value'] = $row->tidaccepted;
-			array_push($returnArr, $retArrRow);
+			$returnArr[] = $retArrRow;
 		}
 	}
-	if($type == 'batch'){
+	if($type === 'batch'){
 		$i = 0;
 		while ($row = $result->fetch_object()) {
 			$sciName = $row->SciName;
@@ -37,4 +39,3 @@ if($queryString) {
 }
 $con->close();
 echo json_encode($returnArr);
-?>

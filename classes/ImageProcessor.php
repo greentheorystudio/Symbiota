@@ -1,6 +1,6 @@
 <?php
-require_once($SERVER_ROOT.'/config/dbconnection.php');
-require_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
 class ImageProcessor {
 
@@ -23,7 +23,8 @@ class ImageProcessor {
 			$this->destructConn = false;
 		}
 		else{
-			$this->conn = MySQLiConnectionFactory::getCon('write');
+			$connection = new DbConnection();
+			$this->conn = $connection->getConnection();
 			if($this->conn === false) exit("ABORT: Image upload aborted: Unable to establish connection to database");
 		}
 	}

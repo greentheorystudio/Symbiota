@@ -11,10 +11,12 @@ class Encryption{
 			return $plainText;
 			//throw new Exception("Needs a 256-bit key!");
 		}
-		$ivSize = openssl_cipher_iv_length(self::METHOD);
-		$iv = openssl_random_pseudo_bytes($ivSize);
-
-		$ciphertext = openssl_encrypt($plainText, self::METHOD, $key, 1, $iv);
+		$secure = false;
+        $ivSize = openssl_cipher_iv_length(self::METHOD);
+        do {
+            $iv = \openssl_random_pseudo_bytes($ivSize, $secure);
+        } while(!$iv || !$secure);
+        $ciphertext = openssl_encrypt($plainText, self::METHOD, $key, 1, $iv);
 
 		return $iv . $ciphertext;
 	}

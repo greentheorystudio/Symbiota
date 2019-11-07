@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 
 class OccurrenceMaintenance {
@@ -16,7 +16,8 @@ class OccurrenceMaintenance {
 			$this->destructConn = false;
 		}
 		else{
-			$this->conn = MySQLiConnectionFactory::getCon("write");
+            $connection = new DbConnection();
+		    $this->conn = $connection->getConnection();
 		}
 	}
 

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
 class UserTaxonomy {
@@ -7,7 +7,8 @@ class UserTaxonomy {
 	private $conn;
 	
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

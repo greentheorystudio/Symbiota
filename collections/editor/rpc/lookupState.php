@@ -1,7 +1,8 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once('../../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retArr = Array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 $countryStr = array_key_exists('country',$_REQUEST)?$con->real_escape_string($_REQUEST['country']):'';
@@ -17,8 +18,8 @@ $sql .= $sqlWhere.'ORDER BY s.statename';
 $result = $con->query($sql);
 while ($row = $result->fetch_object()) {
 	$stateStr = $row->statename;
-	if($CHARSET == 'ISO-8859-1'){
-		if(mb_detect_encoding($stateStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
+	if($CHARSET === 'ISO-8859-1'){
+		if(mb_detect_encoding($stateStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 			$stateStr = utf8_encode($stateStr);
 		}
 	}
@@ -32,4 +33,4 @@ if($retArr){
 else{
 	echo '';
 }
-?>
+

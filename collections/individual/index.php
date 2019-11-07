@@ -2,7 +2,6 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceIndividualManager.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT.'/classes/RdfUtility.php');
 
 $occid = array_key_exists("occid",$_REQUEST)?trim($_REQUEST["occid"]):0;
 $collid = array_key_exists("collid",$_REQUEST)?trim($_REQUEST["collid"]):0;
@@ -48,7 +47,6 @@ $isEditor = false;
 
 //  If other than HTML was requested, return just that content.
 $done=FALSE;
-$accept = RdfUtility::parseHTTPAcceptHeader($_SERVER['HTTP_ACCEPT']);
 while (!$done && list($key, $mediarange) = each($accept)) {
     if ($mediarange=='text/turtle' || $format == 'turtle') {
        Header("Content-Type: text/turtle; charset=".$CHARSET);

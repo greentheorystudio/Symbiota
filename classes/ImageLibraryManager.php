@@ -1,5 +1,5 @@
-<?php 
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+<?php
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
 
 class ImageLibraryManager{
@@ -13,7 +13,8 @@ class ImageLibraryManager{
 	private $sqlWhere = '';
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 		if(array_key_exists('TID_FOCUS', $GLOBALS) && preg_match('/^[\d,]+$/', $GLOBALS['TID_FOCUS'])){
 			$this->tidFocus = $GLOBALS['TID_FOCUS'];
 		}

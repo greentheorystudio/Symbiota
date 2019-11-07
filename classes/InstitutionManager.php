@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 //Used by /collections/misc/collprofiles.php page
 class InstitutionManager {
@@ -10,7 +10,8 @@ class InstitutionManager {
 	private $errorStr;
 	
 	public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){

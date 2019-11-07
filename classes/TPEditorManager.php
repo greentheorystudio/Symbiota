@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class TPEditorManager {
 
@@ -16,7 +16,8 @@ class TPEditorManager {
 	protected $errorStr = '';
 	
  	public function __construct(){
- 		$this->taxonCon = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+ 		$this->taxonCon = $connection->getConnection();
  	}
  	
  	public function __destruct(){

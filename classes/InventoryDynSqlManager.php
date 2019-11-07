@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
  
 class InventoryDynSqlManager {
 
@@ -8,7 +8,8 @@ class InventoryDynSqlManager {
 	private $clName;
 	
 	function __construct($id) {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 		if(is_numeric($id)){
 			$this->clid = $id;
 		}

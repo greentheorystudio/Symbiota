@@ -1,11 +1,5 @@
 <?php
-/**
- *  Base class for managers.  Supplies $conn for connection, $id for primary key, and
- *  $errorMessage/getErrorMessage(), along with supporting clean methods cleanOutStr()
- *  cleanInStr() and cleanInArray();
- */
-
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class Manager  {
 	protected $conn = null;
@@ -17,7 +11,8 @@ class Manager  {
 	protected $verboseMode = 0;
 
     public function __construct($id=null,$conType='readonly'){
- 		$this->conn = MySQLiConnectionFactory::getCon($conType);
+		$connection = new DbConnection();
+    	$this->conn = $connection->getConnection();
  		if($id != null || is_numeric($id)){
 	 		$this->id = $id;
  		}

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class GlossaryUpload{
 	
@@ -13,7 +13,8 @@ class GlossaryUpload{
 	private $errorStr = '';
 	
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
 		ini_set("max_input_time",120);

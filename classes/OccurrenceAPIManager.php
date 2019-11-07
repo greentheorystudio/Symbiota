@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
@@ -15,7 +15,8 @@ class OccurrenceAPIManager{
     protected $serverDomain;
 
 	function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 	}
 
  	public function __destruct(){

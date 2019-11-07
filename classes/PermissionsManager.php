@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -24,7 +24,8 @@ class PermissionsManager{
 	private $conn;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

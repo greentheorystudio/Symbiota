@@ -1,6 +1,8 @@
 <?php
-include_once('../../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $queryTerm = $con->real_escape_string($_REQUEST['term']);
 $queryTerm = str_replace('"',"''",$queryTerm);
 
@@ -16,4 +18,3 @@ $rs->free();
 $con->close();
 
 echo $retStr;
-?>

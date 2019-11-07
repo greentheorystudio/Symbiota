@@ -1,6 +1,6 @@
 <?php 
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
@@ -83,7 +83,8 @@ $dichoKeyManager = new DichoKeyManager();
 class DichoKeyManager{
 
 	private function getConnection($type = "readonly") {
- 		return MySQLiConnectionFactory::getCon($type);
+        $connection = new DbConnection();
+	    return $connection->getConnection();
 	}
 
 	public function buildKey($clid, $taxonFilter){

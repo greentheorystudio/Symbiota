@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 
 class TaxonomyAPIManager{
@@ -14,7 +14,8 @@ class TaxonomyAPIManager{
     private $hideProtected = false;
 	
 	function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 	}
 
  	public function __destruct(){

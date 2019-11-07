@@ -1,13 +1,14 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $clid = $_REQUEST['cl'];
 
 $returnArr = Array();
 if(is_numeric($clid)){
-	$conn = MySQLiConnectionFactory::getCon("readonly");
+	$connection = new DbConnection();
+	$conn = $connection->getConnection();
 	$clid = $conn->real_escape_string($clid);
 	$queryString = $conn->real_escape_string($_REQUEST['term']);
 		
@@ -22,4 +23,3 @@ if(is_numeric($clid)){
 	$conn->close();
 }
 echo json_encode($returnArr);
-?>

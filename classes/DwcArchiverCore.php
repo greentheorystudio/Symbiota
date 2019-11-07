@@ -1,5 +1,4 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverOccurrence.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverDetermination.php');
@@ -1300,7 +1299,7 @@ class DwcArchiverCore extends Manager{
 		//Citation
 		$id = UuidFactory::getUuidV4();
 		$citeElem = $newDoc->createElement('citation');
-		$citeElem->appendChild($newDoc->createTextNode($GLOBALS['defaultTitle'].' - '.$id));
+		$citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' - '.$id));
 		$citeElem->setAttribute('identifier',$id);
 		$symbElem->appendChild($citeElem);
 		//Physical

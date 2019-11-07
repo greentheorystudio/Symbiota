@@ -1,17 +1,16 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once('../../../config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/MapInterfaceManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$con = MySQLiConnectionFactory::getCon("readonly");
+$connection = new DbConnection();
+$con = $connection->getConnection();
 
-$occid = array_key_exists("selected",$_REQUEST)?$_REQUEST["selected"]:'';
+$occid = array_key_exists('selected',$_REQUEST)?$_REQUEST['selected']:'';
 
 function cleanOutStr($str){
-	$newStr = str_replace('"',"&quot;",$str);
-	$newStr = str_replace("'","&apos;",$newStr);
-	return $newStr;
+	return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 }
 
 $sql = 'SELECT o.occid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
@@ -19,7 +18,7 @@ $sql = 'SELECT o.occid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.reco
 	'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
 	'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
 $sql .= 'WHERE o.occid = '.$occid.' ';
-$sql .= "ORDER BY c.sortseq, c.collectionname ";
+$sql .= 'ORDER BY c.sortseq, c.collectionname ';
 $result = $con->query($sql);
 while($r = $result->fetch_object()){
 	$occId = $r->occid;
@@ -43,7 +42,7 @@ $selectionListHtml .= '<td id="selcat'.$occId.'" >';
 $selectionListHtml .= wordwrap($cat, 7, "<br />\n", true);
 $selectionListHtml .= '</td>';
 $selectionListHtml .= '<td id="sellabel'.$occId.'" >';
-$onMouseOver = "openOccidInfoBox('".$c."',".$lat.",".$lon.");";
+$onMouseOver = "openOccidInfoBox('".$c."',".$lat. ',' .$lon.");";
 $selectionListHtml .= '<a href="#" onmouseover="'.$onMouseOver.'" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('.$occId.'); return false;">';
 $selectionListHtml .= wordwrap($c, 12, "<br />\n", true);
 $selectionListHtml .= '</a>';
@@ -56,6 +55,4 @@ $selectionListHtml .= wordwrap($s, 12, "<br />\n", true);
 $selectionListHtml .= '</td>';
 $selectionListHtml .= '</tr>';
 
-//output the response
 echo $selectionListHtml;
-?>

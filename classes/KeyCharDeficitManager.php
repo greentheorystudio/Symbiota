@@ -1,10 +1,5 @@
 <?php
-/*
- * Created on Jul 9, 2006
- * By E.E. Gilbert
- */
-
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class KeyCharDeficitManager{
 	
@@ -14,7 +9,8 @@ class KeyCharDeficitManager{
 	private $language = "English";
 	
 	function __construct(){
-		$this->con = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->con = $connection->getConnection();
 	}
 	
 	function __destruct(){

@@ -1,6 +1,5 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once('../../../config/dbconnection.php');
 
 $type = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 $url = array_key_exists('url',$_REQUEST)?$_REQUEST['url']:'';
@@ -26,4 +25,3 @@ if($type && $url) {
 }
 
 echo str_replace('"','',$result);
-?>

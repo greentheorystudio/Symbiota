@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class ChecklistManager {
 
@@ -12,7 +12,7 @@ class ChecklistManager {
 	private $pid = '';
 	private $projName = '';
 	private $taxaList = Array();
-	private $language = "English";
+	private $language = 'English';
 	private $thesFilter = 0;
 	private $taxonFilter;
 	private $showAuthors;
@@ -32,7 +32,8 @@ class ChecklistManager {
 	private $basicSql;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

@@ -1,7 +1,8 @@
 <?php
 include_once('../../../config/symbini.php');
-include_once('../../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retArr = Array();
 $term = $con->real_escape_string($_REQUEST['term']);
 
@@ -12,10 +13,8 @@ $sql = 'SELECT CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",l.username,"
 $rs = $con->query($sql);
 while($r = $rs->fetch_object()) {
 	$username = $r->username;
-	if($CHARSET == 'ISO-8859-1'){
-		if(mb_detect_encoding($username,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
-			$username = utf8_encode($username);
-		}
+	if(($CHARSET === 'ISO-8859-1') && mb_detect_encoding($username, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+		$username = utf8_encode($username);
 	}
 	$retArr[] = $username;
 }
@@ -27,4 +26,3 @@ if($retArr){
 else{
 	echo '[]';
 }
-?>

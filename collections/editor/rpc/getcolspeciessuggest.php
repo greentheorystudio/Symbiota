@@ -1,14 +1,15 @@
 <?php
-include_once('../../../config/symbini.php'); 
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: application/json; charset=".$CHARSET);
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: application/json; charset=' .$CHARSET);
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retColArr = Array();
 $retArr = Array();
 $term = $_REQUEST['term'];
 
 $colData = file_get_contents('http://www.catalogueoflife.org/col/webservice?name='.$term.'*&format=php&response=terse');
-$colData = unserialize($colData);
+$colData = unserialize($colData, '');
 if(array_key_exists('results',$colData)){
 	$retColArr = $colData['results'];
 }
@@ -24,4 +25,3 @@ if($retColArr){
 else{
 	echo 'null';
 }
-?>

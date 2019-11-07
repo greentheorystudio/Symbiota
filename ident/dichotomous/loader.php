@@ -1,7 +1,7 @@
 <?php 
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $nodeId = array_key_exists("nodeid",$_REQUEST)?$_REQUEST["nodeid"]:0;
 $stmtId = array_key_exists("stmtid",$_REQUEST)?$_REQUEST["stmtid"]:0;
@@ -277,7 +277,8 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS)){
 class DichoManager{
 
 	private function getConnection($type = "readonly") {
- 		return MySQLiConnectionFactory::getCon($type);
+        $connection = new DbConnection();
+	    return $connection->getConnection();
 	}
 
  	public function echoNodeById($nodeId){

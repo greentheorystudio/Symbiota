@@ -1,8 +1,9 @@
 <?php
-include_once('../../../config/symbini.php'); 
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: application/json; charset=".$CHARSET);
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: application/json; charset=' .$CHARSET);
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $retArr = Array();
 $term = trim($con->real_escape_string($_REQUEST['term']));
 if($term){
@@ -16,22 +17,19 @@ if($term){
 		$retArr['family'] = $r->family;
 		$retArr['author'] = $r->author;
 		$retArr['status'] = $r->securitystatus;
-		//$retArr[] = '"family": '.$r->family.',"author":"'.str_replace('"',"''",$r->author).'","status":'.$r->securitystatus;
 	}
 	$rs->free();
 	$con->close();
 }
 
 if($retArr){
-	if($CHARSET == 'UTF-8'){
+	if($CHARSET === 'UTF-8'){
 		echo json_encode($retArr);
 	}
 	else{
 		echo '{"tid":"'.$retArr['tid'].'","family":"'.$retArr['family'].'","author":"'.str_replace('"',"''",$retArr['author']).'","status":"'.$retArr['status'].'"}';
-		//echo '[{'.implode('},{',$retArr).'}]';
 	}
 }
 else{
 	echo 'null';
 }
-?>

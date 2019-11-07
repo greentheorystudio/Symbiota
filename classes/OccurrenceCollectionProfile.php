@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 
@@ -16,7 +16,8 @@ class OccurrenceCollectionProfile {
     private $idigbioKey;
 
 	public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){
@@ -86,18 +87,16 @@ class OccurrenceCollectionProfile {
 			if(!$retArr[$this->collid]['guid']){
 				$guid= UuidFactory::getUuidV4();
 				$retArr[$this->collid]['guid'] = $guid;
-				$conn = MySQLiConnectionFactory::getCon('write');
 				$sql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" '.
 					'WHERE collectionguid IS NULL AND collid = '.$this->collid;
-				$conn->query($sql);
+				$this->conn->query($sql);
 			}
 			if(!$retArr[$this->collid]['skey']){
 				$guid2 = UuidFactory::getUuidV4();
 				$retArr[$this->collid]['skey'] = $guid2;
-				$conn = MySQLiConnectionFactory::getCon('write');
 				$sql = 'UPDATE omcollections SET securitykey = "'.$guid2.'" '.
 					'WHERE securitykey IS NULL AND collid = '.$this->collid;
-				$conn->query($sql);
+				$this->conn->query($sql);
 			}
 		}
 		return $retArr;
@@ -261,7 +260,6 @@ class OccurrenceCollectionProfile {
 			}
 			$indUrl = $this->cleanInStr($postArr['individualurl']);
 
-			$conn = MySQLiConnectionFactory::getCon("write");
 			$sql = 'UPDATE omcollections '.
 				'SET institutioncode = "'.$instCode.'",'.
 				'collectioncode = '.($collCode?'"'.$collCode.'"':'NULL').','.
@@ -292,33 +290,33 @@ class OccurrenceCollectionProfile {
 			}
 			$sql .= 'WHERE (collid = '.$this->collid.')';
 			//echo $sql; exit;
-			if(!$conn->query($sql)){
-				$status = 'ERROR updating collection: '.$conn->error;
+			if(!$this->conn->query($sql)){
+				$status = 'ERROR updating collection: '.$this->conn->error;
 				return $status;
 			}
 
 			//Modify collection category, if needed
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
-				$rs = $conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
+				$rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
 				if($r = $rs->fetch_object()){
 					if($r->ccpk <> $postArr['ccpk']){
-						if(!$conn->query('UPDATE omcollcatlink SET ccpk = '.$postArr['ccpk'].' WHERE ccpk = '.$r->ccpk.' AND collid = '.$this->collid)){
-							$status = 'ERROR updating collection category link: '.$conn->error;
+						if(!$this->conn->query('UPDATE omcollcatlink SET ccpk = '.$postArr['ccpk'].' WHERE ccpk = '.$r->ccpk.' AND collid = '.$this->collid)){
+							$status = 'ERROR updating collection category link: '.$this->conn->error;
 							return $status;
 						}
 					}
 				}
 				else{
-					if(!$conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-						$status = 'ERROR inserting collection category link(1): '.$conn->error;
+					if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
+						$status = 'ERROR inserting collection category link(1): '.$this->conn->error;
 						return $status;
 					}
 				}
 			}
 			else{
-				$conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
+				$this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
 			}
-			$conn->close();
+			$this->conn->close();
 		}
 		return $status;
 	}
@@ -354,7 +352,6 @@ class OccurrenceCollectionProfile {
 		$indUrl = array_key_exists('individualurl',$postArr)?$this->cleanInStr($postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
 
-		$conn = MySQLiConnectionFactory::getCon("write");
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,homepage,'.
 			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
@@ -381,25 +378,25 @@ class OccurrenceCollectionProfile {
 			($sortSeq?$sortSeq:'NULL').') ';
 		//echo "<div>$sql</div>";
 		$cid = 0;
-		if($conn->query($sql)){
-			$cid = $conn->insert_id;
+		if($this->conn->query($sql)){
+			$cid = $this->conn->insert_id;
 			$sql = 'INSERT INTO omcollectionstats(collid,recordcnt,uploadedby) '.
 				'VALUES('.$cid.',0,"'.$SYMB_UID.'")';
-			$conn->query($sql);
+			$this->conn->query($sql);
 			//Add collection to category
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
-				if(!$conn->query($sql)){
-					$status = 'ERROR inserting collection category link(2): '.$conn->error.'; SQL: '.$sql;
+				if(!$this->conn->query($sql)){
+					$status = 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
 					return $status;
 				}
 			}
 			$this->collid = $cid;
 		}
 		else{
-			$cid = 'ERROR inserting new collection: '.$conn->error;
+			$cid = 'ERROR inserting new collection: '.$this->conn->error;
 		}
-		$conn->close();
+		$this->conn->close();
 		return $cid;
 	}
 
@@ -463,15 +460,14 @@ class OccurrenceCollectionProfile {
 	public function linkAddress($addIID){
 		$status = false;
 		if($this->collid && is_numeric($addIID)){
-			$con = MySQLiConnectionFactory::getCon("write");
 			$sql = 'UPDATE omcollections SET iid = '.$addIID.' WHERE collid = '.$this->collid;
-			if($con->query($sql)){
+			if($this->conn->query($sql)){
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR linking institution address: '.$con->error;
+				$this->errorStr = 'ERROR linking institution address: '.$this->conn->error;
 			}
-			$con->close();
+			$this->conn->close();
 		}
 		return $status;
 	}
@@ -479,16 +475,15 @@ class OccurrenceCollectionProfile {
 	public function removeAddress($removeIID){
 		$status = false;
 		if($this->collid && is_numeric($removeIID)){
-			$con = MySQLiConnectionFactory::getCon("write");
 			$sql = 'UPDATE omcollections SET iid = NULL '.
 				'WHERE collid = '.$this->collid.' AND iid = '.$removeIID;
-			if($con->query($sql)){
+			if($this->conn->query($sql)){
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR removing institution address: '.$con->error;
+				$this->errorStr = 'ERROR removing institution address: '.$this->conn->error;
 			}
-			$con->close();
+			$this->conn->close();
 		}
 		return $status;
 	}
@@ -558,17 +553,16 @@ class OccurrenceCollectionProfile {
         $aggKeyArr['endpointKey'] = $this->endpointKey;
         $aggKeyArr['idigbioKey'] = $this->idigbioKey;
         $aggKeyStr = json_encode($aggKeyArr);
-        $conn = MySQLiConnectionFactory::getCon("write");
         $sql = 'UPDATE omcollections '.
             "SET aggKeysStr = '".$aggKeyStr."' ".
             'WHERE (collid = '.$collId.')';
         //echo $sql; exit;
-        if(!$conn->query($sql)){
-            $status = 'ERROR saving key: '.$conn->error;
+        if(!$this->conn->query($sql)){
+            $status = 'ERROR saving key: '.$this->conn->error;
             return $status;
         }
 
-        $conn->close();
+		$this->conn->close();
 
         return $status;
 

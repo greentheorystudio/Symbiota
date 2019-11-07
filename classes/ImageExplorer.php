@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class ImageExplorer{
     private $debug = FALSE;
@@ -7,7 +7,8 @@ class ImageExplorer{
 	private $imgCnt = 0;
 
 	public function __construct(){
-	 	$this->conn = MySQLiConnectionFactory::getCon("readonly");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
  
 	public function __destruct(){

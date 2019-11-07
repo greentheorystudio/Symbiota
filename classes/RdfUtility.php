@@ -140,14 +140,4 @@ class RdfUtility {
    } 
 
 }
-
-
-// Examples 
-//print_r(Utility::parseHTTPAcceptHeader('text/turtle;q=1.0,text/xml,application/xml,application/xhtml+xml,text/html; q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'));
-//print_r(Utility::parseHTTPAcceptHeader('text/xml;q=0.9,application/xml;q=0.9,application/xhtml+xml;q=0.9,text/html;q=0.9,application/rdf+xml;q=1, text/plain;q=0.8,image/png,*/*;q=0.5'));
-// TODO: Unit Tests for correct sort order
-// Test cases, see  http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-//print_r(Utility::parseHTTPAcceptHeader('text/*, text/html, text/html;level=1, */*'));
-//print_r(Utility::parseHTTPAcceptHeader('text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5'));
-
 ?>

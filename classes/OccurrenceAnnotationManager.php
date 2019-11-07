@@ -1,5 +1,4 @@
 <?php
-
 include_once("OccurrenceManager.php");
 
 class OccurrenceAnnotationManager extends OccurrenceManager {

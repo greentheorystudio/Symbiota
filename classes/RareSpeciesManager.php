@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
 class RareSpeciesManager {
@@ -8,7 +8,8 @@ class RareSpeciesManager {
  	private $taxaArr = array();
     
     function __construct($collType = 'readonly'){
-		$this->conn = MySQLiConnectionFactory::getCon($collType);
+        $connection = new DbConnection();
+        $this->conn = $connection->getConnection();
     }
     
  	function __destruct(){

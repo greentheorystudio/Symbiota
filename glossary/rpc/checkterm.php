@@ -1,16 +1,21 @@
 <?php
-include_once('../../config/dbconnection.php');
-$con = MySQLiConnectionFactory::getCon("readonly");
+include_once('../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+$connection = new DbConnection();
+$con = $connection->getConnection();
 $returnArr = Array();
 
 $term = $con->real_escape_string($_REQUEST['term']);
 $language = $con->real_escape_string($_REQUEST['language']);
 $relGlossId = $_REQUEST['relglossid'];
-if(!is_numeric($relGlossId)) $relGlossId = 0;
+if(!is_numeric($relGlossId)) {
+    $relGlossId = 0;
+}
 $tid = $_REQUEST['tid'];
-if(!is_numeric($tid)) $tid = 0;
+if(!is_numeric($tid)) {
+    $tid = 0;
+}
 
-// Is the string length greater than 0?
 if($term && $language && ($tid || $relGlossId)) {
 	$sql = '';
 	if($tid){
@@ -35,6 +40,9 @@ if($term && $language && ($tid || $relGlossId)) {
 }
 $con->close();
 
-if(!$returnArr) echo '';
-else echo '1';
-?>
+if(!$returnArr) {
+    echo false;
+}
+else {
+    echo true;
+}

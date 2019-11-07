@@ -1,16 +1,15 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$clid = $_REQUEST["clid"]; 
-$tid = $_REQUEST["tid"]; 
+$clid = $_REQUEST['clid'];
+$tid = $_REQUEST['tid'];
 
 if(is_numeric($clid) && is_numeric($tid)){
-	if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid,$USER_RIGHTS['ClAdmin']))){
-		$conn = MySQLiConnectionFactory::getCon("write");
+	if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+		$connection = new DbConnection();
+		$conn = $connection->getConnection();
 		$tid = $conn->real_escape_string($tid);
 		$clid = $conn->real_escape_string($clid);
 		$delStatus = 'false';
@@ -19,10 +18,6 @@ if(is_numeric($clid) && is_numeric($tid)){
 		if($conn->query($sql)){
 			echo $tid;
 		}
-		else{
-			echo '0';
-		}
 	}
 }
 $conn->close();
-?>

@@ -1,6 +1,4 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-
 class PluginsManager {
 
  	public function __construct(){

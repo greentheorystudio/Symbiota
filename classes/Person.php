@@ -1,9 +1,4 @@
 <?php
-/*
- * Created on 26 Feb 2009
- * By E.E. Gilbert
- */
-
 class Person{
 	
 	private $uid;

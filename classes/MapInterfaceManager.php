@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once('OccurrenceAccessStats.php');
 
 class MapInterfaceManager{
@@ -22,7 +22,8 @@ class MapInterfaceManager{
 	private $searchTerms = 0;
 
     public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon('readonly');
+        $connection = new DbConnection();
+        $this->conn = $connection->getConnection();
     	$this->googleIconArr = array('pushpin/ylw-pushpin','pushpin/blue-pushpin','pushpin/grn-pushpin','pushpin/ltblu-pushpin',
 			'pushpin/pink-pushpin','pushpin/purple-pushpin', 'pushpin/red-pushpin','pushpin/wht-pushpin','paddle/blu-blank',
 			'paddle/grn-blank','paddle/ltblu-blank','paddle/pink-blank','paddle/wht-blank','paddle/blu-diamond','paddle/grn-diamond',
@@ -36,10 +37,6 @@ class MapInterfaceManager{
 
 	public function __destruct(){
  		if(!($this->conn === false)) $this->conn->close();
-	}
-
-	protected function getConnection($conType = "readonly"){
-		return MySQLiConnectionFactory::getCon($conType);
 	}
 
 	private function getRandomColor(){

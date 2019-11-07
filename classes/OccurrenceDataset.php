@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 
 class OccurrenceDataset {
@@ -13,7 +13,8 @@ class OccurrenceDataset {
 	private $errorArr = array();
 
 	public function __construct(){
- 		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){

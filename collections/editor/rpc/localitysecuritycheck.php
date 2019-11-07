@@ -1,9 +1,10 @@
 <?php
-include_once('../../../config/symbini.php'); 
-include_once($SERVER_ROOT.'/config/dbconnection.php');
-header("Content-Type: application/json; charset=".$CHARSET);
+include_once('../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+header('Content-Type: application/json; charset=' .$CHARSET);
 
-$con = MySQLiConnectionFactory::getCon("readonly");
+$connection = new DbConnection();
+$con = $connection->getConnection();
 
 $retStr = 0;
 $tid = trim($con->real_escape_string($_REQUEST['tid']));
@@ -31,4 +32,3 @@ if($retStr){
 else{
 	echo 0;
 }
-?>

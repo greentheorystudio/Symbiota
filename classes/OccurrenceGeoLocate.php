@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class OccurrenceGeoLocate {
 
@@ -10,7 +10,8 @@ class OccurrenceGeoLocate {
 	private $errorStr;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon('write');
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

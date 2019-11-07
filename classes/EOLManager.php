@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/ImageShared.php');
 include_once($SERVER_ROOT.'/classes/EOLUtilities.php');
 
@@ -9,7 +9,8 @@ class EOLManager {
 	private $imgManager = null;
 
 	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

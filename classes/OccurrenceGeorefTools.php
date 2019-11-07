@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class OccurrenceGeorefTools {
 
@@ -11,7 +11,8 @@ class OccurrenceGeorefTools {
 	private $errorStr;
 
 	function __construct($type = 'write') {
-		$this->conn = MySQLiConnectionFactory::getCon($type);
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	function __destruct(){

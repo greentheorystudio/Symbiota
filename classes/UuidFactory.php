@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class UuidFactory {
 
@@ -14,7 +14,8 @@ class UuidFactory {
 			$this->destructConn = false;
 		}
 		else{
-			$this->conn = MySQLiConnectionFactory::getCon("write");
+            $connection = new DbConnection();
+		    $this->conn = $connection->getConnection();
 		}
 	}
 

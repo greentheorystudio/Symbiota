@@ -1,4 +1,5 @@
 <?php
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 
 class ImageShared{
@@ -55,7 +56,8 @@ class ImageShared{
 	public $documentDate;  // Creation date for transfer document containing image record.
 
  	public function __construct(){
- 		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+ 		$this->conn = $connection->getConnection();
  		$this->imageRootPath = $GLOBALS["imageRootPath"];
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";
 		$this->imageRootUrl = $GLOBALS["imageRootUrl"];

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 
@@ -13,44 +13,46 @@ class ChecklistLoaderManager {
 	private $errorStr = '';
 
 	public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function uploadCsvList($thesId){
+	public function uploadCsvList($thesId): int
+	{
 		set_time_limit(300);
-		ini_set("max_input_time",300);
+		ini_set('max_input_time',300);
 		ini_set('auto_detect_line_endings', true);
 		$successCnt = 0;
 
-		$fh = fopen($_FILES['uploadfile']['tmp_name'],'r') or die("Can't open file. File may be too large. Try uploading file in sections.");
+		$fh = fopen($_FILES['uploadfile']['tmp_name'], 'rb') or die("Can't open file. File may be too large. Try uploading file in sections.");
 
 		$headerArr = Array();
 		$headerData = fgetcsv($fh);
 		foreach($headerData as $k => $v){
 			$vStr = strtolower($v);
-			$vStr = str_replace(Array(" ",".","_"),"",$vStr);
-			if(in_array($vStr, Array("scientificnamewithauthor","scientificname","taxa","speciesname","taxon"))){
+			$vStr = str_replace(Array(' ','.','_'),'',$vStr);
+			if(in_array($vStr, Array('scientificnamewithauthor', 'scientificname', 'taxa', 'speciesname', 'taxon'))){
 				$vStr = 'sciname';
 			}
 			$headerArr[$vStr] = $k;
 		}
-		if(array_key_exists("sciname",$headerArr)){
+		if(array_key_exists('sciname',$headerArr)){
 			$cnt = 0;
 			ob_flush();
 			flush();
 			while($valueArr = fgetcsv($fh)){
-				$sciNameStr = $this->cleanInStr($valueArr[$headerArr["sciname"]]);
+				$sciNameStr = $this->cleanInStr($valueArr[$headerArr['sciname']]);
 				if($sciNameStr){
 					$tid = 0;
 					$rankId = 0;
-					$family = "";
+					$family = '';
 					$sciNameArr = TaxonomyUtilities::parseScientificName($sciNameStr,$this->conn);
-					//Check name is in taxa table and grab tid if it is
-					$sql = "";
 					if($thesId && is_numeric($thesId)){
 						$sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
 							'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.
@@ -70,7 +72,9 @@ class ChecklistLoaderManager {
 							$tid = $row->tid;
 							$rankId = $row->rankid;
 							$family = $row->family;
-							if($sciNameStr == $row->sciname) break;
+							if($sciNameStr === $row->sciname) {
+								break;
+							}
 						}
 						$rs->free();
 					}
@@ -119,16 +123,14 @@ class ChecklistLoaderManager {
 							}
 						}
 						else{
-							$this->errorArr[] = $sciNameStr." failed to load (taxon must be of genus, species, or infraspecific ranking)";
+							$this->errorArr[] = $sciNameStr. ' failed to load (taxon must be of genus, species, or infraspecific ranking)';
 						}
 					}
 					else{
 						$this->problemTaxa[] = $cleanSciName;
-						//$statusStr = $sciNameStr." failed to load (misspelled or not yet in taxonomic thesaurus)";
-						//$failCnt++;
 					}
 					$cnt++;
-					if($cnt%500 == 0) {
+					if($cnt%500 === 0) {
 						echo '<li style="margin-left:10px;">'.$cnt.' taxa loaded</li>';
 						ob_flush();
 						flush();
@@ -136,7 +138,7 @@ class ChecklistLoaderManager {
 				}
 			}
 			fclose($fh);
-			if($cnt && $this->clMeta['type'] == 'rarespp'){
+			if($cnt && $this->clMeta['type'] === 'rarespp'){
 				$occurMain = new OccurrenceMaintenance($this->conn);
 				$occurMain->protectStateRareSpecies();
 			}
@@ -147,9 +149,9 @@ class ChecklistLoaderManager {
 		return $successCnt;
 	}
 
-	public function resolveProblemTaxa(){
+	public function resolveProblemTaxa(): void
+	{
 		if($this->problemTaxa){
-			//$taxHarvester = new TaxonomyHarvester();
 			echo '<table class="styledtable" style="font-family:Arial;font-size:12px;">';
 			echo '<tr><th>Cnt</th><th>Name</th><th>Actions</th></tr>';
 			$cnt = 1;
@@ -158,29 +160,6 @@ class ChecklistLoaderManager {
 				echo '<td>'.$cnt.'</td>';
 				echo '<td>'.$nameStr.'</td>';
 				echo '<td>';
-				//Check taxonomic thesaurus to see if it should be added to thesaurus
-				/*
-				if($taxaArr = $taxHarvester->getEolTaxonArr($nameStr)){
-					if($tid = $taxHarvester->loadNewTaxon($taxaArr)){
-						$this->addTaxonToChecklist($tid);
-
-						echo '<div>';
-
-						echo '</div>';
-					}
-					else{
-						echo '<div>';
-
-						echo '</div>';
-					}
-				}
-				else{
-					//Check database for close matches
-					echo '<div>';
-
-					echo '</div>';
-				}
-				*/
 				echo '</td>';
 				echo '</tr>';
 				flush();
@@ -202,27 +181,31 @@ class ChecklistLoaderManager {
 		return $status;
 	}
 
-	//Setters and getters
-	public function setClid($c){
+	public function setClid($c): void
+	{
 		if($c && is_numeric($c)){
 			$this->clid = $c;
 			$this->setChecklistMetadata();
 		}
 	}
 
-	public function getProblemTaxa(){
+	public function getProblemTaxa(): array
+	{
 		return $this->problemTaxa;
 	}
 
-	public function getErrorArr(){
+	public function getErrorArr(): array
+	{
 		return $this->errorArr;
 	}
 
-	public function getErrorStr(){
+	public function getErrorStr(): string
+	{
 		return $this->errorStr;
 	}
 
-	private function setChecklistMetadata(){
+	private function setChecklistMetadata(): void
+	{
 		if($this->clid){
 			$sql = 'SELECT name, authors, type '.
 				'FROM fmchecklists '.
@@ -237,13 +220,15 @@ class ChecklistLoaderManager {
 		}
 	}
 
-	public function getChecklistMetadata(){
+	public function getChecklistMetadata(): array
+	{
 		return $this->clMeta;
 	}
 
-	public function getThesauri(){
+	public function getThesauri(): array
+	{
 		$retArr = Array();
-		$sql = "SELECT taxauthid, name FROM taxauthority WHERE isactive = 1";
+		$sql = 'SELECT taxauthid, name FROM taxauthority WHERE isactive = 1';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$retArr[$row->taxauthid] = $row->name;
@@ -251,7 +236,6 @@ class ChecklistLoaderManager {
 		return $retArr;
 	}
 
-	//Misc functions
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
@@ -259,30 +243,26 @@ class ChecklistLoaderManager {
 		return $newStr;
 	}
 
-	private function encodeString($inStr){
+	private function encodeString($inStr): string
+	{
 		global $CHARSET;
 		$retStr = $inStr;
-		//Get rid of curly quotes
-		//Get rid of Windows curly (smart) quotes
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
 		$inStr= str_replace($search, $replace, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
+			if(strtolower($CHARSET) === "utf-8" || strtolower($CHARSET) === "utf8"){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
+			elseif(strtolower($CHARSET) === 'iso-8859-1'){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
 					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
 				}
 			}
  		}
 		return $retStr;
 	}
 }
-?>

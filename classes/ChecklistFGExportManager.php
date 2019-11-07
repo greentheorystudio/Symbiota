@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class ChecklistFGExportManager {
 
@@ -11,9 +11,8 @@ class ChecklistFGExportManager {
     private $linkTable = '';
     private $sqlWhereVar = '';
     private $sqlTaxaStr = '';
-	private $taxaList = Array();
-    private $dataArr = Array();
-	private $language = "English";
+	private $dataArr = Array();
+	private $language = 'English';
     private $index = 0;
     private $recLimit = 0;
 	private $thesFilter = 1;
@@ -23,15 +22,19 @@ class ChecklistFGExportManager {
     private $photogIdArr = array();
     private $maxPhoto = 0;
 
-	function __construct() {
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
+	public function __construct() {
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 	}
 
-	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+ 		if(!($this->conn === false)) {
+            $this->conn->close();
+        }
 	}
 
-	public function setClValue($clValue){
+	public function setClValue($clValue): string
+    {
 		$retStr = '';
 		$clValue = $this->conn->real_escape_string($clValue);
 		if(is_numeric($clValue)){
@@ -53,11 +56,10 @@ class ChecklistFGExportManager {
 				trigger_error('ERROR setting checklist ID, SQL: '.$sql, E_USER_ERROR);
 			}
 		}
-		//Get children checklists
 		$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
 		$sqlChild = $sqlChildBase.$this->clid.')';
 		do{
-			$childStr = "";
+			$childStr = '';
 			$rsChild = $this->conn->query($sqlChild);
 			while($rChild = $rsChild->fetch_object()){
 				$this->childClidArr[] = $rChild->clidchild;
@@ -68,13 +70,15 @@ class ChecklistFGExportManager {
 		return $retStr;
 	}
 
-	public function setDynClid($did){
+	public function setDynClid($did): void
+    {
 		if(is_numeric($did)){
 			$this->dynClid = $did;
 		}
 	}
 
-    public function setSqlVars(){
+    public function setSqlVars(): void
+    {
         if($this->clid){
             $clidStr = $this->clid;
             if($this->childClidArr){
@@ -89,27 +93,33 @@ class ChecklistFGExportManager {
         }
     }
 
-    public function primeDataArr(){
+    public function primeDataArr(): void
+    {
         $taxaArr = array();
         $sql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
             'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxstatus AS ts ON ctl.tid = ts.tid '.
             'LEFT JOIN taxa AS t ON ts.tidaccepted = t.TID '.
             'WHERE (ts.taxauthid = '.$this->thesFilter.') AND '.$this->sqlWhereVar.' '.
             'ORDER BY ts.family, t.sciname ';
-        if($this->index || $this->recLimit) $sql .= "LIMIT ".$this->index.",".$this->recLimit;
+        if($this->index || $this->recLimit) {
+            $sql .= 'LIMIT ' . $this->index . ',' . $this->recLimit;
+        }
         //echo $sql; exit;
         $rs = $this->conn->query($sql);
         while($row = $rs->fetch_object()){
-            $this->dataArr[$row->tid]["sciname"] = $row->sciname;
-            $this->dataArr[$row->tid]["family"] = $row->family;
-            $this->dataArr[$row->tid]["author"] = $row->author;
-            if($row->tid) $taxaArr[] = $row->tid;
+            $this->dataArr[$row->tid]['sciname'] = $row->sciname;
+            $this->dataArr[$row->tid]['family'] = $row->family;
+            $this->dataArr[$row->tid]['author'] = $row->author;
+            if($row->tid) {
+                $taxaArr[] = $row->tid;
+            }
         }
         $rs->free();
         $this->sqlTaxaStr = implode(',',$taxaArr);
     }
 
-    public function primeOrderData(){
+    public function primeOrderData(): void
+    {
         if($this->sqlTaxaStr){
             $sql = 'SELECT te.tid, t.SciName AS taxonOrder '.
                 'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
@@ -117,13 +127,14 @@ class ChecklistFGExportManager {
             //echo $sql; exit;
             $rs = $this->conn->query($sql);
             while($row = $rs->fetch_object()){
-                $this->dataArr[$row->tid]["order"] = $row->taxonOrder;
+                $this->dataArr[$row->tid]['order'] = $row->taxonOrder;
             }
             $rs->free();
         }
     }
 
-    public function primeDescData(){
+    public function primeDescData(): void
+    {
         if($this->sqlTaxaStr){
             $sql = 'SELECT tdb.tid, tdb.caption, tdb.source, tds.tdsid, tds.heading, tds.statement, tds.displayheader '.
                 'FROM taxadescrblock AS tdb LEFT JOIN taxadescrstmts AS tds ON tdb.tdbid = tds.tdbid '.
@@ -135,15 +146,16 @@ class ChecklistFGExportManager {
                 $heading = ($row->displayheader?strip_tags($row->heading):'');
                 $statement = strip_tags($row->statement);
                 $source = strip_tags($row->source);
-                $this->dataArr[$row->tid]["desc"][$row->caption]['source'] = $this->cleanOutStr(htmlspecialchars_decode($source));
-                $this->dataArr[$row->tid]["desc"][$row->caption][$row->tdsid]['heading'] = $this->cleanOutStr(htmlspecialchars_decode($heading));
-                $this->dataArr[$row->tid]["desc"][$row->caption][$row->tdsid]['statement'] = $this->cleanOutStr(htmlspecialchars_decode($statement));
+                $this->dataArr[$row->tid]['desc'][$row->caption]['source'] = $this->cleanOutStr(htmlspecialchars_decode($source));
+                $this->dataArr[$row->tid]['desc'][$row->caption][$row->tdsid]['heading'] = $this->cleanOutStr(htmlspecialchars_decode($heading));
+                $this->dataArr[$row->tid]['desc'][$row->caption][$row->tdsid]['statement'] = $this->cleanOutStr(htmlspecialchars_decode($statement));
             }
             $rs->free();
         }
     }
 
-    public function primeVernaculars(){
+    public function primeVernaculars(): void
+    {
         if($this->sqlTaxaStr){
             $sql = 'SELECT v.tid, v.VernacularName '.
                 'FROM taxavernaculars AS v '.
@@ -152,13 +164,14 @@ class ChecklistFGExportManager {
             //echo $sql; exit;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
-                $this->dataArr[$row->tid]["vern"][] = strtoupper($row->VernacularName);
+                $this->dataArr[$row->tid]['vern'][] = strtoupper($row->VernacularName);
             }
             $result->free();
         }
     }
 
-    public function primeImages(){
+    public function primeImages(): void
+    {
         if($this->sqlTaxaStr && ($this->maxPhoto > 0)){
             $photogNameStr = '';
             $photogIdStr = '';
@@ -168,7 +181,7 @@ class ChecklistFGExportManager {
                 $photogNameStr .= '"';
             }
             if($this->photogIdArr){
-                $photogIdStr .= implode(",",$this->photogIdArr);
+                $photogIdStr .= implode(',',$this->photogIdArr);
             }
             $sql = 'SELECT ti.tid, ti.imgid, ti.thumbnailurl, ti.url, ti.`owner`, '.
                 'IFNULL(ti.photographer,IFNULL(CONCAT_WS(" ",u.firstname,u.lastname),CONCAT_WS(" ",u2.firstname,u2.lastname))) AS photographer '.
@@ -179,9 +192,15 @@ class ChecklistFGExportManager {
                 'WHERE ts.taxauthid = '.$this->thesFilter.' AND ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
             if($photogNameStr || $photogIdStr){
                 $tempSql = 'AND (';
-                if($photogNameStr) $tempSql .= '(ti.photographer IN('.$photogNameStr.'))';
-                if($photogNameStr && $photogIdStr) $tempSql .= ' OR ';
-                if($photogIdStr) $tempSql .= '(ti.photographeruid IN('.$photogIdStr.'))';
+                if($photogNameStr) {
+                    $tempSql .= '(ti.photographer IN(' . $photogNameStr . '))';
+                }
+                if($photogNameStr && $photogIdStr) {
+                    $tempSql .= ' OR ';
+                }
+                if($photogIdStr) {
+                    $tempSql .= '(ti.photographeruid IN(' . $photogIdStr . '))';
+                }
                 $tempSql .= ') ';
                 $sql .= $tempSql;
             }
@@ -191,17 +210,19 @@ class ChecklistFGExportManager {
             $currTid = 0;
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){
-                if($currTid != $row->tid){
+                if($currTid !== $row->tid){
                     $currTid = $row->tid;
                     $i = 0;
                 }
                 if($i < $this->maxPhoto){
                     $imgUrl = $row->thumbnailurl;
-                    if((!$imgUrl || $imgUrl == 'empty') && $row->url) $imgUrl = $row->url;
-                    $this->dataArr[$row->tid]["img"][$row->imgid]['id'] = $row->imgid;
-                    $this->dataArr[$row->tid]["img"][$row->imgid]['url'] = $imgUrl;
-                    $this->dataArr[$row->tid]["img"][$row->imgid]['owner'] = $row->owner;
-                    $this->dataArr[$row->tid]["img"][$row->imgid]['photographer'] = $this->cleanOutStr(htmlspecialchars_decode($row->photographer));
+                    if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
+                        $imgUrl = $row->url;
+                    }
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['id'] = $row->imgid;
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['url'] = $imgUrl;
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['owner'] = $row->owner;
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['photographer'] = $this->cleanOutStr(htmlspecialchars_decode($row->photographer));
                 }
                 $i++;
             }
@@ -216,19 +237,25 @@ class ChecklistFGExportManager {
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $imgUrl = $row->thumbnailurl;
-            if((!$imgUrl || $imgUrl == 'empty') && $row->url) $imgUrl = $row->url;
+            if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
+                $imgUrl = $row->url;
+            }
         }
         $result->free();
         return $imgUrl;
     }
 
-    public function getImageDataUrl($url){
+    public function getImageDataUrl($url): string
+    {
         $type = pathinfo($url, PATHINFO_EXTENSION);
         $dataType = '';
         $base64 = '';
-        $data = '';
-        if(strtolower($type) == 'jpg' || strtolower($type) == 'jpeg') $dataType = 'jpg';
-        if(strtolower($type) == 'png') $dataType = 'png';
+        if(strtolower($type) === 'jpg' || strtolower($type) === 'jpeg') {
+            $dataType = 'jpg';
+        }
+        if(strtolower($type) === 'png') {
+            $dataType = 'png';
+        }
         if($dataType){
             @$data = file_get_contents($url);
             if($data){
@@ -239,7 +266,8 @@ class ChecklistFGExportManager {
         return $base64;
     }
 
-    public function getDescSourceList(){
+    public function getDescSourceList(): array
+    {
         $descSourceList = Array();
         $sql = 'SELECT DISTINCT tdb.caption '.
             'FROM taxadescrblock AS tdb '.
@@ -254,7 +282,8 @@ class ChecklistFGExportManager {
         return $descSourceList;
     }
 
-    public function getPhotogList(){
+    public function getPhotogList(): array
+    {
         $photogList = Array();
         $sql = 'SELECT DISTINCT ti.photographeruid, ti.photographer, u.firstname, u.lastname '.
             'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
@@ -279,8 +308,8 @@ class ChecklistFGExportManager {
         return $photogList;
     }
 
-    //Setters and getters
-    public function setThesFilter($filt){
+    public function setThesFilter($filt): void
+    {
 		$this->thesFilter = $filt;
 	}
 
@@ -288,11 +317,13 @@ class ChecklistFGExportManager {
 		return $this->clid;
 	}
 
-	public function getChildClidArr(){
+	public function getChildClidArr(): array
+    {
 		return $this->childClidArr;
 	}
 
-	public function setProj($pValue){
+	public function setProj($pValue): string
+    {
 		$sql = 'SELECT pid, projname FROM fmprojects ';
 		if(is_numeric($pValue)){
 			$sql .= 'WHERE (pid = '.$pValue.')';
@@ -318,12 +349,13 @@ class ChecklistFGExportManager {
 		return $this->pid;
 	}
 
-	public function setLanguage($l){
+	public function setLanguage($l): void
+    {
 		$l = strtolower($l);
-		if($l == "en"){
+		if($l === 'en'){
 			$this->language = 'English';
 		}
-		elseif($l == "es"){
+		elseif($l === 'es'){
 			$this->language = 'Spanish';
 		}
 		else{
@@ -331,57 +363,69 @@ class ChecklistFGExportManager {
 		}
 	}
 
-    public function setPhotogJson($json){
+    public function setPhotogJson($json): void
+    {
         $photogArr = json_decode($json,true);
         if(is_array($photogArr)){
             foreach($photogArr as $str){
-                $parts = explode("---",$str);
+                $parts = explode('---',$str);
                 $id = $parts[0];
                 $name = $parts[1];
-                if($id) $this->photogIdArr[] = $id;
-                elseif($name) $this->photogNameArr[] = $name;
+                if($id) {
+                    $this->photogIdArr[] = $id;
+                }
+                elseif($name) {
+                    $this->photogNameArr[] = $name;
+                }
             }
         }
-        elseif($photogArr != 'all'){
+        elseif($photogArr !== 'all'){
             $this->maxPhoto = 0;
         }
     }
 
-    public function setMaxPhoto($cnt){
+    public function setMaxPhoto($cnt): void
+    {
         $this->maxPhoto = $cnt;
     }
 
-	public function setImageLimit($cnt){
+	public function setImageLimit($cnt): void
+    {
 		$this->imageLimit = $cnt;
 	}
 
-    public function setRecIndex($val){
+    public function setRecIndex($val): void
+    {
         $this->index = $val;
     }
 
-    public function setRecLimit($val){
+    public function setRecLimit($val): void
+    {
         $this->recLimit = $val;
     }
 
-    public function getImageLimit(){
+    public function getImageLimit(): int
+    {
 		return $this->imageLimit;
 	}
 
-	public function setTaxaLimit($cnt){
+	public function setTaxaLimit($cnt): void
+    {
 		$this->taxaLimit = $cnt;
 	}
 
-	public function getTaxaLimit(){
+	public function getTaxaLimit(): int
+    {
 		return $this->taxaLimit;
 	}
 
-    public function getDataArr(){
+    public function getDataArr(): array
+    {
         return $this->dataArr;
     }
 
 	private function cleanOutStr($str){
-		$str = str_replace("&nbsp;"," ",$str);
-        $str = str_replace("&ndash;","-",$str);
+        $str = str_replace(array('&nbsp;', '&ndash;'), array(' ', '-'), $str);
 		return $str;
 	}
 
@@ -392,4 +436,3 @@ class ChecklistFGExportManager {
 		return $newStr;
 	}
 }
-?>

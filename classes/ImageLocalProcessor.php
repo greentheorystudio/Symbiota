@@ -1,6 +1,6 @@
 <?php
 if(isset($SERVER_ROOT) && $SERVER_ROOT){
-	include_once($SERVER_ROOT.'/config/dbconnection.php');
+	include_once($SERVER_ROOT.'/classes/DbConnection.php');
 	include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 	include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 }
@@ -110,8 +110,9 @@ class ImageLocalProcessor {
 		}
 		if($this->dbMetadata){
 			//Set collection
-			if(class_exists('MySQLiConnectionFactory')){
-				$this->conn = MySQLiConnectionFactory::getCon('write');
+			if(class_exists('DbConnection')){
+				$connection = new DbConnection();
+				$this->conn = $connection->getConnection();
 			}
 			elseif(class_exists('ImageBatchConnectionFactory')){
 				$this->conn = ImageBatchConnectionFactory::getCon('write');

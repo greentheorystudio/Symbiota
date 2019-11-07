@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class OccurrenceSupport {
 
@@ -7,7 +7,8 @@ class OccurrenceSupport {
 	private $errorMessage;
 
 	public function __construct(){
-		$this->conn = MySQLiConnectionFactory::getCon("write");
+        $connection = new DbConnection();
+	    $this->conn = $connection->getConnection();
 	}
 
 	public function __destruct(){

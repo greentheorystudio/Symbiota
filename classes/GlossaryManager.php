@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class GlossaryManager{
 
@@ -34,7 +34,8 @@ class GlossaryManager{
 	private $errorStr;
 	
  	public function __construct(){
- 		$this->conn = MySQLiConnectionFactory::getCon("write");
+		$connection = new DbConnection();
+ 		$this->conn = $connection->getConnection();
 		$this->imageRootPath = $GLOBALS["imageRootPath"];
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";  
 		$this->imageRootUrl = $GLOBALS["imageRootUrl"];

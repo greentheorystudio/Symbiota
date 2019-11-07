@@ -1,10 +1,9 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/ChecklistFGExportManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$imgID = array_key_exists("imgid",$_REQUEST)?$_REQUEST["imgid"]:0;
+$imgID = array_key_exists('imgid',$_REQUEST)?$_REQUEST['imgid']:0;
 
 $dataArr = array();
 
@@ -24,4 +23,3 @@ if($imgID){
     }
 }
 echo $returnStr;
-?>
