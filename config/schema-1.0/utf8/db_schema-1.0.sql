@@ -2984,7 +2984,7 @@ DROP TABLE IF EXISTS `userlogin`;
 CREATE TABLE `userlogin` (
   `uid` int(10) unsigned NOT NULL,
   `username` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `alias` varchar(45) DEFAULT NULL,
   `lastlogindate` datetime DEFAULT NULL,
   `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
