@@ -3,7 +3,6 @@ ALTER TABLE `schemaversion`
 
 INSERT IGNORE INTO schemaversion (versionnumber) values ("1.1");
 
-
 #Specimen attribute (traits) model
 CREATE TABLE `tmtraits` (
   `traitid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -329,20 +328,6 @@ INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Im
 INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Diagnostic','Image contains a diagnostic character.','Diagnostic',70);
 INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ImageOfImmature','Image contains the immature organism.','Immature',90);
 
-insert into ctrelationshiptypes (relationship, inverse, collective) values ('Child of', 'Parent of', 'Children');
-insert into ctrelationshiptypes (relationship, inverse, collective) values ('Student of', 'Teacher of', 'Students');
-insert into ctrelationshiptypes (relationship, inverse, collective) values ('Spouse of', 'Spouse of', 'Married to');
-insert into ctrelationshiptypes (relationship, inverse, collective) values ('Could be', 'Confused with', 'Confused with');  -- to accompany notOtherwiseSpecified 
-
-insert into ctnametypes (type) values ('Full Name');
-insert into ctnametypes (type) values ('Initials Last Name');
-insert into ctnametypes (type) values ('Last Name, Initials');
-insert into ctnametypes (type) values ('First Initials Last');
-insert into ctnametypes (type) values ('First Last');
-insert into ctnametypes (type) values ('Standard Abbreviation');
-insert into ctnametypes (type) values ('Standard DwC List');
-insert into ctnametypes (type) values ('Also Known As');
-
 INSERT INTO `referencetype` VALUES ('1', 'Generic', null, 'Title', 'SecondaryTitle', 'PlacePublished', 'Publisher', 'Volume', 'NumberVolumes', 'Number', 'Pages', 'Section', 'TertiaryTitle', 'Edition', 'Date', 'TypeWork', 'ShortTitle', 'AlternativeTitle', 'Isbn_Issn', 'Figures', null, '2014-06-17 00:27:12');
 INSERT INTO `referencetype` VALUES ('2', 'Journal Article', null, 'Title', 'Periodical Title', null, null, 'Volume', null, 'Issue', 'Pages', null, null, null, 'Date', null, 'Short Title', 'Alt. Jour.', null, 'Figures', null, '2014-06-17 00:27:12');
 INSERT INTO `referencetype` VALUES ('3', 'Book', '1', 'Title', 'Series Title', 'City', 'Publisher', 'Volume', 'No. Vols.', 'Number', 'Pages', null, null, 'Edition', 'Date', null, 'Short Title', null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
@@ -556,11 +541,7 @@ ALTER TABLE `omoccurrences`
 ALTER TABLE `omoccurdeterminations` 
   CHANGE COLUMN `identificationRemarks` `identificationRemarks` VARCHAR(500) NULL DEFAULT NULL ;
 
-ALTER TABLE `salixwordstats` 
-  ADD INDEX `INDEX_secondword` (`secondword` ASC);
-
-
-ALTER TABLE `users` 
+ALTER TABLE `users`
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `accessrights`;
 
 
@@ -909,14 +890,3 @@ CREATE TABLE `useraccesstokens` (
 ALTER TABLE `omoccurrencesfulltext` 
   DROP COLUMN `collid`,
   DROP INDEX `Index_occurfull_collid` ;
-
-
-
-
-
-
-#Review pubprofile (adminpublications)
-
-
-#Collection GUID issue
-
