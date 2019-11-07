@@ -1,7 +1,6 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyDataManager.php');
-include_once($SERVER_ROOT.'/content/lang/ident/key.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $isEditor = false;
@@ -50,7 +49,7 @@ if($chars){
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['WEBKEY'];?>
+	<title><?php echo $DEFAULT_TITLE; ?> Web-Key
         <?php echo preg_replace('/\<[^\>]+\>/','',$dataManager->getClName()); ?>
     </title>
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -65,48 +64,28 @@ if($chars){
 </head>
 <body>
 	<?php 
-	$displayLeftMenu = (isset($ident_keyMenu)?$ident_keyMenu:true);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($ident_keyCrumbs)){
-		if($ident_keyCrumbs){
-			echo '<div class="navpath">';
-			if($dynClid){
-				if($dataManager->getClType() == 'Specimen Checklist'){
-					echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
-					echo 'Occurrence Checklist';
-					echo '</a> &gt; ';
-				}
-			}
-			else{
-				echo $ident_keyCrumbs;
-			}
-			echo ' <b>'.$dataManager->getClName().' Key</b>';
-			echo '</div>';
-		}
-	}
-	else{
-		echo '<div class="navpath">';
-		echo '<a href="../index.php">'.$LANG['HOME'].'</a> &gt;&gt; ';
-		if($dynClid){
-			if($dataManager->getClType() == 'Specimen Checklist'){
-				echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
-				echo 'Occurrence Checklist';
-				echo '</a> &gt;&gt; ';
-			}
-		}
-		elseif($clid){
-			echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
-			echo 'Checklist: '.$dataManager->getClName();
-			echo '</a> &gt;&gt; ';
-		}
-		elseif($pid){
-			echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
-			echo 'Project Checklists';
-			echo '</a> &gt;&gt; ';
-		}
-		echo '<b>Key: '.$dataManager->getClName().'</b>';
-		echo '</div>';
-	}
+    echo '<div class="navpath">';
+    echo '<a href="../index.php">Home</a> &gt;&gt; ';
+    if($dynClid){
+        if($dataManager->getClType() == 'Specimen Checklist'){
+            echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
+            echo 'Occurrence Checklist';
+            echo '</a> &gt;&gt; ';
+        }
+    }
+    elseif($clid){
+        echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
+        echo 'Checklist: '.$dataManager->getClName();
+        echo '</a> &gt;&gt; ';
+    }
+    elseif($pid){
+        echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+        echo 'Project Checklists';
+        echo '</a> &gt;&gt; ';
+    }
+    echo '<b>Key: '.$dataManager->getClName().'</b>';
+    echo '</div>';
 	
 ?>
 <div id="innertext">
@@ -124,10 +103,10 @@ if($chars){
 			<tr>
                 <td id="keycharcolumn">
                     <div>
-                        <div style="font-weight:bold;margin-top:0.5em;"><?php echo $LANG['TAXON'];?>:</div>
+                        <div style="font-weight:bold;margin-top:0.5em;">Taxon:</div>
                         <select name="taxon">
                             <?php
-                                echo "<option value='All Species'>".$LANG['SELECTTAX']."</option>\n";
+                                echo "<option value='All Species'>-- Select a Taxonomic Group --</option>\n";
                                 $selectList = Array();
                                 $selectList = $dataManager->getTaxaFilterList();
                                 foreach($selectList as $value){
@@ -142,7 +121,7 @@ if($chars){
                         <input type="hidden" id="dynclid" name="dynclid" value="<?php echo $dynClid; ?>" />
                         <input type="hidden" id="proj" name="proj" value="<?php echo $projValue; ?>" />
                         <input type="hidden" id="rv" name="rv" value="<?php echo $dataManager->getRelevanceValue(); ?>" />
-                        <input type="submit" name="submitbutton" id="submitbutton" value="<?php echo $LANG['DISPRESSPEC'];?>"/>
+                        <input type="submit" name="submitbutton" id="submitbutton" value="Display/Reset Species List"/>
                     </div>
                     <hr size="2" />
 
@@ -156,7 +135,7 @@ if($chars){
                         }
                         echo "</select></div>\n";
                     }
-                    echo "<div style='margin:5px'>".$LANG['DISPLAY'].": <select name='displaymode' onchange='javascript: document.getElementById(\"keyform\").submit();'><option value='0'>".$LANG['SCINAME']."</option><option value='1'".($displayMode?" SELECTED":"").">".$LANG['COMMON']."</option></select></div>";
+                    echo "<div style='margin:5px'>Display as: <select name='displaymode' onchange='javascript: document.getElementById(\"keyform\").submit();'><option value='0'>Scientific Name</option><option value='1'".($displayMode?" SELECTED":"").">Common Name</option></select></div>";
                     if($chars){
                         //echo "<div id='showall' class='dynamControl' style='display:none'><a href='#' onclick='javascript: toggleAll();'>Show All Characters</a></div>\n";
                         //echo "<div class='dynamControl' style='display:block'><a href='#' onclick='javascript: toggleAll();'>Hide Advanced Characters</a></div>\n";
@@ -192,10 +171,10 @@ if($chars){
                             <?php
                             $count = $dataManager->getTaxaCount();
                             if($count > 0){
-                                echo "<tr><td colspan='2'>".$LANG['SPECCOUNT'].": ".$count."</td></tr>\n";
+                                echo "<tr><td colspan='2'>Species Count: ".$count."</td></tr>\n";
                             }
                             else{
-                                    echo "<tr><td colspan='2'>".$LANG['NOMATCHING']."</td></tr>\n";
+                                    echo "<tr><td colspan='2'>There are no species matching your criteria. Please deselect some characters to make the search less restrictive.</td></tr>\n";
                             }
                             ksort($taxa);
                             foreach($taxa as $family => $species){
@@ -206,7 +185,7 @@ if($chars){
                                     echo "<tr><td><div style='margin:0px 5px 0px 10px;'><a href='".$newSpLink."' target='_blank'><i>$disName</i></a></div></td>\n";
                                     echo "<td align='right'>\n";
                                     if($isEditor){
-                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.png' width='15px' border='0' title='".$LANG['EDITMORP']."' /></a>\n";
+                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.png' width='15px' border='0' title='Edit morphology' /></a>\n";
                                     }
                                     echo "</td></tr>\n";
                                 }

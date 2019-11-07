@@ -107,25 +107,14 @@ if($isEditor){
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($taxa_admin_taxaloaderMenu)?$taxa_admin_taxaloaderMenu:false);
 include($SERVER_ROOT.'/header.php');
-if(isset($taxa_admin_taxaloaderCrumbs)){
-	if($taxa_admin_taxaloaderCrumbs){
-		echo '<div class="navpath">';
-		echo $taxa_admin_taxaloaderCrumbs;
-		echo ' <b>Taxa Batch Loader</b>';
-		echo '</div>';
-	}
-}
-else{
-	?>
-	<div class="navpath">
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="taxonomydisplay.php"><b>Taxonomic Tree Viewer</b></a> &gt;&gt;
-		<a href="batchloader.php"><b>Taxa Batch Loader</b></a>
-	</div>
-	<?php
-}
+?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <a href="taxonomydisplay.php"><b>Taxonomic Tree Viewer</b></a> &gt;&gt;
+    <a href="batchloader.php"><b>Taxa Batch Loader</b></a>
+</div>
+<?php
 
 if($isEditor){
 	?>

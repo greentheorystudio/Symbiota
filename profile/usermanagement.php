@@ -46,16 +46,8 @@ if($IS_ADMIN){
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($profile_usermanagementMenu)?$profile_usermanagementMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($profile_usermanagementCrumbs)){
-		echo "<div class='navpath'>";
-		echo "<a href='../index.php'>Home</a> &gt; ";
-		echo $profile_usermanagementCrumbs;
-		echo " <b>User Management</b>"; 
-		echo "</div>";
-	}
-	?> 
+	?>
 	<!-- This is inner text! --> 
 	<div id="innertext">
 		<div style="float:right;">

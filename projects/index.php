@@ -1,7 +1,6 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
-include_once($SERVER_ROOT.'/content/lang/projects/index.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:""; 
@@ -66,7 +65,7 @@ if(!$researchList && !$editMode){
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['INVPROJ'];?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> Inventory Projects</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />
@@ -127,15 +126,15 @@ if(!$researchList && !$editMode){
 
 		function validateProjectForm(f){
 			if(f.projname.value == ""){
-				alert("<?php echo $LANG['PROJNAMEEMP'];?>.");
+				alert("Project name field cannot be empty.");
 				return false;
 			}
 			else if(!isNumeric(f.sortsequence.value)){
-				alert("<?php echo $LANG['ONLYNUMER'];?>.");
+				alert("Sort sequence can only be a numeric value.");
 				return false;
 			}
 			else if(f.fulldescription.value.length > 2000){
-				alert("<?php echo $LANG['DESCMAXCHAR'];?>" + f.fulldescription.value.length + " <?php echo $LANG['CHARLONG'];?>.");
+				alert("Description can only have a maximum of 2000 characters. The description is currently " + f.fulldescription.value.length + " characters long.");
 				return false;
 			}
 			return true;
@@ -143,7 +142,7 @@ if(!$researchList && !$editMode){
 
 		function validateChecklistForm(f){
 			if(f.clid.value == ""){
-				alert("<?php echo $LANG['SELECTCHECKPULL'];?>");
+				alert("Choose a checklist from the pull-down");
 				return false;
 			}
 			return true;
@@ -151,7 +150,7 @@ if(!$researchList && !$editMode){
 
 		function validateManagerAddForm(f){
 			if(f.uid.value == ""){
-				alert("<?php echo $LANG['CHOOSEUSER'];?>");
+				alert("Choose a user from the pull-down");
 				return false;
 			}
 			return true;
@@ -174,15 +173,9 @@ if(!$researchList && !$editMode){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($projects_indexMenu)?$projects_indexMenu:"true");
 	include($SERVER_ROOT.'/header.php');
 	echo "<div class='navpath'>";
-	if(isset($projects_indexCrumbs) && $projArr){
-		if($projects_indexCrumbs) echo $projects_indexCrumbs.' &gt;&gt; ';
-	}
-	else{
-		echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-	}
+    echo "<a href='../index.php'>Home</a> &gt;&gt; ";
 	echo '<b><a href="index.php?pid='.$pid.'">'.($projArr?$projArr['projname']:'Inventory Project List').'</a></b>';
 	echo "</div>";
 	?>
@@ -202,7 +195,7 @@ if(!$researchList && !$editMode){
 		if($pid || $newProj){
 			if($isEditor && !$newProj){
 				?>
-				<div style="float:right;" title="<?php echo $LANG['TOGGLEEDIT'];?>">
+				<div style="float:right;" title="Toggle Editing Functions">
 					<a href="#" onclick="toggleById('tabs');return false;"><img style="border:0px;" src="../images/edit.png"/></a>
 				</div>
 				<?php 
@@ -212,7 +205,7 @@ if(!$researchList && !$editMode){
 				<h1><?php echo $projArr["projname"]; ?></h1>
 				<div style='margin: 10px;'>
 					<div>
-						<b><?php echo $LANG['PROJMANAG'];?></b>
+						<b>Project Managers:</b>
 						<?php echo $projArr["managers"];?>
 					</div>
 					<div style='margin-top:10px;'>
@@ -228,12 +221,12 @@ if(!$researchList && !$editMode){
 				?>
 				<div id="tabs" style="height:550px;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
 					<ul>
-						<li><a href="#mdtab"><span><?php echo $LANG['METADATA'];?></span></a></li>
+						<li><a href="#mdtab"><span>Metadata</span></a></li>
 						<?php
 						if($pid){
 							?>
-							<li><a href="managertab.php?pid=<?php echo $pid; ?>"><span><?php echo $LANG['INVMANAG'];?></span></a></li>
-							<li><a href="checklisttab.php?pid=<?php echo $pid; ?>"><span><?php echo $LANG['CHECKMANAG'];?></span></a></li>
+							<li><a href="managertab.php?pid=<?php echo $pid; ?>"><span>Inventory Managers</span></a></li>
+							<li><a href="checklisttab.php?pid=<?php echo $pid; ?>"><span>Checklist Management</span></a></li>
 							<?php
 						}
 						?>
@@ -245,7 +238,7 @@ if(!$researchList && !$editMode){
 								<table style="width:100%;">
 									<tr>
 										<td>
-											<?php echo $LANG['PROJNAME'];?>:
+                                            Project Name:
 										</td>
 										<td>
 											<input type="text" name="projname" value="<?php if($projArr) echo htmlentities($projArr["projname"]); ?>" style="width:95%;"/>
@@ -253,7 +246,7 @@ if(!$researchList && !$editMode){
 									</tr>	
 									<tr>
 										<td>
-											<?php echo $LANG['MANAG'];?>:
+                                            Managers:
 										</td>
 										<td>
 											<input type="text" name="managers" value="<?php if($projArr) echo htmlentities($projArr["managers"]); ?>" style="width:95%;"/>
@@ -261,7 +254,7 @@ if(!$researchList && !$editMode){
 									</tr>	
 									<tr>
 										<td>
-											<?php echo $LANG['DESCRIP'];?>:
+                                            Description:
 										</td>
 										<td>
 											<textarea rows="8" cols="45" name="fulldescription" maxlength="2000" style="width:95%"><?php if($projArr) echo htmlentities($projArr["fulldescription"]);?></textarea>
@@ -269,7 +262,7 @@ if(!$researchList && !$editMode){
 									</tr>	
 									<tr>
 										<td>
-											<?php echo $LANG['NOTES'];?>:
+                                            Notes:
 										</td>
 										<td>
 											<input type="text" name="notes" value="<?php if($projArr) echo htmlentities($projArr["notes"]);?>" style="width:95%;"/>
@@ -277,19 +270,19 @@ if(!$researchList && !$editMode){
 									</tr>	
 									<tr>
 										<td>
-											<?php echo $LANG['ACCESS'];?>:
+                                            Access:
 										</td>
 										<td>
 											<select name="ispublic">
-												<option value="0"><?php echo $LANG['PRIVATE'];?></option>
-												<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>><?php echo $LANG['PUBLIC'];?></option>
+												<option value="0">Private</option>
+												<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>>Public</option>
 											</select>
 										</td>
 									</tr>
 									<!-- 
 									<tr>
 										<td>
-											<?php echo $LANG['SORTSEQ'];?>:
+											Sort Sequence:
 										</td>
 										<td>
 											<input type="text" name="sortsequence" value="<?php if($projArr) echo $projArr["sortsequence"];?>" style="width:40;"/>
@@ -302,7 +295,7 @@ if(!$researchList && !$editMode){
 												<?php 
 												if($newProj){
 													?>
-													<input type="submit" name="submit" value="<?php echo $LANG['ADDNEWPR'];?>" />
+													<input type="submit" name="submit" value="Add New Project" />
 													<input type="hidden" name="projsubmit" value="addnewproj" />
 													<?php
 												}
@@ -310,7 +303,7 @@ if(!$researchList && !$editMode){
 													?>
 													<input type="hidden" name="pid" value="<?php echo $pid;?>">
 													<input type="hidden" name="projsubmit" value="subedit" />
-													<input type="submit" name="submit" value="<?php echo $LANG['SUBMITEDIT'];?>" />
+													<input type="submit" name="submit" value="Submit Edits" />
 													<?php 
 												}
 												?>
@@ -329,7 +322,7 @@ if(!$researchList && !$editMode){
 									<input type="hidden" name="pid" value="<?php echo $pid;?>">
 									<input type="hidden" name="projsubmit" value="subdelete" />
 									<?php 
-									echo '<input type="submit" name="submit" value="'.$LANG['SUBMITDELETE'].'" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
+									echo '<input type="submit" name="submit" value="Delete Project" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
 									echo '<div style="margin:10px;color:orange">';
 									if(count($managerArr) > 1){
 										echo 'Inventory project cannot be deleted until all other managers are removed as project managers';
@@ -355,24 +348,28 @@ if(!$researchList && !$editMode){
 					if($researchList){
 						?>
 						<div style="font-weight:bold;font-size:130%;">
-							<?php echo $LANG['RESCHECK'];?>
-							<span onclick="toggleResearchInfoBox(this);" title="<?php echo $LANG['QUESRESSPEC'];?>" style="cursor:pointer;">
+                            Research Checklists
+							<span onclick="toggleResearchInfoBox(this);" title="What is a Research Species List?" style="cursor:pointer;">
 								<img src="../images/qmark_big.png" style="height:15px;"/>
 							</span> 
-							<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="<?php echo $LANG['MAPCHECK'];?>">
+							<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
 								<img src='../images/world.png' style='width:14px;border:0' />
 							</a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
 							<img src="../images/uptriangle.png" style="position: relative; top: -22px; left: 30px;" />
-							<?php echo $LANG['RESCHECKQUES'];?>
+                            Research checklists are pre-compiled by biologists.
+                            This is a very controlled method for building a species list, which allows for
+                            specific specimens to be linked to the species names within the checklist and thus serve as vouchers.
+                            Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
+                            can inspect these specimens for verification or annotate the identification when necessary.
 						</div>
 						<?php 
 						if($KEY_MOD_IS_ACTIVE){
 							?>
 							<div style="margin-left:15px;font-size:90%">
-								<?php echo $LANG['THE'];?> <img src="../images/key.png" style="width: 12px;" alt="Golden Key Symbol" />
-								<?php echo $LANG['SYMBOLOPEN'];?>.
+                                The <img src="../images/key.png" style="width: 12px;" alt="Golden Key Symbol" />
+                                symbol opens the species list as an interactive key.
 							</div>
 							<?php
 						}
@@ -381,9 +378,9 @@ if(!$researchList && !$editMode){
 							?>
 							<div style="float:right;text-align:center;">
 								<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
-									<img src="<?php echo $gMapUrl; ?>" title="<?php echo $LANG['MAPREP'];?>" alt="Map representation of checklists" />
+									<img src="<?php echo $gMapUrl; ?>" title="Map representation of checklists" alt="Map representation of checklists" />
 									<br/>
-									<?php echo $LANG['OPENMAP'];?>
+                                    Click to Open Map
 								</a>
 							</div>
 							<?php
@@ -426,8 +423,8 @@ if(!$researchList && !$editMode){
 			foreach($projectArr as $pid => $projList){
 				?>
 				<h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList["projname"]; ?></a></h2>
-				<div style="margin:0px 0px 30px 15px;">
-					<div><b><?php echo $LANG['MANAG'];?>:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
+				<div style="margin:0 0 30px 15px;">
+					<div><b>Managers:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
 					<div style='margin-top:10px;'><?php echo $projList["descr"]; ?></div>
 				</div>
 				<?php 

@@ -14,7 +14,6 @@ $pManager = new ImageLibraryManager();
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($imagelib_photographersMenu)?$imagelib_photographersMenu:false);
 	include($SERVER_ROOT.'/header.php');
 	?>
 	<div class="navpath">

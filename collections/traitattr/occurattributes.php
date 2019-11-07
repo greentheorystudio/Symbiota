@@ -235,7 +235,6 @@ if($traitID){
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/header.php');
 		if($isEditor == 2){
 			echo '<div style="float:right;margin:0px 3px;font-size:90%">';

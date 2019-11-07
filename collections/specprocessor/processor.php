@@ -41,7 +41,6 @@ $statusStr = "";
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';

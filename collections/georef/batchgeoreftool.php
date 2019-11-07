@@ -95,16 +95,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				</div>
 				<div class='navpath' style="margin:10px;">
 					<a href='../../index.php'>Home</a> &gt;&gt;
-					<?php
-					if(isset($collections_editor_georeftoolsCrumbs)){
-						echo $collections_editor_georeftoolsCrumbs." &gt;&gt;";
-					}
-					else{
-						?>
-						<a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Control Menu</a> &gt;&gt;
-						<?php
-					}
-					?>
+                    <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Control Menu</a> &gt;&gt;
 					<b>Batch Georeferencing Tools</b>
 				</div>
 				<?php

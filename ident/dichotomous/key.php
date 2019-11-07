@@ -53,16 +53,8 @@ $dichoKeyManager = new DichoKeyManager();
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($ident_dichotomous_keyMenu)?$ident_dichotomous_keyMenu:"true");
 	include($SERVER_ROOT."/header.php");
-	if(isset($ident_dichotomous_keyCrumbs)){
-		echo "<div class='navpath'>";
-		echo "<a href='../index.php'>Home</a> &gt; ";
-		echo $ident_dichotomous_keyCrumbs;
-		echo " <b>Dichotomous Key</b>";
-		echo "</div>";
-	}
-	?> 
+	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 

@@ -1,6 +1,5 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $latCenter = 0;
@@ -17,7 +16,7 @@ else{
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE.' - '.$LANG['MPR_TITLE']; ?></title>
+		<title><?php echo $DEFAULT_TITLE.' - Coordinate Mapper'; ?></title>
 	</head>
 	<body style="background-color:#ffffff;">
 	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
@@ -61,13 +60,13 @@ else{
 		google.maps.event.addDomListener(window, 'load', initialize);
 
 	</script>
-    <div><?php echo $LANG['MPR_INSTRUCTIONS']?></div>
+    <div>Click once to capture coordinates. Click on the Submit Coordinate button to transfer Coordinates.</div>
     <div id='map' style='width: 100%; height: 520px'></div>
 	<form id="mapForm" onsubmit="return updateParentForm();">
 		<div>
-			<?php echo $LANG['MPR_LAT']?>: <input type="text" id="latbox" size="13" name="lat" value="" />&nbsp;&nbsp;&nbsp; 
-			<?php echo $LANG['MPR_LNG']?>: <input type="text" id="lonbox" size="13" name="lon" value="" /> &nbsp;&nbsp;&nbsp;
-			<input type="submit" name="addcoords" value="<?php echo $LANG['SUBMIT']; ?>" />	
+            Latitude: <input type="text" id="latbox" size="13" name="lat" value="" />&nbsp;&nbsp;&nbsp;
+            Longitude: <input type="text" id="lonbox" size="13" name="lon" value="" /> &nbsp;&nbsp;&nbsp;
+			<input type="submit" name="addcoords" value="Submit" />
 		</div>
 	</form>
   </body>

@@ -209,23 +209,17 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	$displayLeftMenu = (isset($collections_reports_labelmanagerMenu)?$collections_reports_labelmanagerMenu:false);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<?php
-		if(isset($collections_reports_labelmanagerCrumbs)){
-			echo $collections_reports_labelmanagerCrumbs;
-		}
-		else{
-			if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
-				echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
-			}
-			else{
-				echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
-			}
-		}
+        if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
+            echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
+        }
+        else{
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+        }
 		?>
 		<b>Label/Annotation Printing</b>
 	</div>

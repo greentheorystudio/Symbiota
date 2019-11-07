@@ -214,7 +214,6 @@ $imageExplorer = new ImageExplorer();
 
 
 <?php
-$displayLeftMenu = (isset($imagelib_photographersMenu) ? $imagelib_photographersMenu : false);
 include($SERVER_ROOT . '/header.php');
 echo '<div class="navpath">';
 echo '<a href="../index.php">Home</a> &gt;&gt; ';

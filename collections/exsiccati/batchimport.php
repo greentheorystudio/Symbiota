@@ -120,7 +120,6 @@ if($isEditor && $formSubmit){
 </head>
 <body>
 	<?php 
-	$displayLeftMenu = (isset($collections_exsiccati_batchimport)?$collections_exsiccati_batchimport:false);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>

@@ -1,6 +1,5 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -84,21 +83,11 @@ if($SYMB_UID){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_misc_collprofilesMenu)?$collections_misc_collprofilesMenu:true);
 	include($SERVER_ROOT.'/header.php');
 	echo "<div class='navpath'>";
-	if(isset($collections_misc_collprofilesCrumbs)){
-		if($collections_misc_collprofilesCrumbs){
-			echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
-			echo $collections_misc_collprofilesCrumbs.' &gt;&gt; ';
-			echo "<b>".($collid?$collData[$collid]["collectionname"]:"Collection Profiles")." Details</b>";
-		}
-	}
-	else{
-		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-		echo '<a href="../index.php">'.$LANG['COLLECTION_SEARCH'].'</a> &gt;&gt; ';
-		echo "<b>".($collid?$collData[$collid]["collectionname"]:"Collection Profiles")." Details</b>";
-	}
+    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+    echo '<a href="../index.php">Collection Search Page</a> &gt;&gt; ';
+    echo "<b>".($collid?$collData[$collid]["collectionname"]:"Collection Profiles")." Details</b>";
 	echo "</div>";
 	?>
 
@@ -107,12 +96,12 @@ if($SYMB_UID){
 		<?php
 		if($editCode > 1){
 			if($action == 'UpdateStatistics'){
-				echo '<h2> '.$LANG['UPDATE_STATISTICS'].'</h2>';
+				echo '<h2>Updating statistics related to this collection...</h2>';
 				$collManager->updateStatistics(true);
 				echo '<hr/>';
 			}
             if($action == 'cleanSOLR'){
-                echo '<h2> '.$LANG['CLEAN_SOLR'].'</h2>';
+                echo '<h2>Cleaning SOLR Index...</h2>';
                 $solrManager->cleanSOLRIndex($collid);
                 echo '<hr/>';
             }
@@ -150,7 +139,7 @@ if($SYMB_UID){
 								?>
 								<li>
 									<a href="../editor/observationsubmit.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['SUBMIT_IMAGE_V']; ?>
+                                        Submit an Image Voucher (observation supported by a photo)
 									</a>
 								</li>
 								<?php
@@ -158,7 +147,7 @@ if($SYMB_UID){
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
-									<?php echo $LANG['ADD_NEW_OCCUR']; ?>
+                                    Add New Occurrence Record
 								</a>
 							</li>
 							<?php
@@ -166,12 +155,12 @@ if($SYMB_UID){
 								?>
 								<li style="margin-left:10px">
 									<a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['CREATE_NEW_REC']; ?>
+                                        Create New Records Using Image
 									</a>
 								</li>
 								<li style="margin-left:10px">
 									<a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['SKELETAL']; ?>
+                                        Add Skeletal Records
 									</a>
 								</li>
 								<?php
@@ -179,22 +168,22 @@ if($SYMB_UID){
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>">
-									<?php echo $LANG['EDIT_EXISTING']; ?>
+                                    Edit Existing Occurrence Records
 								</a>
 							</li>
 							<li>
 								<a href="../editor/batchdeterminations.php?collid=<?php echo $collid; ?>">
-									<?php echo $LANG['ADD_BATCH_DETER']; ?>
+                                    Add Batch Determinations/Nomenclatural Adjustments
 								</a>
 							</li>
 							<li>
 								<a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
-									<?php echo $LANG['PRINT_LABELS']; ?>
+                                    Print Labels/Annotations
 								</a>
 							</li>
 							<li>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>">
-									<?php echo $LANG['BATCH_GEOREF']; ?>
+                                    Batch Georeference Specimens
 								</a>
 							</li>
 							<?php
@@ -202,7 +191,7 @@ if($SYMB_UID){
 								?>
 								<li>
 									<a href="../loans/index.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['LOAN_MANAGEMENT']; ?>
+                                        Loan Management
 									</a>
 								</li>
 								<?php
@@ -214,22 +203,22 @@ if($SYMB_UID){
 					if($editCode > 1){
 						?>
 						<fieldset style="padding:10px;padding-left:25px;">
-							<legend><b><?php echo $LANG['ADMIN_CONTROL']; ?></b></legend>
+							<legend><b>Administration Control Panel</b></legend>
 							<ul>
 
                                 <li>
                                     <a href="commentlist.php?collid=<?php echo $collid; ?>" >
-										<?php echo $LANG['VIEW_COMMENTS']; ?>
+                                        View Posted Comments
                                     </a>
                                 </li>
 								<li>
 									<a href="collmetadata.php?collid=<?php echo $collid; ?>" >
-										<?php echo $LANG['EDIT_META']; ?>
+                                        Edit Metadata and Contact Information
 									</a>
 								</li>
 								<li>
 									<a href="collpermissions.php?collid=<?php echo $collid; ?>" >
-										<?php echo $LANG['MANAGE_PERMISSIONS']; ?>
+                                        Manage Permissions
 									</a>
 								</li>
 								<?php
@@ -237,7 +226,7 @@ if($SYMB_UID){
                                     ?>
                                     <li>
                                         <a href="fgbatch.php?collid=<?php echo $collid; ?>" >
-                                            <?php echo (isset($LANG['FIELDGUIDE_BATCH'])?$LANG['FIELDGUIDE_BATCH']:'Fieldguide Batch Image Processing'); ?>
+                                            Fieldguide Batch Image Processing
                                         </a>
                                     </li>
                                     <?php
@@ -246,42 +235,42 @@ if($SYMB_UID){
 									?>
 									<li>
 										<a href="#" onclick="$('li.importItem').show(); return false;" >
-											<?php echo (isset($LANG['IMPORT_SPECIMEN'])?$LANG['IMPORT_SPECIMEN']:'Import/Update Specimen Records'); ?>
+                                            Import/Update Specimen Records
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specupload.php?uploadtype=7&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['SKELETAL_FILE_IMPORT'])?$LANG['SKELETAL_FILE_IMPORT']:'Skeletal File Import'); ?>
+                                            Skeletal File Import
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none">
 										<a href="../admin/specupload.php?uploadtype=3&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['TEXT_FILE_IMPORT'])?$LANG['TEXT_FILE_IMPORT']:'Text File Import'); ?>
+                                            Text File Import
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specupload.php?uploadtype=6&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['DWCA_IMPORT'])?$LANG['DWCA_IMPORT']:'DwC-Archive Import'); ?>
+                                            DwC-Archive Import
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specupload.php?uploadtype=8&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['IPT_IMPORT'])?$LANG['IPT_IMPORT']:'IPT Import'); ?>
+                                            IPT Import
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['NFN_IMPORT'])?$LANG['NFN_IMPORT']:'Notes from Nature Import'); ?>
+                                            Notes from Nature Import
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['IMPORT_PROFILES'])?$LANG['IMPORT_PROFILES']:'Saved Import Profiles'); ?>
+                                            Saved Import Profiles
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specuploadmanagement.php?action=addprofile&collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['CREATE_PROFILE'])?$LANG['CREATE_PROFILE']:'Create a new Import Profile'); ?>
+                                            Create a new Import Profile
 										</a>
 									</li>
 									<?php
@@ -289,12 +278,12 @@ if($SYMB_UID){
 										?>
 										<li>
 											<a href="../specprocessor/index.php?collid=<?php echo $collid; ?>">
-												<?php echo $LANG['PROCESSING_TOOLBOX']; ?>
+                                                Processing Toolbox
 											</a>
 										</li>
 										<li>
 											<a href="../datasets/datapublisher.php?collid=<?php echo $collid; ?>">
-	                                            <?php echo $LANG['DARWIN_CORE_PUB']; ?>
+                                                Darwin Core Archive Publishing
 											</a>
 										</li>
 										<?php
@@ -302,12 +291,12 @@ if($SYMB_UID){
 									?>
 									<li>
 										<a href="../editor/editreviewer.php?collid=<?php echo $collid; ?>">
-											<?php echo $LANG['REVIEW_SPEC_EDITS']; ?>
+                                            Review/Verify Occurrence Edits
 										</a>
 									</li>
 									<li>
 										<a href="../reports/accessreport.php?collid=<?php echo $collid; ?>">
-											<?php echo (isset($LANG['ACCESS_REPORT'])?$LANG['ACCESS_REPORT']:'View Access Statistics'); ?>
+                                            View Access Statistics
 										</a>
 									</li>
 									<?php
@@ -315,18 +304,18 @@ if($SYMB_UID){
 								?>
 								<li>
 									<a href="../datasets/duplicatemanager.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['DUP_CLUSTER']; ?>
+                                        Duplicate Clustering
 									</a>
 								</li>
 								<li>
-									<?php echo $LANG['MAINTENANCE_TASKS']; ?>
+                                    General Maintenance Tasks
 								</li>
 								<?php
 								if($collData['colltype'] != 'General Observations'){
 									?>
 									<li style="margin-left:10px;">
 										<a href="../cleaning/index.php?obsuid=0&collid=<?php echo $collid; ?>">
-	                                        <?php echo $LANG['DATA_CLEANING']; ?>
+                                            Data Cleaning Tools
 										</a>
 									</li>
 									<?php
@@ -334,17 +323,17 @@ if($SYMB_UID){
 								?>
 								<li style="margin-left:10px;">
 									<a href="#" onclick="newWindow = window.open('collbackup.php?collid=<?php echo $collid; ?>','bucollid','scrollbars=1,toolbar=0,resizable=1,width=600,height=250,left=20,top=20');">
-										<?php echo $LANG['BACKUP_DATA_FILE']; ?>
+                                        Download Backup Data File
 									</a>
 								</li>
 								<li style="margin-left:10px;">
 									<a href="../../imagelib/admin/thumbnailbuilder.php?collid=<?php echo $collid; ?>">
-										<?php echo $LANG['THUMBNAIL_MAINTENANCE']; ?>
+                                        Thumbnail Maintenance
 									</a>
 								</li>
 								<li style="margin-left:10px;">
 									<a href="collprofiles.php?collid=<?php echo $collid; ?>&action=UpdateStatistics" >
-										<?php echo $LANG['UPDATE_STATS'];?>
+                                        Update Statistics
 									</a>
 								</li>
                                 <?php
@@ -352,7 +341,7 @@ if($SYMB_UID){
                                     ?>
                                     <li style="margin-left:10px;">
                                         <a href="collprofiles.php?collid=<?php echo $collid; ?>&action=cleanSOLR">
-                                            <?php echo $LANG['CLEAN_SOLR']; ?>
+                                            Clean SOLR Index
                                         </a>
                                     </li>
                                     <?php
@@ -369,7 +358,7 @@ if($SYMB_UID){
 			?>
 			<div style='margin:10px;'>
 				<?php
-				echo $collManager->getMetadataHtml($collData, $LANG);
+				echo $collManager->getMetadataHtml($collData);
                 if($publishGBIF && $datasetKey){
                     $dataUrl = 'http://www.gbif.org/dataset/'.$datasetKey;
                     ?>
@@ -431,9 +420,9 @@ if($SYMB_UID){
 				}
 				?>
 				<div style="clear:both;margin-top:5px;">
-					<div style="font-weight:bold;"><?php echo $LANG['COLL_STATISTICS']; ?></div>
+					<div style="font-weight:bold;">Collection Statistics</div>
 					<ul style="margin-top:5px;">
-						<li><?php echo number_format($statsArr["recordcnt"]).' '.$LANG['SPECIMEN_RECORDS'];?></li>
+						<li><?php echo number_format($statsArr["recordcnt"]);?> occurrence</li>
 						<li><?php echo ($statsArr['georefcnt']?number_format($statsArr['georefcnt']):0).($georefPerc?" (".($georefPerc>1?round($georefPerc):round($georefPerc,2))."%)":'');?> georeferenced</li>
 						<?php
 						if($extrastatsArr){
@@ -444,9 +433,9 @@ if($SYMB_UID){
 							if($extrastatsArr['SpecimensCountID']) echo '<li>'.number_format($extrastatsArr['SpecimensCountID']).($spidPerc?" (".($spidPerc>1?round($spidPerc):round($spidPerc,2))."%)":'').' identified to species</li>';
 						}
 						?>
-						<li><?php echo number_format($statsArr["familycnt"]).' '.$LANG['FAMILIES'];?></li>
-						<li><?php echo number_format($statsArr["genuscnt"]).' '.$LANG['GENERA'];?></li>
-						<li><?php echo number_format($statsArr["speciescnt"]).' '.$LANG['SPECIES'];?></li>
+						<li><?php echo number_format($statsArr["familycnt"]);?> families</li>
+						<li><?php echo number_format($statsArr["genuscnt"]);?> genera</li>
+						<li><?php echo number_format($statsArr["speciescnt"]);?> species</li>
 						<?php
 						if($extrastatsArr&&$extrastatsArr['TotalTaxaCount']) echo '<li>'.number_format($extrastatsArr['TotalTaxaCount']).' total taxa (including subsp. and var.)</li>';
 						//if($extrastatsArr&&$extrastatsArr['TypeCount']) echo '<li>'.number_format($extrastatsArr['TypeCount']).' type specimens</li>';
@@ -455,12 +444,12 @@ if($SYMB_UID){
 				</div>
 			</div>
 			<fieldset style='margin:20px;padding:10px;width:300px;background-color:#FFFFCC;'>
-				<legend><b><?php echo $LANG['EXTRA_STATS']; ?></b></legend>
+				<legend><b>Extra Statistics</b></legend>
 				<div style="margin:3px;">
-					<a href="collprofiles.php?collid=<?php echo $collid; ?>&stat=geography#geographystats" ><?php echo $LANG['SHOW_GEOG_DIST']; ?></a>
+					<a href="collprofiles.php?collid=<?php echo $collid; ?>&stat=geography#geographystats" >Show Geographic Distribution</a>
 				</div>
 				<div style="margin:3px;">
-					<a href="collprofiles.php?collid=<?php echo $collid; ?>&stat=taxonomy#taxonomystats" ><?php echo $LANG['SHOW_FAMILY_DIST']; ?></a>
+					<a href="collprofiles.php?collid=<?php echo $collid; ?>&stat=taxonomy#taxonomystats" >Show Family Distribution</a>
 				</div>
 			</fieldset>
 			<?php
@@ -475,7 +464,7 @@ if($SYMB_UID){
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
 				$serverDomain .= $_SERVER['HTTP_HOST'];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
-				echo (isset($LANG['RSS_FEED'])?$LANG['RSS_FEED']:'RSS feed').': <a href="../datasets/rsshandler.php" target="_blank">'.$serverDomain.$CLIENT_ROOT.'collections/datasets/rsshandler.php</a>';
+				echo 'RSS feed: <a href="../datasets/rsshandler.php" target="_blank">'.$serverDomain.$CLIENT_ROOT.'collections/datasets/rsshandler.php</a>';
 				?>
 				<hr/>
 			</div>
@@ -505,11 +494,11 @@ if($SYMB_UID){
 							</h3>
 							<div style='margin:10px;'>
 								<?php
-								echo $collManager->getMetadataHtml($collArr, $LANG);
+								echo $collManager->getMetadataHtml($collArr);
 								?>
 							</div>
 							<div style='margin:5px 0px 15px 10px;'>
-								<a href='collprofiles.php?collid=<?php echo $cid; ?>'><?php echo $LANG['MORE_INFO']; ?></a>
+								<a href='collprofiles.php?collid=<?php echo $cid; ?>'>More Information</a>
 							</div>
 						</td>
 					</tr>

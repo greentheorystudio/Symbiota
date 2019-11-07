@@ -128,7 +128,6 @@ if($editorCode){
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($collections_admin_institutioneditor)?$collections_admin_institutioneditor:true);
 include($SERVER_ROOT.'/header.php');
 ?>
 <div class='navpath'>

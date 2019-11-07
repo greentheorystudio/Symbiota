@@ -94,15 +94,7 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($collections_misc_rarespeciesMenu)?$collections_misc_rarespeciesMenu:true);
 include($SERVER_ROOT.'/header.php');
-if(isset($collections_misc_rarespeciesCrumbs)){
-	echo "<div class='navpath'>";
-	echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-	echo $collections_misc_rarespeciesCrumbs." &gt;&gt;";
-	echo " <b>Sensitive Species for Masking Locality Details</b>";
-	echo "</div>";
-}
 ?>
 <!-- This is inner text! -->
 <div id="innertext">

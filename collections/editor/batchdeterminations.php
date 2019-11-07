@@ -319,18 +319,12 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	$displayLeftMenu = (isset($collections_batchdeterminationsMenu)?$collections_batchdeterminationsMenu:false);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<?php
-		if(isset($collections_batchdeterminationsMenuCrumbs)){
-			echo $collections_batchdeterminationsMenuCrumbs;
-		}
-		else{
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
-		}
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		?>
 		<b>Batch Determinations/Nomenclatural Adjustments</b>
 	</div>

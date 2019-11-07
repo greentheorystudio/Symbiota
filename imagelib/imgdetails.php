@@ -92,14 +92,7 @@ if($imgArr){
 		}(document, 'script', 'facebook-jssdk'));
 	</script>
 	<?php
-	$displayLeftMenu = (isset($taxa_imgdetailsMenu)?$taxa_imgdetailsMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($taxa_imgdetailsCrumbs)){
-		echo "<div class='navpath'>";
-		echo $taxa_imgdetailsCrumbs;
-		echo " <b>Image #$imgId</b>";
-		echo "</div>";
-	}
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">

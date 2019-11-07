@@ -63,14 +63,7 @@ if($collMap){
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($collections_editor_observationsubmitMenu)?$collections_editor_observationsubmitMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_editor_observationsubmitCrumbs)){
-		echo "<div class='navpath'>";
-		echo $collections_editor_observationsubmitCrumbs;
-		echo "<b>Observation Submission</b>";
-		echo "</div>";
-	}
 	?>
 	<!-- inner text -->
 	<div id="innertext">

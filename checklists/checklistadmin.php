@@ -1,7 +1,6 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?'.$_SERVER['QUERY_STRING']);
 
@@ -61,7 +60,7 @@ $voucherProjects = $clManager->getVoucherProjects();
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
-	<title><?php echo $DEFAULT_TITLE; ?><?php echo $LANG['CHECKADMIN'];?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />
@@ -86,18 +85,17 @@ $voucherProjects = $clManager->getVoucherProjects();
 
 <body>
 <?php
-$displayLeftMenu = false;
 include($SERVER_ROOT.'/header.php');
 ?>
 <div class="navpath">
-	<a href="../index.php"><?php echo $LANG['NAV_HOME'];?></a> &gt;&gt;
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>"><?php echo $LANG['RETURNCHECK'];?></a> &gt;&gt;
-	<b><?php echo $LANG['CHECKADMIN'];?></b>
+	<a href="../index.php">Home</a> &gt;&gt;
+	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+	<b> Checklist Administration</b>
 </div>
 
 <!-- This is inner text! -->
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
+<div style="color:#990000;font-size:20px;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
@@ -117,21 +115,21 @@ if($clid && $isEditor){
 	?>
 	<div id="tabs" style="margin:10px;">
 	<ul>
-		<li><a href="#admintab"><span><?php echo $LANG['ADMIN'];?></span></a></li>
-		<li><a href="checklistadminmeta.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span><?php echo $LANG['DESCRIPTION'];?></span></a></li>
+		<li><a href="#admintab"><span>Admin</span></a></li>
+		<li><a href="checklistadminmeta.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span>Description</span></a></li>
 		<!-- 					<li><a href="#pointtab"><span>Non-vouchered Points</span></a></li> -->
-		<li><a href="checklistadminchildren.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span><?php echo $LANG['RELATEDCHECK'];?></span></a></li>
+		<li><a href="checklistadminchildren.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><span>Related Checklists</span></a></li>
 		<?php
 		if($voucherProjects){
 			?>
-			<li><a href="#imgvouchertab"><?php echo $LANG['ADDIMGV'];?></a></li>
+			<li><a href="#imgvouchertab">Add Image Voucher</a></li>
 		<?php
 		}
 		?>
 	</ul>
 	<div id="admintab">
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;"><?php echo $LANG['CURREDIT'];?></div>
+			<div style="font-weight:bold;font-size:120%;">Current Editors</div>
 			<?php
 			$editorArr = $clManager->getEditors();
 			if($editorArr){
@@ -142,7 +140,7 @@ if($clid && $isEditor){
 						?>
 						<li>
 							<?php echo $uName; ?>
-							<a href="checklistadmin.php?clid=<?php echo $clid.'&deleteuid='.$uid.'&pid='.$pid.'&tabindex='.$tabIndex; ?>" onclick="return confirm(<?php echo $LANG['REMOVEEDITPRIVCONFIRM'];?>);" title="<?php echo $LANG['DELETETHISU'];?>">
+							<a href="checklistadmin.php?clid=<?php echo $clid.'&deleteuid='.$uid.'&pid='.$pid.'&tabindex='.$tabIndex; ?>" onclick="return confirm('Are you sure you want to remove editing rights for this user?');" title="Delete this user">
 								<img src="../images/drop.png" style="width:12px;" />
 							</a>
 						</li>
@@ -153,15 +151,15 @@ if($clid && $isEditor){
 			<?php
 			}
 			else{
-				echo "<div>".$LANG['NOEDITOR']."</div>\n";
+				echo "<div>No one has been explicitly assigned as an editor</div>\n";
 			}
 			?>
 			<fieldset style="margin:40px 5px;padding:15px;">
-				<legend><b><?php echo $LANG['ADDNEWU'];?></b></legend>
+				<legend><b>Add New User</b></legend>
 				<form name="adduser" action="checklistadmin.php" method="post" onsubmit="return verifyAddUser(this)">
 					<div>
 						<select name="editoruid">
-							<option value=""><?php echo $LANG['SELECTU'];?></option>
+							<option value="">Select User</option>
 							<option value="">--------------------</option>
 							<?php
 							$userArr = $clManager->getUserList();
@@ -170,7 +168,7 @@ if($clid && $isEditor){
 							}
 							?>
 						</select>
-						<input name="submit" type="submit" value="<?php echo $LANG['ADDEDITOR'];?>" />
+						<input name="submit" type="submit" value="Add Editor" />
 						<input type="hidden" name="submitaction" value="Addeditor" />
 						<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 						<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
@@ -180,7 +178,7 @@ if($clid && $isEditor){
 		</div>
 		<hr/>
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;"><?php echo $LANG['INVPROJAS'];?></div>
+			<div style="font-weight:bold;font-size:120%;">Inventory Project Assignments</div>
 			<ul>
 				<?php
 				$projArr = $clManager->getInventoryProjects();
@@ -192,22 +190,23 @@ if($clid && $isEditor){
 					}
 				}
 				else{
-					echo '<li>'.$LANG['CHECKNOTAS'].'</li>';
+					echo '<li>Checklist has not been assigned to any inventory projects</li>';
 				}
 				?>
 			</ul>
 		</div>
 		<hr/>
 		<div style="margin:20px;">
-			<div style="font-weight:bold;font-size:120%;"><?php echo $LANG['PERMREMOVECHECK'];?></div>
+			<div style="font-weight:bold;font-size:120%;">Permanently Remove Checklist</div>
 			<div style="margin:10px;">
-				<?php echo $LANG['REMOVEUSERCHECK'];?><br/>
-				<b><?php echo $LANG['WARNINGNOUN'];?></b>
+                Before a checklist can be deleted, all editors (except yourself) and inventory project assignments must be removed.
+                Inventory project assignments can only be removed by active managers of the project or a system administrator. <br/>
+				<b>WARNING: Action cannot be undone.</b>
 			</div>
 			<div style="margin:15px;">
-				<form action="checklistadmin.php" method="post" name="deleteclform" onsubmit="return window.confirm('<?php echo $LANG['CONFIRMDELETE'];?>')">
+				<form action="checklistadmin.php" method="post" name="deleteclform" onsubmit="return window.confirm('Are you sure you want to permanently remove checklist? This action cannot be undone!')">
 					<input name="delclid" type="hidden" value="<?php echo $clid; ?>" />
-					<input name="submit" type="submit" value="<?php echo $LANG['DELETECHECK'];?>" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?> />
+					<input name="submit" type="submit" value="Delete Checklist" <?php if($projArr || count($editorArr) > 1) echo 'DISABLED'; ?> />
 					<input type="hidden" name="submitaction" value="DeleteCheck" />
 				</form>
 			</div>
@@ -262,10 +261,11 @@ if($clid && $isEditor){
 		<div id="imgvouchertab">
 			<form name="addimagevoucher" action="../collections/editor/observationsubmit.php" method="get" target="_blank">
 				<fieldset style="margin:15px;padding:25px;">
-					<legend><b><?php echo $LANG['ADDIMGVOUC'];?></b></legend>
-					<?php echo $LANG['FORMADDVOUCH'];?><br><br>
-					<?php echo $LANG['SELECTVOUCPROJ'];?>
-					<div style="margin:5px;">
+					<legend><b>Add Image Voucher and Link to Checklist</b></legend>
+                    This form will allow you to add an image voucher linked to this checklist.<br/>
+                    If not already present, Scientific name will be added to checklist.<br><br>
+                    Select the voucher project to which you wish to add the voucher.
+                    <div style="margin:5px;">
 						<select name="collid">
 							<?php
 							foreach($voucherProjects as $k => $v){
@@ -276,7 +276,7 @@ if($clid && $isEditor){
 						<input type="hidden" name="clid" value="<?php echo $clid; ?>" />
 					</div>
 					<div style="margin:5px;">
-						<input type="submit" name="submitvoucher" value=<?php echo $LANG['ADDIMGVOUC'];?> /><br/>
+						<input type="submit" name="submitvoucher" value="Add Image Voucher and Link to Checklist" /><br/>
 					</div>
 				</fieldset>
 			</form>
@@ -289,10 +289,10 @@ if($clid && $isEditor){
 }
 else{
 	if(!$clid){
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['IDNOTSET'].'</div>';
+		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> Checklist identifier not set</div>';
 	}
 	else{
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>'.$LANG['NOADMINPERM'].'</div>';
+		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> You do not have administrative permission for this checklist</div>';
 	}
 }
 ?>

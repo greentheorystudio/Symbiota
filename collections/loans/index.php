@@ -98,27 +98,13 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_loans_indexMenu)?$collections_loans_indexMenu:false);
 	include($SERVER_ROOT."/header.php");
-	if(isset($collections_loans_indexCrumbs) && $collections_loans_indexCrumbs){
-		?>
-		<div class='navpath'>
-			<a href='../../index.php'>Home</a> &gt;&gt; 
-			<?php echo $collections_loans_indexCrumbs; ?>
-			<a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
-		</div>
-		<?php 
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../../index.php'>Home</a> &gt;&gt; 
-			<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-			<a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
-		</div>
-		<?php 
-	}
-	?>
+    ?>
+    <div class='navpath'>
+        <a href='../../index.php'>Home</a> &gt;&gt;
+        <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
+        <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
+    </div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 

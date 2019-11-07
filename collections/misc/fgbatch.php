@@ -102,27 +102,13 @@ if($isEditor){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_misc_fgbatchMenu)?$collections_misc_fgbatchMenu:true);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_misc_fgbatchCrumbs)){
-		if($collections_misc_fgbatchCrumbs){
-			echo "<div class='navpath'>";
-			echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
-			echo $collections_misc_fgbatchCrumbs;
-			echo "<b>Fieldguide Batch Processing</b>";
-			echo "</div>";
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../../index.php'>Home</a> &gt;&gt; 
-			<a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt; 
-			<b>Fieldguide Batch Processing</b>
-		</div>
-		<?php 
-	}
-	?>
+    ?>
+    <div class='navpath'>
+        <a href='../../index.php'>Home</a> &gt;&gt;
+        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt;
+        <b>Fieldguide Batch Processing</b>
+    </div>
 
 	<!-- This is inner text! -->
 	<div id="innertext">

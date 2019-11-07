@@ -1,6 +1,5 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/shared/mapaids.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 

@@ -104,24 +104,12 @@ if($isEditor){
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/header.php');
-		if(isset($collections_specprocessor_indexCrumbs)){
-			if($collections_specprocessor_indexCrumbs){
-				echo "<div class='navpath'>";
-				echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
-				echo $collections_specprocessor_indexCrumbs;
-				echo " <b>Specimen Processor Control Panel</b>";
-				echo "</div>";
-			}
-		}
-		else{
-			echo '<div class="navpath">';
-			echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-			echo '<b>Specimen Processor Control Panel</b>';
-			echo '</div>';
-		}
+        echo '<div class="navpath">';
+        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        echo '<b>Specimen Processor Control Panel</b>';
+        echo '</div>';
 		?>
 		<!-- This is inner text! -->
 		<div id="innertext">

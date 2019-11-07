@@ -79,16 +79,7 @@ $status = "";
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = (isset($taxa_admin_taxonomycleanerMenu)?$taxa_admin_taxonomycleanerMenu:'true');
 		include($SERVER_ROOT.'/header.php');
-		if(isset($taxa_admin_taxonomycleanerCrumbs)){
-			?>
-			<div class='navpath'>
-				<?php echo $taxa_admin_taxonomycleanerCrumbs; ?>
-				<b>Taxonomic Name Cleaner</b>
-			</div>
-			<?php 
-		}
 		?>
 		<!-- inner text block -->
 		<div id="innertext">

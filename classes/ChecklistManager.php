@@ -12,7 +12,6 @@ class ChecklistManager {
 	private $pid = '';
 	private $projName = '';
 	private $taxaList = Array();
-	private $language = 'English';
 	private $thesFilter = 0;
 	private $taxonFilter;
 	private $showAuthors;
@@ -297,7 +296,7 @@ class ChecklistManager {
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxavernaculars v ON ts2.tid = v.tid '.
 				'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tidReturn).')) ';
-			if($this->language) $sql .= 'AND v.language = "'.$this->language.'" ';
+			//if($this->language) $sql .= 'AND v.language = "'.$this->language.'" ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
@@ -639,19 +638,6 @@ class ChecklistManager {
 
 	public function getPid(){
 		return $this->pid;
-	}
-
-	public function setLanguage($l){
-		$l = strtolower($l);
-		if($l == "en"){
-			$this->language = 'English';
-		}
-		elseif($l == "es"){
-			$this->language = 'Spanish';
-		}
-		else{
-			$this->language = $l;
-		}
 	}
 
 	public function setImageLimit($cnt){

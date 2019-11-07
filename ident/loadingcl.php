@@ -42,10 +42,7 @@ Header($ExpStr);
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($ident_loadingclMenu)?$ident_loadingclMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($ident_loadingclCrumbs)) echo "<div class='navpath'>".$ident_loadingclCrumbs."</div>";
-	
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">

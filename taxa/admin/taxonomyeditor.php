@@ -82,26 +82,13 @@ if($editable){
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($taxa_admin_taxonomyeditorMenu)?$taxa_admin_taxonomyeditorMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($taxa_admin_taxonomyeditorCrumbs)){
-		if($taxa_admin_taxonomyeditorCrumbs){
-			echo "<div class='navpath'>";
-			echo $taxa_admin_taxonomyeditorCrumbs;
-			echo " <b>Taxonomy Editor</b>";
-			echo "</div>";
-		}
-	}
-	else{
-		?>
-		<div class="navpath">
-			<a href="../../index.php">Home</a> &gt;&gt; 
-			<a href="taxonomydisplay.php">Taxonomy Tree Viewer</a> &gt;&gt; 
-			<b>Taxonomy Editor</b>
-		</div>
-		<?php 
-	}
-	?>
+?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <a href="taxonomydisplay.php">Taxonomy Tree Viewer</a> &gt;&gt;
+    <b>Taxonomy Editor</b>
+</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php

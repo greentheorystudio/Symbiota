@@ -67,30 +67,15 @@ $stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($collections_download_downloadMenu)?$collections_download_downloadMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_download_downloadCrumbs)){
-		if($collections_download_downloadCrumbs){
-			?>
-			<div class='navpath'>
-				<?php echo $collections_download_downloadCrumbs; ?>
-				<b>Specimen Download</b>
-			</div>
-			<?php 
-		}
-	}
-	else{
-		?>
-		<div class="navpath">
-			<a href="../../index.php">Home</a> &gt; 
-			<a href="../index.php">Collections</a> &gt; 
-			<a href="../harvestparams.php">Search Criteria</a> &gt; 
-			<a href="../list.php">Specimen Records</a> &gt;
-			<b>Specimen Download</b>
-		</div>
-		<?php 
-	}
-	?>
+?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;
+    <a href="../index.php">Collections</a> &gt;
+    <a href="../harvestparams.php">Search Criteria</a> &gt;
+    <a href="../list.php">Specimen Records</a> &gt;
+    <b>Specimen Download</b>
+</div>
 
 	<div id="innertext">
 		<h2>Data Usage Guidelines</h2>

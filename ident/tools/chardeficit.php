@@ -44,14 +44,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($ident_tools_chardeficitMenu)?$ident_tools_chardeficitMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($ident_tools_chardeficitCrumbs)){
-		echo "<div class='navpath'>";
-		echo $ident_tools_chardeficitCrumbs;
-		echo "<b>Character Deficit Editor</b>";
-		echo "</div>";
-	}
 ?>
 	<!-- This is inner text! -->
 	<div id="innertext">

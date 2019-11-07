@@ -1,6 +1,5 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/taxa/index.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/TaxonProfileManager.php');
 Header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -105,7 +104,6 @@ else{
 </head>
 <body>
 <?php
-$displayLeftMenu = false;
 include($SERVER_ROOT.'/header.php');
 ?>
 <div id="innertable">

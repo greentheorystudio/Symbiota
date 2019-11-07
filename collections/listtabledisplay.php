@@ -220,22 +220,12 @@ else{
 		</div>
 		<div style="width:790px;clear:both;">
 			<?php
-			if(isset($collections_listCrumbs)){
-				if($collections_listCrumbs){
-					echo '<span class="navpath">';
-					echo $collections_listCrumbs.' &gt;&gt; ';
-					echo ' <b>Specimen Records Table</b>';
-					echo '</span>';
-				}
-			}
-			else{
-				echo '<span class="navpath">';
-				echo '<a href="../index.php">Home</a> &gt;&gt; ';
-				echo '<a href="index.php">Collections</a> &gt;&gt; ';
-				echo '<a href="harvestparams.php">Search Criteria</a> &gt;&gt; ';
-				echo '<b>Specimen Records Table</b>';
-				echo '</span>';
-			}
+            echo '<span class="navpath">';
+            echo '<a href="../index.php">Home</a> &gt;&gt; ';
+            echo '<a href="index.php">Collections</a> &gt;&gt; ';
+            echo '<a href="harvestparams.php">Search Criteria</a> &gt;&gt; ';
+            echo '<b>Specimen Records Table</b>';
+            echo '</span>';
 			?>
 		</div>
         <div id="tablediv"></div>

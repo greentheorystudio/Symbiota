@@ -125,28 +125,12 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
 	</script>
 	<?php
-	$displayLeftMenu = (isset($glossary_indexMenu)?$glossary_indexMenu:false);
 	include($SERVER_ROOT."/header.php");
-	if(isset($glossary_indexCrumbs)){
-		if($glossary_indexCrumbs){
-			?>
-			<div class='navpath'>
-				<a href='../index.php'>Home</a> &gt;&gt; 
-				<?php echo $glossary_indexCrumbs; ?>
-				<a href='index.php'> <b>Glossary</b></a>
-			</div>
-			<?php 
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../index.php'>Home</a> &gt;&gt; 
-			<a href='index.php'> <b>Glossary</b></a>
-		</div>
-		<?php 
-	}
-	?>
+    ?>
+    <div class='navpath'>
+        <a href='../index.php'>Home</a> &gt;&gt;
+        <a href='index.php'> <b>Glossary</b></a>
+    </div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 

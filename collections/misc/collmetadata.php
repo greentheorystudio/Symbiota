@@ -242,26 +242,16 @@ $collManager->cleanOutArr($collData);
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_misc_collmetadataMenu)?$collections_misc_collmetadataMenu:true);
 	include($SERVER_ROOT.'/header.php');
 	echo '<div class="navpath">';
-	if(isset($collections_misc_collmetadataCrumbs)){
-		if($collections_misc_collmetadataCrumbs){
-			echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-			echo $collections_misc_collmetadataCrumbs.' &gt;&gt; ';
-			echo '<b>'.$collData["collectionname"].' Metadata Editor</b>';
-		}
-	}
-	else{
-		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-		if($collid){
-			echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt; ';
-			echo '<b>'.$collData['collectionname'].' Metadata Editor</b>';
-		}
-		else{
-			echo '<b>Create New Collection Profile</b>';
-		}
-	}
+    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+    if($collid){
+        echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt; ';
+        echo '<b>'.$collData['collectionname'].' Metadata Editor</b>';
+    }
+    else{
+        echo '<b>Create New Collection Profile</b>';
+    }
 	echo "</div>";
 	?>
 

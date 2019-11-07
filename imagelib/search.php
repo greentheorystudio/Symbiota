@@ -183,21 +183,12 @@ if($action){
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($imagelib_indexMenu)?$imagelib_indexMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($imagelib_indexCrumbs)){
-		echo "<div class='navpath'>";
-		echo $imagelib_indexCrumbs;
-		echo " <b>Image Search</b>";
-		echo "</div>";
-	}
-	else{
-		echo '<div class="navpath">';
-		echo '<a href="../index.php">Home</a> &gt;&gt; ';
-		echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
-		echo '<b>Image Search</b>';
-		echo "</div>";
-	}
+    echo '<div class="navpath">';
+    echo '<a href="../index.php">Home</a> &gt;&gt; ';
+    echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
+    echo '<b>Image Search</b>';
+    echo "</div>";
 	?> 
 	<!-- This is inner text! -->
 	<div id="innertext">

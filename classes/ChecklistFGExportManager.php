@@ -12,8 +12,7 @@ class ChecklistFGExportManager {
     private $sqlWhereVar = '';
     private $sqlTaxaStr = '';
 	private $dataArr = Array();
-	private $language = 'English';
-    private $index = 0;
+	private $index = 0;
     private $recLimit = 0;
 	private $thesFilter = 1;
 	private $imageLimit = 100;
@@ -159,7 +158,7 @@ class ChecklistFGExportManager {
         if($this->sqlTaxaStr){
             $sql = 'SELECT v.tid, v.VernacularName '.
                 'FROM taxavernaculars AS v '.
-                'WHERE v.tid IN('.$this->sqlTaxaStr.') AND (v.SortSequence < 90) AND v.`language` = "'.$this->language.'" '.
+                'WHERE v.tid IN('.$this->sqlTaxaStr.') AND (v.SortSequence < 90) AND v.`language` = "en" '.
                 'ORDER BY v.tid,v.SortSequence';
             //echo $sql; exit;
             $result = $this->conn->query($sql);
@@ -349,21 +348,7 @@ class ChecklistFGExportManager {
 		return $this->pid;
 	}
 
-	public function setLanguage($l): void
-    {
-		$l = strtolower($l);
-		if($l === 'en'){
-			$this->language = 'English';
-		}
-		elseif($l === 'es'){
-			$this->language = 'Spanish';
-		}
-		else{
-			$this->language = $l;
-		}
-	}
-
-    public function setPhotogJson($json): void
+	public function setPhotogJson($json): void
     {
         $photogArr = json_decode($json,true);
         if(is_array($photogArr)){

@@ -1,6 +1,5 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/list.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -42,7 +41,7 @@ if(isset($_REQUEST['db'])){
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
+	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />
@@ -177,24 +176,13 @@ if(isset($_REQUEST['db'])){
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($collections_listMenu)?$collections_listMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_listCrumbs)){
-		if($collections_listCrumbs){
-			echo '<div class="navpath">';
-			echo $collections_listCrumbs.' &gt;&gt; ';
-			echo ' <b>'.$LANG['NAV_SPECIMEN_LIST'].'</b>';
-			echo '</div>';
-		}
-	}
-	else{
-		echo '<div class="navpath">';
-		echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt;&gt; ';
-		echo '<a href="index.php">'.$LANG['NAV_COLLECTIONS'].'</a> &gt;&gt; ';
-		echo '<a href="harvestparams.php">'.$LANG['NAV_SEARCH'].'</a> &gt;&gt; ';
-		echo '<b>'.$LANG['NAV_SPECIMEN_LIST'].'</b>';
-		echo '</div>';
-	}
+echo '<div class="navpath">';
+echo '<a href="../index.php">Home</a> &gt;&gt; ';
+echo '<a href="index.php">Collections</a> &gt;&gt; ';
+echo '<a href="harvestparams.php">Search Criteria</a> &gt;&gt; ';
+echo '<b>Specimen Records</b>';
+echo '</div>';
 	?>
 <!-- This is inner text! -->
 <div id="innertext">
@@ -202,17 +190,17 @@ if(isset($_REQUEST['db'])){
 		<ul>
 			<li>
 				<a id='taxatablink' href=''>
-					<span><?php echo $LANG['TAB_CHECKLIST']; ?></span>
+					<span>Species List</span>
 				</a>
 			</li>
 			<li>
 				<a href="#speclist">
-					<span><?php echo $LANG['TAB_OCCURRENCES']; ?></span>
+					<span>Occurrence Records</span>
 				</a>
 			</li>
 			<li>
 				<a href="#maps">
-					<span><?php echo $LANG['TAB_MAP']; ?></span>
+					<span>Map</span>
 				</a>
 			</li>
 		</ul>
@@ -220,36 +208,41 @@ if(isset($_REQUEST['db'])){
             <div id="queryrecords"></div>
 		</div>
 		<div id="maps" style="min-height:400px;margin-bottom:10px;">
-			<div class="button" style="margin-top:20px;float:right;width:13px;height:13px;" title="<?php echo $LANG['MAP_DOWNLOAD']; ?>">
+			<div class="button" style="margin-top:20px;float:right;width:13px;height:13px;" title="Download Coordinate Data">
 				<a id='mapdllink' href=''><img src="../images/dl.png"/></a>
 			</div>
 			<div style='margin-top:10px;'>
-				<h2><?php echo $LANG['GOOGLE_MAP_HEADER']; ?></h2>
+				<h2>Google Map</h2>
 			</div>
-			<div style='margin:10 0 0 20;'>
+			<div style='margin:10px 0 0 20px;'>
 				<a href="#" onclick="openMapPU();" >
-					<?php echo $LANG['GOOGLE_MAP_DISPLAY']; ?>
+                    Display coordinates in Google Map
 				</a>
 			</div>
-			<div style='margin:10 0 0 20;'>
-				<?php echo $LANG['GOOGLE_MAP_DESCRIPTION'];?>
+			<div style='margin:10px 0 0 20px;'>
+                Google Maps is a web mapping service provided by Google that features a map that users can pan (by
+                dragging the mouse) and zoom (by using the mouse wheel). Collection points are displayed as colored markers
+                that when clicked on, displays the full information for that collection. When multiple species are queried
+                (separated by semi-colons), different colored markers denote each individual species.
 			</div>
 
 			<div style='margin-top:10px;'>
-				<h2><?php echo $LANG['GOOGLE_EARTH_HEADER']; ?></h2>
+				<h2>Google Earth (KML)</h2>
 			</div>
 			<form name="kmlform" action="../map/googlekml.php" method="post" onsubmit="">
-				<div style='margin:10 0 0 20;'>
-					<?php echo $LANG['GOOGLE_EARTH_DESCRIPTION'];?>
+				<div style='margin:10px 0 0 20px;'>
+                    This creates an KML file that can be opened in the Google Earth mapping application. Note that you
+                    must have <a href="http://earth.google.com/" target="_blank"> Google Earth</a> installed on your computer
+                    to make use of this option.
 				</div>
 				<div style="margin:20px;">
 					<input name="jsoncollstarr" id="kmldlcolljson" type="hidden" value='' />
 					<input name="starr" id="kmldlstjson" type="hidden" value='' />
-					<button name="formsubmit" type="submit" value="<?php echo $LANG['CREATE_KML']; ?>"><?php echo $LANG['CREATE_KML']; ?></button>
+					<button name="formsubmit" type="submit" value="Create KML">Create KML</button>
 				</div>
-				<div style='margin:10 0 0 20;'>
+				<div style='margin:10px 0 0 20px;'>
 					<a href="#" onclick="toggleFieldBox('fieldBox');">
-						<?php echo $LANG['GOOGLE_EARTH_EXTRA']; ?>
+                        Add Extra Fields
 					</a>
 				</div>
 				<div id="fieldBox" style="display:none;">

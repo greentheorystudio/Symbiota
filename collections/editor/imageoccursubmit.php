@@ -101,7 +101,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/header.php');
 	?>
 	<div class='navpath'>

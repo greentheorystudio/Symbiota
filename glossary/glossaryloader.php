@@ -117,25 +117,14 @@ if($isEditor){
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($glossary_admin_glossaryloaderMenu)?$glossary_admin_glossaryloaderMenu:false);
 include($SERVER_ROOT.'/header.php');
-if(isset($glossary_admin_glossaryloaderCrumbs)){
-	if($glossary_admin_glossaryloaderCrumbs){
-		echo '<div class="navpath">';
-		echo $glossary_admin_glossaryloaderCrumbs;
-		echo ' <b>Glossary Batch Loader</b>'; 
-		echo '</div>';
-	}
-}
-else{
-	?>
-	<div class="navpath">
-		<a href="../index.php">Home</a> &gt;&gt; 
-		<a href="index.php"><b>Glossary Management</b></a> &gt;&gt; 
-		<b>Glossary Batch Loader</b> 
-	</div>
-	<?php 
-}
+?>
+<div class="navpath">
+    <a href="../index.php">Home</a> &gt;&gt;
+    <a href="index.php"><b>Glossary Management</b></a> &gt;&gt;
+    <b>Glossary Batch Loader</b>
+</div>
+<?php
 
 if($isEditor){
 	?>

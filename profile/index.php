@@ -127,14 +127,7 @@ else{
 <body>
 
 <?php
-$displayLeftMenu = (isset($profile_indexMenu)?$profile_indexMenu:"true");
 include($SERVER_ROOT.'/header.php');
-if(isset($profile_indexCrumbs)){
-	echo "<div class='navpath'>";
-	echo $profile_indexCrumbs;
-	echo " <b>Create New Profile</b>";
-	echo "</div>";
-}
 ?>
 <!-- inner text -->
 <div id="innertext" style="padding-left:0px;margin-left:0px;">

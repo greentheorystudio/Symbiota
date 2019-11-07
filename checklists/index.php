@@ -21,11 +21,9 @@ $clManager->setProj($pid);
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($checklists_indexMenu)?$checklists_indexMenu:"true");
 	include($SERVER_ROOT."/header.php");
 	echo "<div class='navpath'>";
 	echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-	if(isset($checklists_indexCrumbs) && $checklists_indexCrumbs) echo $checklists_indexCrumbs.' &gt;&gt;';
 	echo " <b>Species Checklists</b>";
 	echo "</div>";
 	?>

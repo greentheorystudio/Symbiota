@@ -153,29 +153,13 @@ $duManager->readUploadParameters();
 </head>
 <body onload="<?php if($uspid && $action) echo 'adjustParameterForm()'; ?>">
 <?php
-	$displayLeftMenu = (isset($collections_admin_specuploadMenu)?$collections_admin_specuploadMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_admin_specuploadCrumbs)){
-		if($collections_admin_specuploadCrumbs){
-			?>
-			<div class="navpath">
-				<a href="../../index.php">Home</a> &gt;&gt;
-				<?php echo $collections_admin_specuploadCrumbs; ?>
-				<b>Specimen Loader</b> 
-			</div>
-			<?php 
-		}
-	}
-	else{
-		?>
-		<div class="navpath">
-			<a href="../../index.php">Home</a> &gt;&gt; 
-			<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt; 
-			<b>Specimen Loader</b> 
-		</div>
-		<?php 
-	}
-?> 
+?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
+    <b>Specimen Loader</b>
+</div>
 <!-- This is inner text! -->
 <div id="innertext">
 	<h1>Data Upload Management</h1>

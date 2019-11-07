@@ -30,17 +30,7 @@ $clArr = $gameManager->getChecklistArr($pid);
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($games_indexMenu)?$games_indexMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($gamess_indexCrumbs)){
-		?>
-		<div class="navpath">
-			<a href="../index.php">Home</a> &gt; 
-			<?php echo $games_indexCrumbs;?>
-			<b><?php echo $DEFAULT_TITLE; ?> Games</b> 
-		</div>
-		<?php 
-	}
 	?>
 	
 	<!-- This is inner text! -->

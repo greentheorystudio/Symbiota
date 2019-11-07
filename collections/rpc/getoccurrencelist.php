@@ -1,6 +1,5 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/list.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 
@@ -34,7 +33,7 @@ else{
 
 //Add search details
 $htmlStr = '<div style="float:right;">';
-$htmlStr .= '<div class="button" style="margin:15px 15px 0px 0px;width:13px;height:13px;" title="'.$LANG['DOWNLOAD_SPECIMEN_DATA'].'">';
+$htmlStr .= '<div class="button" style="margin:15px 15px 0px 0px;width:13px;height:13px;" title="Download Specimen Data">';
 $dlLink = 'download/index.php?dltype=specimen&starr='.$stArrSearchJson.'&jsoncollstarr='.$stArrCollJson;
 $htmlStr .= "<a href='".$dlLink."'>";
 $htmlStr .= '<img src="../images/dl.png"></a></div>';
@@ -44,12 +43,12 @@ if($collManager->getClName() && $targetTid){
 	$htmlStr .= '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></div>';
 }
 $htmlStr .= '</div><div style="margin:5px;">';
-$htmlStr .= '<div><b>'.$LANG['DATASET'].':</b> '.$collManager->getDatasetSearchStr().'</div>';
+$htmlStr .= '<div><b>Dataset:</b> '.$collManager->getDatasetSearchStr().'</div>';
 if($taxaSearchStr = $collManager->getTaxaSearchStr()){
-	$htmlStr .= '<div><b>'.$LANG['TAXA'].':</b> '.wordwrap($taxaSearchStr, 115, "<br />\n", true).'</div>';
+	$htmlStr .= '<div><b>Taxa:</b> '.wordwrap($taxaSearchStr, 115, "<br />\n", true).'</div>';
 }
 if($localSearchStr = $collManager->getLocalSearchStr()){
-	$htmlStr .= '<div><b>'.$LANG['SEARCH_CRITERIA'].':</b> '.$localSearchStr.'</div>';
+	$htmlStr .= '<div><b>Search Criteria:</b> '.$localSearchStr.'</div>';
 }
 $htmlStr .= '<textarea id="urlPrefixBox" style="position:absolute;left:-9999px;top:-9999px">';
 $htmlStr .= (isset($_SERVER['HTTPS'])?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
@@ -71,7 +70,7 @@ $startPage = ($pageNumber > 4?$pageNumber - 4:1);
 $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
 $pageBar = '';
 if($startPage > 1){
-	$pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(1);return false;'>".$LANG['PAGINATION_FIRST'].'</a></span>';
+	$pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(1);return false;'>First</a></span>";
 	$pageBar .= "<span class='pagination' style='margin-right:5px;'><a href='' onclick='setOccurrenceList(".(($pageNumber - 10) < 1?1:$pageNumber - 10).");return false;'>&lt;&lt;</a></span>";
 }
 for($x = $startPage; $x <= $endPage; $x++){
@@ -90,7 +89,7 @@ $pageBar .= '</div><div style="float:right;margin:5px;">';
 $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
 $endNum = $beginNum + $cntPerPage - 1;
 if($endNum > $collManager->getRecordCnt()) $endNum = $collManager->getRecordCnt();
-$pageBar .= $LANG['PAGINATION_PAGE'].' '.$pageNumber.', '.$LANG['PAGINATION_RECORDS'].' '.$beginNum.'-'.$endNum.' '.$LANG['PAGINATION_OF'].' '.$collManager->getRecordCnt();
+$pageBar .= 'Page '.$pageNumber.', records '.$beginNum.'-'.$endNum.' of '.$collManager->getRecordCnt();
 $paginationStr .= $pageBar;
 $paginationStr .= '</div><div style="clear:both;"><hr/></div></div>';
 $htmlStr .= $paginationStr;
@@ -126,13 +125,13 @@ if($occurArr){
 		$htmlStr .= $instCode;
 		$htmlStr .= '</div></td><td>';
 		if($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['observeruid'])){
-			$htmlStr .= '<div style="float:right;" title="'.$LANG['OCCUR_EDIT_TITLE'].'">';
+			$htmlStr .= '<div style="float:right;" title="Edit Occurrence Record">';
 			$htmlStr .= '<a href="editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">';
 			$htmlStr .= '<img src="../images/edit.png" style="border:solid 1px gray;height:13px;" /></a></div>';
 		}
 		if($collManager->getClName() && $targetTid){
 			$htmlStr .= '<div style="float:right;" >';
-			$htmlStr .= '<a href="#" onclick="addVoucherToCl('.$occid.','.$targetClid.','.$targetTid.')" title="'.$LANG['VOUCHER_LINK_TITLE'].' '.$collManager->getClName().';return false;">';
+			$htmlStr .= '<a href="#" onclick="addVoucherToCl('.$occid.','.$targetClid.','.$targetTid.')" title="Link occurrence voucher to '.$collManager->getClName().';return false;">';
 			$htmlStr .= '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></a></div>';
 		}
 		if(isset($fieldArr['img'])){
@@ -158,7 +157,7 @@ if($occurArr){
 		if(strlen($localStr) > 2) $localStr = trim($localStr,' ,');
 		$htmlStr .= $localStr;
 		$htmlStr .= '</div><div style="margin:4px">';
-		$htmlStr .= '<b><a href="#" onclick="return openIndPU('.$occid.','.($targetClid?$targetClid:"0").');">'.$LANG['FULL_DETAILS'].'</a></b>';
+		$htmlStr .= '<b><a href="#" onclick="return openIndPU('.$occid.','.($targetClid?$targetClid:"0").');">Full Record Details</a></b>';
 		$htmlStr .= '</div></td></tr><tr><td colspan="2"><hr/></td></tr>';
 	}
 	$specOccJson = json_encode($specOccArr);
@@ -166,7 +165,7 @@ if($occurArr){
 	$htmlStr .= '</table>'.$paginationStr.'<hr/>';
 }
 else{
-	$htmlStr .= '<div><h3>'.$LANG['NO_RESULTS'].'</h3>';
+	$htmlStr .= '<div><h3>Your query did not return any results. Please modify your query parameters</h3>';
 	$tn = $collManager->getTaxaSearchStr();
 	if($p = strpos($tn,';')){
 		$tn = substr($tn,0,$p);
@@ -179,7 +178,7 @@ else{
 	}
 	if($closeArr = $collManager->getCloseTaxaMatch(trim($tn))){
 		$htmlStr .= '<div style="margin: 40px 0px 200px 20px;font-weight:bold;">';
-		$htmlStr .= $LANG['PERHAPS_LOOKING_FOR'].' ';
+		$htmlStr .= 'Perhaps you were looking for: ';
 		foreach($closeArr as $v){
 			$htmlStr .= '<a href="harvestparams.php?taxa='.$v.'">'.$v.'</a>, ';
 		}

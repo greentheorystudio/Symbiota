@@ -73,25 +73,13 @@ $editorArr = $utManager->getTaxonomyEditors();
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($profile_usertaxonomymanagerMenu)?$profile_usertaxonomymanagerMenu:true);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($profile_usertaxonomymanagerCrumbs)){
-		if($profile_usertaxonomymanagerCrumbs){
-			echo "<div class='navpath'>";
-			echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-			echo $profile_usertaxonomymanagerCrumbs;
-			echo " <b>Taxonomic Interest User permissions</b>";
-			echo "</div>";
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../index.php'>Home</a> &gt;&gt; 
-			<b>Taxonomic Interest User permissions</b>
-		</div>
-		<?php 
-	}
+    ?>
+    <div class='navpath'>
+        <a href='../index.php'>Home</a> &gt;&gt;
+        <b>Taxonomic Interest User permissions</b>
+    </div>
+    <?php
 
 	if($statusStr){
 		?>

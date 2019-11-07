@@ -140,26 +140,13 @@ if(isset($_REQUEST['db'])){
 <body>
 
 <?php
-	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_harvestparamsCrumbs)){
-		if($collections_harvestparamsCrumbs){
-			echo '<div class="navpath">';
-			echo $collections_harvestparamsCrumbs.' &gt;&gt; ';
-			echo '<b>'.$LANG['NAV_SEARCH'].'</b>';
-			echo '</div>';
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href="../index.php"><?php echo $LANG['NAV_HOME']; ?></a> &gt;&gt;
-			<a href="index.php"><?php echo $LANG['NAV_COLLECTIONS']; ?></a> &gt;&gt;
-			<b><?php echo $LANG['NAV_SEARCH']; ?></b>
-		</div>
-		<?php
-	}
-	?>
+?>
+<div class='navpath'>
+    <a href="../index.php">Home</a> &gt;&gt;
+    <a href="index.php">Collections</a> &gt;&gt;
+    <b>Search Criteria</b>
+</div>
 
 	<div id="innertext">
 		<h1><?php echo $SEARCHTEXT['PAGE_HEADER']; ?></h1>
@@ -170,8 +157,8 @@ if(isset($_REQUEST['db'])){
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestparamsForm(this);">
 			<div style="margin:10 0 10 0;"><hr></div>
 			<div style='float:right;margin:5px 10px;'>
-				<div style="margin-bottom:10px"><input type="submit" class="nextbtn" value="<?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?>" /></div>
-				<div><button type="button" class="resetbtn" onclick='resetHarvestParamsForm(this.form);'><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
+				<div style="margin-bottom:10px"><input type="submit" class="nextbtn" value="Next" /></div>
+				<div><button type="button" class="resetbtn" onclick='resetHarvestParamsForm(this.form);'>Reset Form</button></div>
 			</div>
 			<div>
 				<h1><?php echo $SEARCHTEXT['TAXON_HEADER']; ?></h1>
@@ -306,7 +293,7 @@ if(isset($_REQUEST['db'])){
 				<input type="text" id="eventdate2" size="32" name="eventdate2" style="width:100px;" value="" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
 			</div>
 			<div style="float:right;">
-				<input type="submit" class="nextbtn" value="<?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?>" />
+				<input type="submit" class="nextbtn" value="Next" />
 			</div>
 			<div>
 				<h1><?php echo $SEARCHTEXT['SPECIMEN_HEADER']; ?></h1>

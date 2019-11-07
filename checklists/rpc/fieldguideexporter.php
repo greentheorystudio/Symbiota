@@ -23,7 +23,6 @@ elseif($dynClid){
 }
 $fgManager->setSqlVars();
 $fgManager->setThesFilter($thesFilter);
-$fgManager->setLanguage($LANG_TAG);
 $fgManager->setRecIndex($index);
 $fgManager->setRecLimit($recLimit);
 $fgManager->setMaxPhoto($photoNum);

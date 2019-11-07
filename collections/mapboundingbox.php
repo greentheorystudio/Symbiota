@@ -1,6 +1,5 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $latCenter = 0;
@@ -18,7 +17,7 @@ else{
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE.' - '.$LANG['MBB_TITLE']; ?></title>
+		<title><?php echo $DEFAULT_TITLE.' - Coordinate Mapper'; ?></title>
 	</head> 
 	<body style="background-color:#ffffff;">
 	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
@@ -97,20 +96,20 @@ else{
 		google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
-    <div style="width:500px;"><?php echo $LANG['MBB_INSTRUCTIONS']; ?></div>
+    <div style="width:500px;">Click once to start drawing and again to finish rectangle. Click on the Submit button to transfer Coordinates.</div>
     <div id='map' style='width:100%; height: 520px'></div>
 	<form id="mapForm" onsubmit="return updateParentForm();">
 		<table>
 			<tr><td>
-				<?php echo $LANG['MBB_NORTHERN']; ?>: <input type="text" id="nlat" size="13" name="nlat" value="" />
+                    Northern Lat: <input type="text" id="nlat" size="13" name="nlat" value="" />
 			</td><td>
-				<?php echo $LANG['MBB_EASTERN']; ?>: <input type="text" id="elon" size="13" name="elon" value="" />
-				<input type="submit" name="addcoords" value="<?php echo $LANG['SUBMIT']; ?>" />	
+                    Eastern Long: <input type="text" id="elon" size="13" name="elon" value="" />
+				<input type="submit" name="addcoords" value="Submit" />
 			</td></tr>
 			<tr><td>
-				<?php echo $LANG['MBB_SOUTHERN']; ?>: <input type="text" id="slat" size="13" name="slat" value="" />
+                    Southern Lat: <input type="text" id="slat" size="13" name="slat" value="" />
 			</td><td>
-				<?php echo $LANG['MBB_WESTERN']; ?>: <input type="text" id="wlon" size="13" name="wlon" value="" />
+                    Western Long: <input type="text" id="wlon" size="13" name="wlon" value="" />
 			</td></tr>
 		</table>
 	</form>

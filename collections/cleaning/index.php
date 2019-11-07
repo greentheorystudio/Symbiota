@@ -38,7 +38,6 @@ if($collMap['colltype'] == 'General Observations'){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/header.php');
 	?>
 	<div class='navpath'>

@@ -89,7 +89,6 @@ if($submitAction){
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($indexMenu)?$indexMenu:"true");
 	include($SERVER_ROOT."/header.php");
 	?> 
 	<!-- This is inner text! -->

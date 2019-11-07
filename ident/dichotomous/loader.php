@@ -132,10 +132,8 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS)){
 <body>
 
 	<?php
-	$displayLeftMenu = (isset($ident_dichotomous_loaderMenu)?$ident_dichotomous_loaderMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($ident_dichotomous_loaderCrumbs)) echo "<div class='navpath'>".$ident_dichotomous_loaderCrumbs."</div>";
-	?> 
+	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
 	<?php if($editable){ ?>

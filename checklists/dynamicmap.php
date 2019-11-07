@@ -109,26 +109,12 @@ elseif($coordRange > 40){
 </head> 
 <body style="background-color:#ffffff;" onload="initialize()">
 	<?php 
-		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/header.php');
-		if(isset($checklists_dynamicmapCrumbs)){
-			if($checklists_dynamicmapCrumbs){
-				echo "<div class='navpath'>";
-				echo "<a href='../index.php'>Home</a> &gt; ";
-				echo $checklists_dynamicmapCrumbs;
-				echo "<b>Dynamic Map</b>";
-				echo "</div>";
-			}
-		}
-		else{
-			?>
-			<div class='navpath'>
-				<a href='../index.php'>Home</a> &gt; 
-				<b>Dynamic Map</b>
-			</div>
-			<?php 
-		}
-		?>
+    ?>
+    <div class='navpath'>
+        <a href='../index.php'>Home</a> &gt;
+        <b>Dynamic Map</b>
+    </div>
 		<div id='innertext'>
 			<div>
 				Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list. 

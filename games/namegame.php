@@ -558,18 +558,12 @@ $imgloc = "../images/games/namegame/";
 <body onload="initNameGame()">
 
 	<?php
-	$displayLeftMenu = (isset($games_namegameMenu)?$games_namegameMenu:"true");
 	include($SERVER_ROOT.'/header.php');
 	echo '<div class="navpath">';
 	echo '<a href="../index.php">Home</a> &gt;&gt; ';
-	if(isset($games_namegameCrumbs) && $games_namegameCrumbs){
-		echo $games_namegameCrumbs;
-	}
-	else{
-		echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
-		echo $clName;
-		echo '</a> &gt;&gt; ';
-	}
+    echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
+    echo $clName;
+    echo '</a> &gt;&gt; ';
 	echo ' <b>Name Game</b>';
 	echo '</div>';
 	?>

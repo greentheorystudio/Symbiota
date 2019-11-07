@@ -354,27 +354,13 @@ if($action != "Update Statistics"){
 		</head>
 		<body>
 			<?php
-			$displayLeftMenu = (isset($collections_misc_collstatsMenu)?$collections_misc_collstatsMenu:false);
 			include($SERVER_ROOT.'/header.php');
-			if(isset($collections_misc_collstatsCrumbs)){
-				if($collections_misc_collstatsCrumbs){
-					echo "<div class='navpath'>";
-					echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
-					echo $collections_misc_collstatsCrumbs.' &gt;&gt; ';
-					echo "<b>Collection Statistics</b>";
-					echo "</div>";
-				}
-			}
-			else{
-				?>
-				<div class='navpath'>
-					<a href='../../index.php'>Home</a> &gt;&gt;
-					<a href='collprofiles.php'>Collections</a> &gt;&gt;
-					<b>Collection Statistics</b>
-				</div>
-				<?php
-			}
-			?>
+            ?>
+            <div class='navpath'>
+                <a href='../../index.php'>Home</a> &gt;&gt;
+                <a href='collprofiles.php'>Collections</a> &gt;&gt;
+                <b>Collection Statistics</b>
+            </div>
 			<!-- This is inner text! -->
 			<div id="innertext">
 				<h1>Select Collections to be Analyzed</h1>

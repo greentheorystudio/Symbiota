@@ -63,27 +63,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 <body <?php echo ($addAuth?'style="width:400px;"':'') ?>>
 	<?php
 	if(!$addAuth){
-		$displayLeftMenu = (isset($reference_indexMenu)?$reference_indexMenu:false);
 		include($SERVER_ROOT."/header.php");
-		if(isset($reference_indexCrumbs)){
-			if($reference_indexCrumbs){
-				?>
-				<div class='navpath'>
-					<a href='../index.php'>Home</a> &gt;&gt; 
-					<?php echo $reference_indexCrumbs; ?>
-					<a href='authoreditor.php'> <b>Author Management</b></a>
-				</div>
-				<?php 
-			}
-		}
-		else{
-			?>
-			<div class='navpath'>
-				<a href='../index.php'>Home</a> &gt;&gt; 
-				<a href='authoreditor.php'> <b>Author Management</b></a>
-			</div>
-			<?php 
-		}
+        ?>
+        <div class='navpath'>
+            <a href='../index.php'>Home</a> &gt;&gt;
+            <a href='authoreditor.php'> <b>Author Management</b></a>
+        </div>
+        <?php
 	}
 	?>
 	<!-- This is inner text! -->

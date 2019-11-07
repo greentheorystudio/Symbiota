@@ -44,7 +44,6 @@ if($SYMB_UID){
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = true;
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<div class="navpath">

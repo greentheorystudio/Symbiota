@@ -45,7 +45,6 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 </head>
 <body>
 	<?php 	
-	$displayLeftMenu = false;
 	if(!$dupArr) include($SERVER_ROOT.'/header.php');
 	?>
 	<div class='navpath'>

@@ -138,18 +138,12 @@ $sciArr = array();
 
 <body onload="init();">
 <?php
-	$displayLeftMenu = (isset($checklists_flashcardsMenu)?$checklists_flashcardsMenu:'true');
 	include($SERVER_ROOT.'/header.php');
 	echo '<div class="navpath">';
 	echo '<a href="../index.php">Home</a> &gt;&gt; ';
-	if(isset($checklists_flashcardsCrumbs) && $checklists_flashcardsCrumbs){
-		echo $checklists_flashcardsCrumbs;
-	}
-	else{
-		echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
-		echo $fcManager->getClName();
-		echo '</a> &gt;&gt; ';
-	}
+echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
+echo $fcManager->getClName();
+echo '</a> &gt;&gt; ';
 	echo ' <b>Flashcard Game</b>';
 	echo '</div>';
 	?>

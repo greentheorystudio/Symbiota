@@ -1,7 +1,6 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-include_once($SERVER_ROOT.'/content/lang/checklists/checklistadmin.'.$LANG_TAG.'.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
@@ -89,42 +88,42 @@ if(!$clid){
 <div id="checklistDiv" style="display:<?php echo ($clid?'block':'none'); ?>;">
 	<form id="checklisteditform" action="<?php echo $CLIENT_ROOT; ?>/checklists/checklistadmin.php" method="post" name="editclmatadata" onsubmit="return validateChecklistForm(this)">
 		<fieldset style="margin:15px;padding:10px;">
-			<legend><b><?php echo ($clid?$LANG['EDITCHECKDET']:$LANG['CREATECHECKDET']); ?></b></legend>
+			<legend><b><?php echo ($clid?'Edit Checklist Details':'Create New Checklist'); ?></b></legend>
 			<div>
-				<b><?php echo $LANG['CHECKNAME'];?></b><br/>
+				<b>Checklist Name</b><br/>
 				<input type="text" name="name" style="width:95%" value="<?php echo $clManager->getClName();?>" />
 			</div>
 			<div>
-				<b><?php echo $LANG['AUTHORS'];?></b><br/>
+				<b>Authors</b><br/>
 				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray["authors"]:''); ?>" />
 			</div>
 			<?php
 			if(isset($GLOBALS['USER_RIGHTS']['RareSppAdmin']) || $IS_ADMIN){
 				?>
 				<div>
-					<b><?php echo $LANG['CHECKTYPE'];?></b><br/>
+					<b>Checklist Type</b><br/>
 					<select name="type">
-						<option value="static"><?php echo $LANG['GENCHECK'];?></option>
-						<option value="rarespp" <?php echo ($clArray && $clArray["type"]=='rarespp'?'SELECTED':'') ?>><?php echo $LANG['RARETHREAT'];?></option>
+						<option value="static">General Checklist</option>
+						<option value="rarespp" <?php echo ($clArray && $clArray["type"]=='rarespp'?'SELECTED':'') ?>>Rare, threatened, protected species list</option>
 					</select>
 				</div>
 			<?php
 			}
 			?>
 			<div>
-				<b><?php echo $LANG['LOC'];?></b><br/>
+				<b>Locality</b><br/>
 				<input type="text" name="locality" style="width:95%" value="<?php echo ($clArray?$clArray["locality"]:''); ?>" />
 			</div>
 			<div>
-				<b><?php echo $LANG['CITATION'];?></b><br/>
+				<b>Citation</b><br/>
 				<input type="text" name="publication" style="width:95%" value="<?php echo ($clArray?$clArray["publication"]:''); ?>" />
 			</div>
 			<div>
-				<b><?php echo $LANG['ABSTRACT'];?></b><br/>
+				<b>Abstract:</b><br/>
 				<textarea name="abstract" style="width:95%" rows="3"><?php echo ($clArray?$clArray["abstract"]:''); ?></textarea>
 			</div>
 			<div>
-				<b><?php echo $LANG['NOTES'];?></b><br/>
+				<b>Notes</b><br/>
 				<input type="text" name="notes" style="width:95%" value="<?php echo ($clArray?$clArray["notes"]:''); ?>" />
 			</div>
 			<div>
@@ -142,31 +141,31 @@ if(!$clid){
 			</div>
 			<div style="width:100%;">
 				<div style="float:left;">
-					<b><?php echo $LANG['LATCENT'];?></b><br/>
+					<b>Latitude</b><br/>
 					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
-					<b><?php echo $LANG['LONGCENT'];?></b><br/>
+					<b>Longitude</b><br/>
 					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
 					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:12px;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
-					<b><?php echo $LANG['POINTRAD'];?></b><br/>
+					<b>Point Radius (meters)</b><br/>
 					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
 				</div>
 				<div style="float:left;margin:8px 0px 0px 25px;">
 					<fieldset style="width:275px;padding:10px">
-						<legend><b><?php echo $LANG['POLYFOOT'];?></b></legend>
+						<legend><b>Polygon Footprint</b></legend>
 						<div style="float:right;margin:10px;">
 							<a href="#" onclick="openMappingPolyAid();return false;" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'block':'none'); ?>;">
-							<?php echo isset($LANG['POLYGON_DEFINED'])?$LANG['POLYGON_DEFINED']:'Polygon footprint defined<br/>Click globe to view/edit'; ?>
+                            'Polygon footprint defined<br/>Click globe to view/edit'
 						</div>
 						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'none':'block'); ?>;">
-							<?php echo isset($LANG['POLYGON_NOT_DEFINED'])?$LANG['POLYGON_NOT_DEFINED']:'Polygon footprint not defined<br/>Click globe to create polygon';?>
+                            'Polygon footprint not defined<br/>Click globe to create polygon'
 						</div>
 						<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
 					</fieldset>
@@ -174,37 +173,37 @@ if(!$clid){
 			</div>
 			<div style="clear:both;margin-top:5px;">
 				<fieldset style="width:300px;">
-					<legend><b><?php echo $LANG['DEFAULTDISPLAY'];?></b></legend>
+					<legend><b>Default Display Settings</b></legend>
 					<div>
 						<!-- Display Details: 0 = false, 1 = true  -->
 						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["ddetails"])?"checked":""); ?> />
-						<?php echo $LANG['SHOWDETAILS'];?>
+                        Show Details
 					</div>
 					<div>
 						<?php
 						//Display Common Names: 0 = false, 1 = true
-						if($DISPLAY_COMMON_NAMES) echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' ".(($defaultArr&&$defaultArr["dcommon"])?"checked":"")." /> ".$LANG['COMMON'];
+						if($DISPLAY_COMMON_NAMES) echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' ".(($defaultArr&&$defaultArr["dcommon"])?"checked":"")." /> Display Common Names";
 						?>
 					</div>
 					<div>
 						<!-- Display as Images: 0 = false, 1 = true  -->
 						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"checked":""); ?> onclick="showImagesDefaultChecked(this.form);" />
-						<?php echo $LANG['DISPLAYIMG'];?>
+                        Display as Images
 					</div>
 					<div>
 						<!-- Display as Vouchers: 0 = false, 1 = true  -->
 						<input name='dvouchers' id='dvouchers' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"disabled":(($defaultArr&&$defaultArr["dvouchers"])?"checked":"")); ?>/>
-						<?php echo $LANG['NOTESVOUC'];?>
+                        Show Notes &amp; Vouchers
 					</div>
 					<div>
 						<!-- Display Taxon Authors: 0 = false, 1 = true  -->
 						<input name='dauthors' id='dauthors' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"disabled":(($defaultArr&&$defaultArr["dauthors"])?"checked":"")); ?>/>
-						<?php echo $LANG['TAXONAUTHOR'];?>
+                        Dislay Taxon Authors
 					</div>
 					<div>
 						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
 						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr["dalpha"]?"checked":""); ?> />
-						<?php echo $LANG['TAXONABC'];?>
+                        Display Taxa Alphabetically
 					</div>
 					<div>
 						<?php
@@ -215,28 +214,28 @@ if(!$clid){
 						}
 						?>
 						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey?"checked":""); ?> />
-						<?php echo $LANG['ACTIVATEKEY'];?>
+                        Activate Identification Key
 					</div>
 				</fieldset>
 			</div>
 			<div style="clear:both;margin-top:15px;">
 				<b>Access</b><br/>
 				<select name="access">
-					<option value="private"><?php echo $LANG['PRIVATE'];?></option>
-					<option value="public" <?php echo ($clArray && $clArray["access"]=="public"?"selected":""); ?>><?php echo $LANG['PUBLIC'];?></option>
+					<option value="private">Private</option>
+					<option value="public" <?php echo ($clArray && $clArray["access"]=="public"?"selected":""); ?>>Public</option>
 				</select>
 			</div>
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
 					?>
-					<input type='submit' name='submit' value='<?php echo $LANG['EDITCHECKLIST'];?>' />
+					<input type='submit' name='submit' value='Save Edits' />
 					<input type="hidden" name="submitaction" value="SubmitEdit" />
 					<?php
 				}
 				else{
 					?>
-					<input type='submit' name='submit' value='<?php echo $LANG['ADDCHECKLIST'];?>' />
+					<input type='submit' name='submit' value='Create Checklist' />
 					<input type="hidden" name="submitaction" value="SubmitAdd" />
 					<?php
 				}

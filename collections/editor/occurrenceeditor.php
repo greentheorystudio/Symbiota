@@ -489,48 +489,33 @@ else{
 					</div>
 					<?php
 				}
-				if(isset($collections_editor_occurrenceeditorCrumbs)){
-					if($collections_editor_occurrenceeditorCrumbs){
-						?>
-						<div class="navpath">
-							<a href='../../index.php'>Home</a> &gt;&gt;
-							<?php echo $collections_editor_occurrenceeditorCrumbs; ?>
-							<b>Editor</b>
-						</div>
-						<?php
-					}
-				}
-				else{
-					?>
-					<div class='navpath'>
-						<a href="../../index.php" onclick="return verifyLeaveForm()">Home</a> &gt;&gt;
-						<?php
-						if($crowdSourceMode){
-							?>
-							<a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
-							<?php
-						}
-						else{
-							if($isGenObs){
-								?>
-								<a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()">Personal Management</a> &gt;&gt;
-								<?php
-							}
-							else{
-								if($isEditor == 1 || $isEditor == 2){
-									?>
-									<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
-									<?php
-								}
-							}
-						}
-						if($occId) echo '<a href="../individual/index.php?occid='.$occId.'">Public Display</a> &gt;&gt;';
-						?>
-						<b><?php if($isEditor == 3) echo 'Taxonomic '; ?>Editor</b>
-					</div>
-					<?php
-				}
-				?>
+                ?>
+                <div class='navpath'>
+                    <a href="../../index.php" onclick="return verifyLeaveForm()">Home</a> &gt;&gt;
+                    <?php
+                    if($crowdSourceMode){
+                        ?>
+                        <a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
+                        <?php
+                    }
+                    else{
+                        if($isGenObs){
+                            ?>
+                            <a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()">Personal Management</a> &gt;&gt;
+                            <?php
+                        }
+                        else{
+                            if($isEditor == 1 || $isEditor == 2){
+                                ?>
+                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
+                                <?php
+                            }
+                        }
+                    }
+                    if($occId) echo '<a href="../individual/index.php?occid='.$occId.'">Public Display</a> &gt;&gt;';
+                    ?>
+                    <b><?php if($isEditor == 3) echo 'Taxonomic '; ?>Editor</b>
+                </div>
 			</div>
 			<?php
 			if($statusStr){

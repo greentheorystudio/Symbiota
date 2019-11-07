@@ -31,19 +31,11 @@ $statusStr = '';
 </head>
 <body>
 	<?php
-	$displayLeftMenu = false;
 	include($SERVER_ROOT.'/header.php');
-	if(isset($crowdsourcecentral_listCrumbs)){
-		if($crowdsourcecentral_listCrumbs){
-			echo $crowdsourcecentral_listCrumbs;
-		}
-	}
-	else{
-		echo "<div class='navpath'>";
-		echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
-		echo "<b>Crowdsourcing Score Board</b>";
-		echo "</div>";
-	}
+    echo "<div class='navpath'>";
+    echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
+    echo "<b>Crowdsourcing Score Board</b>";
+    echo "</div>";
 	?>
 
 	<!-- inner text -->

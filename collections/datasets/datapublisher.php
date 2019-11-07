@@ -159,7 +159,6 @@ if($isEditor){
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($collections_datasets_datapublisherMenu)?$collections_datasets_datapublisherMenu: 'true');
 include($SERVER_ROOT. '/header.php');
 ?>
 <div class='navpath'>

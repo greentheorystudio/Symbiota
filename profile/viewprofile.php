@@ -156,14 +156,7 @@ if($isEditor){
 </head>
 <body>
 <?php
-$displayLeftMenu = (isset($profile_viewprofileMenu)?$profile_viewprofileMenu:"true");
 include($SERVER_ROOT.'/header.php');
-if(isset($profile_viewprofileCrumbs)){
-	echo "<div class='navpath'>";
-	echo $profile_viewprofileCrumbs;
-	echo " <b>User Profile</b>";
-	echo "</div>";
-}
 ?>
 	<!-- inner text -->
 	<div id="innertext">

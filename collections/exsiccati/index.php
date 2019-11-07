@@ -243,7 +243,6 @@ if($formSubmit == 'dlexsiccati'){
 
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_exsiccati_index)?$collections_exsiccati_index:false);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>

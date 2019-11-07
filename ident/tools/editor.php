@@ -96,23 +96,12 @@ if($isEditor && $action){
 </head>
 <body>
 <?php
-	$displayLeftMenu = (isset($ident_tools_editorMenu)?$ident_tools_editorMenu:'false');
 	include($SERVER_ROOT.'/header.php');
-	if(isset($ident_tools_editorCrumbs) && $ident_tools_editorCrumbs){
-		echo "<div class='navpath'>";
-		echo $ident_tools_editorCrumbs;
-		echo "<b>Character Editor</b>";
-		echo "</div>";
-	}
-	else{
-		?>
-		<div class="navpath">
-			<a href="../../index.php">Home</a> &gt;&gt;
-			<b>Character Editor</b>
-		</div>
-		<?php 
-	}
 ?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <b>Character Editor</b>
+</div>
 <div style="margin:15px;">
 <?php 
 if($isEditor){

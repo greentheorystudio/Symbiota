@@ -80,15 +80,7 @@
 
 <body>
 <?php
-	$displayLeftMenu = (isset($checklists_tools_floradynsqlMenu)?$checklists_tools_floradynsqlMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($checklists_tools_floradynsqlCrumbs)){
-		echo "<div class='navpath'>";
-		echo "<a href='../index.php'>Home</a> &gt; ";
-		echo $checklists_tools_floradynsqlCrumbs;
-		echo " <b>".$dynSqlManager->getClName()."</b>";
-		echo "</div>";
-	}
 	?>
 	<!-- This is inner text! -->
 	<div id='innertext'>

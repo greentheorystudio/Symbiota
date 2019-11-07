@@ -1,5 +1,4 @@
 <?php
-include_once($SERVER_ROOT.'/content/lang/collections/misc/collprofiles.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 
 $statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
@@ -14,7 +13,7 @@ if($statDisplay == 'geography'){
 			<legend>
 				<b>
 					<?php
-					echo ($LANG['GEO_DIST']?$LANG['GEO_DIST']:'Geographic Distribution');
+					echo 'Geographic Distribution';
 					if($stateDist){
 						echo ' - '.$stateDist;
 					}
@@ -24,7 +23,7 @@ if($statDisplay == 'geography'){
 					?>
 				</b>
 			</legend>
-			<div style="margin:15px;"><?php echo $LANG['CLICK_ON_SPEC_REC'];?></div>
+			<div style="margin:15px;">Click on the occurrence record counts within the parenthesis to return the records for that term</div>
 			<ul>
 				<?php
 				foreach($distArr as $term => $cnt){
@@ -48,9 +47,9 @@ elseif($statDisplay == 'taxonomy'){
 	$famArr = $collManager->getTaxonomyStats();
 	?>
 	<fieldset id="taxonomystats" style="margin:20px;width:90%;">
-		<legend><b><?php echo $LANG['FAMILY_DIST']; ?></b></legend>
+		<legend><b>Family Distribution</b></legend>
 		<div style="margin:15px;float:left;">
-			<?php echo $LANG['CLICK_ON_SPEC_FAM']; ?>
+            Click on the occurrence record counts within the parenthesis to return the records for that family
 		</div>
 		<div style="clear:both;">
 			<ul>

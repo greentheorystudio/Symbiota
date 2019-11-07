@@ -124,16 +124,10 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	$displayLeftMenu = (isset($collections_datasets_indexMenu)?$collections_datasets_indexMenu:true);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
-		<?php
-		if(isset($collections_datasets_occurharvesterCrumbs)){
-			echo $collections_datasets_occurharvesterCrumbs;
-		}
-		?>
 		<b>Occurrence Harvester</b>
 	</div>
 	<!-- This is inner text! -->

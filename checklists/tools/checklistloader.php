@@ -46,7 +46,6 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 </head>
 <body>
 	<?php
-	$displayLeftMenu = true;
 	include($SERVER_ROOT.'/header.php');
 	?>
 	<div class='navpath'>

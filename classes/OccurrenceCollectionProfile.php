@@ -115,19 +115,19 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function getMetadataHtml($collArr, $LANG){
+	public function getMetadataHtml($collArr){
 		$outStr = '<div>'.$collArr["fulldescription"].'</div>';
-		$outStr .= '<div style="margin-top:5px;"><b>'.$LANG['CONTACT'].':</b> '.$collArr["contact"].($collArr["email"]?" (".str_replace("@","&#64;",$collArr["email"]).")":"").'</div>';
+		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr["contact"].($collArr["email"]?" (".str_replace("@","&#64;",$collArr["email"]).")":"").'</div>';
 		if($collArr["homepage"]){
-			$outStr .= '<div style="margin-top:5px;"><b>'.$LANG['HOMEPAGE'].':</b> ';
+			$outStr .= '<div style="margin-top:5px;"><b>Home Page:</b> ';
 			$outStr .= '<a href="'.$collArr["homepage"].'" target="_blank">'.$collArr["homepage"].'</a>';
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div style="margin-top:5px;">';
-		$outStr .= '<b>'.$LANG['COLLECTION_TYPE'].':</b> '.$collArr['colltype'];
+		$outStr .= '<b>Collection Type:</b> '.$collArr['colltype'];
 		$outStr .= '</div>';
 		$outStr .= '<div style="margin-top:5px;">';
-		$outStr .= '<b>'.$LANG['MANAGEMENT'].':</b> ';
+		$outStr .= '<b>Management:</b> ';
 		if($collArr['managementtype'] == 'Live Data'){
 			$outStr .= 'Live Data managed directly within data portal';
 		}
@@ -138,12 +138,12 @@ class OccurrenceCollectionProfile {
 			else{
 				$outStr .= 'Data snapshot of local collection database ';
 			}
-			$outStr .= '<div style="margin-top:5px;"><b>'.$LANG['LAST_UPDATE'].':</b> '.$collArr['uploaddate'].'</div>';
+			$outStr .= '<div style="margin-top:5px;"><b>Last Update:</b> '.$collArr['uploaddate'].'</div>';
 		}
 		$outStr .= '</div>';
 		if($collArr['managementtype'] == 'Live Data'){
 			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>'.$LANG['GLOBAL_UNIQUE_ID'].':</b> '.$collArr['guid'];
+			$outStr .= '<b>Global Unique Identifier:</b> '.$collArr['guid'];
 			$outStr .= '</div>';
 		}
 		if($collArr['dwcaurl']){
@@ -153,24 +153,24 @@ class OccurrenceCollectionProfile {
 				$dwcaUrl .= '/collections/datasets/datapublisher.php';
 			}
 			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>'.(isset($LANG['DWCA_PUB'])?$LANG['DWCA_PUB']:'DwC-Archive Publishing').':</b> ';
+			$outStr .= '<b>DwC-Archive Publishing:</b> ';
 			$outStr .= '<a href="'.$dwcaUrl.'">'.$dwcaUrl.'</a>';
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div style="margin-top:5px;">';
 		if($collArr['managementtype'] == 'Live Data'){
-			$outStr .= '<b>'.(isset($LANG['LIVE_DOWNLOAD'])?$LANG['LIVE_DOWNLOAD']:'Live Data Download').':</b> ';
+			$outStr .= '<b>Live Data Download:</b> ';
 			if($GLOBALS['SYMB_UID']){
-				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">'.(isset($LANG['FULL_DATA'])?$LANG['FULL_DATA']:'DwC-Archive File').'</a>';
+				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">DwC-Archive File</a>';
 			}
 			else{
-				$outStr .= '<a href="../../profile/index.php?refurl=../collections/misc/collprofiles.php?collid='.$collArr['collid'].'">'.(isset($LANG['LOGIN_TO_ACCESS'])?$LANG['LOGIN_TO_ACCESS']:'Login for access').'</a>';
+				$outStr .= '<a href="../../profile/index.php?refurl=../collections/misc/collprofiles.php?collid='.$collArr['collid'].'">Login for access</a>';
 			}
 		}
 		elseif($collArr['managementtype'] == 'Snapshot'){
 			$pathArr = $this->getDwcaPath($collArr['collid']);
 			if($pathArr){
-				$outStr .= '<div style="float:left"><b>'.(isset($LANG['IPT_SOURCE'])?$LANG['IPT_SOURCE']:'IPT / DwC-A Source').':</b> </div>';
+				$outStr .= '<div style="float:left"><b>IPT / DwC-A Source:</b> </div>';
 				$outStr .= '<div style="float:left;margin-left:3px;">';
 				$delimiter = '';
 				foreach($pathArr as $pArr){
@@ -181,8 +181,8 @@ class OccurrenceCollectionProfile {
 			}
 		}
 		$outStr .= '</div>';
-		$outStr .= '<div style="clear:both;margin-top:5px;"><b>'.(isset($LANG['DIGITAL_METADATA'])?$LANG['DIGITAL_METADATA']:'Digital Metadata').':</b> <a href="../datasets/emlhandler.php?collid='.$collArr['collid'].'" target="_blank">EML File</a></div>';
-		$outStr .= '<div style="margin-top:5px;"><b>'.$LANG['USAGE_RIGHTS'].':</b> ';
+		$outStr .= '<div style="clear:both;margin-top:5px;"><b>Digital Metadata:</b> <a href="../datasets/emlhandler.php?collid='.$collArr['collid'].'" target="_blank">EML File</a></div>';
+		$outStr .= '<div style="margin-top:5px;"><b>Usage Rights:</b> ';
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
@@ -204,13 +204,13 @@ class OccurrenceCollectionProfile {
 		$outStr .= '</div>';
 		if($collArr['rightsholder']){
 			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>'.$LANG['RIGHTS_HOLDER'].':</b> ';
+			$outStr .= '<b>Rights Holder:</b> ';
 			$outStr .= $collArr['rightsholder'];
 			$outStr .= '</div>';
 		}
 		if($collArr['accessrights']){
 			$outStr .= '<div style="margin-top:5px;">'.
-				'<b>'.$LANG['ACCESS_RIGHTS'].':</b> '.
+				'<b>Access Rights:</b> '.
 				$collArr['accessrights'].
 				'</div>';
 		}

@@ -64,32 +64,12 @@ if($target){
 </head>
 <body class="claro">
 <?php
-$displayLeftMenu = (isset($taxa_admin_taxonomydisplayMenu)?$taxa_admin_taxonomydisplayMenu:"true");
 include($SERVER_ROOT.'/header.php');
-if(isset($taxa_admin_taxonomydisplayCrumbs)){
-	echo "<div class='navpath'>";
-	echo "<a href='../index.php'>Home</a> &gt; ";
-	echo $taxa_admin_taxonomydisplayCrumbs;
-	echo " <b>Taxonomy Explorer</b>";
-	echo "</div>";
-}
-if(isset($taxa_admin_taxonomydisplayCrumbs)){
-	if($taxa_admin_taxonomydisplayCrumbs){
-		echo '<div class="navpath">';
-		echo $taxa_admin_taxonomydisplayCrumbs;
-		echo ' <b>Taxonomy Explorer</b>'; 
-		echo '</div>';
-	}
-}
-else{
-	?>
-	<div class="navpath">
-		<a href="../../index.php">Home</a> &gt;&gt; 
-		<a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a> 
-	</div>
-	<?php 
-}
 ?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
+    <a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
+</div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php

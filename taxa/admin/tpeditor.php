@@ -161,14 +161,7 @@ if($editable && $action){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($taxa_admin_tpeditorMenu)?$taxa_admin_tpeditorMenu:false);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($taxa_admin_tpeditorCrumbs)){
-		echo "<div class='navpath'>";
-		echo $taxa_admin_tpeditorCrumbs;
-		echo " <b>Taxon Profile Editor</b>"; 
-		echo "</div>";
-	}
 	?>
 	<div id="innertext">
 		<?php 

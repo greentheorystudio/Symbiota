@@ -137,14 +137,7 @@ if($action == "Create Login"){
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($profile_newprofileMenu)?$profile_newprofileMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($profile_newprofileCrumbs)){
-		echo "<div class='navpath'>";
-		echo $profile_newprofileCrumbs;
-		echo " <b>Create New Profile</b>";
-		echo "</div>";
-	}
 	?>
 	<div id="innertext">
 	<h1>Create New Profile</h1>

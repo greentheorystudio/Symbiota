@@ -11,7 +11,6 @@
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = true;
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<!-- This is inner text! -->

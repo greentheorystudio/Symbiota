@@ -157,7 +157,6 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 	</head>
 	<body style="width:900px">
 		<?php
-		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<div class="navpath">

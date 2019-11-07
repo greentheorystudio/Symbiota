@@ -12,6 +12,7 @@ class SOLRManager extends OccurrenceManager{
     private $checklistTaxaCnt = 0;
     private $iconColors = Array();
     private $collArr = Array();
+    private $taxaSearchType = 0;
 
  	public function __construct(){
  		parent::__construct();
@@ -85,6 +86,7 @@ class SOLRManager extends OccurrenceManager{
 		$solrURL = '';
         $solrURLpre = '';
         $solrURLsuf = '';
+        $canReadRareSpp = false;
         $bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$solrWhere = $this->getSOLRWhere();
         $solrURLpre = $SOLR_URL.'/select?';
@@ -275,7 +277,8 @@ class SOLRManager extends OccurrenceManager{
 
 
     public function translateSOLRGeoCollList($sArr){
-        $returnArr = Array();
+        global $USER_RIGHTS;
+ 	    $returnArr = Array();
         $collMapper = Array();
         $collMapper["undefined"] = "undefined";
         $cnt = 0;
@@ -333,7 +336,8 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRGeoTaxaList($sArr){
-        $returnArr = Array();
+        global $USER_RIGHTS;
+ 	    $returnArr = Array();
         $taxaMapper = Array();
         $taxaMapper["undefined"] = "undefined";
         $cnt = 0;
@@ -983,7 +987,6 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists("polycoords",$this->searchTermsArr)){
             $coordArr = json_decode($this->searchTermsArr["polycoords"], true);
             if($coordArr){
-                $coordStr = '';
                 $coordStr = 'Polygon((';
                 $keys = array();
                 foreach($coordArr as $k => $v){

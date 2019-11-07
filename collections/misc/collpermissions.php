@@ -89,27 +89,13 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($collections_misc_collpermissionsMenu)?$collections_misc_collpermissionsMenu:true);
 	include($SERVER_ROOT.'/header.php');
-	if(isset($collections_misc_collpermissionsCrumbs)){
-		if($collections_misc_collpermissionsCrumbs){
-			echo "<div class='navpath'>";
-			echo "<a href='../../index.php'>Home</a> &gt;&gt; ";
-			echo $collections_misc_collpermissionsCrumbs;
-			echo " <b>".($collMetadata['collectionname']?$collMetadata['collectionname']:"Collection Profiles")."</b>";
-			echo "</div>";
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../../index.php'>Home</a> &gt;&gt; 
-			<a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt; 
-			<b><?php echo $collMetadata['collectionname'].' Permissions'; ?></b>
-		</div>
-		<?php 
-	}
-	?>
+    ?>
+    <div class='navpath'>
+        <a href='../../index.php'>Home</a> &gt;&gt;
+        <a href='collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Management</a> &gt;&gt;
+        <b><?php echo $collMetadata['collectionname'].' Permissions'; ?></b>
+    </div>
 
 	<!-- This is inner text! -->
 	<div id="innertext">

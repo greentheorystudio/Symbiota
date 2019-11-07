@@ -50,28 +50,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($reference_indexMenu)?$reference_indexMenu:false);
 	include($SERVER_ROOT."/header.php");
-	if(isset($reference_indexCrumbs)){
-		if($reference_indexCrumbs){
-			?>
-			<div class='navpath'>
-				<a href='../index.php'>Home</a> &gt;&gt; 
-				<?php echo $reference_indexCrumbs; ?>
-				<a href='index.php'> <b>Reference Management</b></a>
-			</div>
-			<?php 
-		}
-	}
-	else{
-		?>
-		<div class='navpath'>
-			<a href='../index.php'>Home</a> &gt;&gt; 
-			<a href='index.php'> <b>Reference Management</b></a>
-		</div>
-		<?php 
-	}
-	?>
+    ?>
+    <div class='navpath'>
+        <a href='../index.php'>Home</a> &gt;&gt;
+        <a href='index.php'> <b>Reference Management</b></a>
+    </div>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 

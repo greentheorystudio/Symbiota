@@ -31,7 +31,6 @@ $_SESSION['statsOrderArr'] = $orderArr;
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = (isset($collections_misc_collstatsMenu)?$collections_misc_collstatsMenu:false);
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<div id="innertext">

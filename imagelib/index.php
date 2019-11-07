@@ -20,15 +20,8 @@ $imgLibManager = new ImageLibraryManager();
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($imagelib_indexMenu)?$imagelib_indexMenu:"true");
 	include($SERVER_ROOT.'/header.php');
-	if(isset($imagelib_indexCrumbs)){
-		echo "<div class='navpath'>";
-		echo $imagelib_indexCrumbs;
-		echo " <b>Image Library</b>";
-		echo "</div>";
-	}
-	?> 
+	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>Species with Images</h1>

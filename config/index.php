@@ -13,7 +13,6 @@ header("Location: ".$CLIENT_ROOT."/index.php");
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = true;
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<!-- This is inner text! -->

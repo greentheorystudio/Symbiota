@@ -262,45 +262,30 @@ else{
 			}
 			?>
 			<div style="width:790px;clear:both;">
-				<?php
-				if(isset($collections_editor_occurrencetableviewCrumbs)){
-					if($collections_editor_occurrencetableviewCrumbs){
-						?>
-						<div class='navpath'>
-							<a href='../../index.php'>Home</a> &gt;&gt;
-							<?php echo $collections_editor_occurrencetableviewCrumbs; ?>
-							<b>Occurrence Record Table View</b>
-						</div>
-						<?php
-					}
-				}
-				else{
-				?>
-					<span class='navpath'>
+				<span class='navpath'>
 						<a href="../../index.php">Home</a> &gt;&gt;
 						<?php
-						if($crowdSourceMode){
-							?>
-							<a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
-							<?php
-						}
-						else{
-							if(!$isGenObs || $IS_ADMIN){
-								?>
-								<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
-								<?php
-							}
-							if($isGenObs){
-								?>
-								<a href="../../profile/viewprofile.php?tabindex=1">Personal Management</a> &gt;&gt;
-								<?php
-							}
-						}
-						?>
+                        if($crowdSourceMode){
+                            ?>
+                            <a href="../specprocessor/crowdsource/index.php">Crowd Sourcing Central</a> &gt;&gt;
+                            <?php
+                        }
+                        else{
+                            if(!$isGenObs || $IS_ADMIN){
+                                ?>
+                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
+                                <?php
+                            }
+                            if($isGenObs){
+                                ?>
+                                <a href="../../profile/viewprofile.php?tabindex=1">Personal Management</a> &gt;&gt;
+                                <?php
+                            }
+                        }
+                        ?>
 						<b>Occurrence Record Table View</b>
 					</span>
-				<?php
-				}
+                <?php
 				echo $navStr; ?>
 			</div>
 			<?php

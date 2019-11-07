@@ -226,18 +226,12 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	$displayLeftMenu = (isset($collections_datasets_indexMenu)?$collections_datasets_indexMenu:false);
 	include($SERVER_ROOT."/header.php");
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<?php
-		if(isset($collections_datasets_indexCrumbs)){
-			echo $collections_datasets_indexCrumbs;
-		}
-		else{
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
-		}
+        echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
 		?>
 		<a href="index.php">
 			Return to Dataset Listing 

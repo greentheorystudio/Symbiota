@@ -63,7 +63,6 @@ $uuidManager = new UuidFactory();
 </head>
 <body>
 <?php 
-$displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
 include($SERVER_ROOT."/header.php");
 ?>
 <!-- This is inner text! -->

@@ -142,7 +142,6 @@ elseif($activeCollArr){
 	</head>
 	<body>
 		<?php
-		$displayLeftMenu = (isset($taxa_admin_taxonomycleanerMenu)?$taxa_admin_taxonomycleanerMenu:'true');
 		include($SERVER_ROOT.'/header.php');
 		?>
 		<div class='navpath'>
