@@ -1672,12 +1672,12 @@ function getGeographyParams(vector){
             var geoType = selectedClone.getGeometry().getType();
             var wktFormat = new ol.format.WKT();
             var geoJSONFormat = new ol.format.GeoJSON();
-            if(geoType == 'MultiPolygon' || geoType == 'Polygon') {
+            if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
                 var selectiongeometry = selectedClone.getGeometry();
                 var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
                 var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
                 var polyCoords = JSON.parse(geojsonStr).coordinates;
-                if (geoType == 'MultiPolygon') {
+                if (geoType === 'MultiPolygon') {
                     var areaFeat = turf.multiPolygon(polyCoords);
                     var area = turf.area(areaFeat);
                     var area_km = area/1000/1000;
@@ -1694,7 +1694,7 @@ function getGeographyParams(vector){
                     }
                     var turfSimple = turf.multiPolygon(polyCoords);
                 }
-                if (geoType == 'Polygon') {
+                if (geoType === 'Polygon') {
                     var areaFeat = turf.polygon(polyCoords);
                     var area = turf.area(areaFeat);
                     var area_km = area/1000/1000;
@@ -1726,7 +1726,7 @@ function getGeographyParams(vector){
                 solrqfrag = geoSolrqString;
                 solrgeoqArr.push(solrqfrag);
             }
-            if(geoType == 'Circle'){
+            if(geoType === 'Circle'){
                 var center = selectedClone.getGeometry().getCenter();
                 var radius = selectedClone.getGeometry().getRadius();
                 var edgeCoordinate = [center[0] + radius, center[1]];
