@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/config/includes/searchVarDefault.php');
 include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
 header('Pragma: no-cache'); // HTTP 1.0.
 header('Expires: 0'); // Proxies.
@@ -13,18 +13,24 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
 }
 
 $mapCenter = '[-110.90713, 32.21976]';
-if(isset($SPATIAL_INITIAL_CENTER)) $mapCenter = $SPATIAL_INITIAL_CENTER;
+if(isset($SPATIAL_INITIAL_CENTER) && $SPATIAL_INITIAL_CENTER) {
+    $mapCenter = $SPATIAL_INITIAL_CENTER;
+}
 $mapZoom = 7;
-if(isset($SPATIAL_INITIAL_ZOOM)) $mapZoom = $SPATIAL_INITIAL_ZOOM;
+if(isset($SPATIAL_INITIAL_ZOOM) && $SPATIAL_INITIAL_ZOOM) {
+    $mapZoom = $SPATIAL_INITIAL_ZOOM;
+}
 
 $catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
+if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
+    $catId = $DEFAULTCATID;
+}
 
 $spatialManager = new SpatialModuleManager();
 
 $collList = $spatialManager->getFullCollectionList($catId);
-$specArr = (isset($collList['spec'])?$collList['spec']:null);
-$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$specArr = ($collList['spec'] ?? null);
+$obsArr = ($collList['obs'] ?? null);
 
 $dbArr = Array();
 ?>
@@ -146,13 +152,13 @@ $dbArr = Array();
                             <div class="mapinterface">
                                 <form name="spatialcollsearchform" id="spatialcollsearchform" data-ajax="false" action="index.php" method="get" onsubmit="">
                                     <div>
-                                        <h1 style="margin:0px 0px 8px 0px;font-size:15px;">Collections to be Searched</h1>
+                                        <h1 style="margin:0 0 8px 0;font-size:15px;">Collections to be Searched</h1>
                                     </div>
                                     <?php
                                     if($specArr || $obsArr){
                                         ?>
                                         <div id="specobsdiv">
-                                            <div style="margin:0px 0px 10px 20px;">
+                                            <div style="margin:0 0 10px 20px;">
                                                 <input id="dballcb" data-role="none" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
                                                 Select/Deselect All
                                             </div>
@@ -181,7 +187,7 @@ $dbArr = Array();
                                         <button data-role="none" id="display2" name="display2" onclick='loadPoints();' >Load Records</button>
                                     </div>
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div>
                                     <span style=""><input data-role="none" type='checkbox' name='thes' id='thes' onchange="buildQueryStrings();" value='1' CHECKED><?php echo $SEARCHTEXT['GENERAL_TEXT_2_MAP']; ?></span>
                                 </div>
@@ -201,7 +207,7 @@ $dbArr = Array();
                                         </div>
                                     </div>
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div>
                                     <?php echo $SEARCHTEXT['COUNTRY_INPUT']; ?> <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                 </div>
@@ -214,7 +220,7 @@ $dbArr = Array();
                                 <div style="margin-top:5px;">
                                     <?php echo $SEARCHTEXT['LOCALITY_INPUT']; ?> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" onchange="buildQueryStrings();" value="" />
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div id="shapecriteriabox">
                                     <div id="noshapecriteria">
                                         No shapes are selected on the map.
@@ -223,7 +229,7 @@ $dbArr = Array();
                                         Within selected shapes.
                                     </div>
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div>
                                     <?php echo $SEARCHTEXT['COLLECTOR_LASTNAME']; ?>
                                     <input data-role="none" type="text" id="collector" style="width:125px;" name="collector" value="" onchange="buildQueryStrings();" title="" />
@@ -237,7 +243,7 @@ $dbArr = Array();
                                     <input data-role="none" type="text" id="eventdate1" style="width:100px;" name="eventdate1" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_3']; ?>" /> -
                                     <input data-role="none" type="text" id="eventdate2" style="width:100px;" name="eventdate2" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
                                 </div>
-                                <div style="margin:10 0 10 0;"><hr></div>
+                                <div style="margin:10px 0 10px 0;"><hr></div>
                                 <div>
                                     <?php echo $SEARCHTEXT['CATALOG_NUMBER']; ?>
                                     <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" value="" onchange="buildQueryStrings();" title="" />
@@ -261,7 +267,7 @@ $dbArr = Array();
                     </div>
 
                     <h3 id="recordsHeader" class="tabtitle" style="display:none;">Records and Taxa</h3>
-                    <div id="recordstab" style="display:none;width:379px;padding:0px;">
+                    <div id="recordstab" style="display:none;width:379px;padding:0;">
                         <ul>
                             <li><a href='#symbology' onclick='buildCollKey();'>Collections</a></li>
                             <li><a href='#queryrecordsdiv' onclick='changeRecordPage(1);'>Records</a></li>
@@ -298,7 +304,7 @@ $dbArr = Array();
                                     </div>
                                 </div>
                             </div>
-                            <div style="margin:5 0 5 0;clear:both;"><hr /></div>
+                            <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
                             <div id="collSymbologyKey" style="background-color:white;">
                                 <div style="margin-top:8px;">
                                     <div style="display:table;">
@@ -360,14 +366,14 @@ $dbArr = Array();
                                     </div>
                                 </div>
                             </div>
-                            <div style="margin:5 0 5 0;clear:both;"><hr /></div>
+                            <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
                             <div style="margin-bottom:30px;">
                                 <div style='font-weight:bold;float:left;margin-bottom:5px;'>Taxa Count: <span id="taxaCountNum">0</span></div>
                                 <div style="float:right;margin-bottom:5px;">
                                     <button data-role="none" id="taxacsvdownload" onclick="exportTaxaCSV();" >Download CSV</button>
                                 </div>
                             </div>
-                            <div style="margin:5 0 5 0;clear:both;"><hr /></div>
+                            <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
                             <div id="taxasymbologykeysbox" style="background-color:white;"></div>
                         </div>
 
@@ -423,13 +429,13 @@ $dbArr = Array();
                     </div>
 
                     <h3 class="tabtitle">Vector Tools</h3>
-                    <div id="vectortoolstab" style="width:379px;padding:0px;">
+                    <div id="vectortoolstab" style="width:379px;padding:0;">
                         <ul>
                             <li><a class="tabtitle" href="#polycalculatortab">Shapes</a></li>
                             <li><a class="tabtitle" href="#pointscalculatortab">Points</a></li>
                         </ul>
-                        <div id="polycalculatortab" style="width:379px;padding:0px;">
-                            <div style="padding:10px">
+                        <div id="polycalculatortab" style="width:379px;padding:0;">
+                            <div style="padding:10px;">
                                 <div style="height:45px;">
                                     <div style="float:right;">
                                         Total area of selected shapes (sq/km)
@@ -438,7 +444,7 @@ $dbArr = Array();
                                         <input data-role="none" type="text" id="polyarea" style="width:250px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="0" disabled />
                                     </div>
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <b>Download Shapes</b> <select data-role="none" id="shapesdownloadselect">
                                         <option value="">Download Type</option>
@@ -447,27 +453,27 @@ $dbArr = Array();
                                     </select>
                                     <button data-role="none" style="margin-left:5px;" type="button" onclick='downloadShapesLayer();' >Download</button>
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" value="" /> km around selected features.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <button data-role="none" onclick="createPolyDifference();" >Difference</button> Returns a new polygon with the area of the polygon or circle selected first, exluding the area of the polygon or circle selected second.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the area overlapping of both selected polygons or circles.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons or circles. *Note new polygon will replace all selected shapes.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                             </div>
                         </div>
 
-                        <div id="pointscalculatortab" style="width:379px;padding:0px;">
+                        <div id="pointscalculatortab" style="width:379px;padding:0;">
                             <div id="pointToolsNoneDiv" style="padding:10px;margin-top:10px;display:block;">
                                 There are no points loaded on the map.
                             </div>
@@ -479,7 +485,7 @@ $dbArr = Array();
                                         <option value="selected">selected</option>
                                     </select> points with a maximum edge length of <input data-role="none" type="text" id="concaveMaxEdgeSize" style="width:75px;margin-top:3px;" value="" /> kilometers.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
                                     <button data-role="none" onclick="createConvexPoly();" >Convex Hull Polygon</button> Creates a convex hull polygon for
                                     <select data-role="none" id="convexpolysource" style="margin-top:3px;" onchange="checkPointToolSource('convexpolysource');">
@@ -487,7 +493,7 @@ $dbArr = Array();
                                         <option value="selected">selected</option>
                                     </select> points.
                                 </div>
-                                <div style="margin:5 0 5 0;"><hr /></div>
+                                <div style="margin:5px 0 5px 0;"><hr /></div>
                             </div>
                         </div>
                     </div>
@@ -564,7 +570,7 @@ $dbArr = Array();
         </div>
         <div style="clear:both;"></div>
         <div id="dateslidercontrol" style="margin-top:5px;display:none;">
-            <div style="margin:5 0 5 0;color:white;"><hr /></div>
+            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
             <div id="setdatediv" style="">
                 <span class="maptext">Earliest</span>
                 <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" value="" onchange="checkDSLowDate();" />
@@ -572,7 +578,7 @@ $dbArr = Array();
                 <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" value="" onchange="checkDSHighDate();" />
                 <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
             </div>
-            <div style="margin:5 0 5 0;color:white;"><hr /></div>
+            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
             <div id="animatediv" style="">
                 <div>
                     <span class="maptext">Interval Duration (years)</span>
@@ -976,7 +982,7 @@ $dbArr = Array();
     function editVectorLayers(c,title){
         var layer = c.value;
         if(c.checked == true){
-            var layerName = '<?php echo $GEOSERVER_LAYER_WORKSPACE; ?>:'+layer;
+            var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
             var layerSourceName = layer+'Source';
             layersArr[layerSourceName] = new ol.source.ImageWMS({
                 url: 'rpc/GeoServerConnector.php',
@@ -1005,7 +1011,7 @@ $dbArr = Array();
         showWorking();
         var overlay = document.getElementById("vectorizesourcelayer").value;
         var overlaySource = overlayLayers[overlay]['source'];
-        var overlayName = '<?php echo $GEOSERVER_LAYER_WORKSPACE; ?>:'+overlay;
+        var overlayName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+overlay;
         var features = selectInteraction.getFeatures().getArray();
         var boundsFeature = features[0].clone();
         var geoJSONFormat = new ol.format.GeoJSON();
@@ -1128,7 +1134,7 @@ $dbArr = Array();
         overlayLayers[outputName]['values']['rasmax'] = document.getElementById('reclassifyRasterMax').value;
         overlayLayers[outputName]['values']['color'] = document.getElementById('reclassifyColorVal').value;
 
-        var layerName = '<?php echo $GEOSERVER_LAYER_WORKSPACE; ?>:'+rasterLayer;
+        var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+rasterLayer;
         var layerTileSourceName = outputName+'Source';
         var layerRasterSourceName = outputName+'RasterSource';
         var sldContent = generateReclassifySLD(overlayLayers[outputName]['values'],layerName);
@@ -1183,7 +1189,7 @@ $dbArr = Array();
     function editRasterLayers(c,title){
         var layer = c.value;
         if(c.checked == true){
-            var layerName = '<?php echo $GEOSERVER_LAYER_WORKSPACE; ?>:'+layer;
+            var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
             var layerTileSourceName = layer+'Source';
             var layerRasterSourceName = layer+'RasterSource';
             layersArr[layerTileSourceName] = new ol.source.TileWMS({
@@ -1636,7 +1642,7 @@ $dbArr = Array();
                     infoHTML += '<b>locality:</b> '+(iFeature.get('locality')?iFeature.get('locality'):'')+'<br />';
                     if(iFeature.get('thumbnailurl')){
                         var thumburl = iFeature.get('thumbnailurl');
-                        infoHTML += '<img src="'+thumburl+'" style="height:150px" />';
+                        infoHTML += '<img src="'+thumburl+'" style="height:150" />';
                     }
                     popupcontent.innerHTML = infoHTML;
                     popupoverlay.setPosition(evt.coordinate);
@@ -1682,7 +1688,7 @@ $dbArr = Array();
             if(msg){
                 var infoArr = JSON.parse(msg);
                 var objID = infoArr['features'][0]['id'];
-                var url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo $GEOSERVER_LAYER_WORKSPACE; ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
+                var url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
                 $.get(url, function(data){
                     var features = new ol.format.GeoJSON().readFeatures(data);
                     if(features){
