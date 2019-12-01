@@ -38,8 +38,5 @@ services:
     container_name: solr
     volumes:
       - ./data/solr:/var/solr/data
-#      - ./docker/solr/solrconfig.xml:/var/solr/data/symbiota/conf/solrconfig.xml
-#      - ./docker/solr/data-config.xml:/var/solr/data/symbiota/conf/data-config.xml
-#      - ./docker/solr/schema.xml:/var/solr/data/symbiota/conf/schema.xml
     ports:
       - 8984:8983
