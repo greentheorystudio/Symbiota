@@ -17,11 +17,4 @@ USER solr
 WORKDIR /opt/solr/
 CMD ["solr-create", "-c", "symbiota"]
 
-USER root
-COPY solrconfig.xml /var/solr/data/symbiota/conf/solrconfig.xml
-COPY data-config.xml /var/solr/data/symbiota/conf/data-config.xml
-COPY schema.xml /var/solr/data/symbiota/conf/schema.xml
-RUN chown -R solr:solr /var/solr/data/symbiota
-
-USER solr
 ENTRYPOINT ["docker-entrypoint.sh"]
