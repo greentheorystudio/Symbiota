@@ -23,6 +23,14 @@
       "@php -r \"file_exists('robots.txt') || copy('robots_template.txt', 'robots.txt');\"",
       "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\"",
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\""
+    ],
+    "update-docker-solr-config": [
+      "docker-compose down",
+      "@php -r \"copy('./docker/solr/data-config.xml', './data/solr/symbiota/conf/data-config.xml');\"",
+      "@php -r \"copy('./docker/solr/schema.xml', './data/solr/symbiota/conf/schema.xml');\"",
+      "@php -r \"copy('./docker/solr/solrconfig.xml', './data/solr/symbiota/conf/solrconfig.xml');\"",
+      "rm ./data/solr/symbiota/conf/managed-schema",
+      "docker-compose up -d"
     ]
   }
 }
