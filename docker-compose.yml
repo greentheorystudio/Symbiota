@@ -26,9 +26,20 @@ services:
     command: "--default-authentication-plugin=mysql_native_password"
     volumes:
       - ./docker/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
-      - ./data:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: symbiota
     ports:
       - 3308:3306
+
+  solr:
+    build: ./docker/solr
+    container_name: solr
+    volumes:
+      - ./data/solr:/var/solr/data
+#      - ./docker/solr/solrconfig.xml:/var/solr/data/symbiota/conf/solrconfig.xml
+#      - ./docker/solr/data-config.xml:/var/solr/data/symbiota/conf/data-config.xml
+#      - ./docker/solr/schema.xml:/var/solr/data/symbiota/conf/schema.xml
+    ports:
+      - 8984:8983
