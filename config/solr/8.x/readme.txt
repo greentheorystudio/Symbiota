@@ -1,11 +1,5 @@
 The following is a walk-through in configuring Apache SOLR to work with your Symbiota installation.
-SOLR support in Symbiota was developed using Apache SOLR 6.2.1. Additional configurations may be required
-if you are using an older version of SOLR.
-
-***NOTICE: THE FOLLOWING INSTRUCTIONS SHOULD BE USED WITH SOLR 6.2. SOLR HAS BEEN PROGRESSIVELY REDUCING SUPPORT
-WITH MYSQL IN NEWER VERSIONS AND IN DOING SO HAS ALSO REDUCED SYMBIOTA SUPPORT. NEWER VERSIONS OF SOLR WILL NOT BE
-COMPATIBLE WITH SYMBIOTA. THE NEXT VERSION OF SYMBIOTA, SYMBIOTA2 (STILL IN DEVELOPMENT) WILL OFFER SUPPORT FOR
-ELASTICSEARCH IN PLACE OF SOLR.*****
+SOLR support in Symbiota was developed using Apache SOLR 8.3.
 
 Steps for installing and configuring Apache SOLR:
 
@@ -33,10 +27,10 @@ Steps for installing and configuring Apache SOLR:
 
 2) Create a directory named lib in [SOLR BASE DIRECTORY]/contrib/dataimporthandler of your SOLR installation.
 
-3) Download the JDBC driver for MySQL (mysql-connector-java-*.jar) at https://dev.mysql.com/downloads/connector/j/
-    and copy this file into [SOLR BASE DIRECTORY]/contrib/dataimporthandler/lib.
+3) Download the JDBC drivers zip file for MySQL at https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.zip,
+    unzip the file, and copy the jar files (mysql-connector-java-*.jar) into [SOLR BASE DIRECTORY]/contrib/dataimporthandler/lib.
 
-4) Download the JTS Topology Suite driver 1.14.0 (jts-core-1.14.0.jar) at https://repo1.maven.org/maven2/com/vividsolutions/jts-core/1.14.0/
+4) Download the JTS Topology Suite driver 1.16.1 (jts-core-1.16.1.jar) at https://github.com/locationtech/jts/releases/download/jts-1.16.1/jts-core-1.16.1.jar
     and copy this file into [SOLR BASE DIRECTORY]/server/solr-webapp/webapp/WEB-INF/lib.
 
 5) Start your SOLR installation and run the following command to create a new SOLR core for your Symbiota installation
@@ -107,7 +101,7 @@ Steps for installing and configuring Apache SOLR:
     *DELETE managed-schema FILE
     $ sudo rm [SOLR DATA DIRECTORY]/[CORE_NAME]/conf/managed-schema
 
-9) Copy the files data-config.xml and schema.xml from [SYMBIOTA BASE DIRECTORY]/config/solr to
+9) Copy the files data-config.xml and schema.xml from [SYMBIOTA BASE DIRECTORY]/config/solr/8.x to
     [SOLR DATA DIRECTORY]/[CORE_NAME]/conf.
 
 10) On Linux systems, set the owner and group of these two files to solr.
@@ -124,10 +118,10 @@ Steps for installing and configuring Apache SOLR:
 
     -On line 4, change [Database Name] to the name of your Symbiota database.
 
-    -On line 6, change [Database Read Only User Name] to the username of the readonly database connection in the
+    -On line 6, change [Database Username] to the username of the readonly database connection in the
         [SYMBIOTA BASE DIRECTORY]/config/dbconnection.php file of your Symbiota installation.
 
-    -On line 7, change [Database Read Only Password] to the password of the readonly database connection in the
+    -On line 7, change [Database Password] to the password of the readonly database connection in the
         [SYMBIOTA BASE DIRECTORY]/config/dbconnection.php file of your Symbiota installation.
 
     -Save your edits.

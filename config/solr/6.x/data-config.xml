@@ -4,8 +4,8 @@
                 driver="com.mysql.jdbc.Driver"
                 url="jdbc:mysql://[Database Host Name]/[Database Name]"
                 batchSize="-1"
-                user="[Database Read Only User Name]"
-                password="[Database Read Only Password]" />
+                user="[Database Username]"
+                password="[Database Password]" />
     <document>
         <entity name="omoccurrences"
                 query="SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.family, o.sciname, o.tidinterpreted,

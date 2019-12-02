@@ -41,8 +41,8 @@ $GEOSERVER_URL = '';   // URL for Geoserver instance serving map data for this p
 $GEOSERVER_RECORD_LAYER = '';   // Name of Geoserver layer containing occurrence point data for this portal
 
 //Configurations for Apache SOLR integration
-$SOLR_URL = '';   // URL for SOLR instance indexing data for this portal
-$SOLR_FULL_IMPORT_INTERVAL = 0;   // Number of hours between full imports of SOLR index.
+$SOLR_URL = 'http://localhost:8984/solr/symbiota';   // URL for SOLR instance indexing data for this portal
+$SOLR_FULL_IMPORT_INTERVAL = 72;   // Number of hours between full imports of SOLR index.
 
 //Configurations for publishing to GBIF
 $GBIF_USERNAME = '';                //GBIF username which portal will use to publish
