@@ -17,6 +17,7 @@
   },
   "scripts": {
     "pre-update-cmd": [
+      "@php -r \"file_exists('docker-compose.yml') || copy('docker-compose.yml.dist', 'docker-compose.yml');\"",
       "@php -r \"file_exists('footer.php') || copy('footer_template.php', 'footer.php');\"",
       "@php -r \"file_exists('header.php') || copy('header_template.php', 'header.php');\"",
       "@php -r \"file_exists('index.php') || copy('index_template.php', 'index.php');\"",

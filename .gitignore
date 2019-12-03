@@ -21,3 +21,4 @@
 
 /vendor
 /composer.lock
+/docker-compose.yml
