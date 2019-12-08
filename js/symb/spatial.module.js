@@ -260,20 +260,6 @@ function buildCollKeyPiece(key){
     collKeyArr[key] = keyHTML;
 }
 
-function buildCQLString(){
-    newcqlString = '';
-    for(i in cqlArr){
-        newcqlString += ' AND '+cqlArr[i];
-    }
-    if(loadVectorPoints){
-        newcqlString = encodeURIComponent(newcqlString.substr(5,newcqlString.length));
-    }
-    else{
-        newcqlString = newcqlString.substr(5,newcqlString.length);
-    }
-    //console.log(cqlString);
-}
-
 function buildLayerTableRow(lArr,removable){
     var layerList = '';
     var trfragment = '';
@@ -321,18 +307,13 @@ function buildLayerTableRow(lArr,removable){
 }
 
 function buildQueryStrings(){
-    cqlArr = [];
     solrqArr = [];
     solrgeoqArr = [];
-    newcqlString = '';
     newsolrqString = '';
     getCollectionParams();
     prepareTaxaParams(function(res){
         getTextParams();
         getGeographyParams(loadVectorPoints);
-        if(cqlArr.length > 0){
-            buildCQLString();
-        }
         if(solrqArr.length > 0 || solrgeoqArr.length > 0){
             buildSOLRQString();
         }
@@ -1442,14 +1423,7 @@ function findOccPointInCluster(cluster,occid){
 
 function finishGetGeographyParams(){
     if(!geoCallOut){
-        if(tempcqlArr.length > 0){
-            var temcqlfrag = '';
-            for(i in tempcqlArr){
-                temcqlfrag += ' OR '+tempcqlArr[i];
-            }
-            temcqlfrag = '('+temcqlfrag.substr(4,temcqlfrag.length)+')';
-            cqlArr.push(temcqlfrag);
-            buildCQLString();
+        if(solrgeoqArr.length > 0){
             buildSOLRQString();
         }
     }
@@ -1606,7 +1580,6 @@ function getCollectionParams(){
     var c = false;
     var all = true;
     var collid = '';
-    var cqlfrag = '';
     var solrqfrag = '';
     for(i = 0; i < dbElements.length; i++){
         var dbElement = dbElements[i];
@@ -1623,8 +1596,6 @@ function getCollectionParams(){
         if(collid.substr(collid.length-1,collid.length)==','){
             collid = collid.substr(0,collid.length-1);
         }
-        cqlfrag = '(collid IN('+collid+'))';
-        cqlArr.push(cqlfrag);
         solrqfrag = '(collid:('+collid+'))';
         solrqArr.push(solrqfrag);
         return true;
@@ -1660,12 +1631,9 @@ function getDragDropStyle(feature, resolution) {
 }
 
 function getGeographyParams(vector){
-    tempcqlArr = [];
     var totalArea = 0;
     selectInteraction.getFeatures().forEach(function(feature){
-        var cqlfrag = '';
         var solrqfrag = '';
-        var geoCqlString = '';
         var geoSolrqString = '';
         if(feature){
             var selectedClone = feature.clone();
@@ -1713,16 +1681,8 @@ function getGeographyParams(vector){
                 var fixedgeometry = simplegeometry.transform(mapProjection,wgs84Projection);
                 var wmswktString = wktFormat.writeGeometry(fixedgeometry);
                 var geocoords = fixedgeometry.getCoordinates();
-                var wfswktString = writeWfsWktString(geoType,geocoords);
-                if(vector){
-                    geoCqlString += "((WITHIN(geo,"+wfswktString+")))";
-                }
-                else{
-                    geoCqlString += "((WITHIN(geo,"+wmswktString+")))";
-                }
+                //var wfswktString = writeWfsWktString(geoType,geocoords);
                 geoSolrqString = '"Intersects('+wmswktString+')"';
-                cqlfrag = '('+geoCqlString+')';
-                tempcqlArr.push(cqlfrag);
                 solrqfrag = geoSolrqString;
                 solrgeoqArr.push(solrqfrag);
             }
@@ -1748,10 +1708,6 @@ function getGeographyParams(vector){
                 getSOLROccArr(function(res){
                     geoCallOut = false;
                     if(res){
-                        var occStr = res.join();
-                        geoCqlString = '(occid IN('+occStr+'))';
-                        cqlfrag = '('+geoCqlString+')';
-                        tempcqlArr.push(cqlfrag);
                         finishGetGeographyParams();
                     }
                 });
@@ -1857,7 +1813,6 @@ function getSOLRRecCnt(occ,callback){
 }
 
 function getTextParams(){
-    var cqlfrag = '';
     var solrqfrag = '';
     var countryval = document.getElementById("country").value.trim();
     var stateval = document.getElementById("state").value.trim();
@@ -1889,107 +1844,74 @@ function getTextParams(){
             }
         }
         var countryvals = countryval.split(',');
-        var countryCqlString = '';
         var countrySolrqString = '';
         for(i = 0; i < countryvals.length; i++){
-            if(countryCqlString) countryCqlString += " OR ";
             if(countrySolrqString) countrySolrqString += " OR ";
-            countryCqlString += "(country = '"+countryvals[i]+"')";
             countrySolrqString += '(country:"'+countryvals[i]+'")';
         }
-        cqlfrag = '('+countryCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+countrySolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(stateval){
         var statevals = stateval.split(',');
-        var stateCqlString = '';
         var stateSolrqString = '';
         for(i = 0; i < statevals.length; i++){
-            if(stateCqlString) stateCqlString += " OR ";
             if(stateSolrqString) stateSolrqString += " OR ";
-            stateCqlString += "(StateProvince = '"+statevals[i]+"')";
             stateSolrqString += '(StateProvince:"'+statevals[i]+'")';
         }
-        cqlfrag = '('+stateCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+stateSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(countyval){
         var countyvals = countyval.split(',');
-        var countyCqlString = '';
         var countySolrqString = '';
         for(i = 0; i < countyvals.length; i++){
-            if(countyCqlString) countyCqlString += " OR ";
             if(countySolrqString) countySolrqString += " OR ";
-            countyCqlString += "(county LIKE '"+countyvals[i]+"%')";
             countySolrqString += "(county:"+countyvals[i].replace(" ","\\ ")+"*)";
         }
-        cqlfrag = '('+countyCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+countySolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(localityval){
         var localityvals = localityval.split(',');
-        var localityCqlString = '';
         var localitySolrqString = '';
         for(i = 0; i < localityvals.length; i++){
-            if(localityCqlString) localityCqlString += " OR ";
             if(localitySolrqString) localitySolrqString += " OR ";
-            localityCqlString += "(";
             localitySolrqString += "(";
             if(localityvals[i].indexOf(" ") !== -1){
-                var templocalityCqlString = '';
                 var templocalitySolrqString = '';
                 var vals = localityvals[i].split(" ");
                 for(i = 0; i < vals.length; i++){
-                    if(templocalityCqlString) templocalityCqlString += " AND ";
                     if(templocalitySolrqString) templocalitySolrqString += " AND ";
-                    templocalityCqlString += "locality LIKE '%"+vals[i]+"%'";
                     templocalitySolrqString += '((municipality:'+vals[i]+'*) OR (locality:*'+vals[i]+'*))';
                 }
-                localityCqlString += templocalityCqlString;
                 localitySolrqString += templocalitySolrqString;
             }
             else{
-                localityCqlString += "locality LIKE '%"+localityvals[i]+"%'";
                 localitySolrqString += '(locality:*'+localityvals[i]+'*)';
             }
-            localityCqlString += ")";
             localitySolrqString += ")";
         }
-        cqlfrag = '('+localityCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+localitySolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(collectorval){
         var collectorvals = collectorval.split(',');
-        var collectorCqlString = '';
         var collectorSolrqString = '';
         if(collectorvals.length == 1){
-            collectorCqlString = "(recordedBy LIKE '%"+collectorvals[0]+"%')";
             collectorSolrqString = '(recordedBy:*'+collectorvals[0].replace(" ","\\ ")+'*)';
         }
         else if(collectorvals.length > 1){
             for (i in collectorvals){
-                collectorCqlString += " OR (recordedBy LIKE '%"+collectorvals[i]+"%')";
                 collectorSolrqString += ' OR (recordedBy:*'+collectorvals[i].replace(" ","\\ ")+'*)';
             }
-            collectorCqlString = collectorCqlString.substr(4,collectorCqlString.length);
             collectorSolrqString = collectorSolrqString.substr(4,collectorSolrqString.length);
         }
-        cqlfrag = '('+collectorCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+collectorSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(collnumval){
         var collnumvals = collnumval.split(',');
-        var collnumCqlString = '';
         var collnumSolrqString = '';
         for (i in collnumvals){
             if(collnumvals[i].indexOf(" - ") !== -1){
@@ -1997,28 +1919,21 @@ function getTextParams(){
                 var t1 = collnumvals[i].substr(0,pos).trim();
                 var t2 = collnumvals[i].substr(pos+3,collnumvals[i].length).trim();
                 if(!isNaN(t1) && !isNaN(t2)){
-                    collnumCqlString += " OR (recordNumber BETWEEN "+t1+" AND "+t2+")";
                     collnumSolrqString += ' OR (recordNumber:['+t1+' TO '+t2+'])';
                 }
                 else{
-                    collnumCqlString += " OR (recordNumber BETWEEN '"+t1+"' AND '"+t2+"')";
                     collnumSolrqString += " OR (recordNumber:['"+t1+"' TO '"+t2+"'])";
                 }
             }
             else{
-                collnumCqlString += " OR (recordNumber = '"+collnumvals[i]+"')";
                 collnumSolrqString += ' OR (recordNumber:"'+collnumvals[i]+'")';
             }
         }
-        collnumCqlString = collnumCqlString.substr(4,collnumCqlString.length);
         collnumSolrqString = collnumSolrqString.substr(4,collnumSolrqString.length);
-        cqlfrag = '('+collnumCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+collnumSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(colldate1 || colldate2){
-        var colldateCqlString = '';
         var colldateSolrqString = '';
         if(!colldate1 && colldate2){
             colldate1 = colldate2;
@@ -2029,79 +1944,54 @@ function getTextParams(){
             colldate2 = formatCheckDate(colldate2);
         }
         if(colldate2){
-            colldateCqlString += "(eventDate BETWEEN '"+colldate1+"' AND '"+colldate2+"')";
             colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate2+'T23:59:59.999Z])';
         }
         else{
             if(colldate1.substr(colldate1.length-5,colldate1.length) == '00-00'){
-                colldateCqlString += "(coll_year = "+colldate1.substr(0,4)+")";
                 colldateSolrqString += '(coll_year:'+colldate1.substr(0,4)+')';
             }
             else if(colldate1.substr(colldate1.length-2,colldate1.length) == '00'){
-                colldateCqlString += "((coll_year = "+colldate1.substr(0,4)+") AND (coll_month = "+colldate1.substr(5,7)+"))";
                 colldateSolrqString += '((coll_year:'+colldate1.substr(0,4)+') AND (coll_month:'+colldate1.substr(5,7)+'))';
             }
             else{
-                colldateCqlString += "(eventDate = '"+colldate1+"')";
                 colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate1+'T23:59:59.999Z])';
             }
         }
-        cqlfrag = colldateCqlString;
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+colldateSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(catnumval){
         var catnumvals = catnumval.split(',');
-        var catnumCqlString = '';
         var catnumSolrqString = '';
         for(i = 0; i < catnumvals.length; i++){
-            if(catnumCqlString) catnumCqlString += " OR ";
             if(catnumSolrqString) catnumSolrqString += " OR ";
-            catnumCqlString += "(catalogNumber = '"+catnumvals[i]+"')";
             catnumSolrqString += '(catalogNumber:"'+catnumvals[i]+'")';
         }
-        cqlfrag = '('+catnumCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+catnumSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(othercatnumval){
         var othercatnumvals = othercatnumval.split(',');
-        var othercatnumCqlString = '';
         var othercatnumSolrqString = '';
         for(i = 0; i < othercatnumvals.length; i++){
-            if(othercatnumCqlString) othercatnumCqlString += " OR ";
             if(othercatnumSolrqString) othercatnumSolrqString += " OR ";
-            othercatnumCqlString += "(otherCatalogNumbers = '"+othercatnumvals[i]+"')";
             othercatnumSolrqString += '(otherCatalogNumbers:"'+othercatnumvals[i]+'")';
         }
-        cqlfrag = '('+othercatnumCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+othercatnumSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(typestatus){
-        var typestatusCqlString = "typeStatus LIKE '_%'";
         var typestatusSolrqString = "(typeStatus:[* TO *])";
-        cqlfrag = '('+typestatusCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+typestatusSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(hasimages){
-        var hasimagesCqlString = "imgid LIKE '_%'";
         var hasimagesSolrqString = "(imgid:[* TO *])";
-        cqlfrag = '('+hasimagesCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+hasimagesSolrqString+')';
         solrqArr.push(solrqfrag);
     }
     if(hasgenetic){
-        var hasgeneticCqlString = "resourcename LIKE '_%'";
         var hasgeneticSolrqString = "(resourcename:[* TO *])";
-        cqlfrag = '('+hasgeneticCqlString+')';
-        cqlArr.push(cqlfrag);
         solrqfrag = '('+hasgeneticSolrqString+')';
         solrqArr.push(solrqfrag);
     }
@@ -2271,7 +2161,6 @@ function lazyLoadPoints(index,callback){
 }
 
 function loadPoints(){
-    cqlString = '';
     solrqString = '';
     taxaCnt = 0;
     collSymbology = [];
@@ -2280,7 +2169,6 @@ function loadPoints(){
     dsOldestDate = '';
     dsNewestDate = '';
     removeDateSlider();
-    cqlString = newcqlString;
     solrqString = newsolrqString;
     if(newsolrqString){
         showWorking();
@@ -2430,7 +2318,6 @@ function prepareTaxaParams(callback){
     var taxaval = document.getElementById("taxa").value.trim();
     if(taxaval){
         var taxavals = taxaval.split(',');
-        var taxaCqlString = '';
         var taxaSolrqString = '';
         taxaArr = [];
         taxontype = document.getElementById("taxontype").value;
@@ -2442,11 +2329,9 @@ function prepareTaxaParams(callback){
         }
         prepareTaxaData(function(res){
             if(taxaArr){
-                var taxaCqlString = '';
                 var taxaSolrqString = '';
                 for (i in taxaArr){
                     if(taxontype == 4){
-                        taxaCqlString = " OR parenttid = "+i;
                         taxaSolrqString = " OR (parenttid:"+i+")";
                     }
                     else{
@@ -2458,16 +2343,12 @@ function prepareTaxaParams(callback){
                             }
                             if(famArr.length > 0){
                                 taxaSolrqString += " OR (family:("+famArr.join()+"))";
-                                for (f in famArr){
-                                    taxaCqlString += " OR family = '"+famArr[f]+"'";
-                                }
                             }
                             if(taxaArr[i]["scinames"]){
                                 scinameArr = taxaArr[i]["scinames"];
                                 if(scinameArr.length > 0){
                                     for (s in scinameArr){
                                         taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
-                                        taxaCqlString += " OR sciname LIKE '"+scinameArr[s]+"%'";
                                     }
                                 }
                             }
@@ -2475,11 +2356,9 @@ function prepareTaxaParams(callback){
                         else{
                             if((taxontype == 2 || taxontype == 1) && ((i.substr(i.length - 5) == "aceae") || (i.substr(i.length - 4) == "idae"))){
                                 taxaSolrqString += " OR (family:"+i+")";
-                                taxaCqlString += " OR family = '"+i+"'";
                             }
                             if((taxontype == 3 || taxontype == 1) && ((i.substr(i.length - 5) != "aceae") || (i.substr(i.length - 4) != "idae"))){
                                 taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
-                                taxaCqlString += " OR sciname LIKE '"+i+"%'";
                             }
                         }
                         if(taxaArr[i]["synonyms"]){
@@ -2490,7 +2369,6 @@ function prepareTaxaParams(callback){
                                 for (syn in synArr){
                                     if(synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1){
                                         taxaSolrqString += " OR (family:"+synArr[syn]+")";
-                                        taxaCqlString += " OR family = '"+synArr[syn]+"'";
                                     }
                                 }
                             }
@@ -2498,14 +2376,10 @@ function prepareTaxaParams(callback){
                                 tidArr.push(syn);
                             }
                             taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
-                            taxaCqlString += " OR tidinterpreted IN("+tidArr.join(' ')+")";
                         }
                     }
                 }
-                taxaCqlString = taxaCqlString.substr(4,taxaCqlString.length);
                 taxaSolrqString = taxaSolrqString.substr(4,taxaSolrqString.length);
-                cqlfrag = '(('+taxaCqlString+'))';
-                cqlArr.push(cqlfrag);
                 solrqfrag = '('+taxaSolrqString+')';
                 solrqArr.push(solrqfrag);
             }

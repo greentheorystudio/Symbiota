@@ -3,9 +3,6 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/config/includes/searchVarDefault.php');
 include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
-header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
-header('Pragma: no-cache'); // HTTP 1.0.
-header('Expires: 0'); // Proxies.
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
 if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
@@ -618,8 +615,6 @@ $dbArr = Array();
 <script type="text/javascript">
     var layersArr = [];
     var mouseCoords = [];
-    var tempcqlArr = [];
-    var cqlArr = [];
     var solrqArr = [];
     var solrgeoqArr = [];
     var selections = [];
@@ -627,8 +622,6 @@ $dbArr = Array();
     var taxaSymbology = [];
     var collKeyArr = [];
     var taxaKeyArr = [];
-    var cqlString = '';
-    var newcqlString = '';
     var solrqString = '';
     var newsolrqString = '';
     var solroccqString = '';
