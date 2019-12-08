@@ -23,3 +23,6 @@
 /vendor
 /composer.lock
 /docker-compose.yml
+/docs/.sass-cache/
+/docs/_site/
+/docs/Gemfile.lock
