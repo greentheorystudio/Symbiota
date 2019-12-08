@@ -28,7 +28,7 @@
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\"",
       "@php -r \"file_exists('./webservices/dwc/rss.xml') || copy('./webservices/dwc/rss.xml.dist', './webservices/dwc/rss.xml');\""
     ],
-    "post-install-cmd": [
+    "post-update-cmd": [
       "chmod -R 777 ./collections/datasets/dwc",
       "chmod -R 777 ./content/collicon",
       "chmod -R 777 ./content/css",

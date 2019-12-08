@@ -17,15 +17,26 @@ Symbiota requires the following applications to be installed and configured with
 
 In addition, the following PHP extensions need to be installed and enabled:
 
-- mysqli
-- iconv
-- JSON
-- Mbstring
-- OpenSSL
-- PCRE
-- PDO
-- Session
-- SimpleXML
-- Tokenizer
+- php-curl
+- php-gd
+- php-mbstring
+- php-mysql
+- php-xml
+- php-xmlrpc
+- php-zip
+
+The optional [PHP Pear](https://pear.php.net/) package [Image_Barcode](https://pear.php.net/package/Image_Barcode) can also
+be installed to enable barcode generation on specimen labels.
+
+## Installation
+
+### Install the software
+
+It is highly recommended to install Symbiota using git. To do so, follow these steps:
+
+- Navigate to the directory in which you wish to install Symbiota.
+- Clone this repository using the following command:
+    
+    `git clone https://github.com/greentheorystudio/Symbiota.git .`
 
 [Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)
