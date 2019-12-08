@@ -3,8 +3,6 @@ include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/config/includes/searchVarDefault.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
     include($SERVER_ROOT.'/config/includes/searchVarCustom.php');

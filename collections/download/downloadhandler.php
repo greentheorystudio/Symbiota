@@ -4,8 +4,6 @@ include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists("schema",$_REQUEST)?$_REQUEST["schema"]:"symbiota";

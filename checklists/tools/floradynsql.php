@@ -2,9 +2,7 @@
 	include_once('../../config/symbini.php');
 	include_once($SERVER_ROOT.'/classes/InventoryDynSqlManager.php');
 	header("Content-Type: text/html; charset=".$CHARSET);
-	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-	header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-	$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:""; 
+	$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
 	$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
 	$sqlFrag = array_key_exists("sqlfrag",$_REQUEST)?$_REQUEST["sqlfrag"]:"";
 	

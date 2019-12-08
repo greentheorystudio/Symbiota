@@ -2,8 +2,6 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/EOLManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?'.$_SERVER['QUERY_STRING']);
 

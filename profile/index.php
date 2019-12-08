@@ -2,9 +2,6 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-header('Cache-Control: no-cache, no-cache="set-cookie", no-store, must-revalidate');
-header('Pragma: no-cache'); // HTTP 1.0.
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';

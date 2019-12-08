@@ -4,8 +4,6 @@ include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/MapInterfaceManager.php');
 include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); 
 
 $schema = array_key_exists("schema",$_POST)?$_POST["schema"]:"symbiota"; 
 $cSet = array_key_exists("cset",$_POST)?$_POST["cset"]:'';

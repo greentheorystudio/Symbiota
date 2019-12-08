@@ -2,9 +2,6 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/MapInterfaceManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
-header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
-header('Pragma: no-cache'); // HTTP 1.0.
-header('Expires: 0'); // Proxies.
 
 $type = array_key_exists("kmltype",$_POST)?$_POST["kmltype"]:'';
 $selections = array_key_exists('selectionskml',$_POST)?$_POST['selectionskml']:0;
