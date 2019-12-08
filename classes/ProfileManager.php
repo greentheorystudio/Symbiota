@@ -13,9 +13,18 @@ class ProfileManager extends Manager{
     private $token;
     private $authSql;
 	private $errorStr;
+    private $encryption;
 
 	public function __construct(){
 		parent::__construct();
+        $connection = new DbConnection();
+        $dbVersion = $connection->getVersion();
+        if((substr($dbVersion, 0, 2) === '5.') || (substr($dbVersion, 0, 2) === 'ma')){
+            $this->encryption = 'password';
+        }
+        else{
+            $this->encryption = 'sha2';
+        }
 	}
 
 	public function reset(): void
@@ -39,7 +48,12 @@ class ProfileManager extends Manager{
                		'FROM users AS u INNER JOIN userlogin AS ul ON u.uid = ul.uid '.
                		'WHERE (ul.username = "'.$this->userName.'") ';
                 if($pwdStr) {
-                    $this->authSql .= 'AND (ul.password = SHA2("' . $this->cleanInStr($pwdStr) . '", 224)) ';
+                    if($this->encryption === 'password'){
+                        $this->authSql .= 'AND (ul.password = PASSWORD("' . $this->cleanInStr($pwdStr) . '")) ';
+                    }
+                    if($this->encryption === 'sha2'){
+                        $this->authSql .= 'AND (ul.password = SHA2("' . $this->cleanInStr($pwdStr) . '", 224)) ';
+                    }
                 }
             }
 		    //echo $this->authSql;
@@ -203,15 +217,27 @@ class ProfileManager extends Manager{
 			$connection = new DbConnection();
 			$editCon = $connection->getConnection();
 			if($isSelf){
-				$sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
-					'AND (ul.password = SHA2("'.$this->cleanInStr($oldPwd).'", 224))';
+				if($this->encryption === 'password'){
+                    $sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
+                        'AND (ul.password = PASSWORD("'.$this->cleanInStr($oldPwd).'"))';
+                }
+                if($this->encryption === 'sha2'){
+                    $sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
+                        'AND (ul.password = SHA2("'.$this->cleanInStr($oldPwd).'", 224))';
+                }
 				$rsTest = $editCon->query($sqlTest);
 				if(!$rsTest->num_rows) {
 					return false;
 				}
 			}
-			$sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPwd).'", 224) '.
-				'WHERE (uid = '.$this->uid.')';
+			if($this->encryption === 'password'){
+                $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPwd).'") '.
+                    'WHERE (uid = '.$this->uid.')';
+            }
+            if($this->encryption === 'sha2'){
+                $sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPwd).'", 224) '.
+                    'WHERE (uid = '.$this->uid.')';
+            }
 			$successCnt = $editCon->query($sql);
 			$editCon->close();
 			if($successCnt > 0) {
@@ -228,8 +254,14 @@ class ProfileManager extends Manager{
 		if($un){
 			$connection = new DbConnection();
 			$editCon = $connection->getConnection();
-			$sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
-					'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+			if($this->encryption === 'password'){
+                $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
+                    'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+            }
+            if($this->encryption === 'sha2'){
+                $sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
+                    'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+            }
 			$status = $editCon->query($sql);
 			$editCon->close();
 		}
@@ -378,10 +410,18 @@ class ProfileManager extends Manager{
 		if($editCon->query($sql)){
 			$person->setUid($editCon->insert_id);
 			$this->uid = $person->getUid();
-			$sql = 'INSERT INTO userlogin (uid, username, password) '.
-				'VALUES ('.$person->getUid().', "'.
-				$this->cleanInStr($person->getUserName()).
-				'", SHA2("'.$this->cleanInStr($person->getPassword()).'", 224))';
+			if($this->encryption === 'password'){
+                $sql = 'INSERT INTO userlogin (uid, username, password) '.
+                    'VALUES ('.$person->getUid().', "'.
+                    $this->cleanInStr($person->getUserName()).
+                    '", PASSWORD("'.$this->cleanInStr($person->getPassword()).'"))';
+            }
+            if($this->encryption === 'sha2'){
+                $sql = 'INSERT INTO userlogin (uid, username, password) '.
+                    'VALUES ('.$person->getUid().', "'.
+                    $this->cleanInStr($person->getUserName()).
+                    '", SHA2("'.$this->cleanInStr($person->getPassword()).'", 224))';
+            }
 			if($editCon->query($sql)){
 				$status = true;
 				$this->userName = $person->getUserName();

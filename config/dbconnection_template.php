@@ -5,5 +5,6 @@ $DB_SERVER = array(
     'password' => '',
     'database' => '',
     'port' => '3306',
-    'charset' => 'utf8'
+    'charset' => 'utf8',
+    'version' => '5.7'
 );

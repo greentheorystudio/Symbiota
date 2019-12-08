@@ -8,4 +8,10 @@ class DbConnection {
 
         return $connection;
     }
+
+    public function getVersion() {
+        global $DB_SERVER;
+
+        return $DB_SERVER['version'];
+    }
 }
