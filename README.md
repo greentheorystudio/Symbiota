@@ -39,4 +39,8 @@ It is highly recommended to install Symbiota using git. To do so, follow these s
     
     `git clone https://github.com/greentheorystudio/Symbiota.git .`
 
+- Complete the installation through Composer using the following command:
+    
+    `composer install`
+
 [Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)
