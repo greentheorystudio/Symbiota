@@ -13,7 +13,7 @@ Symbiota requires the following applications to be installed and configured with
 - [PHP 7.2 or greater](http://php.net/manual/en/install.php)
 - [MySQL 5.6.2 or greater](https://www.mysql.com/) or [MariaDB 10.2 or greater](https://mariadb.com/)
 - [Composer](https://getcomposer.org/doc/00-intro.md)
-- [git](https://git-scm.com/) (optional, but suggested in order to easily update your installation from this repository)
+- [git](https://git-scm.com/)
 
 In addition, the following PHP extensions need to be installed and enabled:
 
@@ -31,8 +31,6 @@ be installed to enable barcode generation on specimen labels.
 ## Installation
 
 ### Install the software
-
-It is highly recommended to install Symbiota using git. To do so, follow these steps:
 
 - Navigate to the directory in which you wish to install Symbiota.
 - Clone this repository using the following command:
