@@ -833,25 +833,6 @@ function openIndPopup(occid){
 	openPopup('../individual/index.php?occid=' + occid);
 }
 
-function openGarminDownloader(type){
-	if(type=="query"){
-		var jsonSelections = JSON.stringify(selections);
-	}
-	if(type=="dataset"){
-		if(dsselections.length!=0){
-			var jsonSelections = JSON.stringify(dsselections);
-		}
-		else{
-			alert("Please select records from the dataset to send to the GPS unit.");
-			return;
-		}
-	}
-	var url = 'garmin.php?selections='+jsonSelections;
-	newWindow = window.open(url,'popup','scrollbars=1,toolbar=1,resizable=1,width=450,height=350,left=20,top=20');
-	if (newWindow.opener == null) newWindow.opener = self;
-	return false;
-}
-
 function openEditorPopup(occid){
 	openPopup('editor/occurrenceeditor.php?occid=' + occid);
 }

@@ -1722,9 +1722,6 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
                                         <div>
                                             <button data-role="none" id="clearselectionsbut" onclick='clearSelections();' >Clear Selections</button>
                                         </div>
-                                        <div style="margin-top:5px;">
-                                            <button data-role="none" id="sendtogpsbut" onclick='openGarminDownloader("query");' >Send to GPS</button>
-                                        </div>
                                         <div style="margin-top:5px;margin-bottom:5px;">
                                             <button data-role="none" id="selectioncsvbut" onclick='openCsvOptions("selection");' >Download CSV file</button>
                                         </div>
@@ -1788,9 +1785,6 @@ elseif($stArr || ($mapType && $mapType == 'occquery') || $clid){
                                                 <input data-role="none" name="kmlreclimit" id="kmlreclimit" type="hidden" value="<?php echo $recLimit; ?>" />
                                                 <button data-role="none" name="submitaction" type="button" onclick='prepSelectionKml(this.form);' >Download KML file</button>
                                             </form>
-                                        </div>
-                                        <div style="margin-top:5px;">
-                                            <button data-role="none" id="" onclick='openGarminDownloader("dataset");' >Send to GPS</button>
                                         </div>
                                     </div>
                                     <div id="" style='margin-right:15px;float:right;' >
