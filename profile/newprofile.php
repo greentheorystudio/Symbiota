@@ -105,6 +105,10 @@ if($action === 'Create Login'){
 				window.alert("Last Name must contain a value");
 				return false;
 			}
+            if(enteredValue.toString() === randNumber.toString()){
+                window.alert("Enter the number displayed in the box to prove you're human");
+                return false;
+            }
 
 			return true;
 		}
