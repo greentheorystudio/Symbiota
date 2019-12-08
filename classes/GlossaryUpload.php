@@ -487,7 +487,7 @@ class GlossaryUpload{
 				//Create log File
 				$LOG_PATH = $SERVER_ROOT;
 				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
-				$LOG_PATH .= "temp/logs/glossaryloader_".date('Ymd').".log";
+				$LOG_PATH .= "content/logs/glossaryloader_".date('Ymd').".log";
 				$this->logFH = fopen($LOG_PATH, 'a');
 				fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
 			}

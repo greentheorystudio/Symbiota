@@ -7,8 +7,8 @@ secure than the original, requiring fewer third-party services to configure.
 ## Requirements
 
 Symbiota can be installed on any Linux, Windows, or Mac operating systems, but requires an additional server application
-(Apache, nginx, etc.) to be installed and configured. In addition, Symbiota requires the following applications to be installed 
-and configured with the server application:
+([Apache](http://httpd.apache.org/), [NGINX](https://www.nginx.com/), etc.) to be installed and configured. In addition, 
+Symbiota requires the following applications to be installed and configured with the server application:
 
 - [PHP 7.2 or greater](http://php.net/manual/en/install.php)
 - [MySQL 5.6.2 or greater](https://www.mysql.com/) or [MariaDB 10.2 or greater](https://mariadb.com/)
@@ -28,4 +28,4 @@ In addition, the following PHP extensions need to be installed and enabled:
 - SimpleXML
 - Tokenizer
 
-[Go to the Documentation site](https://symbiota2.github.io/Symbiota2/)
+[Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)

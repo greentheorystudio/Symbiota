@@ -256,7 +256,6 @@ class MapInterfaceManager{
 			$polyStr = str_replace("\\","",$this->searchTermsArr["polycoords"]);
             $coordArr = json_decode($polyStr, true);
             if($coordArr){
-				$coordStr = '';
 				$coordStr = 'Polygon((';
 				$keys = array();
 				foreach($coordArr as $k => $v){
@@ -847,9 +846,7 @@ class MapInterfaceManager{
 	}
 
 	public function getFullCollArr($stArr){
-		$sql = '';
 		$this->collArr = Array();
-		$sql = '';
 		$sql = 'SELECT c.CollID, c.CollectionName '.
 			'FROM omcollections AS c ';
 		if($stArr['db'] && $stArr['db'] != 'all'){
@@ -951,7 +948,6 @@ class MapInterfaceManager{
 		$seloccids = preg_match('#\[(.*?)\]#', $seloccids, $match);
 		$seloccids = $match[1];
 		$coordArr = Array();
-		$sql = '';
 		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
 			'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, '.
 			'o.catalognumber, o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
@@ -1451,8 +1447,7 @@ class MapInterfaceManager{
 	public function getChecklist($stArr,$mapWhere){
 		$returnVec = Array();
 		$this->checklistTaxaCnt = 0;
-		$sql = "";
-        $sql = 'SELECT DISTINCT t.tid, IFNULL(ts.family,o.family) AS family, IFNULL(t.sciname,o.sciname) AS sciname '.
+		$sql = 'SELECT DISTINCT t.tid, IFNULL(ts.family,o.family) AS family, IFNULL(t.sciname,o.sciname) AS sciname '.
 			'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
 			'LEFT JOIN taxstatus ts ON t.tid = ts.tid ';
 		if(array_key_exists("clid",$this->searchTermsArr)) $sql .= "LEFT JOIN fmvouchers AS v ON o.occid = v.occid ";

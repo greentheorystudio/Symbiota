@@ -17,7 +17,7 @@ $imgUrlBase = '';
 
 //Log title and Path to where log files will be placed
 $logTitle = '';
-$logProcessorPath = $sourcePathBase.'/logs';
+$logProcessorPath = $sourcePathBase.'/content/logs';
 //0 = silent, 1 = html, 2 = log file, 3 = html and log file
 $logMode = 2;
 

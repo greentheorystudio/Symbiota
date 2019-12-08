@@ -445,7 +445,7 @@ class SpecUpload{
 				if($SERVER_ROOT){
 					$LOG_PATH = $SERVER_ROOT;
 					if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
-					$LOG_PATH .= 'temp/logs/';
+					$LOG_PATH .= 'content/logs/';
 					if($logTitle){
 						$LOG_PATH .= $logTitle;
 					}
