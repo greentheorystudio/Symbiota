@@ -177,12 +177,6 @@ include($SERVER_ROOT.'/header.php');
 				?>
 				<li><a href="personalspecmenu.php">Specimen Management</a></li>
 				<li><a href="userprofile.php?userid=<?php echo $userId; ?>">User Profile</a></li>
-				<?php
-				if ($person->getIsTaxonomyEditor()) {
-					echo '<li><a href="specimenstoid.php?userid='.$userId.'&action='.$action.'">IDs Needed</a></li>';
-					echo '<li><a href="imagesforid.php">Images for ID</a></li>';
-				}
-				?>
 			</ul>
 		</div>
 		<?php
