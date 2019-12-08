@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Symbiota2</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Symbiota2" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/setup/build_docker_setup.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/setup/build_docker_setup.html" />
+<meta property="og:site_name" content="Symbiota2" />
+<script type="application/ld+json">
+{"headline":"Symbiota2","@type":"WebPage","url":"http://0.0.0.0:4000/setup/build_docker_setup.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="http://0.0.0.0:4000/">
+          <h1>Symbiota2</h1>
+        </a>
+        <h2></h2>
+        <a href="https://github.com/Symbiota2/Symbiota2" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3 id="back-to-index"><a href="./index.html">Back to index</a></h3>
+
+<h1 id="build-docker-containers">Build Docker containers</h1>
+
+<p>The initial launch of the containers included in the docker-compose file will take longer to complete as all 
+of the packages will have to be downloaded, installed, and the container images built. Once all of these initial
+steps are complete, further launches are completed much faster. To perform the initial launch of the Docker 
+containers, follow the following steps:</p>
+
+<ul>
+  <li><strong>If you are using a Linux machine, and the nginx and php containers for your server, make sure that Apache is disabled
+and port 80 is open.</strong></li>
+  <li>
+    <p>Start all of the Docker containers in detached (non-logging) mode (on Linux machines run with <code class="highlighter-rouge">sudo</code>):</p>
+
+    <p><code class="highlighter-rouge">docker-compose up -d</code></p>
+  </li>
+  <li>Wait for all of the container images to be built and started.</li>
+  <li>
+    <p>Once all of the containers are ready, if you are using the nginx and php containers for your server, log into the 
+  php container (on Linux machines run with <code class="highlighter-rouge">sudo</code>):</p>
+
+    <p><code class="highlighter-rouge">docker-compose exec php bash</code></p>
+
+    <p><strong>Note - once you are done working in the terminal, exit the php container by typing:</strong> <code class="highlighter-rouge">exit</code></p>
+  </li>
+</ul>
+
+<h3 id="back-to-index-1"><a href="./index.html">Back to index</a></h3>
+
+        </section>
+
+        <aside id="sidebar">
+          
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.zip" class="button">
+              <small>Download</small>
+              .zip file
+            </a>
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.tar.gz" class="button">
+              <small>Download</small>
+              .tar.gz file
+            </a>
+          
+
+        </aside>
+      </div>
+    </div>
+
+    
+  </body>
+</html>

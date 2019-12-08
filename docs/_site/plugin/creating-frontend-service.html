@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Symbiota2</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Symbiota2" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/plugin/creating-frontend-service.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/plugin/creating-frontend-service.html" />
+<meta property="og:site_name" content="Symbiota2" />
+<script type="application/ld+json">
+{"headline":"Symbiota2","@type":"WebPage","url":"http://0.0.0.0:4000/plugin/creating-frontend-service.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="http://0.0.0.0:4000/">
+          <h1>Symbiota2</h1>
+        </a>
+        <h2></h2>
+        <a href="https://github.com/Symbiota2/Symbiota2" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3 id="back-to-index"><a href="./index.html">Back to index</a></h3>
+
+<h1 id="creating-a-new-frontend-service">Creating a new frontend service</h1>
+
+<p><strong>NOTE: If you are not planning on including new services in the frontend elements of your plugin, skip this page.</strong></p>
+
+<p><strong>Before proceeding, be sure to have <a href="./add-npm-build-scripts.html">added the npm build scripts to the package.json file</a>.</strong></p>
+
+<p><strong>The <a href="https://angular.io/guide/architecture-services" target="_blank">Angular documentation on services</a> 
+  should be used as a general reference for creating and working with services in the frontend.</strong></p>
+
+<p><strong>If you are going to be offering i18n internationalization support, <a href="https://www.codeandweb.com/babeledit/tutorials/how-to-translate-your-angular8-app-with-ngx-translate" target="_blank">this ngx-translate tutorial</a> 
+  should be used as a general reference for providing i18n translation support. Note: all translation keys used withing 
+  your plugin must have a prefix of the plugin name in order to ensure uniqueness.</strong></p>
+
+<p>It is strongly suggested to create the initial structure for the new service using an Angular Schematic through 
+  either <a href="https://angular.io/cli/generate" target="_blank">the Angular CLI</a> or using an IDE with Angular support. Using 
+  the Angular CLI, this can be done through the following steps:</p>
+<ul>
+  <li>From the root directory of your Symbiota2 installation, change directory to the <code class="highlighter-rouge">src/lib</code> directory of your plugin
+project through the following command (replacing <code class="highlighter-rouge">&lt;plugin-name&gt;</code> with the name of your plugin):
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd plugins/&lt;plugin-name&gt;/src/lib
+</code></pre></div>    </div>
+  </li>
+  <li>Generate the service Angular Schematic through the following command:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng g service
+</code></pre></div>    </div>
+  </li>
+  <li>Enter a name for the new service when prompted.</li>
+  <li>Once the service has been generated, edit the file named <code class="highlighter-rouge">&lt;plugin-name&gt;.module.ts</code> (with <code class="highlighter-rouge">&lt;plugin-name&gt;</code> being 
+the name of your plugin) in the following ways:
+    <ul>
+      <li>Import the new service in the top of the file..</li>
+      <li>If it does not already exist, add the <code class="highlighter-rouge">providers</code> property to the <code class="highlighter-rouge">@NgModule</code> declaration and assign it 
+an empty array value.</li>
+      <li>Add the imported service to the <code class="highlighter-rouge">providers</code> property array.</li>
+      <li>Add the new component to the <code class="highlighter-rouge">public-api.ts</code> file of your plugin by adding the following 
+line to the  <code class="highlighter-rouge">src/public-api.ts</code> file in your plugin root directory (replacing <code class="highlighter-rouge">&lt;service-name&gt;</code> with the name you 
+entered for the new service in the previous step):
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export * from './lib/&lt;service-name&gt;.service';
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>After following the above steps, for a service named <code class="highlighter-rouge">example</code> in a plugin that offers i18n internationalization support 
+  for English, Spanish, and Portuguese:</p>
+<ul>
+  <li>
+    <p>The root folder for the plugin project within the <code class="highlighter-rouge">plugins</code> folder of the Symbiota2 installation would have a structure 
+resembling the following:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>plugins
+│   ...
+└───example-plugin
+│   │   config.json
+│   │   karma.conf.js
+│   │   ng-package.json
+│   │   package.json
+│   │   README.md
+│   │   tsconfig.lib.json
+│   │   tsconfig.spec.json
+│   │   tslint.json
+│   └───i18n
+│   │   │   en.json
+│   │   │   es.json
+│   │   │   pt.json
+│   │   
+│   └───src
+│       │   public-api.ts
+│       │   test.ts
+│       └───lib
+│           │   example.service.spec.ts
+│           │   example.service.ts
+│           │   example-plugin.module.ts
+│   
+│   ...
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>The <code class="highlighter-rouge">src/public-api.ts</code> file in the plugin root directory would resemble the following:</p>
+
+    <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Public API Surface of example-plugin
+ */</span>
+    
+<span class="k">export</span> <span class="o">*</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./lib/example-plugin.module</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">export</span> <span class="o">*</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./lib/example.service</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>The <code class="highlighter-rouge">src/lib/example-plugin.module.ts</code> file in the plugin root directory would resemble the following:</p>
+  </li>
+</ul>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">import</span> <span class="p">{</span><span class="nx">TranslateModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@ngx-translate/core</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">import</span> <span class="p">{</span><span class="nx">SymbiotaAuthModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">symbiota-auth</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">import</span> <span class="p">{</span><span class="nx">SymbiotaSharedModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">symbiota-shared</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">import</span> <span class="p">{</span><span class="nx">ExampleService</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./example.service</span><span class="dl">"</span><span class="p">;</span>
+  
+  <span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+      <span class="na">declarations</span><span class="p">:</span> <span class="p">[],</span>
+      <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+          <span class="nx">TranslateModule</span><span class="p">,</span>
+          <span class="nx">SymbiotaAuthModule</span><span class="p">,</span>
+          <span class="nx">SymbiotaSharedModule</span>
+      <span class="p">],</span>
+      <span class="na">exports</span><span class="p">:</span> <span class="p">[],</span>
+      <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
+          <span class="nx">ExampleService</span>
+      <span class="p">]</span>
+  <span class="p">})</span>
+  <span class="k">export</span> <span class="kd">class</span> <span class="nx">ExamplePluginModule</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="back-to-index-1"><a href="./index.html">Back to index</a></h3>
+
+        </section>
+
+        <aside id="sidebar">
+          
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.zip" class="button">
+              <small>Download</small>
+              .zip file
+            </a>
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.tar.gz" class="button">
+              <small>Download</small>
+              .tar.gz file
+            </a>
+          
+
+        </aside>
+      </div>
+    </div>
+
+    
+  </body>
+</html>

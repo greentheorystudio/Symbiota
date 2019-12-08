@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Symbiota2</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Symbiota2" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/plugin/packaging-plugin-distribution.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/plugin/packaging-plugin-distribution.html" />
+<meta property="og:site_name" content="Symbiota2" />
+<script type="application/ld+json">
+{"headline":"Symbiota2","@type":"WebPage","url":"http://0.0.0.0:4000/plugin/packaging-plugin-distribution.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="http://0.0.0.0:4000/">
+          <h1>Symbiota2</h1>
+        </a>
+        <h2></h2>
+        <a href="https://github.com/Symbiota2/Symbiota2" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3 id="back-to-index"><a href="./index.html">Back to index</a></h3>
+
+<h1 id="packaging-a-plugin-for-distribution">Packaging a plugin for distribution</h1>
+
+<p><strong>Before proceeding, be sure to have <a href="./add-npm-build-scripts.html">added the npm build scripts to the package.json file</a>.</strong></p>
+
+<p>Once your plugin is complete and ready for distribution, it needs to have a final build and then be packaged in a zip archive.
+To create a final build and package your plugin, follow these steps:</p>
+<ul>
+  <li>Create the final build of your plugin by running the following command (replacing <code class="highlighter-rouge">&lt;plugin-name&gt;</code> with the name of your plugin):
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  npm run package_&lt;plugin-name&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>Copy the <code class="highlighter-rouge">api</code> directory (if it exists), <code class="highlighter-rouge">i18n</code> directory (if it exists), <code class="highlighter-rouge">src</code> directory (if it exists), and the <code class="highlighter-rouge">config.json</code> file from the root directory
+of your plugin to the <code class="highlighter-rouge">dist/&lt;plugin-name&gt;</code> directory (with <code class="highlighter-rouge">&lt;plugin-name&gt;</code> being the name of your plugin) in the root 
+directory of your Symbiota2 installation.</li>
+  <li>Create a zip archive of the <code class="highlighter-rouge">dist/&lt;plugin-name&gt;</code> directory (with <code class="highlighter-rouge">&lt;plugin-name&gt;</code> being the name of your plugin) in the root 
+directory of your Symbiota2 installation. The final zip file will be the final packaged version of your plugin. It can be used
+to install your plugin in a Symbiota2 installation locally, or via download.</li>
+  <li>
+    <p>For a service named <code class="highlighter-rouge">example-plugin</code> which includes a service named <code class="highlighter-rouge">example</code> and a component named <code class="highlighter-rouge">example</code> as well as 
+offers i18n internationalization support for English, Spanish, and Portuguese, the contents of the zip archive for the 
+plugin project would have a structure resembling the following:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  └───example-plugin.zip
+      │   config.json
+      │   example-plugin.d.ts
+      │   example-plugin.metadata.json
+      │   example-plugin-0.0.1.tgz
+      │   package.json
+      │   public-api.d.ts
+      │   README.md
+      └───bundles
+      │   │   example-plugin.umd.js
+      │   │   example-plugin.umd.js.map
+      │   │   example-plugin.umd.min.js
+      │   │   example-plugin.umd.min.js.map
+      │
+      └───esm5
+      │   │   example-plugin.js
+      │   │   public-api.js
+      │   └───lib
+      │       │   example-plugin.module.js
+      │
+      └───esm2015
+      │   │   example-plugin.js
+      │   │   public-api.js
+      │   └───lib
+      │       │   example-plugin.module.js
+      │
+      └───fesm5
+      │   │   example-plugin.js
+      │   │   example-plugin.js.map
+      │
+      └───fesm2015
+      │   │   example-plugin.js
+      │   │   example-plugin.js.map
+      │
+      └───i18n
+      │   │   en.json
+      │   │   es.json
+      │   │   pt.json
+      │
+      └───lib
+      │   │   example-plugin.module.d.ts
+      │      
+      └───src
+          │   public-api.ts
+          │   test.ts
+          └───lib
+                │   example.component.css
+                │   example.component.html
+                │   example.component.spec.ts
+                │   example.component.ts
+                │   example.service.spec.ts
+                │   example.service.ts
+                │   example-plugin.module.ts
+        
+    
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="back-to-index-1"><a href="./index.html">Back to index</a></h3>
+
+        </section>
+
+        <aside id="sidebar">
+          
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.zip" class="button">
+              <small>Download</small>
+              .zip file
+            </a>
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.tar.gz" class="button">
+              <small>Download</small>
+              .tar.gz file
+            </a>
+          
+
+        </aside>
+      </div>
+    </div>
+
+    
+  </body>
+</html>

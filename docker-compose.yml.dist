@@ -40,3 +40,19 @@ services:
       - ./data/solr:/var/solr/data
     ports:
       - 8984:8983
+
+  jekyll:
+    build: ./docker/jekyll
+    container_name: jekyll
+    command: jekyll serve --force_polling
+    volumes:
+      - ./docs:/srv/jekyll
+    ports:
+      - 4000:4000
+
+  adminer:
+    image: adminer:4.7
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080

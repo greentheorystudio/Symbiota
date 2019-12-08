@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Symbiota2</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Symbiota2" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/setup/configure_env_file_database.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/setup/configure_env_file_database.html" />
+<meta property="og:site_name" content="Symbiota2" />
+<script type="application/ld+json">
+{"headline":"Symbiota2","@type":"WebPage","url":"http://0.0.0.0:4000/setup/configure_env_file_database.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="http://0.0.0.0:4000/">
+          <h1>Symbiota2</h1>
+        </a>
+        <h2></h2>
+        <a href="https://github.com/Symbiota2/Symbiota2" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3 id="back-to-index"><a href="./index.html">Back to index</a></h3>
+
+<h1 id="configure-the-database-parameters-in-the-env-file">Configure the database parameters in the .env file</h1>
+
+<p>The <code class="highlighter-rouge">.env</code> file in the root directory of the Symbiota2 installation configures the database connection.
+Symbiota2 is configured to use the MySQL DBMS container within the Docker setup by default. If you are
+planning on using this DBMS for your database, as well as the nginx and php containers within 
+the Docker setup for your server, there is no need to do anything further. If you are planning on using 
+this DBMS for your database with a locally installed application for your server, edit the .env by changing
+line 11 to the following:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">DATABASE_URL</span><span class="o">=</span>mysql://root:password@127.0.0.1:3308/symbiota
+</code></pre></div></div>
+
+<hr />
+
+<p>If you are planning on using a different DBMS in the Docker setup, SQLite, or one installed locally on your machine,
+you must edit the .env file by doing the following:</p>
+
+<ul>
+  <li>Comment out lines 11-13 so that lines 10-14 look like the following:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">######TO USE MYSQL UNCOMMENT THESE LINES##############################</span>
+  <span class="c">#DATABASE_URL=mysql://root:password@mysql/symbiota</span>
+  <span class="c">#DATABASE_DRIVER='pdo_mysql'</span>
+  <span class="c">#DATABASE_SERVER_VERSION='5.7'</span>
+  <span class="c">######################################################################</span>
+</code></pre></div>    </div>
+  </li>
+  <li>If you plan to use the MariaDB DBMS Docker container (<strong>NOTE - THIS CONTAINER IS NOT
+  COMPATIBLE WITH DOCKER FOR WINDOWS</strong>), uncomment lines 17-19 so that lines 16-20 
+  look like the following:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">######TO USE MARIADB UNCOMMENT THESE LINES############################</span>
+  <span class="nv">DATABASE_URL</span><span class="o">=</span>mysql://root:password@mariadb/symbiota
+  <span class="nv">DATABASE_DRIVER</span><span class="o">=</span><span class="s1">'pdo_mysql'</span>
+  <span class="nv">DATABASE_SERVER_VERSION</span><span class="o">=</span><span class="s1">'mariadb-10.4.1'</span>
+  <span class="c">######################################################################</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>If you are going to use this DBMS with a locally installed application for your server, edit the .env by 
+changing line 17 to the following:
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">DATABASE_URL</span><span class="o">=</span>mysql://root:password@127.0.0.1:3310/symbiota
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>If you plan to use the Postgres DBMS Docker container, uncomment lines 23-25 so that lines 
+  22-26 look like the following:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">######TO USE POSTGRES UNCOMMENT THESE LINES###########################</span>
+  <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://postgres:password@postgres/symbiota
+  <span class="nv">DATABASE_DRIVER</span><span class="o">=</span><span class="s1">'pdo_pgsql'</span>
+  <span class="nv">DATABASE_SERVER_VERSION</span><span class="o">=</span><span class="s1">'11.1'</span>
+  <span class="c">######################################################################</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>If you are going to use this DBMS with a locally installed application for your server, edit the .env by 
+  changing line 23 to the following:
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">DATABASE_URL</span><span class="o">=</span>postgres://postgres:password@127.0.0.1:5434/symbiota
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>If you plan to use a DBMS that is installed locally on your machine, follow these steps:
+    <ul>
+      <li>Uncomment lines 33-35 so that lines 32-36 look like the following:
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">######TO USE LOCAL DB UNCOMMENT THESE LINES AND EDIT##################</span>
+<span class="nv">DATABASE_URL</span><span class="o">=</span>
+<span class="nv">DATABASE_DRIVER</span><span class="o">=</span><span class="s1">''</span>
+<span class="nv">DATABASE_SERVER_VERSION</span><span class="o">=</span><span class="s1">''</span>
+<span class="c">######################################################################</span>
+</code></pre></div>        </div>
+      </li>
+      <li>Set <code class="highlighter-rouge">DATABASE_URL</code> to the absolute url for your database connection, for example:
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">DATABASE_URL</span><span class="o">=</span>mysql://username:password@127.0.0.1:3306/database_name
+</code></pre></div>        </div>
+      </li>
+      <li>Set <code class="highlighter-rouge">DATABASE_DRIVER</code> to either <code class="highlighter-rouge">pdo_mysql</code> for MySQL or MariaDB DBMSs, or 
+<code class="highlighter-rouge">pdo_pgsql</code> for a Postgres DBMS.</li>
+      <li>Set <code class="highlighter-rouge">DATABASE_SERVER_VERSION</code> to the version of your DBMS, for example <code class="highlighter-rouge">11.1</code> For 
+a MariaDB DBMS, append <code class="highlighter-rouge">mariadb-</code> to the version number, for example 
+<code class="highlighter-rouge">mariadb-10.4.1</code></li>
+    </ul>
+  </li>
+  <li><strong>NOTE - You can only have one DBMS database configuration uncommented at a time in the .env
+  file. You can change the DBMS that is uncommented, but only one can be active at a time.</strong></li>
+</ul>
+
+<h3 id="back-to-index-1"><a href="./index.html">Back to index</a></h3>
+
+        </section>
+
+        <aside id="sidebar">
+          
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.zip" class="button">
+              <small>Download</small>
+              .zip file
+            </a>
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.tar.gz" class="button">
+              <small>Download</small>
+              .tar.gz file
+            </a>
+          
+
+        </aside>
+      </div>
+    </div>
+
+    
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Symbiota2</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Symbiota2" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://0.0.0.0:4000/setup/plugin_composer_scripts.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/setup/plugin_composer_scripts.html" />
+<meta property="og:site_name" content="Symbiota2" />
+<script type="application/ld+json">
+{"headline":"Symbiota2","@type":"WebPage","url":"http://0.0.0.0:4000/setup/plugin_composer_scripts.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="http://0.0.0.0:4000/">
+          <h1>Symbiota2</h1>
+        </a>
+        <h2></h2>
+        <a href="https://github.com/Symbiota2/Symbiota2" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3 id="back-to-index"><a href="./index.html">Back to index</a></h3>
+
+<h1 id="composer-scripts-for-managing-plugins">Composer scripts for managing plugins</h1>
+
+<p>Within a Symbiota2 installation there are several files that, once installed, are maintained locally and not included in
+code updates. These files are are maintained in such a way so that they can be uniquely configured for a Symbiota2 
+installation without worry that configurations will be lost in future code updates. Periodically these files need to be
+updated however. Several Composer scripts are included with Symbiota2 that automate the process of updating these files 
+and creating a backup copy so that any modifications that have been made to them will be preserved and able to be merged 
+back into the updated file. All of the Composer scripts are defined in the <code class="highlighter-rouge">composer.json</code> file in the root directory of your 
+Symbiota2 installation.</p>
+
+<p><strong>To run any of the Composer scripts, simply type <code class="highlighter-rouge">composer run-script</code> followed by the script.</strong></p>
+
+<p>The following list of scripts are available for backing up and updating locally maintained files:</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">update-angular-json</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">angular.json</code> file (<code class="highlighter-rouge">angular.json.bak</code>) and then updates the file to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-api_platform-yaml</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">config/packages/api_platform.yaml</code> file (<code class="highlighter-rouge">config/packages/api_platform.yaml.bak</code>) and then 
+updates the file to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-docker-compose-yml</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">docker-compose.yml</code> file (<code class="highlighter-rouge">docker-compose.yml.bak</code>) and then updates the file to the most 
+recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-doctrine-yaml</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">config/packages/doctrine.yaml</code> file (<code class="highlighter-rouge">config/packages/doctrine.yaml.bak</code>) and then updates 
+the file to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-package-json</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">package.json</code> file (<code class="highlighter-rouge">package.json.bak</code>) and then updates the file to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-plugin-composer-json</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">plugin-composer.json</code> file (<code class="highlighter-rouge">plugin-composer.json.bak</code>) and then updates the file to the most 
+recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-plugin-config-json</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">config/plugin-config.json</code> file (<code class="highlighter-rouge">config/plugin-config.json.bak</code>) and then updates the file 
+to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-tsconfig-json</code></p>
+
+    <p>Creates a backup copy of the <code class="highlighter-rouge">tsconfig.json</code> file (<code class="highlighter-rouge">tsconfig.json.bak</code>) and then updates the file to the most recent version.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">update-all-files</code></p>
+
+    <p>Automates the process of running <code class="highlighter-rouge">update-angular-json</code>, <code class="highlighter-rouge">update-api_platform-yaml</code>, <code class="highlighter-rouge">update-doctrine-yaml</code>, <code class="highlighter-rouge">update-package-json</code>, 
+  <code class="highlighter-rouge">update-plugin-composer-json</code>, <code class="highlighter-rouge">update-plugin-config-json</code>, and <code class="highlighter-rouge">update-tsconfig-json</code> in succession.</p>
+  </li>
+</ul>
+
+<h3 id="back-to-index-1"><a href="./index.html">Back to index</a></h3>
+
+        </section>
+
+        <aside id="sidebar">
+          
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.zip" class="button">
+              <small>Download</small>
+              .zip file
+            </a>
+            <a href="https://github.com/Symbiota2/Symbiota2/archive/master.tar.gz" class="button">
+              <small>Download</small>
+              .tar.gz file
+            </a>
+          
+
+        </aside>
+      </div>
+    </div>
+
+    
+  </body>
+</html>
