@@ -4,14 +4,15 @@
   "license": "proprietary",
   "require": {
     "phpoffice/phpword": "^0.17.0",
+    "ext-curl": "*",
+    "ext-gd": "*",
+    "ext-iconv": "*",
     "ext-json": "*",
     "ext-mysqli": "*",
     "ext-mbstring": "*",
-    "ext-curl": "*",
-    "ext-zip": "*",
-    "ext-iconv": "*",
     "ext-openssl": "*",
-    "ext-simplexml": "*"
+    "ext-simplexml": "*",
+    "ext-zip": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master"
