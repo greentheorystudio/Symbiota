@@ -27,6 +27,7 @@
       "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\"",
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\"",
       "@php -r \"file_exists('./webservices/dwc/rss.xml') || copy('./webservices/dwc/rss.xml.dist', './webservices/dwc/rss.xml');\"",
+      "@php -r \"file_exists('./collections/datasets/dwc') || mkdir('./collections/datasets/dwc');\"",
       "@php -r \"file_exists('./content') || mkdir('./content');\"",
       "@php -r \"file_exists('./content/collicon') || mkdir('./content/collicon');\"",
       "@php -r \"file_exists('./content/css') || mkdir('./content/css');\"",
