@@ -18,12 +18,14 @@
 /robots.txt
 /index.php
 /misc/usagepolicy.php
+/content
 /data
+/temp
+/webservices/dwc/rss.xml
+/docker-compose.yml
 
 /vendor
 /composer.lock
-/docker-compose.yml
 /docs/.sass-cache/
 /docs/_site/
 /docs/Gemfile.lock
-/webservices/dwc/rss.xml
