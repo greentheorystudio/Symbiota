@@ -107,7 +107,7 @@ elseif($coordRange > 40){
 		}
 	</script>
 </head> 
-<body style="background-color:#ffffff;" onload="initialize()">
+<body onload="initialize()">
 	<?php 
 		include($SERVER_ROOT.'/header.php');
     ?>
