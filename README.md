@@ -62,5 +62,7 @@ be installed to enable barcode generation on specimen labels.
 - Edit the `footer.php`, `header.php`, and `index.php` files within your Symbiota installation to customize the layout, 
   top menu bar, and homepage of your Symbiota portal.
 - Edit the `misc/usagepolicy.php` file within your Symbiota portal to customize the usage policy for your portal.
+- An initial admin user has been installed with the login: `admin` and the password: `admin`. Use this initial user account to 
+  create new admin users and then delete the initial user account.
 
 [Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)
