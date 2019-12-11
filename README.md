@@ -32,13 +32,35 @@ be installed to enable barcode generation on specimen labels.
 
 ### Install the software
 
-- Navigate to the directory in which you wish to install Symbiota.
+- Navigate into the directory in which you wish to install Symbiota.
 - Clone this repository using the following command:
     
     `git clone https://github.com/greentheorystudio/Symbiota.git .`
 
-- Complete the installation through Composer using the following command:
+- Complete the installation using Composer through the following command:
     
     `composer install`
+
+### Setup the database
+
+- Create a new database for your Symbiota portal using the utf8 character set and utf8_general_ci collation.
+- Execute the `config/schema-1.0/utf8/db_schema-1.0.sql` file within your Symbiota installation on your database to setup 
+  the initial schema.
+- Execute the `config/schema-1.0/utf8/db_schema_patch-1.1.sql` file within your Symbiota installation on your database to 
+  update the schema to version 1.1.
+- Create a new user in your database server and grant them DELETE, EXECUTE, INSERT, SELECT, and UPDATE 
+  privileges on your Symbiota database. 
+
+### Configure your Symbiota installation
+
+- Edit the `config/dbconnection.php` file within your Symbiota installation to reflect the Symbiota database and database 
+  user that was created in the previous section.
+- Edit the `config/symbini.php` file within your Symbiota installation with your configuration preferences for your Symbiota portal.
+
+### Customize your Symbiota installation
+- Edit the `css/main.css` file within your Symbiota installation to customize the css styling in your Symbiota portal.
+- Edit the `footer.php`, `header.php`, and `index.php` files within your Symbiota installation to customize the layout, 
+  top menu bar, and homepage of your Symbiota portal.
+- Edit the `misc/usagepolicy.php` file within your Symbiota portal to customize the usage policy for your portal.
 
 [Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)
