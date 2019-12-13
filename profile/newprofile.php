@@ -115,9 +115,7 @@ if($action === 'Create Login'){
 
         function verifyUserInput() {
             const enteredValue = document.getElementById("human-entry").value;
-            if(enteredValue.toString() === randNumber.toString()){
-                document.getElementById("submitButton").disabled = false;
-            }
+            document.getElementById("submitButton").disabled = enteredValue.toString() !== randNumber.toString();
         }
 	</script>
 </head>
