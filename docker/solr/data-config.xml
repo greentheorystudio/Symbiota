@@ -1,7 +1,7 @@
 <dataConfig>
     <dataSource type="JdbcDataSource"
                 driver="com.mysql.jdbc.Driver"
-                url="jdbc:mysql://mysql/symbiota"
+                url="jdbc:mysql://172.28.1.1/symbiota"
                 batchSize="-1"
                 user="root"
                 password="password" />

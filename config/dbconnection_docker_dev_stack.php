@@ -1,6 +1,6 @@
 <?php
 $DB_SERVER = array(
-	'host' => 'mysql',
+	'host' => '172.28.1.1',
 	'username' => 'root',
 	'password' => 'password',
 	'database' => 'symbiota',
