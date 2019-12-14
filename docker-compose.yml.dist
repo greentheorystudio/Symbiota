@@ -48,6 +48,8 @@ services:
     networks:
       symbiota:
         ipv4_address: 172.28.1.2
+    ports:
+      - 8984:8983
 
   jekyll:
     build: ./docker/jekyll
