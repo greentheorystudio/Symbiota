@@ -46,7 +46,7 @@ class SOLRManager extends OccurrenceManager{
         return $solrArr['grouped']['familyscinamecode']['groups'];
     }
 
-    public function getOccArr($geo = false){
+    public function getOccArr($geo = false): array{
         global $SOLR_URL;
         $returnArr = Array();
         if($geo) {
@@ -152,7 +152,7 @@ class SOLRManager extends OccurrenceManager{
         return $q;
     }
 
-    public function translateSOLRRecList($sArr){
+    public function translateSOLRRecList($sArr): array{
         global $IMAGE_DOMAIN;
  	    $returnArr = Array();
         $canReadRareSpp = false;
@@ -166,37 +166,37 @@ class SOLRManager extends OccurrenceManager{
             $collId = $k['collid'];
             $locality = (isset($k['locality'])?$k['locality'][0]:'');
             $locality .= (isset($k['decimalLatitude'])?', '.round((float)$k['decimalLatitude'],5).(isset($k['decimalLongitude'])?' '.round((float)$k['decimalLongitude'],5):''):'');
-            $elev = (isset($k['minimumElevationInMeters'])?$k['minimumElevationInMeters']:'');
+            $elev = ($k['minimumElevationInMeters'] ?? '');
             $elev .= (isset($k['minimumElevationInMeters'], $k['maximumElevationInMeters']) ?' - ':'');
-            $elev .= (isset($k['maximumElevationInMeters'])?$k['maximumElevationInMeters']:'');
+            $elev .= ($k['maximumElevationInMeters'] ?? '');
             $returnArr[$occId]['collid'] = $collId;
-            $returnArr[$occId]['institutioncode'] = (isset($k['InstitutionCode'])?$k['InstitutionCode']:'');
-            $returnArr[$occId]['collectioncode'] = (isset($k['CollectionCode'])?$k['CollectionCode']:'');
-            $returnArr[$occId]['collectionname'] = (isset($k['CollectionName'])?$k['CollectionName']:'');
+            $returnArr[$occId]['institutioncode'] = ($k['InstitutionCode'] ?? '');
+            $returnArr[$occId]['collectioncode'] = ($k['CollectionCode'] ?? '');
+            $returnArr[$occId]['collectionname'] = ($k['CollectionName'] ?? '');
             $returnArr[$occId]['collicon'] = (isset($k['collicon'])?$k['collicon'][0]:'');
-            $returnArr[$occId]['accession'] = (isset($k['catalogNumber'])?$k['catalogNumber']:'');
-            $returnArr[$occId]['family'] = (isset($k['family'])?$k['family']:'');
-            $returnArr[$occId]['sciname'] = (isset($k['sciname'])?$k['sciname']:'');
-            $returnArr[$occId]['tid'] = (isset($k['tidinterpreted'])?$k['tidinterpreted']:'');
-            $returnArr[$occId]['author'] = (isset($k['scientificNameAuthorship'])?$k['scientificNameAuthorship']:'');
-            $returnArr[$occId]['collector'] = (isset($k['recordedBy'])?$k['recordedBy']:'');
-            $returnArr[$occId]['country'] = (isset($k['country'])?$k['country']:'');
-            $returnArr[$occId]['state'] = (isset($k['StateProvince'])?$k['StateProvince']:'');
-            $returnArr[$occId]['county'] = (isset($k['county'])?$k['county']:'');
+            $returnArr[$occId]['accession'] = ($k['catalogNumber'] ?? '');
+            $returnArr[$occId]['family'] = ($k['family'] ?? '');
+            $returnArr[$occId]['sciname'] = ($k['sciname'] ?? '');
+            $returnArr[$occId]['tid'] = ($k['tidinterpreted'] ?? '');
+            $returnArr[$occId]['author'] = ($k['scientificNameAuthorship'] ?? '');
+            $returnArr[$occId]['collector'] = ($k['recordedBy'] ?? '');
+            $returnArr[$occId]['country'] = ($k['country'] ?? '');
+            $returnArr[$occId]['state'] = ($k['StateProvince'] ?? '');
+            $returnArr[$occId]['county'] = ($k['county'] ?? '');
             $returnArr[$occId]['assochost'] = (isset($k['assocverbatimsciname'])?$k['assocverbatimsciname'][0]:'');
-            $returnArr[$occId]['observeruid'] = (isset($k['observeruid'])?$k['observeruid']:'');
-            $returnArr[$occId]['individualCount'] = (isset($k['individualCount'])?$k['individualCount']:'');
-            $returnArr[$occId]['lifeStage'] = (isset($k['lifeStage'])?$k['lifeStage']:'');
-            $returnArr[$occId]['sex'] = (isset($k['sex'])?$k['sex']:'');
-            $localitySecurity = (isset($k['localitySecurity'])?$k['localitySecurity']:false);
+            $returnArr[$occId]['observeruid'] = ($k['observeruid'] ?? '');
+            $returnArr[$occId]['individualCount'] = ($k['individualCount'] ?? '');
+            $returnArr[$occId]['lifeStage'] = ($k['lifeStage'] ?? '');
+            $returnArr[$occId]['sex'] = ($k['sex'] ?? '');
+            $localitySecurity = ($k['localitySecurity'] ?? false);
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                 || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
                 $returnArr[$occId]['locality'] = str_replace('.,',',',$locality);
-                $returnArr[$occId]['collnumber'] = (isset($k['recordNumber'])?$k['recordNumber']:'');
+                $returnArr[$occId]['collnumber'] = ($k['recordNumber'] ?? '');
                 $returnArr[$occId]['habitat'] = (isset($k['habitat'])?$k['habitat'][0]:'');
-                $returnArr[$occId]['date'] = (isset($k['displayDate'])?$k['displayDate']:'');
-                $returnArr[$occId]['eventDate'] = (isset($k['eventDate'])?$k['eventDate']:'');
+                $returnArr[$occId]['date'] = ($k['displayDate'] ?? '');
+                $returnArr[$occId]['eventDate'] = ($k['eventDate'] ?? '');
                 $returnArr[$occId]['elev'] = $elev;
             }
             else{
@@ -221,7 +221,7 @@ class SOLRManager extends OccurrenceManager{
 	    return $returnArr;
     }
 
-    public function translateSOLRMapRecList($sArr){
+    public function translateSOLRMapRecList($sArr): array{
         $returnArr = Array();
         $canReadRareSpp = false;
         if($GLOBALS['USER_RIGHTS']){
@@ -234,15 +234,15 @@ class SOLRManager extends OccurrenceManager{
             $collId = $k['collid'];
             $locality = (isset($k['locality'])?$k['locality'][0]:'');
             $locality .= (isset($k['decimalLatitude'])?', '.round((float)$k['decimalLatitude'],5).(isset($k['decimalLongitude'])?' '.round((float)$k['decimalLongitude'],5):''):'');
-            $localitySecurity = (isset($k['LocalitySecurity'])?$k['LocalitySecurity']:0);
-            $returnArr[$occId]['i'] = (isset($k['InstitutionCode'])?$k['InstitutionCode']:'');
-            $returnArr[$occId]['cat'] = (isset($k['catalogNumber'])?$k['catalogNumber']:'');
-            $returnArr[$occId]['c'] = (isset($k['recordedBy'])?$k['recordedBy']:'').(isset($k['recordNumber'])?' '.$k['recordNumber']:'');
-            $returnArr[$occId]['e'] = (isset($k['displayDate'])?$k['displayDate']:'');
-            $returnArr[$occId]['f'] = (isset($k['family'])?$k['family']:'');
-            $returnArr[$occId]['s'] = (isset($k['sciname'])?$k['sciname']:'');
-            $returnArr[$occId]['lat'] = (isset($k['decimalLatitude'])?$k['decimalLatitude']:'');
-            $returnArr[$occId]['lon'] = (isset($k['decimalLongitude'])?$k['decimalLongitude']:'');
+            $localitySecurity = ($k['LocalitySecurity'] ?? 0);
+            $returnArr[$occId]['i'] = ($k['InstitutionCode'] ?? '');
+            $returnArr[$occId]['cat'] = ($k['catalogNumber'] ?? '');
+            $returnArr[$occId]['c'] = ($k['recordedBy'] ?? '').(isset($k['recordNumber'])?' '.$k['recordNumber']:'');
+            $returnArr[$occId]['e'] = ($k['displayDate'] ?? '');
+            $returnArr[$occId]['f'] = ($k['family'] ?? '');
+            $returnArr[$occId]['s'] = ($k['sciname'] ?? '');
+            $returnArr[$occId]['lat'] = ($k['decimalLatitude'] ?? '');
+            $returnArr[$occId]['lon'] = ($k['decimalLongitude'] ?? '');
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
                 || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
@@ -264,7 +264,7 @@ class SOLRManager extends OccurrenceManager{
     }
 
 
-    public function translateSOLRGeoCollList($sArr){
+    public function translateSOLRGeoCollList($sArr): array{
         global $USER_RIGHTS;
  	    $returnArr = Array();
         $color = 'e69e67';
@@ -286,7 +286,7 @@ class SOLRManager extends OccurrenceManager{
                 $occId = $k['occid'];
                 $collName = $k['CollectionName'];
                 $tidInterpreted = (isset($k['tidinterpreted'])?$this->xmlentities($k['tidinterpreted']):'');
-                $identifier = (isset($k['recordedBy'])?$k['recordedBy']:'');
+                $identifier = ($k['recordedBy'] ?? '');
                 $identifier .= ((isset($k['recordNumber']) || isset($k['displayDate']))?' ':'');
                 $identifier .= ((isset($k['recordNumber']) && !isset($k['displayDate']))?$k['recordNumber']:'');
                 $identifier .= ((!isset($k['recordNumber']) && isset($k['displayDate']))?$k['displayDate']:'');
@@ -312,7 +312,7 @@ class SOLRManager extends OccurrenceManager{
                 else{
                     $returnArr[$collName][$occId]['family'] = 'undefined';
                 }
-                $returnArr[$collName][$occId]['sciname'] = (isset($k['sciname'])?$k['sciname']:'');
+                $returnArr[$collName][$occId]['sciname'] = ($k['sciname'] ?? '');
                 $returnArr[$collName][$occId]['identifier'] = $this->xmlentities($identifier);
                 $returnArr[$collName][$occId]['institutioncode'] = $this->xmlentities($k['InstitutionCode']);
                 $returnArr[$collName][$occId]['collectioncode'] = $this->xmlentities($k['CollectionCode']);
@@ -328,7 +328,7 @@ class SOLRManager extends OccurrenceManager{
         return $returnArr;
     }
 
-    public function translateSOLRGeoTaxaList($sArr){
+    public function translateSOLRGeoTaxaList($sArr): array{
         global $USER_RIGHTS;
  	    $returnArr = Array();
         $taxaMapper = Array();
@@ -369,7 +369,7 @@ class SOLRManager extends OccurrenceManager{
                 $occId = $k['occid'];
                 $sciName = $k['sciname'];
                 $family = $k['family'];
-                $identifier = (isset($k['recordedBy'])?$k['recordedBy']:'');
+                $identifier = ($k['recordedBy'] ?? '');
                 $identifier .= ((isset($k['recordNumber']) || isset($k['displayDate']))?' ':'');
                 $identifier .= ((isset($k['recordNumber']) && !isset($k['displayDate']))?$k['recordNumber']:'');
                 $identifier .= ((!isset($k['recordNumber']) && isset($k['displayDate']))?$k['displayDate']:'');
@@ -405,7 +405,7 @@ class SOLRManager extends OccurrenceManager{
         return $returnArr;
     }
 
-    public function translateSOLRTaxaList($sArr){
+    public function translateSOLRTaxaList($sArr): array{
         $returnArr = Array();
         $this->checklistTaxaCnt = 0;
         foreach($sArr as $k){
@@ -420,7 +420,7 @@ class SOLRManager extends OccurrenceManager{
         return $returnArr;
     }
 
-    public function getSOLRTidList($sArr){
+    public function getSOLRTidList($sArr): array{
         $returnArr = Array();
         foreach($sArr as $k){
             if(isset($k['doclist']['docs'][0]['tidinterpreted']) && !in_array($k['doclist']['docs'][0]['tidinterpreted'], $returnArr, true)){
@@ -431,33 +431,33 @@ class SOLRManager extends OccurrenceManager{
         return $returnArr;
     }
 
-	public function getRecordCnt(){
+	public function getRecordCnt(): int{
 		return $this->recordCount;
 	}
 
-    public function getChecklistTaxaCnt(){
+    public function getChecklistTaxaCnt(): int{
         return $this->checklistTaxaCnt;
     }
 
-    public function setCollArr($cArr){
+    public function setCollArr($cArr): void{
         $this->collArr = $cArr;
     }
 
-    public function setSpatial(){
+    public function setSpatial(): void{
         $this->spatial = true;
     }
 
-    public function setQStr($str){
+    public function setQStr($str): void{
         $this->qStr = $str;
     }
 
-    public function setSorting($sf1,$sf2,$so){
+    public function setSorting($sf1,$sf2,$so): void{
         $this->sortField1 = $sf1;
         $this->sortField2 = $sf2;
         $this->sortOrder = $so;
     }
 	
-	public function updateSOLR(){
+	public function updateSOLR(): void{
         global $SOLR_URL;
 	    $needsFullUpdate = $this->checkLastSOLRUpdate();
         $command = ($needsFullUpdate?'full-import':'delta-import');
@@ -467,7 +467,7 @@ class SOLRManager extends OccurrenceManager{
         }
     }
 
-    public function deleteSOLRDocument($occid){
+    public function deleteSOLRDocument($occid): void{
         global $SOLR_URL;
         $pArr = Array();
         if(!is_array($occid) || count($occid) < 1000){
@@ -532,7 +532,7 @@ class SOLRManager extends OccurrenceManager{
         }
     }
 
-    public function cleanSOLRIndex($collid){
+    public function cleanSOLRIndex($collid): void{
         global $SOLR_URL;
         $SOLROccArr = Array();
         $mysqlOccArr = Array();
@@ -564,7 +564,7 @@ class SOLRManager extends OccurrenceManager{
         echo '<li>...Complete!</li>';
     }
 
-    private function checkLastSOLRUpdate(){
+    private function checkLastSOLRUpdate(): bool{
         global $SERVER_ROOT, $SOLR_FULL_IMPORT_INTERVAL;
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');
@@ -572,7 +572,7 @@ class SOLRManager extends OccurrenceManager{
 
         if(file_exists($SERVER_ROOT.'/temp/data/solr.json')){
             $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
-            $lastDate = (isset($infoArr['lastFullImport'])?$infoArr['lastFullImport']:'');
+            $lastDate = ($infoArr['lastFullImport'] ?? '');
             if($lastDate){
                 $lastDate = new DateTime($lastDate);
                 $now = new DateTime($now);
@@ -594,7 +594,7 @@ class SOLRManager extends OccurrenceManager{
         return $needsUpdate;
     }
 
-    private function resetSOLRInfoFile(){
+    private function resetSOLRInfoFile(): void{
         global $SERVER_ROOT;
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');
@@ -611,14 +611,13 @@ class SOLRManager extends OccurrenceManager{
         fclose($fp);
     }
 	
-	public function getSOLRWhere(){
+	public function getSOLRWhere(): string{
         $solrWhere = '';
         $solrGeoWhere = '';
         if(array_key_exists('clid',$this->searchTermsArr)){
             $solrWhere .= 'AND (CLID:(' .str_replace(',',' ',$this->searchTermsArr['clid']). ')) ';
         }
         elseif(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
-            //Do nothing if db = all
             if($this->searchTermsArr['db'] !== 'all'){
                 if($this->searchTermsArr['db'] === 'allspec'){
                     $solrWhere .= 'AND (CollType:"Preserved Specimens") ';
@@ -1001,7 +1000,7 @@ class SOLRManager extends OccurrenceManager{
         return $retStr;
     }
 
-    public function getCloseTaxaMatch($name){
+    public function getCloseTaxaMatch($name): array{
         $retArr = array();
         $searchName = trim($name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex("'.$searchName.'") AND sciname != "'.$searchName.'"';

@@ -4,7 +4,6 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 class SpatialModuleManager{
 	
 	protected $conn;
-	protected $recordCount = 0;
 	private $collArrIndex = 0;
 
     public function __construct(){
@@ -13,15 +12,13 @@ class SpatialModuleManager{
     }
 
 	public function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+ 		if(!($this->conn === false)) {
+            $this->conn->close();
+        }
 	}
 
-    public function getFullCollectionList($catId = ""){
+    public function getFullCollectionList($catId = ''): array{
         $retArr = array();
-        //Set collection array
-        $collIdArr = array();
-        $catIdArr = array();
-        //Set collections
         $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, cat.category '.
             'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
             'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
@@ -29,25 +26,24 @@ class SpatialModuleManager{
         //echo "<div>SQL: ".$sql."</div>";
         $result = $this->conn->query($sql);
         while($r = $result->fetch_object()){
-            $collType = (stripos($r->colltype, "observation") !== false?'obs':'spec');
+            $collType = (stripos($r->colltype, 'observation') !== false?'obs':'spec');
             if($r->ccpk){
                 if(!isset($retArr[$collType]['cat'][$r->ccpk]['name'])){
                     $retArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
                 }
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]["instcode"] = $r->institutioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]["collcode"] = $r->collectioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]["collname"] = $r->collectionname;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]["icon"] = $r->icon;
+                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
+                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
+                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
+                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
             }
             else{
-                $retArr[$collType]['coll'][$r->collid]["instcode"] = $r->institutioncode;
-                $retArr[$collType]['coll'][$r->collid]["collcode"] = $r->collectioncode;
-                $retArr[$collType]['coll'][$r->collid]["collname"] = $r->collectionname;
-                $retArr[$collType]['coll'][$r->collid]["icon"] = $r->icon;
+                $retArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
+                $retArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
+                $retArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
+                $retArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
             }
         }
         $result->close();
-        //Modify sort so that default catid is first
         if(isset($retArr['spec']['cat'][$catId])){
             $targetArr = $retArr['spec']['cat'][$catId];
             unset($retArr['spec']['cat'][$catId]);
@@ -61,29 +57,35 @@ class SpatialModuleManager{
         return $retArr;
     }
 
-    public function getLayersArr(){
+    public function getLayersArr(): array{
         global $GEOSERVER_URL, $GEOSERVER_LAYER_WORKSPACE;
         $url = $GEOSERVER_URL.'/wms?service=wms&version=2.0.0&request=GetCapabilities';
-        $xml = simplexml_load_file($url);
+        $xml = simplexml_load_string(file_get_contents($url));
         $layers = $xml->Capability->Layer->Layer;
         $retArr = Array();
         foreach ($layers as $l){
-            $nameArr = explode(":",(string)$l->Name);
+            $nameArr = explode(':',(string)$l->Name);
             $workspace = $nameArr[0];
             $layername = $nameArr[1];
-            if($workspace == $GEOSERVER_LAYER_WORKSPACE){
+            if($workspace === $GEOSERVER_LAYER_WORKSPACE){
                 $i = strtolower((string)$l->Title);
                 $retArr[$i]['Name'] = $layername;
                 $retArr[$i]['Title'] = (string)$l->Title;
                 $retArr[$i]['Abstract'] = (string)$l->Abstract;
                 $crsArr = $l->CRS;
                 foreach ($crsArr as $c){
-                    if(strpos($c, 'EPSG:') !== false) $retArr[$i]['DefaultCRS'] = (string)$c;
+                    if(strpos($c, 'EPSG:') !== false) {
+                        $retArr[$i]['DefaultCRS'] = (string)$c;
+                    }
                 }
                 $keywordArr = $l->KeywordList->Keyword;
                 foreach ($keywordArr as $k){
-                    if($k == 'features') $retArr[$i]['layerType'] = 'vector';
-                    elseif($k == 'GeoTIFF') $retArr[$i]['layerType'] = 'raster';
+                    if($k == 'features') {
+                        $retArr[$i]['layerType'] = 'vector';
+                    }
+                    elseif($k == 'GeoTIFF') {
+                        $retArr[$i]['layerType'] = 'raster';
+                    }
                 }
                 $retArr[$i]['legendUrl'] = (string)$l->Style->LegendURL->OnlineResource->attributes('xlink', TRUE)->href;
             }
@@ -93,20 +95,17 @@ class SpatialModuleManager{
         return $retArr;
     }
 	
-	public function getOccStrFromGeoJSON($json){
-        $returnStr = '';
+	public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $occArr[] = $data['properties']['occid'];
         }
-        $returnStr = implode(',',$occArr);
-
-        return $returnStr;
+        return implode(',',$occArr);
     }
 
-    public function getSynonyms($searchTarget,$taxAuthId = 1){
+    public function getSynonyms($searchTarget,$taxAuthId = 1): array{
         $synArr = array();
         $targetTidArr = array();
         $searchStr = '';
@@ -118,16 +117,13 @@ class SpatialModuleManager{
                 $searchStr = implode('","',$searchTarget);
             }
         }
+        else if(is_numeric($searchTarget)){
+            $targetTidArr[] = $searchTarget;
+        }
         else{
-            if(is_numeric($searchTarget)){
-                $targetTidArr[] = $searchTarget;
-            }
-            else{
-                $searchStr = $searchTarget;
-            }
+            $searchStr = $searchTarget;
         }
         if($searchStr){
-            //Input is a string, thus get tids
             $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.$searchStr.'")';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
@@ -137,7 +133,6 @@ class SpatialModuleManager{
         }
 
         if($targetTidArr){
-            //Get acceptd names
             $accArr = array();
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
@@ -147,13 +142,11 @@ class SpatialModuleManager{
             while($r2 = $rs2->fetch_object()){
                 $accArr[] = $r2->tid;
                 $rankId = $r2->rankid;
-                //Put in synonym array if not target
                 $synArr[$r2->tid] = $r2->sciname;
             }
             $rs2->free();
 
             if($accArr){
-                //Get synonym that are different than target
                 $sql3 = 'SELECT DISTINCT t.tid, t.sciname ' .
                     'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
                     'WHERE (ts.taxauthid = ' . $taxAuthId . ') AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
@@ -163,8 +156,7 @@ class SpatialModuleManager{
                 }
                 $rs3->free();
 
-                //If rank is 220, get synonyms of accepted children
-                if ($rankId == 220) {
+                if ($rankId === 220) {
                     $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
                         'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
                         'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = ' . $taxAuthId . ') ' .
@@ -180,17 +172,16 @@ class SpatialModuleManager{
         return $synArr;
     }
 
-    public function outputFullMapCollArr($occArr){
+    public function outputFullMapCollArr($occArr): void{
         global $DEFAULTCATID, $CLIENT_ROOT;
-        $collCnt = 0;
         if(isset($occArr['cat'])){
-            $catArr = $occArr['cat'];
+            $categoryArr = $occArr['cat'];
             ?>
             <table>
                 <?php
-                foreach($catArr as $catid => $catArr){
-                    $name = $catArr["name"];
-                    unset($catArr["name"]);
+                foreach($categoryArr as $catid => $catArr){
+                    $name = $catArr['name'];
+                    unset($catArr['name']);
                     $idStr = $this->collArrIndex.'-'.$catid;
                     ?>
                     <tr>
@@ -210,7 +201,7 @@ class SpatialModuleManager{
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID==$catid?'':'display:none;') ?>margin:10px 0px;">
+                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID===$catid?'':'display:none;') ?>margin:10px 0;">
                                 <table style="margin-left:15px;">
                                     <?php
                                     foreach($catArr as $collid => $collName2){
@@ -218,11 +209,11 @@ class SpatialModuleManager{
                                         <tr>
                                             <td>
                                                 <?php
-                                                if($collName2["icon"]){
-                                                    $cIcon = (substr($collName2["icon"],0,6)=='images'?$CLIENT_ROOT.'/':'').$collName2["icon"];
+                                                if($collName2['icon']){
+                                                    $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$collName2['icon'];
                                                     ?>
                                                     <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                                        <img src="<?php echo $cIcon; ?>" style="border:0px;width:30px;height:30px;" />
+                                                        <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
                                                     </a>
                                                     <?php
                                                 }
@@ -233,7 +224,7 @@ class SpatialModuleManager{
                                             </td>
                                             <td style="padding:6px">
                                                 <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                                    <?php echo $collName2["collname"]." (".$collName2["instcode"].")"; ?>
+                                                    <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
                                                 </a>
                                                 <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
                                                     more info
@@ -241,7 +232,6 @@ class SpatialModuleManager{
                                             </td>
                                         </tr>
                                         <?php
-                                        $collCnt++;
                                     }
                                     ?>
                                 </table>
@@ -264,11 +254,11 @@ class SpatialModuleManager{
                     <tr>
                         <td>
                             <?php
-                            if($cArr["icon"]){
-                                $cIcon = (substr($cArr["icon"],0,6)=='images'?$CLIENT_ROOT.'/':'').$cArr["icon"];
+                            if($cArr['icon']){
+                                $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$cArr['icon'];
                                 ?>
                                 <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                    <img src="<?php echo $cIcon; ?>" style="border:0px;width:30px;height:30px;" />
+                                    <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
                                 </a>
                                 <?php
                             }
@@ -280,7 +270,7 @@ class SpatialModuleManager{
                         </td>
                         <td style="padding:6px">
                             <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                <?php echo $cArr["collname"]." (".$cArr["instcode"].")"; ?>
+                                <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
                             </a>
                             <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
                                 more info
@@ -288,7 +278,6 @@ class SpatialModuleManager{
                         </td>
                     </tr>
                     <?php
-                    $collCnt++;
                 }
                 ?>
             </table>
@@ -297,7 +286,7 @@ class SpatialModuleManager{
         $this->collArrIndex++;
     }
 
-    public function writeGPXFromGeoJSON($json){
+    public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
         $jsonArr = json_decode($json, true);
@@ -311,7 +300,7 @@ class SpatialModuleManager{
         return $returnStr;
     }
 
-    public function writeKMLFromGeoJSON($json){
+    public function writeKMLFromGeoJSON($json): string{
         $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
         $jsonArr = json_decode($json, true);
@@ -344,4 +333,3 @@ class SpatialModuleManager{
         return $returnStr;
     }
 }
-?>

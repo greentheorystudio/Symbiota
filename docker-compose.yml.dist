@@ -37,6 +37,8 @@ services:
     networks:
       symbiota:
         ipv4_address: 172.28.1.1
+    ports:
+      - 3308:3306
 
   solr:
     build: ./docker/solr
