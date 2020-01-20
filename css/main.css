@@ -1,0 +1,326 @@
+/* Modify styles within this file to override styles within base.css file 
+ * 
+ **/
+body{
+	width: 80%;
+	min-width:950px;
+	margin-top:0;
+	background-position: top -80px;
+	background-repeat:no-repeat;
+	background-color:#A8A38E;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 14px;
+    line-height: 16px;
+}
+
+/*Main table framework*/
+#maintable{
+	width: 100%;
+	background-color:#FFFFFF;
+	border:1px solid #333333;
+}
+
+#maintable td{
+
+}
+
+td.header{
+	color:#FFFFFF;
+	background-color:#026B6E;
+	text-align:left;
+	padding:0;
+	padding-bottom:0;
+}
+
+td.header a{
+
+}
+
+td.header a:hover{
+
+}
+
+td.middleleft{
+}
+
+td.middleleftnomenu{
+}
+
+td.middlecenter{
+	padding:0;
+}
+
+td.middleright{
+}
+
+td.footer{
+}
+
+/*Left menu components*/
+div.menu {
+	background-color:   white;
+	margin:				15px;
+	border:   			1px solid #CCCCFF;
+	padding-bottom:   	25px;
+	overflow:   		hidden;
+	width:   			150px;
+	border-radius:		0.5em 0.5em 1.5em 0.5em;
+	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
+	-khtml-border-radius: 0.5em 0.5em 1.5em 0.5em;
+}
+
+div.menuheader{
+	background-color:   #C0C0C0;
+	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:   		13px;
+	color:   			white;
+	overflow:   		hidden;
+	text-align:   		center;
+	padding:   			3px;
+	margin:			   	0;
+}
+
+div.menuheader a{
+
+}
+
+div.menuheader a:hover {
+
+}
+
+div.menusubheader{
+
+}
+
+div.menusubheader a{
+
+}
+
+div.menusubheader a:hover {
+
+}
+
+div.menuitem {
+
+}
+
+div.menuitem a {
+	color: #669999;
+}
+
+div.menuitem a:hover {
+	color: 	#00008B;
+}
+
+/*Central div in the middle center table div */
+#innertext{
+	min-height:400px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom: 0;
+	margin-top: 0;
+	padding-top: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 14px;
+    line-height: 16px;
+}
+
+#innertext a{
+
+}
+#innertext a:hover{
+
+}
+
+div.navpath {
+	padding-top: 8px;
+	padding-bottom: 0;
+	padding-left: 10px;
+	margin-bottom: 0;
+}
+
+/* Image thumbnails   */
+div.tndiv{
+
+}
+
+div.tnimg{
+
+}
+
+div.tnimg a{
+
+}
+
+div.tnimg img{
+
+}	
+
+/*Misc general items*/
+table{
+
+}
+
+h1{
+	font-family: georgia, serif;
+	font-size: 24px;
+	color: #5E7630;
+	font-weight: normal;
+}
+
+h2{
+
+}
+
+h3{
+
+}
+
+#top_navbar{
+	clear:both;
+	height:30px;
+	color:#FFFFFF;
+	background-image:url(images/menu_bkg_gr.png);
+	background-repeat:repeat-x;
+	background-position:top;
+	background-color:#000000;
+}
+#right_navbarlinks{
+	clear:both;
+	font-size:11px;
+	float:right;
+	color:#FFFFFF;
+	margin-top:9px;
+}
+#right_navbarlinks a{
+	color:#FFFFFF;
+}
+ul#hor_dropdown{
+	list-style:none;
+	float:left;
+	position:relative;
+	font-size:12px;
+	width:auto;
+	height:30px;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left:0;
+	background-image:url(images/menu_bkg_gr.png);
+	background-repeat:repeat-x;
+	background-position:top;
+	background-color:#c2c2c2;
+}
+ul#hor_dropdown li{		
+	float:left;
+	position:relative;
+	padding:0;
+	margin:0;
+}
+ul#hor_dropdown a{
+	display:block;
+	color:#FFFFFF;
+	text-decoration:none;
+	padding-top:8px;
+	padding-bottom:10px;
+	padding-left:10px;
+	padding-right:10px;
+	background-image: url(images/menu_divider_gr_l.png), url(images/menu_divider_gr_r.png);
+    background-position: left top, right top;
+    background-repeat: no-repeat, no-repeat;
+}
+ul#hor_dropdown a:hover{
+	background-image: url(images/menu_divider_br_l.png), url(images/menu_bkg_br.png), url(images/menu_divider_br_r.png);
+    background-position: left top, top, right top;
+    background-repeat: no-repeat, repeat-x, no-repeat;
+	color:#FFFFFF;
+	padding-top:8px;
+	padding-bottom:10px;
+	padding-left:10px;
+	padding-right:10px;
+}
+/* Submenu */
+ul#hor_dropdown ul {
+	list-style:none;
+	position:absolute;
+	left:-9999px;
+	top:-9999px;
+	background-color:#dcdcdc;
+	z-index:1000;
+}
+ul#hor_dropdown ul li{
+	float:none;
+}
+ul#hor_dropdown ul a{
+	white-space:nowrap;
+}
+ul#hor_dropdown li:hover ul {
+	left:0;
+	top:30px;
+	padding:0;
+	z-index:1000;
+}
+ul#hor_dropdown li:hover ul a {
+	padding:5px;
+	color:#FFFFFF;
+	text-decoration:none;
+	text-indent:8px;
+	padding-right:8px;
+	background-image: none;
+	background-color:#5d7530;
+	z-index:1000;
+}
+ul#hor_dropdown li:hover ul li a:hover {
+	background:#b96619; 
+}
+ul#hor_dropdown li:hover ul li a:hover {
+	background:#b96619;
+}
+ul#hor_dropdown li ul li ul {
+	display: none;
+}
+ul#hor_dropdown li ul li:hover ul {
+	left:100%;
+	top:0;
+	display: block;
+	padding:0;
+	z-index:1000;
+}
+ul#hor_dropdown li ul li:hover ul a {
+	padding:5px;
+	text-decoration:none;
+	text-indent:8px;
+	padding-right:8px;
+	background-image: none;
+	background-color:#5d7530;
+	z-index:1000;
+}
+ul#hor_dropdown li ul li:hover ul li a:hover {
+	background:#b96619;
+}
+
+/* Quick Search Plugin */
+#quicksearchtext{
+	margin-top:0;
+	padding-bottom:0;
+	float: left;
+}
+
+#quicksearchbutton{
+	margin-left:10px;
+	margin-top:0;
+	margin-bottom:0;
+	padding-bottom:0;
+	float: left;
+}
+
+#quicksearchtaxon{
+	width: 250px;
+	float: left;
+	clear: left;
+	margin-bottom:0;
+	padding-bottom:0;
+	font-family: Arial, Helvetica, sans-serif;
+}
