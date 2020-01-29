@@ -1,12 +1,11 @@
 <?php
-//error_reporting(E_ALL);
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$target = array_key_exists("target",$_REQUEST)?$_REQUEST["target"]:"";
+$target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']: '';
 $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
-$taxAuthId = array_key_exists("taxauthid",$_REQUEST)?$_REQUEST["taxauthid"]:1;
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
@@ -14,7 +13,7 @@ $taxonDisplayObj->setTargetStr($target);
 $taxonDisplayObj->setTaxAuthId($taxAuthId);
 
 $editable = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$editable = true;
 }
 
@@ -28,7 +27,7 @@ if($target){
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." Taxonomy Explorer: ".$taxonDisplayObj->getTargetStr(); ?></title>
+	<title><?php echo $DEFAULT_TITLE. ' Taxonomy Explorer: ' .$taxonDisplayObj->getTargetStr(); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -42,8 +41,8 @@ if($target){
 		.dijitFolderOpened,
 		.dijitIconFolderOpen {
 			background-image: none; 
-			width: 0px;
-			height: 0px;
+			width: 0;
+			height: 0;
 		}
 	</style>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
@@ -68,7 +67,6 @@ include($SERVER_ROOT.'/header.php');
     <a href="../../index.php">Home</a> &gt;&gt;
     <a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
 </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($statusStr){
@@ -84,7 +82,7 @@ include($SERVER_ROOT.'/header.php');
 			?>
 			<div style="float:right;" title="Add a New Taxon">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<img style='border:0;width:15px;' src='../../images/add.png'/>
 				</a>
 			</div>
 			<?php
@@ -102,7 +100,7 @@ include($SERVER_ROOT.'/header.php');
 						<input name="tdsubmit" type="submit" value="Display Taxon Tree"/>
 						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" /> 
 					</div>
-					<div style="margin:15px 15px 0px 60px;">
+					<div style="margin:15px 15px 0 60px;">
 						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> Display authors
 					</div>
 				</fieldset>
@@ -124,16 +122,11 @@ include($SERVER_ROOT.'/header.php');
 					"dojo/store/JsonRest",
 					"dojo/domReady!"
 				], function(win, declare, dom, on, Tree, ObjectStoreModel, dndSource, JsonRest){
-				/*require([
-					"dojo/_base/declare", "dojo/aspect", "dojo/json", "dojo/query", "dojo/store/Memory", "dojo/store/Observable",
-					"dijit/Tree", "dijit/tree/ObjectStoreModel", "dijit/tree/dndSource", "dojo/domReady!"
-				], function(declare, aspect, json, query, Memory, Observable, Tree, ObjectStoreModel, dndSource){*/
-					// set up the store to get the tree data
-					var taxonTreeStore = new JsonRest({
+				    var taxonTreeStore = new JsonRest({
 						target: "rpc/getdynamicchildren.php",
 						labelAttribute: "label",
 						getChildren: function(object){
-							return this.query({id:object.id,authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(function(fullObject){
+                            return this.query({id:object.id,authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(function(fullObject){
 								return fullObject.children;
 							});
 						},
@@ -142,18 +135,6 @@ include($SERVER_ROOT.'/header.php');
 						}
 					});
 					
-					/*aspect.around(taxonTreeStore, "put", function(originalPut){
-						return function(obj, options){
-							if(options && options.parent){
-								obj.parent = options.parent.id;
-							}
-							return originalPut.call(taxonTreeStore, obj, options);
-						}
-					});
-					
-					taxonTreeStore = new Observable(taxonTreeStore);*/
-					
-					// set up the model, assigning taxonTreeStore, and assigning method to identify leaf nodes of tree
 					var taxonTreeModel = new ObjectStoreModel({
 						store: taxonTreeStore,
 						deferItemLoadingUntilExpand: true,
@@ -169,18 +150,15 @@ include($SERVER_ROOT.'/header.php');
 						_setLabelAttr: {node: "labelNode", type: "innerHTML"}
 					});
 
-					// set up the tree, assigning taxonTreeModel;
 					var taxonTree = new Tree({
 						model: taxonTreeModel,
 						showRoot: false,
 						label: "Taxa Tree",
-						//dndController: dndSource,
 						persist: false,
 						_createTreeNode: function(args){
 						   return new TaxonTreeNode(args);
 						},
 						onClick: function(item){
-							// Get the URL from the item, and navigate to it
 							location.href = item.url;
 						}
 					}, "tree");
@@ -192,48 +170,7 @@ include($SERVER_ROOT.'/header.php');
 					);
 					taxonTree.startup();
 					
-					/*taxonTree.onLoadDeferred.then(function(){
-						var parentnode = taxonTree.getNodesByItem("<?php echo $targetId; ?>");
-						var lastnodes = parentnode[0].getChildren();
-						for (i in lastnodes) {
-							if(lastnodes[i].isExpanded){
-								 taxonTree._collapseNode(lastnodes[i]);
-							}
-							lastnodes[i].makeExpandable();
-						}
-					});*/
 				});
-				
-				/*query("#add-new-child").on("click", function(){
-					// get the selected object from the tree
-					var selectedObject = taxonTree.get("selectedItems")[0];
-					if(!selectedObject){
-						return alert("No object selected");
-					}
-
-					// add a new child item
-					var childItem = {
-						name: "New child",
-						id: Math.random()
-					};
-					taxonTreeStore.put(childItem, {
-						overwrite: true,
-						parent: selectedObject
-					});
-				});
-				
-				query("#remove").on("click", function(){
-					var selectedObject = taxonTree.get("selectedItems")[0];
-					if(!selectedObject){
-						return alert("No object selected");
-					}
-					taxonTreeStore.remove(selectedObject.id);
-				});
-				
-				taxonTree.on("dblclick", function(object){
-					object.name = prompt("Enter a new name for the object");
-					taxonTreeStore.put(object);
-				}, true);*/
 				
 			</script>
 			<?php
