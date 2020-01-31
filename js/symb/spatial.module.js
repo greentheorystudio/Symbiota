@@ -1690,8 +1690,7 @@ function getGeographyParams(vector){
                 var center = selectedClone.getGeometry().getCenter();
                 var radius = selectedClone.getGeometry().getRadius();
                 var edgeCoordinate = [center[0] + radius, center[1]];
-                var wgs84Sphere = new ol.Sphere(6378137);
-                var groundRadius = wgs84Sphere.haversineDistance(
+                var groundRadius = ol.sphere.getDistance(
                     ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
                     ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
                 );
@@ -2067,8 +2066,10 @@ function getTurfPointFeaturesetSelected(){
 function getWGS84CirclePoly(center,radius){
     var turfFeature = '';
     var edgeCoordinate = [center[0] + radius, center[1]];
-    var wgs84Sphere = new ol.Sphere(6378137);
-    var groundRadius = wgs84Sphere.haversineDistance(center,edgeCoordinate);
+    var groundRadius = ol.sphere.getDistance(
+        ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
+        ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
+    );
     groundRadius = groundRadius/1000;
     var ciroptions = {steps:200, units:'kilometers'};
     turfFeature = turf.circle(center,groundRadius,ciroptions);
@@ -2839,8 +2840,7 @@ function setClusterSymbol(feature) {
                     stroke: stroke,
                     fill: new ol.style.Fill({
                         color: [colorArr['r'],colorArr['g'],colorArr['b'],0.8]
-                    }),
-                    atlasManager: atlasManager
+                    })
                 }),
                 text: new ol.style.Text({
                     scale: 1,
@@ -3146,8 +3146,7 @@ function setSymbol(feature){
                 fill: fill,
                 stroke: stroke,
                 points: 3,
-                radius: 7,
-                atlasManager: atlasManager
+                radius: 7
             })
         });
     }
@@ -3158,8 +3157,7 @@ function setSymbol(feature){
                 scale: 1,
                 radius: 7,
                 fill: fill,
-                stroke: stroke,
-                atlasManager: atlasManager
+                stroke: stroke
             })
         });
     }
