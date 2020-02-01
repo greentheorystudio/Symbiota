@@ -612,6 +612,7 @@ $dbArr = Array();
 </div>
 
 <script type="text/javascript">
+    var SOLRMODE = '<?php echo $SOLR_MODE; ?>';
     var layersArr = [];
     var mouseCoords = [];
     var solrqArr = [];
