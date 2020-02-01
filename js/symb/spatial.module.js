@@ -1662,6 +1662,8 @@ function getDragDropStyle(feature, resolution) {
 
 function getGeographyParams(){
     geogParams = false;
+    searchTermsArr['polyArr'] = [];
+    searchTermsArr['circleArr'] = [];
     geoPolyArr = [];
     geoCircleArr = [];
     var totalArea = 0;
