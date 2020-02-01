@@ -58,7 +58,7 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=259" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=261" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             var winHeight = $(window).height();
@@ -613,6 +613,13 @@ $dbArr = Array();
 
 <script type="text/javascript">
     var SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+    var collectionParams = false;
+    var geogParams = false;
+    var textParams = false;
+    var taxaParams = false;
+    var geoPolyArr = [];
+    var geoCircleArr = [];
+    var searchTermsArr = {};
     var layersArr = [];
     var mouseCoords = [];
     var solrqArr = [];
@@ -626,13 +633,12 @@ $dbArr = Array();
     var newsolrqString = '';
     var solroccqString = '';
     var geoCallOut = false;
-    var solrRecCnt = 0;
+    var queryRecCnt = 0;
     var draw;
     var clustersource;
     var taxaArr = [];
     var taxontype = '';
     var thes = false;
-    var loadVectorPoints = true;
     var loadPointsEvent = false;
     var taxaCnt = 0;
     var lazyLoadCnt = 20000;
@@ -1494,7 +1500,7 @@ $dbArr = Array();
                     processed = processed + lazyLoadCnt;
                     index++;
                 }
-                while(processed < solrRecCnt);
+                while(processed < queryRecCnt);
             }
         });
 
