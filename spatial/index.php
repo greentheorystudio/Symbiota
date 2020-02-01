@@ -52,11 +52,10 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/gts-ol-symbiota.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jscolor/jscolor.js?ver=2" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/shapefile.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/dbf.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=259" type="text/javascript"></script>
@@ -656,8 +655,6 @@ $dbArr = Array();
     var dragDrop2 = false;
     var dragDrop3 = false;
     var dragDropTarget = '';
-    var droppedShapefile = '';
-    var droppedDBF = '';
     var dsOldestDate = '';
     var dsNewestDate = '';
     var tsOldestDate = '';
@@ -1291,11 +1288,23 @@ $dbArr = Array();
         }
     });
 
+    function getArrayBuffer(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = () => {
+                const arrayBuffer = reader.result;
+                const bytes = new Uint8Array(arrayBuffer);
+                resolve(bytes);
+            };
+        });
+    }
+
     dragAndDropInteraction.on('addfeatures', function(event) {
         var filename = event.file.name.split('.');
         var fileType = filename.pop();
         filename = filename.join("");
-        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'shp' || fileType === 'dbf'){
+        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     var infoArr = [];
@@ -1320,51 +1329,37 @@ $dbArr = Array();
                     toggleLayerTable();
                 }
             }
-            else if(fileType == 'shp' || fileType == 'dbf'){
-                var dbfURL = '';
-                if(fileType == 'shp'){
-                    droppedShapefile = window.URL.createObjectURL(event.file);
-                }
-                if(fileType == 'dbf'){
-                    droppedDBF = window.URL.createObjectURL(event.file);
-                }
-                if(fileType == 'shp'){
-                    if(setDragDropTarget()){
-                        setTimeout(function() {
-                            shapefile = new Shapefile({
-                                shp: droppedShapefile,
-                                dbf: droppedDBF
-                            },function (data){
-                                var infoArr = [];
-                                infoArr['Name'] = dragDropTarget;
-                                infoArr['layerType'] = 'vector';
-                                infoArr['Title'] = filename;
-                                infoArr['Abstract'] = '';
-                                infoArr['DefaultCRS'] = '';
-                                var sourceIndex = dragDropTarget+'Source';
-                                var format = new ol.format.GeoJSON();
-                                var res = map.getView().getResolution();
-                                var features = format.readFeatures(data.geojson, {
-                                    featureProjection: 'EPSG:3857'
-                                });
-                                layersArr[sourceIndex] = new ol.source.Vector({
-                                    features: features
-                                });
-                                layersArr[dragDropTarget].setStyle(getDragDropStyle);
-                                layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                                buildLayerTableRow(infoArr,true);
-                                map.getView().fit(layersArr[sourceIndex].getExtent());
-                                toggleLayerTable();
-                                droppedShapefile = '';
-                                droppedDBF = '';
+            else if(fileType === 'zip'){
+                if(setDragDropTarget()){
+                    getArrayBuffer(event.file).then((data) => {
+                        shp(data).then((geojson) => {
+                            var infoArr = [];
+                            infoArr['Name'] = dragDropTarget;
+                            infoArr['layerType'] = 'vector';
+                            infoArr['Title'] = filename;
+                            infoArr['Abstract'] = '';
+                            infoArr['DefaultCRS'] = '';
+                            var sourceIndex = dragDropTarget+'Source';
+                            var format = new ol.format.GeoJSON();
+                            var res = map.getView().getResolution();
+                            var features = format.readFeatures(geojson, {
+                                featureProjection: 'EPSG:3857'
                             });
-                        },500);
-                    }
+                            layersArr[sourceIndex] = new ol.source.Vector({
+                                features: features
+                            });
+                            layersArr[dragDropTarget].setStyle(getDragDropStyle);
+                            layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                            buildLayerTableRow(infoArr,true);
+                            map.getView().fit(layersArr[sourceIndex].getExtent());
+                            toggleLayerTable();
+                        });
+                    });
                 }
             }
         }
         else{
-            alert('The drag and drop file loading only supports GeoJSON, kml, and shp file formats.');
+            alert('The drag and drop file loading only supports GeoJSON, kml, and shapefile zip archives.');
         }
     });
 
