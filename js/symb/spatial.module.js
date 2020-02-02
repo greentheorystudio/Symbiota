@@ -1,11 +1,11 @@
 $(window).resize(function(){
-    var winHeight = $(window).height();
+    let winHeight = $(window).height();
     winHeight = winHeight + "px";
     document.getElementById('spatialpanel').style.height = winHeight;
     $("#accordion").accordion("refresh");
 });
 
-$(document).on("pageloadfailed", function(event, data){
+$(document).on("pageloadfailed", function(event){
     event.preventDefault();
 });
 
@@ -28,25 +28,24 @@ $(document).ready(function() {
         })
         .autocomplete({
             source: function( request, response ) {
-                var t = document.getElementById("taxontype").value;
-                var source = '';
-                var rankLow = '';
-                var rankHigh = '';
-                var rankLimit = '';
-                if(t == 5){
-                    source = '../webservices/autofillvernacular.php';
+                const t = document.getElementById("taxontype").value;
+                let rankLow = '';
+                let rankHigh = '';
+                let rankLimit = '';
+                if(t === 5){
+                    const source = '../webservices/autofillvernacular.php';
                 }
                 else{
-                    source = '../webservices/autofillsciname.php';
+                    const source = '../webservices/autofillsciname.php';
                 }
-                if(t == 4){
+                if(t === 4){
                     rankLow = 21;
                     rankHigh = 139;
                 }
-                else if(t == 2){
+                else if(t === 2){
                     rankLimit = 140;
                 }
-                else if(t == 3){
+                else if(t === 3){
                     rankLow = 141;
                 }
                 else{
@@ -64,7 +63,7 @@ $(document).ready(function() {
             },
             appendTo: "#taxa_autocomplete",
             search: function() {
-                var term = extractLast( this.value );
+                const term = extractLast( this.value );
                 if ( term.length < 4 ) {
                     return false;
                 }
@@ -73,7 +72,7 @@ $(document).ready(function() {
                 return false;
             },
             select: function( event, ui ) {
-                var terms = split( this.value );
+                const terms = split( this.value );
                 terms.pop();
                 terms.push( ui.item.value );
                 this.value = terms.join( ", " );
@@ -89,7 +88,7 @@ function addLayerToSelList(layer,title){
     var newOption = '<option id="lsel-'+optionId+'" value="'+layer+'">'+title+'</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
-    if(layer != 'select'){
+    if(layer !== 'select'){
         document.getElementById("selectlayerselect").value = layer;
         setActiveLayer();
     }
@@ -448,36 +447,36 @@ function changeBaseMap(){
     var blsource;
     var selection = document.getElementById('base-map').value;
     var baseLayer = map.getLayers().getArray()[0];
-    if(selection == 'worldtopo'){
+    if(selection === 'worldtopo'){
         blsource = new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'openstreet'){blsource = new ol.source.OSM();}
-    if(selection == 'blackwhite'){blsource = new ol.source.Stamen({layer: 'toner'});}
-    if(selection == 'worldimagery'){
+    if(selection === 'openstreet'){blsource = new ol.source.OSM();}
+    if(selection === 'blackwhite'){blsource = new ol.source.Stamen({layer: 'toner'});}
+    if(selection === 'worldimagery'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'ocean'){
+    if(selection === 'ocean'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'ngstopo'){
+    if(selection === 'ngstopo'){
         blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/NGS_Topo_US_2D/MapServer/tile/{z}/{y}/{x}');
     }
-    if(selection == 'natgeoworld'){
+    if(selection === 'natgeoworld'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'esristreet'){
+    if(selection === 'esristreet'){
         blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{z}/{y}/{x}');
     }
     baseLayer.setSource(blsource);
@@ -1169,35 +1168,70 @@ function createPolyIntersect(){
     selectInteraction.getFeatures().forEach(function(feature){
         var selectedClone = feature.clone();
         var geoType = selectedClone.getGeometry().getType();
-        if(geoType == 'Polygon' || geoType == 'MultiPolygon' || geoType == 'Circle'){
+        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
             shapeCount++;
         }
     });
-    if(shapeCount == 2){
-        var features = [];
+    if(shapeCount === 2){
+        var featuresOne = [];
+        var featuresTwo = [];
+        var pass = 1;
+        var intersection;
         var geoJSONFormat = new ol.format.GeoJSON();
         selectInteraction.getFeatures().forEach(function(feature){
             if(feature){
                 var selectedClone = feature.clone();
                 var geoType = selectedClone.getGeometry().getType();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType == 'Polygon'){
-                    features.push(turf.polygon(featCoords));
-                }
-                else if(geoType == 'MultiPolygon'){
-                    features.push(turf.multiPolygon(featCoords));
-                }
-                else if(geoType == 'Circle'){
-                    var center = fixedselectgeometry.getCenter();
-                    var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                    var selectiongeometry = selectedClone.getGeometry();
+                    var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
+                    var geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                    var featCoords = JSON.parse(geojsonStr).coordinates;
+                    if(geoType === 'Polygon'){
+                        if(pass === 1){
+                            featuresOne.push(turf.polygon(featCoords));
+                        }
+                        else{
+                            featuresTwo.push(turf.polygon(featCoords));
+                        }
+                    }
+                    else if(geoType === 'MultiPolygon'){
+                        for (e in featCoords) {
+                            if(pass === 1){
+                                featuresOne.push(turf.polygon(featCoords[e]));
+                            }
+                            else{
+                                featuresTwo.push(turf.polygon(featCoords[e]));
+                            }
+                        }
+                    }
+                    else if(geoType === 'Circle'){
+                        var center = fixedselectgeometry.getCenter();
+                        var radius = fixedselectgeometry.getRadius();
+                        if(pass === 1){
+                            featuresOne.push(getWGS84CirclePoly(center,radius));
+                        }
+                        else{
+                            featuresTwo.push(getWGS84CirclePoly(center,radius));
+                        }
+                    }
+                    pass++;
                 }
             }
         });
-        var intersection = turf.intersect(features[0],features[1]);
+        for (i in featuresOne) {
+            for (e in featuresTwo) {
+                var tempPoly = turf.intersect(featuresOne[i],featuresTwo[e]);
+                if(tempPoly){
+                    if(intersection){
+                        intersection = turf.union(intersection,tempPoly);
+                    }
+                    else{
+                        intersection = tempPoly;
+                    }
+                }
+            }
+        }
         if(intersection){
             var interpoly = geoJSONFormat.readFeature(intersection);
             interpoly.getGeometry().transform(wgs84Projection,mapProjection);
