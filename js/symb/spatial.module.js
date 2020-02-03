@@ -3732,32 +3732,38 @@ function writeWfsWktString(type,geocoords) {
     var wktStr = '';
     var coordStr = '';
     var coordRingStr = '';
-    if(type == 'Polygon'){
+    if(type === 'Polygon'){
         for(i in geocoords){
+            coordStr += '(';
             for(c in geocoords[i]) {
                 var lat = geocoords[i][c][1];
                 var long = geocoords[i][c][0];
                 coordStr += lat+' '+long+',';
             }
+            coordStr = coordStr.substring(0,coordStr.length-1);
+            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
-        wktStr = 'POLYGON(('+coordStr+'))';
+        wktStr = 'POLYGON('+coordStr+')';
     }
-    else if(type == 'MultiPolygon'){
+    else if(type === 'MultiPolygon'){
         for(i in geocoords){
+            coordStr += '(';
             for(r in geocoords[i]){
-                coordRingStr = '';
+                coordStr += '(';
                 for(c in geocoords[i][r]) {
                     var lat = geocoords[i][r][c][1];
                     var long = geocoords[i][r][c][0];
-                    coordRingStr += lat+' '+long+',';
+                    coordStr += lat+' '+long+',';
                 }
-                coordRingStr = coordRingStr.substring(0,coordRingStr.length-1);
-                coordStr += '('+coordRingStr+'),';
+                coordStr = coordStr.substring(0,coordStr.length-1);
+                coordStr += '),';
             }
+            coordStr = coordStr.substring(0,coordStr.length-1);
+            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
-        wktStr = 'MULTIPOLYGON(('+coordStr+'))';
+        wktStr = 'MULTIPOLYGON('+coordStr+')';
     }
 
     return wktStr;
