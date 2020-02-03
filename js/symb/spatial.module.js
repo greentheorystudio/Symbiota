@@ -1750,14 +1750,14 @@ function getGeographyParams(){
                 var fixedgeometry = simplegeometry.transform(mapProjection,wgs84Projection);
                 var wmswktString = wktFormat.writeGeometry(fixedgeometry);
                 var geocoords = fixedgeometry.getCoordinates();
-                var wfswktString = writeWfsWktString(geoType,geocoords);
+                var mysqlWktString = writeMySQLWktString(geoType,geocoords);
                 if(SOLRMODE) {
                     geoSolrqString = '"Intersects('+wmswktString+')"';
                     solrqfrag = geoSolrqString;
                     solrgeoqArr.push(solrqfrag);
                 }
                 else{
-                    geoPolyArr.push(wfswktString);
+                    geoPolyArr.push(mysqlWktString);
                 }
                 geogParams = true;
             }
@@ -2412,7 +2412,7 @@ function loadPoints(){
         pointvectorsource = new ol.source.Vector({wrapX: false});
         layersArr['pointv'].setSource(pointvectorsource);
         getQueryRecCnt(false,function(res) {
-            if(queryRecCnt){
+            if(queryRecCnt > 0){
                 loadPointsEvent = true;
                 setLoadingTimer();
                 loadPointWFSLayer(0);
@@ -3728,10 +3728,9 @@ function verifyCollForm(){
     return formVerified;
 }
 
-function writeWfsWktString(type,geocoords) {
+function writeMySQLWktString(type,geocoords) {
     var wktStr = '';
     var coordStr = '';
-    var coordRingStr = '';
     if(type === 'Polygon'){
         for(i in geocoords){
             coordStr += '(';
