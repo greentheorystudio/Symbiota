@@ -1848,7 +1848,7 @@ function getPointStyle(feature) {
 
 function getSOLROccArr(callback){
     getQueryRecCnt(true,function(res) {
-        if(queryRecCnt){
+        if(queryRecCnt > 0){
             var occArr = [];
             var http = new XMLHttpRequest();
             var url = "rpc/SOLRConnector.php";
