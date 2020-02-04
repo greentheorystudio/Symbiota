@@ -50,7 +50,7 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/map/mapinterface.php" target="_blank">Map Search</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
                     </li>
                     <li>
                         <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>

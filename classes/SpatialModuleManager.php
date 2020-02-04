@@ -478,29 +478,33 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$localArr);
         }
-        if(array_key_exists('circleArr',$this->searchTermsArr)){
-            $sqlFragArr = Array();
-            $objArr = $this->searchTermsArr['circleArr'];
+        if(array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('polyArr',$this->searchTermsArr)){
+            $geoSqlStrArr = Array();
+            if(array_key_exists('circleArr',$this->searchTermsArr)){
+                $sqlFragArr = Array();
+                $objArr = $this->searchTermsArr['circleArr'];
 
-            if($objArr){
-                foreach($objArr as $obj => $oArr){
-                    $radius = $oArr['radius'] * 0.621371;
-                    $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlong']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlat']. ') ) + sin( radians(' .$oArr['pointlong']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
-                    $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
+                if($objArr){
+                    foreach($objArr as $obj => $oArr){
+                        $radius = $oArr['radius'] * 0.621371;
+                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlong']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlat']. ') ) + sin( radians(' .$oArr['pointlong']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
+                        $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
+                    }
+                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
-                $sqlWhere .= 'AND ('.implode(' OR ', $sqlFragArr).') ';
             }
-        }
-        if(array_key_exists('polyArr',$this->searchTermsArr)){
-            //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
-            $sqlFragArr = Array();
-            $geomArr = $this->searchTermsArr['polyArr'];
-            if($geomArr){
-                foreach($geomArr as $geom){
-                    $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
+            if(array_key_exists('polyArr',$this->searchTermsArr)){
+                //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
+                $sqlFragArr = Array();
+                $geomArr = $this->searchTermsArr['polyArr'];
+                if($geomArr){
+                    foreach($geomArr as $geom){
+                        $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
+                    }
+                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
-                $sqlWhere .= 'AND ('.implode(' OR ', $sqlFragArr).') ';
             }
+            $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
         }
         if(array_key_exists('collector',$this->searchTermsArr)&&$this->searchTermsArr['collector']){
             $collectorArr = explode(';',$this->searchTermsArr['collector']);
