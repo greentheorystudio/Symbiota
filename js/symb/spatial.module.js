@@ -104,7 +104,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==3){
+        if(activeTab === 3){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }
@@ -264,13 +264,13 @@ function buildLayerTableRow(lArr,removable){
     var trfragment = '';
     var layerID = lArr['Name'];
     var layerType = lArr['layerType'];
-    if(layerType != 'vector'){
+    if(layerType !== 'vector'){
         var infoArr = [];
         infoArr['id'] = layerID;
         infoArr['title'] = lArr['Title'];
         rasterLayers.push(infoArr);
     }
-    var addLayerFunction = (layerType == 'vector'?'editVectorLayers':'editRasterLayers');
+    var addLayerFunction = (layerType === 'vector'?'editVectorLayers':'editRasterLayers');
     var divid = "lay-"+layerID;
     if(!document.getElementById(divid)){
         trfragment += '<td style="width:30px;">';
@@ -284,7 +284,7 @@ function buildLayerTableRow(lArr,removable){
         trfragment += lArr['Abstract'];
         trfragment += '</td>';
         trfragment += '<td style="width:50px;background-color:black">';
-        trfragment += '<img src="../images/'+(layerType == 'vector'?'button_wfs.png':'button_wms.png')+'" style="width:20px;margin-left:8px;">';
+        trfragment += '<img src="../images/'+(layerType === 'vector'?'button_wfs.png':'button_wms.png')+'" style="width:20px;margin-left:8px;">';
         trfragment += '</td>';
         trfragment += '<td style="width:50px;">';
         if(removable){
@@ -565,7 +565,7 @@ function changeHeatMapRadius(){
 }
 
 function changeMapSymbology(symbology){
-    if(symbology != mapSymbology){
+    if(symbology !== mapSymbology){
         if(spiderCluster){
             var source = layersArr['spider'].getSource();
             source.clear();
@@ -582,8 +582,8 @@ function changeMapSymbology(symbology){
             layersArr['pointv'].getSource().changed();
         }
     }
-    if(symbology == 'coll'){
-        if(mapSymbology == 'taxa'){
+    if(symbology === 'coll'){
+        if(mapSymbology === 'taxa'){
             clearTaxaSymbology();
             clusterKey = 'CollectionName';
             mapSymbology = 'coll';
@@ -592,8 +592,8 @@ function changeMapSymbology(symbology){
             }
         }
     }
-    if(symbology == 'taxa'){
-        if(mapSymbology == 'coll'){
+    if(symbology === 'taxa'){
+        if(mapSymbology === 'coll'){
             resetMainSymbology();
             clusterKey = 'namestring';
             mapSymbology = 'taxa';
@@ -620,7 +620,7 @@ function changeRecordPage(page){
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             var newMapRecordList = JSON.parse(http.responseText);
             document.getElementById("queryrecords").innerHTML = newMapRecordList;
         }
@@ -2748,10 +2748,10 @@ function primeSymbologyData(features){
 }
 
 function processCheckSelection(c){
-    if(c.checked == true){
+    if(c.checked === true){
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==1){
-            if($('.occcheck:checked').length==$('.occcheck').length){
+        if(activeTab === 1){
+            if($('.occcheck:checked').length === $('.occcheck').length){
                 document.getElementById("selectallcheck").checked = true;
             }
         }
@@ -2759,9 +2759,9 @@ function processCheckSelection(c){
         layersArr['pointv'].getSource().changed();
         updateSelections(Number(c.value),false);
     }
-    else if(c.checked == false){
+    else if(c.checked === false){
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==1){
+        if(activeTab === 1){
             document.getElementById("selectallcheck").checked = false;
         }
         var index = selections.indexOf(Number(c.value));
@@ -2782,26 +2782,26 @@ function processDownloadRequest(selection){
     if(dlType){
         var filename = 'spatialdata_'+getDateTimeString();
         var contentType = '';
-        if(dlType == 'kml') contentType = 'application/vnd.google-earth.kml+xml';
-        else if(dlType == 'geojson') contentType = 'application/vnd.geo+json';
-        else if(dlType == 'gpx') contentType = 'application/gpx+xml';
+        if(dlType === 'kml') contentType = 'application/vnd.google-earth.kml+xml';
+        else if(dlType === 'geojson') contentType = 'application/vnd.geo+json';
+        else if(dlType === 'gpx') contentType = 'application/gpx+xml';
         document.getElementById("dh-type").value = dlType;
         document.getElementById("dh-filename").value = filename;
         document.getElementById("dh-contentType").value = contentType;
         if(selection) document.getElementById("dh-selections").value = selections.join();
-        if(!selection && dlType == 'csv'){
+        if(!selection && dlType === 'csv'){
             document.getElementById("dh-fl").value = 'occid';
         }
         else{
             document.getElementById("dh-fl").value = SOLRFields;
         }
-        if(dlType == 'csv'){
+        if(dlType === 'csv'){
             $("#csvoptions").popup("show");
         }
-        else if(dlType == 'kml' || dlType == 'geojson' || dlType == 'gpx'){
+        else if(dlType === 'kml' || dlType === 'geojson' || dlType === 'gpx'){
             document.getElementById("datadownloadform").submit();
         }
-        else if(dlType == 'png'){
+        else if(dlType === 'png'){
             var imagefilename = 'map_'+getDateTimeString()+'.png';
             exportMapPNG(imagefilename,false);
         }
@@ -3067,6 +3067,7 @@ function setBaseLayerSource(urlTemplate){
 }
 
 function setClusterSymbol(feature) {
+    var clusterindex, hexcolor, radius;
     var style = '';
     var stroke = '';
     var selected = false;
@@ -3075,33 +3076,35 @@ function setClusterSymbol(feature) {
         if(size > 1){
             var features = feature.get('features');
             if(selections.length > 0){
-                var clusterindex = feature.get('identifiers');
+                clusterindex = feature.get('identifiers');
                 for(i in selections){
-                    if(clusterindex.indexOf(selections[i]) !== -1) selected = true;
+                    if(clusterindex.indexOf(selections[i].toString()) !== -1) {
+                        selected = true;
+                    }
                 }
             }
-            var clusterindex = feature.get('identifiers');
+            clusterindex = feature.get('identifiers');
             var cKey = feature.get('clusterkey');
-            if(mapSymbology == 'coll'){
-                var hexcolor = '#'+collSymbology[cKey]['color'];
+            if(mapSymbology === 'coll'){
+                hexcolor = '#'+collSymbology[cKey]['color'];
             }
-            else if(mapSymbology == 'taxa'){
-                var hexcolor = '#'+taxaSymbology[cKey]['color'];
+            else if(mapSymbology === 'taxa'){
+                hexcolor = '#'+taxaSymbology[cKey]['color'];
             }
             var colorArr = hexToRgb(hexcolor);
-            if(size < 10) var radius = 10;
-            else if(size < 100) var radius = 15;
-            else if(size < 1000) var radius = 20;
-            else if(size < 10000) var radius = 25;
-            else if(size < 100000) var radius = 30;
-            else var radius = 35;
+            if(size < 10) radius = 10;
+            else if(size < 100) radius = 15;
+            else if(size < 1000) radius = 20;
+            else if(size < 10000) radius = 25;
+            else if(size < 100000) radius = 30;
+            else radius = 35;
 
-            if(selected) stroke = new ol.style.Stroke({color: '#10D8E6', width: 2});
+            if(selected) {
+                stroke = new ol.style.Stroke({color: '#10D8E6', width: 2})
+            }
 
             style = new ol.style.Style({
                 image: new ol.style.Circle({
-                    opacity: 1,
-                    scale: 1,
                     radius: radius,
                     stroke: stroke,
                     fill: new ol.style.Fill({
@@ -3134,7 +3137,7 @@ function setDownloadFeatures(features){
     for(i in features){
         var clone = features[i].clone();
         var geoType = clone.getGeometry().getType();
-        if(geoType == 'Circle'){
+        if(geoType === 'Circle'){
             var geoJSONFormat = new ol.format.GeoJSON();
             var geometry = clone.getGeometry();
             var fixedgeometry = geometry.transform(mapProjection,wgs84Projection);
@@ -3252,7 +3255,7 @@ function setLayersTable(){
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             var layerArr;
             var jsonReturn = false;
             try{
@@ -3390,13 +3393,15 @@ function setSymbol(feature){
     var recType = feature.get('CollType');
     if(!recType) recType = 'observation';
     if(selections.length > 0){
-        var occid = feature.get('occid');
-        if(selections.indexOf(occid) !== -1) selected = true;
+        var occid = Number(feature.get('occid'));
+        if(selections.indexOf(occid) !== -1) {
+            selected = true;
+        }
     }
-    if(mapSymbology == 'coll'){
+    if(mapSymbology === 'coll'){
         var color = '#'+collSymbology[cKey]['color'];
     }
-    else if(mapSymbology == 'taxa'){
+    else if(mapSymbology === 'taxa'){
         var color = '#'+taxaSymbology[cKey]['color'];
     }
 
@@ -3413,8 +3418,6 @@ function setSymbol(feature){
     if(recType.toLowerCase().indexOf('observation') !== -1){
         style = new ol.style.Style({
             image: new ol.style.RegularShape({
-                opacity: 1,
-                scale: 1,
                 fill: fill,
                 stroke: stroke,
                 points: 3,
@@ -3425,8 +3428,6 @@ function setSymbol(feature){
     else{
         style = new ol.style.Style({
             image: new ol.style.Circle({
-                opacity: 1,
-                scale: 1,
                 radius: 7,
                 fill: fill,
                 stroke: stroke
@@ -3706,7 +3707,7 @@ function validateFeatureDate(feature){
     var valid = false;
     if(feature.get('coll_year')){
         var fyear = Number(feature.get('coll_year'));
-        if(fyear.toString().length == 4 && fyear > 1500){
+        if(fyear.toString().length === 4 && fyear > 1500){
             var fmonth = (feature.get('coll_month')?Number(feature.get('coll_month')):1);
             var fday = (feature.get('coll_day')?Number(feature.get('coll_day')):1);
             var fDate = new Date();
