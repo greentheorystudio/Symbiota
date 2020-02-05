@@ -672,6 +672,9 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
+        if(strpos($mapWhere, 'WHERE ') !== 0){
+            $sql .= 'WHERE ';
+        }
         $sql .= $mapWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
@@ -736,6 +739,9 @@ class SpatialModuleManager{
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
+        if(strpos($mapWhere, 'WHERE ') !== 0){
+            $sql .= 'WHERE ';
         }
         $sql .= $mapWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
