@@ -964,9 +964,10 @@ class TaxonomyUpload{
 
 	//Setters and getters
 	private function setUploadTargetPath(){
+		global $TEMP_DIR_ROOT, $SERVER_ROOT;
 		$tPath = '';
-		if(!$tPath && isset($GLOBALS["TEMP_DIR_ROOT"])){
-			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
+		if(!$tPath && isset($TEMP_DIR_ROOT)){
+			$tPath = $TEMP_DIR_ROOT;
 			if(substr($tPath,-1) != '/') $tPath .= "/";
 			if(file_exists($tPath.'downloads')) $tPath .= 'downloads/';
 		}
@@ -974,7 +975,7 @@ class TaxonomyUpload{
 			$tPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tPath){
-			$tPath = $GLOBALS['SERVER_ROOT'];
+			$tPath = $SERVER_ROOT;
 			if(substr($tPath,-1) != '/') $tPath .= "/";
 			$tPath .= "temp/downloads/";
 		}

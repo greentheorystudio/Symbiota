@@ -150,13 +150,14 @@ class SpecProcessorOcr{
 	}
 
 	private function loadImage($imgUrl){
+		global $IMAGE_DOMAIN;
 		$status = false;
 		if($imgUrl){
 			if(substr($imgUrl,0,1)=="/"){
-				if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
+				if($IMAGE_DOMAIN){
 					//If there is an image domain name is set in symbini.php and url is relative,
 					//then it's assumed that image is located on another server, thus add domain to url
-					$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
+					$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 				}
 				else{
 					$urlDomain = "http://";
@@ -783,15 +784,16 @@ class SpecProcessorOcr{
 	}
 
 	private function setTempPath(){
+		global $SERVER_ROOT, $TEMP_DIR_ROOT;
 		$tempPath = 0;
-		if(array_key_exists('tempDirRoot',$GLOBALS)){
-			$tempPath = $GLOBALS['tempDirRoot'];
+		if($TEMP_DIR_ROOT){
+			$tempPath = $TEMP_DIR_ROOT;
 		}
 		else{
 			$tempPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tempPath){
-			$tempPath = $GLOBALS['serverRoot'];
+			$tempPath = $SERVER_ROOT;
 			if(substr($tempPath,-1) != '/') $tempPath .= '/';
 			$tempPath .= 'temp/';
 		}

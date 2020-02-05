@@ -537,7 +537,7 @@ if($clArray["locality"]){
 										<a href="checklistmap.php?clid=<?php echo $clid.'&thesfilter='.$thesFilter.'&taxonfilter='.$taxonFilter; ?>" target="_blank">
 											<?php 
 											$googleUrl = '//maps.googleapis.com/maps/api/staticmap?size=170x170&maptype=terrain';
-											if(array_key_exists('GOOGLE_MAP_KEY',$GLOBALS) && $GLOBALS['GOOGLE_MAP_KEY']) $googleUrl .= '&key='.$GLOBALS['GOOGLE_MAP_KEY'];
+											if($GOOGLE_MAP_KEY) $googleUrl .= '&key='.$GOOGLE_MAP_KEY;
 											$googleUrl .= '&markers=size:tiny|'.implode('|',$coordArr);
 											?>
 											<img src="<?php echo $googleUrl; ?>" style="border:0px;" /><br/>
@@ -622,7 +622,7 @@ if($clArray["locality"]){
 									<?php 
 									$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
 									if($imgSrc){
-										$imgSrc = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgSrc,0,4)!="http"?$GLOBALS["imageDomain"]:"").$imgSrc;
+										$imgSrc = ($IMAGE_DOMAIN&&substr($imgSrc,0,4)!="http"?$IMAGE_DOMAIN:"").$imgSrc;
 										if(!$printMode) echo "<a href='".$spUrl."' target='_blank'>";
 										echo "<img src='".$imgSrc."' />";
 										if(!$printMode) echo "</a>";

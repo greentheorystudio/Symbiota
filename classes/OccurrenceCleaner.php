@@ -764,12 +764,13 @@ class OccurrenceCleaner extends Manager{
 	}
 
 	private function setVerification($occid, $category, $ranking, $protocol = '', $source = '', $notes = ''){
+		global $SYMB_UID;
 		$sql = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, source, notes, uid) '.
 			'VALUES('.$occid.',"'.$category.'",'.$ranking.','.
 			($protocol?'"'.$protocol.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').','.
-			$GLOBALS['SYMB_UID'].')';
+			$SYMB_UID.')';
 		if(!$this->conn->query($sql)){
 			$this->errorMessage = 'ERROR thrown setting occurrence verification: '.$this->conn->error;
 			echo '<li style="margin-left:15px;">'.$this->errorMessage.'</li>';

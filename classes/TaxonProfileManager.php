@@ -472,7 +472,8 @@ class TaxonProfileManager {
  	}
 
 	public function echoImages($start, $length = 0, $useThumbnail = 1){		//length=0 => means show all images
-		$status = false;
+		global $IMAGE_DOMAIN;
+ 		$status = false;
 		if(!isset($this->imageArr)){
 			$this->setTaxaImages();
 		}
@@ -490,10 +491,10 @@ class TaxonProfileManager {
 			$imgUrl = $imgObj["url"];
 			$imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
 			$imgThumbnail = $imgObj["thumbnailurl"];
-			if(array_key_exists("IMAGE_DOMAIN",$GLOBALS)){
+			if($IMAGE_DOMAIN){
 				//Images with relative paths are on another server
-				if(substr($imgUrl,0,1)=="/") $imgUrl = $GLOBALS["IMAGE_DOMAIN"].$imgUrl;
-				if(substr($imgThumbnail,0,1)=="/") $imgThumbnail = $GLOBALS["IMAGE_DOMAIN"].$imgThumbnail;
+				if(substr($imgUrl,0,1)=="/") $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+				if(substr($imgThumbnail,0,1)=="/") $imgThumbnail = $IMAGE_DOMAIN.$imgThumbnail;
 			}
 			if($imgObj['occid']){
 				$imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
@@ -565,7 +566,8 @@ class TaxonProfileManager {
 	}
 
 	public function getMapArr($tidStr = 0){
-		$maps = Array();
+		global $IMAGE_DOMAIN;
+ 		$maps = Array();
  		if(!$tidStr){
 			$tidArr = Array($this->tid,$this->submittedTid);
 			if($this->synonyms) $tidArr = array_merge($tidArr,array_keys($this->synonyms));
@@ -579,8 +581,8 @@ class TaxonProfileManager {
 			$result = $this->con->query($sql);
 			if($row = $result->fetch_object()){
 				$imgUrl = $row->url;
-				if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($imgUrl,0,1)=="/"){
-					$imgUrl = $GLOBALS["IMAGE_DOMAIN"].$imgUrl;
+				if($IMAGE_DOMAIN && substr($imgUrl,0,1)=="/"){
+					$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 				}
 				$maps[] = $imgUrl;
 			}
@@ -590,7 +592,8 @@ class TaxonProfileManager {
  	}
 
  	public function getGoogleStaticMap($tidStr = 0){
-		if(!$tidStr){
+		global $MAPPING_BOUNDARIES, $GOOGLE_MAP_KEY, $TAXON_PROFILE_MAP_CENTER, $TAXON_PROFILE_MAP_ZOOM;
+ 		if(!$tidStr){
 			$tidArr = Array($this->tid,$this->submittedTid);
 			if($this->synonyms) $tidArr = array_merge($tidArr,array_keys($this->synonyms));
 			$tidStr = trim(implode(",",$tidArr),' ,');
@@ -603,8 +606,8 @@ class TaxonProfileManager {
 	 		$minLong = 180;
 	 		$maxLong = -180;
 	 		$latlonArr = array();
-	 		if(isset($GLOBALS['MAPPING_BOUNDARIES'])){
-	 			$latlonArr = explode(";",$GLOBALS['MAPPING_BOUNDARIES']);
+	 		if($MAPPING_BOUNDARIES){
+	 			$latlonArr = explode(";",$MAPPING_BOUNDARIES);
 	 		}
 
 	 		$sqlBase = "SELECT t.sciname, gi.DecimalLatitude, gi.DecimalLongitude ".
@@ -649,10 +652,10 @@ class TaxonProfileManager {
 			$longDist = $maxLong - $minLong;
 
 			$googleUrl = '//maps.googleapis.com/maps/api/staticmap?size=256x256&maptype=terrain';
-			if(array_key_exists('GOOGLE_MAP_KEY',$GLOBALS) && $GLOBALS['GOOGLE_MAP_KEY']) $googleUrl .= '&key='.$GLOBALS['GOOGLE_MAP_KEY'];
-            if(array_key_exists('TAXON_PROFILE_MAP_CENTER',$GLOBALS) && $GLOBALS['TAXON_PROFILE_MAP_CENTER']) $googleUrl .= '&center='.$GLOBALS['TAXON_PROFILE_MAP_CENTER'];
-			if(array_key_exists('TAXON_PROFILE_MAP_ZOOM',$GLOBALS) && $GLOBALS['TAXON_PROFILE_MAP_ZOOM']) {
-                $googleUrl .= '&zoom='.$GLOBALS['TAXON_PROFILE_MAP_ZOOM'];
+			if($GOOGLE_MAP_KEY) $googleUrl .= '&key='.$GOOGLE_MAP_KEY;
+            if($TAXON_PROFILE_MAP_CENTER) $googleUrl .= '&center='.$TAXON_PROFILE_MAP_CENTER;
+			if($TAXON_PROFILE_MAP_ZOOM) {
+                $googleUrl .= '&zoom='.$TAXON_PROFILE_MAP_ZOOM;
 			}
             elseif($latDist < 3 || $longDist < 3) {
                 $googleUrl .= "&zoom=6";

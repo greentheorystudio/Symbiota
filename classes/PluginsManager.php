@@ -22,7 +22,7 @@ class PluginsManager {
 	}
 
 	public function setSlidewhow($ssId,$numSlides,$numDays,$imageType,$clId,$dayInterval){
-		global $SERVER_ROOT;
+		global $SERVER_ROOT, $IMAGE_DOMAIN;
 		$currentDate = date("Y-m-d");
 		$replace = 0;
 		if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json')){
@@ -116,8 +116,8 @@ class PluginsManager {
 					if(!in_array($imgId, $previous)){
 						if (substr($row->url, 0, 1) == '/'){
 							//If imageDomain variable is set within symbini file, image
-							if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-								$file = $GLOBALS['imageDomain'].$row->url;
+							if($IMAGE_DOMAIN){
+								$file = $IMAGE_DOMAIN.$row->url;
 							}
 							else{
 								//Use local domain
@@ -155,8 +155,8 @@ class PluginsManager {
 				else{
 					if (substr($row->url, 0, 1) == '/'){
 						//If imageDomain variable is set within symbini file, image
-						if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-							$file = $GLOBALS['imageDomain'].$row->url;
+						if($IMAGE_DOMAIN){
+							$file = $IMAGE_DOMAIN.$row->url;
 						}
 						else{
 							//Use local domain
@@ -215,7 +215,6 @@ class PluginsManager {
 		global $CLIENT_ROOT;
 		$windowHeight = $width + 75;
 		$imageHeight = $width + 50;
-		$html = '';
 		$html = '<div id="slideshowcontainer" style="clear:both;width:'.$width.'px;height:'.$windowHeight.'px;">';
 		$html .= '<div class="container">';
 		$html .= '<div id="slides">';

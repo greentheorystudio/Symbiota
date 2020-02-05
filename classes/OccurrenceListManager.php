@@ -18,10 +18,10 @@ class OccurrenceListManager extends OccurrenceManager{
 	}
 
     public function getRecordArr($pageRequest,$cntPerPage){
-        global $IMAGE_DOMAIN;
+        global $USER_RIGHTS, $IS_ADMIN, $IMAGE_DOMAIN;
 	    $canReadRareSpp = false;
-        if($GLOBALS['USER_RIGHTS']){
-            if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll", $GLOBALS['USER_RIGHTS'])){
+        if($USER_RIGHTS){
+            if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
                 $canReadRareSpp = true;
             }
         }
@@ -89,8 +89,8 @@ class OccurrenceListManager extends OccurrenceManager{
             $returnArr[$occId]["sex"] = $this->cleanOutStr($row->sex);
             $localitySecurity = $row->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
-           		|| (array_key_exists("CollEditor", $GLOBALS['USER_RIGHTS']) && in_array($row->CollID,$GLOBALS['USER_RIGHTS']["CollEditor"]))
-           		|| (array_key_exists("RareSppReader", $GLOBALS['USER_RIGHTS']) && in_array($row->CollID,$GLOBALS['USER_RIGHTS']["RareSppReader"]))){
+           		|| (array_key_exists("CollEditor", $USER_RIGHTS) && in_array($row->CollID,$USER_RIGHTS["CollEditor"]))
+           		|| (array_key_exists("RareSppReader", $USER_RIGHTS) && in_array($row->CollID,$USER_RIGHTS["RareSppReader"]))){
                 $returnArr[$occId]["locality"] = $this->cleanOutStr(str_replace('.,',',',$row->locality));
                 $returnArr[$occId]["collnumber"] = $this->cleanOutStr($row->recordnumber);
                 $returnArr[$occId]["habitat"] = $this->cleanOutStr($row->habitat);
@@ -140,7 +140,8 @@ class OccurrenceListManager extends OccurrenceManager{
     }
 
 	private function setRecordCnt($sqlWhere){
-		if($sqlWhere){
+		global $CLIENT_ROOT;
+	    if($sqlWhere){
 			$sql = "SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ".$this->setTableJoins($sqlWhere).$sqlWhere;
 			//echo "<div>Count sql: ".$sql."</div>";
 			$result = $this->conn->query($sql);
@@ -149,7 +150,7 @@ class OccurrenceListManager extends OccurrenceManager{
 			}
 			$result->free();
 		}
-		setCookie("collvars","reccnt:".$this->recordCount,time()+64800,($GLOBALS['CLIENT_ROOT']?$GLOBALS['CLIENT_ROOT']:'/'));
+		setCookie("collvars","reccnt:".$this->recordCount,time()+64800,($CLIENT_ROOT?$CLIENT_ROOT:'/'));
 	}
 
     public function getRecordCnt(){

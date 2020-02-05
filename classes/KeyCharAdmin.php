@@ -284,26 +284,24 @@ class KeyCharAdmin{
 	}
 	
 	public function uploadCsImage($formArr){
-		global $PARAMS_ARR;
+		global $PARAMS_ARR, $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL;
 		$statusStr = '';
 		if(is_numeric($formArr['cid']) && is_numeric($formArr['cs'])){
-	 		$IMAGE_ROOT_PATH = $GLOBALS["imageRootPath"];
-			if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
+	 		if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
 			if(file_exists($IMAGE_ROOT_PATH)){
 				$IMAGE_ROOT_PATH .= 'ident/';
 				if(!file_exists($IMAGE_ROOT_PATH)){
-					if(!mkdir($IMAGE_ROOT_PATH)){
+					if(!mkdir($IMAGE_ROOT_PATH) && !is_dir($IMAGE_ROOT_PATH)){
 						return 'ERROR, unable to create upload directory: '.$IMAGE_ROOT_PATH;
 					}
 				}
 				$IMAGE_ROOT_PATH .= 'csimgs/';
 				if(!file_exists($IMAGE_ROOT_PATH)){
-					if(!mkdir($IMAGE_ROOT_PATH)){
+					if(!mkdir($IMAGE_ROOT_PATH) && !is_dir($IMAGE_ROOT_PATH)){
 						return 'ERROR, unable to create upload directory: '.$IMAGE_ROOT_PATH;
 					}
 				}
 				//Create url prefix 
-				$IMAGE_ROOT_URL = $GLOBALS["imageRootUrl"];
 				if(substr($IMAGE_ROOT_URL,-1) != "/") $IMAGE_ROOT_URL .= "/";
 				$IMAGE_ROOT_URL .= 'ident/csimgs/';
 				
@@ -389,10 +387,10 @@ class KeyCharAdmin{
 	}
 
 	public function deleteCsImage($csImgId){
+		global $IMAGE_ROOT_PATH;
 		$statusStr = 'SUCCESS: image uploaded successful';
 		//Remove image from file system
-	 	$IMAGE_ROOT_PATH = $GLOBALS["imageRootPath"];
-		if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
+	 	if(substr($IMAGE_ROOT_PATH,-1) != "/") $IMAGE_ROOT_PATH .= "/";
 		$IMAGE_ROOT_PATH .= 'ident/csimgs/';
 		$sql = 'SELECT url FROM kmcsimages WHERE csimgid = '.$csImgId;
 		$rs = $this->conn->query($sql);
@@ -523,9 +521,10 @@ class KeyCharAdmin{
 	}
 
 	public function setLangId($lang=''){
+		global $DEFAULT_LANG;
 		if(!$lang){
-			if($GLOBALS['defaultLang']){
-				$lang = $GLOBALS['defaultLang'];
+			if($DEFAULT_LANG){
+				$lang = $DEFAULT_LANG;
 			}
 			else{
 				$lang = 'English';

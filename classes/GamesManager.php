@@ -42,7 +42,7 @@ class GamesManager {
 
 	//Organism of the day game 
 	public function setOOTD($oodID,$clid){
-		global $SERVER_ROOT;
+		global $SERVER_ROOT, $IMAGE_DOMAIN;
 		//Sanitation: $clid variable cound be a single checklist or a collection of clid separated by commas
 		if(!preg_match('/^[\d,]+$/',$clid)) return '';
 		if(is_numeric($oodID)){
@@ -140,8 +140,8 @@ class GamesManager {
 						$file = '';
 						if (substr($row->url, 0, 1) == '/'){
 							//If imageDomain variable is set within symbini file, image  
-							if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-								$file = $GLOBALS['imageDomain'].$row->url;
+							if(isset($IMAGE_DOMAIN) && $IMAGE_DOMAIN){
+								$file = $IMAGE_DOMAIN.$row->url;
 							}
 							else{
 								//Use local domain 
@@ -184,7 +184,7 @@ class GamesManager {
 	
 	//Flashcard functions
 	public function getFlashcardImages(){
-		//Get species list
+		global $IMAGE_DOMAIN;
 		$retArr = Array();
 		//Grab a random list of no more than 1000 taxa 
 		$sql = '';
@@ -241,8 +241,8 @@ class GamesManager {
 				if(array_key_exists('url',$retArr[$rImg->tidaccepted])) $iCnt = count($retArr[$rImg->tidaccepted]['url']);
 				if($iCnt < 5){
 					$url = $rImg->url;
-					if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($url,0,1)=="/"){
-						$url = $GLOBALS["IMAGE_DOMAIN"].$url;
+					if($IMAGE_DOMAIN && substr($url,0,1)=="/"){
+						$url = $IMAGE_DOMAIN.$url;
 					}
 					$retArr[$rImg->tidaccepted]['url'][] = $url;
 				}
@@ -264,8 +264,8 @@ class GamesManager {
 					if(array_key_exists('url',$retArr[$rImg2->parenttid])) $iCnt = count($retArr[$rImg2->parenttid]['url']);
 					if($iCnt < 5){
 						$url = $rImg2->url;
-						if(array_key_exists("IMAGE_DOMAIN",$GLOBALS) && substr($url,0,1)=="/"){
-							$url = $GLOBALS["IMAGE_DOMAIN"].$url;
+						if($IMAGE_DOMAIN && substr($url,0,1)=="/"){
+							$url = $IMAGE_DOMAIN.$url;
 						}
 						$retArr[$rImg2->parenttid]['url'][] = $url;
 					}

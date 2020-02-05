@@ -78,9 +78,10 @@ class EOLManager {
 	}
 	
 	private function queryEolIdentifier($tid, $sciName, $makePrimaryLink){
+		global $EOL_KEY;
 		$retStatus = false;
 		$url = 'http://eol.org/api/search/1.0.json?q='.urlencode($sciName);
-		if(isset($GLOBALS['EOL_KEY']) && $GLOBALS['EOL_KEY']) $url .= '&key='.$GLOBALS['EOL_KEY'];
+		if($EOL_KEY) $url .= '&key='.$EOL_KEY;
 		if($fh = fopen($url, 'r')){
 			echo '<li>Reading identifier for '.$sciName.' (tid: <a href="../index.php?taxon='.$tid.'" target="_blank">'.$tid.'</a>)... ';
 			$content = '';
@@ -180,11 +181,11 @@ class EOLManager {
 	}
 
 	private function mapEolImages($tid, $identifier){
-
+		global $EOL_KEY;
 		$retStatus = false;
 		$url = 'http://eol.org/api/pages/1.0.json?id='.$identifier.'&images_per_page=20&vetted=2&details=1';
 		//echo $url;
-		if(isset($GLOBALS['EOL_KEY']) && $GLOBALS['EOL_KEY']) $url .= '&key='.$GLOBALS['EOL_KEY'];
+		if($EOL_KEY) $url .= '&key='.$EOL_KEY;
 		if($fh = fopen($url, 'r')){
 			$content = '';
 			while($line = fread($fh, 1024)){

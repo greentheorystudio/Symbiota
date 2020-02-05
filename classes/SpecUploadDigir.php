@@ -19,8 +19,9 @@ class SpecUploadDigir extends SpecUploadBase {
 	private $dbpkSequence = 0;
 
  	public function __construct(){
- 		parent::__construct();
- 		$this->defaultSchema = $GLOBALS["clientRoot"]."/collections/admin/darwinsymbiota.xsd";
+ 		global $CLIENT_ROOT;
+ 	    parent::__construct();
+ 		$this->defaultSchema = $CLIENT_ROOT."/collections/admin/darwinsymbiota.xsd";
  		set_time_limit(10000);
  	}
 

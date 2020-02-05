@@ -61,9 +61,10 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function analyzeTaxa($taxResource, $startIndex, $limit = 50){
+		global $USER_RIGHTS, $CLIENT_ROOT;
 		set_time_limit(1800);
 		$isTaxonomyEditor = false;
-		if(isset($GLOBALS['USER_RIGHTS']) && array_key_exists('Taxonomy', $GLOBALS['USER_RIGHTS'])) $isTaxonomyEditor = true;
+		if($USER_RIGHTS && array_key_exists('Taxonomy', $USER_RIGHTS)) $isTaxonomyEditor = true;
 		$endIndex = 0;
 		$this->logOrEcho("Starting taxa check ");
 		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
@@ -85,7 +86,7 @@ class TaxonomyCleaner extends Manager{
 			$taxaCnt = 1;
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
+				$editLink = '[<a href="#" onclick="openPopup(\''.$CLIENT_ROOT.
 					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
 					$this->collid.'\'); return false;">'.$r->cnt.' specimens <img src="../../images/edit.png" style="width:12px;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
@@ -326,6 +327,7 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifier = ''){
+		global $SYMB_UID;
 		$affectedRows = 0;
 		if(is_numeric($collid) && $oldSciname && is_numeric($tid)){
 			//Temporary code needed for to test for new schema update
@@ -351,11 +353,11 @@ class TaxonomyCleaner extends Manager{
 			$sqlWhere = 'WHERE (collid IN('.$collid.')) AND (sciname = "'.$oldSciname.'") AND (tidinterpreted IS NULL) ';
 			//Version edit in edits table
 			$sql1 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-				'SELECT occid, "sciname", "'.$newSciname.'", sciname, '.$GLOBALS['SYMB_UID'].', 1, 1'.($hasEditType?',1':'').' FROM omoccurrences '.$sqlWhere;
+				'SELECT occid, "sciname", "'.$newSciname.'", sciname, '.$SYMB_UID.', 1, 1'.($hasEditType?',1':'').' FROM omoccurrences '.$sqlWhere;
 			if($this->conn->query($sql1)){
 				if($newAuthor){
 					$sql2 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
+						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$SYMB_UID.', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere.'AND (scientificNameAuthorship != "'.$newAuthor.'")';
 					if(!$this->conn->query($sql2)){
 						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (author): '.$this->conn->error,1);
@@ -364,7 +366,7 @@ class TaxonomyCleaner extends Manager{
 				if($idQualifier){
 					$sql3 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
 						'SELECT occid, "identificationQualifier" AS fieldname, CONCAT_WS("; ",identificationQualifier,"'.$idQualifier.'") AS idqual, '.
-						'IFNULL(identificationQualifier,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
+						'IFNULL(identificationQualifier,""), '.$SYMB_UID.', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere;
 					if(!$this->conn->query($sql3)){
 						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (idQual): '.$this->conn->error,1);
@@ -714,9 +716,10 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function getTaxonomicResourceList(){
+		global $TAXONOMIC_AUTHORITIES;
 		$taArr = array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species','tropicos'=>'TROPICOS','eol'=>'Encyclopedia of Life');
-		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES'])) return array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species');
-		return array_intersect_key($taArr,array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']));
+		if(!isset($TAXONOMIC_AUTHORITIES)) return array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species');
+		return array_intersect_key($taArr,array_change_key_case($TAXONOMIC_AUTHORITIES));
 	}
 
 	public function getTaxaSuggest($queryString){

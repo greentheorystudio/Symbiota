@@ -41,9 +41,10 @@ class SpecProcessorManager {
 	protected $mdOutputFH;
 
 	function __construct() {
+		global $SERVER_ROOT;
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
-		$this->logPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) == '/'?'':'/').'content/logs/';
+		$this->logPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) == '/'?'':'/').'content/logs/';
 	}
 
 	function __destruct(){
@@ -217,8 +218,6 @@ class SpecProcessorManager {
 			}
 			$rs->free();
 
-			//if(!$this->targetPath) $this->targetPath = $GLOBALS['imageRootPath'];
-			//if(!$this->imgUrlBase) $this->imgUrlBase = $GLOBALS['imageRootUrl'];
 			if($this->sourcePath && substr($this->sourcePath,-1) != '/' && substr($this->sourcePath,-1) != '\\') $this->sourcePath .= '/';
 			if($this->targetPath && substr($this->targetPath,-1) != '/' && substr($this->targetPath,-1) != '\\') $this->targetPath .= '/';
 			if($this->imgUrlBase && substr($this->imgUrlBase,-1) != '/') $this->imgUrlBase .= '/';
@@ -545,8 +544,9 @@ class SpecProcessorManager {
 
  	//Misc Stats functions
 	public function downloadReportData($target){
+		global $CHARSET;
 		$fileName = 'SymbSpecNoImages_'.time().'.csv';
-		header ('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
+		header ('Content-Type: text/csv; charset='.$CHARSET);
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
 		$headerArr = array('occid','catalogNumber','sciname','recordedBy','recordNumber','eventDate','country','stateProvince','county');
 		$sqlFrag = '';
@@ -706,9 +706,10 @@ class SpecProcessorManager {
 	}
 
 	public function getSourcePathDefault(){
+		global $IPLANT_IMAGE_IMPORT_PATH;
 		$sourcePath = $this->sourcePath;
-		if(!$sourcePath && $this->projectType == 'iplant' && $GLOBALS['IPLANT_IMAGE_IMPORT_PATH']){
-			$sourcePath = $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'];
+		if(!$sourcePath && $this->projectType == 'iplant' && $IPLANT_IMAGE_IMPORT_PATH){
+			$sourcePath = $IPLANT_IMAGE_IMPORT_PATH;
 			if(strpos($sourcePath, '--INSTITUTION_CODE--')) $sourcePath = str_replace('--INSTITUTION_CODE--', $this->institutionCode, $sourcePath);
 			if(strpos($sourcePath, '--COLLECTION_CODE--')) $sourcePath = str_replace('--COLLECTION_CODE--', $this->collectionCode, $sourcePath);
 		}

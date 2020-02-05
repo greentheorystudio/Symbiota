@@ -33,9 +33,10 @@ class FieldGuideManager {
     }
 
     public function checkFGLog($collid){
+        global $SERVER_ROOT;
         $retArr = Array();
         $jsonFileName = $collid.'-FGLog.json';
-        $jsonFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
+        $jsonFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
         if(file_exists($jsonFile)){
             $jsonStr = file_get_contents($jsonFile);
             $retArr = json_decode($jsonStr,true);
@@ -193,6 +194,7 @@ class FieldGuideManager {
     }
 
     public function getFGBatchImgArr(){
+        global $IMAGE_DOMAIN;
         $returnArr = Array();
         $tId = '';
         if($this->taxon) $tId = $this->getFGBatchTaxonTid($this->taxon);
@@ -212,8 +214,8 @@ class FieldGuideManager {
             $imgId = $row->imgid;
             $imgUrl = $row->url;
             $localDomain = '';
-            if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-                $localDomain = $GLOBALS['IMAGE_DOMAIN'];
+            if(isset($IMAGE_DOMAIN) && $IMAGE_DOMAIN){
+                $localDomain = $IMAGE_DOMAIN;
             }
             else{
                 $localDomain = $this->serverDomain;
@@ -400,6 +402,7 @@ class FieldGuideManager {
     }
 
     public function getFGResultImgArr(){
+        global $IMAGE_DOMAIN;
         $returnArr = Array();
         $fgOccIdStr = implode(",",$this->fgResOccArr);
         $sql = 'SELECT i.imgid, o.occid, o.sciname, IFNULL(ts.family,o.family) AS family, i.url, c.InstitutionCode, c.CollectionCode '.
@@ -413,8 +416,8 @@ class FieldGuideManager {
             $imgId = $row->imgid;
             $imgUrl = $row->url;
             $localDomain = '';
-            if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-                $localDomain = $GLOBALS['IMAGE_DOMAIN'];
+            if($IMAGE_DOMAIN){
+                $localDomain = $IMAGE_DOMAIN;
             }
             else{
                 $localDomain = $this->serverDomain;

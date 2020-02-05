@@ -447,15 +447,13 @@ class GlossaryUpload{
 	
 	//Setters and getters
 	private function setUploadTargetPath(){
-		$tPath = $GLOBALS["tempDirRoot"];
+		global $TEMP_DIR_ROOT, $SERVER_ROOT;
+		$tPath = $TEMP_DIR_ROOT;
 		if(!$tPath){
 			$tPath = ini_get('upload_tmp_dir');
 		}
-		if(!$tPath && isset($GLOBALS["TEMP_DIR_ROOT"])){
-			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
-		}
 		if(!$tPath){
-			$tPath = $GLOBALS['SERVER_ROOT'];
+			$tPath = $SERVER_ROOT;
 			if(substr($tPath,-1) != '/') $tPath .= "/"; 
 			$tPath .= "temp/downloads";
 		}

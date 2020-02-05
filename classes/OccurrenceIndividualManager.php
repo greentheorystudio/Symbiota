@@ -298,11 +298,12 @@ class OccurrenceIndividualManager extends Manager{
 	}
 
 	public function addComment($commentStr){
+		global $SYMB_UID;
 		$status = false;
-		if(isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']){
+		if($SYMB_UID){
 	 		$con = MySQLiConnectionFactory::getCon("write");
 			$sql = 'INSERT INTO omoccurcomments(occid,comment,uid,reviewstatus) '.
-				'VALUES('.$this->occid.',"'.$this->cleanInStr($commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
+				'VALUES('.$this->occid.',"'.$this->cleanInStr($commentStr).'",'.$SYMB_UID.',1)';
 			//echo 'sql: '.$sql;
 			if($con->query($sql)){
 				$status = true;
@@ -331,9 +332,10 @@ class OccurrenceIndividualManager extends Manager{
 	}
 
 	public function reportComment($repComId){
+		global $ADMIN_EMAIL, $CLIENT_ROOT, $DEFAULT_TITLE;
 		$status = true;
 		if(!is_numeric($repComId)) return false;
-		if(isset($GLOBALS['ADMIN_EMAIL'])){
+		if(isset($ADMIN_EMAIL)){
 			//Set Review status to supress
  			$con = MySQLiConnectionFactory::getCon("write");
 			if(!$con->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
@@ -343,9 +345,9 @@ class OccurrenceIndividualManager extends Manager{
 			$con->close();
 
 			//Email to portal admin
-			$emailAddr = $GLOBALS['ADMIN_EMAIL'];
-			$comUrl = 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
-			$subject = $GLOBALS['DEFAULT_TITLE'].' inappropriate comment reported<br/>';
+			$emailAddr = $ADMIN_EMAIL;
+			$comUrl = 'http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$this->occid.'#commenttab';
+			$subject = $DEFAULT_TITLE.' inappropriate comment reported<br/>';
 			$bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
 			'<a href="'.$comUrl.'">'.$comUrl.'</a>';
 			$headerStr = "MIME-Version: 1.0 \r\n".
@@ -679,13 +681,14 @@ class OccurrenceIndividualManager extends Manager{
 	 * Return: 0 = false, 2 = full editor, 3 = taxon editor, but not for this collection
 	 */
 	public function isTaxonomicEditor(){
+		global $SYMB_UID;
 		$isEditor = 0;
 
 		//Grab taxonomic node id and geographic scopes
 		$editTidArr = array();
 		$sqlut = 'SELECT idusertaxonomy, tid, geographicscope '.
 			'FROM usertaxonomy '.
-			'WHERE editorstatus = "OccurrenceEditor" AND uid = '.$GLOBALS['SYMB_UID'];
+			'WHERE editorstatus = "OccurrenceEditor" AND uid = '.$SYMB_UID;
 		//echo $sqlut;
 		$rsut = $this->conn->query($sqlut);
 		while($rut = $rsut->fetch_object()){

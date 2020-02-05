@@ -1477,12 +1477,13 @@ class SpecUploadBase extends SpecUpload{
 	}
 
 	protected function setUploadTargetPath(){
-		$tPath = $GLOBALS["tempDirRoot"];
+		global $SERVER_ROOT, $TEMP_DIR_ROOT;
+		$tPath = $TEMP_DIR_ROOT;
 		if(!$tPath){
 			$tPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tPath){
-			$tPath = $GLOBALS["serverRoot"]."/temp";
+			$tPath = $SERVER_ROOT."/temp";
 		}
 		if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
 			$tPath .= '/';

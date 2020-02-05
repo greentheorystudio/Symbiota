@@ -615,6 +615,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	private function exportCsv($fileName,$sql,$localitySecurityFields = null){
+		global $USER_RIGHTS;
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-Type: text/csv');
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
@@ -632,7 +633,7 @@ class ChecklistVoucherAdmin {
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
 					$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
-					if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) || !in_array($row['collid'],$GLOBALS['USER_RIGHTS']['RareSppReader']))){
+					if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $USER_RIGHTS) || !in_array($row['collid'],$USER_RIGHTS['RareSppReader']))){
 						$redactStr = '';
 						foreach($localitySecurityFields as $fieldName){
 							if($row[$fieldName]) $redactStr .= ','.$fieldName;
@@ -671,6 +672,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	private function getOccurrenceFieldArr(){
+		global $CLIENT_ROOT;
 		$retArr = array('o.family AS family_occurrence', 'o.sciName AS scientificName_occurrence', 'IFNULL(o.institutionCode,c.institutionCode) AS institutionCode','IFNULL(o.collectionCode,c.collectionCode) AS collectionCode',
 			'CASE guidTarget WHEN "symbiotaUUID" THEN IFNULL(o.occurrenceID,g.guid) WHEN "occurrenceId" THEN o.occurrenceID WHEN "catalogNumber" THEN o.catalogNumber ELSE "" END AS occurrenceID',
 			'o.catalogNumber', 'o.otherCatalogNumbers', 'o.identifiedBy', 'o.dateIdentified',
@@ -682,7 +684,7 @@ class ChecklistVoucherAdmin {
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
 		$serverDomain .= $_SERVER['HTTP_HOST'];
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
-		$retArr[] = 'CONCAT("'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=",o.occid) as `references`';
+		$retArr[] = 'CONCAT("'.$serverDomain.$CLIENT_ROOT.'/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
 
 		/*
@@ -821,10 +823,11 @@ class ChecklistVoucherAdmin {
 	}
 
 	private function isRareSpeciesReader(){
+		global $IS_ADMIN, $USER_RIGHTS;
 		$canReadRareSpp = false;
-		if($GLOBALS['IS_ADMIN']
-			|| array_key_exists("CollAdmin", $GLOBALS['USER_RIGHTS'])
-			|| array_key_exists("RareSppAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll", $GLOBALS['USER_RIGHTS'])){
+		if($IS_ADMIN
+			|| array_key_exists("CollAdmin", $USER_RIGHTS)
+			|| array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
 			$canReadRareSpp = true;
 		}
 		return $canReadRareSpp;
@@ -872,8 +875,9 @@ class ChecklistVoucherAdmin {
 	}
 
 	private function encodeArr(&$inArr){
+		global $CHARSET;
 		$charSetOut = 'ISO-8859-1';
-		$charSetSource = strtoupper($GLOBALS['CHARSET']);
+		$charSetSource = strtoupper($CHARSET);
 		if($charSetSource && $charSetOut != $charSetSource){
 			foreach($inArr as $k => $v){
 				$inArr[$k] = $this->encodeStr($v);
@@ -882,7 +886,8 @@ class ChecklistVoucherAdmin {
 	}
 
 	protected function encodeStr($inStr){
-		$charSetSource = strtoupper($GLOBALS['CHARSET']);
+		global $CHARSET;
+		$charSetSource = strtoupper($CHARSET);
 		$charSetOut = 'ISO-8859-1';
 		$retStr = $inStr;
 		if($inStr && $charSetSource){

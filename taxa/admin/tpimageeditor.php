@@ -36,9 +36,9 @@ if($tid){
 								foreach($images as $imgArr){
 									$webUrl = $imgArr["url"]; 
 									$tnUrl = $imgArr["thumbnailurl"];
-									if($GLOBALS["imageDomain"]){
-										if(substr($imgArr["url"],0,1)=="/") $webUrl = $GLOBALS["imageDomain"].$imgArr["url"];
-										if(substr($imgArr["thumbnailurl"],0,1)=="/") $tnUrl = $GLOBALS["imageDomain"].$imgArr["thumbnailurl"];
+									if($IMAGE_DOMAIN){
+										if(substr($imgArr["url"],0,1)=="/") $webUrl = $IMAGE_DOMAIN.$imgArr["url"];
+										if(substr($imgArr["thumbnailurl"],0,1)=="/") $tnUrl = $IMAGE_DOMAIN.$imgArr["thumbnailurl"];
 									}
 									if(!$tnUrl) $tnUrl = $webUrl;
 									?>
@@ -224,9 +224,9 @@ if($tid){
 									<?php 
 									$webUrl = $imgArr["url"]; 
 									$tnUrl = $imgArr["thumbnailurl"];
-									if($GLOBALS['imageDomain']){
-										if(substr($imgArr["url"],0,1) == "/") $webUrl = $GLOBALS["imageDomain"].$imgArr["url"]; 
-										if(substr($imgArr["thumbnailurl"],0,1) == "/") $tnUrl = $GLOBALS["imageDomain"].$imgArr["thumbnailurl"];
+									if($IMAGE_DOMAIN){
+										if(substr($imgArr["url"],0,1) == "/") $webUrl = $IMAGE_DOMAIN.$imgArr["url"];
+										if(substr($imgArr["thumbnailurl"],0,1) == "/") $tnUrl = $IMAGE_DOMAIN.$imgArr["thumbnailurl"];
 									}
 									if(!$tnUrl) $tnUrl = $webUrl;
 									?>
@@ -235,7 +235,7 @@ if($tid){
 									</a>
 									<?php 
 									if($imgArr["originalurl"]){
-										$origUrl = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgArr["originalurl"],0,1)=="/"?$GLOBALS["imageDomain"]:"").$imgArr["originalurl"];
+										$origUrl = ($IMAGE_DOMAIN&&substr($imgArr["originalurl"],0,1)=="/"?$IMAGE_DOMAIN:"").$imgArr["originalurl"];
 										?>
 										<br /><a href="<?php echo $origUrl;?>">Open Large Image</a>
 										<?php 

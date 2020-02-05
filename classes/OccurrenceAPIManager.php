@@ -73,8 +73,8 @@ class OccurrenceAPIManager{
             $returnArr[$occId]["observeruid"] = $row->observeruid;
             $localitySecurity = $row->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
-                || (array_key_exists("CollEditor", $GLOBALS['USER_RIGHTS']) && in_array($collIdStr,$GLOBALS['USER_RIGHTS']["CollEditor"]))
-                || (array_key_exists("RareSppReader", $GLOBALS['USER_RIGHTS']) && in_array($collIdStr,$GLOBALS['USER_RIGHTS']["RareSppReader"]))){
+                || (array_key_exists("CollEditor", $USER_RIGHTS) && in_array($collIdStr,$USER_RIGHTS["CollEditor"]))
+                || (array_key_exists("RareSppReader", $USER_RIGHTS) && in_array($collIdStr,$USER_RIGHTS["RareSppReader"]))){
                 $returnArr[$occId]["locality"] = $row->locality;
                 $returnArr[$occId]["decimallatitude"] = $row->decimallatitude;
                 $returnArr[$occId]["decimallongitude"] = $row->decimallongitude;
@@ -102,7 +102,6 @@ class OccurrenceAPIManager{
     public function processImageUpload($pArr){
         global $PARAMS_ARR, $SOLR_MODE;
         $occManager = new OccurrenceEditorImages();
-        $occId = 0;
         $occId = ($pArr["occid"]?$pArr["occid"]:$this->getOccFromCatNum($pArr["collid"],$pArr["catnum"]));
         if($occId){
             $occManager->setSymbUid($PARAMS_ARR["uid"]);

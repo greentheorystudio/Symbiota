@@ -220,8 +220,8 @@ elseif($exportType == 'singlelanguage'){
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr["url"];
 					if(substr($imgSrc,0,1)=="/"){
-						if(array_key_exists("imageDomain",$GLOBALS) && $GLOBALS["imageDomain"]){
-							$imgSrc = $GLOBALS["imageDomain"].$imgSrc;
+						if($IMAGE_DOMAIN){
+							$imgSrc = $IMAGE_DOMAIN.$imgSrc;
 						}
 						else{
 							$imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;

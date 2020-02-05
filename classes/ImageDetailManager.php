@@ -59,10 +59,11 @@ class ImageDetailManager {
 	}
 
 	public function editImage($postArr){
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$status = "";
-		$searchStr = $GLOBALS["imageRootUrl"];
+		$searchStr = $IMAGE_ROOT_URL;
 		if(substr($searchStr,-1) != "/") $searchStr .= "/";
-		$replaceStr = $GLOBALS["imageRootPath"];
+		$replaceStr = $IMAGE_ROOT_PATH;
 		if(substr($replaceStr,-1) != "/") $replaceStr .= "/";
 	 	$url = $postArr["url"];
 	 	$tnUrl = $postArr["thumbnailurl"];
