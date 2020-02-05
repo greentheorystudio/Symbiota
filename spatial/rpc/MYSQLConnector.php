@@ -22,6 +22,6 @@ if($stArr){
         echo $spatialManager->getRecordCnt();
     }
     if($type === 'geoquery'){
-        echo $spatialManager->getOccPointGeoJson($mapWhere,$occIndex,1000);
+        echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,1000);
     }
 }

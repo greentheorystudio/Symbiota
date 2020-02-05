@@ -47,7 +47,7 @@ $isEditor = false;
 
 //  If other than HTML was requested, return just that content.
 $done=FALSE;
-while (!$done && list($key, $mediarange) = each($accept)) {
+/*while (!$done && list($key, $mediarange) = each($accept)) {
     if ($mediarange=='text/turtle' || $format == 'turtle') {
        Header("Content-Type: text/turtle; charset=".$CHARSET);
        $dwcManager = new DwcArchiverCore();
@@ -70,7 +70,7 @@ while (!$done && list($key, $mediarange) = each($accept)) {
        $done = TRUE;
     }
 
-}
+}*/
 if ($done) {
   die;
 }

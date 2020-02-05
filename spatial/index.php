@@ -1721,6 +1721,7 @@ $dbArr = Array();
 <!-- Data Download Form -->
 <div style="display:none;">
     <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
+        <input id="starrjson" name="starrjson"  type="hidden" value='' />
         <input id="dh-q" name="dh-q"  type="hidden" value="" />
         <input id="dh-fq" name="dh-fq" type="hidden" value="" />
         <input id="dh-fl" name="dh-fl" type="hidden" value="" />

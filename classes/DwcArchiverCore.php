@@ -45,6 +45,7 @@ class DwcArchiverCore extends Manager{
 	private $geolocateVariables = array();
 
 	public function __construct($conType='readonly'){
+		global $SERVER_ROOT, $LOG_PATH, $CHARSET;
 		parent::__construct(null,$conType);
 		//Ensure that PHP DOMDocument class is installed
 		if(!class_exists('DOMDocument')){
@@ -52,12 +53,12 @@ class DwcArchiverCore extends Manager{
 		}
 		$this->ts = time();
 		if($this->verboseMode){
-			$logFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/')."content/logs/DWCA_".date('Y-m-d').".log";
+			$logFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)==='/'?'':'/'). 'content/logs/DWCA_' .date('Y-m-d'). '.log';
 			$this->setLogFH($LOG_PATH);
 		}
 
 		//Character set
-		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
+		$this->charSetSource = strtoupper($CHARSET);
 		$this->charSetOut = $this->charSetSource;
 
 		$this->condAllowArr = array('catalognumber','othercatalognumbers','occurrenceid','family','sciname',
@@ -97,17 +98,18 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setTargetPath($tp = ''){
+		global $SERVER_ROOT, $TEMP_DIR_ROOT;
 		if($tp){
 			$this->targetPath = $tp;
 		}
 		else{
 			//Set to temp download path
-			$tPath = $GLOBALS["tempDirRoot"];
+			$tPath = $TEMP_DIR_ROOT;
 			if(!$tPath){
 				$tPath = ini_get('upload_tmp_dir');
 			}
 			if(!$tPath){
-				$tPath = $GLOBALS["serverRoot"];
+				$tPath = $SERVER_ROOT;
 				if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
 					$tPath .= '/';
 				}
@@ -1486,9 +1488,9 @@ class DwcArchiverCore extends Manager{
 
 	//Generate Data files
 	private function writeOccurrenceFile(){
-		$this->logOrEcho("Creating occurrence file (".date('h:i:s A').")... ");
+		$this->logOrEcho('Creating occurrence file (' .date('h:i:s A'). ')... ');
 		$filePath = $this->targetPath.$this->ts.'-occur'.$this->fileExt;
-		$fh = fopen($filePath, 'w');
+		$fh = fopen($filePath, 'wb');
 		if(!$fh){
 			$this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
 			return false;
@@ -1501,8 +1503,12 @@ class DwcArchiverCore extends Manager{
 		//Output records
 		$this->applyConditions();
 		$sql = DwcArchiverOccurrence::getSqlOccurrences($this->occurrenceFieldArr['fields'],$this->conditionSql,$this->getTableJoins());
-		if(!$sql) return false;
-		if($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
+		if(!$sql) {
+			return false;
+		}
+		if($this->schemaType !== 'backup') {
+			$sql .= ' LIMIT 1000000';
+		}
 
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
@@ -1686,14 +1692,15 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function getOccurrenceFile(){
-		if(!$this->targetPath) $this->setTargetPath();
-		$filePath = $this->writeOccurrenceFile();
-		return $filePath;
+		if(!$this->targetPath) {
+			$this->setTargetPath();
+		}
+		return $this->writeOccurrenceFile();
 	}
 
 	private function writeDeterminationFile(){
-		$this->logOrEcho("Creating identification file (".date('h:i:s A').")... ");
-		$fh = fopen($this->targetPath.$this->ts.'-det'.$this->fileExt, 'w');
+		$this->logOrEcho('Creating identification file (' .date('h:i:s A'). ')... ');
+		$fh = fopen($this->targetPath.$this->ts.'-det'.$this->fileExt, 'wb');
 		if(!$fh){
 			$this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
 			return false;

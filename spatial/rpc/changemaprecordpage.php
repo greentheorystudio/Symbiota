@@ -22,19 +22,23 @@ if($selArrJson){
     $selections = json_decode($selArrJson, true);
 }
 
-if($q || $fq){
-	$q = $solrManager->checkQuerySecurity($q);
-	$qStr = 'q='.$q.'&fq='.$fq;
-	$solrManager->setQStr($qStr);
-	$solrArr = $solrManager->getGeoArr($pageNumber,$cntPerPage);
-	$occArr = $solrManager->translateSOLRMapRecList($solrArr);
+if($SOLR_MODE){
+	if($q || $fq){
+		$q = $solrManager->checkQuerySecurity($q);
+		$qStr = 'q='.$q.'&fq='.$fq;
+		$solrManager->setQStr($qStr);
+		$solrArr = $solrManager->getGeoArr($pageNumber,$cntPerPage);
+		$occArr = $solrManager->translateSOLRMapRecList($solrArr);
+	}
 }
 
-if($stArrJson){
-	$stArr = json_decode($stArrJson, true);
-	$spatialManager->setSearchTermsArr($stArr);
-	$mapWhere = $spatialManager->getSqlWhere();
-	$occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
+if(!$SOLR_MODE){
+	if($stArrJson){
+		$stArr = json_decode($stArrJson, true);
+		$spatialManager->setSearchTermsArr($stArr);
+		$mapWhere = $spatialManager->getSqlWhere();
+		$occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
+	}
 }
 
 $pageOccids = array_keys($occArr);
@@ -124,4 +128,3 @@ else{
 $recordListHtml = utf8_encode($recordListHtml);
 
 echo json_encode($recordListHtml);
-?>

@@ -939,7 +939,13 @@ function createBuffers(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    var turfFeature = getWGS84CirclePoly(center,radius);
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    var turfFeature = getWGS84CirclePoly(center,groundRadius);
                 }
                 var buffered = turf.buffer(turfFeature,bufferSize,{units:'kilometers'});
                 var buffpoly = geoJSONFormat.readFeature(buffered);
@@ -1147,7 +1153,13 @@ function createPolyDifference(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    features.push(getWGS84CirclePoly(center,groundRadius));
                 }
             }
         });
@@ -1208,11 +1220,17 @@ function createPolyIntersect(){
                     else if(geoType === 'Circle'){
                         var center = fixedselectgeometry.getCenter();
                         var radius = fixedselectgeometry.getRadius();
+                        var edgeCoordinate = [center[0] + radius, center[1]];
+                        var groundRadius = ol.sphere.getDistance(
+                            ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                            ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                        );
+                        groundRadius = groundRadius/1000;
                         if(pass === 1){
-                            featuresOne.push(getWGS84CirclePoly(center,radius));
+                            featuresOne.push(getWGS84CirclePoly(center,groundRadius));
                         }
                         else{
-                            featuresTwo.push(getWGS84CirclePoly(center,radius));
+                            featuresTwo.push(getWGS84CirclePoly(center,groundRadius));
                         }
                     }
                     pass++;
@@ -1275,7 +1293,13 @@ function createPolyUnion(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    features.push(getWGS84CirclePoly(center,groundRadius));
                 }
             }
         });
@@ -1475,6 +1499,7 @@ function finishGetGeographyParams(){
             if(geoCircleArr.length > 0){
                 searchTermsArr['circleArr'] = geoCircleArr;
             }
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
         }
     }
 }
@@ -1661,6 +1686,7 @@ function getCollectionParams(){
         }
         else{
             searchTermsArr['db'] = collidArr.join(",")+";";
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
         }
         return true;
     }
@@ -2212,6 +2238,7 @@ function getTextParams(){
         }
         textParams = true;
     }
+    document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
 }
 
 function getTurfPointFeaturesetAll(){
@@ -2283,14 +2310,8 @@ function getTurfPointFeaturesetSelected(){
 
 function getWGS84CirclePoly(center,radius){
     var turfFeature = '';
-    var edgeCoordinate = [center[0] + radius, center[1]];
-    var groundRadius = ol.sphere.getDistance(
-        ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-        ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-    );
-    groundRadius = groundRadius/1000;
     var ciroptions = {steps:200, units:'kilometers'};
-    turfFeature = turf.circle(center,groundRadius,ciroptions);
+    turfFeature = turf.circle(center,radius,ciroptions);
     return turfFeature;
 }
 
@@ -2627,6 +2648,7 @@ function prepareTaxaParams(callback){
             searchTermsArr['usethes'] = thes;
             searchTermsArr['taxontype'] = taxontype;
             searchTermsArr['taxa'] = taxaval;
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
 
         }
         taxaParams = true;
@@ -3118,7 +3140,13 @@ function setDownloadFeatures(features){
             var fixedgeometry = geometry.transform(mapProjection,wgs84Projection);
             var center = fixedgeometry.getCenter();
             var radius = fixedgeometry.getRadius();
-            var turfCircle = getWGS84CirclePoly(center,radius);
+            var edgeCoordinate = [center[0] + radius, center[1]];
+            var groundRadius = ol.sphere.getDistance(
+                ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+            );
+            groundRadius = groundRadius/1000;
+            var turfCircle = getWGS84CirclePoly(center,groundRadius);
             var circpoly = geoJSONFormat.readFeature(turfCircle);
             circpoly.getGeometry().transform(wgs84Projection,mapProjection);
             fixedFeatures.push(circpoly);
