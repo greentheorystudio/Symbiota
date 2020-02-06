@@ -38,11 +38,11 @@ class ImageProcessor {
 	}
 
 	private function initProcessor($processorType){
-		//Close log file
+		global $SERVER_ROOT;
 		if($this->logFH) fclose($this->logFH);
 		if($this->logMode > 1){
 			//Create log File
-			$LOG_PATH = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) == '/'?'':'/').'content/logs/';
+			$LOG_PATH = $SERVER_ROOT.(substr($SERVER_ROOT,-1) == '/'?'':'/').'content/logs/';
 			if($processorType) $LOG_PATH .= $processorType.'/';
 			if(!file_exists($LOG_PATH)) mkdir($LOG_PATH);
 			if(file_exists($LOG_PATH)){
@@ -80,6 +80,7 @@ class ImageProcessor {
 
 	//iPlant functions
 	public function processIPlantImages($pmTerm, $postArr){
+		global $IPLANT_IMAGE_IMPORT_PATH;
 		set_time_limit(1000);
 		$lastRunDate = $postArr['startdate'];
 		$iPlantSourcePath = (array_key_exists('sourcepath', $postArr)?$postArr['sourcepath']:'');
@@ -89,7 +90,7 @@ class ImageProcessor {
 		if($this->collid){
 			$iPlantDataUrl = 'https://bisque.cyverse.org/data_service/';
 			$iPlantImageUrl = 'https://bisque.cyverse.org/image_service/image/';
-			if(!$iPlantSourcePath && array_key_exists('IPLANT_IMAGE_IMPORT_PATH', $GLOBALS)) $iPlantSourcePath = $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'];
+			if(!$iPlantSourcePath && $IPLANT_IMAGE_IMPORT_PATH) $iPlantSourcePath = $IPLANT_IMAGE_IMPORT_PATH;
 			if($iPlantSourcePath){
 				if(strpos($iPlantSourcePath, '--INSTITUTION_CODE--')) $iPlantSourcePath = str_replace('--INSTITUTION_CODE--', $this->collArr['instcode'], $iPlantSourcePath);
 				if(strpos($iPlantSourcePath, '--COLLECTION_CODE--')) $iPlantSourcePath = str_replace('--COLLECTION_CODE--', $this->collArr['collcode'], $iPlantSourcePath);
@@ -185,6 +186,7 @@ class ImageProcessor {
 
 	//iDigBio Image ingestion processing functions
 	public function processiDigBioOutput($pmTerm,$postArr){
+		global $SERVER_ROOT;
 		$status = '';
 		$this->matchCatalogNumber = (array_key_exists('matchcatalognumber', $postArr)?1:0);
 		$this->matchOtherCatalogNumbers = (array_key_exists('matchothercatalognumbers', $postArr)?1:0);
@@ -193,7 +195,7 @@ class ImageProcessor {
 		$collStr = $this->collArr['instcode'].($this->collArr['collcode']?'-'.$this->collArr['collcode']:'');
 		$this->logOrEcho('Starting image processing for '.$collStr.' ('.date('Y-m-d h:i:s A').')');
 		if($pmTerm){
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
+			$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) != '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
 			if(move_uploaded_file($_FILES['idigbiofile']['tmp_name'],$fullPath)){
 				if($fh = fopen($fullPath,'rb')){
 					$headerArr = fgetcsv($fh,0,',');
@@ -257,11 +259,12 @@ class ImageProcessor {
 	}
 
 	public function initiateFileUpload(){
+		global $SERVER_ROOT;
 		$this->initProcessor('imageFile');
 		$collStr = $this->collArr['instcode'].($this->collArr['collcode']?'-'.$this->collArr['collcode']:'');
 		$this->logOrEcho('Starting image processing for '.$collStr.' ('.date('Y-m-d h:i:s A').')');
 		if($pmTerm){
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
+			$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) != '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
 			if(move_uploaded_file($_FILES['idigbiofile']['tmp_name'],$fullPath)){
 				if($fh = fopen($fullPath,'rb')){
 					$headerArr = fgetcsv($fh,0,',');
@@ -272,10 +275,11 @@ class ImageProcessor {
 
 	//Image file upload
 	public function loadImageFile(){
+		global $SERVER_ROOT;
 		$inFileName = basename($_FILES['uploadfile']['name']);
 		$ext = substr(strrchr($inFileName, '.'), 1);
 		$fileName = 'imageMappingFile_'.time();
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/';
+		$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) != '/'?'/':'').'temp/data/';
 		if(move_uploaded_file($_FILES['uploadfile']['tmp_name'],$fullPath.$fileName.'.'.$ext)){
 			if($ext == 'zip'){
 				$zipFilePath = $fullPath.$fileName.'.zip';
@@ -306,7 +310,8 @@ class ImageProcessor {
 	}
 
 	public function echoFileMapping($fileName){
-		$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$fileName;
+		global $SERVER_ROOT;
+		$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) != '/'?'/':'').'temp/data/'.$fileName;
 		if($fh = fopen($fullPath,'rb')){
 			$translationMap = array('catalognumber' => 'catalognumber', 'url' => 'url', 'thumbnailurl' => 'thumbnailurl',
 				'originalurl' => 'originalurl', 'thumbnail' => 'thumbnailurl', 'large' => 'originalurl', 'web' => 'url');
@@ -333,11 +338,12 @@ class ImageProcessor {
 	}
 
 	public function loadFileData($postArr){
+		global $SERVER_ROOT;
 		if(isset($postArr['filename']) && isset($postArr['tf'])){
 			//Get field map
 			$fieldMap = array_flip($postArr['tf']);
 			//Load data
-			$fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) != '/'?'/':'').'temp/data/'.$postArr['filename'];
+			$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) != '/'?'/':'').'temp/data/'.$postArr['filename'];
 			if($fh = fopen($fullPath,'rb')){
 				$headerArr = fgetcsv($fh);
 				while($recordArr = fgetcsv($fh)){
@@ -419,11 +425,12 @@ class ImageProcessor {
 	}
 
 	private function deleteImage($imgUrl){
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		if(stripos($imgUrl, 'http') === 0 || stripos($imgUrl, 'https') === 0){
 			$imgUrl = parse_url($imgUrl, PHP_URL_PATH);
 		}
-		if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl,$GLOBALS['IMAGE_ROOT_URL']) === 0){
-			$imgPath = $GLOBALS['IMAGE_ROOT_PATH'].substr($imgUrl,strlen($GLOBALS['IMAGE_ROOT_URL']));
+		if($IMAGE_ROOT_URL && strpos($imgUrl,$IMAGE_ROOT_URL) === 0){
+			$imgPath = $IMAGE_ROOT_PATH.substr($imgUrl,strlen($IMAGE_ROOT_URL));
 			unlink($imgPath);
 		}
 	}

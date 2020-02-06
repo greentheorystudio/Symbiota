@@ -13,8 +13,9 @@ class WebServiceBase extends Manager{
 	}
 
 	public function validateSecurityKey($k){
-		if(isset($GLOBALS['SECURITY_KEY'])){
-			if($k == $GLOBALS['SECURITY_KEY']){
+		global $SECURITY_KEY;
+	    if(isset($SECURITY_KEY)){
+			if($k == $SECURITY_KEY){
 				return true;
 			}
 			else{

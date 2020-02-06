@@ -219,6 +219,7 @@ class TaxonomyEditorManager{
 
 	//Edit Functions
 	public function submitTaxonEdits($postArr){
+		global $SYMB_UID;
 		$statusStr = '';
 		//Update taxa record
 		$sql = 'UPDATE taxa SET '.
@@ -233,7 +234,7 @@ class TaxonomyEditorManager{
 			'source = '.($postArr['source']?'"'.$this->cleanInStr($postArr['source']).'"':'NULL').', '.
 			'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').', '.
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
-			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
+			'modifiedUid = '.$SYMB_UID.', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
 			'sciname = "'.$this->cleanInStr(($postArr["unitind1"]?$postArr["unitind1"]." ":"").
 			$postArr["unitname1"].($postArr["unitind2"]?" ".$postArr["unitind2"]:"").
@@ -540,7 +541,7 @@ class TaxonomyEditorManager{
 
 	//Load Taxon functions
 	public function loadNewName($dataArr){
-		//Load new name into taxa table
+		global $SYMB_UID;
 		$tid = 0;
 		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
@@ -556,7 +557,7 @@ class TaxonomyEditorManager{
 			($dataArr['source']?'"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
 			$this->cleanInStr($dataArr['securitystatus']).','.
-			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
+			$SYMB_UID.',"'.date('Y-m-d H:i:s').'")';
 		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;

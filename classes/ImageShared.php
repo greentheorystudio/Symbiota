@@ -56,29 +56,30 @@ class ImageShared{
 	public $documentDate;  // Creation date for transfer document containing image record.
 
  	public function __construct(){
-		$connection = new DbConnection();
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH, $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_LG_WIDTH, $IMG_FILE_SIZE_LIMIT, $DEFAULT_TITLE;
+ 		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
- 		$this->imageRootPath = $GLOBALS["imageRootPath"];
+ 		$this->imageRootPath = $IMAGE_ROOT_PATH;
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";
-		$this->imageRootUrl = $GLOBALS["imageRootUrl"];
+		$this->imageRootUrl = $IMAGE_ROOT_URL;
 		if(substr($this->imageRootUrl,-1) != "/") $this->imageRootUrl .= "/";
-		if(array_key_exists('imgTnWidth',$GLOBALS)){
-			$this->tnPixWidth = $GLOBALS['imgTnWidth'];
+		if($IMG_TN_WIDTH){
+			$this->tnPixWidth = $IMG_TN_WIDTH;
 		}
-		if(array_key_exists('imgWebWidth',$GLOBALS)){
-			$this->webPixWidth = $GLOBALS['imgWebWidth'];
+		if($IMG_WEB_WIDTH){
+			$this->webPixWidth = $IMG_WEB_WIDTH;
 		}
-		if(array_key_exists('imgLgWidth',$GLOBALS)){
-			$this->lgPixWidth = $GLOBALS['imgLgWidth'];
+		if($IMG_LG_WIDTH){
+			$this->lgPixWidth = $IMG_LG_WIDTH;
 		}
-		if(array_key_exists('imgFileSizeLimit',$GLOBALS)){
-			$this->webFileSizeLimit = $GLOBALS['imgFileSizeLimit'];
+		if($IMG_FILE_SIZE_LIMIT){
+			$this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
 		}
 		//Needed to avoid 403 errors
 		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		$opts = array(
 			'http'=>array(
-				'user_agent' => $GLOBALS['DEFAULT_TITLE'],
+				'user_agent' => $DEFAULT_TITLE,
 				'method'=>"GET",
 				'header'=> implode("\r\n", array('Content-type: text/plain;'))
 			)
@@ -225,12 +226,13 @@ class ImageShared{
 	}
 
 	public function parseUrl($url){
-		$status = false;
+		global $IMAGE_DOMAIN;
+ 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		//If image is relative, add proper domain
 		if(substr($url,0,1) == '/'){
-			if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-				$url = $GLOBALS['imageDomain'].$url;
+			if($IMAGE_DOMAIN){
+				$url = $IMAGE_DOMAIN.$url;
 			}
 			else{
 				//Use local domain
@@ -521,7 +523,8 @@ class ImageShared{
 	}
 
 	private function databaseImage($imgWebUrl,$imgTnUrl,$imgLgUrl){
-		$status = true;
+		global $USERNAME;
+ 		$status = true;
 		if($imgWebUrl){
 			$urlBase = $this->getUrlBase();
 			if(strtolower(substr($imgWebUrl,0,7)) != 'http://' && strtolower(substr($imgWebUrl,0,8)) != 'https://'){
@@ -561,7 +564,7 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?$this->occid:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				$this->cleanInStr($GLOBALS['USERNAME']).'",'.
+				$this->cleanInStr($USERNAME).'",'.
 				($this->sortSeq?$this->sortSeq:'50').','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
@@ -684,6 +687,7 @@ class ImageShared{
 	 * @return an empty string on success, otherwise a string containing an error message.
 	 */
 	public function databaseImageRecord($imgWebUrl,$imgTnUrl,$imgLgUrl,$tid,$caption,$phototrapher,$photographerUid,$sourceUrl,$copyright,$owner,$locality,$occid,$notes,$sortSequence,$imagetype,$anatomy,$sourceIdentifier,$rights,$accessRights){
+		global $IMAGE_DOMAIN;
 		$status = "";
 		$sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, caption, '.
 			'owner, sourceurl, copyright, locality, occid, notes, username, sortsequence, imagetype, anatomy, '.
@@ -692,7 +696,7 @@ class ImageShared{
 		if ($statement = $this->conn->prepare($sql)) {
 			//If central images are on remote server and new ones stored locally, then we need to use full domain
 			//e.g. this portal is sister portal to central portal
-			if($GLOBALS['imageDomain']){
+			if($IMAGE_DOMAIN){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 				$urlPrefix .= $_SERVER['HTTP_HOST'];
@@ -734,6 +738,7 @@ class ImageShared{
 	 * @return an empty string on success, otherwise a string containing an error message.
 	 */
 	public function updateImageRecord($imgid,$imgWebUrl,$imgTnUrl,$imgLgUrl,$tid,$caption,$phototrapher,$photographerUid,$sourceUrl,$copyright,$owner,$locality,$occid,$notes,$sortSequence,$imagetype,$anatomy, $sourceIdentifier, $rights, $accessRights){
+		global $IMAGE_DOMAIN;
 		$status = "";
 		$sql = 'update images set tid=?, url=?, thumbnailurl=?, originalurl=?, photographer=?, photographeruid=?, caption=?, '.
 			'owner=?, sourceurl=?, copyright=?, locality=?, occid=?, notes=?, username=?, sortsequence=?, imagetype=?, anatomy=?, '.
@@ -742,7 +747,7 @@ class ImageShared{
 		if ($statement = $this->conn->prepare($sql)) {
 			//If central images are on remote server and new ones stored locally, then we need to use full domain
 			//e.g. this portal is sister portal to central portal
-			if($GLOBALS['imageDomain']){
+			if($IMAGE_DOMAIN){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 				$urlPrefix .= $_SERVER['HTTP_HOST'];
@@ -862,10 +867,11 @@ class ImageShared{
 	}
 
 	public function getUrlBase(){
+		global $IMAGE_DOMAIN;
 		$urlBase = $this->urlBase;
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 		//e.g. this portal is sister portal to central portal
-	 	if($GLOBALS['imageDomain']){
+	 	if($IMAGE_DOMAIN){
 			$urlPrefix = "http://";
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 			$urlPrefix .= $_SERVER['HTTP_HOST'];
@@ -1108,15 +1114,16 @@ class ImageShared{
 	}
 
 	public function uriExists($uri) {
+		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$exists = false;
 
 		if(substr($uri,0,1) == '/'){
-			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($uri,$GLOBALS['IMAGE_ROOT_URL']) === 0){
-				$fileName = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$uri);
+			if($IMAGE_ROOT_URL && strpos($uri,$IMAGE_ROOT_URL) === 0){
+				$fileName = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$uri);
 				if(file_exists($fileName)) $exists = true;
 			}
-			if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-				$uri = $GLOBALS['imageDomain'].$uri;
+			if($IMAGE_DOMAIN){
+				$uri = $IMAGE_DOMAIN.$uri;
 			}
 			else{
 				$urlPrefix = "http://";
@@ -1194,9 +1201,10 @@ class ImageShared{
 
 	// Retrieve JPEG width and height without downloading/reading entire image.
 	private static function getImgDim1($imgUrl) {
+		global $DEFAULT_TITLE;
 		$opts = array(
 				'http'=>array(
-						'user_agent' => $GLOBALS['DEFAULT_TITLE'],
+						'user_agent' => $DEFAULT_TITLE,
 						'method'=>"GET",
 						'header'=> implode("\r\n", array('Content-type: text/plain;'))
 				)

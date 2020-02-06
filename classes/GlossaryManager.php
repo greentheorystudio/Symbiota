@@ -34,20 +34,21 @@ class GlossaryManager{
 	private $errorStr;
 	
  	public function __construct(){
-		$connection = new DbConnection();
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH, $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_FILE_SIZE_LIMIT;
+ 		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
-		$this->imageRootPath = $GLOBALS["imageRootPath"];
+		$this->imageRootPath = $IMAGE_ROOT_PATH;
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";  
-		$this->imageRootUrl = $GLOBALS["imageRootUrl"];
+		$this->imageRootUrl = $IMAGE_ROOT_URL;
 		if(substr($this->imageRootUrl,-1) != "/") $this->imageRootUrl .= "/";
-		if(array_key_exists('imgTnWidth',$GLOBALS)){
-			$this->tnPixWidth = $GLOBALS['imgTnWidth'];
+		if($IMG_TN_WIDTH){
+			$this->tnPixWidth = $IMG_TN_WIDTH;
 		}
-		if(array_key_exists('imgWebWidth',$GLOBALS)){
-			$this->webPixWidth = $GLOBALS['imgWebWidth'];
+		if($IMG_WEB_WIDTH){
+			$this->webPixWidth = $IMG_WEB_WIDTH;
 		}
-		if(array_key_exists('imgFileSizeLimit',$GLOBALS)){
-			$this->webFileSizeLimit = $GLOBALS['imgFileSizeLimit'];
+		if($IMG_FILE_SIZE_LIMIT){
+			$this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
 		}
  	}
  	
@@ -290,7 +291,8 @@ class GlossaryManager{
 
 	//Editing functions
 	public function createTerm($pArr){
-		$status = true;
+		global $SYMB_UID;
+ 		$status = true;
 		$term = $this->cleanInStr($pArr['term']);
 		$def = $this->cleanInStr($pArr['definition']);
 		$lang = $this->cleanInStr($pArr['language']);
@@ -302,7 +304,7 @@ class GlossaryManager{
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,author,translator,notes,resourceurl,uid) '.
 			'VALUES("'.$term.'",'.($def?'"'.$def.'"':'NULL').','.($lang?'"'.$lang.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.($author?'"'.$author.'"':'NULL').','.($translator?'"'.$translator.'"':'NULL').','.
-			($notes?'"'.$notes.'"':'NULL').','.($resourceUrl?'"'.$resourceUrl.'"':'NULL').','.$GLOBALS['SYMB_UID'].') ';
+			($notes?'"'.$notes.'"':'NULL').','.($resourceUrl?'"'.$resourceUrl.'"':'NULL').','.$SYMB_UID.') ';
 		//echo $sql; exit;
 		if($this->conn->query($sql)){
 			$this->glossId = $this->conn->insert_id;
@@ -917,14 +919,15 @@ class GlossaryManager{
 	}
 	
 	public function uriExists($url){
-		$exists = false;
+		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
+ 		$exists = false;
 		$localUrl = '';
 		if(substr($url,0,1) == '/'){
-			if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-				$url = $GLOBALS['imageDomain'].$url;
+			if($IMAGE_DOMAIN){
+				$url = $IMAGE_DOMAIN.$url;
 			}
-			elseif($GLOBALS['imageRootUrl'] && strpos($url,$GLOBALS['imageRootUrl']) === 0){
-				$localUrl = str_replace($GLOBALS['imageRootUrl'],$GLOBALS['imageRootPath'],$url);
+			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) === 0){
+				$localUrl = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$url);
 			}
 			else{
 				$url = $this->getServerDomain().$url;
@@ -1054,10 +1057,11 @@ class GlossaryManager{
 	}
 	
 	public function getUrlBase(){
-		$urlBase = $this->urlBase;
+		global $IMAGE_DOMAIN;
+ 		$urlBase = $this->urlBase;
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 	    //e.g. this portal is sister portal to central portal
-	 	if($GLOBALS['imageDomain']){
+	 	if($IMAGE_DOMAIN){
 			$urlBase = $this->getServerDomain().$urlBase;
     	}
 		return $urlBase;

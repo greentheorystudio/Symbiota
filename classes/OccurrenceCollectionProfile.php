@@ -116,6 +116,7 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function getMetadataHtml($collArr){
+		global $SYMB_UID, $RIGHTS_TERMS;
 		$outStr = '<div>'.$collArr["fulldescription"].'</div>';
 		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr["contact"].($collArr["email"]?" (".str_replace("@","&#64;",$collArr["email"]).")":"").'</div>';
 		if($collArr["homepage"]){
@@ -160,7 +161,7 @@ class OccurrenceCollectionProfile {
 		$outStr .= '<div style="margin-top:5px;">';
 		if($collArr['managementtype'] == 'Live Data'){
 			$outStr .= '<b>Live Data Download:</b> ';
-			if($GLOBALS['SYMB_UID']){
+			if($SYMB_UID){
 				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">DwC-Archive File</a>';
 			}
 			else{
@@ -188,8 +189,8 @@ class OccurrenceCollectionProfile {
 			$rightsUrl = '';
 			if(substr($rights,0,4) == 'http'){
 				$rightsUrl = $rights;
-				if($GLOBALS['RIGHTS_TERMS']){
-					if($rightsArr = array_keys($GLOBALS['RIGHTS_TERMS'],$rights)){
+				if($RIGHTS_TERMS){
+					if($rightsArr = array_keys($RIGHTS_TERMS,$rights)){
 						$rights = current($rightsArr);
 					}
 				}
@@ -401,8 +402,9 @@ class OccurrenceCollectionProfile {
 	}
 
 	private function addIconImageFile(){
-		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $GLOBALS['CLIENT_ROOT'].'/content/collicon/';
+		global $SERVER_ROOT, $CLIENT_ROOT;
+		$targetPath = $SERVER_ROOT.'/content/collicon/';
+		$urlBase = $CLIENT_ROOT.'/content/collicon/';
 		$urlPrefix = "http://";
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 		$urlPrefix .= $_SERVER["HTTP_HOST"];

@@ -60,6 +60,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	}
 
 	public function editImage(){
+		global $IMAGE_DOMAIN;
 		$this->setRootpaths();
 		$status = "Image editted successfully!";
 		$imgId = $_REQUEST["imgid"];
@@ -128,7 +129,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 	    //e.g. this portal is sister portal to central portal
-    	if($GLOBALS['imageDomain']){
+    	if($IMAGE_DOMAIN){
     		if(substr($url,0,1) == '/'){
 	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
     		}
@@ -302,9 +303,10 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	}
 	
 	private function setRootPaths(){
-		$this->imageRootPath = $GLOBALS["imageRootPath"];
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
+		$this->imageRootPath = $IMAGE_ROOT_PATH;
 		if(substr($this->imageRootPath,-1) != "/") $this->imageRootPath .= "/";  
-		$this->imageRootUrl = $GLOBALS["imageRootUrl"];
+		$this->imageRootUrl = $IMAGE_ROOT_URL;
 		if(substr($this->imageRootUrl,-1) != "/") $this->imageRootUrl .= "/";
 	}
 

@@ -23,25 +23,26 @@ class OccurrenceDownload{
     private $occArr = array();
 
  	public function __construct(){
-		$connection = new DbConnection();
+		global $IS_ADMIN, $USER_RIGHTS, $CHARSET;
+ 		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
 
 		//Set rare species variables
 		$this->securityArr = Array('locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
 			'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT','verbatimCoordinates',
 			'georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources','georeferenceVerificationStatus','habitat');
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppAdmin", $GLOBALS['USER_RIGHTS']) || array_key_exists("RareSppReadAll", $GLOBALS['USER_RIGHTS'])){
+		if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
 			$this->redactLocalities = false;
 		}
-		if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
-			$this->rareReaderArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
+		if(array_key_exists('CollEditor', $USER_RIGHTS)){
+			$this->rareReaderArr = $USER_RIGHTS['CollEditor'];
 		}
-		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
+		if(array_key_exists('RareSppReader', $USER_RIGHTS)){
+			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$USER_RIGHTS['RareSppReader']));
 		}
 
 		//Character set
-		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
+		$this->charSetSource = strtoupper($CHARSET);
 		$this->charSetOut = $this->charSetSource;
 	}
 
@@ -272,7 +273,7 @@ xmlwriter_end_attribute($xml_resource);
 	}
 
 	private function getDataEntryXML($days, $limit){
-
+		global $DEFAULT_TITLE, $CLIENT_ROOT, $IMAGE_DOMAIN;
 		//Create new document and write out to target
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
 
@@ -289,7 +290,7 @@ xmlwriter_end_attribute($xml_resource);
 
 		//Add title, link, description, language
 		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' New Occurrence Records'));
+		$titleElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' New Occurrence Records'));
 		$channelElem->appendChild($titleElem);
 
 		$serverDomain = "http://";
@@ -298,14 +299,14 @@ xmlwriter_end_attribute($xml_resource);
 		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
 		$urlPathPrefix = '';
 		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+			$urlPathPrefix = $serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 		}
 
 		$linkElem = $newDoc->createElement('link');
 		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$GLOBALS['DEFAULT_TITLE'].' portal'));
+		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$DEFAULT_TITLE.' portal'));
 		$channelElem->appendChild($descriptionElem);
 		$languageElem = $newDoc->createElement('language','en-us');
 		$channelElem->appendChild($languageElem);
@@ -359,8 +360,8 @@ xmlwriter_end_attribute($xml_resource);
 
 			$tnUrl = $r->thumbnailurl;
 			if(substr($tnUrl,0,1) == '/'){
-				if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
+				if($IMAGE_DOMAIN){
+					$tnUrl = $IMAGE_DOMAIN.$tnUrl;
 				}
 				else{
 					$tnUrl = $serverDomain.$tnUrl;
@@ -574,9 +575,10 @@ xmlwriter_end_attribute($xml_resource);
 	}
 
 	private function getOutputFilePath(){
-		$retStr = $GLOBALS['tempDirRoot'];
+		global $SERVER_ROOT, $TEMP_DIR_ROOT;
+		$retStr = $TEMP_DIR_ROOT;
 		if(!$retStr){
-			$retStr = $GLOBALS['serverRoot'];
+			$retStr = $SERVER_ROOT;
 			if(substr($retStr,-1) != '/' && substr($retStr,-1) != "\\") $retStr .= '/';
 			$retStr .= 'temp/';
 		}
@@ -588,8 +590,9 @@ xmlwriter_end_attribute($xml_resource);
 	}
 
 	private function getOutputFileName(){
+		global $DEFAULT_TITLE;
 		$retStr = '';
-		$fileName = str_replace(Array(".",":"),"",$GLOBALS['DEFAULT_TITLE']);
+		$fileName = str_replace(Array(".",":"),"",$DEFAULT_TITLE);
 		if(stripos($fileName,'the ') === 0) $fileName = substr($fileName,4);
 		if(strlen($fileName) > 15){
 			if($p = strpos($fileName,'(')) $fileName = substr($filename,0,$p);

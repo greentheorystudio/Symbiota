@@ -20,6 +20,7 @@ class ObservationSubmitManager {
 	}
 
 	public function addObservation($postArr){
+		global $SYMB_UID;
 		$newOccId = '';
 		if($postArr && $this->collId){
 			//Setup Event Date fields
@@ -93,7 +94,7 @@ class ObservationSubmitManager {
 			($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
 			($postArr['georeferenceremarks']?'"'.$this->cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
 			($postArr['minimumelevationinmeters']?$postArr['minimumelevationinmeters']:'NULL').','.
-			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'") ';
+				$SYMB_UID.',"'.date('Y-m-d H:i:s').'") ';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$newOccId = $this->conn->insert_id;
@@ -131,7 +132,7 @@ class ObservationSubmitManager {
 				//Set verification status
 				if(is_numeric($postArr['confidenceranking'])){
 					$sqlVer = 'INSERT INTO omoccurverification(occid,category,ranking,uid) '.
-							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$GLOBALS['SYMB_UID'].')';
+							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$SYMB_UID.')';
 					if(!$this->conn->query($sqlVer)){
 						$statusStr .= 'WARNING adding confidence ranking failed ('.$this->conn->error.') ';
 					}
@@ -145,6 +146,7 @@ class ObservationSubmitManager {
 	}
 
 	private function addImages($postArr,$newOccId,$tid){
+		global $SYMB_UID;
 		$status = true;
 		$imgManager = new ImageShared();
 		//Set target path
@@ -155,7 +157,7 @@ class ObservationSubmitManager {
 			//Set parameters
 			$imgManager->setTargetPath($subTargetPath.'/'.date('Ym').'/');
 			$imgManager->setMapLargeImg(false);			//Do not import large image, at least for now
-			$imgManager->setPhotographerUid($GLOBALS['SYMB_UID']);
+			$imgManager->setPhotographerUid($SYMB_UID);
 			$imgManager->setSortSeq(40);
 			$imgManager->setOccid($newOccId);
 			$imgManager->setTid($tid);
@@ -188,11 +190,12 @@ class ObservationSubmitManager {
 	}
 
 	public function getChecklists(){
+		global $USER_RIGHTS;
 		$retArr = Array();
-		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin'])){
+		if(isset($USER_RIGHTS['ClAdmin'])){
 			$sql = 'SELECT clid, name, access '.
 				'FROM fmchecklists '.
-				'WHERE clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).') '.
+				'WHERE clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).') '.
 				'ORDER BY name';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -239,9 +242,10 @@ class ObservationSubmitManager {
 	}
 
 	public function getUserName(){
+		global $SYMB_UID;
 		$retStr = '';
-		if(is_numeric($GLOBALS['SYMB_UID'])){
-			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+		if(is_numeric($SYMB_UID)){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$SYMB_UID;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retStr = $r->username;

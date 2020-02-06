@@ -44,9 +44,8 @@ class MappingShared{
 	}
 
 	public function getGeoCoords($mapWhere,$limit=1000,$includeDescr=false){
-		global $USER_RIGHTS;
+		global $USER_RIGHTS, $IS_ADMIN;
 		$coordArr = Array();
-		$sql = '';
 		$sql = 'SELECT DISTINCT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
 			'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 			'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName ';
@@ -63,7 +62,7 @@ class MappingShared{
 		if(strpos($mapWhere,'MATCH(f.recordedby)') || strpos($mapWhere,'MATCH(f.locality)')) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		$sql .= $mapWhere;
 		$sql .= " AND (o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 20000) ";
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
+		if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
 			//Is global rare species reader, thus do nothing to sql and grab all records
 		}
 		elseif(array_key_exists("RareSppReader",$USER_RIGHTS)){

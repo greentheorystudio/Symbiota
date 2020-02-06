@@ -309,15 +309,15 @@ ob_start();
 
                 if(array_key_exists("url",$subArr)){
                     $imgUrl = $subArr["url"];
-                    if(array_key_exists("imageDomain",$GLOBALS) && substr($imgUrl,0,1)=="/"){
-                        $imgUrl = $GLOBALS["imageDomain"].$imgUrl;
+                    if($IMAGE_DOMAIN && substr($imgUrl,0,1)=="/"){
+                        $imgUrl = $IMAGE_DOMAIN.$imgUrl;
                     }
                     echo "<a href='index.php?taxon=".$subArr["tid"]."&taxauthid=".$taxAuthId.($clValue?"&cl=".$clValue:"")."'>";
 
                     if($subArr["thumbnailurl"]){
                         $imgUrl = $subArr["thumbnailurl"];
-                        if(array_key_exists("imageDomain",$GLOBALS) && substr($subArr["thumbnailurl"],0,1)=="/"){
-                            $imgUrl = $GLOBALS["imageDomain"].$subArr["thumbnailurl"];
+                        if($IMAGE_DOMAIN && substr($subArr["thumbnailurl"],0,1)=="/"){
+                            $imgUrl = $IMAGE_DOMAIN.$subArr["thumbnailurl"];
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';

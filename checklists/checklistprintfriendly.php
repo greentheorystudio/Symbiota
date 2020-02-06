@@ -114,7 +114,7 @@
 								echo "<div class='tnimg' style='".($imgSrc?"":"border:1px solid black;")."'>";
 								$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clManager->getClid();
 								if($imgSrc){
-									$imgSrc = (array_key_exists("imageDomain",$GLOBALS)&&substr($imgSrc,0,4)!="http"?$GLOBALS["imageDomain"]:"").$imgSrc;
+									$imgSrc = ($IMAGE_DOMAIN&&substr($imgSrc,0,4)!="http"?$IMAGE_DOMAIN:"").$imgSrc;
 									echo "<img src='".$imgSrc."' style='height:100%;' />";
 								}
 								else{

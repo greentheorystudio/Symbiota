@@ -72,7 +72,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	}
 	
 	public function writeRssFile(){
-
+        global $DEFAULT_TITLE, $CLIENT_ROOT, $SERVER_ROOT;
 		$this->logOrEcho("Mapping data to RSS feed... \n");
 		
 		//Create new document and write out to target
@@ -91,11 +91,11 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		
 		//Add title, link, description, language
 		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Darwin Core Archive rss feed'));
+		$titleElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' Darwin Core Archive rss feed'));
 		$channelElem->appendChild($titleElem);
 
 		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 
 		$localDomain = $this->serverDomain;
 		
@@ -103,7 +103,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Darwin Core Archive rss feed'));
+		$descriptionElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' Darwin Core Archive rss feed'));
 		$channelElem->appendChild($descriptionElem);
 		$languageElem = $newDoc->createElement('language','en-us');
 		$channelElem->appendChild($languageElem);
@@ -182,7 +182,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 
 		//Add existing items
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'webservices/dwc/rss.xml';
 		if(file_exists($rssFile)){
 			//Get other existing DWCAs by reading and parsing current rss.xml
 			$oldDoc = new DOMDocument();
@@ -208,8 +208,9 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	//Misc data retrival functions 
 	public function getDwcaItems($collid = 0){
-		$retArr = Array();
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'webservices/dwc/rss.xml';
+		global $SERVER_ROOT;
+	    $retArr = Array();
+		$rssFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'webservices/dwc/rss.xml';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->load($rssFile);

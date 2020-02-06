@@ -13,10 +13,11 @@ class ImageLibraryManager{
 	private $sqlWhere = '';
 
 	function __construct() {
-        $connection = new DbConnection();
+        global $TID_FOCUS;
+	    $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		if(array_key_exists('TID_FOCUS', $GLOBALS) && preg_match('/^[\d,]+$/', $GLOBALS['TID_FOCUS'])){
-			$this->tidFocus = $GLOBALS['TID_FOCUS'];
+		if($TID_FOCUS && preg_match('/^[\d,]+$/', $TID_FOCUS)){
+			$this->tidFocus = $TID_FOCUS;
 		}
 	}
 

@@ -317,12 +317,13 @@ class ImageCleaner extends Manager{
 	}
 
 	private function unlinkImageFile($url,$origTs){
-		$status = false;
-		if(!$GLOBALS['IMAGE_ROOT_PATH']){
+		global $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL;
+	    $status = false;
+		if(!$IMAGE_ROOT_PATH){
 			$this->logOrEcho('FATAL ERROR: IMAGE_ROOT_PATH not configured within portal configuration file',1);
 			exit;
 		}
-		if(!$GLOBALS['IMAGE_ROOT_URL']){
+		if(!$IMAGE_ROOT_URL){
 			$this->logOrEcho('FATAL ERROR: IMAGE_ROOT_URL not configured within portal configuration file',1);
 			exit;
 		}
@@ -330,8 +331,8 @@ class ImageCleaner extends Manager{
 			//Remove domain name
 			$url = parse_url($url, PHP_URL_PATH);
 		}
-		if(strpos($url, $GLOBALS['IMAGE_ROOT_URL']) === 0){
-			$path = $GLOBALS['IMAGE_ROOT_PATH'].substr($url,strlen($GLOBALS['IMAGE_ROOT_URL']));
+		if(strpos($url, $IMAGE_ROOT_URL) === 0){
+			$path = $IMAGE_ROOT_PATH.substr($url,strlen($IMAGE_ROOT_URL));
 			if($p = strpos($path,'?')) $path = substr($path,0,$p);
 			if(!file_exists($path)) return true;
 			if(is_writable($path)){
@@ -473,6 +474,7 @@ return -1;
 	}
 
 	private function recycleImage($imgID){
+		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		if(!is_numeric($imgID)) return false;
 		if($this->imgRecycleBin){
 			$sql = 'SELECT i.url, i.originalurl, i.thumbnailurl '.
@@ -495,13 +497,13 @@ return -1;
 					elseif(substr($imgUrl, 0, 4) == 'http'){
 						$imgUrl = parse_url($imgUrl, PHP_URL_PATH);
 					}
-					if(strpos($imgUrl, $GLOBALS['IMAGE_ROOT_URL']) === 0){
-						$imgUrl = $GLOBALS['IMAGE_ROOT_PATH'].substr($imgUrl,strlen($GLOBALS['IMAGE_ROOT_URL']));
+					if(strpos($imgUrl, $IMAGE_ROOT_URL) === 0){
+						$imgUrl = $IMAGE_ROOT_PATH.substr($imgUrl,strlen($IMAGE_ROOT_URL));
 					}
 					if(is_writable($imgUrl)){
 						$pathParts = pathinfo($imgUrl);
 						$path = $pathParts['dirname'];
-						if(strpos($path, $GLOBALS['IMAGE_ROOT_PATH']) === 0) $path = substr($path,strlen($GLOBALS['IMAGE_ROOT_PATH']));
+						if(strpos($path, $IMAGE_ROOT_PATH) === 0) $path = substr($path,strlen($IMAGE_ROOT_PATH));
 						$targetPath = $this->imgRecycleBin.$path;
 						if(!file_exists($targetPath)) mkdir($targetPath,0777,true);
 						$targetPath .= '/'.$pathParts['basename'];
@@ -518,6 +520,7 @@ return -1;
 	}
 
 	private function setRecycleBin($binPath = ''){
+		global $IMAGE_ROOT_PATH;
 		if($binPath){
 			if(file_exists($binPath)){
 				$this->imgRecycleBin = $binPath;
@@ -529,8 +532,8 @@ return -1;
 			}
 		}
 		else{
-			if($GLOBALS['IMAGE_ROOT_PATH']){
-				$path = $GLOBALS['IMAGE_ROOT_PATH'];
+			if($IMAGE_ROOT_PATH){
+				$path = $IMAGE_ROOT_PATH;
 				if(substr($path, -1) != '/') $path .= '/';
 				$path .= 'trash';
 				if(!file_exists($path)){

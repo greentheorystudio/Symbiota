@@ -1,11 +1,11 @@
 $(window).resize(function(){
-    var winHeight = $(window).height();
+    let winHeight = $(window).height();
     winHeight = winHeight + "px";
     document.getElementById('spatialpanel').style.height = winHeight;
     $("#accordion").accordion("refresh");
 });
 
-$(document).on("pageloadfailed", function(event, data){
+$(document).on("pageloadfailed", function(event){
     event.preventDefault();
 });
 
@@ -28,25 +28,24 @@ $(document).ready(function() {
         })
         .autocomplete({
             source: function( request, response ) {
-                var t = document.getElementById("taxontype").value;
-                var source = '';
-                var rankLow = '';
-                var rankHigh = '';
-                var rankLimit = '';
-                if(t == 5){
-                    source = '../webservices/autofillvernacular.php';
+                const t = document.getElementById("taxontype").value;
+                let rankLow = '';
+                let rankHigh = '';
+                let rankLimit = '';
+                if(t === 5){
+                    const source = '../webservices/autofillvernacular.php';
                 }
                 else{
-                    source = '../webservices/autofillsciname.php';
+                    const source = '../webservices/autofillsciname.php';
                 }
-                if(t == 4){
+                if(t === 4){
                     rankLow = 21;
                     rankHigh = 139;
                 }
-                else if(t == 2){
+                else if(t === 2){
                     rankLimit = 140;
                 }
-                else if(t == 3){
+                else if(t === 3){
                     rankLow = 141;
                 }
                 else{
@@ -64,7 +63,7 @@ $(document).ready(function() {
             },
             appendTo: "#taxa_autocomplete",
             search: function() {
-                var term = extractLast( this.value );
+                const term = extractLast( this.value );
                 if ( term.length < 4 ) {
                     return false;
                 }
@@ -73,7 +72,7 @@ $(document).ready(function() {
                 return false;
             },
             select: function( event, ui ) {
-                var terms = split( this.value );
+                const terms = split( this.value );
                 terms.pop();
                 terms.push( ui.item.value );
                 this.value = terms.join( ", " );
@@ -89,7 +88,7 @@ function addLayerToSelList(layer,title){
     var newOption = '<option id="lsel-'+optionId+'" value="'+layer+'">'+title+'</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
-    if(layer != 'select'){
+    if(layer !== 'select'){
         document.getElementById("selectlayerselect").value = layer;
         setActiveLayer();
     }
@@ -105,7 +104,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==3){
+        if(activeTab === 3){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }
@@ -265,13 +264,13 @@ function buildLayerTableRow(lArr,removable){
     var trfragment = '';
     var layerID = lArr['Name'];
     var layerType = lArr['layerType'];
-    if(layerType != 'vector'){
+    if(layerType !== 'vector'){
         var infoArr = [];
         infoArr['id'] = layerID;
         infoArr['title'] = lArr['Title'];
         rasterLayers.push(infoArr);
     }
-    var addLayerFunction = (layerType == 'vector'?'editVectorLayers':'editRasterLayers');
+    var addLayerFunction = (layerType === 'vector'?'editVectorLayers':'editRasterLayers');
     var divid = "lay-"+layerID;
     if(!document.getElementById(divid)){
         trfragment += '<td style="width:30px;">';
@@ -285,7 +284,7 @@ function buildLayerTableRow(lArr,removable){
         trfragment += lArr['Abstract'];
         trfragment += '</td>';
         trfragment += '<td style="width:50px;background-color:black">';
-        trfragment += '<img src="../images/'+(layerType == 'vector'?'button_wfs.png':'button_wms.png')+'" style="width:20px;margin-left:8px;">';
+        trfragment += '<img src="../images/'+(layerType === 'vector'?'button_wfs.png':'button_wms.png')+'" style="width:20px;margin-left:8px;">';
         trfragment += '</td>';
         trfragment += '<td style="width:50px;">';
         if(removable){
@@ -313,7 +312,7 @@ function buildQueryStrings(){
     getCollectionParams();
     prepareTaxaParams(function(res){
         getTextParams();
-        getGeographyParams(loadVectorPoints);
+        getGeographyParams();
         if(solrqArr.length > 0 || solrgeoqArr.length > 0){
             buildSOLRQString();
         }
@@ -448,36 +447,36 @@ function changeBaseMap(){
     var blsource;
     var selection = document.getElementById('base-map').value;
     var baseLayer = map.getLayers().getArray()[0];
-    if(selection == 'worldtopo'){
+    if(selection === 'worldtopo'){
         blsource = new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'openstreet'){blsource = new ol.source.OSM();}
-    if(selection == 'blackwhite'){blsource = new ol.source.Stamen({layer: 'toner'});}
-    if(selection == 'worldimagery'){
+    if(selection === 'openstreet'){blsource = new ol.source.OSM();}
+    if(selection === 'blackwhite'){blsource = new ol.source.Stamen({layer: 'toner'});}
+    if(selection === 'worldimagery'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'ocean'){
+    if(selection === 'ocean'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'ngstopo'){
+    if(selection === 'ngstopo'){
         blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/NGS_Topo_US_2D/MapServer/tile/{z}/{y}/{x}');
     }
-    if(selection == 'natgeoworld'){
+    if(selection === 'natgeoworld'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection == 'esristreet'){
+    if(selection === 'esristreet'){
         blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{z}/{y}/{x}');
     }
     baseLayer.setSource(blsource);
@@ -566,7 +565,7 @@ function changeHeatMapRadius(){
 }
 
 function changeMapSymbology(symbology){
-    if(symbology != mapSymbology){
+    if(symbology !== mapSymbology){
         if(spiderCluster){
             var source = layersArr['spider'].getSource();
             source.clear();
@@ -583,8 +582,8 @@ function changeMapSymbology(symbology){
             layersArr['pointv'].getSource().changed();
         }
     }
-    if(symbology == 'coll'){
-        if(mapSymbology == 'taxa'){
+    if(symbology === 'coll'){
+        if(mapSymbology === 'taxa'){
             clearTaxaSymbology();
             clusterKey = 'CollectionName';
             mapSymbology = 'coll';
@@ -593,8 +592,8 @@ function changeMapSymbology(symbology){
             }
         }
     }
-    if(symbology == 'taxa'){
-        if(mapSymbology == 'coll'){
+    if(symbology === 'taxa'){
+        if(mapSymbology === 'coll'){
             resetMainSymbology();
             clusterKey = 'namestring';
             mapSymbology = 'taxa';
@@ -610,12 +609,18 @@ function changeRecordPage(page){
     var selJson = JSON.stringify(selections);
     var http = new XMLHttpRequest();
     var url = "rpc/changemaprecordpage.php";
-    var params = solrqString+'&rows='+solrRecCnt+'&page='+page+'&selected='+selJson;
+    if(SOLRMODE){
+        var params = solrqString+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+    }
+    else{
+        var jsonStarr = JSON.stringify(searchTermsArr);
+        var params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+    }
     //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             var newMapRecordList = JSON.parse(http.responseText);
             document.getElementById("queryrecords").innerHTML = newMapRecordList;
         }
@@ -934,7 +939,13 @@ function createBuffers(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    var turfFeature = getWGS84CirclePoly(center,radius);
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    var turfFeature = getWGS84CirclePoly(center,groundRadius);
                 }
                 var buffered = turf.buffer(turfFeature,bufferSize,{units:'kilometers'});
                 var buffpoly = geoJSONFormat.readFeature(buffered);
@@ -1142,7 +1153,13 @@ function createPolyDifference(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    features.push(getWGS84CirclePoly(center,groundRadius));
                 }
             }
         });
@@ -1163,35 +1180,76 @@ function createPolyIntersect(){
     selectInteraction.getFeatures().forEach(function(feature){
         var selectedClone = feature.clone();
         var geoType = selectedClone.getGeometry().getType();
-        if(geoType == 'Polygon' || geoType == 'MultiPolygon' || geoType == 'Circle'){
+        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
             shapeCount++;
         }
     });
-    if(shapeCount == 2){
-        var features = [];
+    if(shapeCount === 2){
+        var featuresOne = [];
+        var featuresTwo = [];
+        var pass = 1;
+        var intersection;
         var geoJSONFormat = new ol.format.GeoJSON();
         selectInteraction.getFeatures().forEach(function(feature){
             if(feature){
                 var selectedClone = feature.clone();
                 var geoType = selectedClone.getGeometry().getType();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType == 'Polygon'){
-                    features.push(turf.polygon(featCoords));
-                }
-                else if(geoType == 'MultiPolygon'){
-                    features.push(turf.multiPolygon(featCoords));
-                }
-                else if(geoType == 'Circle'){
-                    var center = fixedselectgeometry.getCenter();
-                    var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
+                    var selectiongeometry = selectedClone.getGeometry();
+                    var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
+                    var geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                    var featCoords = JSON.parse(geojsonStr).coordinates;
+                    if(geoType === 'Polygon'){
+                        if(pass === 1){
+                            featuresOne.push(turf.polygon(featCoords));
+                        }
+                        else{
+                            featuresTwo.push(turf.polygon(featCoords));
+                        }
+                    }
+                    else if(geoType === 'MultiPolygon'){
+                        for (e in featCoords) {
+                            if(pass === 1){
+                                featuresOne.push(turf.polygon(featCoords[e]));
+                            }
+                            else{
+                                featuresTwo.push(turf.polygon(featCoords[e]));
+                            }
+                        }
+                    }
+                    else if(geoType === 'Circle'){
+                        var center = fixedselectgeometry.getCenter();
+                        var radius = fixedselectgeometry.getRadius();
+                        var edgeCoordinate = [center[0] + radius, center[1]];
+                        var groundRadius = ol.sphere.getDistance(
+                            ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                            ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                        );
+                        groundRadius = groundRadius/1000;
+                        if(pass === 1){
+                            featuresOne.push(getWGS84CirclePoly(center,groundRadius));
+                        }
+                        else{
+                            featuresTwo.push(getWGS84CirclePoly(center,groundRadius));
+                        }
+                    }
+                    pass++;
                 }
             }
         });
-        var intersection = turf.intersect(features[0],features[1]);
+        for (i in featuresOne) {
+            for (e in featuresTwo) {
+                var tempPoly = turf.intersect(featuresOne[i],featuresTwo[e]);
+                if(tempPoly){
+                    if(intersection){
+                        intersection = turf.union(intersection,tempPoly);
+                    }
+                    else{
+                        intersection = tempPoly;
+                    }
+                }
+            }
+        }
         if(intersection){
             var interpoly = geoJSONFormat.readFeature(intersection);
             interpoly.getGeometry().transform(wgs84Projection,mapProjection);
@@ -1235,7 +1293,13 @@ function createPolyUnion(){
                 else if(geoType == 'Circle'){
                     var center = fixedselectgeometry.getCenter();
                     var radius = fixedselectgeometry.getRadius();
-                    features.push(getWGS84CirclePoly(center,radius));
+                    var edgeCoordinate = [center[0] + radius, center[1]];
+                    var groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    features.push(getWGS84CirclePoly(center,groundRadius));
                 }
             }
         });
@@ -1423,8 +1487,19 @@ function findOccPointInCluster(cluster,occid){
 
 function finishGetGeographyParams(){
     if(!geoCallOut){
-        if(solrgeoqArr.length > 0){
-            buildSOLRQString();
+        if(SOLRMODE) {
+            if(solrgeoqArr.length > 0){
+                buildSOLRQString();
+            }
+        }
+        else{
+            if(geoPolyArr.length > 0){
+                searchTermsArr['polyArr'] = geoPolyArr;
+            }
+            if(geoCircleArr.length > 0){
+                searchTermsArr['circleArr'] = geoCircleArr;
+            }
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
         }
     }
 }
@@ -1576,28 +1651,43 @@ function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
 }
 
 function getCollectionParams(){
+    collectionParams = false;
+    searchTermsArr['db'] = '';
     var dbElements = document.getElementsByName("db[]");
     var c = false;
     var all = true;
     var collid = '';
+    var collidArr = [];
     var solrqfrag = '';
     for(i = 0; i < dbElements.length; i++){
         var dbElement = dbElements[i];
         if(dbElement.checked && !isNaN(dbElement.value)){
-            if(c == true) collid = collid+" ";
-            collid = collid + dbElement.value;
+            if(SOLRMODE) {
+                if(c == true) collid = collid+" ";
+                collid = collid + dbElement.value;
+            }
+            else{
+                collidArr.push(dbElement.value);
+            }
             c = true;
+            collectionParams = true;
         }
         if(!dbElement.checked && !isNaN(dbElement.value)){
             all = false;
         }
     }
     if(all == false && c == true){
-        if(collid.substr(collid.length-1,collid.length)==','){
-            collid = collid.substr(0,collid.length-1);
+        if(SOLRMODE) {
+            if(collid.substr(collid.length-1,collid.length)==','){
+                collid = collid.substr(0,collid.length-1);
+            }
+            solrqfrag = '(collid:('+collid+'))';
+            solrqArr.push(solrqfrag);
         }
-        solrqfrag = '(collid:('+collid+'))';
-        solrqArr.push(solrqfrag);
+        else{
+            searchTermsArr['db'] = collidArr.join(",")+";";
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
+        }
         return true;
     }
     else if(all == false && c == false){
@@ -1630,7 +1720,12 @@ function getDragDropStyle(feature, resolution) {
     }
 }
 
-function getGeographyParams(vector){
+function getGeographyParams(){
+    geogParams = false;
+    searchTermsArr['polyArr'] = [];
+    searchTermsArr['circleArr'] = [];
+    geoPolyArr = [];
+    geoCircleArr = [];
     var totalArea = 0;
     selectInteraction.getFeatures().forEach(function(feature){
         var solrqfrag = '';
@@ -1681,17 +1776,22 @@ function getGeographyParams(vector){
                 var fixedgeometry = simplegeometry.transform(mapProjection,wgs84Projection);
                 var wmswktString = wktFormat.writeGeometry(fixedgeometry);
                 var geocoords = fixedgeometry.getCoordinates();
-                //var wfswktString = writeWfsWktString(geoType,geocoords);
-                geoSolrqString = '"Intersects('+wmswktString+')"';
-                solrqfrag = geoSolrqString;
-                solrgeoqArr.push(solrqfrag);
+                var mysqlWktString = writeMySQLWktString(geoType,geocoords);
+                if(SOLRMODE) {
+                    geoSolrqString = '"Intersects('+wmswktString+')"';
+                    solrqfrag = geoSolrqString;
+                    solrgeoqArr.push(solrqfrag);
+                }
+                else{
+                    geoPolyArr.push(mysqlWktString);
+                }
+                geogParams = true;
             }
             if(geoType === 'Circle'){
                 var center = selectedClone.getGeometry().getCenter();
                 var radius = selectedClone.getGeometry().getRadius();
                 var edgeCoordinate = [center[0] + radius, center[1]];
-                var wgs84Sphere = new ol.Sphere(6378137);
-                var groundRadius = wgs84Sphere.haversineDistance(
+                var groundRadius = ol.sphere.getDistance(
                     ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
                     ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
                 );
@@ -1699,18 +1799,29 @@ function getGeographyParams(vector){
                 var circleArea = Math.PI*groundRadius*groundRadius;
                 totalArea = totalArea + circleArea;
                 var fixedcenter = ol.proj.transform(center,'EPSG:3857','EPSG:4326');
-                geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
-                solrqfrag = geoSolrqString;
-                solrgeoqArr.push(solrqfrag);
-                buildSOLRQString();
-                geoCallOut = true;
-                solroccqString = 'q=*:*&fq='+geoSolrqString;
-                getSOLROccArr(function(res){
-                    geoCallOut = false;
-                    if(res){
-                        finishGetGeographyParams();
-                    }
-                });
+                if(SOLRMODE) {
+                    geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
+                    solrqfrag = geoSolrqString;
+                    solrgeoqArr.push(solrqfrag);
+                    buildSOLRQString();
+                    geoCallOut = true;
+                    solroccqString = 'q=*:*&fq='+geoSolrqString;
+                    getSOLROccArr(function(res){
+                        geoCallOut = false;
+                        if(res){
+                            finishGetGeographyParams();
+                        }
+                    });
+                }
+                else{
+                    var circleObj = {
+                        pointlat: fixedcenter[0],
+                        pointlong: fixedcenter[1],
+                        radius: groundRadius
+                    };
+                    geoCircleArr.push(circleObj);
+                }
+                geogParams = true;
             }
         }
     });
@@ -1762,12 +1873,12 @@ function getPointStyle(feature) {
 }
 
 function getSOLROccArr(callback){
-    getSOLRRecCnt(true,function(res) {
-        if(solrRecCnt){
+    getQueryRecCnt(true,function(res) {
+        if(queryRecCnt > 0){
             var occArr = [];
             var http = new XMLHttpRequest();
             var url = "rpc/SOLRConnector.php";
-            var params = solroccqString+'&rows='+solrRecCnt+'&start=0&fl=occid&wt=json';
+            var params = solroccqString+'&rows='+queryRecCnt+'&start=0&fl=occid&wt=json';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1780,39 +1891,59 @@ function getSOLROccArr(callback){
                     }
                     callback(occArr);
                 }
-            }
+            };
             http.send(params);
         }
     });
 }
 
-function getSOLRRecCnt(occ,callback){
-    solrRecCnt = 0;
-    var qStr = '';
-    if(occ){
-        qStr = solroccqString;
+function getQueryRecCnt(occ,callback){
+    queryRecCnt = 0;
+    if(SOLRMODE){
+        var qStr = '';
+        if(occ){
+            qStr = solroccqString;
+        }
+        else{
+            qStr = solrqString;
+        }
+        var http = new XMLHttpRequest();
+        var url = "rpc/SOLRConnector.php";
+        var params = qStr+'&rows=0&start=0&wt=json';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                var resArr = JSON.parse(http.responseText);
+                queryRecCnt = resArr['response']['numFound'];
+                document.getElementById("dh-rows").value = queryRecCnt;
+                callback(1);
+            }
+        };
+        http.send(params);
     }
     else{
-        qStr = solrqString;
+        var jsonStarr = JSON.stringify(searchTermsArr);
+        var http = new XMLHttpRequest();
+        var url = "rpc/MYSQLConnector.php";
+        var params = 'starr='+jsonStarr+'&rows=0&start=0&type=reccnt';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                queryRecCnt = http.responseText;
+                document.getElementById("dh-rows").value = queryRecCnt;
+                callback(1);
+            }
+        };
+        http.send(params);
     }
-    var http = new XMLHttpRequest();
-    var url = "rpc/SOLRConnector.php";
-    var params = qStr+'&rows=0&start=0&wt=json';
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
-            var resArr = JSON.parse(http.responseText);
-            solrRecCnt = resArr['response']['numFound'];
-            document.getElementById("dh-rows").value = solrRecCnt;
-            callback(1);
-        }
-    };
-    http.send(params);
 }
 
 function getTextParams(){
+    textParams = false;
     var solrqfrag = '';
     var countryval = document.getElementById("country").value.trim();
     var stateval = document.getElementById("state").value.trim();
@@ -1827,174 +1958,287 @@ function getTextParams(){
     var typestatus = document.getElementById("typestatus").checked;
     var hasimages = document.getElementById("hasimages").checked;
     var hasgenetic = document.getElementById("hasgenetic").checked;
+    searchTermsArr['country'] = '';
+    searchTermsArr['state'] = '';
+    searchTermsArr['county'] = '';
+    searchTermsArr['local'] = '';
+    searchTermsArr['collector'] = '';
+    searchTermsArr['collnum'] = '';
+    searchTermsArr['eventdate1'] = '';
+    searchTermsArr['eventdate2'] = '';
+    searchTermsArr['catnum'] = '';
+    searchTermsArr['othercatnum'] = '';
+    searchTermsArr['typestatus'] = '';
+    searchTermsArr['hasimages'] = '';
+    searchTermsArr['hasgenetic'] = '';
 
     if(countryval){
-        if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
-            if(countryval.indexOf('USA') === -1){
-                countryval += ',USA';
+        if(SOLRMODE) {
+            if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
+                if(countryval.indexOf('USA') === -1){
+                    countryval += ',USA';
+                }
+                if(countryval.indexOf('United States') === -1){
+                    countryval += ',United States';
+                }
+                if(countryval.indexOf('U.S.A.') === -1){
+                    countryval += ',U.S.A.';
+                }
+                if(countryval.indexOf('United States of America') === -1){
+                    countryval += ',United States of America';
+                }
             }
-            if(countryval.indexOf('United States') === -1){
-                countryval += ',United States';
+            var countryvals = countryval.split(',');
+            var countrySolrqString = '';
+            for(i = 0; i < countryvals.length; i++){
+                if(countrySolrqString) countrySolrqString += " OR ";
+                countrySolrqString += '(country:"'+countryvals[i]+'")';
             }
-            if(countryval.indexOf('U.S.A.') === -1){
-                countryval += ',U.S.A.';
-            }
-            if(countryval.indexOf('United States of America') === -1){
-                countryval += ',United States of America';
-            }
+            solrqfrag = '('+countrySolrqString+')';
+            solrqArr.push(solrqfrag);
         }
-        var countryvals = countryval.split(',');
-        var countrySolrqString = '';
-        for(i = 0; i < countryvals.length; i++){
-            if(countrySolrqString) countrySolrqString += " OR ";
-            countrySolrqString += '(country:"'+countryvals[i]+'")';
+        else {
+            countryval = countryval.replace(",", ";");
+            if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
+                if(countryval.indexOf('USA') === -1){
+                    countryval += ';USA';
+                }
+                if(countryval.indexOf('United States') === -1){
+                    countryval += ';United States';
+                }
+                if(countryval.indexOf('U.S.A.') === -1){
+                    countryval += ';U.S.A.';
+                }
+                if(countryval.indexOf('United States of America') === -1){
+                    countryval += ';United States of America';
+                }
+            }
+            searchTermsArr['country'] = countryval;
         }
-        solrqfrag = '('+countrySolrqString+')';
-        solrqArr.push(solrqfrag);
+        textParams = true;
     }
     if(stateval){
-        var statevals = stateval.split(',');
-        var stateSolrqString = '';
-        for(i = 0; i < statevals.length; i++){
-            if(stateSolrqString) stateSolrqString += " OR ";
-            stateSolrqString += '(StateProvince:"'+statevals[i]+'")';
-        }
-        solrqfrag = '('+stateSolrqString+')';
-        solrqArr.push(solrqfrag);
-    }
-    if(countyval){
-        var countyvals = countyval.split(',');
-        var countySolrqString = '';
-        for(i = 0; i < countyvals.length; i++){
-            if(countySolrqString) countySolrqString += " OR ";
-            countySolrqString += "(county:"+countyvals[i].replace(" ","\\ ")+"*)";
-        }
-        solrqfrag = '('+countySolrqString+')';
-        solrqArr.push(solrqfrag);
-    }
-    if(localityval){
-        var localityvals = localityval.split(',');
-        var localitySolrqString = '';
-        for(i = 0; i < localityvals.length; i++){
-            if(localitySolrqString) localitySolrqString += " OR ";
-            localitySolrqString += "(";
-            if(localityvals[i].indexOf(" ") !== -1){
-                var templocalitySolrqString = '';
-                var vals = localityvals[i].split(" ");
-                for(i = 0; i < vals.length; i++){
-                    if(templocalitySolrqString) templocalitySolrqString += " AND ";
-                    templocalitySolrqString += '((municipality:'+vals[i]+'*) OR (locality:*'+vals[i]+'*))';
-                }
-                localitySolrqString += templocalitySolrqString;
+        if(SOLRMODE) {
+            var statevals = stateval.split(',');
+            var stateSolrqString = '';
+            for(i = 0; i < statevals.length; i++){
+                if(stateSolrqString) stateSolrqString += " OR ";
+                stateSolrqString += '(StateProvince:"'+statevals[i]+'")';
             }
-            else{
-                localitySolrqString += '(locality:*'+localityvals[i]+'*)';
-            }
-            localitySolrqString += ")";
-        }
-        solrqfrag = '('+localitySolrqString+')';
-        solrqArr.push(solrqfrag);
-    }
-    if(collectorval){
-        var collectorvals = collectorval.split(',');
-        var collectorSolrqString = '';
-        if(collectorvals.length == 1){
-            collectorSolrqString = '(recordedBy:*'+collectorvals[0].replace(" ","\\ ")+'*)';
-        }
-        else if(collectorvals.length > 1){
-            for (i in collectorvals){
-                collectorSolrqString += ' OR (recordedBy:*'+collectorvals[i].replace(" ","\\ ")+'*)';
-            }
-            collectorSolrqString = collectorSolrqString.substr(4,collectorSolrqString.length);
-        }
-        solrqfrag = '('+collectorSolrqString+')';
-        solrqArr.push(solrqfrag);
-    }
-    if(collnumval){
-        var collnumvals = collnumval.split(',');
-        var collnumSolrqString = '';
-        for (i in collnumvals){
-            if(collnumvals[i].indexOf(" - ") !== -1){
-                var pos = collnumvals[i].indexOf(" - ");
-                var t1 = collnumvals[i].substr(0,pos).trim();
-                var t2 = collnumvals[i].substr(pos+3,collnumvals[i].length).trim();
-                if(!isNaN(t1) && !isNaN(t2)){
-                    collnumSolrqString += ' OR (recordNumber:['+t1+' TO '+t2+'])';
-                }
-                else{
-                    collnumSolrqString += " OR (recordNumber:['"+t1+"' TO '"+t2+"'])";
-                }
-            }
-            else{
-                collnumSolrqString += ' OR (recordNumber:"'+collnumvals[i]+'")';
-            }
-        }
-        collnumSolrqString = collnumSolrqString.substr(4,collnumSolrqString.length);
-        solrqfrag = '('+collnumSolrqString+')';
-        solrqArr.push(solrqfrag);
-    }
-    if(colldate1 || colldate2){
-        var colldateSolrqString = '';
-        if(!colldate1 && colldate2){
-            colldate1 = colldate2;
-            colldate2 = '';
-        }
-        colldate1 = formatCheckDate(colldate1);
-        if(colldate2){
-            colldate2 = formatCheckDate(colldate2);
-        }
-        if(colldate2){
-            colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate2+'T23:59:59.999Z])';
+            solrqfrag = '('+stateSolrqString+')';
+            solrqArr.push(solrqfrag);
         }
         else{
-            if(colldate1.substr(colldate1.length-5,colldate1.length) == '00-00'){
-                colldateSolrqString += '(coll_year:'+colldate1.substr(0,4)+')';
+            stateval = stateval.replace(",", ";");
+            searchTermsArr['state'] = stateval;
+        }
+        textParams = true;
+    }
+    if(countyval){
+        if(SOLRMODE) {
+            var countyvals = countyval.split(',');
+            var countySolrqString = '';
+            for(i = 0; i < countyvals.length; i++){
+                if(countySolrqString) countySolrqString += " OR ";
+                countySolrqString += "(county:"+countyvals[i].replace(" ","\\ ")+"*)";
             }
-            else if(colldate1.substr(colldate1.length-2,colldate1.length) == '00'){
-                colldateSolrqString += '((coll_year:'+colldate1.substr(0,4)+') AND (coll_month:'+colldate1.substr(5,7)+'))';
+            solrqfrag = '('+countySolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            countyval = countyval.replace(" Co.", "");
+            countyval = countyval.replace(" County", "");
+            countyval = countyval.replace(",", ";");
+            searchTermsArr['county'] = countyval;
+        }
+        textParams = true;
+    }
+    if(localityval){
+        if(SOLRMODE) {
+            var localityvals = localityval.split(',');
+            var localitySolrqString = '';
+            for(i = 0; i < localityvals.length; i++){
+                if(localitySolrqString) localitySolrqString += " OR ";
+                localitySolrqString += "(";
+                if(localityvals[i].indexOf(" ") !== -1){
+                    var templocalitySolrqString = '';
+                    var vals = localityvals[i].split(" ");
+                    for(i = 0; i < vals.length; i++){
+                        if(templocalitySolrqString) templocalitySolrqString += " AND ";
+                        templocalitySolrqString += '((municipality:'+vals[i]+'*) OR (locality:*'+vals[i]+'*))';
+                    }
+                    localitySolrqString += templocalitySolrqString;
+                }
+                else{
+                    localitySolrqString += '(locality:*'+localityvals[i]+'*)';
+                }
+                localitySolrqString += ")";
+            }
+            solrqfrag = '('+localitySolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            localityval = localityval.replace(",", ";");
+            searchTermsArr['local'] = localityval;
+        }
+        textParams = true;
+    }
+    if(collectorval){
+        if(SOLRMODE) {
+            var collectorvals = collectorval.split(',');
+            var collectorSolrqString = '';
+            if(collectorvals.length == 1){
+                collectorSolrqString = '(recordedBy:*'+collectorvals[0].replace(" ","\\ ")+'*)';
+            }
+            else if(collectorvals.length > 1){
+                for (i in collectorvals){
+                    collectorSolrqString += ' OR (recordedBy:*'+collectorvals[i].replace(" ","\\ ")+'*)';
+                }
+                collectorSolrqString = collectorSolrqString.substr(4,collectorSolrqString.length);
+            }
+            solrqfrag = '('+collectorSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            collectorval = collectorval.replace(",", ";");
+            searchTermsArr['collector'] = collectorval;
+        }
+        textParams = true;
+    }
+    if(collnumval){
+        if(SOLRMODE) {
+            var collnumvals = collnumval.split(',');
+            var collnumSolrqString = '';
+            for (i in collnumvals){
+                if(collnumvals[i].indexOf(" - ") !== -1){
+                    var pos = collnumvals[i].indexOf(" - ");
+                    var t1 = collnumvals[i].substr(0,pos).trim();
+                    var t2 = collnumvals[i].substr(pos+3,collnumvals[i].length).trim();
+                    if(!isNaN(t1) && !isNaN(t2)){
+                        collnumSolrqString += ' OR (recordNumber:['+t1+' TO '+t2+'])';
+                    }
+                    else{
+                        collnumSolrqString += " OR (recordNumber:['"+t1+"' TO '"+t2+"'])";
+                    }
+                }
+                else{
+                    collnumSolrqString += ' OR (recordNumber:"'+collnumvals[i]+'")';
+                }
+            }
+            collnumSolrqString = collnumSolrqString.substr(4,collnumSolrqString.length);
+            solrqfrag = '('+collnumSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            collnumval = collnumval.replace(",", ";");
+            searchTermsArr['collnum'] = collnumval;
+        }
+        textParams = true;
+    }
+    if(colldate1 || colldate2){
+        if(SOLRMODE) {
+            var colldateSolrqString = '';
+            if(!colldate1 && colldate2){
+                colldate1 = colldate2;
+                colldate2 = '';
+            }
+            colldate1 = formatCheckDate(colldate1);
+            if(colldate2){
+                colldate2 = formatCheckDate(colldate2);
+            }
+            if(colldate2){
+                colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate2+'T23:59:59.999Z])';
             }
             else{
-                colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate1+'T23:59:59.999Z])';
+                if(colldate1.substr(colldate1.length-5,colldate1.length) == '00-00'){
+                    colldateSolrqString += '(coll_year:'+colldate1.substr(0,4)+')';
+                }
+                else if(colldate1.substr(colldate1.length-2,colldate1.length) == '00'){
+                    colldateSolrqString += '((coll_year:'+colldate1.substr(0,4)+') AND (coll_month:'+colldate1.substr(5,7)+'))';
+                }
+                else{
+                    colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate1+'T23:59:59.999Z])';
+                }
+            }
+            solrqfrag = '('+colldateSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            searchTermsArr['eventdate1'] = colldate1;
+            if(colldate1 && colldate2){
+                searchTermsArr['eventdate2'] = colldate2;
             }
         }
-        solrqfrag = '('+colldateSolrqString+')';
-        solrqArr.push(solrqfrag);
+        textParams = true;
     }
     if(catnumval){
-        var catnumvals = catnumval.split(',');
-        var catnumSolrqString = '';
-        for(i = 0; i < catnumvals.length; i++){
-            if(catnumSolrqString) catnumSolrqString += " OR ";
-            catnumSolrqString += '(catalogNumber:"'+catnumvals[i]+'")';
+        if(SOLRMODE) {
+            var catnumvals = catnumval.split(',');
+            var catnumSolrqString = '';
+            for(i = 0; i < catnumvals.length; i++){
+                if(catnumSolrqString) catnumSolrqString += " OR ";
+                catnumSolrqString += '(catalogNumber:"'+catnumvals[i]+'")';
+            }
+            solrqfrag = '('+catnumSolrqString+')';
+            solrqArr.push(solrqfrag);
         }
-        solrqfrag = '('+catnumSolrqString+')';
-        solrqArr.push(solrqfrag);
+        else{
+            catnumval = catnumval.replace(",", ";");
+            searchTermsArr['catnum'] = catnumval;
+        }
+        textParams = true;
     }
     if(othercatnumval){
-        var othercatnumvals = othercatnumval.split(',');
-        var othercatnumSolrqString = '';
-        for(i = 0; i < othercatnumvals.length; i++){
-            if(othercatnumSolrqString) othercatnumSolrqString += " OR ";
-            othercatnumSolrqString += '(otherCatalogNumbers:"'+othercatnumvals[i]+'")';
+        if(SOLRMODE) {
+            var othercatnumvals = othercatnumval.split(',');
+            var othercatnumSolrqString = '';
+            for(i = 0; i < othercatnumvals.length; i++){
+                if(othercatnumSolrqString) othercatnumSolrqString += " OR ";
+                othercatnumSolrqString += '(otherCatalogNumbers:"'+othercatnumvals[i]+'")';
+            }
+            solrqfrag = '('+othercatnumSolrqString+')';
+            solrqArr.push(solrqfrag);
         }
-        solrqfrag = '('+othercatnumSolrqString+')';
-        solrqArr.push(solrqfrag);
+        else{
+            othercatnumval = othercatnumval.replace(",", ";");
+            searchTermsArr['othercatnum'] = othercatnumval;
+        }
+        textParams = true;
     }
     if(typestatus){
-        var typestatusSolrqString = "(typeStatus:[* TO *])";
-        solrqfrag = '('+typestatusSolrqString+')';
-        solrqArr.push(solrqfrag);
+        if(SOLRMODE) {
+            var typestatusSolrqString = "(typeStatus:[* TO *])";
+            solrqfrag = '('+typestatusSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            searchTermsArr['typestatus'] = true;
+        }
+        textParams = true;
     }
     if(hasimages){
-        var hasimagesSolrqString = "(imgid:[* TO *])";
-        solrqfrag = '('+hasimagesSolrqString+')';
-        solrqArr.push(solrqfrag);
+        if(SOLRMODE) {
+            var hasimagesSolrqString = "(imgid:[* TO *])";
+            solrqfrag = '('+hasimagesSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            searchTermsArr['hasimages'] = true;
+        }
+        textParams = true;
     }
     if(hasgenetic){
-        var hasgeneticSolrqString = "(resourcename:[* TO *])";
-        solrqfrag = '('+hasgeneticSolrqString+')';
-        solrqArr.push(solrqfrag);
+        if(SOLRMODE) {
+            var hasgeneticSolrqString = "(resourcename:[* TO *])";
+            solrqfrag = '('+hasgeneticSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            searchTermsArr['hasgenetic'] = true;
+        }
+        textParams = true;
     }
+    document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
 }
 
 function getTurfPointFeaturesetAll(){
@@ -2066,12 +2310,8 @@ function getTurfPointFeaturesetSelected(){
 
 function getWGS84CirclePoly(center,radius){
     var turfFeature = '';
-    var edgeCoordinate = [center[0] + radius, center[1]];
-    var wgs84Sphere = new ol.Sphere(6378137);
-    var groundRadius = wgs84Sphere.haversineDistance(center,edgeCoordinate);
-    groundRadius = groundRadius/1000;
     var ciroptions = {steps:200, units:'kilometers'};
-    turfFeature = turf.circle(center,groundRadius,ciroptions);
+    turfFeature = turf.circle(center,radius,ciroptions);
     return turfFeature;
 }
 
@@ -2145,19 +2385,37 @@ function lazyLoadPoints(index,callback){
     loadingComplete = true;
     if(index > 1) startindex = (index - 1)*lazyLoadCnt;
     var http = new XMLHttpRequest();
-    var url = "rpc/SOLRConnector.php";
-    var params = solrqString+'&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
-            loadingComplete = false;
-            setTimeout(checkLoading,loadingTimer);
-            callback(http.responseText);
-        }
-    };
-    http.send(params);
+    if(SOLRMODE){
+        var url = "rpc/SOLRConnector.php";
+        var params = solrqString+'&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                loadingComplete = false;
+                setTimeout(checkLoading,loadingTimer);
+                callback(http.responseText);
+            }
+        };
+        http.send(params);
+    }
+    else{
+        var jsonStarr = JSON.stringify(searchTermsArr);
+        var url = "rpc/MYSQLConnector.php";
+        var params = 'starr='+jsonStarr+'&rows='+lazyLoadCnt+'&start='+startindex+'&type=geoquery';
+        //console.log(url+'?'+params);
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                loadingComplete = false;
+                setTimeout(checkLoading,loadingTimer);
+                callback(http.responseText);
+            }
+        };
+        http.send(params);
+    }
 }
 
 function loadPoints(){
@@ -2170,26 +2428,21 @@ function loadPoints(){
     dsNewestDate = '';
     removeDateSlider();
     solrqString = newsolrqString;
-    if(newsolrqString){
+    if(collectionParams || geogParams || textParams || taxaParams){
         showWorking();
         pointvectorsource = new ol.source.Vector({wrapX: false});
         layersArr['pointv'].setSource(pointvectorsource);
-        getSOLRRecCnt(false,function(res) {
-            if(solrRecCnt){
+        getQueryRecCnt(false,function(res) {
+            if(queryRecCnt > 0){
                 loadPointsEvent = true;
                 setLoadingTimer();
-                if(loadVectorPoints){
-                    loadPointWFSLayer(0);
-                }
-                else{
-                    loadPointWMSLayer();
-                }
+                loadPointWFSLayer(0);
                 //cleanSelectionsLayer();
                 setRecordsTab();
                 changeRecordPage(1);
                 $('#recordstab').tabs({active: 1});
                 $("#accordion").accordion("option","active",1);
-                selectInteraction.getFeatures().clear();
+                //selectInteraction.getFeatures().clear();
                 if(!pointActive){
                     var infoArr = [];
                     infoArr['Name'] = 'pointv';
@@ -2315,76 +2568,90 @@ function prepareTaxaData(callback){
 }
 
 function prepareTaxaParams(callback){
+    taxaParams = false;
+    searchTermsArr['usethes'] = '';
+    searchTermsArr['taxontype'] = '';
+    searchTermsArr['taxa'] = '';
     var taxaval = document.getElementById("taxa").value.trim();
     if(taxaval){
-        var taxavals = taxaval.split(',');
-        var taxaSolrqString = '';
-        taxaArr = [];
         taxontype = document.getElementById("taxontype").value;
-        thes = false;
-        if(document.getElementById("thes").checked) thes = true;
-        for (i in taxavals){
-            var name = taxavals[i].trim();
-            taxaArr.push(name);
-        }
-        prepareTaxaData(function(res){
-            if(taxaArr){
-                var taxaSolrqString = '';
-                for (i in taxaArr){
-                    if(taxontype == 4){
-                        taxaSolrqString = " OR (parenttid:"+i+")";
-                    }
-                    else{
-                        if(taxontype == 5){
-                            var famArr = [];
-                            var scinameArr = [];
-                            if(taxaArr[i]["families"]){
-                                famArr = taxaArr[i]["families"];
-                            }
-                            if(famArr.length > 0){
-                                taxaSolrqString += " OR (family:("+famArr.join()+"))";
-                            }
-                            if(taxaArr[i]["scinames"]){
-                                scinameArr = taxaArr[i]["scinames"];
-                                if(scinameArr.length > 0){
-                                    for (s in scinameArr){
-                                        taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
-                                    }
-                                }
-                            }
+        thes = !!document.getElementById("thes").checked;
+        if(SOLRMODE) {
+            taxaArr = [];
+            var taxavals = taxaval.split(',');
+            var taxaSolrqString = '';
+            for (i in taxavals){
+                var name = taxavals[i].trim();
+                taxaArr.push(name);
+            }
+            prepareTaxaData(function(res){
+                if(taxaArr){
+                    var taxaSolrqString = '';
+                    for (i in taxaArr){
+                        if(taxontype == 4){
+                            taxaSolrqString = " OR (parenttid:"+i+")";
                         }
                         else{
-                            if((taxontype == 2 || taxontype == 1) && ((i.substr(i.length - 5) == "aceae") || (i.substr(i.length - 4) == "idae"))){
-                                taxaSolrqString += " OR (family:"+i+")";
-                            }
-                            if((taxontype == 3 || taxontype == 1) && ((i.substr(i.length - 5) != "aceae") || (i.substr(i.length - 4) != "idae"))){
-                                taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
-                            }
-                        }
-                        if(taxaArr[i]["synonyms"]){
-                            var synArr = [];
-                            synArr = taxaArr[i]["synonyms"];
-                            var tidArr = [];
-                            if(taxontype == 1 || taxontype == 2 || taxontype == 5){
-                                for (syn in synArr){
-                                    if(synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1){
-                                        taxaSolrqString += " OR (family:"+synArr[syn]+")";
+                            if(taxontype == 5){
+                                var famArr = [];
+                                var scinameArr = [];
+                                if(taxaArr[i]["families"]){
+                                    famArr = taxaArr[i]["families"];
+                                }
+                                if(famArr.length > 0){
+                                    taxaSolrqString += " OR (family:("+famArr.join()+"))";
+                                }
+                                if(taxaArr[i]["scinames"]){
+                                    scinameArr = taxaArr[i]["scinames"];
+                                    if(scinameArr.length > 0){
+                                        for (s in scinameArr){
+                                            taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
+                                        }
                                     }
                                 }
                             }
-                            for (syn in synArr){
-                                tidArr.push(syn);
+                            else{
+                                if((taxontype == 2 || taxontype == 1) && ((i.substr(i.length - 5) == "aceae") || (i.substr(i.length - 4) == "idae"))){
+                                    taxaSolrqString += " OR (family:"+i+")";
+                                }
+                                if((taxontype == 3 || taxontype == 1) && ((i.substr(i.length - 5) != "aceae") || (i.substr(i.length - 4) != "idae"))){
+                                    taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
+                                }
                             }
-                            taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
+                            if(taxaArr[i]["synonyms"]){
+                                var synArr = [];
+                                synArr = taxaArr[i]["synonyms"];
+                                var tidArr = [];
+                                if(taxontype == 1 || taxontype == 2 || taxontype == 5){
+                                    for (syn in synArr){
+                                        if(synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1){
+                                            taxaSolrqString += " OR (family:"+synArr[syn]+")";
+                                        }
+                                    }
+                                }
+                                for (syn in synArr){
+                                    tidArr.push(syn);
+                                }
+                                taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
+                            }
                         }
                     }
+                    taxaSolrqString = taxaSolrqString.substr(4,taxaSolrqString.length);
+                    solrqfrag = '('+taxaSolrqString+')';
+                    solrqArr.push(solrqfrag);
                 }
-                taxaSolrqString = taxaSolrqString.substr(4,taxaSolrqString.length);
-                solrqfrag = '('+taxaSolrqString+')';
-                solrqArr.push(solrqfrag);
-            }
-            callback(1);
-        });
+                callback(1);
+            });
+        }
+        else{
+            taxaval = taxaval.replace(",", ";");
+            searchTermsArr['usethes'] = thes;
+            searchTermsArr['taxontype'] = taxontype;
+            searchTermsArr['taxa'] = taxaval;
+            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
+
+        }
+        taxaParams = true;
     }
     else{
         callback(1);
@@ -2481,10 +2748,10 @@ function primeSymbologyData(features){
 }
 
 function processCheckSelection(c){
-    if(c.checked == true){
+    if(c.checked === true){
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==1){
-            if($('.occcheck:checked').length==$('.occcheck').length){
+        if(activeTab === 1){
+            if($('.occcheck:checked').length === $('.occcheck').length){
                 document.getElementById("selectallcheck").checked = true;
             }
         }
@@ -2492,9 +2759,9 @@ function processCheckSelection(c){
         layersArr['pointv'].getSource().changed();
         updateSelections(Number(c.value),false);
     }
-    else if(c.checked == false){
+    else if(c.checked === false){
         var activeTab = $('#recordstab').tabs("option","active");
-        if(activeTab==1){
+        if(activeTab === 1){
             document.getElementById("selectallcheck").checked = false;
         }
         var index = selections.indexOf(Number(c.value));
@@ -2515,26 +2782,26 @@ function processDownloadRequest(selection){
     if(dlType){
         var filename = 'spatialdata_'+getDateTimeString();
         var contentType = '';
-        if(dlType == 'kml') contentType = 'application/vnd.google-earth.kml+xml';
-        else if(dlType == 'geojson') contentType = 'application/vnd.geo+json';
-        else if(dlType == 'gpx') contentType = 'application/gpx+xml';
+        if(dlType === 'kml') contentType = 'application/vnd.google-earth.kml+xml';
+        else if(dlType === 'geojson') contentType = 'application/vnd.geo+json';
+        else if(dlType === 'gpx') contentType = 'application/gpx+xml';
         document.getElementById("dh-type").value = dlType;
         document.getElementById("dh-filename").value = filename;
         document.getElementById("dh-contentType").value = contentType;
         if(selection) document.getElementById("dh-selections").value = selections.join();
-        if(!selection && dlType == 'csv'){
+        if(!selection && dlType === 'csv'){
             document.getElementById("dh-fl").value = 'occid';
         }
         else{
             document.getElementById("dh-fl").value = SOLRFields;
         }
-        if(dlType == 'csv'){
+        if(dlType === 'csv'){
             $("#csvoptions").popup("show");
         }
-        else if(dlType == 'kml' || dlType == 'geojson' || dlType == 'gpx'){
+        else if(dlType === 'kml' || dlType === 'geojson' || dlType === 'gpx'){
             document.getElementById("datadownloadform").submit();
         }
-        else if(dlType == 'png'){
+        else if(dlType === 'png'){
             var imagefilename = 'map_'+getDateTimeString()+'.png';
             exportMapPNG(imagefilename,false);
         }
@@ -2800,6 +3067,7 @@ function setBaseLayerSource(urlTemplate){
 }
 
 function setClusterSymbol(feature) {
+    var clusterindex, hexcolor, radius;
     var style = '';
     var stroke = '';
     var selected = false;
@@ -2808,39 +3076,40 @@ function setClusterSymbol(feature) {
         if(size > 1){
             var features = feature.get('features');
             if(selections.length > 0){
-                var clusterindex = feature.get('identifiers');
+                clusterindex = feature.get('identifiers');
                 for(i in selections){
-                    if(clusterindex.indexOf(selections[i]) !== -1) selected = true;
+                    if(clusterindex.indexOf(selections[i].toString()) !== -1) {
+                        selected = true;
+                    }
                 }
             }
-            var clusterindex = feature.get('identifiers');
+            clusterindex = feature.get('identifiers');
             var cKey = feature.get('clusterkey');
-            if(mapSymbology == 'coll'){
-                var hexcolor = '#'+collSymbology[cKey]['color'];
+            if(mapSymbology === 'coll'){
+                hexcolor = '#'+collSymbology[cKey]['color'];
             }
-            else if(mapSymbology == 'taxa'){
-                var hexcolor = '#'+taxaSymbology[cKey]['color'];
+            else if(mapSymbology === 'taxa'){
+                hexcolor = '#'+taxaSymbology[cKey]['color'];
             }
             var colorArr = hexToRgb(hexcolor);
-            if(size < 10) var radius = 10;
-            else if(size < 100) var radius = 15;
-            else if(size < 1000) var radius = 20;
-            else if(size < 10000) var radius = 25;
-            else if(size < 100000) var radius = 30;
-            else var radius = 35;
+            if(size < 10) radius = 10;
+            else if(size < 100) radius = 15;
+            else if(size < 1000) radius = 20;
+            else if(size < 10000) radius = 25;
+            else if(size < 100000) radius = 30;
+            else radius = 35;
 
-            if(selected) stroke = new ol.style.Stroke({color: '#10D8E6', width: 2});
+            if(selected) {
+                stroke = new ol.style.Stroke({color: '#10D8E6', width: 2})
+            }
 
             style = new ol.style.Style({
                 image: new ol.style.Circle({
-                    opacity: 1,
-                    scale: 1,
                     radius: radius,
                     stroke: stroke,
                     fill: new ol.style.Fill({
                         color: [colorArr['r'],colorArr['g'],colorArr['b'],0.8]
-                    }),
-                    atlasManager: atlasManager
+                    })
                 }),
                 text: new ol.style.Text({
                     scale: 1,
@@ -2868,13 +3137,19 @@ function setDownloadFeatures(features){
     for(i in features){
         var clone = features[i].clone();
         var geoType = clone.getGeometry().getType();
-        if(geoType == 'Circle'){
+        if(geoType === 'Circle'){
             var geoJSONFormat = new ol.format.GeoJSON();
             var geometry = clone.getGeometry();
             var fixedgeometry = geometry.transform(mapProjection,wgs84Projection);
             var center = fixedgeometry.getCenter();
             var radius = fixedgeometry.getRadius();
-            var turfCircle = getWGS84CirclePoly(center,radius);
+            var edgeCoordinate = [center[0] + radius, center[1]];
+            var groundRadius = ol.sphere.getDistance(
+                ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+            );
+            groundRadius = groundRadius/1000;
+            var turfCircle = getWGS84CirclePoly(center,groundRadius);
             var circpoly = geoJSONFormat.readFeature(turfCircle);
             circpoly.getGeometry().transform(wgs84Projection,mapProjection);
             fixedFeatures.push(circpoly);
@@ -2980,7 +3255,7 @@ function setLayersTable(){
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             var layerArr;
             var jsonReturn = false;
             try{
@@ -3007,12 +3282,12 @@ function setLayersTable(){
 
 function setLoadingTimer(){
     loadingTimer = 20000;
-    if(solrRecCnt < 200000) loadingTimer = 13000;
-    if(solrRecCnt < 150000) loadingTimer = 10000;
-    if(solrRecCnt < 100000) loadingTimer = 7000;
-    if(solrRecCnt < 50000) loadingTimer = 5000;
-    if(solrRecCnt < 10000) loadingTimer = 3000;
-    if(solrRecCnt < 5000) loadingTimer = 1000;
+    if(queryRecCnt < 200000) loadingTimer = 13000;
+    if(queryRecCnt < 150000) loadingTimer = 10000;
+    if(queryRecCnt < 100000) loadingTimer = 7000;
+    if(queryRecCnt < 50000) loadingTimer = 5000;
+    if(queryRecCnt < 10000) loadingTimer = 3000;
+    if(queryRecCnt < 5000) loadingTimer = 1000;
 }
 
 function setReclassifyTable(){
@@ -3080,7 +3355,7 @@ function setReclassifyTable(){
 }
 
 function setRecordsTab(){
-    if(solrRecCnt > 0){
+    if(queryRecCnt > 0){
         document.getElementById("recordsHeader").style.display = "block";
         document.getElementById("recordstab").style.display = "block";
         document.getElementById("pointToolsNoneDiv").style.display = "none";
@@ -3118,13 +3393,15 @@ function setSymbol(feature){
     var recType = feature.get('CollType');
     if(!recType) recType = 'observation';
     if(selections.length > 0){
-        var occid = feature.get('occid');
-        if(selections.indexOf(occid) !== -1) selected = true;
+        var occid = Number(feature.get('occid'));
+        if(selections.indexOf(occid) !== -1) {
+            selected = true;
+        }
     }
-    if(mapSymbology == 'coll'){
+    if(mapSymbology === 'coll'){
         var color = '#'+collSymbology[cKey]['color'];
     }
-    else if(mapSymbology == 'taxa'){
+    else if(mapSymbology === 'taxa'){
         var color = '#'+taxaSymbology[cKey]['color'];
     }
 
@@ -3141,25 +3418,19 @@ function setSymbol(feature){
     if(recType.toLowerCase().indexOf('observation') !== -1){
         style = new ol.style.Style({
             image: new ol.style.RegularShape({
-                opacity: 1,
-                scale: 1,
                 fill: fill,
                 stroke: stroke,
                 points: 3,
-                radius: 7,
-                atlasManager: atlasManager
+                radius: 7
             })
         });
     }
     else{
         style = new ol.style.Style({
             image: new ol.style.Circle({
-                opacity: 1,
-                scale: 1,
                 radius: 7,
                 fill: fill,
-                stroke: stroke,
-                atlasManager: atlasManager
+                stroke: stroke
             })
         });
     }
@@ -3436,7 +3707,7 @@ function validateFeatureDate(feature){
     var valid = false;
     if(feature.get('coll_year')){
         var fyear = Number(feature.get('coll_year'));
-        if(fyear.toString().length == 4 && fyear > 1500){
+        if(fyear.toString().length === 4 && fyear > 1500){
             var fmonth = (feature.get('coll_month')?Number(feature.get('coll_month')):1);
             var fday = (feature.get('coll_day')?Number(feature.get('coll_day')):1);
             var fDate = new Date();
@@ -3486,36 +3757,41 @@ function verifyCollForm(){
     return formVerified;
 }
 
-function writeWfsWktString(type,geocoords) {
+function writeMySQLWktString(type,geocoords) {
     var wktStr = '';
     var coordStr = '';
-    var coordRingStr = '';
-    if(type == 'Polygon'){
+    if(type === 'Polygon'){
         for(i in geocoords){
+            coordStr += '(';
             for(c in geocoords[i]) {
                 var lat = geocoords[i][c][1];
                 var long = geocoords[i][c][0];
                 coordStr += lat+' '+long+',';
             }
+            coordStr = coordStr.substring(0,coordStr.length-1);
+            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
-        wktStr = 'POLYGON(('+coordStr+'))';
+        wktStr = 'POLYGON('+coordStr+')';
     }
-    else if(type == 'MultiPolygon'){
+    else if(type === 'MultiPolygon'){
         for(i in geocoords){
+            coordStr += '(';
             for(r in geocoords[i]){
-                coordRingStr = '';
+                coordStr += '(';
                 for(c in geocoords[i][r]) {
                     var lat = geocoords[i][r][c][1];
                     var long = geocoords[i][r][c][0];
-                    coordRingStr += lat+' '+long+',';
+                    coordStr += lat+' '+long+',';
                 }
-                coordRingStr = coordRingStr.substring(0,coordRingStr.length-1);
-                coordStr += '('+coordRingStr+'),';
+                coordStr = coordStr.substring(0,coordStr.length-1);
+                coordStr += '),';
             }
+            coordStr = coordStr.substring(0,coordStr.length-1);
+            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
-        wktStr = 'MULTIPOLYGON(('+coordStr+'))';
+        wktStr = 'MULTIPOLYGON('+coordStr+')';
     }
 
     return wktStr;

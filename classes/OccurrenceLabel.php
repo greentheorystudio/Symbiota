@@ -19,9 +19,9 @@ class OccurrenceLabel{
 
 	//Label functions
 	public function queryOccurrences($postArr){
-		global $USER_RIGHTS;
+		global $USER_RIGHTS, $IS_ADMIN, $SYMB_UID;
 		$canReadRareSpp = false;
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+		if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
 			$canReadRareSpp = true;
 		}
 		elseif((array_key_exists("CollEditor", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["CollEditor"])) || (array_key_exists("RareSppReader", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["RareSppReader"]))){
@@ -137,7 +137,7 @@ class OccurrenceLabel{
 			}
 			if($this->collArr['colltype'] == 'General Observations'){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
-				if(!array_key_exists('extendedsearch', $postArr)) $sqlWhere .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
+				if(!array_key_exists('extendedsearch', $postArr)) $sqlWhere .= ' AND (o.observeruid = '.$SYMB_UID.') ';
 			}
 			elseif(!array_key_exists('extendedsearch', $postArr)){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
@@ -155,7 +155,7 @@ class OccurrenceLabel{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$localitySecurity = $r->localitySecurity;
-				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid == $GLOBALS['SYMB_UID'])){
+				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid == $SYMB_UID)){
 					$occId = $r->occid;
 					$retArr[$occId]['collid'] = $r->collid;
 					$retArr[$occId]['q'] = $r->q;
@@ -172,11 +172,12 @@ class OccurrenceLabel{
 	}
 
 	public function getLabelArray($occidArr, $speciesAuthors){
+		global $SYMB_UID;
 		$retArr = array();
 		if($occidArr){
 			$authorArr = array();
 			$sqlWhere = 'WHERE (o.occid IN('.implode(',',$occidArr).')) ';
-			if($this->collArr['colltype'] == 'General Observations') $sqlWhere .= 'AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
+			if($this->collArr['colltype'] == 'General Observations') $sqlWhere .= 'AND (o.observeruid = '.$SYMB_UID.') ';
 			//Get species authors for infraspecific taxa
 			$sql1 = 'SELECT o.occid, t2.author '.
 				'FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted '.
@@ -279,17 +280,18 @@ class OccurrenceLabel{
 	}
 
 	public function getLabelProjects(){
+		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT labelproject, observeruid '.
 				'FROM omoccurrences '.
 				'WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (observeruid = '.$GLOBALS['SYMB_UID'].') ';
+			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (observeruid = '.$SYMB_UID.') ';
 			$sql .= 'ORDER BY labelproject';
 			$rs = $this->conn->query($sql);
 			$altArr = array();
 			while($r = $rs->fetch_object()){
-				if($GLOBALS['SYMB_UID'] == $r->observeruid){
+				if($SYMB_UID == $r->observeruid){
 					$retArr[] = $r->labelproject;
 				}
 				else{
@@ -306,6 +308,7 @@ class OccurrenceLabel{
 	}
 
 	public function getDatasetProjects(){
+		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT ds.datasetid, ds.name '.
@@ -313,7 +316,7 @@ class OccurrenceLabel{
 				'INNER JOIN omoccurdatasetlink dl ON ds.datasetid = dl.datasetid '.
 				'INNER JOIN omoccurrences o ON dl.occid = o.occid '.
 				'WHERE (r.tablename = "omoccurdatasets") AND (o.collid = '.$this->collid.') ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
+			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (o.observeruid = '.$SYMB_UID.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->datasetid] = $r->name;
@@ -324,6 +327,7 @@ class OccurrenceLabel{
 	}
 	
 	public function getAnnoQueue(){
+		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT o.occid, d.detid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, '.
@@ -332,7 +336,7 @@ class OccurrenceLabel{
 				'FROM omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
 				'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
 			if($this->collArr['colltype'] == 'General Observations'){
-				$sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
+				$sql .= ' AND (o.observeruid = '.$SYMB_UID.') ';
 			}
 			$sql .= 'LIMIT 400 ';
 			//echo $sql;

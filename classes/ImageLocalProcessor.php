@@ -66,14 +66,15 @@ class ImageLocalProcessor {
  
 
 	function __construct(){
+		global $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_LG_WIDTH, $IMG_FILE_SIZE_LIMIT;
 		ini_set('memory_limit','1024M');
 		ini_set('auto_detect_line_endings', true);
 		//Use deaults located within symbini, if they are available
 		//Will be replaced by values within configuration file, if they are set 
-		if(isset($GLOBALS['imgWebWidth']) && $GLOBALS['imgWebWidth']) $this->webPixWidth = $GLOBALS['imgWebWidth'];
-		if(isset($GLOBALS['imgTnWidth']) && $GLOBALS['imgTnWidth']) $this->tnPixWidth = $GLOBALS['imgTnWidth'];
-		if(isset($GLOBALS['imgLgWidth']) && $GLOBALS['imgLgWidth']) $this->lgPixWidth = $GLOBALS['imgLgWidth'];
-		if(isset($GLOBALS['imgFileSizeLimit']) && $GLOBALS['imgFileSizeLimit']) $this->webFileSizeLimit = $GLOBALS['imgFileSizeLimit'];
+		if($IMG_WEB_WIDTH) $this->webPixWidth = $IMG_WEB_WIDTH;
+		if($IMG_TN_WIDTH) $this->tnPixWidth = $IMG_TN_WIDTH;
+		if($IMG_LG_WIDTH) $this->lgPixWidth = $IMG_LG_WIDTH;
+		if($IMG_FILE_SIZE_LIMIT) $this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
 	}
 
 	function __destruct(){
@@ -125,6 +126,7 @@ class ImageLocalProcessor {
 	}
 
 	public function batchLoadImages(){
+		global $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL, $IMAGE_DOMAIN;
 		if(substr($this->sourcePathBase,0,4) == 'http'){
 			//http protocol, thus test for a valid page
 			$headerArr = get_headers($this->sourcePathBase);
@@ -154,11 +156,11 @@ class ImageLocalProcessor {
 		//Set target base path
 		if(!$this->targetPathBase){
 			//Assume that portal's default image root path is what needs to be used  
-			$this->targetPathBase = $GLOBALS['imageRootPath'];
+			$this->targetPathBase = $IMAGE_ROOT_PATH;
 		}
 		if(!$this->targetPathBase){
 			//Assume that we should use the portal's default image root path   
-			$this->targetPathBase = $GLOBALS['imageRootPath'];
+			$this->targetPathBase = $IMAGE_ROOT_PATH;
 		}
 		if($this->targetPathBase && substr($this->targetPathBase,-1) != '/' && substr($this->targetPathBase,-1) != "\\"){
 			$this->targetPathBase .= '/';
@@ -167,9 +169,9 @@ class ImageLocalProcessor {
 		//Set image base URL
 		if(!$this->imgUrlBase){
 			//Assume that we should use the portal's default image url prefix 
-			$this->imgUrlBase = $GLOBALS['imageRootUrl'];
+			$this->imgUrlBase = $IMAGE_ROOT_URL;
 		}
-		if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
+		if($IMAGE_DOMAIN){
 			//Since imageDomain is set, portal is not central portal thus add portals domain to url base
 			if(substr($this->imgUrlBase,0,7) != 'http://' && substr($this->imgUrlBase,0,8) != 'https://'){
 				$urlPrefix = "http://";
@@ -1807,14 +1809,15 @@ class ImageLocalProcessor {
 	}
 	
 	private function uriExists($url) {
+		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$exists = false;
 		$localUrl = '';
 		if(substr($url,0,1) == '/'){
-			if(isset($GLOBALS['imageDomain']) && $GLOBALS['imageDomain']){
-				$url = $GLOBALS['imageDomain'].$url;
+			if($IMAGE_DOMAIN){
+				$url = $IMAGE_DOMAIN.$url;
 			}
-			elseif($GLOBALS['imageRootUrl'] && strpos($url,$GLOBALS['imageRootUrl']) === 0){
-				$localUrl = str_replace($GLOBALS['imageRootUrl'],$GLOBALS['imageRootPath'],$url);
+			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) === 0){
+				$localUrl = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$url);
 			}
 			else{
 				$urlPrefix = "http://";

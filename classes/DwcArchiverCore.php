@@ -45,6 +45,7 @@ class DwcArchiverCore extends Manager{
 	private $geolocateVariables = array();
 
 	public function __construct($conType='readonly'){
+		global $SERVER_ROOT, $LOG_PATH, $CHARSET;
 		parent::__construct(null,$conType);
 		//Ensure that PHP DOMDocument class is installed
 		if(!class_exists('DOMDocument')){
@@ -52,12 +53,12 @@ class DwcArchiverCore extends Manager{
 		}
 		$this->ts = time();
 		if($this->verboseMode){
-			$logFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/')."content/logs/DWCA_".date('Y-m-d').".log";
+			$logFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)==='/'?'':'/'). 'content/logs/DWCA_' .date('Y-m-d'). '.log';
 			$this->setLogFH($LOG_PATH);
 		}
 
 		//Character set
-		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
+		$this->charSetSource = strtoupper($CHARSET);
 		$this->charSetOut = $this->charSetSource;
 
 		$this->condAllowArr = array('catalognumber','othercatalognumbers','occurrenceid','family','sciname',
@@ -97,17 +98,18 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function setTargetPath($tp = ''){
+		global $SERVER_ROOT, $TEMP_DIR_ROOT;
 		if($tp){
 			$this->targetPath = $tp;
 		}
 		else{
 			//Set to temp download path
-			$tPath = $GLOBALS["tempDirRoot"];
+			$tPath = $TEMP_DIR_ROOT;
 			if(!$tPath){
 				$tPath = ini_get('upload_tmp_dir');
 			}
 			if(!$tPath){
-				$tPath = $GLOBALS["serverRoot"];
+				$tPath = $SERVER_ROOT;
 				if(substr($tPath,-1) != '/' && substr($tPath,-1) != '\\'){
 					$tPath .= '/';
 				}
@@ -587,7 +589,8 @@ class DwcArchiverCore extends Manager{
     }
 
     public function getDwcArray() {
-		$result = Array();
+		global $CLIENT_ROOT;
+    	$result = Array();
 		if(!$this->occurrenceFieldArr){
 			$this->occurrenceFieldArr = DwcArchiverOccurrence::getOccurrenceArr($this->schemaType, $this->extended);
 		}
@@ -627,7 +630,7 @@ class DwcArchiverCore extends Manager{
 				//$typeArr = array('Other material', 'Holotype', 'Paratype', 'Hapantotype', 'Syntype', 'Isotype', 'Neotype', 'Lectotype', 'Paralectotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
 			}
 			$this->setServerDomain();
-			$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+			$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 			$hasRecords = false;
 			$cnt = 0;
 			while($r = $rs->fetch_assoc()){
@@ -994,9 +997,9 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function getEmlArr(){
-
+		global $CLIENT_ROOT, $DEFAULT_TITLE, $USER_DISPLAY_NAME, $PORTAL_GUID, $ADMIN_EMAIL;
 		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 		$localDomain = $this->serverDomain;
 
 		$emlArr = array();
@@ -1024,23 +1027,22 @@ class DwcArchiverCore extends Manager{
 			$emlArr['intellectualRights'] = $cArr['rights'];
 		}
 		else{
-			$emlArr['title'] = $GLOBALS['DEFAULT_TITLE'].' general data extract';
+			$emlArr['title'] = $DEFAULT_TITLE.' general data extract';
 		}
-		if(isset($GLOBALS['USER_DISPLAY_NAME']) && $GLOBALS['USER_DISPLAY_NAME']){
-			//$emlArr['creator'][0]['individualName'] = $GLOBALS['USER_DISPLAY_NAME'];
-			$emlArr['associatedParty'][0]['individualName'] = $GLOBALS['USER_DISPLAY_NAME'];
+		if(isset($USER_DISPLAY_NAME)){
+			$emlArr['associatedParty'][0]['individualName'] = $USER_DISPLAY_NAME;
 			$emlArr['associatedParty'][0]['role'] = 'CONTENT_PROVIDER';
 		}
 
-		if(array_key_exists('PORTAL_GUID',$GLOBALS) && $GLOBALS['PORTAL_GUID']){
-			$emlArr['creator'][0]['attr']['id'] = $GLOBALS['PORTAL_GUID'];
+		if($PORTAL_GUID){
+			$emlArr['creator'][0]['attr']['id'] = $PORTAL_GUID;
 		}
-		$emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['creator'][0]['organizationName'] = $DEFAULT_TITLE;
+		$emlArr['creator'][0]['electronicMailAddress'] = $ADMIN_EMAIL;
 		$emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix.'index.php';
 
-		$emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
-		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
+		$emlArr['metadataProvider'][0]['organizationName'] = $DEFAULT_TITLE;
+		$emlArr['metadataProvider'][0]['electronicMailAddress'] = $ADMIN_EMAIL;
 		$emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix.'index.php';
 
 		$emlArr['pubDate'] = date("Y-m-d");
@@ -1113,7 +1115,7 @@ class DwcArchiverCore extends Manager{
 	 * USED BY: this class, and emlhandler.php
 	 */
 	public function getEmlDom($emlArr = null){
-		global $RIGHTS_TERMS_DEFS,$EML_PROJECT_ADDITIONS;
+		global $DEFAULT_TITLE, $CLIENT_ROOT, $RIGHTS_TERMS_DEFS, $EML_PROJECT_ADDITIONS;
 		$usageTermArr = Array();
 
 		if(!$emlArr) $emlArr = $this->getEmlArr();
@@ -1299,7 +1301,7 @@ class DwcArchiverCore extends Manager{
 		//Citation
 		$id = UuidFactory::getUuidV4();
 		$citeElem = $newDoc->createElement('citation');
-		$citeElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' - '.$id));
+		$citeElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' - '.$id));
 		$citeElem->setAttribute('identifier',$id);
 		$symbElem->appendChild($citeElem);
 		//Physical
@@ -1352,7 +1354,7 @@ class DwcArchiverCore extends Manager{
 			$this->setServerDomain();
 			$urlPathPrefix = '';
 			if($this->serverDomain){
-				$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+				$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 				$urlPathPrefix .= 'collections/individual/index.php';
 				//Add Geolocate metadata
 				$glElem = $newDoc->createElement('geoLocate');
@@ -1374,7 +1376,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function getFullRss(){
-		//Create new document and write out to target
+		global $DEFAULT_TITLE, $CLIENT_ROOT;
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
 
 		//Add root element
@@ -1390,11 +1392,11 @@ class DwcArchiverCore extends Manager{
 
 		//Add title, link, description, language
 		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Biological Occurrences RSS feed'));
+		$titleElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' Biological Occurrences RSS feed'));
 		$channelElem->appendChild($titleElem);
 
 		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+		$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 
 		$localDomain = $this->serverDomain;
 
@@ -1402,7 +1404,7 @@ class DwcArchiverCore extends Manager{
 		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Natural History Collections and Observation Project feed'));
+		$descriptionElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' Natural History Collections and Observation Project feed'));
 		$channelElem->appendChild($descriptionElem);
 		$languageElem = $newDoc->createElement('language','en-us');
 		$channelElem->appendChild($languageElem);
@@ -1486,9 +1488,10 @@ class DwcArchiverCore extends Manager{
 
 	//Generate Data files
 	private function writeOccurrenceFile(){
-		$this->logOrEcho("Creating occurrence file (".date('h:i:s A').")... ");
+		global $CLIENT_ROOT;
+		$this->logOrEcho('Creating occurrence file (' .date('h:i:s A'). ')... ');
 		$filePath = $this->targetPath.$this->ts.'-occur'.$this->fileExt;
-		$fh = fopen($filePath, 'w');
+		$fh = fopen($filePath, 'wb');
 		if(!$fh){
 			$this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
 			return false;
@@ -1501,8 +1504,12 @@ class DwcArchiverCore extends Manager{
 		//Output records
 		$this->applyConditions();
 		$sql = DwcArchiverOccurrence::getSqlOccurrences($this->occurrenceFieldArr['fields'],$this->conditionSql,$this->getTableJoins());
-		if(!$sql) return false;
-		if($this->schemaType != 'backup') $sql .= ' LIMIT 1000000';
+		if(!$sql) {
+			return false;
+		}
+		if($this->schemaType !== 'backup') {
+			$sql .= ' LIMIT 1000000';
+		}
 
 		//Output header
 		$fieldArr = $this->occurrenceFieldArr['fields'];
@@ -1553,7 +1560,7 @@ class DwcArchiverCore extends Manager{
 		//echo $sql; exit;
 		if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
 			$this->setServerDomain();
-			$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+			$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 			$typeArr = null;
 			if($this->schemaType == 'pensoft'){
 				$typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
@@ -1686,14 +1693,15 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function getOccurrenceFile(){
-		if(!$this->targetPath) $this->setTargetPath();
-		$filePath = $this->writeOccurrenceFile();
-		return $filePath;
+		if(!$this->targetPath) {
+			$this->setTargetPath();
+		}
+		return $this->writeOccurrenceFile();
 	}
 
 	private function writeDeterminationFile(){
-		$this->logOrEcho("Creating identification file (".date('h:i:s A').")... ");
-		$fh = fopen($this->targetPath.$this->ts.'-det'.$this->fileExt, 'w');
+		$this->logOrEcho('Creating identification file (' .date('h:i:s A'). ')... ');
+		$fh = fopen($this->targetPath.$this->ts.'-det'.$this->fileExt, 'wb');
 		if(!$fh){
 			$this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
 			return false;
@@ -1726,7 +1734,7 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function writeImageFile(){
-
+		global $CLIENT_ROOT, $IMAGE_DOMAIN;
 		$this->logOrEcho("Creating image file (".date('h:i:s A').")... ");
 		$fh = fopen($this->targetPath.$this->ts.'-images'.$this->fileExt, 'w');
 		if(!$fh){
@@ -1744,11 +1752,10 @@ class DwcArchiverCore extends Manager{
 		if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
 
 			$this->setServerDomain();
-			$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1)=='/'?'':'/');
+			$urlPathPrefix = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
 
-			$localDomain = '';
-			if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-				$localDomain = $GLOBALS['IMAGE_DOMAIN'];
+			if($IMAGE_DOMAIN){
+				$localDomain = $IMAGE_DOMAIN;
 			}
 			else{
 				$localDomain = $this->serverDomain;
@@ -1870,8 +1877,8 @@ class DwcArchiverCore extends Manager{
 	}
 
 	public function deleteArchive($collID){
-		//Remove archive instance from RSS feed
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/').'webservices/dwc/rss.xml';
+		global $SERVER_ROOT;
+		$rssFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'webservices/dwc/rss.xml';
 		if(!file_exists($rssFile)) return false;
 		$doc = new DOMDocument();
 		$doc->load($rssFile);
@@ -1881,7 +1888,7 @@ class DwcArchiverCore extends Manager{
 			if($i->getAttribute('collid') == $collID){
 				$link = $i->getElementsByTagName("link");
 				$nodeValue = $link->item(0)->nodeValue;
-				$filePath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1)=='/'?'':'/');
+				$filePath = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/');
 				$filePath1 = $filePath.'content/dwca'.substr($nodeValue,strrpos($nodeValue,'/'));
 				if(file_exists($filePath1)) unlink($filePath1);
 				$emlPath1 = str_replace('.zip','.eml',$filePath1);

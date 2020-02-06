@@ -40,13 +40,13 @@ if($imgArr){
 	$imgUrl = $imgArr["url"];
 	$origUrl = $imgArr["originalurl"];
 	$metaUrl = $imgArr["url"];
-	if(array_key_exists("imageDomain",$GLOBALS)){
+	if($IMAGE_DOMAIN){
 		if(substr($imgUrl,0,1)=="/"){
-			$imgUrl = $GLOBALS["imageDomain"].$imgUrl;
-			$metaUrl = $GLOBALS["imageDomain"].$metaUrl;
+			$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+			$metaUrl = $IMAGE_DOMAIN.$metaUrl;
 		}
 		if($origUrl && substr($origUrl,0,1)=="/"){
-			$origUrl = $GLOBALS["imageDomain"].$origUrl;
+			$origUrl = $IMAGE_DOMAIN.$origUrl;
 		}
 	}
 	if(substr($metaUrl,0,1)=="/"){

@@ -98,7 +98,7 @@ if(!$clid){
 				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray["authors"]:''); ?>" />
 			</div>
 			<?php
-			if(isset($GLOBALS['USER_RIGHTS']['RareSppAdmin']) || $IS_ADMIN){
+			if(isset($USER_RIGHTS['RareSppAdmin']) || $IS_ADMIN){
 				?>
 				<div>
 					<b>Checklist Type</b><br/>

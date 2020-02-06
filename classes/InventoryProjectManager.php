@@ -11,10 +11,11 @@ class InventoryProjectManager {
 	private $errorStr;
 
 	public function __construct($connType = 'readonly'){
-        $connection = new DbConnection();
+        global $GOOGLE_MAP_KEY;
+		$connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
 		$this->googleUrl = "http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain";
-		if(array_key_exists('GOOGLE_MAP_KEY',$GLOBALS) && $GLOBALS['GOOGLE_MAP_KEY']) $this->googleUrl .= '&key='.$GLOBALS['GOOGLE_MAP_KEY'];
+		if($GOOGLE_MAP_KEY) $this->googleUrl .= '&key='.$GOOGLE_MAP_KEY;
 	}
 
 	public function __destruct(){

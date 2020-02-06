@@ -76,9 +76,10 @@ class SiteMapManager{
 	}
 
 	public function getChecklistList($clArr){
+		global $IS_ADMIN;
 		$returnArr = Array();
 		$sql = 'SELECT clid, name, access FROM fmchecklists ';
-		if($GLOBALS['IS_ADMIN']){
+		if($IS_ADMIN){
 			//Show all without restrictions
 		}
 		elseif($clArr){
