@@ -115,7 +115,12 @@ if($action === 'Create Login'){
 
         function verifyUserInput() {
             const enteredValue = document.getElementById("human-entry").value;
-            document.getElementById("submitButton").disabled = enteredValue.toString() !== randNumber.toString();
+            if(enteredValue.toString() === randNumber.toString()){
+                setTimeout(function() {
+                    const enteredValue2 = document.getElementById("human-entry").value;
+                    document.getElementById("submit").disabled = enteredValue2.toString() !== randNumber.toString();
+                }, 500 );
+            }
         }
 	</script>
 </head>
