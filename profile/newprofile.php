@@ -118,8 +118,11 @@ if($action === 'Create Login'){
             if(enteredValue.toString() === randNumber.toString()){
                 setTimeout(function() {
                     const enteredValue2 = document.getElementById("human-entry").value;
-                    document.getElementById("submit").disabled = enteredValue2.toString() !== randNumber.toString();
+                    document.getElementById("submitButton").disabled = enteredValue2.toString() !== randNumber.toString();
                 }, 500 );
+            }
+            else{
+                document.getElementById("submitButton").disabled = true;
             }
         }
 	</script>
