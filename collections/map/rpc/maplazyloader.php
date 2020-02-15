@@ -11,7 +11,7 @@ $mapType = $_REQUEST['maptype'];
 $mapManager = new MapInterfaceManager();
 $solrManager = new SOLRManager();
 
-$retArr = Array();
+$retArr = array();
 
 $stArr = json_decode($stArrJson, true);
 

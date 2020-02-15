@@ -8,7 +8,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS)){
 	$isEditor = true;
 }
 
-$attrsValues = Array();
+$attrsValues = array();
 
 $clValue = array_key_exists("cl",$_REQUEST)?htmlspecialchars($_REQUEST["cl"],ENT_QUOTES):"";
 $dynClid = array_key_exists("dynclid",$_REQUEST)?htmlspecialchars($_REQUEST["dynclid"],ENT_QUOTES):0;
@@ -40,7 +40,7 @@ $chars = $data["chars"];  				//$chars = Array(HTML Strings)
 $taxa = $data["taxa"];					//$taxa  = Array(family => array(TID => DisplayName))
 
 //Harevest and remove language list from $chars
-$languages = Array();
+$languages = array();
 if($chars){
 	$languages = $chars["Languages"];
 	unset($chars["Languages"]);
@@ -107,7 +107,7 @@ if($chars){
                         <select name="taxon">
                             <?php
                                 echo "<option value='All Species'>-- Select a Taxonomic Group --</option>\n";
-                                $selectList = Array();
+                                $selectList = array();
                                 $selectList = $dataManager->getTaxaFilterList();
                                 foreach($selectList as $value){
                                     $selectStr = ($value==$taxonValue?"SELECTED":"");

@@ -20,7 +20,7 @@ class KeyMassUpdate extends KeyManager{
 	}
 
 	public function getCharList($tidFilter){
-		$headingArray = Array();		//Heading => Array(CID => CharName)
+		$headingArray = array();		//Heading => Array(CID => CharName)
 		$sql = "SELECT DISTINCT ch.headingname, c.CID, c.CharName ".
 			"FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID ".
 			"INNER JOIN kmcharheading ch ON c.hid = ch.hid ".
@@ -52,7 +52,7 @@ class KeyMassUpdate extends KeyManager{
 	}
 
 	public function echoTaxaList($tidFilter, $generaOnly = false){
-		$tidArr = Array();
+		$tidArr = array();
 		
 		$sqlBase = '';
 		$sqlWhere = '';
@@ -210,7 +210,7 @@ class KeyMassUpdate extends KeyManager{
 
 	//Setter and getters
 	public function getTaxaQueryList(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT DISTINCT t.tid, t.sciname '. 
 			'FROM fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid '.
 			'INNER JOIN taxa t ON e.parenttid = t.tid '.

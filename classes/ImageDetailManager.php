@@ -20,7 +20,7 @@ class ImageDetailManager {
 	}
  	
 	public function getImageMetadata(){
-		$retArr = Array();
+		$retArr = array();
 		if($this->imgId){
 			$sql = "SELECT i.imgid, i.tid, i.url, i.thumbnailurl, i.originalurl, i.photographeruid, i.photographer, ".
 				"IFNULL(i.photographer,CONCAT_WS(' ',u.firstname,u.lastname)) AS photographerdisplay, ".

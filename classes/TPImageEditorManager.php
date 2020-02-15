@@ -23,7 +23,7 @@ class TPImageEditorManager extends TPEditorManager{
  	}
  
 	public function getImages(){
-		$imageArr = Array();
+		$imageArr = array();
 		$tidArr = Array($this->tid);
 		if($this->rankId == 220){
 			$sql1 = 'SELECT DISTINCT tid '.
@@ -37,7 +37,7 @@ class TPImageEditorManager extends TPEditorManager{
 		}
 		
 		$tidStr = implode(",",$tidArr);
-		$this->imageArr = Array();
+		$this->imageArr = array();
 		$sql = 'SELECT ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.photographer, ti.photographeruid, '.
 			'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographerdisplay, ti.owner, '.
 			'ti.locality, ti.occid, ti.notes, ti.sortsequence, ti.sourceurl, ti.copyright, t.tid, t.sciname '.

@@ -321,7 +321,7 @@ class TaxonomyHarvester extends Manager{
 			$this->logOrEcho('ERROR harvesting from worms: illegal identifier: '.$id,1);
 			return 0;
 		}
-		$taxonArr= Array();
+		$taxonArr= array();
 		$acceptedTid = 0;
 		$url = 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$id;
 		if($resultStr = $this->getWormsReturnStr($this->getContentString($url),$url)){
@@ -438,7 +438,7 @@ class TaxonomyHarvester extends Manager{
 	}
 
 	private function addTropicosTaxonByID($id){
-		$taxonArr= Array();
+		$taxonArr= array();
 		$url = 'http://services.tropicos.org/Name/'.$id.'?apikey='.$this->taxonomicResources['tropicos'].'&format=json';
 		if($fh = fopen($url, 'r')){
 			$content = "";

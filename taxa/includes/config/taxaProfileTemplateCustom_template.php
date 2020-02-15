@@ -13,14 +13,14 @@
  *          $footerRowElements = Array($footerLinksDiv);
  *      }
  *      elseif($taxonRank == 180){
- *          $topRowElements = Array();
+ *          $topRowElements = array();
  *          $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
  *          $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
  *          $bottomRowElements = Array($imgBoxDiv);
  *          $footerRowElements = Array($footerLinksDiv);
  *      }
  *      else{
- *          $topRowElements = Array();
+ *          $topRowElements = array();
  *          $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
  *          $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
  *          $bottomRowElements = Array($imgBoxDiv);
@@ -54,37 +54,37 @@ if(file_exists('includes/config/taxaProfileElementsCustom.php')){
     include('includes/config/taxaProfileElementsCustom.php');
 }
 
-$topRowElements = Array(); //Top horizontal bar in taxon profile page
-$leftColumnElements = Array(); //Left column below top horizontal bar in taxon profile page
-$rightColumnElements = Array(); //Right column below top horizontal bar in taxon profile page
-$bottomRowElements = Array(); //Horizontal bar below left and right columns in taxon profile page
-$footerRowElements = Array(); //Bottom horizontal bar in taxon profile page
+$topRowElements = array(); //Top horizontal bar in taxon profile page
+$leftColumnElements = array(); //Left column below top horizontal bar in taxon profile page
+$rightColumnElements = array(); //Right column below top horizontal bar in taxon profile page
+$bottomRowElements = array(); //Horizontal bar below left and right columns in taxon profile page
+$footerRowElements = array(); //Bottom horizontal bar in taxon profile page
 
 if($taxonRank){
     if($taxonRank > 180){ //Template for taxa pages below the genus rank.
-        $topRowElements = Array();
-        $leftColumnElements = Array();
-        $rightColumnElements = Array();
-        $bottomRowElements = Array();
-        $footerRowElements = Array();
+        $topRowElements = array();
+        $leftColumnElements = array();
+        $rightColumnElements = array();
+        $bottomRowElements = array();
+        $footerRowElements = array();
     }
     elseif($taxonRank == 180){ //Template for genera taxa pages.
-        $topRowElements = Array();
-        $leftColumnElements = Array();
-        $rightColumnElements = Array();
-        $bottomRowElements = Array();
-        $footerRowElements = Array();
+        $topRowElements = array();
+        $leftColumnElements = array();
+        $rightColumnElements = array();
+        $bottomRowElements = array();
+        $footerRowElements = array();
     }
     else{  //Template for taxa pages above the genus rank.
-        $topRowElements = Array();
-        $leftColumnElements = Array();
-        $rightColumnElements = Array();
-        $bottomRowElements = Array();
-        $footerRowElements = Array();
+        $topRowElements = array();
+        $leftColumnElements = array();
+        $rightColumnElements = array();
+        $bottomRowElements = array();
+        $footerRowElements = array();
     }
 }
 elseif($taxonValue){
-    $topRowElements = Array();
+    $topRowElements = array();
 }
 else{
     $topRowElements = Array('ERROR!');

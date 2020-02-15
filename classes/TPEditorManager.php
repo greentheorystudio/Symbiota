@@ -90,7 +90,7 @@ class TPEditorManager {
  	}
  	
  	public function getChildrenTaxa(){
-		$childrenArr = Array();
+		$childrenArr = array();
 		$sql = "SELECT t.Tid, t.SciName, t.Author ".
 			"FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ".
 			"WHERE ts.taxauthid = 1 AND (ts.ParentTid = ".$this->tid.") ORDER BY t.SciName";
@@ -104,7 +104,7 @@ class TPEditorManager {
  	}
 	
  	public function getSynonym(){
- 		$synArr = Array();
+ 		$synArr = array();
 		$sql = "SELECT t2.tid, t2.SciName, ts.SortSequence ".
 			"FROM (taxa t1 INNER JOIN taxstatus ts ON t1.tid = ts.tidaccepted) ".
 			"INNER JOIN taxa t2 ON ts.tid = t2.tid ".
@@ -136,7 +136,7 @@ class TPEditorManager {
 	}
 
  	public function getVernaculars(){
-		$vernArr = Array();
+		$vernArr = array();
 		$sql = "SELECT v.VID, v.VernacularName, v.Language, v.Source, v.username, v.notes, v.SortSequence ".
 			"FROM taxavernaculars v ".
 			"WHERE (v.tid = ".$this->tid.") ";
@@ -203,7 +203,7 @@ class TPEditorManager {
 	}
 
 	public function getChildrenArr(){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT t.tid, t.sciname FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'WHERE ts.taxauthid = 1 AND (ts.parenttid = '.$this->tid.')';
 		//echo $sql;
@@ -216,7 +216,7 @@ class TPEditorManager {
 	}
 	
 	public function getMaps(){
-		$mapArr = Array();
+		$mapArr = array();
 		$sql = "SELECT tm.mid, tm.url, tm.title, tm.initialtimestamp ".
 			"FROM taxamaps tm INNER JOIN taxa t ON tm.tid = t.TID ".
 			"WHERE (tm.tid = ".$this->tid.") ";
@@ -232,7 +232,7 @@ class TPEditorManager {
 	}
 	
 	public function getLinks(){
-		$linkArr = Array();
+		$linkArr = array();
 		$sql = 'SELECT tl.url, tl.title '.
 			'FROM taxalinks tl INNER JOIN taxa ON tl.tid = taxa.TID '.
 			'WHERE (taxa.TID = '.$this->tid.') ';
@@ -273,7 +273,7 @@ class TPEditorManager {
  	
  	//Misc functions
  	protected function cleanInArray($arr){
- 		$newArray = Array();
+ 		$newArray = array();
  		foreach($arr as $key => $value){
  			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
  		}

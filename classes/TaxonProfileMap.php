@@ -3,7 +3,7 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class TaxonProfileMap {
 	
-	private $iconColors = Array();
+	private $iconColors = array();
 	private $tid;
 	private $sciName;
 	private $taxaMap = array();
@@ -104,7 +104,7 @@ class TaxonProfileMap {
 		//Map scientific names and icons to $taxaMap
 		$cnt = 9;
 		foreach($this->taxArr as $key => $taxonName){
-        	$this->taxaArr[$taxonName] = Array();
+        	$this->taxaArr[$taxonName] = array();
 			$cnt++;
         }
 		return $this->taxaMap;

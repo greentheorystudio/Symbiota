@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $q = $con->real_escape_string($_REQUEST['term']);
 
 $sql = 'SELECT count(t.tid) as ct, t.tid, t.sciname FROM taxa t '.

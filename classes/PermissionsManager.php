@@ -33,7 +33,7 @@ class PermissionsManager{
 	}
 
 	public function getUser($uid){
-		$returnArr = Array();
+		$returnArr = array();
 		if(is_numeric($uid)){
 			$sql = "SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.city, u.state, ".
 				"u.zip, u.country, u.email, u.url, u.notes, ul.username, IFNULL(ul.lastlogindate,ul.initialTimestamp) AS lastlogindate ".
@@ -63,7 +63,7 @@ class PermissionsManager{
 	}
 
 	public function getUserPermissions($uid){
-		$perArr = Array();
+		$perArr = array();
 		if(is_numeric($uid)){
 			$sql = 'SELECT r.role, r.tablepk, CONCAT_WS(", ",u.lastname,u.firstname) AS assignedby, r.initialtimestamp '.
 				'FROM userroles r LEFT JOIN users u ON r.uidassignedby = u.uid '.
@@ -289,7 +289,7 @@ class PermissionsManager{
 
 	//General get list functions
 	public function getCollectionMetadata($targetCollid = 0, $collTypeLimit = ''){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT collid, collectionname, institutioncode, collectioncode, colltype '.
 			'FROM omcollections ';
 		$sqlWhere = '';
@@ -317,7 +317,7 @@ class PermissionsManager{
 	}
 
 	public function getCollectionEditors($collid){
-		$returnArr = Array();
+		$returnArr = array();
 		if($collid){
 			$sql = 'SELECT ur.uid, ur.role, ur.tablepk, CONCAT_WS(", ",u.lastname,u.firstname) AS uname, '.
 				'CONCAT_WS(", ",u2.lastname,u2.firstname) AS assignedby, ur.initialtimestamp '.
@@ -355,7 +355,7 @@ class PermissionsManager{
 	}
 
 	public function getUsers($searchTerm=''){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS uname, l.username '.
 			'FROM users u LEFT JOIN userlogin l ON u.uid = l.uid ';
 		if($searchTerm){
@@ -375,7 +375,7 @@ class PermissionsManager{
 	}
 
 	public function getProjectArr($pidKeys){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT pid, projname FROM fmprojects ';
 		if($pidKeys) $sql .= 'WHERE (pid NOT IN('.implode(',',$pidKeys).')) ';
 		$sql .= 'ORDER BY projname';
@@ -389,7 +389,7 @@ class PermissionsManager{
 	}
 
 	public function getChecklistArr($clKeys){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT cl.clid, cl.name FROM fmchecklists cl ';
 		if($clKeys) $sql .= 'WHERE (cl.access != "private") AND (cl.clid NOT IN('.implode(',',$clKeys).')) ';
 		$sql .= 'ORDER BY cl.name';

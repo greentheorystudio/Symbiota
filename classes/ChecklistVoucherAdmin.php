@@ -263,7 +263,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getNonVoucheredTaxa($startLimit,$limit = 100){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT t.tid, ts.family, t.sciname '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
@@ -281,7 +281,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getNewVouchers($startLimit = 500,$includeAll = 1){
-		$retArr = Array();
+		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$clidStr = $this->clid;
 			if($this->childClidArr){
@@ -351,7 +351,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getMissingTaxa(){
-		$retArr = Array();
+		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$sql = 'SELECT DISTINCT t.tid, t.sciname '.$this->getMissingTaxaBaseSql($sqlFrag);
 			//echo '<div>'.$sql.'</div>';
@@ -367,7 +367,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getMissingTaxaSpecimens($limitIndex){
-		$retArr = Array();
+		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
 			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
@@ -400,7 +400,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getConflictVouchers(){
-		$retArr = Array();
+		$retArr = array();
 		$clidStr = $this->clid;
 		if($this->childClidArr){
 			$clidStr .= ','.implode(',',$this->childClidArr);
@@ -505,7 +505,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function getMissingProblemTaxa(){
-		$retArr = Array();
+		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			//Make sure tidinterpreted are valid
 			//$this->conn->query('UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.tidinterpreted = t.tid WHERE o.tidinterpreted IS NULL');

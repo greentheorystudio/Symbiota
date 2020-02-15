@@ -6,7 +6,7 @@ class ObservationSubmitManager {
 
 	private $conn;
 	private $collId;
-	private $collMap = Array();
+	private $collMap = array();
 
 	private $errArr = array();
 
@@ -191,7 +191,7 @@ class ObservationSubmitManager {
 
 	public function getChecklists(){
 		global $USER_RIGHTS;
-		$retArr = Array();
+		$retArr = array();
 		if(isset($USER_RIGHTS['ClAdmin'])){
 			$sql = 'SELECT clid, name, access '.
 				'FROM fmchecklists '.

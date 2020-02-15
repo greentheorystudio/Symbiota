@@ -14,8 +14,8 @@ class SpecUploadDigir extends SpecUploadBase {
 	private $activeFieldValue = "";
 
 	//MySQL database stuff
-	private $fieldDataArr = Array();
-	private $symbTargetFields = Array();
+	private $fieldDataArr = array();
+	private $symbTargetFields = array();
 	private $dbpkSequence = 0;
 
  	public function __construct(){
@@ -178,7 +178,7 @@ class SpecUploadDigir extends SpecUploadBase {
 			$this->withinRecordElement = false;
 			$this->loadRecord(array_change_key_case($this->fieldDataArr));
 			unset($this->fieldDataArr);
-			$this->fieldDataArr = Array();
+			$this->fieldDataArr = array();
 		}
 		elseif($this->withinRecordElement && $this->activeFieldName && $this->activeFieldValue){
 			if($this->activeFieldName == "GLOBALUNIQUEIDENTIFIER" && !array_key_exists("OCCURRENCEID",$this->fieldDataArr)){

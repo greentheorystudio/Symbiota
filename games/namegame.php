@@ -203,7 +203,7 @@ $imgloc = "../images/games/namegame/";
 		function generate(){
 			numbersRange=mainList.length; //range
 			firstRun=true;
-			selectedNums=new Array(); 
+			selectedNums = new Array();
 			
 			for(var i=0;i<numbersRange;i++){
 				wordChosen=false; 

@@ -106,7 +106,7 @@ if(array_key_exists("sf",$_POST)){
 		//Set field map for occurrences using mapping form
  		$targetFields = $_POST["tf"];
  		$sourceFields = $_POST["sf"];
- 		$fieldMap = Array();
+ 		$fieldMap = array();
 		for($x = 0;$x<count($targetFields);$x++){
 			if($targetFields[$x]){
 				$tField = $targetFields[$x];
@@ -122,7 +122,7 @@ if(array_key_exists("sf",$_POST)){
 		if(array_key_exists("ID-sf",$_POST)){
 	 		$targetIdFields = $_POST["ID-tf"];
 	 		$sourceIdFields = $_POST["ID-sf"];
-	 		$fieldIdMap = Array();
+	 		$fieldIdMap = array();
 			for($x = 0;$x<count($targetIdFields);$x++){
 				if($targetIdFields[$x]){
 					$tIdField = $targetIdFields[$x];
@@ -136,7 +136,7 @@ if(array_key_exists("sf",$_POST)){
 		if(array_key_exists("IM-sf",$_POST)){
 	 		$targetImFields = $_POST["IM-tf"];
 	 		$sourceImFields = $_POST["IM-sf"];
-	 		$fieldImMap = Array();
+	 		$fieldImMap = array();
 			for($x = 0;$x<count($targetImFields);$x++){
 				if($targetImFields[$x]){
 					$tImField = $targetImFields[$x];

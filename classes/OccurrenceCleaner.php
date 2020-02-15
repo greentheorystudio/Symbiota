@@ -910,7 +910,7 @@ class OccurrenceCleaner extends Manager{
 
 	//Misc fucntions
 	public function getCollMap(){
-		$retArr = Array();
+		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT CONCAT_WS("-",c.institutioncode, c.collectioncode) AS code, c.collectionname, '.
 				'c.icon, c.colltype, c.managementtype '.

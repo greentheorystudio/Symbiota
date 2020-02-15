@@ -152,7 +152,7 @@ class TaxonProfileManager {
  	}
 
  	public function setAccepted(){
-		$this->acceptedTaxa = Array();
+		$this->acceptedTaxa = array();
 		$sql = "SELECT t.Tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus ".
 			"FROM taxstatus ts INNER JOIN taxa t ON ts.TidAccepted = t.TID ".
 			"WHERE (ts.taxauthid = ".($this->taxAuthId?$this->taxAuthId:"1").") AND (ts.Tid = ".$this->submittedTid.") ORDER BY t.SciName";
@@ -233,7 +233,7 @@ class TaxonProfileManager {
  	}
 
 	public function setSppData(){
-		$this->sppArray = Array();
+		$this->sppArray = array();
 		$sql = '';
 		if($this->clid){
 			$sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
@@ -258,7 +258,7 @@ class TaxonProfileManager {
 		}
 		//echo $sql; exit;
 
-		$tids = Array();
+		$tids = array();
 		$result = $this->con->query($sql);
 		while($row = $result->fetch_object()){
 			$sn = ucfirst(strtolower($row->sciname));
@@ -335,7 +335,7 @@ class TaxonProfileManager {
 
 	public function setVernaculars(){
 		if($this->tid){
-			$this->vernaculars = Array();
+			$this->vernaculars = array();
 			$sql = 'SELECT v.vid, v.VernacularName, v.language '.
 				'FROM taxavernaculars v INNER JOIN taxstatus ts ON v.tid = ts.tidaccepted '.
 				'WHERE (ts.TID = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (v.SortSequence < 90) '.
@@ -384,7 +384,7 @@ class TaxonProfileManager {
 
  	public function setSynonyms(){
 		if($this->tid){
-			$this->synonyms = Array();
+			$this->synonyms = array();
 			$sql = 'SELECT t.tid, t.SciName, t.Author '.
 				'FROM taxstatus ts INNER JOIN taxa t ON ts.Tid = t.TID '.
 				'WHERE (ts.TidAccepted = '.$this->tid.') AND (ts.taxauthid = '.
@@ -534,7 +534,7 @@ class TaxonProfileManager {
  	}
 
 	public function getTaxaLinks(){
-		$links = Array();
+		$links = array();
 		//Get hierarchy string
 		if($this->tid){
 			$parArr = array($this->tid);
@@ -567,7 +567,7 @@ class TaxonProfileManager {
 
 	public function getMapArr($tidStr = 0){
 		global $IMAGE_DOMAIN;
- 		$maps = Array();
+ 		$maps = array();
  		if(!$tidStr){
 			$tidArr = Array($this->tid,$this->submittedTid);
 			if($this->synonyms) $tidArr = array_merge($tidArr,array_keys($this->synonyms));
@@ -599,7 +599,7 @@ class TaxonProfileManager {
 			$tidStr = trim(implode(",",$tidArr),' ,');
 		}
 
-		$mapArr = Array();
+		$mapArr = array();
 		if($tidStr){
 	 		$minLat = 90;
 	 		$maxLat = -90;
@@ -668,7 +668,7 @@ class TaxonProfileManager {
  	}
 
 	public function getDescriptions(){
-		$retArr = Array();
+		$retArr = array();
 		if($this->tid){
 			$rsArr = array();
 			$sql = 'SELECT ts.tid, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, '.

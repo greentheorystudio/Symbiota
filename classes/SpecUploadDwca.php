@@ -389,7 +389,7 @@ class SpecUploadDwca extends SpecUploadBase{
 					$this->conn->query('SET unique_checks=0');
 					$this->conn->query('SET foreign_key_checks=0');
 					while($recordArr = $this->getRecordArr($fh)){
-						$recMap = Array();
+						$recMap = array();
 						foreach($this->fieldMap as $symbField => $sMap){
 							if(substr($symbField,0,8) != 'unmapped'){
 								$indexArr = array_keys($this->sourceArr,$sMap['field']);
@@ -542,7 +542,7 @@ class SpecUploadDwca extends SpecUploadBase{
 				//$this->conn->query('SET unique_checks=0');
 				//$this->conn->query('SET foreign_key_checks=0');
 				while($recordArr = $this->getRecordArr($fh)){
-					$recMap = Array();
+					$recMap = array();
 					foreach($fieldMap as $symbField => $iMap){
 						if(substr($symbField,0,8) != 'unmapped'){
 							$indexArr = array_keys($sourceArr,$iMap['field']);
@@ -584,7 +584,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	}
 
 	private function getRecordArr($fHandler){
-		$recordArr = Array();
+		$recordArr = array();
 		if($this->delimiter){
 			$recordArr = fgetcsv($fHandler,0,$this->delimiter,$this->enclosure);
 		}

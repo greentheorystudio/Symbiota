@@ -12,8 +12,8 @@ $taxaArrJson = array_key_exists('taxajson',$_REQUEST)?$_REQUEST['taxajson']:'';
 $taxonType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:0;
 $useThes = array_key_exists('thes',$_REQUEST)?$_REQUEST['thes']:false;
 
-$tempTaxaArr = Array();
-$taxaArr = Array();
+$tempTaxaArr = array();
+$taxaArr = array();
 
 if($taxaArrJson){
     $tempTaxaArr = json_decode($taxaArrJson, true);
@@ -27,7 +27,7 @@ if($tempTaxaArr){
             while($row = $rs->fetch_object()){
                 $taxaStr = $row->sciname;
                 if($taxaStr) {
-                    $taxaArr[$taxaStr] = Array();
+                    $taxaArr[$taxaStr] = array();
                 }
             }
             $rs->close();
@@ -36,7 +36,7 @@ if($tempTaxaArr){
             if($taxonType !== 5) {
                 $name = ucfirst($name);
             }
-            $taxaArr[$name] = Array();
+            $taxaArr[$name] = array();
         }
     }
 
@@ -97,7 +97,7 @@ if($tempTaxaArr){
             }
         }
         elseif($taxonType === 5){
-            $famArr = Array();
+            $famArr = array();
             if(array_key_exists('families',$valueArray)){
                 $famArr = $valueArray['families'];
             }

@@ -5,8 +5,8 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
 
-$retArrRow = Array();
-$retArr = Array();
+$retArrRow = array();
+$retArr = array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 if($queryString) {
 	$sql = 'SELECT DISTINCT SciName '.

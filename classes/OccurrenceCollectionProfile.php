@@ -429,7 +429,7 @@ class OccurrenceCollectionProfile {
 
 	//Institution address functions
 	public function getAddress(){
-		$retArr = Array();
+		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT i.iid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, '.
 					'i.city, i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
@@ -587,7 +587,7 @@ class OccurrenceCollectionProfile {
     }
 
     public function getCollPubArr($collId){
-        $returnArr = Array();
+        $returnArr = array();
         $aggKeyStr = '';
         $sql = 'SELECT CollID, publishToGbif, publishToIdigbio, aggKeysStr, collectionguid '.
             'FROM omcollections '.
@@ -610,7 +610,7 @@ class OccurrenceCollectionProfile {
     }
 
     public function getGbifInstKey(){
-        $returnArr = Array();
+        $returnArr = array();
         $sql = 'SELECT aggKeysStr '.
             'FROM omcollections '.
             'WHERE aggKeysStr IS NOT NULL ';
@@ -647,7 +647,7 @@ class OccurrenceCollectionProfile {
 
     public function getTaxonCounts($f=''){
 		$family = $this->cleanInStr($f);
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = '';
 		if($family){
 			/*
@@ -688,7 +688,7 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function getGeographyStats($country,$state){
-		$retArr = Array();
+		$retArr = array();
 		$sql = '';
 		if($state){
 			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
@@ -727,7 +727,7 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function getTaxonomyStats(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT family, count(*) as cnt FROM omoccurrences o  WHERE o.family IS NOT NULL AND collid = '.$this->collid.' GROUP BY family';
 		//echo $sql; exit;
 		$rs = $this->conn->query($sql);
@@ -875,7 +875,7 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function runStatistics($collId){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = "SELECT c.collid, c.CollectionName, IFNULL(cs.recordcnt,0) AS recordcnt, IFNULL(cs.georefcnt,0) AS georefcnt, ".
 			"cs.dynamicProperties ".
 			"FROM omcollections AS c INNER JOIN omcollectionstats AS cs ON c.collid = cs.collid ".
@@ -931,7 +931,7 @@ class OccurrenceCollectionProfile {
 	}
 
     public function runStatisticsQuery($collId,$taxon,$country){
-        $returnArr = Array();
+        $returnArr = array();
         $pTID = '';
         $sqlFrom = 'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
             'LEFT JOIN omcollections AS c ON o.collid = c.CollID ';
@@ -1110,7 +1110,7 @@ class OccurrenceCollectionProfile {
 	}
 
     public function getOrderStatsDataArr($collId){
-        $statsArr = Array();
+        $statsArr = array();
         $sql = 'SELECT (CASE WHEN t.RankId = 100 THEN t.SciName WHEN t2.RankId = 100 THEN t2.SciName ELSE NULL END) AS SciName, '.
             'COUNT(DISTINCT o.occid) AS SpecimensPerOrder, '.
             'COUNT(DISTINCT CASE WHEN o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS GeorefSpecimensPerOrder, '.

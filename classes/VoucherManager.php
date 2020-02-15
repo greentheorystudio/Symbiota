@@ -48,7 +48,7 @@ class VoucherManager {
 	}
 	
 	public function getChecklistData(){
- 		$checklistData = Array();
+ 		$checklistData = array();
  		if(!$this->tid || !$this->clid) return $checklistData; 
 		$sql = "SELECT t.SciName, cllink.Habitat, cllink.Abundance, cllink.Notes, cllink.internalnotes, cllink.source, cllink.familyoverride, ".
 			"cl.Name, cl.type, cl.locality ".
@@ -213,7 +213,7 @@ class VoucherManager {
 	}
 
 	public function getVoucherData(){
-		$voucherData = Array();
+		$voucherData = array();
  		if(!$this->tid || !$this->clid) return $voucherData;
 		$sql = 'SELECT v.occid, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, o.catalognumber, '.
 			'o.sciname, o.eventdate, v.notes, v.editornotes '.
@@ -268,7 +268,7 @@ class VoucherManager {
 	}
 
 	private function addVoucherRecord($vOccId, $vNotes, $vEditNotes){
-		$insertArr = Array();
+		$insertArr = array();
 		//Checklist-taxon combination already exists
 		$sql = 'SELECT DISTINCT o.occid, ctl.tid, ctl.clid, o.recordedby, o.recordnumber, '.
 			'"'.$vNotes.'" AS Notes, "'.$vEditNotes.'" AS editnotes '.

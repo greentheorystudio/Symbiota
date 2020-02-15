@@ -31,15 +31,15 @@ $obsArr = (isset($collList['obs'])?$collList['obs']:null);
 $mapManager->setFieldArr(0);
 $mapWhere = '';
 $genObs = $mapManager->getGenObsInfo();
-$tArr = Array();
+$tArr = array();
 $coordExist = false;
 $spatial = false;
-$iconKeys = Array();
-$coordArr = Array();
-$stArr = Array();
-$previousCriteria = Array();
+$iconKeys = array();
+$coordArr = array();
+$stArr = array();
+$previousCriteria = array();
 $groupCnt = 1;
-$grpCntArr = Array();
+$grpCntArr = array();
 $jsonStArr = '';
 $gridSize = 60;
 $minClusterSize = 10;
@@ -90,7 +90,7 @@ if($previousCriteria){
     if(array_key_exists('recordlimit',$previousCriteria)) $recLimit = (($previousCriteria['recordlimit']&&is_numeric($previousCriteria['recordlimit']))?$previousCriteria['recordlimit']:5000);
 }
 
-$dbArr = Array();
+$dbArr = array();
 if(array_key_exists('db',$_REQUEST)){
     if(!is_array($previousCriteria["db"])){
         $dbArr[] = 'all';

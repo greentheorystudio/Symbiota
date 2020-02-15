@@ -40,7 +40,7 @@ $token = array_key_exists('token',$_POST)?$_POST['token']:'';
 
 $pHandler = new ProfileManager();
 
-$accessPacket = Array();
+$accessPacket = array();
 
 if(!$un && $uId){
     $un = $pHandler->getUserName($uId);

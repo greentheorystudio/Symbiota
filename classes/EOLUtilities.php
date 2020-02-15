@@ -48,7 +48,7 @@ class EOLUtilities {
 		//http://eol.org/api/docs/search
 		//http://eol.org/api/search/1.0.json?q=Pinus+ponderosa&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=
 		//http://eol.org/api/search/1.0.json?q=Pinus+ponderosa+var.+arizonica&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=
-		$retArr = Array();
+		$retArr = array();
 		if($sciName){
 			$retArr['searchTaxon'] = $sciName;
 			//$url = 'http://eol.org/api/search/1.0.json?q='.str_replace(" ","%20",$sciName).'&page=1&exact=true';
@@ -87,7 +87,7 @@ class EOLUtilities {
 	public function getPage($id, $includeSynonyms = true, $includeCommonNames = false, $contentLimit = 1){
 		//http://eol.org/api/docs/pages
 		//http://eol.org/api/pages/1.0/205264.json?images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true&common_names=false&synonyms=false&references=false&vetted=0&cache_ttl=
-		$taxonArr = Array();
+		$taxonArr = array();
 		$url = 'http://eol.org/api/pages/1.0/'.$id.'.json?images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true';
 		$url .= '&common_names='.($includeCommonNames?'true':'false').'&synonyms='.($includeSynonyms?'true':'false').'&references=false&vetted=0&cache_ttl=';
 		if($fh = fopen($url, 'r')){
@@ -145,7 +145,7 @@ class EOLUtilities {
 	public function getHierarchyEntries($id, $includeSynonyms = true, $includeCommonNames = true, $includeParents = true){
 		//http://eol.org/api/docs/hierarchy_entries
 		//http://eol.org/api/hierarchy_entries/1.0/52595368.json?common_names=true&synonyms=true&cache_ttl=
-		$taxonArr = Array();
+		$taxonArr = array();
 		if($id){
 			//Get taxonomy
 			$url = 'http://eol.org/api/hierarchy_entries/1.0/'.$id.'.json?common_names='.($includeCommonNames?'true':'false').'&synonyms='.($includeSynonyms?'true':'false');

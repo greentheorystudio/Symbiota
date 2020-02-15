@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$returnArr = Array();
+$returnArr = array();
 
 $term = $con->real_escape_string($_REQUEST['term']);
 $language = $con->real_escape_string($_REQUEST['language']);

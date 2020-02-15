@@ -400,7 +400,7 @@ if($SYMB_UID){
 				}
 				//Collection Statistics
 				$statsArr = $collManager->getBasicStats();
-				$extrastatsArr = Array();
+				$extrastatsArr = array();
 				$georefPerc = 0;
 				if($statsArr['georefcnt']&&$statsArr['recordcnt']){
 					$georefPerc = (100*($statsArr['georefcnt']/$statsArr['recordcnt']));

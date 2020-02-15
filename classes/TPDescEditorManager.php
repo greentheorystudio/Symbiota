@@ -12,7 +12,7 @@ class TPDescEditorManager extends TPEditorManager{
  	}
 
 	public function getDescriptions($editor = false){
-		$descrArr = Array();
+		$descrArr = array();
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
 			'FROM (taxstatus ts INNER JOIN taxadescrblock tdb ON ts.tid = tdb.tid) '.
 			'INNER JOIN taxa t ON ts.tid = t.tid '.

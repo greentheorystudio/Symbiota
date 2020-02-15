@@ -110,7 +110,7 @@ class ChecklistAdmin{
     {
 		$statusStr = '';
 		$setSql = '';
-		$defaultViewArr = Array();
+		$defaultViewArr = array();
 		$defaultViewArr['ddetails'] = array_key_exists('ddetails',$postArr)?1:0;
 		$defaultViewArr['dcommon'] = array_key_exists('dcommon',$postArr)?1:0;
 		$defaultViewArr['dimages'] = array_key_exists('dimages',$postArr)?1:0;
@@ -230,7 +230,7 @@ class ChecklistAdmin{
 
 	public function getChildrenChecklist(): array
     {
-		$retArr = Array();
+		$retArr = array();
 		$targetStr = $this->clid;
 		do{
 			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
@@ -253,7 +253,7 @@ class ChecklistAdmin{
 
 	public function getParentChecklists(): array
     {
-		$retArr = Array();
+		$retArr = array();
 		$targetStr = $this->clid;
 		do{
 			$sql = 'SELECT c.clid, c.name, child.clid as pclid '.
@@ -489,7 +489,7 @@ class ChecklistAdmin{
 
 	public function getUserList(): array
     {
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",l.username,")") AS uname '.
 			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
 			'ORDER BY u.lastname,u.firstname';
@@ -504,7 +504,7 @@ class ChecklistAdmin{
 
 	public function getInventoryProjects(): array
     {
-		$retArr = Array();
+		$retArr = array();
 		if($this->clid){
 			$sql = 'SELECT p.pid, p.projname '.
 				'FROM fmprojects p INNER JOIN fmchklstprojlink pl ON p.pid = pl.pid '.
@@ -555,7 +555,7 @@ class ChecklistAdmin{
 
 	public function getManagementLists($uid): array
     {
-		$returnArr = Array();
+		$returnArr = array();
 		if(is_numeric($uid)){
 			$clStr = '';
 			$projStr = '';

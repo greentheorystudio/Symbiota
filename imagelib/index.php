@@ -68,7 +68,7 @@ $imgLibManager = new ImageLibraryManager();
 		</div>
 		<div style='clear:both;'><hr/></div>
 		<?php
-			$taxaList = Array();
+			$taxaList = array();
 			if($target == "genus"){
 				echo "<div style='margin-left:20px;margin-top:20px;margin-bottom:20px;font-weight:bold;'>Select a Genus to see species list.</div>";
 				$taxaList = $imgLibManager->getGenusList();

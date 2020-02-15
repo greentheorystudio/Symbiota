@@ -26,7 +26,7 @@ if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
 
 if($editable && $action){
 	if($action === "Edit Synonym Sort Order"){
-		$synSortArr = Array();
+		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
 			if($sortValue && (substr($sortKey,0,4) === "syn-")){
 				$synSortArr[substr($sortKey,4)] = $sortValue;
@@ -35,7 +35,7 @@ if($editable && $action){
 		$statusStr = $tEditor->editSynonymSort($synSortArr);
 	}
  	elseif($action === "Submit Common Name Edits"){
- 		$editVernArr = Array();
+ 		$editVernArr = array();
 		$editVernArr["vid"] = $_REQUEST["vid"];
  		if($_REQUEST["vernacularname"]) $editVernArr["vernacularname"] = str_replace("\"","-",$_REQUEST["vernacularname"]);
 		if($_REQUEST["language"]) $editVernArr["language"] = $_REQUEST["language"];
@@ -46,7 +46,7 @@ if($editable && $action){
 		$statusStr = $tEditor->editVernacular($editVernArr);
 	}
 	elseif($action === "Add Common Name"){
-		$addVernArr = Array();
+		$addVernArr = array();
 		$addVernArr["vernacularname"] = str_replace("\"","-",$_REQUEST["vern"]);
 		if($_REQUEST["language"]) $addVernArr["language"] = $_REQUEST["language"];
 		if($_REQUEST["notes"]) $addVernArr["notes"] = str_replace("\"","-",$_REQUEST["notes"]);
@@ -81,7 +81,7 @@ if($editable && $action){
 		$statusStr = $tDescEditor->deleteStatement($_POST['tdsid']);
 	}
 	elseif($action === "Submit Image Sort Edits"){
-		$imgSortArr = Array();
+		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
 			if($sortValue && substr($sortKey,0,6) === "imgid-"){
 				$imgSortArr[substr($sortKey,6)]  = $sortValue;

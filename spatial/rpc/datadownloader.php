@@ -24,7 +24,7 @@ $jsonContent = '';
 
 if($SOLR_MODE){
     $solrManager = new SOLRManager();
-    $pArr = Array();
+    $pArr = array();
     if(isset($_REQUEST['dh-q'])) {
         $pArr['q'] = $_REQUEST['dh-q'];
     }

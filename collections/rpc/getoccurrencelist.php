@@ -98,7 +98,7 @@ $htmlStr .= $paginationStr;
 if($occurArr){
 	$htmlStr .= '<table id="omlisttable">';
 	$prevCollid = 0;
-	$specOccArr = Array();
+	$specOccArr = array();
 	foreach($occurArr as $occid => $fieldArr){
 		$collId = $fieldArr["collid"];
 		$specOccArr[] = $occid;

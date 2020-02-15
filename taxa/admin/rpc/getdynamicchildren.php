@@ -18,8 +18,8 @@ $taxonRankArr = array(1=>'Organism',10=>'Kingdom',20=>'Subkingdom',30=>'Phylum',
     210=>'Subsection',220=>'Species',230=>'Subspecies',240=>'Variety',250=>'Subvariety',260=>'Form',
     270=>'Subform',300=>'Cultivated');
 
-$retArr = Array();
-$childArr = Array();
+$retArr = array();
+$childArr = array();
 if($taxId === 'root'){
 	$retArr['id'] = 'root';
 	$retArr['label'] = 'root';
@@ -30,7 +30,7 @@ if($taxId === 'root'){
 	else{
 		$retArr['url'] = '../index.php';
 	}
-	$retArr['children'] = Array();
+	$retArr['children'] = array();
 	$lowestRank = '';
 	$sql = 'SELECT MIN(t.RankId) AS RankId '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
@@ -134,7 +134,7 @@ else{
 			else{
 				$retArr['url'] = '../index.php?taxon='.$row2->tid;
 			}
-			$retArr['children'] = Array();
+			$retArr['children'] = array();
 		}
 		else{
 			$childArr[$i]['id'] = $row2->tid;

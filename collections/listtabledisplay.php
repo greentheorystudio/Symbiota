@@ -15,8 +15,8 @@ $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
 if(!is_numeric($occIndex)) $occIndex = 0;
 
 $collManager = new OccurrenceListManager();
-$stArr = Array();
-$collArr = Array();
+$stArr = array();
+$collArr = array();
 $resetOccIndex = false;
 $navStr = '';
 

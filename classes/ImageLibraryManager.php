@@ -4,10 +4,10 @@ include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
 
 class ImageLibraryManager{
 
-	private $searchTermsArr = Array();
+	private $searchTermsArr = array();
 	private $recordCount = 0;
 	private $conn;
-	private $taxaArr = Array();
+	private $taxaArr = array();
 	private $tidFocus;
 	private $collArrIndex = 0;
 	private $sqlWhere = '';
@@ -26,7 +26,7 @@ class ImageLibraryManager{
 	}
 
  	public function getFamilyList(){
- 		$returnArray = Array();
+ 		$returnArray = array();
 		$sql = 'SELECT DISTINCT ts.Family ';
 		$sql .= $this->getImageSql();
 		$sql .= 'AND (ts.Family Is Not Null) ';
@@ -57,8 +57,8 @@ class ImageLibraryManager{
 	}
 
 	public function getSpeciesList($taxon = ''){
-		$retArr = Array();
-		$tidArr = Array();
+		$retArr = array();
+		$tidArr = array();
 		if($taxon){
 			$taxon = $this->cleanInStr($taxon);
 			if(strpos($taxon, ' ')) $tidArr = array_keys($this->getSynonyms($taxon));
@@ -513,9 +513,9 @@ class ImageLibraryManager{
 			$taxaSearchType = $this->searchTermsArr["taxontype"];
 			$taxaArr = explode(";",trim($this->searchTermsArr["taxa"]));
 			//Set scientific name
-			$this->taxaArr = Array();
+			$this->taxaArr = array();
 			foreach($taxaArr as $sName){
-				$this->taxaArr[trim($sName)] = Array();
+				$this->taxaArr[trim($sName)] = array();
 			}
 			if($taxaSearchType == 3){
 				//Common name search
@@ -588,7 +588,7 @@ class ImageLibraryManager{
 		
 		if(array_key_exists("country",$this->searchTermsArr)&&$this->searchTermsArr["country"]){
 			$countryArr = explode(";",$this->searchTermsArr["country"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($countryArr as $value){
 				$tempArr[] = "(o.Country = '".trim($value)."')";
 			}
@@ -596,7 +596,7 @@ class ImageLibraryManager{
 		}
 		if(array_key_exists("state",$this->searchTermsArr)&&$this->searchTermsArr["state"]){
 			$stateAr = explode(";",$this->searchTermsArr["state"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($stateAr as $value){
 				$tempArr[] = "(o.StateProvince LIKE '".trim($value)."%')";
 			}
@@ -610,7 +610,7 @@ class ImageLibraryManager{
 		}
 		if(array_key_exists("keywords",$this->searchTermsArr)&&$this->searchTermsArr["keywords"]){
 			$keywordArr = explode(";",$this->searchTermsArr["keywords"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($keywordArr as $value){
 				$tempArr[] = "(ik.keyword LIKE '%".trim($value)."%')";
 			}
@@ -669,7 +669,7 @@ class ImageLibraryManager{
 	}
 	
 	public function getImageArr($pageRequest,$cntPerPage){
-		$retArr = Array();
+		$retArr = array();
 		if(!$this->recordCount){
 			$this->setRecordCnt();
 		}

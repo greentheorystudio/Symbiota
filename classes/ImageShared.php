@@ -830,7 +830,7 @@ class ImageShared{
 	}
 
 	private function getImageTagValues($lang='en') {
-	   $returnArr = Array();
+	   $returnArr = array();
 	   switch ($lang) {
 		  case 'en':
 		  default:

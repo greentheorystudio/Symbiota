@@ -5,7 +5,7 @@ include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 class TaxonomyDisplayManager{
 
 	private $conn;
-	private $taxaArr = Array();
+	private $taxaArr = array();
 	private $targetStr = "";
 	private $taxonRank = 0;
 	private $taxAuthId = 1;
@@ -39,7 +39,7 @@ class TaxonomyDisplayManager{
 		$this->primeTaxaEnumTree();
 		
 		$subGenera = array();
-		$taxaParentIndex = Array();
+		$taxaParentIndex = array();
 		if($this->targetStr){
 			$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, ts.parenttid, ts.tidaccepted '.
 				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
@@ -86,7 +86,7 @@ class TaxonomyDisplayManager{
 			$rs1->free();
 		}
 
-		$hierarchyArr = Array();
+		$hierarchyArr = array();
 		if($this->taxaArr){
 			//Get direct parents and children, but only accepted children
 			$tidStr = implode(',',array_keys($this->taxaArr));
@@ -167,7 +167,7 @@ class TaxonomyDisplayManager{
 			}
 			
 			//Build Hierarchy Array: grab leaf nodes and attach to parent until none are left
-			$leafTaxa = Array();
+			$leafTaxa = array();
 			while($leafTaxa = array_diff(array_keys($taxaParentIndex),$taxaParentIndex)){
 				foreach($leafTaxa as $value){
 					if(array_key_exists($value,$hierarchyArr)){
@@ -264,7 +264,7 @@ class TaxonomyDisplayManager{
 	}
 	
 	public function getDynamicTreePath(){
-		$retArr = Array();
+		$retArr = array();
 		$this->primeTaxaEnumTree();
 		
 		//Get target taxa (we don't want children and parents of non-accepted taxa, so we'll get those later) 

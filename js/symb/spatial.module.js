@@ -32,11 +32,12 @@ $(document).ready(function() {
                 let rankLow = '';
                 let rankHigh = '';
                 let rankLimit = '';
+                let source = '';
                 if(t === 5){
-                    const source = '../webservices/autofillvernacular.php';
+                    source = '../webservices/autofillvernacular.php';
                 }
                 else{
-                    const source = '../webservices/autofillsciname.php';
+                    source = '../webservices/autofillsciname.php';
                 }
                 if(t === 4){
                     rankLow = 21;
@@ -351,12 +352,16 @@ function buildSOLRQString(){
     var tempfqStr = '';
     if(solrqArr.length > 0){
         for(i in solrqArr){
-            tempqStr += ' AND '+solrqArr[i];
+            if(solrqArr[i] !== '()'){
+                tempqStr += ' AND '+solrqArr[i];
+            }
         }
-        tempqStr = tempqStr.substr(5,tempqStr.length);
-        tempqStr += ' AND (decimalLatitude:[* TO *] AND decimalLongitude:[* TO *] AND sciname:[* TO *])';
-        document.getElementById("dh-q").value = tempqStr;
-        newsolrqString += tempqStr;
+        if(tempqStr){
+            tempqStr = tempqStr.substr(5,tempqStr.length);
+            tempqStr += ' AND (decimalLatitude:[* TO *] AND decimalLongitude:[* TO *] AND sciname:[* TO *])';
+            document.getElementById("dh-q").value = tempqStr;
+            newsolrqString += tempqStr;
+        }
     }
     else{
         document.getElementById("dh-q").value = '(sciname:[* TO *])';
@@ -3078,8 +3083,10 @@ function setClusterSymbol(feature) {
             if(selections.length > 0){
                 clusterindex = feature.get('identifiers');
                 for(i in selections){
-                    if(clusterindex.indexOf(selections[i].toString()) !== -1) {
-                        selected = true;
+                    if(selections.hasOwnProperty(i)){
+                        if(clusterindex.indexOf(selections[i]) !== -1) {
+                            selected = true;
+                        }
                     }
                 }
             }
@@ -3490,7 +3497,7 @@ function spiderifyPoints(features){
             var style = setClusterSymbol(cf);
             cf.setStyle(style);
             source.addFeature(cf);
-        };
+        }
     }
     else{
         var a = 0;
@@ -3502,8 +3509,8 @@ function spiderifyPoints(features){
         for(i in spiderFeatures){
             r = d/2 + d*a/(2*Math.PI);
             a = a + (d+0.1)/r;
-            var dx = pix*r*Math.sin(a)
-            var dy = pix*r*Math.cos(a)
+            var dx = pix*r*Math.sin(a);
+            var dy = pix*r*Math.cos(a);
             var p = [center[0]+dx, center[1]+dy];
             var cf = new ol.Feature({
                 'features':[spiderFeatures[i]],

@@ -19,7 +19,7 @@ class BuildHierarchy{
 		$resultHier = $conn->query($sqlHier);
 		while($rowHier = $resultHier->fetch_object()){
 			$id = $rowHier->stmtid;
-			$parentArr = Array();
+			$parentArr = array();
 			$targetId = $id;
 			$parCnt = 0;
 			do{

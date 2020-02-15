@@ -25,8 +25,8 @@ class OccurrenceListManager extends OccurrenceManager{
                 $canReadRareSpp = true;
             }
         }
-        $returnArr = Array();
-        $imageSearchArr = Array();
+        $returnArr = array();
+        $imageSearchArr = array();
         $sqlWhere = $this->getSqlWhere();
         if(!$this->recordCount || $this->reset){
             $this->setRecordCnt($sqlWhere);

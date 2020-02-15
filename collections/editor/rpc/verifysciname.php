@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 header('Content-Type: application/json; charset=' .$CHARSET);
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $term = trim($con->real_escape_string($_REQUEST['term']));
 if($term){
 	$sql = 'SELECT DISTINCT t.tid, t.author, ts.family, t.securitystatus '.

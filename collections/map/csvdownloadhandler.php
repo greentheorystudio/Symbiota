@@ -12,7 +12,7 @@ $format = $_POST['format'];
 $type = array_key_exists("typecsv",$_POST)?$_POST["typecsv"]:'';
 $selections = array_key_exists('selectionscsv',$_POST)?$_POST['selectionscsv']:0;
 $stArrJson = array_key_exists("starrcsv",$_POST)?$_POST["starrcsv"]:'';
-$stArr = Array();
+$stArr = array();
 if($stArrJson){
 	$stArr = json_decode($stArrJson, true);
 }

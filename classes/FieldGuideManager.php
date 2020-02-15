@@ -34,7 +34,7 @@ class FieldGuideManager {
 
     public function checkFGLog($collid){
         global $SERVER_ROOT;
-        $retArr = Array();
+        $retArr = array();
         $jsonFileName = $collid.'-FGLog.json';
         $jsonFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
         if(file_exists($jsonFile)){
@@ -195,7 +195,7 @@ class FieldGuideManager {
 
     public function getFGBatchImgArr(){
         global $IMAGE_DOMAIN;
-        $returnArr = Array();
+        $returnArr = array();
         $tId = '';
         if($this->taxon) $tId = $this->getFGBatchTaxonTid($this->taxon);
         $sql = 'SELECT i.imgid, o.occid, o.sciname, t.SciName AS taxonorder, i.url '.
@@ -403,7 +403,7 @@ class FieldGuideManager {
 
     public function getFGResultImgArr(){
         global $IMAGE_DOMAIN;
-        $returnArr = Array();
+        $returnArr = array();
         $fgOccIdStr = implode(",",$this->fgResOccArr);
         $sql = 'SELECT i.imgid, o.occid, o.sciname, IFNULL(ts.family,o.family) AS family, i.url, c.InstitutionCode, c.CollectionCode '.
             'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.

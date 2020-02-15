@@ -26,8 +26,8 @@ class TaxonomyEditorManager{
 	private $hierarchyArr;
 	private $securityStatus;
 	private $isAccepted = -1;			// 1 = accepted, 0 = not accepted, -1 = not assigned, -2 in conflict
-	private $acceptedArr = Array();
-	private $synonymArr = Array();
+	private $acceptedArr = array();
+	private $synonymArr = array();
 
 	private $errorStr = '';
 	
@@ -457,7 +457,7 @@ class TaxonomyEditorManager{
 		if(!$tid) $tid = $this->tid;
 		if(!$this->rankid) $this->setTaxon();
 		//Get parent array
-		$parentArr = Array();
+		$parentArr = array();
 		$parCnt = 0;
 		$targetTid = $tid;
 		do{

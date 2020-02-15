@@ -29,7 +29,7 @@ $collList = $spatialManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 
-$dbArr = Array();
+$dbArr = array();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -50,7 +50,7 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-1.9.1.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui-1.10.4.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/gts-ol-symbiota.js" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=2" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
@@ -58,7 +58,7 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=263" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=269" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             var winHeight = $(window).height();
@@ -133,7 +133,6 @@ $dbArr = Array();
     <div role="main" class="ui-content">
         <a href="#defaultpanel" id="panelopenbutton" data-role="button" data-inline="true" data-icon="bars">Open</a>
     </div>
-    <!-- defaultpanel -->
     <div data-role="panel" data-dismissible=false class="overflow:hidden;" id="defaultpanel" data-swipe-close=false data-position="left" data-display="overlay" >
         <div class="panel-content">
             <div id="spatialpanel">
@@ -311,7 +310,7 @@ $dbArr = Array();
                                 </div>
                             </div>
                         </div>
-                        <div id="queryrecordsdiv" style="">
+                        <div id="queryrecordsdiv">
                             <div style="margin-top:-10px;margin-right:10px;">
                                 <fieldset style="border:1px solid black;height:50px;width:360px;margin-left:-10px;padding-top:3px;">
                                     <legend><b>Download</b></legend>
@@ -332,7 +331,7 @@ $dbArr = Array();
                                     </div>
                                 </fieldset>
                             </div>
-                            <div id="queryrecords" style=""></div>
+                            <div id="queryrecords"></div>
                         </div>
                         <div id="maptaxalist" >
                             <div style="margin-bottom:15px;">
@@ -476,7 +475,7 @@ $dbArr = Array();
                                 There are no points loaded on the map.
                             </div>
                             <div id="pointToolsDiv" style="padding:10px;display:none;">
-                                <div style="">
+                                <div>
                                     <button data-role="none" onclick="createConcavePoly();" >Concave Hull Polygon</button> Creates a concave hull polygon or multipolygon for
                                     <select data-role="none" id="concavepolysource" style="margin-top:3px;" onchange="checkPointToolSource('concavepolysource');">
                                         <option value="all">all</option>
@@ -499,8 +498,8 @@ $dbArr = Array();
                 </div>
             </div>
             <a href="#" id="panelclosebutton" data-rel="close" data-role="button" data-theme="a" data-icon="delete" data-inline="true"></a>
-        </div><!-- /content wrapper for padding -->
-    </div><!-- /defaultpanel -->
+        </div>
+    </div>
 </div>
 
 <div id="map" class="map"></div>
@@ -617,6 +616,7 @@ $dbArr = Array();
     var geogParams = false;
     var textParams = false;
     var taxaParams = false;
+    var tempOccArr = [];
     var geoPolyArr = [];
     var geoCircleArr = [];
     var searchTermsArr = {};

@@ -58,7 +58,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 			<div style='margin-top:1em;font-weight:bold;'>Checklist:</div>
 		  	<select name="cl"> 
 		  		<?php 
-		  			$selectList = Array();
+		  			$selectList = array();
 		  			$selectList = $cdManager->getClQueryList();
 		  			echo "<option>--Select a Checklist--</option>";
 		  			foreach($selectList as $key => $value){
@@ -71,7 +71,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("
 			<div style='margin-top:1em;font-weight:bold;'>Filter Character List:</div>
 				<select name="cf">
 		  		<?php 
-		  			$selectList = Array();
+		  			$selectList = array();
 		  			$selectList = $cdManager->getTaxaQueryList();
 		  			echo "<option>--Select a Taxon--</option>";
 		  			foreach($selectList as $key => $value){

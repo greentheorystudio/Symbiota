@@ -17,7 +17,7 @@ class RareSpeciesManager {
 	}
     
 	public function getRareSpeciesList(){
- 		$returnArr = Array();
+ 		$returnArr = array();
 		$sql = 'SELECT t.tid, ts.Family, t.SciName, t.Author '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.tid '.
 			'WHERE ((t.SecurityStatus = 1) AND (ts.taxauthid = 1)) ';
@@ -66,7 +66,7 @@ class RareSpeciesManager {
 	}
 
 	public function getStateList(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT DISTINCT c.clid, c.name, c.locality, c.authors, c.access '.
 			'FROM fmchecklists c INNER JOIN fmchklsttaxalink l ON c.clid = l.clid '.
 			'WHERE c.type = "rarespp" ';

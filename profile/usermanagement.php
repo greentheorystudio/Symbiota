@@ -38,7 +38,6 @@ if($IS_ADMIN){
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> User Management</title>
-	<meta http-equiv="X-Frame-Options" content="deny">
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 </head>
@@ -491,7 +490,7 @@ if($IS_ADMIN){
 								<?php 
 							}
 							//Get checklists
-							$pidArr = Array();
+							$pidArr = array();
 							if(array_key_exists("ProjAdmin",$userPermissions)){
 								$pidArr = array_keys($userPermissions["ProjAdmin"]);
 							}
@@ -516,7 +515,7 @@ if($IS_ADMIN){
 								}
 							}
 							//Get checklists
-							$cidArr = Array();
+							$cidArr = array();
 							if(array_key_exists("ClAdmin",$userPermissions)){
 								$cidArr = array_keys($userPermissions["ClAdmin"]);
 							}

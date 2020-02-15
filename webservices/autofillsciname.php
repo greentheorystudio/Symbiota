@@ -39,7 +39,7 @@ $rankHigh = array_key_exists('rhigh',$_REQUEST)?$_REQUEST['rhigh']:0;
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:0;
 
 $qHandler = new TaxonomyAPIManager();
-$listArr = Array();
+$listArr = array();
 
 if($queryString){
     $qHandler->setHideAuth($hideAuth);

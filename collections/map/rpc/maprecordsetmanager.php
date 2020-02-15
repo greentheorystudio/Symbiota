@@ -45,7 +45,7 @@ if($action=="addrecords"){
 	$datasetManager->addSelectedOccurrences($dsId,$occAddArr);
 }
 if($action=="clonedataset"){
-	$dsidArr = Array();
+	$dsidArr = array();
 	$dsidArr[] = $dsId;
 	$datasetManager->cloneDatasets($dsidArr,$uid);
 	$newId = $datasetManager->getDsId();

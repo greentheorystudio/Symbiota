@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $refType = array_key_exists('reftype',$_REQUEST)?$_REQUEST['reftype']:0;

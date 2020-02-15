@@ -12,7 +12,7 @@ $fq = array_key_exists('fq',$_REQUEST)?$_REQUEST['fq']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $recordCnt = array_key_exists('rows',$_REQUEST)?$_REQUEST['rows']:0;
 
-$selections = Array();
+$selections = array();
 $allSelected = false;
 
 $solrManager = new SOLRManager();
@@ -32,27 +32,23 @@ if($SOLR_MODE){
 	}
 }
 
-if(!$SOLR_MODE){
-	if($stArrJson){
-		$stArr = json_decode($stArrJson, true);
-		$spatialManager->setSearchTermsArr($stArr);
-		$mapWhere = $spatialManager->getSqlWhere();
-		$occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
-	}
+if(!$SOLR_MODE && $stArrJson) {
+    $stArr = json_decode($stArrJson, true);
+    $spatialManager->setSearchTermsArr($stArr);
+    $mapWhere = $spatialManager->getSqlWhere();
+    $occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
 }
 
 $pageOccids = array_keys($occArr);
-if($selections){
-	if(!array_diff($pageOccids,$selections)){
-		$allSelected = true;
-	}
+if($selections && !array_diff($pageOccids, $selections)) {
+    $allSelected = true;
 }
 
 $recordListHtml = '';
 $lastPage = (int) ($recordCnt / $cntPerPage) + 1;
 $startPage = ($pageNumber > 4?$pageNumber - 4:1);
 if($lastPage > $startPage){
-	$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+	$endPage = (($lastPage > ($startPage + 9))?($startPage + 9):$lastPage);
 	$paginationStr = "<div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div><div style='float:left;'>\n";
 	$hrefPrefix = "<a href='#' onclick='changeRecordPage(";
 	$pageBar = '';
@@ -62,10 +58,10 @@ if($lastPage > $startPage){
 	}
 	for($x = $startPage; $x <= $endPage; $x++){
 		if($pageNumber !== $x){
-			$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x."</a></span>";
+			$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
 		}
 		else{
-			$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x."</span>";
+			$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
 		}
 	}
 	if(($lastPage - $startPage) >= 10){
@@ -75,7 +71,9 @@ if($lastPage > $startPage){
 	$pageBar .= "</div><div style='clear:both;float:left;margin-top:4px;margin-bottom:8px;'>";
 	$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
 	$endNum = $beginNum + $cntPerPage - 1;
-	if($endNum > $recordCnt) $endNum = $recordCnt;
+	if($endNum > $recordCnt) {
+        $endNum = $recordCnt;
+    }
 	$pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt;
 	$paginationStr .= $pageBar;
 	$paginationStr .= "</div><div style='clear:both;margin:5px 0 5px 0;'><hr /></div></div>";
@@ -87,7 +85,7 @@ if($lastPage > $startPage){
 if($occArr){
 	$recordListHtml .= '<form name="selectform" id="selectform" action="" method="post" onsubmit="" target="_blank">';
 	$recordListHtml .= '<div style="margin-bottom:5px;clear:both;">';
-	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" onclick="selectAll(this);" '.($allSelected===true? 'checked' : '').' />';
+	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
 	$recordListHtml .= 'Select/Deselect all Records';
 	$recordListHtml .= '</div>';
 	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">';
@@ -127,4 +125,4 @@ else{
 }
 $recordListHtml = utf8_encode($recordListHtml);
 
-echo json_encode($recordListHtml);
+echo $recordListHtml;

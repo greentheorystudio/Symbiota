@@ -58,7 +58,7 @@ if($taxonManager->getSecurityStatus() == 0){
 	$displayLocality = 1;
 }
 $taxonManager->setDisplayLocality($displayLocality);
-$descr = Array();
+$descr = array();
 
 if(file_exists('includes/config/taxaProfileTemplateCustom.php')){
     include('includes/config/taxaProfileTemplateCustom.php');

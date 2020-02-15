@@ -3,7 +3,7 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$returnArr = Array();
+$returnArr = array();
 $queryString = $con->real_escape_string($_REQUEST['q']);
 $type = $con->real_escape_string($_REQUEST['t']);
 if($queryString && $type){
@@ -57,7 +57,7 @@ if($queryString && $type){
         }
     }
     if($type === 'photographer'){
-        $retArrRow = Array();
+        $retArrRow = array();
         $sql = "SELECT DISTINCT u.uid, CONCAT_WS(' ',u.firstname,u.lastname) AS fullname ".
             'FROM images AS i LEFT JOIN users AS u ON i.photographeruid = u.uid ' .
             "WHERE u.firstname LIKE '".$queryString."%' OR u.lastname LIKE '".$queryString."%' ".

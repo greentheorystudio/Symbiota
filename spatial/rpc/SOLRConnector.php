@@ -2,7 +2,7 @@
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 
-$pArr = Array();
+$pArr = array();
 $pArr['q'] = ($_REQUEST['q'] ?? '*:*');
 if(isset($_REQUEST['fq'])) {
     $pArr['fq'] = $_REQUEST['fq'];

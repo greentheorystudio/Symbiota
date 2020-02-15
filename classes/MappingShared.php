@@ -4,10 +4,10 @@ include_once('OccurrenceAccessStats.php');
 
 class MappingShared{
 
-	private $iconColors = Array();
-	private $googleIconArr = Array();
-	private $taxaArr = Array();
-	private $fieldArr = Array();
+	private $iconColors = array();
+	private $googleIconArr = array();
+	private $taxaArr = array();
+	private $fieldArr = array();
 	private $sqlWhere;
 	private $searchTerms = 0;
 
@@ -45,7 +45,7 @@ class MappingShared{
 
 	public function getGeoCoords($mapWhere,$limit=1000,$includeDescr=false){
 		global $USER_RIGHTS, $IS_ADMIN;
-		$coordArr = Array();
+		$coordArr = array();
 		$sql = 'SELECT DISTINCT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
 			'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 			'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName ';
@@ -76,7 +76,7 @@ class MappingShared{
 			$sql .= " LIMIT ".$limit;
 		}
 		*/
-		$taxaMapper = Array();
+		$taxaMapper = array();
 		$taxaMapper["undefined"] = "undefined";
 		$cnt = 0;
 		//echo json_encode($this->taxaArr);

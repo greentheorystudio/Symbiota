@@ -266,7 +266,7 @@ class OccurrenceMaintenance {
 		$genusCnt = 0;
 		$speciesCnt = 0;
 		if($full){
-			$statsArr = Array();
+			$statsArr = array();
 			if($this->verbose) $this->outputMsg('Calculating occurrence, georeference, family, genera, and species counts... ',1);
 			$sql = 'SELECT COUNT(o.occid) AS SpecimenCount, COUNT(o.decimalLatitude) AS GeorefCount, '.
 				'COUNT(DISTINCT o.family) AS FamilyCount, COUNT(o.typeStatus) AS TypeCount, '.

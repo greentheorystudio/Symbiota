@@ -695,7 +695,7 @@ class TaxonomyCleaner extends Manager{
 	//Misc fucntions
 	public function getCollMap(){
 		global $USER_RIGHTS, $IS_ADMIN;
-		$retArr = Array();
+		$retArr = array();
 		$collArr = array();
 		if(isset($USER_RIGHTS['CollAdmin'])) $collArr = $USER_RIGHTS['CollAdmin'];
 		if($IS_ADMIN) $collArr = array_merge($collArr, explode(',',$this->collid));
@@ -723,7 +723,7 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function getTaxaSuggest($queryString){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT tid, sciname FROM taxa ';
 		//$queryString = $this->cleanInStr($queryString);
 		$queryString = preg_replace('/[()\'"+\-=@$%]+/i', '', $queryString);
