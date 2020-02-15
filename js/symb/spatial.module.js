@@ -1500,7 +1500,7 @@ function findOccClusterPosition(occid){
     if(spiderCluster){
         const spiderPoints = layersArr['spider'].getSource().getFeatures();
         for(let p in spiderPoints){
-            if(spiderPoints.hasOwnProperty(p) && spiderPoints[p].get('features')[0].get('occid') === Number(occid)){
+            if(spiderPoints.hasOwnProperty(p) && Number(spiderPoints[p].get('features')[0].get('occid')) === occid){
                 return spiderPoints[p].getGeometry().getCoordinates();
             }
         }
@@ -1510,7 +1510,7 @@ function findOccClusterPosition(occid){
         for(let c in clusters){
             if(clusters.hasOwnProperty(c)){
                 const clusterindex = clusters[c].get('identifiers');
-                if(clusterindex.indexOf(Number(occid)) !== -1){
+                if(clusterindex.indexOf(occid.toString()) !== -1){
                     return clusters[c].getGeometry().getCoordinates();
                 }
             }
