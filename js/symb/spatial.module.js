@@ -3207,7 +3207,7 @@ function setClusterSymbol(feature) {
                 clusterindex = feature.get('identifiers');
                 for(let i in selections){
                     if(selections.hasOwnProperty(i)){
-                        if(clusterindex.indexOf(selections[i]) !== -1) {
+                        if(clusterindex.indexOf(selections[i].toString()) !== -1) {
                             selected = true;
                         }
                     }
