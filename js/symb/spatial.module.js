@@ -1510,7 +1510,7 @@ function findOccClusterPosition(occid){
         for(let c in clusters){
             if(clusters.hasOwnProperty(c)){
                 const clusterindex = clusters[c].get('identifiers');
-                if(clusterindex.indexOf(occid.toString()) !== -1){
+                if(clusterindex.indexOf(occid) !== -1){
                     return clusters[c].getGeometry().getCoordinates();
                 }
             }
@@ -3207,7 +3207,7 @@ function setClusterSymbol(feature) {
                 clusterindex = feature.get('identifiers');
                 for(let i in selections){
                     if(selections.hasOwnProperty(i)){
-                        if(clusterindex.indexOf(selections[i].toString()) !== -1) {
+                        if(clusterindex.indexOf(selections[i]) !== -1) {
                             selected = true;
                         }
                     }
