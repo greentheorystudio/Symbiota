@@ -12,13 +12,6 @@ $(document).on("pageloadfailed", function(event){
 $(document).ready(function() {
     setLayersTable();
 
-    function split( val ) {
-        return val.split( /,\s*/ );
-    }
-    function extractLast( term ) {
-        return split( term ).pop();
-    }
-
     $( "#taxa" )
         .bind( "keydown", function( event ) {
             if ( event.keyCode === $.ui.keyCode.TAB &&
@@ -83,10 +76,10 @@ $(document).ready(function() {
 });
 
 function addLayerToSelList(layer,title){
-    var origValue = document.getElementById("selectlayerselect").value;
-    var selectionList = document.getElementById("selectlayerselect").innerHTML;
-    var optionId = "lsel-"+layer;
-    var newOption = '<option id="lsel-'+optionId+'" value="'+layer+'">'+title+'</option>';
+    const origValue = document.getElementById("selectlayerselect").value;
+    let selectionList = document.getElementById("selectlayerselect").innerHTML;
+    const optionId = "lsel-" + layer;
+    const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
     if(layer !== 'select'){
@@ -114,16 +107,17 @@ function adjustSelectionsTab(){
 
 function animateDS(){
     if(!dsAnimStop){
-        var lowDate = document.getElementById("datesliderearlydate").value;
-        var highDate = document.getElementById("datesliderlatedate").value;
-        var lowDateVal = new Date(lowDate);
+        let calcHighDate, lowDateValStr, highDateValStr;
+        const lowDate = document.getElementById("datesliderearlydate").value;
+        const highDate = document.getElementById("datesliderlatedate").value;
+        let lowDateVal = new Date(lowDate);
         lowDateVal = new Date(lowDateVal.setTime(lowDateVal.getTime()+86400000));
-        var highDateVal = new Date(highDate);
+        let highDateVal = new Date(highDate);
         highDateVal = new Date(highDateVal.setTime(highDateVal.getTime()+86400000));
         if(dsAnimReverse){
             if(dsAnimDual){
                 if(lowDateVal.getTime() !== highDateVal.getTime()) highDateVal = new Date(highDateVal.setDate(highDateVal.getDate() - dsAnimDuration));
-                var calcLowDate = new Date(lowDateVal.setDate(lowDateVal.getDate() - dsAnimDuration));
+                const calcLowDate = new Date(lowDateVal.setDate(lowDateVal.getDate() - dsAnimDuration));
                 if(calcLowDate.getTime() > dsAnimLow.getTime()){
                     lowDateVal = calcLowDate;
                 }
@@ -133,7 +127,7 @@ function animateDS(){
                 }
             }
             else{
-                var calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() - dsAnimDuration));
+                calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() - dsAnimDuration));
                 if(calcHighDate.getTime() > dsAnimLow.getTime()){
                     highDateVal = calcHighDate;
                 }
@@ -144,7 +138,7 @@ function animateDS(){
         }
         else{
             if(dsAnimDual && (lowDateVal.getTime() !== highDateVal.getTime())) lowDateVal = new Date(lowDateVal.setDate(lowDateVal.getDate() + dsAnimDuration));
-            var calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() + dsAnimDuration));
+            calcHighDate = new Date(highDateVal.setDate(highDateVal.getDate() + dsAnimDuration));
             if(calcHighDate.getTime() < dsAnimHigh.getTime()){
                 highDateVal = calcHighDate;
             }
@@ -155,8 +149,8 @@ function animateDS(){
         }
         tsOldestDate = lowDateVal;
         tsNewestDate = highDateVal;
-        var lowDateValStr = getISOStrFromDateObj(lowDateVal);
-        var highDateValStr = getISOStrFromDateObj(highDateVal);
+        lowDateValStr = getISOStrFromDateObj(lowDateVal);
+        highDateValStr = getISOStrFromDateObj(highDateVal);
         $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
         $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
         $("#custom-label-min").text(lowDateValStr);
@@ -174,8 +168,8 @@ function animateDS(){
         else{
             tsOldestDate = dsAnimLow;
             tsNewestDate = dsAnimHigh;
-            var lowDateValStr = getISOStrFromDateObj(dsAnimLow);
-            var highDateValStr = getISOStrFromDateObj(dsAnimHigh);
+            lowDateValStr = getISOStrFromDateObj(dsAnimLow);
+            highDateValStr = getISOStrFromDateObj(dsAnimHigh);
             $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
             $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
             $("#custom-label-min").text(lowDateValStr);
@@ -189,8 +183,8 @@ function animateDS(){
 }
 
 function arrayIndexSort(obj){
-    var keys = [];
-    for(var key in obj){
+    const keys = [];
+    for(const key in obj){
         if(obj.hasOwnProperty(key)){
             keys.push(key);
         }
@@ -201,16 +195,18 @@ function arrayIndexSort(obj){
 function autoColorColl(){
     document.getElementById("randomColorColl").disabled = true;
     changeMapSymbology('coll');
-    var usedColors = [];
-    for(i in collSymbology){
-        var randColor = generateRandColor();
-        while (usedColors.indexOf(randColor) > -1) {
-            randColor = generateRandColor();
+    const usedColors = [];
+    for(let i in collSymbology){
+        if(collSymbology.hasOwnProperty(i)){
+            let randColor = generateRandColor();
+            while (usedColors.indexOf(randColor) > -1) {
+                randColor = generateRandColor();
+            }
+            usedColors.push(randColor);
+            changeCollColor(randColor,i);
+            const keyName = 'keyColor' + i;
+            document.getElementById(keyName).color.fromString(randColor);
         }
-        usedColors.push(randColor);
-        changeCollColor(randColor,i);
-        var keyName = 'keyColor'+i;
-        document.getElementById(keyName).color.fromString(randColor);
     }
     document.getElementById("randomColorColl").disabled = false;
 }
@@ -218,30 +214,36 @@ function autoColorColl(){
 function autoColorTaxa(){
     document.getElementById("randomColorTaxa").disabled = true;
     changeMapSymbology('taxa');
-    var usedColors = [];
-    for(i in taxaSymbology){
-        var randColor = generateRandColor();
-        while (usedColors.indexOf(randColor) > -1) {
-            randColor = generateRandColor();
-        }
-        usedColors.push(randColor);
-        changeTaxaColor(randColor,i);
-        var keyName = 'taxaColor'+i;
-        if(document.getElementById(keyName)){
-            document.getElementById(keyName).color.fromString(randColor);
+    const usedColors = [];
+    for(let i in taxaSymbology){
+        if(taxaSymbology.hasOwnProperty(i)){
+            let randColor = generateRandColor();
+            while (usedColors.indexOf(randColor) > -1) {
+                randColor = generateRandColor();
+            }
+            usedColors.push(randColor);
+            changeTaxaColor(randColor,i);
+            const keyName = 'taxaColor' + i;
+            if(document.getElementById(keyName)){
+                document.getElementById(keyName).color.fromString(randColor);
+            }
         }
     }
     document.getElementById("randomColorTaxa").disabled = false;
 }
 
 function buildCollKey(){
-    for(i in collSymbology){
-        buildCollKeyPiece(i);
+    for(let i in collSymbology){
+        if(collSymbology.hasOwnProperty(i)){
+            buildCollKeyPiece(i);
+        }
     }
     keyHTML = '';
-    var sortedKeys = arrayIndexSort(collKeyArr).sort();
-    for(i in sortedKeys) {
-        keyHTML += collKeyArr[sortedKeys[i]];
+    const sortedKeys = arrayIndexSort(collKeyArr).sort();
+    for(let i in sortedKeys) {
+        if(sortedKeys.hasOwnProperty(i)){
+            keyHTML += collKeyArr[sortedKeys[i]];
+        }
     }
     document.getElementById("symbologykeysbox").innerHTML = keyHTML;
     jscolor.init();
@@ -261,21 +263,20 @@ function buildCollKeyPiece(key){
 }
 
 function buildLayerTableRow(lArr,removable){
-    var layerList = '';
-    var trfragment = '';
-    var layerID = lArr['Name'];
-    var layerType = lArr['layerType'];
+    let trfragment = '';
+    const layerID = lArr['Name'];
+    const layerType = lArr['layerType'];
     if(layerType !== 'vector'){
-        var infoArr = [];
+        const infoArr = [];
         infoArr['id'] = layerID;
         infoArr['title'] = lArr['Title'];
         rasterLayers.push(infoArr);
     }
-    var addLayerFunction = (layerType === 'vector'?'editVectorLayers':'editRasterLayers');
-    var divid = "lay-"+layerID;
+    const addLayerFunction = (layerType === 'vector' ? 'editVectorLayers' : 'editRasterLayers');
+    const divid = "lay-" + layerID;
     if(!document.getElementById(divid)){
         trfragment += '<td style="width:30px;">';
-        var onchange = (removable?"toggleUploadLayer(this,'"+lArr['Title']+"');":addLayerFunction+"(this,'"+lArr['Title']+"');");
+        const onchange = (removable ? "toggleUploadLayer(this,'" + lArr['Title'] + "');" : addLayerFunction + "(this,'" + lArr['Title'] + "');");
         trfragment += '<input type="checkbox" value="'+layerID+'" onchange="'+onchange+'" '+(removable?'checked ':'')+'/>';
         trfragment += '</td>';
         trfragment += '<td style="width:170px;">';
@@ -289,12 +290,12 @@ function buildLayerTableRow(lArr,removable){
         trfragment += '</td>';
         trfragment += '<td style="width:50px;">';
         if(removable){
-            var onclick = "removeUserLayer('"+layerID+"');";
+            const onclick = "removeUserLayer('" + layerID + "');";
             trfragment += '<input type="image" style="margin-left:5px;" src="../images/del.png" onclick="'+onclick+'" title="Remove layer">';
         }
         trfragment += '</td>';
-        var layerTable = document.getElementById("layercontroltable");
-        var newLayerRow = (removable?layerTable.insertRow(0):layerTable.insertRow());
+        const layerTable = document.getElementById("layercontroltable");
+        const newLayerRow = (removable ? layerTable.insertRow(0) : layerTable.insertRow());
         newLayerRow.id = 'lay-'+layerID;
         newLayerRow.innerHTML = trfragment;
         if(removable) addLayerToSelList(layerID,lArr['Title']);
@@ -311,7 +312,7 @@ function buildQueryStrings(){
     solrgeoqArr = [];
     newsolrqString = '';
     getCollectionParams();
-    prepareTaxaParams(function(res){
+    prepareTaxaParams(function(){
         getTextParams();
         getGeographyParams();
         if(solrqArr.length > 0 || solrgeoqArr.length > 0){
@@ -321,26 +322,33 @@ function buildQueryStrings(){
 }
 
 function buildRasterCalcDropDown(){
-    var selectionList = '<option value="">Select Layer</option>';
+    let selectionList = '<option value="">Select Layer</option>';
     overlayLayers.sort();
-    for(l in overlayLayers){
-        var newOption = '<option value="'+overlayLayers[l]['id']+'">'+overlayLayers[l]['id']+'</option>';
-        selectionList += newOption;
+    for(let l in overlayLayers){
+        if(overlayLayers.hasOwnProperty(l)){
+            const newOption = '<option value="' + overlayLayers[l]['id'] + '">' + overlayLayers[l]['id'] + '</option>';
+            selectionList += newOption;
+        }
     }
     document.getElementById("rastcalcoverlay1").innerHTML = selectionList;
     document.getElementById("rastcalcoverlay2").innerHTML = selectionList;
 }
 
 function buildReclassifyDropDown(){
-    var selectionList = '<option value="">Select Layer</option>';
-    for(i in rasterLayers){
-        var newOption = '<option value="'+rasterLayers[i]['id']+'">'+rasterLayers[i]['title']+'</option>';
-        selectionList += newOption;
+    let newOption;
+    let selectionList = '<option value="">Select Layer</option>';
+    for(let i in rasterLayers){
+        if(rasterLayers.hasOwnProperty(i)){
+            newOption = '<option value="'+rasterLayers[i]['id']+'">'+rasterLayers[i]['title']+'</option>';
+            selectionList += newOption;
+        }
     }
     if(overlayLayers.length > 0){
-        for(l in overlayLayers){
-            var newOption = '<option value="'+overlayLayers[l]['id']+'">'+overlayLayers[l]['id']+'</option>';
-            selectionList += newOption;
+        for(let l in overlayLayers){
+            if(overlayLayers.hasOwnProperty(l)){
+                newOption = '<option value="'+overlayLayers[l]['id']+'">'+overlayLayers[l]['id']+'</option>';
+                selectionList += newOption;
+            }
         }
     }
     document.getElementById("reclassifysourcelayer").innerHTML = selectionList;
@@ -348,11 +356,11 @@ function buildReclassifyDropDown(){
 
 function buildSOLRQString(){
     newsolrqString = 'q=';
-    var tempqStr = '';
-    var tempfqStr = '';
+    let tempqStr = '';
+    let tempfqStr = '';
     if(solrqArr.length > 0){
-        for(i in solrqArr){
-            if(solrqArr[i] !== '()'){
+        for(let i in solrqArr){
+            if(solrqArr.hasOwnProperty(i) && solrqArr[i] !== '()'){
                 tempqStr += ' AND '+solrqArr[i];
             }
         }
@@ -369,8 +377,10 @@ function buildSOLRQString(){
     }
 
     if(solrgeoqArr.length > 0){
-        for(i in solrgeoqArr){
-            tempfqStr += ' OR geo:'+solrgeoqArr[i];
+        for(let i in solrgeoqArr){
+            if(solrgeoqArr.hasOwnProperty(i)){
+                tempfqStr += ' OR geo:'+solrgeoqArr[i];
+            }
         }
         tempfqStr = tempfqStr.substr(4,tempfqStr.length);
         document.getElementById("dh-fq").value = tempfqStr;
@@ -380,37 +390,45 @@ function buildSOLRQString(){
 
 function buildTaxaKey(){
     document.getElementById("taxaCountNum").innerHTML = taxaCnt;
-    for(i in taxaSymbology){
-        var family = taxaSymbology[i]['family'];
-        var tidinterpreted = taxaSymbology[i]['tidinterpreted'];
-        var sciname = taxaSymbology[i]['sciname'];
-        buildTaxaKeyPiece(i,family,tidinterpreted,sciname);
+    for(let i in taxaSymbology){
+        if(taxaSymbology.hasOwnProperty(i)){
+            const family = taxaSymbology[i]['family'];
+            const tidinterpreted = taxaSymbology[i]['tidinterpreted'];
+            const sciname = taxaSymbology[i]['sciname'];
+            buildTaxaKeyPiece(i,family,tidinterpreted,sciname);
+        }
     }
     keyHTML = '';
-    var famUndefinedArr = [];
+    let famUndefinedArr = [];
     if(taxaKeyArr['undefined']){
         famUndefinedArr = taxaKeyArr['undefined'];
         var undIndex = taxaKeyArr.indexOf('undefined');
         taxaKeyArr.splice(undIndex,1);
     }
-    var fsortedKeys = arrayIndexSort(taxaKeyArr).sort();
-    for(f in fsortedKeys){
-        var scinameArr = [];
-        scinameArr = taxaKeyArr[fsortedKeys[f]];
-        var ssortedKeys = arrayIndexSort(scinameArr).sort();
-        keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>"+fsortedKeys[f]+"</h3></div>";
-        keyHTML += "<div style='display:table;'>";
-        for(s in ssortedKeys){
-            keyHTML += taxaKeyArr[fsortedKeys[f]][ssortedKeys[s]];
+    const fsortedKeys = arrayIndexSort(taxaKeyArr).sort();
+    for(let f in fsortedKeys){
+        if(fsortedKeys.hasOwnProperty(f)){
+            let scinameArr = [];
+            scinameArr = taxaKeyArr[fsortedKeys[f]];
+            var ssortedKeys = arrayIndexSort(scinameArr).sort();
+            keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>"+fsortedKeys[f]+"</h3></div>";
+            keyHTML += "<div style='display:table;'>";
+            for(let s in ssortedKeys){
+                if(ssortedKeys.hasOwnProperty(s)){
+                    keyHTML += taxaKeyArr[fsortedKeys[f]][ssortedKeys[s]];
+                }
+            }
+            keyHTML += "</div>";
         }
-        keyHTML += "</div>";
     }
     if(famUndefinedArr.length > 0){
-        var usortedKeys = arrayIndexSort(famUndefinedArr).sort();
+        const usortedKeys = arrayIndexSort(famUndefinedArr).sort();
         keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>Family Not Defined</h3></div>";
         keyHTML += "<div style='display:table;'>";
-        for(u in usortedKeys){
-            keyHTML += taxaKeyArr[usortedKeys[u]];
+        for(let u in usortedKeys){
+            if(usortedKeys.hasOwnProperty(u)){
+                keyHTML += taxaKeyArr[usortedKeys[u]];
+            }
         }
     }
     document.getElementById("taxasymbologykeysbox").innerHTML = keyHTML;
@@ -420,7 +438,7 @@ function buildTaxaKey(){
 function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
     keyHTML = '';
     keyLabel = "'"+key+"'";
-    var color = taxaSymbology[key]['color'];
+    const color = taxaSymbology[key]['color'];
     keyHTML += '<div id="'+key+'keyrow">';
     keyHTML += '<div style="display:table-row;">';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
@@ -439,27 +457,33 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
 }
 
 function buildVectorizeDropDown(){
-    var selectionList = '<option value="">Select Layer</option>';
+    let selectionList = '<option value="">Select Layer</option>';
     vectorizeLayers.sort();
-    for(l in vectorizeLayers){
-        var newOption = '<option value="'+vectorizeLayers[l]+'">'+vectorizeLayers[l]+'</option>';
-        selectionList += newOption;
+    for(let l in vectorizeLayers){
+        if(vectorizeLayers.hasOwnProperty(l)){
+            const newOption = '<option value="' + vectorizeLayers[l] + '">' + vectorizeLayers[l] + '</option>';
+            selectionList += newOption;
+        }
     }
     document.getElementById("vectorizesourcelayer").innerHTML = selectionList;
 }
 
 function changeBaseMap(){
-    var blsource;
-    var selection = document.getElementById('base-map').value;
-    var baseLayer = map.getLayers().getArray()[0];
+    let blsource;
+    const selection = document.getElementById('base-map').value;
+    const baseLayer = map.getLayers().getArray()[0];
     if(selection === 'worldtopo'){
         blsource = new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         });
     }
-    if(selection === 'openstreet'){blsource = new ol.source.OSM();}
-    if(selection === 'blackwhite'){blsource = new ol.source.Stamen({layer: 'toner'});}
+    if(selection === 'openstreet'){
+        blsource = new ol.source.OSM();
+    }
+    if(selection === 'blackwhite'){
+        blsource = new ol.source.Stamen({layer: 'toner'});
+    }
     if(selection === 'worldimagery'){
         blsource = new ol.source.XYZ({
             url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -514,16 +538,18 @@ function changeCollColor(color,key){
     collSymbology[key]['color'] = color;
     layersArr['pointv'].getSource().changed();
     if(spiderCluster){
-        var spiderFeatures = layersArr['spider'].getSource().getFeatures();
-        for(f in spiderFeatures){
-            var style = (spiderFeatures[f].get('features')?setClusterSymbol(spiderFeatures[f]):setSymbol(spiderFeatures[f]));
-            spiderFeatures[f].setStyle(style);
+        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+        for(let f in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(f)){
+                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
+                spiderFeatures[f].setStyle(style);
+            }
         }
     }
 }
 
 function changeDraw() {
-    var value = typeSelect.value;
+    const value = typeSelect.value;
     if (value !== 'None') {
         draw = new ol.interaction.Draw({
             source: selectsource,
@@ -572,15 +598,17 @@ function changeHeatMapRadius(){
 function changeMapSymbology(symbology){
     if(symbology !== mapSymbology){
         if(spiderCluster){
-            var source = layersArr['spider'].getSource();
+            const source = layersArr['spider'].getSource();
             source.clear();
-            var blankSource = new ol.source.Vector({
+            const blankSource = new ol.source.Vector({
                 features: new ol.Collection(),
                 useSpatialIndex: true
             });
             layersArr['spider'].setSource(blankSource);
-            for(i in hiddenClusters){
-                showFeature(hiddenClusters[i]);
+            for(let i in hiddenClusters){
+                if(hiddenClusters.hasOwnProperty(i)){
+                    showFeature(hiddenClusters[i]);
+                }
             }
             hiddenClusters = [];
             spiderCluster = '';
@@ -610,24 +638,24 @@ function changeMapSymbology(symbology){
 }
 
 function changeRecordPage(page){
+    let params;
     document.getElementById("queryrecords").innerHTML = "<p>Loading...</p>";
-    var selJson = JSON.stringify(selections);
-    var http = new XMLHttpRequest();
-    var url = "rpc/changemaprecordpage.php";
+    const selJson = JSON.stringify(selections);
+    const http = new XMLHttpRequest();
+    const url = "rpc/changemaprecordpage.php";
     if(SOLRMODE){
-        var params = solrqString+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+        params = solrqString+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     else{
-        var jsonStarr = JSON.stringify(searchTermsArr);
-        var params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+        const jsonStarr = JSON.stringify(searchTermsArr);
+        params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
         if(http.readyState === 4 && http.status === 200) {
-            var newMapRecordList = JSON.parse(http.responseText);
-            document.getElementById("queryrecords").innerHTML = newMapRecordList;
+            document.getElementById("queryrecords").innerHTML = http.responseText;
         }
     };
     http.send(params);
@@ -643,40 +671,41 @@ function checkDateSliderType(){
     if(dateSliderActive){
         document.body.removeChild(sliderdiv);
         sliderdiv = '';
-        var dual = document.getElementById("dsdualtype").checked;
+        const dual = document.getElementById("dsdualtype").checked;
         createDateSlider(dual);
     }
 }
 
 function checkDSAnimDuration(){
-    var duration = document.getElementById("datesliderinterduration").value;
-    var imageSave = document.getElementById("dateslideranimimagesave").checked;
+    let lowDate, hLowDate, highDate, hHighDate, difference, diffYears;
+    const duration = document.getElementById("datesliderinterduration").value;
+    const imageSave = document.getElementById("dateslideranimimagesave").checked;
     if(duration){
         if(!isNaN(duration) && duration > 0){
-            var lowDate = document.getElementById("datesliderearlydate").value;
-            var hLowDate = new Date(lowDate);
+            lowDate = document.getElementById("datesliderearlydate").value;
+            hLowDate = new Date(lowDate);
             hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-            var highDate = document.getElementById("datesliderlatedate").value;
-            var hHighDate = new Date(highDate);
+            highDate = document.getElementById("datesliderlatedate").value;
+            hHighDate = new Date(highDate);
             hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-            var difference = (hHighDate-hLowDate)/1000;
+            difference = (hHighDate-hLowDate)/1000;
             difference /= (60*60*24);
-            var diffYears = Math.abs(difference/365.25);
+            diffYears = Math.abs(difference/365.25);
             if(duration >= diffYears){
                 alert("Interval duration must less than the difference between the earliest and latest dates in years: "+diffYears.toFixed(4));
                 document.getElementById("datesliderinterduration").value = '';
             }
             else if(imageSave){
-                var lowDate = document.getElementById("datesliderearlydate").value;
-                var hLowDate = new Date(lowDate);
+                lowDate = document.getElementById("datesliderearlydate").value;
+                hLowDate = new Date(lowDate);
                 hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-                var highDate = document.getElementById("datesliderlatedate").value;
-                var hHighDate = new Date(highDate);
+                highDate = document.getElementById("datesliderlatedate").value;
+                hHighDate = new Date(highDate);
                 hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-                var difference = (hHighDate - hLowDate)/1000;
+                difference = (hHighDate - hLowDate)/1000;
                 difference /= (60*60*24);
-                var diffYears = difference/365.25;
-                var imageCount = Math.ceil(diffYears/duration);
+                diffYears = difference/365.25;
+                const imageCount = Math.ceil(diffYears / duration);
                 if(!confirm("You have Save Images checked. With the current interval duration and date settings, this will produce "+imageCount+" images. Click OK to continue.")){
                     document.getElementById("dateslideranimimagesave").checked = false;
                 }
@@ -690,32 +719,28 @@ function checkDSAnimDuration(){
 }
 
 function checkDSAnimTime(){
-    var animtime = Number(document.getElementById("datesliderintertime").value);
-    if(animtime){
-        if(isNaN(animtime) || animtime < 0.1 || animtime > 5){
-            alert("Interval time must be a number greater than or equal to .1, and less than or equal to 5.");
-            document.getElementById("datesliderintertime").value = '';
-        }
+    const animtime = Number(document.getElementById("datesliderintertime").value);
+    if(animtime && (isNaN(animtime) || animtime < 0.1 || animtime > 5)){
+        alert("Interval time must be a number greater than or equal to .1, and less than or equal to 5.");
+        document.getElementById("datesliderintertime").value = '';
     }
 }
 
 function checkDSHighDate(){
-    var maxDate = dsNewestDate.getTime();
-    var hMaxDate = new Date(maxDate);
-    var hMaxDateStr = getISOStrFromDateObj(hMaxDate);
-    var currentHighSetting = new Date($("#sliderdiv").slider("values",1));
-    var currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
-    var highDate = document.getElementById("datesliderlatedate").value;
+    const maxDate = dsNewestDate.getTime();
+    const hMaxDate = new Date(maxDate);
+    const hMaxDateStr = getISOStrFromDateObj(hMaxDate);
+    const currentHighSetting = new Date($("#sliderdiv").slider("values", 1));
+    const currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
+    const highDate = document.getElementById("datesliderlatedate").value;
     if(highDate){
         if(formatCheckDate(highDate)){
-            var currentLowSetting = new Date($("#sliderdiv").slider("values",0));
-            var currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
-            var hHighDate = new Date(highDate);
-            if(hHighDate < hMaxDate){
-                if(hHighDate < currentLowSetting){
-                    alert("Date cannot be earlier than the currently set earliest date: "+currentLowSettingStr+'.');
-                    document.getElementById("datesliderlatedate").value = currentHighSettingStr;
-                }
+            const currentLowSetting = new Date($("#sliderdiv").slider("values", 0));
+            const currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
+            const hHighDate = new Date(highDate);
+            if(hHighDate < hMaxDate && hHighDate < currentLowSetting){
+                alert("Date cannot be earlier than the currently set earliest date: "+currentLowSettingStr+'.');
+                document.getElementById("datesliderlatedate").value = currentHighSettingStr;
             }
             else{
                 alert("Date cannot be later than the latest date on slider: "+hMaxDateStr+'.');
@@ -729,22 +754,20 @@ function checkDSHighDate(){
 }
 
 function checkDSLowDate(){
-    var minDate = dsOldestDate.getTime();;
-    var hMinDate = new Date(minDate);
-    var hMinDateStr = getISOStrFromDateObj(hMinDate);
-    var currentLowSetting = new Date($("#sliderdiv").slider("values",0));
-    var currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
-    var lowDate = document.getElementById("datesliderearlydate").value;
+    const minDate = dsOldestDate.getTime();
+    const hMinDate = new Date(minDate);
+    const hMinDateStr = getISOStrFromDateObj(hMinDate);
+    const currentLowSetting = new Date($("#sliderdiv").slider("values", 0));
+    const currentLowSettingStr = getISOStrFromDateObj(currentLowSetting);
+    const lowDate = document.getElementById("datesliderearlydate").value;
     if(lowDate){
         if(formatCheckDate(lowDate)){
-            var currentHighSetting = new Date($("#sliderdiv").slider("values",1));
-            var currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
-            var hLowDate = new Date(lowDate);
-            if(hLowDate > hMinDate){
-                if(hLowDate > currentHighSetting){
-                    alert("Date cannot be after the currently set latest date: "+currentHighSettingStr+'.');
-                    document.getElementById("datesliderearlydate").value = currentLowSettingStr;
-                }
+            const currentHighSetting = new Date($("#sliderdiv").slider("values", 1));
+            const currentHighSettingStr = getISOStrFromDateObj(currentHighSetting);
+            const hLowDate = new Date(lowDate);
+            if(hLowDate > hMinDate && hLowDate > currentHighSetting){
+                alert("Date cannot be after the currently set latest date: "+currentHighSettingStr+'.');
+                document.getElementById("datesliderearlydate").value = currentLowSettingStr;
             }
             else{
                 alert("Date cannot be earlier than the earliest date on slider: "+hMinDateStr+'.');
@@ -758,20 +781,20 @@ function checkDSLowDate(){
 }
 
 function checkDSSaveImage(){
-    var imageSave = document.getElementById("dateslideranimimagesave").checked;
-    var duration = document.getElementById("datesliderinterduration").value;
+    const imageSave = document.getElementById("dateslideranimimagesave").checked;
+    const duration = document.getElementById("datesliderinterduration").value;
     if(imageSave){
         if(duration){
-            var lowDate = document.getElementById("datesliderearlydate").value;
-            var hLowDate = new Date(lowDate);
+            const lowDate = document.getElementById("datesliderearlydate").value;
+            let hLowDate = new Date(lowDate);
             hLowDate = new Date(hLowDate.setTime(hLowDate.getTime()+86400000));
-            var highDate = document.getElementById("datesliderlatedate").value;
-            var hHighDate = new Date(highDate);
+            const highDate = document.getElementById("datesliderlatedate").value;
+            let hHighDate = new Date(highDate);
             hHighDate = new Date(hHighDate.setTime(hHighDate.getTime()+86400000));
-            var difference = (hHighDate - hLowDate)/1000;
+            let difference = (hHighDate - hLowDate) / 1000;
             difference /= (60*60*24);
-            var diffYears = difference/365.25;
-            var imageCount = Math.ceil(diffYears/duration);
+            const diffYears = difference / 365.25;
+            const imageCount = Math.ceil(diffYears / duration);
             if(!confirm("With the current interval duration and date settings, this will produce "+imageCount+" images. Click OK to continue.")){
                 document.getElementById("dateslideranimimagesave").checked = false;
             }
@@ -792,8 +815,10 @@ function checkLoading(){
 }
 
 function checkObjectNotEmpty(obj){
-    for(var i in obj){
-        if(obj[i]) return true;
+    for(const i in obj){
+        if(obj.hasOwnProperty(i) && obj[i]){
+            return true;
+        }
     }
     return false;
 }
@@ -806,16 +831,16 @@ function checkPointToolSource(selector){
 }
 
 function checkReclassifyForm(){
-    var rasterLayer = document.getElementById("reclassifysourcelayer").value;
-    var outputName = document.getElementById("reclassifyOutputName").value;
-    var rasterMinVal = document.getElementById("reclassifyRasterMin").value;
-    var rasterMaxVal = document.getElementById("reclassifyRasterMax").value;
-    var colorVal = document.getElementById("reclassifyColorVal").value;
-    if(rasterLayer == "") alert("Please select a raster layer to reclassify.");
-    else if(outputName == "") alert("Please enter a name for the output overlay.");
+    const rasterLayer = document.getElementById("reclassifysourcelayer").value;
+    const outputName = document.getElementById("reclassifyOutputName").value;
+    const rasterMinVal = document.getElementById("reclassifyRasterMin").value;
+    const rasterMaxVal = document.getElementById("reclassifyRasterMax").value;
+    const colorVal = document.getElementById("reclassifyColorVal").value;
+    if(rasterLayer === "") alert("Please select a raster layer to reclassify.");
+    else if(outputName === "") alert("Please enter a name for the output overlay.");
     else if(layersArr[outputName]) alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
-    else if(colorVal == "FFFFFF") alert("Please select a color other than white for this overlay.");
-    else if(rasterMinVal == "" || rasterMaxVal == "") alert("Please enter a min and max value for the raster to reclassify.");
+    else if(colorVal === "FFFFFF") alert("Please select a color other than white for this overlay.");
+    else if(rasterMinVal === "" || rasterMaxVal === "") alert("Please enter a min and max value for the raster to reclassify.");
     else if(isNaN(rasterMinVal) || isNaN(rasterMaxVal)) alert("Please enter only numbers for the min and max values.");
     else{
         $("#reclassifytool").popup("hide");
@@ -838,8 +863,10 @@ function checkReclassifyToolOpen(){
 }
 
 function checkVectorizeForm(){
-    var rasterLayer = document.getElementById("vectorizesourcelayer").value;
-    if(rasterLayer == "") alert("Please select an overlay layer to vectorize.");
+    const rasterLayer = document.getElementById("vectorizesourcelayer").value;
+    if(rasterLayer === "") {
+        alert("Please select an overlay layer to vectorize.");
+    }
     else{
         $("#vectorizeoverlaytool").popup("hide");
         vectorizeRaster();
@@ -847,7 +874,7 @@ function checkVectorizeForm(){
 }
 
 function checkVectorizeOverlayToolOpen(){
-    if(checkObjectNotEmpty(vectorizeLayers) && selectInteraction.getFeatures().getArray().length == 1){
+    if(checkObjectNotEmpty(vectorizeLayers) && selectInteraction.getFeatures().getArray().length === 1){
         buildVectorizeDropDown();
         document.getElementById("vectorizesourcelayer").selectedIndex = 0;
         $("#maptools").popup("hide");
@@ -859,10 +886,10 @@ function checkVectorizeOverlayToolOpen(){
 }
 
 function cleanSelectionsLayer(){
-    var selLayerFeatures = layersArr['select'].getSource().getFeatures();
-    var currentlySelected = selectInteraction.getFeatures().getArray();
-    for(i in selLayerFeatures){
-        if(currentlySelected.indexOf(selLayerFeatures[i]) === -1){
+    const selLayerFeatures = layersArr['select'].getSource().getFeatures();
+    const currentlySelected = selectInteraction.getFeatures().getArray();
+    for(let i in selLayerFeatures){
+        if(selLayerFeatures.hasOwnProperty(i) && currentlySelected.indexOf(selLayerFeatures[i]) === -1){
             layersArr['select'].getSource().removeFeature(selLayerFeatures[i]);
         }
     }
@@ -871,18 +898,18 @@ function cleanSelectionsLayer(){
 function clearReclassifyForm() {
     document.getElementById("reclassifysourcelayer").selectedIndex = 0;
     document.getElementById("reclassifyOutputName").value = "";
-    var tableDiv = document.getElementById("reclassifyTableDiv");
+    const tableDiv = document.getElementById("reclassifyTableDiv");
     tableDiv.removeChild(tableDiv.childNodes[0]);
     setReclassifyTable();
 }
 
 function clearSelections(){
-    var selpoints = selections;
+    const selpoints = selections;
     selections = [];
-    for(i in selpoints){
-        if(!clusterPoints){
-            var point = findOccPoint(selpoints[i]);
-            var style = setSymbol(point);
+    for(let i in selpoints){
+        if(selpoints.hasOwnProperty(i) && !clusterPoints){
+            const point = findOccPoint(selpoints[i]);
+            const style = setSymbol(point);
             point.setStyle(style);
         }
     }
@@ -892,11 +919,13 @@ function clearSelections(){
 }
 
 function clearTaxaSymbology(){
-    for(i in taxaSymbology){
-        taxaSymbology[i]['color'] = "E69E67";
-        var keyName = 'taxaColor'+i;
-        if(document.getElementById(keyName)){
-            document.getElementById(keyName).color.fromString("E69E67");
+    for(let i in taxaSymbology){
+        if(taxaSymbology.hasOwnProperty(i)){
+            taxaSymbology[i]['color'] = "E69E67";
+            const keyName = 'taxaColor' + i;
+            if(document.getElementById(keyName)){
+                document.getElementById(keyName).color.fromString("E69E67");
+            }
         }
     }
 }
@@ -908,52 +937,58 @@ function closeOccidInfoBox(){
 function coordFormat(){
     return(function(coord1){
         mouseCoords = coord1;
-        if(coord1[0] < -180){coord1[0] = coord1[0] + 360};
-        if(coord1[0] > 180){coord1[0] = coord1[0] - 360};
-        var template = 'Lat: {y} Lon: {x}';
-        var coord2 = [coord1[1], coord1[0]];
+        if(coord1[0] < -180){
+            coord1[0] = coord1[0] + 360;
+        }
+        if(coord1[0] > 180){
+            coord1[0] = coord1[0] - 360;
+        }
+        const template = 'Lat: {y} Lon: {x}';
         return ol.coordinate.format(coord1,template,5);
     });
 }
 
 function createBuffers(){
-    var bufferSize = document.getElementById("bufferSize").value;
-    if(bufferSize == '' || isNaN(bufferSize)) alert("Please enter a number for the buffer size.");
+    const bufferSize = document.getElementById("bufferSize").value;
+    if(bufferSize === '' || isNaN(bufferSize)) {
+        alert("Please enter a number for the buffer size.");
+    }
     else if(selectInteraction.getFeatures().getArray().length >= 1){
         selectInteraction.getFeatures().forEach(function(feature){
+            let turfFeature;
             if(feature){
-                var selectedClone = feature.clone();
-                var geoType = selectedClone.getGeometry().getType();
-                var geoJSONFormat = new ol.format.GeoJSON();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType == 'Point'){
-                    var turfFeature = turf.point(featCoords);
+                const selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
+                const geoJSONFormat = new ol.format.GeoJSON();
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                if(geoType === 'Point'){
+                    turfFeature = turf.point(featCoords);
                 }
-                else if(geoType == 'LineString'){
-                    var turfFeature = turf.lineString(featCoords);
+                else if(geoType === 'LineString'){
+                    turfFeature = turf.lineString(featCoords);
                 }
-                else if(geoType == 'Polygon'){
-                    var turfFeature = turf.polygon(featCoords);
+                else if(geoType === 'Polygon'){
+                    turfFeature = turf.polygon(featCoords);
                 }
-                else if(geoType == 'MultiPolygon'){
-                    var turfFeature = turf.multiPolygon(featCoords);
+                else if(geoType === 'MultiPolygon'){
+                    turfFeature = turf.multiPolygon(featCoords);
                 }
-                else if(geoType == 'Circle'){
-                    var center = fixedselectgeometry.getCenter();
-                    var radius = fixedselectgeometry.getRadius();
-                    var edgeCoordinate = [center[0] + radius, center[1]];
-                    var groundRadius = ol.sphere.getDistance(
+                else if(geoType === 'Circle'){
+                    const center = fixedselectgeometry.getCenter();
+                    const radius = fixedselectgeometry.getRadius();
+                    const edgeCoordinate = [center[0] + radius, center[1]];
+                    let groundRadius = ol.sphere.getDistance(
                         ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                         ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                     );
                     groundRadius = groundRadius/1000;
-                    var turfFeature = getWGS84CirclePoly(center,groundRadius);
+                    turfFeature = getWGS84CirclePoly(center,groundRadius);
                 }
-                var buffered = turf.buffer(turfFeature,bufferSize,{units:'kilometers'});
-                var buffpoly = geoJSONFormat.readFeature(buffered);
+                const buffered = turf.buffer(turfFeature, bufferSize, {units: 'kilometers'});
+                const buffpoly = geoJSONFormat.readFeature(buffered);
                 buffpoly.getGeometry().transform(wgs84Projection,mapProjection);
                 selectsource.addFeature(buffpoly);
             }
@@ -966,15 +1001,15 @@ function createBuffers(){
 }
 
 function createConcavePoly(){
-    var source = document.getElementById('concavepolysource').value;
-    var maxEdge = document.getElementById('concaveMaxEdgeSize').value;
-    var features = [];
-    var geoJSONFormat = new ol.format.GeoJSON();
-    if(maxEdge != '' && !isNaN(maxEdge) && maxEdge > 0){
-        if(source == 'all'){
+    const source = document.getElementById('concavepolysource').value;
+    const maxEdge = document.getElementById('concaveMaxEdgeSize').value;
+    let features = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
+    if(maxEdge !== '' && !isNaN(maxEdge) && maxEdge > 0){
+        if(source === 'all'){
             features = getTurfPointFeaturesetAll();
         }
-        else if(source == 'selected'){
+        else if(source === 'selected'){
             if(selections.length >= 3){
                 features = getTurfPointFeaturesetSelected();
             }
@@ -985,16 +1020,16 @@ function createConcavePoly(){
             }
         }
         if(features){
-            var concavepoly = '';
+            let concavepoly = '';
             try{
-                var options = {units: 'kilometers', maxEdge: Number(maxEdge)};
+                const options = {units: 'kilometers', maxEdge: Number(maxEdge)};
                 concavepoly = turf.concave(features,options);
             }
             catch(e){
                 alert('Concave polygon was not able to be calculated. Perhaps try using a larger value for the maximum edge length.');
             }
             if(concavepoly){
-                var cnvepoly = geoJSONFormat.readFeature(concavepoly);
+                const cnvepoly = geoJSONFormat.readFeature(concavepoly);
                 cnvepoly.getGeometry().transform(wgs84Projection,mapProjection);
                 selectsource.addFeature(cnvepoly);
             }
@@ -1011,13 +1046,13 @@ function createConcavePoly(){
 }
 
 function createConvexPoly(){
-    var source = document.getElementById('convexpolysource').value;
-    var features = [];
-    var geoJSONFormat = new ol.format.GeoJSON();
-    if(source == 'all'){
+    const source = document.getElementById('convexpolysource').value;
+    let features = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
+    if(source === 'all'){
         features = getTurfPointFeaturesetAll();
     }
-    else if(source == 'selected'){
+    else if(source === 'selected'){
         if(selections.length >= 3){
             features = getTurfPointFeaturesetSelected();
         }
@@ -1028,7 +1063,7 @@ function createConvexPoly(){
         }
     }
     if(features){
-        var convexpoly = turf.convex(features);
+        const convexpoly = turf.convex(features);
         if(convexpoly){
             var cnvxpoly = geoJSONFormat.readFeature(convexpoly);
             cnvxpoly.getGeometry().transform(wgs84Projection,mapProjection);
@@ -1046,43 +1081,43 @@ function createDateSlider(dual){
         sliderdiv = document.createElement('div');
         sliderdiv.setAttribute("id","sliderdiv");
         sliderdiv.setAttribute("style","width:calc(95% - 250px);height:30px;bottom:10px;left:50px;display:block;position:absolute;z-index:3;");
-        var minhandlediv = document.createElement('div');
+        const minhandlediv = document.createElement('div');
         minhandlediv.setAttribute("id","custom-handle-min");
         minhandlediv.setAttribute("class","ui-slider-handle");
-        var minlabeldiv = document.createElement('div');
+        const minlabeldiv = document.createElement('div');
         minlabeldiv.setAttribute("id","custom-label-min");
         minlabeldiv.setAttribute("class","custom-label");
-        var minlabelArrowdiv = document.createElement('div');
+        const minlabelArrowdiv = document.createElement('div');
         minlabelArrowdiv.setAttribute("id","custom-label-min-arrow");
         minlabelArrowdiv.setAttribute("class","label-arrow");
         minhandlediv.appendChild(minlabeldiv);
         minhandlediv.appendChild(minlabelArrowdiv);
         sliderdiv.appendChild(minhandlediv);
-        var maxhandlediv = document.createElement('div');
+        const maxhandlediv = document.createElement('div');
         maxhandlediv.setAttribute("id","custom-handle-max");
         maxhandlediv.setAttribute("class","ui-slider-handle");
-        var maxlabeldiv = document.createElement('div');
+        const maxlabeldiv = document.createElement('div');
         maxlabeldiv.setAttribute("id","custom-label-max");
         maxlabeldiv.setAttribute("class","custom-label");
         maxhandlediv.appendChild(maxlabeldiv);
-        var maxlabelArrowdiv = document.createElement('div');
+        const maxlabelArrowdiv = document.createElement('div');
         maxlabelArrowdiv.setAttribute("class","label-arrow");
         maxhandlediv.appendChild(maxlabeldiv);
         maxhandlediv.appendChild(maxlabelArrowdiv);
         sliderdiv.appendChild(maxhandlediv);
         document.body.appendChild(sliderdiv);
 
-        var minDate = dsOldestDate.getTime();
-        var maxDate = dsNewestDate.getTime();
+        const minDate = dsOldestDate.getTime();
+        const maxDate = dsNewestDate.getTime();
         tsOldestDate = dsOldestDate;
         tsNewestDate = dsNewestDate;
-        var hMinDate = new Date(minDate);
-        var minDateStr = getISOStrFromDateObj(hMinDate);
-        var hMaxDate = new Date(maxDate);
-        var maxDateStr = getISOStrFromDateObj(hMaxDate);
+        const hMinDate = new Date(minDate);
+        const minDateStr = getISOStrFromDateObj(hMinDate);
+        const hMaxDate = new Date(maxDate);
+        const maxDateStr = getISOStrFromDateObj(hMaxDate);
 
-        var minhandle = $("#custom-handle-min");
-        var maxhandle = $("#custom-handle-max");
+        const minhandle = $("#custom-handle-min");
+        const maxhandle = $("#custom-handle-max");
         $("#sliderdiv").slider({
             range: true,
             min: minDate,
@@ -1090,25 +1125,24 @@ function createDateSlider(dual){
             values: [minDate,maxDate],
             create: function() {
                 if(dual){
-                    var mintextbox = $("#custom-label-min");
+                    const mintextbox = $("#custom-label-min");
                     mintextbox.text(minDateStr);
                 }
-                var maxtextbox = $("#custom-label-max");
+                const maxtextbox = $("#custom-label-max");
                 maxtextbox.text(maxDateStr);
             },
-            //step: 7 * 24 * 60 * 60 * 1000,
             step: 1000 * 60 * 60 * 24,
             slide: function(event, ui) {
                 if(dual){
-                    var mintextbox = $("#custom-label-min");
+                    const mintextbox = $("#custom-label-min");
                     tsOldestDate = new Date(ui.values[0]);
-                    var newMinDateStr = getISOStrFromDateObj(tsOldestDate);
+                    const newMinDateStr = getISOStrFromDateObj(tsOldestDate);
                     mintextbox.text(newMinDateStr);
                     document.getElementById("datesliderearlydate").value = newMinDateStr;
                 }
-                var maxtextbox = $("#custom-label-max");
+                const maxtextbox = $("#custom-label-max");
                 tsNewestDate = new Date(ui.values[1]);
-                var newMaxDateStr = getISOStrFromDateObj(tsNewestDate);
+                const newMaxDateStr = getISOStrFromDateObj(tsNewestDate);
                 maxtextbox.text(newMaxDateStr);
                 document.getElementById("datesliderlatedate").value = newMaxDateStr;
                 layersArr['pointv'].getSource().changed();
@@ -1130,36 +1164,36 @@ function createDateSlider(dual){
 }
 
 function createPolyDifference(){
-    var shapeCount = 0;
+    let shapeCount = 0;
     selectInteraction.getFeatures().forEach(function(feature){
-        var selectedClone = feature.clone();
-        var geoType = selectedClone.getGeometry().getType();
-        if(geoType == 'Polygon' || geoType == 'MultiPolygon' || geoType == 'Circle'){
+        const selectedClone = feature.clone();
+        const geoType = selectedClone.getGeometry().getType();
+        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
             shapeCount++;
         }
     });
-    if(shapeCount == 2){
-        var features = [];
-        var geoJSONFormat = new ol.format.GeoJSON();
+    if(shapeCount === 2){
+        const features = [];
+        const geoJSONFormat = new ol.format.GeoJSON();
         selectInteraction.getFeatures().forEach(function(feature){
             if(feature){
-                var selectedClone = feature.clone();
-                var geoType = selectedClone.getGeometry().getType();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType == 'Polygon'){
+                const selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                if(geoType === 'Polygon'){
                     features.push(turf.polygon(featCoords));
                 }
-                else if(geoType == 'MultiPolygon'){
+                else if(geoType === 'MultiPolygon'){
                     features.push(turf.multiPolygon(featCoords));
                 }
-                else if(geoType == 'Circle'){
-                    var center = fixedselectgeometry.getCenter();
-                    var radius = fixedselectgeometry.getRadius();
-                    var edgeCoordinate = [center[0] + radius, center[1]];
-                    var groundRadius = ol.sphere.getDistance(
+                else if(geoType === 'Circle'){
+                    const center = fixedselectgeometry.getCenter();
+                    const radius = fixedselectgeometry.getRadius();
+                    const edgeCoordinate = [center[0] + radius, center[1]];
+                    let groundRadius = ol.sphere.getDistance(
                         ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                         ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                     );
@@ -1168,9 +1202,9 @@ function createPolyDifference(){
                 }
             }
         });
-        var difference = turf.difference(features[0],features[1]);
+        const difference = turf.difference(features[0], features[1]);
         if(difference){
-            var diffpoly = geoJSONFormat.readFeature(difference);
+            const diffpoly = geoJSONFormat.readFeature(difference);
             diffpoly.getGeometry().transform(wgs84Projection,mapProjection);
             selectsource.addFeature(diffpoly);
         }
@@ -1181,29 +1215,29 @@ function createPolyDifference(){
 }
 
 function createPolyIntersect(){
-    var shapeCount = 0;
+    let shapeCount = 0;
     selectInteraction.getFeatures().forEach(function(feature){
-        var selectedClone = feature.clone();
-        var geoType = selectedClone.getGeometry().getType();
+        const selectedClone = feature.clone();
+        const geoType = selectedClone.getGeometry().getType();
         if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
             shapeCount++;
         }
     });
     if(shapeCount === 2){
-        var featuresOne = [];
-        var featuresTwo = [];
-        var pass = 1;
-        var intersection;
-        var geoJSONFormat = new ol.format.GeoJSON();
+        const featuresOne = [];
+        const featuresTwo = [];
+        let pass = 1;
+        let intersection;
+        const geoJSONFormat = new ol.format.GeoJSON();
         selectInteraction.getFeatures().forEach(function(feature){
             if(feature){
-                var selectedClone = feature.clone();
-                var geoType = selectedClone.getGeometry().getType();
+                const selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
                 if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
-                    var selectiongeometry = selectedClone.getGeometry();
-                    var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                    var geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
-                    var featCoords = JSON.parse(geojsonStr).coordinates;
+                    const selectiongeometry = selectedClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(selectiongeometry);
+                    const featCoords = JSON.parse(geojsonStr).coordinates;
                     if(geoType === 'Polygon'){
                         if(pass === 1){
                             featuresOne.push(turf.polygon(featCoords));
@@ -1213,20 +1247,22 @@ function createPolyIntersect(){
                         }
                     }
                     else if(geoType === 'MultiPolygon'){
-                        for (e in featCoords) {
-                            if(pass === 1){
-                                featuresOne.push(turf.polygon(featCoords[e]));
-                            }
-                            else{
-                                featuresTwo.push(turf.polygon(featCoords[e]));
+                        for (let e in featCoords) {
+                            if(featCoords.hasOwnProperty(e)){
+                                if(pass === 1){
+                                    featuresOne.push(turf.polygon(featCoords[e]));
+                                }
+                                else{
+                                    featuresTwo.push(turf.polygon(featCoords[e]));
+                                }
                             }
                         }
                     }
                     else if(geoType === 'Circle'){
-                        var center = fixedselectgeometry.getCenter();
-                        var radius = fixedselectgeometry.getRadius();
-                        var edgeCoordinate = [center[0] + radius, center[1]];
-                        var groundRadius = ol.sphere.getDistance(
+                        const center = fixedselectgeometry.getCenter();
+                        const radius = fixedselectgeometry.getRadius();
+                        const edgeCoordinate = [center[0] + radius, center[1]];
+                        let groundRadius = ol.sphere.getDistance(
                             ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                             ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                         );
@@ -1242,21 +1278,25 @@ function createPolyIntersect(){
                 }
             }
         });
-        for (i in featuresOne) {
-            for (e in featuresTwo) {
-                var tempPoly = turf.intersect(featuresOne[i],featuresTwo[e]);
-                if(tempPoly){
-                    if(intersection){
-                        intersection = turf.union(intersection,tempPoly);
-                    }
-                    else{
-                        intersection = tempPoly;
+        for (let i in featuresOne) {
+            if(featuresOne.hasOwnProperty(i)){
+                for (let e in featuresTwo) {
+                    if(featuresTwo.hasOwnProperty(e)){
+                        const tempPoly = turf.intersect(featuresOne[i], featuresTwo[e]);
+                        if(tempPoly){
+                            if(intersection){
+                                intersection = turf.union(intersection,tempPoly);
+                            }
+                            else{
+                                intersection = tempPoly;
+                            }
+                        }
                     }
                 }
             }
         }
         if(intersection){
-            var interpoly = geoJSONFormat.readFeature(intersection);
+            const interpoly = geoJSONFormat.readFeature(intersection);
             interpoly.getGeometry().transform(wgs84Projection,mapProjection);
             selectsource.addFeature(interpoly);
         }
@@ -1270,36 +1310,36 @@ function createPolyIntersect(){
 }
 
 function createPolyUnion(){
-    var shapeCount = 0;
+    let shapeCount = 0;
     selectInteraction.getFeatures().forEach(function(feature){
-        var selectedClone = feature.clone();
-        var geoType = selectedClone.getGeometry().getType();
-        if(geoType == 'Polygon' || geoType == 'MultiPolygon' || geoType == 'Circle'){
+        const selectedClone = feature.clone();
+        const geoType = selectedClone.getGeometry().getType();
+        if(geoType === 'Polygon' || geoType === 'MultiPolygon' || geoType === 'Circle'){
             shapeCount++;
         }
     });
     if(shapeCount > 1){
-        var features = [];
-        var geoJSONFormat = new ol.format.GeoJSON();
+        const features = [];
+        const geoJSONFormat = new ol.format.GeoJSON();
         selectInteraction.getFeatures().forEach(function(feature){
             if(feature){
-                var selectedClone = feature.clone();
-                var geoType = selectedClone.getGeometry().getType();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var featCoords = JSON.parse(geojsonStr).coordinates;
-                if(geoType == 'Polygon'){
+                const selectedClone = feature.clone();
+                const geoType = selectedClone.getGeometry().getType();
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                const featCoords = JSON.parse(geojsonStr).coordinates;
+                if(geoType === 'Polygon'){
                     features.push(turf.polygon(featCoords));
                 }
-                else if(geoType == 'MultiPolygon'){
+                else if(geoType === 'MultiPolygon'){
                     features.push(turf.multiPolygon(featCoords));
                 }
-                else if(geoType == 'Circle'){
-                    var center = fixedselectgeometry.getCenter();
-                    var radius = fixedselectgeometry.getRadius();
-                    var edgeCoordinate = [center[0] + radius, center[1]];
-                    var groundRadius = ol.sphere.getDistance(
+                else if(geoType === 'Circle'){
+                    const center = fixedselectgeometry.getCenter();
+                    const radius = fixedselectgeometry.getRadius();
+                    const edgeCoordinate = [center[0] + radius, center[1]];
+                    let groundRadius = ol.sphere.getDistance(
                         ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                         ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                     );
@@ -1308,15 +1348,15 @@ function createPolyUnion(){
                 }
             }
         });
-        var union = turf.union(features[0],features[1]);
-        for (f in features){
-            if(f > 1){
+        let union = turf.union(features[0], features[1]);
+        for (let f in features){
+            if(features.hasOwnProperty(f) && f > 1){
                 union = turf.union(union,features[f]);
             }
         }
         if(union){
             deleteSelections();
-            var unionpoly = geoJSONFormat.readFeature(union);
+            const unionpoly = geoJSONFormat.readFeature(union);
             unionpoly.getGeometry().transform(wgs84Projection,mapProjection);
             selectsource.addFeature(unionpoly);
             document.getElementById("selectlayerselect").value = 'select';
@@ -1339,36 +1379,40 @@ function deleteSelections(){
 }
 
 function downloadShapesLayer(){
-    var dlType = document.getElementById("shapesdownloadselect").value;
-    var format = '';
-    if(dlType == ''){
+    let filetype;
+    const dlType = document.getElementById("shapesdownloadselect").value;
+    let format = '';
+    if(dlType === ''){
         alert('Please select a download format.');
         return;
     }
-    else if(dlType == 'kml'){
-        var format = new ol.format.KML();
-        var filetype = 'application/vnd.google-earth.kml+xml';
+    else if(dlType === 'kml'){
+        format = new ol.format.KML();
+        filetype = 'application/vnd.google-earth.kml+xml';
     }
-    else if(dlType == 'geojson'){
-        var format = new ol.format.GeoJSON();
-        var filetype = 'application/vnd.geo+json';
+    else if(dlType === 'geojson'){
+        format = new ol.format.GeoJSON();
+        filetype = 'application/vnd.geo+json';
     }
-    var features = layersArr['select'].getSource().getFeatures();
-    var fixedFeatures = setDownloadFeatures(features);
-    var exportStr = format.writeFeatures(fixedFeatures,{'dataProjection': wgs84Projection, 'featureProjection': mapProjection});
-    if(dlType == 'kml'){
+    const features = layersArr['select'].getSource().getFeatures();
+    const fixedFeatures = setDownloadFeatures(features);
+    let exportStr = format.writeFeatures(fixedFeatures, {
+        'dataProjection': wgs84Projection,
+        'featureProjection': mapProjection
+    });
+    if(dlType === 'kml'){
         exportStr = exportStr.replace(/<kml xmlns="http:\/\/www.opengis.net\/kml\/2.2" xmlns:gx="http:\/\/www.google.com\/kml\/ext\/2.2" xmlns:xsi="http:\/\/www.w3.org\/2001\/XMLSchema-instance" xsi:schemaLocation="http:\/\/www.opengis.net\/kml\/2.2 https:\/\/developers.google.com\/kml\/schema\/kml22gx.xsd">/g,'<kml xmlns="http://www.opengis.net/kml/2.2"><Document id="root_doc"><Folder><name>shapes_export</name>');
         exportStr = exportStr.replace(/<Placemark>/g,'<Placemark><Style><LineStyle><color>ff000000</color><width>1</width></LineStyle><PolyStyle><color>4DAAAAAA</color><fill>1</fill></PolyStyle></Style>');
         exportStr = exportStr.replace(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
         exportStr = exportStr.replace(/<\/kml>/g,'</Folder></Document></kml>');
     }
-    var filename = 'shapes_'+getDateTimeString()+'.'+dlType;
-    var blob = new Blob([exportStr], {type: filetype});
+    const filename = 'shapes_' + getDateTimeString() + '.' + dlType;
+    const blob = new Blob([exportStr], {type: filetype});
     if(window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
     }
     else{
-        var elem = window.document.createElement('a');
+        const elem = window.document.createElement('a');
         elem.href = window.URL.createObjectURL(blob);
         elem.download = filename;
         document.body.appendChild(elem);
@@ -1379,13 +1423,13 @@ function downloadShapesLayer(){
 
 function exportMapPNG(filename,zip){
     map.once('postcompose', function(event) {
-        var canvas = document.getElementsByTagName('canvas').item(0);
+        const canvas = document.getElementsByTagName('canvas').item(0);
         if(zip){
-            var image = canvas.toDataURL('image/png', 1.0);
+            const image = canvas.toDataURL('image/png', 1.0);
             zipFolder.file(filename, image.substr(image.indexOf(',')+1), {base64: true});
             if(dsAnimImageSave && dsAnimStop){
                 zipFile.generateAsync({type:"blob"}).then(function(content) {
-                    var zipfilename = 'dateanimationimages_'+getDateTimeString()+'.zip';
+                    const zipfilename = 'dateanimationimages_' + getDateTimeString() + '.zip';
                     saveAs(content,zipfilename);
                 });
             }
@@ -1403,23 +1447,25 @@ function exportMapPNG(filename,zip){
 }
 
 function exportTaxaCSV(){
-    var csvContent = '';
+    let csvContent = '';
     csvContent = '"ScientificName","Family","RecordCount"'+"\n";
-    var sortedTaxa = arrayIndexSort(taxaSymbology).sort();
-    for(i in sortedTaxa){
-        var family = taxaSymbology[sortedTaxa[i]]['family'].toLowerCase();
-        family = family.charAt(0).toUpperCase()+family.slice(1);
-        var row = taxaSymbology[sortedTaxa[i]]['sciname']+','+family+','+taxaSymbology[sortedTaxa[i]]['count']+"\n";
-        csvContent += row;
+    const sortedTaxa = arrayIndexSort(taxaSymbology).sort();
+    for(let i in sortedTaxa){
+        if(sortedTaxa.hasOwnProperty(i)){
+            let family = taxaSymbology[sortedTaxa[i]]['family'].toLowerCase();
+            family = family.charAt(0).toUpperCase()+family.slice(1);
+            const row = taxaSymbology[sortedTaxa[i]]['sciname'] + ',' + family + ',' + taxaSymbology[sortedTaxa[i]]['count'] + "\n";
+            csvContent += row;
+        }
     }
-    var filename = 'taxa_list.csv';
-    var filetype = 'text/csv; charset=utf-8';
-    var blob = new Blob([csvContent], {type: filetype});
+    const filename = 'taxa_list.csv';
+    const filetype = 'text/csv; charset=utf-8';
+    const blob = new Blob([csvContent], {type: filetype});
     if(window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob,filename);
     }
     else{
-        var elem = window.document.createElement('a');
+        const elem = window.document.createElement('a');
         elem.href = window.URL.createObjectURL(blob);
         elem.download = filename;
         document.body.appendChild(elem);
@@ -1429,43 +1475,51 @@ function exportTaxaCSV(){
 }
 
 function extensionSelected(obj){
-    if(obj.checked == true){
+    if(obj.checked === true){
         document.getElementById('csvzip').checked = true;
     }
 }
 
+function extractLast(term){
+    return split( term ).pop();
+}
+
 function findOccCluster(occid){
-    var clusters = layersArr['pointv'].getSource().getFeatures();
-    for(c in clusters){
-        var clusterindex = clusters[c].get('identifiers');
-        if(clusterindex.indexOf(Number(occid)) !== -1){
-            return clusters[c];
+    const clusters = layersArr['pointv'].getSource().getFeatures();
+    for(let c in clusters){
+        if(clusters.hasOwnProperty(c)){
+            const clusterindex = clusters[c].get('identifiers');
+            if(clusterindex.indexOf(Number(occid)) !== -1){
+                return clusters[c];
+            }
         }
     }
 }
 
 function findOccClusterPosition(occid){
     if(spiderCluster){
-        var spiderPoints = layersArr['spider'].getSource().getFeatures();
-        for(p in spiderPoints){
-            if(spiderPoints[p].get('features')[0].get('occid') == Number(occid)){
+        const spiderPoints = layersArr['spider'].getSource().getFeatures();
+        for(let p in spiderPoints){
+            if(spiderPoints.hasOwnProperty(p) && spiderPoints[p].get('features')[0].get('occid') === Number(occid)){
                 return spiderPoints[p].getGeometry().getCoordinates();
             }
         }
     }
     else if(clusterPoints){
-        var clusters = layersArr['pointv'].getSource().getFeatures();
-        for(c in clusters){
-            var clusterindex = clusters[c].get('identifiers');
-            if(clusterindex.indexOf(Number(occid)) !== -1){
-                return clusters[c].getGeometry().getCoordinates();
+        const clusters = layersArr['pointv'].getSource().getFeatures();
+        for(let c in clusters){
+            if(clusters.hasOwnProperty(c)){
+                const clusterindex = clusters[c].get('identifiers');
+                if(clusterindex.indexOf(Number(occid)) !== -1){
+                    return clusters[c].getGeometry().getCoordinates();
+                }
             }
         }
     }
     else{
-        var features = layersArr['pointv'].getSource().getFeatures();
-        for(f in features){
-            if(Number(features[f].get('occid')) == occid){
+        const features = layersArr['pointv'].getSource().getFeatures();
+        for(let f in features){
+            if(features.hasOwnProperty(f) && Number(features[f].get('occid')) === occid){
                 return features[f].getGeometry().getCoordinates();
             }
         }
@@ -1473,18 +1527,18 @@ function findOccClusterPosition(occid){
 }
 
 function findOccPoint(occid){
-    var features = layersArr['pointv'].getSource().getFeatures();
-    for(f in features){
-        if(Number(features[f].get('occid')) == occid){
+    const features = layersArr['pointv'].getSource().getFeatures();
+    for(let f in features){
+        if(features.hasOwnProperty(f) && Number(features[f].get('occid')) === occid){
             return features[f];
         }
     }
 }
 
 function findOccPointInCluster(cluster,occid){
-    var cFeatures = cluster.get('features');
-    for (f in cFeatures) {
-        if(Number(cFeatures[f].get('occid')) == occid){
+    const cFeatures = cluster.get('features');
+    for (let f in cFeatures) {
+        if(cFeatures.hasOwnProperty(f) && Number(cFeatures[f].get('occid')) === occid){
             return cFeatures[f];
         }
     }
@@ -1510,36 +1564,33 @@ function finishGetGeographyParams(){
 }
 
 function formatCheckDate(dateStr){
-    if(dateStr != ""){
-        var dateArr = parseDate(dateStr);
-        if(dateArr['y'] == 0){
+    if(dateStr !== ""){
+        const dateArr = parseDate(dateStr);
+        if(dateArr['y'] === 0){
             alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
             return false;
         }
         else{
-            //Invalid format is month > 12
             if(dateArr['m'] > 12){
                 alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
                 return false;
             }
 
-            //Check to see if day is valid
             if(dateArr['d'] > 28){
                 if(dateArr['d'] > 31
-                    || (dateArr['d'] == 30 && dateArr['m'] == 2)
-                    || (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
+                    || (dateArr['d'] === 30 && dateArr['m'] === 2)
+                    || (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
                     alert("The Day (" + dateArr['d'] + ") is invalid for that month");
                     return false;
                 }
             }
 
-            //Enter date into date fields
-            var mStr = dateArr['m'];
-            if(mStr.length == 1){
+            let mStr = dateArr['m'];
+            if(mStr.length === 1){
                 mStr = "0" + mStr;
             }
-            var dStr = dateArr['d'];
-            if(dStr.length == 1){
+            let dStr = dateArr['d'];
+            if(dStr.length === 1){
                 dStr = "0" + dStr;
             }
             return dateArr['y'] + "-" + mStr + "-" + dStr;
@@ -1548,17 +1599,17 @@ function formatCheckDate(dateStr){
 }
 
 function generateRandColor(){
-    var hexColor = '';
-    var x = Math.round(0xffffff * Math.random()).toString(16);
-    var y = (6-x.length);
-    var z = '000000';
-    var z1 = z.substring(0,y);
+    let hexColor = '';
+    const x = Math.round(0xffffff * Math.random()).toString(16);
+    const y = (6 - x.length);
+    const z = '000000';
+    const z1 = z.substring(0, y);
     hexColor = z1 + x;
     return hexColor;
 }
 
 function generateReclassifySLD(valueArr,layername){
-    var sldContent = '';
+    let sldContent = '';
     sldContent += '<?xml version="1.0" encoding="UTF-8"?>';
     sldContent += '<StyledLayerDescriptor version="1.0.0" ';
     sldContent += 'xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" ';
@@ -1588,7 +1639,7 @@ function generateReclassifySLD(valueArr,layername){
 }
 
 function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
-    var xmlContent = '';
+    let xmlContent = '';
     xmlContent += '<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" ';
     xmlContent += 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" ';
     xmlContent += 'xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" ';
@@ -1658,17 +1709,19 @@ function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
 function getCollectionParams(){
     collectionParams = false;
     searchTermsArr['db'] = '';
-    var dbElements = document.getElementsByName("db[]");
-    var c = false;
-    var all = true;
-    var collid = '';
-    var collidArr = [];
-    var solrqfrag = '';
-    for(i = 0; i < dbElements.length; i++){
-        var dbElement = dbElements[i];
+    const dbElements = document.getElementsByName("db[]");
+    let c = false;
+    let all = true;
+    let collid = '';
+    const collidArr = [];
+    let solrqfrag = '';
+    for(let i = 0; i < dbElements.length; i++){
+        const dbElement = dbElements[i];
         if(dbElement.checked && !isNaN(dbElement.value)){
             if(SOLRMODE) {
-                if(c == true) collid = collid+" ";
+                if(c === true) {
+                    collid = collid+" ";
+                }
                 collid = collid + dbElement.value;
             }
             else{
@@ -1681,9 +1734,9 @@ function getCollectionParams(){
             all = false;
         }
     }
-    if(all == false && c == true){
+    if(all === false && c === true){
         if(SOLRMODE) {
-            if(collid.substr(collid.length-1,collid.length)==','){
+            if(collid.substr(collid.length-1,collid.length)===','){
                 collid = collid.substr(0,collid.length-1);
             }
             solrqfrag = '(collid:('+collid+'))';
@@ -1695,7 +1748,7 @@ function getCollectionParams(){
         }
         return true;
     }
-    else if(all == false && c == false){
+    else if(all === false && c === false){
         alert("Please choose at least one collection");
         return false;
     }
@@ -1705,8 +1758,8 @@ function getCollectionParams(){
 }
 
 function getDateTimeString(){
-    var now = new Date();
-    var dateTimeString = now.getFullYear().toString();
+    const now = new Date();
+    let dateTimeString = now.getFullYear().toString();
     dateTimeString += (((now.getMonth()+1) < 10)?'0':'')+(now.getMonth()+1).toString();
     dateTimeString += ((now.getDate() < 10)?'0':'')+now.getDate().toString();
     dateTimeString += ((now.getHours() < 10)?'0':'')+now.getHours().toString();
@@ -1716,7 +1769,7 @@ function getDateTimeString(){
 }
 
 function getDragDropStyle(feature, resolution) {
-    var featureStyleFunction = feature.getStyleFunction();
+    const featureStyleFunction = feature.getStyleFunction();
     if(featureStyleFunction) {
         return featureStyleFunction.call(feature, resolution);
     }
@@ -1731,57 +1784,64 @@ function getGeographyParams(){
     searchTermsArr['circleArr'] = [];
     geoPolyArr = [];
     geoCircleArr = [];
-    var totalArea = 0;
+    let totalArea = 0;
     selectInteraction.getFeatures().forEach(function(feature){
-        var solrqfrag = '';
-        var geoSolrqString = '';
+        let turfSimple;
+        let options;
+        let area_km;
+        let area;
+        let areaFeat;
+        let solrqfrag = '';
+        let geoSolrqString = '';
         if(feature){
-            var selectedClone = feature.clone();
-            var geoType = selectedClone.getGeometry().getType();
-            var wktFormat = new ol.format.WKT();
-            var geoJSONFormat = new ol.format.GeoJSON();
+            const selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            const wktFormat = new ol.format.WKT();
+            const geoJSONFormat = new ol.format.GeoJSON();
             if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var polyCoords = JSON.parse(geojsonStr).coordinates;
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                let polyCoords = JSON.parse(geojsonStr).coordinates;
                 if (geoType === 'MultiPolygon') {
-                    var areaFeat = turf.multiPolygon(polyCoords);
-                    var area = turf.area(areaFeat);
-                    var area_km = area/1000/1000;
+                    areaFeat = turf.multiPolygon(polyCoords);
+                    area = turf.area(areaFeat);
+                    area_km = area/1000/1000;
                     totalArea = totalArea + area_km;
-                    for (e in polyCoords) {
-                        var singlePoly = turf.polygon(polyCoords[e]);
-                        //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
-                        if(singlePoly.geometry.coordinates.length > 10){
-                            var options = {tolerance: 0.001, highQuality: true};
-                            singlePoly = turf.simplify(singlePoly,options);
+                    for (let e in polyCoords) {
+                        if(polyCoords.hasOwnProperty(e)){
+                            let singlePoly = turf.polygon(polyCoords[e]);
+                            //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
+                            if(singlePoly.geometry.coordinates.length > 10){
+                                options = {tolerance: 0.001, highQuality: true};
+                                singlePoly = turf.simplify(singlePoly,options);
+                            }
+                            //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
+                            polyCoords[e] = singlePoly.geometry.coordinates;
                         }
-                        //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
-                        polyCoords[e] = singlePoly.geometry.coordinates;
                     }
-                    var turfSimple = turf.multiPolygon(polyCoords);
+                    turfSimple = turf.multiPolygon(polyCoords);
                 }
                 if (geoType === 'Polygon') {
-                    var areaFeat = turf.polygon(polyCoords);
-                    var area = turf.area(areaFeat);
-                    var area_km = area/1000/1000;
+                    areaFeat = turf.polygon(polyCoords);
+                    area = turf.area(areaFeat);
+                    area_km = area / 1000 / 1000;
                     totalArea = totalArea + area_km;
                     //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
                     if(areaFeat.geometry.coordinates.length > 10){
-                        var options = {tolerance: 0.001, highQuality: true};
+                        options = {tolerance: 0.001, highQuality: true};
                         areaFeat = turf.simplify(areaFeat,options);
                     }
                     //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
                     polyCoords = areaFeat.geometry.coordinates;
-                    var turfSimple = turf.polygon(polyCoords);
+                    turfSimple = turf.polygon(polyCoords);
                 }
-                var polySimple = geoJSONFormat.readFeature(turfSimple,{featureProjection:'EPSG:3857'});
-                var simplegeometry = polySimple.getGeometry();
-                var fixedgeometry = simplegeometry.transform(mapProjection,wgs84Projection);
-                var wmswktString = wktFormat.writeGeometry(fixedgeometry);
-                var geocoords = fixedgeometry.getCoordinates();
-                var mysqlWktString = writeMySQLWktString(geoType,geocoords);
+                const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
+                const simplegeometry = polySimple.getGeometry();
+                const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
+                const wmswktString = wktFormat.writeGeometry(fixedgeometry);
+                const geocoords = fixedgeometry.getCoordinates();
+                const mysqlWktString = writeMySQLWktString(geoType, geocoords);
                 if(SOLRMODE) {
                     geoSolrqString = '"Intersects('+wmswktString+')"';
                     solrqfrag = geoSolrqString;
@@ -1793,17 +1853,17 @@ function getGeographyParams(){
                 geogParams = true;
             }
             if(geoType === 'Circle'){
-                var center = selectedClone.getGeometry().getCenter();
-                var radius = selectedClone.getGeometry().getRadius();
-                var edgeCoordinate = [center[0] + radius, center[1]];
-                var groundRadius = ol.sphere.getDistance(
+                const center = selectedClone.getGeometry().getCenter();
+                const radius = selectedClone.getGeometry().getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                let groundRadius = ol.sphere.getDistance(
                     ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
                     ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
                 );
                 groundRadius = groundRadius/1000;
-                var circleArea = Math.PI*groundRadius*groundRadius;
+                const circleArea = Math.PI * groundRadius * groundRadius;
                 totalArea = totalArea + circleArea;
-                var fixedcenter = ol.proj.transform(center,'EPSG:3857','EPSG:4326');
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
                 if(SOLRMODE) {
                     geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
                     solrqfrag = geoSolrqString;
@@ -1819,7 +1879,7 @@ function getGeographyParams(){
                     });
                 }
                 else{
-                    var circleObj = {
+                    const circleObj = {
                         pointlat: fixedcenter[0],
                         pointlong: fixedcenter[1],
                         radius: groundRadius
@@ -1840,21 +1900,21 @@ function getGeographyParams(){
 }
 
 function getISOStrFromDateObj(dObj){
-    var dYear = dObj.getFullYear();
-    var dMonth = ((dObj.getMonth() + 1) > 9?(dObj.getMonth() + 1):'0'+(dObj.getMonth() + 1));
-    var dDay = (dObj.getDate() > 9?dObj.getDate():'0'+dObj.getDate());
+    const dYear = dObj.getFullYear();
+    const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
+    const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
 
     return dYear+'-'+dMonth+'-'+dDay;
 }
 
 function getPointInfoArr(cluster){
-    var feature = (cluster.get('features')?cluster.get('features')[0]:cluster);
-    var infoArr = [];
+    const feature = (cluster.get('features') ? cluster.get('features')[0] : cluster);
+    const infoArr = [];
     infoArr['occid'] = Number(feature.get('occid'));
     infoArr['institutioncode'] = (feature.get('InstitutionCode')?feature.get('InstitutionCode'):'');
     infoArr['catalognumber'] = (feature.get('catalogNumber')?feature.get('catalogNumber'):'');
-    var recordedby = (feature.get('recordedBy')?feature.get('recordedBy'):'');
-    var recordnumber = (feature.get('recordNumber')?feature.get('recordNumber'):'');
+    const recordedby = (feature.get('recordedBy') ? feature.get('recordedBy') : '');
+    const recordnumber = (feature.get('recordNumber') ? feature.get('recordNumber') : '');
     infoArr['collector'] = (recordedby?recordedby:'')+(recordedby&&recordnumber?' ':'')+(recordnumber?recordnumber:'');
     infoArr['eventdate'] = (feature.get('displayDate')?feature.get('displayDate'):'');
     infoArr['sciname'] = (feature.get('sciname')?feature.get('sciname'):'');
@@ -1867,7 +1927,7 @@ function getPointInfoArr(cluster){
 }
 
 function getPointStyle(feature) {
-    var style = '';
+    let style = '';
     if(clusterPoints){
         style = setClusterSymbol(feature);
     }
@@ -1880,19 +1940,21 @@ function getPointStyle(feature) {
 function getSOLROccArr(callback){
     getQueryRecCnt(true,function(res) {
         if(queryRecCnt > 0){
-            var occArr = [];
-            var http = new XMLHttpRequest();
-            var url = "rpc/SOLRConnector.php";
-            var params = solroccqString+'&rows='+queryRecCnt+'&start=0&fl=occid&wt=json';
+            const occArr = [];
+            const http = new XMLHttpRequest();
+            const url = "rpc/SOLRConnector.php";
+            const params = solroccqString + '&rows=' + queryRecCnt + '&start=0&fl=occid&wt=json';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
-                if(http.readyState == 4 && http.status == 200) {
-                    var resArr = JSON.parse(http.responseText);
-                    var recArr = resArr['response']['docs'];
-                    for(i in recArr){
-                        occArr.push(recArr[i]['occid']);
+                if(http.readyState === 4 && http.status === 200) {
+                    const resArr = JSON.parse(http.responseText);
+                    const recArr = resArr['response']['docs'];
+                    for(let i in recArr){
+                        if(recArr.hasOwnProperty(i)){
+                            occArr.push(recArr[i]['occid']);
+                        }
                     }
                     callback(occArr);
                 }
@@ -1903,24 +1965,27 @@ function getSOLROccArr(callback){
 }
 
 function getQueryRecCnt(occ,callback){
+    let params;
+    let url;
+    let http;
     queryRecCnt = 0;
     if(SOLRMODE){
-        var qStr = '';
+        let qStr = '';
         if(occ){
             qStr = solroccqString;
         }
         else{
             qStr = solrqString;
         }
-        var http = new XMLHttpRequest();
-        var url = "rpc/SOLRConnector.php";
-        var params = qStr+'&rows=0&start=0&wt=json';
+        http = new XMLHttpRequest();
+        url = "rpc/SOLRConnector.php";
+        params = qStr+'&rows=0&start=0&wt=json';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState == 4 && http.status == 200) {
-                var resArr = JSON.parse(http.responseText);
+            if(http.readyState === 4 && http.status === 200) {
+                const resArr = JSON.parse(http.responseText);
                 queryRecCnt = resArr['response']['numFound'];
                 document.getElementById("dh-rows").value = queryRecCnt;
                 callback(1);
@@ -1929,15 +1994,15 @@ function getQueryRecCnt(occ,callback){
         http.send(params);
     }
     else{
-        var jsonStarr = JSON.stringify(searchTermsArr);
-        var http = new XMLHttpRequest();
-        var url = "rpc/MYSQLConnector.php";
-        var params = 'starr='+jsonStarr+'&rows=0&start=0&type=reccnt';
+        const jsonStarr = JSON.stringify(searchTermsArr);
+        http = new XMLHttpRequest();
+        url = "rpc/MYSQLConnector.php";
+        params = 'starr=' + jsonStarr + '&rows=0&start=0&type=reccnt';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState == 4 && http.status == 200) {
+            if(http.readyState === 4 && http.status === 200) {
                 queryRecCnt = http.responseText;
                 document.getElementById("dh-rows").value = queryRecCnt;
                 callback(1);
@@ -1949,20 +2014,20 @@ function getQueryRecCnt(occ,callback){
 
 function getTextParams(){
     textParams = false;
-    var solrqfrag = '';
-    var countryval = document.getElementById("country").value.trim();
-    var stateval = document.getElementById("state").value.trim();
-    var countyval = document.getElementById("county").value.trim();
-    var localityval = document.getElementById("locality").value.trim();
-    var collectorval = document.getElementById("collector").value.trim();
-    var collnumval = document.getElementById("collnum").value.trim();
-    var colldate1 = document.getElementById("eventdate1").value.trim();
-    var colldate2 = document.getElementById("eventdate2").value.trim();
-    var catnumval = document.getElementById("catnum").value.trim();
-    var othercatnumval = document.getElementById("othercatnum").value.trim();
-    var typestatus = document.getElementById("typestatus").checked;
-    var hasimages = document.getElementById("hasimages").checked;
-    var hasgenetic = document.getElementById("hasgenetic").checked;
+    let solrqfrag = '';
+    let countryval = document.getElementById("country").value.trim();
+    let stateval = document.getElementById("state").value.trim();
+    let countyval = document.getElementById("county").value.trim();
+    let localityval = document.getElementById("locality").value.trim();
+    let collectorval = document.getElementById("collector").value.trim();
+    let collnumval = document.getElementById("collnum").value.trim();
+    let colldate1 = document.getElementById("eventdate1").value.trim();
+    let colldate2 = document.getElementById("eventdate2").value.trim();
+    let catnumval = document.getElementById("catnum").value.trim();
+    let othercatnumval = document.getElementById("othercatnum").value.trim();
+    const typestatus = document.getElementById("typestatus").checked;
+    const hasimages = document.getElementById("hasimages").checked;
+    const hasgenetic = document.getElementById("hasgenetic").checked;
     searchTermsArr['country'] = '';
     searchTermsArr['state'] = '';
     searchTermsArr['county'] = '';
@@ -1993,9 +2058,9 @@ function getTextParams(){
                     countryval += ',United States of America';
                 }
             }
-            var countryvals = countryval.split(',');
-            var countrySolrqString = '';
-            for(i = 0; i < countryvals.length; i++){
+            const countryvals = countryval.split(',');
+            let countrySolrqString = '';
+            for(let i = 0; i < countryvals.length; i++){
                 if(countrySolrqString) countrySolrqString += " OR ";
                 countrySolrqString += '(country:"'+countryvals[i]+'")';
             }
@@ -2024,9 +2089,9 @@ function getTextParams(){
     }
     if(stateval){
         if(SOLRMODE) {
-            var statevals = stateval.split(',');
-            var stateSolrqString = '';
-            for(i = 0; i < statevals.length; i++){
+            const statevals = stateval.split(',');
+            let stateSolrqString = '';
+            for(let i = 0; i < statevals.length; i++){
                 if(stateSolrqString) stateSolrqString += " OR ";
                 stateSolrqString += '(StateProvince:"'+statevals[i]+'")';
             }
@@ -2041,9 +2106,9 @@ function getTextParams(){
     }
     if(countyval){
         if(SOLRMODE) {
-            var countyvals = countyval.split(',');
-            var countySolrqString = '';
-            for(i = 0; i < countyvals.length; i++){
+            const countyvals = countyval.split(',');
+            let countySolrqString = '';
+            for(let i = 0; i < countyvals.length; i++){
                 if(countySolrqString) countySolrqString += " OR ";
                 countySolrqString += "(county:"+countyvals[i].replace(" ","\\ ")+"*)";
             }
@@ -2060,14 +2125,14 @@ function getTextParams(){
     }
     if(localityval){
         if(SOLRMODE) {
-            var localityvals = localityval.split(',');
-            var localitySolrqString = '';
-            for(i = 0; i < localityvals.length; i++){
+            const localityvals = localityval.split(',');
+            let localitySolrqString = '';
+            for(let i = 0; i < localityvals.length; i++){
                 if(localitySolrqString) localitySolrqString += " OR ";
                 localitySolrqString += "(";
                 if(localityvals[i].indexOf(" ") !== -1){
-                    var templocalitySolrqString = '';
-                    var vals = localityvals[i].split(" ");
+                    let templocalitySolrqString = '';
+                    const vals = localityvals[i].split(" ");
                     for(i = 0; i < vals.length; i++){
                         if(templocalitySolrqString) templocalitySolrqString += " AND ";
                         templocalitySolrqString += '((municipality:'+vals[i]+'*) OR (locality:*'+vals[i]+'*))';
@@ -2090,13 +2155,13 @@ function getTextParams(){
     }
     if(collectorval){
         if(SOLRMODE) {
-            var collectorvals = collectorval.split(',');
-            var collectorSolrqString = '';
-            if(collectorvals.length == 1){
+            const collectorvals = collectorval.split(',');
+            let collectorSolrqString = '';
+            if(collectorvals.length === 1){
                 collectorSolrqString = '(recordedBy:*'+collectorvals[0].replace(" ","\\ ")+'*)';
             }
             else if(collectorvals.length > 1){
-                for (i in collectorvals){
+                for (let i in collectorvals){
                     collectorSolrqString += ' OR (recordedBy:*'+collectorvals[i].replace(" ","\\ ")+'*)';
                 }
                 collectorSolrqString = collectorSolrqString.substr(4,collectorSolrqString.length);
@@ -2112,13 +2177,13 @@ function getTextParams(){
     }
     if(collnumval){
         if(SOLRMODE) {
-            var collnumvals = collnumval.split(',');
-            var collnumSolrqString = '';
-            for (i in collnumvals){
+            const collnumvals = collnumval.split(',');
+            let collnumSolrqString = '';
+            for (let i in collnumvals){
                 if(collnumvals[i].indexOf(" - ") !== -1){
-                    var pos = collnumvals[i].indexOf(" - ");
-                    var t1 = collnumvals[i].substr(0,pos).trim();
-                    var t2 = collnumvals[i].substr(pos+3,collnumvals[i].length).trim();
+                    const pos = collnumvals[i].indexOf(" - ");
+                    const t1 = collnumvals[i].substr(0, pos).trim();
+                    const t2 = collnumvals[i].substr(pos + 3, collnumvals[i].length).trim();
                     if(!isNaN(t1) && !isNaN(t2)){
                         collnumSolrqString += ' OR (recordNumber:['+t1+' TO '+t2+'])';
                     }
@@ -2142,7 +2207,7 @@ function getTextParams(){
     }
     if(colldate1 || colldate2){
         if(SOLRMODE) {
-            var colldateSolrqString = '';
+            let colldateSolrqString = '';
             if(!colldate1 && colldate2){
                 colldate1 = colldate2;
                 colldate2 = '';
@@ -2155,10 +2220,10 @@ function getTextParams(){
                 colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate2+'T23:59:59.999Z])';
             }
             else{
-                if(colldate1.substr(colldate1.length-5,colldate1.length) == '00-00'){
+                if(colldate1.substr(colldate1.length-5,colldate1.length) === '00-00'){
                     colldateSolrqString += '(coll_year:'+colldate1.substr(0,4)+')';
                 }
-                else if(colldate1.substr(colldate1.length-2,colldate1.length) == '00'){
+                else if(colldate1.substr(colldate1.length-2,colldate1.length) === '00'){
                     colldateSolrqString += '((coll_year:'+colldate1.substr(0,4)+') AND (coll_month:'+colldate1.substr(5,7)+'))';
                 }
                 else{
@@ -2178,9 +2243,9 @@ function getTextParams(){
     }
     if(catnumval){
         if(SOLRMODE) {
-            var catnumvals = catnumval.split(',');
-            var catnumSolrqString = '';
-            for(i = 0; i < catnumvals.length; i++){
+            const catnumvals = catnumval.split(',');
+            let catnumSolrqString = '';
+            for(let i = 0; i < catnumvals.length; i++){
                 if(catnumSolrqString) catnumSolrqString += " OR ";
                 catnumSolrqString += '(catalogNumber:"'+catnumvals[i]+'")';
             }
@@ -2195,9 +2260,9 @@ function getTextParams(){
     }
     if(othercatnumval){
         if(SOLRMODE) {
-            var othercatnumvals = othercatnumval.split(',');
-            var othercatnumSolrqString = '';
-            for(i = 0; i < othercatnumvals.length; i++){
+            const othercatnumvals = othercatnumval.split(',');
+            let othercatnumSolrqString = '';
+            for(let i = 0; i < othercatnumvals.length; i++){
                 if(othercatnumSolrqString) othercatnumSolrqString += " OR ";
                 othercatnumSolrqString += '(otherCatalogNumbers:"'+othercatnumvals[i]+'")';
             }
@@ -2212,7 +2277,7 @@ function getTextParams(){
     }
     if(typestatus){
         if(SOLRMODE) {
-            var typestatusSolrqString = "(typeStatus:[* TO *])";
+            const typestatusSolrqString = "(typeStatus:[* TO *])";
             solrqfrag = '('+typestatusSolrqString+')';
             solrqArr.push(solrqfrag);
         }
@@ -2223,7 +2288,7 @@ function getTextParams(){
     }
     if(hasimages){
         if(SOLRMODE) {
-            var hasimagesSolrqString = "(imgid:[* TO *])";
+            const hasimagesSolrqString = "(imgid:[* TO *])";
             solrqfrag = '('+hasimagesSolrqString+')';
             solrqArr.push(solrqfrag);
         }
@@ -2234,7 +2299,7 @@ function getTextParams(){
     }
     if(hasgenetic){
         if(SOLRMODE) {
-            var hasgeneticSolrqString = "(resourcename:[* TO *])";
+            const hasgeneticSolrqString = "(resourcename:[* TO *])";
             solrqfrag = '('+hasgeneticSolrqString+')';
             solrqArr.push(solrqfrag);
         }
@@ -2247,36 +2312,46 @@ function getTextParams(){
 }
 
 function getTurfPointFeaturesetAll(){
-    var turfFeatureArr = [];
-    var geoJSONFormat = new ol.format.GeoJSON();
+    let pntCoords;
+    let geojsonStr;
+    let fixedselectgeometry;
+    let selectiongeometry;
+    let selectedClone;
+    const turfFeatureArr = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
     if(clusterPoints){
-        var clusters = layersArr['pointv'].getSource().getFeatures();
-        for(c in clusters){
-            var cFeatures = clusters[c].get('features');
-            for (f in cFeatures) {
-                var selectedClone = cFeatures[f].clone();
-                var selectiongeometry = selectedClone.getGeometry();
-                var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-                var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                var pntCoords = JSON.parse(geojsonStr).coordinates;
-                turfFeatureArr.push(turf.point(pntCoords));
+        const clusters = layersArr['pointv'].getSource().getFeatures();
+        for(let c in clusters){
+            if(clusters.hasOwnProperty(c)){
+                const cFeatures = clusters[c].get('features');
+                for (let f in cFeatures) {
+                    if(cFeatures.hasOwnProperty(f)){
+                        selectedClone = cFeatures[f].clone();
+                        selectiongeometry = selectedClone.getGeometry();
+                        fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
+                        geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                        pntCoords = JSON.parse(geojsonStr).coordinates;
+                        turfFeatureArr.push(turf.point(pntCoords));
+                    }
+                }
             }
         }
     }
     else{
-        var features = layersArr['pointv'].getSource().getFeatures();
+        const features = layersArr['pointv'].getSource().getFeatures();
         for(f in features){
-            var selectedClone = features[f].clone();
-            var selectiongeometry = selectedClone.getGeometry();
-            var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-            var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-            var pntCoords = JSON.parse(geojsonStr).coordinates;
-            turfFeatureArr.push(turf.point(pntCoords));
+            if(features.hasOwnProperty(f)){
+                selectedClone = features[f].clone();
+                selectiongeometry = selectedClone.getGeometry();
+                fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                pntCoords = JSON.parse(geojsonStr).coordinates;
+                turfFeatureArr.push(turf.point(pntCoords));
+            }
         }
     }
     if(turfFeatureArr.length >= 3){
-        var turfCollection = turf.featureCollection(turfFeatureArr);
-        return turfCollection;
+        return turf.featureCollection(turfFeatureArr);
     }
     else{
         return false;
@@ -2284,29 +2359,30 @@ function getTurfPointFeaturesetAll(){
 }
 
 function getTurfPointFeaturesetSelected(){
-    var turfFeatureArr = [];
-    var geoJSONFormat = new ol.format.GeoJSON();
-    for(i in selections){
-        var point = '';
-        if(clusterPoints){
-            var cluster = findOccCluster(selections[i]);
-            point = findOccPointInCluster(cluster,selections[i]);
-        }
-        else{
-            point = findOccPoint(selections[i]);
-        }
-        if(point){
-            var selectedClone = point.clone();
-            var selectiongeometry = selectedClone.getGeometry();
-            var fixedselectgeometry = selectiongeometry.transform(mapProjection,wgs84Projection);
-            var geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-            var pntCoords = JSON.parse(geojsonStr).coordinates;
-            turfFeatureArr.push(turf.point(pntCoords));
+    const turfFeatureArr = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
+    for(let i in selections){
+        if(selections.hasOwnProperty(i)){
+            let point = '';
+            if(clusterPoints){
+                const cluster = findOccCluster(selections[i]);
+                point = findOccPointInCluster(cluster,selections[i]);
+            }
+            else{
+                point = findOccPoint(selections[i]);
+            }
+            if(point){
+                const selectedClone = point.clone();
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                const pntCoords = JSON.parse(geojsonStr).coordinates;
+                turfFeatureArr.push(turf.point(pntCoords));
+            }
         }
     }
     if(turfFeatureArr.length >= 3){
-        var turfCollection = turf.featureCollection(turfFeatureArr);
-        return turfCollection;
+        return turf.featureCollection(turfFeatureArr);
     }
     else{
         return false;
@@ -2314,14 +2390,14 @@ function getTurfPointFeaturesetSelected(){
 }
 
 function getWGS84CirclePoly(center,radius){
-    var turfFeature = '';
-    var ciroptions = {steps:200, units:'kilometers'};
+    let turfFeature = '';
+    const ciroptions = {steps: 200, units: 'kilometers'};
     turfFeature = turf.circle(center,radius,ciroptions);
     return turfFeature;
 }
 
 function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1],16),
         g: parseInt(result[2],16),
@@ -2330,7 +2406,7 @@ function hexToRgb(hex) {
 }
 
 function hideFeature(feature){
-    var invisibleStyle = new ol.style.Style({
+    const invisibleStyle = new ol.style.Style({
         image: new ol.style.Circle({
             radius: feature.get('radius'),
             fill: new ol.style.Fill({
@@ -2346,13 +2422,13 @@ function hideWorking(){
 }
 
 function imagePostFunction(image, src) {
-    var img = image.getImage();
+    const img = image.getImage();
     if(typeof window.btoa === 'function'){
-        var xhr = new XMLHttpRequest();
-        var dataEntries = src.split("&");
-        var url;
-        var params = "";
-        for (var i = 0 ; i< dataEntries.length ; i++){
+        const xhr = new XMLHttpRequest();
+        const dataEntries = src.split("&");
+        let url;
+        let params = "";
+        for (let i = 0 ; i< dataEntries.length ; i++){
             if (i===0){
                 url = dataEntries[i];
             }
@@ -2364,14 +2440,14 @@ function imagePostFunction(image, src) {
         xhr.responseType = 'arraybuffer';
         xhr.onload = function(e) {
             if (this.status === 200) {
-                var uInt8Array = new Uint8Array(this.response);
-                var i = uInt8Array.length;
-                var binaryString = new Array(i);
+                const uInt8Array = new Uint8Array(this.response);
+                let i = uInt8Array.length;
+                const binaryString = new Array(i);
                 while (i--) {
                     binaryString[i] = String.fromCharCode(uInt8Array[i]);
                 }
-                var data = binaryString.join('');
-                var type = xhr.getResponseHeader('content-type');
+                const data = binaryString.join('');
+                const type = xhr.getResponseHeader('content-type');
                 if (type.indexOf('image') === 0) {
                     img.src = 'data:' + type + ';base64,' + window.btoa(data);
                 }
@@ -2386,18 +2462,20 @@ function imagePostFunction(image, src) {
 }
 
 function lazyLoadPoints(index,callback){
-    var startindex = 0;
+    let params;
+    let url;
+    let startindex = 0;
     loadingComplete = true;
     if(index > 1) startindex = (index - 1)*lazyLoadCnt;
-    var http = new XMLHttpRequest();
+    const http = new XMLHttpRequest();
     if(SOLRMODE){
-        var url = "rpc/SOLRConnector.php";
-        var params = solrqString+'&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
+        url = "rpc/SOLRConnector.php";
+        params = solrqString+'&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState == 4 && http.status == 200) {
+            if(http.readyState === 4 && http.status === 200) {
                 loadingComplete = false;
                 setTimeout(checkLoading,loadingTimer);
                 callback(http.responseText);
@@ -2406,14 +2484,14 @@ function lazyLoadPoints(index,callback){
         http.send(params);
     }
     else{
-        var jsonStarr = JSON.stringify(searchTermsArr);
-        var url = "rpc/MYSQLConnector.php";
-        var params = 'starr='+jsonStarr+'&rows='+lazyLoadCnt+'&start='+startindex+'&type=geoquery';
+        const jsonStarr = JSON.stringify(searchTermsArr);
+        url = "rpc/MYSQLConnector.php";
+        params = 'starr=' + jsonStarr + '&rows=' + lazyLoadCnt + '&start=' + startindex + '&type=geoquery';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState == 4 && http.status == 200) {
+            if(http.readyState === 4 && http.status === 200) {
                 loadingComplete = false;
                 setTimeout(checkLoading,loadingTimer);
                 callback(http.responseText);
@@ -2449,7 +2527,7 @@ function loadPoints(){
                 $("#accordion").accordion("option","active",1);
                 //selectInteraction.getFeatures().clear();
                 if(!pointActive){
-                    var infoArr = [];
+                    const infoArr = [];
                     infoArr['Name'] = 'pointv';
                     infoArr['layerType'] = 'vector';
                     infoArr['Title'] = 'Points';
@@ -2481,7 +2559,7 @@ function openIndPopup(occid){
 }
 
 function openOccidInfoBox(occid,label){
-    var occpos = findOccClusterPosition(occid);
+    const occpos = findOccClusterPosition(occid);
     finderpopupcontent.innerHTML = label;
     finderpopupoverlay.setPosition(occpos);
 }
@@ -2494,25 +2572,27 @@ function openPopup(urlStr){
 }
 
 function parseDate(dateStr){
-    var y = 0;
-    var m = 0;
-    var d = 0;
+    const dateObj = new Date(dateStr);
+    let dateTokens;
+    let y = 0;
+    let m = 0;
+    let d = 0;
     try{
-        var validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
-        var validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
-        var validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
+        const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
+        const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
+        const validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
         if(validformat1.test(dateStr)){
-            var dateTokens = dateStr.split("-");
+            dateTokens = dateStr.split("-");
             y = dateTokens[0];
             m = dateTokens[1];
             d = dateTokens[2];
         }
         else if(validformat2.test(dateStr)){
-            var dateTokens = dateStr.split("/");
+            dateTokens = dateStr.split("/");
             m = dateTokens[0];
             d = dateTokens[1];
             y = dateTokens[2];
-            if(y.length == 2){
+            if(y.length === 2){
                 if(y < 20){
                     y = "20" + y;
                 }
@@ -2522,11 +2602,11 @@ function parseDate(dateStr){
             }
         }
         else if(validformat3.test(dateStr)){
-            var dateTokens = dateStr.split(" ");
+            dateTokens = dateStr.split(" ");
             d = dateTokens[0];
             mText = dateTokens[1];
             y = dateTokens[2];
-            if(y.length == 2){
+            if(y.length === 2){
                 if(y < 15){
                     y = "20" + y;
                 }
@@ -2536,11 +2616,10 @@ function parseDate(dateStr){
             }
             mText = mText.substring(0,3);
             mText = mText.toLowerCase();
-            var mNames = new Array("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec");
+            const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
             m = mNames.indexOf(mText)+1;
         }
-        else if(dateObj instanceof Date && dateObj != "Invalid Date"){
-            var dateObj = new Date(dateStr);
+        else if(dateObj instanceof Date && dateObj !== "Invalid Date"){
             y = dateObj.getFullYear();
             m = dateObj.getMonth() + 1;
             d = dateObj.getDate();
@@ -2548,7 +2627,7 @@ function parseDate(dateStr){
     }
     catch(ex){
     }
-    var retArr = new Array();
+    const retArr = [];
     retArr["y"] = y.toString();
     retArr["m"] = m.toString();
     retArr["d"] = d.toString();
@@ -2556,15 +2635,15 @@ function parseDate(dateStr){
 }
 
 function prepareTaxaData(callback){
-    var http = new XMLHttpRequest();
-    var url = "rpc/gettaxalinks.php";
-    var taxaArrStr = JSON.stringify(taxaArr);
-    var params = 'taxajson='+taxaArrStr+'&type='+taxontype+'&thes='+thes;
+    const http = new XMLHttpRequest();
+    const url = "rpc/gettaxalinks.php";
+    const taxaArrStr = JSON.stringify(taxaArr);
+    const params = 'taxajson=' + taxaArrStr + '&type=' + taxontype + '&thes=' + thes;
     //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             taxaArr = JSON.parse(http.responseText);
             callback(1);
         }
@@ -2577,67 +2656,73 @@ function prepareTaxaParams(callback){
     searchTermsArr['usethes'] = '';
     searchTermsArr['taxontype'] = '';
     searchTermsArr['taxa'] = '';
-    var taxaval = document.getElementById("taxa").value.trim();
+    let taxaval = document.getElementById("taxa").value.trim();
     if(taxaval){
         taxontype = document.getElementById("taxontype").value;
         thes = !!document.getElementById("thes").checked;
         if(SOLRMODE) {
             taxaArr = [];
-            var taxavals = taxaval.split(',');
-            var taxaSolrqString = '';
-            for (i in taxavals){
+            const taxavals = taxaval.split(',');
+            const taxaSolrqString = '';
+            for (let i in taxavals){
                 var name = taxavals[i].trim();
                 taxaArr.push(name);
             }
             prepareTaxaData(function(res){
                 if(taxaArr){
-                    var taxaSolrqString = '';
-                    for (i in taxaArr){
-                        if(taxontype == 4){
-                            taxaSolrqString = " OR (parenttid:"+i+")";
-                        }
-                        else{
-                            if(taxontype == 5){
-                                var famArr = [];
-                                var scinameArr = [];
-                                if(taxaArr[i]["families"]){
-                                    famArr = taxaArr[i]["families"];
-                                }
-                                if(famArr.length > 0){
-                                    taxaSolrqString += " OR (family:("+famArr.join()+"))";
-                                }
-                                if(taxaArr[i]["scinames"]){
-                                    scinameArr = taxaArr[i]["scinames"];
-                                    if(scinameArr.length > 0){
-                                        for (s in scinameArr){
-                                            taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
-                                        }
-                                    }
-                                }
+                    let taxaSolrqString = '';
+                    for (let i in taxaArr){
+                        if(taxaArr.hasOwnProperty(i)){
+                            if(taxontype === 4){
+                                taxaSolrqString = " OR (parenttid:"+i+")";
                             }
                             else{
-                                if((taxontype == 2 || taxontype == 1) && ((i.substr(i.length - 5) == "aceae") || (i.substr(i.length - 4) == "idae"))){
-                                    taxaSolrqString += " OR (family:"+i+")";
-                                }
-                                if((taxontype == 3 || taxontype == 1) && ((i.substr(i.length - 5) != "aceae") || (i.substr(i.length - 4) != "idae"))){
-                                    taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
-                                }
-                            }
-                            if(taxaArr[i]["synonyms"]){
-                                var synArr = [];
-                                synArr = taxaArr[i]["synonyms"];
-                                var tidArr = [];
-                                if(taxontype == 1 || taxontype == 2 || taxontype == 5){
-                                    for (syn in synArr){
-                                        if(synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1){
-                                            taxaSolrqString += " OR (family:"+synArr[syn]+")";
+                                if(taxontype === 5){
+                                    let famArr = [];
+                                    let scinameArr = [];
+                                    if(taxaArr[i]["families"]){
+                                        famArr = taxaArr[i]["families"];
+                                    }
+                                    if(famArr.length > 0){
+                                        taxaSolrqString += " OR (family:("+famArr.join()+"))";
+                                    }
+                                    if(taxaArr[i]["scinames"]){
+                                        scinameArr = taxaArr[i]["scinames"];
+                                        if(scinameArr.length > 0){
+                                            for (let s in scinameArr){
+                                                if(scinameArr.hasOwnProperty(s)){
+                                                    taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                for (syn in synArr){
-                                    tidArr.push(syn);
+                                else{
+                                    if((taxontype === 2 || taxontype === 1) && ((i.substr(i.length - 5) === "aceae") || (i.substr(i.length - 4) === "idae"))){
+                                        taxaSolrqString += " OR (family:"+i+")";
+                                    }
+                                    if((taxontype === 3 || taxontype === 1) && ((i.substr(i.length - 5) !== "aceae") || (i.substr(i.length - 4) !== "idae"))){
+                                        taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
+                                    }
                                 }
-                                taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
+                                if(taxaArr[i]["synonyms"]){
+                                    let synArr = [];
+                                    synArr = taxaArr[i]["synonyms"];
+                                    const tidArr = [];
+                                    if(taxontype === 1 || taxontype === 2 || taxontype === 5){
+                                        for (let syn in synArr){
+                                            if(synArr.hasOwnProperty(syn) && (synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1)){
+                                                taxaSolrqString += " OR (family:"+synArr[syn]+")";
+                                            }
+                                        }
+                                    }
+                                    for (let syn in synArr){
+                                        if(synArr.hasOwnProperty(syn)){
+                                            tidArr.push(syn);
+                                        }
+                                    }
+                                    taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
+                                }
                             }
                         }
                     }
@@ -2664,23 +2749,38 @@ function prepareTaxaParams(callback){
 }
 
 function prepCsvControlForm(){
-    if (document.getElementById('csvschemasymb').checked) var schema = document.getElementById('csvschemasymb').value;
-    if (document.getElementById('csvschemadwc').checked) var schema = document.getElementById('csvschemadwc').value;
-    if (document.getElementById('csvformatcsv').checked) var format = document.getElementById('csvformatcsv').value;
-    if (document.getElementById('csvformattab').checked) var format = document.getElementById('csvformattab').value;
-    if (document.getElementById('csvcsetiso').checked) var cset = document.getElementById('csvcsetiso').value;
-    if (document.getElementById('csvcsetutf').checked) var cset = document.getElementById('csvcsetutf').value;
+    let cset;
+    let format;
+    let schema;
+    if (document.getElementById('csvschemasymb').checked) {
+        schema = document.getElementById('csvschemasymb').value;
+    }
+    if (document.getElementById('csvschemadwc').checked) {
+        schema = document.getElementById('csvschemadwc').value;
+    }
+    if (document.getElementById('csvformatcsv').checked) {
+        format = document.getElementById('csvformatcsv').value;
+    }
+    if (document.getElementById('csvformattab').checked) {
+        format = document.getElementById('csvformattab').value;
+    }
+    if (document.getElementById('csvcsetiso').checked) {
+        cset = document.getElementById('csvcsetiso').value;
+    }
+    if (document.getElementById('csvcsetutf').checked) {
+        cset = document.getElementById('csvcsetutf').value;
+    }
     document.getElementById("schemacsv").value = schema;
     document.getElementById("dh-filename").value = document.getElementById("dh-filename").value+'.'+schema;
-    if(document.getElementById("csvidentifications").checked==true){
+    if(document.getElementById("csvidentifications").checked === true){
         document.getElementById("identificationscsv").value = 1;
     }
-    if(document.getElementById("csvimages").checked==true){
+    if(document.getElementById("csvimages").checked === true){
         document.getElementById("imagescsv").value = 1;
     }
     document.getElementById("formatcsv").value = format;
     document.getElementById("csetcsv").value = cset;
-    if(document.getElementById("csvzip").checked==true){
+    if(document.getElementById("csvzip").checked === true){
         document.getElementById("zipcsv").value = 1;
         document.getElementById("dh-type").value = 'zip';
         document.getElementById("dh-contentType").value = 'application/zip';
@@ -2695,66 +2795,69 @@ function prepCsvControlForm(){
 }
 
 function primeSymbologyData(features){
-    var currentDate = new Date();
-    for(f in features) {
-        if(features[f].get('coll_year')){
-            var fyear = Number(features[f].get('coll_year'));
-            if(fyear.toString().length == 4 && fyear > 1500){
-                var fmonth = (features[f].get('coll_month')?Number(features[f].get('coll_month')):1);
-                var fday = (features[f].get('coll_day')?Number(features[f].get('coll_day')):1);
-                var fDate = new Date();
-                fDate.setFullYear(fyear, fmonth - 1, fday);
-                if(currentDate > fDate){
-                    if(!dsOldestDate || (fDate < dsOldestDate)){
-                        dsOldestDate = fDate;
-                    }
-                    if(!dsNewestDate || (fDate > dsNewestDate)){
-                        dsNewestDate = fDate;
+    const currentDate = new Date();
+    for(let f in features) {
+        if(features.hasOwnProperty(f)){
+            if(features[f].get('coll_year')){
+                const fyear = Number(features[f].get('coll_year'));
+                if(fyear.toString().length === 4 && fyear > 1500){
+                    const fmonth = (features[f].get('coll_month') ? Number(features[f].get('coll_month')) : 1);
+                    const fday = (features[f].get('coll_day') ? Number(features[f].get('coll_day')) : 1);
+                    const fDate = new Date();
+                    fDate.setFullYear(fyear, fmonth - 1, fday);
+                    if(currentDate > fDate){
+                        if(!dsOldestDate || (fDate < dsOldestDate)){
+                            dsOldestDate = fDate;
+                        }
+                        if(!dsNewestDate || (fDate > dsNewestDate)){
+                            dsNewestDate = fDate;
+                        }
                     }
                 }
             }
+            const color = 'e69e67';
+            const collName = features[f].get('CollectionName');
+            const collid = features[f].get('collid');
+            const tidinterpreted = features[f].get('tidinterpreted');
+            const sciname = features[f].get('sciname');
+            let family = (features[f].get('accFamily') ? features[f].get('accFamily') : features[f].get('family'));
+            if(family){
+                family = family.toUpperCase();
+            }
+            else{
+                family = 'undefined';
+            }
+            //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
+            let namestring = (sciname ? sciname : '');
+            namestring = namestring.replace(" ","");
+            namestring = namestring.toLowerCase();
+            namestring = namestring.replace(/[^A-Za-z0-9 ]/g,'');
+            if(!collSymbology[collName]){
+                collSymbology[collName] = [];
+                collSymbology[collName]['collid'] = collid;
+                collSymbology[collName]['color'] = color;
+            }
+            if(!taxaSymbology[namestring]){
+                taxaCnt++;
+                taxaSymbology[namestring] = [];
+                taxaSymbology[namestring]['sciname'] = sciname;
+                taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
+                taxaSymbology[namestring]['family'] = family;
+                taxaSymbology[namestring]['color'] = color;
+                taxaSymbology[namestring]['count'] = 1;
+            }
+            else{
+                taxaSymbology[namestring]['count'] = taxaSymbology[namestring]['count'] + 1;
+            }
+            features[f].set('namestring',namestring,true);
         }
-        var color = 'e69e67';
-        var collName = features[f].get('CollectionName');
-        var collid = features[f].get('collid');
-        var tidinterpreted = features[f].get('tidinterpreted');
-        var sciname = features[f].get('sciname');
-        var family = (features[f].get('accFamily')?features[f].get('accFamily'):features[f].get('family'));
-        if(family){
-            family = family.toUpperCase();
-        }
-        else{
-            family = 'undefined';
-        }
-        //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
-        var namestring = (sciname?sciname:'');
-        namestring = namestring.replace(" ","");
-        namestring = namestring.toLowerCase();
-        namestring = namestring.replace(/[^A-Za-z0-9 ]/g,'');
-        if(!collSymbology[collName]){
-            collSymbology[collName] = [];
-            collSymbology[collName]['collid'] = collid;
-            collSymbology[collName]['color'] = color;
-        }
-        if(!taxaSymbology[namestring]){
-            taxaCnt++;
-            taxaSymbology[namestring] = [];
-            taxaSymbology[namestring]['sciname'] = sciname;
-            taxaSymbology[namestring]['tidinterpreted'] = tidinterpreted;
-            taxaSymbology[namestring]['family'] = family;
-            taxaSymbology[namestring]['color'] = color;
-            taxaSymbology[namestring]['count'] = 1;
-        }
-        else{
-            taxaSymbology[namestring]['count'] = taxaSymbology[namestring]['count'] + 1;
-        }
-        features[f].set('namestring',namestring,true);
     }
 }
 
 function processCheckSelection(c){
+    let activeTab;
     if(c.checked === true){
-        var activeTab = $('#recordstab').tabs("option","active");
+        activeTab = $('#recordstab').tabs("option","active");
         if(activeTab === 1){
             if($('.occcheck:checked').length === $('.occcheck').length){
                 document.getElementById("selectallcheck").checked = true;
@@ -2765,7 +2868,7 @@ function processCheckSelection(c){
         updateSelections(Number(c.value),false);
     }
     else if(c.checked === false){
-        var activeTab = $('#recordstab').tabs("option","active");
+        activeTab = $('#recordstab').tabs("option", "active");
         if(activeTab === 1){
             document.getElementById("selectallcheck").checked = false;
         }
@@ -2783,17 +2886,25 @@ function processDownloadRequest(selection){
     document.getElementById("dh-filename").value = '';
     document.getElementById("dh-contentType").value = '';
     document.getElementById("dh-selections").value = '';
-    var dlType = (selection?document.getElementById("selectdownloadselect").value:document.getElementById("querydownloadselect").value);
+    const dlType = (selection ? document.getElementById("selectdownloadselect").value : document.getElementById("querydownloadselect").value);
     if(dlType){
-        var filename = 'spatialdata_'+getDateTimeString();
-        var contentType = '';
-        if(dlType === 'kml') contentType = 'application/vnd.google-earth.kml+xml';
-        else if(dlType === 'geojson') contentType = 'application/vnd.geo+json';
-        else if(dlType === 'gpx') contentType = 'application/gpx+xml';
+        const filename = 'spatialdata_' + getDateTimeString();
+        let contentType = '';
+        if(dlType === 'kml') {
+            contentType = 'application/vnd.google-earth.kml+xml';
+        }
+        else if(dlType === 'geojson') {
+            contentType = 'application/vnd.geo+json';
+        }
+        else if(dlType === 'gpx') {
+            contentType = 'application/gpx+xml';
+        }
         document.getElementById("dh-type").value = dlType;
         document.getElementById("dh-filename").value = filename;
         document.getElementById("dh-contentType").value = contentType;
-        if(selection) document.getElementById("dh-selections").value = selections.join();
+        if(selection) {
+            document.getElementById("dh-selections").value = selections.join();
+        }
         if(!selection && dlType === 'csv'){
             document.getElementById("dh-fl").value = 'occid';
         }
@@ -2817,25 +2928,25 @@ function processDownloadRequest(selection){
 }
 
 function processPointSelection(sFeature){
-    var feature = (sFeature.get('features')?sFeature.get('features')[0]:sFeature);
-    var occid = Number(feature.get('occid'));
+    const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
+    const occid = Number(feature.get('occid'));
     if(selections.indexOf(occid) < 0){
         selections.push(occid);
-        var infoArr = getPointInfoArr(sFeature);
+        const infoArr = getPointInfoArr(sFeature);
         updateSelections(occid,infoArr);
     }
     else{
-        var index = selections.indexOf(occid);
+        const index = selections.indexOf(occid);
         selections.splice(index, 1);
         removeSelectionRecord(occid);
     }
-    var style = (sFeature.get('features')?setClusterSymbol(sFeature):setSymbol(sFeature));
+    const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
     adjustSelectionsTab();
 }
 
 function refreshLayerOrder(){
-    var layerCount = map.getLayers().getArray().length;
+    const layerCount = map.getLayers().getArray().length;
     layersArr['dragdrop1'].setZIndex(layerCount-6);
     layersArr['dragdrop2'].setZIndex(layerCount-5);
     layersArr['dragdrop3'].setZIndex(layerCount-4);
@@ -2875,28 +2986,28 @@ function removeDateSlider(){
 }
 
 function removeLayerToSelList(layer){
-    var selectobject = document.getElementById("selectlayerselect");
-    for (var i=0; i<selectobject.length; i++){
-        if(selectobject.options[i].value == layer) selectobject.remove(i);
+    const selectobject = document.getElementById("selectlayerselect");
+    for (let i = 0; i<selectobject.length; i++){
+        if(selectobject.options[i].value === layer) selectobject.remove(i);
     }
     setActiveLayer();
 }
 
 function removeSelection(c){
-    if(c.checked == false){
-        var occid = c.value;
-        var chbox = 'ch'+occid;
+    if(c.checked === false){
+        const occid = c.value;
+        const chbox = 'ch' + occid;
         removeSelectionRecord(occid);
         if(document.getElementById(chbox)){
             document.getElementById(chbox).checked = false;
         }
-        var index = selections.indexOf(Number(c.value));
+        const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
         layersArr['pointv'].getSource().changed();
         if(spiderCluster){
-            var spiderFeatures = layersArr['spider'].getSource().getFeatures();
-            for(f in spiderFeatures){
-                if(spiderFeatures[f].get('features')[0].get('occid') == Number(c.value)){
+            const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+            for(let f in spiderFeatures){
+                if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('occid') === Number(c.value)){
                     var style = (spiderFeatures[f].get('features')?setClusterSymbol(spiderFeatures[f]):setSymbol(spiderFeatures[f]));
                     spiderFeatures[f].setStyle(style);
                 }
@@ -2907,25 +3018,25 @@ function removeSelection(c){
 }
 
 function removeSelectionRecord(sel){
-    var selDivId = "sel"+sel;
+    const selDivId = "sel" + sel;
     if(document.getElementById(selDivId)){
-        var selDiv = document.getElementById(selDivId);
+        const selDiv = document.getElementById(selDivId);
         selDiv.parentNode.removeChild(selDiv);
     }
 }
 
 function removeUserLayer(layerID){
-    var layerDivId = "lay-"+layerID;
+    const layerDivId = "lay-" + layerID;
     if(document.getElementById(layerDivId)){
-        var layerDiv = document.getElementById(layerDivId);
+        const layerDiv = document.getElementById(layerDivId);
         layerDiv.parentNode.removeChild(layerDiv);
     }
-    if(layerID == 'select'){
+    if(layerID === 'select'){
         selectInteraction.getFeatures().clear();
         layersArr[layerID].getSource().clear(true);
         shapeActive = false;
     }
-    else if(layerID == 'pointv'){
+    else if(layerID === 'pointv'){
         clearSelections();
         adjustSelectionsTab();
         removeDateSlider();
@@ -2939,23 +3050,29 @@ function removeUserLayer(layerID){
         pointActive = false;
     }
     else if(overlayLayers[layerID]){
-        var layerTileSourceName = layerID+'Source';
-        var layerRasterSourceName = layerID+'RasterSource';
+        const layerTileSourceName = layerID + 'Source';
+        const layerRasterSourceName = layerID + 'RasterSource';
         layersArr[layerTileSourceName] = '';
         layersArr[layerRasterSourceName] = '';
         layersArr[layerID].setVisible(false);
-        var index = overlayLayers.indexOf(layerID);
+        const index = overlayLayers.indexOf(layerID);
         overlayLayers.splice(index, 1);
         if(vectorizeLayers[layerID]){
-            var vecindex = vectorizeLayers.indexOf(layerID);
+            const vecindex = vectorizeLayers.indexOf(layerID);
             vectorizeLayers.splice(vecindex, 1);
         }
     }
     else{
         layersArr[layerID].setSource(blankdragdropsource);
-        if(layerID == 'dragdrop1') dragDrop1 = false;
-        else if(layerID == 'dragdrop2') dragDrop2 = false;
-        else if(layerID == 'dragdrop3') dragDrop3 = false;
+        if(layerID === 'dragdrop1') {
+            dragDrop1 = false;
+        }
+        else if(layerID === 'dragdrop2') {
+            dragDrop2 = false;
+        }
+        else if(layerID === 'dragdrop3') {
+            dragDrop3 = false;
+        }
     }
     document.getElementById("selectlayerselect").value = 'none';
     removeLayerToSelList(layerID);
@@ -2964,11 +3081,13 @@ function removeUserLayer(layerID){
 }
 
 function resetMainSymbology(){
-    for(i in collSymbology){
-        collSymbology[i]['color'] = "E69E67";
-        var keyName = 'keyColor'+i;
-        if(document.getElementById(keyName)){
-            document.getElementById(keyName).color.fromString("E69E67");
+    for(let i in collSymbology){
+        if(collSymbology.hasOwnProperty(i)){
+            collSymbology[i]['color'] = "E69E67";
+            const keyName = 'keyColor' + i;
+            if(document.getElementById(keyName)){
+                document.getElementById(keyName).color.fromString("E69E67");
+            }
         }
     }
 }
@@ -2978,15 +3097,19 @@ function resetSymbology(){
     document.getElementById("symbolizeReset2").disabled = true;
     changeMapSymbology('coll');
     resetMainSymbology();
-    for(i in collSymbology){
-        buildCollKeyPiece(i);
+    for(let i in collSymbology){
+        if(collSymbology.hasOwnProperty(i)){
+            buildCollKeyPiece(i);
+        }
     }
     layersArr['pointv'].getSource().changed();
     if(spiderCluster){
-        var spiderFeatures = layersArr['spider'].getSource().getFeatures();
-        for(f in spiderFeatures){
-            var style = (spiderFeatures[f].get('features')?setClusterSymbol(spiderFeatures[f]):setSymbol(spiderFeatures[f]));
-            spiderFeatures[f].setStyle(style);
+        const spiderFeatures = layersArr['spider'].getSource().getFeatures();
+        for(let f in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(f)){
+                const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
+                spiderFeatures[f].setStyle(style);
+            }
         }
     }
     document.getElementById("symbolizeReset1").disabled = false;
@@ -2994,8 +3117,8 @@ function resetSymbology(){
 }
 
 function saveKeyImage(){
-    var keyElement = (mapSymbology == 'coll'?document.getElementById("collSymbologyKey"):document.getElementById("taxasymbologykeysbox"));
-    var keyClone = keyElement.cloneNode(true);
+    const keyElement = (mapSymbology === 'coll' ? document.getElementById("collSymbologyKey") : document.getElementById("taxasymbologykeysbox"));
+    let keyClone = keyElement.cloneNode(true);
     document.body.appendChild(keyClone);
     html2canvas(keyClone).then(function(canvas) {
         if (navigator.msSaveBlob) {
@@ -3012,47 +3135,47 @@ function saveKeyImage(){
 }
 
 function selectAll(cb){
-    var boxesChecked = true;
+    let boxesChecked = true;
     if(!cb.checked){
         boxesChecked = false;
     }
-    var f = cb.form;
-    for(var i=0;i<f.length;i++){
-        if(f.elements[i].name == "db[]" || f.elements[i].name == "cat[]" || f.elements[i].name == "occid[]"){
+    const f = cb.form;
+    for(let i=0; i<f.length; i++){
+        if(f.elements[i].name === "db[]" || f.elements[i].name === "cat[]" || f.elements[i].name === "occid[]"){
             f.elements[i].checked = boxesChecked;
         }
-        if(f.elements[i].name == "occid[]"){
+        if(f.elements[i].name === "occid[]"){
             f.elements[i].onchange();
         }
     }
 }
 
 function selectAllCat(cb,target){
-    var boxesChecked = true;
+    let boxesChecked = true;
     if(!cb.checked){
         boxesChecked = false;
     }
-    var inputObjs = document.getElementsByTagName("input");
-    for (i = 0; i < inputObjs.length; i++) {
-        var inputObj = inputObjs[i];
-        if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
+    const inputObjs = document.getElementsByTagName("input");
+    for (let i = 0; i < inputObjs.length; i++) {
+        const inputObj = inputObjs[i];
+        if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
             inputObj.checked = boxesChecked;
         }
     }
 }
 
 function setActiveLayer(){
-    var selectDropDown = document.getElementById("selectlayerselect");
+    const selectDropDown = document.getElementById("selectlayerselect");
     activeLayer = selectDropDown.options[selectDropDown.selectedIndex].value;
 }
 
 function setBaseLayerSource(urlTemplate){
     return new ol.source.TileImage({
-        tileUrlFunction: function(tileCoord, pixelRatio, projection) {
-            var z = tileCoord[0];
-            var x = tileCoord[1];
-            var y = -tileCoord[2] - 1;
-            var n = Math.pow(2, z + 1); // 2 tiles at z=0
+        tileUrlFunction: function(tileCoord) {
+            const z = tileCoord[0];
+            let x = tileCoord[1];
+            const y = -tileCoord[2] - 1;
+            const n = Math.pow(2, z + 1); // 2 tiles at z=0
             x = x % n;
             if (x * n < 0) {
                 x = x + n;
@@ -3072,17 +3195,17 @@ function setBaseLayerSource(urlTemplate){
 }
 
 function setClusterSymbol(feature) {
-    var clusterindex, hexcolor, radius;
-    var style = '';
-    var stroke = '';
-    var selected = false;
+    let clusterindex, hexcolor, radius;
+    let style = '';
+    let stroke = '';
+    let selected = false;
     if(feature.get('features')){
-        var size = feature.get('features').length;
+        const size = feature.get('features').length;
         if(size > 1){
-            var features = feature.get('features');
+            const features = feature.get('features');
             if(selections.length > 0){
                 clusterindex = feature.get('identifiers');
-                for(i in selections){
+                for(let i in selections){
                     if(selections.hasOwnProperty(i)){
                         if(clusterindex.indexOf(selections[i]) !== -1) {
                             selected = true;
@@ -3091,14 +3214,14 @@ function setClusterSymbol(feature) {
                 }
             }
             clusterindex = feature.get('identifiers');
-            var cKey = feature.get('clusterkey');
+            const cKey = feature.get('clusterkey');
             if(mapSymbology === 'coll'){
                 hexcolor = '#'+collSymbology[cKey]['color'];
             }
             else if(mapSymbology === 'taxa'){
                 hexcolor = '#'+taxaSymbology[cKey]['color'];
             }
-            var colorArr = hexToRgb(hexcolor);
+            const colorArr = hexToRgb(hexcolor);
             if(size < 10) radius = 10;
             else if(size < 100) radius = 15;
             else if(size < 1000) radius = 20;
@@ -3132,7 +3255,7 @@ function setClusterSymbol(feature) {
             });
         }
         else{
-            var originalFeature = feature.get('features')[0];
+            const originalFeature = feature.get('features')[0];
             style = setSymbol(originalFeature);
         }
     }
@@ -3140,29 +3263,31 @@ function setClusterSymbol(feature) {
 }
 
 function setDownloadFeatures(features){
-    var fixedFeatures = [];
-    for(i in features){
-        var clone = features[i].clone();
-        var geoType = clone.getGeometry().getType();
-        if(geoType === 'Circle'){
-            var geoJSONFormat = new ol.format.GeoJSON();
-            var geometry = clone.getGeometry();
-            var fixedgeometry = geometry.transform(mapProjection,wgs84Projection);
-            var center = fixedgeometry.getCenter();
-            var radius = fixedgeometry.getRadius();
-            var edgeCoordinate = [center[0] + radius, center[1]];
-            var groundRadius = ol.sphere.getDistance(
-                ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
-                ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
-            );
-            groundRadius = groundRadius/1000;
-            var turfCircle = getWGS84CirclePoly(center,groundRadius);
-            var circpoly = geoJSONFormat.readFeature(turfCircle);
-            circpoly.getGeometry().transform(wgs84Projection,mapProjection);
-            fixedFeatures.push(circpoly);
-        }
-        else{
-            fixedFeatures.push(clone);
+    const fixedFeatures = [];
+    for(let i in features){
+        if(features.hasOwnProperty(i)){
+            const clone = features[i].clone();
+            const geoType = clone.getGeometry().getType();
+            if(geoType === 'Circle'){
+                const geoJSONFormat = new ol.format.GeoJSON();
+                const geometry = clone.getGeometry();
+                const fixedgeometry = geometry.transform(mapProjection, wgs84Projection);
+                const center = fixedgeometry.getCenter();
+                const radius = fixedgeometry.getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                let groundRadius = ol.sphere.getDistance(
+                    ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
+                    ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
+                );
+                groundRadius = groundRadius/1000;
+                const turfCircle = getWGS84CirclePoly(center, groundRadius);
+                const circpoly = geoJSONFormat.readFeature(turfCircle);
+                circpoly.getGeometry().transform(wgs84Projection,mapProjection);
+                fixedFeatures.push(circpoly);
+            }
+            else{
+                fixedFeatures.push(clone);
+            }
         }
     }
     return fixedFeatures;
@@ -3201,14 +3326,14 @@ function setDSAnimation(){
         dsAnimImageSave = document.getElementById("dateslideranimimagesave").checked;
         dsAnimReverse = document.getElementById("dateslideranimreverse").checked;
         dsAnimDual = document.getElementById("dateslideranimdual").checked;
-        var lowDate = document.getElementById("datesliderearlydate").value;
-        var highDate = document.getElementById("datesliderlatedate").value;
+        const lowDate = document.getElementById("datesliderearlydate").value;
+        const highDate = document.getElementById("datesliderlatedate").value;
         dsAnimLow = new Date(lowDate);
         dsAnimLow = new Date(dsAnimLow.setTime(dsAnimLow.getTime()+86400000));
         dsAnimHigh = new Date(highDate);
         dsAnimHigh = new Date(dsAnimHigh.setTime(dsAnimHigh.getTime()+86400000));
-        var lowDateVal = dsAnimLow;
-        var highDateVal = dsAnimHigh;
+        let lowDateVal = dsAnimLow;
+        let highDateVal = dsAnimHigh;
         if(dsAnimReverse){
             if(dsAnimDual) lowDateVal = highDateVal;
         }
@@ -3217,8 +3342,8 @@ function setDSAnimation(){
         }
         tsOldestDate = lowDateVal;
         tsNewestDate = highDateVal;
-        var lowDateValStr = getISOStrFromDateObj(lowDateVal);
-        var highDateValStr = getISOStrFromDateObj(highDateVal);
+        const lowDateValStr = getISOStrFromDateObj(lowDateVal);
+        const highDateValStr = getISOStrFromDateObj(highDateVal);
         $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
         $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
         $("#custom-label-min").text(lowDateValStr);
@@ -3240,14 +3365,14 @@ function setDSAnimation(){
 }
 
 function setDSValues(){
-    var lowDate = document.getElementById("datesliderearlydate").value;
+    const lowDate = document.getElementById("datesliderearlydate").value;
     tsOldestDate = new Date(lowDate);
     tsOldestDate = new Date(tsOldestDate.setTime(tsOldestDate.getTime()+86400000));
-    var hLowDateStr = getISOStrFromDateObj(tsOldestDate);
-    var highDate = document.getElementById("datesliderlatedate").value;
+    const hLowDateStr = getISOStrFromDateObj(tsOldestDate);
+    const highDate = document.getElementById("datesliderlatedate").value;
     tsNewestDate = new Date(highDate);
     tsNewestDate = new Date(tsNewestDate.setTime(tsNewestDate.getTime()+86400000));
-    var hHighDateStr = getISOStrFromDateObj(tsNewestDate);
+    const hHighDateStr = getISOStrFromDateObj(tsNewestDate);
     $("#sliderdiv").slider('values',0,tsOldestDate.getTime());
     $("#sliderdiv").slider('values',1,tsNewestDate.getTime());
     $("#custom-label-min").text(hLowDateStr);
@@ -3256,8 +3381,8 @@ function setDSValues(){
 }
 
 function setLayersTable(){
-    var http = new XMLHttpRequest();
-    var url = "rpc/getlayersarr.php";
+    const http = new XMLHttpRequest();
+    const url = "rpc/getlayersarr.php";
     //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -3270,14 +3395,8 @@ function setLayersTable(){
             }catch(e){
                 return false;
             }
-            for(i in layerArr){
-                if(String(layerArr[i])){
-                    jsonReturn = true;
-                    break;
-                }
-            }
-            if(jsonReturn){
-                for(i in layerArr){
+            for(let i in layerArr){
+                if(layerArr.hasOwnProperty(i) && String(layerArr[i])){
                     buildLayerTableRow(layerArr[i],false);
                 }
             }
@@ -3299,35 +3418,35 @@ function setLoadingTimer(){
 
 function setReclassifyTable(){
     if(document.getElementById("reclassifytable")){
-        var currentTable = document.getElementById("reclassifytable");
+        const currentTable = document.getElementById("reclassifytable");
         currentTable.parentNode.removeChild(currentTable);
     }
-    var newTable = document.createElement('table');
+    const newTable = document.createElement('table');
     newTable.setAttribute("id","reclassifytable");
     newTable.setAttribute("class","styledtable");
     newTable.setAttribute("style","font-family:Arial;font-size:12px;margin-top:15px;margin-left:auto;margin-right:auto;width:330px;");
-    var newTHead = document.createElement('thead');
-    var newTHeadRow = document.createElement('tr');
-    var newTHeadHead1 = document.createElement('th');
+    const newTHead = document.createElement('thead');
+    const newTHeadRow = document.createElement('tr');
+    let newTHeadHead1 = document.createElement('th');
     newTHeadHead1.setAttribute("style","text-align:center;");
     newTHeadHead1.innerHTML = "Raster Min Value";
     newTHeadRow.appendChild(newTHeadHead1);
-    var newTHeadHead1 = document.createElement('th');
+    newTHeadHead1 = document.createElement('th');
     newTHeadHead1.setAttribute("style","text-align:center;");
     newTHeadHead1.innerHTML = "Raster Max Value";
     newTHeadRow.appendChild(newTHeadHead1);
-    var newTHeadHead2 = document.createElement('th');
+    const newTHeadHead2 = document.createElement('th');
     newTHeadHead2.setAttribute("style","text-align:center;");
     newTHeadHead2.innerHTML = "Color";
     newTHeadRow.appendChild(newTHeadHead2);
     newTHead.appendChild(newTHeadRow);
     newTable.appendChild(newTHead);
-    var newTBody = document.createElement('tbody');
+    const newTBody = document.createElement('tbody');
     newTBody.setAttribute("id","reclassifyTBody");
-    var newRow = document.createElement('tr');
-    var newRastValCell = document.createElement('td');
+    const newRow = document.createElement('tr');
+    let newRastValCell = document.createElement('td');
     newRastValCell.setAttribute("style","width:150px;");
-    var newRastValInput = document.createElement('input');
+    let newRastValInput = document.createElement('input');
     newRastValInput.setAttribute("data-role","none");
     newRastValInput.setAttribute("type","text");
     newRastValInput.setAttribute("id","reclassifyRasterMin");
@@ -3335,9 +3454,9 @@ function setReclassifyTable(){
     newRastValInput.setAttribute("value","");
     newRastValCell.appendChild(newRastValInput);
     newRow.appendChild(newRastValCell);
-    var newRastValCell = document.createElement('td');
+    newRastValCell = document.createElement('td');
     newRastValCell.setAttribute("style","width:150px;");
-    var newRastValInput = document.createElement('input');
+    newRastValInput = document.createElement('input');
     newRastValInput.setAttribute("data-role","none");
     newRastValInput.setAttribute("type","text");
     newRastValInput.setAttribute("id","reclassifyRasterMax");
@@ -3345,9 +3464,9 @@ function setReclassifyTable(){
     newRastValInput.setAttribute("value","");
     newRastValCell.appendChild(newRastValInput);
     newRow.appendChild(newRastValCell);
-    var newColorValCell = document.createElement('td');
+    const newColorValCell = document.createElement('td');
     newColorValCell.setAttribute("style","width:30px;");
-    var newColorValInput = document.createElement('input');
+    const newColorValInput = document.createElement('input');
     newColorValInput.setAttribute("data-role","none");
     newColorValInput.setAttribute("id","reclassifyColorVal");
     newColorValInput.setAttribute("class","color");
@@ -3377,7 +3496,7 @@ function setRecordsTab(){
 }
 
 function setSpatialParamBox(){
-    var selectionCnt = selectInteraction.getFeatures().getArray().length;
+    const selectionCnt = selectInteraction.getFeatures().getArray().length;
     if(selectionCnt > 0){
         document.getElementById("noshapecriteria").style.display = "none";
         document.getElementById("shapecriteria").style.display = "block";
@@ -3389,37 +3508,43 @@ function setSpatialParamBox(){
 }
 
 function setSymbol(feature){
-    var showPoint = true;
+    let fill;
+    let color;
+    let showPoint = true;
     if(dateSliderActive){
         showPoint = validateFeatureDate(feature);
     }
-    var style = '';
-    var stroke = '';
-    var selected = false;
-    var cKey = feature.get(clusterKey);
-    var recType = feature.get('CollType');
+    let style = '';
+    let stroke = '';
+    let selected = false;
+    const cKey = feature.get(clusterKey);
+    let recType = feature.get('CollType');
     if(!recType) recType = 'observation';
     if(selections.length > 0){
-        var occid = Number(feature.get('occid'));
+        const occid = Number(feature.get('occid'));
         if(selections.indexOf(occid) !== -1) {
             selected = true;
         }
     }
     if(mapSymbology === 'coll'){
-        var color = '#'+collSymbology[cKey]['color'];
+        color = '#'+collSymbology[cKey]['color'];
     }
     else if(mapSymbology === 'taxa'){
-        var color = '#'+taxaSymbology[cKey]['color'];
+        color = '#' + taxaSymbology[cKey]['color'];
     }
 
     if(showPoint){
-        if(selected) stroke = new ol.style.Stroke({color: '#10D8E6', width: 2});
-        else stroke = new ol.style.Stroke({color: 'black', width: 1});
-        var fill = new ol.style.Fill({color: color});
+        if(selected) {
+            stroke = new ol.style.Stroke({color: '#10D8E6', width: 2});
+        }
+        else {
+            stroke = new ol.style.Stroke({color: 'black', width: 1});
+        }
+        fill = new ol.style.Fill({color: color});
     }
     else{
         stroke = new ol.style.Stroke({color: 'rgba(255, 255, 255, 0.01)', width: 0});
-        var fill = new ol.style.Fill({color: 'rgba(255, 255, 255, 0.01)'});
+        fill = new ol.style.Fill({color: 'rgba(255, 255, 255, 0.01)'});
     }
 
     if(recType.toLowerCase().indexOf('observation') !== -1){
@@ -3446,11 +3571,12 @@ function setSymbol(feature){
 }
 
 function showFeature(feature){
+    let featureStyle;
     if(feature.get('features')){
-        var featureStyle = setClusterSymbol(feature);
+        featureStyle = setClusterSymbol(feature);
     }
     else{
-        var featureStyle = setSymbol(feature);
+        featureStyle = setSymbol(feature);
     }
     feature.setStyle(featureStyle);
 }
@@ -3460,67 +3586,84 @@ function showWorking(){
 }
 
 function spiderifyPoints(features){
+    let style;
+    let cf;
+    let p;
+    let a;
+    let max;
     spiderCluster = 1;
     spiderFeature = '';
-    var spiderFeatures = [];
-    for(f in features){
-        var feature = features[f];
-        hideFeature(feature);
-        hiddenClusters.push(feature);
-        if(feature.get('features')){
-            var addFeatures = feature.get('features');
-            for(f in addFeatures){
-                spiderFeatures.push(addFeatures[f]);
+    const spiderFeatures = [];
+    for(let f in features){
+        if(features.hasOwnProperty(f)){
+            const feature = features[f];
+            hideFeature(feature);
+            hiddenClusters.push(feature);
+            if(feature.get('features')){
+                const addFeatures = feature.get('features');
+                for(let i in addFeatures){
+                    if(addFeatures.hasOwnProperty(i)){
+                        spiderFeatures.push(addFeatures[i]);
+                    }
+                }
             }
-        }
-        else{
-            spiderFeatures.push(feature);
+            else{
+                spiderFeatures.push(feature);
+            }
         }
     }
 
-    var source = layersArr['spider'].getSource();
+    const source = layersArr['spider'].getSource();
     source.clear();
 
-    var center = features[0].getGeometry().getCoordinates();
-    var pix = map.getView().getResolution();
-    var r = pix * 12 * (0.5 + spiderFeatures.length / 4);
+    const center = features[0].getGeometry().getCoordinates();
+    const pix = map.getView().getResolution();
+    let r = pix * 12 * (0.5 + spiderFeatures.length / 4);
     if (spiderFeatures.length <= 10){
-        var max = Math.min(spiderFeatures.length, 10);
-        for(i in spiderFeatures){
-            var a = 2*Math.PI*i/max;
-            if (max==2 || max == 4) a += Math.PI/4;
-            var p = [center[0]+r*Math.sin(a), center[1]+r*Math.cos(a)];
-            var cf = new ol.Feature({
-                'features':[spiderFeatures[i]],
-                geometry: new ol.geom.Point(p)
-            });
-            var style = setClusterSymbol(cf);
-            cf.setStyle(style);
-            source.addFeature(cf);
+        max = Math.min(spiderFeatures.length, 10);
+        for(let i in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(i)){
+                a = 2*Math.PI*i/max;
+                if (max === 2 || max === 4) {
+                    a += Math.PI/4;
+                }
+                p = [center[0]+r*Math.sin(a), center[1]+r*Math.cos(a)];
+                cf = new ol.Feature({
+                    'features':[spiderFeatures[i]],
+                    geometry: new ol.geom.Point(p)
+                });
+                style = setClusterSymbol(cf);
+                cf.setStyle(style);
+                source.addFeature(cf);
+            }
         }
     }
     else{
-        var a = 0;
-        var r;
-        var d = 30;
-        var features = new Array();
-        var links = new Array();
-        var max = Math.min (60, spiderFeatures.length);
-        for(i in spiderFeatures){
-            r = d/2 + d*a/(2*Math.PI);
-            a = a + (d+0.1)/r;
-            var dx = pix*r*Math.sin(a);
-            var dy = pix*r*Math.cos(a);
-            var p = [center[0]+dx, center[1]+dy];
-            var cf = new ol.Feature({
-                'features':[spiderFeatures[i]],
-                geometry: new ol.geom.Point(p)
-            });
-            var style = setClusterSymbol(cf);
-            cf.setStyle(style);
-            source.addFeature(cf);
+        a = 0;
+        let radius;
+        const d = 30;
+        max = Math.min(60, spiderFeatures.length);
+        for(let i in spiderFeatures){
+            if(spiderFeatures.hasOwnProperty(i)){
+                radius = d/2 + d*a/(2*Math.PI);
+                a = a + (d+0.1)/radius;
+                const dx = pix * radius * Math.sin(a);
+                const dy = pix * radius * Math.cos(a);
+                p = [center[0] + dx, center[1] + dy];
+                cf = new ol.Feature({
+                    'features': [spiderFeatures[i]],
+                    geometry: new ol.geom.Point(p)
+                });
+                style = setClusterSymbol(cf);
+                cf.setStyle(style);
+                source.addFeature(cf);
+            }
         }
     }
+}
+
+function split(val) {
+    return val.split( /,\s*/ );
 }
 
 function stopDSAnimation(){
@@ -3547,25 +3690,25 @@ function stopDSAnimation(){
 }
 
 function toggle(target){
-    var ele = document.getElementById(target);
+    const ele = document.getElementById(target);
     if(ele){
-        if(ele.style.display=="none"){
-            ele.style.display="block";
+        if(ele.style.display === "none"){
+            ele.style.display = "block";
         }
         else {
-            ele.style.display="none";
+            ele.style.display = "none";
         }
     }
     else{
-        var divObjs = document.getElementsByTagName("div");
-        for (i = 0; i < divObjs.length; i++) {
-            var divObj = divObjs[i];
-            if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
-                if(divObj.style.display=="none"){
-                    divObj.style.display="block";
+        const divObjs = document.getElementsByTagName("div");
+        for (let i = 0; i < divObjs.length; i++) {
+            const divObj = divObjs[i];
+            if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+                if(divObj.style.display === "none"){
+                    divObj.style.display = "block";
                 }
                 else {
-                    divObj.style.display="none";
+                    divObj.style.display = "none";
                 }
             }
         }
@@ -3582,7 +3725,7 @@ function toggleDateSlider(){
     dateSliderActive = document.getElementById("datesliderswitch").checked;
     if(dateSliderActive){
         if(dsOldestDate && dsNewestDate){
-            if(dsOldestDate != dsNewestDate){
+            if(dsOldestDate !== dsNewestDate){
                 if(!clusterPoints){
                     //var dual = document.getElementById("dsdualtype").checked;
                     createDateSlider(true);
@@ -3627,7 +3770,7 @@ function toggleHeatMap(){
 }
 
 function toggleLayerTable(layerID){
-    var tableRows = document.getElementById("layercontroltable").rows.length;
+    const tableRows = document.getElementById("layercontroltable").rows.length;
     if(tableRows > 0){
         document.getElementById("nolayermessage").style.display = "none";
         document.getElementById("layercontroltable").style.display = "block";
@@ -3640,9 +3783,9 @@ function toggleLayerTable(layerID){
 }
 
 function toggleUploadLayer(c,title){
-    var layer = c.value;
-    if(layer == 'pointv' && showHeatMap) layer = 'heat';
-    if(c.checked == true){
+    let layer = c.value;
+    if(layer === 'pointv' && showHeatMap) layer = 'heat';
+    if(c.checked === true){
         layersArr[layer].setVisible(true);
         addLayerToSelList(c.value,title);
     }
@@ -3657,25 +3800,25 @@ function uncheckAll(f){
 }
 
 function unselectCat(catTarget){
-    var catObj = document.getElementById(catTarget);
+    const catObj = document.getElementById(catTarget);
     catObj.checked = false;
     uncheckAll();
 }
 
 function updateSelections(seloccid,infoArr){
-    var selectionList = '';
-    var trfragment = '';
-    var selcat = '';
-    var sellabel = '';
-    var sele = '';
-    var sels = '';
+    let selectionList = '';
+    let trfragment = '';
+    let selcat = '';
+    let sellabel = '';
+    let sele = '';
+    let sels = '';
     selectionList += document.getElementById("selectiontbody").innerHTML;
-    var divid = "sel"+seloccid;
-    var trid = "tr"+seloccid;
+    const divid = "sel" + seloccid;
+    const trid = "tr" + seloccid;
     if(infoArr){
         selcat = infoArr['catalognumber'];
-        var mouseOverLabel = "openOccidInfoBox("+seloccid+",'"+infoArr['collector']+"');";
-        var labelHTML = '<a href="#" onmouseover="'+mouseOverLabel+'" onmouseout="closeOccidInfoBox();" onclick="openIndPopup('+seloccid+'); return false;">';
+        const mouseOverLabel = "openOccidInfoBox(" + seloccid + ",'" + infoArr['collector'] + "');";
+        let labelHTML = '<a href="#" onmouseover="' + mouseOverLabel + '" onmouseout="closeOccidInfoBox();" onclick="openIndPopup(' + seloccid + '); return false;">';
         labelHTML += infoArr['collector'];
         labelHTML += '</a>';
         sellabel = labelHTML;
@@ -3683,10 +3826,10 @@ function updateSelections(seloccid,infoArr){
         sels = infoArr['sciname'];
     }
     else if(document.getElementById(trid)){
-        var catid = "cat"+seloccid;
-        var labelid = "label"+seloccid;
-        var eid = "e"+seloccid;
-        var sid = "s"+seloccid;
+        const catid = "cat" + seloccid;
+        const labelid = "label" + seloccid;
+        const eid = "e" + seloccid;
+        const sid = "s" + seloccid;
         selcat = document.getElementById(catid).innerHTML;
         sellabel = document.getElementById(labelid).innerHTML;
         sele = document.getElementById(eid).innerHTML;
@@ -3711,13 +3854,13 @@ function updateSelections(seloccid,infoArr){
 }
 
 function validateFeatureDate(feature){
-    var valid = false;
+    let valid = false;
     if(feature.get('coll_year')){
-        var fyear = Number(feature.get('coll_year'));
+        const fyear = Number(feature.get('coll_year'));
         if(fyear.toString().length === 4 && fyear > 1500){
-            var fmonth = (feature.get('coll_month')?Number(feature.get('coll_month')):1);
-            var fday = (feature.get('coll_day')?Number(feature.get('coll_day')):1);
-            var fDate = new Date();
+            const fmonth = (feature.get('coll_month') ? Number(feature.get('coll_month')) : 1);
+            const fday = (feature.get('coll_day') ? Number(feature.get('coll_day')) : 1);
+            const fDate = new Date();
             fDate.setFullYear(fyear, fmonth - 1, fday);
             if(fDate > tsOldestDate && fDate < tsNewestDate){
                 valid = true;
@@ -3728,30 +3871,29 @@ function validateFeatureDate(feature){
 }
 
 function verifyCollForm(){
-    var f = document.getElementById("spatialcollsearchform");
-    var formVerified = false;
-    for(var h=0;h<f.length;h++){
-        if(f.elements[h].name == "db[]" && f.elements[h].checked){
+    const f = document.getElementById("spatialcollsearchform");
+    let formVerified = false;
+    for(let h=0; h<f.length; h++){
+        if(f.elements[h].name === "db[]" && f.elements[h].checked){
             formVerified = true;
             break;
         }
-        if(f.elements[h].name == "cat[]" && f.elements[h].checked){
+        if(f.elements[h].name === "cat[]" && f.elements[h].checked){
             formVerified = true;
             break;
         }
     }
     if(formVerified){
-        for(var i=0;i<f.length;i++){
-            if(f.elements[i].name == "cat[]" && f.elements[i].checked){
-                //Uncheck all db input elements within cat div
-                var childrenEle = document.getElementById('cat-'+f.elements[i].value).children;
-                for(var j=0;j<childrenEle.length;j++){
-                    if(childrenEle[j].tagName == "DIV"){
-                        var divChildren = childrenEle[j].children;
-                        for(var k=0;k<divChildren.length;k++){
-                            var divChildren2 = divChildren[k].children;
-                            for(var l=0;l<divChildren2.length;l++){
-                                if(divChildren2[l].tagName == "INPUT"){
+        for(let i=0; i<f.length; i++){
+            if(f.elements[i].name === "cat[]" && f.elements[i].checked){
+                const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
+                for(let j=0; j<childrenEle.length; j++){
+                    if(childrenEle[j].tagName === "DIV"){
+                        const divChildren = childrenEle[j].children;
+                        for(let k=0; k<divChildren.length; k++){
+                            const divChildren2 = divChildren[k].children;
+                            for(let l=0; l<divChildren2.length; l++){
+                                if(divChildren2[l].tagName === "INPUT"){
                                     divChildren2[l].checked = false;
                                 }
                             }
@@ -3765,37 +3907,49 @@ function verifyCollForm(){
 }
 
 function writeMySQLWktString(type,geocoords) {
-    var wktStr = '';
-    var coordStr = '';
+    let long;
+    let lat;
+    let wktStr = '';
+    let coordStr = '';
     if(type === 'Polygon'){
-        for(i in geocoords){
-            coordStr += '(';
-            for(c in geocoords[i]) {
-                var lat = geocoords[i][c][1];
-                var long = geocoords[i][c][0];
-                coordStr += lat+' '+long+',';
+        for(let i in geocoords){
+            if(geocoords.hasOwnProperty(i)){
+                coordStr += '(';
+                for(let c in geocoords[i]) {
+                    if(geocoords[i].hasOwnProperty(c)){
+                        lat = geocoords[i][c][1];
+                        long = geocoords[i][c][0];
+                        coordStr += lat+' '+long+',';
+                    }
+                }
+                coordStr = coordStr.substring(0,coordStr.length-1);
+                coordStr += '),';
             }
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
         wktStr = 'POLYGON('+coordStr+')';
     }
     else if(type === 'MultiPolygon'){
-        for(i in geocoords){
-            coordStr += '(';
-            for(r in geocoords[i]){
+        for(let i in geocoords){
+            if(geocoords.hasOwnProperty(i)){
                 coordStr += '(';
-                for(c in geocoords[i][r]) {
-                    var lat = geocoords[i][r][c][1];
-                    var long = geocoords[i][r][c][0];
-                    coordStr += lat+' '+long+',';
+                for(let r in geocoords[i]){
+                    if(geocoords[i].hasOwnProperty(r)){
+                        coordStr += '(';
+                        for(let c in geocoords[i][r]) {
+                            if(geocoords[i][r].hasOwnProperty(c)){
+                                lat = geocoords[i][r][c][1];
+                                long = geocoords[i][r][c][0];
+                                coordStr += lat+' '+long+',';
+                            }
+                        }
+                        coordStr = coordStr.substring(0,coordStr.length-1);
+                        coordStr += '),';
+                    }
                 }
                 coordStr = coordStr.substring(0,coordStr.length-1);
                 coordStr += '),';
             }
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            coordStr += '),';
         }
         coordStr = coordStr.substring(0,coordStr.length-1);
         wktStr = 'MULTIPOLYGON('+coordStr+')';
@@ -3805,25 +3959,27 @@ function writeMySQLWktString(type,geocoords) {
 }
 
 function zipSelected(obj){
-    if(obj.checked == false){
+    if(obj.checked === false){
         document.getElementById("csvimages").checked = false;
         document.getElementById("csvidentifications").checked = false;
     }
 }
 
 function zoomToSelections(){
-    var extent = ol.extent.createEmpty();
-    for(i in selections){
-        var point = '';
-        if(clusterPoints){
-            var cluster = findOccCluster(selections[i]);
-            point = findOccPointInCluster(cluster,selections[i]);
-        }
-        else{
-            point = findOccPoint(selections[i]);
-        }
-        if(point){
-            ol.extent.extend(extent, point.getGeometry().getExtent());
+    const extent = ol.extent.createEmpty();
+    for(let i in selections){
+        if(selections.hasOwnProperty(i)){
+            let point = '';
+            if(clusterPoints){
+                const cluster = findOccCluster(selections[i]);
+                point = findOccPointInCluster(cluster,selections[i]);
+            }
+            else{
+                point = findOccPoint(selections[i]);
+            }
+            if(point){
+                ol.extent.extend(extent, point.getGeometry().getExtent());
+            }
         }
     }
     map.getView().fit(extent, map.getSize());

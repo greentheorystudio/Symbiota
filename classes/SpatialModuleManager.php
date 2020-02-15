@@ -440,7 +440,7 @@ class SpatialModuleManager{
             }
             $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
         }
-        if(array_key_exists('country',$this->searchTermsArr)&&$this->searchTermsArr['country']){
+        if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
             $countryArr = explode(';',$this->searchTermsArr['country']);
             $tempArr = array();
             foreach($countryArr as $value){
@@ -449,7 +449,7 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$countryArr);
         }
-        if(array_key_exists('state',$this->searchTermsArr)&&$this->searchTermsArr['state']){
+        if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
             $stateAr = explode(';',$this->searchTermsArr['state']);
             $tempArr = array();
             foreach($stateAr as $value){
@@ -458,7 +458,7 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$stateAr);
         }
-        if(array_key_exists('county',$this->searchTermsArr)&&$this->searchTermsArr['county']){
+        if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
             $countyArr = explode(';',$this->searchTermsArr['county']);
             $tempArr = array();
             foreach($countyArr as $value){
@@ -467,7 +467,7 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$countyArr);
         }
-        if(array_key_exists('local',$this->searchTermsArr)&&$this->searchTermsArr['local']){
+        if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
             $localArr = explode(';',$this->searchTermsArr['local']);
             $tempArr = array();
             foreach($localArr as $value){
@@ -478,7 +478,7 @@ class SpatialModuleManager{
         }
         if(array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('polyArr',$this->searchTermsArr)){
             $geoSqlStrArr = array();
-            if(array_key_exists('circleArr',$this->searchTermsArr)){
+            if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
                 $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
 
@@ -491,7 +491,7 @@ class SpatialModuleManager{
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
             }
-            if(array_key_exists('polyArr',$this->searchTermsArr)){
+            if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
                 //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
                 $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
@@ -502,7 +502,9 @@ class SpatialModuleManager{
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
             }
-            $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
+            if($geoSqlStrArr){
+                $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
+            }
         }
         if(array_key_exists('collector',$this->searchTermsArr)&&$this->searchTermsArr['collector']){
             $collectorArr = explode(';',$this->searchTermsArr['collector']);
