@@ -97,7 +97,7 @@ function adjustSelectionsTab(){
     }
     else{
         document.getElementById("selectionstab").style.display = "none";
-        var activeTab = $('#recordstab').tabs("option","active");
+        const activeTab = $('#recordstab').tabs("option", "active");
         if(activeTab === 3){
             buildCollKey();
             $('#recordstab').tabs({active:0});
@@ -159,7 +159,7 @@ function animateDS(){
         document.getElementById("datesliderlatedate").value = highDateValStr;
         layersArr['pointv'].getSource().changed();
         if(dsAnimImageSave){
-            var filename = lowDateValStr+'-to-'+highDateValStr+'.png';
+            const filename = lowDateValStr + '-to-' + highDateValStr + '.png';
             exportMapPNG(filename,true);
         }
         if(!dsAnimStop){
@@ -252,7 +252,7 @@ function buildCollKey(){
 function buildCollKeyPiece(key){
     keyHTML = '';
     keyLabel = "'"+key+"'";
-    var color = collSymbology[key]['color'];
+    const color = collSymbology[key]['color'];
     keyHTML += '<div style="display:table-row;">';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
@@ -402,7 +402,7 @@ function buildTaxaKey(){
     let famUndefinedArr = [];
     if(taxaKeyArr['undefined']){
         famUndefinedArr = taxaKeyArr['undefined'];
-        var undIndex = taxaKeyArr.indexOf('undefined');
+        const undIndex = taxaKeyArr.indexOf('undefined');
         taxaKeyArr.splice(undIndex,1);
     }
     const fsortedKeys = arrayIndexSort(taxaKeyArr).sort();
@@ -410,7 +410,7 @@ function buildTaxaKey(){
         if(fsortedKeys.hasOwnProperty(f)){
             let scinameArr = [];
             scinameArr = taxaKeyArr[fsortedKeys[f]];
-            var ssortedKeys = arrayIndexSort(scinameArr).sort();
+            const ssortedKeys = arrayIndexSort(scinameArr).sort();
             keyHTML += "<div style='margin-left:5px;'><h3 style='margin-top:8px;margin-bottom:5px;'>"+fsortedKeys[f]+"</h3></div>";
             keyHTML += "<div style='display:table;'>";
             for(let s in ssortedKeys){
@@ -497,7 +497,10 @@ function changeBaseMap(){
         });
     }
     if(selection === 'ngstopo'){
-        blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/NGS_Topo_US_2D/MapServer/tile/{z}/{y}/{x}');
+        blsource = new ol.source.XYZ({
+            url: 'http://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}',
+            crossOrigin: 'anonymous'
+        });
     }
     if(selection === 'natgeoworld'){
         blsource = new ol.source.XYZ({
@@ -506,7 +509,10 @@ function changeBaseMap(){
         });
     }
     if(selection === 'esristreet'){
-        blsource = setBaseLayerSource('http://services.arcgisonline.com/arcgis/rest/services/ESRI_StreetMap_World_2D/MapServer/tile/{z}/{y}/{x}');
+        blsource = new ol.source.XYZ({
+            url: 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            crossOrigin: 'anonymous'
+        });
     }
     baseLayer.setSource(blsource);
 }
@@ -560,7 +566,7 @@ function changeDraw() {
             typeSelect.value = 'None';
             map.removeInteraction(draw);
             if(!shapeActive){
-                var infoArr = [];
+                const infoArr = [];
                 infoArr['Name'] = 'select';
                 infoArr['Title'] = 'Shapes';
                 infoArr['layerType'] = 'vector';
@@ -1065,7 +1071,7 @@ function createConvexPoly(){
     if(features){
         const convexpoly = turf.convex(features);
         if(convexpoly){
-            var cnvxpoly = geoJSONFormat.readFeature(convexpoly);
+            const cnvxpoly = geoJSONFormat.readFeature(convexpoly);
             cnvxpoly.getGeometry().transform(wgs84Projection,mapProjection);
             selectsource.addFeature(cnvxpoly);
         }
@@ -2665,7 +2671,7 @@ function prepareTaxaParams(callback){
             const taxavals = taxaval.split(',');
             const taxaSolrqString = '';
             for (let i in taxavals){
-                var name = taxavals[i].trim();
+                const name = taxavals[i].trim();
                 taxaArr.push(name);
             }
             prepareTaxaData(function(res){
@@ -2872,7 +2878,7 @@ function processCheckSelection(c){
         if(activeTab === 1){
             document.getElementById("selectallcheck").checked = false;
         }
-        var index = selections.indexOf(Number(c.value));
+        const index = selections.indexOf(Number(c.value));
         selections.splice(index, 1);
         layersArr['pointv'].getSource().changed();
         removeSelectionRecord(Number(c.value));
@@ -2918,7 +2924,7 @@ function processDownloadRequest(selection){
             document.getElementById("datadownloadform").submit();
         }
         else if(dlType === 'png'){
-            var imagefilename = 'map_'+getDateTimeString()+'.png';
+            const imagefilename = 'map_' + getDateTimeString() + '.png';
             exportMapPNG(imagefilename,false);
         }
     }
@@ -3008,7 +3014,7 @@ function removeSelection(c){
             const spiderFeatures = layersArr['spider'].getSource().getFeatures();
             for(let f in spiderFeatures){
                 if(spiderFeatures.hasOwnProperty(f) && spiderFeatures[f].get('features')[0].get('occid') === Number(c.value)){
-                    var style = (spiderFeatures[f].get('features')?setClusterSymbol(spiderFeatures[f]):setSymbol(spiderFeatures[f]));
+                    const style = (spiderFeatures[f].get('features') ? setClusterSymbol(spiderFeatures[f]) : setSymbol(spiderFeatures[f]));
                     spiderFeatures[f].setStyle(style);
                 }
             }
@@ -3388,8 +3394,8 @@ function setLayersTable(){
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
         if(http.readyState === 4 && http.status === 200) {
-            var layerArr;
-            var jsonReturn = false;
+            let layerArr;
+            const jsonReturn = false;
             try{
                 layerArr = JSON.parse(http.responseText);
             }catch(e){

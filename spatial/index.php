@@ -58,7 +58,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=271" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=272" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             let winHeight = $(window).height();
@@ -1406,7 +1406,7 @@ $dbArr = array();
                 if (newfeatures.length > 1) {
                     for (const n in newfeatures) {
                         if(newfeatures.hasOwnProperty(n)){
-                            var nfeature = newfeatures[n];
+                            const nfeature = newfeatures[n];
                             pointInteraction.getFeatures().remove(nfeature);
                             if(nfeature.get('features')){
                                 cFeatures = nfeature.get('features');
@@ -1526,7 +1526,7 @@ $dbArr = array();
                         primeSymbologyData(features);
                         pointvectorsource.addFeatures(features);
                         if(loadPointsEvent){
-                            var pointextent = pointvectorsource.getExtent();
+                            const pointextent = pointvectorsource.getExtent();
                             map.getView().fit(pointextent,map.getSize());
                         }
                     });
@@ -1679,7 +1679,7 @@ $dbArr = array();
                     infoHTML += '<b>county:</b> '+(iFeature.get('county')?iFeature.get('county'):'')+'<br />';
                     infoHTML += '<b>locality:</b> '+(iFeature.get('locality')?iFeature.get('locality'):'')+'<br />';
                     if(iFeature.get('thumbnailurl')){
-                        var thumburl = iFeature.get('thumbnailurl');
+                        const thumburl = iFeature.get('thumbnailurl');
                         infoHTML += '<img src="'+thumburl+'" style="height:150px" />';
                     }
                     popupcontent.innerHTML = infoHTML;
