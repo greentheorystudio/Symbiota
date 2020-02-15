@@ -123,6 +123,5 @@ else{
 	$recordListHtml .= 'No records found matching the query';
 	$recordListHtml .= '</div>';
 }
-$recordListHtml = utf8_encode($recordListHtml);
 
 echo $recordListHtml;
