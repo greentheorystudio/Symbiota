@@ -6,16 +6,19 @@ class UserTaxonomy {
 
 	private $conn;
 	
-	function __construct() {
+	public function __construct() {
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
 	}
 
-	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+ 		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 	
-	public function getTaxonomyEditors(){
+	public function getTaxonomyEditors(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", lastname, firstname) as fullname, t.sciname, ut.editorstatus, '.
 			'ut.geographicscope, ut.notes, l.username '.
@@ -26,7 +29,9 @@ class UserTaxonomy {
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$editorStatus = $r->editorstatus;
-			if(!$editorStatus) $editorStatus = 'RegionOfInterest';
+			if(!$editorStatus) {
+				$editorStatus = 'RegionOfInterest';
+			}
 			$retArr[$editorStatus][$r->uid]['username'] = $r->fullname.' ('.$r->username.')';
 			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['sciname'] = $r->sciname;
 			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['geoscope'] = $r->geographicscope;
@@ -36,24 +41,22 @@ class UserTaxonomy {
 		return $retArr;
 	} 
 
-	public function deleteUser($utid,$uid,$editorStatus){
-		$statusStr = '';
+	public function deleteUser($utid,$uid,$editorStatus): string
+	{
 		$profileManager = new ProfileManager();
 		$profileManager->setUid($uid);
-		$statusStr = $profileManager->deleteUserTaxonomy($utid,$editorStatus);
-		return $statusStr;
+		return $profileManager->deleteUserTaxonomy($utid,$editorStatus);
 	}
 
-	public function addUser($uid, $taxa, $editorStatus, $geographicScope, $notes){
-		$statusStr = '';
+	public function addUser($uid, $taxa, $editorStatus, $geographicScope, $notes): string
+	{
 		$profileManager = new ProfileManager();
 		$profileManager->setUid($uid);
-		$statusStr = $profileManager->addUserTaxonomy($taxa, $editorStatus, $geographicScope, $notes);
-		return $statusStr;
+		return $profileManager->addUserTaxonomy($taxa, $editorStatus, $geographicScope, $notes);
 	}
 
-	//Get functions
-	public function getUserArr(){
+	public function getUserArr(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname,CONCAT(" (",l.username,")")) as fullname '.
 			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
@@ -66,18 +69,4 @@ class UserTaxonomy {
 		return $retArr;
 	}
 
-	//Misc functions
-	private function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
-		return $str;
-	}
-	
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
 }
-?>

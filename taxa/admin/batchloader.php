@@ -1,6 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
+include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 if(!$SYMB_UID) {
     header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
@@ -18,6 +19,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 }
 
 $loaderManager = new TaxonomyUpload();
+$taxaUtilities = new TaxonomyUtilities();
 $loaderManager->setTaxaAuthId($taxAuthId);
 
 $status = '';
@@ -77,14 +79,6 @@ if($isEditor){
                 }
 				}
 			}
-		}
-
-		function verifyItisUploadForm(f){
-			if(f.uploadfile.value === "" && f.uloverride.value === ""){
-				alert("Please enter a path value of the file you wish to upload");
-				return false;
-			}
-			return true;
 		}
 
 		function verifyUploadForm(f){
@@ -211,10 +205,6 @@ if($isEditor){
 					$loaderManager->loadFile($fieldMap);
 					$loaderManager->cleanUpload();
 				}
-				elseif($action === 'Upload ITIS File'){
-					$loaderManager->loadItisFile();
-					$loaderManager->cleanUpload();
-				}
 				elseif($action === 'Analyze Taxa'){
 					$loaderManager->cleanUpload();
 				}
@@ -288,8 +278,9 @@ if($isEditor){
 			elseif($action === 'Activate Taxa'){
 				echo '<ul>';
 				$loaderManager->transferUpload();
+                $taxaUtilities->buildHierarchyEnumTree($taxAuthId);
 				echo '<li>Taxa upload appears to have been successful.</li>';
-				echo "<li>Go to <a href='taxonomydisplay.php'>Taxonomic Tree Search</a> page to query for a loaded name.</li>";
+				echo "<li>Go to the <a href='taxonomydynamicdisplay.php'>Taxonomy Explorer</a> to search for a loaded name.</li>";
 				echo '</ul>';
 			}
 			else{
@@ -340,44 +331,6 @@ if($isEditor){
 								<div style="float:right;" >
 									<a href="#" onclick="toggle('overrideopt');return false;">Toggle Manual Upload Option</a>
 								</div>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-				<div>
-					<form name="itisuploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyItisUploadForm(this);">
-						<fieldset style="width:90%;">
-							<legend style="font-weight:bold;font-size:120%;">ITIS Upload File</legend>
-							<div style="margin:10px;">
-								ITIS data extract from the <a href="http://www.itis.gov/access.html" target="_blank">ITIS Download Page</a> can be uploaded
-								using this function. Note that the file needs to be in their single file pipe-delimited format.
-								File might have .csv extension, even though it is NOT comma delimited.
-								This upload option is not guaranteed to work if the ITIS download format change often.
-								Large data files can be compressed as a ZIP file before import.
-								If the file upload step fails without displaying an error message, it is possible that the
-								file size exceeds the file upload limits set within your PHP installation (see your php configuration file).
-								If synonyms and vernaculars are included, these data will also be incorporated into the upload process.
-							</div>
-							<input type='hidden' name='MAX_FILE_SIZE' value='100000000' />
-							<div class="itisoverrideopt">
-								<b>Upload File:</b>
-								<div style="margin:10px;">
-									<input id="itisuploadfile" name="uploadfile" type="file" size="40" />
-								</div>
-							</div>
-							<div class="itisoverrideopt" style="display:none;">
-								<b>Full File Path:</b>
-								<div style="margin:10px;">
-									<input name="uloverride" type="text" size="50" /><br/>
-									* This option is for manual upload of a data file.
-									Enter full path to data file located on working server.
-								</div>
-							</div>
-							<div style="margin:10px;">
-								<input type="submit" name="action" value="Upload ITIS File" />
-							</div>
-							<div style="float:right;">
-								<a href="#" onclick="toggle('itisoverrideopt');return false;">Toggle Manual Upload Option</a>
 							</div>
 						</fieldset>
 					</form>

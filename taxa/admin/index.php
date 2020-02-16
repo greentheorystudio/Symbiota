@@ -1,7 +1,6 @@
 <?php
-//error_reporting(E_ALL);
- include_once('../../config/symbini.php');
- header("Content-Type: text/html; charset=".$CHARSET);
+include_once('../../config/symbini.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
  
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -14,7 +13,6 @@
 		<?php
 		include($SERVER_ROOT.'/header.php');
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<h1>Forbidden</h1>
 			<div style="font-weight:bold;">

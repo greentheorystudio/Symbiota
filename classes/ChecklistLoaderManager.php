@@ -52,7 +52,7 @@ class ChecklistLoaderManager {
 					$tid = 0;
 					$rankId = 0;
 					$family = '';
-					$sciNameArr = TaxonomyUtilities::parseScientificName($sciNameStr,$this->conn);
+					$sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
 					if($thesId && is_numeric($thesId)){
 						$sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
 							'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.

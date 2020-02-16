@@ -10,8 +10,8 @@ class WsOccurEditor extends WebServiceBase{
 	private $source;
 	private $editor;
 	private $origTimestamp;
-	private $approvedFields = array();
-	private $fieldTranslation = array();
+	private $approvedFields;
+	private $fieldTranslation;
 
 	public function __construct(){
 		parent::__construct(null, 'write');
@@ -34,26 +34,27 @@ class WsOccurEditor extends WebServiceBase{
 			'maximumdepth'=>'maximumdepthinmeters','notes'=>'occurrenceremarks');
 	}
 
-	public function __destruct(){
-		parent::__destruct();
+    public function applyEdit(){
+		if($this->editType === 1) {
+            return $this->applyOccurrenceEdit();
+        }
+		if($this->editType === 2) {
+            return $this->applyIdentificationEdit();
+        }
+
+		return true;
 	}
 
-	public function applyEdit(){
-		if($this->editType == 1) return $this->applyOccurrenceEdit();
-		if($this->editType == 2) return $this->applyIdentificationEdit();
-	}
-
-	private function applyOccurrenceEdit(){
+	private function applyOccurrenceEdit(): string
+    {
 		$successArr = array();
 		$approvedGeolocateFields = array('decimallatitude','decimallongitude','geodeticdatum','coordinateuncertaintyinmeters','georeferencedby',
 			'georeferenceprotocol','georeferencesources','georeferenceverificationstatus','georeferenceremarks');
 		foreach($this->occidArr as $occid){
-			if($this->source == 'geolocate'){
-				//Set georefSource and georefBy 
+			if($this->source === 'geolocate'){
 				$this->dwcArr['georeferencesources'] = 'GeoLocate (CoGe)';
 				$this->dwcArr['georeferencedby'] = $this->editor;
 			}
-			//Get current record
 			$sql = 'SELECT '.implode(',',array_keys($this->dwcArr)).' FROM omoccurrences WHERE occid = '.$occid;
 			$rs = $this->conn->query($sql);
 			$oldValueArr = $rs->fetch_assoc();
@@ -62,58 +63,48 @@ class WsOccurEditor extends WebServiceBase{
 				$this->warningArr[$occid] = 'Identifier not valid';
 				continue;
 			}
-			//if(!$oldValueArr) return '{"Result":[{"Status":"FAILURE","Error":"Occurrence identifier not valid"}]}';
-		
-			//limit to fields where new values are different than old values
+
 			$vettedOldValues = array();
 			$vettedNewValues = array();
 			foreach($this->dwcArr as $symbField => $value){
-				if(array_key_exists($symbField, $oldValueArr) && $value != $oldValueArr[$symbField]){
+				if(array_key_exists($symbField, $oldValueArr) && $value !== $oldValueArr[$symbField]){
 					$vettedOldValues[$symbField] = $oldValueArr[$symbField]; 
 					$vettedNewValues[$symbField] = $value;
 				}
 			}
-			//if(!$vettedNewValues) return '{"Result":[{"Status":"FAILURE","Error":"No targetted values have changed"}]}';
 			if(!$vettedNewValues){
 				$this->warningArr[$occid] = 'No values have changed';
 				continue;
 			}
 			
 			$appliedStatus = 0;
-			//Custom adjustments applied per project based on source
-			if($this->source == 'geolocate'){
-				//Only edit coordinate and georeference detail field
-				if((!isset($vettedNewValues['decimallatitude']) || !isset($vettedNewValues['decimallongitude'])) && !isset($vettedNewValues['georeferenceremarks'])){
-					//Abort edits because decimalLatitude and decimalLongitude are NULL or unchanged
-					//return '{"Result":[{"Status":"FAILURE","Error":"decimalLatitude, decimalLongitude, or georeferenceRemarks are NULL or unchanged"}]}';
+			if($this->source === 'geolocate'){
+				if((!isset($vettedNewValues['decimallatitude'], $vettedNewValues['decimallongitude'])) && !isset($vettedNewValues['georeferenceremarks'])){
 					$this->warningArr[$occid] = 'decimalLatitude, decimalLongitude, or georeferenceRemarks are NULL or unchanged';
 					continue;
 				}
-				else{
-					$vettedOldValues = array_intersect_key($vettedOldValues, array_flip($approvedGeolocateFields));
-					$vettedNewValues = array_intersect_key($vettedNewValues, array_flip($approvedGeolocateFields));
 
-					//Activate only if an internal edit hasn't already been applied to any of the fields
-					$sqlTest = 'SELECT ocedid FROM omoccuredits WHERE occid = '.$occid.' AND fieldname IN("decimallatitude","decimallongitude") AND (FieldValueNew IS NOT NULL)';
-					$rsTest = $this->conn->query($sqlTest);
-					if($rsTest->num_rows){
-						$appliedStatus = 0;
-					}
-					else{
-						$appliedStatus = 1;
-					}
-					$rsTest->free();
+				$vettedOldValues = array_intersect_key($vettedOldValues, array_flip($approvedGeolocateFields));
+				$vettedNewValues = array_intersect_key($vettedNewValues, array_flip($approvedGeolocateFields));
+
+				$sqlTest = 'SELECT ocedid FROM omoccuredits WHERE occid = '.$occid.' AND fieldname IN("decimallatitude","decimallongitude") AND (FieldValueNew IS NOT NULL)';
+				$rsTest = $this->conn->query($sqlTest);
+				if($rsTest->num_rows){
+					$appliedStatus = 0;
 				}
+				else{
+					$appliedStatus = 1;
+				}
+				$rsTest->free();
 			}
 
-			//Abort processing if same edit by same source and editor has already been recorded
 			$newValueJson = json_encode($vettedNewValues);
 			$abort = false;
 			$sql2 = 'SELECT newvalues,externalsource,externaleditor '.
 				'FROM omoccurrevisions WHERE occid = '.$occid;
 			$rs2 = $this->conn->query($sql2);
 			while($r2 = $rs2->fetch_object()){
-				if($newValueJson == $r2->newvalues && $this->source == $r2->externalsource && $this->editor == $r2->externaleditor){
+				if($newValueJson === $r2->newvalues && $this->source === $r2->externalsource && $this->editor === $r2->externaleditor){
 					$abort = true;
 					break;
 				}
@@ -124,14 +115,12 @@ class WsOccurEditor extends WebServiceBase{
 				continue;
 			}
 			
-			//Version edits by adding into omoccurrevisions table
 			$sql3 = 'INSERT INTO omoccurrevisions(occid,oldValues,newValues,externalSource,externalEditor,reviewStatus,appliedStatus,externalTimestamp) '.
 				'VALUES('.$occid.',"'.$this->cleanInStr(json_encode($vettedOldValues)).'","'.$this->cleanInStr($newValueJson).'",'.
 				($this->source?'"'.$this->cleanInStr($this->source).'"':'NULL').','.($this->editor?'"'.$this->cleanInStr($this->editor).'"':'NULL').
 				',1,'.$appliedStatus.','.($this->origTimestamp?'"'.$this->cleanInStr($this->origTimestamp).'"':'NULL').')';
 			//echo $sql2; exit;
 			if($this->conn->query($sql3)){
-				//By default, external edits will not be applied unless they are coming from an authorative source
 				if($appliedStatus){
 					$sqlIns = '';
 					foreach($vettedNewValues as $k => $v){
@@ -169,18 +158,16 @@ class WsOccurEditor extends WebServiceBase{
 			foreach($successArr as $oKey => $msg){
 				$msgStr .= '{"occid":"'.$oKey.'","Message":"'.$msg.'"},';
 			}
-			if($retStr) $retStr .= ',';
+			if($retStr) {
+				$retStr .= ',';
+			}
 			$retStr .= '"Success":['.trim($msgStr,' ,').']';
 		}
 		return '{"Result":{'.$retStr.'}}';
 	}
 
-	private function applyIdentificationEdit(){
-		
-	}
-
-	//Setters and getters
-	public function setOccid($occidStr){
+	public function setOccid($occidStr): void
+	{
 		if(preg_match('/^[\d,]+$/', $occidStr)){
 			if(strpos($occidStr, ',') !== false){
 				$this->occidArr = explode(',',$occidStr);
@@ -191,9 +178,10 @@ class WsOccurEditor extends WebServiceBase{
 		}
 	}
 	
-	public function setRecordID($guid){
+	public function setRecordID($guid): bool
+	{
 		$status = false;
-		$guid = preg_replace("/[^A-Za-z0-9\-]/","",$guid);
+		$guid = preg_replace("/[^A-Za-z0-9\-]/", '',$guid);
 		$sql = 'SELECT occid FROM guidoccurrences WHERE guid = "'.$guid.'"';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -204,51 +192,54 @@ class WsOccurEditor extends WebServiceBase{
 		return $status;
 	}
 
-	public function setDwcArr($dwcObj){
+	public function setDwcArr($dwcObj): bool
+	{
 		$recArr = json_decode($dwcObj,true);
 		if($recArr){
 			$recArr = array_change_key_case($recArr);
-			//Translate fields
 			foreach($this->fieldTranslation as $otherName => $symbName){
 				if(array_key_exists($otherName, $recArr) && !array_key_exists($symbName, $recArr)){
 					$recArr[$symbName] = $recArr[$otherName];
 					unset($recArr[$otherName]);
 				}
 			}
-			//Filter out unapproved fields
 			$recArr = array_intersect_key($recArr, array_flip($this->approvedFields));
 			$this->dwcArr = OccurrenceUtilities::occurrenceArrayCleaning($recArr);
-			//urldecode input data
 			foreach($this->dwcArr as $k => $v){
 				$this->dwcArr[$k] = urldecode($v);
 			}
-			if($this->dwcArr) return true;
+			if($this->dwcArr) {
+				return true;
+			}
 		}
 		return false;
 	}
 
-	public function setEditType($type){
+	public function setEditType($type): void
+	{
 		if(is_numeric($type)){
-			$editType = $type;
+			$this->editType = $type;
 		}
-		elseif(strtolower($type) == 'occurrence'){
-			$editType = 1;
+		elseif(strtolower($type) === 'occurrence'){
+			$this->editType = 1;
 		}
-		elseif(strtolower($type) == 'identification'){
-			$editType = 2;
+		elseif(strtolower($type) === 'identification'){
+			$this->editType = 2;
 		}
 	}
 
-	public function setSource($s){ 	
+	public function setSource($s): void
+	{
 		$this->source = $s;
 	}
 
-	public function setEditor($e){
+	public function setEditor($e): void
+	{
 		$this->editor = $e;
 	}
 
-	public function setOrigTimestamp($ts){
+	public function setOrigTimestamp($ts): void
+	{
 		$this->origTimestamp = $ts;
 	}
 }
-?>

@@ -143,8 +143,8 @@ class OccurrenceUtilities {
 	 * OUTPUT: Array containing parsed values 
 	 *         Keys: unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, author, identificationqualifier 
 	 */
-	public static function parseScientificName($inStr, $conn = null, $rankId = 0){
-		$taxonArr = TaxonomyUtilities::parseScientificName($inStr, $conn, $rankId);
+	public static function parseScientificName($inStr, $rankId = 0){
+		$taxonArr = (new TaxonomyUtilities)->parseScientificName($inStr, $rankId);
 		if(array_key_exists('unitind1',$taxonArr)){
 			$taxonArr['unitname1'] = $taxonArr['unitind1'].' '.$taxonArr['unitname1'];
 			unset($taxonArr['unitind1']);
@@ -689,7 +689,7 @@ class OccurrenceUtilities {
 			}
 			elseif(array_key_exists('scientificname',$recMap)){
 				//Clean and parse scientific name
-				$parsedArr = TaxonomyUtilities::parseScientificName($recMap['scientificname']);
+				$parsedArr = (new TaxonomyUtilities)->parseScientificName($recMap['scientificname']);
 				$scinameStr = '';
 				if(array_key_exists('unitname1',$parsedArr)){
 					$scinameStr = $parsedArr['unitname1'];

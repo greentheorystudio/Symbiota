@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/EOLManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?'.$_SERVER['QUERY_STRING']);
 
@@ -18,13 +18,10 @@ $eolManager = new EOLManager();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." EOL Manager: "; ?></title>
+	<title><?php echo $DEFAULT_TITLE. ' EOL Manager: '; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>"/>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-	<script language=javascript>
-
-	</script>
 </head>
 <body>
 <?php
@@ -34,7 +31,6 @@ include($SERVER_ROOT.'/header.php');
 	<a href="../index.php">Home</a> &gt;&gt;
 	<b>Encyclopedia of Life Manager</b>
 </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>Encyclopedia of Life Linkage Manager</h1>
 		<?php
@@ -53,7 +49,7 @@ include($SERVER_ROOT.'/header.php');
 				<hr/>
 				<div style="margin:15px;">
 					<?php
-					if($submitAction == 'Map Taxa'){
+					if($submitAction === 'Map Taxa'){
 						$makePrimary = 0;
 						$restart = 0;
 						if(array_key_exists('makeprimary',$_POST) && $_POST['makeprimary']){
@@ -64,7 +60,7 @@ include($SERVER_ROOT.'/header.php');
 						}
 						$eolManager->mapTaxa($makePrimary,$_POST['tidstart'],$restart);
 					}
-					elseif($submitAction == 'Map Images'){
+					elseif($submitAction === 'Map Images'){
 						$restart = 0;
 						if(array_key_exists('restart',$_POST) && $_POST['restart']){
 							$restart = 1;

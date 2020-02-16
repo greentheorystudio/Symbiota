@@ -101,7 +101,7 @@ class EOLUtilities {
 			//Get other stuff - to be added
 
 			//Get taxonomic concepts
-			$taxonArr = TaxonomyUtilities::parseScientificName($eolObj->scientificName);
+			$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 			if($eolObj->scientificName) $taxonArr['scientificName'] = $eolObj->scientificName;
 			if(isset($eolObj->taxonConcepts)){
 				$cnt = 1;
@@ -159,7 +159,7 @@ class EOLUtilities {
 				//Process return
 				$eolObj = json_decode($content);
 				if($eolObj->scientificName){
-					$taxonArr = TaxonomyUtilities::parseScientificName($eolObj->scientificName);
+					$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 					$taxonArr['scientificName'] = $eolObj->scientificName;
 					$taxonArr['taxonRank'] = $eolObj->taxonRank;
 					if(isset($eolObj->nameAccordingTo)) $taxonArr['source'] = $eolObj->nameAccordingTo[0];

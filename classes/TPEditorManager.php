@@ -21,12 +21,13 @@ class TPEditorManager {
  	}
  	
  	public function __destruct(){
-		if(!($this->taxonCon === null)) $this->taxonCon->close();
+		if(!($this->taxonCon === null)) {
+			$this->taxonCon->close();
+		}
 	}
  	
  	public function setTid($t){
-		$sql = '';
- 		if(is_numeric($t)){
+		if(is_numeric($t)){
 			$sql = 'SELECT t.tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted '. 
 				'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID '.
 				'WHERE (ts.taxauthid = 1) AND (t.TID = '.$t.')';
@@ -39,7 +40,7 @@ class TPEditorManager {
 		if($sql){
 			$result = $this->taxonCon->query($sql);
 			if($row = $result->fetch_object()){
-				if($row->tid == $row->TidAccepted){
+				if($row->tid === $row->TidAccepted){
 					$this->tid = $row->tid;
 					$this->sciName = $row->SciName;
 					$this->family = $row->family;
@@ -51,9 +52,9 @@ class TPEditorManager {
 					$this->submittedTid = $row->tid;
 					$this->submittedSciName = $row->SciName;
 					$this->tid = $row->TidAccepted;
-					$sqlNew = "SELECT ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted ". 
-						"FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID ".
-						"WHERE (ts.taxauthid = 1) AND (t.TID = ".$this->tid.")";
+					$sqlNew = 'SELECT ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted ' .
+						'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID ' .
+						'WHERE (ts.taxauthid = 1) AND (t.TID = ' .$this->tid. ')';
 					$resultNew = $this->taxonCon->query($sqlNew);
 					if($rowNew = $resultNew->fetch_object()){
 						$this->sciName = $rowNew->SciName;
@@ -66,7 +67,7 @@ class TPEditorManager {
 				}
 			}
 		    else{
-		    	$this->sciName = "unknown";
+		    	$this->sciName = 'unknown';
 		    }
 		    $result->free();
 		}
@@ -88,165 +89,113 @@ class TPEditorManager {
  	public function getSubmittedSciName(){
  		return $this->submittedSciName;
  	}
- 	
- 	public function getChildrenTaxa(){
-		$childrenArr = array();
-		$sql = "SELECT t.Tid, t.SciName, t.Author ".
-			"FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ".
-			"WHERE ts.taxauthid = 1 AND (ts.ParentTid = ".$this->tid.") ORDER BY t.SciName";
-		$result = $this->taxonCon->query($sql);
-		while($row = $result->fetch_object()){
-			$childrenArr[$row->Tid]["sciname"] = $row->SciName;
-			$childrenArr[$row->Tid]["author"] = $row->Author;
-		}
-		$result->close();
-		return $childrenArr;
- 	}
-	
- 	public function getSynonym(){
+
+	public function getSynonym(): array
+	{
  		$synArr = array();
-		$sql = "SELECT t2.tid, t2.SciName, ts.SortSequence ".
-			"FROM (taxa t1 INNER JOIN taxstatus ts ON t1.tid = ts.tidaccepted) ".
-			"INNER JOIN taxa t2 ON ts.tid = t2.tid ".
-			"WHERE (ts.taxauthid = 1) AND (ts.tid <> ts.TidAccepted) AND (t1.tid = ".$this->tid.") ".
-			"ORDER BY ts.SortSequence, t2.SciName";
+		$sql = 'SELECT t2.tid, t2.SciName, ts.SortSequence ' .
+			'FROM (taxa t1 INNER JOIN taxstatus ts ON t1.tid = ts.tidaccepted) ' .
+			'INNER JOIN taxa t2 ON ts.tid = t2.tid ' .
+			'WHERE (ts.taxauthid = 1) AND (ts.tid <> ts.TidAccepted) AND (t1.tid = ' .$this->tid. ') ' .
+			'ORDER BY ts.SortSequence, t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);
 		while($row = $result->fetch_object()){
-			$synArr[$row->tid]["sciname"] = $row->SciName;
-			$synArr[$row->tid]["sortsequence"] = $row->SortSequence;
+			$synArr[$row->tid]['sciname'] = $row->SciName;
+			$synArr[$row->tid]['sortsequence'] = $row->SortSequence;
 		}
 		$result->close();
  		return $synArr;
  	}
  	
-	public function editSynonymSort($synSort){
-		$status = "";
+	public function editSynonymSort($synSort): string
+	{
+		$status = '';
 		foreach($synSort as $editKey => $editValue){
 			if(is_numeric($editKey) && is_numeric($editValue)){
-				$sql = "UPDATE taxstatus SET SortSequence = ".$editValue." WHERE (tid = ".$editKey.") AND (TidAccepted = ".$this->tid.')';
+				$sql = 'UPDATE taxstatus SET SortSequence = '.$editValue.' WHERE (tid = '.$editKey.') AND (TidAccepted = '.$this->tid.')';
 				//echo $sql."<br>";
 				if(!$this->taxonCon->query($sql)){
-					$status .= $this->taxonCon->error."\nSQL: ".$sql.";<br/> ";
+					$status .= $this->taxonCon->error."\nSQL: ".$sql. ';<br/> ';
 				}
 			}
 		}
-		if($status) $status = "Errors with editVernacularSort method:<br/> ".$status;
+		if($status) {
+			$status = 'Errors with editVernacularSort method:<br/> ' . $status;
+		}
 		return $status;
 	}
 
- 	public function getVernaculars(){
+ 	public function getVernaculars(): array
+	{
 		$vernArr = array();
-		$sql = "SELECT v.VID, v.VernacularName, v.Language, v.Source, v.username, v.notes, v.SortSequence ".
-			"FROM taxavernaculars v ".
-			"WHERE (v.tid = ".$this->tid.") ";
-		//if($this->language) $sql .= "AND (v.Language = '".$this->language."') ";
-		$sql .= "ORDER BY v.Language, v.SortSequence";
+		$sql = 'SELECT v.VID, v.VernacularName, v.Language, v.Source, v.username, v.notes, v.SortSequence ' .
+			'FROM taxavernaculars v ' .
+			'WHERE (v.tid = ' .$this->tid. ') ';
+		$sql .= 'ORDER BY v.Language, v.SortSequence';
 		$result = $this->taxonCon->query($sql);
 		$vernCnt = 0;
 		while($row = $result->fetch_object()){
 			$lang = $row->Language;
-			$vernArr[$lang][$vernCnt]["vid"] = $row->VID;
-			$vernArr[$lang][$vernCnt]["vernacularname"] = $row->VernacularName;
-			$vernArr[$lang][$vernCnt]["source"] = $row->Source;
-			$vernArr[$lang][$vernCnt]["username"] = $row->username;
-			$vernArr[$lang][$vernCnt]["notes"] = $row->notes;
-			$vernArr[$lang][$vernCnt]["language"] = $row->Language;
-			$vernArr[$lang][$vernCnt]["sortsequence"] = $row->SortSequence;
+			$vernArr[$lang][$vernCnt]['vid'] = $row->VID;
+			$vernArr[$lang][$vernCnt]['vernacularname'] = $row->VernacularName;
+			$vernArr[$lang][$vernCnt]['source'] = $row->Source;
+			$vernArr[$lang][$vernCnt]['username'] = $row->username;
+			$vernArr[$lang][$vernCnt]['notes'] = $row->notes;
+			$vernArr[$lang][$vernCnt]['language'] = $row->Language;
+			$vernArr[$lang][$vernCnt]['sortsequence'] = $row->SortSequence;
 			$vernCnt++;
 		}
 		$result->close();
 		return $vernArr;
 	}
 	
-	public function editVernacular($inArray){
+	public function editVernacular($inArray): string
+	{
 		$editArr = $this->cleanInArray($inArray);
-		$vid = $editArr["vid"];
-		unset($editArr["vid"]);
-		$setFrag = "";
+		$vid = $editArr['vid'];
+		unset($editArr['vid']);
+		$setFrag = '';
 		foreach($editArr as $keyField => $value){
 			$setFrag .= ','.$keyField.' = "'.$value.'" ';
 		}
-		$sql = "UPDATE taxavernaculars SET ".substr($setFrag,1)." WHERE (vid = ".$this->taxonCon->real_escape_string($vid).')';
+		$sql = 'UPDATE taxavernaculars SET '.substr($setFrag,1).' WHERE (vid = '.$this->taxonCon->real_escape_string($vid).')';
 		//echo $sql;
-		$status = "";
+		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = "Error:editingVernacular: ".$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:editingVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
 		}
 		return $status;
 	}
 	
-	public function addVernacular($inArray){
+	public function addVernacular($inArray): string
+	{
 		$newVerns = $this->cleanInArray($inArray);
-		$sql = "INSERT INTO taxavernaculars (tid,".implode(",",array_keys($newVerns)).") VALUES (".$this->getTid().",\"".implode("\",\"",$newVerns)."\")";
+		$sql = 'INSERT INTO taxavernaculars (tid,'.implode(',',array_keys($newVerns)).') VALUES ('.$this->getTid().',"'.implode('","',$newVerns).'")';
 		//echo $sql;
-		$status = "";
+		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = "Error:addingNewVernacular: ".$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:addingNewVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
 		}
 		return $status;
 	}
 	
-	public function deleteVernacular($delVid){
+	public function deleteVernacular($delVid): string
+	{
 		$status = '';
 		if(is_numeric($delVid)){
-			$sql = "DELETE FROM taxavernaculars WHERE (VID = ".$delVid.')';
+			$sql = 'DELETE FROM taxavernaculars WHERE (VID = '.$delVid.')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
-				$status = "Error:deleteVernacular: ".$this->taxonCon->error."\nSQL: ".$sql;
+				$status = 'Error:deleteVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
 			}
 			else{
-				$status = "";
+				$status = '';
 			}
 		}
 		return $status;
 	}
 
-	public function getChildrenArr(){
-		$returnArr = array();
-		$sql = 'SELECT t.tid, t.sciname FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE ts.taxauthid = 1 AND (ts.parenttid = '.$this->tid.')';
-		//echo $sql;
-		$result = $this->taxonCon->query($sql);
-		while($row = $result->fetch_object()){
-			$returnArr[$row->tid] = $row->sciname;
-		}
-		$result->close();
-		return $returnArr;
-	}
-	
-	public function getMaps(){
-		$mapArr = array();
-		$sql = "SELECT tm.mid, tm.url, tm.title, tm.initialtimestamp ".
-			"FROM taxamaps tm INNER JOIN taxa t ON tm.tid = t.TID ".
-			"WHERE (tm.tid = ".$this->tid.") ";
-		$result = $this->taxonCon->query($sql);
-		$mapCnt = 0;
-		while($row = $result->fetch_object()){
-			$mapArr[$mapCnt]["url"] = $row->url;
-			$mapArr[$mapCnt]["title"] = $row->title;
-			$mapCnt++;
-		}
-		$result->close();
-		return $mapArr;
-	}
-	
-	public function getLinks(){
-		$linkArr = array();
-		$sql = 'SELECT tl.url, tl.title '.
-			'FROM taxalinks tl INNER JOIN taxa ON tl.tid = taxa.TID '.
-			'WHERE (taxa.TID = '.$this->tid.') ';
-		$result = $this->taxonCon->query($sql);
-		$linkCnt = 0;
-		while($row = $result->fetch_object()){
-			$linkArr[$linkCnt]["url"] = $row->url;
-			$linkArr[$linkCnt]["title"] = $row->title;
-			$linkCnt++;
-		}
-		$result->close();
-		return $linkArr;
-	}
-	
 	public function getAuthor(){
  		return $this->author;
  	}
@@ -263,16 +212,18 @@ class TPEditorManager {
  		return $this->parentTid;
  	}
 
- 	public function setLanguage($lang){
+ 	public function setLanguage($lang): string
+	{
  		return $this->language = $this->taxonCon->real_escape_string($lang);
  	}
  	
- 	public function getErrorStr(){
+ 	public function getErrorStr(): string
+	{
  		return $this->errorStr;
  	}
  	
- 	//Misc functions
- 	protected function cleanInArray($arr){
+ 	protected function cleanInArray($arr): array
+	{
  		$newArray = array();
  		foreach($arr as $key => $value){
  			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
@@ -287,4 +238,3 @@ class TPEditorManager {
 		return $newStr;
 	}
 }
-?>

@@ -77,9 +77,6 @@ class TaxonomyUpload{
 					if(in_array($targetName, $uploadTaxaFieldArr, true)){
 						$uploadTaxaIndexArr[$k] = $targetName;
 					}
-					if($targetName === 'unitname1') {
-						$targetName = 'genus';
-					}
 					if(in_array($targetName, $taxonUnitArr, true)){
 						$taxonUnitIndexArr[$k] = array_search($targetName, $taxonUnitArr, true);
 					}
@@ -164,7 +161,7 @@ class TaxonomyUpload{
                                 $sciArr['rankid'] = ($inputArr['rankid'] ?? '');
                             }
 							else{
-                                $sciArr = TaxonomyUtilities::parseScientificName($inputArr['scinameinput'],$this->conn,($inputArr['rankid'] ?? 0));
+                                $sciArr = (new TaxonomyUtilities)->parseScientificName($inputArr['scinameinput'],($inputArr['rankid'] ?? 0));
                             }
 							foreach($sciArr as $sciKey => $sciValue){
 								if(!array_key_exists($sciKey, $inputArr)) {
@@ -221,138 +218,6 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function loadItisFile(): void
-	{
-		$this->outputMsg('Starting Upload');
-		$extraArr = array();
-		$authArr = array();
-		$this->conn->query('DELETE FROM uploadtaxa');
-		$this->conn->query('OPTIMIZE TABLE uploadtaxa');
-		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb')) !== FALSE){
-			$this->outputMsg('Taxa file uploaded and successfully opened');
-
-			$delimtStr = '';
-			$this->outputMsg('Harvesting authors, synonyms, and vernaculars');
-			while($record = fgets($fh)){
-				if(!$delimtStr){
-					$delimtStr = '|';
-					if(!strpos($record, '|') && strpos($record, ',')){
-						$delimtStr = ',';
-					}
-				}
-				if(substr($record,4) !== '[TU]'){
-					$recordArr = explode($delimtStr,$record);
-					$this->cleanInArr($recordArr);
-					$this->encodeArr($recordArr);
-					if($recordArr[0] === '[SY]'){
-						$extraArr[$recordArr[2]]['s'] = $recordArr[3];
-					}
-					elseif($recordArr[0] === '[TA]'){
-						$authArr[$recordArr[1]] = $recordArr[2];
-					}
-					elseif($recordArr[0] === '[VR]'){
-						$extraArr[$recordArr[4]]['v'] = $recordArr[3];
-						$extraArr[$recordArr[4]]['l'] = $recordArr[5];
-					}
-				}
-			}
-			if($authArr){
-				$this->outputMsg('Authors mapped');
-			}
-			if($extraArr){
-				$this->outputMsg('Synonyms and Vernaculars mapped');
-			}
-
-			$this->outputMsg('Harvest and loading Taxa... ');
-			$recordCnt = 0;
-			rewind($fh);
-
-			$this->conn->query('SET autocommit=0');
-			$this->conn->query('SET unique_checks=0');
-			$this->conn->query('SET foreign_key_checks=0');
-			while($record = fgets($fh)){
-				$recordArr = explode($delimtStr,$record);
-				if($recordArr[0] === '[TU]'){
-					$this->cleanInArr($recordArr);
-					$this->encodeArr($recordArr);
-					$this->loadItisTaxonUnit($recordArr,$extraArr,$authArr);
-					$recordCnt++;
-				}
-			}
-			$this->deleteIllegalHomonyms();
-			$this->conn->query('COMMIT');
-			$this->conn->query('SET autocommit=1');
-			$this->conn->query('SET unique_checks=1');
-			$this->conn->query('SET foreign_key_checks=1');
-
-			$this->outputMsg($recordCnt.' records loaded');
-			fclose($fh);
-			$this->setUploadCount();
-			$this->removeUploadFile();
-		}
-		else{
-			echo 'ERROR thrown opening input file: '.$this->uploadTargetPath.$this->uploadFileName.'<br/>';
-			if(!is_writable($this->uploadTargetPath)) {
-				echo '<b>Target upload path is not writable. File permissions need to be adjusted</b>';
-			}
-			exit;
-		}
-	}
-
-	private function loadItisTaxonUnit($tuArr,$extraArr,$authArr): void
-	{
-		if(count($tuArr) > 24){
-
-			$unitInd3 = ($tuArr[8]?:$tuArr[6]);
-			$unitName3 = ($tuArr[9]?:$tuArr[7]);
-			$sciName = TRIM($tuArr[2]. ' ' .$tuArr[3].($tuArr[4]? ' ' .$tuArr[4]: ''). ' ' .$tuArr[5]. ' ' .$unitInd3. ' ' .$unitName3);
-			$sciName = preg_REPLACE('/\s\s+/', ' ',$sciName);
-			$author = '';
-			if($tuArr[20] && array_key_exists($tuArr[20],$authArr)){
-				$author = $authArr[$tuArr[20]];
-				unset($authArr[$tuArr[20]]);
-			}
-			$sourceId = $tuArr[1];
-			$sourceAcceptedId = '';
-			$acceptance = '1';
-			$vernacular = '';
-			$vernlang = '';
-			if(array_key_exists($sourceId,$extraArr)){
-				$eArr = $extraArr[$sourceId];
-				if(array_key_exists('s',$eArr)){
-					$sourceAcceptedId = $eArr['s'];
-					$acceptance = '0';
-				}
-				if(array_key_exists('v',$eArr)){
-					$vernacular = $eArr['v'];
-					$vernlang = $eArr['l'];
-				}
-				unset($extraArr[$sourceId]);
-			}
-			$sql = 'INSERT INTO uploadtaxa(SourceId,scinameinput,sciname,unitind1,unitname1,unitind2,unitname2,unitind3,'.
-				'unitname3,SourceParentId,author,rankid,SourceAcceptedId,acceptance,vernacular,vernlang) '.
-				'VALUES ('.$sourceId.',"'.$sciName.'","'.$sciName.'",'.
-				($tuArr[2]?'"'.$tuArr[2].'"':'NULL').','.
-				($tuArr[3]?'"'.$tuArr[3].'"':'NULL').','.
-				($tuArr[4]?'"'.$tuArr[4].'"':'NULL').','.
-				($tuArr[5]?'"'.$tuArr[5].'"':'NULL').','.
-				($unitInd3?'"'.$unitInd3.'"':'NULL').','.($unitName3?'"'.$unitName3.'"':'NULL').','.
-				($tuArr[18]?:'NULL').','.
-				($author?'"'.$author.'"':'NULL').','.
-				($tuArr[24]?:'NULL').','.
-				($sourceAcceptedId?:'NULL').','.$acceptance.','.
-				($vernacular?'"'.$vernacular.'"':'NULL').','.
-				($vernlang?'"'.$vernlang.'"':'NULL').')';
-			//echo '<div>'.$sql.'</div>';
-			if(!$this->conn->query($sql) && $acceptance) {
-				$sql = 'REPLACE'.substr($sql,6);
-				if(!$this->conn->query($sql)){
-					$this->outputMsg('ERROR loading ITIS taxon: '.$this->conn->error);
-				}
-			}
-		}
-	}
-
 	private function removeUploadFile(): void
 	{
 		if($this->uploadTargetPath && $this->uploadFileName && file_exists($this->uploadTargetPath . $this->uploadFileName)) {
@@ -360,24 +225,38 @@ class TaxonomyUpload{
 		}
 	}
 
-	private function deleteIllegalHomonyms(): void
+    public function cleanUpload(): void
 	{
-		$homonymArr = array();
-		$sql = 'SELECT sciname, COUNT(*) cnt FROM uploadtaxa GROUP BY sciname HAVING cnt > 1';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$homonymArr[] = $r->sciname;
-		}
-		$rs->free();
-		if($homonymArr){
-			$sql2 = 'DELETE FROM uploadtaxa '.
-				'WHERE (sciname IN("'.implode('","',$homonymArr).'")) AND (acceptance = 0) ';
-			$this->conn->query($sql2);
-		}
-	}
-
-	public function cleanUpload(): void
-	{
+        $sql = 'UPDATE uploadtaxa '.
+            'SET RankName = "Superphylum" '.
+            'WHERE RankName = "Superdivision"';
+        if(!$this->conn->query($sql)){
+            $this->outputMsg('ERROR: '.$this->conn->error,1);
+        }
+        $sql = 'UPDATE uploadtaxa '.
+            'SET RankName = "Phylum" '.
+            'WHERE RankName = "Division"';
+        if(!$this->conn->query($sql)){
+            $this->outputMsg('ERROR: '.$this->conn->error,1);
+        }
+        $sql = 'UPDATE uploadtaxa '.
+            'SET RankName = "Subphylum" '.
+            'WHERE RankName = "Subdivision"';
+        if(!$this->conn->query($sql)){
+            $this->outputMsg('ERROR: '.$this->conn->error,1);
+        }
+        $sql = 'UPDATE uploadtaxa '.
+            'SET RankName = "Infraphylum" '.
+            'WHERE RankName = "Infradivision"';
+        if(!$this->conn->query($sql)){
+            $this->outputMsg('ERROR: '.$this->conn->error,1);
+        }
+        $sql = 'UPDATE uploadtaxa '.
+            'SET RankName = "Parvphylum" '.
+            'WHERE RankName = "Parvdivision"';
+        if(!$this->conn->query($sql)){
+            $this->outputMsg('ERROR: '.$this->conn->error,1);
+        }
 
 		$sql = 'UPDATE uploadtaxa u INNER JOIN uploadtaxa u2 ON u.sourceParentId = u2.sourceId '.
 			'SET u.parentstr = u2.sciname '.
@@ -746,11 +625,10 @@ class TaxonomyUpload{
 				$this->outputMsg('ERROR populating parent TIDs: '.$this->conn->error,1);
 			}
 			$loopCnt++;
-		}while($loopCnt < 30);
+		}
+		while($loopCnt < 30);
 
 		$this->outputMsg('House cleaning... ');
-		TaxonomyUtilities::buildHierarchyEnumTree($this->conn, $this->taxAuthId);
-
 		$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE ISNULL(o.TidInterpreted)';
 		$this->conn->query($sql1);
 
@@ -884,7 +762,7 @@ class TaxonomyUpload{
 	private function getTaxonUnitArr(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits WHERE rankid < 220';
+		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits';
 		//echo $sql.'<br/>';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -1017,28 +895,14 @@ class TaxonomyUpload{
 		}
 	}
 
-	private function cleanInArr(&$inArr): void
-	{
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->cleanInStr($v);
-		}
-	}
-
-	private function cleanInStr($str){
+    private function cleanInStr($str){
 		$newStr = TRIM($str);
 		$newStr = preg_REPLACE('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
 
-	private function encodeArr(&$inArr): void
-	{
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->encodeString($v);
-		}
-	}
-
-	private function encodeString($inStr): string
+    private function encodeString($inStr): string
 	{
 		global $CHARSET;
 		$retStr = $inStr;

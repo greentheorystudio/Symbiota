@@ -3,13 +3,12 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 
 class TaxonProfileMap {
 	
-	private $iconColors = array();
 	private $tid;
 	private $sciName;
 	private $taxaMap = array();
+	private $taxArr = array();
 	private $synMap = array();
 	private $childLoopCnt = 0;
-	private $mapType;
 	private $sqlWhere = '';
 
     public function __construct(){
@@ -18,10 +17,13 @@ class TaxonProfileMap {
     }
 
 	public function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+ 		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 	
-	public function setTaxon($tValue){
+	public function setTaxon($tValue): void
+	{
 		if($tValue){
 			$taxonValue = $this->conn->real_escape_string($tValue);
 			$sql = 'SELECT t.tid, t.sciname FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted ';
@@ -38,22 +40,18 @@ class TaxonProfileMap {
 				$this->sciName = $r->sciname;
 			}
 			$result->close();
-			//Add subject
 			if($this->tid){
 				$this->taxArr[$this->tid] = $this->sciName;
-				//Get accepted children 
-				$this->taxArr = $this->taxArr + $this->getChildren(array($this->tid));
-				//Seed $synMap with accepted names
+				$this->taxArr += $this->getChildren(array($this->tid));
 				$taxaKeys = array_keys($this->taxArr);
-				//Add synonyms to $synMap
 				$this->synMap = array_combine($taxaKeys,$taxaKeys);
-				//Add synonyms to $synMap
 				$this->setTaxaSynonyms($taxaKeys);
 			}
 		}
 	}
 
-    private function getChildren($inArr){
+    private function getChildren($inArr): array
+	{
 		$retArr = array();
 		if($inArr){
 			$sql = 'SELECT t.tid, t.sciname FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.tid '.
@@ -64,15 +62,16 @@ class TaxonProfileMap {
 	        	$retArr[$r->tid] = $r->sciname;
 	        }
 			$rs->close();
-			if($retArr && count(array_intersect($retArr,$inArr)) < count($retArr) && $this->childLoopCnt < 5){
-				$retArr = $retArr + $this->getChildren(array_keys($retArr));
+			if($retArr && $this->childLoopCnt < 5 && count(array_intersect($retArr,$inArr)) < count($retArr)){
+				$retArr += $this->getChildren(array_keys($retArr));
 			}
 			$this->childLoopCnt++;
 		}
 		return $retArr;
 	}
 
-	private function setTaxaSynonyms($inArray){
+	private function setTaxaSynonyms($inArray): void
+	{
 		if($inArray){
 			$sql = 'SELECT s.tid, s.tidaccepted, t.SciName FROM taxa t LEFT JOIN taxstatus s on t.TID = s.tid '.
 				'WHERE s.taxauthid = 1 AND s.tidaccepted IN('.implode(',',$inArray).') AND (s.tid <> s.tidaccepted)';
@@ -86,46 +85,40 @@ class TaxonProfileMap {
 		}
 	}
 	
-	private function getTaxaWhere(){
-		global $USER_RIGHTS, $MAPPING_BOUNDARIES;
-		$sql = "";
+	private function getTaxaWhere(): string
+	{
+		global $USER_RIGHTS;
+		$sql = '';
 		$sql .= 'WHERE (o.tidinterpreted IN('.implode(',',array_keys($this->synMap)).')) '.
 			'AND (o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
-		if(array_key_exists("SuperAdmin",$USER_RIGHTS) || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
-			//Is global rare species reader, thus do nothing to sql and grab all records
-		}
-		elseif(array_key_exists("RareSppReader",$USER_RIGHTS)){
-			$sql .= 'AND ((o.CollId IN ('.implode(',',$USER_RIGHTS["RareSppReader"]).')) OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+		if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) &&
+			!array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS) && array_key_exists('RareSppReader',$USER_RIGHTS)){
+			$sql .= 'AND ((o.CollId IN ('.implode(',',$USER_RIGHTS['RareSppReader']).')) OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
 		}
 		return $sql;
 	}
 	
-	public function getTaxaMap(){
-		//Map scientific names and icons to $taxaMap
-		$cnt = 9;
+	public function getTaxaMap(): array
+	{
 		foreach($this->taxArr as $key => $taxonName){
-        	$this->taxaArr[$taxonName] = array();
-			$cnt++;
-        }
+        	$this->taxArr[$taxonName] = array();
+		}
 		return $this->taxaMap;
 	}
 
-	public function getSynMap(){
+	public function getSynMap(): array
+	{
 		return $this->synMap;
 	}
 
-	public function getTaxaSqlWhere(){
+	public function getTaxaSqlWhere(): string
+	{
 		$this->sqlWhere = $this->getTaxaWhere();
 		return $this->sqlWhere;
 	}
 
-    //Setters and getters
-    public function setMapType($type){
-    	$this->mapType = $type;
-    }
-	
-	public function getTaxaArr(){
-    	return $this->taxaArr;
+	public function getTaxaArr(): array
+	{
+    	return $this->taxArr;
     }
 }
-?>
