@@ -11,7 +11,7 @@ class ImageCleaner extends Manager{
 	private $imgManager = null;
 
 	function __construct() {
-		parent::__construct(null,'write');
+		parent::__construct(null);
 		$this->verboseMode = 2;
 		set_time_limit(2000);
 	}

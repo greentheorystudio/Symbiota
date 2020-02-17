@@ -170,18 +170,7 @@ class ChecklistLoaderManager {
 		}
 	}
 
-	private function addTaxonToChecklist($tid){
-		$status = true;
-		$sql = 'INSERT INTO fmchklsttaxalink(clid,tid) '.
-			'VALUES('.$this->clid.','.$tid.')';
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR adding new taxon to checklist: '.$this->conn->error;
-			$status = false;
-		}
-		return $status;
-	}
-
-	public function setClid($c): void
+    public function setClid($c): void
 	{
 		if($c && is_numeric($c)){
 			$this->clid = $c;

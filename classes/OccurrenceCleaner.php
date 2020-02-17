@@ -10,7 +10,7 @@ class OccurrenceCleaner extends Manager{
 	private $googleApi;
 
 	public function __construct(){
-		parent::__construct(null,'write');
+		parent::__construct(null);
 		$urlPrefix = 'http://';
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 		$this->googleApi = $urlPrefix.'maps.googleapis.com/maps/api/geocode/json?sensor=false';

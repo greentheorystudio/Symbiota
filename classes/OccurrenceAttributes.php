@@ -11,7 +11,7 @@ class OccurrenceAttributes extends Manager {
 	private $sqlBody = '';
 
 	public function __construct($type = 'write'){
-		parent::__construct(null, $type);
+		parent::__construct(null);
 	}
 
 	public function __destruct(){

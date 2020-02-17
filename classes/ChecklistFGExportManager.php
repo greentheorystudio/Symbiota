@@ -316,39 +316,7 @@ class ChecklistFGExportManager {
 		return $this->clid;
 	}
 
-	public function getChildClidArr(): array
-    {
-		return $this->childClidArr;
-	}
-
-	public function setProj($pValue): string
-    {
-		$sql = 'SELECT pid, projname FROM fmprojects ';
-		if(is_numeric($pValue)){
-			$sql .= 'WHERE (pid = '.$pValue.')';
-		}
-		else{
-			$sql .= 'WHERE (projname = "'.$this->cleanInStr($pValue).'")';
-		}
-		$rs = $this->conn->query($sql);
-		if($rs){
-			if($r = $rs->fetch_object()){
-				$this->pid = $r->pid;
-				$this->projName = $this->cleanOutStr($r->projname);
-			}
-			$rs->free();
-		}
-		else{
-			trigger_error('ERROR: Unable to project => SQL: '.$sql, E_USER_WARNING);
-		}
-		return $this->pid;
-	}
-
-    public function getPid(){
-		return $this->pid;
-	}
-
-	public function setPhotogJson($json): void
+    public function setPhotogJson($json): void
     {
         $photogArr = json_decode($json,true);
         if(is_array($photogArr)){
@@ -374,11 +342,6 @@ class ChecklistFGExportManager {
         $this->maxPhoto = $cnt;
     }
 
-	public function setImageLimit($cnt): void
-    {
-		$this->imageLimit = $cnt;
-	}
-
     public function setRecIndex($val): void
     {
         $this->index = $val;
@@ -388,21 +351,6 @@ class ChecklistFGExportManager {
     {
         $this->recLimit = $val;
     }
-
-    public function getImageLimit(): int
-    {
-		return $this->imageLimit;
-	}
-
-	public function setTaxaLimit($cnt): void
-    {
-		$this->taxaLimit = $cnt;
-	}
-
-	public function getTaxaLimit(): int
-    {
-		return $this->taxaLimit;
-	}
 
     public function getDataArr(): array
     {
@@ -414,10 +362,4 @@ class ChecklistFGExportManager {
 		return $str;
 	}
 
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
 }

@@ -378,18 +378,7 @@ class ChecklistAdmin{
 		return $statusStr;
 	}
 
-	public function removePoint($pointPK): string
-    {
-		$statusStr = '';
-		if($pointPK && is_numeric($pointPK)){
-			if(!$this->conn->query('DELETE FROM fmchklstcoordinates WHERE (chklstcoordid = '.$pointPK.')')){
-				$statusStr = 'ERROR: unable to remove point. '.$this->conn->error;
-			}
-		}
-		return $statusStr;
-	}
-
-	public function getEditors(): array
+    public function getEditors(): array
     {
 		$editorArr = array();
 		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",l.username,")") as uname '.
@@ -542,14 +531,12 @@ class ChecklistAdmin{
 		}
 		$sql .= 'ORDER BY colltype,collectionname';
 		//echo $sql;
-		if($runQuery){
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$retArr[$r->collid] = $r->collectionname;
-				}
-				$rs->free();
-			}
-		}
+		if($runQuery && $rs = $this->conn->query($sql)) {
+            while($r = $rs->fetch_object()){
+                $retArr[$r->collid] = $r->collectionname;
+            }
+            $rs->free();
+        }
 		return $retArr;
 	}
 

@@ -5,7 +5,7 @@ include_once($SERVER_ROOT.'/classes/GPoint.php');
 class OccurrenceAssociations extends Manager {
 
  	public function __construct(){
-		parent::__construct(null,'write');
+		parent::__construct(null);
  	}
  	
  	public function __destruct(){

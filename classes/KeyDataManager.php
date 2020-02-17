@@ -22,7 +22,7 @@ class KeyDataManager extends Manager{
 	private $dynClid;
 
 	function __construct(){
-        parent::__construct(null,'readonly');
+        parent::__construct(null);
     }
 
     function __destruct(){

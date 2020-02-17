@@ -18,7 +18,7 @@ class OccurrenceEditReview extends Manager{
 	private $limitNumber;
 
 	public function __construct(){
-		parent::__construct(null,'write');
+		parent::__construct(null);
 	}
 
     public function setCollId($id): string

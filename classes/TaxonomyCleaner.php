@@ -15,7 +15,7 @@ class TaxonomyCleaner extends Manager{
 	private $verificationMode = 0;		//0 = default to internal taxonomy, 1 = adopt target taxonomy
 
 	public function __construct(){
-		parent::__construct(null,'write');
+		parent::__construct(null);
 	}
 
 	function __destruct(){

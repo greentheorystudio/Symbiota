@@ -38,27 +38,33 @@ class DwcArchiverImage{
 		$termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';	//en
 		$fieldArr['metadataLanguage'] = '';
 
-		if($schemaType == 'backup') $fieldArr['rights'] = 'i.copyright';
+		if($schemaType === 'backup') {
+            $fieldArr['rights'] = 'i.copyright';
+        }
 
 		$retArr['terms'] = self::trimBySchemaType($termArr, $schemaType);
 		$retArr['fields'] = self::trimBySchemaType($fieldArr, $schemaType);
 		return $retArr;
 	}
 
-	private static function trimBySchemaType($imageArr, $schemaType){
+	private static function trimBySchemaType($imageArr, $schemaType): array
+    {
 		$trimArr = array();
-		if($schemaType == 'backup'){
+		if($schemaType === 'backup'){
 			$trimArr = array('Owner', 'UsageTerms', 'WebStatement'); 
 		}
 		return array_diff_key($imageArr,array_flip($trimArr));
 	}
 
-	public static function getSqlImages($fieldArr, $conditionSql, $redactLocalities, $rareReaderArr){
+	public static function getSqlImages($fieldArr, $conditionSql, $redactLocalities, $rareReaderArr): string
+    {
 		$sql = ''; 
 		if($fieldArr && $conditionSql){
 			$sqlFrag = '';
 			foreach($fieldArr as $fieldName => $colName){
-				if($colName) $sqlFrag .= ', '.$colName;
+				if($colName) {
+                    $sqlFrag .= ', ' . $colName;
+                }
 			}
 			$sql = 'SELECT '.trim($sqlFrag,', ').
 				' FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
@@ -67,22 +73,18 @@ class DwcArchiverImage{
 				'INNER JOIN guidoccurrences og ON o.occid = og.occid ';
 
 			if(strpos($conditionSql,'v.clid')){
-				//Search criteria came from custom search page
 				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
 			}
 			if(strpos($conditionSql,'p.point')){
-				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
 			if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
 				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
 			if(stripos($conditionSql,'a.stateid')){
-				//Search is limited by occurrence attribute
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
 			}
 			elseif(stripos($conditionSql,'s.traitid')){
-				//Search is limited by occurrence trait
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
 					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
 			}
@@ -100,4 +102,3 @@ class DwcArchiverImage{
 		return $sql;
 	}
 }
-?>

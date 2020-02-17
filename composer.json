@@ -5,6 +5,7 @@
   "require": {
     "phpoffice/phpword": "^0.17.0",
     "ext-curl": "*",
+    "ext-dom": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-json": "*",

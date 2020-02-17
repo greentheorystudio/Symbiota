@@ -15,7 +15,7 @@ class TaxonomyHarvester extends Manager{
 	private $fullyResolved;
 
 	public function __construct() {
-		parent::__construct(null,'write');
+		parent::__construct(null);
 	}
 
 	public function processSciname($term){
