@@ -58,7 +58,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=272" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=273" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             let winHeight = $(window).height();
@@ -807,7 +807,9 @@ $dbArr = array();
         })
     });
 
-    const selectsource = new ol.source.Vector({wrapX: false});
+    const selectsource = new ol.source.Vector({
+        wrapX: true
+    });
     const selectlayer = new ol.layer.Vector({
         source: selectsource,
         style: new ol.style.Style({
@@ -831,7 +833,9 @@ $dbArr = array();
         })
     });
 
-    let pointvectorsource = new ol.source.Vector({wrapX: false});
+    let pointvectorsource = new ol.source.Vector({
+        wrapX: true
+    });
     const pointvectorlayer = new ol.layer.Vector({
         source: pointvectorsource
     });
@@ -840,7 +844,9 @@ $dbArr = array();
         source: pointvectorsource,
         weight: function (feature) {
             let showPoint = true;
-            if (dateSliderActive) showPoint = validateFeatureDate(feature);
+            if (dateSliderActive) {
+                showPoint = validateFeatureDate(feature);
+            }
             if (showPoint) {
                 return 1;
             } else {
@@ -848,12 +854,14 @@ $dbArr = array();
             }
         },
         gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
-        blur: parseInt(heatMapBlur, 10),
-        radius: parseInt(heatMapRadius, 10),
+        blur: parseInt(heatMapBlur.toString(), 10),
+        radius: parseInt(heatMapRadius.toString(), 10),
         visible: false
     });
 
-    const blankdragdropsource = new ol.source.Vector({wrapX: false});
+    const blankdragdropsource = new ol.source.Vector({
+        wrapX: true
+    });
     const dragdroplayer1 = new ol.layer.Vector({
         source: blankdragdropsource
     });
@@ -1634,7 +1642,7 @@ $dbArr = array();
                 if(feature){
                     const properties = feature.getKeys();
                     for(let i in properties){
-                        if(String(properties[i]) !== 'geometry'){
+                        if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
                             infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
                         }
                     }
