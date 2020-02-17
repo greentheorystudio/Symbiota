@@ -434,7 +434,7 @@ class ImageExplorer{
 
 	//Misc functions
  	private function cleanInArray($arr){
- 		$newArray = Array();
+ 		$newArray = array();
  		foreach($arr as $key => $value){
  			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
  		}

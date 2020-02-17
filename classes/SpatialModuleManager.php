@@ -5,12 +5,12 @@ class SpatialModuleManager{
 	
 	protected $conn;
 	private $collArrIndex = 0;
-    protected $searchTermsArr = Array();
-    protected $localSearchArr = Array();
+    protected $searchTermsArr = array();
+    protected $localSearchArr = array();
     protected $recordCount = 0;
     private $searchTerms = 0;
     private $taxaSearchType;
-    private $taxaArr = Array();
+    private $taxaArr = array();
 
     public function __construct(){
         $connection = new DbConnection();
@@ -320,13 +320,12 @@ class SpatialModuleManager{
             if($propArr){
                 $returnStr .= '<ExtendedData>';
                 foreach($propKeys as $k){
-                    $propindex = htmlspecialchars($k, ENT_QUOTES);
                     $prop = htmlspecialchars((is_array($propArr[$k])?$propArr[$k][0]:$propArr[$k]), ENT_QUOTES);
                     if($propArr[$k]){
-                        $returnStr .= '<Data name="'.$propindex.'"><value>'.$prop.'</value></Data>';
+                        $returnStr .= '<Data><value>'.$prop.'</value></Data>';
                     }
                     else{
-                        $returnStr .= '<Data name="'.$propindex.'"/>';
+                        $returnStr .= '<Data value="'.$prop.'"/>';
                     }
                 }
                 $returnStr .= '</ExtendedData>';
@@ -339,7 +338,8 @@ class SpatialModuleManager{
         return $returnStr;
     }
 
-    public function getSqlWhere(){
+    public function getSqlWhere(): string
+    {
         $sqlWhere = '';
         if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
             if($this->searchTermsArr['db'] !== 'all'){
@@ -378,10 +378,8 @@ class SpatialModuleManager{
             if((int)$this->taxaSearchType === 5){
                 $this->setSciNamesByVerns();
             }
-            else{
-                if($useThes){
-                    $this->setSynonyms();
-                }
+            else if($useThes){
+                $this->setSynonyms();
             }
 
             foreach($this->taxaArr as $key => $valueArray){
@@ -442,36 +440,36 @@ class SpatialModuleManager{
             }
             $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
         }
-        if(array_key_exists('country',$this->searchTermsArr)&&$this->searchTermsArr['country']){
+        if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
             $countryArr = explode(';',$this->searchTermsArr['country']);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($countryArr as $value){
                 $tempArr[] = "(o.Country = '".trim($value)."')";
             }
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$countryArr);
         }
-        if(array_key_exists('state',$this->searchTermsArr)&&$this->searchTermsArr['state']){
+        if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
             $stateAr = explode(';',$this->searchTermsArr['state']);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($stateAr as $value){
                 $tempArr[] = "(o.StateProvince LIKE '".trim($value)."%')";
             }
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$stateAr);
         }
-        if(array_key_exists('county',$this->searchTermsArr)&&$this->searchTermsArr['county']){
+        if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
             $countyArr = explode(';',$this->searchTermsArr['county']);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($countyArr as $value){
                 $tempArr[] = "(o.county LIKE '".trim($value)."%')";
             }
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(' OR ',$countyArr);
         }
-        if(array_key_exists('local',$this->searchTermsArr)&&$this->searchTermsArr['local']){
+        if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
             $localArr = explode(';',$this->searchTermsArr['local']);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($localArr as $value){
                 $tempArr[] = "(o.municipality LIKE '".trim($value)."%' OR o.Locality LIKE '%".trim($value)."%')";
             }
@@ -479,9 +477,9 @@ class SpatialModuleManager{
             $this->localSearchArr[] = implode(' OR ',$localArr);
         }
         if(array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('polyArr',$this->searchTermsArr)){
-            $geoSqlStrArr = Array();
-            if(array_key_exists('circleArr',$this->searchTermsArr)){
-                $sqlFragArr = Array();
+            $geoSqlStrArr = array();
+            if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
+                $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
 
                 if($objArr){
@@ -493,9 +491,9 @@ class SpatialModuleManager{
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
             }
-            if(array_key_exists('polyArr',$this->searchTermsArr)){
+            if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
                 //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
-                $sqlFragArr = Array();
+                $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
                 if($geomArr){
                     foreach($geomArr as $geom){
@@ -504,11 +502,13 @@ class SpatialModuleManager{
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
             }
-            $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
+            if($geoSqlStrArr){
+                $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
+            }
         }
         if(array_key_exists('collector',$this->searchTermsArr)&&$this->searchTermsArr['collector']){
             $collectorArr = explode(';',$this->searchTermsArr['collector']);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($collectorArr as $value){
                 $tempArr[] = "(o.recordedBy LIKE '%".trim($value)."%')";
             }
@@ -516,7 +516,7 @@ class SpatialModuleManager{
             $this->localSearchArr[] = implode(', ',$collectorArr);
         }
         if(array_key_exists('collnum',$this->searchTermsArr)&&$this->searchTermsArr['collnum']){
-            $collNumArr = explode(";",$this->searchTermsArr['collnum']);
+            $collNumArr = explode(';',$this->searchTermsArr['collnum']);
             $rnWhere = '';
             foreach($collNumArr as $v){
                 $v = trim($v);
@@ -524,7 +524,6 @@ class SpatialModuleManager{
                     $term1 = trim(substr($v,0,$p));
                     $term2 = trim(substr($v,$p+3));
                     if(is_numeric($term1) && is_numeric($term2)){
-                        $rnIsNum = true;
                         $rnWhere = 'OR (o.recordnumber BETWEEN '.$term1.' AND '.$term2.')';
                     }
                     else{
@@ -566,16 +565,14 @@ class SpatialModuleManager{
                 if($eDate2){
                     $sqlWhere .= 'AND (DATE(o.eventdate) BETWEEN "'.$eDate1.'" AND "'.$eDate2.'") ';
                 }
+                else if(substr($eDate1,-5) === '00-00'){
+                    $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,5).'%") ';
+                }
+                elseif(substr($eDate1,-2) === '00'){
+                    $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,8).'%") ';
+                }
                 else{
-                    if(substr($eDate1,-5) === '00-00'){
-                        $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,5).'%") ';
-                    }
-                    elseif(substr($eDate1,-2) === '00'){
-                        $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,8).'%") ';
-                    }
-                    else{
-                        $sqlWhere .= 'AND (DATE(o.eventdate) = "'.$eDate1.'") ';
-                    }
+                    $sqlWhere .= 'AND (DATE(o.eventdate) = "'.$eDate1.'") ';
                 }
             }
             $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
@@ -662,8 +659,8 @@ class SpatialModuleManager{
 
     public function getOccPointMapGeoJson($mapWhere,$pageRequest,$cntPerPage){
         global $USER_RIGHTS;
-        $geomArr = Array();
-        $featuresArr = Array();
+        $geomArr = array();
+        $featuresArr = array();
         $sql = 'SELECT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
@@ -691,7 +688,7 @@ class SpatialModuleManager{
         //echo '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $geoArr = Array();
+            $geoArr = array();
             $geoArr['type'] = 'Feature';
             $geoArr['geometry']['type'] = 'Point';
             $geoArr['geometry']['coordinates'] = [$row->decimalLongitude, $row->decimalLatitude];
@@ -725,8 +722,8 @@ class SpatialModuleManager{
 
     public function getOccPointDownloadGeoJson($mapWhere,$pageRequest,$cntPerPage){
         global $USER_RIGHTS;
-        $geomArr = Array();
-        $featuresArr = Array();
+        $geomArr = array();
+        $featuresArr = array();
         $sql = 'SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
             'o.scientificNameAuthorship, o.identifiedBy, o.dateIdentified, o.typeStatus, o.recordedBy, o.recordNumber, '.
             'o.eventdate, o.`year`, o.`month`, o.`day`, o.habitat, o.associatedTaxa, o.basisOfRecord, o.occurrenceID, '.
@@ -759,7 +756,7 @@ class SpatialModuleManager{
         //echo '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $geoArr = Array();
+            $geoArr = array();
             $geoArr['type'] = 'Feature';
             $geoArr['geometry']['type'] = 'Point';
             $geoArr['geometry']['coordinates'] = [$row->decimalLongitude, $row->decimalLatitude];
@@ -819,7 +816,8 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function setRecordCnt($sqlWhere){
+    public function setRecordCnt($sqlWhere): void
+    {
         global $USER_RIGHTS;
         if($sqlWhere){
             $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
@@ -844,9 +842,10 @@ class SpatialModuleManager{
         }
     }
 
-    public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere){
+    public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
+    {
         global $USER_RIGHTS;
-        $retArr = Array();
+        $retArr = array();
         $sql = 'SELECT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
@@ -970,22 +969,28 @@ class SpatialModuleManager{
         return $retDate;
     }
 
-    protected function setSynonyms(){
+    protected function setSynonyms(): void
+    {
         foreach($this->taxaArr as $key => $value){
             if(array_key_exists('scinames',$value)){
                 if(!in_array('no records', $value['scinames'], true)){
                     $synArr = $this->getSynonyms($value['scinames']);
-                    if($synArr) $this->taxaArr[$key]['synonyms'] = $synArr;
+                    if($synArr) {
+                        $this->taxaArr[$key]['synonyms'] = $synArr;
+                    }
                 }
             }
             else{
                 $synArr = $this->getSynonyms($key);
-                if($synArr) $this->taxaArr[$key]['synonyms'] = $synArr;
+                if($synArr) {
+                    $this->taxaArr[$key]['synonyms'] = $synArr;
+                }
             }
         }
     }
 
-    protected function setSciNamesByVerns(){
+    protected function setSciNamesByVerns(): void
+    {
         $sql = 'SELECT DISTINCT v.VernacularName, t.tid, t.sciname, ts.family, t.rankid ' .
             'FROM (taxstatus ts LEFT JOIN taxavernaculars v ON ts.TID = v.TID) ' .
             'LEFT JOIN taxa t ON t.TID = ts.tidaccepted ';
@@ -1016,20 +1021,18 @@ class SpatialModuleManager{
         $result->close();
     }
 
-    public function setSearchTermsArr($stArr){
+    public function setSearchTermsArr($stArr): void
+    {
         $this->searchTermsArr = $stArr;
         $this->searchTerms = 1;
     }
 
-    public function getRecordCnt(){
+    public function getRecordCnt(): int
+    {
         return $this->recordCount;
     }
 
     protected function cleanOutStr($str){
         return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-    }
-
-    private function xmlentities($string){
-        return str_replace(array ('&','"',"'",'<','>','?'),array ('&amp;','&quot;','&apos;','&lt;','&gt;','&apos;'),$string);
     }
 }

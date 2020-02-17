@@ -18,8 +18,8 @@ $taxonRankArr = array(1=>'Organism',10=>'Kingdom',20=>'Subkingdom',30=>'Phylum',
     210=>'Subsection',220=>'Species',230=>'Subspecies',240=>'Variety',250=>'Subvariety',260=>'Form',
     270=>'Subform',300=>'Cultivated');
 
-$retArr = Array();
-$childArr = Array();
+$retArr = array();
+$childArr = array();
 if($taxId === 'root'){
 	$retArr['id'] = 'root';
 	$retArr['label'] = 'root';
@@ -30,7 +30,7 @@ if($taxId === 'root'){
 	else{
 		$retArr['url'] = '../index.php';
 	}
-	$retArr['children'] = Array();
+	$retArr['children'] = array();
 	$lowestRank = '';
 	$sql = 'SELECT MIN(t.RankId) AS RankId '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
@@ -44,9 +44,9 @@ if($taxId === 'root'){
 	$rs->free();
 	$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomName = tu.kingdomName AND t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
 		'WHERE ts.taxauthid = 1 AND t.RankId = '.$lowestRank.' ';
-	//echo "<div>".$sql1."</div>";
+	//echo '<div>' .$sql1. '</div>';
 	$rs1 = $con->query($sql1);
 	$i = 0;
 	while($row1 = $rs1->fetch_object()){
@@ -99,7 +99,7 @@ if($taxId === 'root'){
 else{
 	$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomName = tu.kingdomName AND t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
 		'WHERE (ts.taxauthid = 1) AND (ts.tid = ts.tidaccepted) '.
 		'AND ((ts.parenttid = '.$taxId.') OR (t.tid = '.$taxId.')) ';
 	//echo $sql2."<br>";
@@ -108,7 +108,8 @@ else{
 	while($row2 = $rs2->fetch_object()){
 		$rankName = $row2->rankname;
 		if(!$rankName) {
-			$rankName = $taxonRankArr[$row2->rankid];
+			echo $row2->rankid;
+		    $rankName = $taxonRankArr[$row2->rankid];
 		}
         if(!$rankName) {
 			$rankName = 'Unknown';
@@ -134,7 +135,7 @@ else{
 			else{
 				$retArr['url'] = '../index.php?taxon='.$row2->tid;
 			}
-			$retArr['children'] = Array();
+			$retArr['children'] = array();
 		}
 		else{
 			$childArr[$i]['id'] = $row2->tid;
@@ -171,7 +172,7 @@ else{
 	
 	$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.kingdomName = tu.kingdomName AND t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
 		'WHERE (ts.tid <> ts.tidaccepted) AND (ts.taxauthid = 1) AND (ts.tidaccepted = '.$taxId.')';
 	//echo $sqlSyns;
 	$rsSyns = $con->query($sqlSyns);
@@ -210,7 +211,7 @@ else{
 }
 
 function cmp($a,$b){
-	return strnatcmp($a['label'],$b['']);
+    return strnatcmp($a['label'],$b['label']);
 }
 
 usort($childArr,'cmp');
@@ -218,4 +219,3 @@ usort($childArr,'cmp');
 $retArr['children'] = $childArr;
 	
 echo json_encode($retArr);
-

@@ -18,7 +18,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 	}
 
 	public function getChecklist($taxonAuthorityId){
-		$returnVec = Array();
+		$returnVec = array();
 		$this->checklistTaxaCnt = 0;
 		$sql = "";
 		$sqlWhere = $this->getSqlWhere();
@@ -53,7 +53,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 	}
 
     public function getTidChecklist($tidArr,$taxonFilter){
-        $returnVec = Array();
+        $returnVec = array();
         $tidStr = implode(',',$tidArr);
         $this->checklistTaxaCnt = 0;
         $sql = "";

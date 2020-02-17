@@ -10,7 +10,7 @@ $type = $_REQUEST['type'];
 
 $spatialManager = new SpatialModuleManager();
 
-$retArr = Array();
+$retArr = array();
 
 $stArr = json_decode($stArrJson, true);
 

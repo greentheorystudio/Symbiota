@@ -639,7 +639,7 @@ class OccurrenceEditorManager {
 	}
 
 	protected function setOccurArr(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',$this->occFieldArr);
         if($this->sqlWhere && strpos($this->sqlWhere,'oas.verbatimsciname') !== false){
             $sql .= ', oas.verbatimsciname';
@@ -1616,7 +1616,7 @@ class OccurrenceEditorManager {
 
 	public function getUserChecklists(){
 		global $USER_RIGHTS;
-		$retArr = Array();
+		$retArr = array();
 		if(isset($USER_RIGHTS['ClAdmin'])){
 			$sql = 'SELECT clid, name, access '.
 					'FROM fmchecklists '.
@@ -1770,7 +1770,7 @@ class OccurrenceEditorManager {
 	}
 
 	public function getImageMap(){
-		$imageMap = Array();
+		$imageMap = array();
 		if($this->occid){
 			$sql = 'SELECT imgid, url, thumbnailurl, originalurl, caption, photographer, photographeruid, '.
 				'sourceurl, copyright, notes, occid, username, sortsequence, initialtimestamp '.
@@ -1835,7 +1835,7 @@ class OccurrenceEditorManager {
 	}
 
 	public function getExternalEditArr(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT r.orid, r.oldvalues, r.newvalues, r.externalsource, r.externaleditor, r.reviewstatus, r.appliedstatus, '.
 				'CONCAT_WS(", ",u.lastname,u.firstname) AS username, r.externaltimestamp, r.initialtimestamp '.
 				'FROM omoccurrevisions r LEFT JOIN users u ON r.uid = u.uid '.
@@ -2035,7 +2035,7 @@ class OccurrenceEditorManager {
 	}
 
 	public function getQuickHost($occId){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT associd, verbatimsciname '.
 			'FROM omoccurassociations '.
 			'WHERE relationship = "host" AND occid = '.$occId.' ';

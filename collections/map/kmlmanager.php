@@ -7,7 +7,7 @@ $type = array_key_exists("kmltype",$_POST)?$_POST["kmltype"]:'';
 $selections = array_key_exists('selectionskml',$_POST)?$_POST['selectionskml']:0;
 $stArrJson = array_key_exists("starrkml",$_POST)?$_POST["starrkml"]:'';
 $limit = array_key_exists("kmlreclimit",$_POST)?$_POST["kmlreclimit"]:'';
-$stArr = Array();
+$stArr = array();
 if($stArrJson){
 	$stArr = json_decode($stArrJson, true);
 }

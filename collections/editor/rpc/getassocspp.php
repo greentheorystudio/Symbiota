@@ -17,7 +17,7 @@ if($strCnt > 2){
 }
 
 if($str1){
-    $retArr = Array();
+    $retArr = array();
     $sql = 'SELECT sciname '.
         'FROM taxa '.
         'WHERE unitname1 LIKE "'.$str1.'%" ';

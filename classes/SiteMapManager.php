@@ -77,7 +77,7 @@ class SiteMapManager{
 
 	public function getChecklistList($clArr){
 		global $IS_ADMIN;
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT clid, name, access FROM fmchecklists ';
 		if($IS_ADMIN){
 			//Show all without restrictions
@@ -101,7 +101,7 @@ class SiteMapManager{
 	}
 
 	public function getProjectList($projArr = ""){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT p.pid, p.projname, p.managers FROM fmprojects p '.
 			'WHERE p.ispublic = 1 ';
 		if($projArr){

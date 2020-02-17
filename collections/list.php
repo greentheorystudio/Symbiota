@@ -14,8 +14,8 @@ if(!is_numeric($taxonFilter)) $taxonFilter = 1;
 if(!is_numeric($cntPerPage)) $cntPerPage = 100;
 
 $collManager = new OccurrenceListManager();
-$stArr = Array();
-$collArr = Array();
+$stArr = array();
+$collArr = array();
 $stArrSearchJson = '';
 $stArrCollJson = '';
 $resetPageNum = false;

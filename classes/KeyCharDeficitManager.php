@@ -26,7 +26,7 @@ class KeyCharDeficitManager{
 	}
 	
 	public function getClQueryList(){
-		$returnList = Array();
+		$returnList = array();
 
 		$sql = "SELECT DISTINCT cl.Name, cl.CLID ".
 			"FROM (fmchecklists cl INNER JOIN fmchklstprojlink cpl ON cl.CLID = cpl.clid) ".
@@ -42,7 +42,7 @@ class KeyCharDeficitManager{
 	}
 	
 	public function getTaxaQueryList(){
-		$returnList = Array();
+		$returnList = array();
 
 		$sql = "SELECT DISTINCT t.RankId, t.SciName, t.TID ".
 			"FROM taxa t INNER JOIN kmchartaxalink ctl ON t.TID = ctl.TID ".
@@ -57,7 +57,7 @@ class KeyCharDeficitManager{
 	}
 
 	public function getCharList($cfVal, $cidVal){
-		$returnArray = Array();
+		$returnArray = array();
 		if($cfVal){
 			$strFrag = implode(",",$this->getParents($cfVal));
 			
@@ -74,7 +74,7 @@ class KeyCharDeficitManager{
 				$this->language."') AND (ch.language='".$this->language."') AND (ctl.TID In ($strFrag))) ".
 				"ORDER BY c.hid, c.CID";
 			//echo $sql;
-			$headingArray = Array();		//Heading => Array(CID => CharName)
+			$headingArray = array();		//Heading => Array(CID => CharName)
 			$result = $this->con->query($sql);
 			while($row = $result->fetch_object()){
 				$headingArray[$row->headingname][$row->CID] = $row->CharName;
@@ -96,7 +96,7 @@ class KeyCharDeficitManager{
 	
 	private function getParents($t){
 		//Returns a list of parent TIDs, including target 
- 		$parentList = Array();
+ 		$parentList = array();
 		$targetTid = $t;
 		$parentList[] = $targetTid;
 		while($targetTid){
@@ -116,8 +116,8 @@ class KeyCharDeficitManager{
 	}
 	
 	public function getTaxaList($cidVal, $cfVal, $clVal){
-		$returnArray = Array();				//family => Array(tid => sciname)
-		$spArray = Array();
+		$returnArray = array();				//family => Array(tid => sciname)
+		$spArray = array();
 		$sppStr = $this->getChildren($cidVal, $cfVal, $clVal);
 		$sql = "SELECT DISTINCT t.TID, ts.Family, t.SciName ".
 			"FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ". 
@@ -138,7 +138,7 @@ class KeyCharDeficitManager{
 	private function getChildren($cidVal, $cfVal, $clVal){
 		//Returns a list of children TIDs that are members of selected checklist and only of the 220 rank
  		//Get taxa to exclude
- 		$excludeArray = Array();
+ 		$excludeArray = array();
  		$sqlEx = "SELECT c.TID FROM kmchartaxalink c WHERE (c.CID = ".$cidVal.") AND c.Relation = 'exclude'";
 		$resultEx = $this->con->query($sqlEx);
 		while($row = $resultEx->fetch_object()){
@@ -148,11 +148,11 @@ class KeyCharDeficitManager{
 		$resultEx->close();
 		
 		//get Children
-		$children = Array();
+		$children = array();
 		$targetStr = $cfVal;
 		do{
 			if(isset($targetList)) unset($targetList);
-			$targetList = Array();
+			$targetList = array();
 			$sql = "SELECT DISTINCT t.TID, t.rankid, cl.clid ".
 				"FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ".
 				"LEFT JOIN (SELECT ctl.tid, ctl.clid From fmchklsttaxalink ctl WHERE (ctl.clid = ".$clVal.")) AS cl ".

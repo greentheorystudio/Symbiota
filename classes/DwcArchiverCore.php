@@ -590,7 +590,7 @@ class DwcArchiverCore extends Manager{
 
     public function getDwcArray() {
 		global $CLIENT_ROOT;
-    	$result = Array();
+    	$result = array();
 		if(!$this->occurrenceFieldArr){
 			$this->occurrenceFieldArr = DwcArchiverOccurrence::getOccurrenceArr($this->schemaType, $this->extended);
 		}
@@ -1116,7 +1116,7 @@ class DwcArchiverCore extends Manager{
 	 */
 	public function getEmlDom($emlArr = null){
 		global $DEFAULT_TITLE, $CLIENT_ROOT, $RIGHTS_TERMS_DEFS, $EML_PROJECT_ADDITIONS;
-		$usageTermArr = Array();
+		$usageTermArr = array();
 
 		if(!$emlArr) $emlArr = $this->getEmlArr();
 		foreach($RIGHTS_TERMS_DEFS as $k => $v){

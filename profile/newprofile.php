@@ -11,7 +11,6 @@ $pHandler = new ProfileManager();
 $middle = $pHandler->checkFieldExists('users','middleinitial');
 $displayStr = '';
 
-//Sanitation
 if($login && !$pHandler->setUserName($login)) {
     $login = '';
     $displayStr = 'Invalid login name';

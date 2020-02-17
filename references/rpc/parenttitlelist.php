@@ -3,8 +3,8 @@ include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$returnArr = Array();
-$retArrRow = Array();
+$returnArr = array();
+$retArrRow = array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 if($queryString) {
 	$sql = 'SELECT o.refid, o.secondarytitle, o.volume, o.title, o.edition ' .

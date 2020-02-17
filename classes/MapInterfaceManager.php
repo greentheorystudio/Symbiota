@@ -5,19 +5,19 @@ include_once('OccurrenceAccessStats.php');
 class MapInterfaceManager{
 
 	protected $conn;
-	protected $searchTermsArr = Array();
-	protected $localSearchArr = Array();
+	protected $searchTermsArr = array();
+	protected $localSearchArr = array();
 	protected $reset = 0;
 	protected $dynamicClid;
 	protected $recordCount = 0;
-	private $taxaArr = Array();
-	private $collArr = Array();
+	private $taxaArr = array();
+	private $collArr = array();
 	private $taxaSearchType;
 	private $clName;
 	private $collArrIndex = 0;
-	private $iconColors = Array();
-	private $googleIconArr = Array();
-	private $fieldArr = Array();
+	private $iconColors = array();
+	private $googleIconArr = array();
+	private $fieldArr = array();
 	private $sqlWhere;
 	private $searchTerms = 0;
 
@@ -104,9 +104,9 @@ class MapInterfaceManager{
 			$this->taxaSearchType = $this->searchTermsArr["taxontype"];
 			$taxaArr = explode(";",trim($this->searchTermsArr["taxa"]));
 			//Set scientific name
-			$this->taxaArr = Array();
+			$this->taxaArr = array();
 			foreach($taxaArr as $sName){
-				$this->taxaArr[trim($sName)] = Array();
+				$this->taxaArr[trim($sName)] = array();
 			}
 			if($this->taxaSearchType == 5){
 				//Common name search
@@ -194,7 +194,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("clid",$this->searchTermsArr)&&$this->searchTermsArr["clid"]){
 			$clidArr = explode(";",$this->searchTermsArr["clid"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($clidArr as $value){
 				$tempArr[] = "(v.CLID = ".trim($value).")";
 			}
@@ -203,7 +203,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("country",$this->searchTermsArr)&&$this->searchTermsArr["country"]){
 			$countryArr = explode(";",$this->searchTermsArr["country"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($countryArr as $value){
 				$tempArr[] = "(o.Country = '".trim($value)."')";
 			}
@@ -212,7 +212,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("state",$this->searchTermsArr)&&$this->searchTermsArr["state"]){
 			$stateAr = explode(";",$this->searchTermsArr["state"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($stateAr as $value){
 				$tempArr[] = "(o.StateProvince LIKE '".trim($value)."%')";
 			}
@@ -221,7 +221,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("county",$this->searchTermsArr)&&$this->searchTermsArr["county"]){
 			$countyArr = explode(";",$this->searchTermsArr["county"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($countyArr as $value){
 				$tempArr[] = "(o.county LIKE '".trim($value)."%')";
 			}
@@ -230,7 +230,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("local",$this->searchTermsArr)&&$this->searchTermsArr["local"]){
 			$localArr = explode(";",$this->searchTermsArr["local"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($localArr as $value){
 				$tempArr[] = "(o.municipality LIKE '".trim($value)."%' OR o.Locality LIKE '%".trim($value)."%')";
 			}
@@ -269,7 +269,7 @@ class MapInterfaceManager{
 		}
 		if(array_key_exists("collector",$this->searchTermsArr)&&$this->searchTermsArr["collector"]){
 			$collectorArr = explode(";",$this->searchTermsArr["collector"]);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($collectorArr as $value){
 				$tempArr[] = "(o.recordedBy LIKE '%".trim($value)."%')";
 			}
@@ -516,7 +516,7 @@ class MapInterfaceManager{
 	}
 
 	public function getTaxaSearchStr(){
-		$returnArr = Array();
+		$returnArr = array();
 		foreach($this->taxaArr as $taxonName => $taxonArr){
 			$str = $taxonName;
 			if(array_key_exists("sciname",$taxonArr)){
@@ -535,7 +535,7 @@ class MapInterfaceManager{
 	}
 
 	public function getTaxonAuthorityList(){
-		$taxonAuthorityList = Array();
+		$taxonAuthorityList = array();
 		$sql = "SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)";
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
@@ -754,7 +754,7 @@ class MapInterfaceManager{
                 $this->searchTermsArr["hasgenetic"] = true;
             }
         }
-		$latLongArr = Array();
+		$latLongArr = array();
 		if(array_key_exists("upperlat",$_REQUEST)){
 			$upperLat = $this->conn->real_escape_string($_REQUEST["upperlat"]);
 			if($upperLat){
@@ -846,7 +846,7 @@ class MapInterfaceManager{
 	}
 
 	public function getFullCollArr($stArr){
-		$this->collArr = Array();
+		$this->collArr = array();
 		$sql = 'SELECT c.CollID, c.CollectionName '.
 			'FROM omcollections AS c ';
 		if($stArr['db'] && $stArr['db'] != 'all'){
@@ -859,14 +859,14 @@ class MapInterfaceManager{
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$collName = $row->CollectionName;
-			$this->collArr[$collName] = Array();
+			$this->collArr[$collName] = array();
 		}
 		$result->close();
 	}
 
     public function getCollGeoCoords($mapWhere,$pageRequest,$cntPerPage){
 		global $USER_RIGHTS, $MAPPING_BOUNDARIES;
-		$coordArr = Array();
+		$coordArr = array();
 		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
 			'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, o.catalognumber, '.
 			'o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName ';
@@ -891,9 +891,9 @@ class MapInterfaceManager{
 		if($pageRequest && $cntPerPage){
             $sql .= "LIMIT ".$pageRequest.",".$cntPerPage;
         }
-		$collMapper = Array();
+		$collMapper = array();
 		$collMapper["undefined"] = "undefined";
-		$usedColors = Array();
+		$usedColors = array();
         $color = 'e69e67';
 		//echo json_encode($this->taxaArr);
 		//echo "<div>SQL: ".$sql."</div>";
@@ -947,13 +947,13 @@ class MapInterfaceManager{
 		global $USER_RIGHTS, $MAPPING_BOUNDARIES;
 		$seloccids = preg_match('#\[(.*?)\]#', $seloccids, $match);
 		$seloccids = $match[1];
-		$coordArr = Array();
+		$coordArr = array();
 		$sql = 'SELECT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
 			'o.sciname, o.family, o.tidinterpreted, o.DecimalLatitude, o.DecimalLongitude, o.collid, '.
 			'o.catalognumber, o.othercatalognumbers, c.institutioncode, c.collectioncode, c.CollectionName '.
 			'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
 			'WHERE o.occid IN('.$seloccids.') ';
-		$collMapper = Array();
+		$collMapper = array();
 		$collMapper["undefined"] = "undefined";
 		//echo json_encode($this->taxaArr);
 		foreach($this->collArr as $key => $valueArr){
@@ -1285,7 +1285,7 @@ class MapInterfaceManager{
 
 	public function getMapSpecimenArr($pageRequest,$cntPerPage,$mapWhere){
 		global $USER_RIGHTS;
-		$retArr = Array();
+		$retArr = array();
 		if(!$this->recordCount){
 			$this->setRecordCnt($mapWhere);
 		}
@@ -1445,7 +1445,7 @@ class MapInterfaceManager{
 	}
 
 	public function getChecklist($stArr,$mapWhere){
-		$returnVec = Array();
+		$returnVec = array();
 		$this->checklistTaxaCnt = 0;
 		$sql = 'SELECT DISTINCT t.tid, IFNULL(ts.family,o.family) AS family, IFNULL(t.sciname,o.sciname) AS sciname '.
 			'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
@@ -1614,7 +1614,7 @@ class MapInterfaceManager{
 	}
 
 	public function getPersonalRecordsets($uid){
-		$retArr = Array();
+		$retArr = array();
 		$sql = "";
         //Get datasets owned by user
 		$sql = 'SELECT datasetid, name '.

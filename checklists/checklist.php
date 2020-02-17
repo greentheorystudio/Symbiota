@@ -38,7 +38,7 @@ if($clValue){
 elseif($dynClid){
 	$clManager->setDynClid($dynClid);
 }
-$clArray = Array();
+$clArray = array();
 if($clValue || $dynClid){
 	$clArray = $clManager->getClMetaData();
 }
@@ -102,7 +102,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		$statusStr = $clAdmin->addNewSpecies($dataArr,$setRareSpp);
 	}
 }
-$taxaArray = Array();
+$taxaArray = array();
 if($clValue || $dynClid){
 	$taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
     if($CHECKLIST_FG_EXPORT){
@@ -407,7 +407,7 @@ if($clArray["locality"]){
 							    	<select data-role='none' name='thesfilter' id='thesfilter'>
 										<option value=''>Original Checklist</option>
 										<?php 
-											$taxonAuthList = Array();
+											$taxonAuthList = array();
 											$taxonAuthList = $clManager->getTaxonAuthorityList();
 											foreach($taxonAuthList as $taCode => $taValue){
 												echo "<option value='".$taCode."'".($taCode == $clManager->getThesFilter()?" selected":"").">".$taValue."</option>\n";
@@ -768,7 +768,7 @@ if($clArray["locality"]){
                 <b>Primary Description Source:</b>
                 <select data-role='none' name='fgPriDescSource' id='fgPriDescSource'>
                     <?php
-                    $descSourceList = Array();
+                    $descSourceList = array();
                     $descSourceList = $fgManager->getDescSourceList();
                     foreach($descSourceList as $source){
                         echo "<option value='".$source."'>".$source."</option>\n";
@@ -798,7 +798,7 @@ if($clArray["locality"]){
                 <div id='fgPhotogBox' style="display:none;width:570px;margin-top:10px;margin-bottom:10px;">
                     <table style="font-family:Arial;font-size:12px;">
                         <?php
-                        $photogList = Array();
+                        $photogList = array();
                         $i = 1;
                         $innerHtml = '';
                         $innerHtml .= '<tr>';

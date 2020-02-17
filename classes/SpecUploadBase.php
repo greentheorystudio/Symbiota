@@ -18,15 +18,15 @@ class SpecUploadBase extends SpecUpload{
 	protected $nfnIdentifier;
 	protected $uploadTargetPath;
 
-	protected $sourceArr = Array();
-	protected $identSourceArr = Array();
-	protected $imageSourceArr = Array();
-	protected $fieldMap = Array();
-	protected $identFieldMap = Array();
-	protected $imageFieldMap = Array();
-	protected $symbFields = Array();
-	protected $identSymbFields = Array();
-	protected $imageSymbFields = Array();
+	protected $sourceArr = array();
+	protected $identSourceArr = array();
+	protected $imageSourceArr = array();
+	protected $fieldMap = array();
+	protected $identFieldMap = array();
+	protected $imageFieldMap = array();
+	protected $symbFields = array();
+	protected $identSymbFields = array();
+	protected $imageSymbFields = array();
 	private $sourceDatabaseType = '';
 
 	function __construct() {
@@ -245,7 +245,7 @@ class SpecUploadBase extends SpecUpload{
 		}
 
 		//Build a Source => Symbiota field Map
-		$sourceSymbArr = Array();
+		$sourceSymbArr = array();
 		foreach($fieldMap as $symbField => $fArr){
 			if($symbField != 'dbpk') $sourceSymbArr[$fArr["field"]] = $symbField;
 		}
@@ -258,7 +258,7 @@ class SpecUploadBase extends SpecUpload{
 		echo '<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">';
 		echo '<tr><th>Source Field</th><th>Target Field</th></tr>'."\n";
 		sort($symbFields);
-		$autoMapArr = Array();
+		$autoMapArr = array();
 		foreach($sourceArr as $fieldName){
 			if($fieldName == 'coreid') continue;
 			$diplayFieldName = $fieldName;
@@ -1211,7 +1211,7 @@ class SpecUploadBase extends SpecUpload{
 				//Try to get author, if it's not there
 				if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
 					//Parse scientific name to see if it has author imbedded
-					$parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname'],$this->conn);
+					$parsedArr = OccurrenceUtilities::parseScientificName($recMap['sciname']);
 					if(array_key_exists('author',$parsedArr)){
 						$recMap['scientificnameauthorship'] = $parsedArr['author'];
 						//Load sciname from parsedArr since if appears that author was embedded

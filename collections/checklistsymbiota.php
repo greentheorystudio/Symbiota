@@ -14,7 +14,7 @@ $stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
 
 //Sanitation
 if(!is_numeric($taxonFilter)) $taxonFilter = 1;
-$tidArr = Array();
+$tidArr = array();
 
 if($stArrCollJson && $stArrSearchJson){
 	$stArrSearchJson = str_replace("%apos;","'",$stArrSearchJson);

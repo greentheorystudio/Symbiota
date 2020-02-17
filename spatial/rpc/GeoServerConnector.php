@@ -4,7 +4,7 @@ if(!isset($GEOSERVER_LAYER_WORKSPACE)){
     $GEOSERVER_LAYER_WORKSPACE = '';
 }
 
-$pArr = Array();
+$pArr = array();
 $dataType = ($_REQUEST['datatype'] ?? '');
 $xmlRequest = ($_REQUEST['xmlrequest'] ?? '');
 if(isset($_REQUEST['SERVICE'])) {

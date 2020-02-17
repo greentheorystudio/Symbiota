@@ -5,7 +5,7 @@ include_once($SERVER_ROOT.'/classes/ImageShared.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
-	private $photographerArr = Array();
+	private $photographerArr = array();
 	private $IMAGE_ROOT_PATH = "";
 	private $IMAGE_ROOT_URL = "";
 	private $activeImgId = 0;
@@ -330,7 +330,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
      * @return an array of keys for image type tagging along with their descriptions.
      */
     public function getImageTagValues($lang='en') { 
-       $returnArr = Array();
+       $returnArr = array();
        switch ($lang) { 
           case 'en':
           default: 
@@ -358,7 +358,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
      * presence/absence for the provided image and descriptions.
      */
     public function getImageTagUsage($imgid,$lang='en') {
-       $resultArr = Array();
+       $resultArr = array();
        switch ($lang) {
           case 'en':
           default:

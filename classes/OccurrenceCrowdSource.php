@@ -6,7 +6,7 @@ class OccurrenceCrowdSource {
 	private $conn;
 	private $collid;
 	private $omcsid;
-	private $headArr = Array();
+	private $headArr = array();
 
 	function __construct() {
         $connection = new DbConnection();

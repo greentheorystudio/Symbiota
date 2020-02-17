@@ -21,9 +21,7 @@ if($target){
 	$treePath = $taxonDisplayObj->getDynamicTreePath();
 	$targetId = end($treePath);
 	reset($treePath);
-	//echo json_encode($treePath);
 }
-
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -52,7 +50,12 @@ if($target){
 		$(document).ready(function() {
 			$("#taxontarget").autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "../../webservices/autofillsciname.php", { term: request.term, limit: 10, hideauth: true, taid: document.tdform.taxauthid.value }, response );
+					$.getJSON( "../../webservices/autofillsciname.php", {
+					    term: request.term,
+                        limit: 10,
+                        hideauth: true,
+                        taid: document.tdform.taxauthid.value
+                    }, response );
 				}
 			},{ minLength: 3 }
 			);
@@ -122,48 +125,59 @@ include($SERVER_ROOT.'/header.php');
 					"dojo/store/JsonRest",
 					"dojo/domReady!"
 				], function(win, declare, dom, on, Tree, ObjectStoreModel, dndSource, JsonRest){
-				    var taxonTreeStore = new JsonRest({
-						target: "rpc/getdynamicchildren.php",
-						labelAttribute: "label",
-						getChildren: function(object){
-                            return this.query({id:object.id,authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(function(fullObject){
-								return fullObject.children;
-							});
-						},
-						mayHaveChildren: function(object){
-							return "children" in object;
-						}
-					});
-					
-					var taxonTreeModel = new ObjectStoreModel({
-						store: taxonTreeStore,
-						deferItemLoadingUntilExpand: true,
-						getRoot: function(onItem){
-							this.store.query({id:"root",authors:<?php echo $displayAuthor; ?>,targetid:<?php echo $targetId; ?>}).then(onItem);
-						},
-						mayHaveChildren: function(object){
-							return "children" in object;
-						}
-					});
-					
-					var TaxonTreeNode = declare(Tree._TreeNode, {
-						_setLabelAttr: {node: "labelNode", type: "innerHTML"}
-					});
+                    const taxonTreeStore = new JsonRest({
+                        target: "rpc/getdynamicchildren.php",
+                        labelAttribute: "label",
+                        getChildren: function(object){
+                            return this.query({
+                                id:object.id,
+                                authors:<?php echo $displayAuthor; ?>,
+                                targetid:<?php echo $targetId; ?>
+                            }).then(function(fullObject){
+                                return fullObject.children;
+                            });
+                        },
+                        mayHaveChildren: function(object){
+                            return "children" in object;
+                        }
+                    });
 
-					var taxonTree = new Tree({
-						model: taxonTreeModel,
-						showRoot: false,
-						label: "Taxa Tree",
-						persist: false,
-						_createTreeNode: function(args){
-						   return new TaxonTreeNode(args);
-						},
-						onClick: function(item){
-							location.href = item.url;
-						}
-					}, "tree");
-					
-					taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
+                    const taxonTreeModel = new ObjectStoreModel({
+                        store: taxonTreeStore,
+                        deferItemLoadingUntilExpand: true,
+                        getRoot: function(onItem){
+                            this.store.query({
+                                id:"root",
+                                authors:<?php echo $displayAuthor; ?>,
+                                targetid:<?php echo $targetId; ?>
+                            }).then(onItem);
+                        },
+                        mayHaveChildren: function(object){
+                            return "children" in object;
+                        }
+                    });
+
+                    const TaxonTreeNode = declare(Tree._TreeNode, {
+                        _setLabelAttr: {
+                            node: "labelNode",
+                            type: "innerHTML"
+                        }
+                    });
+
+                    const taxonTree = new Tree({
+                        model: taxonTreeModel,
+                        showRoot: false,
+                        label: "Taxa Tree",
+                        persist: false,
+                        _createTreeNode: function (args) {
+                            return new TaxonTreeNode(args);
+                        },
+                        onClick: function (item) {
+                            location.href = item.url;
+                        }
+                    }, "tree");
+
+                    taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
 						function(path){
 							win.scrollIntoView(taxonTree.selectedNode.id);        
 						}
@@ -171,7 +185,6 @@ include($SERVER_ROOT.'/header.php');
 					taxonTree.startup();
 					
 				});
-				
 			</script>
 			<?php
 		}

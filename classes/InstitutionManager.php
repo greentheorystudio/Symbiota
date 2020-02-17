@@ -19,7 +19,7 @@ class InstitutionManager {
 	}
 
 	public function getInstitutionData(){
-		$retArr = Array();
+		$retArr = array();
 		if($this->iid){
 			$sql = 'SELECT iid, institutioncode, institutionname, institutionname2, address1, address2, city, '.
 				'stateprovince, postalcode, country, phone, contact, email, url, notes '.
@@ -176,7 +176,7 @@ class InstitutionManager {
 	} 
 
 	public function getInstitutionList(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, '.
 			'i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
 			'FROM institutions i LEFT JOIN omcollections c ON i.iid = c.iid '.
@@ -197,7 +197,7 @@ class InstitutionManager {
 	}
 
 	public function getCollectionList(){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT collid, iid, CONCAT(collectionname, " (", CONCAT_WS("-",institutioncode, collectioncode),")") AS collname '.
 			'FROM omcollections '.
 			'ORDER BY collectionname,institutioncode';

@@ -17,10 +17,10 @@ $imgLibManager = new ImageLibraryManager();
 $collList = $imgLibManager->getFullCollectionList($catId);
 $specArr = (isset($collList['spec'])?$collList['spec']:null);
 $obsArr = (isset($collList['obs'])?$collList['obs']:null);
-$stArr = Array();
-$previousCriteria = Array();
-$imageArr = Array();
-$taxaList = Array();
+$stArr = array();
+$previousCriteria = array();
+$imageArr = array();
+$taxaList = array();
 $jsonStArr = '';
 
 if($stArrJson && !array_key_exists('db',$_REQUEST)){
@@ -37,7 +37,7 @@ if($_REQUEST || $stArr){
 	}
 }
 
-$dbArr = Array();
+$dbArr = array();
 if(array_key_exists('db',$_REQUEST)){
 	$dbArr = $_REQUEST["db"];
 }

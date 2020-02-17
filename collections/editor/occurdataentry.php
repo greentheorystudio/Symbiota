@@ -14,7 +14,7 @@ if($SOLR_MODE) $solrManager = new SOLRManager();
 
 $isEditor = 0;		//If not editor, edits will be submitted to omoccuredits table but not applied to omoccurrences
 
-$collMap = Array();
+$collMap = array();
 $statusStr = '';
 $isGenObs = 0;
 

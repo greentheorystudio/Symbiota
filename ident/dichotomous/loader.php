@@ -15,7 +15,7 @@ $notes = array_key_exists("notes",$_REQUEST)?$_REQUEST["notes"]:"";
 $dichoManager = new DichoManager();
 
 if($action){
-	$dataArr = Array(); 
+	$dataArr = array();
 	$dataArr["nodeid"] = $nodeId;
 	$dataArr["statement"] = $statement;
 	$dataArr["tid"] = $tid;
@@ -144,7 +144,7 @@ if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS)){
 		<h1>Dichotomous Key Loader</h1>
 		<ul>
 		<?php 
-		$rows = Array();
+		$rows = array();
 		if($nodeId){
 			$rows = $dichoManager->echoNodeById($nodeId);
 		}
@@ -301,7 +301,7 @@ class DichoManager{
  	private function echoNode($sql){
 		$con = $this->getConnection();
 		$result = $con->query($sql);
-		$returnArr = Array();
+		$returnArr = array();
 		$stmtCnt = 0;
 		while($row = $result->fetch_object()){
 			$returnArr[$stmtCnt]["nodeid"] = $row->nodeid;

@@ -75,12 +75,12 @@ class KeyManager{
 
 	protected function getChildrenArr($tid){
 		//Return list of accepted taxa, not including target 
-		$retArr = Array();
+		$retArr = array();
 		if($tid){
 			$targetStr = $tid;
 			do{
 				if(isset($targetList)) unset($targetList);
-				$targetList = Array();
+				$targetList = array();
 				$sql = 'SELECT t.tid '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 					'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.ParentTID In ('.$targetStr.')) AND (ts.tid = ts.tidaccepted)';
@@ -99,7 +99,7 @@ class KeyManager{
 	}
 	
 	protected function getParentArr($tid){
- 		$retArr = Array();
+ 		$retArr = array();
  		if($tid){
 			$targetTid = $tid;
 			while($targetTid){

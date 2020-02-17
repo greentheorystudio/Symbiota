@@ -11,7 +11,7 @@ class SOLRManager extends OccurrenceManager{
     protected $spatial = false;
     private $checklistTaxaCnt = 0;
     private $iconColors;
-    private $collArr = Array();
+    private $collArr = array();
     private $taxaSearchType = 0;
 
  	public function __construct(){
@@ -48,7 +48,7 @@ class SOLRManager extends OccurrenceManager{
 
     public function getOccArr($geo = false): array{
         global $SOLR_URL;
-        $returnArr = Array();
+        $returnArr = array();
         if($geo) {
             $this->setSpatial();
         }
@@ -75,7 +75,7 @@ class SOLRManager extends OccurrenceManager{
 		$solrWhere = $this->getSOLRWhere();
         $solrURLpre = $SOLR_URL.'/select?';
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
-            $sortArr = Array();
+            $sortArr = array();
             $sortFields = array('Collection' => 'CollectionName','Catalog Number' => 'catalogNumber','Family' => 'family',
                 'Scientific Name' => 'sciname','Collector' => 'recordedBy','Number' => 'recordNumber','Event Date' => 'eventDate',
                 'Individual Count' => 'individualCount','Life Stage' => 'lifeStage','Sex' => 'sex',
@@ -155,7 +155,7 @@ class SOLRManager extends OccurrenceManager{
 
     public function translateSOLRRecList($sArr): array{
         global $USER_RIGHTS, $IS_ADMIN, $IMAGE_DOMAIN;
- 	    $returnArr = Array();
+ 	    $returnArr = array();
         $canReadRareSpp = false;
         if($USER_RIGHTS){
             if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
@@ -224,7 +224,7 @@ class SOLRManager extends OccurrenceManager{
 
     public function translateSOLRMapRecList($sArr): array{
         global $USER_RIGHTS, $IS_ADMIN;
- 	    $returnArr = Array();
+ 	    $returnArr = array();
         $canReadRareSpp = false;
         if($USER_RIGHTS){
             if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
@@ -268,7 +268,7 @@ class SOLRManager extends OccurrenceManager{
 
     public function translateSOLRGeoCollList($sArr): array{
         global $USER_RIGHTS, $IS_ADMIN;
- 	    $returnArr = Array();
+ 	    $returnArr = array();
         $color = 'e69e67';
         foreach($sArr as $k){
             $canReadRareSpp = false;
@@ -332,8 +332,8 @@ class SOLRManager extends OccurrenceManager{
 
     public function translateSOLRGeoTaxaList($sArr): array{
         global $USER_RIGHTS, $IS_ADMIN;
- 	    $returnArr = Array();
-        $taxaMapper = Array();
+ 	    $returnArr = array();
+        $taxaMapper = array();
         $taxaMapper['undefined'] = 'undefined';
         $cnt = 0;
         foreach($this->taxaArr as $key => $valueArr){
@@ -408,7 +408,7 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRTaxaList($sArr): array{
-        $returnArr = Array();
+        $returnArr = array();
         $this->checklistTaxaCnt = 0;
         foreach($sArr as $k){
             $family = (isset($k['doclist']['docs'][0]['accFamily'])?strtoupper($k['doclist']['docs'][0]['accFamily']):strtoupper($k['doclist']['docs'][0]['family']));
@@ -423,7 +423,7 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function getSOLRTidList($sArr): array{
-        $returnArr = Array();
+        $returnArr = array();
         foreach($sArr as $k){
             if(isset($k['doclist']['docs'][0]['tidinterpreted']) && !in_array($k['doclist']['docs'][0]['tidinterpreted'], $returnArr, true)){
                 $returnArr[] = $k['doclist']['docs'][0]['tidinterpreted'];
@@ -471,7 +471,7 @@ class SOLRManager extends OccurrenceManager{
 
     public function deleteSOLRDocument($occid): void{
         global $SOLR_URL;
-        $pArr = Array();
+        $pArr = array();
         if(!is_array($occid) || count($occid) < 1000){
             if(is_array($occid)){
                 $occidStr = '('.implode(' ',$occid).')';
@@ -536,8 +536,8 @@ class SOLRManager extends OccurrenceManager{
 
     public function cleanSOLRIndex($collid): void{
         global $SOLR_URL;
-        $SOLROccArr = Array();
-        $mysqlOccArr = Array();
+        $SOLROccArr = array();
+        $mysqlOccArr = array();
         $solrWhere = 'q=(collid:('.$collid.'))';
         $solrURL = $SOLR_URL.'/select?'.$solrWhere;
         $solrURL .= '&rows=1&start=1&wt=json';
@@ -600,7 +600,7 @@ class SOLRManager extends OccurrenceManager{
         global $SERVER_ROOT;
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');
-        $infoArr = Array();
+        $infoArr = array();
 
         if(file_exists($SERVER_ROOT.'/temp/data/solr.json')){
             $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
@@ -643,9 +643,9 @@ class SOLRManager extends OccurrenceManager{
             $useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
             $this->taxaSearchType = $this->searchTermsArr['taxontype'];
             $taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
-            $this->taxaArr = Array();
+            $this->taxaArr = array();
             foreach($taxaArr as $sName){
-                $this->taxaArr[trim($sName)] = Array();
+                $this->taxaArr[trim($sName)] = array();
             }
             if($this->taxaSearchType === 5){
                 $this->setSciNamesByVerns();
@@ -716,7 +716,7 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('country',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);
             $countryArr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($countryArr as $k => $value){
                 if($value === 'NULL'){
                     $countryArr[$k] = '-country:["" TO *]';
@@ -732,7 +732,7 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('state',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['state']);
             $stateAr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($stateAr as $k => $value){
                 if($value === 'NULL'){
                     $tempArr[] = '-StateProvince:["" TO *]';
@@ -748,7 +748,7 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('county',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['county']);
             $countyArr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($countyArr as $k => $value){
                 if($value === 'NULL'){
                     $tempArr[] = '-county:["" TO *]';
@@ -765,11 +765,11 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('local',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['local']);
             $localArr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($localArr as $k => $value){
                 if(strpos($value,' ')){
                     $wordArr = explode(' ',$value);
-                    $tempStrArr = Array();
+                    $tempStrArr = array();
                     foreach($wordArr as $w => $word){
                         $tempStrArr[] = '((municipality:'.trim($word).'*) OR (locality:*'.trim($word).'*))';
                     }
@@ -801,7 +801,7 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('assochost',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
             $hostAr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($hostAr as $k => $value){
                 if($value === 'NULL'){
                     $tempArr[] = '((assocrelationship:"host") AND (-assocverbatimsciname:["" TO *]))';
@@ -825,7 +825,7 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('collector',$this->searchTermsArr)){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['collector']);
             $collectorArr = explode(';',$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             if(count($collectorArr) === 1){
                 if($collectorArr[0] === 'NULL'){
                     $tempArr[] = '(-recordedBy:["" TO *])';

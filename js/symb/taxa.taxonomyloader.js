@@ -72,7 +72,7 @@ function parseName(f){
 	sciName = sciName.replace(/^\s+|\s+$/g,"");
 	f.reset();
 	f.sciname.value = sciName;
-	var sciNameArr = new Array(); 
+	var sciNameArr = new Array();
 	var activeIndex = 0;
 	var unitName1 = "";
 	var unitName2 = "";

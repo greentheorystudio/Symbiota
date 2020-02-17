@@ -18,7 +18,7 @@ class SpecUploadDirect extends SpecUploadBase {
 			if(strlen($sql) > 20 && stripos(substr($sql,-20)," limit ") === false) $sql .= " LIMIT 10";
 			$rs = $sourceConn->query($sql);
 			if($rs){
-				$sourceArr = Array();
+				$sourceArr = array();
 				if($row = $rs->fetch_assoc()){
 					foreach($row as $k => $v){
 						$sourceArr[] = strtolower($k);
@@ -57,7 +57,7 @@ class SpecUploadDirect extends SpecUploadBase {
 				echo "<li style='font-weight:bold;'>Results obtained from Source Connection, now reading Resultset... </li>";
 				$this->transferCount = 0;
 				while($row = $result->fetch_assoc()){
-					$recMap = Array();
+					$recMap = array();
 					$row = array_change_key_case($row);
 					foreach($this->fieldMap as $symbField => $sMap){
 						$valueStr = $row[$sMap['field']];

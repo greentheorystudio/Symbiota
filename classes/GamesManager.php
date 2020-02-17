@@ -21,7 +21,7 @@ class GamesManager {
 	}
 	
 	public function getChecklistArr($projId = 0){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT DISTINCT c.clid, c.name '.
 			'FROM fmchecklists c INNER JOIN fmchklstprojlink plink ON c.clid = plink.clid ';
 		if($projId){
@@ -62,7 +62,7 @@ class GamesManager {
 			
 			if($replace == 1){
 				//Delete old files
-				$previous = Array();
+				$previous = array();
 				if(file_exists($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json')){
 					$previous = json_decode(file_get_contents($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json'), true);
 					unlink($SERVER_ROOT.'/temp/ootd/'.$oodID.'_previous.json');
@@ -90,7 +90,7 @@ class GamesManager {
 				$ootdInfo = array();
 				$ootdInfo['lastDate'] = $currentDate;
 				
-				$tidArr = Array();
+				$tidArr = array();
 				$sql = 'SELECT l.TID, COUNT(i.imgid) AS cnt '. 
 					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
 					'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
@@ -127,7 +127,7 @@ class GamesManager {
 					}
 					$rs->free();
 					
-					$files = Array();
+					$files = array();
 					$sql3 = 'SELECT i.url '.
 						'FROM images i '.
 						'WHERE (i.tid = '.$randTaxa.') '.
@@ -185,7 +185,7 @@ class GamesManager {
 	//Flashcard functions
 	public function getFlashcardImages(){
 		global $IMAGE_DOMAIN;
-		$retArr = Array();
+		$retArr = array();
 		//Grab a random list of no more than 1000 taxa 
 		$sql = '';
 		if($this->clid){
@@ -278,7 +278,7 @@ class GamesManager {
 	}
 	
 	public function echoFlashcardTaxonFilterList(){
-		$returnArr = Array();
+		$returnArr = array();
 		if($this->clid || $this->dynClid){
 			$sqlFamily = '';
 			if($this->clid){

@@ -47,12 +47,12 @@ class PluginsManager {
 
 			//Delete old files
 			if($clId){
-				$previous = Array();
+				$previous = array();
 				if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json')){
 					$previous = json_decode(file_get_contents($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json'), true);
 					unlink($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json');
 					if($clId != $lastCLID){
-						$previous = Array();
+						$previous = array();
 					}
 				}
 			}
@@ -79,7 +79,7 @@ class PluginsManager {
 			$ssIdInfo['numdays'] = $numDays;
 			$ssIdInfo['imagetype'] = $imageType;
 
-			$files = Array();
+			$files = array();
 			$limit = $numSlides * 3;
 			$sql = 'SELECT i.imgid, i.tid, i.occid, i.url, i.photographer, i.`owner`, t.SciName, o.sciname AS occsciname, '.
 				'CONCAT_WS(" ",u.firstname,u.lastname) AS photographerName, '.
@@ -106,7 +106,7 @@ class PluginsManager {
 			}
 			//echo '<div>'.$sql.'</div>';
 			$cnt = 1;
-			$imgIdArr = Array();
+			$imgIdArr = array();
  			$conn = MySQLiConnectionFactory::getCon("readonly");
 			$rs = $conn->query($sql);
 			while(($row = $rs->fetch_object()) && ($cnt < ($numSlides + 1))){

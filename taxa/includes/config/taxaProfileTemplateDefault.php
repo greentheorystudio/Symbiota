@@ -4,11 +4,11 @@ if(file_exists('includes/config/taxaProfileElementsCustom.php')){
     include('includes/config/taxaProfileElementsCustom.php');
 }
 
-$topRowElements = Array();
-$leftColumnElements = Array();
-$rightColumnElements = Array();
-$bottomRowElements = Array();
-$footerRowElements = Array();
+$topRowElements = array();
+$leftColumnElements = array();
+$rightColumnElements = array();
+$bottomRowElements = array();
+$footerRowElements = array();
 
 if($taxonRank){
     if($taxonRank > 180){
@@ -19,14 +19,14 @@ if($taxonRank){
         $footerRowElements = Array($footerLinksDiv);
     }
     elseif($taxonRank == 180){
-        $topRowElements = Array();
+        $topRowElements = array();
         $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
     else{
-        $topRowElements = Array();
+        $topRowElements = array();
         $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);

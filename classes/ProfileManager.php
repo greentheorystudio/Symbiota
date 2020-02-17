@@ -90,7 +90,7 @@ class ProfileManager extends Manager{
     private function setTokenCookie(): void
 	{
         global $CLIENT_ROOT;
-	    $tokenArr = Array();
+	    $tokenArr = array();
         if(!$this->token){
             $this->createToken();
         }
@@ -1009,7 +1009,7 @@ class ProfileManager extends Manager{
 
 	public function generateTokenPacket(): array
     {
-        $pkArr = Array();
+        $pkArr = array();
         $this->createToken();
         $person = $this->getPerson();
         if($this->token){
@@ -1024,7 +1024,7 @@ class ProfileManager extends Manager{
 
     public function generateAccessPacket(): array
     {
-        $pkArr = Array();
+        $pkArr = array();
         $sql = 'SELECT ul.role, ul.tablename, ul.tablepk, c.CollectionName, c.CollectionCode, c.InstitutionCode, fc.`Name`, fp.projname '.
             'FROM userroles AS ul LEFT JOIN omcollections AS c ON ul.tablepk = c.CollID '.
             'LEFT JOIN fmchecklists AS fc ON ul.tablepk = fc.CLID '.
@@ -1085,7 +1085,7 @@ class ProfileManager extends Manager{
 
     public function getCollectionArr(): array
     {
-        $retArr = Array();
+        $retArr = array();
         $sql = 'SELECT CollID, InstitutionCode, CollectionCode, CollectionName FROM omcollections';
         //echo $sql;
         if($rs = $this->conn->query($sql)){
@@ -1102,7 +1102,7 @@ class ProfileManager extends Manager{
 
     public function getChecklistArr(): array
     {
-        $retArr = Array();
+        $retArr = array();
         $sql = 'SELECT CLID, `Name` FROM fmchecklists';
         //echo $sql;
         if($rs = $this->conn->query($sql)){
@@ -1117,7 +1117,7 @@ class ProfileManager extends Manager{
 
     public function getProjectArr(): array
     {
-        $retArr = Array();
+        $retArr = array();
         $sql = 'SELECT pid, projname FROM fmprojects';
         //echo $sql;
         if($rs = $this->conn->query($sql)){

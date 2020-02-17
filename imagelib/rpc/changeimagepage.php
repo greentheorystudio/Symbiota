@@ -8,9 +8,9 @@ $cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:1
 $pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1; 
 $stArrJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
 $view = array_key_exists("view",$_REQUEST)?$_REQUEST["view"]:'';
-$stArr = Array();
-$imageArr = Array();
-$taxaList = Array();
+$stArr = array();
+$imageArr = array();
+$taxaList = array();
 if($stArrJson){
 	$stArr = json_decode($stArrJson, true);
 }

@@ -23,7 +23,7 @@ class TaxonomyAPIManager{
 	}
 
     public function generateSciNameList($queryString){
-        $retArr = Array();
+        $retArr = array();
         $sql = '';
 
  	    $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
@@ -64,7 +64,7 @@ class TaxonomyAPIManager{
     }
 
     public function generateVernacularList($queryString){
-        $retArr = Array();
+        $retArr = array();
         $sql = '';
 
         $sql = 'SELECT DISTINCT v.VernacularName '.

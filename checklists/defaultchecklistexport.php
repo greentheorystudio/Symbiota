@@ -34,7 +34,7 @@ if($clValue){
 elseif($dynClid){
 	$clManager->setDynClid($dynClid);
 }
-$clArray = Array();
+$clArray = array();
 if($clValue || $dynClid){
 	$clArray = $clManager->getClMetaData();
 }
@@ -71,7 +71,7 @@ $isEditor = false;
 if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
 	$isEditor = true;
 }
-$taxaArray = Array();
+$taxaArray = array();
 if($clValue || $dynClid){
 	$taxaArray = $clManager->getTaxaList($pageNumber,0);
 }

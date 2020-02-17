@@ -112,7 +112,7 @@ class SpecUploadFile extends SpecUploadBase{
 			$this->transferCount = 0;
 			$this->outputMsg('<li>Beginning to load records...</li>',1);
 			while($recordArr = $this->getRecordArr($fh)){
-				$recMap = Array();
+				$recMap = array();
 				foreach($this->fieldMap as $symbField => $sMap){
 					$indexArr = array_keys($headerArr,$sMap['field']);
 					$index = array_shift($indexArr);
@@ -217,7 +217,7 @@ class SpecUploadFile extends SpecUploadBase{
 			$this->isCsv = true;
 		}
 		//Grab header terms
-		$headerArr = Array();
+		$headerArr = array();
 		if($this->isCsv){
 			rewind($fHandler);
 			$headerArr = fgetcsv($fHandler,0,$this->delimiter);
@@ -239,7 +239,7 @@ class SpecUploadFile extends SpecUploadBase{
 	}
 
 	private function getRecordArr($fHandler){
-		$recordArr = Array();
+		$recordArr = array();
 		if($this->isCsv){
 			$recordArr = fgetcsv($fHandler,0,$this->delimiter);
 		}

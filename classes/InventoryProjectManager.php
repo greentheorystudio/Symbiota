@@ -6,7 +6,7 @@ class InventoryProjectManager {
 	private $conn;
 	private $pid;
 	private $googleUrl;
-	private $researchCoord = Array();
+	private $researchCoord = array();
 	private $isPublic = 1;
 	private $errorStr;
 
@@ -23,7 +23,7 @@ class InventoryProjectManager {
 	}
 
 	public function getProjectList(){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT pid, projname, managers, fulldescription '.
 			'FROM fmprojects '.
 			'WHERE ispublic = 1 '.
@@ -40,7 +40,7 @@ class InventoryProjectManager {
 	}
 
 	public function getProjectData(){
-		$returnArr = Array();
+		$returnArr = array();
 		if($this->pid){
 			$sql = 'SELECT pid, projname, managers, fulldescription, notes, '.
 				'occurrencesearch, ispublic, sortsequence '.
@@ -110,7 +110,7 @@ class InventoryProjectManager {
 	
 	public function getResearchChecklists(){
 		global $USER_RIGHTS;
-		$retArr = Array();
+		$retArr = array();
 		if($this->pid){
 			$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access '.
 				'FROM fmchklstprojlink cpl INNER JOIN fmchecklists c ON cpl.clid = c.clid '.
@@ -222,7 +222,7 @@ class InventoryProjectManager {
 	//Misc functions
 	public function getClAddArr(){
 		global $USER_RIGHTS;
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT c.clid, c.name, c.access '.
 			'FROM fmchecklists c LEFT JOIN (SELECT clid FROM fmchklstprojlink WHERE (pid = '.$this->pid.')) pl ON c.clid = pl.clid '.
 			'WHERE (pl.clid IS NULL) AND (c.access = "public" ';
@@ -243,7 +243,7 @@ class InventoryProjectManager {
 	}
 
 	public function getClDeleteArr(){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = 'SELECT c.clid, c.name '.
 			'FROM fmchecklists c INNER JOIN fmchklstprojlink pl ON c.clid = pl.clid '.
 			'WHERE (pl.pid = '.$this->pid.') '.

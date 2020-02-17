@@ -3,7 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $occId = $con->real_escape_string($_REQUEST['occid']);
 
 $sql = 'SELECT cl.clid, cl.name '.

@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 header('Content-Type: application/json; charset=' .$CHARSET);
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $term = $con->real_escape_string($_REQUEST['term']);
 
 $sql = 'SELECT DISTINCT tid, sciname ' .

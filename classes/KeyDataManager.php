@@ -13,10 +13,10 @@ class KeyDataManager extends Manager{
 	private $clAuthors;
 	private $clType;
 	private $dynamicSql;
-	private $charArr = Array();
+	private $charArr = array();
 	private $taxaCount;
 	private $lang;
-    private $langArr = Array();
+    private $langArr = array();
 	private $commonDisplay = false;
 	private $pid;
 	private $dynClid;
@@ -60,7 +60,7 @@ class KeyDataManager extends Manager{
 	}
 
 	public function getTaxaFilterList(){
-		$returnArr = Array();
+		$returnArr = array();
 		$sql = "SELECT DISTINCT nt.UnitName1, ts.Family ";
 		if($this->clid && $this->clType == "static"){
 			$sql .= "FROM (taxstatus ts INNER JOIN taxa nt ON ts.tid = nt.tid) INNER JOIN fmchklsttaxalink cltl ON nt.TID = cltl.TID ".
@@ -205,9 +205,9 @@ class KeyDataManager extends Manager{
 	//								)
 	//							)
 	public function getCharList(){
-		$returnArray = Array();
+		$returnArray = array();
 		//Rate char list: Get list of char that are coded for a percentage of taxa list that is greater than
-		$charList = Array();
+		$charList = array();
 		$countMin = $this->taxaCount * $this->relevanceValue;
 		$loopCnt = 0;
 		while(!$charList && $loopCnt < 10){
@@ -247,9 +247,9 @@ class KeyDataManager extends Manager{
 			$result = $this->conn->query($sqlChar);
 
 			//Process recordset
-			$langList = Array();
-			$headingArray = Array();
-			$statesArray = Array();
+			$langList = array();
+			$headingArray = array();
+			$statesArray = array();
 			if(!$result) return null;
             $currentCID = '';
 			while($row = $result->fetch_object()){

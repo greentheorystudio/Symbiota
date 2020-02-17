@@ -22,7 +22,7 @@ $queryString = $_REQUEST['term'];
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:0;
 
 $qHandler = new TaxonomyAPIManager();
-$listArr = Array();
+$listArr = array();
 
 if($queryString){
     $qHandler->setLimit($limit);

@@ -781,7 +781,7 @@ class OccurrenceDuplicate {
 	}
 
 	public function getCollMap($collid){
-		$returnArr = Array();
+		$returnArr = array();
 		if($collid){
 			$sql = 'SELECT c.institutioncode, c.collectioncode, c.collectionname, '.
 				'c.icon, c.colltype, c.managementtype '.

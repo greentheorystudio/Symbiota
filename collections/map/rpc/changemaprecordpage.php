@@ -8,8 +8,8 @@ $cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:1
 $pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1; 
 $stArrJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
 $selArrJson = array_key_exists("selected",$_REQUEST)?$_REQUEST["selected"]:'';
-$stArr = Array();
-$selections = Array();
+$stArr = array();
+$selections = array();
 $allSelected = false;
 if($stArrJson){
 	$stArr = json_decode($stArrJson, true);

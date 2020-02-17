@@ -3,7 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $queryString = $con->real_escape_string($_REQUEST['term']);
 
 $sql = 'SELECT DISTINCT ometid, title, abbreviation FROM omexsiccatititles '.

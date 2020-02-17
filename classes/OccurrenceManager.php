@@ -6,10 +6,10 @@ include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
 class OccurrenceManager{
 
 	protected $conn;
-	protected $taxaArr = Array();
+	protected $taxaArr = array();
 	private $taxaSearchType;
-	protected $searchTermsArr = Array();
-	protected $localSearchArr = Array();
+	protected $searchTermsArr = array();
+	protected $localSearchArr = array();
 	protected $reset = 0;
 	private $clName;
 	private $collArrIndex = 0;
@@ -91,9 +91,9 @@ class OccurrenceManager{
 			$this->taxaSearchType = $this->searchTermsArr["taxontype"];
 			$taxaArr = explode(";",trim($this->searchTermsArr["taxa"]));
 			//Set scientific name
-			$this->taxaArr = Array();
+			$this->taxaArr = array();
 			foreach($taxaArr as $sName){
-				$this->taxaArr[trim($sName)] = Array();
+				$this->taxaArr[trim($sName)] = array();
 			}
 			if($this->taxaSearchType == 5){
 				//Common name search
@@ -183,7 +183,7 @@ class OccurrenceManager{
 		if(array_key_exists("country",$this->searchTermsArr)){
 			$searchStr = str_replace("%apos;","'",$this->searchTermsArr["country"]);
 			$countryArr = explode(";",$searchStr);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($countryArr as $k => $value){
 				if($value == 'NULL'){
 					$countryArr[$k] = 'Country IS NULL';
@@ -199,7 +199,7 @@ class OccurrenceManager{
 		if(array_key_exists("state",$this->searchTermsArr)){
 			$searchStr = str_replace("%apos;","'",$this->searchTermsArr["state"]);
 			$stateAr = explode(";",$searchStr);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($stateAr as $k => $value){
 				if($value == 'NULL'){
 					$tempArr[] = '(o.StateProvince IS NULL)';
@@ -215,7 +215,7 @@ class OccurrenceManager{
 		if(array_key_exists("county",$this->searchTermsArr)){
 			$searchStr = str_replace("%apos;","'",$this->searchTermsArr["county"]);
 			$countyArr = explode(";",$searchStr);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($countyArr as $k => $value){
 				if($value == 'NULL'){
 					$tempArr[] = '(o.county IS NULL)';
@@ -232,7 +232,7 @@ class OccurrenceManager{
 		if(array_key_exists("local",$this->searchTermsArr)){
 			$searchStr = str_replace("%apos;","'",$this->searchTermsArr["local"]);
 			$localArr = explode(";",$searchStr);
-			$tempArr = Array();
+			$tempArr = array();
 			foreach($localArr as $k => $value){
 				$value = trim($value);
 				if($value == 'NULL'){
@@ -256,7 +256,7 @@ class OccurrenceManager{
 			$elevhigh = 30000;
 			if (array_key_exists("elevlow",$this->searchTermsArr))  { $elevlow = $this->searchTermsArr["elevlow"]; }
 			if (array_key_exists("elevhigh",$this->searchTermsArr))  { $elevhigh = $this->searchTermsArr["elevhigh"]; }
-			$tempArr = Array();
+			$tempArr = array();
 			$sqlWhere .= "AND ( " .
 						 "	  ( minimumElevationInMeters >= $elevlow AND maximumElevationInMeters <= $elevhigh ) OR " .
 						 "	  ( maximumElevationInMeters is null AND minimumElevationInMeters >= $elevlow AND minimumElevationInMeters <= $elevhigh ) ".
@@ -265,7 +265,7 @@ class OccurrenceManager{
         if(array_key_exists("assochost",$this->searchTermsArr)){
             $searchStr = str_replace("%apos;","'",$this->searchTermsArr["assochost"]);
             $hostAr = explode(";",$searchStr);
-            $tempArr = Array();
+            $tempArr = array();
             foreach($hostAr as $k => $value){
                 if($value == 'NULL'){
                     $tempArr[] = '(o.StateProvince IS NULL)';
@@ -304,7 +304,7 @@ class OccurrenceManager{
 		if(array_key_exists("collector",$this->searchTermsArr)){
 			$searchStr = str_replace("%apos;","'",$this->searchTermsArr["collector"]);
 			$collectorArr = explode(";",$searchStr);
-			$tempArr = Array();
+			$tempArr = array();
 			if(count($collectorArr) == 1){
 				if($collectorArr[0] == 'NULL'){
 					$tempArr[] = '(o.recordedBy IS NULL)';
@@ -636,7 +636,7 @@ class OccurrenceManager{
 	}
 
 	public function outputFullCollArr($occArr, $targetCatID = 0){
-		global $DEFAULTCATID, $LANG;
+		global $DEFAULTCATID;
         if(!$targetCatID && $DEFAULTCATID) $targetCatID = $DEFAULTCATID;
         $collCnt = 0;
 		echo '<div style="position:relative">';
@@ -644,7 +644,7 @@ class OccurrenceManager{
 			$categoryArr = $occArr['cat'];
 			?>
 			<div style="float:right;margin-top:20px;">
-				<input type="submit" class="nextbtn searchcollnextbtn" value="<?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?>"  />
+				<input type="submit" class="nextbtn searchcollnextbtn" value="Next >"  />
 			</div>
 			<table style="float:left;width:80%;">
 				<?php
@@ -782,14 +782,14 @@ class OccurrenceManager{
 			if(!isset($occArr['cat'])){
 				?>
 				<div style="float:right;position:absolute;top:<?php echo count($collArr)*5; ?>px;right:0px;">
-					<input type="submit" class="nextbtn searchcollnextbtn" value="<?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?>" />
+					<input type="submit" class="nextbtn searchcollnextbtn" value="Next >" />
 				</div>
 				<?php
 			}
 			if(count($collArr) > 40){
 				?>
 				<div style="float:right;position:absolute;top:<?php echo count($collArr)*15; ?>px;right:0px;">
-					<input type="submit" class="nextbtn searchcollnextbtn" value="<?php echo isset($LANG['BUTTON_NEXT'])?$LANG['BUTTON_NEXT']:'Next >'; ?>" />
+					<input type="submit" class="nextbtn searchcollnextbtn" value="Next >" />
 				</div>
 				<?php
 			}
@@ -817,8 +817,8 @@ class OccurrenceManager{
 	}
 
 	public function getOccurVoucherProjects(){
-		$retArr = Array();
-		$titleArr = Array();
+		$retArr = array();
+		$titleArr = array();
 		$sql = 'SELECT p2.pid AS parentpid, p2.projname as catname, p1.pid, p1.projname, '.
 			'c.clid, c.name as clname '.
 			'FROM fmprojects p1 INNER JOIN fmprojects p2 ON p1.parentpid = p2.pid '.
@@ -875,7 +875,7 @@ class OccurrenceManager{
 	}
 
 	public function getTaxaSearchStr(){
-		$returnArr = Array();
+		$returnArr = array();
 		foreach($this->taxaArr as $taxonName => $taxonArr){
 			$str = $taxonName;
 			if(array_key_exists("sciname",$taxonArr)){
@@ -895,7 +895,7 @@ class OccurrenceManager{
 
     public function getSearchResultUrl(){
         $url = '?';
-        $stPieces = Array();
+        $stPieces = array();
         foreach($this->searchTermsArr as $i => $v){
             if($v){
                 $stPieces[] = $i.'='.$v;
@@ -909,7 +909,7 @@ class OccurrenceManager{
     }
 
 	public function getTaxonAuthorityList(){
-		$taxonAuthorityList = Array();
+		$taxonAuthorityList = array();
 		$sql = "SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)";
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
@@ -1020,7 +1020,7 @@ class OccurrenceManager{
 				unset($this->searchTermsArr["taxa"]);
 			}
 		}
-		$searchArr = Array();
+		$searchArr = array();
 		$searchFieldsActivated = false;
 		if(array_key_exists("country",$_REQUEST)){
 			$country = $this->cleanInputStr($_REQUEST["country"]);
@@ -1235,7 +1235,7 @@ class OccurrenceManager{
 			$this->searchTermsArr["targetclid"] = $_REQUEST["targetclid"];
 			$searchFieldsActivated = true;
 		}
-		$latLongArr = Array();
+		$latLongArr = array();
 		if(array_key_exists("upperlat",$_REQUEST)){
 			if(is_numeric($_REQUEST["upperlat"]) && is_numeric($_REQUEST["bottomlat"]) && is_numeric($_REQUEST["leftlong"]) && is_numeric($_REQUEST["rightlong"])){
 				$upperLat = $_REQUEST["upperlat"];

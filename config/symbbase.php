@@ -13,8 +13,8 @@ if(substr($SERVER_ROOT,-1) === '/'){
 	$SERVER_ROOT = substr($SERVER_ROOT,0, -1);
 }
 
-$PARAMS_ARR = Array();
-$USER_RIGHTS = Array();
+$PARAMS_ARR = array();
+$USER_RIGHTS = array();
 if(!isset($_SESSION['userparams'])){
     if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
         $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);

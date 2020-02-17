@@ -32,7 +32,7 @@ class ChecklistLoaderManager {
 
 		$fh = fopen($_FILES['uploadfile']['tmp_name'], 'rb') or die("Can't open file. File may be too large. Try uploading file in sections.");
 
-		$headerArr = Array();
+		$headerArr = array();
 		$headerData = fgetcsv($fh);
 		foreach($headerData as $k => $v){
 			$vStr = strtolower($v);
@@ -52,7 +52,7 @@ class ChecklistLoaderManager {
 					$tid = 0;
 					$rankId = 0;
 					$family = '';
-					$sciNameArr = TaxonomyUtilities::parseScientificName($sciNameStr,$this->conn);
+					$sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
 					if($thesId && is_numeric($thesId)){
 						$sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
 							'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.
@@ -227,7 +227,7 @@ class ChecklistLoaderManager {
 
 	public function getThesauri(): array
 	{
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT taxauthid, name FROM taxauthority WHERE isactive = 1';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){

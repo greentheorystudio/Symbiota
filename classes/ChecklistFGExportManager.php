@@ -11,7 +11,7 @@ class ChecklistFGExportManager {
     private $linkTable = '';
     private $sqlWhereVar = '';
     private $sqlTaxaStr = '';
-	private $dataArr = Array();
+	private $dataArr = array();
 	private $index = 0;
     private $recLimit = 0;
 	private $thesFilter = 1;
@@ -267,7 +267,7 @@ class ChecklistFGExportManager {
 
     public function getDescSourceList(): array
     {
-        $descSourceList = Array();
+        $descSourceList = array();
         $sql = 'SELECT DISTINCT tdb.caption '.
             'FROM taxadescrblock AS tdb '.
             'WHERE tdb.tid IN('.$this->sqlTaxaStr.') '.
@@ -283,7 +283,7 @@ class ChecklistFGExportManager {
 
     public function getPhotogList(): array
     {
-        $photogList = Array();
+        $photogList = array();
         $sql = 'SELECT DISTINCT ti.photographeruid, ti.photographer, u.firstname, u.lastname '.
             'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
             'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.

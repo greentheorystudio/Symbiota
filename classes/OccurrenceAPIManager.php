@@ -39,7 +39,7 @@ class OccurrenceAPIManager{
 
     public function getOccLookupArr(){
         global $USER_RIGHTS;
-        $returnArr = Array();
+        $returnArr = array();
         $sql = 'SELECT o.occid, o.collid, o.dbpk, o.institutioncode, o.collectioncode, o.catalogNumber, o.otherCatalogNumbers, o.family, '.
             'o.sciname, o.tidinterpreted, o.scientificNameAuthorship, o.recordedBy, o.recordNumber, o.eventDate, o.country, '.
             'o.stateProvince, o.county, o.locality, o.decimallatitude, o.decimallongitude, o.LocalitySecurity, '.

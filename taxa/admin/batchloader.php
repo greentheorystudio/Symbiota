@@ -1,25 +1,29 @@
 <?php
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/taxa/admin/batchloader.php');
+include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
+}
 ini_set('max_execution_time', 3600);
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-$ulFileName = array_key_exists("ulfilename",$_REQUEST)?$_REQUEST["ulfilename"]:"";
-$ulOverride = array_key_exists("uloverride",$_REQUEST)?$_REQUEST["uloverride"]:"";
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';
+$ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']: '';
 $taxAuthId = (array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1);
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
 $loaderManager = new TaxonomyUpload();
+$taxaUtilities = new TaxonomyUtilities();
 $loaderManager->setTaxaAuthId($taxAuthId);
 
-$status = "";
-$fieldMap = Array();
+$status = '';
+$fieldMap = array();
 if($isEditor){
 	if($ulFileName){
 		$loaderManager->setFileName($ulFileName);
@@ -28,16 +32,17 @@ if($isEditor){
 		$loaderManager->setUploadFile($ulOverride);
 	}
 
-	if(array_key_exists("sf",$_REQUEST)){
-		//Grab field mapping, if mapping form was submitted
- 		$targetFields = $_REQUEST["tf"];
- 		$sourceFields = $_REQUEST["sf"];
-		for($x = 0;$x<count($targetFields);$x++){
-			if($targetFields[$x] && $sourceFields[$x]) $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+	if(array_key_exists('sf',$_REQUEST)){
+		$targetFields = $_REQUEST['tf'];
+ 		$sourceFields = $_REQUEST['sf'];
+		for($x = 0, $xMax = count($targetFields); $x< $xMax; $x++){
+			if($targetFields[$x] && $sourceFields[$x]) {
+                $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+            }
 		}
 	}
 
-	if($action == 'downloadcsv'){
+	if($action === 'downloadcsv'){
 		$loaderManager->exportUploadTaxa();
 		exit;
 	}
@@ -51,48 +56,40 @@ if($isEditor){
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function toggle(target){
-			var tDiv = document.getElementById(target);
+			const tDiv = document.getElementById(target);
 			if(tDiv != null){
-				if(tDiv.style.display=="none"){
-					tDiv.style.display="block";
+				if(tDiv.style.display === "none"){
+					tDiv.style.display = "block";
 				}
 			 	else {
-			 		tDiv.style.display="none";
+			 		tDiv.style.display = "none";
 			 	}
 			}
 			else{
-			  	var divs = document.getElementsByTagName("div");
-			  	for (var i = 0; i < divs.length; i++) {
-			  	var divObj = divs[i];
-					if(divObj.className == target){
-						if(divObj.style.display=="none"){
-							divObj.style.display="block";
-						}
-					 	else {
-					 		divObj.style.display="none";
-					 	}
-					}
+			  	const divs = document.getElementsByTagName("div");
+			  	for (let i = 0; i < divs.length; i++) {
+			  	const divObj = divs[i];
+                if(divObj.className === target){
+                    if(divObj.style.display === "none"){
+                        divObj.style.display = "block";
+                    }
+                    else {
+                        divObj.style.display = "none";
+                    }
+                }
 				}
 			}
 		}
 
-		function verifyItisUploadForm(f){
-			if(f.uploadfile.value == "" && f.uloverride.value == ""){
-				alert("Please enter a path value of the file you wish to upload");
-				return false;
-			}
-			return true;
-		}
-
 		function verifyUploadForm(f){
-			var inputValue = f.uploadfile.value;
-			if(inputValue == "") inputValue = f.uloverride.value;
-			if(inputValue == ""){
+			let inputValue = f.uploadfile.value;
+			if(inputValue === "") inputValue = f.uloverride.value;
+			if(inputValue === ""){
 				alert("Please enter a path value of the file you wish to upload");
 				return false;
 			}
 			else{
-				if(inputValue.indexOf(".csv") == -1 && inputValue.indexOf(".CSV") == -1 && inputValue.indexOf(".zip") == -1){
+				if(inputValue.indexOf(".csv") === -1 && inputValue.indexOf(".CSV") === -1 && inputValue.indexOf(".zip") === -1){
 					alert("Upload file must be a CSV or ZIP file");
 					return false;
 				}
@@ -100,7 +97,7 @@ if($isEditor){
 			return true;
 		}
 
-		function checkTransferForm(f){
+		function checkTransferForm(){
 			return true;
 		}
 	</script>
@@ -127,7 +124,7 @@ if($isEditor){
 				pages for more details on the Taxonomic Thesaurus layout.
 			</div>
 			<?php
-			if($action == 'Map Input File' || $action == 'Verify Mapping'){
+			if($action === 'Map Input File' || $action === 'Verify Mapping'){
 				?>
 				<form name="mapform" action="batchloader.php" method="post">
 					<fieldset style="width:90%;">
@@ -155,28 +152,28 @@ if($isEditor){
 										<input type="hidden" name="sf[]" value="<?php echo $sField; ?>" />
 									</td>
 									<td>
-										<select name="tf[]" style="background:<?php echo (array_key_exists($sField,$fieldMap)?"":"yellow");?>">
+										<select name="tf[]" style="background:<?php echo (array_key_exists($sField,$fieldMap)? '' : 'yellow');?>">
 											<option value="">Field Unmapped</option>
 											<option value="">-------------------------</option>
 											<?php
-											$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]:"");
-											$selStr = "";
-											if($mappedTarget=="unmapped") $selStr = "SELECTED";
-											echo "<option value='unmapped' ".$selStr.">Leave Field Unmapped</option>";
+											$mappedTarget = (array_key_exists($sField,$fieldMap)?$fieldMap[$sField]: '');
+											$selStr = '';
+											if($mappedTarget === 'unmapped') {
+                                                $selStr = 'SELECTED';
+                                            }
+											echo "<option value='unmapped' ".$selStr. '>Leave Field Unmapped</option>';
 											if($selStr){
 												$selStr = 0;
 											}
 											foreach($tArr as $k => $tField){
-												if($selStr !== 0 && $tField == "scinameinput" && (strtolower($sField == "sciname") || strtolower($sField) == "scientific name")){
-													$selStr = "SELECTED";
+												if($selStr !== 0 && (
+												        ($mappedTarget && $mappedTarget === $tField) ||
+                                                        ($tField === $sField && $tField !== 'sciname') ||
+                                                        ($tField === 'scinameinput' && (strtolower($sField) === 'sciname' || strtolower($sField) === 'scientific name'))
+                                                    )){
+													$selStr = 'SELECTED';
 												}
-												elseif($selStr !== 0 && $mappedTarget && $mappedTarget == $tField){
-													$selStr = "SELECTED";
-												}
-												elseif($selStr !== 0 && $tField==$sField && $tField != "sciname"){
-													$selStr = "SELECTED";
-												}
-												echo '<option value="'.$k.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
+												echo '<option value="'.$k.'" '.($selStr?:'').'>'.$tField."</option>\n";
 												if($selStr){
 													$selStr = 0;
 												}
@@ -202,23 +199,19 @@ if($isEditor){
 				</form>
 				<?php
 			}
-			elseif(substr($action,0,6) == 'Upload' || $action == 'Analyze Taxa'){
+			elseif($action === 'Analyze Taxa' || strpos($action, 'Upload') === 0){
 				echo '<ul>';
-				if($action == 'Upload Taxa'){
+				if($action === 'Upload Taxa'){
 					$loaderManager->loadFile($fieldMap);
 					$loaderManager->cleanUpload();
 				}
-				elseif($action == "Upload ITIS File"){
-					$loaderManager->loadItisFile($fieldMap);
-					$loaderManager->cleanUpload();
-				}
-				elseif($action == 'Analyze Taxa'){
+				elseif($action === 'Analyze Taxa'){
 					$loaderManager->cleanUpload();
 				}
 				$reportArr = $loaderManager->analysisUpload();
 				echo '</ul>';
 				?>
-				<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm(this)">
+				<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm();">
 					<fieldset style="width:450px;">
 						<legend style="font-weight:bold;font-size:120%;">Transfer Taxa To Central Table</legend>
 						<div style="margin:10px;">
@@ -228,12 +221,14 @@ if($isEditor){
 							<?php
 							$statArr = $loaderManager->getStatArr();
 							if($statArr){
-								if(isset($statArr['upload'])) echo '<u>Taxa uploaded</u>: <b>'.$statArr['upload'].'</b><br/>';
+								if(isset($statArr['upload'])) {
+                                    echo '<u>Taxa uploaded</u>: <b>' . $statArr['upload'] . '</b><br/>';
+                                }
 								echo '<u>Total taxa</u>: <b>'.$statArr['total'].'</b> (includes new parent taxa)<br/>';
-								echo '<u>Taxa already in thesaurus</u>: <b>'.(isset($statArr['exist'])?$statArr['exist']:0).'</b><br/>';
-								echo '<u>New taxa</u>: <b>'.(isset($statArr['new'])?$statArr['new']:0).'</b><br/>';
-								echo '<u>Accepted taxa</u>: <b>'.(isset($statArr['accepted'])?$statArr['accepted']:0).'</b><br/>';
-								echo '<u>Non-accepted taxa</u>: <b>'.(isset($statArr['nonaccepted'])?$statArr['nonaccepted']:0).'</b><br/>';
+								echo '<u>Taxa already in thesaurus</u>: <b>'.($statArr['exist'] ?? 0).'</b><br/>';
+								echo '<u>New taxa</u>: <b>'.($statArr['new'] ?? 0).'</b><br/>';
+								echo '<u>Accepted taxa</u>: <b>'.($statArr['accepted'] ?? 0).'</b><br/>';
+								echo '<u>Non-accepted taxa</u>: <b>'.($statArr['nonaccepted'] ?? 0).'</b><br/>';
 								if(isset($statArr['bad'])){
 									?>
 									<fieldset style="margin:15px;padding:15px;">
@@ -263,7 +258,7 @@ if($isEditor){
 								<?php
 								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 								foreach($taxonAuthArr as $k => $v){
-									echo '<option value="'.$k.'" '.($k==$taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+									echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 								}
 								?>
 							</select>
@@ -280,17 +275,18 @@ if($isEditor){
 				</form>
 				<?php
 			}
-			elseif($action == "Activate Taxa"){
+			elseif($action === 'Activate Taxa'){
 				echo '<ul>';
-				$loaderManager->transferUpload($taxAuthId);
-				echo "<li>Taxa upload appears to have been successful.</li>";
-				echo "<li>Go to <a href='taxonomydisplay.php'>Taxonomic Tree Search</a> page to query for a loaded name.</li>";
+				$loaderManager->transferUpload();
+                $taxaUtilities->buildHierarchyEnumTree($taxAuthId);
+				echo '<li>Taxa upload appears to have been successful.</li>';
+				echo "<li>Go to the <a href='taxonomydynamicdisplay.php'>Taxonomy Explorer</a> to search for a loaded name.</li>";
 				echo '</ul>';
 			}
 			else{
 				?>
 				<div>
-					<form name="uploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this)">
+					<form name="uploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this);">
 						<fieldset style="width:90%;">
 							<legend style="font-weight:bold;font-size:120%;">Taxa Upload Form</legend>
 							<div style="margin:10px;">
@@ -340,45 +336,6 @@ if($isEditor){
 					</form>
 				</div>
 				<div>
-					<form name="itisuploadform" action="batchloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyItisUploadForm(this)">
-						<fieldset style="width:90%;">
-							<legend style="font-weight:bold;font-size:120%;">ITIS Upload File</legend>
-							<div style="margin:10px;">
-								ITIS data extract from the <a href="http://www.itis.gov/access.html" target="_blank">ITIS Download Page</a> can be uploaded
-								using this function. Note that the file needs to be in their single file pipe-delimited format
-								(example: <a href="CyprinidaeItisExample.bin">CyprinidaeItisExample.bin</a>).
-								File might have .csv extension, even though it is NOT comma delimited.
-								This upload option is not guaranteed to work if the ITIS download format change often.
-								Large data files can be compressed as a ZIP file before import.
-								If the file upload step fails without displaying an error message, it is possible that the
-								file size exceeds the file upload limits set within your PHP installation (see your php configuration file).
-								If synonyms and vernaculars are included, these data will also be incorporated into the upload process.
-							</div>
-							<input type='hidden' name='MAX_FILE_SIZE' value='100000000' />
-							<div class="itisoverrideopt">
-								<b>Upload File:</b>
-								<div style="margin:10px;">
-									<input id="itisuploadfile" name="uploadfile" type="file" size="40" />
-								</div>
-							</div>
-							<div class="itisoverrideopt" style="display:none;">
-								<b>Full File Path:</b>
-								<div style="margin:10px;">
-									<input name="uloverride" type="text" size="50" /><br/>
-									* This option is for manual upload of a data file.
-									Enter full path to data file located on working server.
-								</div>
-							</div>
-							<div style="margin:10px;">
-								<input type="submit" name="action" value="Upload ITIS File" />
-							</div>
-							<div style="float:right;">
-								<a href="#" onclick="toggle('itisoverrideopt');return false;">Toggle Manual Upload Option</a>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-				<div>
 					<form name="analyzeform" action="batchloader.php" method="post">
 						<fieldset style="width:90%;">
 							<legend style="font-weight:bold;font-size:120%;">Clean and Analyze</legend>
@@ -392,7 +349,7 @@ if($isEditor){
 									<?php
 									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 									foreach($taxonAuthArr as $k => $v){
-										echo '<option value="'.$k.'" '.($k==$taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+										echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 									}
 									?>
 								</select>

@@ -91,9 +91,9 @@ class DichoKeyManager{
 		}
 		//echo $sql."<br/>";
 		$result = $con->query($sql);
-		$parentArr = Array();
-		$taxaArr = Array();
-		$tempTaxa = Array();
+		$parentArr = array();
+		$taxaArr = array();
+		$tempTaxa = array();
 		while($row = $result->fetch_object()){
 			$childTid = $row->tid;
 			if($row->hierarchystr){
@@ -113,13 +113,13 @@ class DichoKeyManager{
 		$result->close();
 
 		//Build dichotomous key hierarchy and link taxa to nodes defined by stmtid ($taxaMap)
-		$stmtTaxaMap = Array();
+		$stmtTaxaMap = array();
 		$sql = "SELECT dk.stmtid, dk.statement, dk.hierarchystr, dk.tid ".
 			"FROM dichotomouskey dk INNER JOIN taxa t ON dk.tid = t.tid ".
 			"WHERE dk.tid IN(".implode(",",array_keys($parentArr)).") ORDER BY t.rankid DESC ";
 		$result = $con->query($sql);
 		//echo $sql;
-		$stmtArr = Array();
+		$stmtArr = array();
 		while($row = $result->fetch_object()){
 			$hArr = explode(",",$row->hierarchystr);
 			$pStmt = 0;
@@ -130,7 +130,7 @@ class DichoKeyManager{
 				}
 			}
 			$stmtArr[$pStmt][$row->stmtid] = ($row->tid?$row->tid:0);
-			$children = Array();
+			$children = array();
 			$child = $row->tid;
 			do{
 				$keys = array_keys($parentArr,$child);
@@ -148,7 +148,7 @@ class DichoKeyManager{
 		
 		//Filter out insignificant stmt nodes (nodes w/o branches)
 		ksort($stmtArr);
-		//$tempStmtArr = Array();
+		//$tempStmtArr = array();
 		foreach($stmtArr as $p => $sArr){
 			while(is_array($sArr) && count($sArr) == 1){
 				$taxon = current($sArr);
@@ -176,7 +176,7 @@ class DichoKeyManager{
 		}
 		
 		//Grab statements for active stmtids and add to map
-		$tempArr = Array();
+		$tempArr = array();
 		foreach($stmtArr as $k => $innerArr){
 			$tempArr = array_merge($tempArr,array_keys($innerArr));
 		}

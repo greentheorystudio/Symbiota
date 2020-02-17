@@ -10,7 +10,7 @@ $collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
 $totalCnt = array_key_exists("totalcnt",$_REQUEST)?$_REQUEST["totalcnt"]:0;
 
 $collManager = new OccurrenceCollectionProfile();
-$orderArr = Array();
+$orderArr = array();
 
 if($collId){
 	$orderArr = $collManager->getOrderStatsDataArr($collId);

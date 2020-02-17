@@ -9,8 +9,8 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
 }
 
 $collManager = new OccurrenceManager();
-$collArr = Array();
-$stArr = Array();
+$collArr = array();
+$stArr = array();
 $stArrCollJson = '';
 $stArrSearchJson = '';
 

@@ -13,7 +13,7 @@ if($IS_ADMIN){
 
 $importManager = new ImageImport();
 
-$fieldMap = Array();			//array(sourceField => symbIndex)
+$fieldMap = array();			//array(sourceField => symbIndex)
 if($isEditor){
 	if($action){
 		$importManager->setUploadFile($ulFileName);

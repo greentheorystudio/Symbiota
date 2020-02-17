@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 
 $clid = $_REQUEST['cl'];
 
-$returnArr = Array();
+$returnArr = array();
 if(is_numeric($clid)){
 	$connection = new DbConnection();
 	$conn = $connection->getConnection();

@@ -14,7 +14,7 @@ if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
 }
 
 if($isEditor){
-	if($action == 'buildenumtree'){
+	if($action === 'buildenumtree'){
 		if($harvesterManager->buildHierarchyEnumTree()){
 			$statusStr = 'SUCCESS building Taxonomic Index';
 		}
@@ -22,7 +22,7 @@ if($isEditor){
 			$statusStr = 'ERROR building Taxonomic Index: '.$harvesterManager->getErrorMessage();
 		}
 	}
-	elseif($action == 'rebuildenumtree'){
+	elseif($action === 'rebuildenumtree'){
 		if($harvesterManager->rebuildHierarchyEnumTree()){
 			$statusStr = 'SUCCESS building Taxonomic Index';
 		}

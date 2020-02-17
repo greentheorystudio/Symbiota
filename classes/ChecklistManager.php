@@ -11,7 +11,7 @@ class ChecklistManager {
 	private $voucherArr = array();
 	private $pid = '';
 	private $projName = '';
-	private $taxaList = Array();
+	private $taxaList = array();
 	private $thesFilter = 0;
 	private $taxonFilter;
 	private $showAuthors;
@@ -21,7 +21,7 @@ class ChecklistManager {
 	private $showAlphaTaxa;
 	private $searchCommon;
 	private $searchSynonyms;
-	private $filterArr = Array();
+	private $filterArr = array();
 	private $imageLimit = 100;
 	private $taxaLimit = 500;
 	private $speciesCount = 0;
@@ -134,7 +134,7 @@ class ChecklistManager {
 	}
 
 	public function getTaxonAuthorityList(){
-    	$taxonAuthList = Array();
+    	$taxonAuthList = array();
 		$sql = "SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)";
  		$rs = $this->conn->query($sql);
 		while ($row = $rs->fetch_object()){
@@ -149,9 +149,9 @@ class ChecklistManager {
 		if(!$this->clid && !$this->dynClid) return;
 		//Get species list
 		$speciesPrev="";$taxonPrev="";
-		$tidReturn = Array();
-        $genusCntArr = Array();
-        $familyCntArr = Array();
+		$tidReturn = array();
+        $genusCntArr = array();
+        $familyCntArr = array();
 		if($this->showImages && $retLimit) $retLimit = $this->imageLimit;
 		if(!$this->basicSql) $this->setClSql();
 		$result = $this->conn->query($this->basicSql);
@@ -488,7 +488,7 @@ class ChecklistManager {
 	//Checklist index page fucntions
 	public function getChecklists(){
 		global $USER_RIGHTS;
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access '.
 			'FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid '.
 			'LEFT JOIN fmprojects p ON cpl.pid = p.pid '.

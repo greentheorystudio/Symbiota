@@ -62,7 +62,7 @@ class ImageLocalProcessor {
      *   to contain more than one record for the same path (for image 
      *   uploads from an institution with more than one collection code).
      */
-    private $processedFiles = Array();  
+    private $processedFiles = array();
  
 
 	function __construct(){
@@ -1057,7 +1057,7 @@ class ImageLocalProcessor {
 					while($recordArr = $this->getRecordArr($fh,$delimiter)){
 						//Clean record and creaet map array
 						$catNum = 0;
-						$recMap = Array();
+						$recMap = array();
 						foreach($headerArr as $k => $hStr){
 							if($hStr == 'catalognumber') $catNum = $recordArr[$k];
 							if(array_key_exists($hStr,$symbMap)){
@@ -1354,7 +1354,7 @@ class ImageLocalProcessor {
 
 	private function getRecordArr($fh, $delimiter){
 		if(!$delimiter) return;
-		$recordArr = Array();
+		$recordArr = array();
 		if($delimiter == 'csv'){
 			$recordArr = fgetcsv($fh);
 		}

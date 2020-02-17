@@ -3109,7 +3109,46 @@ INSERT INTO userroles(uid,role) VALUES (1,"SuperAdmin");
 
 -- Prime taxonunits table
 INSERT IGNORE INTO `taxonunits`(rankid,rankname, dirparentrankid, reqparentrankid)
-  VALUES (1,"Organism",1,1),(10,"Kingdom",1,1),(20,"Subkingdom",10,10),(30,"Division",20,10),(40,"Subdivision",30,30),(50,"Superclass",40,30),(60,"Class",50,30),(70,"Subclass",60,60),(100,"Order",70,60),(110,"Suborder",100,100),(140,"Family",110,100),(150,"Subfamily",140,140),(160,"Tribe",150,140),(170,"Subtribe",160,140),(180,"Genus",170,140),(190,"Subgenus",180,180),(200,"Section",190,180),(210,"Subsection",200,180),(220,"Species",210,180),(230,"Subspecies",220,180),(240,"Variety",220,180),(250,"Subvariety",240,180),(260,"Form",220,180),(270,"Subform",260,180),(300,"Cultivated",220,220);
+  VALUES
+    (1,"Organism",1,1),
+    (10,"Kingdom",1,1),
+    (20,"Subkingdom",10,10),
+    (25,"Infrakingdom",20,10),
+    (27,"Superphylum",25,10),
+    (30,"Phylum",27,10),
+    (40,"Subphylum",30,30),
+    (45,"Infraphylum",40,30),
+    (47,"Parvphylum",45,30),
+    (50,"Superclass",47,30),
+    (60,"Class",50,30),
+    (70,"Subclass",60,60),
+    (80,"Infraclass",70,60),
+    (90,"Superorder",70,60),
+    (100,"Order",90,60),
+    (110,"Suborder",100,100),
+    (120,"Infraorder",110,100),
+    (124,"Section",120,100),
+    (126,"Subsection",124,100),
+    (130,"Superfamily",120,110),
+    (140,"Family",110,100),
+    (150,"Subfamily",140,140),
+    (160,"Tribe",150,140),
+    (170,"Subtribe",160,140),
+    (180,"Genus",170,140),
+    (190,"Subgenus",180,180),
+    (200,"Section",190,180),
+    (210,"Subsection",200,180),
+    (220,"Species",210,180),
+    (230,"Subspecies",220,180),
+    (240,"Variety",220,180),
+    (245,"Form",220,220),
+    (250,"Subvariety",240,180),
+    (255,"Stirp",220,220),
+    (260,"Form",220,180),
+    (265,"Aberration",220,220),
+    (270,"Subform",260,180),
+    (290,"Cultivated",220,220),
+    (300,"Unspecified",220,220);
 
 INSERT INTO `taxauthority` (`taxauthid`, `isprimary`, `name`) VALUES ('1', '1', 'Central Thesaurus');
 

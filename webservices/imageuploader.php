@@ -41,7 +41,7 @@ $qHandler = new OccurrenceAPIManager();
 $occManager = new OccurrenceEditorImages();
 $authenticated = false;
 $isEditor = false;
-$size = Array();
+$size = array();
 
 if($_FILES){
 	@$size = getimagesize(str_replace(' ', '%20', $_FILES['imgfile']['tmp_name']));

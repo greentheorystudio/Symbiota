@@ -4,8 +4,8 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 header('Content-Type: application/json; charset=' .$CHARSET);
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retColArr = Array();
-$retArr = Array();
+$retColArr = array();
+$retArr = array();
 $term = $_REQUEST['term'];
 
 $colData = file_get_contents('http://www.catalogueoflife.org/col/webservice?name='.$term.'*&format=php&response=terse');

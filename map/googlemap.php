@@ -20,7 +20,7 @@ $solrManager = new SOLRManager();
 $sharedMapManager->setFieldArr(0);
 
 $mapWhere = '';
-$stArr = Array();
+$stArr = array();
 $genObs = $sharedMapManager->getGenObsInfo();
 
 if($mapType == 'taxa'){
@@ -138,7 +138,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 			
            <?php 
 			$coordExist = false;
-			$iconKeys = Array(); 
+			$iconKeys = array(); 
 			$markerCnt = 0;
 			$spCnt = 1;
 			$minLng = 180;

@@ -209,7 +209,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	//Misc data retrival functions 
 	public function getDwcaItems($collid = 0){
 		global $SERVER_ROOT;
-	    $retArr = Array();
+	    $retArr = array();
 		$rssFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'webservices/dwc/rss.xml';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();

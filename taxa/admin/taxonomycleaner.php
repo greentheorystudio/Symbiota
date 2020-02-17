@@ -1,24 +1,19 @@
 <?php
-//error_reporting(E_ALL);
 include_once('../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collId = $_REQUEST["collid"];
 $displayIndex = array_key_exists('displayindex',$_REQUEST)?$_REQUEST['displayindex']:0;
 $analyzeIndex = array_key_exists('analyzeindex',$_REQUEST)?$_REQUEST['analyzeindex']:0;
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:0;
 
-$cleanManager;
+$cleanManager = new TaxonomyCleaner();
 $collName = '';
 
 if($collId){
-	$cleanManager = new TaxonomyCleaner();
 	$cleanManager->setCollId($collId);
 	$collName = $cleanManager->getCollectionName();
-}
-else{
-	$cleanManager = new TaxonomyCleaner();
 }
 if($taxAuthId){
 	$cleanManager->setTaxAuthId($taxAuthId);
@@ -30,7 +25,7 @@ if($IS_ADMIN){
 }
 else{
 	if($collId){
-		if(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])){
+		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
 			$isEditor = true;
 		}
 	}

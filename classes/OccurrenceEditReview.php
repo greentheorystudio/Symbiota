@@ -84,7 +84,7 @@ class OccurrenceEditReview extends Manager{
 
 	private function getOccurEditArr(): array
 	{
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT e.ocedid,e.occid,o.catalognumber,e.fieldname,e.fieldvaluenew,e.fieldvalueold,e.reviewstatus,e.appliedstatus,'.
 			'CONCAT_WS(", ",u.lastname,u.firstname) AS username, e.initialtimestamp '.
 			$this->getEditSqlBase().' ORDER BY e.initialtimestamp DESC, e.fieldname ASC '.
@@ -149,7 +149,7 @@ class OccurrenceEditReview extends Manager{
 
 	private function getRevisionArr(): array
 	{
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT r.orid, r.occid, o.catalognumber, r.oldvalues, r.newvalues, r.externalsource, r.externaleditor, r.reviewstatus, r.appliedstatus, r.errormessage, '.
 			'CONCAT_WS(", ",u.lastname,u.firstname) AS username, r.externaltimestamp, r.initialtimestamp '.
 			$this->getRevisionSqlBase().' ORDER BY r.initialtimestamp DESC '.
@@ -542,7 +542,7 @@ class OccurrenceEditReview extends Manager{
 
 	public function getEditorList(): array
 	{
-		$retArr = Array();
+		$retArr = array();
 		if($this->display === 1){
 			$sql = 'SELECT DISTINCT u.uid AS id, CONCAT_WS(", ",u.lastname,u.firstname) AS name '.
 				'FROM omoccuredits e INNER JOIN omoccurrences o ON e.occid = o.occid '.

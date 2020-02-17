@@ -3,7 +3,7 @@ include_once('../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$retArr = Array();
+$retArr = array();
 $occid = $_POST['occid'];
 if(is_numeric($occid)){
 	$sql = 'SELECT recordedby, recordnumber, eventdate ' .

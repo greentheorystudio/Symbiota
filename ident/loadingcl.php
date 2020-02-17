@@ -7,7 +7,7 @@ $ExpStr = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
 Header($ExpStr);
 
  $symClid = 0;
- $attrsValues = Array();
+ $attrsValues = array();
  
  $clValue = array_key_exists("cl",$_REQUEST)?$_REQUEST["cl"]:""; 
  $symClid = array_key_exists("symclid",$_REQUEST)?$_REQUEST["symclid"]:0; 

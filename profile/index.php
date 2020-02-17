@@ -1,33 +1,35 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
-$remMe = array_key_exists("remember",$_POST)?$_POST["remember"]:'';
+$remMe = array_key_exists('remember',$_POST)?$_POST['remember']:'';
 $emailAddr = array_key_exists('emailaddr',$_POST)?$_POST['emailaddr']:'';
-$resetPwd = ((array_key_exists("resetpwd",$_REQUEST) && is_numeric($_REQUEST["resetpwd"]))?$_REQUEST["resetpwd"]:0);
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-if(!$action && array_key_exists('submit',$_REQUEST)) $action = $_REQUEST['submit'];
+$resetPwd = ((array_key_exists('resetpwd',$_REQUEST) && is_numeric($_REQUEST['resetpwd']))?$_REQUEST['resetpwd']:0);
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+if(!$action && array_key_exists('submit',$_REQUEST)) {
+    $action = $_REQUEST['submit'];
+}
 
-$refUrl = "";
-if(array_key_exists("refurl",$_REQUEST)){
-	$refGetStr = "";
+$refUrl = '';
+if(array_key_exists('refurl',$_REQUEST)){
+	$refGetStr = '';
 	foreach($_GET as $k => $v){
-		if($k != "refurl"){
-			if($k == "attr" && is_array($v)){
+		if($k !== 'refurl'){
+			if($k === 'attr' && is_array($v)){
 				foreach($v as $v2){
-					$refGetStr .= "&attr[]=".$v2;
+					$refGetStr .= '&attr[]=' .$v2;
 				}
 			}
 			else{
-				$refGetStr .= "&".$k."=".$v;
+				$refGetStr .= '&' .$k. '=' .$v;
 			}
 		}
 	}
-	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST["refurl"]));
-	if(substr($refUrl,-4) == ".php"){
-		$refUrl .= "?".substr($refGetStr,1);
+	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl']));
+	if(substr($refUrl,-4) === '.php'){
+		$refUrl .= '?' .substr($refGetStr,1);
 	}
 	else{
 		$refUrl .= $refGetStr;
@@ -36,47 +38,48 @@ if(array_key_exists("refurl",$_REQUEST)){
 
 $pHandler = new ProfileManager();
 
-$statusStr = "";
+$statusStr = '';
 
-//Sanitation
-if($login){
-	if(!$pHandler->setUserName($login)){
-		$login = '';
-		$statusStr = 'Invalid login name';
-	}
+if($login && !$pHandler->setUserName($login)) {
+    $login = '';
+    $statusStr = 'Invalid login name';
 }
-if($emailAddr){
-	if(!$pHandler->validateEmailAddress($emailAddr)){
-		$emailAddr = '';
-		$statusStr = 'Invalid email';
-	}
+if($emailAddr && !$pHandler->validateEmailAddress($emailAddr)) {
+    $emailAddr = '';
+    $statusStr = 'Invalid email';
 }
-if(!is_numeric($resetPwd)) $resetPwd = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+if(!is_numeric($resetPwd)) {
+    $resetPwd = 0;
+}
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
 
-if($remMe) $pHandler->setRememberMe(true);
+if($remMe) {
+    $pHandler->setRememberMe(true);
+}
 
-if($action == "logout"){
+if($action === 'logout'){
 	$pHandler->reset();
-	header("Location: ../index.php");
+	header('Location: ../index.php');
 }
-elseif($action == "Login"){
-	if($pHandler->authenticate($_POST["password"])){
-		if(!$refUrl || (strtolower(substr($refUrl,0,4)) == 'http') || strpos($refUrl,'newprofile.php')){
-			header("Location: ../index.php");
+elseif($action === 'Login'){
+	if($pHandler->authenticate($_POST['password'])){
+		if(!$refUrl || (stripos($refUrl, 'http') === 0) || strpos($refUrl,'newprofile.php')){
+			header('Location: ../index.php');
 		}
 		else{
-			header("Location: ".$refUrl);
+			header('Location: ' .$refUrl);
 		}
 	}
 	else{
 		$statusStr = 'Your username or password was incorrect. Please try again.<br/> If you are unable to remember your login credentials,<br/> use the controls below to retrieve your login or reset your password.';
 	}
 }
-elseif($action == "Retrieve Login"){
+elseif($action === 'Retrieve Login'){
 	if($emailAddr){
 		if($pHandler->lookupUserName($emailAddr)){
-			$statusStr = "Your login name will be emailed to you.";
+			$statusStr = 'Your login name will be emailed to you.';
 		}
 		else{
 			$statusStr = $pHandler->getErrorStr();
@@ -94,7 +97,6 @@ else{
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Login</title>
-	<meta http-equiv="X-Frame-Options" content="deny">
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
@@ -103,7 +105,7 @@ else{
 		}
 	
 		function resetPassword(){
-			if(document.getElementById("login").value == ""){
+			if(document.getElementById("login").value === ""){
 				alert("Enter your login name in the Login field and leave the password blank");
 				return false;
 			}
@@ -112,7 +114,7 @@ else{
 		}
 		
 		function checkCreds(){
-			if(document.getElementById("login").value == "" || document.getElementById("password").value == ""){
+			if(document.getElementById("login").value === "" || document.getElementById("password").value === ""){
 				alert("Please enter your login and password.");
 				return false;
 			}
@@ -126,13 +128,12 @@ else{
 <?php
 include($SERVER_ROOT.'/header.php');
 ?>
-<!-- inner text -->
-<div id="innertext" style="padding-left:0px;margin-left:0px;">
+<div id="innertext" style="padding-left:0;margin-left:0;">
 	
 	<?php
 	if($statusStr){
 		?>
-		<div style='color:#FF0000;margin: 1em 1em 0em 1em;'>
+		<div style='color:#FF0000;margin: 1em 1em 0 1em;'>
 			<?php 
 			echo $statusStr;
 			?>
@@ -177,7 +178,7 @@ include($SERVER_ROOT.'/header.php');
 			</div>
 			<div>
 				<div style="color:blue;cursor:pointer;" onclick="toggle('emaildiv');">Retrieve Login</div>
-				<div id="emaildiv" style="display:none;margin:10px 0px 10px 40px;">
+				<div id="emaildiv" style="display:none;margin:10px 0 10px 40px;">
 					<fieldset style="padding:10px;">
 						<form id="retrieveloginform" name="retrieveloginform" action="index.php" method="post">
 							<div>Your Email: <input type="text" name="emailaddr" /></div>

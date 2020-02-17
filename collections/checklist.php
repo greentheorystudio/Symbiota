@@ -11,7 +11,7 @@ $stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
 //Sanitation
 if(!is_numeric($taxonFilter)) $taxonFilter = 1;
 
-$checklistArr = Array();
+$checklistArr = array();
 $taxaCnt = 0;
 
 $solrManager = new SOLRManager();
@@ -87,7 +87,7 @@ if($stArrCollJson || $stArrSearchJson){
 	<div style="clear:both;"><hr/></div>
 	<?php
 		echo '<div style="font-weight:bold;font-size:125%;">Taxa Count: '.$taxaCnt.'</div>';
-		$undFamilyArray = Array();
+		$undFamilyArray = array();
 		if(array_key_exists("undefined",$checklistArr)){
 			$undFamilyArray = $checklistArr["undefined"];
 			unset($checklistArr["undefined"]);

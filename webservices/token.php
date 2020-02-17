@@ -29,7 +29,7 @@ $pw = array_key_exists('pw',$_POST)?$_POST['pw']:'';
 
 $pHandler = new ProfileManager();
 
-$tokenPacket = Array();
+$tokenPacket = array();
 
 if($un && $pw){
     $pHandler->setUserName($un);

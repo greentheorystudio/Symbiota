@@ -59,7 +59,7 @@ $catnum = array_key_exists('catnum',$_POST)?$_POST['catnum']:'';
 
 $pHandler = new ProfileManager();
 $qHandler = new OccurrenceAPIManager();
-$occArr = Array();
+$occArr = array();
 
 if(!$un && $uId){
     $un = $pHandler->getUserName($uId);

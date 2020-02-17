@@ -95,7 +95,7 @@ class TaxonomyCleaner extends Manager{
 				$sciname = $r->sciname;
 				$tid = 0;
 				$manualCheck = true;
-				$taxonArr = TaxonomyUtilities::parseScientificName($r->sciname,$this->conn);
+				$taxonArr = (new TaxonomyUtilities)->parseScientificName($r->sciname,$this->conn);
 				if($taxonArr && $taxonArr['sciname']){
 					$sciname = $taxonArr['sciname'];
 					if($sciname != $r->sciname){
@@ -603,7 +603,7 @@ class TaxonomyCleaner extends Manager{
 		else{
 			//Test taxon does not exists, thus lets load it
 			//Prepare taxon for loading
-			$parsedArr = TaxonomyUtilities::parseScientificName($testObj['name'],$this->conn);
+			$parsedArr = (new TaxonomyUtilities)->parseScientificName($testObj['name'],$this->conn);
 			if(!array_key_exists('rank',$newTaxon)){
 				//Grab taxon object from EOL or Species2000
 
@@ -695,7 +695,7 @@ class TaxonomyCleaner extends Manager{
 	//Misc fucntions
 	public function getCollMap(){
 		global $USER_RIGHTS, $IS_ADMIN;
-		$retArr = Array();
+		$retArr = array();
 		$collArr = array();
 		if(isset($USER_RIGHTS['CollAdmin'])) $collArr = $USER_RIGHTS['CollAdmin'];
 		if($IS_ADMIN) $collArr = array_merge($collArr, explode(',',$this->collid));
@@ -723,7 +723,7 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function getTaxaSuggest($queryString){
-		$retArr = Array();
+		$retArr = array();
 		$sql = 'SELECT tid, sciname FROM taxa ';
 		//$queryString = $this->cleanInStr($queryString);
 		$queryString = preg_replace('/[()\'"+\-=@$%]+/i', '', $queryString);

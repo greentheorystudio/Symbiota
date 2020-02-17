@@ -29,7 +29,7 @@ $collList = $spatialManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 
-$dbArr = Array();
+$dbArr = array();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -42,7 +42,7 @@ $dbArr = Array();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=15" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=16" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-1.10.2.min.js" type="text/javascript"></script>
@@ -50,7 +50,7 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-1.9.1.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui-1.10.4.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/gts-ol-symbiota.js" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
@@ -58,10 +58,10 @@ $dbArr = Array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=263" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=272" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
-            var winHeight = $(window).height();
+            let winHeight = $(window).height();
             winHeight = winHeight + "px";
             document.getElementById('spatialpanel').style.height = winHeight;
 
@@ -133,7 +133,6 @@ $dbArr = Array();
     <div role="main" class="ui-content">
         <a href="#defaultpanel" id="panelopenbutton" data-role="button" data-inline="true" data-icon="bars">Open</a>
     </div>
-    <!-- defaultpanel -->
     <div data-role="panel" data-dismissible=false class="overflow:hidden;" id="defaultpanel" data-swipe-close=false data-position="left" data-display="overlay" >
         <div class="panel-content">
             <div id="spatialpanel">
@@ -146,7 +145,7 @@ $dbArr = Array();
                         </ul>
                         <div id="searchcollections">
                             <div class="mapinterface">
-                                <form name="spatialcollsearchform" id="spatialcollsearchform" data-ajax="false" action="index.php" method="get" onsubmit="">
+                                <form name="spatialcollsearchform" id="spatialcollsearchform" data-ajax="false" action="index.php" method="get">
                                     <div>
                                         <h1 style="margin:0 0 8px 0;font-size:15px;">Collections to be Searched</h1>
                                     </div>
@@ -201,22 +200,22 @@ $dbArr = Array();
                                             </select>
                                         </div>
                                         <div style="margin-top:5px;">
-                                            <?php echo $SEARCHTEXT['TAXON_INPUT']; ?> <input data-role="none" id="taxa" type="text" style="width:275px;" name="taxa" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                                            <?php echo $SEARCHTEXT['TAXON_INPUT']; ?> <input data-role="none" id="taxa" type="text" style="width:275px;" name="taxa" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                         </div>
                                     </div>
                                 </div>
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div>
-                                    <?php echo $SEARCHTEXT['COUNTRY_INPUT']; ?> <input data-role="none" type="text" id="country" style="width:225px;" name="country" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                                    <?php echo $SEARCHTEXT['COUNTRY_INPUT']; ?> <input data-role="none" type="text" id="country" style="width:225px;" name="country" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                 </div>
                                 <div style="margin-top:5px;">
-                                    <?php echo $SEARCHTEXT['STATE_INPUT']; ?> <input data-role="none" type="text" id="state" style="width:150px;" name="state" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                                    <?php echo $SEARCHTEXT['STATE_INPUT']; ?> <input data-role="none" type="text" id="state" style="width:150px;" name="state" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                 </div>
                                 <div style="margin-top:5px;">
-                                    <?php echo $SEARCHTEXT['COUNTY_INPUT']; ?> <input data-role="none" type="text" id="county" style="width:225px;"  name="county" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                                    <?php echo $SEARCHTEXT['COUNTY_INPUT']; ?> <input data-role="none" type="text" id="county" style="width:225px;"  name="county" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                 </div>
                                 <div style="margin-top:5px;">
-                                    <?php echo $SEARCHTEXT['LOCALITY_INPUT']; ?> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" onchange="buildQueryStrings();" value="" />
+                                    <?php echo $SEARCHTEXT['LOCALITY_INPUT']; ?> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" onchange="buildQueryStrings();" />
                                 </div>
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div id="shapecriteriabox">
@@ -230,25 +229,25 @@ $dbArr = Array();
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div>
                                     <?php echo $SEARCHTEXT['COLLECTOR_LASTNAME']; ?>
-                                    <input data-role="none" type="text" id="collector" style="width:125px;" name="collector" value="" onchange="buildQueryStrings();" title="" />
+                                    <input data-role="none" type="text" id="collector" style="width:125px;" name="collector" onchange="buildQueryStrings();" />
                                 </div>
                                 <div style="margin-top:5px;">
                                     <?php echo $SEARCHTEXT['COLLECTOR_NUMBER']; ?>
-                                    <input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_2']; ?>" />
+                                    <input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_2']; ?>" />
                                 </div>
                                 <div style="margin-top:5px;">
                                     <?php echo $SEARCHTEXT['COLLECTOR_DATE']; ?>
-                                    <input data-role="none" type="text" id="eventdate1" style="width:100px;" name="eventdate1" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_3']; ?>" /> -
-                                    <input data-role="none" type="text" id="eventdate2" style="width:100px;" name="eventdate2" value="" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
+                                    <input data-role="none" type="text" id="eventdate1" style="width:100px;" name="eventdate1" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_3']; ?>" /> -
+                                    <input data-role="none" type="text" id="eventdate2" style="width:100px;" name="eventdate2" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
                                 </div>
                                 <div style="margin:10px 0 10px 0;"><hr></div>
                                 <div>
                                     <?php echo $SEARCHTEXT['CATALOG_NUMBER']; ?>
-                                    <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" value="" onchange="buildQueryStrings();" title="" />
+                                    <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" onchange="buildQueryStrings();" />
                                 </div>
                                 <div style="margin-top:5px;">
                                     <?php echo $SEARCHTEXT['OTHER_CATNUM']; ?>
-                                    <input data-role="none" type="text" id="othercatnum" style="width:150px;" name="othercatnum" value="" onchange="buildQueryStrings();" title="" />
+                                    <input data-role="none" type="text" id="othercatnum" style="width:150px;" name="othercatnum" onchange="buildQueryStrings();" />
                                 </div>
                                 <div style="margin-top:5px;">
                                     <input data-role="none" type='checkbox' name='typestatus' id='typestatus' value='1' onchange="buildQueryStrings();"> <?php echo $SEARCHTEXT['TYPE']; ?>
@@ -272,7 +271,7 @@ $dbArr = Array();
                             <li><a href='#maptaxalist' onclick='buildTaxaKey();'>Taxa</a></li>
                             <li style="display:none;" id="selectionstab" ><a href='#selectionslist'>Selections</a></li>
                         </ul>
-                        <div id="symbology" style="">
+                        <div id="symbology">
                             <div style="margin-bottom:15px;">
                                 <div style="float:left;margin-top:20px;">
                                     <div>
@@ -311,14 +310,14 @@ $dbArr = Array();
                                 </div>
                             </div>
                         </div>
-                        <div id="queryrecordsdiv" style="">
+                        <div id="queryrecordsdiv">
                             <div style="margin-top:-10px;margin-right:10px;">
                                 <fieldset style="border:1px solid black;height:50px;width:360px;margin-left:-10px;padding-top:3px;">
                                     <legend><b>Download</b></legend>
                                     <div style="height:25px;width:330px;margin-left:auto;margin-right:auto;">
                                         <div style="float:left;">
                                             <select data-role="none" id="querydownloadselect">
-                                                <option value="">Download Type</option>
+                                                <option>Download Type</option>
                                                 <option value="csv">CSV</option>
                                                 <option value="kml">KML</option>
                                                 <option value="geojson">GeoJSON</option>
@@ -332,7 +331,7 @@ $dbArr = Array();
                                     </div>
                                 </fieldset>
                             </div>
-                            <div id="queryrecords" style=""></div>
+                            <div id="queryrecords"></div>
                         </div>
                         <div id="maptaxalist" >
                             <div style="margin-bottom:15px;">
@@ -453,7 +452,7 @@ $dbArr = Array();
                                 </div>
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
-                                    <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" value="" /> km around selected features.
+                                    <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
                                 </div>
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
@@ -476,12 +475,12 @@ $dbArr = Array();
                                 There are no points loaded on the map.
                             </div>
                             <div id="pointToolsDiv" style="padding:10px;display:none;">
-                                <div style="">
+                                <div>
                                     <button data-role="none" onclick="createConcavePoly();" >Concave Hull Polygon</button> Creates a concave hull polygon or multipolygon for
                                     <select data-role="none" id="concavepolysource" style="margin-top:3px;" onchange="checkPointToolSource('concavepolysource');">
                                         <option value="all">all</option>
                                         <option value="selected">selected</option>
-                                    </select> points with a maximum edge length of <input data-role="none" type="text" id="concaveMaxEdgeSize" style="width:75px;margin-top:3px;" value="" /> kilometers.
+                                    </select> points with a maximum edge length of <input data-role="none" type="text" id="concaveMaxEdgeSize" style="width:75px;margin-top:3px;" /> kilometers.
                                 </div>
                                 <div style="margin:5px 0 5px 0;"><hr /></div>
                                 <div style="margin-top:10px;">
@@ -499,8 +498,8 @@ $dbArr = Array();
                 </div>
             </div>
             <a href="#" id="panelclosebutton" data-rel="close" data-role="button" data-theme="a" data-icon="delete" data-inline="true"></a>
-        </div><!-- /content wrapper for padding -->
-    </div><!-- /defaultpanel -->
+        </div>
+    </div>
 </div>
 
 <div id="map" class="map"></div>
@@ -571,18 +570,18 @@ $dbArr = Array();
             <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
             <div id="setdatediv" style="">
                 <span class="maptext">Earliest</span>
-                <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" value="" onchange="checkDSLowDate();" />
+                <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
                 <span class="maptext">Latest</span>
-                <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" value="" onchange="checkDSHighDate();" />
+                <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
                 <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
             </div>
             <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-            <div id="animatediv" style="">
+            <div id="animatediv">
                 <div>
                     <span class="maptext">Interval Duration (years)</span>
-                    <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" value="" onchange="checkDSAnimDuration();" />
+                    <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
                     <span class="maptext">Interval Time (seconds)</span>
-                    <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" value="" onchange="checkDSAnimTime();" />
+                    <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
                 </div>
                 <div style="clear:both;"></div>
                 <div style="margin-top:3px;">
@@ -612,84 +611,85 @@ $dbArr = Array();
 </div>
 
 <script type="text/javascript">
-    var SOLRMODE = '<?php echo $SOLR_MODE; ?>';
-    var collectionParams = false;
-    var geogParams = false;
-    var textParams = false;
-    var taxaParams = false;
-    var geoPolyArr = [];
-    var geoCircleArr = [];
-    var searchTermsArr = {};
-    var layersArr = [];
-    var mouseCoords = [];
-    var solrqArr = [];
-    var solrgeoqArr = [];
-    var selections = [];
-    var collSymbology = [];
-    var taxaSymbology = [];
-    var collKeyArr = [];
-    var taxaKeyArr = [];
-    var solrqString = '';
-    var newsolrqString = '';
-    var solroccqString = '';
-    var geoCallOut = false;
-    var queryRecCnt = 0;
-    var draw;
-    var clustersource;
-    var taxaArr = [];
-    var taxontype = '';
-    var thes = false;
-    var loadPointsEvent = false;
-    var taxaCnt = 0;
-    var lazyLoadCnt = 20000;
-    var clusterDistance = 50;
-    var clusterPoints = true;
-    var showHeatMap = false;
-    var heatMapRadius = 5;
-    var heatMapBlur = 15;
-    var mapSymbology = 'coll';
-    var clusterKey = 'CollectionName';
-    var maxFeatureCount;
-    var currentResolution;
-    var activeLayer = 'none';
-    var shapeActive = false;
-    var pointActive = false;
-    var spiderCluster;
-    var spiderFeature;
-    var hiddenClusters = [];
-    var clickedFeatures = [];
-    var dragDrop1 = false;
-    var dragDrop2 = false;
-    var dragDrop3 = false;
-    var dragDropTarget = '';
-    var dsOldestDate = '';
-    var dsNewestDate = '';
-    var tsOldestDate = '';
-    var tsNewestDate = '';
-    var dateSliderActive = false;
-    var sliderdiv = '';
-    var rasterLayers = [];
-    var overlayLayers = [];
-    var vectorizeLayers = [];
-    var loadingTimer = 0;
-    var loadingComplete = true;
-    var returnClusters = false;
-    var dsAnimDuration = '';
-    var dsAnimTime = '';
-    var dsAnimImageSave = false;
-    var dsAnimReverse = false;
-    var dsAnimDual = false;
-    var dsAnimLow = '';
-    var dsAnimHigh = '';
-    var dsAnimStop = true;
-    var dsAnimation = '';
-    var zipFile = '';
-    var zipFolder = '';
-    var SOLRFields = 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tidinterpreted,scientificNameAuthorship,identifiedBy,' +
+    const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+    let collectionParams = false;
+    let geogParams = false;
+    let textParams = false;
+    let taxaParams = false;
+    let tempOccArr = [];
+    let geoPolyArr = [];
+    let geoCircleArr = [];
+    let searchTermsArr = {};
+    let layersArr = [];
+    let mouseCoords = [];
+    let solrqArr = [];
+    let solrgeoqArr = [];
+    let selections = [];
+    let collSymbology = [];
+    let taxaSymbology = [];
+    let collKeyArr = [];
+    let taxaKeyArr = [];
+    let solrqString = '';
+    let newsolrqString = '';
+    let solroccqString = '';
+    let geoCallOut = false;
+    let queryRecCnt = 0;
+    let draw;
+    let clustersource;
+    let taxaArr = [];
+    let taxontype = '';
+    let thes = false;
+    let loadPointsEvent = false;
+    let taxaCnt = 0;
+    let lazyLoadCnt = 20000;
+    let clusterDistance = 50;
+    let clusterPoints = true;
+    let showHeatMap = false;
+    let heatMapRadius = 5;
+    let heatMapBlur = 15;
+    let mapSymbology = 'coll';
+    let clusterKey = 'CollectionName';
+    let maxFeatureCount;
+    let currentResolution;
+    let activeLayer = 'none';
+    let shapeActive = false;
+    let pointActive = false;
+    let spiderCluster;
+    let spiderFeature;
+    let hiddenClusters = [];
+    let clickedFeatures = [];
+    let dragDrop1 = false;
+    let dragDrop2 = false;
+    let dragDrop3 = false;
+    let dragDropTarget = '';
+    let dsOldestDate = '';
+    let dsNewestDate = '';
+    let tsOldestDate = '';
+    let tsNewestDate = '';
+    let dateSliderActive = false;
+    let sliderdiv = '';
+    let rasterLayers = [];
+    let overlayLayers = [];
+    let vectorizeLayers = [];
+    let loadingTimer = 0;
+    let loadingComplete = true;
+    let returnClusters = false;
+    let dsAnimDuration = '';
+    let dsAnimTime = '';
+    let dsAnimImageSave = false;
+    let dsAnimReverse = false;
+    let dsAnimDual = false;
+    let dsAnimLow = '';
+    let dsAnimHigh = '';
+    let dsAnimStop = true;
+    let dsAnimation = '';
+    let zipFile = '';
+    let zipFolder = '';
+    const SOLRFields = 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tidinterpreted,scientificNameAuthorship,identifiedBy,' +
         'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
         'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
         'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily';
-    var dragDropStyle = {
+    const dragDropStyle = {
         'Point': new ol.style.Style({
             image: new ol.style.Circle({
                 fill: new ol.style.Fill({
@@ -746,15 +746,15 @@ $dbArr = Array();
         })
     };
 
-    var popupcontainer = document.getElementById('popup');
-    var popupcontent = document.getElementById('popup-content');
-    var popupcloser = document.getElementById('popup-closer');
-    var finderpopupcontainer = document.getElementById('finderpopup');
-    var finderpopupcontent = document.getElementById('finderpopup-content');
-    var finderpopupcloser = document.getElementById('finderpopup-closer');
-    var typeSelect = document.getElementById('drawselect');
+    const popupcontainer = document.getElementById('popup');
+    const popupcontent = document.getElementById('popup-content');
+    const popupcloser = document.getElementById('popup-closer');
+    const finderpopupcontainer = document.getElementById('finderpopup');
+    const finderpopupcontent = document.getElementById('finderpopup-content');
+    const finderpopupcloser = document.getElementById('finderpopup-closer');
+    const typeSelect = document.getElementById('drawselect');
 
-    var popupoverlay = new ol.Overlay({
+    const popupoverlay = new ol.Overlay({
         element: popupcontainer,
         autoPan: true,
         autoPanAnimation: {
@@ -768,7 +768,7 @@ $dbArr = Array();
         return false;
     };
 
-    var finderpopupoverlay = new ol.Overlay({
+    const finderpopupoverlay = new ol.Overlay({
         element: finderpopupcontainer,
         autoPan: true,
         autoPanAnimation: {
@@ -782,33 +782,33 @@ $dbArr = Array();
         return false;
     };
 
-    var mapProjection = new ol.proj.Projection({
+    const mapProjection = new ol.proj.Projection({
         code: 'EPSG:3857'
     });
 
-    var wgs84Projection = new ol.proj.Projection({
+    const wgs84Projection = new ol.proj.Projection({
         code: 'EPSG:4326',
         units: 'degrees'
     });
 
-    var projection = ol.proj.get('EPSG:4326');
-    var projectionExtent = projection.getExtent();
-    var tileSize = 512;
-    var maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
-    var resolutions = new Array(16);
-    for (var z = 0; z < 16; ++z) {
+    const projection = ol.proj.get('EPSG:4326');
+    const projectionExtent = projection.getExtent();
+    const tileSize = 512;
+    const maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
+    const resolutions = new Array(16);
+    for (let z = 0; z < 16; ++z) {
         resolutions[z] = maxResolution / Math.pow(2, z);
     }
 
-    var baselayer = new ol.layer.Tile({
+    const baselayer = new ol.layer.Tile({
         source: new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
             crossOrigin: 'anonymous'
         })
     });
 
-    var selectsource = new ol.source.Vector({wrapX: false});
-    var selectlayer = new ol.layer.Vector({
+    const selectsource = new ol.source.Vector({wrapX: false});
+    const selectlayer = new ol.layer.Vector({
         source: selectsource,
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -831,41 +831,40 @@ $dbArr = Array();
         })
     });
 
-    var pointvectorsource = new ol.source.Vector({wrapX: false});
-    var pointvectorlayer = new ol.layer.Vector({
+    let pointvectorsource = new ol.source.Vector({wrapX: false});
+    const pointvectorlayer = new ol.layer.Vector({
         source: pointvectorsource
     });
 
-    var heatmaplayer = new ol.layer.Heatmap({
+    const heatmaplayer = new ol.layer.Heatmap({
         source: pointvectorsource,
-        weight: function(feature){
-            var showPoint = true;
-            if(dateSliderActive) showPoint = validateFeatureDate(feature);
-            if(showPoint){
+        weight: function (feature) {
+            let showPoint = true;
+            if (dateSliderActive) showPoint = validateFeatureDate(feature);
+            if (showPoint) {
                 return 1;
-            }
-            else{
+            } else {
                 return 0;
             }
         },
-        gradient: ['#00f','#0ff','#0f0','#ff0','#f00'],
+        gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
         blur: parseInt(heatMapBlur, 10),
         radius: parseInt(heatMapRadius, 10),
         visible: false
     });
 
-    var blankdragdropsource = new ol.source.Vector({wrapX: false});
-    var dragdroplayer1 = new ol.layer.Vector({
+    const blankdragdropsource = new ol.source.Vector({wrapX: false});
+    const dragdroplayer1 = new ol.layer.Vector({
         source: blankdragdropsource
     });
-    var dragdroplayer2 = new ol.layer.Vector({
+    const dragdroplayer2 = new ol.layer.Vector({
         source: blankdragdropsource
     });
-    var dragdroplayer3 = new ol.layer.Vector({
+    const dragdroplayer3 = new ol.layer.Vector({
         source: blankdragdropsource
     });
 
-    var spiderLayer = new ol.layer.Vector({
+    const spiderLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
             features: new ol.Collection(),
             useSpatialIndex: true
@@ -881,10 +880,13 @@ $dbArr = Array();
     layersArr['heat'] = heatmaplayer;
     layersArr['spider'] = spiderLayer;
 
-    var zoomslider = new ol.control.ZoomSlider();
-    var scaleLineControl_us = new ol.control.ScaleLine({target: document.getElementById('mapscale_us'),units: 'us'});
-    var scaleLineControl_metric = new ol.control.ScaleLine({target: document.getElementById('mapscale_metric'),units: 'metric'});
-    var dragAndDropInteraction = new ol.interaction.DragAndDrop({
+    const zoomslider = new ol.control.ZoomSlider();
+    const scaleLineControl_us = new ol.control.ScaleLine({target: document.getElementById('mapscale_us'), units: 'us'});
+    const scaleLineControl_metric = new ol.control.ScaleLine({
+        target: document.getElementById('mapscale_metric'),
+        units: 'metric'
+    });
+    const dragAndDropInteraction = new ol.interaction.DragAndDrop({
         formatConstructors: [
             ol.format.GPX,
             ol.format.GeoJSON,
@@ -894,10 +896,10 @@ $dbArr = Array();
         ]
     });
 
-    var selectInteraction = new ol.interaction.Select({
+    const selectInteraction = new ol.interaction.Select({
         layers: [layersArr['select']],
-        condition: function(evt) {
-            return (evt.type == 'click' && activeLayer == 'select' && !evt.originalEvent.altKey);
+        condition: function (evt) {
+            return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey);
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -921,26 +923,28 @@ $dbArr = Array();
         toggleCondition: ol.events.condition.click
     });
 
-    var pointInteraction = new ol.interaction.Select({
-        layers: [layersArr['pointv'],layersArr['spider']],
-        condition: function(evt) {
-            if(evt.type == 'click' && activeLayer == 'pointv'){
-                if(!evt.originalEvent.altKey){
-                    if(spiderCluster){
-                        var spiderclick = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+    const pointInteraction = new ol.interaction.Select({
+        layers: [layersArr['pointv'], layersArr['spider']],
+        condition: function (evt) {
+            if (evt.type === 'click' && activeLayer === 'pointv') {
+                if (!evt.originalEvent.altKey) {
+                    if (spiderCluster) {
+                        const spiderclick = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                             spiderFeature = feature;
-                            if(feature && layer === layersArr['spider']){
+                            if (feature && layer === layersArr['spider']) {
                                 return feature;
                             }
                         });
-                        if(!spiderclick){
-                            var blankSource = new ol.source.Vector({
+                        if (!spiderclick) {
+                            const blankSource = new ol.source.Vector({
                                 features: new ol.Collection(),
                                 useSpatialIndex: true
                             });
                             layersArr['spider'].setSource(blankSource);
-                            for(i in hiddenClusters){
-                                showFeature(hiddenClusters[i]);
+                            for (const i in hiddenClusters) {
+                                if(hiddenClusters.hasOwnProperty(i)){
+                                    showFeature(hiddenClusters[i]);
+                                }
                             }
                             hiddenClusters = [];
                             spiderCluster = false;
@@ -949,15 +953,13 @@ $dbArr = Array();
                         }
                     }
                     return true;
-                }
-                else if(evt.originalEvent.altKey){
+                } else if (evt.originalEvent.altKey) {
                     map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                        if(feature){
-                            if(spiderCluster && layer === layersArr['spider']){
+                        if (feature) {
+                            if (spiderCluster && layer === layersArr['spider']) {
                                 clickedFeatures.push(feature);
                                 return feature;
-                            }
-                            else if(layer === layersArr['pointv']){
+                            } else if (layer === layersArr['pointv']) {
                                 clickedFeatures.push(feature);
                                 return feature;
                             }
@@ -965,8 +967,7 @@ $dbArr = Array();
                     });
                     return false;
                 }
-            }
-            else{
+            } else {
                 return false;
             }
         },
@@ -977,10 +978,10 @@ $dbArr = Array();
     });
 
     function editVectorLayers(c,title){
-        var layer = c.value;
-        if(c.checked == true){
-            var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
-            var layerSourceName = layer+'Source';
+        const layer = c.value;
+        if(c.checked === true){
+            const layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
+            const layerSourceName = layer + 'Source';
             layersArr[layerSourceName] = new ol.source.ImageWMS({
                 url: 'rpc/GeoServerConnector.php',
                 params: {'LAYERS':layerName, 'datatype':'vector'},
@@ -1006,26 +1007,26 @@ $dbArr = Array();
 
     function vectorizeRaster(){
         showWorking();
-        var overlay = document.getElementById("vectorizesourcelayer").value;
-        var overlaySource = overlayLayers[overlay]['source'];
-        var overlayName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+overlay;
-        var features = selectInteraction.getFeatures().getArray();
-        var boundsFeature = features[0].clone();
-        var geoJSONFormat = new ol.format.GeoJSON();
-        var geometry = boundsFeature.getGeometry();
-        var fixedgeometry = geometry.transform(mapProjection,wgs84Projection);
-        var geojsonStr = geoJSONFormat.writeGeometry(fixedgeometry);
-        var xmlContent = generateWPSPolyExtractXML(overlayLayers[overlay]['values'],overlaySource,geojsonStr);
-        var http = new XMLHttpRequest();
-        var url = "rpc/GeoServerConnector.php";
-        var params = 'REQUEST=wps&xmlrequest='+xmlContent;
+        const overlay = document.getElementById("vectorizesourcelayer").value;
+        const overlaySource = overlayLayers[overlay]['source'];
+        const overlayName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+overlay;
+        const features = selectInteraction.getFeatures().getArray();
+        const boundsFeature = features[0].clone();
+        const geoJSONFormat = new ol.format.GeoJSON();
+        const geometry = boundsFeature.getGeometry();
+        const fixedgeometry = geometry.transform(mapProjection, wgs84Projection);
+        const geojsonStr = geoJSONFormat.writeGeometry(fixedgeometry);
+        const xmlContent = generateWPSPolyExtractXML(overlayLayers[overlay]['values'], overlaySource, geojsonStr);
+        const http = new XMLHttpRequest();
+        const url = "rpc/GeoServerConnector.php";
+        const params = 'REQUEST=wps&xmlrequest=' + xmlContent;
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
-            if(http.readyState == 4 && http.status == 200) {
+            if(http.readyState === 4 && http.status === 200) {
                 //console.log(http.responseText);
-                var features = geoJSONFormat.readFeatures(http.responseText, {
+                const features = geoJSONFormat.readFeatures(http.responseText, {
                     featureProjection: 'EPSG:3857'
                 });
                 selectsource.addFeatures(features);
@@ -1038,16 +1039,26 @@ $dbArr = Array();
     }
 
     function checkRasterCalcForm(){
-        var outputName = document.getElementById("rastercalcOutputName").value;
-        var layer1 = document.getElementById("rastcalcoverlay1").value;
-        var operator = document.getElementById("rastcalcoperator").value;
-        var layer2 = document.getElementById("rastcalcoverlay2").value;
-        var colorVal = document.getElementById("rastcalccolor").value;
-        if(layer1 == "" || layer2 == "") alert("Please select overlay layers to calculate.");
-        else if(outputName == "") alert("Please enter a name for the output overlay.");
-        else if(layersArr[outputName]) alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
-        else if(operator == "") alert("Please select operator for calculation.");
-        else if(colorVal == "FFFFFF") alert("Please select a color other than white for this overlay.");
+        const outputName = document.getElementById("rastercalcOutputName").value;
+        const layer1 = document.getElementById("rastcalcoverlay1").value;
+        const operator = document.getElementById("rastcalcoperator").value;
+        const layer2 = document.getElementById("rastcalcoverlay2").value;
+        const colorVal = document.getElementById("rastcalccolor").value;
+        if(layer1 === "" || layer2 === "") {
+            alert("Please select overlay layers to calculate.");
+        }
+        else if(outputName === "") {
+            alert("Please enter a name for the output overlay.");
+        }
+        else if(layersArr[outputName]) {
+            alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
+        }
+        else if(operator === "") {
+            alert("Please select operator for calculation.");
+        }
+        else if(colorVal === "FFFFFF") {
+            alert("Please select a color other than white for this overlay.");
+        }
         else{
             $("#rastercalctool").popup("hide");
             calculateRasters();
@@ -1055,32 +1066,42 @@ $dbArr = Array();
     }
 
     function calculateRasters(){
-        var layer1 = document.getElementById("rastcalcoverlay1").value;
-        var layer2 = document.getElementById("rastcalcoverlay2").value;
-        var operator = document.getElementById("rastcalcoperator").value;
-        var hexColor = document.getElementById("rastcalccolor").value;
-        var rgbColorArr = hexToRgb('#'+hexColor);
-        var outputName = document.getElementById("rastercalcOutputName").value;
+        const layer1 = document.getElementById("rastcalcoverlay1").value;
+        const layer2 = document.getElementById("rastcalcoverlay2").value;
+        const operator = document.getElementById("rastcalcoperator").value;
+        const hexColor = document.getElementById("rastcalccolor").value;
+        const rgbColorArr = hexToRgb('#' + hexColor);
+        let outputName = document.getElementById("rastercalcOutputName").value;
         outputName = outputName.replace(" ","_");
         overlayLayers[outputName] = [];
         overlayLayers[outputName]['id'] = outputName;
         overlayLayers[outputName]['title'] = outputName;
         overlayLayers[outputName]['source'] = '';
 
-        var layerRasterSourceName = outputName+'RasterSource';
+        const layerRasterSourceName = outputName + 'RasterSource';
         layersArr[layerRasterSourceName] = new ol.source.Raster({
             sources: [layersArr[layer1].getSource(), layersArr[layer2].getSource()],
             operationType: 'pixel',
             operation: function (pixels, data) {
-                var operator = data.operator;
-                var rgbarr = data.rgbarr;
-                var value1 = pixels[0][4];
-                var value2 = pixels[1][4];
-                if(operator == '+') var result = value1+value2;
-                else if(operator == '-') var result = value1-value2;
-                else if(operator == '*') var result = value1*value2;
-                else if(operator == '/') var result = value1/value2;
+                let result;
+                const operator = data.operator;
+                const rgbarr = data.rgbarr;
+                const value1 = pixels[0][4];
+                const value2 = pixels[1][4];
+                if(operator === '+') {
+                    result = value1 + value2;
+                }
+                else if(operator === '-') {
+                    result = value1 - value2;
+                }
+                else if(operator === '*') {
+                    result = value1 * value2;
+                }
+                else if(operator === '/') {
+                    result = value1 / value2;
+                }
                 if(result > 0){
+                    let inputPixel = [];
                     inputPixel[0] = 123; //rgbarr['r'];
                     inputPixel[1] = 203; //rgbarr['g'];
                     inputPixel[2] = 122; //rgbarr['b'];
@@ -1102,7 +1123,7 @@ $dbArr = Array();
         layersArr[outputName].setOpacity(0.4);
         map.addLayer(layersArr[outputName]);
         refreshLayerOrder();
-        var infoArr = [];
+        const infoArr = [];
         infoArr['Name'] = outputName;
         infoArr['layerType'] = 'raster';
         infoArr['Title'] = outputName;
@@ -1119,8 +1140,8 @@ $dbArr = Array();
     }
 
     function reclassifyRaster(){
-        var rasterLayer = document.getElementById("reclassifysourcelayer").value;
-        var outputName = document.getElementById("reclassifyOutputName").value;
+        const rasterLayer = document.getElementById("reclassifysourcelayer").value;
+        let outputName = document.getElementById("reclassifyOutputName").value;
         outputName = outputName.replace(" ","_");
         overlayLayers[outputName] = [];
         overlayLayers[outputName]['id'] = outputName;
@@ -1131,10 +1152,10 @@ $dbArr = Array();
         overlayLayers[outputName]['values']['rasmax'] = document.getElementById('reclassifyRasterMax').value;
         overlayLayers[outputName]['values']['color'] = document.getElementById('reclassifyColorVal').value;
 
-        var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+rasterLayer;
-        var layerTileSourceName = outputName+'Source';
-        var layerRasterSourceName = outputName+'RasterSource';
-        var sldContent = generateReclassifySLD(overlayLayers[outputName]['values'],layerName);
+        const layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+rasterLayer;
+        const layerTileSourceName = outputName + 'Source';
+        const layerRasterSourceName = outputName + 'RasterSource';
+        const sldContent = generateReclassifySLD(overlayLayers[outputName]['values'], layerName);
         layersArr[layerTileSourceName] = new ol.source.TileWMS({
             url: 'rpc/GeoServerConnector.php',
             params: {'LAYERS':layerName, 'STYLES':'reclassify_style', 'SLD_BODY':sldContent, 'datatype':'raster'},
@@ -1147,16 +1168,16 @@ $dbArr = Array();
         layersArr[layerRasterSourceName] = new ol.source.Raster({
             sources: [layersArr[layerTileSourceName]],
             operationType: 'pixel',
-            operation: function (pixels, data) {
-                var inputPixel = pixels[0];
+            operation: function (pixels) {
+                const inputPixel = pixels[0];
                 if((inputPixel[0] && inputPixel[1] && inputPixel[2])){
-                    var pixr = inputPixel[0];
-                    var pixg = inputPixel[1];
-                    var pixb = inputPixel[2];
-                    if(pixr == 255 && pixg == 255 && pixb == 255){
+                    const pixr = inputPixel[0];
+                    const pixg = inputPixel[1];
+                    const pixb = inputPixel[2];
+                    if(pixr === 255 && pixg === 255 && pixb === 255){
                         return [0, 0, 0, 0];
                     }
-                    else if(pixr == 0 && pixg == 0 && pixb == 0){
+                    else if(pixr === 0 && pixg === 0 && pixb === 0){
                         return [0, 0, 0, 0];
                     }
                     else{
@@ -1173,7 +1194,7 @@ $dbArr = Array();
         layersArr[outputName].setOpacity(0.4);
         map.addLayer(layersArr[outputName]);
         refreshLayerOrder();
-        var infoArr = [];
+        const infoArr = [];
         infoArr['Name'] = outputName;
         infoArr['raster'] = 'vector';
         infoArr['Title'] = outputName;
@@ -1184,11 +1205,11 @@ $dbArr = Array();
     }
 
     function editRasterLayers(c,title){
-        var layer = c.value;
-        if(c.checked == true){
-            var layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
-            var layerTileSourceName = layer+'Source';
-            var layerRasterSourceName = layer+'RasterSource';
+        const layer = c.value;
+        if(c.checked === true){
+            const layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
+            const layerTileSourceName = layer + 'Source';
+            const layerRasterSourceName = layer + 'RasterSource';
             layersArr[layerTileSourceName] = new ol.source.TileWMS({
                 url: 'rpc/GeoServerConnector.php',
                 params: {'LAYERS':layerName, 'datatype':'raster'},
@@ -1201,7 +1222,7 @@ $dbArr = Array();
             layersArr[layerRasterSourceName] = new ol.source.Raster({
                 sources: [layersArr[layerTileSourceName]],
                 operationType: 'pixel',
-                operation: function (pixels, data) {
+                operation: function (pixels) {
                     return pixels[0];
                 }
             });
@@ -1220,7 +1241,7 @@ $dbArr = Array();
         }
     }
 
-    var mapView = new ol.View({
+    const mapView = new ol.View({
         zoom: <?php echo $mapZoom; ?>,
         projection: 'EPSG:3857',
         minZoom: 2.5,
@@ -1228,7 +1249,7 @@ $dbArr = Array();
         center: ol.proj.transform(<?php echo $mapCenter; ?>, 'EPSG:4326', 'EPSG:3857'),
     });
 
-    var map = new ol.Map({
+    const map = new ol.Map({
         view: mapView,
         target: 'map',
         controls: ol.control.defaults().extend([
@@ -1248,7 +1269,7 @@ $dbArr = Array();
         renderer: 'canvas'
     });
 
-    var mousePositionControl = new ol.control.MousePosition({
+    const mousePositionControl = new ol.control.MousePosition({
         coordinateFormat: coordFormat(),
         projection: 'EPSG:4326',
         className: 'custom-mouse-position',
@@ -1264,30 +1285,32 @@ $dbArr = Array();
     map.addInteraction(pointInteraction);
     map.addInteraction(dragAndDropInteraction);
 
-    var selectedFeatures = selectInteraction.getFeatures();
-    var selectedPointFeatures = pointInteraction.getFeatures();
+    const selectedFeatures = selectInteraction.getFeatures();
+    const selectedPointFeatures = pointInteraction.getFeatures();
 
-    selectedPointFeatures.on('add', function(event) {
+    selectedPointFeatures.on('add', function() {
         setSpatialParamBox();
         buildQueryStrings();
     });
 
-    selectedPointFeatures.on('remove', function(event) {
+    selectedPointFeatures.on('remove', function() {
         setSpatialParamBox();
         buildQueryStrings();
     });
 
-    map.getView().on('change:resolution', function(event) {
+    map.getView().on('change:resolution', function() {
         if(spiderCluster){
-            var source = layersArr['spider'].getSource();
+            const source = layersArr['spider'].getSource();
             source.clear();
-            var blankSource = new ol.source.Vector({
+            const blankSource = new ol.source.Vector({
                 features: new ol.Collection(),
                 useSpatialIndex: true
             });
             layersArr['spider'].setSource(blankSource);
-            for(i in hiddenClusters){
-                showFeature(hiddenClusters[i]);
+            for(const i in hiddenClusters){
+                if(hiddenClusters.hasOwnProperty(i)){
+                    showFeature(hiddenClusters[i]);
+                }
             }
             hiddenClusters = [];
             spiderCluster = '';
@@ -1308,22 +1331,22 @@ $dbArr = Array();
     }
 
     dragAndDropInteraction.on('addfeatures', function(event) {
-        var filename = event.file.name.split('.');
-        var fileType = filename.pop();
+        let filename = event.file.name.split('.');
+        const fileType = filename.pop();
         filename = filename.join("");
         if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
-                    var infoArr = [];
+                    const infoArr = [];
                     infoArr['Name'] = dragDropTarget;
                     infoArr['layerType'] = 'vector';
                     infoArr['Title'] = filename;
                     infoArr['Abstract'] = '';
                     infoArr['DefaultCRS'] = '';
-                    var sourceIndex = dragDropTarget+'Source';
-                    var features = event.features;
-                    if(fileType == 'kml'){
-                        var geoJSONFormat = new ol.format.GeoJSON();
+                    const sourceIndex = dragDropTarget + 'Source';
+                    let features = event.features;
+                    if(fileType === 'kml'){
+                        const geoJSONFormat = new ol.format.GeoJSON();
                         features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
                     }
                     layersArr[sourceIndex] = new ol.source.Vector({
@@ -1340,16 +1363,16 @@ $dbArr = Array();
                 if(setDragDropTarget()){
                     getArrayBuffer(event.file).then((data) => {
                         shp(data).then((geojson) => {
-                            var infoArr = [];
+                            const infoArr = [];
                             infoArr['Name'] = dragDropTarget;
                             infoArr['layerType'] = 'vector';
                             infoArr['Title'] = filename;
                             infoArr['Abstract'] = '';
                             infoArr['DefaultCRS'] = '';
-                            var sourceIndex = dragDropTarget+'Source';
-                            var format = new ol.format.GeoJSON();
-                            var res = map.getView().getResolution();
-                            var features = format.readFeatures(geojson, {
+                            const sourceIndex = dragDropTarget + 'Source';
+                            const format = new ol.format.GeoJSON();
+                            const res = map.getView().getResolution();
+                            const features = format.readFeatures(geojson, {
                                 featureProjection: 'EPSG:3857'
                             });
                             layersArr[sourceIndex] = new ol.source.Vector({
@@ -1371,36 +1394,46 @@ $dbArr = Array();
     });
 
     pointInteraction.on('select', function(event) {
-        var newfeatures = event.selected;
-        var zoomLevel = map.getView().getZoom();
+        let clusterCnt;
+        let newfeature;
+        let f;
+        let cFeatures;
+        const newfeatures = event.selected;
+        const zoomLevel = map.getView().getZoom();
         if (newfeatures.length > 0) {
             if (zoomLevel < 17) {
-                var extent = ol.extent.createEmpty();
+                const extent = ol.extent.createEmpty();
                 if (newfeatures.length > 1) {
-                    for (n in newfeatures) {
-                        var nfeature = newfeatures[n];
-                        pointInteraction.getFeatures().remove(nfeature);
-                        if(nfeature.get('features')){
-                            var cFeatures = nfeature.get('features');
-                            for (f in cFeatures) {
-                                ol.extent.extend(extent, cFeatures[f].getGeometry().getExtent());
+                    for (const n in newfeatures) {
+                        if(newfeatures.hasOwnProperty(n)){
+                            const nfeature = newfeatures[n];
+                            pointInteraction.getFeatures().remove(nfeature);
+                            if(nfeature.get('features')){
+                                cFeatures = nfeature.get('features');
+                                for (let f in cFeatures) {
+                                    if(cFeatures.hasOwnProperty(f)){
+                                        ol.extent.extend(extent, cFeatures[f].getGeometry().getExtent());
+                                    }
+                                }
                             }
-                        }
-                        else{
-                            ol.extent.extend(extent, nfeature.getGeometry().getExtent());
+                            else{
+                                ol.extent.extend(extent, nfeature.getGeometry().getExtent());
+                            }
                         }
                     }
                     map.getView().fit(extent, map.getSize());
                 }
                 else {
-                    var newfeature = newfeatures[0];
+                    newfeature = newfeatures[0];
                     pointInteraction.getFeatures().remove(newfeature);
                     if (newfeature.get('features')) {
-                        var clusterCnt = newfeature.get('features').length;
+                        clusterCnt = newfeature.get('features').length;
                         if (clusterCnt > 1) {
-                            var cFeatures = newfeature.get('features');
-                            for (f in cFeatures) {
-                                ol.extent.extend(extent, cFeatures[f].getGeometry().getExtent());
+                            cFeatures = newfeature.get('features');
+                            for (let f in cFeatures) {
+                                if(cFeatures.hasOwnProperty(f)){
+                                    ol.extent.extend(extent, cFeatures[f].getGeometry().getExtent());
+                                }
                             }
                             map.getView().fit(extent, map.getSize());
                         }
@@ -1422,15 +1455,15 @@ $dbArr = Array();
                 }
                 else {
                     if(spiderFeature){
-                        var newfeature = spiderFeature;
+                        newfeature = spiderFeature;
                         spiderFeature = '';
                     }
                     else{
-                        var newfeature = newfeatures[0];
+                        newfeature = newfeatures[0];
                     }
                     pointInteraction.getFeatures().clear();
                     if (newfeature.get('features')) {
-                        var clusterCnt = newfeatures[0].get('features').length;
+                        clusterCnt = newfeatures[0].get('features').length;
                         if (clusterCnt > 1 && !spiderCluster) {
                             spiderifyPoints(newfeatures);
                         }
@@ -1458,10 +1491,10 @@ $dbArr = Array();
 
     selectsource.on('change', function(event) {
         if(!draw){
-            var featureCnt = selectsource.getFeatures().length;
+            const featureCnt = selectsource.getFeatures().length;
             if(featureCnt > 0){
                 if(!shapeActive){
-                    var infoArr = [];
+                    const infoArr = [];
                     infoArr['Name'] = 'select';
                     infoArr['layerType'] = 'vector';
                     infoArr['Title'] = 'Shapes';
@@ -1483,17 +1516,17 @@ $dbArr = Array();
     function loadPointWFSLayer(index){
         pointvectorsource = new ol.source.Vector({
             loader: function(extent, resolution, projection) {
-                var processed = 0;
+                let processed = 0;
                 do{
                     lazyLoadPoints(index,function(res){
-                        var format = new ol.format.GeoJSON();
-                        var features = format.readFeatures(res, {
+                        const format = new ol.format.GeoJSON();
+                        const features = format.readFeatures(res, {
                             featureProjection: 'EPSG:3857'
                         });
                         primeSymbologyData(features);
                         pointvectorsource.addFeatures(features);
                         if(loadPointsEvent){
-                            var pointextent = pointvectorsource.getExtent();
+                            const pointextent = pointvectorsource.getExtent();
                             map.getView().fit(pointextent,map.getSize());
                         }
                     });
@@ -1538,11 +1571,15 @@ $dbArr = Array();
     }
 
     map.on('singleclick', function(evt) {
+        let infoHTML;
+        let url;
+        let viewResolution;
+        let layerIndex;
         if(evt.originalEvent.altKey){
-            var layerIndex = activeLayer+"Source";
-            var viewResolution = /** @type {number} */ (mapView.getResolution());
-            if(activeLayer != 'none' && activeLayer != 'select' && activeLayer != 'pointv' && activeLayer != 'dragdrop1' && activeLayer != 'dragdrop2' && activeLayer != 'dragdrop3'){
-                var url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate,viewResolution,'EPSG:3857',{'INFO_FORMAT':'application/json'});
+            layerIndex = activeLayer + "Source";
+            viewResolution = (mapView.getResolution());
+            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv' && activeLayer !== 'dragdrop1' && activeLayer !== 'dragdrop2' && activeLayer !== 'dragdrop3'){
+                url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
                 if (url) {
                     $.ajax({
                         type: "GET",
@@ -1550,14 +1587,14 @@ $dbArr = Array();
                         async: true
                     }).done(function(msg) {
                         if(msg){
-                            var infoHTML = '';
-                            var infoArr = JSON.parse(msg);
-                            var propArr = infoArr['features'][0]['properties'];
+                            let infoHTML = '';
+                            const infoArr = JSON.parse(msg);
+                            const propArr = infoArr['features'][0]['properties'];
                             if(overlayLayers[activeLayer]){
-                                var sourceVal = propArr['GRAY_INDEX'];
-                                var lowCalVal = overlayLayers[activeLayer]['values']['rasmin'];
-                                var highCalVal = overlayLayers[activeLayer]['values']['rasmax'];
-                                var calcVal = overlayLayers[activeLayer]['values']['newval'];
+                                const sourceVal = propArr['GRAY_INDEX'];
+                                const lowCalVal = overlayLayers[activeLayer]['values']['rasmin'];
+                                const highCalVal = overlayLayers[activeLayer]['values']['rasmax'];
+                                const calcVal = overlayLayers[activeLayer]['values']['newval'];
                                 if(sourceVal >= lowCalVal && sourceVal <= highCalVal){
                                     infoHTML += '<b>Value:</b> '+calcVal+'<br />';
                                 }
@@ -1568,11 +1605,17 @@ $dbArr = Array();
                             else{
                                 //infoHTML += '<b>id:</b> '+infoArr['id']+'<br />';
                                 //infoHTML += '<b>geometry:</b> '+infoArr['geometry']+'<br />';
-                                for(var key in propArr){
-                                    var valTag = '';
-                                    if(key == 'GRAY_INDEX') valTag = 'Value';
-                                    else valTag = key;
-                                    infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
+                                for(const key in propArr){
+                                    if(propArr.hasOwnProperty(key)){
+                                        let valTag = '';
+                                        if(key === 'GRAY_INDEX') {
+                                            valTag = 'Value';
+                                        }
+                                        else {
+                                            valTag = key;
+                                        }
+                                        infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
+                                    }
                                 }
                             }
                             popupcontent.innerHTML = infoHTML;
@@ -1581,17 +1624,17 @@ $dbArr = Array();
                     });
                 }
             }
-            else if(activeLayer == 'dragdrop1' || activeLayer == 'dragdrop2' || activeLayer == 'dragdrop3' || activeLayer == 'select'){
-                var infoHTML = '';
-                var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-                    if(layer === layersArr[activeLayer]){
+            else if(activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3' || activeLayer === 'select'){
+                infoHTML = '';
+                const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                    if (layer === layersArr[activeLayer]) {
                         return feature;
                     }
                 });
                 if(feature){
-                    var properties = feature.getKeys();
-                    for(i in properties){
-                        if(String(properties[i]) != 'geometry'){
+                    const properties = feature.getKeys();
+                    for(let i in properties){
+                        if(String(properties[i]) !== 'geometry'){
                             infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
                         }
                     }
@@ -1601,15 +1644,15 @@ $dbArr = Array();
                     }
                 }
             }
-            else if(activeLayer == 'pointv'){
-                var infoHTML = '';
-                var targetFeature = '';
-                var iFeature = '';
-                if(clickedFeatures.length == 1){
+            else if(activeLayer === 'pointv'){
+                infoHTML = '';
+                let targetFeature = '';
+                let iFeature = '';
+                if(clickedFeatures.length === 1){
                     targetFeature = clickedFeatures[0];
                 }
                 if(targetFeature){
-                    if(clusterPoints && targetFeature.get('features').length == 1){
+                    if(clusterPoints && targetFeature.get('features').length === 1){
                         iFeature = targetFeature.get('features')[0];
                     }
                     else if(!clusterPoints){
@@ -1636,7 +1679,7 @@ $dbArr = Array();
                     infoHTML += '<b>county:</b> '+(iFeature.get('county')?iFeature.get('county'):'')+'<br />';
                     infoHTML += '<b>locality:</b> '+(iFeature.get('locality')?iFeature.get('locality'):'')+'<br />';
                     if(iFeature.get('thumbnailurl')){
-                        var thumburl = iFeature.get('thumbnailurl');
+                        const thumburl = iFeature.get('thumbnailurl');
                         infoHTML += '<img src="'+thumburl+'" style="height:150px" />';
                     }
                     popupcontent.innerHTML = infoHTML;
@@ -1649,9 +1692,9 @@ $dbArr = Array();
             }
         }
         else{
-            var layerIndex = activeLayer+"Source";
-            if(activeLayer != 'none' && activeLayer != 'select' && activeLayer != 'pointv'){
-                if(activeLayer == 'dragdrop1' || activeLayer == 'dragdrop2' || activeLayer == 'dragdrop3'){
+            layerIndex = activeLayer + "Source";
+            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv'){
+                if(activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3'){
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
                             try{
@@ -1666,8 +1709,8 @@ $dbArr = Array();
                     });
                 }
                 else{
-                    var viewResolution = /** @type {number} */ (mapView.getResolution());
-                    var url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
+                    viewResolution = (mapView.getResolution());
+                    url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
                     selectObjectFromID(url, activeLayer);
                 }
             }
@@ -1681,11 +1724,11 @@ $dbArr = Array();
             async: true
         }).done(function(msg) {
             if(msg){
-                var infoArr = JSON.parse(msg);
-                var objID = infoArr['features'][0]['id'];
-                var url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
+                const infoArr = JSON.parse(msg);
+                const objID = infoArr['features'][0]['id'];
+                const url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
                 $.get(url, function(data){
-                    var features = new ol.format.GeoJSON().readFeatures(data);
+                    const features = new ol.format.GeoJSON().readFeatures(data);
                     if(features){
                         selectsource.addFeatures(features);
                         document.getElementById("selectlayerselect").value = 'select';
@@ -1721,21 +1764,21 @@ $dbArr = Array();
 <!-- Data Download Form -->
 <div style="display:none;">
     <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
-        <input id="starrjson" name="starrjson"  type="hidden" value='' />
-        <input id="dh-q" name="dh-q"  type="hidden" value="" />
-        <input id="dh-fq" name="dh-fq" type="hidden" value="" />
-        <input id="dh-fl" name="dh-fl" type="hidden" value="" />
-        <input id="dh-rows" name="dh-rows" type="hidden" value="" />
-        <input id="dh-type" name="dh-type" type="hidden" value="" />
-        <input id="dh-filename" name="dh-filename" type="hidden" value="" />
-        <input id="dh-contentType" name="dh-contentType" type="hidden" value="" />
-        <input id="dh-selections" name="dh-selections" type="hidden" value="" />
-        <input id="schemacsv" name="schemacsv" type="hidden" value="" />
-        <input id="identificationscsv" name="identificationscsv" type="hidden" value="" />
-        <input id="imagescsv" name="imagescsv" type="hidden" value="" />
-        <input id="formatcsv" name="formatcsv" type="hidden" value="" />
-        <input id="zipcsv" name="zipcsv" type="hidden" value="" />
-        <input id="csetcsv" name="csetcsv" type="hidden" value="" />
+        <input id="starrjson" name="starrjson"  type="hidden" />
+        <input id="dh-q" name="dh-q"  type="hidden" />
+        <input id="dh-fq" name="dh-fq" type="hidden" />
+        <input id="dh-fl" name="dh-fl" type="hidden" />
+        <input id="dh-rows" name="dh-rows" type="hidden" />
+        <input id="dh-type" name="dh-type" type="hidden" />
+        <input id="dh-filename" name="dh-filename" type="hidden" />
+        <input id="dh-contentType" name="dh-contentType" type="hidden" />
+        <input id="dh-selections" name="dh-selections" type="hidden" />
+        <input id="schemacsv" name="schemacsv" type="hidden" />
+        <input id="identificationscsv" name="identificationscsv" type="hidden" />
+        <input id="imagescsv" name="imagescsv" type="hidden" />
+        <input id="formatcsv" name="formatcsv" type="hidden" />
+        <input id="zipcsv" name="zipcsv" type="hidden" />
+        <input id="csetcsv" name="csetcsv" type="hidden" />
     </form>
 </div>
 

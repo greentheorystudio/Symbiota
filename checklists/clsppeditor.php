@@ -27,7 +27,7 @@ if($action == "Rename Taxon"){
 	$followUpAction = "removeTaxon()";
 }
 elseif($action == "Submit Checklist Edits"){
-	$eArr = Array();
+	$eArr = array();
 	$eArr["habitat"] = $_POST["habitat"];
 	$eArr["abundance"] = $_POST["abundance"];
 	$eArr["notes"] = $_POST["notes"];

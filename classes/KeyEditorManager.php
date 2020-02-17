@@ -5,12 +5,12 @@ class KeyEditorManager extends KeyManager{
 
 	private $tid;
 	private $taxonName;
-	private $chars = Array();
-	private $charStates = Array();
-	private $selectedStates = Array();
+	private $chars = array();
+	private $charStates = array();
+	private $selectedStates = array();
 	private $parentTid;
 	private $rankId;
-	private $charDepArray = Array();
+	private $charDepArray = array();
   
 	public function __construct(){
 		parent::__construct();
@@ -77,7 +77,7 @@ class KeyEditorManager extends KeyManager{
 	
 	private function setCharList(){
 		//chars Array: HeadingName => (cid => charName)
-		$cidArray = Array();
+		$cidArray = array();
 		$parentStr = implode(',',$this->getParentArr($this->tid));
 		$sql = 'SELECT c.CharName, c.CID, ch.headingname, dep.CIDDependance, dep.CSDependance '.
 			'FROM ((kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID) '.

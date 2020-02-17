@@ -110,7 +110,7 @@ class OccurrenceSupport {
 
 	//OccurrenceSearch tool used to search for and link images to existing occurrence
 	public function getOccurrenceList($collid, $catalogNumber, $otherCatalogNumbers, $recordedBy, $recordNumber){
-		$retArr = Array();
+		$retArr = array();
 		if(!$catalogNumber && !$otherCatalogNumbers && !$recordedBy && !$recordNumber) return $retArr;
 		$sqlWhere = "";
 		if($collid){

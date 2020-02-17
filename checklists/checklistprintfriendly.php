@@ -36,7 +36,7 @@
 	if($showImages) $clManager->setShowImages();
 	if($showVouchers) $clManager->setShowVouchers();
 
-	$clArray = Array();
+	$clArray = array();
 	if($clValue || $dynClid){
 		$clArray = $clManager->getClMetaData();
 		$taxaArray = $clManager->getTaxaList(0,99999);

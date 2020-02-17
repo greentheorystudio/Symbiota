@@ -6,7 +6,7 @@ class SpecUpload{
 	protected $conn;
 	protected $collId;
 	protected $uspid;
-	protected $collMetadataArr = Array();
+	protected $collMetadataArr = array();
 	
 	protected $title = "";
 	protected $platform;
@@ -56,7 +56,7 @@ class SpecUpload{
 	}
 
 	public function getUploadList(){
-		$returnArr = Array();
+		$returnArr = array();
 		if($this->collId){
 			$sql = 'SELECT usp.uspid, usp.uploadtype, usp.title '.
 				'FROM uploadspecparameters usp '.
@@ -159,7 +159,7 @@ class SpecUpload{
 
 	//Review or import data
 	public function exportPendingImport($searchVariables){
-		$retArr = Array();
+		$retArr = array();
 		if($this->collId){
 			if(!$searchVariables) $searchVariables = 'TOTAL_TRANSFER';
 			$fileName = $searchVariables.'_'.$this->collId.'_'.'upload.csv';
@@ -191,7 +191,7 @@ class SpecUpload{
 	}
 
 	public function getPendingImportData($start, $limit, $searchVariables = ''){
-		$retArr = Array();
+		$retArr = array();
 		if($this->collId){
 			$sql = $this->getPendingImportSql($searchVariables) ;
 			if($limit) $sql .= 'LIMIT '.$start.','.$limit;
