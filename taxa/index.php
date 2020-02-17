@@ -1,22 +1,28 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonProfileManager.php');
-Header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$taxonValue = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:""; 
-$taxAuthId = array_key_exists("taxauthid",$_REQUEST)?$_REQUEST["taxauthid"]:1; 
-$clValue = array_key_exists("cl",$_REQUEST)?$_REQUEST["cl"]:0;
-$projValue = array_key_exists("proj",$_REQUEST)?$_REQUEST["proj"]:0;
-$lang = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:$DEFAULT_LANG;
-$descrDisplayLevel = array_key_exists("displaylevel",$_REQUEST)?$_REQUEST["displaylevel"]:"";
-
-//if(!$projValue && !$clValue) $projValue = $DEFAULT_PROJ_ID;
+$taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
+$clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
+$projValue = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']:0;
+$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$DEFAULT_LANG;
+$descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 
 $taxonManager = new TaxonProfileManager();
-if($taxAuthId || $taxAuthId === "0") $taxonManager->setTaxAuthId($taxAuthId);
-if($clValue) $taxonManager->setClName($clValue);
-if($projValue) $taxonManager->setProj($projValue);
-if($lang) $taxonManager->setLanguage($lang);
+if($taxAuthId || $taxAuthId === '0') {
+    $taxonManager->setTaxAuthId($taxAuthId);
+}
+if($clValue) {
+    $taxonManager->setClName($clValue);
+}
+if($projValue) {
+    $taxonManager->setProj($projValue);
+}
+if($lang) {
+    $taxonManager->setLanguage($lang);
+}
 if($taxonValue) {
 	$taxonManager->setTaxon($taxonValue);
 	$taxonManager->setAttributes();
@@ -31,7 +37,7 @@ $vernStr = $taxonManager->getVernacularStr();
 $synStr = $taxonManager->getSynonymStr();
 if($links){
 	foreach($links as $linkKey => $linkUrl){
-		if($linkUrl['title'] == 'REDIRECT'){
+		if($linkUrl['title'] === 'REDIRECT'){
 			$locUrl = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$linkUrl['url']);
 			header('Location: '.$locUrl);
 			exit;
@@ -40,21 +46,27 @@ if($links){
 }
 
 $styleClass = '';
-if($taxonRank > 180) $styleClass = 'species';
-elseif($taxonRank == 180) $styleClass = 'genus';
-else $styleClass = 'higher';
+if($taxonRank > 180) {
+    $styleClass = 'species';
+}
+elseif($taxonRank === 180) {
+    $styleClass = 'genus';
+}
+else {
+    $styleClass = 'higher';
+}
 
 $displayLocality = 0;
 $isEditor = false;
 if($SYMB_UID){
-	if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
+	if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
 		$isEditor = true;
 	}
-	if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
+	if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
 		$displayLocality = 1;
 	}
 }
-if($taxonManager->getSecurityStatus() == 0){
+if($taxonManager->getSecurityStatus() === 0){
 	$displayLocality = 1;
 }
 $taxonManager->setDisplayLocality($displayLocality);
@@ -70,7 +82,7 @@ else{
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." - ".$spDisplay; ?></title>
+	<title><?php echo $DEFAULT_TITLE. ' - ' .$spDisplay; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -83,9 +95,9 @@ else{
 		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
-		var currentLevel = <?php echo ($descrDisplayLevel?$descrDisplayLevel:"1"); ?>;
-		var levelArr = new Array(<?php echo ($descr?"'".implode("','",array_keys($descr))."'":""); ?>);
-		var tid = <?php echo $taxonManager->getTid(); ?>
+		let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
+		const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
+		let tid = <?php echo $taxonManager->getTid(); ?>;
 	</script>
 	<script src="../js/symb/taxa.index.js?ver=20170310" type="text/javascript"></script>
 	<script src="../js/symb/taxa.editor.js?ver=20140619" type="text/javascript"></script>
