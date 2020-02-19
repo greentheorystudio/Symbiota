@@ -21,7 +21,6 @@ class OccurrenceEditorManager {
     private $qryArr = array();
 	private $crowdSourceMode = 0;
 	private $exsiccatiMode = 0;
-	private $SYMB_UID;
 	protected $errorArr = array();
 	protected $isShareConn = false;
 
