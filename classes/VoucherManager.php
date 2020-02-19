@@ -101,6 +101,12 @@ class VoucherManager {
 	public function renameTaxon($newTaxon,$rareLocality = ''): string
 	{
 		$statusStr = '';
+        $habitatSource = '';
+        $abundSource = '';
+        $notesSource = '';
+        $internalNotesSource = '';
+        $sourceSource = '';
+        $nativeSource = '';
 		$nTaxon = $this->conn->real_escape_string($newTaxon);
 		if(is_numeric($nTaxon)){
 			$sql = 'UPDATE fmchklsttaxalink SET TID = '.$nTaxon.' '.

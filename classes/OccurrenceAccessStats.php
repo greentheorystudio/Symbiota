@@ -14,7 +14,6 @@ class OccurrenceAccessStats {
 	private $occidStr;
 	private $pageNum = 0;
 	private $limit = 1000;
-	private $logFH = null;
 	private $errorMessage;
 
 	public function __construct(){
@@ -23,10 +22,13 @@ class OccurrenceAccessStats {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function recordAccessEventByArr($occidArr, $accessType){
+	public function recordAccessEventByArr($occidArr, $accessType): bool
+	{
 		$status = true;
 		foreach($occidArr as $occid){
 			if(!$this->recordAccessEvent($occid, $accessType)){
@@ -36,11 +38,11 @@ class OccurrenceAccessStats {
 		return $status;
 	}
 
-	public function recordAccessEvent($occid,$accessType){
+	public function recordAccessEvent($occid,$accessType): bool
+	{
 		$status = false;
 		if(is_numeric($occid)){
-			/*
-			 $sql = 'INSERT INTO omoccuraccessstats '.
+			$sql = 'INSERT INTO omoccuraccessstats '.
 				'SET occid='.$occid.', accessdate="'.date('Y-m-d').'", ipaddress="'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", '.
 				'cnt=1, accesstype="'.$this->cleanInStr($accessType).'" ON DUPLICATE KEY UPDATE cnt=cnt+1';
 			//echo $sql.'<br/>';
@@ -51,42 +53,28 @@ class OccurrenceAccessStats {
 				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR recording access event: '.$this->conn->error;
 				$this->logError($sql);
 			}
-			*/
 		}
-		return true;
 		return $status;
 	}
 
-	public function batchRecordEventsBySql($sqlFrag,$accessType){
-		$status = true;
-		/*
-		$sql = 'INSERT INTO omoccuraccessstats(occid,accessdate,ipaddress,cnt,accesstype) '.
-			'SELECT o.occid, "'.date('Y-m-d').'", "'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", 1, "'.$this->cleanInStr($accessType).'" ';
-		$sql .= $sqlFrag;
-		$sql .= 'ON DUPLICATE KEY UPDATE cnt=cnt+1';
-		if(!$this->conn->query($sql)){
-			$this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access event by SQL: '.$this->conn->error;
-			$this->logError($sql);
-		}
-		*/
-		return $status;
-	}
-
-	private function logError($sqlStr){
+	private function logError($sqlStr): void
+	{
 		global $SERVER_ROOT;
-		$logFH = fopen($SERVER_ROOT.'/content/logs/statsError_'.date('Y-m-d').'.log', 'a');
+		$logFH = fopen($SERVER_ROOT.'/content/logs/statsError_'.date('Y-m-d').'.log', 'ab');
 		fwrite($logFH,$this->errorMessage."\n");
 		fwrite($logFH,$sqlStr."\n");
 		fclose($logFH);
 	}
 
-	//Reports
-	public function getSummaryReport(){
+	public function getSummaryReport(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT '.$this->getDurationSql().' AS timeperiod, a.accesstype, count(a.occid) as speccnt '.
 			$this->getSqlBase().
 			'GROUP BY timeperiod, a.accesstype ';
-		if($this->limit) $sql .= 'LIMIT '.($this->pageNum*$this->limit).','.$this->limit;
+		if($this->limit) {
+			$sql .= 'LIMIT ' . ($this->pageNum * $this->limit) . ',' . $this->limit;
+		}
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -96,7 +84,8 @@ class OccurrenceAccessStats {
 		return $retArr;
 	}
 
-	public function getSummaryReportCount(){
+	public function getSummaryReportCount(): int
+	{
 		$cnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT '.$this->getDurationSql().', a.accesstype) as cnt '.$this->getSqlBase();
 		//echo $sql;
@@ -108,12 +97,15 @@ class OccurrenceAccessStats {
 		return $cnt;
 	}
 
-	public function getFullReport(){
+	public function getFullReport(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT '.$this->getDurationSql().' AS accessdate, a.accesstype, a.occid, SUM(a.cnt) as cnt '.
 			$this->getSqlBase().
 			'GROUP BY accessdate, a.accesstype, a.occid ';
-			if($this->limit) $sql .= 'LIMIT '.($this->pageNum*$this->limit).','.$this->limit;
+			if($this->limit) {
+				$sql .= 'LIMIT ' . ($this->pageNum * $this->limit) . ',' . $this->limit;
+			}
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -123,7 +115,8 @@ class OccurrenceAccessStats {
 		return $retArr;
 	}
 
-	public function getFullReportCount(){
+	public function getFullReportCount(): int
+	{
 		$cnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT '.$this->getDurationSql().', a.accesstype, a.occid) as cnt '.$this->getSqlBase();
 		//echo $sql;
@@ -135,21 +128,23 @@ class OccurrenceAccessStats {
 		return $cnt;
 	}
 
-	private function getDurationSql(){
+	private function getDurationSql(): string
+	{
 		$durationStr = 'accessdate';
-		if($this->duration == 'week'){
+		if($this->duration === 'week'){
 			$durationStr = 'DATE_FORMAT(a.accessdate,"%Y-%V")';
 		}
-		elseif($this->duration == 'month'){
+		elseif($this->duration === 'month'){
 			$durationStr = 'DATE_FORMAT(a.accessdate,"%Y-%m")';
 		}
-		elseif($this->duration == 'year'){
+		elseif($this->duration === 'year'){
 			$durationStr = 'year(a.accessdate)';
 		}
 		return $durationStr;
 	}
 
-	private function getSqlBase(){
+	private function getSqlBase(): string
+	{
 		$sqlWhere = '';
 		if($this->startDate && $this->endDate){
 			$sqlWhere .= 'AND (a.accessdate BETWEEN "'.$this->startDate.'" AND "'.$this->endDate.'") ';
@@ -160,21 +155,30 @@ class OccurrenceAccessStats {
 		elseif($this->endDate){
 			$sqlWhere .= 'AND (a.accessdate <= "'.$this->endDate.'") ';
 		}
-		if($this->ip) $sqlWhere .= 'AND (a.ipaddress = "'.$this->ip.'") ';
-		if($this->accessType) $sqlWhere .= 'AND (a.accesstype = "'.$this->accessType.'") ';
-		if($this->occidStr) $sqlWhere .= 'AND (a.occid IN("'.$this->occidStr.'")) ';
+		if($this->ip) {
+			$sqlWhere .= 'AND (a.ipaddress = "' . $this->ip . '") ';
+		}
+		if($this->accessType) {
+			$sqlWhere .= 'AND (a.accesstype = "' . $this->accessType . '") ';
+		}
+		if($this->occidStr) {
+			$sqlWhere .= 'AND (a.occid IN("' . $this->occidStr . '")) ';
+		}
 		$sql = 'FROM omoccuraccessstats a ';
-		if($this->collid) $sql .= 'INNER JOIN omoccurrences o ON a.occid = o.occid WHERE (o.collid = '.$this->collid.') '.$sqlWhere;
-		elseif($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere,3);
+		if($this->collid) {
+			$sql .= 'INNER JOIN omoccurrences o ON a.occid = o.occid WHERE (o.collid = ' . $this->collid . ') ' . $sqlWhere;
+		}
+		elseif($sqlWhere) {
+			$sql .= 'WHERE ' . substr($sqlWhere, 3);
+		}
 		return $sql;
 	}
 
-	public function exportCsvFile($display){
+	public function exportCsvFile($display): bool
+	{
 		$status = true;
-		$headerArr = array();
-		$recArr = array();
 		$this->limit = 0;
-		if($display == 'full'){
+		if($display === 'full'){
 			$headerArr = array('Date','Access Type','Record #','Record Count');
 			$recArr = $this->getFullReport();
 		}
@@ -184,19 +188,18 @@ class OccurrenceAccessStats {
 			$recArr = $this->getSummaryReport();
 		}
 		if($recArr){
-			$fileName = 'AccessStats_'.time().".csv";
+			$fileName = 'AccessStats_'.time(). '.csv';
 			header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 			header ('Content-Type: text/csv');
 			header ("Content-Disposition: attachment; filename=\"$fileName\"");
-			$outFH = fopen('php://output', 'w');
+			$outFH = fopen('php://output', 'wb');
 			fputcsv($outFH, $headerArr);
-			//Output records
 			$accessTypeArr = array('view'=>'Full View','map'=>'Map View','list'=>'List View','download'=>'Record Download','downloadJSON'=>'API JSON Download');
-			if($display == 'full'){
+			if($display === 'full'){
 				foreach($recArr as $date => $arr1){
 					foreach($arr1 as $aType => $arr2){
 						foreach($arr2 as $recid => $cnt){
-							$outArr = array($date,(isset($accessTypeArr[$aType])?$accessTypeArr[$aType]:''),$recid,$cnt);
+							$outArr = array($date,($accessTypeArr[$aType] ?? ''),$recid,$cnt);
 							fputcsv($outFH, $outArr);
 						}
 					}
@@ -205,7 +208,7 @@ class OccurrenceAccessStats {
 			else{
 				foreach($recArr as $date => $arr1){
 					foreach($arr1 as $aType => $cnt){
-						$outArr = array($date,(isset($accessTypeArr[$aType])?$accessTypeArr[$aType]:''),$cnt);
+						$outArr = array($date,($accessTypeArr[$aType] ?? ''),$cnt);
 						fputcsv($outFH, $outArr);
 					}
 				}
@@ -214,13 +217,13 @@ class OccurrenceAccessStats {
 		}
 		else{
 			$status = false;
-			$this->errorMessage = "Recordset is empty";
+			$this->errorMessage = 'Recordset is empty';
 		}
 		return $status;
 	}
 
-	//Setters and getters
-	public function setCollid($id){
+	public function setCollid($id): string
+	{
 		$collName = '';
 		if($id && is_numeric($id)){
 			$this->collid = $id;
@@ -234,43 +237,66 @@ class OccurrenceAccessStats {
 		return $collName;
 	}
 
-	public function setDuration($durStr){
-		if(in_array($durStr, array('day','week','month','year'))) $this->duration = $durStr;
+	public function setDuration($durStr): void
+	{
+		if(in_array($durStr, array('day','week','month','year'))) {
+			$this->duration = $durStr;
+		}
 	}
 
-	public function setStartDate($startDate){
-		if(preg_match('/^[\d-]+$/', $startDate)) $this->startDate = $startDate;
+	public function setStartDate($startDate): void
+	{
+		if(preg_match('/^[\d-]+$/', $startDate)) {
+			$this->startDate = $startDate;
+		}
 	}
 
-	public function setEndDate($endDate){
-		if(preg_match('/^[\d-]+$/', $endDate)) $this->endDate = $endDate;
+	public function setEndDate($endDate): void
+	{
+		if(preg_match('/^[\d-]+$/', $endDate)) {
+			$this->endDate = $endDate;
+		}
 	}
 
-	public function setIpAddress($ip){
-		if(filter_var($ip, FILTER_VALIDATE_IP)) $this->ip = $ip;
+	public function setIpAddress($ip): void
+	{
+		if(filter_var($ip, FILTER_VALIDATE_IP)) {
+			$this->ip = $ip;
+		}
 	}
 
-	public function setAccessType($accessType){
-		if(preg_match('/^[a-z,A-Z]+$/', $accessType)) $this->accessType = $accessType;
+	public function setAccessType($accessType): void
+	{
+		if(preg_match('/^[a-z,A-Z]+$/', $accessType)) {
+			$this->accessType = $accessType;
+		}
 	}
 
-	public function setOccidStr($occidStr){
-		if(preg_match('/^[\d,]+$/', $occidStr)) $this->occidStr = $occidStr;
+	public function setOccidStr($occidStr): void
+	{
+		if(preg_match('/^[\d,]+$/', $occidStr)) {
+			$this->occidStr = $occidStr;
+		}
 	}
 
-	public function setPageNum($num){
-		if(is_numeric($num)) $this->pageNum = $num;
+	public function setPageNum($num): void
+	{
+		if(is_numeric($num)) {
+			$this->pageNum = $num;
+		}
 	}
 
-	public function setLimit($l){
-		if(is_numeric($l)) $this->limit = $l;
+	public function setLimit($l): void
+	{
+		if(is_numeric($l)) {
+			$this->limit = $l;
+		}
 	}
 
 	public function getErrorStr(){
 		return $this->errorMessage;
 	}
 
-	//Misc fucntions
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		if($newStr){
@@ -280,4 +306,3 @@ class OccurrenceAccessStats {
 		return $newStr;
 	}
 }
-?>

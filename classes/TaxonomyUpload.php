@@ -608,7 +608,9 @@ class TaxonomyUpload{
 			$this->outputMsg('Preparing for next round... ',1);
 			$sql = 'DELETE FROM uploadtaxa WHERE (tid IS NOT NULL) AND (tidaccepted IS NOT NULL) AND (parenttid IS NOT NULL)';
 			$this->conn->query($sql);
-			if(!$this->conn->affected_rows) break;
+			if(!$this->conn->affected_rows) {
+                break;
+            }
 
 			$sql = 'UPDATE uploadtaxa ut1 INNER JOIN uploadtaxa ut2 ON ut1.sourceparentid = ut2.sourceid '.
 				'INNER JOIN taxa AS t ON ut2.sciname = t.sciname '.
@@ -626,7 +628,7 @@ class TaxonomyUpload{
 			}
 			$loopCnt++;
 		}
-		while($loopCnt < 30);
+		while($loopCnt < 100);
 
 		$this->outputMsg('House cleaning... ');
 		$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE ISNULL(o.TidInterpreted)';

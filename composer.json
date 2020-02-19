@@ -4,8 +4,10 @@
   "license": "proprietary",
   "require": {
     "phpoffice/phpword": "^0.17.0",
+    "ext-ctype": "*",
     "ext-curl": "*",
     "ext-dom": "*",
+    "ext-exif": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-json": "*",

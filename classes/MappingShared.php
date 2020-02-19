@@ -1,17 +1,17 @@
 <?php
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once('OccurrenceAccessStats.php');
 
 class MappingShared{
 
-	private $iconColors = array();
-	private $googleIconArr = array();
+	private $conn;
+	private $iconColors;
+	private $googleIconArr;
 	private $taxaArr = array();
 	private $fieldArr = array();
-	private $sqlWhere;
 	private $searchTerms = 0;
+	private $searchTermsArr;
 
-    public function __construct(){
+	public function __construct(){
 		$connection = new DbConnection();
     	$this->conn = $connection->getConnection();
     	$this->iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
@@ -26,10 +26,13 @@ class MappingShared{
     }
 
 	public function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+ 		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 
-    public function getGenObsInfo(){
+    public function getGenObsInfo(): string
+	{
 		$retVar = '';
 		$sql = 'SELECT collid '.
 			'FROM omcollections '.
@@ -43,7 +46,8 @@ class MappingShared{
 		return $retVar;
 	}
 
-	public function getGeoCoords($mapWhere,$limit=1000,$includeDescr=false){
+	public function getGeoCoords($mapWhere,$includeDescr=false): array
+	{
 		global $USER_RIGHTS, $IS_ADMIN;
 		$coordArr = array();
 		$sql = 'SELECT DISTINCT o.occid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS identifier, '.
@@ -54,44 +58,41 @@ class MappingShared{
 		}
 		if($this->fieldArr){
 			foreach($this->fieldArr as $k => $v){
-				$sql .= ", o.".$v." ";
+				$sql .= ', o.' .$v. ' ';
 			}
 		}
-		$sql .= "FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ";
-		if(strpos($mapWhere,'v.clid')) $sql .= "INNER JOIN fmvouchers v ON o.occid = v.occid ";
-		if(strpos($mapWhere,'MATCH(f.recordedby)') || strpos($mapWhere,'MATCH(f.locality)')) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
+		if(strpos($mapWhere,'v.clid')) {
+			$sql .= 'INNER JOIN fmvouchers v ON o.occid = v.occid ';
+		}
+		if(strpos($mapWhere,'MATCH(f.recordedby)') || strpos($mapWhere,'MATCH(f.locality)')) {
+			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		}
 		$sql .= $mapWhere;
-		$sql .= " AND (o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 20000) ";
-		if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("RareSppAdmin",$USER_RIGHTS) || array_key_exists("RareSppReadAll",$USER_RIGHTS)){
-			//Is global rare species reader, thus do nothing to sql and grab all records
+		$sql .= ' AND (o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 20000) ';
+		if(!$IS_ADMIN && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+			if(array_key_exists('RareSppReader',$USER_RIGHTS)){
+				$sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+			}
+			else{
+				$sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+			}
 		}
-		elseif(array_key_exists("RareSppReader",$USER_RIGHTS)){
-			$sql .= " AND (o.CollId IN (".implode(",",$USER_RIGHTS["RareSppReader"]).") OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ";
-		}
-		else{
-			$sql .= " AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ";
-		}
-		/*
-		if($limit && is_numeric($limit)){
-			$sql .= " LIMIT ".$limit;
-		}
-		*/
 		$taxaMapper = array();
-		$taxaMapper["undefined"] = "undefined";
+		$taxaMapper['undefined'] = 'undefined';
 		$cnt = 0;
-		//echo json_encode($this->taxaArr);
 		foreach($this->taxaArr as $key => $valueArr){
-			$coordArr[$key] = Array("color" => $this->iconColors[$cnt%7]);
+			$coordArr[$key] = Array('color' => $this->iconColors[$cnt%7]);
 			$cnt++;
 			$taxaMapper[$key] = $key;
-			if(array_key_exists("scinames",$valueArr)){
-				$scinames = $valueArr["scinames"];
+			if(array_key_exists('scinames',$valueArr)){
+				$scinames = $valueArr['scinames'];
 				foreach($scinames as $sciname){
 					$taxaMapper[$sciname] = $key;
 				}
 			}
-			if(array_key_exists("synonyms",$valueArr)){
-				$synonyms = $valueArr["synonyms"];
+			if(array_key_exists('synonyms',$valueArr)){
+				$synonyms = $valueArr['synonyms'];
 				foreach($synonyms as $syn){
 					$taxaMapper[$syn] = $key;
 				}
@@ -105,8 +106,7 @@ class MappingShared{
 				$occId = $row->occid;
 				$sciName = $row->sciname;
 				$family = $row->family;
-				//$latLngStr = round($row->DecimalLatitude,4).",".round($row->DecimalLongitude,4);
-				$latLngStr = $row->DecimalLatitude.",".$row->DecimalLongitude;
+				$latLngStr = $row->DecimalLatitude. ',' .$row->DecimalLongitude;
 				if(!array_key_exists($sciName,$taxaMapper)){
 					foreach($taxaMapper as $keySciname => $v){
 						if(strpos($sciName,$keySciname) === 0){
@@ -118,94 +118,96 @@ class MappingShared{
 						$sciName = $family;
 					}
 				}
-				if(!array_key_exists($sciName,$taxaMapper)) $sciName = "undefined";
-				$coordArr[$taxaMapper[$sciName]][$occId]["collid"] = $row->collid;
-				$coordArr[$taxaMapper[$sciName]][$occId]["latLngStr"] = $latLngStr;
-				$coordArr[$taxaMapper[$sciName]][$occId]["identifier"] = $row->identifier;
-				$coordArr[$taxaMapper[$sciName]][$occId]["tidinterpreted"] = $this->xmlentities($row->tidinterpreted);
-				$coordArr[$taxaMapper[$sciName]][$occId]["institutioncode"] = $row->institutioncode;
-				$coordArr[$taxaMapper[$sciName]][$occId]["collectioncode"] = $row->collectioncode;
-				$coordArr[$taxaMapper[$sciName]][$occId]["catalognumber"] = $row->catalognumber;
-				$coordArr[$taxaMapper[$sciName]][$occId]["othercatalognumbers"] = $row->othercatalognumbers;
+				if(!array_key_exists($sciName,$taxaMapper)) {
+					$sciName = 'undefined';
+				}
+				$coordArr[$taxaMapper[$sciName]][$occId]['collid'] = $row->collid;
+				$coordArr[$taxaMapper[$sciName]][$occId]['latLngStr'] = $latLngStr;
+				$coordArr[$taxaMapper[$sciName]][$occId]['identifier'] = $row->identifier;
+				$coordArr[$taxaMapper[$sciName]][$occId]['tidinterpreted'] = $this->xmlentities($row->tidinterpreted);
+				$coordArr[$taxaMapper[$sciName]][$occId]['institutioncode'] = $row->institutioncode;
+				$coordArr[$taxaMapper[$sciName]][$occId]['collectioncode'] = $row->collectioncode;
+				$coordArr[$taxaMapper[$sciName]][$occId]['catalognumber'] = $row->catalognumber;
+				$coordArr[$taxaMapper[$sciName]][$occId]['othercatalognumbers'] = $row->othercatalognumbers;
 				if($includeDescr){
-					$coordArr[$taxaMapper[$sciName]][$occId]["descr"] = $row->descr;
+					$coordArr[$taxaMapper[$sciName]][$occId]['descr'] = $row->descr;
 				}
 				if($this->fieldArr){
 					foreach($this->fieldArr as $k => $v){
 						$coordArr[$taxaMapper[$sciName]][$occId][$v] = $this->xmlentities($row->$v);
 					}
 				}
-				//Set access statistics
 				$statsManager->recordAccessEvent($occId, 'map');
 			}
 		}
-		if(array_key_exists("undefined",$coordArr)){
-			$coordArr["undefined"]["color"] = $this->iconColors[7];
+		if(array_key_exists('undefined',$coordArr)){
+			$coordArr['undefined']['color'] = $this->iconColors[7];
 		}
 		$result->free();
 
 		return $coordArr;
-		//return $sql;
 	}
 
-    public function writeKMLFile($coordArr){
-    	global $DEFAULT_TITLE, $USER_RIGHTS, $CLIENT_ROOT, $CHARSET;
+    public function writeKMLFile($coordArr): void
+	{
+    	global $DEFAULT_TITLE, $CLIENT_ROOT, $CHARSET;
 		$fileName = $DEFAULT_TITLE;
 		if($fileName){
-			if(strlen($fileName) > 10) $fileName = substr($fileName,0,10);
-			$fileName = str_replace(".","",$fileName);
-			$fileName = str_replace(" ","_",$fileName);
+			if(strlen($fileName) > 10) {
+				$fileName = substr($fileName, 0, 10);
+			}
+			$fileName = str_replace(array('.', ' '), array('', '_'), $fileName);
 		}
 		else{
-			$fileName = "symbiota";
+			$fileName = 'symbiota';
 		}
-		$fileName .= time().".kml";
+		$fileName .= time(). '.kml';
     	header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-type: application/vnd.google-earth.kml+xml');
 		header ("Content-Disposition: attachment; filename=\"$fileName\"");
 		echo "<?xml version='1.0' encoding='".$CHARSET."'?>\n";
         echo "<kml xmlns='http://www.opengis.net/kml/2.2'>\n";
         echo "<Document>\n";
-		echo "<Folder>\n<name>".$DEFAULT_TITLE." Specimens - ".date('j F Y g:ia')."</name>\n";
+		echo "<Folder>\n<name>".$DEFAULT_TITLE. ' Specimens - ' .date('j F Y g:ia')."</name>\n";
 
 		$cnt = 0;
 		foreach($coordArr as $sciName => $contentArr){
 			$iconStr = $this->googleIconArr[$cnt%44];
 			$cnt++;
-			unset($contentArr["color"]);
+			unset($contentArr['color']);
 
 			echo "<Style id='sn_".$iconStr."'>\n";
-            echo "<IconStyle><scale>1.1</scale><Icon>";
-			echo "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>";
+            echo '<IconStyle><scale>1.1</scale><Icon>';
+			echo '<href>http://maps.google.com/mapfiles/kml/' .$iconStr. '.png</href>';
 			echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
 			echo "<Style id='sh_".$iconStr."'>\n";
-            echo "<IconStyle><scale>1.3</scale><Icon>";
-			echo "<href>http://maps.google.com/mapfiles/kml/".$iconStr.".png</href>";
+            echo '<IconStyle><scale>1.3</scale><Icon>';
+			echo '<href>http://maps.google.com/mapfiles/kml/' .$iconStr. '.png</href>';
 			echo "</Icon><hotSpot x='20' y='2' xunits='pixels' yunits='pixels'/></IconStyle>\n</Style>\n";
-			echo "<StyleMap id='".str_replace(" ","_",$sciName)."'>\n";
-            echo "<Pair><key>normal</key><styleUrl>#sn_".$iconStr."</styleUrl></Pair>";
-			echo "<Pair><key>highlight</key><styleUrl>#sh_".$iconStr."</styleUrl></Pair>";
+			echo "<StyleMap id='".str_replace(' ', '_',$sciName)."'>\n";
+            echo '<Pair><key>normal</key><styleUrl>#sn_' .$iconStr. '</styleUrl></Pair>';
+			echo '<Pair><key>highlight</key><styleUrl>#sh_' .$iconStr. '</styleUrl></Pair>';
 			echo "</StyleMap>\n";
-			echo "<Folder><name>".$sciName."</name>\n";
+			echo '<Folder><name>' .$sciName."</name>\n";
 			foreach($contentArr as $occId => $pointArr){
 				echo "<Placemark>\n";
-				echo "<name>".htmlspecialchars($pointArr["identifier"], ENT_QUOTES)."</name>\n";
+				echo '<name>' .htmlspecialchars($pointArr['identifier'], ENT_QUOTES)."</name>\n";
 				echo "<ExtendedData>\n";
-				echo "<Data name='institutioncode'>".$this->xmlentities($pointArr["institutioncode"])."</Data>\n";
-				echo "<Data name='collectioncode'>".$this->xmlentities($pointArr["collectioncode"])."</Data>\n";
-				echo "<Data name='catalognumber'>".$this->xmlentities($pointArr["catalognumber"])."</Data>\n";
-				echo "<Data name='othercatalognumbers'>".$this->xmlentities($pointArr["othercatalognumbers"])."</Data>\n";
+				echo "<Data name='institutioncode'>".$this->xmlentities($pointArr['institutioncode'])."</Data>\n";
+				echo "<Data name='collectioncode'>".$this->xmlentities($pointArr['collectioncode'])."</Data>\n";
+				echo "<Data name='catalognumber'>".$this->xmlentities($pointArr['catalognumber'])."</Data>\n";
+				echo "<Data name='othercatalognumbers'>".$this->xmlentities($pointArr['othercatalognumbers'])."</Data>\n";
 				if($this->fieldArr){
 					foreach($this->fieldArr as $k => $v){
 						echo "<Data name='".$v."'>".$pointArr[$v]."</Data>\n";
 					}
 				}
 				echo "<Data name='DataSource'>Data retrieved from ".$DEFAULT_TITLE." Data Portal</Data>\n";
-				$url = "http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."/collections/individual/index.php?occid=".$occId;
+				$url = "http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '/collections/individual/index.php?occid=' .$occId;
 				echo "<Data name='RecordURL'>".$url."</Data>\n";
 				echo "</ExtendedData>\n";
-				echo "<styleUrl>#".str_replace(" ","_",$sciName)."</styleUrl>\n";
-				echo "<Point><coordinates>".implode(",",array_reverse(explode(",",$pointArr["latLngStr"]))).",0</coordinates></Point>\n";
+				echo '<styleUrl>#' .str_replace(' ', '_',$sciName)."</styleUrl>\n";
+				echo '<Point><coordinates>' .implode(',',array_reverse(explode(',',$pointArr['latLngStr']))).",0</coordinates></Point>\n";
 				echo "</Placemark>\n";
 			}
 			echo "</Folder>\n";
@@ -219,18 +221,19 @@ class MappingShared{
 		return str_replace(array ('&','"',"'",'<','>','?'),array ('&amp;','&quot;','&apos;','&lt;','&gt;','&apos;'),$string);
 	}
 
-    //Setters and getters
-    public function setTaxaArr($tArr){
+    public function setTaxaArr($tArr): void
+	{
     	$this->taxaArr = $tArr;
     }
 
-	public function setFieldArr($fArr){
+	public function setFieldArr($fArr): void
+	{
     	$this->fieldArr = $fArr;
     }
 
-	public function setSearchTermsArr($stArr){
+	public function setSearchTermsArr($stArr): void
+	{
     	$this->searchTermsArr = $stArr;
 		$this->searchTerms = 1;
     }
 }
-?>

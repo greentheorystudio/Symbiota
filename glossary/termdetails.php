@@ -77,7 +77,7 @@ if($formSubmit){
 		}
 	}
 	elseif($formSubmit == 'Delete Term'){
-		if($glosManager->deleteTerm($_POST)){
+		if($glosManager->deleteTerm()){
 			$glossId = 0;
 			$closeWindow = true;
 		}

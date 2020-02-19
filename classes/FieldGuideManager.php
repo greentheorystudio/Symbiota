@@ -23,20 +23,22 @@ class FieldGuideManager {
     private $resultArr = array();
     protected $serverDomain;
 
-    function __construct(){
+    public function __construct(){
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) $this->conn->close();
+        if(!($this->conn === null)) {
+            $this->conn->close();
+        }
     }
 
     public function checkFGLog($collid){
         global $SERVER_ROOT;
         $retArr = array();
         $jsonFileName = $collid.'-FGLog.json';
-        $jsonFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
+        $jsonFile = $SERVER_ROOT.(substr($SERVER_ROOT,-1) === '/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
         if(file_exists($jsonFile)){
             $jsonStr = file_get_contents($jsonFile);
             $retArr = json_decode($jsonStr,true);
@@ -47,7 +49,7 @@ class FieldGuideManager {
     public function processCurrentJobs($jobs){
         global $FIELDGUIDE_API_KEY;
         foreach($jobs as $job => $jArr){
-            $pArr["job_id"] = $job;
+            $pArr['job_id'] = $job;
             $headers = array(
                 'authorization: Token '.$FIELDGUIDE_API_KEY,
                 'Content-Type: application/x-www-form-urlencoded',
@@ -70,14 +72,15 @@ class FieldGuideManager {
             curl_close($ch);
             if($result){
                 $statArr = json_decode($result, true);
-                $jobs[$job]['status'] = ($statArr['status']?$statArr['status']:'');
-                $jobs[$job]['progress'] = ($statArr['progress']?$statArr['progress']:'');
+                $jobs[$job]['status'] = ($statArr['status']?:'');
+                $jobs[$job]['progress'] = ($statArr['progress']?:'');
             }
         }
         return $jobs;
     }
 
-    public function initiateFGBatchProcess(){
+    public function initiateFGBatchProcess(): string
+    {
         global $SERVER_ROOT, $CLIENT_ROOT, $FIELDGUIDE_API_KEY;
         $status = '';
         $this->setServerDomain();
@@ -85,50 +88,55 @@ class FieldGuideManager {
         if($imgArr){
             $processDataArr = array();
             $pArr = array();
-            $token = sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-                mt_rand( 0, 0xffff ),
-                mt_rand( 0, 0x0fff ) | 0x4000,
-                mt_rand( 0, 0x3fff ) | 0x8000,
-                mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-            );
-            $jsonFileName = $this->collId.'-i-'.$token.'.json';
-            $jobID = $this->collId.'_'.$token;
-            $processDataArr["job_id"] = $jobID;
-            $processDataArr["parenttaxon"] = $this->taxon;
-            $processDataArr["dateinitiated"] = date("Y-m-d");
-            $processDataArr["images"] = $imgArr;
-            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$jsonFileName, 'w');
-            fwrite($fp, json_encode($processDataArr));
-            fclose($fp);
-            $dataFileUrl = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
-            $responseUrl = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'webservices/fieldguidebatch.php';
-            $pArr["job_id"] = $processDataArr["job_id"];
-            $pArr["response_url"] = $responseUrl;
-            $pArr["url"] = $dataFileUrl;
-            $headers = array(
-                'authorization: Token '.$FIELDGUIDE_API_KEY,
-                'Content-Type: application/x-www-form-urlencoded',
-                'Accept: application/json',
-                'Cache-Control: no-cache',
-                'Pragma: no-cache',
-                'Content-Length: '.strlen(http_build_query($pArr))
-            );
-            $ch = curl_init();
-            $options = array(
-                CURLOPT_URL => 'https://fieldguide.net/api2/symbiota/submit_cv_job',
-                CURLOPT_POST => true,
-                CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_TIMEOUT => 90,
-                CURLOPT_POSTFIELDS => http_build_query($pArr),
-                CURLOPT_RETURNTRANSFER => true
-            );
-            curl_setopt_array($ch, $options);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            unset($processDataArr["images"]);
-            $this->logFGBatchFile($jsonFileName,$processDataArr);
-            $status = 'Batch process initiated';
+            $token = '';
+            try {
+                $token = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                    random_int(0, 0xffff), random_int(0, 0xffff),
+                    random_int(0, 0xffff),
+                    random_int(0, 0x0fff) | 0x4000,
+                    random_int(0, 0x3fff) | 0x8000,
+                    random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff)
+                );
+            } catch (Exception $e) {}
+            if($token){
+                $jsonFileName = $this->collId.'-i-'.$token.'.json';
+                $jobID = $this->collId.'_'.$token;
+                $processDataArr['job_id'] = $jobID;
+                $processDataArr['parenttaxon'] = $this->taxon;
+                $processDataArr['dateinitiated'] = date('Y-m-d');
+                $processDataArr['images'] = $imgArr;
+                $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$jsonFileName, 'wb');
+                fwrite($fp, json_encode($processDataArr));
+                fclose($fp);
+                $dataFileUrl = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
+                $responseUrl = $this->serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'webservices/fieldguidebatch.php';
+                $pArr['job_id'] = $processDataArr['job_id'];
+                $pArr['response_url'] = $responseUrl;
+                $pArr['url'] = $dataFileUrl;
+                $headers = array(
+                    'authorization: Token '.$FIELDGUIDE_API_KEY,
+                    'Content-Type: application/x-www-form-urlencoded',
+                    'Accept: application/json',
+                    'Cache-Control: no-cache',
+                    'Pragma: no-cache',
+                    'Content-Length: '.strlen(http_build_query($pArr))
+                );
+                $ch = curl_init();
+                $options = array(
+                    CURLOPT_URL => 'https://fieldguide.net/api2/symbiota/submit_cv_job',
+                    CURLOPT_POST => true,
+                    CURLOPT_HTTPHEADER => $headers,
+                    CURLOPT_TIMEOUT => 90,
+                    CURLOPT_POSTFIELDS => http_build_query($pArr),
+                    CURLOPT_RETURNTRANSFER => true
+                );
+                curl_setopt_array($ch, $options);
+                curl_exec($ch);
+                curl_close($ch);
+                unset($processDataArr['images']);
+                $this->logFGBatchFile($jsonFileName,$processDataArr);
+                $status = 'Batch process initiated';
+            }
         }
         else{
             $status = 'No images found for that parent taxon';
@@ -136,25 +144,26 @@ class FieldGuideManager {
         return $status;
     }
 
-    public function logFGBatchFile($jsonFileName,$infoArr){
+    public function logFGBatchFile($jsonFileName,$infoArr): void
+    {
         global $SERVER_ROOT;
-        $jobID = $infoArr["job_id"];
+        $jobID = $infoArr['job_id'];
         $fileArr = array();
         if(file_exists($SERVER_ROOT.'/temp/data/fieldguide/'.$this->collId.'-FGLog.json')){
             $fileArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$this->collId.'-FGLog.json'), true);
             unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$this->collId.'-FGLog.json');
         }
         $fileArr['jobs'][$jobID]['file'] = $jsonFileName;
-        $fileArr['jobs'][$jobID]['taxon'] = $infoArr["parenttaxon"];
-        $fileArr['jobs'][$jobID]['date'] = $infoArr["dateinitiated"];
-        $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$this->collId.'-FGLog.json', 'w');
+        $fileArr['jobs'][$jobID]['taxon'] = $infoArr['parenttaxon'];
+        $fileArr['jobs'][$jobID]['date'] = $infoArr['dateinitiated'];
+        $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$this->collId.'-FGLog.json', 'wb');
         fwrite($fp, json_encode($fileArr));
         fclose($fp);
     }
 
-    public function cancelFGBatchProcess($collid,$jobId){
+    public function cancelFGBatchProcess($collid,$jobId): string
+    {
         global $SERVER_ROOT, $FIELDGUIDE_API_KEY;
-        $status = '';
         $resultsCnt = 0;
         $fileArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
         unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json');
@@ -162,13 +171,15 @@ class FieldGuideManager {
         unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$fileName);
         unset($fileArr['jobs'][$jobId]);
         $jobsCnt = count($fileArr['jobs']);
-        if(isset($fileArr['results'])) $resultsCnt = count($fileArr['results']);
+        if(isset($fileArr['results'])) {
+            $resultsCnt = count($fileArr['results']);
+        }
         if(($jobsCnt + $resultsCnt) > 0){
-            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'w');
+            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
             fwrite($fp, json_encode($fileArr));
             fclose($fp);
         }
-        $pArr["job_id"] = $jobID;
+        $pArr['job_id'] = $jobId;
         $headers = array(
             'authorization: Token '.$FIELDGUIDE_API_KEY,
             'Content-Type: application/x-www-form-urlencoded',
@@ -187,17 +198,19 @@ class FieldGuideManager {
             CURLOPT_RETURNTRANSFER => true
         );
         curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
+        curl_exec($ch);
         curl_close($ch);
-        $status = 'Batch process cancelled';
-        return $status;
+        return 'Batch process cancelled';
     }
 
-    public function getFGBatchImgArr(){
+    public function getFGBatchImgArr(): array
+    {
         global $IMAGE_DOMAIN;
         $returnArr = array();
         $tId = '';
-        if($this->taxon) $tId = $this->getFGBatchTaxonTid($this->taxon);
+        if($this->taxon) {
+            $tId = $this->getFGBatchTaxonTid($this->taxon);
+        }
         $sql = 'SELECT i.imgid, o.occid, o.sciname, t.SciName AS taxonorder, i.url '.
             'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
@@ -206,32 +219,36 @@ class FieldGuideManager {
             'LEFT JOIN taxa AS t2 ON o.tidinterpreted = t2.TID '.
             'WHERE o.collid = '.$this->collId.' AND ((t2.SciName = "'.$this->taxon.'") OR '.
             '((ts.taxauthid = 1 AND te.taxauthid = 1 AND t.RankId = 100)';
-        if($tId) $sql .= ' AND o.tidinterpreted IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$tId.')';
+        if($tId) {
+            $sql .= ' AND o.tidinterpreted IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . $tId . ')';
+        }
         $sql .= ')) ';
         //echo "<div>Sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $imgId = $row->imgid;
             $imgUrl = $row->url;
-            $localDomain = '';
             if(isset($IMAGE_DOMAIN) && $IMAGE_DOMAIN){
                 $localDomain = $IMAGE_DOMAIN;
             }
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(substr($imgUrl,0,1) == '/') $imgUrl = $localDomain.$imgUrl;
-            $returnArr[$imgId]["occid"] = $row->occid;
-            $returnArr[$imgId]["sciname"] = $row->sciname;
-            $returnArr[$imgId]["order"] = $row->taxonorder;
-            $returnArr[$imgId]["url"] = $imgUrl;
+            if(strpos($imgUrl, '/') === 0) {
+                $imgUrl = $localDomain . $imgUrl;
+            }
+            $returnArr[$imgId]['occid'] = $row->occid;
+            $returnArr[$imgId]['sciname'] = $row->sciname;
+            $returnArr[$imgId]['order'] = $row->taxonorder;
+            $returnArr[$imgId]['url'] = $imgUrl;
         }
         $result->free();
 
         return $returnArr;
     }
 
-    public function getFGBatchTaxonTid($taxon){
+    public function getFGBatchTaxonTid($taxon): int
+    {
         $tId = 0;
         $sql = 'SELECT TID '.
             'FROM taxa '.
@@ -246,7 +263,8 @@ class FieldGuideManager {
         return $tId;
     }
 
-    public function checkImages($collid){
+    public function checkImages($collid): bool
+    {
         $images = false;
         $sql = 'SELECT i.imgid '.
             'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
@@ -254,31 +272,41 @@ class FieldGuideManager {
         //echo "<div>Sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            if($row->imgid) $images = true;
+            if($row->imgid) {
+                $images = true;
+            }
         }
         $result->free();
 
         return $images;
     }
 
-    public function validateFGResults($collid,$jobId){
+    public function validateFGResults($collid,$jobId): bool
+    {
         global $SERVER_ROOT;
         $valid = false;
         if(file_exists($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json')){
             $dataArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json'),true);
-            if(isset($dataArr['jobs'][$jobId])) $valid = true;
+            if(isset($dataArr['jobs'][$jobId])) {
+                $valid = true;
+            }
         }
         return $valid;
     }
 
-    public function logFGResults($collid,$token,$resultUrl){
+    public function logFGResults($collid,$token,$resultUrl): void
+    {
         global $SERVER_ROOT;
+        $fileName = '';
+        $taxon = '';
+        $startDate = '';
         $jobArr = array();
+        $processDataArr = array();
         $jobID = $collid.'_'.$token;
         $fileArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
         unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json');
         foreach($fileArr['jobs'] as $job => $jArr){
-            if($job == $jobID){
+            if($job === $jobID){
                 $fileName = $jArr['file'];
                 $taxon = $jArr['taxon'];
                 $startDate = $jArr['date'];
@@ -287,32 +315,38 @@ class FieldGuideManager {
                 $jobArr[$job] = $jArr;
             }
         }
-        $dateReceived = date("Y-m-d");
-        unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$fileName);
-        $fileArr['jobs'] = $jobArr;
-        $resArr = json_decode(file_get_contents($resultUrl), true);
-        $processDataArr["job_id"] = $jobID;
-        $processDataArr["parenttaxon"] = $taxon;
-        $processDataArr["dateinitiated"] = $startDate;
-        $processDataArr["datereceived"] = $dateReceived;
-        $processDataArr["images"] = $resArr['images'];
-        if(isset($resArr['image_counts'])) $processDataArr["imagecnts"] = $resArr['image_counts'];
-        $jsonFileName = $collid.'-r-'.$token.'.json';
-        $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$jsonFileName, 'w');
-        fwrite($fp, json_encode($processDataArr));
-        fclose($fp);
-        $fileArr['results'][$jobID]['file'] = $jsonFileName;
-        $fileArr['results'][$jobID]['taxon'] = $taxon;
-        $fileArr['results'][$jobID]['inidate'] = $startDate;
-        $fileArr['results'][$jobID]['recdate'] = $dateReceived;
-        $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'w');
-        fwrite($fp, json_encode($fileArr));
-        fclose($fp);
+        $dateReceived = date('Y-m-d');
+        if($fileName && $taxon && $startDate){
+            unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$fileName);
+            $fileArr['jobs'] = $jobArr;
+            $resArr = json_decode(file_get_contents($resultUrl), true);
+            $processDataArr['job_id'] = $jobID;
+            $processDataArr['parenttaxon'] = $taxon;
+            $processDataArr['dateinitiated'] = $startDate;
+            $processDataArr['datereceived'] = $dateReceived;
+            $processDataArr['images'] = $resArr['images'];
+            if(isset($resArr['image_counts'])) {
+                $processDataArr['imagecnts'] = $resArr['image_counts'];
+            }
+        }
+        if($processDataArr){
+            $jsonFileName = $collid.'-r-'.$token.'.json';
+            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$jsonFileName, 'wb');
+            fwrite($fp, json_encode($processDataArr));
+            fclose($fp);
+            $fileArr['results'][$jobID]['file'] = $jsonFileName;
+            $fileArr['results'][$jobID]['taxon'] = $taxon;
+            $fileArr['results'][$jobID]['inidate'] = $startDate;
+            $fileArr['results'][$jobID]['recdate'] = $dateReceived;
+            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
+            fwrite($fp, json_encode($fileArr));
+            fclose($fp);
+        }
     }
 
-    public function deleteFGBatchResults($collid,$jobId){
+    public function deleteFGBatchResults($collid,$jobId): string
+    {
         global $SERVER_ROOT;
-        $status = '';
         $jobsCnt = 0;
         $fileArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
         unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json');
@@ -320,77 +354,80 @@ class FieldGuideManager {
         unlink($SERVER_ROOT.'/temp/data/fieldguide/'.$fileName);
         unset($fileArr['results'][$jobId]);
         $resultsCnt = count($fileArr['results']);
-        if(isset($fileArr['jobs'])) $jobsCnt = count($fileArr['jobs']);
+        if(isset($fileArr['jobs'])) {
+            $jobsCnt = count($fileArr['jobs']);
+        }
         if(($jobsCnt + $resultsCnt) > 0){
-            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'w');
+            $fp = fopen($SERVER_ROOT.'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
             fwrite($fp, json_encode($fileArr));
             fclose($fp);
         }
-        $status = 'Batch results deleted';
-        return $status;
+        return 'Batch results deleted';
     }
 
-    public function primeFGResults(){
+    public function primeFGResults(): void
+    {
         global $SERVER_ROOT;
-        $tempCntArr = array();
         $resultFilename = $this->collId.'-r-'.$this->token.'.json';
         $fileArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/fieldguide/'.$resultFilename), true);
-        $this->taxon = $fileArr["parenttaxon"];
-        $this->fgResultArr = $fileArr["images"];
-        if(isset($fileArr["imagecnts"])) $this->fgImageCntArr = $fileArr["imagecnts"];
+        $this->taxon = $fileArr['parenttaxon'];
+        $this->fgResultArr = $fileArr['images'];
+        if(isset($fileArr['imagecnts'])) {
+            $this->fgImageCntArr = $fileArr['imagecnts'];
+        }
         foreach($this->fgResultArr as $imgId => $ifArr){
-            if($ifArr["status"] == 'OK'){
-                if($ifArr["result"]){
-                    foreach($ifArr["result"] as $name){
-                        if(!array_key_exists($name,$this->fgResTidArr)){
-                            $this->fgResTidArr[$name] = array();
-                        }
+            if(($ifArr['status'] === 'OK') && $ifArr['result']) {
+                foreach($ifArr['result'] as $name){
+                    if(!array_key_exists($name,$this->fgResTidArr)){
+                        $this->fgResTidArr[$name] = array();
                     }
                 }
             }
-            $tempCntArr[] = $imgId;
         }
         $imgIdArr = array_keys($this->fgResultArr);
         $this->primeFGResultsOccArr($imgIdArr);
         $this->getFGResultTids();
     }
 
-    public function primeFGResultsOccArr($imgArr){
+    public function primeFGResultsOccArr($imgArr): void
+    {
         $tempArr = $this->fgResultArr;
-        $imgIDStr = implode(",",$imgArr);
+        $imgIDStr = implode(',',$imgArr);
         $sql = 'SELECT DISTINCT imgid, occid '.
             'FROM images '.
-            "WHERE imgid IN(".$imgIDStr.") ";
+            'WHERE imgid IN(' .$imgIDStr. ') ';
         //echo "<div>Sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $add = false;
             $imgId = $row->imgid;
             $occId = $row->occid;
-            $fgStatus = $this->fgResultArr[$imgId]["status"];
-            $fgResults = $this->fgResultArr[$imgId]["result"];
-            if($this->viewMode == 'full'){
+            $fgStatus = $this->fgResultArr[$imgId]['status'];
+            $fgResults = $this->fgResultArr[$imgId]['result'];
+            if($this->viewMode === 'full'){
                 $add = true;
             }
-            elseif($fgStatus == 'OK' && $fgResults && count($fgResults) > 0){
+            elseif($fgStatus === 'OK' && $fgResults && count($fgResults) > 0){
                 $add = true;
             }
             if($add){
-                if(!in_array($occId,$this->fgResOccArr)) $this->fgResOccArr[] = $occId;
+                if(!in_array($occId, $this->fgResOccArr, true)) {
+                    $this->fgResOccArr[] = $occId;
+                }
                 $this->fgResultArr[$occId][$imgId] = $tempArr[$imgId];
             }
         }
         $result->free();
     }
 
-    public function getFGResultTids(){
+    public function getFGResultTids(): void
+    {
         $fgIDNamesArr = array_keys($this->fgResTidArr);
         $fgIDNamesStr = "'".implode("','",$fgIDNamesArr)."'";
         $sql = 'SELECT t.SciName, t.TID '.
             'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-            "WHERE t.SciName IN(".$fgIDNamesStr.") AND ts.taxauthid = 1 AND t.TID = ts.tidaccepted ";
+            'WHERE t.SciName IN(' .$fgIDNamesStr. ') AND ts.taxauthid = 1 AND t.TID = ts.tidaccepted ';
         //echo "<div>Sql: ".$sql."</div>";
-        //$result = $this->conn->query($sql);
         if($result = $this->conn->query($sql)){
             while($row = $result->fetch_object()){
                 $sciname = $row->SciName;
@@ -401,10 +438,11 @@ class FieldGuideManager {
         }
     }
 
-    public function getFGResultImgArr(){
+    public function getFGResultImgArr(): array
+    {
         global $IMAGE_DOMAIN;
         $returnArr = array();
-        $fgOccIdStr = implode(",",$this->fgResOccArr);
+        $fgOccIdStr = implode(',',$this->fgResOccArr);
         $sql = 'SELECT i.imgid, o.occid, o.sciname, IFNULL(ts.family,o.family) AS family, i.url, c.InstitutionCode, c.CollectionCode '.
             'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
@@ -415,34 +453,38 @@ class FieldGuideManager {
         while($row = $result->fetch_object()){
             $imgId = $row->imgid;
             $imgUrl = $row->url;
-            $localDomain = '';
             if($IMAGE_DOMAIN){
                 $localDomain = $IMAGE_DOMAIN;
             }
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(substr($imgUrl,0,1) == '/') $imgUrl = $localDomain.$imgUrl;
-            $returnArr[$imgId]["occid"] = $row->occid;
-            $returnArr[$imgId]["InstitutionCode"] = $row->InstitutionCode;
-            $returnArr[$imgId]["CollectionCode"] = $row->CollectionCode;
-            $returnArr[$imgId]["sciname"] = $row->sciname;
-            $returnArr[$imgId]["family"] = $row->family;
-            $returnArr[$imgId]["url"] = $imgUrl;
+            if(strpos($imgUrl, '/') === 0) {
+                $imgUrl = $localDomain . $imgUrl;
+            }
+            $returnArr[$imgId]['occid'] = $row->occid;
+            $returnArr[$imgId]['InstitutionCode'] = $row->InstitutionCode;
+            $returnArr[$imgId]['CollectionCode'] = $row->CollectionCode;
+            $returnArr[$imgId]['sciname'] = $row->sciname;
+            $returnArr[$imgId]['family'] = $row->family;
+            $returnArr[$imgId]['url'] = $imgUrl;
         }
         $result->free();
 
         return $returnArr;
     }
 
-    public function getReturnOccArr(){
+    public function getReturnOccArr(): array
+    {
         $returnArr = array();
-        $occIDStr = implode(",",$this->fgResOccArr);
+        $occIDStr = implode(',',$this->fgResOccArr);
         $sql = 'SELECT DISTINCT occid '.
             'FROM omoccurrences '.
-            "WHERE occid IN(".$occIDStr.") ".
+            'WHERE occid IN(' .$occIDStr. ') ' .
             'ORDER BY occid ';
-        if($this->recLimit) $sql .= 'LIMIT '.$this->recStart.','.$this->recLimit;
+        if($this->recLimit) {
+            $sql .= 'LIMIT ' . $this->recStart . ',' . $this->recLimit;
+        }
         //echo "<div>Sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -452,7 +494,8 @@ class FieldGuideManager {
         return $returnArr;
     }
 
-    public function processFGResults(){
+    public function processFGResults(): void
+    {
         $this->fgResultTot = count($this->fgResOccArr);
         $imgArr = $this->getFGResultImgArr();
         $limitArr = $this->getReturnOccArr();
@@ -463,33 +506,34 @@ class FieldGuideManager {
             if(($this->recLimit && $i > $this->recLimit)){
                 break;
             }
-            if(in_array($occId,$limitArr)){
+            if(in_array($occId, $limitArr, true)){
                 foreach($oArr as $imgId => $iArr){
                     if($imgArr[$imgId]){
                         $ifArr = $imgArr[$imgId];
-                        $currID = $ifArr["sciname"];
-                        $family = $ifArr["family"];
-                        $imgUrl = $ifArr["url"];
-                        $fgStatus = $iArr["status"];
-                        $fgResults = $iArr["result"];
-                        if($prevOccid != $occId){
+                        $currID = $ifArr['sciname'];
+                        $family = $ifArr['family'];
+                        $imgUrl = $ifArr['url'];
+                        $fgStatus = $iArr['status'];
+                        $fgResults = $iArr['result'];
+                        if($prevOccid !== $occId){
                             $prevOccid = $occId;
                             $i++;
                         }
-                        $this->resultArr[$occId]["InstitutionCode"] = $ifArr["InstitutionCode"];
-                        $this->resultArr[$occId]["CollectionCode"] = $ifArr["CollectionCode"];
-                        $this->resultArr[$occId]["sciname"] = $currID;
-                        $this->resultArr[$occId]["family"] = $family;
-                        $this->resultArr[$occId][$imgId]["url"] = $imgUrl;
-                        $this->resultArr[$occId][$imgId]["status"] = $fgStatus;
-                        $this->resultArr[$occId][$imgId]["results"] = $fgResults;
+                        $this->resultArr[$occId]['InstitutionCode'] = $ifArr['InstitutionCode'];
+                        $this->resultArr[$occId]['CollectionCode'] = $ifArr['CollectionCode'];
+                        $this->resultArr[$occId]['sciname'] = $currID;
+                        $this->resultArr[$occId]['family'] = $family;
+                        $this->resultArr[$occId][$imgId]['url'] = $imgUrl;
+                        $this->resultArr[$occId][$imgId]['status'] = $fgStatus;
+                        $this->resultArr[$occId][$imgId]['results'] = $fgResults;
                     }
                 }
             }
         }
     }
 
-    public function processDeterminations($pArr){
+    public function processDeterminations($pArr): void
+    {
         global $PARAMS_ARR, $SOLR_MODE;
         $occArr = $pArr['occid'];
         foreach($occArr as $occId){
@@ -498,7 +542,7 @@ class FieldGuideManager {
             $detFamily = '';
             $detSciNameAuthor = '';
             $sciname = '';
-            $determiner = "FieldGuide CV Determination";
+            $determiner = 'FieldGuide CV Determination';
             $sql = 'SELECT ts.family, t.SciName, t.Author '.
                 'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
                 'LEFT JOIN taxauthority AS ta ON ts.taxauthid = ta.taxauthid '.
@@ -512,22 +556,22 @@ class FieldGuideManager {
             }
             $result->free();
             $occManager = new OccurrenceEditorDeterminations();
-            $occManager->setSymbUid($PARAMS_ARR["uid"]);
+            $occManager->setSymbUid($PARAMS_ARR['uid']);
             $occManager->setOccId($occId);
-            $occManager->setCollId($pArr["collid"]);
+            $occManager->setCollId($pArr['collid']);
             $iArr = array(
-                "identificationqualifier" => "",
-                "sciname" => $sciname,
-                "tidtoadd" => $detTidAccepted,
-                "family" => $detFamily,
-                "scientificnameauthorship" => $detSciNameAuthor,
-                "confidenceranking" => 5,
-                "identifiedby" => $determiner,
-                "dateidentified" => date('m-d-Y'),
-                "identificationreferences" => "",
-                "identificationremarks" => "",
-                "makecurrent" => 1,
-                "occid" => $occId
+                'identificationqualifier' => '',
+                'sciname' => $sciname,
+                'tidtoadd' => $detTidAccepted,
+                'family' => $detFamily,
+                'scientificnameauthorship' => $detSciNameAuthor,
+                'confidenceranking' => 5,
+                'identifiedby' => $determiner,
+                'dateidentified' => date('m-d-Y'),
+                'identificationreferences' => '',
+                'identificationremarks' => '',
+                'makecurrent' => 1,
+                'occid' => $occId
             );
             $occManager->addDetermination($iArr,1);
         }
@@ -537,53 +581,67 @@ class FieldGuideManager {
         }
     }
 
-    public function setCollID($val){
+    public function setCollID($val): void
+    {
         $this->collId = $val;
     }
 
-    public function setRecLimit($val){
+    public function setRecLimit($val): void
+    {
         $this->recLimit = $val;
     }
 
-    public function setRecStart($val){
+    public function setRecStart($val): void
+    {
         $this->recStart = $val;
     }
 
-    public function setJobID($val){
+    public function setJobID($val): void
+    {
         $this->jobId = $val;
-        $jobArr = explode("_",$val,2);
+        $jobArr = explode('_',$val,2);
         $this->token = $jobArr[1];
     }
 
-    public function setViewMode($val){
+    public function setViewMode($val): void
+    {
         $this->viewMode = $val;
     }
 
-    public function setTaxon($val){
+    public function setTaxon($val): void
+    {
         $this->taxon = $val;
     }
 
-    public function getResults(){
+    public function getResults(): array
+    {
         return $this->resultArr;
     }
 
-    public function getImageCnts(){
+    public function getImageCnts(): array
+    {
         return $this->fgImageCntArr;
     }
 
-    public function getResultTot(){
+    public function getResultTot(): int
+    {
         return $this->fgResultTot;
     }
 
-    public function getTids(){
+    public function getTids(): array
+    {
         return $this->fgResTidArr;
     }
 
-    public function setServerDomain(){
-        $this->serverDomain = "http://";
-        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $this->serverDomain = "https://";
+    public function setServerDomain(): void
+    {
+        $this->serverDomain = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $this->serverDomain = 'https://';
+        }
         $this->serverDomain .= $_SERVER['HTTP_HOST'];
-        if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $this->serverDomain .= ':'.$_SERVER["SERVER_PORT"];
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+            $this->serverDomain .= ':' . $_SERVER['SERVER_PORT'];
+        }
     }
 }
-?>

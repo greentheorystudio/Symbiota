@@ -11,20 +11,13 @@ class KeyEditorManager extends KeyManager{
 	private $parentTid;
 	private $rankId;
 	private $charDepArray = array();
-  
-	public function __construct(){
-		parent::__construct();
-	}
 
-	public function __destruct(){
-		parent::__destruct();
-	}
-	
-	public function setTid($t){
+	public function setTid($t): void
+	{
 		if(is_numeric($t)){
 			$this->tid = $t;
-			$sql = "SELECT t.SciName, ts.ParentTID, t.RankId ".
-				"FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = 1 AND (t.TID = ".$this->tid.')';
+			$sql = 'SELECT t.SciName, ts.ParentTID, t.RankId ' .
+				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = 1 AND (t.TID = ' .$this->tid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->taxonName = $row->SciName;
@@ -51,32 +44,28 @@ class KeyEditorManager extends KeyManager{
 		return $this->rankId;
 	}
 
-	public function isSelected($str){
-		if($this->selectedStates && array_key_exists($str, $this->selectedStates)){
-			return true;
-		}
-		else{
-			return false;
-		}
+	public function isSelected($str): bool
+	{
+		return $this->selectedStates && array_key_exists($str, $this->selectedStates);
 	}
 
 	public function getInheritedStr($str){
 		if($this->selectedStates && array_key_exists($str, $this->selectedStates)){
 			return $this->selectedStates[$str];
 		}
-		else{
-			return "";
-		}
+
+		return '';
 	}
 
-	public function getCharList(){
+	public function getCharList(): array
+	{
 		$this->setCharList();
 		$this->setSelectedStates();
 		return $this->chars;
 	}
 	
-	private function setCharList(){
-		//chars Array: HeadingName => (cid => charName)
+	private function setCharList(): void
+	{
 		$cidArray = array();
 		$parentStr = implode(',',$this->getParentArr($this->tid));
 		$sql = 'SELECT c.CharName, c.CID, ch.headingname, dep.CIDDependance, dep.CSDependance '.
@@ -91,29 +80,35 @@ class KeyEditorManager extends KeyManager{
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$charKey = $row->CID;
-			$cidArray[$charKey] = "";
+			$cidArray[$charKey] = '';
 			$charValue = $row->CharName;
 			$charHeading = $row->headingname;
-			$pos = strpos($charHeading,":");
-			if($pos) $charHeading = substr($charHeading, $pos + 2);
+			$pos = strpos($charHeading, ':');
+			if($pos) {
+				$charHeading = substr($charHeading, $pos + 2);
+			}
 			$this->chars[$charHeading][$charKey] = $charValue;
 
-			//Set CharDependance array values;
 			$cidDepValue = $row->CIDDependance;
 			$csDepValue = $row->CSDependance;
-			if($cidDepValue) $this->charDepArray[$charKey] = $cidDepValue.":".$csDepValue;
+			if($cidDepValue) {
+				$this->charDepArray[$charKey] = $cidDepValue . ':' . $csDepValue;
+			}
 			
 		}
-		if($cidArray) $this->setCharStates(implode(",",array_keys($cidArray)));
+		if($cidArray) {
+			$this->setCharStates(implode(',', array_keys($cidArray)));
+		}
 		$result->free();
 	}
 	
-	public function getCharDepArray(){
+	public function getCharDepArray(): array
+	{
 		return $this->charDepArray;
 	}
 
-	private function setCharStates($cidStr){
-		//cs Array: cid => (cs => charStateName)
+	private function setCharStates($cidStr): void
+	{
 		$sql = 'SELECT cid, cs, charstatename FROM kmcs WHERE (cid In ('.$cidStr.')) ORDER BY sortSequence, cs';
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
@@ -122,31 +117,34 @@ class KeyEditorManager extends KeyManager{
 		$result->free();
 	}
 	
-	public function getCharStates(){
+	public function getCharStates(): array
+	{
 		return $this->charStates;
 	}
 
-	private function setSelectedStates(){
-		//selectedStates Array: cid_cs (ex: 1_3=>" (i)")
-		$sql = "SELECT d.CID, d.CS, d.Inherited FROM kmdescr d WHERE (d.TID = $this->tid)";
+	private function setSelectedStates(): void
+	{
+		$sql = 'SELECT d.CID, d.CS, d.Inherited FROM kmdescr d WHERE (d.TID = '.$this->tid.')';
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$cid = $row->CID;
 			$cs = $row->CS;
-			$this->selectedStates[$cid."_".$cs] = ($row->Inherited?" (i)":"");
+			$this->selectedStates[$cid. '_' .$cs] = ($row->Inherited? ' (i)' : '');
 		}
 		$result->free();
 	}
 
-	public function processTaxa($addStates,$removeStates){
+	public function processTaxa($addStates,$removeStates): void
+	{
 		$aStates = $this->processStateArr($addStates);
 		$rStates = $this->processStateArr($removeStates);
 		$charUsedStr = implode(',',array_unique(array_merge(array_keys($aStates),array_keys($rStates))));
 
-		if($charUsedStr) $this->deleteInheritance($this->tid,$charUsedStr); 
+		if($charUsedStr) {
+			$this->deleteInheritance($this->tid, $charUsedStr);
+		}
 		
 		if($rStates){
-			//Delete all char/cs combinations in $rStates
 			foreach($rStates as $cid => $csArr){
 				foreach($csArr as $cs){
 					$this->deleteDescr($this->tid, $cid, $cs);
@@ -155,7 +153,6 @@ class KeyEditorManager extends KeyManager{
 		}
 
 		if($aStates){
-			//Add all char/cs combinations in $aStates
 			foreach($aStates as $cid => $csArr){
 				foreach($csArr as $cs){
 					$this->insertDescr($this->tid, $cid, $cs);
@@ -166,11 +163,12 @@ class KeyEditorManager extends KeyManager{
 		$this->resetInheritance($this->tid, $charUsedStr);
 	}
 
-	private function processStateArr($stateArr){
+	private function processStateArr($stateArr): array
+	{
 		$retArr = array();
 		if($stateArr){
 			foreach($stateArr as $value){
-				$tok = explode("_",$value);
+				$tok = explode('_',$value);
 				$cid = $tok[0];
 				$cs = $tok[1];
 				$retArr[$cid][] = $cs; 
@@ -179,4 +177,3 @@ class KeyEditorManager extends KeyManager{
 		return $retArr;
 	} 
 }
-?>

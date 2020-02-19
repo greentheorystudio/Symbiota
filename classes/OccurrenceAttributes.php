@@ -10,16 +10,12 @@ class OccurrenceAttributes extends Manager {
 	private $attrNotes = '';
 	private $sqlBody = '';
 
-	public function __construct($type = 'write'){
-		parent::__construct(null);
+	public function __construct(){
+		parent::__construct();
 	}
 
-	public function __destruct(){
-		parent::__destruct();
-	}
-
-	//Edit functions
-	public function saveAttributes($postArr,$notes,$uid){
+	public function saveAttributes($postArr,$notes,$uid): bool
+	{
 		if(!is_numeric($uid)){
 			$this->errorMessage = 'ERROR saving occurrence attribute: bad input values; ';
 			return false;
@@ -27,9 +23,11 @@ class OccurrenceAttributes extends Manager {
 		$status = true;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
-			if(substr($postKey,0,8) == 'stateid-'){
+			if(strpos($postKey, 'stateid-') === 0){
 				if(is_array($postValue)){
-					$stateArr = array_merge($stateArr,$postValue);
+					foreach($postValue as $val){
+						$stateArr[] = $val;
+					}
 				}
 				else{
 					$stateArr[] = $postValue;
@@ -52,11 +50,13 @@ class OccurrenceAttributes extends Manager {
 		return $status;
 	}
 
-	//Get data functions
-	public function getImageUrls(){
+	public function getImageUrls(): array
+	{
 		$retArr = array();
 		if($this->collidStr){
-			if(!$this->sqlBody) $this->setSqlBody();
+			if(!$this->sqlBody) {
+				$this->setSqlBody();
+			}
 			$sql = 'SELECT i.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.
 				$this->sqlBody.
 				'ORDER BY RAND() LIMIT 1';
@@ -89,7 +89,9 @@ class OccurrenceAttributes extends Manager {
 	public function getSpecimenCount(){
 		$retCnt = 0;
 		if($this->collidStr){
-			if(!$this->sqlBody) $this->setSqlBody();
+			if(!$this->sqlBody) {
+				$this->setSqlBody();
+			}
 			$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$this->sqlBody;
 			if($this->tidFilter){
 				$sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$this->sqlBody;
@@ -104,12 +106,12 @@ class OccurrenceAttributes extends Manager {
 		return $retCnt;
 	}
 	
-	private function setSqlBody(){
+	private function setSqlBody(): void
+	{
 		$this->sqlBody = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
 			'LEFT JOIN tmattributes a ON i.occid = a.occid '.
 			'WHERE (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
 		if($this->tidFilter){
-			//Get Synonyms
 			$tidArr = array();
 			$sql = 'SELECT ts1.tid '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '. 
@@ -127,21 +129,12 @@ class OccurrenceAttributes extends Manager {
 		}
 	}
 
-	public function getTraitNames(){
+	public function getTraitNames(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT t.traitid, t.traitname '.
 			'FROM tmtraits t LEFT JOIN tmtraitdependencies d ON t.traitid = d.traitid '.
 			'WHERE t.traittype IN("UM","OM") AND d.traitid IS NULL';
-		/*
-		if($this->tidFilter){
-			$sql = 'SELECT DISTINCT t.traitid, t.traitname '.
-				'FROM tmtraits t INNER JOIN tmtraittaxalink l ON t.traitid = l.traitid '.
-				'INNER JOIN taxaenumtree e ON l.tid = e.parenttid '.
-				'LEFT JOIN tmtraitdependencies d ON t.traitid = d.traitid '.
-				'WHERE traittype IN("UM","OM") AND e.taxauthid = 1 AND d.traitid IS NULL AND e.tid = '.$this->tidFilter;
-		}
-		*/
-		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->traitid] = $r->traitname;
@@ -151,16 +144,20 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 
-	public function getTraitArr($traitID, $setAttributes = false){
+	public function getTraitArr($traitID, $setAttributes = false): array
+	{
 		unset($this->traitArr);
 		$this->traitArr = array();
 		$this->setTraitArr($traitID);
 		$this->setTraitStates();
-		if($setAttributes) $this->setCodedAttribute();
+		if($setAttributes) {
+			$this->setCodedAttribute();
+		}
 		return $this->traitArr;
 	}
 
-	private function setTraitArr($traitStr){
+	private function setTraitArr($traitStr): array
+	{
 		if(preg_match('/^[\d,]+$/', $traitStr)){
 			$sql = 'SELECT traitid, traitname, traittype, units, description, refurl, notes, dynamicproperties '.
 				'FROM tmtraits '. 
@@ -177,13 +174,13 @@ class OccurrenceAttributes extends Manager {
 				$this->traitArr[$r->traitid]['props'] = $r->dynamicproperties;
 			}
 			$rs->free();
-			//Get dependent traits and append to return array
 			$this->setDependentTraits($traitStr);
 		}
 		return $this->traitArr;
 	}
 
-	private function setDependentTraits($traitStr){
+	private function setDependentTraits($traitStr): void
+	{
 		$traitIdArr = array();
 		$sql = 'SELECT DISTINCT s.traitid AS parenttraitid, d.parentstateid, d.traitid AS depTraitID '.
 			'FROM tmstates s INNER JOIN tmtraitdependencies d ON s.stateid = d.parentstateid '.
@@ -200,7 +197,8 @@ class OccurrenceAttributes extends Manager {
 		}
 	}
 
-	private function setTraitStates(){
+	private function setTraitStates(): void
+	{
 		$sql = 'SELECT traitid, stateid, statename, description, notes, refurl '.
 			'FROM tmstates '.
 			'WHERE traitid IN('.implode(',',array_keys($this->traitArr)).') '.
@@ -216,7 +214,8 @@ class OccurrenceAttributes extends Manager {
 		$rs->free();
 	}
 
-	private function setCodedAttribute(){
+	private function setCodedAttribute(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT s.traitid, a.stateid, a.notes '.
 			'FROM tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid '.
@@ -231,49 +230,52 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 	
-	public function echoFormTraits($traitID){
+	public function echoFormTraits($traitID): void
+	{
 		echo $this->getTraitUnitString($traitID,true);
 		echo '<div style="margin:10px 5px;">';
 		echo 'Notes: <input name="notes" type="text" style="width:200px" value="'.$this->attrNotes.'" />';
 		echo '</div>';
 	}
 
-	private function getTraitUnitString($traitID,$dispaly,$classStr=''){
+	private function getTraitUnitString($traitID,$dispaly,$classStr=''): string
+	{
 		$controlType = 'checkbox';
 		if($this->traitArr[$traitID]['props']){
 			$propArr = json_decode($this->traitArr[$traitID]['props'],true);
-			if(isset($propArr[0]['controlType'])) $controlType = $propArr[0]['controlType'];
+			if(isset($propArr[0]['controlType'])) {
+				$controlType = $propArr[0]['controlType'];
+			}
 		}
 		$attrStateArr = $this->traitArr[$traitID]['states'];
-		$hasBeenCoded = false;
 		$innerStr = '';
 		foreach($attrStateArr as $sid => $sArr){
 			$isCoded = false;
 			if(array_key_exists('coded',$sArr)){
 				$isCoded = true;
-				$hasBeenCoded = true;
 				$this->attrNotes = $sArr['coded'];
 			}
 			$depTraitId = false;
-			if(isset($sArr['dependTraitID']) && $sArr['dependTraitID']) $depTraitId = $sArr['dependTraitID'];
-			if($controlType == 'checkbox' || $controlType == 'radio'){
+			if(isset($sArr['dependTraitID']) && $sArr['dependTraitID']) {
+				$depTraitId = $sArr['dependTraitID'];
+			}
+			if($controlType === 'checkbox' || $controlType === 'radio'){
 				$innerStr .= '<div title="'.$sArr['description'].'"><input name="stateid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged('.$traitID.')" /> '.$sArr['name'].'</div>';
 			}
-			elseif($controlType == 'select'){
+			elseif($controlType === 'select'){
 				$innerStr .= '<option value="'.$sid.'" '.($isCoded?'selected':'').'>'.$sArr['name'].'</option>';
 			}
 			if($depTraitId){
 				$innerStr .= $this->getTraitUnitString($depTraitId,$isCoded,trim($classStr.' child-'.$sid));
 			}
 		}
-		//Display if trait has been coded or is the first/base trait (e.g. $indend == 0)
 		$divClass = '';
 		if($classStr){
 			$classArr = explode(' ',$classStr);
 			$divClass = array_pop($classArr);
 		}
 		$outStr = '<div class="'.$divClass.'" style="margin-left:'.($classStr?'10':'').'px; display:'.($dispaly?'block':'none').';">';
-		if($controlType == 'select'){
+		if($controlType === 'select'){
 			$outStr .= '<select name="stateid">';
 			$outStr .= '<option value="">Select State</option>';
 			$outStr .= '<option value="">------------------------------</option>';
@@ -283,7 +285,7 @@ class OccurrenceAttributes extends Manager {
 		else{
 			$outStr .= $innerStr;
 		}
-		$outStr .= "</div>";
+		$outStr .= '</div>';
 		return $outStr;
 	}
 
@@ -306,16 +308,19 @@ class OccurrenceAttributes extends Manager {
 		return json_encode($retArr);
 	}
 
-	//Attribute review functions
 	public function getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start){
 		$retArr = array();
-		//Some sanitation
-		if($reviewUid && !is_numeric($reviewUid)) return false;
-		if($reviewStatus && !is_numeric($reviewStatus)) return false;
-		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) return false;
+		if($reviewUid && !is_numeric($reviewUid)) {
+			return false;
+		}
+		if($reviewStatus && !is_numeric($reviewStatus)) {
+			return false;
+		}
+		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) {
+			return false;
+		}
 		if(is_numeric($traitID) && $this->collidStr){
 			$targetOccid = 0;
-			//$traitID is required
 			$sql1 = 'SELECT DISTINCT o.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.
 				$this->getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus).' LIMIT '.$start.',1';
 			//echo $sql1;
@@ -325,7 +330,6 @@ class OccurrenceAttributes extends Manager {
 				$retArr[$r1->occid]['catnum'] = $r1->catnum;
 			}
 			$rs1->free();
-			//Get images for target occid (isolation query into separate statements returns all images where there are multiples per specimen) 
 			$sql = 'SELECT imgid, url, originalurl, occid FROM images WHERE (occid = '.$targetOccid.')';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
@@ -342,12 +346,16 @@ class OccurrenceAttributes extends Manager {
 	
 	public function getReviewCount($traitID, $reviewUid, $reviewDate, $reviewStatus){
 		$cnt = 0;
-		//Some sanitation
-		if($reviewUid && !is_numeric($reviewUid)) return false;
-		if($reviewStatus && !is_numeric($reviewStatus)) return false;
-		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) return false;
+		if($reviewUid && !is_numeric($reviewUid)) {
+			return false;
+		}
+		if($reviewStatus && !is_numeric($reviewStatus)) {
+			return false;
+		}
+		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) {
+			return false;
+		}
 		if(is_numeric($traitID) && $this->collidStr){
-			//$traitID is required
 			$sql = 'SELECT COUNT(DISTINCT o.occid) as cnt '.
 				$this->getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus);
 			//echo $sql;
@@ -360,7 +368,8 @@ class OccurrenceAttributes extends Manager {
 		return $cnt;
 	}
 
-	private function getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus){
+	private function getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus): string
+	{
 		$sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
 			'INNER JOIN tmattributes a ON i.occid = a.occid '.
 			'INNER JOIN tmstates s ON a.stateid = s.stateid '. 
@@ -380,14 +389,17 @@ class OccurrenceAttributes extends Manager {
 		return $sqlFrag;
 	}
 
-	public function saveReviewStatus($traitID, $postArr){
+	public function saveReviewStatus($traitID, $postArr): bool
+	{
 		global $SYMB_UID;
 	    $status = false;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
-			if(substr($postKey,0,8) == 'stateid-'){
+			if(strpos($postKey, 'stateid-') === 0){
 				if(is_array($postValue)){
-					$stateArr = array_merge($stateArr,$postValue);
+					foreach($postValue as $val){
+						$stateArr[] = $val;
+					}
 				}
 				else{
 					$stateArr[] = $postValue;
@@ -397,7 +409,6 @@ class OccurrenceAttributes extends Manager {
 		$setStatus = $postArr['setstatus'];
 		if(is_numeric($traitID) && is_numeric($setStatus)){
 			$this->setTraitArr($traitID);
-			//$this->setTraitStates();
 			$attrArr = $this->setCodedAttribute();
 			$addArr = array_diff($stateArr,$attrArr);
 			$delArr = array_diff($attrArr,$stateArr);
@@ -437,7 +448,8 @@ class OccurrenceAttributes extends Manager {
 		return $status;
 	}
 
-	public function getEditorArr(){
+	public function getEditorArr(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT u.uid, u.lastname, u.firstname, l.username '.
 			'FROM tmattributes a INNER JOIN users u ON a.createduid = u.uid '.
@@ -452,7 +464,8 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 	
-	public function getEditDates(){
+	public function getEditDates(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT DATE(a.initialtimestamp) as d '.
 			'FROM tmattributes a INNER JOIN omoccurrences o ON a.occid = o.occid '.
@@ -465,8 +478,8 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 
-	//Attribute mining 
-	public function getFieldValueArr($traitID, $fieldName, $tidFilter, $stringFilter){
+	public function getFieldValueArr($traitID, $fieldName, $tidFilter, $stringFilter): array
+	{
 		$retArr = array();
 		if(is_numeric($traitID)){
 			$sql = 'SELECT o.'.$fieldName.', count(DISTINCT o.occid) AS cnt FROM omoccurrences o '.
@@ -475,7 +488,9 @@ class OccurrenceAttributes extends Manager {
 			//echo $sql; 
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_assoc()){
-				if($r[$fieldName]) $retArr[] = strtolower($r[$fieldName]).' - ['.$r['cnt'].']';
+				if($r[$fieldName]) {
+					$retArr[] = strtolower($r[$fieldName]) . ' - [' . $r['cnt'] . ']';
+				}
 			}
 			$rs->free();
 			sort($retArr);
@@ -483,13 +498,14 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 
-	public function submitBatchAttributes($traitID, $fieldName, $tidFilter, $stateIDArr, $fieldValueArr, $notes, $reviewStatus){
+	public function submitBatchAttributes($traitID, $fieldName, $tidFilter, $stateIDArr, $fieldValueArr, $notes, $reviewStatus): bool
+	{
 		global $SYMB_UID;
 		set_time_limit(1800);
 		$status = true;
 		$fieldArr = array();
 		foreach($fieldValueArr as $fieldValue){
-			if(preg_match('/(.+) - \[\d+\]$/',$fieldValue,$m)){
+			if(preg_match('/(.+) - \[\d+]$/',$fieldValue,$m)){
 				$fieldValue = $m[1];
 			}
 			$fieldArr[] = $this->conn->real_escape_string($fieldValue);
@@ -523,15 +539,17 @@ class OccurrenceAttributes extends Manager {
 					}
 				}
 			}
-			//Add notes, source, and editor uid
 			$occidChuckArr = array_chunk($occArr, '200000');
 			foreach($occidChuckArr as $oArr){
 				$sqlUpdate = 'UPDATE tmattributes '.
 					'SET source = "Field mining: '.$this->cleanInStr($fieldName).'", createduid = '.$SYMB_UID;
-				if($notes) $sqlUpdate .= ', notes = "'.$this->cleanInStr($notes).'"';
-				if(is_numeric($reviewStatus)) $sqlUpdate .= ', statuscode = "'.$this->cleanInStr($reviewStatus).'"';
+				if($notes) {
+					$sqlUpdate .= ', notes = "' . $this->cleanInStr($notes) . '"';
+				}
+				if(is_numeric($reviewStatus)) {
+					$sqlUpdate .= ', statuscode = "' . $this->cleanInStr($reviewStatus) . '"';
+				}
 				$sqlUpdate .= ' WHERE stateid IN('.implode(',',$stateIDArr).') AND occid IN('.implode(',',$oArr).')';
-				//echo $sqlUpdate;
 				if(!$this->conn->query($sqlUpdate)){
 					$this->errorMessage .= 'ERROR saving batch occurrence attributes(2): '.$this->conn->error.'; ';
 					$status = false;
@@ -541,7 +559,8 @@ class OccurrenceAttributes extends Manager {
 		return $status;
 	}
 	
-	private function getMiningSqlFrag($traitID, $fieldName, $tidFilter, $stringFilter = ''){
+	private function getMiningSqlFrag($traitID, $fieldName, $tidFilter, $stringFilter = ''): string
+	{
 		$sql = '';
 		if($tidFilter){
 			$sql = 'INNER JOIN taxaenumtree e ON o.tidinterpreted = e.tid ';
@@ -551,7 +570,7 @@ class OccurrenceAttributes extends Manager {
 		if($tidFilter){
 			$sql .= 'AND (e.taxauthid = 1) AND (e.parenttid = '.$tidFilter.' OR o.tidinterpreted = '.$tidFilter.') ';
 		}
-		if($this->collidStr != 'all'){
+		if($this->collidStr !== 'all'){
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';
 		}
 		if($stringFilter){
@@ -560,11 +579,13 @@ class OccurrenceAttributes extends Manager {
 		return $sql;
 	}
 
-	//Setters, getters, and misc get functions
-	public function getCollectionList($collArr){
+	public function getCollectionList($collArr): array
+	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname, CONCAT_WS("-",institutioncode,collectioncode) as instcode FROM omcollections ';
-		if($collArr) $sql .= 'WHERE collid IN('.implode(',',$collArr).')';
+		if($collArr) {
+			$sql .= 'WHERE collid IN(' . implode(',', $collArr) . ')';
+		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid] = $r->collectionname.' ('.$r->instcode.')';
@@ -573,22 +594,24 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 
-	public function setCollid($idStr){
+	public function setCollid($idStr): void
+	{
 		if(preg_match('/^[0-9,al]+$/', $idStr)){
 			$this->collidStr = $idStr;
 		}
 	}
 
-	public function setTidFilter($tid){
+	public function setTidFilter($tid): void
+	{
 		if(is_numeric($tid)){
 			$this->tidFilter = $tid;
 		}
 	}
 
-	public function setTargetOccid($occid){
+	public function setTargetOccid($occid): void
+	{
 		if(is_numeric($occid)){
 			$this->targetOccid = $occid;
 		}
 	}
 }
-?>

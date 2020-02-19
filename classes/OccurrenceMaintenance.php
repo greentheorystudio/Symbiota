@@ -181,7 +181,8 @@ class OccurrenceMaintenance {
 	}
 	
 	//Protect Rare species data
-	public function protectRareSpecies($collid = 0){
+	public function protectRareSpecies($collid = 0): void
+	{
 		$this->protectGloballyRareSpecies($collid);
 		$this->protectStateRareSpecies($collid);
 	}
@@ -399,6 +400,7 @@ class OccurrenceMaintenance {
             $solrManager = new SOLRManager();
             $solrManager->updateSOLR();
         }
+		return true;
 	}
 	
 	//Misc support functions

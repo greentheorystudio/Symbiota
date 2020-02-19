@@ -12,7 +12,7 @@ $statusStr = '';
 
 if(!$pid && array_key_exists("proj",$_GET) && is_numeric($_GET['proj'])) $pid = $_GET['proj'];
 
-$projManager = new InventoryProjectManager($projSubmit?'write':'readonly');
+$projManager = new InventoryProjectManager();
 if($pid) $projManager->setPid($pid);
 
 $isEditor = 0;

@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 if(!$SYMB_UID) {
     header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
 }
-ini_set('max_execution_time', 3600);
+ini_set('max_execution_time', 7200);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';

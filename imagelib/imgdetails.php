@@ -7,7 +7,7 @@ $imgId = $_REQUEST["imgid"];
 $action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
 $eMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0;
 
-$imgManager = new ImageDetailManager($imgId,($action?'write':'readonly'));
+$imgManager = new ImageDetailManager($imgId);
 
 $imgArr = $imgManager->getImageMetadata($imgId);
 $isEditor = false;

@@ -1364,11 +1364,6 @@ class DwcArchiverCore extends Manager{
 				$this->encodeArr($r);
 				$this->addcslashesArr($r);
 				$this->writeOutRecord($fh,$r);
-				if($this->isPublicDownload){
-					if($this->schemaType === 'dwc' || $this->schemaType === 'symbiota'){
-						$statsManager->recordAccessEvent($r['occid'], 'download');
-					}
-				}
 			}
 			$rs->free();
 		}

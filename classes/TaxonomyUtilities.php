@@ -194,7 +194,7 @@ class TaxonomyUtilities {
                 }
                 $cnt++;
             }
-            while($cnt < 50 && !$complete);
+            while($cnt < 100 && !$complete);
         }
 
 		return $status;
