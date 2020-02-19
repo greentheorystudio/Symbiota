@@ -6,22 +6,12 @@ include_once($SERVER_ROOT.'/classes/ImageShared.php');
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
 	private $photographerArr = array();
-	private $IMAGE_ROOT_PATH = "";
-	private $IMAGE_ROOT_URL = "";
 	private $activeImgId = 0;
 
 	public function __construct(){
  		parent::__construct();
 	}
 
-	public function __destruct(){
- 		parent::__destruct();
-	}
-
-    /**
-     * Takes parameters from a form submission and modifies an existing image record
-     * in the database.
-     */
 	public function addImageOccurrence($postArr){
 		$status = true;
 		//Load occurrence record
@@ -349,14 +339,6 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
        return $returnArr;
     } 
 
-    /**
-     * Obtain an array of the keys used for tagging images by content type.
-     *
-     * @param imgid the images.imgid for which to return presence/absence values for each key
-     * @param lang language for the description, only en currently supported.
-     * @return an ImagTagUse object containing the keys for image type tagging along with their
-     * presence/absence for the provided image and descriptions.
-     */
     public function getImageTagUsage($imgid,$lang='en') {
        $resultArr = array();
        switch ($lang) {
@@ -380,13 +362,11 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
           $stmt->execute();
           $i = 0;
           while ($stmt->fetch()) {
-             $result = new ImageTagUse();
-             $result->tagkey = $key;
-             $result->shortlabel = $lab;
-             $result->description = $desc;
-             $result->sortorder = $sort;
-             $result->value = $value;
-             $resultArr[$i] = $result;
+             $resultArr[$i]['tagkey'] = $key;
+             $resultArr[$i]['shortlabel'] = $lab;
+             $resultArr[$i]['description'] = $desc;
+             $resultArr[$i]['sortorder'] = $sort;
+             $resultArr[$i]['value'] = $value;
              $i++;
           }
           $stmt->close();
@@ -395,11 +375,3 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
     }
 }
 
-class ImageTagUse { 
-   public $tagkey;  // magic value
-   public $shortlabel;  // short human readable value
-   public $description; // human readable description
-   public $sortorder;
-   public $value;  // 0 or 1
-}
-?>

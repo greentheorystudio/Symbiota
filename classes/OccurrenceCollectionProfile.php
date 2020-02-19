@@ -3,7 +3,6 @@ include_once($SERVER_ROOT.'/classes/DbConnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 
-//Used by /collections/misc/collprofiles.php page
 class OccurrenceCollectionProfile {
 
 	private $conn;
@@ -21,10 +20,13 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function setCollid($collid){
+	public function setCollid($collid): bool
+	{
 		if(is_numeric($collid)){
 			$this->collid = $collid;
 			return true;
@@ -32,7 +34,8 @@ class OccurrenceCollectionProfile {
 		return false;
 	}
 
-	public function getCollectionMetadata(){
+	public function getCollectionMetadata(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, '.
 			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, '.
@@ -71,19 +74,18 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['sortseq'] = $row->sortseq;
 			$retArr[$row->collid]['skey'] = $row->securitykey;
 			$retArr[$row->collid]['guid'] = $row->collectionguid;
-			$uDate = "";
+			$uDate = '';
 			if($row->uploaddate){
 				$uDate = $row->uploaddate;
 				$month = substr($uDate,5,2);
 				$day = substr($uDate,8,2);
 				$year = substr($uDate,0,4);
-				$uDate = date("j F Y",mktime(0,0,0,$month,$day,$year));
+				$uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
 			}
 			$retArr[$row->collid]['uploaddate'] = $uDate;
 		}
 		$rs->free();
 		if($this->collid){
-			//Check to make sure Security Key and collection GUIDs exist
 			if(!$retArr[$this->collid]['guid']){
 				$guid= UuidFactory::getUuidV4();
 				$retArr[$this->collid]['guid'] = $guid;
@@ -102,7 +104,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function getCollectionCategories(){
+	public function getCollectionCategories(): array
+	{
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT c.ccpk, c.category FROM omcollcatlink l INNER JOIN omcollcategories c ON l.ccpk = c.ccpk WHERE (l.collid = '.$this->collid.') ';
@@ -115,13 +118,14 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function getMetadataHtml($collArr){
+	public function getMetadataHtml($collArr): string
+	{
 		global $SYMB_UID, $RIGHTS_TERMS;
-		$outStr = '<div>'.$collArr["fulldescription"].'</div>';
-		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr["contact"].($collArr["email"]?" (".str_replace("@","&#64;",$collArr["email"]).")":"").'</div>';
-		if($collArr["homepage"]){
+		$outStr = '<div>'.$collArr['fulldescription'].'</div>';
+		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr['contact'].($collArr['email']? ' (' .str_replace('@', '&#64;',$collArr['email']). ')' : '').'</div>';
+		if($collArr['homepage']){
 			$outStr .= '<div style="margin-top:5px;"><b>Home Page:</b> ';
-			$outStr .= '<a href="'.$collArr["homepage"].'" target="_blank">'.$collArr["homepage"].'</a>';
+			$outStr .= '<a href="'.$collArr['homepage'].'" target="_blank">'.$collArr['homepage'].'</a>';
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div style="margin-top:5px;">';
@@ -129,11 +133,11 @@ class OccurrenceCollectionProfile {
 		$outStr .= '</div>';
 		$outStr .= '<div style="margin-top:5px;">';
 		$outStr .= '<b>Management:</b> ';
-		if($collArr['managementtype'] == 'Live Data'){
+		if($collArr['managementtype'] === 'Live Data'){
 			$outStr .= 'Live Data managed directly within data portal';
 		}
 		else{
-			if($collArr['managementtype'] == 'Aggregate'){
+			if($collArr['managementtype'] === 'Aggregate'){
 				$outStr .= 'Data harvested from a data aggregator';
 			}
 			else{
@@ -142,7 +146,7 @@ class OccurrenceCollectionProfile {
 			$outStr .= '<div style="margin-top:5px;"><b>Last Update:</b> '.$collArr['uploaddate'].'</div>';
 		}
 		$outStr .= '</div>';
-		if($collArr['managementtype'] == 'Live Data'){
+		if($collArr['managementtype'] === 'Live Data'){
 			$outStr .= '<div style="margin-top:5px;">';
 			$outStr .= '<b>Global Unique Identifier:</b> '.$collArr['guid'];
 			$outStr .= '</div>';
@@ -159,7 +163,7 @@ class OccurrenceCollectionProfile {
 			$outStr .= '</div>';
 		}
 		$outStr .= '<div style="margin-top:5px;">';
-		if($collArr['managementtype'] == 'Live Data'){
+		if($collArr['managementtype'] === 'Live Data'){
 			$outStr .= '<b>Live Data Download:</b> ';
 			if($SYMB_UID){
 				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">DwC-Archive File</a>';
@@ -168,7 +172,7 @@ class OccurrenceCollectionProfile {
 				$outStr .= '<a href="../../profile/index.php?refurl=../collections/misc/collprofiles.php?collid='.$collArr['collid'].'">Login for access</a>';
 			}
 		}
-		elseif($collArr['managementtype'] == 'Snapshot'){
+		elseif($collArr['managementtype'] === 'Snapshot'){
 			$pathArr = $this->getDwcaPath($collArr['collid']);
 			if($pathArr){
 				$outStr .= '<div style="float:left"><b>IPT / DwC-A Source:</b> </div>';
@@ -187,17 +191,19 @@ class OccurrenceCollectionProfile {
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
-			if(substr($rights,0,4) == 'http'){
+			if(strpos($rights, 'http') === 0){
 				$rightsUrl = $rights;
-				if($RIGHTS_TERMS){
-					if($rightsArr = array_keys($RIGHTS_TERMS,$rights)){
-						$rights = current($rightsArr);
-					}
+				if($RIGHTS_TERMS && $rightsArr = array_keys($RIGHTS_TERMS, $rights)) {
+					$rights = current($rightsArr);
 				}
 			}
-			if($rightsUrl) $outStr .= '<a href="'.$rightsUrl.'" target="_blank">';
+			if($rightsUrl) {
+				$outStr .= '<a href="' . $rightsUrl . '" target="_blank">';
+			}
 			$outStr .= $rights;
-			if($rightsUrl) $outStr .= '</a>';
+			if($rightsUrl) {
+				$outStr .= '</a>';
+			}
 		}
 		elseif(file_exists('../../misc/usagepolicy.php')){
 			$outStr .= '<a href="../../misc/usagepolicy.php" target="_blank">Usage policy</a>';
@@ -218,7 +224,8 @@ class OccurrenceCollectionProfile {
 		return $outStr;
 	}
 
-	private function getDwcaPath($collid){
+	private function getDwcaPath($collid): array
+	{
 		$retArr = array();
 		$sql = 'SELECT uspid, title, path FROM uploadspecparameters WHERE (collid = '.$collid.') AND (uploadtype = 8)';
 		$rs = $this->conn->query($sql);
@@ -234,10 +241,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	//Editing functions
 	public function submitCollEdits($postArr){
-        global $GBIF_USERNAME,$GBIF_PASSWORD;
-	    $status = true;
+        $status = true;
 		if($this->collid){
 			$instCode = $this->cleanInStr($postArr['institutioncode']);
 			$collCode = $this->cleanInStr($postArr['collectioncode']);
@@ -269,8 +274,8 @@ class OccurrenceCollectionProfile {
 				'homepage = '.($homepage?'"'.$homepage.'"':'NULL').','.
 				'contact = '.($contact?'"'.$contact.'"':'NULL').','.
 				'email = '.($email?'"'.$email.'"':'NULL').','.
-				'latitudedecimal = '.($postArr['latitudedecimal']?$postArr['latitudedecimal']:'NULL').','.
-				'longitudedecimal = '.($postArr['longitudedecimal']?$postArr['longitudedecimal']:'NULL').',';
+				'latitudedecimal = '.($postArr['latitudedecimal']?:'NULL').','.
+				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').',';
             if(array_key_exists('publishToGbif',$postArr)){
                 $sql .= 'publishToGbif = '.$gbifPublish.',';
             }
@@ -287,7 +292,7 @@ class OccurrenceCollectionProfile {
 			if(array_key_exists('colltype',$postArr)){
 				$sql .= ',managementtype = "'.$postArr['managementtype'].'",'.
 					'colltype = "'.$postArr['colltype'].'",'.
-					'sortseq = '.($postArr['sortseq']?$postArr['sortseq']:'NULL').' ';
+					'sortseq = '.($postArr['sortseq']?:'NULL').' ';
 			}
 			$sql .= 'WHERE (collid = '.$this->collid.')';
 			//echo $sql; exit;
@@ -296,15 +301,12 @@ class OccurrenceCollectionProfile {
 				return $status;
 			}
 
-			//Modify collection category, if needed
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
 				if($r = $rs->fetch_object()){
-					if($r->ccpk <> $postArr['ccpk']){
-						if(!$this->conn->query('UPDATE omcollcatlink SET ccpk = '.$postArr['ccpk'].' WHERE ccpk = '.$r->ccpk.' AND collid = '.$this->collid)){
-							$status = 'ERROR updating collection category link: '.$this->conn->error;
-							return $status;
-						}
+					if(($r->ccpk !== $postArr['ccpk']) && !$this->conn->query('UPDATE omcollcatlink SET ccpk = ' . $postArr['ccpk'] . ' WHERE ccpk = ' . $r->ccpk . ' AND collid = ' . $this->collid)) {
+						$status = 'ERROR updating collection category link: '.$this->conn->error;
+						return $status;
 					}
 				}
 				else{
@@ -349,7 +351,9 @@ class OccurrenceCollectionProfile {
 		$managementType = array_key_exists('managementtype',$postArr)?$this->cleanInStr($postArr['managementtype']):'';
 		$collType = array_key_exists('colltype',$postArr)?$this->cleanInStr($postArr['colltype']):'';
 		$guid = array_key_exists('collectionguid',$postArr)?$this->cleanInStr($postArr['collectionguid']):'';
-		if(!$guid) $guid = UuidFactory::getUuidV4();
+		if(!$guid) {
+			$guid = UuidFactory::getUuidV4();
+		}
 		$indUrl = array_key_exists('individualurl',$postArr)?$this->cleanInStr($postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
 
@@ -378,18 +382,15 @@ class OccurrenceCollectionProfile {
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
 			($sortSeq?$sortSeq:'NULL').') ';
 		//echo "<div>$sql</div>";
-		$cid = 0;
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
 			$sql = 'INSERT INTO omcollectionstats(collid,recordcnt,uploadedby) '.
 				'VALUES('.$cid.',0,"'.$SYMB_UID.'")';
 			$this->conn->query($sql);
-			//Add collection to category
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
 				if(!$this->conn->query($sql)){
-					$status = 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
-					return $status;
+					return 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
 				}
 			}
 			$this->collid = $cid;
@@ -401,40 +402,49 @@ class OccurrenceCollectionProfile {
 		return $cid;
 	}
 
-	private function addIconImageFile(){
+	private function addIconImageFile(): string
+	{
 		global $SERVER_ROOT, $CLIENT_ROOT;
 		$targetPath = $SERVER_ROOT.'/content/collicon/';
 		$urlBase = $CLIENT_ROOT.'/content/collicon/';
-		$urlPrefix = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
-		$urlPrefix .= $_SERVER["HTTP_HOST"];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
+		$urlPrefix = 'http://';
+		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+			$urlPrefix = 'https://';
+		}
+		$urlPrefix .= $_SERVER['HTTP_HOST'];
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
+		}
 		$urlBase = $urlPrefix.$urlBase;
 
-		//Clean file name
 		$fileName = basename($_FILES['iconfile']['name']);
 		$imgExt = '';
-		if($p = strrpos($fileName,".")) $imgExt = strtolower(substr($fileName,$p));
-		$fileName = strtolower($_REQUEST["institutioncode"].($_REQUEST["collectioncode"]?'-'.$_REQUEST["collectioncode"]:''));
-		$fileName = str_replace(array("%20","%23"," ","__"),"_",$fileName);
-		if(strlen($fileName) > 30) $fileName = substr($fileName,0,30);
+		if($p = strrpos($fileName, '.')) {
+			$imgExt = strtolower(substr($fileName, $p));
+		}
+		$fileName = strtolower($_REQUEST['institutioncode'].($_REQUEST['collectioncode']?'-'.$_REQUEST['collectioncode']:''));
+		$fileName = str_replace(array('%20', '%23', ' ', '__'), '_',$fileName);
+		if(strlen($fileName) > 30) {
+			$fileName = substr($fileName, 0, 30);
+		}
 		$fileName .= $imgExt;
 
-		//Upload file
 		$fullUrl = '';
-		if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) $fullUrl = $urlBase.$fileName;
+		if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
+			$fullUrl = $urlBase . $fileName;
+		}
 
 		return $fullUrl;
 	}
 
-	//Institution address functions
-	public function getAddress(){
+	public function getAddress(): array
+	{
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT i.iid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, '.
 					'i.city, i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
 					'FROM institutions i INNER JOIN omcollections c ON i.iid = c.iid '.
-					'WHERE (c.collid = '.$this->collid.") ";
+					'WHERE (c.collid = '.$this->collid. ') ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -459,7 +469,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function linkAddress($addIID){
+	public function linkAddress($addIID): bool
+	{
 		$status = false;
 		if($this->collid && is_numeric($addIID)){
 			$sql = 'UPDATE omcollections SET iid = '.$addIID.' WHERE collid = '.$this->collid;
@@ -474,7 +485,8 @@ class OccurrenceCollectionProfile {
 		return $status;
 	}
 
-	public function removeAddress($removeIID){
+	public function removeAddress($removeIID): bool
+	{
 		$status = false;
 		if($this->collid && is_numeric($removeIID)){
 			$sql = 'UPDATE omcollections SET iid = NULL '.
@@ -490,13 +502,13 @@ class OccurrenceCollectionProfile {
 		return $status;
 	}
 
-	//Publishing functions
-    public function triggerGBIFCrawl($datasetKey){
+	public function triggerGBIFCrawl($datasetKey): void
+	{
         global $GBIF_USERNAME,$GBIF_PASSWORD;
         $loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
         $url = 'http://api.gbif.org/v1/dataset/'.$datasetKey.'/crawl';
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_USERPWD, $loginStr);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -504,10 +516,11 @@ class OccurrenceCollectionProfile {
                 'Accept: application/json')
         );
 
-        $result = curl_exec($ch);
+        curl_exec($ch);
     }
 
-    public function batchTriggerGBIFCrawl($collIdArr){
+    public function batchTriggerGBIFCrawl($collIdArr): void
+	{
         $collIdStr = implode(',',$collIdArr);
         $sql = 'SELECT CollID, publishToGbif, aggKeysStr '.
             'FROM omcollections '.
@@ -527,7 +540,8 @@ class OccurrenceCollectionProfile {
         $rs->free();
     }
 
-    public function setAggKeys($aggKeyStr){
+    public function setAggKeys($aggKeyStr): void
+	{
         $aggKeyArr = json_decode($aggKeyStr,true);
         if($aggKeyArr['organizationKey']){
             $this->organizationKey = $aggKeyArr['organizationKey'];
@@ -565,10 +579,8 @@ class OccurrenceCollectionProfile {
         }
 
 		$this->conn->close();
-
-        return $status;
-
-    }
+		return $status;
+	}
 
     public function getInstallationKey(){
         return $this->installationKey;
@@ -586,7 +598,8 @@ class OccurrenceCollectionProfile {
         return $this->idigbioKey;
     }
 
-    public function getCollPubArr($collId){
+    public function getCollPubArr($collId): array
+	{
         $returnArr = array();
         $aggKeyStr = '';
         $sql = 'SELECT CollID, publishToGbif, publishToIdigbio, aggKeysStr, collectionguid '.
@@ -609,8 +622,8 @@ class OccurrenceCollectionProfile {
         return $returnArr;
     }
 
-    public function getGbifInstKey(){
-        $returnArr = array();
+    public function getGbifInstKey(): string
+	{
         $sql = 'SELECT aggKeysStr '.
             'FROM omcollections '.
             'WHERE aggKeysStr IS NOT NULL ';
@@ -634,7 +647,7 @@ class OccurrenceCollectionProfile {
         $url .= $_SERVER['HTTP_HOST'].$CLIENT_ROOT;
         $url .= '/webservices/dwc/'.$guid.'%22}';
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
         $returnArr = json_decode($result,true);
@@ -645,51 +658,9 @@ class OccurrenceCollectionProfile {
         return $this->idigbioKey;
     }
 
-    public function getTaxonCounts($f=''){
-		$family = $this->cleanInStr($f);
-		$returnArr = array();
-		$sql = '';
-		if($family){
-			/*
-			$sql = 'SELECT t.unitname1 as taxon, Count(o.occid) AS cnt '.
-				'FROM omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
-				'GROUP BY o.CollID, t.unitname1, o.Family '.
-				'HAVING (o.CollID = '.$this->collid.') '.
-				'AND (o.Family = "'.$family.'") AND (t.unitname1 != "'.$family.'") '.
-				'ORDER BY t.unitname1';
-			*/
-			$sql = 'SELECT t.unitname1 as taxon, Count(o.occid) AS cnt '.
-				'FROM omoccurrences o INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.Family = "'.$family.'") AND (t.unitname1 != "'.$family.'") '.
-				'GROUP BY o.CollID, t.unitname1, o.Family ';
-		}
-		else{
-			/*
-			$sql = 'SELECT o.family as taxon, Count(*) AS cnt '.
-				'FROM omoccurrences o '.
-				'GROUP BY o.CollID, o.Family '.
-				'HAVING (o.CollID = '.$this->collid.') '.
-				'AND (o.Family IS NOT NULL) AND (o.Family <> "") '.
-				'ORDER BY o.Family';
-			*/
-			$sql = 'SELECT o.family as taxon, Count(*) AS cnt '.
-				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.Family IS NOT NULL) AND (o.Family <> "") '.
-				'GROUP BY o.CollID, o.Family ';
-		}
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$returnArr[$row->taxon] = $row->cnt;
-		}
-		$rs->free();
-		asort($returnArr);
-		return $returnArr;
-	}
-
-	public function getGeographyStats($country,$state){
+	public function getGeographyStats($country,$state): array
+	{
 		$retArr = array();
-		$sql = '';
 		if($state){
 			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
@@ -716,17 +687,21 @@ class OccurrenceCollectionProfile {
 			$cnt = $row->cnt;
 			if($state){
 				$t = trim(str_ireplace(array(' county',' co.',' counties'),'',$t));
-				if(array_key_exists($t, $retArr)) $cnt = $cnt + $retArr[$t];
+				if(array_key_exists($t, $retArr)) {
+					$cnt += $retArr[$t];
+				}
 			}
-			//if($country) $t = ucwords(strtolower($t));
-			if($t) $retArr[$t] = $cnt;
+			if($t) {
+				$retArr[$t] = $cnt;
+			}
 		}
 		$rs->free();
 		ksort($retArr);
 		return $retArr;
 	}
 
-	public function getTaxonomyStats(){
+	public function getTaxonomyStats(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT family, count(*) as cnt FROM omoccurrences o  WHERE o.family IS NOT NULL AND collid = '.$this->collid.' GROUP BY family';
 		//echo $sql; exit;
@@ -735,12 +710,11 @@ class OccurrenceCollectionProfile {
 			$retArr[ucwords($r->family)] = $r->cnt;
 		}
 		$rs->free();
-		//ksort($retArr);
 		return $retArr;
 	}
 
-	//Statistic functions
-	public function getBasicStats(){
+	public function getBasicStats(): array
+	{
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT uploaddate, recordcnt, georefcnt, familycnt, genuscnt, speciescnt, dynamicProperties FROM omcollectionstats WHERE collid = '.$this->collid;
@@ -752,7 +726,7 @@ class OccurrenceCollectionProfile {
 					$month = substr($uDate,5,2);
 					$day = substr($uDate,8,2);
 					$year = substr($uDate,0,4);
-					$uDate = date("j F Y",mktime(0,0,0,$month,$day,$year));
+					$uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
 				}
 				$retArr['uploaddate'] = $uDate;
 				$retArr['recordcnt'] = $row->recordcnt;
@@ -767,7 +741,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function updateStatistics($verbose = false){
+	public function updateStatistics($verbose = false): void
+	{
 		$occurMaintenance = new OccurrenceMaintenance();
 		if($verbose){
 			echo '<ul>';
@@ -790,11 +765,8 @@ class OccurrenceCollectionProfile {
 		}
 	}
 
-	public function getStatCollectionList($catId = ""){
-		//Set collection array
-		$collIdArr = array();
-		$catIdArr = array();
-		//Set collections
+	public function getStatCollectionList($catId = ''): array
+	{
 		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
 			'cat.category, cat.icon AS caticon, cat.acronym '.
 			'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
@@ -805,33 +777,35 @@ class OccurrenceCollectionProfile {
 		$collArr = array();
 		while($r = $result->fetch_object()){
 			$collType = '';
-			if(stripos($r->colltype, "observation") !== false) $collType = 'obs';
-			if(stripos($r->colltype, "specimen")) $collType = 'spec';
+			if(stripos($r->colltype, 'observation') !== false) {
+				$collType = 'obs';
+			}
+			if(stripos($r->colltype, 'specimen')) {
+				$collType = 'spec';
+			}
 			if($collType){
 				if($r->ccpk){
 					if(!isset($collArr[$collType]['cat'][$r->ccpk]['name'])){
 						$collArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
 						$collArr[$collType]['cat'][$r->ccpk]['icon'] = $r->caticon;
 						$collArr[$collType]['cat'][$r->ccpk]['acronym'] = $r->acronym;
-						//if(in_array($r->ccpk,$catIdArr)) $retArr[$collType]['cat'][$catId]['isselected'] = 1;
 					}
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]["instcode"] = $r->institutioncode;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]["collcode"] = $r->collectioncode;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]["collname"] = $r->collectionname;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]["icon"] = $r->icon;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
 				}
 				else{
-					$collArr[$collType]['coll'][$r->collid]["instcode"] = $r->institutioncode;
-					$collArr[$collType]['coll'][$r->collid]["collcode"] = $r->collectioncode;
-					$collArr[$collType]['coll'][$r->collid]["collname"] = $r->collectionname;
-					$collArr[$collType]['coll'][$r->collid]["icon"] = $r->icon;
+					$collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
+					$collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
+					$collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
+					$collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
 				}
 			}
 		}
 		$result->free();
 
 		$retArr = array();
-		//Modify sort so that default catid is first
 		if(isset($collArr['spec']['cat'][$catId])){
 			$retArr['spec']['cat'][$catId] = $collArr['spec']['cat'][$catId];
 			unset($collArr['spec']['cat'][$catId]);
@@ -850,14 +824,13 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function batchUpdateStatistics($collId){
+	public function batchUpdateStatistics($collId): void
+	{
 		echo 'Updating collection statistics...';
 		echo '<ul>';
-		//echo '<li>General cleaning in preparation for collecting stats... </li>';
 		flush();
 		ob_flush();
 		$occurMaintenance = new OccurrenceMaintenance();
-		//$occurMaintenance->generalOccurrenceCleaning();
 		$sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN('.$collId.') ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
@@ -874,12 +847,13 @@ class OccurrenceCollectionProfile {
 		ob_flush();
 	}
 
-	public function runStatistics($collId){
+	public function runStatistics($collId): array
+	{
 		$returnArr = array();
-		$sql = "SELECT c.collid, c.CollectionName, IFNULL(cs.recordcnt,0) AS recordcnt, IFNULL(cs.georefcnt,0) AS georefcnt, ".
-			"cs.dynamicProperties ".
-			"FROM omcollections AS c INNER JOIN omcollectionstats AS cs ON c.collid = cs.collid ".
-			"WHERE c.collid IN(".$collId.") ";
+		$sql = 'SELECT c.collid, c.CollectionName, IFNULL(cs.recordcnt,0) AS recordcnt, IFNULL(cs.georefcnt,0) AS georefcnt, ' .
+			'cs.dynamicProperties ' .
+			'FROM omcollections AS c INNER JOIN omcollectionstats AS cs ON c.collid = cs.collid ' .
+			'WHERE c.collid IN(' .$collId. ') ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -930,7 +904,8 @@ class OccurrenceCollectionProfile {
 		return $returnArr;
 	}
 
-    public function runStatisticsQuery($collId,$taxon,$country){
+    public function runStatisticsQuery($collId,$taxon,$country): array
+	{
         $returnArr = array();
         $pTID = '';
         $sqlFrom = 'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
@@ -1020,7 +995,8 @@ class OccurrenceCollectionProfile {
         return $returnArr;
     }
 
-	public function getYearStatsHeaderArr($months){
+	public function getYearStatsHeaderArr($months): array
+	{
 		$dateArr = array();
 		$a = $months + 1;
         $reps = $a;
@@ -1034,7 +1010,8 @@ class OccurrenceCollectionProfile {
 		return $dateArr;
 	}
 
-	public function getYearStatsDataArr($collId,$days){
+	public function getYearStatsDataArr($collId,$days): array
+	{
 		$statArr = array();
 		$sql = 'SELECT CONCAT_WS("-",c.institutioncode,c.collectioncode) as collcode, c.collectionname '.
 			'FROM omoccurrences AS o INNER JOIN omcollections AS c ON o.collid = c.collid '.
@@ -1109,7 +1086,8 @@ class OccurrenceCollectionProfile {
 		return $statArr;
 	}
 
-    public function getOrderStatsDataArr($collId){
+    public function getOrderStatsDataArr($collId): array
+	{
         $statsArr = array();
         $sql = 'SELECT (CASE WHEN t.RankId = 100 THEN t.SciName WHEN t2.RankId = 100 THEN t2.SciName ELSE NULL END) AS SciName, '.
             'COUNT(DISTINCT o.occid) AS SpecimensPerOrder, '.
@@ -1124,7 +1102,7 @@ class OccurrenceCollectionProfile {
         $rs = $this->conn->query($sql);
         //echo $sql;
         while($r = $rs->fetch_object()){
-            $order = str_replace(array('"',"'"),"",$r->SciName);
+            $order = str_replace(array('"',"'"), '',$r->SciName);
             if($order){
                 $statsArr[$order]['SpecimensPerOrder'] = $r->SpecimensPerOrder;
                 $statsArr[$order]['GeorefSpecimensPerOrder'] = $r->GeorefSpecimensPerOrder;
@@ -1137,7 +1115,8 @@ class OccurrenceCollectionProfile {
         return $statsArr;
     }
 
-    public function getInstitutionArr(){
+    public function getInstitutionArr(): array
+	{
     	$retArr = array();
     	$sql = 'SELECT iid,institutionname,institutioncode '.
       	'FROM institutions '.
@@ -1149,7 +1128,8 @@ class OccurrenceCollectionProfile {
     	return $retArr;
     }
 
-    public function getCategoryArr(){
+    public function getCategoryArr(): array
+	{
     	$retArr = array();
     	$sql = 'SELECT ccpk, category '.
       	'FROM omcollcategories '.
@@ -1162,23 +1142,19 @@ class OccurrenceCollectionProfile {
     	return $retArr;
     }
 
-    //Setters and getter
-	public function getErrorStr(){
+    public function getErrorStr(){
 		return $this->errorStr;
 	}
 
-	//Misc functions
-	public function cleanOutArr(&$arr){
+	public function cleanOutArr(&$arr): void
+	{
 		foreach($arr as $k => $v){
 			$arr[$k] = $this->cleanOutStr($v);
 		}
 	}
 
 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 
 	private function cleanInStr($str){
@@ -1188,4 +1164,3 @@ class OccurrenceCollectionProfile {
 		return $newStr;
 	}
 }
-?>

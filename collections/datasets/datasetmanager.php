@@ -14,9 +14,6 @@ if(!is_numeric($datasetId)) $datasetId = 0;
 if(!is_numeric($tabIndex)) $tabIndex = 0;
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
-$datasetManager = new OccurrenceDataset();
-$datasetManager->setSymbUid($SYMB_UID);
-
 $mdArr = $datasetManager->getDatasetMetadata($datasetId);
 $role = '';
 $roleLabel = '';
@@ -44,7 +41,7 @@ elseif(isset($mdArr['roles'])){
 $statusStr = '';
 if($isEditor){
 	if($action == 'Export Selected Occurrences'){
-		if($datasetManager->exportDataset($datasetId, $_POST['occid'], $schema, $format, $cset)){
+		if($datasetManager->exportDataset()){
 			$datasetId = 0;
 		}
 	}

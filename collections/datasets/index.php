@@ -10,9 +10,6 @@ $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'
 //Sanitize input variables
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
 
-$datasetManager = new OccurrenceDataset();
-$datasetManager->setSymbUid($SYMB_UID);
-
 $statusStr = '';
 if($action == 'Create New Dataset'){
 	if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$SYMB_UID)){
