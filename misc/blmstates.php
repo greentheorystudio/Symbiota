@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 ?>
@@ -18,7 +18,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../header.php');
 		?>
 		<div class="navpath">
 			<a href="<?php echo $CLIENT_ROOT; ?>/index.php">Home</a> &gt;&gt; 
@@ -45,7 +45,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 			</ul>
 		</div>
 		<?php
-			include($SERVER_ROOT.'/footer.php');
+			include(__DIR__ . '/../footer.php');
 		?>
 	</body>
 </html>

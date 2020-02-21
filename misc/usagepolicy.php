@@ -1,7 +1,6 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
- 
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
@@ -11,7 +10,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../header.php');
 		?>
 		<div id="innertext">
 			<h1>Guidelines for Acceptable Use of Data</h1><br />
@@ -47,7 +46,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 			<div>
 			</div>
 
-			<a name="occurrences"></a>
 			<h2>Occurrence Record Use Policy</h2>
 		    <div style="margin:10px;">
 				<ul>
@@ -72,7 +70,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 				</ul>
 		    </div>
 		
-			<a name="images"></a>
 			<h2>Images</h2>
 		    <div style="margin:15px;">
 		    	Images within this website have been generously contributed by their owners to 
@@ -98,7 +95,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 			</div> 
 		</div>
 		<?php
-			include($SERVER_ROOT.'/footer.php');
+			include(__DIR__ . '/../footer.php');
 		?>
 	</body>
 </html>

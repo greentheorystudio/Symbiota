@@ -6,12 +6,8 @@
 .buildpath
 .idea
 
-/collections/editor/includes/config/occurVarDefault.php
-/collections/editor/includes/config/occurVarGenObsDefault.php
 /config/dbconnection.php
 /config/symbini.php
-/taxa/includes/config/taxaProfileElementsCustom.php
-/taxa/includes/config/taxaProfileTemplateCustom.php
 /robots.txt
 /collections/datasets/dwc
 /content

@@ -1,4 +1,4 @@
-<table id="maintable" cellspacing="0">
+<table id="maintable" style="border-spacing:0;">
 	<tr>
 		<td class="header" colspan="3">
 			<div style="clear:both;background-color:#000000;height:150px;">

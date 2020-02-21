@@ -1,8 +1,8 @@
 <?php
-include_once("config/symbini.php");
+include_once(__DIR__ . '/config/symbini.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 ?>
-<html>
+<html lang="en">
 <head>
 	<title><?php echo $DEFAULT_TITLE?> Home</title>
 	<link href="css/base.css?v=201502" type="text/css" rel="stylesheet" />
@@ -14,7 +14,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/header.php');
 	?> 
         <div  id="innertext">
             <div style="float:right;width:380px;">
@@ -23,7 +23,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 						<?php
 						$searchText = 'Taxon Search';
 						$buttonText = 'Search';
-						include_once($SERVER_ROOT.'/classes/PluginsManager.php');
+						include_once(__DIR__ . '/classes/PluginsManager.php');
 						$pluginManager = new PluginsManager();
 						$quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
 						echo $quicksearch;
@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 				$ootdGameTitle = 'Plant of the Day ';
 				$ootdGameType = 'plant';
 				
-				include_once($SERVER_ROOT.'/classes/GamesManager.php');
+				include_once(__DIR__ . '/classes/GamesManager.php');
 				$gameManager = new GamesManager();
 				$gameInfo = $gameManager->setOOTD($oodID,$ootdGameChecklist);
 				?>
@@ -45,7 +45,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 						<?php echo $ootdGameTitle; ?>
 					</div>
 					<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
-						<img src="<?php echo $CLIENT_ROOT; ?>/temp/ootd/<?php echo $oodID; ?>_organism300_1.jpg" style="width:350px;border:0px;" />
+						<img src="<?php echo $CLIENT_ROOT; ?>/temp/ootd/<?php echo $oodID; ?>_organism300_1.jpg" style="width:350px;border:0;" />
 					</a><br/>
 					<b>What is this <?php echo $ootdGameType; ?>?</b><br/>
 					<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
@@ -76,8 +76,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 		</div>
 
 	<?php
-	include($SERVER_ROOT.'/footer.php');
-	?> 
-
+	include(__DIR__ . '/footer.php');
+	?>
 </body>
 </html>
