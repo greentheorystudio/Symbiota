@@ -1,17 +1,13 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
+include_once('OccurrenceManager.php');
 
 class OccurrenceChecklistManager extends OccurrenceManager{
 	
 	private $checklistTaxaCnt = 0;
-	private $conn;
 
  	public function __construct(){
  		parent::__construct();
-		$connection = new DbConnection();
-		$this->conn = $connection->getConnection();
- 	}
+	}
 
 	public function getChecklistTaxaCnt(): int
 	{

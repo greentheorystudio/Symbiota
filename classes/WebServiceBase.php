@@ -1,5 +1,5 @@
 <?php
-require_once($SERVER_ROOT.'/classes/Manager.php');
+require_once('Manager.php');
 
 class WebServiceBase extends Manager{
 

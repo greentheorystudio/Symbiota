@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class MappingShared{
 
@@ -193,18 +193,18 @@ class MappingShared{
 				echo "<Placemark>\n";
 				echo '<name>' .htmlspecialchars($pointArr['identifier'], ENT_QUOTES)."</name>\n";
 				echo "<ExtendedData>\n";
-				echo "<Data name='institutioncode'>".$this->xmlentities($pointArr['institutioncode'])."</Data>\n";
-				echo "<Data name='collectioncode'>".$this->xmlentities($pointArr['collectioncode'])."</Data>\n";
-				echo "<Data name='catalognumber'>".$this->xmlentities($pointArr['catalognumber'])."</Data>\n";
-				echo "<Data name='othercatalognumbers'>".$this->xmlentities($pointArr['othercatalognumbers'])."</Data>\n";
+				echo '<Data>' .$this->xmlentities($pointArr['institutioncode'])."</Data>\n";
+				echo '<Data>' .$this->xmlentities($pointArr['collectioncode'])."</Data>\n";
+				echo '<Data>' .$this->xmlentities($pointArr['catalognumber'])."</Data>\n";
+				echo '<Data>' .$this->xmlentities($pointArr['othercatalognumbers'])."</Data>\n";
 				if($this->fieldArr){
 					foreach($this->fieldArr as $k => $v){
-						echo "<Data name='".$v."'>".$pointArr[$v]."</Data>\n";
+						echo '<Data>' .$pointArr[$v]."</Data>\n";
 					}
 				}
-				echo "<Data name='DataSource'>Data retrieved from ".$DEFAULT_TITLE." Data Portal</Data>\n";
-				$url = "http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '/collections/individual/index.php?occid=' .$occId;
-				echo "<Data name='RecordURL'>".$url."</Data>\n";
+				echo "<Data>Data retrieved from ".$DEFAULT_TITLE." Data Portal</Data>\n";
+				$url = 'http://' .$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '/collections/individual/index.php?occid=' .$occId;
+				echo '<Data>' .$url."</Data>\n";
 				echo "</ExtendedData>\n";
 				echo '<styleUrl>#' .str_replace(' ', '_',$sciName)."</styleUrl>\n";
 				echo '<Point><coordinates>' .implode(',',array_reverse(explode(',',$pointArr['latLngStr']))).",0</coordinates></Point>\n";

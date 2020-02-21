@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class KeyManager{
 
@@ -22,8 +22,12 @@ class KeyManager{
 	{
 		if($tidStr){
 			$sqlWhere = '(TID In ('.$tidStr.')) ';
-			if($charStr) $sqlWhere .= 'AND (CID IN ('.$charStr.'))';
-			if($csStr) $sqlWhere .= 'AND (cs IN ('.$csStr.'))';
+			if($charStr) {
+                $sqlWhere .= 'AND (CID IN (' . $charStr . '))';
+            }
+			if($csStr) {
+                $sqlWhere .= 'AND (cs IN (' . $csStr . '))';
+            }
 			
 			$sql = 'DELETE FROM kmdescr WHERE '.$sqlWhere;
 			//echo "<div>".$sql."</div>";

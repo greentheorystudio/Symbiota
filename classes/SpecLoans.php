@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class SpecLoans{
 
@@ -494,7 +494,7 @@ class SpecLoans{
 			while($row = $result->fetch_object()) {
 				$occArr[] = $row->occid;
 			}
-			if(count($occArr) == 0){
+			if(count($occArr) === 0){
 				$sql = 'SELECT occid FROM omoccurrences WHERE (collid = '.$collId.') AND (othercatalognumbers = "'.trim($catNum).'")';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()) {

@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once('OccurrenceEditorManager.php');
+include_once('SpecProcessorOcr.php');
+include_once('ImageShared.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
@@ -323,60 +323,44 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $this->photographerArr;
 	}
 
-    public function getImageTagValues($lang='en'): array
+    public function getImageTagValues(): array
     {
-       $returnArr = array();
-       SWITCH ($lang) {
-          case 'en':
-          default: 
-           $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder';
-       } 
-       $stmt = $this->conn->stmt_init();
-       $stmt->prepare($sql);
-       if ($stmt) { 
-          $stmt->bind_result($key,$desc);
-          $stmt->execute();
-          while ($stmt->fetch()) { 
-             $returnArr[$key]=$desc;
-          } 
-          $stmt->close(); 
-       }
+        $returnArr = array();
+        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
+            $returnArr[$row->tagkey] = $row->description_en;
+        }
+        $result->close();
        return $returnArr;
     } 
 
-    public function getImageTagUsage($imgid,$lang='en'): array
+    public function getImageTagUsage($imgid): array
     {
-       $resultArr = array();
-       switch ($lang) {
-          case 'en':
-          default:
-            $sql = 'select * from ( ' .
-                   '  select tagkey, description_en, shortlabel, sortorder, not isnull(imgid) from imagetagkey k ' .
-                   '     left join imagetag i on k.tagkey = i.keyvalue ' .
-                   '     where (i.imgid is null or i.imgid = ? ) ' .
-                   '  union ' .
-                   '  select tagkey, description_en, shortlabel, sortorder, 0 from imagetagkey k ' .
-                   '     left join imagetag i on k.tagkey = i.keyvalue ' .
-                   '     where (i.imgid is not null and i.imgid <> ? ) ' .
-                   ' ) a order by sortorder ';
-       }
-       $stmt = $this->conn->stmt_init();
-       $stmt->prepare($sql);
-       if ($stmt) {
-          $stmt->bind_param('ii',$imgid,$imgid);
-          $stmt->bind_result($key,$desc,$lab,$sort,$value);
-          $stmt->execute();
-          $i = 0;
-          while ($stmt->fetch()) {
-             $resultArr[$i]['tagkey'] = $key;
-             $resultArr[$i]['shortlabel'] = $lab;
-             $resultArr[$i]['description'] = $desc;
-             $resultArr[$i]['sortorder'] = $sort;
-             $resultArr[$i]['value'] = $value;
-             $i++;
-          }
-          $stmt->close();
-       }
-       return $resultArr;
+        $resultArr = array();
+        $imageTagArr = array();
+        $sql = 'SELECT k.tagkey '.
+            'FROM imagetagkey AS k LEFT JOIN imagetag AS i ON k.tagkey = i.keyvalue '.
+            'WHERE i.imgid = '.$imgid.' ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $imageTagArr[] = $row->tagkey;
+        }
+
+        $sql = 'SELECT tagkey, description_en, shortlabel, sortorder '.
+            'FROM imagetagkey ORDER BY sortorder ';
+        $result = $this->conn->query($sql);
+        $i = 0;
+        while($row = $result->fetch_object()){
+            $resultArr[$i]['tagkey'] = $row->tagkey;
+            $resultArr[$i]['shortlabel'] = $row->shortlabel;
+            $resultArr[$i]['description'] = $row->description_en;
+            $resultArr[$i]['sortorder'] = $row->sortorder;
+            $resultArr[$i]['value'] = (in_array($row->tagkey, $imageTagArr, true)?1:0);
+            $i++;
+        }
+        $result->close();
+        return $resultArr;
     }
 }

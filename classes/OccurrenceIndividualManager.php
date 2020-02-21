@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'Manager.php');
-include_once($SERVER_ROOT.'OccurrenceDuplicate.php');
-include_once($SERVER_ROOT.'OccurrenceAccessStats.php');
+include_once('Manager.php');
+include_once('OccurrenceDuplicate.php');
+include_once('OccurrenceAccessStats.php');
 
 class OccurrenceIndividualManager extends Manager{
 

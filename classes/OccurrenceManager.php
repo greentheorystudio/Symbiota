@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once('DbConnection.php');
+include_once('OccurrenceUtilities.php');
+include_once('ChecklistVoucherAdmin.php');
 
 class OccurrenceManager{
 

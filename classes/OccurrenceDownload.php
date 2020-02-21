@@ -1,14 +1,13 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAccessStats.php');
+include_once('DbConnection.php');
+include_once('OccurrenceAccessStats.php');
 
 class OccurrenceDownload{
 
 	private $conn;
 	private $redactLocalities = true;
 	private $rareReaderArr = array();
-	private $securityArr;
-	private $schemaType = 'symbiota';			//symbiota,dwc,georef,checklist
+	private $schemaType = 'symbiota';
 	private $extended = 0;
 	private $delimiter = ',';
 	private $charSetSource;
@@ -27,9 +26,6 @@ class OccurrenceDownload{
  		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
 
-		$this->securityArr = Array('locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
-			'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT','verbatimCoordinates',
-			'georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources','georeferenceVerificationStatus','habitat');
 		if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 			$this->redactLocalities = false;
 		}

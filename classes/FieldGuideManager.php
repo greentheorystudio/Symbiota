@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAPIManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once('DbConnection.php');
+include_once('OccurrenceAPIManager.php');
+include_once('OccurrenceUtilities.php');
+include_once('OccurrenceEditorManager.php');
+include_once('SOLRManager.php');
 
 class FieldGuideManager {
 
@@ -534,7 +534,7 @@ class FieldGuideManager {
 
     public function processDeterminations($pArr): void
     {
-        global $PARAMS_ARR, $SOLR_MODE;
+        global $SOLR_MODE;
         $occArr = $pArr['occid'];
         foreach($occArr as $occId){
             $idIndex = 'id'.$occId;

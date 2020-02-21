@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once('DbConnection.php');
+include_once('TaxonomyUtilities.php');
+include_once('OccurrenceMaintenance.php');
 
 class ChecklistLoaderManager {
 

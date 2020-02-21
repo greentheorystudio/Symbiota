@@ -1,8 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once('DbConnection.php');
+include_once('OccurrenceUtilities.php');
+include_once('OccurrenceEditorManager.php');
+include_once('SOLRManager.php');
 
 class OccurrenceAPIManager{
 
@@ -12,7 +12,6 @@ class OccurrenceAPIManager{
     private $dbpk = '';
     private $catNum = '';
     private $occLUWhere = '';
-    protected $serverDomain;
 
 	public function __construct(){
         $connection = new DbConnection();
@@ -135,7 +134,7 @@ class OccurrenceAPIManager{
 
     public function processImageUploadDetermination($occId,$pArr): void
     {
-        global $PARAMS_ARR, $SOLR_MODE;
+        global $SOLR_MODE;
 	    $detTidAccepted = 0;
         $detFamily = '';
         $detSciNameAuthor = '';

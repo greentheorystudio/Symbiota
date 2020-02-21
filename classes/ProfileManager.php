@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('DbConnection.php');
+include_once('Manager.php');
 include_once('Person.php');
 include_once('Encryption.php');
 
@@ -57,8 +57,7 @@ class ProfileManager extends Manager{
                     }
                 }
             }
-		    //echo $this->authSql;
-			$result = $this->conn->query($this->authSql);
+		    $result = $this->conn->query($this->authSql);
 			if($row = $result->fetch_object()){
 				$this->uid = $row->uid;
 				$this->displayName = $row->firstname;

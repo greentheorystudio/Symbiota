@@ -1,8 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherPensoft.php');
+include_once('ChecklistVoucherPensoft.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
-define('EOL',(PHP_SAPI === 'cli') ? PHP_EOL : '<br />');
-require_once $SERVER_ROOT.'/vendor/phpoffice/phpexcel/PHPExcel.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 
@@ -13,7 +14,7 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 
 	public function downloadPensoftXlsx(): void
 	{
-		$objPHPExcel = new PHPExcel();
+		$objPHPExcel = new Spreadsheet();
 		$penArr = $this->getPensoftArr();
 		$headerArr = $penArr['header'];
 		$taxaArr = $penArr['taxa'];
@@ -93,7 +94,7 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter = new Xlsx($objPHPExcel);
 		$objWriter->save('php://output');
 	}
 }

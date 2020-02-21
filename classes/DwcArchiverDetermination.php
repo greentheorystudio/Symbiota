@@ -1,4 +1,5 @@
 <?php
+
 class DwcArchiverDetermination{
 
 	public static function getDeterminationArr($schemaType,$extended){

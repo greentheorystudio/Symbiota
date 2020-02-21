@@ -1,4 +1,5 @@
 <?php
+
 class DwcArchiverImage{
 
 	public static function getImageArr($schemaType){

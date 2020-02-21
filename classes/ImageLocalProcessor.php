@@ -1,9 +1,7 @@
 <?php
-if(isset($SERVER_ROOT) && $SERVER_ROOT){
-	include_once($SERVER_ROOT.'/classes/DbConnection.php');
-	include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-	include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-}
+include_once('DbConnection.php');
+include_once('OccurrenceMaintenance.php');
+include_once('UuidFactory.php');
 
 class ImageLocalProcessor {
 
@@ -213,12 +211,10 @@ class ImageLocalProcessor {
 			if($sourcePathFrag && substr($sourcePathFrag,-1) !== '/' && substr($sourcePathFrag,-1) !== "\\"){
 				$sourcePathFrag .= '/';
 			}
-			if(!file_exists($this->targetPathBase.$this->targetPathFrag)){
-				if(!mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag, 0777, true) && !is_dir($concurrentDirectory)){
-					$this->logOrEcho('ERROR: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ') ');
-					exit('ABORT: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ')');
-				}
-			}
+			if(!file_exists($this->targetPathBase . $this->targetPathFrag) && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag, 0777, true) && !is_dir($concurrentDirectory)) {
+                $this->logOrEcho('ERROR: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ') ');
+                exit('ABORT: unable to create new folder (' .$this->targetPathBase.$this->targetPathFrag. ')');
+            }
 
 			if($this->keepOrig){
 				$this->origPathFrag = 'orig/'.date('Ym').'/';
@@ -1328,7 +1324,6 @@ class ImageLocalProcessor {
 
 			if(!mail($email,$subject,$body,$headers)){
 				echo 'Mail send ... ERROR!';
-				print_r( error_get_last() );
 			}
 		}
 	}

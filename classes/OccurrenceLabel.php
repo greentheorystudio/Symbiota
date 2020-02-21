@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class OccurrenceLabel{
 
@@ -32,7 +32,6 @@ class OccurrenceLabel{
 		$retArr = array();
 		if($this->collid){
 			$sqlWhere = '';
-			$sqlOrderBy = '';
 			if($postArr['taxa']){
 				$sqlWhere .= 'AND (o.sciname = "'.$this->cleanInStr($postArr['taxa']).'") ';
 			}

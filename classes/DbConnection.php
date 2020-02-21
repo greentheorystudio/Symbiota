@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/config/dbconnection.php');
+include_once(__DIR__ . '/../config/dbconnection.php');
 
 class DbConnection {
     public function getConnection(): \mysqli

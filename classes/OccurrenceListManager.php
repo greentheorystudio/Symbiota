@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'OccurrenceManager.php');
-include_once($SERVER_ROOT.'OccurrenceAccessStats.php');
+include_once('OccurrenceManager.php');
+include_once('OccurrenceAccessStats.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 

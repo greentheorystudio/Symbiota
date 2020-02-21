@@ -1,11 +1,11 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverOccurrence.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverDetermination.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverImage.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverAttribute.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAccessStats.php');
+include_once('Manager.php');
+include_once('DwcArchiverOccurrence.php');
+include_once('DwcArchiverDetermination.php');
+include_once('DwcArchiverImage.php');
+include_once('DwcArchiverAttribute.php');
+include_once('UuidFactory.php');
+include_once('OccurrenceAccessStats.php');
 
 class DwcArchiverCore extends Manager{
 
@@ -33,13 +33,13 @@ class DwcArchiverCore extends Manager{
 	private $attributeFieldArr = array();
 	private $isPublicDownload = false;
 
-	private $securityArr = array();
+	private $securityArr;
 	private $includeDets = 1;
 	private $includeImgs = 1;
 	private $includeAttributes = 0;
 	private $redactLocalities = 1;
 	private $rareReaderArr = array();
-	private $charSetSource = '';
+	private $charSetSource;
 	protected $charSetOut = '';
 
 	private $geolocateVariables = array();
@@ -57,10 +57,6 @@ class DwcArchiverCore extends Manager{
 
 		$this->charSetSource = strtoupper($CHARSET);
 		$this->charSetOut = $this->charSetSource;
-
-		$this->condAllowArr = array('catalognumber','othercatalognumbers','occurrenceid','family','sciname',
-			'country','stateprovince','county','municipality','recordedby','recordnumber','eventdate',
-			'decimallatitude','decimallongitude','minimumelevationinmeters','maximumelevationinmeters','datelastmodified','dateentered');
 
 		$this->securityArr = array('eventDate','month','day','startDayOfYear','endDayOfYear','verbatimEventDate',
 			'recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
@@ -371,7 +367,7 @@ class DwcArchiverCore extends Manager{
 			$cnt = 0;
 			while($r = $rs->fetch_assoc()){
 				if($this->redactLocalities
-                   && $r["localitySecurity"] === 1
+                   && $r['localitySecurity'] === 1
                    && !in_array($r['collid'], $this->rareReaderArr, true)
                 ){
 					$protectedFields = array();
@@ -1283,7 +1279,7 @@ class DwcArchiverCore extends Manager{
 					continue;
 				}
 				$hasRecords = true;
-				if($this->redactLocalities && $r["localitySecurity"] === 1 && !in_array($r['collid'], $this->rareReaderArr, true)){
+				if($this->redactLocalities && $r['localitySecurity'] === 1 && !in_array($r['collid'], $this->rareReaderArr, true)){
 					$protectedFields = array();
 					foreach($this->securityArr as $v){
 						if(array_key_exists($v,$r) && $r[$v]){
@@ -1296,7 +1292,9 @@ class DwcArchiverCore extends Manager{
 					}
 				}
 
-				if($urlPathPrefix) $r['t_references'] = $urlPathPrefix.'collections/individual/index.php?occid='.$r['occid'];
+				if($urlPathPrefix) {
+                    $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
+                }
 				$r['recordId'] = 'urn:uuid:'.$r['recordId'];
 				$managementType = $this->collArr[$r['collid']]['managementtype'];
 				if($managementType && $managementType === 'Live Data' && array_key_exists('collectionID', $r) && !$r['collectionID']) {

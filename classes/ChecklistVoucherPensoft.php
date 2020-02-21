@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-require_once($SERVER_ROOT.'/vendor/autoload.php');
+include_once('ChecklistVoucherAdmin.php');
+include_once('DwcArchiverCore.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -14,9 +14,11 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 
 	public function downloadPensoftXlsx(): void
 	{
-		$spreadsheet = new Spreadsheet();
-		$taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
-		$penArr = $this->getPensoftArr();
+        $taxaSheet = null;
+        $materialsSheet = null;
+	    $spreadsheet = new Spreadsheet();
+        $taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
+        $penArr = $this->getPensoftArr();
 		$headerArr = $penArr['header'];
 		$taxaArr = $penArr['taxa'];
 
@@ -46,9 +48,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			$rowCnt++;
 		}
 
-		$materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
+        $materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
 
-		$dwcaHandler = new DwcArchiverCore();
+        $dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
 		$dwcaHandler->setCharSetOut('ISO-8859-1');
 		$dwcaHandler->setSchemaType('pensoft');
@@ -82,9 +84,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			}
 		}
 
-		$spreadsheet->createSheet(2)->setTitle('ExternalLinks');
+        $spreadsheet->createSheet(2)->setTitle('ExternalLinks');
 
-		$file = $this->getExportFileName().'.xlsx';
+        $file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
 		header('Content-Disposition: attachment; filename='.basename($file));
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -92,9 +94,8 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		header('Pragma: public');
 
 		$writer = new Xlsx($spreadsheet);
-		$writer->save('php://output');
-
-	}
+        $writer->save('php://output');
+    }
 
 	protected function getPensoftArr(): array
 	{

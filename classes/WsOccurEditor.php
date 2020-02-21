@@ -1,6 +1,6 @@
 <?php
-require_once($SERVER_ROOT.'/classes/WebServiceBase.php');
-require_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+require_once('WebServiceBase.php');
+require_once('OccurrenceUtilities.php');
 
 class WsOccurEditor extends WebServiceBase{
 

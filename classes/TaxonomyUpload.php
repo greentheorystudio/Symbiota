@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once('DbConnection.php');
+include_once('TaxonomyUtilities.php');
 
 class TaxonomyUpload{
 
@@ -10,7 +10,7 @@ class TaxonomyUpload{
 	private $taxAuthId = 1;
 	private $statArr = array();
 
-	private $verboseMode = 1; // 0 = silent, 1 = echo only, 2 = echo and log
+	private $verboseMode = 1;
 	private $logFH;
 	private $errorStr = '';
 

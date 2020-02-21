@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class GlossaryUpload{
 	
@@ -25,9 +25,9 @@ class GlossaryUpload{
 		if(!($this->conn === false)) {
 			$this->conn->close();
 		}
-		if($this->verboseMode === 2){
-			if($this->logFH) fclose($this->logFH);
-		}
+		if(($this->verboseMode === 2) && $this->logFH) {
+            fclose($this->logFH);
+        }
 	}
 	
 	public function setUploadFile($ulFileName = ''): void

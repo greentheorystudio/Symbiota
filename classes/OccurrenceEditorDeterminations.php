@@ -1,4 +1,5 @@
 <?php
+
 class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 
 	public function __construct(){

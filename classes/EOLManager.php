@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
-include_once($SERVER_ROOT.'/classes/EOLUtilities.php');
+include_once('DbConnection.php');
+include_once('ImageShared.php');
+include_once('EOLUtilities.php');
 
 class EOLManager {
 
@@ -284,7 +284,9 @@ class EOLManager {
 							$imgCnt++;
 							$retStatus = true;
 						}
-						if($imgCnt > 5) break;
+						if($imgCnt > 5) {
+                            break;
+                        }
 					}
 				}
 				echo '<li style="margin-left:10px;">'.$imgCnt.' images mapped</li>';

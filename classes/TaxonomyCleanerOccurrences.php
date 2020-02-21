@@ -1,4 +1,5 @@
 <?php
+
 class TaxonomyCleanerOccurrences extends TaxonomyCleaner{
 
 	private $collId;

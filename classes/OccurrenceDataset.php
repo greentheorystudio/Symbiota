@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once('DbConnection.php');
+include_once('DwcArchiverCore.php');
 
 class OccurrenceDataset {
 

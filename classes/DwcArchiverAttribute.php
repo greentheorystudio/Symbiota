@@ -1,4 +1,5 @@
 <?php
+
 class DwcArchiverAttribute{
 
 	public static function getFieldArr(){

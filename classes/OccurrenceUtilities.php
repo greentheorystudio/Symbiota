@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/GPoint.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once('GPoint.php');
+include_once('TaxonomyUtilities.php');
 
 class OccurrenceUtilities {
 
@@ -17,7 +17,9 @@ class OccurrenceUtilities {
 	public static function formatDate($inStr){
 		$retDate = '';
 		$dateStr = trim($inStr);
-		if(!$dateStr) return;
+		if(!$dateStr) {
+            return true;
+        }
 		$t = '';
 		$y = '';
 		$m = '00';

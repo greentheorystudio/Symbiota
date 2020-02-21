@@ -1,6 +1,5 @@
 <?php
-include_once(__DIR__ . './../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class TaxonomyUtilities {
 

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/KeyManager.php');
+include_once('KeyManager.php');
 
 class KeyEditorManager extends KeyManager{
 

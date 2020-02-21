@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once('DwcArchiverCore.php');
 
 class DwcArchiverPublisher extends DwcArchiverCore{
 

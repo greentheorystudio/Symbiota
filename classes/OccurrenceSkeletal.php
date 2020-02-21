@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once('DbConnection.php');
+include_once('UuidFactory.php');
 
 class OccurrenceSkeletal {
 

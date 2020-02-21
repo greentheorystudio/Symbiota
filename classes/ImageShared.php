@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once('DbConnection.php');
+include_once('UuidFactory.php');
 
 class ImageShared{
 
@@ -651,26 +651,18 @@ class ImageShared{
 		return $status;
 	}
 
-	private function getImageTagValues($lang='en'): array
-	{
-	   $returnArr = array();
-	   SWITCH ($lang) {
-		  CASE 'en':
-		  DEFAULT:
-		   $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder';
-	   }
-	   $stmt = $this->conn->stmt_init();
-	   $stmt->prepare($sql);
-	   if ($stmt) {
-		  $stmt->bind_result($key,$desc);
-		  $stmt->execute();
-		  while ($stmt->fetch()) {
-			 $returnArr[$key]=$desc;
-		  }
-		  $stmt->close();
-	   }
-	   return $returnArr;
-	}
+    public function getImageTagValues(): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
+            $returnArr[$row->tagkey] = $row->description_en;
+        }
+        $result->close();
+        return $returnArr;
+    }
 
 	public function getActiveImgId(): int
 	{

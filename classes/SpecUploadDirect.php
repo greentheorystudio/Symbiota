@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
+include_once('SpecUploadBase.php');
 
 class SpecUploadDirect extends SpecUploadBase {
 
