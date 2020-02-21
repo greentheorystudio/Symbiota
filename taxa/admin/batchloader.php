@@ -1,12 +1,12 @@
 <?php
-include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 if(!$SYMB_UID) {
     header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
 }
-ini_set('max_execution_time', 3600);
+ini_set('max_execution_time', 7200);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';
@@ -104,7 +104,7 @@ if($isEditor){
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
@@ -251,19 +251,6 @@ if($isEditor){
 							}
 							?>
 						</div>
-						<!--
-						<div style="margin:10px;">
-							Target Thesaurus:
-							<select name="taxauthid">
-								<?php
-								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
-								foreach($taxonAuthArr as $k => $v){
-									echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
-								}
-								?>
-							</select>
-						</div>
-						-->
 						<div style="margin:10px;">
 							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
 							<input type="submit" name="action" value="Activate Taxa" />
@@ -374,7 +361,7 @@ else{
 	</div>
 	<?php
 }
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

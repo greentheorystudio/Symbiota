@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -12,7 +12,7 @@ $statusStr = '';
 
 if(!$pid && array_key_exists("proj",$_GET) && is_numeric($_GET['proj'])) $pid = $_GET['proj'];
 
-$projManager = new InventoryProjectManager($projSubmit?'write':'readonly');
+$projManager = new InventoryProjectManager();
 if($pid) $projManager->setPid($pid);
 
 $isEditor = 0;

@@ -2519,7 +2519,9 @@ function loadPoints(){
     solrqString = newsolrqString;
     if(collectionParams || geogParams || textParams || taxaParams){
         showWorking();
-        pointvectorsource = new ol.source.Vector({wrapX: false});
+        pointvectorsource = new ol.source.Vector({
+            wrapX: false
+        });
         layersArr['pointv'].setSource(pointvectorsource);
         getQueryRecCnt(false,function(res) {
             if(queryRecCnt > 0){
@@ -3046,7 +3048,9 @@ function removeUserLayer(layerID){
         clearSelections();
         adjustSelectionsTab();
         removeDateSlider();
-        pointvectorsource = new ol.source.Vector({wrapX: false});
+        pointvectorsource = new ol.source.Vector({
+            wrapX: false
+        });
         layersArr['pointv'].setSource(pointvectorsource);
         layersArr['heat'].setSource(pointvectorsource);
         layersArr['heat'].setVisible(false);

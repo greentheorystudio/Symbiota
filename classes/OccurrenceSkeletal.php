@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once('DbConnection.php');
+include_once('UuidFactory.php');
 
 class OccurrenceSkeletal {
 
@@ -31,10 +31,13 @@ class OccurrenceSkeletal {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function addOccurrence($postArr){
+	public function addOccurrence($postArr): bool
+	{
 		global $USERNAME;
 		$status = false;
 		if($this->collid){
@@ -45,7 +48,7 @@ class OccurrenceSkeletal {
 				$sql1 .= ','.$f;
 				if(array_key_exists($f, $postArr) && ($postArr[$f] || $postArr[$f] === 0)){
 					$v = $postArr[$f];
-					if($dataType == 'n' && is_numeric($v)){
+					if($dataType === 'n' && is_numeric($v)){
 						$sql2 .= ','.$v;
 					}
 					else{
@@ -62,9 +65,7 @@ class OccurrenceSkeletal {
 			if($this->conn->query($sql)){
 				$status = true;
 				$this->occidArr[] = $this->conn->insert_id;
-				//Update collection stats
 				$this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = '.$this->collid);
-				//Create and insert Symbiota GUID (UUID)
 				$guid = UuidFactory::getUuidV4();
 				if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occidArr[0].')')){
 					$this->errorStr = '(WARNING: Symbiota GUID mapping failed) ';
@@ -78,7 +79,8 @@ class OccurrenceSkeletal {
 		return $status;
 	}
 
-	public function updateOccurrence($postArr){
+	public function updateOccurrence($postArr): bool
+	{
 		$status = false;
 		if($this->occidArr){
 			$postArr = $this->cleanOccurrenceArr($postArr);
@@ -87,7 +89,7 @@ class OccurrenceSkeletal {
 				if(array_key_exists($f, $postArr) && ($postArr[$f] || $postArr[$f] === 0)){
 					$sqlA .= ', '.$f.' = IFNULL('.$f.',';
 					$v = $postArr[$f];
-					if($dataType == 'n' && is_numeric($v)){
+					if($dataType === 'n' && is_numeric($v)){
 						$sqlA .= $v;
 					}
 					else{
@@ -111,17 +113,17 @@ class OccurrenceSkeletal {
 	}
 
 	private function cleanOccurrenceArr($postArr){
-		if(isset($postArr['stateprovince']) && $postArr['stateprovince'] && strlen($postArr['stateprovince']) == 2){
+		if(isset($postArr['stateprovince']) && $postArr['stateprovince'] && strlen($postArr['stateprovince']) === 2){
 			$postArr['stateprovince'] = $this->translateStateAbbreviation($postArr['stateprovince']);
 		}
-		//If country is NULL and state populated, grab country from geo-lookup tables
 		if((!isset($postArr['country']) || !$postArr['country']) && isset($postArr['stateprovince']) && $postArr['stateprovince']){
 			$postArr['country'] = $this->getCountry($postArr['stateprovince']);
 		}
 		return $postArr;
 	}
 
-	public function catalogNumberExists($catNum){
+	public function catalogNumberExists($catNum): bool
+	{
 		$status = false;
 		if($this->collid){
 			$sql = 'SELECT occid FROM omoccurrences '.
@@ -137,10 +139,11 @@ class OccurrenceSkeletal {
 		return $status;
 	}
 
-	private function getCountry($state){
+	private function getCountry($state): string
+	{
 		$countryStr = '';
 		if($state){
-			if(in_array(ucwords($state),$this->stateList)){
+			if(in_array(ucwords($state), $this->stateList, true)){
 				$countryStr = 'United States';
 			}
 			else{
@@ -165,15 +168,16 @@ class OccurrenceSkeletal {
 		return $stateStr;
 	}
 
-	//Setters and getters
-	public function setCollId($id){
+	public function setCollId($id): void
+	{
 		if($id && is_numeric($id)){
 			$this->collid = $id;
 			$this->setCollectionMap();
 		}
 	}
 
-	private function setCollectionMap(){
+	private function setCollectionMap(): void
+	{
 		if($this->collid){
 			$sql = 'SELECT collid, collectionname, institutioncode, collectioncode, colltype, managementtype '.
 				'FROM omcollections '.
@@ -190,11 +194,13 @@ class OccurrenceSkeletal {
 		}
 	}
 
-	public function getCollectionMap(){
+	public function getCollectionMap(): array
+	{
 		return $this->collectionMap;
 	}
 
-	public function getLanguageArr(){
+	public function getLanguageArr(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT iso639_1, langname '.
 			'FROM adminlanguages ';
@@ -211,11 +217,11 @@ class OccurrenceSkeletal {
 		return $this->occidArr;
 	}
 
-	public function getErrorStr(){
+	public function getErrorStr(): string
+	{
 		return $this->errorStr;
 	}
 
-	//Misc functions
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
@@ -223,4 +229,3 @@ class OccurrenceSkeletal {
 		return $newStr;
 	}
 }
-?>

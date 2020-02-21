@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/EOLUtilities.php');
+include_once('Manager.php');
+include_once('TaxonomyUtilities.php');
+include_once('EOLUtilities.php');
 
 class TaxonomyHarvester extends Manager{
 
@@ -15,7 +15,7 @@ class TaxonomyHarvester extends Manager{
 	private $fullyResolved;
 
 	public function __construct() {
-		parent::__construct(null,'write');
+		parent::__construct(null);
 	}
 
 	public function processSciname($term){
@@ -1072,7 +1072,7 @@ class TaxonomyHarvester extends Manager{
 			if(!$tidArr) {
 				return 0;
 			}
-			if(count($tidArr) == 1){
+			if(count($tidArr) === 1){
 				$tid = key($tidArr);
 			}
 			elseif(count($tidArr) > 1){

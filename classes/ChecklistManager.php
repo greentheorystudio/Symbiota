@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class ChecklistManager {
 
@@ -30,16 +30,19 @@ class ChecklistManager {
 	private $genusCount = 0;
 	private $basicSql;
 
-	function __construct() {
+	public function __construct() {
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
 	}
 
-	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+ 		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 
-	public function setClValue($clValue){
+	public function setClValue($clValue): string
+	{
 		$retStr = '';
 		$clValue = $this->conn->real_escape_string($clValue);
 		if(is_numeric($clValue)){
@@ -61,63 +64,65 @@ class ChecklistManager {
 				trigger_error('ERROR setting checklist ID, SQL: '.$sql, E_USER_ERROR);
 			}
 		}
-		//Get children checklists
 		$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
 		$sqlChild = $sqlChildBase.$this->clid.')';
 		do{
-			$childStr = "";
+			$childStr = '';
 			$rsChild = $this->conn->query($sqlChild);
 			while($rChild = $rsChild->fetch_object()){
 				$this->childClidArr[] = $rChild->clidchild;
 				$childStr .= ','.$rChild->clidchild;
 			}
 			$sqlChild = $sqlChildBase.substr($childStr,1).')';
-		}while($childStr);
+		}
+		while($childStr);
 		return $retStr;
 	}
 
-	public function setDynClid($did){
+	public function setDynClid($did): void
+	{
 		if(is_numeric($did)){
 			$this->dynClid = $did;
 		}
 	}
 
-	public function getClMetaData(){
+	public function getClMetaData(): array
+	{
 		$retArr = array();
-		$sql = "";
+		$sql = '';
 		if($this->clid){
-			$sql = "SELECT c.clid, c.name, c.locality, c.publication, ".
-				"c.abstract, c.authors, c.parentclid, c.notes, ".
-				"c.latcentroid, c.longcentroid, c.pointradiusmeters, c.footprintwkt, c.access, c.defaultSettings, ".
-				"c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp ".
-				"FROM fmchecklists c WHERE (c.clid = ".$this->clid.')';
+			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, ' .
+				'c.abstract, c.authors, c.parentclid, c.notes, ' .
+				'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.footprintwkt, c.access, c.defaultSettings, ' .
+				'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp ' .
+				'FROM fmchecklists c WHERE (c.clid = ' .$this->clid.')';
 		}
 		elseif($this->dynClid){
-			$sql = "SELECT c.dynclid AS clid, c.name, c.details AS locality, c.notes, c.uid, c.type, c.initialtimestamp ".
-				"FROM fmdynamicchecklists c WHERE (c.dynclid = ".$this->dynClid.')';
+			$sql = 'SELECT c.dynclid AS clid, c.name, c.details AS locality, c.notes, c.uid, c.type, c.initialtimestamp ' .
+				'FROM fmdynamicchecklists c WHERE (c.dynclid = ' .$this->dynClid.')';
 		}
 		if($sql){
 		 	$result = $this->conn->query($sql);
 			if($result){
 		 		if($row = $result->fetch_object()){
 					$this->clName = $row->name;
-					$retArr["locality"] = $row->locality;
-					$retArr["notes"] = $row->notes;
-					$retArr["type"] = $row->type;
+					$retArr['locality'] = $row->locality;
+					$retArr['notes'] = $row->notes;
+					$retArr['type'] = $row->type;
 					if($this->clid){
-						$retArr["publication"] = $row->publication;
-						$retArr["abstract"] = $row->abstract;
-						$retArr["authors"] = $row->authors;
-						$retArr["parentclid"] = $row->parentclid;
-						$retArr["uid"] = $row->uid;
-						$retArr["latcentroid"] = $row->latcentroid;
-						$retArr["longcentroid"] = $row->longcentroid;
-						$retArr["pointradiusmeters"] = $row->pointradiusmeters;
+						$retArr['publication'] = $row->publication;
+						$retArr['abstract'] = $row->abstract;
+						$retArr['authors'] = $row->authors;
+						$retArr['parentclid'] = $row->parentclid;
+						$retArr['uid'] = $row->uid;
+						$retArr['latcentroid'] = $row->latcentroid;
+						$retArr['longcentroid'] = $row->longcentroid;
+						$retArr['pointradiusmeters'] = $row->pointradiusmeters;
 						$retArr['footprintwkt'] = $row->footprintwkt;
-						$retArr["access"] = $row->access;
-						$retArr["defaultSettings"] = $row->defaultSettings;
-						$retArr["dynamicsql"] = $row->dynamicsql;
-						$retArr["datelastmodified"] = $row->datelastmodified;
+						$retArr['access'] = $row->access;
+						$retArr['defaultSettings'] = $row->defaultSettings;
+						$retArr['dynamicsql'] = $row->dynamicsql;
+						$retArr['datelastmodified'] = $row->datelastmodified;
 					}
 		    	}
 		    	$result->free();
@@ -129,11 +134,8 @@ class ChecklistManager {
 		return $retArr;
 	}
 
-	public function echoFilterList(){
-		echo "'".implode("','",$this->filterArr)."'";
-	}
-
-	public function getTaxonAuthorityList(){
+	public function getTaxonAuthorityList(): array
+	{
     	$taxonAuthList = array();
 		$sql = "SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)";
  		$rs = $this->conn->query($sql);
@@ -144,27 +146,38 @@ class ChecklistManager {
 		return $taxonAuthList;
 	}
 
-	//return an array: family => array(TID => sciName)
 	public function getTaxaList($pageNumber = 1,$retLimit = 500){
-		if(!$this->clid && !$this->dynClid) return;
-		//Get species list
-		$speciesPrev="";$taxonPrev="";
+		if(!$this->clid && !$this->dynClid) {
+			return false;
+		}
+		$speciesPrev = '';
+		$taxonPrev = '';
 		$tidReturn = array();
         $genusCntArr = array();
         $familyCntArr = array();
-		if($this->showImages && $retLimit) $retLimit = $this->imageLimit;
-		if(!$this->basicSql) $this->setClSql();
+		if($this->showImages && $retLimit) {
+			$retLimit = $this->imageLimit;
+		}
+		if(!$this->basicSql) {
+			$this->setClSql();
+		}
 		$result = $this->conn->query($this->basicSql);
 		while($row = $result->fetch_object()){
 			$family = strtoupper($row->family);
-			if(!$family) $family = 'Family Incertae Sedis';
+			if(!$family) {
+				$family = 'Family Incertae Sedis';
+			}
 			$this->filterArr[$family] = '';
 			$tid = $row->tid;
 			$sciName = $this->cleanOutStr($row->sciname);
-			$taxonTokens = explode(" ",$sciName);
-			if(in_array("x",$taxonTokens) || in_array("X",$taxonTokens)){
-				if(in_array("x",$taxonTokens)) unset($taxonTokens[array_search("x",$taxonTokens)]);
-				if(in_array("X",$taxonTokens)) unset($taxonTokens[array_search("X",$taxonTokens)]);
+			$taxonTokens = explode(' ',$sciName);
+			if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
+				if(in_array('x',$taxonTokens, true)) {
+					unset($taxonTokens[array_search('x', $taxonTokens, true)]);
+				}
+				if(in_array('X',$taxonTokens, true)) {
+					unset($taxonTokens[array_search('X', $taxonTokens, true)]);
+				}
 				$newArr = array();
 				foreach($taxonTokens as $v){
 					$newArr[] = $v;
@@ -172,37 +185,49 @@ class ChecklistManager {
 				$taxonTokens = $newArr;
 			}
 			if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
-				if(count($taxonTokens) == 1) $sciName .= " sp.";
-				if($this->showVouchers){
-					$clStr = "";
-					if($row->habitat) $clStr = ", ".$row->habitat;
-					if($row->abundance) $clStr .= ", ".$row->abundance;
-					if($row->notes) $clStr .= ", ".$row->notes;
-					if($row->source) $clStr .= ", <u>source</u>: ".$row->source;
-					if($clStr) $this->taxaList[$tid]["notes"] = substr($clStr,2);
+				if(count($taxonTokens) === 1) {
+					$sciName .= ' sp.';
 				}
-				$this->taxaList[$tid]["sciname"] = $sciName;
-				$this->taxaList[$tid]["family"] = $family;
+				if($this->showVouchers){
+					$clStr = '';
+					if($row->habitat) {
+						$clStr = ', ' . $row->habitat;
+					}
+					if($row->abundance) {
+						$clStr .= ', ' . $row->abundance;
+					}
+					if($row->notes) {
+						$clStr .= ', ' . $row->notes;
+					}
+					if($row->source) {
+						$clStr .= ', <u>source</u>: ' . $row->source;
+					}
+					if($clStr) {
+						$this->taxaList[$tid]['notes'] = substr($clStr, 2);
+					}
+				}
+				$this->taxaList[$tid]['sciname'] = $sciName;
+				$this->taxaList[$tid]['family'] = $family;
 				$tidReturn[] = $tid;
 				if($this->showAuthors){
-					$this->taxaList[$tid]["author"] = $this->cleanOutStr($row->author);
+					$this->taxaList[$tid]['author'] = $this->cleanOutStr($row->author);
 				}
     		}
-            if(!in_array($family,$familyCntArr)){
+            if(!in_array($family, $familyCntArr, true)){
                 $familyCntArr[] = $family;
             }
-            if(!in_array($taxonTokens[0],$genusCntArr)){
+            if(!in_array($taxonTokens[0], $genusCntArr, true)){
                 $genusCntArr[] = $taxonTokens[0];
             }
-			$this->filterArr[$taxonTokens[0]] = "";
-    		if(count($taxonTokens) > 1 && $taxonTokens[0]." ".$taxonTokens[1] != $speciesPrev){
+			$this->filterArr[$taxonTokens[0]] = '';
+    		if(count($taxonTokens) > 1 && $taxonTokens[0]. ' ' .$taxonTokens[1] !== $speciesPrev){
     			$this->speciesCount++;
-    			$speciesPrev = $taxonTokens[0]." ".$taxonTokens[1];
+    			$speciesPrev = $taxonTokens[0]. ' ' .$taxonTokens[1];
     		}
-    		if(!$taxonPrev || $sciName != $taxonPrev){
+    		if(!$taxonPrev || $sciName !== $taxonPrev){
     			$this->taxaCount++;
     		}
-    		$taxonPrev = implode(" ",$taxonTokens);
+    		$taxonPrev = implode(' ',$taxonTokens);
 		}
         $this->familyCount = count($familyCntArr);
         $this->genusCount = count($genusCntArr);
@@ -214,7 +239,6 @@ class ChecklistManager {
 			unset($this->filterArr);
 			return $this->getTaxaList(1,$retLimit);
 		}
-		//Get voucher data; note that dynclid list won't have vouchers
 		if($this->taxaList){
 			if($this->showVouchers){
 				$clidStr = $this->clid;
@@ -229,28 +253,42 @@ class ChecklistManager {
 				//echo $vSql; exit;
 		 		$vResult = $this->conn->query($vSql);
 				while ($row = $vResult->fetch_object()){
-					$collector = ($row->recordedby?$row->recordedby:$row->catalognumber);
+					$collector = ($row->recordedby?:$row->catalognumber);
 					if(strlen($collector) > 25){
-						//Collector string is too big, thus reduce
 						$strPos = strpos($collector,';');
-						if(!$strPos) $strPos = strpos($collector,',');
-						if(!$strPos) $strPos = strpos($collector,' ',10);
-						if($strPos) $collector = substr($collector,0,$strPos).'...';
+						if(!$strPos) {
+							$strPos = strpos($collector, ',');
+						}
+						if(!$strPos) {
+							$strPos = strpos($collector, ' ', 10);
+						}
+						if($strPos) {
+							$collector = substr($collector, 0, $strPos) . '...';
+						}
 					}
-					if($row->recordnumber) $collector .= ' '.$row->recordnumber;
-					else $collector .= ' '.$row->eventdate;
+					if($row->recordnumber) {
+						$collector .= ' ' . $row->recordnumber;
+					}
+					else {
+						$collector .= ' ' . $row->eventdate;
+					}
 					$collector .= ' ['.$row->institutioncode.']';
 					$this->voucherArr[$row->tid][$row->occid] = $collector;
 				}
 				$vResult->close();
 			}
-			if($this->showImages) $this->setImages($tidReturn);
-			if($this->showCommon) $this->setVernaculars($tidReturn);
+			if($this->showImages) {
+				$this->setImages($tidReturn);
+			}
+			if($this->showCommon) {
+				$this->setVernaculars($tidReturn);
+			}
 		}
 		return $this->taxaList;
 	}
 
-	private function setImages($tidReturn){
+	private function setImages($tidReturn): void
+	{
 		if($tidReturn){
 			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
 				'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
@@ -263,14 +301,13 @@ class ChecklistManager {
 			$rs = $this->conn->query($sql);
 			$matchedArr = array();
 			while($row = $rs->fetch_object()){
-				$this->taxaList[$row->tid]["url"] = $row->url;
-				$this->taxaList[$row->tid]["tnurl"] = $row->thumbnailurl;
+				$this->taxaList[$row->tid]['url'] = $row->url;
+				$this->taxaList[$row->tid]['tnurl'] = $row->thumbnailurl;
 				$matchedArr[] = $row->tid;
 			}
 			$rs->free();
 			$missingArr = array_diff(array_keys($this->taxaList),$matchedArr);
 			if($missingArr){
-				//Get children images
 				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images i INNER JOIN '.
 					'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
@@ -281,46 +318,47 @@ class ChecklistManager {
 				//echo $sql;
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
-					$this->taxaList[$row2->tid]["url"] = $row2->url;
-					$this->taxaList[$row2->tid]["tnurl"] = $row2->thumbnailurl;
+					$this->taxaList[$row2->tid]['url'] = $row2->url;
+					$this->taxaList[$row2->tid]['tnurl'] = $row2->thumbnailurl;
 				}
 				$rs2->free();
 			}
 		}
 	}
 
-	private function setVernaculars($tidReturn){
+	private function setVernaculars($tidReturn): void
+	{
 		if($tidReturn){
-			$tempVernArr = array();
 			$sql = 'SELECT ts1.tid, v.vernacularname '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxavernaculars v ON ts2.tid = v.tid '.
 				'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tidReturn).')) ';
-			//if($this->language) $sql .= 'AND v.language = "'.$this->language.'" ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				if($r->vernacularname) $this->taxaList[$r->tid]['vern'] = $this->cleanOutStr($r->vernacularname);
+				if($r->vernacularname) {
+					$this->taxaList[$r->tid]['vern'] = $this->cleanOutStr($r->vernacularname);
+				}
 			}
 			$rs->free();
 		}
 	}
 
-	public function getCoordinates($tid = 0,$abbreviated=false){
+	public function getCoordinates($tid = 0,$abbreviated=false): array
+	{
 		$retArr = array();
-		if(!$this->basicSql) $this->setClSql();
+		if(!$this->basicSql) {
+			$this->setClSql();
+		}
 		if($this->clid){
-			//Add children checklists to query
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
 
 			$retCnt = 0;
-			//Grab general points
 			try{
-				$sql1 = '';
 				if($tid){
 					$sql1 = 'SELECT DISTINCT cc.tid, t.sciname, cc.decimallatitude, cc.decimallongitude, cc.notes '.
 						'FROM fmchklstcoordinates cc INNER JOIN taxa t ON cc.tid = t.tid '.
@@ -355,8 +393,6 @@ class ChecklistManager {
 
 			if(!$abbreviated || $retCnt < 50){
 				try{
-					//Grab voucher points
-					$sql2 = '';
 					if($tid){
 						$sql2 = 'SELECT DISTINCT v.tid, o.occid, o.decimallatitude, o.decimallongitude, '.
 							'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,o.eventdate),")") as notes '.
@@ -389,33 +425,37 @@ class ChecklistManager {
 						$rs2->free();
 					}
 				}
-				catch(Exception $e){
-					//echo 'Caught exception getting voucher coordinates: ',  $e->getMessage(), "\n";
-				}
+				catch(Exception $e){}
 			}
 		}
 		return $retArr;
 	}
 
-	public function downloadChecklistCsv(){
-    	if(!$this->basicSql) $this->setClSql();
-		//Output checklist
-    	$fileName = $this->clName."_".time().".csv";
+	public function downloadChecklistCsv(): void
+	{
+    	if(!$this->basicSql) {
+			$this->setClSql();
+		}
+		$fileName = $this->clName. '_' .time(). '.csv';
     	header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-Type: text/csv');
 		header ("Content-Disposition: attachment; filename=\"$fileName\"");
 		$this->showAuthors = 1;
 		if($taxaArr = $this->getTaxaList(1,0)){
-			$fh = fopen('php://output', 'w');
+			$fh = fopen('php://output', 'wb');
 			$headerArr = array('Family','ScientificName','ScientificNameAuthorship');
-			if($this->showCommon) $headerArr[] = 'CommonName';
+			if($this->showCommon) {
+				$headerArr[] = 'CommonName';
+			}
 			$headerArr[] = 'Notes';
 			$headerArr[] = 'TaxonId';
 			fputcsv($fh,$headerArr);
 			foreach($taxaArr as $tid => $tArr){
 				unset($outArr);
 				$outArr = array($tArr['family'],$tArr['sciname'],$tArr['author']);
-				if($this->showCommon) $outArr[] = (array_key_exists('vern',$tArr)?$tArr['vern']:'');
+				if($this->showCommon) {
+					$outArr[] = (array_key_exists('vern', $tArr) ? $tArr['vern'] : '');
+				}
 				$outArr[] = (array_key_exists('notes',$tArr)?strip_tags($tArr['notes']):'');
 				$outArr[] = $tid;
 				fputcsv($fh,$outArr);
@@ -427,7 +467,8 @@ class ChecklistManager {
 		}
     }
 
-	private function setClSql(){
+	private function setClSql(): void
+	{
 		if($this->clid){
 			$clidStr = $this->clid;
 			if($this->childClidArr){
@@ -452,52 +493,57 @@ class ChecklistManager {
 			$this->basicSql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 				'INNER JOIN fmdyncltaxalink ctl ON t.tid = ctl.tid '.
-    	  		'WHERE (ts.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') AND (ctl.dynclid = '.$this->dynClid.') ';
+    	  		'WHERE (ts.taxauthid = '.($this->thesFilter?:'1').') AND (ctl.dynclid = '.$this->dynClid.') ';
 		}
 		if($this->taxonFilter){
 			if($this->searchCommon){
 				$this->basicSql .= 'AND ts.tidaccepted IN(SELECT ts2.tidaccepted FROM taxavernaculars v INNER JOIN taxstatus ts2 ON v.tid = ts2.tid WHERE (v.vernacularname LIKE "%'.$this->taxonFilter.'%")) ';
 			}
 			else{
-				//Search direct name, which is particularly good for a genera term
 				$sqlWhere = 'OR (t.SciName Like "'.$this->taxonFilter.'%") ';
-				if($this->clid && (substr($this->taxonFilter,-5) == 'aceae' || substr($this->taxonFilter,-4) == 'idae')){
-					//Include taxn filter in familyoverride
+				if($this->clid && (substr($this->taxonFilter,-5) === 'aceae' || substr($this->taxonFilter,-4) === 'idae')){
 					$sqlWhere .= "OR (ctl.familyoverride = '".$this->taxonFilter."') ";
 				}
 				if($this->searchSynonyms){
-					$sqlWhere .= "OR (ts.tidaccepted IN(SELECT ts2.tidaccepted FROM taxa t2 INNER JOIN taxstatus ts2 ON t2.tid = ts2.tid ".
+					$sqlWhere .= 'OR (ts.tidaccepted IN(SELECT ts2.tidaccepted FROM taxa t2 INNER JOIN taxstatus ts2 ON t2.tid = ts2.tid ' .
 						"WHERE (t2.sciname Like '".$this->taxonFilter."%'))) ";
 				}
-				//Include parents
 				$sqlWhere .= 'OR (t.tid IN(SELECT e.tid '.
 					'FROM taxa t3 INNER JOIN taxaenumtree e ON t3.tid = e.parenttid '.
-					'WHERE (e.taxauthid = '.($this->thesFilter?$this->thesFilter:'1').') AND (t3.sciname = "'.$this->taxonFilter.'")))';
-				if($sqlWhere) $this->basicSql .= 'AND ('.substr($sqlWhere,2).') ';
+					'WHERE (e.taxauthid = '.($this->thesFilter?:'1').') AND (t3.sciname = "'.$this->taxonFilter.'")))';
+				if($sqlWhere) {
+					$this->basicSql .= 'AND (' . substr($sqlWhere, 2) . ') ';
+				}
 			}
 		}
 		if($this->showAlphaTaxa){
-			$this->basicSql .= " ORDER BY sciname";
+			$this->basicSql .= ' ORDER BY sciname';
 		}
 		else{
-			$this->basicSql .= " ORDER BY family, sciname";
+			$this->basicSql .= ' ORDER BY family, sciname';
 		}
 		//echo $this->basicSql; exit;
 	}
 
-	//Checklist index page fucntions
-	public function getChecklists(){
+	public function getChecklists(): array
+	{
 		global $USER_RIGHTS;
 		$retArr = array();
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access '.
 			'FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid '.
 			'LEFT JOIN fmprojects p ON cpl.pid = p.pid '.
 			'WHERE ((c.access LIKE "public%") ';
-		if(isset($USER_RIGHTS['ClAdmin']) && $USER_RIGHTS['ClAdmin']) $sql .= 'OR (c.clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).'))';
+		if(isset($USER_RIGHTS['ClAdmin']) && $USER_RIGHTS['ClAdmin']) {
+			$sql .= 'OR (c.clid IN(' . implode(',', $USER_RIGHTS['ClAdmin']) . '))';
+		}
 		$sql .= ') AND ((p.pid IS NULL) OR (p.ispublic = 1) ';
-		if(isset($USER_RIGHTS['ProjAdmin']) && $USER_RIGHTS['ProjAdmin']) $sql .= 'OR (p.pid IN('.implode(',',$USER_RIGHTS['ProjAdmin']).'))';
+		if(isset($USER_RIGHTS['ProjAdmin']) && $USER_RIGHTS['ProjAdmin']) {
+			$sql .= 'OR (p.pid IN(' . implode(',', $USER_RIGHTS['ProjAdmin']) . '))';
+		}
 		$sql .= ') ';
-		if($this->pid) $sql .= 'AND (p.pid = '.$this->pid.') ';
+		if($this->pid) {
+			$sql .= 'AND (p.pid = ' . $this->pid . ') ';
+		}
 		$sql .= 'ORDER BY p.projname, c.Name';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
@@ -511,7 +557,7 @@ class ChecklistManager {
 				$projName = 'Undefinded Inventory Project';
 			}
 			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
-			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access=='private'?' (Private)':'');
+			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}
 		$rs->free();
 		if(isset($retArr[0])){
@@ -522,12 +568,10 @@ class ChecklistManager {
 		return $retArr;
 	}
 
-	public function echoResearchPoints($target){
+	public function echoResearchPoints($target): void
+	{
 		global $USER_RIGHTS;
-		$clCluster = '';
-		if(isset($USER_RIGHTS['ClAdmin'])) {
-			$clCluster = $USER_RIGHTS['ClAdmin'];
-		}
+		$clCluster = $USER_RIGHTS['ClAdmin'] ?? '';
 		$sql = 'SELECT c.clid, c.name, c.longcentroid, c.latcentroid '.
 			'FROM fmchecklists c INNER JOIN fmchklstprojlink cpl ON c.CLID = cpl.clid '.
 			'INNER JOIN fmprojects p ON cpl.pid = p.pid '.
@@ -536,63 +580,70 @@ class ChecklistManager {
 		while($row = $result->fetch_object()){
 			$idStr = $row->clid;
 			$nameStr = $this->cleanOutStr($row->name);
-			echo "var point".$idStr." = new google.maps.LatLng(".$row->latcentroid.", ".$row->longcentroid.");\n";
-			echo "points.push( point".$idStr." );\n";
-			echo 'var marker'.$idStr.' = new google.maps.Marker({ position: point'.$idStr.', map: map, title: "'.$nameStr.'" });'."\n";
-			//Single click event
-			echo 'var infoWin'.$idStr.' = new google.maps.InfoWindow({ content: "<div style=\'width:300px;\'><b>'.$nameStr.'</b><br/>Double Click to open</div>" });'."\n";
-			echo "infoWins.push( infoWin".$idStr." );\n";
-			echo "google.maps.event.addListener(marker".$idStr.", 'click', function(){ closeAllInfoWins(); infoWin".$idStr.".open(map,marker".$idStr."); });\n";
-			//Double click event
-			if($target == 'keys'){
-				echo "var lStr".$idStr." = '../ident/key.php?cl=".$idStr."&proj=".$this->pid."&taxon=All+Species';\n";
+			echo 'const point' .$idStr. ' = new google.maps.LatLng(' .$row->latcentroid. ', ' .$row->longcentroid.");\n";
+			echo 'points.push( point' .$idStr." );\n";
+			echo 'const marker'.$idStr.' = new google.maps.Marker({ position: point'.$idStr.', map: map, title: "'.$nameStr.'" });'."\n";
+			echo 'const infoWin'.$idStr.' = new google.maps.InfoWindow({ content: "<div style=\'width:300px;\'><b>'.$nameStr.'</b><br/>Double Click to open</div>" });'."\n";
+			echo 'infoWins.push( infoWin' .$idStr." );\n";
+			echo 'google.maps.event.addListener(marker' .$idStr.", 'click', function(){ closeAllInfoWins(); infoWin".$idStr. '.open(map,marker' .$idStr."); });\n";
+			if($target === 'keys'){
+				echo 'let lStr' .$idStr." = '../ident/key.php?cl=".$idStr. '&proj=' .$this->pid."&taxon=All+Species';\n";
 			}
 			else{
-				echo "var lStr".$idStr." = 'checklist.php?cl=".$idStr."&proj=".$this->pid."';\n";
+				echo 'let lStr' .$idStr." = 'checklist.php?cl=".$idStr. '&proj=' .$this->pid."';\n";
 			}
-			echo "google.maps.event.addListener(marker".$idStr.", 'dblclick', function(){ closeAllInfoWins(); marker".$idStr.".setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr".$idStr."; });\n";
+			echo 'google.maps.event.addListener(marker' .$idStr.", 'dblclick', function(){ closeAllInfoWins(); marker".$idStr. '.setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr' .$idStr."; });\n";
 		}
 		$result->free();
 	}
 
-	//Setters and getters
-    public function setThesFilter($filt){
+	public function setThesFilter($filt): void
+	{
 		$this->thesFilter = $filt;
 	}
 
-	public function getThesFilter(){
+	public function getThesFilter(): int
+	{
 		return $this->thesFilter;
 	}
 
-	public function setTaxonFilter($tFilter){
+	public function setTaxonFilter($tFilter): void
+	{
 		$this->taxonFilter = $this->cleanInStr(strtolower($tFilter));
 	}
 
-	public function setShowAuthors($value = 1){
+	public function setShowAuthors($value = 1): void
+	{
 		$this->showAuthors = $value;
 	}
 
-	public function setShowCommon($value = 1){
+	public function setShowCommon($value = 1): void
+	{
 		$this->showCommon = $value;
 	}
 
-	public function setShowImages($value = 1){
+	public function setShowImages($value = 1): void
+	{
 		$this->showImages = $value;
 	}
 
-	public function setShowVouchers($value = 1){
+	public function setShowVouchers($value = 1): void
+	{
 		$this->showVouchers = $value;
 	}
 
-	public function setShowAlphaTaxa($value = 1){
+	public function setShowAlphaTaxa($value = 1): void
+	{
 		$this->showAlphaTaxa = $value;
 	}
 
-	public function setSearchCommon($value = 1){
+	public function setSearchCommon($value = 1): void
+	{
 		$this->searchCommon = $value;
 	}
 
-	public function setSearchSynonyms($value = 1){
+	public function setSearchSynonyms($value = 1): void
+	{
 		$this->searchSynonyms = $value;
 	}
 
@@ -600,11 +651,8 @@ class ChecklistManager {
 		return $this->clid;
 	}
 
-	public function getChildClidArr(){
-		return $this->childClidArr;
-	}
-
-	public function getVoucherArr(){
+	public function getVoucherArr(): array
+	{
 		return $this->voucherArr;
 	}
 
@@ -612,7 +660,8 @@ class ChecklistManager {
 		return $this->clName;
 	}
 
-	public function setProj($pValue){
+	public function setProj($pValue): string
+	{
 		$sql = 'SELECT pid, projname FROM fmprojects ';
 		if(is_numeric($pValue)){
 			$sql .= 'WHERE (pid = '.$pValue.')';
@@ -634,49 +683,48 @@ class ChecklistManager {
 		return $this->pid;
 	}
 
-	public function getProjName(){
+	public function getProjName(): string
+	{
 		return $this->projName;
 	}
 
-	public function getPid(){
+	public function getPid(): string
+	{
 		return $this->pid;
 	}
 
-	public function setImageLimit($cnt){
-		$this->imageLimit = $cnt;
-	}
-
-	public function getImageLimit(){
+	public function getImageLimit(): int
+	{
 		return $this->imageLimit;
 	}
 
-	public function setTaxaLimit($cnt){
-		$this->taxaLimit = $cnt;
-	}
-
-	public function getTaxaLimit(){
+	public function getTaxaLimit(): int
+	{
 		return $this->taxaLimit;
 	}
 
-	public function getTaxaCount(){
+	public function getTaxaCount(): int
+	{
 		return $this->taxaCount;
 	}
 
-	public function getFamilyCount(){
+	public function getFamilyCount(): int
+	{
 		return $this->familyCount;
 	}
 
-	public function getGenusCount(){
+	public function getGenusCount(): int
+	{
 		return $this->genusCount;
 	}
 
-	public function getSpeciesCount(){
+	public function getSpeciesCount(): int
+	{
 		return $this->speciesCount;
 	}
 
 	private function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
+		$str = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 		return $str;
 	}
 
@@ -687,4 +735,3 @@ class ChecklistManager {
 		return $newStr;
 	}
 }
-?>

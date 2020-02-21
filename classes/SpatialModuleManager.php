@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class SpatialModuleManager{
 	
@@ -864,7 +864,7 @@ class SpatialModuleManager{
         }
         $bottomLimit = ($pageRequest - 1)*$cntPerPage;
         $sql .= 'ORDER BY o.sciname, o.eventdate ';
-        $sql .= 'LIMIT ' .$bottomLimit.",".$cntPerPage;
+        $sql .= 'LIMIT ' .$bottomLimit. ',' .$cntPerPage;
         //echo "<div>Spec sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         $canReadRareSpp = false;

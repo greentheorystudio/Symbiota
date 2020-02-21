@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class DynamicChecklistManager {
 
@@ -11,22 +11,23 @@ class DynamicChecklistManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
 	public function createChecklist($lat, $lng, $radius, $radiusUnits, $tidFilter){
 		global $SYMB_UID;
-		//Radius is a set value 
-		if($radiusUnits == "mi") $radius = round($radius*1.6);
+		if($radiusUnits === 'mi') {
+			$radius = round($radius * 1.6);
+		}
 		$dynPk = 0;
-		//Create checklist
 		$sql = 'INSERT INTO fmdynamicchecklists(name,details,expiration,uid) '.
 			'VALUES ("'.round($lat,5).' '.round($lng,5).' within '.round($radius,1).' km","'.$lat.' '.$lng.' within '.$radius.' km","'.
-			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?$SYMB_UID:'NULL').')';
+			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?:'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$dynPk = $this->conn->insert_id;
-			//Add species to checklist
 			$latRadius = $radius / 111;
 			$lngRadius = cos($lat / 57.3)*($radius / 111);
 			$lat1 = $lat - $latRadius;
@@ -34,25 +35,21 @@ class DynamicChecklistManager {
 			$lng1 = $lng - $lngRadius;
 			$lng2 = $lng + $lngRadius;
 
-			//$sql = 'SELECT count(o.tid) AS speccnt FROM omoccurgeoindex o '.
-			//	'WHERE (o.DecimalLatitude BETWEEN lat1 AND lat2) AND (o.DecimalLongitude BETWEEN lng1 AND lng2)';
-			//$this->conn->query($sql);
-			
-			$sql = 'INSERT INTO fmdyncltaxalink (dynclid, tid) '.
+			$sql2 = 'INSERT INTO fmdyncltaxalink (dynclid, tid) '.
 				'SELECT DISTINCT '.$dynPk.' AS dynpk, IF(t.rankid=220,t.tid,ts2.parenttid) as tid '.
 				'FROM omoccurgeoindex o INNER JOIN taxstatus ts ON o.tid = ts.tid '.
 				'INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tid '.
 				'INNER JOIN taxa t ON ts2.tid = t.tid ';
 			if($tidFilter){
-				$sql .= 'INNER JOIN taxaenumtree e ON ts2.tid = e.tid '; 
+				$sql2 .= 'INNER JOIN taxaenumtree e ON ts2.tid = e.tid ';
 			}
-			$sql .= 'WHERE (t.rankid IN(220,230,240,260)) AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) '.
+			$sql2 .= 'WHERE (t.rankid IN(220,230,240,260)) AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) '.
 				'AND (o.DecimalLatitude BETWEEN '.$lat1.' AND '.$lat2.') AND (o.DecimalLongitude BETWEEN '.$lng1.' AND '.$lng2.') ';
 			if($tidFilter){
-				$sql .= 'and e.parentTid = '.$tidFilter;
+				$sql2 .= 'and e.parentTid = '.$tidFilter;
 			}
 			//echo $sql; exit;
-			$this->conn->query($sql);
+			$this->conn->query($sql2);
 		}
 
 		return $dynPk;
@@ -61,11 +58,12 @@ class DynamicChecklistManager {
 	public function createDynamicChecklist($lat, $lng, $radiusUnit, $tidFilter){
 		global $SYMB_UID;
 		$dynPK = 0;
-
 		$specCnt = 0;
-		$radius;
-		$latRadius; $lngRadius;
-		$lat1; $lat2; $lng1; $lng2;
+		$radius = 0;
+		$lat1 = 0;
+		$lat2 = 0;
+		$lng1 = 0;
+		$lng2 = 0;
 		$loopCnt = 1;
 		while($specCnt < 2500 && $loopCnt < 10){
 			$radius = $radiusUnit*$loopCnt;
@@ -87,10 +85,10 @@ class DynamicChecklistManager {
 			$loopCnt++;
 		}
 		
-		$radius = $radius*1.60934;
+		$radius *= 1.60934;
 		$sql2 = 'INSERT INTO fmdynamicchecklists(name,details,expiration,uid) '.
 			'VALUES ("'.round($lat,5).' '.round($lng,5).' within '.round($radius,1).' km","'.$lat.' '.$lng.' within '.$radius.' km","'.
-			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?$SYMB_UID:'NULL').')';
+			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?:'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql2)){
 			$dynPK = $this->conn->insert_id;
@@ -108,15 +106,13 @@ class DynamicChecklistManager {
 				$sql3 .= 'and e.parentTid = '.$tidFilter;
 			}
 			//echo $sql3; exit;
-			if(!$this->conn->query($sql3)){
-				
-			}
+			$this->conn->query($sql3);
 		}
 		return $dynPK;
 	}
 	
-	public function removeOldChecklists(){
-		//Remove any old checklists
+	public function removeOldChecklists(): void
+	{
 		$sql1 = 'DELETE dcl.* '.
 			'FROM fmdyncltaxalink dcl INNER JOIN fmdynamicchecklists dc ON dcl.dynclid = dc.dynclid '.
 			'WHERE dc.expiration < NOW()';
@@ -125,4 +121,3 @@ class DynamicChecklistManager {
 		$this->conn->query($sql2);
 	} 
 }
-?>

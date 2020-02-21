@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class SpecUpload{
 
@@ -8,7 +8,7 @@ class SpecUpload{
 	protected $uspid;
 	protected $collMetadataArr = array();
 	
-	protected $title = "";
+	protected $title = '';
 	protected $platform;
 	protected $server;
 	protected $port;
@@ -22,84 +22,89 @@ class SpecUpload{
 	protected $storedProcedure;
 	protected $lastUploadDate;
 	protected $uploadType;
-	private $securityKey;
 
-	protected $verboseMode = 1;	// 0 = silent, 1 = echo, 2 = log
+	protected $verboseMode = 1;
 	private $logFH;
 	protected $errorStr;
 
 	protected $DIRECTUPLOAD = 1, $DIGIRUPLOAD = 2, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9;
 	
-	function __construct() {
+	public function __construct() {
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
 	}
 	
-	function __destruct(){
- 		if($this->conn) $this->conn->close();
-		if($this->verboseMode == 2){
-			if($this->logFH) fclose($this->logFH);
+	public function __destruct(){
+ 		if($this->conn) {
+			$this->conn->close();
+		}
+		if(($this->verboseMode === 2) && $this->logFH) {
+			fclose($this->logFH);
 		}
 	}
 	
-	public function setCollId($id){
+	public function setCollId($id): void
+	{
 		if(is_numeric($id)){
 			$this->collId = $id;
 			$this->setCollInfo();
 		}
 	}
 	
-	public function setUspid($id){
+	public function setUspid($id): void
+	{
 		if($id && is_numeric($id)){
 			$this->uspid = $id;
 		}
 	}
 
-	public function getUploadList(){
+	public function getUploadList(): array
+	{
 		$returnArr = array();
 		if($this->collId){
 			$sql = 'SELECT usp.uspid, usp.uploadtype, usp.title '.
 				'FROM uploadspecparameters usp '.
 				'WHERE (usp.collid = '.$this->collId.') '.
-				"ORDER BY usp.uploadtype,usp.title";
+				'ORDER BY usp.uploadtype,usp.title';
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
 				$uploadType = $row->uploadtype;
-				$uploadStr = "";
-				if($uploadType == $this->DIRECTUPLOAD){
-					$uploadStr = "Direct Upload";
+				$uploadStr = '';
+				if($uploadType === $this->DIRECTUPLOAD){
+					$uploadStr = 'Direct Upload';
 				}
-				elseif($uploadType == $this->DIGIRUPLOAD){
-					$uploadStr = "DiGIR Provider Upload";
+				elseif($uploadType === $this->DIGIRUPLOAD){
+					$uploadStr = 'DiGIR Provider Upload';
 				}
-				elseif($uploadType == $this->FILEUPLOAD){
-					$uploadStr = "File Upload";
+				elseif($uploadType === $this->FILEUPLOAD){
+					$uploadStr = 'File Upload';
 				}
-				elseif($uploadType == $this->SKELETAL){
-					$uploadStr = "Skeletal File Upload";
+				elseif($uploadType === $this->SKELETAL){
+					$uploadStr = 'Skeletal File Upload';
 				}
-				elseif($uploadType == $this->NFNUPLOAD){
-					$uploadStr = "NfN File Upload";
+				elseif($uploadType === $this->NFNUPLOAD){
+					$uploadStr = 'NfN File Upload';
 				}
-				elseif($uploadType == $this->STOREDPROCEDURE){
-					$uploadStr = "Stored Procedure";
+				elseif($uploadType === $this->STOREDPROCEDURE){
+					$uploadStr = 'Stored Procedure';
 				}
-				elseif($uploadType == $this->DWCAUPLOAD){
-					$uploadStr = "Darwin Core Archive Upload";
+				elseif($uploadType === $this->DWCAUPLOAD){
+					$uploadStr = 'Darwin Core Archive Upload';
 				}
-				elseif($uploadType == $this->IPTUPLOAD){
-					$uploadStr = "IPT Resource";
+				elseif($uploadType === $this->IPTUPLOAD){
+					$uploadStr = 'IPT Resource';
 				}
-				$returnArr[$row->uspid]["title"] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
-				$returnArr[$row->uspid]["uploadtype"] = $row->uploadtype;
+				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
+				$returnArr[$row->uspid]['uploadtype'] = $row->uploadtype;
 			}
 			$result->free();
 		}
 		return $returnArr;
 	}
 
-	private function setCollInfo(){
+	private function setCollInfo(): void
+	{
 		if($this->collId){
 			$sql = 'SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode, c.icon, c.colltype, c.managementtype, cs.uploaddate, c.securitykey, c.guidtarget '.
 				'FROM omcollections c LEFT JOIN omcollectionstats cs ON c.collid = cs.collid '.
@@ -107,23 +112,25 @@ class SpecUpload{
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$this->collMetadataArr["collid"] = $row->collid;
-				$this->collMetadataArr["name"] = $row->collectionname;
-				$this->collMetadataArr["institutioncode"] = $row->institutioncode;
-				$this->collMetadataArr["collectioncode"] = $row->collectioncode;
-				$dateStr = ($row->uploaddate?date("d F Y g:i:s", strtotime($row->uploaddate)):"");
-				$this->collMetadataArr["uploaddate"] = $dateStr;
-				$this->collMetadataArr["colltype"] = $row->colltype;
-				$this->collMetadataArr["managementtype"] = $row->managementtype;
-				$this->collMetadataArr["securitykey"] = $row->securitykey;
-				$this->collMetadataArr["guidtarget"] = $row->guidtarget;
+				$this->collMetadataArr['collid'] = $row->collid;
+				$this->collMetadataArr['name'] = $row->collectionname;
+				$this->collMetadataArr['institutioncode'] = $row->institutioncode;
+				$this->collMetadataArr['collectioncode'] = $row->collectioncode;
+				$dateStr = ($row->uploaddate?date('d F Y g:i:s', strtotime($row->uploaddate)): '');
+				$this->collMetadataArr['uploaddate'] = $dateStr;
+				$this->collMetadataArr['colltype'] = $row->colltype;
+				$this->collMetadataArr['managementtype'] = $row->managementtype;
+				$this->collMetadataArr['securitykey'] = $row->securitykey;
+				$this->collMetadataArr['guidtarget'] = $row->guidtarget;
 			}
 			$result->free();
 		}
 	}
 	
-	public function getCollInfo($fieldStr = ""){
-		if(!$this->collMetadataArr) $this->setCollInfo();
+	public function getCollInfo($fieldStr = ''){
+		if(!$this->collMetadataArr) {
+			$this->setCollInfo();
+		}
 		if($fieldStr){
 			if(array_key_exists($fieldStr,$this->collMetadataArr)){
 				return $this->collMetadataArr[$fieldStr];
@@ -133,7 +140,8 @@ class SpecUpload{
 		return $this->collMetadataArr;
 	}
 
-	public function validateSecurityKey($k){
+	public function validateSecurityKey($k): bool
+	{
 		if(!$this->collId){
 			$sql = 'SELECT collid '.
 			'FROM omcollections '.
@@ -148,25 +156,24 @@ class SpecUpload{
 	    	}
 			$rs->free();
 		}
-		elseif(!isset($this->collMetadataArr["securitykey"])){
+		elseif(!isset($this->collMetadataArr['securitykey'])){
 			$this->setCollInfo();
 		}
-		if($k == $this->collMetadataArr["securitykey"]){
-			return true;
-		}
-		return false;
+		return $k === $this->collMetadataArr['securitykey'];
 	}
 
-	//Review or import data
-	public function exportPendingImport($searchVariables){
+	public function exportPendingImport($searchVariables): array
+	{
 		$retArr = array();
 		if($this->collId){
-			if(!$searchVariables) $searchVariables = 'TOTAL_TRANSFER';
+			if(!$searchVariables) {
+				$searchVariables = 'TOTAL_TRANSFER';
+			}
 			$fileName = $searchVariables.'_'.$this->collId.'_'.'upload.csv';
 			
 			header ('Content-Type: text/csv');
 			header ('Content-Disposition: attachment; filename="'.$fileName.'"');
-			$outstream = fopen("php://output", "w");
+			$outstream = fopen('php://output', 'wb');
 			$outputHeader = true;
 
 			$sql = $this->getPendingImportSql($searchVariables) ;
@@ -185,16 +192,19 @@ class SpecUpload{
 				echo "Recordset is empty.\n";
 			}
 			$rs->free();
+			fclose($outstream);
 		}
-		fclose($outstream);
 		return $retArr;
 	}
 
-	public function getPendingImportData($start, $limit, $searchVariables = ''){
+	public function getPendingImportData($start, $limit, $searchVariables = ''): array
+	{
 		$retArr = array();
 		if($this->collId){
 			$sql = $this->getPendingImportSql($searchVariables) ;
-			if($limit) $sql .= 'LIMIT '.$start.','.$limit;
+			if($limit) {
+				$sql .= 'LIMIT ' . $start . ',' . $limit;
+			}
 			//echo "<div>".$sql."</div>"; exit;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_assoc()){
@@ -205,7 +215,8 @@ class SpecUpload{
 		return $retArr;
 	}
 
-	private function getPendingImportSql($searchVariables){
+	private function getPendingImportSql($searchVariables): string
+	{
 		$occFieldArr = array('catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'scientificname', 'sciname',
 			'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
 			'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',
@@ -222,23 +233,23 @@ class SpecUpload{
 		$sql = 'SELECT occid, dbpk, '.implode(',',$occFieldArr).' FROM uploadspectemp '.
 				'WHERE collid IN('.$this->collId.') ';
 		if($searchVariables){
-			if($searchVariables == 'matchappend'){
+			if($searchVariables === 'matchappend'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
 						'FROM uploadspectemp u INNER JOIN omoccurrences o ON u.collid = o.collid '.
 						'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber = o.catalogNumber OR u.othercatalogNumbers = o.othercatalogNumbers) ';
 			}
-			elseif($searchVariables == 'sync'){
+			elseif($searchVariables === 'sync'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' '.
 						'FROM uploadspectemp u INNER JOIN omoccurrences o ON (u.catalogNumber = o.catalogNumber) AND (u.collid = o.collid) '.
 						'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber IS NOT NULL) '.
 						'AND (o.catalogNumber IS NOT NULL) AND (o.dbpk IS NULL) ';
 			}
-			elseif($searchVariables == 'exist'){
+			elseif($searchVariables === 'exist'){
 				$sql = 'SELECT DISTINCT o.occid, o.dbpk, o.'.implode(',o.',$occFieldArr).' '.
 						'FROM omoccurrences o LEFT JOIN uploadspectemp u  ON (o.occid = u.occid) '.
 						'WHERE (o.collid IN('.$this->collId.')) AND (u.occid IS NULL) ';
 			}
-			elseif($searchVariables == 'dupdbpk'){
+			elseif($searchVariables === 'dupdbpk'){
 				$sql = 'SELECT DISTINCT u.occid, u.dbpk, u.'.implode(',u.',$occFieldArr).' FROM uploadspectemp u WHERE u.dbpk IN('.
 						'SELECT dbpk FROM uploadspectemp '.
 						'GROUP BY dbpk, collid, basisofrecord '.
@@ -251,10 +262,10 @@ class SpecUpload{
 						$vArr = explode(':',$varStr);
 						$sql .= 'AND '.$vArr[0];
 						switch($vArr[1]){
-							case "ISNULL":
+							case 'ISNULL':
 								$sql .= ' IS NULL ';
 								break;
-							case "ISNOTNULL":
+							case 'ISNOTNULL':
 								$sql .= ' IS NOT NULL ';
 								break;
 							default:
@@ -267,19 +278,8 @@ class SpecUpload{
 		return $sql;
 	}
 
-	public function getUploadCount(){
-		$cnt = 0;
-		if($this->collId){
-			$sql = 'SELECT count(*) AS cnt FROM uploadspectemp WHERE (collid IN('.$this->collId.'))';
-			$rs = $this->conn->query($sql);
-			$rs->num_rows;
-			$rs->free();
-		}
-		return $cnt;
-	}
-
-	//Profile management
-    public function readUploadParameters(){
+	public function readUploadParameters(): void
+	{
     	if($this->uspid){
 			$sql = 'SELECT usp.collid, usp.title, usp.Platform, usp.server, usp.port, usp.Username, usp.Password, usp.SchemaName, '.
 	    		'usp.code, usp.path, usp.pkfield, usp.querystr, usp.cleanupsp, cs.uploaddate, usp.uploadtype '.
@@ -288,7 +288,9 @@ class SpecUpload{
 			//echo $sql;
 			$result = $this->conn->query($sql);
 	    	if($row = $result->fetch_object()){
-	    		if(!$this->collId) $this->collId = $row->collid;
+	    		if(!$this->collId) {
+					$this->collId = $row->collid;
+				}
 	    		$this->title = $row->title;
 	    		$this->platform = $row->Platform;
 	    		$this->server = $row->server;
@@ -297,23 +299,28 @@ class SpecUpload{
 	    		$this->password = $row->Password;
 	    		$this->schemaName = $row->SchemaName;
 	    		$this->code = $row->code;
-	    		if(!$this->path) $this->path = $row->path;
+	    		if(!$this->path) {
+					$this->path = $row->path;
+				}
 	    		$this->pKField = strtolower($row->pkfield);
 	    		$this->queryStr = $row->querystr;
 	    		$this->storedProcedure = $row->cleanupsp;
 	    		$this->lastUploadDate = $row->uploaddate;
 	    		$this->uploadType = $row->uploadtype;
-	    		if(!$this->lastUploadDate) $this->lastUploadDate = date('Y-m-d H:i:s');
+	    		if(!$this->lastUploadDate) {
+					$this->lastUploadDate = date('Y-m-d H:i:s');
+				}
 	    	}
 	    	$result->free();
     	}
     }
 
-    public function editUploadProfile($profileArr){
+    public function editUploadProfile($profileArr): bool
+	{
     	$sql = 'UPDATE uploadspecparameters SET title = "'.$this->cleanInStr($profileArr['title']).'"'.
 			', platform = '.($profileArr['platform']?'"'.$profileArr['platform'].'"':'NULL').
 			', server = '.($profileArr['server']?'"'.$profileArr['server'].'"':'NULL').
-			', port = '.($profileArr['port']?$profileArr['port']:'NULL').
+			', port = '.($profileArr['port']?:'NULL').
 			', username = '.($profileArr['username']?'"'.$profileArr['username'].'"':'NULL').
 			', password = '.($profileArr['password']?'"'.$profileArr['password'].'"':'NULL').
 			', schemaname = '.($profileArr['schemaname']?'"'.$profileArr['schemaname'].'"':'NULL').
@@ -325,7 +332,7 @@ class SpecUpload{
 			'WHERE (uspid = '.$this->uspid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = "<div>Error Editing Upload Parameters: ".$this->conn->error."</div><div>$sql</div>";
+			$this->errorStr = '<div>Error Editing Upload Parameters: ' .$this->conn->error."</div><div>$sql</div>";
 			return false;
 		}
 		return true;
@@ -350,13 +357,13 @@ class SpecUpload{
 		if($this->conn->query($sql)){
 			return $this->conn->insert_id;
 		}
-		else{
-			$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div style="margin-left:10px;">SQL: '.$sql.'</div>';
-			return false;
-		}
+
+		$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div style="margin-left:10px;">SQL: '.$sql.'</div>';
+		return false;
 	}
 
-    public function deleteUploadProfile($uspid){
+    public function deleteUploadProfile($uspid): bool
+	{
 		$sql = 'DELETE FROM uploadspecparameters WHERE (uspid = '.$uspid.')';
 		if(!$this->conn->query($sql)){
 			$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div>'.$sql.'</div>';
@@ -365,12 +372,12 @@ class SpecUpload{
 		return true;
 	}
 
-	//Setter and getters
 	public function getUspid(){
 		return $this->uspid;
 	}
 	
-	public function getTitle(){
+	public function getTitle(): string
+	{
 		return $this->title;
 	}
 
@@ -402,7 +409,8 @@ class SpecUpload{
 		return $this->path;
 	}
 
-	public function setPath($p){
+	public function setPath($p): void
+	{
 		$this->path = $p;
 	}
 
@@ -426,7 +434,8 @@ class SpecUpload{
 		return $this->uploadType;
 	}
 	
-	public function setUploadType($uploadType){
+	public function setUploadType($uploadType): void
+	{
 		if(is_numeric($uploadType)){
 			$this->uploadType = $uploadType;
 		}
@@ -436,52 +445,47 @@ class SpecUpload{
 		return $this->errorStr;
 	}
 	
-	public function setVerboseMode($vMode, $logTitle = ''){
+	public function setVerboseMode($vMode, $logTitle = ''): void
+	{
 		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
-			if($this->verboseMode == 2){
-				//Create log File
-				if($SERVER_ROOT){
-					$LOG_PATH = $SERVER_ROOT;
-					if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
-					$LOG_PATH .= 'content/logs/';
-					if($logTitle){
-						$LOG_PATH .= $logTitle;
-					}
-					else{
-						$LOG_PATH .= 'dataupload';
-					}
-					$LOG_PATH .= '_'.date('Ymd').".log";
-					$this->logFH = fopen($LOG_PATH, 'a');
-					fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
+			if(($this->verboseMode === 2) && $SERVER_ROOT) {
+				$LOG_PATH = $SERVER_ROOT;
+				if(substr($SERVER_ROOT,-1) !== '/' && substr($SERVER_ROOT,-1) !== '\\') $LOG_PATH .= '/';
+				$LOG_PATH .= 'content/logs/';
+				if($logTitle){
+					$LOG_PATH .= $logTitle;
 				}
+				else{
+					$LOG_PATH .= 'dataupload';
+				}
+				$LOG_PATH .= '_'.date('Ymd'). '.log';
+				$this->logFH = fopen($LOG_PATH, 'ab');
+				fwrite($this->logFH, 'Start time: ' .date('Y-m-d h:i:s A')."\n");
 			}
 		}
 	}
 
-	protected function outputMsg($str, $indent = 0){
-		if($this->verboseMode == 1){
+	protected function outputMsg($str, $indent = 0): void
+	{
+		if($this->verboseMode === 1){
 			echo $str;
 			ob_flush();
 			flush();
 		}
-		elseif($this->verboseMode == 2){
-			if($this->logFH) fwrite($this->logFH,($indent?str_repeat("\t",$indent):'').strip_tags($str)."\n");
+		elseif($this->verboseMode === 2){
+			if($this->logFH) {
+				fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
+			}
 		}
 	}
 	
 	protected function cleanInStr($inStr){
 		$retStr = trim($inStr);
-		$retStr = str_replace(chr(10),' ',$retStr);
-		$retStr = str_replace(chr(11),' ',$retStr);
-		$retStr = str_replace(chr(13),' ',$retStr);
-		$retStr = str_replace(chr(20),' ',$retStr);
-		$retStr = str_replace(chr(30),' ',$retStr);
+		$retStr = str_replace(array(chr(10), chr(11), chr(13), chr(20), chr(30)), ' ', $retStr);
 		$retStr = preg_replace('/\s\s+/', ' ',$retStr);
 		$retStr = $this->conn->real_escape_string($retStr);
 		return $retStr;
 	}
 }
-
-?>

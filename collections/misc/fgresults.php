@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
 header("Content-Type: text/html; charset=".$CHARSET);

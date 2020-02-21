@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -31,7 +31,7 @@ else{
 
 if($isEditor){
 	if($action == 'Download Records'){
-		$harvManager->exportCsvFile($_POST);
+		$harvManager->exportCsvFile();
 		exit;
 	}
 	else{

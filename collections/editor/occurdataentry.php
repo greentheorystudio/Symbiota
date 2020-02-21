@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
@@ -20,7 +20,6 @@ $isGenObs = 0;
 
 if($SYMB_UID){
 	//Set variables
-	$occManager->setSymbUid($SYMB_UID);
 	$occManager->setCollId($collid);
 	$collMap = $occManager->getCollMap();
 

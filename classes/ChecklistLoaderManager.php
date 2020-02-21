@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once('DbConnection.php');
+include_once('TaxonomyUtilities.php');
+include_once('OccurrenceMaintenance.php');
 
 class ChecklistLoaderManager {
 
@@ -170,18 +170,7 @@ class ChecklistLoaderManager {
 		}
 	}
 
-	private function addTaxonToChecklist($tid){
-		$status = true;
-		$sql = 'INSERT INTO fmchklsttaxalink(clid,tid) '.
-			'VALUES('.$this->clid.','.$tid.')';
-		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR adding new taxon to checklist: '.$this->conn->error;
-			$status = false;
-		}
-		return $status;
-	}
-
-	public function setClid($c): void
+    public function setClid($c): void
 	{
 		if($c && is_numeric($c)){
 			$this->clid = $c;

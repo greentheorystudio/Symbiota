@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 
 $recordedBy = array_key_exists('recordedby',$_REQUEST)?trim(urldecode($_REQUEST['recordedby'])):'';

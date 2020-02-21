@@ -25,9 +25,6 @@ body{
 	clear: both;	
 }
 
-#navDiv.navpath{
-}
-
 #occdiv{
 	position: relative;
 	width: 795px;
@@ -90,7 +87,6 @@ body{
 	clear:both;
 }
 
-/* Field entry divs and input objects */
 #catalogNumberDiv {
 	float:	left;
 }
@@ -249,7 +245,7 @@ body{
 }
 
 #identificationReferencesDiv{
-	padding:	3px 0px 0px 10px;
+	padding:	3px 0 0 10px;
 }
 
 #identificationReferencesDiv input{
@@ -257,7 +253,7 @@ body{
 }
 
 #identificationRemarksDiv{
-	padding:	3px 0px 0px 10px;
+	padding:	3px 0 0 10px;
 }
 
 #identificationRemarksDiv input{
@@ -265,7 +261,7 @@ body{
 }
 
 #taxonRemarksDiv{
-	padding:	3px 0px 0px 10px;
+	padding:	3px 0 0 10px;
 }
 
 #taxonRemarksDiv input{
@@ -306,7 +302,7 @@ body{
 
 #localityDiv{
 	clear:	both;
-	margin:	4px 0px 2px 0px;
+	margin:	4px 0 2px 0;
 }
 
 #localityDiv input{
@@ -334,7 +330,7 @@ body{
 
 #locationRemarksDiv{
 	clear:	both;
-	margin:	4px 0px 2px 0px;
+	margin:	4px 0 2px 0;
 }
 
 #locationRemarksDiv input{
@@ -375,7 +371,7 @@ body{
 }
 
 #googleDiv img{
-	border:	0px;
+	border:	0;
 	width:	13px;
 }
 
@@ -584,7 +580,7 @@ body{
 
 #associatedTaxaDiv img{
 	width:	15px;
-	border:	0px;
+	border:	0;
 }
 
 #verbatimAttributesDiv{
@@ -831,7 +827,6 @@ body{
 	clear:both;
 }
 
-/* Button Controls */
 #addButtonDiv{
 	width:		450px;
 	border:		1px solid black;
@@ -844,9 +839,8 @@ body{
 	margin:	15px 30px;
 }
 
-/*Misc styling*/
-img.docimg { 
-	border:			0px;
+img.docimg {
+	border:			0;
 	width:			9px;
 	margin-bottom:	2px; 
 }

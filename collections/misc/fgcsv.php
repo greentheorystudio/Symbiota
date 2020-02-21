@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 

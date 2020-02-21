@@ -3,7 +3,6 @@ ALTER TABLE `schemaversion`
 
 INSERT IGNORE INTO schemaversion (versionnumber) values ("1.1");
 
-#Specimen attribute (traits) model
 CREATE TABLE `tmtraits` (
   `traitid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `traitname` VARCHAR(100) NOT NULL,
@@ -109,9 +108,7 @@ CREATE TABLE `tmtraitdependencies` (
     FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE  
 );
 
-
-#Occurrence associations
-ALTER TABLE `omoccurassococcurrences` 
+ALTER TABLE `omoccurassococcurrences`
   DROP FOREIGN KEY `omossococcur_occid`,
   DROP FOREIGN KEY `omossococcur_occidassoc`;
 
@@ -148,8 +145,6 @@ ALTER TABLE `omoccurassociations`
 
 DROP TABLE IF EXISTS `omoccurassoctaxa`;
 
-
-#lookup table for municipality
 CREATE TABLE `lkupmunicipality` (
   `municipalityId` int NOT NULL AUTO_INCREMENT,
   `stateId` int NOT NULL,
@@ -162,16 +157,13 @@ CREATE TABLE `lkupmunicipality` (
   CONSTRAINT `lkupmunicipality_ibfk_1` FOREIGN KEY (`stateId`) REFERENCES `lkupstateprovince` (`stateId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-
-#Checklist voucher changes
-ALTER TABLE `fmvouchers` 
+ALTER TABLE `fmvouchers`
   DROP COLUMN `Collector`,
   ADD COLUMN `preferredImage` INT NULL DEFAULT 0 AFTER `editornotes`;
 
 ALTER TABLE `fmvouchers` 
   DROP FOREIGN KEY `FK_vouchers_cl`;
 
-#Remove any bad double referenced occurrence vouchers within the same checklist
 CREATE TABLE `temp_voucher_delete` (
   `clid` INT NOT NULL,
   `occid` INT NOT NULL);
@@ -197,9 +189,7 @@ ALTER TABLE `fmvouchers`
 ALTER TABLE `fmvouchers` 
   ADD CONSTRAINT `FK_vouchers_cl`  FOREIGN KEY (`TID` , `CLID`)  REFERENCES `fmchklsttaxalink` (`TID` , `CLID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
-  
-#Checklist changes
-ALTER TABLE `fmchklstprojlink` 
+ALTER TABLE `fmchklstprojlink`
   ADD COLUMN `clNameOverride` VARCHAR(100) NULL AFTER `clid`,
   ADD COLUMN `mapChecklist` SMALLINT NULL DEFAULT 1 AFTER `clNameOverride`,
   ADD COLUMN `notes` VARCHAR(250) NULL AFTER `mapChecklist`;
@@ -214,8 +204,6 @@ ALTER TABLE `fmprojects`
   ADD COLUMN `headerUrl` VARCHAR(150) NULL AFTER `iconUrl`,
   ADD COLUMN `dynamicProperties` TEXT NULL AFTER `ispublic`;
 
-
-#Identification key
 ALTER TABLE `kmcharacterlang` DROP FOREIGN KEY `FK_characterlang_1`;
 ALTER TABLE `kmcharacterlang` 
   ADD CONSTRAINT `FK_characterlang_1` FOREIGN KEY (`cid`)  REFERENCES `kmcharacters` (`cid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
@@ -256,8 +244,6 @@ ALTER TABLE `kmdescr`
   ADD CONSTRAINT `FK_descr_cs`  FOREIGN KEY (`CID` , `CS`)  REFERENCES `kmcs` (`cid` , `cs`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_descr_tid`  FOREIGN KEY (`TID`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
-
-#Occurrence revisions
 CREATE TABLE `omoccurrevisions` (
   `orid` INT NOT NULL AUTO_INCREMENT,
   `occid` INT UNSIGNED NOT NULL,
@@ -306,15 +292,11 @@ CREATE TABLE `omcollpuboccurlink` (
   CONSTRAINT `FK_ompuboccid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
 
-
-#Remove deprecated survey tables
 DROP TABLE `omsurveyprojlink`;
 DROP TABLE `omsurveyoccurlink`;
 DROP TABLE `omsurveys`;
 
-
-#Copy over INSERT data priming statements that should have been included in original schema definition 
-INSERT IGNORE INTO `adminlanguages`(langid,langname,iso639_1) 
+INSERT IGNORE INTO `adminlanguages`(langid,langname,iso639_1)
 VALUES ('1', 'English', 'en'), ('2', 'German', 'de'), ('3', 'French', 'fr'), ('4', 'Dutch', 'nl'), ('5', 'Italian', 'it'), ('6', 'Spanish', 'es'), ('7', 'Polish', 'pl'), ('8', 'Russian', 'ru'), ('9', 'Japanese', 'ja'), ('10', 'Portuguese', 'pt'), ('11', 'Swedish', 'sv'), ('12', 'Chinese', 'zh'), ('13', 'Catalan', 'ca'), ('14', 'Ukrainian', 'uk'), ('15', 'Norwegian (Bokm�l)', 'no'), ('16', 'Finnish', 'fi'), ('17', 'Vietnamese', 'vi'), ('18', 'Czech', 'cs'), ('19', 'Hungarian', 'hu'), ('20', 'Korean', 'ko'), ('21', 'Indonesian', 'id'), ('22', 'Turkish', 'tr'), ('23', 'Romanian', 'ro'), ('24', 'Persian', 'fa'), ('25', 'Arabic', 'ar'), ('26', 'Danish', 'da'), ('27', 'Esperanto', 'eo'), ('28', 'Serbian', 'sr'), ('29', 'Lithuanian', 'lt'), ('30', 'Slovak', 'sk'), ('31', 'Malay', 'ms'), ('32', 'Hebrew', 'he'), ('33', 'Bulgarian', 'bg'), ('34', 'Slovenian', 'sl'), ('35', 'Volap�k', 'vo'), ('36', 'Kazakh', 'kk'), ('37', 'Waray-Waray', 'war'), ('38', 'Basque', 'eu'), ('39', 'Croatian', 'hr'), ('40', 'Hindi', 'hi'), ('41', 'Estonian', 'et'), ('42', 'Azerbaijani', 'az'), ('43', 'Galician', 'gl'), ('44', 'Simple English', 'simple'), ('45', 'Norwegian (Nynorsk)', 'nn'), ('46', 'Thai', 'th'), ('47', 'Newar / Nepal Bhasa', 'new'), ('48', 'Greek', 'el'), ('49', 'Aromanian', 'roa-rup'), ('50', 'Latin', 'la'), ('51', 'Occitan', 'oc'), ('52', 'Tagalog', 'tl'), ('53', 'Haitian', 'ht'), ('54', 'Macedonian', 'mk'), ('55', 'Georgian', 'ka'), ('56', 'Serbo-Croatian', 'sh'), ('57', 'Telugu', 'te'), ('58', 'Piedmontese', 'pms'), ('59', 'Cebuano', 'ceb'), ('60', 'Tamil', 'ta'), ('61', 'Belarusian (Tara�kievica)', 'be-x-old'), ('62', 'Breton', 'br'), ('63', 'Latvian', 'lv'), ('64', 'Javanese', 'jv'), ('65', 'Albanian', 'sq'), ('66', 'Belarusian', 'be'), ('67', 'Marathi', 'mr'), ('68', 'Welsh', 'cy'), ('69', 'Luxembourgish', 'lb'), ('70', 'Icelandic', 'is'), ('71', 'Bosnian', 'bs'), ('72', 'Yoruba', 'yo'), ('73', 'Malagasy', 'mg'), ('74', 'Aragonese', 'an'), ('75', 'Bishnupriya Manipuri', 'bpy'), ('76', 'Lombard', 'lmo'), ('77', 'West Frisian', 'fy'), ('78', 'Bengali', 'bn'), ('79', 'Ido', 'io'), ('80', 'Swahili', 'sw'), ('81', 'Gujarati', 'gu'), ('82', 'Malayalam', 'ml'), ('83', 'Western Panjabi', 'pnb'), ('84', 'Afrikaans', 'af'), ('85', 'Low Saxon', 'nds'), ('86', 'Sicilian', 'scn'), ('87', 'Urdu', 'ur'), ('88', 'Kurdish', 'ku'), ('89', 'Cantonese', 'zh-yue'), ('90', 'Armenian', 'hy'), ('91', 'Quechua', 'qu'), ('92', 'Sundanese', 'su'), ('93', 'Nepali', 'ne'), ('94', 'Zazaki', 'diq'), ('95', 'Asturian', 'ast'), ('96', 'Tatar', 'tt'), ('97', 'Neapolitan', 'nap'), ('98', 'Irish', 'ga'), ('99', 'Chuvash', 'cv'), ('100', 'Samogitian', 'bat-smg'), ('101', 'Walloon', 'wa'), ('102', 'Amharic', 'am'), ('103', 'Kannada', 'kn'), ('104', 'Alemannic', 'als'), ('105', 'Buginese', 'bug'), ('106', 'Burmese', 'my'), ('107', 'Interlingua', 'ia');
 
 INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasOrganism','Image shows an organism.','Organism',0);
@@ -360,9 +342,7 @@ INSERT INTO `referencetype` VALUES ('29', 'Sub-Reference', null, 'Title', null, 
 INSERT INTO `referencetype` VALUES ('30', 'Periodical', '1', 'Title', null, 'City', null, 'Volume', null, 'Issue', null, null, null, 'Edition', 'Date', null, 'Short Title', 'Alt. Jour.', null, null, null, '2014-10-30 21:34:44');
 INSERT INTO `referencetype` VALUES ('31', 'Web Page', null, 'Title', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '2014-10-30 21:37:12');
 
-
-#Language support extended
-ALTER TABLE `kmcslang` 
+ALTER TABLE `kmcslang`
   ADD INDEX `FK_cslang_lang_idx` (`langid` ASC),
   ADD CONSTRAINT `FK_cslang_lang`  FOREIGN KEY (`langid`)  REFERENCES `adminlanguages` (`langid`)  ON DELETE NO ACTION  ON UPDATE NO ACTION;
 
@@ -386,7 +366,6 @@ UPDATE taxadescrblock t INNER JOIN adminlanguages l ON t.language = l.langname
 ALTER TABLE `taxadescrblock`
 	MODIFY COLUMN `caption`  varchar(40) NULL DEFAULT NULL AFTER `tid`;
 
-
 ALTER TABLE `taxavernaculars` 
   ADD COLUMN `langid` INT NULL AFTER `Language`,
   ADD INDEX `FK_vern_lang_idx` (`langid` ASC);
@@ -398,8 +377,6 @@ UPDATE taxavernaculars t INNER JOIN adminlanguages l ON t.language = l.langname
   SET t.langid = l.langid
   WHERE t.langid IS NULL;
 
-
-#Misc
 DELETE FROM `uploadspectemp`;
 ALTER TABLE `uploadspectemp` 
   ADD COLUMN `exsiccatiIdentifier` INT NULL AFTER `genericcolumn2`,
@@ -432,8 +409,6 @@ ALTER TABLE `taxa`
 ALTER TABLE `taxalinks` 
   ADD COLUMN `inherit` INT NULL DEFAULT 1 AFTER `icon`;
 
-
-# Needed for FP functions
 CREATE INDEX idx_taxacreated ON taxa(initialtimestamp);
 
 ALTER TABLE `specprocessorprojects`
@@ -483,8 +458,6 @@ CREATE TABLE `omoccuraccessstats` (
   UNIQUE INDEX `UNIQUE_occuraccess` (`occid` ASC, `accessdate` ASC, `ipaddress` ASC, `accesstype` ASC),
   CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
 
-
-# Establishes many-many relationship to be used in DwC eml.xml file
 CREATE TABLE `omcollectioncontacts` (
   `collid` INT UNSIGNED NOT NULL,
   `uid` INT UNSIGNED NOT NULL,
@@ -540,8 +513,6 @@ ALTER TABLE `omoccurdeterminations`
 ALTER TABLE `users`
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `accessrights`;
 
-
-# Spatial Indexing
 SET FOREIGN_KEY_CHECKS=0;
 
 TRUNCATE TABLE `omoccurpoints`;
@@ -679,8 +650,6 @@ ALTER TABLE `glossarytermlink`
   ADD CONSTRAINT `FK_glossarytermlink_glossid`  FOREIGN KEY (`glossid`)  REFERENCES `glossary` (`glossid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_glossarytermlink_glossgrpid`  FOREIGN KEY (`glossgrpid`)  REFERENCES `glossary` (`glossid`)  ON DELETE CASCADE  ON UPDATE CASCADE;
 
-  
--- Paleo Tables
 CREATE TABLE `paleochronostratigraphy` (
   `chronoId` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Eon` varchar(255) DEFAULT NULL,
@@ -880,9 +849,3 @@ CREATE TABLE `useraccesstokens` (
   KEY `FK_useraccesstokens_uid_idx` (`uid`),
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
 );
-
-
-# OK if fails: put at end because may fail due to collid not existing (depending on verion of installation)
-ALTER TABLE `omoccurrencesfulltext` 
-  DROP COLUMN `collid`,
-  DROP INDEX `Index_occurfull_collid` ;

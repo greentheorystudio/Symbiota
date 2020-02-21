@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
@@ -44,7 +44,7 @@ if($taxId === 'root'){
 	$rs->free();
 	$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
 		'WHERE ts.taxauthid = 1 AND t.RankId = '.$lowestRank.' ';
 	//echo '<div>' .$sql1. '</div>';
 	$rs1 = $con->query($sql1);
@@ -99,7 +99,7 @@ if($taxId === 'root'){
 else{
 	$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
 		'WHERE (ts.taxauthid = 1) AND (ts.tid = ts.tidaccepted) '.
 		'AND ((ts.parenttid = '.$taxId.') OR (t.tid = '.$taxId.')) ';
 	//echo $sql2."<br>";
@@ -107,11 +107,10 @@ else{
 	$i = 0;
 	while($row2 = $rs2->fetch_object()){
 		$rankName = $row2->rankname;
-		if(!$rankName) {
-			echo $row2->rankid;
-		    $rankName = $taxonRankArr[$row2->rankid];
+		if(!$rankName && array_key_exists($row2->rankid, $taxonRankArr)) {
+			$rankName = $taxonRankArr[$row2->rankid];
 		}
-        if(!$rankName) {
+        elseif(!$rankName) {
 			$rankName = 'Unknown';
 		}
 		$label = '2-'.$row2->rankid.'-'.$rankName.'-'.$row2->sciname;
@@ -172,7 +171,7 @@ else{
 	
 	$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'LEFT JOIN taxonunits AS tu ON (t.rankid = tu.rankid) '.
+		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
 		'WHERE (ts.tid <> ts.tidaccepted) AND (ts.taxauthid = 1) AND (ts.tidaccepted = '.$taxId.')';
 	//echo $sqlSyns;
 	$rsSyns = $con->query($sqlSyns);

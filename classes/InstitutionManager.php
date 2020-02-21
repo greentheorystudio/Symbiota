@@ -1,7 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
-//Used by /collections/misc/collprofiles.php page
 class InstitutionManager {
 
 	private $conn;
@@ -15,10 +14,13 @@ class InstitutionManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function getInstitutionData(){
+	public function getInstitutionData(): array
+	{
 		$retArr = array();
 		if($this->iid){
 			$sql = 'SELECT iid, institutioncode, institutionname, institutionname2, address1, address2, city, '.
@@ -35,7 +37,8 @@ class InstitutionManager {
 		return $retArr;
 	}
 
-	public function submitInstitutionEdits($postData){
+	public function submitInstitutionEdits($postData): bool
+	{
 		$status = true;
 		if($postData['institutioncode'] && $postData['institutionname']){
 			$sql = 'UPDATE institutions SET '.
@@ -95,9 +98,9 @@ class InstitutionManager {
 		return $newIID;
 	}
 
-	public function deleteInstitution($delIid){
+	public function deleteInstitution($delIid): bool
+	{
 		$status = true;
-		//Check to see if record is linked to collections
 		$sql = 'SELECT collid, CONCAT_WS(" ",CollectionName,CONCAT(InstitutionCode,IFNULL(CONCAT(":",CollectionCode),""))) AS name '.
 			'FROM omcollections WHERE iid = '.$delIid.' ORDER BY CollectionName,InstitutionCode,CollectionCode';
 		//echo $sql;
@@ -112,9 +115,10 @@ class InstitutionManager {
 			$this->errorStr .= '</ul><br/>';
 		}
 		$rs->free();
-		if(!$status) return false;
+		if(!$status) {
+			return false;
+		}
 		
-		//Check outgoing and incoming loans
 		$sql = 'SELECT loanid '.
 			'FROM omoccurloans '.
 			'WHERE iidOwner = '.$delIid.' OR iidBorrower = '.$delIid;
@@ -126,7 +130,6 @@ class InstitutionManager {
 		$rs->free();
 
 		if($status){
-			//If record is not linked to other data, OK to delete
 			$sql = 'DELETE FROM institutions WHERE iid = '.$delIid;
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
@@ -137,7 +140,8 @@ class InstitutionManager {
 		return $status;
 	}
 	
-	public function removeCollection($collid){
+	public function removeCollection($collid): bool
+	{
 		$status = true;
 		$sql = 'UPDATE omcollections SET iid = NULL WHERE collid = '.$collid;
 		//echo $sql; exit;
@@ -148,7 +152,8 @@ class InstitutionManager {
 		return $status;
 	}
 	
-	public function addCollection($collid,$iid){
+	public function addCollection($collid,$iid): bool
+	{
 		$status = true;
 		if(is_numeric($collid) && is_numeric($iid)){
 			$sql = 'UPDATE omcollections SET iid = '.$iid.' WHERE collid = '.$collid;
@@ -161,21 +166,19 @@ class InstitutionManager {
 		return $status;
 	}
 	
-	public function setInstitutionId($id){
+	public function setInstitutionId($id): void
+	{
 		if(is_numeric($id)){
 			$this->iid = $id;
 		}
-	}
-	
-	public function getInstitutionId(){
-		return $this->iid;
 	}
 
 	public function getErrorStr(){
 		return $this->errorStr;
 	} 
 
-	public function getInstitutionList(){
+	public function getInstitutionList(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT i.iid, c.collid, i.institutioncode, i.institutionname, i.institutionname2, i.address1, i.address2, i.city, '.
 			'i.stateprovince, i.postalcode, i.country, i.phone, i.contact, i.email, i.url, i.notes '.
@@ -196,7 +199,8 @@ class InstitutionManager {
 		return $retArr;
 	}
 
-	public function getCollectionList(){
+	public function getCollectionList(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT collid, iid, CONCAT(collectionname, " (", CONCAT_WS("-",institutioncode, collectioncode),")") AS collname '.
 			'FROM omcollections '.
@@ -211,7 +215,8 @@ class InstitutionManager {
 		return $retArr;
 	}
 
-	private function cleanOutArr($inArr){
+	private function cleanOutArr($inArr): array
+	{
 		$outArr = array();
 		foreach($inArr as $k => $v){
 			$outArr[$k] = $this->cleanOutStr($v);
@@ -220,9 +225,7 @@ class InstitutionManager {
 	}
 	
  	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->conn->real_escape_string($newStr);
+		$newStr = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 		return $newStr;
 	}
 
@@ -233,4 +236,3 @@ class InstitutionManager {
 		return $newStr;
 	}
 }
-?>

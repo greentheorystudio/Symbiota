@@ -1,11 +1,5 @@
-/* Do not modify styles within this file
- * Instead, modify styles within the main.css file to override the default styles within this file 
- * 
- **/
 body{
-	margin:	8px;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 8px auto;
 	width:		900px; 
 	background-color: #FFFFFF;
 	color: #000000;
@@ -13,7 +7,6 @@ body{
 	font-size: 12px;
 }
 
-/*Main table framework*/
 #maintable{
 	border-spacing: 0;
 	width:		900px; 
@@ -23,9 +16,6 @@ body{
 #maintable td{
  	vertical-align: top;
 	font-size: 12px;
-}
-
-td.header{
 }
 
 td.middleleft{
@@ -44,20 +34,11 @@ td.middleright{
 	width:	15px;
 }
 
-/*Central div and general components */
 #innertext{
 	margin:	10px;	
 	background-color: #FFFFFF;
 	min-height:400px;
 	padding-top: 15px;
-}
-
-#innertext a{
-
-}
-
-#innertext a:hover{
-
 }
 
 form div {
@@ -74,8 +55,7 @@ a:hover{
     text-decoration: underline;
 }
 
-/* Spans that use javascript to add clickable link behaviors */
-span[class=link] { 
+span[class=link] {
 	color: 		#2C405E;
     text-decoration: none;	
 }
@@ -85,7 +65,6 @@ span[class=link]:hover {
     text-decoration: underline;	
 }
 
-/* General Image thumbnails   */
 div.tndiv{
 	float: left;
 	text-align: center;
@@ -111,8 +90,8 @@ div.tnimg img{
 	position: absolute;
 	max-height: 160px;
 	max-width: 160px;
-	width: 		expression(this.width >= this.height ? 160: true);
-	height:		expression(this.height >= this.width ? 160: true);
+	width: 		160px;
+	height:		160px;
 	top: -9999px;
 	bottom: -9999px;
 	left: -9999px;
@@ -120,12 +99,11 @@ div.tnimg img{
 	margin: auto;
 }	
 
-/* styled table */
-
 table.styledtable{
 	width:				100%; 
 	border-collapse:	collapse; 
 }
+
 table.styledtable th {
 	text-align:			left; 
 	padding:			4px;
@@ -133,19 +111,19 @@ table.styledtable th {
 	background-color:	#dbe5f1; 
 	color:				black; 
 }
+
 table.styledtable td {
 	font-size:		1em; 
 	padding:		3px;
 	border:			1px solid gray; 
 	background-color: #efefef;
 }
+
 table.styledtable tr.alt td {
 	color:				#000000; 
-	/*background-color:	#FCFCFC; */
 	background-color: #dfdfdf;
 }
 
-/*  navpath styles */
 div.navpath {
 	color: #000000;
 	font-size: 11px;
@@ -161,7 +139,6 @@ div.navpath a:hover {
 	font-size: 11px;
 }
 
-/*Download buttons on the search display pages*/
 div.button {
 	background-color:	#FFFFD7;
 	padding:			3px;
@@ -174,11 +151,6 @@ div.button img {
 
 div.button:hover {
 	border:	1px inset #A0A0A0;
-}
-
-/*Dynamic Key module*/
-#keytable{
-
 }
 
 #keycharcolumn{
@@ -196,28 +168,11 @@ div.button:hover {
 	width:	65%;
 }
 
-.charHeading{
-
-}
-
-.characterStateName{
-
-}
-
-.dynam{
-
-}
-
 .dynamlang{
 	margin-top:0.5em;
 	font-weight: bold;
 }
 
-.dynamopt{
-
-}
-
-/* misc page specific items */
 #cloptiondiv{
 	margin:		5px;
 	width:		250px;
@@ -236,8 +191,7 @@ div.button:hover {
 }
 
 
-/* /collections/ folder pages */
-.categorytitle a{ 
+.categorytitle a{
 	font-weight: bold; 
 	color:		black; 
 	font-size:	110%; 
@@ -260,7 +214,6 @@ div.button:hover {
     border: medium double #990000;
 }
 
-/* Quick Search Plugin */
 #quicksearchdiv{
 	float: right;
 	width: 335px;
@@ -290,14 +243,12 @@ div.button:hover {
 	padding-bottom:0;
 }
 
-/* Slideshow Plugin */
 #slideshowcontainer{
 	border: 2px solid black;
 	border-radius:10px;
 	padding:10px;
 }
 
-/* misc */
 div.genericpopup{
 	position:				absolute;
 	display:				none;
@@ -339,7 +290,6 @@ div.genericpopup{
     color: black;
 }
 
-/* JQuery Manifest alterations */
 div.mf_container {
 	border: 1px solid #aaa;
 	cursor: text;

@@ -1,4 +1,3 @@
-<!-- Reclassify Tool -->
 <div id="reclassifytool" data-role="popup" class="well" style="width:600px;height:40%;">
     <a class="boxclose reclassifytool_close" id="boxclose"></a>
     <h2>Reclassify Tool</h2>

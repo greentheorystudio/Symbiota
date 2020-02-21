@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
@@ -49,7 +49,6 @@ $statusStr = '';
 
 if($SYMB_UID){
 	//Set variables
-	$occManager->setSymbUid($SYMB_UID);
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
 	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){

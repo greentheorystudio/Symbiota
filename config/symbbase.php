@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Encryption.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/Encryption.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 ini_set('session.gc_maxlifetime',3600);
 session_start();
 

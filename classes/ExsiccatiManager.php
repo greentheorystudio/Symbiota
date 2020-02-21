@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class ExsiccatiManager {
 
@@ -101,7 +101,6 @@ class ExsiccatiManager {
     {
 		$retArr = array();
 		if($ometid){
-			//Grab all numbers for that exsiccati title; only show number that have occid links
 			$sql = 'SELECT DISTINCT en.omenid, en.exsnumber, en.notes, o.sciname, '.
 				'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,"s.n."),") ",IFNULL(o.eventDate,"date unknown")) as collector '.
 				'FROM omexsiccatinumbers en '.($specimenOnly || $imagesOnly?'INNER':'LEFT').' JOIN omexsiccatiocclink ol ON en.omenid = ol.omenid '.
@@ -606,7 +605,7 @@ class ExsiccatiManager {
 			$sql = 'SELECT '.implode(',',$fieldArr).', occid FROM omoccurrences WHERE occid IN('.implode(',',$occidArr).') ';
 			$rs = $this->conn->query($sql);
 			if($rs->num_rows){
-				$out = fopen('php://output', 'w');
+				$out = fopen('php://output', 'wb');
 				array_unshift($fieldArr,'catalogNumber');
 				$fieldArr[] = 'occid';
 				echo implode(',',$fieldArr)."\n";
@@ -704,10 +703,10 @@ class ExsiccatiManager {
             $isTarget = true;
         }
 		$retStr = '<tr>';
-		$retStr .= '<td align="center">';
+		$retStr .= '<td style="text-align:center;">';
 		$retStr .= '<input id="'.$occid.'" name="occid[]" type="checkbox" value="'.$occid.'" '.($isTarget?'disabled':'').' />';
 		$retStr .= '</td>';
-		$retStr .= '<td align="center">';
+		$retStr .= '<td style="text-align:center;">';
 		if($isTarget){
 			$retStr .= '<span style="color:red;"><b>Cannot Import</b><br/>Is Target Collection</span>';
 		}
@@ -715,10 +714,10 @@ class ExsiccatiManager {
 			$retStr .= '<input name="cat-'.$occid.'" type="text" onchange="checkRecord(this,'.$occid.')" />';
 		}
 		$retStr .= '</td>';
-		$retStr .= '<td align="center"><a href="#" onclick="openExsPU('.$omenid.')">#'.$oArr['exsnum'].'</a></td>';
+		$retStr .= '<td style="text-align:center;"><a href="#" onclick="openExsPU('.$omenid.')">#'.$oArr['exsnum'].'</a></td>';
 		$retStr .= '<td>';
 		$retStr .= '<span '.($isTarget?'style="color:red;"':'').' title="'.$oArr['collname'].'">'.$oArr['collcode'].'</span>, ';
-		$retStr .= '<a href="#" onclick="openIndPU('.$occid.')">'.$oArr['recby'].' '.($oArr['recnum']?$oArr['recnum']:'s.n.').'</a>';
+		$retStr .= '<a href="#" onclick="openIndPU('.$occid.')">'.$oArr['recby'].' '.($oArr['recnum']?:'s.n.').'</a>';
 		$retStr .= ($oArr['eventdate']?', '.$oArr['eventdate']:'');
 		$retStr .= ', <i>'.$oArr['sciname'].'</i> '.$oArr['author'];
 		$retStr .= $oArr['country'].', '.$oArr['state'].', '.$oArr['county'].', '.(strlen($oArr['locality'])>75?substr($oArr['locality'],0,75).'...':$oArr['locality']);

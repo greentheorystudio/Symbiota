@@ -1,21 +1,18 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUploadBase.php');
+include_once('SpecUploadBase.php');
 
 class SpecUploadDirect extends SpecUploadBase {
 
- 	public function __construct(){
-		parent::__construct();
- 	}
- 	
-	public function __destruct(){
- 		parent::__destruct();
-	}
-	
- 	public function analyzeUpload(){
+	public function analyzeUpload(): bool
+	{
 		if($sourceConn = $this->getSourceConnection()){
 			$sql = trim($this->queryStr);
-			if(substr($sql,-1) == ";") $sql = substr($sql,0,strlen($sql)-1); 
-			if(strlen($sql) > 20 && stripos(substr($sql,-20)," limit ") === false) $sql .= " LIMIT 10";
+			if(substr($sql,-1) === ';') {
+				$sql = substr($sql, 0, -1);
+			}
+			if(strlen($sql) > 20 && stripos(substr($sql,-20), ' limit ') === false) {
+				$sql .= ' LIMIT 10';
+			}
 			$rs = $sourceConn->query($sql);
 			if($rs){
 				$sourceArr = array();
@@ -30,7 +27,6 @@ class SpecUploadDirect extends SpecUploadBase {
 				}
 				$rs->close();
 				$this->sourceArr = $sourceArr;
-				//$this->echoFieldMapTable($sourceArr);
 			}
 			else{
 				echo '<div style="font-weight:bold;margin:15px;">ERROR: '.$sourceConn->error.'</div>';
@@ -41,18 +37,16 @@ class SpecUploadDirect extends SpecUploadBase {
 		return false;
 	}
 
- 	public function uploadData($finalTransfer){
+ 	public function uploadData($finalTransfer): void
+	{
  		global $CHARSET;
 		
 		$sourceConn = $this->getSourceConnection();
 		if($sourceConn){
-			//Delete all records in uploadspectemp table
 			$this->prepUploadData();
-			
 			echo "<li style='font-weight:bold;'>Connected to Source Database</li>";
 			set_time_limit(800);
-			$sourceConn->query("SET NAMES ".str_replace('-','',strtolower($CHARSET)).";");
-			//echo "<div>".$this->queryStr."</div><br/>";
+			$sourceConn->query('SET NAMES ' .str_replace('-','',strtolower($CHARSET)). ';');
 			if($result = $sourceConn->query($this->queryStr)){
 				echo "<li style='font-weight:bold;'>Results obtained from Source Connection, now reading Resultset... </li>";
 				$this->transferCount = 0;
@@ -76,8 +70,7 @@ class SpecUploadDirect extends SpecUploadBase {
 			}
 			else{
 				echo "<hr /><div style='color:red;'>Unable to create a Resultset with the Source Connection. Check connection parameters, source sql statement, and firewall restriction</div>";
-				echo "<div style='color:red;'>ERROR: ".$sourceConn->error."</div><hr />";
-				//echo "<div>SQL: $this->sourceSql</div>";
+				echo "<div style='color:red;'>ERROR: ".$sourceConn->error. '</div><hr />';
 			}
 			$sourceConn->close();
 		}
@@ -91,16 +84,16 @@ class SpecUploadDirect extends SpecUploadBase {
 		$connection = new mysqli($this->server, $this->username, $this->password, $this->schemaName);
 		if($connection->connect_error){
 			echo "<div style='color:red;'>Could not connect to Source database!</div>";
-			echo "<div style='color:red;'>ERROR: ".mysqli_connect_error()."</div>";
+			echo "<div style='color:red;'>ERROR: ".mysqli_connect_error(). '</div>';
 			return false;
 		}
 		return $connection;
     }
 
-	public function getDbpkOptions(){
+	public function getDbpkOptions(): array
+	{
 		$sFields = $this->sourceArr;
 		sort($sFields);
 		return $sFields;
 	}
 }
-?>

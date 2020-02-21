@@ -1,14 +1,14 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class OccurrenceCrowdSource {
 
 	private $conn;
 	private $collid;
 	private $omcsid;
-	private $headArr = array();
+	private $headArr;
 
-	function __construct() {
+	public function __construct() {
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
 		$this->headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
@@ -18,15 +18,15 @@ class OccurrenceCrowdSource {
 			'processingstatus','dateLastModified');
 	}
 
-	function __destruct(){
-		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 
-	//Functions used in controlpanel.php
-	public function getProjectDetails(){
+	public function getProjectDetails(): array
+	{
 		$retArr = array();
-		//Currently returns one first CS project associated with collection
-		//we could support multiple CS projects per collection each with different instructions, training, and data entry personnel
 		if($this->collid){
 			$sql = 'SELECT CONCAT_WS(":",c.institutioncode,c.collectioncode) AS collcode, c.collectionname, '.
 				'csc.omcsid, csc.instructions, csc.trainingurl '.
@@ -46,7 +46,8 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function editProject($omcsid,$instr,$url){
+	public function editProject($omcsid,$instr,$url): string
+	{
 		$statusStr = '';
 		if(is_numeric($omcsid)){
 			$sql = 'UPDATE omcrowdsourcecentral '.
@@ -60,7 +61,8 @@ class OccurrenceCrowdSource {
 		return $statusStr;
 	}
 
-	private function createNewProject(){
+	private function createNewProject(): void
+	{
 		if($this->collid){
 			$sql = 'INSERT INTO omcrowdsourcecentral(collid,instructions,trainingurl) '.
 				'VALUES('.$this->collid.',NULL,NULL)';
@@ -72,10 +74,10 @@ class OccurrenceCrowdSource {
 		}
 	}
 
-	public function getProjectStats(){
+	public function getProjectStats(): array
+	{
 		$retArr = array();
 		if($this->collid){
-			//Get review status total counts
 			$sql = 'SELECT q.reviewstatus, count(q.occid) as cnt '.
 				'FROM omcrowdsourcequeue q INNER JOIN omcrowdsourcecentral c ON q.omcsid = c.omcsid '.
 				'WHERE c.collid = '.$this->collid.' '.
@@ -86,7 +88,6 @@ class OccurrenceCrowdSource {
 			}
 			$rs->free();
 
-			//Get record count for those available for adding to queue
 			$sql = 'SELECT count(o.occid) as cnt '.
 				'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
 				'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
@@ -102,10 +103,10 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function getProcessingStats(){
+	public function getProcessingStats(): array
+	{
 		$retArr = array();
 		if($this->collid){
-			//Processing scores by user
 			$sql = 'SELECT CONCAT_WS(", ", u.lastname, u.firstname) as username, u.uid, q.isvolunteer, sum(IFNULL(q.points,0)) as usersum '.
 				'FROM omcrowdsourcequeue q INNER JOIN omcrowdsourcecentral c ON q.omcsid = c.omcsid '.
 				'INNER JOIN users u ON q.uidprocessor = u.uid '.
@@ -114,20 +115,19 @@ class OccurrenceCrowdSource {
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$tag = ($r->isvolunteer==1?'v':'e');
+				$tag = ($r->isvolunteer === 1?'v':'e');
 				$retArr[$tag][$r->uid]['score'] = $r->usersum;
 				$retArr[$tag][$r->uid]['name'] = $r->username;
 			}
 			$rs->free();
 
-			//Processing counts by user
 			$sql = 'SELECT q.uidprocessor, q.reviewstatus, q.isvolunteer, count(q.occid) as cnt '.
 				'FROM omcrowdsourcequeue q INNER JOIN omcrowdsourcecentral c ON q.omcsid = c.omcsid '.
 				'WHERE c.collid = '.$this->collid.' AND q.uidprocessor IS NOT NULL '.
 				'GROUP BY q.uidprocessor, q.reviewstatus, q.isvolunteer';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$tag = ($r->isvolunteer==1?'v':'e');
+				$tag = ($r->isvolunteer === 1?'v':'e');
 				$retArr[$tag][$r->uidprocessor][$r->reviewstatus] = $r->cnt;
 			}
 			$rs->free();
@@ -135,9 +135,9 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function getTopScores($catid){
+	public function getTopScores($catid): array
+	{
 		$retArr = array();
-		//Get users
 		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) as user, sum(q.points) AS toppoints '.
 			'FROM omcrowdsourcequeue q INNER JOIN users u ON q.uidprocessor = u.uid ';
 		if($catid){
@@ -152,16 +152,21 @@ class OccurrenceCrowdSource {
 		$cnt = 0;
 		while($r = $rs->fetch_object()){
 			$topPoints = $r->toppoints;
-			if(!$topPoints) $topPoints = 0;
+			if(!$topPoints) {
+				$topPoints = 0;
+			}
 			$retArr[$topPoints] = $r->user;
 			$cnt++;
-			if($cnt > 10) break;
+			if($cnt > 10) {
+				break;
+			}
 		}
 		$rs->free();
 		return $retArr;
 	}
 
-	public function getUserStats($catid){
+	public function getUserStats($catid): array
+	{
 		global $SYMB_UID;
 		$retArr = array();
 		$sql = 'SELECT c.collid, CONCAT_WS(":",c.institutioncode,c.collectioncode) as collcode, c.collectionname, '.
@@ -183,13 +188,15 @@ class OccurrenceCrowdSource {
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid]['name'] = $r->collectionname.' ('.$r->collcode.')';
 			$retArr[$r->collid]['cnt'][$r->reviewstatus] = $r->cnt;
-			if($r->isvolunteer) $retArr[$r->collid]['points'][$r->reviewstatus] = $r->points;
+			if($r->isvolunteer) {
+				$retArr[$r->collid]['points'][$r->reviewstatus] = $r->points;
+			}
 			if($r->reviewstatus >= 10){
 				if($r->isvolunteer){
 					$aPoints += $r->points;
 				}
 			}
-			elseif($r->reviewstatus == 5){
+			elseif($r->reviewstatus === 5){
 				if($r->isvolunteer){
 					$pPoints += $r->points;
 				}
@@ -211,10 +218,15 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit){
+	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit): string
+	{
 		$statusStr = 'SUCCESS: specimens added to queue';
-		if(!$this->omcsid) return 'ERROR adding to queue, omcsid is null';
-		if(!$this->collid) return 'ERROR adding to queue, collid is null';
+		if(!$this->omcsid) {
+			return 'ERROR adding to queue, omcsid is null';
+		}
+		if(!$this->collid) {
+			return 'ERROR adding to queue, collid is null';
+		}
 		$sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
 			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
 			'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
@@ -230,15 +242,15 @@ class OccurrenceCrowdSource {
 		if($stateProvince){
 			$sqlFrag .= 'AND (o.stateprovince = "'.$this->cleanInStr($stateProvince).'") ';
 		}
-		//Get count
 		$sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
 		$rs = $this->conn->query($sqlCnt);
 		if($r = $rs->fetch_object()){
 			$statusStr = $r->cnt;
-			if($statusStr > $limit) $statusStr = $limit;
+			if($statusStr > $limit) {
+				$statusStr = $limit;
+			}
 		}
 		$rs->free();
-		//Run insert query
 		if($limit){
 			$sqlFrag .= 'LIMIT '.$limit;
 		}
@@ -252,10 +264,15 @@ class OccurrenceCrowdSource {
 		return $statusStr;
 	}
 
-	public function deleteQueue(){
+	public function deleteQueue(): string
+	{
 		$statusStr = 'SUCCESS: all specimens removed from queue';
-		if(!$this->omcsid) return 'ERROR adding to queue, omcsid is null';
-		if(!$this->collid) return 'ERROR adding to queue, collid is null';
+		if(!$this->omcsid) {
+			return 'ERROR adding to queue, omcsid is null';
+		}
+		if(!$this->collid) {
+			return 'ERROR adding to queue, collid is null';
+		}
 		$sql = 'DELETE FROM omcrowdsourcequeue '.
 			'WHERE omcsid = '.$this->omcsid.' AND uidprocessor IS NULL and reviewstatus = 0 ';
 		if(!$this->conn->query($sql)){
@@ -266,7 +283,8 @@ class OccurrenceCrowdSource {
 		return $statusStr;
 	}
 
-	public function getQueueLimitCriteria(){
+	public function getQueueLimitCriteria(): array
+	{
 		$country = array();
 		$state = array();
 		$sql = 'SELECT DISTINCT o.country, o.stateprovince '.
@@ -275,14 +293,17 @@ class OccurrenceCrowdSource {
 			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if($r->country) $country[$r->country] = '';
-			if($r->stateprovince) $state[$r->stateprovince] = '';
+			if($r->country) {
+				$country[$r->country] = '';
+			}
+			if($r->stateprovince) {
+				$state[$r->stateprovince] = '';
+			}
 		}
 		$rs->free();
 		$retArr = array();
 		$retArr['country'] = array_keys($country);
 		$retArr['state'] = array_keys($state);
-		//Add genera to $sciname
 		$family = array();
 		$sciname = array();
 		$sql = 'SELECT DISTINCT o.family, o.sciname, t.unitname1 '.
@@ -292,10 +313,14 @@ class OccurrenceCrowdSource {
 			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if($r->family) $family[$r->family] = '';
+			if($r->family) {
+				$family[$r->family] = '';
+			}
 			if($r->sciname){
 				$sciname[$r->sciname] = '';
-				if($r->unitname1 && !array_key_exists($r->unitname1,$sciname)) $sciname[$r->unitname1] = '';
+				if($r->unitname1 && !array_key_exists($r->unitname1,$sciname)) {
+					$sciname[$r->unitname1] = '';
+				}
 			}
 		}
 		$rs->free();
@@ -304,8 +329,8 @@ class OccurrenceCrowdSource {
 		return $retArr;
 	}
 
-	//Review functions
-	public function getReviewArr($startIndex,$limit,$uid,$rStatus){
+	public function getReviewArr($startIndex,$limit,$uid,$rStatus): array
+	{
 		$retArr = array();
 		if($this->collid || $uid){
 			$sql = 'FROM omcrowdsourcequeue q INNER JOIN omcrowdsourcecentral csc ON q.omcsid = csc.omcsid '.
@@ -317,7 +342,6 @@ class OccurrenceCrowdSource {
 			if($uid){
 				$sql .= 'AND (q.uidprocessor = '.$uid.') ';
 			}
-			//Get occurrence records
 			$sqlRec = 'SELECT o.occid, '.implode(', ',$this->headArr).', q.uidprocessor, q.reviewstatus, q.points, q.notes '.
 				$sql.'ORDER BY o.datelastmodified DESC LIMIT '.$startIndex.','.$limit;
 			//echo $sqlRec;
@@ -325,13 +349,13 @@ class OccurrenceCrowdSource {
 			$headerArr = array();
 			while($r = $rs->fetch_assoc()){
 				$retArr[$r['occid']] = $r;
-				//Collection fields that have a value in at least on record
 				foreach($r as $field => $value){
-					if($value && !in_array($field, $headerArr)) $headerArr[] = $field;
+					if($value && !in_array($field, $headerArr, true)) {
+						$headerArr[] = $field;
+					}
 				}
 			}
 			$rs->free();
-			//Remove fields from $this->headArr that are not in $headerArr
 			$this->headArr = array_intersect($this->headArr,$headerArr);
 
 			//Get count
@@ -343,12 +367,13 @@ class OccurrenceCrowdSource {
 			}
 		}
 		else{
-			echo "ERROR: both collid and user id are null";
+			echo 'ERROR: both collid and user id are null';
 		}
 		return $retArr;
 	}
 
-	public function submitReviews($postArr){
+	public function submitReviews($postArr): string
+	{
 		$statusStr = '';
 		$occidArr = $postArr['occid'];
 		if($occidArr){
@@ -367,7 +392,6 @@ class OccurrenceCrowdSource {
 				}
 			}
 			if($successArr && isset($postArr['updateProcessingStatus']) && $postArr['updateProcessingStatus']){
-				//Change status to reviewed
 				$sql2 = 'UPDATE omoccurrences SET processingstatus = "reviewed" WHERE occid IN('.implode(',',$successArr).')';
                 $this->conn->query($sql2);
 			}
@@ -376,12 +400,11 @@ class OccurrenceCrowdSource {
 		return $statusStr;
 	}
 
-	//Setters and Getters and General functions
-	public function setCollid($id){
+	public function setCollid($id): void
+	{
 		if($id && is_numeric($id)){
 			$this->collid = $id;
 			if(!$this->omcsid){
-				//set omcsid
 				$sql = 'SELECT omcsid FROM omcrowdsourcecentral WHERE collid = '.$this->collid;
 				//echo $sql;
 				$rs = $this->conn->query($sql);
@@ -391,15 +414,8 @@ class OccurrenceCrowdSource {
 				$rs->free();
 			}
 			if(!$this->omcsid){
-				//If omcsid project doesn't exist yet, create one!
 				$this->createNewProject();
 			}
-		}
-	}
-
-	public function setOmcsid($id){
-		if($id && is_numeric($id)){
-			$this->omcsid = $id;
 		}
 	}
 
@@ -407,7 +423,8 @@ class OccurrenceCrowdSource {
 		return $this->omcsid;
 	}
 
-	public function getEditorList(){
+	public function getEditorList(): array
+	{
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as user '.
@@ -432,8 +449,8 @@ class OccurrenceCrowdSource {
 		return $newStr;
 	}
 
-	public function getHeaderArr(){
+	public function getHeaderArr(): array
+	{
     	return $this->headArr;
     }
 }
-?>

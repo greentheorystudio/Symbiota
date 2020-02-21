@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
 if($CHECKLIST_FG_EXPORT) include_once($SERVER_ROOT.'/classes/ChecklistFGExportManager.php');
@@ -540,12 +540,12 @@ if($clArray["locality"]){
 											if($GOOGLE_MAP_KEY) $googleUrl .= '&key='.$GOOGLE_MAP_KEY;
 											$googleUrl .= '&markers=size:tiny|'.implode('|',$coordArr);
 											?>
-											<img src="<?php echo $googleUrl; ?>" style="border:0px;" /><br/>
+											<img src="<?php echo $googleUrl; ?>" style="border:0;" /><br/>
 											Simple Map
 										</a>
 									</div>
 									<div>
-										<a href="../collections/map/mapinterface.php?clid=<?php echo $clid.'&taxonfilter='.$taxonFilter; ?>&db=all&maptype=occquery&type=1&reset=1" target="_blank">
+										<a href="../spatial/index.php?clid=<?php echo $clid.'&taxonfilter='.$taxonFilter; ?>&db=all&maptype=occquery&type=1&reset=1" target="_blank">
 											Advanced Map
 										</a>
 									</div>

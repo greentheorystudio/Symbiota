@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('Manager.php');
 
 class OccurrenceEditReview extends Manager{
 
@@ -18,7 +18,7 @@ class OccurrenceEditReview extends Manager{
 	private $limitNumber;
 
 	public function __construct(){
-		parent::__construct(null,'write');
+		parent::__construct(null);
 	}
 
     public function setCollId($id): string

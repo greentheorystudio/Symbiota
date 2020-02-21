@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once('DbConnection.php');
+include_once('Manager.php');
 include_once('Person.php');
 include_once('Encryption.php');
 
@@ -19,7 +19,7 @@ class ProfileManager extends Manager{
 		parent::__construct();
         $connection = new DbConnection();
         $dbVersion = $connection->getVersion();
-        if((substr($dbVersion, 0, 2) === '5.') || (substr($dbVersion, 0, 2) === 'ma')){
+        if((strpos($dbVersion, '5.') === 0) || (strpos($dbVersion, 'ma') === 0)){
             $this->encryption = 'password';
         }
         else{
@@ -57,8 +57,7 @@ class ProfileManager extends Manager{
                     }
                 }
             }
-		    //echo $this->authSql;
-			$result = $this->conn->query($this->authSql);
+		    $result = $this->conn->query($this->authSql);
 			if($row = $result->fetch_object()){
 				$this->uid = $row->uid;
 				$this->displayName = $row->firstname;
@@ -703,95 +702,7 @@ class ProfileManager extends Manager{
 		return $statusStr;
 	}
 
-	public function echoSpecimensPendingIdent($withImgOnly = 1): void
-    {
-		if($this->uid){
-			$tidArr = array();
-			$sqlt = 'SELECT t.tid, t.sciname '.
-				'FROM usertaxonomy u INNER JOIN taxa t ON u.tid = t.tid '.
-				'WHERE u.uid = '.$this->uid.' AND u.editorstatus = "OccurrenceEditor" '.
-				'ORDER BY t.sciname ';
-			$rst = $this->conn->query($sqlt);
-			while($rt = $rst->fetch_object()){
-				$tidArr[$rt->tid] = $rt->sciname;
-			}
-			$rst->free();
-			if($tidArr){
-				foreach($tidArr as $tid => $taxonName){
-					echo '<div style="margin:10px;">';
-					echo '<div><b><u>'.$taxonName.'</u></b></div>';
-					echo '<ul style="margin:10px;">';
-					$sql = 'SELECT DISTINCT o.occid, o.catalognumber, IFNULL(o.sciname,t.sciname) as sciname, o.stateprovince, '.
-						'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
-						'FROM omoccurrences o INNER JOIN omoccurverification v ON o.occid = v.occid '.
-						'INNER JOIN omcollections c ON o.collid = c.collid '.
-						'INNER JOIN taxa t ON o.tidinterpreted = t.tid '.
-						'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
-					if($withImgOnly) {
-                        $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
-                    }
-					$sql .= 'WHERE v.category = "identification" AND v.ranking < 6 AND e.taxauthid = 1 '.
-						'AND (e.parenttid = '.$tid.' OR t.tid = '.$tid.') '.
-						'ORDER BY o.sciname,t.sciname,o.catalognumber ';
-					//echo '<div>'.$sql.'</div>';
-					$rs = $this->conn->query($sql);
-					if($rs->num_rows){
-						while($r = $rs->fetch_object()){
-							echo '<li><i>'.$r->sciname.'</i>, ';
-							echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
-							echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
-							echo '</li>'."\n";
-						}
-					}
-					else{
-						echo '<li>No deficiently identified specimens were found within this taxon</li>';
-					}
-					echo '</ul>';
-					echo '</div>';
-					$rs->free();
-					ob_flush();
-					flush();
-				}
-			}
-		}
-	}
-
-	public function echoSpecimensLackingIdent($withImgOnly = 1): void
-    {
-		if($this->uid){
-			echo '<div style="margin:10px;">';
-			echo '<div><b><u>Lacking Identifications</u></b></div>';
-			echo '<ul style="margin:10px;">';
-			$sql = 'SELECT DISTINCT o.occid, o.catalognumber, o.stateprovince, '.
-				'CONCAT_WS("-",IFNULL(o.institutioncode,c.institutioncode),IFNULL(o.collectioncode,c.collectioncode)) AS collcode '.
-				'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-			if($withImgOnly) {
-                $sql .= 'INNER JOIN images i ON o.occid = i.occid ';
-            }
-			$sql .= 'WHERE (o.sciname IS NULL) '.
-				'ORDER BY c.institutioncode, o.catalognumber LIMIT 2000';
-			//echo '<div>'.$sql.'</div>';
-			$rs = $this->conn->query($sql);
-			if($rs->num_rows){
-				while($r = $rs->fetch_object()){
-					echo '<li>';
-					echo '<a href="../collections/editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">';
-					echo $r->catalognumber.'</a> ['.$r->collcode.']'.($r->stateprovince?', '.$r->stateprovince:'');
-					echo '</li>';
-				}
-			}
-			else{
-				echo '<li>No un-identified specimens were found</li>';
-			}
-			echo '</ul>';
-			echo '</div>';
-			$rs->free();
-			ob_flush();
-			flush();
-		}
-	}
-
-	public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
+    public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
 		global $CHARSET, $PARAMS_ARR, $SERVER_ROOT, $CLIENT_ROOT;
         $tempPath = $this->getTempPath();
     	$buFileName = $PARAMS_ARR['un'].'_'.time();
@@ -828,7 +739,7 @@ class ProfileManager extends Manager{
     		'WHERE collid = '.$collId.' AND observeruid = '.$this->uid;
     	if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_row()){
-				if($characterSet && $characterSet != $cSet){
+				if($characterSet && $characterSet !== $cSet){
 					$this->encodeArr($r,$characterSet);
 				}
 				fputcsv($specFH, $r);

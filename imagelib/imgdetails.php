@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageDetailManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -7,7 +7,7 @@ $imgId = $_REQUEST["imgid"];
 $action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
 $eMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0;
 
-$imgManager = new ImageDetailManager($imgId,($action?'write':'readonly'));
+$imgManager = new ImageDetailManager($imgId);
 
 $imgArr = $imgManager->getImageMetadata($imgId);
 $isEditor = false;

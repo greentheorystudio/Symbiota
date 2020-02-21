@@ -33,7 +33,8 @@ class SOLRManager extends OccurrenceManager{
         return $solrArr['response']['numFound'];
     }
 
-    public function getTaxaArr(){
+    public function getTaxaArr(): array
+    {
         global $SOLR_URL;
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere();

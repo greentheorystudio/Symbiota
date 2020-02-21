@@ -1,9 +1,10 @@
 <?php
+
 class DwcArchiverOccurrence{
 
 	public static function getOccurrenceArr($schemaType, $extended){
         global $QUICK_HOST_ENTRY_IS_ACTIVE;
-        if($schemaType == 'pensoft'){
+        if($schemaType === 'pensoft'){
         	$occurFieldArr['Taxon_Local_ID'] = 'v.tid AS Taxon_Local_ID';
         }
         else{
@@ -37,8 +38,6 @@ class DwcArchiverOccurrence{
 		$occurFieldArr['family'] = 'o.family';
 		$occurTermArr['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
 		$occurFieldArr['scientificName'] = 'o.sciname AS scientificName';
-		//$occurTermArr['verbatimScientificName'] = 'http://symbiota.org/terms/verbatimScientificName';
-		//$occurFieldArr['verbatimScientificName'] = 'o.scientificname AS verbatimScientificName';
 		$occurTermArr['taxonID'] = 'http://rs.tdwg.org/dwc/terms/taxonID';
 		$occurFieldArr['taxonID'] = 'o.tidinterpreted as taxonID';
 		$occurTermArr['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
@@ -151,8 +150,6 @@ class DwcArchiverOccurrence{
 		$occurFieldArr['geodeticDatum'] = 'o.geodeticDatum';
 		$occurTermArr['coordinateUncertaintyInMeters'] = 'http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters';
 		$occurFieldArr['coordinateUncertaintyInMeters'] = 'o.coordinateUncertaintyInMeters';
-		//$occurTermArr['footprintWKT'] = 'http://rs.tdwg.org/dwc/terms/footprintWKT';
-		//$occurFieldArr['footprintWKT'] = 'o.footprintWKT';
 		$occurTermArr['verbatimCoordinates'] = 'http://rs.tdwg.org/dwc/terms/verbatimCoordinates';
 		$occurFieldArr['verbatimCoordinates'] = 'o.verbatimCoordinates';
 		$occurTermArr['georeferencedBy'] = 'http://rs.tdwg.org/dwc/terms/georeferencedBy';
@@ -215,13 +212,13 @@ class DwcArchiverOccurrence{
 		$occurFieldArr['recordId'] = 'g.guid AS recordId';
 		$occurTermArr['references'] = 'http://purl.org/dc/terms/references';
 		$occurFieldArr['references'] = '';
-		if($schemaType == 'pensoft'){
+		if($schemaType === 'pensoft'){
 			$occurFieldArr['occid'] = 'o.occid';
 		}
 
 		$occurrenceFieldArr['terms'] = self::trimOccurrenceBySchemaType($occurTermArr, $schemaType, $extended);
 		$occurFieldArr = self::trimOccurrenceBySchemaType($occurFieldArr, $schemaType, $extended);
-		if($schemaType == 'dwc' || $schemaType == 'pensoft'){
+		if($schemaType === 'dwc' || $schemaType === 'pensoft'){
 			$occurFieldArr['recordedBy'] = 'CONCAT_WS("; ",o.recordedBy,o.associatedCollectors) AS recordedBy';
 			$occurFieldArr['occurrenceRemarks'] = 'CONCAT_WS("; ",o.occurrenceRemarks,o.verbatimAttributes) AS occurrenceRemarks';
 			$occurFieldArr['habitat'] = 'CONCAT_WS("; ",o.habitat, o.substrate) AS habitat';
@@ -230,15 +227,16 @@ class DwcArchiverOccurrence{
 		return $occurrenceFieldArr;
 	}
 
-	private static function trimOccurrenceBySchemaType($occurArr, $schemaType, $extended){
+	private static function trimOccurrenceBySchemaType($occurArr, $schemaType, $extended): array
+    {
 		$retArr = array();
-		if($schemaType == 'dwc' || $schemaType == 'pensoft'){
+		if($schemaType === 'dwc' || $schemaType === 'pensoft'){
 			$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus',
 				'localitySecurityReason','genericcolumn1','genericcolumn2','storageLocation','observerUid','processingStatus',
 				'duplicateQuantity','dateEntered','dateLastModified','sourcePrimaryKey-dbpk','host');
 			$retArr = array_diff_key($occurArr,array_flip($trimArr));
 		}
-		elseif($schemaType == 'symbiota'){
+		elseif($schemaType === 'symbiota'){
 			$trimArr = array();
 			if(!$extended){
 				$trimArr = array('collectionID','rights','rightsHolder','accessRights','genericcolumn1','genericcolumn2',
@@ -246,11 +244,11 @@ class DwcArchiverOccurrence{
 			}
 			$retArr = array_diff_key($occurArr,array_flip($trimArr));
 		}
-		elseif($schemaType == 'backup'){
+		elseif($schemaType === 'backup'){
 			$trimArr = array('collectionID','rights','rightsHolder','accessRights');
 			$retArr = array_diff_key($occurArr,array_flip($trimArr));
 		}
-		elseif($schemaType == 'coge'){
+		elseif($schemaType === 'coge'){
 			$targetArr = array('id','basisOfRecord','institutionCode','collectionCode','catalogNumber','occurrenceID','family','scientificName','scientificNameAuthorship',
 				'kingdom','phylum','class','order','genus','specificEpithet','infraSpecificEpithet',
 				'recordedBy','recordNumber','eventDate','year','month','day','fieldNumber','country','stateProvince','county','municipality',
@@ -262,7 +260,8 @@ class DwcArchiverOccurrence{
 		return $retArr;
 	}
 
-	public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql = true){
+	public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql = true): string
+    {
 		$sql = '';
 		if($conditionSql){
 			if($fullSql){
@@ -281,10 +280,11 @@ class DwcArchiverOccurrence{
 				'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
 				'LEFT JOIN taxa t ON o.tidinterpreted = t.TID ';
 			$sql .= $tableJoinStr.$conditionSql;
-			if($fullSql) $sql .= ' ORDER BY c.collid ';
+			if($fullSql) {
+                $sql .= ' ORDER BY c.collid ';
+            }
 			//echo '<div>'.$sql.'</div>'; exit;
 		}
 		return $sql;
 	}
 }
-?>

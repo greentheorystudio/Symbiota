@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class TaxonProfileMap {
 	
@@ -10,6 +10,7 @@ class TaxonProfileMap {
 	private $synMap = array();
 	private $childLoopCnt = 0;
 	private $sqlWhere = '';
+    private $conn;
 
     public function __construct(){
 		$connection = new DbConnection();

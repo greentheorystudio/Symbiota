@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/TaxonomyHarvester.php');
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/admin/taxonomymaintenance.php?'.$_SERVER['QUERY_STRING']);

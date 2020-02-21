@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
  
 class InventoryProjectManager {
 
@@ -10,19 +10,24 @@ class InventoryProjectManager {
 	private $isPublic = 1;
 	private $errorStr;
 
-	public function __construct($connType = 'readonly'){
+	public function __construct(){
         global $GOOGLE_MAP_KEY;
 		$connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->googleUrl = "http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain";
-		if($GOOGLE_MAP_KEY) $this->googleUrl .= '&key='.$GOOGLE_MAP_KEY;
+		$this->googleUrl = 'http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain';
+		if($GOOGLE_MAP_KEY) {
+			$this->googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
+		}
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	public function getProjectList(){
+	public function getProjectList(): array
+	{
 		$returnArr = array();
 		$sql = 'SELECT pid, projname, managers, fulldescription '.
 			'FROM fmprojects '.
@@ -31,15 +36,16 @@ class InventoryProjectManager {
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$projId = $row->pid;
-			$returnArr[$projId]["projname"] = $row->projname;
-			$returnArr[$projId]["managers"] = $row->managers;
-			$returnArr[$projId]["descr"] = $row->fulldescription;
+			$returnArr[$projId]['projname'] = $row->projname;
+			$returnArr[$projId]['managers'] = $row->managers;
+			$returnArr[$projId]['descr'] = $row->fulldescription;
 		}
 		$rs->free();
 		return $returnArr;
 	}
 
-	public function getProjectData(){
+	public function getProjectData(): array
+	{
 		$returnArr = array();
 		if($this->pid){
 			$sql = 'SELECT pid, projname, managers, fulldescription, notes, '.
@@ -56,7 +62,7 @@ class InventoryProjectManager {
 				$returnArr['occurrencesearch'] = $row->occurrencesearch;
 				$returnArr['ispublic'] = $row->ispublic;
 				$returnArr['sortsequence'] = $row->sortsequence;
-				if($row->ispublic == 0){
+				if($row->ispublic === 0){
 					$this->isPublic = 0;
 				}
 			}
@@ -65,11 +71,12 @@ class InventoryProjectManager {
 		return $returnArr;
 	}
 
-	public function submitProjEdits($projArr){
+	public function submitProjEdits($projArr): void
+	{
 		$fieldArr = array('projname', 'displayname', 'managers', 'fulldescription', 'notes', 'ispublic', 'parentpid', 'sortsequence');
-		$sql = "";
+		$sql = '';
 		foreach($projArr as $field => $value){
-			if(in_array($field,$fieldArr)){
+			if(in_array($field, $fieldArr, true)){
 				$sql .= ','.$field.' = "'.$this->cleanInStr($value).'"';
 			}
 		}
@@ -78,7 +85,8 @@ class InventoryProjectManager {
 		$this->conn->query($sql);
 	}
 
-	public function deleteProject($projID){
+	public function deleteProject($projID): bool
+	{
 		$status = true;
 		if($projID && is_numeric($projID)){
 			$sql = 'DELETE FROM fmprojects WHERE pid = '.$projID;
@@ -108,7 +116,8 @@ class InventoryProjectManager {
 		return $this->pid;
 	}
 	
-	public function getResearchChecklists(){
+	public function getResearchChecklists(): array
+	{
 		global $USER_RIGHTS;
 		$retArr = array();
 		if($this->pid){
@@ -121,12 +130,12 @@ class InventoryProjectManager {
 			else{
 				$sql .= ') ';
 			}
-			$sql .= "ORDER BY c.SortSequence, c.name";
+			$sql .= 'ORDER BY c.SortSequence, c.name';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			$cnt = 0;
 			while($row = $rs->fetch_object()){
-				$retArr[$row->clid] = $row->name.($row->access == 'private'?' <span title="Viewable only to editors">(private)</span>':'');
+				$retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
 				if($cnt < 50 && $row->latcentroid){
 					$this->researchCoord[] = $row->latcentroid.','.$row->longcentroid;
 				}
@@ -137,17 +146,19 @@ class InventoryProjectManager {
 		return $retArr;
 	}
 	
-	public function getGoogleStaticMap(){
+	public function getGoogleStaticMap(): string
+	{
 		$googleUrlLocal = $this->googleUrl;
-		//$googleUrlLocal .= "&zoom=6";
 		$coordStr = implode('%7C',$this->researchCoord);
-		if(!$coordStr) return ""; 
-		$googleUrlLocal .= "&markers=size:tiny%7C".$coordStr;
+		if(!$coordStr) {
+			return '';
+		}
+		$googleUrlLocal .= '&markers=size:tiny%7C' .$coordStr;
 		return $googleUrlLocal;
 	}
 	
-	//User management functions
-	public function getManagers(){
+	public function getManagers(): array
+	{
 		$retArr = array();
 		if($this->pid){
 			$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
@@ -164,7 +175,8 @@ class InventoryProjectManager {
 		return $retArr;
 	} 
 	
-	public function addManager($uid){
+	public function addManager($uid): bool
+	{
 		$status = false;
 		if(is_numeric($uid) && $this->pid){
 			$sql = 'INSERT INTO userroles(role,tablename,tablepk,uid) '.
@@ -176,7 +188,8 @@ class InventoryProjectManager {
 		return $status;
 	} 
 	
-	public function deleteManager($uid){
+	public function deleteManager($uid): bool
+	{
 		$status = true;
 		if(is_numeric($uid) && $this->pid){
 			$sql = 'DELETE FROM userroles WHERE (role = "ProjAdmin") AND (tablepk = '.$this->pid.') AND (uid = '.$uid.') ';
@@ -188,7 +201,8 @@ class InventoryProjectManager {
 		return $status;
 	}
 
-	public function getPotentialManagerArr(){
+	public function getPotentialManagerArr(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
 			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
@@ -198,29 +212,33 @@ class InventoryProjectManager {
 			$retArr[$r->uid] = $r->fullname.' ('.$r->username.')';
 		}
 		$rs->free();
-		//asort($retArr);
 		return $retArr;
 	}
 	
-	//Checklist management functions
 	public function addChecklist($clid){
-		if(!is_numeric($clid)) return false; 
+		if(!is_numeric($clid)) {
+			return false;
+		}
 		$sql = 'INSERT INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.','.$clid.') ';
 		if(!$this->conn->query($sql)){
 			return 'ERROR adding checklist to project: '.$this->conn->error;
 		}
+		return true;
 	}
 
 	public function deleteChecklist($clid){
-		if(!is_numeric($clid)) return false; 
+		if(!is_numeric($clid)) {
+			return false;
+		}
 		$sql = 'DELETE FROM fmchklstprojlink WHERE (pid = '.$this->pid.') AND (clid = '.$clid.')';
 		if($this->conn->query($sql)){
 			return 'ERROR deleting checklist from project';
 		}
+		return true;
 	}
 
-	//Misc functions
-	public function getClAddArr(){
+	public function getClAddArr(): array
+	{
 		global $USER_RIGHTS;
 		$returnArr = array();
 		$sql = 'SELECT c.clid, c.name, c.access '.
@@ -236,13 +254,14 @@ class InventoryProjectManager {
 
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$returnArr[$row->clid] = $row->name.($row->access == 'private'?' (private)':'');
+			$returnArr[$row->clid] = $row->name.($row->access === 'private'?' (private)':'');
 		}
 		$rs->free();
 		return $returnArr;
 	}
 
-	public function getClDeleteArr(){
+	public function getClDeleteArr(): array
+	{
 		$returnArr = array();
 		$sql = 'SELECT c.clid, c.name '.
 			'FROM fmchecklists c INNER JOIN fmchklstprojlink pl ON c.clid = pl.clid '.
@@ -256,26 +275,21 @@ class InventoryProjectManager {
 		return $returnArr;
 	}
 
-	//Setter and getters
-	public function getPid(){
-		return $this->pid;
-	}
-	
-	public function setPid($pid){
-		if(is_numeric($pid)) $this->pid = $pid;
+	public function setPid($pid): void
+	{
+		if(is_numeric($pid)) {
+			$this->pid = $pid;
+		}
 	}
 
 	public function getErrorStr(){
 		return $this->errorStr;
 	}
 
-	//Misc functions
 	private function cleanInStr($str){
 		$newStr = trim($str);
-		//$newStr = str_replace(array(chr(10),chr(11),chr(13)),' ',$newStr);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
 }
-?>

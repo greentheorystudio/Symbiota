@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once('DbConnection.php');
+include_once('TaxonomyUtilities.php');
 
 class TaxonomyDisplayManager{
 
@@ -293,15 +293,15 @@ class TaxonomyDisplayManager{
 				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
 				'LEFT JOIN taxstatus ts1 ON t.tid = ts1.tidaccepted '.
 				'LEFT JOIN taxa t1 ON ts1.tid = t1.tid '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.' OR ts.taxauthid IS NULL) AND (ts1.taxauthid = '.$this->taxAuthId.' OR ts1.taxauthid IS NULL) ';
+				'WHERE (ts.taxauthid = '.$this->taxAuthId.' OR ISNULL(ts.taxauthid)) AND (ts1.taxauthid = '.$this->taxAuthId.' OR ISNULL(ts1.taxauthid)) ';
 			if(is_numeric($this->targetStr)){
-				$sql1 .= 'AND (t.tid IN('.implode(',',$this->targetStr).') OR (ts1.tid = '.$this->targetStr.'))';
+				$sql1 .= 'AND (t.tid IN('.implode((array)',',$this->targetStr).') OR (ts1.tid = '.$this->targetStr.'))';
 			}
 			else{
 				$sql1 .= 'AND ((t.sciname = "'.$this->targetStr.'") OR (t1.sciname = "'.$this->targetStr.'") '.
 					'OR (CONCAT(t.sciname," ",t.author) = "'.$this->targetStr.'") OR (CONCAT(t1.sciname," ",t1.author) = "'.$this->targetStr.'")) ';
 			}
-			//echo "<div>".$sql1."</div>";
+			//echo '<div>' .$sql1. '</div>';
 			$rs1 = $this->conn->query($sql1);
 			while($row1 = $rs1->fetch_object()){
 				if($rs1->num_rows === 1){
@@ -323,7 +323,7 @@ class TaxonomyDisplayManager{
 					'INNER JOIN taxstatus ts ON te.parenttid = ts.tid '.
 					'WHERE te.TID = '.($acceptedTid?:$tid).' AND te.taxauthid = '.$this->taxAuthId.' AND ts.taxauthid = '.$this->taxAuthId.' '.
 					'ORDER BY t.RankId ';
-				//echo "<div>".$sql2."</div>";
+				//echo '<div>' .$sql2. '</div>';
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
 					if(!$prevTid || ($row2->par2 === $prevTid)){
@@ -335,7 +335,7 @@ class TaxonomyDisplayManager{
 							'FROM taxstatus '.
 							'WHERE parenttid = '.$prevTid.' AND taxauthid = '.$this->taxAuthId.' '.
 							'AND tid IN(SELECT parenttid FROM taxaenumtree WHERE tid = '.$tid.' AND taxauthid = '.$this->taxAuthId.') ';
-						//echo "<div>".$sql3."</div>";
+						//echo '<div>' .$sql3. '</div>';
 						$rs3 = $this->conn->query($sql3);
 						while($row3 = $rs3->fetch_object()){
 							$retArr[$i] = $row3->tid;
@@ -344,10 +344,10 @@ class TaxonomyDisplayManager{
 						$rs3->free();
 					}
 					$i++;
-				}
-				if($acceptedTid){
-					$retArr[$i] = $acceptedTid;
-					$i++;
+                    if($acceptedTid){
+                        $retArr[$i] = $acceptedTid;
+                        $i++;
+                    }
 				}
 				$retArr[$i] = $tid;
 				$rs2->free();

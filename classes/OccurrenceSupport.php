@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class OccurrenceSupport {
 
@@ -12,22 +12,28 @@ class OccurrenceSupport {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	//Comment functions
-	public function getComments($collid, $start, $limit, $tsStart, $tsEnd, $uid, $reviewStatus){
+	public function getComments($collid, $start, $limit, $tsStart, $tsEnd, $uid, $reviewStatus): array
+	{
 		$retArr = array();
 		if(is_numeric($collid)){
-			if(!is_numeric($start)) $start = 0;
-			if(!is_numeric($limit)) $limit = 100;
+			if(!is_numeric($start)) {
+				$start = 0;
+			}
+			if(!is_numeric($limit)) {
+				$limit = 100;
+			}
 			$sqlBase = 'FROM omoccurcomments c INNER JOIN omoccurrences o ON c.occid = o.occid '.
 				'WHERE o.collid = '.$collid;
 			if(is_numeric($uid) && $uid){
 				$sqlBase .= ' AND c.uid = '.$uid;
 			}
 			if(is_numeric($reviewStatus) && $reviewStatus){
-				$sqlBase .= ' AND c.reviewstatus IN('.($reviewStatus==2?$reviewStatus.',0':$reviewStatus).') ';
+				$sqlBase .= ' AND c.reviewstatus IN('.($reviewStatus === 2?$reviewStatus.',0':$reviewStatus).') ';
 			}
 			if(preg_match('/^\d{4}-\d{2}-\d{2}/', $tsStart)){
 				$sqlBase .= ' AND initialtimestamp >= "'.$tsStart.'"';
@@ -35,7 +41,6 @@ class OccurrenceSupport {
 			if(preg_match('/^\d{4}-\d{2}-\d{2}/', $tsEnd)){
 				$sqlBase .= ' AND initialtimestamp < "'.$tsEnd.'"';
 			}
-			//Get count
 			$sqlCnt = 'SELECT count(c.comid) as cnt '.$sqlBase;
 			$rsCnt = $this->conn->query($sqlCnt);
 			while($rCnt = $rsCnt->fetch_object()){
@@ -62,23 +67,29 @@ class OccurrenceSupport {
 		return $retArr;
 	}
 
-	public function setReviewStatus($comid,$reviewStatus){
+	public function setReviewStatus($comid,$reviewStatus): bool
+	{
 		$status = true;
 		if(is_numeric($comid) && is_numeric($reviewStatus)){
 			$sql = 'UPDATE omoccurcomments SET reviewstatus = '.$reviewStatus.' WHERE comid = '.$comid;
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'Public';
-				if($reviewStatus == 2) $statusStr = 'Non-public';
-				elseif($reviewStatus == 3) $statusStr = 'Reviewed';
-				$this->errorMessage = 'ERROR changing comment status to '.$statusStr.': '.$con->error;
+				if($reviewStatus === 2) {
+					$statusStr = 'Non-public';
+				}
+				elseif($reviewStatus === 3) {
+					$statusStr = 'Reviewed';
+				}
+				$this->errorMessage = 'ERROR changing comment status to '.$statusStr.': '.$this->conn->error;
 				$status = false;
 			}
 		}
 		return $status;
 	}
 
-	public function deleteComment($comid){
+	public function deleteComment($comid): bool
+	{
 		$status = true;
 		if(is_numeric($comid)){
 			$sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comid;
@@ -90,7 +101,8 @@ class OccurrenceSupport {
 		return $status;
 	}
 	
-	public function getCommentUsers($collid){
+	public function getCommentUsers($collid): array
+	{
 		$retArr = array();
 		if($collid){
 			$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) as userstr  '.
@@ -108,13 +120,15 @@ class OccurrenceSupport {
 		return $retArr;
 	}
 
-	//OccurrenceSearch tool used to search for and link images to existing occurrence
-	public function getOccurrenceList($collid, $catalogNumber, $otherCatalogNumbers, $recordedBy, $recordNumber){
+	public function getOccurrenceList($collid, $catalogNumber, $otherCatalogNumbers, $recordedBy, $recordNumber): array
+	{
 		$retArr = array();
-		if(!$catalogNumber && !$otherCatalogNumbers && !$recordedBy && !$recordNumber) return $retArr;
-		$sqlWhere = "";
+		if(!$catalogNumber && !$otherCatalogNumbers && !$recordedBy && !$recordNumber) {
+			return $retArr;
+		}
+		$sqlWhere = '';
 		if($collid){
-			$sqlWhere .= "AND (o.collid = ".$collid.") ";
+			$sqlWhere .= 'AND (o.collid = ' .$collid. ') ';
 		}
 		if($catalogNumber){
 			$sqlWhere .= 'AND (o.catalognumber = "'.$catalogNumber.'") ';
@@ -123,8 +137,7 @@ class OccurrenceSupport {
 			$sqlWhere .= 'AND (o.othercatalognumbers = "'.$otherCatalogNumbers.'") ';
 		}
 		if($recordedBy){
-			if(strlen($recordedBy) < 4 || strtolower($recordedBy) == 'best'){
-				//Need to avoid FULLTEXT stopwords interfering with return
+			if(strlen($recordedBy) < 4 || strtolower($recordedBy) === 'best'){
 				$sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
 			}
 			else{
@@ -141,21 +154,25 @@ class OccurrenceSupport {
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$occId = $row->occid;
-			$retArr[$occId]["recordedby"] = $row->recordedby;
-			$retArr[$occId]["recordnumber"] = $row->recordnumber;
-			$retArr[$occId]["eventdate"] = $row->eventdate;
-			$retArr[$occId]["locality"] = $row->locality;
+			$retArr[$occId]['recordedby'] = $row->recordedby;
+			$retArr[$occId]['recordnumber'] = $row->recordnumber;
+			$retArr[$occId]['eventdate'] = $row->eventdate;
+			$retArr[$occId]['locality'] = $row->locality;
 		}
 		$rs->free();
 		return $retArr;
 	}
 	
-	//Used by /collections/misc/occurrencesearch.php 
-	public function getCollectionArr($filter){
+	public function getCollectionArr($filter): array
+	{
 		$retArr = array();
-		if(!$filter) return $retArr;
-		$sql = "SELECT collid, collectionname FROM omcollections ";
-		if($filter != 'all' && is_array($filter)) $sql .= 'WHERE collid IN('.implode(',',$filter).')';
+		if(!$filter) {
+			return $retArr;
+		}
+		$sql = 'SELECT collid, collectionname FROM omcollections ';
+		if($filter !== 'all' && is_array($filter)) {
+			$sql .= 'WHERE collid IN(' . implode(',', $filter) . ')';
+		}
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$retArr[$row->collid] = $row->collectionname;
@@ -165,8 +182,8 @@ class OccurrenceSupport {
 		return $retArr;
 	}
 
-	//Occurrence harvester function (occurharvester.php)
-	public function exportCsvFile($postArr){
+	public function exportCsvFile(): void
+	{
 		$fieldArr = array('occid','occurrenceID','catalogNumber','otherCatalogNumbers','family','sciname','genus','specificEpithet','taxonRank',
 		'infraspecificEpithet','scientificNameAuthorship','taxonRemarks','identifiedBy','dateIdentified','identificationReferences',
 		'identificationRemarks','identificationQualifier','typeStatus','recordedBy','recordNumber','associatedCollectors','eventDate',
@@ -183,7 +200,7 @@ class OccurrenceSupport {
 		$sql = 'SELECT '.implode(',',$fieldArr).' FROM omoccurrences WHERE occid IN() ';
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows){
-			$out = fopen('php://output', 'w');
+			$out = fopen('php://output', 'wb');
 			echo implode(',',$fieldArr)."\n";
 			while($r = $rs->fetch_assoc()){
 				fputcsv($out, $r);
@@ -200,4 +217,3 @@ class OccurrenceSupport {
 		return $this->errorMessage;
 	}
 }
-?>

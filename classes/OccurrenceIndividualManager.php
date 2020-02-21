@@ -291,7 +291,9 @@ class OccurrenceIndividualManager extends Manager{
 		$sql = 'SELECT c.comid, c.comment, u.username, c.reviewstatus, c.initialtimestamp '.
 			'FROM omoccurcomments c INNER JOIN userlogin u ON c.uid = u.uid '.
 			'WHERE (c.occid = '.$this->occid.') ';
-		if(!$isEditor) $sql .= 'AND c.reviewstatus IN(1,3) ';
+		if(!$isEditor) {
+            $sql .= 'AND c.reviewstatus IN(1,3) ';
+        }
 		$sql .= 'ORDER BY c.initialtimestamp';
 		//echo $sql.'<br/><br/>';
 		$result = $this->conn->query($sql);

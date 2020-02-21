@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
  
 class InventoryDynSqlManager {
 
@@ -7,7 +7,7 @@ class InventoryDynSqlManager {
 	private $clid;
 	private $clName;
 	
-	function __construct($id) {
+	public function __construct($id) {
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
 		if(is_numeric($id)){
@@ -15,14 +15,17 @@ class InventoryDynSqlManager {
 		}
 	}
 
-	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+ 		if(!($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 	
-	public function getDynamicSql(){
-		$sqlStr = "";
+	public function getDynamicSql(): string
+	{
+		$sqlStr = '';
 		if($this->clid){
-			$sql = "SELECT c.dynamicsql FROM fmchecklists c WHERE (c.clid = ".$this->clid.')';
+			$sql = 'SELECT c.dynamicsql FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
@@ -33,16 +36,18 @@ class InventoryDynSqlManager {
 		return $sqlStr;
 	}
 	
-	public function testSql($strFrag){
-		$sql = "SELECT * FROM omoccurrences o WHERE ".$strFrag;
+	public function testSql($strFrag): bool
+	{
+		$sql = 'SELECT * FROM omoccurrences o WHERE '.$strFrag;
 		if($this->conn->query($sql)){
 			return true;
 		}
 		return false;
 	}
 	
-	public function saveSql($sqlFrag){
-		$sql = "UPDATE fmchecklists c SET c.dynamicsql = \"".trim($sqlFrag)."\" WHERE (c.clid = ".$this->clid.')';
+	public function saveSql($sqlFrag): void
+	{
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.trim($sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
 		$this->conn->query($sql);
 	}
 
@@ -50,4 +55,3 @@ class InventoryDynSqlManager {
 		return $this->clName;
 	}
 }
-?> 

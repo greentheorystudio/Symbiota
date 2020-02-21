@@ -1,6 +1,5 @@
 <?php
-include_once(__DIR__ . './../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class TaxonomyUtilities {
 
@@ -194,7 +193,7 @@ class TaxonomyUtilities {
                 }
                 $cnt++;
             }
-            while($cnt < 50 && !$complete);
+            while($cnt < 100 && !$complete);
         }
 
 		return $status;

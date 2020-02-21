@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/KeyManager.php');
+include_once('KeyManager.php');
 
 class KeyMassUpdate extends KeyManager{
 	
@@ -10,21 +10,14 @@ class KeyMassUpdate extends KeyManager{
 	private $descrArr = array();
 	private $headerStr;
 	private $cnt = 0;
-	
-	public function __construct(){
-		parent::__construct();
-	}
 
-	public function __destruct(){
-		parent::__destruct();
-	}
-
-	public function getCharList($tidFilter){
-		$headingArray = array();		//Heading => Array(CID => CharName)
-		$sql = "SELECT DISTINCT ch.headingname, c.CID, c.CharName ".
-			"FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID ".
-			"INNER JOIN kmcharheading ch ON c.hid = ch.hid ".
-			"LEFT JOIN kmchardependance cd ON c.CID = cd.CID ".
+	public function getCharList($tidFilter): array
+	{
+		$headingArray = array();
+		$sql = 'SELECT DISTINCT ch.headingname, c.CID, c.CharName ' .
+			'FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID ' .
+			'INNER JOIN kmcharheading ch ON c.hid = ch.hid ' .
+			'LEFT JOIN kmchardependance cd ON c.CID = cd.CID ' .
 			"WHERE ch.language = '".$this->language."' AND (ctl.Relation = 'include') ".
 			"AND (c.chartype='UM' OR c.chartype='OM') AND (c.defaultlang='".$this->language."') ";
 		if($tidFilter){
@@ -41,7 +34,8 @@ class KeyMassUpdate extends KeyManager{
 		return $headingArray;
 	}
 	
-	private function setStates(){
+	private function setStates(): void
+	{
 		$sql = 'SELECT charstatename, cs FROM kmcs WHERE (cid = '.$this->cid.') ';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
@@ -51,7 +45,8 @@ class KeyMassUpdate extends KeyManager{
 		ksort($this->stateArr);
 	}
 
-	public function echoTaxaList($tidFilter, $generaOnly = false){
+	public function echoTaxaList($tidFilter, $generaOnly = false): void
+	{
 		$tidArr = array();
 		
 		$sqlBase = '';
@@ -60,7 +55,6 @@ class KeyMassUpdate extends KeyManager{
 			$sqlBase .= 'INNER JOIN taxaenumtree e ON ts.tid = e.tid ';
 			$sqlWhere .= 'AND (e.taxauthid = '.$this->taxAuthId.') AND (e.parenttid = '.$tidFilter.') ';
 		}
-		//Get accepted taxa
 		if(!$generaOnly){
 			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts2.parenttid '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
@@ -76,7 +70,6 @@ class KeyMassUpdate extends KeyManager{
 			$rs->free();
 		}
 		
-		//Get parents
 		$famArr = array();
 		$sql2 = 'SELECT DISTINCT t.tid, t.sciname, ts2.parenttid, t.rankid '.
 			'FROM taxa t INNER JOIN taxaenumtree e2 ON t.tid = e2.parenttid '.
@@ -88,7 +81,7 @@ class KeyMassUpdate extends KeyManager{
 		//echo $sql2; exit;
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
-			if($r2->rankid == 140){
+			if($r2->rankid === 140){
 				$famArr[$r2->tid] = $r2->sciname;
 			}
 			elseif(!$generaOnly || $r2->rankid < 220){
@@ -98,7 +91,6 @@ class KeyMassUpdate extends KeyManager{
 		}
 		$rs2->free();
 
-		//Get descriptions
 		if($tidArr){
 			$sql3 = 'SELECT tid, cid, cs, inherited FROM kmdescr '.
 				'WHERE (cid='.$this->cid.') AND (tid IN('.implode(',',$tidArr).'))';
@@ -109,14 +101,13 @@ class KeyMassUpdate extends KeyManager{
 			$rs3->free();
 		}
 		
-		//Create and output header 
 		$this->setStates();
 		$this->headerStr = '<tr><th/>';
  		foreach($this->stateArr as $cs => $csName){
- 			$this->headerStr .= '<th>'.str_replace(" ","<br/>",$csName).'</th>';
+ 			$this->headerStr .= '<th>'.str_replace(' ', '<br/>',$csName).'</th>';
  		}
  		$this->headerStr .= '</tr>'."\n";
- 		$this->headerStr .= '<tr><td align="right" colspan="'.(count($this->stateArr)+1).'"><input type="submit" name="action" value="Save Changes" onclick="submitAttrs()" /></td></tr>';
+ 		$this->headerStr .= '<tr><td style="text-align:right;" colspan="'.(count($this->stateArr)+1).'"><input type="submit" name="action" value="Save Changes" onclick="submitAttrs()" /></td></tr>';
  		echo $this->headerStr;
 		
 		foreach($famArr as $famTid => $family){
@@ -126,7 +117,8 @@ class KeyMassUpdate extends KeyManager{
 		echo $this->headerStr;
 	}
 	
-	private function processTaxa($tid,$indent=0){
+	private function processTaxa($tid,$indent=0): void
+	{
 		if(isset($this->taxaArr[$tid])){
 			$indent++;
 			$childArr = $this->taxaArr[$tid];
@@ -138,7 +130,8 @@ class KeyMassUpdate extends KeyManager{
 		}
 	}
 
-	private function echoTaxaRow($tid,$sciname,$indent = 0){
+	private function echoTaxaRow($tid,$sciname,$indent = 0): void
+	{
 		echo '<tr><td>';
 		echo '<span style="margin-left:'.($indent*10).'px"><b>'.($indent?'<i>':'').$sciname.($indent?'</i>':'').'</b></span>';
 		echo '<a href="editor.php?tid='.$tid.'" target="_blank"><img src="../../images/edit.png" /></a>';
@@ -148,43 +141,51 @@ class KeyMassUpdate extends KeyManager{
 			$isInherited = false;
 			if(isset($this->descrArr[$tid][$cs])){
 				$isSelected = true;
-				if($this->descrArr[$tid][$cs]) $isInherited = true;
+				if($this->descrArr[$tid][$cs]) {
+					$isInherited = true;
+				}
 			}
 			if($isSelected && !$isInherited){
-				//State is true and not inherited for this taxon
-				$jsStr = "removeAttr('".$tid."-".$cs."');";
+				$jsStr = "removeAttr('".$tid. '-' .$cs."');";
 			}
 			else{
-				//State is false for this taxon or it is inherited
-				$jsStr = "addAttr('".$tid."-".$cs."');";
+				$jsStr = "addAttr('".$tid. '-' .$cs."');";
 			}
-			echo '<td align="center" style="width:15px;white-space:nowrap;">';
+			echo '<td style="text-align:center;width:15px;white-space:nowrap;">';
 			echo '<input type="checkbox" name="csDisplay" onclick="'.$jsStr.'" '.($isSelected && !$isInherited?'CHECKED':'').' title="'.$csName.'"/>'.($isInherited?'(I)':'');
 			echo "</td>\n";
 		}
 		echo '</tr>';
 		$this->cnt++;
-		if($this->cnt%40 == 0) echo $this->headerStr;
+		if($this->cnt%40 === 0) {
+			echo $this->headerStr;
+		}
 	}
 	
-	public function processAttributes($rAttrs,$aAttrs){
+	public function processAttributes($rAttrs,$aAttrs): void
+	{
 		$removeArr = $this->processAttrArr($rAttrs);
 		$addArr = $this->processAttrArr($aAttrs);
 		$tidUsedStr = implode(',',array_unique(array_merge(array_keys($removeArr),array_keys($addArr))));
 		if($tidUsedStr){
 			$this->deleteInheritance($tidUsedStr,$this->cid);
-			if($removeArr) $this->processRemoveAttributes($removeArr);
-			if($addArr) $this->processAddAttributes($addArr);
+			if($removeArr) {
+				$this->processRemoveAttributes($removeArr);
+			}
+			if($addArr) {
+				$this->processAddAttributes($addArr);
+			}
 			$this->resetInheritance($tidUsedStr,$this->cid);
 		}
 	}
 	
-	private function processAttrArr($inputArr){
+	private function processAttrArr($inputArr): array
+	{
 		$retArr = array();
 		if($inputArr){
 			foreach($inputArr as $v){
 	 			if($v){
-					$t = explode("-",$v);
+					$t = explode('-',$v);
 					$retArr[$t[0]][] = $t[1];
 	 			}
 	 		}
@@ -192,7 +193,8 @@ class KeyMassUpdate extends KeyManager{
  		return $retArr;
 	}
 
-	private function processRemoveAttributes($inputArr){
+	private function processRemoveAttributes($inputArr): void
+	{
  		foreach($inputArr as $tid => $csArr){
  			foreach($csArr as $cs){
 				$this->deleteDescr($tid, $this->cid, $cs);
@@ -200,7 +202,8 @@ class KeyMassUpdate extends KeyManager{
  		}
 	}
 
-	private function processAddAttributes($addArr){
+	private function processAddAttributes($addArr): void
+	{
  		foreach($addArr as $tid => $csArr){
  			foreach($csArr as $cs){
 				$this->insertDescr($tid, $this->cid, $cs);
@@ -208,8 +211,8 @@ class KeyMassUpdate extends KeyManager{
  		}
 	}
 
-	//Setter and getters
-	public function getTaxaQueryList(){
+	public function getTaxaQueryList(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT t.tid, t.sciname '. 
 			'FROM fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid '.
@@ -225,12 +228,17 @@ class KeyMassUpdate extends KeyManager{
 		return $retArr;
 	}
 
-	public function setCid($cid){
-		if(is_numeric($cid)) $this->cid = $cid;
+	public function setCid($cid): void
+	{
+		if(is_numeric($cid)) {
+			$this->cid = $cid;
+		}
 	}
 
-	public function setClid($clid){
-		if(is_numeric($clid)) $this->clid = $clid;
+	public function setClid($clid): void
+	{
+		if(is_numeric($clid)) {
+			$this->clid = $clid;
+		}
 	}
 }
-?>

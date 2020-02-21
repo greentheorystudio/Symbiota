@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once('fp/FPNetworkFactory.php');
 include_once('fp/common/AnnotationGenerator.php');
 

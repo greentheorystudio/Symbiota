@@ -1,22 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `adminlanguages`
---
-
-DROP TABLE IF EXISTS `adminlanguages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `adminlanguages` (
   `langid` int(11) NOT NULL AUTO_INCREMENT,
   `langname` varchar(45) NOT NULL,
@@ -27,15 +10,7 @@ CREATE TABLE `adminlanguages` (
   PRIMARY KEY (`langid`),
   UNIQUE KEY `index_langname_unique` (`langname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchecklists`
---
-
-DROP TABLE IF EXISTS `fmchecklists`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchecklists` (
   `CLID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Name` varchar(100) NOT NULL,
@@ -66,15 +41,7 @@ CREATE TABLE `fmchecklists` (
   KEY `name` (`Name`,`Type`) USING BTREE,
   CONSTRAINT `FK_checklists_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchklstchildren`
---
-
-DROP TABLE IF EXISTS `fmchklstchildren`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchklstchildren` (
   `clid` int(10) unsigned NOT NULL,
   `clidchild` int(10) unsigned NOT NULL,
@@ -87,15 +54,7 @@ CREATE TABLE `fmchklstchildren` (
   CONSTRAINT `FK_fmchklstchild_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_fmchklstchild_child` FOREIGN KEY (`clidchild`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchklstcoordinates`
---
-
-DROP TABLE IF EXISTS `fmchklstcoordinates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchklstcoordinates` (
   `chklstcoordid` int(11) NOT NULL AUTO_INCREMENT,
   `clid` int(10) unsigned NOT NULL,
@@ -109,15 +68,7 @@ CREATE TABLE `fmchklstcoordinates` (
   KEY `FKchklsttaxalink` (`clid`,`tid`),
   CONSTRAINT `FKchklsttaxalink` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchklstprojlink`
---
-
-DROP TABLE IF EXISTS `fmchklstprojlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchklstprojlink` (
   `pid` int(10) unsigned NOT NULL,
   `clid` int(10) unsigned NOT NULL,
@@ -127,15 +78,7 @@ CREATE TABLE `fmchklstprojlink` (
   CONSTRAINT `FK_chklstprojlink_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`),
   CONSTRAINT `FK_chklstprojlink_proj` FOREIGN KEY (`pid`) REFERENCES `fmprojects` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchklsttaxalink`
---
-
-DROP TABLE IF EXISTS `fmchklsttaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchklsttaxalink` (
   `TID` int(10) unsigned NOT NULL DEFAULT '0',
   `CLID` int(10) unsigned NOT NULL DEFAULT '0',
@@ -157,15 +100,7 @@ CREATE TABLE `fmchklsttaxalink` (
   CONSTRAINT `FK_chklsttaxalink_cid` FOREIGN KEY (`CLID`) REFERENCES `fmchecklists` (`CLID`),
   CONSTRAINT `FK_chklsttaxalink_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmchklsttaxastatus`
---
-
-DROP TABLE IF EXISTS `fmchklsttaxastatus`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmchklsttaxastatus` (
   `clid` int(10) unsigned NOT NULL,
   `tid` int(10) unsigned NOT NULL,
@@ -190,15 +125,7 @@ CREATE TABLE `fmchklsttaxastatus` (
   KEY `FK_fmchklsttaxastatus_clid_idx` (`clid`,`tid`),
   CONSTRAINT `FK_fmchklsttaxastatus_clidtid` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmcltaxacomments`
---
-
-DROP TABLE IF EXISTS `fmcltaxacomments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmcltaxacomments` (
   `cltaxacommentsid` int(11) NOT NULL AUTO_INCREMENT,
   `clid` int(10) unsigned NOT NULL,
@@ -214,15 +141,7 @@ CREATE TABLE `fmcltaxacomments` (
   CONSTRAINT `FK_clcomment_users` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_clcomment_cltaxa` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmdynamicchecklists`
---
-
-DROP TABLE IF EXISTS `fmdynamicchecklists`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmdynamicchecklists` (
   `dynclid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
@@ -234,15 +153,7 @@ CREATE TABLE `fmdynamicchecklists` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`dynclid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmdyncltaxalink`
---
-
-DROP TABLE IF EXISTS `fmdyncltaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmdyncltaxalink` (
   `dynclid` int(10) unsigned NOT NULL,
   `tid` int(10) unsigned NOT NULL,
@@ -252,15 +163,7 @@ CREATE TABLE `fmdyncltaxalink` (
   CONSTRAINT `FK_dyncltaxalink_dynclid` FOREIGN KEY (`dynclid`) REFERENCES `fmdynamicchecklists` (`dynclid`) ON DELETE CASCADE,
   CONSTRAINT `FK_dyncltaxalink_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmprojectcategories`
---
-
-DROP TABLE IF EXISTS `fmprojectcategories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmprojectcategories` (
   `projcatid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `pid` int(10) unsigned NOT NULL,
@@ -277,15 +180,7 @@ CREATE TABLE `fmprojectcategories` (
   KEY `FK_fmprojcat_pid_idx` (`pid`),
   CONSTRAINT `FK_fmprojcat_pid` FOREIGN KEY (`pid`) REFERENCES `fmprojects` (`pid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmprojects`
---
-
-DROP TABLE IF EXISTS `fmprojects`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmprojects` (
   `pid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `projname` varchar(45) NOT NULL,
@@ -303,15 +198,7 @@ CREATE TABLE `fmprojects` (
   KEY `FK_parentpid_proj` (`parentpid`),
   CONSTRAINT `FK_parentpid_proj` FOREIGN KEY (`parentpid`) REFERENCES `fmprojects` (`pid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `fmvouchers`
---
-
-DROP TABLE IF EXISTS `fmvouchers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fmvouchers` (
   `TID` int(10) unsigned NOT NULL,
   `CLID` int(10) unsigned NOT NULL,
@@ -325,15 +212,7 @@ CREATE TABLE `fmvouchers` (
   CONSTRAINT `FK_fmvouchers_occ` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_vouchers_cl` FOREIGN KEY (`TID`, `CLID`) REFERENCES `fmchklsttaxalink` (`TID`, `CLID`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `glossary`
---
-
-DROP TABLE IF EXISTS `glossary`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `glossary` (
   `glossid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `term` varchar(150) NOT NULL,
@@ -346,15 +225,7 @@ CREATE TABLE `glossary` (
   PRIMARY KEY (`glossid`),
   KEY `Index_term` (`term`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `glossaryimages`
---
-
-DROP TABLE IF EXISTS `glossaryimages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `glossaryimages` (
   `glimgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `glossid` int(10) unsigned NOT NULL,
@@ -368,15 +239,7 @@ CREATE TABLE `glossaryimages` (
   KEY `FK_glossaryimages_gloss` (`glossid`),
   CONSTRAINT `FK_glossaryimages_gloss` FOREIGN KEY (`glossid`) REFERENCES `glossary` (`glossid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `glossarytaxalink`
---
-
-DROP TABLE IF EXISTS `glossarytaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `glossarytaxalink` (
   `glossgrpid` int(10) unsigned NOT NULL,
   `tid` int(10) unsigned NOT NULL,
@@ -386,15 +249,7 @@ CREATE TABLE `glossarytaxalink` (
   CONSTRAINT `glossarytaxalink_ibfk_1` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `glossarytaxalink_ibfk_2` FOREIGN KEY (`glossgrpid`) REFERENCES `glossarytermlink` (`glossgrpid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `glossarytermlink`
---
-
-DROP TABLE IF EXISTS `glossarytermlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `glossarytermlink` (
   `gltlinkid` int(10) NOT NULL AUTO_INCREMENT,
   `glossgrpid` int(10) unsigned NOT NULL,
@@ -406,15 +261,7 @@ CREATE TABLE `glossarytermlink` (
   KEY `glossarytermlink_ibfk_1` (`glossid`),
   CONSTRAINT `glossarytermlink_ibfk_1` FOREIGN KEY (`glossid`) REFERENCES `glossary` (`glossid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `guidimages`
---
-
-DROP TABLE IF EXISTS `guidimages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `guidimages` (
   `guid` varchar(45) NOT NULL,
   `imgid` int(10) unsigned DEFAULT NULL,
@@ -425,15 +272,7 @@ CREATE TABLE `guidimages` (
   PRIMARY KEY (`guid`),
   UNIQUE KEY `guidimages_imgid_unique` (`imgid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `guidoccurdeterminations`
---
-
-DROP TABLE IF EXISTS `guidoccurdeterminations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `guidoccurdeterminations` (
   `guid` varchar(45) NOT NULL,
   `detid` int(10) unsigned DEFAULT NULL,
@@ -444,15 +283,7 @@ CREATE TABLE `guidoccurdeterminations` (
   PRIMARY KEY (`guid`),
   UNIQUE KEY `guidoccurdet_detid_unique` (`detid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `guidoccurrences`
---
-
-DROP TABLE IF EXISTS `guidoccurrences`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `guidoccurrences` (
   `guid` varchar(45) NOT NULL,
   `occid` int(10) unsigned DEFAULT NULL,
@@ -463,15 +294,7 @@ CREATE TABLE `guidoccurrences` (
   PRIMARY KEY (`guid`),
   UNIQUE KEY `guidoccurrences_occid_unique` (`occid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `imageannotations`
---
-
-DROP TABLE IF EXISTS `imageannotations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `imageannotations` (
   `tid` int(10) unsigned DEFAULT NULL,
   `imgid` int(10) unsigned NOT NULL DEFAULT '0',
@@ -483,15 +306,7 @@ CREATE TABLE `imageannotations` (
   CONSTRAINT `FK_resourceannotations_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`),
   CONSTRAINT `FK_resourceannotations_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `imagekeywords`
---
-
-DROP TABLE IF EXISTS `imagekeywords`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `imagekeywords` (
   `imgkeywordid` int(11) NOT NULL AUTO_INCREMENT,
   `imgid` int(10) unsigned NOT NULL,
@@ -505,15 +320,7 @@ CREATE TABLE `imagekeywords` (
   CONSTRAINT `FK_imagekeywords_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_imagekeyword_uid` FOREIGN KEY (`uidassignedby`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `images`
---
-
-DROP TABLE IF EXISTS `images`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `images` (
   `imgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(10) unsigned DEFAULT NULL,
@@ -547,15 +354,7 @@ CREATE TABLE `images` (
   CONSTRAINT `FK_photographeruid` FOREIGN KEY (`photographeruid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_taxaimagestid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `imagetag`
---
-
-DROP TABLE IF EXISTS `imagetag`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `imagetag` (
   `imagetagid` bigint(20) NOT NULL AUTO_INCREMENT,
   `imgid` int(10) unsigned NOT NULL,
@@ -568,15 +367,7 @@ CREATE TABLE `imagetag` (
   CONSTRAINT `FK_imagetag_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_imagetag_tagkey` FOREIGN KEY (`keyvalue`) REFERENCES `imagetagkey` (`tagkey`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `imagetagkey`
---
-
-DROP TABLE IF EXISTS `imagetagkey`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `imagetagkey` (
   `tagkey` varchar(30) NOT NULL,
   `shortlabel` varchar(30) NOT NULL,
@@ -586,15 +377,7 @@ CREATE TABLE `imagetagkey` (
   PRIMARY KEY (`tagkey`),
   KEY `sortorder` (`sortorder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `institutions`
---
-
-DROP TABLE IF EXISTS `institutions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `institutions` (
   `iid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `InstitutionCode` varchar(45) NOT NULL,
@@ -618,15 +401,7 @@ CREATE TABLE `institutions` (
   KEY `FK_inst_uid_idx` (`modifieduid`),
   CONSTRAINT `FK_inst_uid` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcharacterlang`
---
-
-DROP TABLE IF EXISTS `kmcharacterlang`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcharacterlang` (
   `cid` int(10) unsigned NOT NULL,
   `charname` varchar(150) NOT NULL,
@@ -639,15 +414,7 @@ CREATE TABLE `kmcharacterlang` (
   PRIMARY KEY (`cid`,`langid`) USING BTREE,
   CONSTRAINT `FK_characterlang_1` FOREIGN KEY (`cid`) REFERENCES `kmcharacters` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcharacters`
---
-
-DROP TABLE IF EXISTS `kmcharacters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcharacters` (
   `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `charname` varchar(150) NOT NULL,
@@ -668,15 +435,7 @@ CREATE TABLE `kmcharacters` (
   KEY `FK_charheading_idx` (`hid`),
   CONSTRAINT `FK_charheading` FOREIGN KEY (`hid`) REFERENCES `kmcharheading` (`hid`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmchardependance`
---
-
-DROP TABLE IF EXISTS `kmchardependance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmchardependance` (
   `CID` int(10) unsigned NOT NULL,
   `CIDDependance` int(10) unsigned NOT NULL,
@@ -688,15 +447,7 @@ CREATE TABLE `kmchardependance` (
   CONSTRAINT `FK_chardependance_cid` FOREIGN KEY (`CID`) REFERENCES `kmcharacters` (`cid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_chardependance_cs` FOREIGN KEY (`CIDDependance`, `CSDependance`) REFERENCES `kmcs` (`cid`, `cs`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcharheading`
---
-
-DROP TABLE IF EXISTS `kmcharheading`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcharheading` (
   `hid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `headingname` varchar(255) NOT NULL,
@@ -711,15 +462,7 @@ CREATE TABLE `kmcharheading` (
   KEY `FK_kmcharheading_lang_idx` (`langid`),
   CONSTRAINT `FK_kmcharheading_lang` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmchartaxalink`
---
-
-DROP TABLE IF EXISTS `kmchartaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmchartaxalink` (
   `CID` int(10) unsigned NOT NULL DEFAULT '0',
   `TID` int(10) unsigned NOT NULL DEFAULT '0',
@@ -733,15 +476,7 @@ CREATE TABLE `kmchartaxalink` (
   CONSTRAINT `FK_chartaxalink_cid` FOREIGN KEY (`CID`) REFERENCES `kmcharacters` (`cid`),
   CONSTRAINT `FK_chartaxalink_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcs`
---
-
-DROP TABLE IF EXISTS `kmcs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcs` (
   `cid` int(10) unsigned NOT NULL DEFAULT '0',
   `cs` varchar(16) NOT NULL,
@@ -758,15 +493,7 @@ CREATE TABLE `kmcs` (
   KEY `FK_cs_chars` (`cid`),
   CONSTRAINT `FK_cs_chars` FOREIGN KEY (`cid`) REFERENCES `kmcharacters` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcsimages`
---
-
-DROP TABLE IF EXISTS `kmcsimages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcsimages` (
   `csimgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cid` int(10) unsigned NOT NULL,
@@ -780,15 +507,7 @@ CREATE TABLE `kmcsimages` (
   KEY `FK_kscsimages_kscs_idx` (`cid`,`cs`),
   CONSTRAINT `FK_kscsimages_kscs` FOREIGN KEY (`cid`, `cs`) REFERENCES `kmcs` (`cid`, `cs`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmcslang`
---
-
-DROP TABLE IF EXISTS `kmcslang`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmcslang` (
   `cid` int(10) unsigned NOT NULL,
   `cs` varchar(16) NOT NULL,
@@ -801,15 +520,7 @@ CREATE TABLE `kmcslang` (
   PRIMARY KEY (`cid`,`cs`,`langid`),
   CONSTRAINT `FK_cslang_1` FOREIGN KEY (`cid`, `cs`) REFERENCES `kmcs` (`cid`, `cs`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `kmdescr`
---
-
-DROP TABLE IF EXISTS `kmdescr`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `kmdescr` (
   `TID` int(10) unsigned NOT NULL DEFAULT '0',
   `CID` int(10) unsigned NOT NULL DEFAULT '0',
@@ -829,15 +540,7 @@ CREATE TABLE `kmdescr` (
   CONSTRAINT `FK_descr_cs` FOREIGN KEY (`CID`, `CS`) REFERENCES `kmcs` (`cid`, `cs`),
   CONSTRAINT `FK_descr_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `lkupcountry`
---
-
-DROP TABLE IF EXISTS `lkupcountry`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lkupcountry` (
   `countryId` int(11) NOT NULL AUTO_INCREMENT,
   `countryName` varchar(100) NOT NULL,
@@ -850,15 +553,7 @@ CREATE TABLE `lkupcountry` (
   KEY `Index_lkupcountry_iso` (`iso`),
   KEY `Index_lkupcountry_iso3` (`iso3`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `lkupcounty`
---
-
-DROP TABLE IF EXISTS `lkupcounty`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lkupcounty` (
   `countyId` int(11) NOT NULL AUTO_INCREMENT,
   `stateId` int(11) NOT NULL,
@@ -870,15 +565,7 @@ CREATE TABLE `lkupcounty` (
   KEY `index_countyname` (`countyName`),
   CONSTRAINT `fk_stateprovince` FOREIGN KEY (`stateId`) REFERENCES `lkupstateprovince` (`stateId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `lkupstateprovince`
---
-
-DROP TABLE IF EXISTS `lkupstateprovince`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lkupstateprovince` (
   `stateId` int(11) NOT NULL AUTO_INCREMENT,
   `countryId` int(11) NOT NULL,
@@ -892,15 +579,7 @@ CREATE TABLE `lkupstateprovince` (
   KEY `Index_lkupstate_abbr` (`abbrev`),
   CONSTRAINT `fk_country` FOREIGN KEY (`countryId`) REFERENCES `lkupcountry` (`countryId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `media`
---
-
-DROP TABLE IF EXISTS `media`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `media` (
   `mediaid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(10) unsigned DEFAULT NULL,
@@ -925,15 +604,7 @@ CREATE TABLE `media` (
   CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_media_uid` FOREIGN KEY (`authoruid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollcategories`
---
-
-DROP TABLE IF EXISTS `omcollcategories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollcategories` (
   `ccpk` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category` varchar(75) NOT NULL,
@@ -945,15 +616,7 @@ CREATE TABLE `omcollcategories` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ccpk`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollcatlink`
---
-
-DROP TABLE IF EXISTS `omcollcatlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollcatlink` (
   `ccpk` int(10) unsigned NOT NULL,
   `collid` int(10) unsigned NOT NULL,
@@ -964,15 +627,7 @@ CREATE TABLE `omcollcatlink` (
   CONSTRAINT `FK_collcatlink_cat` FOREIGN KEY (`ccpk`) REFERENCES `omcollcategories` (`ccpk`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_collcatlink_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollections`
---
-
-DROP TABLE IF EXISTS `omcollections`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollections` (
   `CollID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `InstitutionCode` varchar(45) NOT NULL,
@@ -1006,15 +661,7 @@ CREATE TABLE `omcollections` (
   PRIMARY KEY (`CollID`) USING BTREE,
   UNIQUE KEY `Index_inst` (`InstitutionCode`,`CollectionCode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollectionstats`
---
-
-DROP TABLE IF EXISTS `omcollectionstats`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollectionstats` (
   `collid` int(10) unsigned NOT NULL,
   `recordcnt` int(10) unsigned NOT NULL DEFAULT '0',
@@ -1030,15 +677,7 @@ CREATE TABLE `omcollectionstats` (
   PRIMARY KEY (`collid`),
   CONSTRAINT `FK_collectionstats_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollectors`
---
-
-DROP TABLE IF EXISTS `omcollectors`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollectors` (
   `recordedById` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `familyname` varchar(45) NOT NULL,
@@ -1055,15 +694,7 @@ CREATE TABLE `omcollectors` (
   KEY `fullname` (`familyname`,`firstname`),
   KEY `FK_preferred_recby_idx` (`preferredrecbyid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollpublications`
---
-
-DROP TABLE IF EXISTS `omcollpublications`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollpublications` (
   `pubid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -1080,15 +711,7 @@ CREATE TABLE `omcollpublications` (
   KEY `FK_adminpub_collid_idx` (`collid`),
   CONSTRAINT `FK_adminpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcollsecondary`
---
-
-DROP TABLE IF EXISTS `omcollsecondary`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcollsecondary` (
   `ocsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -1111,15 +734,7 @@ CREATE TABLE `omcollsecondary` (
   KEY `FK_omcollsecondary_coll` (`collid`),
   CONSTRAINT `FK_omcollsecondary_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcrowdsourcecentral`
---
-
-DROP TABLE IF EXISTS `omcrowdsourcecentral`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcrowdsourcecentral` (
   `omcsid` int(11) NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -1133,15 +748,7 @@ CREATE TABLE `omcrowdsourcecentral` (
   KEY `FK_omcrowdsourcecentral_collid` (`collid`),
   CONSTRAINT `FK_omcrowdsourcecentral_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omcrowdsourcequeue`
---
-
-DROP TABLE IF EXISTS `omcrowdsourcequeue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omcrowdsourcequeue` (
   `idomcrowdsourcequeue` int(11) NOT NULL AUTO_INCREMENT,
   `omcsid` int(11) NOT NULL,
@@ -1159,15 +766,7 @@ CREATE TABLE `omcrowdsourcequeue` (
   CONSTRAINT `FK_omcrowdsourcequeue_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_omcrowdsourcequeue_uid` FOREIGN KEY (`uidprocessor`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omexsiccatinumbers`
---
-
-DROP TABLE IF EXISTS `omexsiccatinumbers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omexsiccatinumbers` (
   `omenid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `exsnumber` varchar(45) NOT NULL,
@@ -1179,15 +778,7 @@ CREATE TABLE `omexsiccatinumbers` (
   KEY `FK_exsiccatiTitleNumber` (`ometid`),
   CONSTRAINT `FK_exsiccatiTitleNumber` FOREIGN KEY (`ometid`) REFERENCES `omexsiccatititles` (`ometid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omexsiccatiocclink`
---
-
-DROP TABLE IF EXISTS `omexsiccatiocclink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omexsiccatiocclink` (
   `omenid` int(10) unsigned NOT NULL,
   `occid` int(10) unsigned NOT NULL,
@@ -1201,15 +792,7 @@ CREATE TABLE `omexsiccatiocclink` (
   CONSTRAINT `FKExsiccatiNumOccLink1` FOREIGN KEY (`omenid`) REFERENCES `omexsiccatinumbers` (`omenid`) ON DELETE CASCADE,
   CONSTRAINT `FKExsiccatiNumOccLink2` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omexsiccatititles`
---
-
-DROP TABLE IF EXISTS `omexsiccatititles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omexsiccatititles` (
   `ometid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(150) NOT NULL,
@@ -1225,15 +808,7 @@ CREATE TABLE `omexsiccatititles` (
   PRIMARY KEY (`ometid`),
   KEY `index_exsiccatiTitle` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurassococcurrences`
---
-
-DROP TABLE IF EXISTS `omoccurassococcurrences`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurassococcurrences` (
   `aoid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1256,15 +831,7 @@ CREATE TABLE `omoccurassococcurrences` (
   CONSTRAINT `omossococcur_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `omossococcur_occidassoc` FOREIGN KEY (`occidassociate`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurassoctaxa`
---
-
-DROP TABLE IF EXISTS `omoccurassoctaxa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurassoctaxa` (
   `assoctaxaid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1281,15 +848,7 @@ CREATE TABLE `omoccurassoctaxa` (
   CONSTRAINT `FK_assoctaxa_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_aooctaxa_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurcomments`
---
-
-DROP TABLE IF EXISTS `omoccurcomments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurcomments` (
   `comid` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1304,15 +863,7 @@ CREATE TABLE `omoccurcomments` (
   CONSTRAINT `fk_omoccurcomments_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_omoccurcomments_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurdatasetlink`
---
-
-DROP TABLE IF EXISTS `omoccurdatasetlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurdatasetlink` (
   `occid` int(10) unsigned NOT NULL,
   `datasetid` int(10) unsigned NOT NULL,
@@ -1324,15 +875,7 @@ CREATE TABLE `omoccurdatasetlink` (
   CONSTRAINT `FK_omoccurdatasetlink_datasetid` FOREIGN KEY (`datasetid`) REFERENCES `omoccurdatasets` (`datasetid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurdatasetlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurdatasets`
---
-
-DROP TABLE IF EXISTS `omoccurdatasets`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurdatasets` (
   `datasetid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -1347,15 +890,7 @@ CREATE TABLE `omoccurdatasets` (
   CONSTRAINT `FK_omoccurdatasets_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_omcollections_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurdeterminations`
---
-
-DROP TABLE IF EXISTS `omoccurdeterminations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurdeterminations` (
   `detid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1385,15 +920,7 @@ CREATE TABLE `omoccurdeterminations` (
   CONSTRAINT `FK_omoccurdets_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurdets_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurduplicatelink`
---
-
-DROP TABLE IF EXISTS `omoccurduplicatelink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurduplicatelink` (
   `occid` int(10) unsigned NOT NULL,
   `duplicateid` int(11) NOT NULL,
@@ -1407,15 +934,7 @@ CREATE TABLE `omoccurduplicatelink` (
   CONSTRAINT `FK_omoccurdupelink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurdupelink_dupeid` FOREIGN KEY (`duplicateid`) REFERENCES `omoccurduplicates` (`duplicateid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurduplicates`
---
-
-DROP TABLE IF EXISTS `omoccurduplicates`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurduplicates` (
   `duplicateid` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(50) NOT NULL,
@@ -1425,15 +944,7 @@ CREATE TABLE `omoccurduplicates` (
   `initialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`duplicateid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccureditlocks`
---
-
-DROP TABLE IF EXISTS `omoccureditlocks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccureditlocks` (
   `occid` int(10) unsigned NOT NULL,
   `uid` int(11) NOT NULL,
@@ -1441,15 +952,7 @@ CREATE TABLE `omoccureditlocks` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`occid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccuredits`
---
-
-DROP TABLE IF EXISTS `omoccuredits`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccuredits` (
   `ocedid` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1466,15 +969,7 @@ CREATE TABLE `omoccuredits` (
   CONSTRAINT `fk_omoccuredits_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_omoccuredits_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurexchange`
---
-
-DROP TABLE IF EXISTS `omoccurexchange`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurexchange` (
   `exchangeid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `identifier` varchar(30) DEFAULT NULL,
@@ -1501,15 +996,7 @@ CREATE TABLE `omoccurexchange` (
   KEY `FK_occexch_coll` (`collid`),
   CONSTRAINT `FK_occexch_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurgenetic`
---
-
-DROP TABLE IF EXISTS `omoccurgenetic`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurgenetic` (
   `idoccurgenetic` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1525,15 +1012,7 @@ CREATE TABLE `omoccurgenetic` (
   KEY `INDEX_omoccurgenetic_name` (`resourcename`),
   CONSTRAINT `FK_omoccurgenetic` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurgeoindex`
---
-
-DROP TABLE IF EXISTS `omoccurgeoindex`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurgeoindex` (
   `tid` int(10) unsigned NOT NULL,
   `decimallatitude` double NOT NULL,
@@ -1542,15 +1021,7 @@ CREATE TABLE `omoccurgeoindex` (
   PRIMARY KEY (`tid`,`decimallatitude`,`decimallongitude`),
   CONSTRAINT `FK_specgeoindex_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccuridentifiers`
---
-
-DROP TABLE IF EXISTS `omoccuridentifiers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccuridentifiers` (
   `idomoccuridentifiers` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1565,15 +1036,7 @@ CREATE TABLE `omoccuridentifiers` (
   KEY `Index_value` (`identifiervalue`),
   CONSTRAINT `FK_omoccuridentifiers_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurloans`
---
-
-DROP TABLE IF EXISTS `omoccurloans`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurloans` (
   `loanid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `loanIdentifierOwn` varchar(30) DEFAULT NULL,
@@ -1617,15 +1080,7 @@ CREATE TABLE `omoccurloans` (
   CONSTRAINT `FK_occurloans_owncoll` FOREIGN KEY (`collidOwn`) REFERENCES `omcollections` (`CollID`) ON UPDATE CASCADE,
   CONSTRAINT `FK_occurloans_owninst` FOREIGN KEY (`iidOwner`) REFERENCES `institutions` (`iid`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurloanslink`
---
-
-DROP TABLE IF EXISTS `omoccurloanslink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurloanslink` (
   `loanid` int(10) unsigned NOT NULL,
   `occid` int(10) unsigned NOT NULL,
@@ -1638,15 +1093,7 @@ CREATE TABLE `omoccurloanslink` (
   CONSTRAINT `FK_occurloanlink_loanid` FOREIGN KEY (`loanid`) REFERENCES `omoccurloans` (`loanid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_occurloanlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurpoints`
---
-
-DROP TABLE IF EXISTS `omoccurpoints`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurpoints` (
   `geoID` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(11) NOT NULL,
@@ -1658,15 +1105,7 @@ CREATE TABLE `omoccurpoints` (
   UNIQUE KEY `occid` (`occid`),
   SPATIAL KEY `point` (`point`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurrences`
---
-
-DROP TABLE IF EXISTS `omoccurrences`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurrences` (
   `occid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -1800,17 +1239,9 @@ CREATE TABLE `omoccurrences` (
   CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `omoccurrencesfulltext_insert` AFTER INSERT ON `omoccurrences`
+CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrencesfulltext_insert` AFTER INSERT ON `omoccurrences`
 FOR EACH ROW BEGIN
   INSERT INTO omoccurrencesfulltext (
     `occid`,
@@ -1821,59 +1252,26 @@ FOR EACH ROW BEGIN
     NEW.`recordedby`,
     NEW.`locality`
   );
-END */;;
+END ;;
 DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `omoccurrencesfulltext_update` AFTER UPDATE ON `omoccurrences`
+CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrencesfulltext_update` AFTER UPDATE ON `omoccurrences`
 FOR EACH ROW BEGIN
   UPDATE omoccurrencesfulltext SET
     `recordedby` = NEW.`recordedby`,
     `locality` = NEW.`locality`
   WHERE `occid` = NEW.`occid`;
-END */;;
+END ;;
 DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `omoccurrencesfulltext_delete` BEFORE DELETE ON `omoccurrences`
+CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrencesfulltext_delete` BEFORE DELETE ON `omoccurrences`
 FOR EACH ROW BEGIN
   DELETE FROM omoccurrencesfulltext WHERE `occid` = OLD.`occid`;
-END */;;
+END ;;
 DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
---
--- Table structure for table `omoccurrencesfulltext`
---
-
-DROP TABLE IF EXISTS `omoccurrencesfulltext`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurrencesfulltext` (
   `occid` int(11) NOT NULL,
   `locality` text,
@@ -1882,15 +1280,7 @@ CREATE TABLE `omoccurrencesfulltext` (
   FULLTEXT KEY `ft_occur_locality` (`locality`),
   FULLTEXT KEY `ft_occur_recordedby` (`recordedby`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omoccurverification`
---
-
-DROP TABLE IF EXISTS `omoccurverification`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omoccurverification` (
   `ovsid` int(11) NOT NULL AUTO_INCREMENT,
   `occid` int(10) unsigned NOT NULL,
@@ -1908,15 +1298,7 @@ CREATE TABLE `omoccurverification` (
   CONSTRAINT `FK_omoccurverification_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_omoccurverification_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omsurveyoccurlink`
---
-
-DROP TABLE IF EXISTS `omsurveyoccurlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omsurveyoccurlink` (
   `occid` int(10) unsigned NOT NULL,
   `surveyid` int(10) unsigned NOT NULL,
@@ -1927,15 +1309,7 @@ CREATE TABLE `omsurveyoccurlink` (
   CONSTRAINT `FK_omsurveyoccurlink_occ` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`),
   CONSTRAINT `FK_omsurveyoccurlink_sur` FOREIGN KEY (`surveyid`) REFERENCES `omsurveys` (`surveyid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omsurveyprojlink`
---
-
-DROP TABLE IF EXISTS `omsurveyprojlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omsurveyprojlink` (
   `surveyid` int(10) unsigned NOT NULL,
   `pid` int(10) unsigned NOT NULL,
@@ -1945,15 +1319,7 @@ CREATE TABLE `omsurveyprojlink` (
   CONSTRAINT `FK_omsurveyprojlink_proj` FOREIGN KEY (`pid`) REFERENCES `fmprojects` (`pid`),
   CONSTRAINT `FK_omsurveyprojlink_sur` FOREIGN KEY (`surveyid`) REFERENCES `omsurveys` (`surveyid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `omsurveys`
---
-
-DROP TABLE IF EXISTS `omsurveys`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omsurveys` (
   `surveyid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `projectname` varchar(75) NOT NULL,
@@ -1967,15 +1333,7 @@ CREATE TABLE `omsurveys` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`surveyid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referenceauthorlink`
---
-
-DROP TABLE IF EXISTS `referenceauthorlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referenceauthorlink` (
   `refid` int(11) NOT NULL,
   `refauthid` int(11) NOT NULL,
@@ -1986,15 +1344,7 @@ CREATE TABLE `referenceauthorlink` (
   CONSTRAINT `FK_refauthlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refauthlink_refauthid` FOREIGN KEY (`refauthid`) REFERENCES `referenceauthors` (`refauthorid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referenceauthors`
---
-
-DROP TABLE IF EXISTS `referenceauthors`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referenceauthors` (
   `refauthorid` int(11) NOT NULL AUTO_INCREMENT,
   `lastname` varchar(100) NOT NULL,
@@ -2006,15 +1356,7 @@ CREATE TABLE `referenceauthors` (
   PRIMARY KEY (`refauthorid`),
   KEY `INDEX_refauthlastname` (`lastname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referencechecklistlink`
---
-
-DROP TABLE IF EXISTS `referencechecklistlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referencechecklistlink` (
   `refid` int(11) NOT NULL,
   `clid` int(10) unsigned NOT NULL,
@@ -2025,15 +1367,7 @@ CREATE TABLE `referencechecklistlink` (
   CONSTRAINT `FK_refchecklistlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refchecklistlink_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referencechklsttaxalink`
---
-
-DROP TABLE IF EXISTS `referencechklsttaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referencechklsttaxalink` (
   `refid` int(11) NOT NULL,
   `clid` int(10) unsigned NOT NULL,
@@ -2044,15 +1378,7 @@ CREATE TABLE `referencechklsttaxalink` (
   CONSTRAINT `FK_refchktaxalink_ref` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refchktaxalink_clidtid` FOREIGN KEY (`clid`, `tid`) REFERENCES `fmchklsttaxalink` (`CLID`, `TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referencecollectionlink`
---
-
-DROP TABLE IF EXISTS `referencecollectionlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referencecollectionlink` (
   `refid` int(11) NOT NULL,
   `collid` int(10) unsigned NOT NULL,
@@ -2062,15 +1388,7 @@ CREATE TABLE `referencecollectionlink` (
   CONSTRAINT `FK_refcollectionlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_refcollectionlink_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referenceobject`
---
-
-DROP TABLE IF EXISTS `referenceobject`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referenceobject` (
   `refid` int(11) NOT NULL AUTO_INCREMENT,
   `parentRefId` int(11) DEFAULT NULL,
@@ -2108,15 +1426,7 @@ CREATE TABLE `referenceobject` (
   CONSTRAINT `FK_refobj_parentrefid` FOREIGN KEY (`parentRefId`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refobj_reftypeid` FOREIGN KEY (`ReferenceTypeId`) REFERENCES `referencetype` (`ReferenceTypeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referenceoccurlink`
---
-
-DROP TABLE IF EXISTS `referenceoccurlink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referenceoccurlink` (
   `refid` int(11) NOT NULL,
   `occid` int(10) unsigned NOT NULL,
@@ -2127,15 +1437,7 @@ CREATE TABLE `referenceoccurlink` (
   CONSTRAINT `FK_refoccurlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_refoccurlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referencetaxalink`
---
-
-DROP TABLE IF EXISTS `referencetaxalink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referencetaxalink` (
   `refid` int(11) NOT NULL,
   `tid` int(10) unsigned NOT NULL,
@@ -2146,15 +1448,7 @@ CREATE TABLE `referencetaxalink` (
   CONSTRAINT `FK_reftaxalink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_reftaxalink_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `referencetype`
---
-
-DROP TABLE IF EXISTS `referencetype`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `referencetype` (
   `ReferenceTypeId` int(11) NOT NULL AUTO_INCREMENT,
   `ReferenceType` varchar(45) NOT NULL,
@@ -2181,30 +1475,14 @@ CREATE TABLE `referencetype` (
   PRIMARY KEY (`ReferenceTypeId`),
   UNIQUE KEY `ReferenceType_UNIQUE` (`ReferenceType`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `schemaversion`
---
-
-DROP TABLE IF EXISTS `schemaversion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schemaversion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `versionnumber` varchar(20) NOT NULL,
   `dateapplied` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `specprocessorprojects`
---
-
-DROP TABLE IF EXISTS `specprocessorprojects`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `specprocessorprojects` (
   `spprid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collid` int(10) unsigned NOT NULL,
@@ -2230,15 +1508,7 @@ CREATE TABLE `specprocessorprojects` (
   KEY `FK_specprocessorprojects_coll` (`collid`),
   CONSTRAINT `FK_specprocessorprojects_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `specprocessorrawlabels`
---
-
-DROP TABLE IF EXISTS `specprocessorrawlabels`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `specprocessorrawlabels` (
   `prlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `imgid` int(10) unsigned DEFAULT NULL,
@@ -2256,23 +1526,7 @@ CREATE TABLE `specprocessorrawlabels` (
   CONSTRAINT `FK_specproc_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_specproc_images` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 
---
--- Table structure for table `specprococrfrag`
---
-
-DROP TABLE IF EXISTS `specprococrfrag`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `specprococrfrag` (
   `ocrfragid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `prlid` int(10) unsigned NOT NULL,
@@ -2286,15 +1540,7 @@ CREATE TABLE `specprococrfrag` (
   KEY `Index_keyterm` (`keyterm`),
   CONSTRAINT `FK_specprococrfrag_prlid` FOREIGN KEY (`prlid`) REFERENCES `specprocessorrawlabels` (`prlid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxa`
---
-
-DROP TABLE IF EXISTS `taxa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxa` (
   `TID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `kingdomName` varchar(45) DEFAULT NULL,
@@ -2324,15 +1570,7 @@ CREATE TABLE `taxa` (
   KEY `FK_taxa_uid_idx` (`modifiedUid`),
   CONSTRAINT `FK_taxa_uid` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxadescrblock`
---
-
-DROP TABLE IF EXISTS `taxadescrblock`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxadescrblock` (
   `tdbid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(10) unsigned NOT NULL,
@@ -2348,15 +1586,7 @@ CREATE TABLE `taxadescrblock` (
   UNIQUE KEY `Index_unique` (`tid`,`displaylevel`,`language`),
   CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxadescrstmts`
---
-
-DROP TABLE IF EXISTS `taxadescrstmts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxadescrstmts` (
   `tdsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tdbid` int(10) unsigned NOT NULL,
@@ -2370,15 +1600,7 @@ CREATE TABLE `taxadescrstmts` (
   KEY `FK_taxadescrstmts_tblock` (`tdbid`),
   CONSTRAINT `FK_taxadescrstmts_tblock` FOREIGN KEY (`tdbid`) REFERENCES `taxadescrblock` (`tdbid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxaenumtree`
---
-
-DROP TABLE IF EXISTS `taxaenumtree`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxaenumtree` (
   `tid` int(10) unsigned NOT NULL,
   `taxauthid` int(10) unsigned NOT NULL,
@@ -2392,15 +1614,7 @@ CREATE TABLE `taxaenumtree` (
   CONSTRAINT `FK_tet_taxauth` FOREIGN KEY (`taxauthid`) REFERENCES `taxauthority` (`taxauthid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_tet_taxa2` FOREIGN KEY (`parenttid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxalinks`
---
-
-DROP TABLE IF EXISTS `taxalinks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxalinks` (
   `tlid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(10) unsigned NOT NULL,
@@ -2416,15 +1630,7 @@ CREATE TABLE `taxalinks` (
   KEY `Index_unique` (`tid`,`url`(255)),
   CONSTRAINT `FK_taxalinks_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxamaps`
---
-
-DROP TABLE IF EXISTS `taxamaps`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxamaps` (
   `mid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tid` int(10) unsigned NOT NULL,
@@ -2435,38 +1641,7 @@ CREATE TABLE `taxamaps` (
   KEY `FK_tid_idx` (`tid`),
   CONSTRAINT `FK_taxamaps_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxanestedtree`
---
-
-DROP TABLE IF EXISTS `taxanestedtree`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `taxanestedtree` (
-  `tid` int(10) unsigned NOT NULL,
-  `taxauthid` int(10) unsigned NOT NULL,
-  `leftindex` int(10) unsigned NOT NULL,
-  `rightindex` int(10) unsigned NOT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tid`,`taxauthid`),
-  KEY `leftindex` (`leftindex`),
-  KEY `rightindex` (`rightindex`),
-  KEY `FK_tnt_taxa` (`tid`),
-  KEY `FK_tnt_taxauth` (`taxauthid`),
-  CONSTRAINT `FK_tnt_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_tnt_taxauth` FOREIGN KEY (`taxauthid`) REFERENCES `taxauthority` (`taxauthid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `taxaprofilepubdesclink`
---
-
-DROP TABLE IF EXISTS `taxaprofilepubdesclink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxaprofilepubdesclink` (
   `tdbid` int(10) unsigned NOT NULL,
   `tppid` int(11) NOT NULL,
@@ -2479,15 +1654,7 @@ CREATE TABLE `taxaprofilepubdesclink` (
   CONSTRAINT `FK_tppubdesclink_tdbid` FOREIGN KEY (`tdbid`) REFERENCES `taxadescrblock` (`tdbid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_tppubdesclink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxaprofilepubimagelink`
---
-
-DROP TABLE IF EXISTS `taxaprofilepubimagelink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxaprofilepubimagelink` (
   `imgid` int(10) unsigned NOT NULL,
   `tppid` int(11) NOT NULL,
@@ -2500,15 +1667,7 @@ CREATE TABLE `taxaprofilepubimagelink` (
   CONSTRAINT `FK_tppubimagelink_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_tppubimagelink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxaprofilepubmaplink`
---
-
-DROP TABLE IF EXISTS `taxaprofilepubmaplink`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxaprofilepubmaplink` (
   `mid` int(10) unsigned NOT NULL,
   `tppid` int(11) NOT NULL,
@@ -2521,15 +1680,7 @@ CREATE TABLE `taxaprofilepubmaplink` (
   CONSTRAINT `FK_tppubmaplink_tdbid` FOREIGN KEY (`mid`) REFERENCES `taxamaps` (`mid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_tppubmaplink_id` FOREIGN KEY (`tppid`) REFERENCES `taxaprofilepubs` (`tppid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxaprofilepubs`
---
-
-DROP TABLE IF EXISTS `taxaprofilepubs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxaprofilepubs` (
   `tppid` int(11) NOT NULL AUTO_INCREMENT,
   `pubtitle` varchar(150) NOT NULL,
@@ -2550,15 +1701,7 @@ CREATE TABLE `taxaprofilepubs` (
   KEY `INDEX_taxaprofilepubs_title` (`pubtitle`),
   CONSTRAINT `FK_taxaprofilepubs_uid` FOREIGN KEY (`uidowner`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxauthority`
---
-
-DROP TABLE IF EXISTS `taxauthority`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxauthority` (
   `taxauthid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `isprimary` int(1) unsigned NOT NULL DEFAULT '0',
@@ -2573,15 +1716,7 @@ CREATE TABLE `taxauthority` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`taxauthid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxavernaculars`
---
-
-DROP TABLE IF EXISTS `taxavernaculars`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxavernaculars` (
   `TID` int(10) unsigned NOT NULL DEFAULT '0',
   `VernacularName` varchar(80) NOT NULL,
@@ -2599,15 +1734,7 @@ CREATE TABLE `taxavernaculars` (
   KEY `vernacularsnames` (`VernacularName`),
   CONSTRAINT `FK_vernaculars_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxonunits`
---
-
-DROP TABLE IF EXISTS `taxonunits`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxonunits` (
   `taxonunitid` int(11) NOT NULL AUTO_INCREMENT,
   `rankid` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -2620,15 +1747,7 @@ CREATE TABLE `taxonunits` (
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`taxonunitid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `taxstatus`
---
-
-DROP TABLE IF EXISTS `taxstatus`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `taxstatus` (
   `tid` int(10) unsigned NOT NULL,
   `tidaccepted` int(10) unsigned NOT NULL,
@@ -2651,15 +1770,7 @@ CREATE TABLE `taxstatus` (
   CONSTRAINT `FK_taxstatus_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`),
   CONSTRAINT `FK_taxstatus_tidacc` FOREIGN KEY (`tidaccepted`) REFERENCES `taxa` (`TID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploaddetermtemp`
---
-
-DROP TABLE IF EXISTS `uploaddetermtemp`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploaddetermtemp` (
   `occid` int(10) unsigned DEFAULT NULL,
   `collid` int(10) unsigned DEFAULT NULL,
@@ -2681,15 +1792,7 @@ CREATE TABLE `uploaddetermtemp` (
   KEY `Index_uploaddet_collid` (`collid`),
   KEY `Index_uploaddet_dbpk` (`dbpk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploadimagetemp`
---
-
-DROP TABLE IF EXISTS `uploadimagetemp`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploadimagetemp` (
   `tid` int(10) unsigned DEFAULT NULL,
   `url` varchar(255) NOT NULL,
@@ -2715,15 +1818,7 @@ CREATE TABLE `uploadimagetemp` (
   KEY `Index_uploadimg_dbpk` (`dbpk`),
   KEY `Index_uploadimg_ts` (`initialtimestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploadspecmap`
---
-
-DROP TABLE IF EXISTS `uploadspecmap`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploadspecmap` (
   `usmid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `uspid` int(10) unsigned NOT NULL,
@@ -2735,15 +1830,7 @@ CREATE TABLE `uploadspecmap` (
   UNIQUE KEY `Index_unique` (`uspid`,`symbspecfield`,`sourcefield`),
   CONSTRAINT `FK_uploadspecmap_usp` FOREIGN KEY (`uspid`) REFERENCES `uploadspecparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploadspecparameters`
---
-
-DROP TABLE IF EXISTS `uploadspecparameters`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploadspecparameters` (
   `uspid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `CollID` int(10) unsigned NOT NULL,
@@ -2767,15 +1854,7 @@ CREATE TABLE `uploadspecparameters` (
   KEY `FK_uploadspecparameters_coll` (`CollID`),
   CONSTRAINT `FK_uploadspecparameters_coll` FOREIGN KEY (`CollID`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploadspectemp`
---
-
-DROP TABLE IF EXISTS `uploadspectemp`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploadspectemp` (
   `collid` int(10) unsigned NOT NULL,
   `dbpk` varchar(150) DEFAULT NULL,
@@ -2925,15 +2004,7 @@ CREATE TABLE `uploadspectemp` (
   KEY `Index_uploadspec_catalognumber` (`catalogNumber`),
   CONSTRAINT `FK_uploadspectemp_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `uploadtaxa`
---
-
-DROP TABLE IF EXISTS `uploadtaxa`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `uploadtaxa` (
   `TID` int(10) unsigned DEFAULT NULL,
   `SourceId` int(10) unsigned DEFAULT NULL,
@@ -2970,15 +2041,7 @@ CREATE TABLE `uploadtaxa` (
   KEY `sciname_index` (`SciName`),
   KEY `scinameinput_index` (`scinameinput`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `userlogin`
---
-
-DROP TABLE IF EXISTS `userlogin`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userlogin` (
   `uid` int(10) unsigned NOT NULL,
   `username` varchar(45) NOT NULL,
@@ -2991,15 +2054,7 @@ CREATE TABLE `userlogin` (
   KEY `FK_login_user` (`uid`),
   CONSTRAINT `FK_login_user` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `userroles`
---
-
-DROP TABLE IF EXISTS `userroles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userroles` (
   `userroleid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(10) unsigned NOT NULL,
@@ -3017,15 +2072,7 @@ CREATE TABLE `userroles` (
   CONSTRAINT `FK_userrole_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_userrole_uid_assigned` FOREIGN KEY (`uidassignedby`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `firstname` varchar(45) DEFAULT NULL,
@@ -3055,15 +2102,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`uid`),
   UNIQUE KEY `Index_email` (`email`,`lastname`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `usertaxonomy`
---
-
-DROP TABLE IF EXISTS `usertaxonomy`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `usertaxonomy` (
   `idusertaxonomy` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(10) unsigned NOT NULL,
@@ -3084,90 +2123,75 @@ CREATE TABLE `usertaxonomy` (
   CONSTRAINT `FK_usertaxonomy_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_usertaxonomy_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO schemaversion (versionnumber) VALUES ('1.0');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+INSERT INTO users(uid,firstname,lastname,state,country,email) VALUES (1,'General','Administrator','NA','NA','NA');
+INSERT INTO userlogin(uid,username,password) VALUES (1,'admin', SHA2('admin', 224));
+INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
 
--- Dump completed on 2015-02-19 22:35:51
-
-
--- Prime some tables with default data values
-INSERT INTO schemaversion (versionnumber) VALUES ("1.0");
-
--- Create the general admin user
-INSERT INTO users(uid,firstname,lastname,state,country,email) VALUES (1,"General","Administrator","NA","NA","NA");
-INSERT INTO userlogin(uid,username,password) VALUES (1,"admin", SHA2("admin", 224));
-INSERT INTO userroles(uid,role) VALUES (1,"SuperAdmin");
-
--- Prime taxonunits table
 INSERT IGNORE INTO `taxonunits`(rankid,rankname, dirparentrankid, reqparentrankid)
   VALUES
-    (1,"Organism",1,1),
-    (10,"Kingdom",1,1),
-    (20,"Subkingdom",10,10),
-    (25,"Infrakingdom",20,10),
-    (27,"Superphylum",25,10),
-    (30,"Phylum",27,10),
-    (40,"Subphylum",30,30),
-    (45,"Infraphylum",40,30),
-    (47,"Parvphylum",45,30),
-    (50,"Superclass",47,30),
-    (60,"Class",50,30),
-    (70,"Subclass",60,60),
-    (80,"Infraclass",70,60),
-    (90,"Superorder",70,60),
-    (100,"Order",90,60),
-    (110,"Suborder",100,100),
-    (120,"Infraorder",110,100),
-    (124,"Section",120,100),
-    (126,"Subsection",124,100),
-    (130,"Superfamily",120,110),
-    (140,"Family",110,100),
-    (150,"Subfamily",140,140),
-    (160,"Tribe",150,140),
-    (170,"Subtribe",160,140),
-    (180,"Genus",170,140),
-    (190,"Subgenus",180,180),
-    (200,"Section",190,180),
-    (210,"Subsection",200,180),
-    (220,"Species",210,180),
-    (230,"Subspecies",220,180),
-    (240,"Variety",220,180),
-    (245,"Form",220,220),
-    (250,"Subvariety",240,180),
-    (255,"Stirp",220,220),
-    (260,"Form",220,180),
-    (265,"Aberration",220,220),
-    (270,"Subform",260,180),
-    (290,"Cultivated",220,220),
-    (300,"Unspecified",220,220);
+    (1,'Organism',1,1),
+    (10,'Kingdom',1,1),
+    (20,'Subkingdom',10,10),
+    (25,'Infrakingdom',20,10),
+    (27,'Superphylum',25,10),
+    (30,'Phylum',27,10),
+    (40,'Subphylum',30,30),
+    (45,'Infraphylum',40,30),
+    (47,'Parvphylum',45,30),
+    (50,'Superclass',47,30),
+    (60,'Class',50,30),
+    (70,'Subclass',60,60),
+    (80,'Infraclass',70,60),
+    (90,'Superorder',70,60),
+    (100,'Order',90,60),
+    (110,'Suborder',100,100),
+    (120,'Infraorder',110,100),
+    (124,'Section',120,100),
+    (126,'Subsection',124,100),
+    (130,'Superfamily',120,110),
+    (140,'Family',110,100),
+    (150,'Subfamily',140,140),
+    (160,'Tribe',150,140),
+    (170,'Subtribe',160,140),
+    (180,'Genus',170,140),
+    (190,'Subgenus',180,180),
+    (200,'Section',190,180),
+    (210,'Subsection',200,180),
+    (220,'Species',210,180),
+    (230,'Subspecies',220,180),
+    (240,'Variety',220,180),
+    (245,'Form',220,220),
+    (250,'Subvariety',240,180),
+    (255,'Stirp',220,220),
+    (260,'Form',220,180),
+    (265,'Aberration',220,220),
+    (270,'Subform',260,180),
+    (290,'Cultivated',220,220),
+    (300,'Unspecified',220,220);
 
-INSERT INTO `taxauthority` (`taxauthid`, `isprimary`, `name`) VALUES ('1', '1', 'Central Thesaurus');
+INSERT INTO `taxauthority` (`taxauthid`, `isprimary`, `name`) VALUES (1, 1, 'Central Thesaurus');
 
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("1", "1", "Organism", "Organism");
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("2", "10", "Monera", "Monera");
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("3", "10", "Protista", "Protista");
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("4", "10", "Plantae", "Plantae");
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("5", "10", "Fungi", "Fungi");
-INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES ("6", "10", "Animalia", "Animalia");
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (1, 1, 'Organism', 'Organism');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (2, 10, 'Bacteria', 'Bacteria');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (3, 10, 'Protozoa', 'Protozoa');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (4, 10, 'Plantae', 'Plantae');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (5, 10, 'Fungi', 'Fungi');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (6, 10, 'Animalia', 'Animalia');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (7, 10, 'Chromista', 'Chromista');
+INSERT INTO `taxa` (`TID`, `RankId`, `SciName`, `UnitName1`) VALUES (8, 10, 'Archaea', 'Archaea');
 
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("1", "1", "1", "1");
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("2", "2", "1", "1");
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("3", "3", "1", "1");
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("4", "4", "1", "1");
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("5", "5", "1", "1");
-INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES ("6", "6", "1", "1");
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (1, 1, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (2, 2, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (3, 3, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (4, 4, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (5, 5, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (6, 6, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (7, 7, 1, 1);
+INSERT INTO `taxstatus` (`tid`, `tidaccepted`, `taxauthid`, `parenttid`) VALUES (8, 8, 1, 1);
 
-
--- Geographic thesaurus tables
 INSERT INTO `lkupcountry` VALUES (1,'Andorra','AD','AND',20,'2011-06-01 01:35:22'),(2,'United Arab Emirates','AE','ARE',784,'2011-06-01 01:35:22'),(3,'Afghanistan','AF','AFG',4,'2011-06-01 01:35:22'),(4,'Antigua and Barbuda','AG','ATG',28,'2011-06-01 01:35:22'),(5,'Anguilla','AI','AIA',660,'2011-06-01 01:35:22'),(6,'Albania','AL','ALB',8,'2011-06-01 01:35:22'),(7,'Armenia','AM','ARM',51,'2011-06-01 01:35:22'),(8,'Netherlands Antilles','AN','ANT',530,'2011-06-01 01:35:22'),(9,'Angola','AO','AGO',24,'2011-06-01 01:35:22'),(10,'Antarctica','AQ',NULL,NULL,'2011-06-01 01:35:22'),(11,'Argentina','AR','ARG',32,'2011-06-01 01:35:22'),(12,'American Samoa','AS','ASM',16,'2011-06-01 01:35:22'),(13,'Austria','AT','AUT',40,'2011-06-01 01:35:22'),(14,'Australia','AU','AUS',36,'2011-06-01 01:35:22'),(15,'Aruba','AW','ABW',533,'2011-06-01 01:35:22'),(16,'Azerbaijan','AZ','AZE',31,'2011-06-01 01:35:22'),(17,'Bosnia and Herzegovina','BA','BIH',70,'2011-06-01 01:35:22'),(18,'Barbados','BB','BRB',52,'2011-06-01 01:35:22'),(19,'Bangladesh','BD','BGD',50,'2011-06-01 01:35:22'),(20,'Belgium','BE','BEL',56,'2011-06-01 01:35:22'),(21,'Burkina Faso','BF','BFA',854,'2011-06-01 01:35:22'),(22,'Bulgaria','BG','BGR',100,'2011-06-01 01:35:22'),(23,'Bahrain','BH','BHR',48,'2011-06-01 01:35:22'),(24,'Burundi','BI','BDI',108,'2011-06-01 01:35:22'),(25,'Benin','BJ','BEN',204,'2011-06-01 01:35:22'),(26,'Bermuda','BM','BMU',60,'2011-06-01 01:35:22'),(27,'Brunei Darussalam','BN','BRN',96,'2011-06-01 01:35:22'),(28,'Bolivia','BO','BOL',68,'2011-06-01 01:35:22'),(29,'Brazil','BR','BRA',76,'2011-06-01 01:35:22'),(30,'Bahamas','BS','BHS',44,'2011-06-01 01:35:22'),(31,'Bhutan','BT','BTN',64,'2011-06-01 01:35:22'),(32,'Bouvet Island','BV',NULL,NULL,'2011-06-01 01:35:22'),(33,'Botswana','BW','BWA',72,'2011-06-01 01:35:22'),(34,'Belarus','BY','BLR',112,'2011-06-01 01:35:22'),(35,'Belize','BZ','BLZ',84,'2011-06-01 01:35:22'),(36,'Canada','CA','CAN',124,'2011-06-01 01:35:22'),(37,'Cocos (Keeling) Islands','CC',NULL,NULL,'2011-06-01 01:35:22'),(38,'Congo, the Democratic Republic of the','CD','COD',180,'2011-06-01 01:35:22'),(39,'Central African Republic','CF','CAF',140,'2011-06-01 01:35:22'),(40,'Congo','CG','COG',178,'2011-06-01 01:35:22'),(41,'Switzerland','CH','CHE',756,'2011-06-01 01:35:22'),(42,'Cote D\'Ivoire','CI','CIV',384,'2011-06-01 01:35:22'),(43,'Cook Islands','CK','COK',184,'2011-06-01 01:35:22'),(44,'Chile','CL','CHL',152,'2011-06-01 01:35:22'),(45,'Cameroon','CM','CMR',120,'2011-06-01 01:35:22'),(46,'China','CN','CHN',156,'2011-06-01 01:35:22'),(47,'Colombia','CO','COL',170,'2011-06-01 01:35:22'),(48,'Costa Rica','CR','CRI',188,'2011-06-01 01:35:22'),(49,'Serbia and Montenegro','CS',NULL,NULL,'2011-06-01 01:35:22'),(50,'Cuba','CU','CUB',192,'2011-06-01 01:35:22'),(51,'Cape Verde','CV','CPV',132,'2011-06-01 01:35:22'),(52,'Christmas Island','CX',NULL,NULL,'2011-06-01 01:35:22'),(53,'Cyprus','CY','CYP',196,'2011-06-01 01:35:22'),(54,'Czech Republic','CZ','CZE',203,'2011-06-01 01:35:22'),(55,'Germany','DE','DEU',276,'2011-06-01 01:35:22'),(56,'Djibouti','DJ','DJI',262,'2011-06-01 01:35:22'),(57,'Denmark','DK','DNK',208,'2011-06-01 01:35:22'),(58,'Dominica','DM','DMA',212,'2011-06-01 01:35:22'),(59,'Dominican Republic','DO','DOM',214,'2011-06-01 01:35:22'),(60,'Algeria','DZ','DZA',12,'2011-06-01 01:35:22'),(61,'Ecuador','EC','ECU',218,'2011-06-01 01:35:22'),(62,'Estonia','EE','EST',233,'2011-06-01 01:35:22'),(63,'Egypt','EG','EGY',818,'2011-06-01 01:35:22'),(64,'Western Sahara','EH','ESH',732,'2011-06-01 01:35:22'),(65,'Eritrea','ER','ERI',232,'2011-06-01 01:35:22'),(66,'Spain','ES','ESP',724,'2011-06-01 01:35:22'),(67,'Ethiopia','ET','ETH',231,'2011-06-01 01:35:22'),(68,'Finland','FI','FIN',246,'2011-06-01 01:35:22'),(69,'Fiji','FJ','FJI',242,'2011-06-01 01:35:22'),(70,'Falkland  Islands (Malvinas)','FK','FLK',238,'2011-06-01 01:35:22'),(71,'Micronesia, Federated States of','FM','FSM',583,'2011-06-01 01:35:22'),(72,'Faroe Islands','FO','FRO',234,'2011-06-01 01:35:22');
 INSERT INTO `lkupcountry` VALUES (73,'France','FR','FRA',250,'2011-06-01 01:35:22'),(74,'Gabon','GA','GAB',266,'2011-06-01 01:35:22'),(75,'United Kingdom','GB','GBR',826,'2011-06-01 01:35:22'),(76,'Grenada','GD','GRD',308,'2011-06-01 01:35:22'),(77,'Georgia','GE','GEO',268,'2011-06-01 01:35:22'),(78,'French Guiana','GF','GUF',254,'2011-06-01 01:35:22'),(79,'Ghana','GH','GHA',288,'2011-06-01 01:35:22'),(80,'Gibraltar','GI','GIB',292,'2011-06-01 01:35:22'),(81,'Greenland','GL','GRL',304,'2011-06-01 01:35:22'),(82,'Gambia','GM','GMB',270,'2011-06-01 01:35:22'),(83,'Guinea','GN','GIN',324,'2011-06-01 01:35:22'),(84,'Guadeloupe','GP','GLP',312,'2011-06-01 01:35:22'),(85,'Equatorial Guinea','GQ','GNQ',226,'2011-06-01 01:35:22'),(86,'Greece','GR','GRC',300,'2011-06-01 01:35:22'),(87,'South Georgia and the South Sandwich Islands','GS',NULL,NULL,'2011-06-01 01:35:22'),(88,'Guatemala','GT','GTM',320,'2011-06-01 01:35:22'),(89,'Guam','GU','GUM',316,'2011-06-01 01:35:22'),(90,'Guinea-Bissau','GW','GNB',624,'2011-06-01 01:35:22'),(91,'Guyana','GY','GUY',328,'2011-06-01 01:35:22'),(92,'Hong Kong','HK','HKG',344,'2011-06-01 01:35:22'),(93,'Heard Island and Mcdonald Islands','HM',NULL,NULL,'2011-06-01 01:35:22'),(94,'Honduras','HN','HND',340,'2011-06-01 01:35:22'),(95,'Croatia','HR','HRV',191,'2011-06-01 01:35:22'),(96,'Haiti','HT','HTI',332,'2011-06-01 01:35:22'),(97,'Hungary','HU','HUN',348,'2011-06-01 01:35:22'),(98,'Indonesia','ID','IDN',360,'2011-06-01 01:35:22'),(99,'Ireland','IE','IRL',372,'2011-06-01 01:35:22'),(100,'Israel','IL','ISR',376,'2011-06-01 01:35:22'),(101,'India','IN','IND',356,'2011-06-01 01:35:22'),(102,'British Indian Ocean Territory','IO',NULL,NULL,'2011-06-01 01:35:22'),(103,'Iraq','IQ','IRQ',368,'2011-06-01 01:35:22'),(104,'Iran, Islamic Republic of','IR','IRN',364,'2011-06-01 01:35:22'),(105,'Iceland','IS','ISL',352,'2011-06-01 01:35:22'),(106,'Italy','IT','ITA',380,'2011-06-01 01:35:22'),(107,'Jamaica','JM','JAM',388,'2011-06-01 01:35:22'),(108,'Jordan','JO','JOR',400,'2011-06-01 01:35:22'),(109,'Japan','JP','JPN',392,'2011-06-01 01:35:22'),(110,'Kenya','KE','KEN',404,'2011-06-01 01:35:22'),(111,'Kyrgyzstan','KG','KGZ',417,'2011-06-01 01:35:22'),(112,'Cambodia','KH','KHM',116,'2011-06-01 01:35:22'),(113,'Kiribati','KI','KIR',296,'2011-06-01 01:35:22'),(114,'Comoros','KM','COM',174,'2011-06-01 01:35:22'),(115,'Saint Kitts and Nevis','KN','KNA',659,'2011-06-01 01:35:22'),(116,'Korea, Democratic People\'s Republic of','KP','PRK',408,'2011-06-01 01:35:22'),(117,'Korea, Republic of','KR','KOR',410,'2011-06-01 01:35:22'),(118,'Kuwait','KW','KWT',414,'2011-06-01 01:35:22'),(119,'Cayman Islands','KY','CYM',136,'2011-06-01 01:35:22'),(120,'Kazakhstan','KZ','KAZ',398,'2011-06-01 01:35:22'),(121,'Lao People\'s Democratic Republic','LA','LAO',418,'2011-06-01 01:35:22'),(122,'Lebanon','LB','LBN',422,'2011-06-01 01:35:22'),(123,'Saint Lucia','LC','LCA',662,'2011-06-01 01:35:22'),(124,'Liechtenstein','LI','LIE',438,'2011-06-01 01:35:22'),(125,'Sri Lanka','LK','LKA',144,'2011-06-01 01:35:22'),(126,'Liberia','LR','LBR',430,'2011-06-01 01:35:22'),(127,'Lesotho','LS','LSO',426,'2011-06-01 01:35:22'),(128,'Lithuania','LT','LTU',440,'2011-06-01 01:35:22'),(129,'Luxembourg','LU','LUX',442,'2011-06-01 01:35:22'),(130,'Latvia','LV','LVA',428,'2011-06-01 01:35:22'),(131,'Libyan Arab Jamahiriya','LY','LBY',434,'2011-06-01 01:35:22'),(132,'Morocco','MA','MAR',504,'2011-06-01 01:35:22'),(133,'Monaco','MC','MCO',492,'2011-06-01 01:35:22'),(134,'Moldova, Republic of','MD','MDA',498,'2011-06-01 01:35:22'),(135,'Madagascar','MG','MDG',450,'2011-06-01 01:35:22'),(136,'Marshall Islands','MH','MHL',584,'2011-06-01 01:35:22'),(137,'Macedonia, the Former Yugoslav Republic of','MK','MKD',807,'2011-06-01 01:35:22'),(138,'Mali','ML','MLI',466,'2011-06-01 01:35:22'),(139,'Myanmar','MM','MMR',104,'2011-06-01 01:35:22'),(140,'Mongolia','MN','MNG',496,'2011-06-01 01:35:22'),(141,'Macao','MO','MAC',446,'2011-06-01 01:35:22');
 INSERT INTO `lkupcountry` VALUES (142,'Northern Mariana Islands','MP','MNP',580,'2011-06-01 01:35:22'),(143,'Martinique','MQ','MTQ',474,'2011-06-01 01:35:22'),(144,'Mauritania','MR','MRT',478,'2011-06-01 01:35:22'),(145,'Montserrat','MS','MSR',500,'2011-06-01 01:35:22'),(146,'Malta','MT','MLT',470,'2011-06-01 01:35:22'),(147,'Mauritius','MU','MUS',480,'2011-06-01 01:35:22'),(148,'Maldives','MV','MDV',462,'2011-06-01 01:35:22'),(149,'Malawi','MW','MWI',454,'2011-06-01 01:35:22'),(150,'Mexico','MX','MEX',484,'2011-06-01 01:35:22'),(151,'Malaysia','MY','MYS',458,'2011-06-01 01:35:22'),(152,'Mozambique','MZ','MOZ',508,'2011-06-01 01:35:22'),(153,'Namibia','NA','NAM',516,'2011-06-01 01:35:22'),(154,'New Caledonia','NC','NCL',540,'2011-06-01 01:35:22'),(155,'Niger','NE','NER',562,'2011-06-01 01:35:22'),(156,'Norfolk Island','NF','NFK',574,'2011-06-01 01:35:22'),(157,'Nigeria','NG','NGA',566,'2011-06-01 01:35:22'),(158,'Nicaragua','NI','NIC',558,'2011-06-01 01:35:22'),(159,'Netherlands','NL','NLD',528,'2011-06-01 01:35:22'),(160,'Norway','NO','NOR',578,'2011-06-01 01:35:22'),(161,'Nepal','NP','NPL',524,'2011-06-01 01:35:22'),(162,'Nauru','NR','NRU',520,'2011-06-01 01:35:22'),(163,'Niue','NU','NIU',570,'2011-06-01 01:35:22'),(164,'New Zealand','NZ','NZL',554,'2011-06-01 01:35:22'),(165,'Oman','OM','OMN',512,'2011-06-01 01:35:22'),(166,'Panama','PA','PAN',591,'2011-06-01 01:35:22'),(167,'Peru','PE','PER',604,'2011-06-01 01:35:22'),(168,'French Polynesia','PF','PYF',258,'2011-06-01 01:35:22'),(169,'Papua New Guinea','PG','PNG',598,'2011-06-01 01:35:22'),(170,'Philippines','PH','PHL',608,'2011-06-01 01:35:22'),(171,'Pakistan','PK','PAK',586,'2011-06-01 01:35:22'),(172,'Poland','PL','POL',616,'2011-06-01 01:35:22'),(173,'Saint Pierre and Miquelon','PM','SPM',666,'2011-06-01 01:35:22'),(174,'Pitcairn','PN','PCN',612,'2011-06-01 01:35:22'),(175,'Puerto Rico','PR','PRI',630,'2011-06-01 01:35:22'),(176,'Palestinian Territory, Occupied','PS',NULL,NULL,'2011-06-01 01:35:22'),(177,'Portugal','PT','PRT',620,'2011-06-01 01:35:22'),(178,'Palau','PW','PLW',585,'2011-06-01 01:35:22'),(179,'Paraguay','PY','PRY',600,'2011-06-01 01:35:22'),(180,'Qatar','QA','QAT',634,'2011-06-01 01:35:22'),(181,'Reunion','RE','REU',638,'2011-06-01 01:35:22'),(182,'Romania','RO','ROM',642,'2011-06-01 01:35:22'),(183,'Russian Federation','RU','RUS',643,'2011-06-01 01:35:22'),(184,'Rwanda','RW','RWA',646,'2011-06-01 01:35:22'),(185,'Saudi Arabia','SA','SAU',682,'2011-06-01 01:35:22'),(186,'Solomon Islands','SB','SLB',90,'2011-06-01 01:35:22'),(187,'Seychelles','SC','SYC',690,'2011-06-01 01:35:22'),(188,'Sudan','SD','SDN',736,'2011-06-01 01:35:22'),(189,'Sweden','SE','SWE',752,'2011-06-01 01:35:22'),(190,'Singapore','SG','SGP',702,'2011-06-01 01:35:22'),(191,'Saint Helena','SH','SHN',654,'2011-06-01 01:35:22'),(192,'Slovenia','SI','SVN',705,'2011-06-01 01:35:22'),(193,'Svalbard and Jan Mayen','SJ','SJM',744,'2011-06-01 01:35:22'),(194,'Slovakia','SK','SVK',703,'2011-06-01 01:35:22'),(195,'Sierra Leone','SL','SLE',694,'2011-06-01 01:35:22'),(196,'San Marino','SM','SMR',674,'2011-06-01 01:35:22'),(197,'Senegal','SN','SEN',686,'2011-06-01 01:35:22'),(198,'Somalia','SO','SOM',706,'2011-06-01 01:35:22'),(199,'Suriname','SR','SUR',740,'2011-06-01 01:35:22'),(200,'Sao Tome and Principe','ST','STP',678,'2011-06-01 01:35:22'),(201,'El Salvador','SV','SLV',222,'2011-06-01 01:35:22'),(202,'Syrian Arab Republic','SY','SYR',760,'2011-06-01 01:35:22'),(203,'Swaziland','SZ','SWZ',748,'2011-06-01 01:35:22'),(204,'Turks and Caicos Islands','TC','TCA',796,'2011-06-01 01:35:22'),(205,'Chad','TD','TCD',148,'2011-06-01 01:35:22'),(206,'French Southern Territories','TF',NULL,NULL,'2011-06-01 01:35:22'),(207,'Togo','TG','TGO',768,'2011-06-01 01:35:22'),(208,'Thailand','TH','THA',764,'2011-06-01 01:35:22'),(209,'Tajikistan','TJ','TJK',762,'2011-06-01 01:35:22'),(210,'Tokelau','TK','TKL',772,'2011-06-01 01:35:22'),(211,'Timor-Leste','TL',NULL,NULL,'2011-06-01 01:35:22');
@@ -3212,3 +2236,5 @@ INSERT INTO `lkupcounty` VALUES (2954,143,'Canyon','2011-06-01 02:06:40'),(2955,
 INSERT INTO `lkupcounty` VALUES (3047,160,'Lander','2011-06-01 02:06:40'),(3048,160,'Eureka','2011-06-01 02:06:40'),(3049,160,'Washoe','2011-06-01 02:06:40'),(3050,160,'Lyon','2011-06-01 02:06:40'),(3051,160,'Humboldt','2011-06-01 02:06:40'),(3052,160,'Churchill','2011-06-01 02:06:40'),(3053,160,'Douglas','2011-06-01 02:06:40'),(3054,160,'Mineral','2011-06-01 02:06:40'),(3055,160,'Pershing','2011-06-01 02:06:40'),(3056,160,'Storey','2011-06-01 02:06:40'),(3057,160,'Carson city','2011-06-01 02:06:40'),(3058,160,'Elko','2011-06-01 02:06:40'),(3059,133,'Los angeles','2011-06-01 02:06:40'),(3060,133,'Orange','2011-06-01 02:06:40'),(3061,133,'Ventura','2011-06-01 02:06:40'),(3062,133,'San bernardino','2011-06-01 02:06:40'),(3063,133,'Riverside','2011-06-01 02:06:40'),(3064,133,'San diego','2011-06-01 02:06:40'),(3065,133,'Imperial','2011-06-01 02:06:40'),(3066,133,'Inyo','2011-06-01 02:06:40'),(3067,133,'Santa barbara','2011-06-01 02:06:40'),(3068,133,'Tulare','2011-06-01 02:06:40'),(3069,133,'Kings','2011-06-01 02:06:40'),(3070,133,'Kern','2011-06-01 02:06:40'),(3071,133,'Fresno','2011-06-01 02:06:40'),(3072,133,'San luis obispo','2011-06-01 02:06:40'),(3073,133,'Monterey','2011-06-01 02:06:40'),(3074,133,'Mono','2011-06-01 02:06:40'),(3075,133,'Madera','2011-06-01 02:06:40'),(3076,133,'Merced','2011-06-01 02:06:40'),(3077,133,'Mariposa','2011-06-01 02:06:40'),(3078,133,'San mateo','2011-06-01 02:06:40'),(3079,133,'Santa clara','2011-06-01 02:06:40'),(3080,133,'San francisco','2011-06-01 02:06:40'),(3081,133,'Sacramento','2011-06-01 02:06:40'),(3082,133,'Alameda','2011-06-01 02:06:40'),(3083,133,'Napa','2011-06-01 02:06:40'),(3084,133,'Contra costa','2011-06-01 02:06:40'),(3085,133,'Solano','2011-06-01 02:06:40'),(3086,133,'Marin','2011-06-01 02:06:40'),(3087,133,'Sonoma','2011-06-01 02:06:40'),(3088,133,'Santa cruz','2011-06-01 02:06:40'),(3089,133,'San benito','2011-06-01 02:06:40'),(3090,133,'San joaquin','2011-06-01 02:06:40'),(3091,133,'Calaveras','2011-06-01 02:06:40'),(3092,133,'Tuolumne','2011-06-01 02:06:40'),(3093,133,'Stanislaus','2011-06-01 02:06:40'),(3094,133,'Mendocino','2011-06-01 02:06:40'),(3095,133,'Lake','2011-06-01 02:06:40'),(3096,133,'Humboldt','2011-06-01 02:06:40'),(3097,133,'Trinity','2011-06-01 02:06:40'),(3098,133,'Del norte','2011-06-01 02:06:40'),(3099,133,'Siskiyou','2011-06-01 02:06:40'),(3100,133,'Amador','2011-06-01 02:06:40'),(3101,133,'Placer','2011-06-01 02:06:40'),(3102,133,'Yolo','2011-06-01 02:06:40'),(3103,133,'El dorado','2011-06-01 02:06:40'),(3104,133,'Alpine','2011-06-01 02:06:40'),(3105,133,'Sutter','2011-06-01 02:06:40'),(3106,133,'Yuba','2011-06-01 02:06:40'),(3107,133,'Nevada','2011-06-01 02:06:40'),(3108,133,'Sierra','2011-06-01 02:06:40'),(3109,133,'Colusa','2011-06-01 02:06:40'),(3110,133,'Glenn','2011-06-01 02:06:40'),(3111,133,'Butte','2011-06-01 02:06:40'),(3112,133,'Plumas','2011-06-01 02:06:40'),(3113,133,'Shasta','2011-06-01 02:06:40'),(3114,133,'Modoc','2011-06-01 02:06:40'),(3115,133,'Lassen','2011-06-01 02:06:40'),(3116,133,'Tehama','2011-06-01 02:06:40'),(3117,142,'Honolulu','2011-06-01 02:06:40'),(3118,142,'Kauai','2011-06-01 02:06:40'),(3119,142,'Hawaii','2011-06-01 02:06:40'),(3120,142,'Maui','2011-06-01 02:06:40'),(3121,130,'American samoa','2011-06-01 02:06:40'),(3122,141,'Guam','2011-06-01 02:06:40'),(3123,171,'Palau','2011-06-01 02:06:40'),(3124,138,'Federated states of micro','2011-06-01 02:06:40'),(3125,167,'Northern mariana islands','2011-06-01 02:06:40'),(3126,151,'Marshall islands','2011-06-01 02:06:40'),(3127,170,'Wasco','2011-06-01 02:06:40'),(3128,170,'Marion','2011-06-01 02:06:40'),(3129,170,'Clackamas','2011-06-01 02:06:40'),(3130,170,'Washington','2011-06-01 02:06:40'),(3131,170,'Multnomah','2011-06-01 02:06:40'),(3132,170,'Hood river','2011-06-01 02:06:40'),(3133,170,'Columbia','2011-06-01 02:06:40'),(3134,170,'Sherman','2011-06-01 02:06:40'),(3135,170,'Yamhill','2011-06-01 02:06:40'),(3136,170,'Clatsop','2011-06-01 02:06:40');
 INSERT INTO `lkupcounty` VALUES (3137,170,'Tillamook','2011-06-01 02:06:40'),(3138,170,'Polk','2011-06-01 02:06:40'),(3139,170,'Linn','2011-06-01 02:06:40'),(3140,170,'Benton','2011-06-01 02:06:40'),(3141,170,'Lincoln','2011-06-01 02:06:40'),(3142,170,'Lane','2011-06-01 02:06:40'),(3143,170,'Curry','2011-06-01 02:06:40'),(3144,170,'Coos','2011-06-01 02:06:40'),(3145,170,'Douglas','2011-06-01 02:06:40'),(3146,170,'Klamath','2011-06-01 02:06:40'),(3147,170,'Josephine','2011-06-01 02:06:40'),(3148,170,'Jackson','2011-06-01 02:06:40'),(3149,170,'Lake','2011-06-01 02:06:40'),(3150,170,'Deschutes','2011-06-01 02:06:40'),(3151,170,'Harney','2011-06-01 02:06:40'),(3152,170,'Jefferson','2011-06-01 02:06:40'),(3153,170,'Wheeler','2011-06-01 02:06:40'),(3154,170,'Crook','2011-06-01 02:06:40'),(3155,170,'Umatilla','2011-06-01 02:06:40'),(3156,170,'Gilliam','2011-06-01 02:06:40'),(3157,170,'Baker','2011-06-01 02:06:40'),(3158,170,'Grant','2011-06-01 02:06:40'),(3159,170,'Morrow','2011-06-01 02:06:40'),(3160,170,'Union','2011-06-01 02:06:40'),(3161,170,'Wallowa','2011-06-01 02:06:40'),(3162,170,'Malheur','2011-06-01 02:06:40'),(3163,183,'King','2011-06-01 02:06:40'),(3164,183,'Snohomish','2011-06-01 02:06:40'),(3165,183,'Kitsap','2011-06-01 02:06:40'),(3166,183,'Whatcom','2011-06-01 02:06:40'),(3167,183,'Skagit','2011-06-01 02:06:40'),(3168,183,'San juan','2011-06-01 02:06:40'),(3169,183,'Island','2011-06-01 02:06:40'),(3170,183,'Pierce','2011-06-01 02:06:40'),(3171,183,'Clallam','2011-06-01 02:06:40'),(3172,183,'Jefferson','2011-06-01 02:06:40'),(3173,183,'Lewis','2011-06-01 02:06:40'),(3174,183,'Thurston','2011-06-01 02:06:40'),(3175,183,'Grays harbor','2011-06-01 02:06:40'),(3176,183,'Mason','2011-06-01 02:06:40'),(3177,183,'Pacific','2011-06-01 02:06:40'),(3178,183,'Cowlitz','2011-06-01 02:06:40'),(3179,183,'Clark','2011-06-01 02:06:40'),(3180,183,'Klickitat','2011-06-01 02:06:40'),(3181,183,'Skamania','2011-06-01 02:06:40'),(3182,183,'Wahkiakum','2011-06-01 02:06:40'),(3183,183,'Chelan','2011-06-01 02:06:40'),(3184,183,'Douglas','2011-06-01 02:06:40'),(3185,183,'Okanogan','2011-06-01 02:06:40'),(3186,183,'Grant','2011-06-01 02:06:40'),(3187,183,'Yakima','2011-06-01 02:06:40'),(3188,183,'Kittitas','2011-06-01 02:06:40'),(3189,183,'Spokane','2011-06-01 02:06:40'),(3190,183,'Lincoln','2011-06-01 02:06:40'),(3191,183,'Stevens','2011-06-01 02:06:40'),(3192,183,'Whitman','2011-06-01 02:06:40'),(3193,183,'Adams','2011-06-01 02:06:40'),(3194,183,'Ferry','2011-06-01 02:06:40'),(3195,183,'Pend oreille','2011-06-01 02:06:40'),(3196,183,'Franklin','2011-06-01 02:06:40'),(3197,183,'Benton','2011-06-01 02:06:40'),(3198,183,'Walla walla','2011-06-01 02:06:40'),(3199,183,'Columbia','2011-06-01 02:06:40'),(3200,183,'Garfield','2011-06-01 02:06:40'),(3201,183,'Asotin','2011-06-01 02:06:40'),(3202,128,'Anchorage','2011-06-01 02:06:40'),(3203,128,'Bethel','2011-06-01 02:06:40'),(3204,128,'Aleutians west','2011-06-01 02:06:40'),(3205,128,'Lake and peninsula','2011-06-01 02:06:40'),(3206,128,'Kodiak island','2011-06-01 02:06:40'),(3207,128,'Aleutians east','2011-06-01 02:06:40'),(3208,128,'Wade hampton','2011-06-01 02:06:40'),(3209,128,'Dillingham','2011-06-01 02:06:40'),(3210,128,'Kenai peninsula','2011-06-01 02:06:40'),(3211,128,'Yukon koyukuk','2011-06-01 02:06:40'),(3212,128,'Valdez cordova','2011-06-01 02:06:40'),(3213,128,'Matanuska susitna','2011-06-01 02:06:40'),(3214,128,'Bristol bay','2011-06-01 02:06:40'),(3215,128,'Nome','2011-06-01 02:06:40'),(3216,128,'Yakutat','2011-06-01 02:06:40'),(3217,128,'Fairbanks north star','2011-06-01 02:06:40'),(3218,128,'Denali','2011-06-01 02:06:40'),(3219,128,'North slope','2011-06-01 02:06:40'),(3220,128,'Northwest arctic','2011-06-01 02:06:40'),(3221,128,'Southeast fairbanks','2011-06-01 02:06:40'),(3222,128,'Juneau','2011-06-01 02:06:40'),(3223,128,'Skagway hoonah angoon','2011-06-01 02:06:40'),(3224,128,'Haines','2011-06-01 02:06:40'),(3225,128,'Wrangell petersburg','2011-06-01 02:06:40');
 INSERT INTO `lkupcounty` VALUES (3226,128,'Sitka','2011-06-01 02:06:40'),(3227,128,'Ketchikan gateway','2011-06-01 02:06:40'),(3228,128,'Prince wales ketchikan','2011-06-01 02:06:40');
+
+SET FOREIGN_KEY_CHECKS = 1;

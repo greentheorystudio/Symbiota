@@ -1,4 +1,5 @@
 <?php
+
 class DwcArchiverDetermination{
 
 	public static function getDeterminationArr($schemaType,$extended){
@@ -41,34 +42,38 @@ class DwcArchiverDetermination{
 		return $retArr;
 	}
 	
-	private static function trimBySchemaType($detArr,$schemaType,$extended){
+	private static function trimBySchemaType($detArr,$schemaType,$extended): array
+    {
 		$trimArr = array();
-		if($schemaType == 'dwc'){
-			$trimArr = array('identifiedByID');
-			$trimArr = array('tidInterpreted');
-			$trimArr = array('identificationIsCurrent');
+		if($schemaType === 'dwc'){
+			$trimArr[] = 'identifiedByID';
+			$trimArr[] = 'tidInterpreted';
+			$trimArr[] = 'identificationIsCurrent';
 		}
-		elseif($schemaType == 'symbiota'){
+		elseif($schemaType === 'symbiota'){
 			if(!$extended){
-				$trimArr = array('identifiedByID');
-				$trimArr = array('tidInterpreted');
+				$trimArr[] = 'identifiedByID';
+				$trimArr[] = 'tidInterpreted';
 			}
 		}
-		elseif($schemaType == 'backup'){
+		elseif($schemaType === 'backup'){
 			$trimArr = array(); 
 		}
-		elseif($schemaType == 'coge'){
+		elseif($schemaType === 'coge'){
 			$trimArr = array(); 
 		}
 		return array_diff_key($detArr,array_flip($trimArr));
 	}
 
-	public static function getSqlDeterminations($fieldArr,$conditionSql){
+	public static function getSqlDeterminations($fieldArr,$conditionSql): string
+    {
 		$sql = ''; 
 		if($fieldArr && $conditionSql){
 			$sqlFrag = '';
 			foreach($fieldArr as $fieldName => $colName){
-				if($colName) $sqlFrag .= ', '.$colName;
+				if($colName) {
+                    $sqlFrag .= ', ' . $colName;
+                }
 			}
 			$sql = 'SELECT '.trim($sqlFrag,', ').
 				' FROM omoccurdeterminations d INNER JOIN omoccurrences o ON d.occid = o.occid '.
@@ -76,22 +81,18 @@ class DwcArchiverDetermination{
 				'INNER JOIN guidoccurrences og ON o.occid = og.occid '.
 				'LEFT JOIN taxa t ON d.tidinterpreted = t.tid ';
 			if(strpos($conditionSql,'v.clid')){
-				//Search criteria came from custom search page
 				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';
 			}
 			if(strpos($conditionSql,'p.point')){
-				//Search criteria came from map search page
 				$sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
 			}
 			if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
 				$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
 			if(stripos($conditionSql,'a.stateid')){
-				//Search is limited by occurrence attribute
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid ';
 			}
 			elseif(stripos($conditionSql,'s.traitid')){
-				//Search is limited by occurrence trait
 				$sql .= 'INNER JOIN tmattributes a ON o.occid = a.occid '.
 					'INNER JOIN tmstates s ON a.stateid = s.stateid ';
 			}
@@ -102,4 +103,3 @@ class DwcArchiverDetermination{
 		return $sql;
 	}
 }
-?>

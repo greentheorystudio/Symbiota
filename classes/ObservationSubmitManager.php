@@ -1,6 +1,6 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/ImageShared.php');
+include_once('DbConnection.php');
+include_once('ImageShared.php');
 
 class ObservationSubmitManager {
 
@@ -16,14 +16,15 @@ class ObservationSubmitManager {
 	}
 	
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
 	public function addObservation($postArr){
 		global $SYMB_UID;
 		$newOccId = '';
 		if($postArr && $this->collId){
-			//Setup Event Date fields
 			$eventYear = 'NULL'; $eventMonth = 'NULL'; $eventDay = 'NULL'; $startDay = 'NULL';
 			if($dateObj = strtotime($postArr['eventdate'])){
 				$eventYear = date('Y',$dateObj);
@@ -31,16 +32,16 @@ class ObservationSubmitManager {
 				$eventDay = date('d',$dateObj);
 				$startDay = date('z',$dateObj)+1;
 			}
-			//Get tid for scinetific name
 			$tid = 0;
 			$localitySecurity = (array_key_exists('localitysecurity',$postArr)?1:0);
 			if($postArr['sciname']){
 				$result = $this->conn->query('SELECT tid, securitystatus FROM taxa WHERE (sciname = "'.$postArr['sciname'].'")');
 				if($row = $result->fetch_object()){
 					$tid = $row->tid;
-					if($row->securitystatus > 0) $localitySecurity = $row->securitystatus;
+					if($row->securitystatus > 0) {
+						$localitySecurity = $row->securitystatus;
+					}
 					if(!$localitySecurity){
-						//Check to see if species is rare or sensitive within a state
 						$sql = 'SELECT cl.tid '.
 							'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '. 
 							'WHERE c.type = "rarespp" AND c.locality = "'.$postArr['stateprovince'].'" AND cl.tid = '.$tid;
@@ -51,16 +52,15 @@ class ObservationSubmitManager {
 					}
 				}
 				else{
-					//Abort process
 					$this->errArr[] = 'ERROR: scientific name failed, contact admin to add name to thesaurus';
-					return;
+					return false;
 				}
 			}
 
 			$sql = 'INSERT INTO omoccurrences(collid, basisofrecord, family, sciname, scientificname, '.
 				'scientificNameAuthorship, tidinterpreted, taxonRemarks, identifiedBy, dateIdentified, '.
 				'identificationReferences, recordedBy, recordNumber, '.
-				'associatedCollectors, eventDate, year, month, day, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
+				'associatedCollectors, eventDate, `year`, `month`, `day`, startDayOfYear, habitat, substrate, occurrenceRemarks, associatedTaxa, '.
 				'verbatimattributes, reproductiveCondition, cultivationStatus, establishmentMeans, country, '.
 				'stateProvince, county, locality, localitySecurity, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, observeruid, dateEntered) '.
@@ -69,7 +69,7 @@ class ObservationSubmitManager {
 			'"'.$this->cleanInStr($postArr['sciname']).'","'.
 			$this->cleanInStr($postArr['sciname'].' '.$postArr['scientificnameauthorship']).'",'.
 			($postArr['scientificnameauthorship']?'"'.$this->cleanInStr($postArr['scientificnameauthorship']).'"':'NULL').','.
-			($tid?$tid:'NULL').','.($postArr['taxonremarks']?'"'.$this->cleanInStr($postArr['taxonremarks']).'"':'NULL').','.
+			($tid?:'NULL').','.($postArr['taxonremarks']?'"'.$this->cleanInStr($postArr['taxonremarks']).'"':'NULL').','.
 			($postArr['identifiedby']?'"'.$this->cleanInStr($postArr['identifiedby']).'"':'NULL').','.
 			($postArr['dateidentified']?'"'.$this->cleanInStr($postArr['dateidentified']).'"':'NULL').','.
 			($postArr['identificationreferences']?'"'.$this->cleanInStr($postArr['identificationreferences']).'"':'NULL').','.
@@ -98,12 +98,10 @@ class ObservationSubmitManager {
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$newOccId = $this->conn->insert_id;
-				//Link observation to checklist
 				if(isset($postArr['clid'])){
 					$clid = $postArr['clid'];
 					$finalTid = 0;
 					if($tid){
-						//If synonym is already linked, get tid of linked taxon. If not, then add using current tid
 						$sql = 'SELECT cltl.tid '.
 							'FROM fmchklsttaxalink cltl INNER JOIN taxstatus ts1 ON cltl.tid = ts1.tid '.
 							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
@@ -111,7 +109,9 @@ class ObservationSubmitManager {
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
 							$finalTid = $r->tid;
-							if($finalTid == $tid) break; 
+							if($finalTid === $tid) {
+								break;
+							}
 						}
 						$rs->free();
 						if(!$finalTid){
@@ -122,20 +122,16 @@ class ObservationSubmitManager {
 						}
 					}
 					$sql = 'INSERT INTO fmvouchers(tid,clid,occid) '.
-						'VALUES('.($finalTid?$finalTid:'NULL').','.$clid.','.$newOccId.') ';
+						'VALUES('.($finalTid?:'NULL').','.$clid.','.$newOccId.') ';
 					$this->conn->query($sql);
 				}
-				//Load images
 				if(!$this->addImages($postArr,$newOccId,$tid)){
 					$this->errArr[] = 'Observation added successfully, but images did not upload successful';
 				}
-				//Set verification status
 				if(is_numeric($postArr['confidenceranking'])){
 					$sqlVer = 'INSERT INTO omoccurverification(occid,category,ranking,uid) '.
 							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$SYMB_UID.')';
-					if(!$this->conn->query($sqlVer)){
-						$statusStr .= 'WARNING adding confidence ranking failed ('.$this->conn->error.') ';
-					}
+					$this->conn->query($sqlVer);
 				}
 			}
 			else{
@@ -145,43 +141,47 @@ class ObservationSubmitManager {
 		return $newOccId;
 	}
 
-	private function addImages($postArr,$newOccId,$tid){
+	private function addImages($postArr,$newOccId,$tid): bool
+	{
 		global $SYMB_UID;
 		$status = true;
 		$imgManager = new ImageShared();
-		//Set target path
 		$subTargetPath = $this->collMap['institutioncode'];
-		if($this->collMap['collectioncode']) $subTargetPath .= '_'.$this->collMap['collectioncode'];
+		if($this->collMap['collectioncode']) {
+			$subTargetPath .= '_' . $this->collMap['collectioncode'];
+		}
 		
 		for($i=1;$i<=5;$i++){
-			//Set parameters
 			$imgManager->setTargetPath($subTargetPath.'/'.date('Ym').'/');
-			$imgManager->setMapLargeImg(false);			//Do not import large image, at least for now
+			$imgManager->setMapLargeImg(false);
 			$imgManager->setPhotographerUid($SYMB_UID);
 			$imgManager->setSortSeq(40);
 			$imgManager->setOccid($newOccId);
 			$imgManager->setTid($tid);
 				
 			$imgFileName = 'imgfile'.$i;
-			if(!array_key_exists($imgFileName,$_FILES) || !$_FILES[$imgFileName]['name']) break;
+			if(!array_key_exists($imgFileName,$_FILES) || !$_FILES[$imgFileName]['name']) {
+				break;
+			}
 		
-			//Set image metadata variables
-			if(isset($postArr['caption'.$i])) $imgManager->setCaption($postArr['caption'.$i]);
-			if(isset($postArr['notes'.$i])) $imgManager->setNotes($postArr['notes'.$i]);
+			$capLabel = 'caption'.$i;
+			if(isset($postArr[$capLabel])) {
+				$imgManager->setCaption($postArr['caption' . $i]);
+			}
+			$noteLabel = 'notes'.$i;
+			if(isset($postArr[$noteLabel])) {
+				$imgManager->setNotes($postArr['notes' . $i]);
+			}
 		
-			//Image is a file upload
 			if($imgManager->uploadImage($imgFileName)){
 				$status = $imgManager->processImage();
 			}
 			else{
 				$status = false;
 			}
-			if(!$status){
-				//Get errors and warnings
-				if($errArr = $imgManager->getErrArr()) {
-					foreach($errArr as $errStr){
-						$this->errArr[] = $errStr;
-					}
+			if(!$status && $errArr = $imgManager->getErrArr()) {
+				foreach($errArr as $errStr){
+					$this->errArr[] = $errStr;
 				}
 			}
 			$imgManager->reset();
@@ -189,7 +189,8 @@ class ObservationSubmitManager {
 		return $status;
 	}
 
-	public function getChecklists(){
+	public function getChecklists(): array
+	{
 		global $USER_RIGHTS;
 		$retArr = array();
 		if(isset($USER_RIGHTS['ClAdmin'])){
@@ -200,26 +201,32 @@ class ObservationSubmitManager {
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$retArr[$row->clid] = $row->name.($row->access == 'private'?' (private)':'');
+				$retArr[$row->clid] = $row->name.($row->access === 'private'?' (private)':'');
 			}
 		}
 		return $retArr;
 	}
  	
-	public function getCollMap(){
+	public function getCollMap(): array
+	{
 		return $this->collMap;
 	}
 	
-	public function getErrorArr(){
+	public function getErrorArr(): array
+	{
 		return $this->errArr;
 	}
 
-	public function setCollid($id){
-		if(is_numeric($id)) $this->collId = $id;
+	public function setCollid($id): void
+	{
+		if(is_numeric($id)) {
+			$this->collId = $id;
+		}
 		$this->setMetadata();
 	}
 
-	private function setMetadata(){
+	private function setMetadata(): void
+	{
 		$sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections ';
 		if($this->collId){
 			$sql .= 'WHERE (collid = '.$this->collId.')';
@@ -241,7 +248,8 @@ class ObservationSubmitManager {
 		$rs->free();
 	}
 
-	public function getUserName(){
+	public function getUserName(): string
+	{
 		global $SYMB_UID;
 		$retStr = '';
 		if(is_numeric($SYMB_UID)){
@@ -256,10 +264,7 @@ class ObservationSubmitManager {
 	}
 
 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 	
 	private function cleanInStr($str){
@@ -269,4 +274,3 @@ class ObservationSubmitManager {
 		return $newStr;
 	}
 }
-?>

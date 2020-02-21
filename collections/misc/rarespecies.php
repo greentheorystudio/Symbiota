@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/RareSpeciesManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -11,7 +11,7 @@ if($IS_ADMIN || array_key_exists("RareSppAdmin",$USER_RIGHTS)){
 	$isEditor = 1;
 }
 
-$rsManager = new RareSpeciesManager($isEditor?'write':'readonly');
+$rsManager = new RareSpeciesManager();
 
 if($isEditor){
 	if($submitAction == "addspecies"){

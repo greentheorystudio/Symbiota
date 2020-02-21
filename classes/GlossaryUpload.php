@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class GlossaryUpload{
 	
@@ -8,34 +8,37 @@ class GlossaryUpload{
 	private $uploadTargetPath;
 	private $statArr = array();
 	
-	private $verboseMode = 1; // 0 = silent, 1 = echo only, 2 = echo and log
+	private $verboseMode = 1;
 	private $logFH;
 	private $errorStr = '';
 	
-	function __construct() {
+	public function __construct() {
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
-		ini_set("max_input_time",120);
+		ini_set('max_input_time',120);
   		ini_set('auto_detect_line_endings', true);
 	}
 
-	function __destruct(){
-		if(!($this->conn === false)) $this->conn->close();
-		if($this->verboseMode == 2){
-			if($this->logFH) fclose($this->logFH);
+	public function __destruct(){
+		if(!($this->conn === false)) {
+			$this->conn->close();
 		}
+		if(($this->verboseMode === 2) && $this->logFH) {
+            fclose($this->logFH);
+        }
 	}
 	
-	public function setUploadFile($ulFileName = ""){
+	public function setUploadFile($ulFileName = ''): void
+	{
 		if($ulFileName){
-			//URL to existing file  
 			if(file_exists($ulFileName)){
-				$pos = strrpos($ulFileName,"/");
-				if(!$pos) $pos = strrpos($ulFileName,"\\");
+				$pos = strrpos($ulFileName, '/');
+				if(!$pos) {
+					$pos = strrpos($ulFileName, "\\");
+				}
 				$this->uploadFileName = substr($ulFileName,$pos+1);
-				//$this->outputMsg($this->uploadFileName;
 				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
 			}
 		}
@@ -43,7 +46,7 @@ class GlossaryUpload{
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
 			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
 		}
-		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) == ".zip"){
+		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
 			$zip = new ZipArchive;
 			$zip->open($this->uploadTargetPath.$this->uploadFileName);
 			$zipFile = $this->uploadTargetPath.$this->uploadFileName;
@@ -54,23 +57,22 @@ class GlossaryUpload{
 		}
 	}
 
-	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources){
+	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources): void
+	{
 		$batchSources = $this->cleanInStr($this->encodeString($batchSources));
 		$this->outputMsg('Starting Upload',0);
-		$this->conn->query("TRUNCATE TABLE uploadglossary");
-		$this->conn->query("OPTIMIZE TABLE uploadglossary");
-		$fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r') or die("Can't open file");
-		$headerArr = fgetcsv($fh);
+		$this->conn->query('TRUNCATE TABLE uploadglossary');
+		$this->conn->query('OPTIMIZE TABLE uploadglossary');
+		$fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb') or die("Can't open file");
 		$newTermColumn = false;
 		foreach($languageArr as $lang){
 			foreach($fieldMap as $csvField => $field){
-				if($field == $lang.'_term'){
+				if($field === $lang.'_term'){
 					$newTermColumn = true;
 				}
 			}
 		}
 		if($newTermColumn){
-			$recordCnt = 0;
 			$this->conn->query('SET autocommit=0');
 			$this->conn->query('SET unique_checks=0');
 			$this->conn->query('SET foreign_key_checks=0');
@@ -87,51 +89,51 @@ class GlossaryUpload{
 					$resourceUrl = '';
 					$synonym = '';
 					foreach($fieldMap as $csvField => $field){
-						if($field == $lang.'_term'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_term'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$term = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_definition'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_definition'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$definition = $this->cleanInStr($this->encodeString($recordArr[$index]));
 							if(strlen($definition) > 2000){
 								$definition = '';
 								$this->outputMsg('Definition for '.$term.' in '.ucfirst($lang).' is more than 2000 characters and was set to NULL.');
 							}
 						}
-						if($field == $lang.'_source'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_source'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$source = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_author'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_author'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$author = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_translator'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_translator'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$translator = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_notes'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_notes'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$notes = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_resourceurl'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_resourceurl'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$resourceUrl = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
-						if($field == $lang.'_synonym'){
-							$index = array_search($csvField,array_keys($fieldMap));
+						if($field === $lang.'_synonym'){
+							$index = array_search($csvField, array_keys($fieldMap), true);
 							$synonym = $this->cleanInStr($this->encodeString($recordArr[$index]));
 						}
 					}
 					if($term){
-						$sql = "INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,newGroupId) ";
+						$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,newGroupId) ';
 						$sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($source?'"'.$source.'"':($batchSources?'"'.$batchSources.'"':'null')).',';
 						$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",'.$id.')';
 						//echo "<div>".$sql."</div>";
 						if($this->conn->query($sql)){
 							$recordCnt++;
-							if($recordCnt%1000 == 0){
+							if($recordCnt%1000 === 0){
 								$this->outputMsg('Upload count: '.$recordCnt,1);
 								ob_flush();
 								flush();
@@ -141,13 +143,13 @@ class GlossaryUpload{
 							$this->outputMsg('ERROR loading term: '.$this->conn->error);
 						}
 						if($synonym){
-							$sql = "INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ";
+							$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
 							$sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($source?'"'.$source.'"':($batchSources?'"'.$batchSources.'"':'null')).',';
 							$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",1,'.$id.')';
 							//echo "<div>".$sql."</div>";
 							if($this->conn->query($sql)){
 								$recordCnt++;
-								if($recordCnt%1000 == 0){
+								if($recordCnt%1000 === 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
 									ob_flush();
 									flush();
@@ -173,15 +175,8 @@ class GlossaryUpload{
 		$this->setUploadCount();
 	}
 
-	private function removeUploadFile(){
-		if($this->uploadTargetPath && $this->uploadFileName){
-			if(file_exists($this->uploadTargetPath.$this->uploadFileName)){
-				unlink($this->uploadTargetPath.$this->uploadFileName);
-			}
-		}
-	}
-
-	public function cleanUpload($tidStr){
+	public function cleanUpload($tidStr): void
+	{
 		$this->outputMsg('Linking terms already in database... ');
 		$sql = 'UPDATE uploadglossary AS ug LEFT JOIN glossary AS g ON ug.term = g.term AND ug.`language` = g.`language` '.
 			'LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
@@ -200,9 +195,8 @@ class GlossaryUpload{
 		
 	}
 	
-	public function analysisUpload(){
-		$retArr = array();
-		//Get total number
+	public function analysisUpload(): void
+	{
 		$sql1 = 'SELECT count(*) as cnt FROM uploadglossary';
 		$rs1 = $this->conn->query($sql1);
 		while($r1 = $rs1->fetch_object()){
@@ -210,7 +204,6 @@ class GlossaryUpload{
 		}
 		$rs1->free();
 
-		//Get number matching existing terms and number of new
 		$sql2 = 'SELECT count(*) as cnt FROM uploadglossary WHERE ISNULL(term)';
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
@@ -220,13 +213,10 @@ class GlossaryUpload{
 		$rs2->free();
 	}
 
-	public function transferUpload(){
+	public function transferUpload(): void
+	{
 		global $SYMB_UID;
-		$existingTerms = false;
-		$tidStr = '';
-		$tidArr = array();
 		$languageArr = array();
-		$primaryLanguage = '';
 		$this->outputMsg('Starting data transfer...');
 		
 		$sql = 'SELECT COUNT(*) AS cnt FROM uploadglossary WHERE currentGroupId IS NOT NULL';
@@ -269,14 +259,14 @@ class GlossaryUpload{
 			}
 		}
 		
-		if(in_array('English',$languageArr)){
+		if(in_array('English', $languageArr, true)){
 			$primaryLanguage = 'English';
 		}
 		else{
 			$primaryLanguage = $languageArr[0];
 		}
 		
-		$tidArr = explode(",",$tidStr);
+		$tidArr = explode(',',$tidStr);
 		
 		$this->outputMsg('Adding new '.$primaryLanguage.' terms... ');
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,translator,author,notes,resourceurl,uid) '.
@@ -339,7 +329,7 @@ class GlossaryUpload{
 		}
 		
 		foreach($languageArr as $lang){
-			if($lang != $primaryLanguage){
+			if($lang !== $primaryLanguage){
 				$this->outputMsg('Adding new '.$lang.' terms... ');
 				$sql = 'INSERT INTO glossary(term,definition,`language`,source,translator,author,notes,resourceurl,uid) '.
 					'SELECT term, definition, `language`, source, translator, author, notes, resourceurl, '.$SYMB_UID.' '.
@@ -368,7 +358,8 @@ class GlossaryUpload{
 		$this->outputMsg('Done! ');
 	}
 
-	public function exportUploadTerms(){
+	public function exportUploadTerms(): void
+	{
 		$fieldArr = array('term','definition','`language`','source','translator','author','notes','resourceurl');
 		$fileName = 'termUpload_'.time().'.csv';
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -377,7 +368,7 @@ class GlossaryUpload{
 		$sql = 'SELECT '.implode(',',$fieldArr).' FROM uploadglossary WHERE term IS NOT NULL ';
 		$rs = $this->conn->query($sql);
 		if($rs->num_rows){
-			$out = fopen('php://output', 'w');
+			$out = fopen('php://output', 'wb');
 			echo implode(',',$fieldArr)."\n";
 			while($r = $rs->fetch_assoc()){
 				fputcsv($out, $r);
@@ -390,8 +381,8 @@ class GlossaryUpload{
 		$rs->free();
 	}
 
-	//Misc get data functions
-	private function setUploadCount(){
+	private function setUploadCount(): void
+	{
 		$sql = 'SELECT count(*) as cnt FROM uploadglossary';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -400,17 +391,18 @@ class GlossaryUpload{
 		$rs->free();
 	}
 
-	public function getFieldArr(){
+	public function getFieldArr(): array
+	{
 		$fieldArr = array();
 		$languageArr = array();
 		$targetFieldArr = $this->getUploadGlossaryFieldArr();
-		$fh = fopen($this->uploadTargetPath.$this->uploadFileName,'r') or die("Can't open file");
+		$fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb') or die("Can't open file");
 		$headerArr = fgetcsv($fh);
 		foreach($headerArr as $field){
 			$fieldStr = strtolower(trim($field));
 			if($fieldStr){
 				$fieldArr['source'][] = $fieldStr;
-				$fieldStr = str_replace(" ","_",$fieldStr);
+				$fieldStr = str_replace(' ', '_',$fieldStr);
 				if(strpos($fieldStr,'_') === false){
 					$languageArr[] = $fieldStr;
 				}
@@ -429,14 +421,14 @@ class GlossaryUpload{
 		return $fieldArr;
 	}
 	
-	private function getUploadGlossaryFieldArr(){
-		//Get metadata
+	private function getUploadGlossaryFieldArr(): array
+	{
 		$targetArr = array();
-		$sql = "SHOW COLUMNS FROM uploadglossary";
+		$sql = 'SHOW COLUMNS FROM uploadglossary';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$field = strtolower($row->Field);
-			if(strtolower($field) != 'language' && strtolower($field) != 'tidstr' && strtolower($field) != 'synonym' && strtolower($field) != 'newgroupid' && strtolower($field) != 'currentgroupid' && strtolower($field) != 'initialtimestamp'){
+			if($field !== 'language' && $field !== 'tidstr' && $field !== 'synonym' && $field !== 'newgroupid' && $field !== 'currentgroupid' && $field !== 'initialtimestamp'){
 				$targetArr[$field] = $field;
 			}
 		}
@@ -445,8 +437,8 @@ class GlossaryUpload{
 		return $targetArr;
 	}
 	
-	//Setters and getters
-	private function setUploadTargetPath(){
+	private function setUploadTargetPath(): void
+	{
 		global $TEMP_DIR_ROOT, $SERVER_ROOT;
 		$tPath = $TEMP_DIR_ROOT;
 		if(!$tPath){
@@ -454,14 +446,19 @@ class GlossaryUpload{
 		}
 		if(!$tPath){
 			$tPath = $SERVER_ROOT;
-			if(substr($tPath,-1) != '/') $tPath .= "/"; 
-			$tPath .= "temp/downloads";
+			if(substr($tPath,-1) !== '/') {
+				$tPath .= '/';
+			}
+			$tPath .= 'temp/downloads';
 		}
-		if(substr($tPath,-1) != '/') $tPath .= '/';
+		if(substr($tPath,-1) !== '/') {
+			$tPath .= '/';
+		}
 		$this->uploadTargetPath = $tPath; 
 	}
 
-	public function setFileName($fName){
+	public function setFileName($fName): void
+	{
 		$this->uploadFileName = $fName;
 	}
 
@@ -469,44 +466,43 @@ class GlossaryUpload{
 		return $this->uploadFileName;
 	}
 	
-	public function getStatArr(){
+	public function getStatArr(): array
+	{
 		return $this->statArr;
 	}
 	
-	public function getErrorStr(){
+	public function getErrorStr(): string
+	{
 		return $this->errorStr;
 	}
 
-	public function setVerboseMode($vMode){
+	public function setVerboseMode($vMode): void
+	{
 		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
-			if($this->verboseMode == 2){
-				//Create log File
+			if($this->verboseMode === 2){
 				$LOG_PATH = $SERVER_ROOT;
-				if(substr($SERVER_ROOT,-1) != '/' && substr($SERVER_ROOT,-1) != '\\') $LOG_PATH .= '/';
-				$LOG_PATH .= "content/logs/glossaryloader_".date('Ymd').".log";
-				$this->logFH = fopen($LOG_PATH, 'a');
-				fwrite($this->logFH,"Start time: ".date('Y-m-d h:i:s A')."\n");
+				$subStr = substr($SERVER_ROOT,-1);
+				if($subStr !== '/' && $subStr !== '\\') {
+					$LOG_PATH .= '/';
+				}
+				$LOG_PATH .= 'content/logs/glossaryloader_' .date('Ymd'). '.log';
+				$this->logFH = fopen($LOG_PATH, 'ab');
+				fwrite($this->logFH, 'Start time: ' .date('Y-m-d h:i:s A')."\n");
 			}
 		}
 	}
 
-	//Misc functions
-	private function outputMsg($str, $indent = 0){
-		if($this->verboseMode > 0 || substr($str,0,5) == 'ERROR'){
-			echo '<li style="margin-left:'.(10*$indent).'px;'.(substr($str,0,5)=='ERROR'?'color:red':'').'">'.$str.'</li>';
+	private function outputMsg($str, $indent = 0): void
+	{
+		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
+			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
 			ob_flush();
 			flush();
 		}
-		if($this->verboseMode == 2){
-			if($this->logFH) fwrite($this->logFH,($indent?str_repeat("\t",$indent):'').strip_tags($str)."\n");
-		}
-	}
-
-	private function cleanInArr(&$inArr){
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->cleanInStr($v);
+		if(($this->verboseMode === 2) && $this->logFH) {
+			fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 		}
 	}
 
@@ -516,47 +512,37 @@ class GlossaryUpload{
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
-	
-	private function encodeArr(&$inArr){
-		foreach($inArr as $k => $v){
-			$inArr[$k] = $this->encodeString($v);
-		}
-	}
 
-	private function encodeString($inStr){
+	private function encodeString($inStr): string
+	{
 		global $CHARSET;
 		$retStr = $inStr;
-		//Get rid of Windows curly (smart) quotes
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
 		$inStr= str_replace($search, $replace, $inStr);
-		//Get rid of UTF-8 curly smart quotes and dashes 
-		$badwordchars=array("\xe2\x80\x98", // left single quote
-							"\xe2\x80\x99", // right single quote
-							"\xe2\x80\x9c", // left double quote
-							"\xe2\x80\x9d", // right double quote
-							"\xe2\x80\x94", // em dash
-							"\xe2\x80\xa6" // elipses
+		$badwordchars=array("\xe2\x80\x98",
+							"\xe2\x80\x99",
+							"\xe2\x80\x9c",
+							"\xe2\x80\x9d",
+							"\xe2\x80\x94",
+							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		
 		if($inStr){
-			if(strtolower($CHARSET) == "utf-8" || strtolower($CHARSET) == "utf8"){
-				//$this->outputMsg($inStr.': '.mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true);
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == "ISO-8859-1"){
+			$charLower = strtolower($CHARSET);
+			if($charLower === 'utf-8' || $charLower === 'utf8'){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif(strtolower($CHARSET) == "iso-8859-1"){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == "UTF-8"){
+			elseif($charLower === 'iso-8859-1'){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
 					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
 				}
 			}
  		}
 		return $retStr;
 	}
 }
-?>

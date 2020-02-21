@@ -1,11 +1,11 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class KeyManager{
 
 	protected $conn;
 	protected $taxAuthId = 1;
-	protected $language = "English";
+	protected $language = 'English';
 
 	public function __construct(){
 		$connection = new DbConnection();
@@ -13,45 +13,51 @@ class KeyManager{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	//Management functions
-	protected function deleteDescr($tidStr, $charStr = '', $csStr = ''){
+	protected function deleteDescr($tidStr, $charStr = '', $csStr = ''): void
+	{
 		if($tidStr){
 			$sqlWhere = '(TID In ('.$tidStr.')) ';
-			if($charStr) $sqlWhere .= 'AND (CID IN ('.$charStr.'))';
-			if($csStr) $sqlWhere .= 'AND (cs IN ('.$csStr.'))';
+			if($charStr) {
+                $sqlWhere .= 'AND (CID IN (' . $charStr . '))';
+            }
+			if($csStr) {
+                $sqlWhere .= 'AND (cs IN (' . $csStr . '))';
+            }
 			
-			//Delete descriptions
 			$sql = 'DELETE FROM kmdescr WHERE '.$sqlWhere;
 			//echo "<div>".$sql."</div>";
 			$this->conn->query($sql);
 		}
 	}
 
-	protected function insertDescr($tid, $cid, $cs){ 
+	protected function insertDescr($tid, $cid, $cs): void
+	{
 		global $USERNAME;
 		if(is_numeric($tid) && is_numeric($cid) && $cs){
-			$sql = "INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ($tid, $cid, '".$cs."', '".$USERNAME."')";
+			$sql = 'INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ('.$tid.', '.$cid.", '".$cs."', '".$USERNAME."')";
 			$this->conn->query($sql);
 		}
 	}
 
-	protected function deleteInheritance($tidStr,$cidStr){
+	protected function deleteInheritance($tidStr,$cidStr): void
+	{
 		if($tidStr){
-			//delete all inherited children traits for CIDs that will be modified
-			$childrenStr = trim(implode(',',$this->getChildrenArr($tidStr)).','.$tidStr,' ,'); 
-			$sql = "DELETE FROM kmdescr ".
-				"WHERE (TID IN(".$childrenStr.")) ".
-				"AND (CID IN(".$cidStr.")) AND (Inherited Is Not Null AND Inherited <> '')";
+			$childrenStr = trim(implode(',',$this->getChildrenArr($tidStr)).','.$tidStr,' ,');
+			$sql = 'DELETE FROM kmdescr '.
+				'WHERE (TID IN('.$childrenStr.')) '.
+				'AND (CID IN('.$cidStr.")) AND (Inherited Is Not Null AND Inherited <> '')";
 			//echo $sql;
 			$this->conn->query($sql);
 		}
 	}
 
-	protected function resetInheritance($tidStr, $cidStr){
-		//Set inheritance for target and all children of target
+	protected function resetInheritance($tidStr, $cidStr): void
+	{
 		$cnt = 0;
 		$childrenStr = trim(implode(',',$this->getChildrenArr($tidStr)).','.$tidStr,' ,'); 
 		do{
@@ -70,16 +76,19 @@ class KeyManager{
 				echo 'ERROR setting inheritance: '.$this->conn->error;
 			}
 			$cnt++;
-		}while($this->conn->affected_rows && $cnt < 10);
+		}
+		while($this->conn->affected_rows && $cnt < 10);
 	}
 
-	protected function getChildrenArr($tid){
-		//Return list of accepted taxa, not including target 
+	protected function getChildrenArr($tid): array
+	{
 		$retArr = array();
 		if($tid){
 			$targetStr = $tid;
 			do{
-				if(isset($targetList)) unset($targetList);
+				if(isset($targetList)) {
+					unset($targetList);
+				}
 				$targetList = array();
 				$sql = 'SELECT t.tid '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
@@ -87,31 +96,36 @@ class KeyManager{
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
 					$targetList[] = $row->tid;
+					$retArr[] = $row->tid;
 			    }
 			    $rs->free();
 				if($targetList){
-					$targetStr = implode(",", $targetList);
-					$retArr = array_merge($retArr, $targetList);
+					$targetStr = implode(',', $targetList);
 				}
-			}while($targetList);
+			}
+			while($targetList);
 		}
 		return $retArr;
 	}
 	
-	protected function getParentArr($tid){
+	protected function getParentArr($tid): array
+	{
  		$retArr = array();
  		if($tid){
 			$targetTid = $tid;
 			while($targetTid){
-				//$sql = 'SELECT parenttid FROM taxaenumtree WHERE taxauthid = 1 AND (tid = '.$this->tid.')';
 				$sql = 'SELECT parenttid FROM taxstatus '.
 					'WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$targetTid.')';
 				//echo $sql;
 				$rs = $this->conn->query($sql);
 			    if($row = $rs->fetch_object()){
-			    	if(!$row->parenttid || $targetTid == $row->parenttid) break;
+			    	if(!$row->parenttid || $targetTid === $row->parenttid) {
+						break;
+					}
 					$targetTid = $row->parenttid;
-					if($targetTid) $retArr[] = $targetTid;
+					if($targetTid) {
+						$retArr[] = $targetTid;
+					}
 			    }
 			}
 			$rs->free();
@@ -119,22 +133,30 @@ class KeyManager{
 		return $retArr;
 	}
 
-	//Setters and getters
-	public function setTaxAuthId($id){
-		if(is_numeric($id)) $this->taxAuthId = $id;
+	public function setTaxAuthId($id): void
+	{
+		if(is_numeric($id)) {
+			$this->taxAuthId = $id;
+		}
 	}
 
-	public function setLanguage($lang){
+	public function setLanguage($lang): void
+	{
 		$lang = strtolower($lang);
-		if(strlen($lang) == 2){
-			if($lang == 'en') $lang = 'english';
-			if($lang == 'es') $lang = 'spanish';
-			if($lang == 'fr') $lang = 'french';
+		if(strlen($lang) === 2){
+			if($lang === 'en') {
+				$lang = 'english';
+			}
+			if($lang === 'es') {
+				$lang = 'spanish';
+			}
+			if($lang === 'fr') {
+				$lang = 'french';
+			}
 		}
 		$this->language = $lang;
 	}
 
-	//Misc functions
 	protected function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
@@ -142,4 +164,3 @@ class KeyManager{
 		return $newStr;
 	}
 }
-?>

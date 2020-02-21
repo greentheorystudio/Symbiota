@@ -1,7 +1,7 @@
 <?php
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-require_once($SERVER_ROOT.'/vendor/autoload.php');
+include_once('ChecklistVoucherAdmin.php');
+include_once('DwcArchiverCore.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -14,9 +14,11 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 
 	public function downloadPensoftXlsx(): void
 	{
-		$spreadsheet = new Spreadsheet();
-		$taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
-		$penArr = $this->getPensoftArr();
+        $taxaSheet = null;
+        $materialsSheet = null;
+	    $spreadsheet = new Spreadsheet();
+        $taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
+        $penArr = $this->getPensoftArr();
 		$headerArr = $penArr['header'];
 		$taxaArr = $penArr['taxa'];
 
@@ -46,9 +48,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			$rowCnt++;
 		}
 
-		$materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
+        $materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
 
-		$dwcaHandler = new DwcArchiverCore();
+        $dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
 		$dwcaHandler->setCharSetOut('ISO-8859-1');
 		$dwcaHandler->setSchemaType('pensoft');
@@ -82,9 +84,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			}
 		}
 
-		$spreadsheet->createSheet(2)->setTitle('ExternalLinks');
+        $spreadsheet->createSheet(2)->setTitle('ExternalLinks');
 
-		$file = $this->getExportFileName().'.xlsx';
+        $file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
 		header('Content-Disposition: attachment; filename='.basename($file));
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -92,9 +94,8 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		header('Pragma: public');
 
 		$writer = new Xlsx($spreadsheet);
-		$writer->save('php://output');
-
-	}
+        $writer->save('php://output');
+    }
 
 	protected function getPensoftArr(): array
 	{
@@ -105,19 +106,21 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 
 		$clArr = array();
 		$kingdomArr = array();
-		$sql = 'SELECT t.tid, t.kingdomname, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
+		$sql = 'SELECT t.tid, t.kingdomId, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
 			'FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid '.
 			'INNER JOIN taxstatus ts ON c.tid = ts.tid '.
 			'WHERE (ts.taxauthid = 1) AND (c.clid IN('.$clidStr.')) '.
 			'ORDER BY IFNULL(c.familyoverride, ts.family), t.sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if(isset($kingdomArr[$r->kingdomname])) {
-				++$kingdomArr[$r->kingdomname];
-			}
-			else {
-				$kingdomArr[$r->kingdomname] = 0;
-			}
+			if($r->kingdomId){
+                if(isset($kingdomArr[$r->kingdomId])) {
+                    ++$kingdomArr[$r->kingdomId];
+                }
+                else {
+                    $kingdomArr[$r->kingdomId] = 0;
+                }
+            }
 			$clArr[$r->tid]['tid'] = $r->tid;
 			$clArr[$r->tid]['author'] = $this->encodeStr($r->author);
 			if($r->familyoverride) {
@@ -167,7 +170,7 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			$outArr['taxa'] = $clArr;
 			asort($kingdomArr);
 			end($kingdomArr);
-			$sql = 'SELECT rankid, rankname FROM taxonunits WHERE rankid IN('.implode(',',$rankArr).') ';
+			$sql = 'SELECT rankid, rankname FROM taxonunits WHERE rankid IN('.implode(',',$rankArr).') AND kingdomid IN('.implode(',',$kingdomArr).') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$rankArr[$r->rankid] = $r->rankname;

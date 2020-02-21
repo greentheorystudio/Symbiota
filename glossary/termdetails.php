@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
@@ -77,7 +77,7 @@ if($formSubmit){
 		}
 	}
 	elseif($formSubmit == 'Delete Term'){
-		if($glosManager->deleteTerm($_POST)){
+		if($glosManager->deleteTerm()){
 			$glossId = 0;
 			$closeWindow = true;
 		}

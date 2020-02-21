@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
 
@@ -135,7 +135,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<option value=''>All States</option>
 												<option value=''>--------------------</option>
 												<?php
-												$sArr = $geoManager->getStateArr($qCountry);
+												$sArr = $geoManager->getStateArr();
 												foreach($sArr as $s){
 													echo '<option '.($qState==$s?'SELECTED':'').'>'.$s.'</option>';
 												}
@@ -147,7 +147,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<option value=''>All Counties</option>
 												<option value=''>--------------------</option>
 												<?php
-												$coArr = $geoManager->getCountyArr($qCountry,$qState);
+												$coArr = $geoManager->getCountyArr($qState);
 												foreach($coArr as $c){
 													echo '<option '.($qCounty==$c?'SELECTED':'').'>'.$c.'</option>';
 												}
@@ -161,7 +161,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<option value=''>All Municipalities</option>
 												<option value=''>--------------------</option>
 												<?php
-												$muArr = $geoManager->getMunicipalityArr($qCountry,$qState);
+												$muArr = $geoManager->getMunicipalityArr($qState);
 												foreach($muArr as $m){
 													echo '<option '.($qMunicipality==$m?'SELECTED':'').'>'.$m.'</option>';
 												}

@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class UuidFactory {
 
-	const METHOD = 'aes-256-cbc';
+	public const METHOD = 'aes-256-cbc';
 	private $silent = 0;
 	private $conn;
 	private $destructConn = true;
@@ -38,7 +38,7 @@ class UuidFactory {
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
+				$guid = self::getUuidV4();
 				$insSql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" '.
 					'WHERE collectionguid IS NULL AND collid = '.$r->collid;
 				if(!$this->conn->query($insSql)){
@@ -61,7 +61,7 @@ class UuidFactory {
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
+				$guid = self::getUuidV4();
 				$insSql = 'INSERT INTO guidoccurrences(guid,occid) '.
 					'VALUES("'.$guid.'",'.$r->occid.')';
 				if(!$this->conn->query($insSql)){
@@ -89,7 +89,7 @@ class UuidFactory {
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
+				$guid = self::getUuidV4();
 				$insSql = 'INSERT INTO guidoccurdeterminations(guid,detid) '.
 					'VALUES("'.$guid.'",'.$r->detid.')';
 				if(!$this->conn->query($insSql)){
@@ -117,7 +117,7 @@ class UuidFactory {
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
+				$guid = self::getUuidV4();
 				$insSql = 'INSERT INTO guidimages(guid,imgid) '.
 					'VALUES("'.$guid.'",'.$r->imgid.')';
 				if(!$this->conn->query($insSql)){
@@ -254,8 +254,4 @@ class UuidFactory {
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
-	public static function is_valid($uuid): bool
-	{
-		return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
-	}
 }

@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class ChecklistVoucherAdmin {
 
@@ -11,7 +11,7 @@ class ChecklistVoucherAdmin {
 	private $missingTaxaCount = 0;
 	private $closeConnOnDestroy = true;
 
-	function __construct($con = null) {
+	public function __construct($con = null) {
 		if($con) {
 			$this->conn = $con;
 			$this->closeConnOnDestroy = false;
@@ -22,15 +22,21 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	function __destruct(){
- 		if($this->closeConnOnDestroy && !($this->conn === false)) $this->conn->close();
+	public function __destruct(){
+ 		if($this->closeConnOnDestroy && !($this->conn === false)) {
+			$this->conn->close();
+		}
 	}
 
-	public function setClid($clid){
-		if(is_numeric($clid)) $this->clid = $clid;
+	public function setClid($clid): void
+	{
+		if(is_numeric($clid)) {
+			$this->clid = $clid;
+		}
 	}
 
-	public function setCollectionVariables(){
+	public function setCollectionVariables(): void
+	{
 		if($this->clid){
 			$sql = 'SELECT name, dynamicsql FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
@@ -38,7 +44,7 @@ class ChecklistVoucherAdmin {
 				$this->clName = $this->cleanOutStr($row->name);
 				$sqlFrag = $row->dynamicsql;
 				$varArr = json_decode($sqlFrag,true);
-				if(json_last_error() != JSON_ERROR_NONE){
+				if(json_last_error() !== JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);
 				}
@@ -48,18 +54,18 @@ class ChecklistVoucherAdmin {
 				$this->clName = 'Unknown';
 			}
 			$result->free();
-			//Get children checklists
 			$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
 			$sqlChild = $sqlChildBase.$this->clid.')';
 			do{
-				$childStr = "";
+				$childStr = '';
 				$rsChild = $this->conn->query($sqlChild);
 				while($rChild = $rsChild->fetch_object()){
 					$this->childClidArr[] = $rChild->clidchild;
 					$childStr .= ','.$rChild->clidchild;
 				}
 				$sqlChild = $sqlChildBase.substr($childStr,1).')';
-			}while($childStr);
+			}
+			while($childStr);
 		}
 	}
 
@@ -67,21 +73,23 @@ class ChecklistVoucherAdmin {
 		return $this->clName;
 	}
 
-	public function saveQueryVariables($postArr){
+	public function saveQueryVariables($postArr): void
+	{
 		$fieldArr = array('country','state','county','locality','taxon','collid','recordedby',
 			'latnorth','latsouth','lngeast','lngwest','latlngor','excludecult','onlycoord');
 		$jsonArr = array();
 		foreach($fieldArr as $fieldName){
-			if(isset($postArr[$fieldName]) && $postArr[$fieldName]) $jsonArr[$fieldName] = $postArr[$fieldName];
+			if(isset($postArr[$fieldName]) && $postArr[$fieldName]) {
+				$jsonArr[$fieldName] = $postArr[$fieldName];
+			}
 		}
 		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.$this->cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
 		//echo $sql; exit;
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR: unable to create or modify search statement ('.$this->conn->error.')';
-		}
+		$this->conn->query($sql);
 	}
 
-	private function parseSqlFrag($sqlFrag){
+	private function parseSqlFrag($sqlFrag): array
+	{
 		$retArr = array();
 		if($sqlFrag){
 			if(preg_match('/country = "([^"]+)"/',$sqlFrag,$m)){
@@ -102,11 +110,11 @@ class ChecklistVoucherAdmin {
 			if(preg_match_all('/AGAINST\("([^()"]+)"\)/',$sqlFrag,$m)){
 				$retArr['recordedby'] = implode(',',$m[1]);
 			}
-			if(preg_match('/decimallatitude BETWEEN ([-\.\d]+) AND ([-\.\d]+)\D+/',$sqlFrag,$m)){
+			if(preg_match('/decimallatitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
 				$retArr['latsouth'] = $m[1];
 				$retArr['latnorth'] = $m[2];
 			}
-			if(preg_match('/decimallongitude BETWEEN ([-\.\d]+) AND ([-\.\d]+)\D+/',$sqlFrag,$m)){
+			if(preg_match('/decimallongitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
 				$retArr['lngwest'] = $m[1];
 				$retArr['lngeast'] = $m[2];
 			}
@@ -116,17 +124,18 @@ class ChecklistVoucherAdmin {
 			if(preg_match('/ OR \(\(o.decimallatitude/',$sqlFrag) || preg_match('/ OR \(\(o.decimallongitude/',$sqlFrag)){
 				$retArr['latlngor'] = 1;
 			}
-			if(preg_match('/cultivationStatus/',$sqlFrag)){
+			if(false !== strpos($sqlFrag, 'cultivationStatus')){
 				$retArr['excludecult'] = 1;
 			}
-			if(preg_match('/decimallatitude/',$sqlFrag)){
+			if(false !== strpos($sqlFrag, 'decimallatitude')){
 				$retArr['onlycoord'] = 1;
 			}
 		}
 		return $retArr;
 	}
 
-	public function getSqlFrag(){
+	public function getSqlFrag(): string
+	{
 		$sqlFrag = '';
 		if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
 			$countryStr = str_replace(';',',',$this->cleanInStr($this->queryVariablesArr['country']));
@@ -160,55 +169,42 @@ class ChecklistVoucherAdmin {
 			}
 			$sqlFrag .= 'AND ('.substr($locStr, 2).') ';
 		}
-		//taxonomy
 		if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
 			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
 				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid = '.$tidPar.')) ';
 			}
-			/*
-			if(strpos($tStr,'aceae') || strpos($tStr,'idae')){
-				$sqlFrag .= 'AND (o.family LIKE "'.$tStr.'") ';
-			}
-			else{
-				$sqlFrag .= 'AND (o.sciname LIKE "'.$tStr.'%") ';
-			}
-			*/
 		}
-		//Latitude and longitude
 		$llStr = '';
-		if(isset($this->queryVariablesArr['latnorth']) && isset($this->queryVariablesArr['latsouth']) && is_numeric($this->queryVariablesArr['latnorth']) && is_numeric($this->queryVariablesArr['latsouth'])){
+		if(isset($this->queryVariablesArr['latnorth'], $this->queryVariablesArr['latsouth']) && is_numeric($this->queryVariablesArr['latnorth']) && is_numeric($this->queryVariablesArr['latsouth'])){
 			$llStr .= 'AND (o.decimallatitude BETWEEN '.$this->queryVariablesArr['latsouth'].' AND '.$this->queryVariablesArr['latnorth'].') ';
 		}
-		if(isset($this->queryVariablesArr['lngwest']) && isset($this->queryVariablesArr['lngeast']) && is_numeric($this->queryVariablesArr['lngwest']) && is_numeric($this->queryVariablesArr['lngeast'])){
+		if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast']) && is_numeric($this->queryVariablesArr['lngwest']) && is_numeric($this->queryVariablesArr['lngeast'])){
 			$llStr .= 'AND (o.decimallongitude BETWEEN '.$this->queryVariablesArr['lngwest'].' AND '.$this->queryVariablesArr['lngeast'].') ';
 		}
 		if($llStr){
-			if(array_key_exists('latlngor',$this->queryVariablesArr)) $llStr = 'OR ('.trim(substr($llStr,3)).') ';
+			if(array_key_exists('latlngor',$this->queryVariablesArr)) {
+				$llStr = 'OR (' . trim(substr($llStr, 3)) . ') ';
+			}
 			$sqlFrag .= $llStr;
 		}
-		//Use occurrences only with decimallatitude
 		if(!$llStr && isset($this->queryVariablesArr['onlycoord']) && $this->queryVariablesArr['onlycoord']){
 			$sqlFrag .= 'AND (o.decimallatitude IS NOT NULL) ';
 		}
-		//Exclude taxonomy
 		if(isset($this->queryVariablesArr['excludecult']) && $this->queryVariablesArr['excludecult']){
 			$sqlFrag .= 'AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) ';
 		}
-		//Limit by collection
 		if(isset($this->queryVariablesArr['collid']) && is_numeric($this->queryVariablesArr['collid'])){
 			$sqlFrag .= 'AND (o.collid = '.$this->queryVariablesArr['collid'].') ';
 		}
 
-		//Limit by collector
 		if(isset($this->queryVariablesArr['recordedby']) && $this->queryVariablesArr['recordedby']){
 			$collStr = str_replace(',', ';', $this->queryVariablesArr['recordedby']);
 			$collArr = explode(';',$collStr);
 			$tempArr = array();
-			foreach($collArr as $str){
-				if(strlen($str) < 4 || strtolower($str) == 'best'){
-					//Need to avoid FULLTEXT stopwords interfering with return
+			foreach($collArr as $str => $postArr){
+				if(strlen($str) < 4 || strtolower($str) === 'best'){
 					$tempArr[] = '(o.recordedby LIKE "%'.$this->cleanInStr($postArr['recordedby']).'%")';
 				}
 				else{
@@ -218,12 +214,14 @@ class ChecklistVoucherAdmin {
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
 		}
 
-		//Save SQL fragment
-		if($sqlFrag) $sqlFrag = trim(substr($sqlFrag,3));
+		if($sqlFrag) {
+			$sqlFrag = trim(substr($sqlFrag, 3));
+		}
 		return $sqlFrag;
 	}
 
-	public function deleteQueryVariables(){
+	public function deleteQueryVariables(): string
+	{
 		$statusStr = '';
 		if($this->conn->query('UPDATE fmchecklists c SET c.dynamicsql = NULL WHERE (c.clid = '.$this->clid.')')){
 			unset($this->queryVariablesArr);
@@ -235,19 +233,8 @@ class ChecklistVoucherAdmin {
 		return $statusStr;
 	}
 
-	//Listing function for tabs
-	public function getVoucherCnt(){
-		$vCnt = 0;
-		$sql = 'SELECT count(*) AS vcnt FROM fmvouchers WHERE (clid = '.$this->clid.')';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$vCnt = $r->vcnt;
-		}
-		$rs->free();
-		return $vCnt;
-	}
-
-	public function getNonVoucheredCnt(){
+	public function getNonVoucheredCnt(): int
+	{
 		$uvCnt = 0;
 		$sql = 'SELECT count(t.tid) AS uvcnt '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
@@ -262,7 +249,8 @@ class ChecklistVoucherAdmin {
 		return $uvCnt;
 	}
 
-	public function getNonVoucheredTaxa($startLimit,$limit = 100){
+	public function getNonVoucheredTaxa($startLimit,$limit = 100): array
+	{
 		$retArr = array();
 		$sql = 'SELECT t.tid, ts.family, t.sciname '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
@@ -280,14 +268,15 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function getNewVouchers($startLimit = 500,$includeAll = 1){
+	public function getNewVouchers($startLimit = 500,$includeAll = 1): array
+	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$clidStr = $this->clid;
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
-			if($includeAll == 1 || $includeAll == 2){
+			if($includeAll === 1 || $includeAll === 2){
 				$sql = 'SELECT DISTINCT cl.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -296,12 +285,14 @@ class ChecklistVoucherAdmin {
 					'INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
 					'INNER JOIN fmchklsttaxalink cl ON ts.tidaccepted = cl.tid '.
 					'INNER JOIN taxa t ON cl.tid = t.tid ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
+					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
-				if($includeAll == 1){
+				if($includeAll === 1){
 					$sql .= 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
-				elseif($includeAll == 2){
+				elseif($includeAll === 2){
 					$sql .= 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
 				$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -310,7 +301,9 @@ class ChecklistVoucherAdmin {
 				while($r = $rs->fetch_object()){
 					$retArr[$r->cltid][$r->occid]['tid'] = $r->tidinterpreted;
 					$sciName = $r->clsciname;
-					if($r->clsciname <> $r->sciname) $sciName .= '<br/>spec id: '.$r->sciname;
+					if($r->clsciname !== $r->sciname) {
+						$sciName .= '<br/>spec id: ' . $r->sciname;
+					}
 					$retArr[$r->cltid][$r->occid]['sciname'] = $sciName;
 					$retArr[$r->cltid][$r->occid]['collcode'] = $r->collcode;
 					$retArr[$r->cltid][$r->occid]['recordedby'] = $r->recordedby;
@@ -319,7 +312,7 @@ class ChecklistVoucherAdmin {
 					$retArr[$r->cltid][$r->occid]['locality'] = $r->locality;
 				}
 			}
-			elseif($includeAll == 3){
+			elseif($includeAll === 3){
 				$sql = 'SELECT DISTINCT t.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -327,7 +320,9 @@ class ChecklistVoucherAdmin {
 					'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
 					'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
 					'LEFT JOIN taxstatus AS ts ON t.TID = ts.tid ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) $sql .= 'LEFT JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
+					$sql .= 'LEFT JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND ((t.RankId < 220)) '.
 					'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE CLID IN('.$clidStr.'))) ';
 				$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -336,7 +331,9 @@ class ChecklistVoucherAdmin {
 				while($r = $rs->fetch_object()){
 					$retArr[$r->cltid][$r->occid]['tid'] = $r->tidinterpreted;
 					$sciName = $r->clsciname;
-					if($r->clsciname <> $r->sciname) $sciName .= '<br/>spec id: '.$r->sciname;
+					if($r->clsciname !== $r->sciname) {
+						$sciName .= '<br/>spec id: ' . $r->sciname;
+					}
 					$retArr[$r->cltid][$r->occid]['sciname'] = $sciName;
 					$retArr[$r->cltid][$r->occid]['collcode'] = $r->collcode;
 					$retArr[$r->cltid][$r->occid]['recordedby'] = $r->recordedby;
@@ -344,13 +341,14 @@ class ChecklistVoucherAdmin {
 					$retArr[$r->cltid][$r->occid]['eventdate'] = $r->eventdate;
 					$retArr[$r->cltid][$r->occid]['locality'] = $r->locality;
 				}
+				$rs->free();
 			}
-			$rs->free();
 		}
 		return $retArr;
 	}
 
-	public function getMissingTaxa(){
+	public function getMissingTaxa(): array
+	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$sql = 'SELECT DISTINCT t.tid, t.sciname '.$this->getMissingTaxaBaseSql($sqlFrag);
@@ -366,7 +364,8 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function getMissingTaxaSpecimens($limitIndex){
+	public function getMissingTaxaSpecimens($limitIndex): array
+	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
 			$sqlBase = $this->getMissingTaxaBaseSql($sqlFrag);
@@ -386,7 +385,6 @@ class ChecklistVoucherAdmin {
 			}
 			$rs->free();
 
-			//Set missing taxa count
 			$sqlB = 'SELECT COUNT(DISTINCT ts.tidaccepted) as cnt '.
 				$sqlBase;
 			//echo '<div>'.$sql.'</div>';
@@ -399,7 +397,8 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function getConflictVouchers(){
+	public function getConflictVouchers(): array
+	{
 		$retArr = array();
 		$clidStr = $this->clid;
 		if($this->childClidArr){
@@ -420,17 +419,20 @@ class ChecklistVoucherAdmin {
 		while($row = $rs->fetch_object()){
 			$clSciname = $row->listid;
 			$voucherSciname = $row->sciname;
-			//if(str_replace($voucherSciname)) continue;
 			$retArr[$cnt]['tid'] = $row->tid;
 			$retArr[$cnt]['clid'] = $row->clid;
 			$retArr[$cnt]['occid'] = $row->occid;
 			$retArr[$cnt]['listid'] = $clSciname;
 			$collStr = $row->recordedby;
-			if($row->recordnumber) $collStr .= ' ('.$row->recordnumber.')';
+			if($row->recordnumber) {
+				$collStr .= ' (' . $row->recordnumber . ')';
+			}
 			$retArr[$cnt]['recordnumber'] = $this->cleanOutStr($collStr);
 			$retArr[$cnt]['specid'] = $this->cleanOutStr($voucherSciname);
 			$idBy = $row->identifiedby;
-			if($row->dateidentified) $idBy .= ' ('.$this->cleanOutStr($row->dateidentified).')';
+			if($row->dateidentified) {
+				$idBy .= ' (' . $this->cleanOutStr($row->dateidentified) . ')';
+			}
 			$retArr[$cnt]['identifiedby'] = $this->cleanOutStr($idBy);
 			$cnt++;
 		}
@@ -438,10 +440,10 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function batchAdjustChecklist($postArr){
+	public function batchAdjustChecklist($postArr): void
+	{
 		$occidArr = $postArr['occid'];
 		foreach($occidArr as $occid){
-			//Get checklist tid
 			$tidChecklist = 0;
 			$sql = 'SELECT tid FROM fmvouchers WHERE (clid = '.$this->clid.') AND (occid = '.$occid.')';
 			$rs = $this->conn->query($sql);
@@ -449,7 +451,6 @@ class ChecklistVoucherAdmin {
 				$tidChecklist = $r->tid;
 			}
 			$rs->free();
-			//Get voucher tid
 			$tidVoucher = 0;
 			$sql1 = 'SELECT tidinterpreted FROM omoccurrences WHERE (occid = '.$occid.')';
 			$rs1 = $this->conn->query($sql1);
@@ -457,25 +458,23 @@ class ChecklistVoucherAdmin {
 				$tidVoucher = $r1->tidinterpreted;
 			}
 			$rs1->free();
-			//Make sure
 			$sql2 = 'INSERT IGNORE INTO fmchklsttaxalink(tid, clid, morphospecies, familyoverride, habitat, abundance, notes, explicitExclude, source, internalnotes, dynamicProperties) '.
 				'SELECT '.$tidVoucher.' as tid, c.clid, c.morphospecies, c.familyoverride, c.habitat, c.abundance, c.notes, c.explicitExclude, c.source, c.internalnotes, c.dynamicProperties '.
 				'FROM fmchklsttaxalink c INNER JOIN fmvouchers v ON c.tid = v.tid AND c.clid = v.clid '.
 				'WHERE (c.clid = '.$this->clid.') AND (v.occid = '.$occid.')';
 			$this->conn->query($sql2);
-			//Transfer voucher to new name
 			$sql3 = 'UPDATE fmvouchers SET tid = '.$tidVoucher.' WHERE (clid = '.$this->clid.') AND (occid = '.$occid.')';
 			$this->conn->query($sql3);
 			if(array_key_exists('removeOldIn',$postArr)){
 				$sql4 = 'DELETE c.* FROM fmchklsttaxalink c LEFT JOIN fmvouchers v ON c.clid = v.clid AND c.tid = v.tid '.
-					'WHERE (c.clid = '.$this->clid.') AND (c.tid = '.$tidChecklist.') AND (v.clid IS NULL)';
+					'WHERE (c.clid = '.$this->clid.') AND (c.tid = '.$tidChecklist.') AND ISNULL(v.clid)';
 				$this->conn->query($sql4);
 			}
 		}
 	}
 
-	//Export functions used within voucherreporthandler.php
-	public function exportMissingOccurCsv(){
+	public function exportMissingOccurCsv(): void
+	{
 		if($sqlFrag = $this->getSqlFrag()){
 			$fileName = 'Missing_'.$this->getExportFileName().'.csv';
 
@@ -489,14 +488,19 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	private function getMissingTaxaBaseSql($sqlFrag){
+	private function getMissingTaxaBaseSql($sqlFrag): string
+	{
 		$clidStr = $this->clid;
-		if($this->childClidArr) $clidStr .= ','.implode(',',$this->childClidArr);
+		if($this->childClidArr) {
+			$clidStr .= ',' . implode(',', $this->childClidArr);
+		}
 		$retSql = 'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
 			'INNER JOIN taxa t ON ts.tidaccepted = t.tid '.
 			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) $retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
+			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		}
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
 			'AND (t.rankid IN(220,230,240,260,230)) AND (ts.taxauthid = 1) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
@@ -504,12 +508,10 @@ class ChecklistVoucherAdmin {
 		return $retSql;
 	}
 
-	public function getMissingProblemTaxa(){
+	public function getMissingProblemTaxa(): array
+	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
-			//Make sure tidinterpreted are valid
-			//$this->conn->query('UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.tidinterpreted = t.tid WHERE o.tidinterpreted IS NULL');
-			//Grab records
 			$sql = 'SELECT DISTINCT o.occid, IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 				'o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
 				'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
@@ -532,7 +534,8 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	public function exportProblemTaxaCsv(){
+	public function exportProblemTaxaCsv(): void
+	{
 		$fileName = 'ProblemTaxa_'.$this->getExportFileName().'.csv';
 
 		if($sqlFrag = $this->getSqlFrag()){
@@ -544,18 +547,24 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	private function getProblemTaxaSql($sqlFrag){
+	private function getProblemTaxaSql($sqlFrag): string
+	{
 		$clidStr = $this->clid;
-		if($this->childClidArr) $clidStr .= ','.implode(',',$this->childClidArr);
+		if($this->childClidArr) {
+			$clidStr .= ',' . implode(',', $this->childClidArr);
+		}
 		$retSql = 'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.CollID '.
 			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) $retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
+			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+		}
 		$retSql .= 'WHERE ('.$sqlFrag.') AND (o.tidinterpreted IS NULL) AND (o.sciname IS NOT NULL) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) ';
 		return $retSql;
 	}
 
-	public function downloadChecklistCsv(){
+	public function downloadChecklistCsv(): void
+	{
 		if($this->clid){
 			$fieldArr = array('tid'=>'t.tid AS Taxon_Local_ID');
 			$fieldArr['clhabitat'] = 'ctl.habitat AS habitat';
@@ -581,7 +590,8 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	public function downloadVoucherCsv(){
+	public function downloadVoucherCsv(): void
+	{
 		if($this->clid){
 			$fileName = $this->getExportFileName().'.csv';
 
@@ -614,7 +624,8 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	private function exportCsv($fileName,$sql,$localitySecurityFields = null){
+	private function exportCsv($fileName,$sql,$localitySecurityFields = null): void
+	{
 		global $USER_RIGHTS;
 		header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header ('Content-Type: text/csv');
@@ -632,13 +643,17 @@ class ChecklistVoucherAdmin {
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
-					$localSecurity = ($row["localitysecurity"]?$row["localitysecurity"]:0);
-					if(!$rareSpeciesReader && $localSecurity != 1 && (!array_key_exists('RareSppReader', $USER_RIGHTS) || !in_array($row['collid'],$USER_RIGHTS['RareSppReader']))){
+					$localSecurity = ($row['localitysecurity']?:0);
+					if(!$rareSpeciesReader && $localSecurity !== 1 && (!array_key_exists('RareSppReader', $USER_RIGHTS) || !in_array($row['collid'], $USER_RIGHTS['RareSppReader'], true))){
 						$redactStr = '';
 						foreach($localitySecurityFields as $fieldName){
-							if($row[$fieldName]) $redactStr .= ','.$fieldName;
+							if($row[$fieldName]) {
+								$redactStr .= ',' . $fieldName;
+							}
 						}
-						if($redactStr) $row['informationWithheld'] = 'Fields with redacted values (e.g. rare species localities):'.trim($redactStr,', ');
+						if($redactStr) {
+							$row['informationWithheld'] = 'Fields with redacted values (e.g. rare species localities):' . trim($redactStr, ', ');
+						}
 					}
 				}
 				$this->encodeArr($row);
@@ -658,7 +673,9 @@ class ChecklistVoucherAdmin {
 			if(strlen($fileName) > 20){
 				$nameArr = explode(' ',$fileName);
 				foreach($nameArr as $k => $w){
-					if(strlen($w) > 3) $nameArr[$k] = substr($w,0,4);
+					if(strlen($w) > 3) {
+						$nameArr[$k] = substr($w, 0, 4);
+					}
 				}
 				$fileName = implode('',$nameArr);
 			}
@@ -671,7 +688,8 @@ class ChecklistVoucherAdmin {
 		return $fileName;
 	}
 
-	private function getOccurrenceFieldArr(){
+	private function getOccurrenceFieldArr(): array
+	{
 		global $CLIENT_ROOT;
 		$retArr = array('o.family AS family_occurrence', 'o.sciName AS scientificName_occurrence', 'IFNULL(o.institutionCode,c.institutionCode) AS institutionCode','IFNULL(o.collectionCode,c.collectionCode) AS collectionCode',
 			'CASE guidTarget WHEN "symbiotaUUID" THEN IFNULL(o.occurrenceID,g.guid) WHEN "occurrenceId" THEN o.occurrenceID WHEN "catalogNumber" THEN o.catalogNumber ELSE "" END AS occurrenceID',
@@ -680,38 +698,33 @@ class ChecklistVoucherAdmin {
  			'o.decimalLatitude', 'o.decimalLongitude', 'o.coordinateUncertaintyInMeters', 'o.minimumElevationInMeters', 'o.maximumelevationinmeters',
 			'o.verbatimelevation', 'o.habitat', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.reproductivecondition', 'o.informationWithheld', 'o.occid');
 		$retArr[] = 'g.guid AS recordID';
-		$serverDomain = "http://";
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $serverDomain = "https://";
+		$serverDomain = 'http://';
+		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+			$serverDomain = 'https://';
+		}
 		$serverDomain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $serverDomain .= ':'.$_SERVER["SERVER_PORT"];
+		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+			$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
+		}
 		$retArr[] = 'CONCAT("'.$serverDomain.$CLIENT_ROOT.'/collections/individual/index.php?occid=",o.occid) as `references`';
 		return $retArr;
-
-		/*
-		return array('family'=>'o.family','scientificName'=>'o.sciName AS scientificName_occurrence','institutionCode'=>'IFNULL(o.institutionCode,c.institutionCode) AS institutionCode',
-			'collectionCode'=>'IFNULL(o.collectionCode,c.collectionCode) AS collectionCode','occurrenceID'=>'o.occurrenceID',
-			'catalogNumber'=>'o.catalogNumber','identifiedBy'=>'o.identifiedBy','dateIdentified'=>'o.dateIdentified',
-			'recordedBy'=>'o.recordedBy','recordNumber'=>'o.recordNumber','eventDate'=>'o.eventDate','country'=>'o.country',
-			'stateProvince'=>'o.stateProvince','county'=>'o.county','municipality'=>'o.municipality','locality'=>'o.locality',
-			'decimalLatitude'=>'o.decimalLatitude','decimalLongitude'=>'o.decimalLongitude','coordinateUncertaintyInMeters'=>'o.coordinateUncertaintyInMeters','minimumElevationInMeters'=>'o.minimumElevationInMeters',
-			'maximumElevationInMeters'=>'o.maximumelevationinmeters','verbatimElevation'=>'o.verbatimelevation',
-			'habitat'=>'o.habitat','occurrenceRemarks'=>'o.occurrenceRemarks','associatedTaxa'=>'o.associatedTaxa',
-			'reproductiveCondition'=>'o.reproductivecondition','informationWithheld'=>'o.informationWithheld','occid'=>'o.occid');
-		*/
 	}
 
-	private function getLocalitySecurityArr(){
+	private function getLocalitySecurityArr(): array
+	{
 		return array('recordNumber','eventDate','locality','decimalLatitude','decimalLongitude','minimumElevationInMeters',
 			'minimumElevationInMeters','habitat','occurrenceRemarks');
 	}
 
-	//Voucher loading functions
-	public function linkVouchers($occidArr){
+	public function linkVouchers($occidArr): string
+	{
 		$retStatus = '';
 		$sqlFrag = '';
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			if(count($vArr) == 2 && $vArr[0] && $vArr[1]) $sqlFrag .= ',('.$this->clid.','.$vArr[0].','.$vArr[1].')';
+			if(count($vArr) === 2 && $vArr[0] && $vArr[1]) {
+				$sqlFrag .= ',(' . $this->clid . ',' . $vArr[0] . ',' . $vArr[1] . ')';
+			}
 		}
 		$sql = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES '.substr($sqlFrag,1);
 		//echo $sql;
@@ -733,40 +746,31 @@ class ChecklistVoucherAdmin {
 		if($this->conn->query($sql)){
 			return 1;
 		}
-		else{
-			if($this->conn->errno == 1062){
-				//trigger_error('Specimen already a voucher for checklist ');
-				return 'Specimen already a voucher for checklist';
-			}
-			else{
-				//trigger_error('Attempting to resolve by adding species to checklist; '.$this->conn->error,E_USER_WARNING);
-				$sql2 = 'INSERT INTO fmchklsttaxalink(tid,clid) VALUES('.$taxa.','.$this->clid.')';
-				if($this->conn->query($sql2)){
-					if($this->conn->query($sql)){
-						return 1;
-					}
-					else{
-						//echo 'Name added to list, though still unable to link voucher';
-						//trigger_error('Name added to checklist, though still unable to link voucher": '.$this->conn->error,E_USER_WARNING);
-						return 'Name added to checklist, though unable to link voucher: '.$this->conn->error;
-					}
-				}
-				else{
-					//echo 'Unable to link voucher; unknown error';
-					//trigger_error('Unable to link voucher; '.$this->conn->error,E_USER_WARNING);
-					return 'Unable to link voucher: '.$this->conn->error;
-				}
-			}
+
+		if($this->conn->errno === 1062){
+			return 'Specimen already a voucher for checklist';
 		}
+
+		$sql2 = 'INSERT INTO fmchklsttaxalink(tid,clid) VALUES('.$taxa.','.$this->clid.')';
+		if($this->conn->query($sql2)){
+			if($this->conn->query($sql)){
+				return 1;
+			}
+
+			return 'Name added to checklist, though unable to link voucher: '.$this->conn->error;
+		}
+
+		return 'Unable to link voucher: '.$this->conn->error;
 	}
 
-	public function linkTaxaVouchers($occidArr,$useCurrentTaxon = 1){
+	public function linkTaxaVouchers($occidArr,$useCurrentTaxon = 1): void
+	{
 		$tidsUsed = array();
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
 			$tid = $vArr[1];
 			$occid = $vArr[0];
-			if(count($vArr) == 2 && is_numeric($occid) && is_numeric($tid)){
+			if(is_numeric($occid) && is_numeric($tid) && count($vArr) === 2){
 				if($useCurrentTaxon){
 					$sql = 'SELECT tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tid = '.$tid;
 					$rs = $this->conn->query($sql);
@@ -775,8 +779,7 @@ class ChecklistVoucherAdmin {
 					}
 					$rs->free();
 				}
-				if(!in_array($tid,$tidsUsed)){
-					//Add name to checklist
+				if(!in_array($tid, $tidsUsed, true)){
 					$sql = 'INSERT INTO fmchklsttaxalink(clid,tid) VALUES('.$this->clid.','.$tid.')';
 					$tidsUsed[] = $tid;
 					//echo $sql;
@@ -784,56 +787,81 @@ class ChecklistVoucherAdmin {
 						trigger_error('Unable to add taxon; '.$this->conn->error,E_USER_WARNING);
 					}
 				}
-				//Link Vouchers
-				$sql = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES ('.$this->clid.','.$occid.','.$tid.')';
-				if(!$this->conn->query($sql)){
+				$sql2 = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES ('.$this->clid.','.$occid.','.$tid.')';
+				if(!$this->conn->query($sql2)){
 					trigger_error('Unable to link taxon voucher; '.$this->conn->error,E_USER_WARNING);
 				}
 			}
 		}
 	}
 
-	//Misc fucntions
-	public function getQueryVariablesArr(){
+	public function getQueryVariablesArr(): array
+	{
 		return $this->queryVariablesArr;
 	}
 
-	public function getQueryVariableStr(){
+	public function getQueryVariableStr(): string
+	{
 		$retStr = '';
 		if(isset($this->queryVariablesArr['collid'])){
 			$collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
 			$retStr .= current($collArr).'; ';
 		}
-		if(isset($this->queryVariablesArr['country'])) $retStr .= $this->queryVariablesArr['country'].'; ';
-		if(isset($this->queryVariablesArr['state'])) $retStr .= $this->queryVariablesArr['state'].'; ';
-		if(isset($this->queryVariablesArr['county'])) $retStr .= $this->queryVariablesArr['county'].'; ';
-		if(isset($this->queryVariablesArr['locality'])) $retStr .= $this->queryVariablesArr['locality'].'; ';
-		if(isset($this->queryVariablesArr['taxon'])) $retStr .= $this->queryVariablesArr['taxon'].'; ';
-		if(isset($this->queryVariablesArr['recordedby'])) $retStr .= $this->queryVariablesArr['recordedby'].'; ';
-		if(isset($this->queryVariablesArr['latsouth']) && isset($this->queryVariablesArr['latnorth'])) $retStr .= 'Lat between '.$this->queryVariablesArr['latsouth'].' and '.$this->queryVariablesArr['latnorth'].'; ';
-		if(isset($this->queryVariablesArr['lngwest']) && isset($this->queryVariablesArr['lngeast'])) $retStr .= 'Long between '.$this->queryVariablesArr['lngwest'].' and '.$this->queryVariablesArr['lngeast'].'; ';
-		if(isset($this->queryVariablesArr['latlngor'])) $retStr .= 'Include Lat/Long and locality as an "OR" condition; ';
-		if(isset($this->queryVariablesArr['excludecult'])) $retStr .= 'Exclude cultivated species; ';
-		if(isset($this->queryVariablesArr['onlycoord'])) $retStr .= 'Only include occurrences with coordinates; ';
+		if(isset($this->queryVariablesArr['country'])) {
+			$retStr .= $this->queryVariablesArr['country'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['state'])) {
+			$retStr .= $this->queryVariablesArr['state'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['county'])) {
+			$retStr .= $this->queryVariablesArr['county'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['locality'])) {
+			$retStr .= $this->queryVariablesArr['locality'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['taxon'])) {
+			$retStr .= $this->queryVariablesArr['taxon'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['recordedby'])) {
+			$retStr .= $this->queryVariablesArr['recordedby'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['latsouth'], $this->queryVariablesArr['latnorth'])) {
+			$retStr .= 'Lat between ' . $this->queryVariablesArr['latsouth'] . ' and ' . $this->queryVariablesArr['latnorth'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast'])) {
+			$retStr .= 'Long between ' . $this->queryVariablesArr['lngwest'] . ' and ' . $this->queryVariablesArr['lngeast'] . '; ';
+		}
+		if(isset($this->queryVariablesArr['latlngor'])) {
+			$retStr .= 'Include Lat/Long and locality as an "OR" condition; ';
+		}
+		if(isset($this->queryVariablesArr['excludecult'])) {
+			$retStr .= 'Exclude cultivated species; ';
+		}
+		if(isset($this->queryVariablesArr['onlycoord'])) {
+			$retStr .= 'Only include occurrences with coordinates; ';
+		}
 		return trim($retStr,' ;');
 	}
 
-	public function getMissingTaxaCount(){
+	public function getMissingTaxaCount(): int
+	{
 		return $this->missingTaxaCount;
 	}
 
-	private function isRareSpeciesReader(){
+	private function isRareSpeciesReader(): bool
+	{
 		global $IS_ADMIN, $USER_RIGHTS;
 		$canReadRareSpp = false;
 		if($IS_ADMIN
-			|| array_key_exists("CollAdmin", $USER_RIGHTS)
-			|| array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+			|| array_key_exists('CollAdmin', $USER_RIGHTS)
+			|| array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 			$canReadRareSpp = true;
 		}
 		return $canReadRareSpp;
 	}
 
-	public function getCollectionList($collId = 0){
+	public function getCollectionList($collId = 0): array
+	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname FROM omcollections ';
 		if($collId) $sql .= 'WHERE collid = '.$collId;
@@ -846,7 +874,8 @@ class ChecklistVoucherAdmin {
 		return $retArr;
 	}
 
-	private function getSciname($tid){
+	private function getSciname($tid): string
+	{
 		$retStr = '';
 		if(is_numeric($tid)){
 			$sql = 'SELECT sciname FROM taxa WHERE tid = '.$tid;
@@ -859,7 +888,8 @@ class ChecklistVoucherAdmin {
 		return $retStr;
 	}
 
-	private function getTid($sciname){
+	private function getTid($sciname): int
+	{
 		$tidRet = 0;
 		$sql = 'SELECT tid FROM taxa WHERE sciname = ("'.$sciname.'")';
 		$rs = $this->conn->query($sql);
@@ -870,37 +900,38 @@ class ChecklistVoucherAdmin {
 		return $tidRet;
 	}
 
-	public function getChildClidArr(){
+	public function getChildClidArr(): array
+	{
 		return $this->childClidArr;
 	}
 
-	private function encodeArr(&$inArr){
+	private function encodeArr(&$inArr): void
+	{
 		global $CHARSET;
 		$charSetOut = 'ISO-8859-1';
 		$charSetSource = strtoupper($CHARSET);
-		if($charSetSource && $charSetOut != $charSetSource){
+		if($charSetSource && $charSetOut !== $charSetSource){
 			foreach($inArr as $k => $v){
 				$inArr[$k] = $this->encodeStr($v);
 			}
 		}
 	}
 
-	protected function encodeStr($inStr){
+	protected function encodeStr($inStr): string
+	{
 		global $CHARSET;
 		$charSetSource = strtoupper($CHARSET);
 		$charSetOut = 'ISO-8859-1';
 		$retStr = $inStr;
 		if($inStr && $charSetSource){
-			if($charSetOut == 'UTF-8' && $charSetSource == 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) == 'ISO-8859-1'){
+			if($charSetOut === 'UTF-8' && $charSetSource === 'ISO-8859-1'){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
-					//$retStr = iconv("ISO-8859-1//TRANSLIT","UTF-8",$inStr);
 				}
 			}
-			elseif($charSetOut == "ISO-8859-1" && $charSetSource == 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') == 'UTF-8'){
+			elseif($charSetOut === 'ISO-8859-1' && $charSetSource === 'UTF-8'){
+				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
 					$retStr = utf8_decode($inStr);
-					//$retStr = iconv("UTF-8","ISO-8859-1//TRANSLIT",$inStr);
 				}
 			}
 		}
@@ -908,8 +939,7 @@ class ChecklistVoucherAdmin {
 	}
 
 	private function cleanOutStr($str){
-		$str = str_replace('"',"&quot;",$str);
-		$str = str_replace("'","&apos;",$str);
+		$str = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 		return $str;
 	}
 
@@ -920,4 +950,3 @@ class ChecklistVoucherAdmin {
 		return $newStr;
 	}
 }
-?>

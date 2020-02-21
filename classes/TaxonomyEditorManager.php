@@ -1,5 +1,5 @@
 <?php
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once('DbConnection.php');
 
 class TaxonomyEditorManager{
 
@@ -9,6 +9,7 @@ class TaxonomyEditorManager{
 	private $family;
 	private $sciName;
 	private $kingdomName;
+    private $kingdomId = 0;
 	private $rankid = 0;
 	private $rankName;
 	private $unitInd1;
@@ -44,7 +45,7 @@ class TaxonomyEditorManager{
 	
 	public function setTaxon(): void
 	{
-		$sqlTaxon = 'SELECT tid, rankid, sciname, unitind1, unitname1, '.
+		$sqlTaxon = 'SELECT tid, kingdomId, rankid, sciname, unitind1, unitname1, '.
 			'unitind2, unitname2, unitind3, unitname3, author, source, notes, securitystatus, initialtimestamp '.
 			'FROM taxa '.
 			'WHERE (tid = '.$this->tid.')';
@@ -53,7 +54,8 @@ class TaxonomyEditorManager{
 		if($r = $rs->fetch_object()){
 			$this->sciName = $r->sciname;
 			$this->rankid = $r->rankid;
-			$this->unitInd1 = $r->unitind1;
+            $this->kingdomId = $r->kingdomId;
+            $this->unitInd1 = $r->unitind1;
 			$this->unitName1 = $r->unitname1;
 			$this->unitInd2 = $r->unitind2;
 			$this->unitName2 = $r->unitname2;
@@ -151,7 +153,7 @@ class TaxonomyEditorManager{
 		if($this->rankid){
 			$sql = 'SELECT rankname '.
 				'FROM taxonunits '.
-				'WHERE (rankid = '.$this->rankid.') ';
+				'WHERE (rankid = '.$this->rankid.') AND (kingdomId = '.$this->kingdomId.') ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
@@ -994,7 +996,11 @@ class TaxonomyEditorManager{
 	public function getRankArr(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT rankid, rankname FROM taxonunits ORDER BY rankid ';
+		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ';
+		if($this->kingdomId){
+            $sql .= 'WHERE kingdomid = '.$this->kingdomId.' ';
+        }
+        $sql .= 'ORDER BY rankid ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->rankid] = $r->rankname;

@@ -1,7 +1,7 @@
 <?php
 include_once('config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SiteMapManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/classes/SiteMapManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $smManager = new SiteMapManager();
@@ -13,7 +13,7 @@ $smManager = new SiteMapManager();
 	<link href="css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function submitTaxaNoImgForm(f){
-			if(f.clid.value != ""){
+			if(f.clid.value !== ""){
 				f.submit();
 			}
 			return false;
@@ -23,9 +23,8 @@ $smManager = new SiteMapManager();
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/header.php');
 	?>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>Site Map</h1>
 		<div style="margin:10px;">
@@ -130,11 +129,11 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 
-					if($KEY_MOD_IS_ACTIVE || array_key_exists("KeyAdmin",$USER_RIGHTS)){
+					if($KEY_MOD_IS_ACTIVE || array_key_exists('KeyAdmin',$USER_RIGHTS)){
 						?>
 						<h3>Identification Keys</h3>
 						<?php
-						if(!$KEY_MOD_IS_ACTIVE && array_key_exists("KeyAdmin",$USER_RIGHTS)){
+						if(!$KEY_MOD_IS_ACTIVE && array_key_exists('KeyAdmin',$USER_RIGHTS)){
 							?>
 							<div style="color:red;margin-left:10px;">
                                 Note: The Identification Key module is deactivated within this portal. However, you can override by activating idividual keys within the checklist administration page.
@@ -144,14 +143,14 @@ $smManager = new SiteMapManager();
 						?>
 						<ul>
 							<?php
-							if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
+							if($IS_ADMIN || array_key_exists('KeyAdmin',$USER_RIGHTS)){
 								?>
 								<li>
                                     You are authorized to access the <a href="<?php echo $CLIENT_ROOT; ?>/ident/admin/index.php">Characters and Character States Editor</a>
 								</li>
 								<?php
 							}
-							if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("KeyAdmin",$USER_RIGHTS)){
+							if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS) || array_key_exists('KeyAdmin',$USER_RIGHTS)){
 								?>
 								<li>
                                     You are authorized to edit Identification Keys.
@@ -162,7 +161,7 @@ $smManager = new SiteMapManager();
 	                                    echo 'For coding characters in a table format, open the Mass-Update Editor for the following checklists. <br/>';
 										echo '<ul>';
 										foreach($clAdmin as $vClid => $name){
-											echo "<li><a href='".$CLIENT_ROOT."/ident/tools/massupdate.php?clid=".$vClid."'>".$name."</a></li>";
+											echo "<li><a href='".$CLIENT_ROOT. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
 										}
 										echo '</ul>';
 									}
@@ -202,7 +201,7 @@ $smManager = new SiteMapManager();
 							</li>
 							<?php
 						}
-						if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) || array_key_exists("CollEditor",$USER_RIGHTS)){
+						if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('CollEditor',$USER_RIGHTS)){
 							?>
 							<li>
 								<a href="collections/editor/observationsubmit.php">
@@ -244,7 +243,7 @@ $smManager = new SiteMapManager();
 
 					<h3>Taxon Profile Page</h3>
 					<?php
-					if($IS_ADMIN || array_key_exists("TaxonProfile",$USER_RIGHTS)){
+					if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
 						?>
 						<div style="margin:10px;">
                             The following Species Profile page editing features are also available to editors via an
@@ -270,13 +269,13 @@ $smManager = new SiteMapManager();
 					<h3>Taxonomy</h3>
 					<ul>
 						<?php
-						if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+						if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 							?>
 							<li>Edit Taxonomic Placement (use <a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer)</a></li>
 							<li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
 							<li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
 							<?php
-							if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+							if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 								?>
 								<li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
 								<?php
@@ -299,11 +298,11 @@ $smManager = new SiteMapManager();
 						<?php
 						if($clAdmin){
 							foreach($clAdmin as $k => $v){
-								echo "<li><a href='".$CLIENT_ROOT."/checklists/checklist.php?cl=".$k."&emode=1'>$v</a></li>";
+								echo "<li><a href='".$CLIENT_ROOT. '/checklists/checklist.php?cl=' .$k."&emode=1'>$v</a></li>";
 							}
 						}
 						else{
-							echo "<li>You are not authorized to edit any of the Checklists</li>";
+							echo '<li>You are not authorized to edit any of the Checklists</li>';
 						}
 						?>
 					</ul>
@@ -350,7 +349,7 @@ $smManager = new SiteMapManager();
 							}
 						}
 						else{
-							echo "<li>You have no explicit editing permissions for a particular collections</li>";
+							echo '<li>You have no explicit editing permissions for a particular collections</li>';
 						}
 						?>
 						</ul>
@@ -386,7 +385,9 @@ $smManager = new SiteMapManager();
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid='.$k.'&emode=1">'.$oArr['name']."</a></li>\n";
+									if($oArr['isadmin']) {
+                                        $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . $oArr['name'] . "</a></li>\n";
+                                    }
 								}
 								foreach($obsList as $k => $oArr){
 									?>
@@ -396,11 +397,13 @@ $smManager = new SiteMapManager();
 										</a>
 									</li>
 									<?php
-									if($oArr['isadmin']) $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid='.$k.'&emode=1">'.$oArr['name']."</a></li>\n";
+									if($oArr['isadmin']) {
+                                        $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . $oArr['name'] . "</a></li>\n";
+                                    }
 								}
 							}
 							else{
-								echo "<li>There are no Observation Projects to which you have permissions</li>";
+								echo '<li>There are no Observation Projects to which you have permissions</li>';
 							}
 							?>
 						</ul>
@@ -454,7 +457,7 @@ $smManager = new SiteMapManager();
 		</div>
 	</div>
 	<?php
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/footer.php');
 	?>
 </body>
 </html>
