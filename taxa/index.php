@@ -1,6 +1,6 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonProfileManager.php');
+include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
@@ -92,7 +92,7 @@ else{
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
 		let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
@@ -116,7 +116,7 @@ else{
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div id="innertable">
     <div id="toprow">
@@ -163,7 +163,7 @@ include($SERVER_ROOT.'/header.php');
     </div>
 </div>
 <?php
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

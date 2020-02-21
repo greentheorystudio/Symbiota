@@ -1,4 +1,3 @@
-<!-- Map Tools -->
 <div id="maptools" data-role="popup" class="well" style="width:600px;height:90%;">
     <a class="boxclose maptools_close" id="boxclose"></a>
     <h2>Tools</h2>

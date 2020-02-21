@@ -1,4 +1,3 @@
-<!-- Map Settings -->
 <div id="mapsettings" data-role="popup" class="well" style="width:600px;height:90%;font-size:14px;">
     <a class="boxclose mapsettings_close" id="boxclose"></a>
     <h2>Map Settings</h2>

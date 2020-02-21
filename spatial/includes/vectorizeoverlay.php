@@ -1,4 +1,3 @@
-<!-- Vectorize Tool -->
 <div id="vectorizeoverlaytool" data-role="popup" class="well" style="width:400px;height:20%;">
     <a class="boxclose vectorizeoverlaytool_close" id="boxclose"></a>
     <h2>Vectorize Tool</h2>

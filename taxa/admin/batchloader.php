@@ -1,7 +1,7 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUpload.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
+include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 if(!$SYMB_UID) {
     header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
@@ -104,7 +104,7 @@ if($isEditor){
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
@@ -361,7 +361,7 @@ else{
 	</div>
 	<?php
 }
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

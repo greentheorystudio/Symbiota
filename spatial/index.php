@@ -1,12 +1,12 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/config/includes/searchVarDefault.php');
-include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
+include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
-if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
-    include($SERVER_ROOT.'/config/includes/searchVarCustom.php');
+if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
+    include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 
 $mapCenter = '[-110.90713, 32.21976]';
