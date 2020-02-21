@@ -1,8 +1,6 @@
 <?php
-//error_reporting(E_ALL);
- include_once(__DIR__ . '/../config/symbini.php');
- header("Content-Type: text/html; charset=".$CHARSET);
- 
+include_once(__DIR__ . '/../config/symbini.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
@@ -12,9 +10,8 @@
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../header.php');
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<h1>Guidelines for Acceptable Use of Data</h1><br />
 
@@ -27,7 +24,7 @@
 				<div style="margin:10px;">
 					<?php 
 					echo $DEFAULT_TITLE.'. '.date('Y').'. ';
-					echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php. '; 
+					echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php. ';
 					echo 'Accessed on '.date('F d').'. '; 
 					?>
 				</div>
@@ -38,18 +35,17 @@
 				<div style="margin:10px;">
 					Biodiversity occurrence data published by: &lt;List of Collections&gt; 
 					(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
+					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
 					<b>For example:</b><br/>
 					Biodiversity occurrence data published by: 
 					Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden 
 					(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
+					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
 				</div>
 			</div>
 			<div>
 			</div>
 
-			<a name="occurrences"></a>
 			<h2>Occurrence Record Use Policy</h2>
 		    <div style="margin:10px;">
 				<ul>
@@ -74,7 +70,6 @@
 				</ul>
 		    </div>
 		
-			<a name="images"></a>
 			<h2>Images</h2>
 		    <div style="margin:15px;">
 		    	Images within this website have been generously contributed by their owners to 
@@ -100,7 +95,7 @@
 			</div> 
 		</div>
 		<?php
-			include($SERVER_ROOT.'/footer.php');
+			include(__DIR__ . '/../footer.php');
 		?>
 	</body>
 </html>
