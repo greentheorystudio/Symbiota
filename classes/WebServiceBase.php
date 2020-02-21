@@ -3,7 +3,7 @@ require_once($SERVER_ROOT.'/classes/Manager.php');
 
 class WebServiceBase extends Manager{
 
-	public function __construct($id, $conType) {
+	public function __construct($id) {
 		parent::__construct($id);
 		$this->setLogFH('../content/logs/occurrenceWriter_'.date('Ymd').'.log');
 	}

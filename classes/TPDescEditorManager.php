@@ -88,7 +88,7 @@ class TPDescEditorManager extends TPEditorManager{
 	{
 		global $SYMB_UID;
 		$status = '';
-		if(is_numeric($_REQUEST["tid"])){
+		if(is_numeric($_REQUEST['tid'])){
 			$sql = 'INSERT INTO taxadescrblock(tid,uid,'.($_REQUEST['language']? 'language,' : '').($_REQUEST['displaylevel']? 'displaylevel,' : '').
 				'notes,caption,source,sourceurl) '.
 				'VALUES('.$_REQUEST['tid'].','.$SYMB_UID.
@@ -101,7 +101,6 @@ class TPDescEditorManager extends TPEditorManager{
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
 				$status = 'ERROR adding description block: ' .$this->taxonCon->error;
-				//$status .= "\nSQL: ".$sql;
 			}
 		}
 		return $status;

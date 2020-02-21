@@ -121,7 +121,7 @@ class TaxonProfileManager {
 		}
 		else if (!$isFinal && preg_match('/^([A-Z]+[a-z]*\s+x?\s?[a-z]+)/', $t, $m)) {
 			$sn = $m[1];
-			if (preg_match('/\s{1}var\.\s+([a-z]+)/', $t, $m)) {
+			if (preg_match('/\svar\.\s+([a-z]+)/', $t, $m)) {
 				$sn .= ' var. ' . $m[1];
 			} elseif (preg_match('/\s+(s[ub]*sp\.)\s+([a-z]+)/', $t, $m)) {
 				$sn .= ' ' . $m[1] . ' ' . $m[2];
@@ -399,11 +399,7 @@ class TaxonProfileManager {
 		}
  	}
 
-	public function getSynonyms(){
-		return $this->synonyms;
-	}
-
- 	public function getSynonymStr(): string
+    public function getSynonymStr(): string
 	{
  		$str = '';
  		$cnt = 0;
@@ -601,7 +597,9 @@ class TaxonProfileManager {
 		$googleUrl = '';
 		if(!$tidStr){
 			$tidArr = Array($this->tid,$this->submittedTid);
-			if($this->synonyms) $tidArr = array_merge($tidArr,array_keys($this->synonyms));
+			if($this->synonyms) {
+                $tidArr = array_merge($tidArr, array_keys($this->synonyms));
+            }
 			$tidStr = trim(implode(',',$tidArr),' ,');
 		}
 

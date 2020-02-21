@@ -8,7 +8,7 @@ $exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0
 $loanManager = new SpecLoans();
 if($collId) $loanManager->setCollId($collId);
 
-$transInstList = $loanManager->getTransInstList($collId);
+$transInstList = $loanManager->getTransInstList();
 if($transInstList){
 	?>
 	<div id="exchangeToggle" style="float:right;margin:10px;">

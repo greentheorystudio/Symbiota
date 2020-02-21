@@ -7,16 +7,19 @@ class RareSpeciesManager {
  	private $conn;
  	private $taxaArr = array();
     
-    function __construct($collType = 'readonly'){
+    public function __construct(){
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
     }
     
- 	function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+ 	public function __destruct(){
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
     
-	public function getRareSpeciesList(){
+	public function getRareSpeciesList(): array
+	{
  		$returnArr = array();
 		$sql = 'SELECT t.tid, ts.Family, t.SciName, t.Author '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.tid '.
@@ -29,30 +32,30 @@ class RareSpeciesManager {
  		$result = $this->conn->query($sql);
 		if($result) {
 			while($row = $result->fetch_object()){
-				$returnArr[$row->Family][$row->tid] = "<i>".$row->SciName."</i>&nbsp;&nbsp;".$row->Author;
+				$returnArr[$row->Family][$row->tid] = '<i>' .$row->SciName. '</i>&nbsp;&nbsp;' .$row->Author;
 			}
 		}
 		$result->free();
 		return $returnArr;
 	}
 
-	public function addSpecies($tid){
+	public function addSpecies($tid): void
+	{
 		if(is_numeric($tid)){
 	 		$sql = 'UPDATE taxa t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			//Update specimen records
 			$occurMain = new OccurrenceMaintenance($this->conn);
 			$occurMain->protectGloballyRareSpecies();
 		}
 	}
 
-	public function deleteSpecies($tid){
+	public function deleteSpecies($tid): void
+	{
 		if(is_numeric($tid)){
 			$sql = 'UPDATE taxa t SET t.SecurityStatus = 0 WHERE (t.tid = '.$tid.')';
 	 		//echo $sql;
 			$this->conn->query($sql);
-			//Update specimen records
 			$sql2 = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxa t ON ts2.tid = t.tid '.
@@ -65,7 +68,8 @@ class RareSpeciesManager {
 		}
 	}
 
-	public function getStateList(){
+	public function getStateList(): array
+	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT c.clid, c.name, c.locality, c.authors, c.access '.
 			'FROM fmchecklists c INNER JOIN fmchklsttaxalink l ON c.clid = l.clid '.
@@ -87,7 +91,8 @@ class RareSpeciesManager {
 		return $retArr;
 	}
 	
-	public function setSearchTaxon($searchTaxon){
+	public function setSearchTaxon($searchTaxon): void
+	{
 		$sql = 'SELECT ts.tidaccepted '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'WHERE t.sciname = "'.$searchTaxon.'" AND ts.taxauthid = 1';
@@ -99,7 +104,6 @@ class RareSpeciesManager {
 		}
 		$rs->free();
 
-		//Get synonyms
 		$sql = 'SELECT tid  FROM taxstatus  WHERE tidaccepted IN('.implode(',',$this->taxaArr).")";
 		$rs = $this->conn->query($sql);
 		if($rs) {
@@ -110,4 +114,3 @@ class RareSpeciesManager {
 		$rs->free();
 	}
 }
-?>

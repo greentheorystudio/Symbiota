@@ -13,20 +13,21 @@ class TaxonomyAPIManager{
     private $hideAuth = false;
     private $hideProtected = false;
 	
-	function __construct(){
+	public function __construct(){
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
 	}
 
  	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+            $this->conn->close();
+        }
 	}
 
-    public function generateSciNameList($queryString){
+    public function generateSciNameList($queryString): array
+    {
         $retArr = array();
-        $sql = '';
-
- 	    $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
+        $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
             'FROM taxa AS t ';
  	    if($this->taxAuthId){
             $sql .= 'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
@@ -63,10 +64,9 @@ class TaxonomyAPIManager{
  	    return $retArr;
     }
 
-    public function generateVernacularList($queryString){
+    public function generateVernacularList($queryString): array
+    {
         $retArr = array();
-        $sql = '';
-
         $sql = 'SELECT DISTINCT v.VernacularName '.
             'FROM taxavernaculars AS v ';
         $sql .= 'WHERE v.VernacularName LIKE "'.$this->cleanInStr($queryString).'%" ';
@@ -81,31 +81,38 @@ class TaxonomyAPIManager{
         return $retArr;
     }
  	
-	public function setTaxAuthId($val){
+	public function setTaxAuthId($val): void
+    {
         $this->taxAuthId = $this->cleanInStr($val);
     }
 
-    public function setRankLimit($val){
+    public function setRankLimit($val): void
+    {
         $this->rankLimit = $this->cleanInStr($val);
     }
 
-    public function setRankLow($val){
+    public function setRankLow($val): void
+    {
         $this->rankLow = $this->cleanInStr($val);
     }
 
-    public function setRankHigh($val){
+    public function setRankHigh($val): void
+    {
         $this->rankHigh = $this->cleanInStr($val);
     }
 
-    public function setLimit($val){
+    public function setLimit($val): void
+    {
         $this->limit = $this->cleanInStr($val);
     }
 
-    public function setHideAuth($val){
+    public function setHideAuth($val): void
+    {
         $this->hideAuth = $this->cleanInStr($val);
     }
 
-    public function setHideProtected($val){
+    public function setHideProtected($val): void
+    {
         $this->hideProtected = $this->cleanInStr($val);
     }
 	
@@ -116,4 +123,3 @@ class TaxonomyAPIManager{
         return $newStr;
     }
 }
-?>

@@ -105,19 +105,21 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 
 		$clArr = array();
 		$kingdomArr = array();
-		$sql = 'SELECT t.tid, t.kingdomname, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
+		$sql = 'SELECT t.tid, t.kingdomId, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
 			'FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid '.
 			'INNER JOIN taxstatus ts ON c.tid = ts.tid '.
 			'WHERE (ts.taxauthid = 1) AND (c.clid IN('.$clidStr.')) '.
 			'ORDER BY IFNULL(c.familyoverride, ts.family), t.sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			if(isset($kingdomArr[$r->kingdomname])) {
-				++$kingdomArr[$r->kingdomname];
-			}
-			else {
-				$kingdomArr[$r->kingdomname] = 0;
-			}
+			if($r->kingdomId){
+                if(isset($kingdomArr[$r->kingdomId])) {
+                    ++$kingdomArr[$r->kingdomId];
+                }
+                else {
+                    $kingdomArr[$r->kingdomId] = 0;
+                }
+            }
 			$clArr[$r->tid]['tid'] = $r->tid;
 			$clArr[$r->tid]['author'] = $this->encodeStr($r->author);
 			if($r->familyoverride) {
@@ -167,7 +169,7 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			$outArr['taxa'] = $clArr;
 			asort($kingdomArr);
 			end($kingdomArr);
-			$sql = 'SELECT rankid, rankname FROM taxonunits WHERE rankid IN('.implode(',',$rankArr).') ';
+			$sql = 'SELECT rankid, rankname FROM taxonunits WHERE rankid IN('.implode(',',$rankArr).') AND kingdomid IN('.implode(',',$kingdomArr).') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$rankArr[$r->rankid] = $r->rankname;

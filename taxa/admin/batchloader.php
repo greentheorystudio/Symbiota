@@ -251,19 +251,6 @@ if($isEditor){
 							}
 							?>
 						</div>
-						<!--
-						<div style="margin:10px;">
-							Target Thesaurus:
-							<select name="taxauthid">
-								<?php
-								$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
-								foreach($taxonAuthArr as $k => $v){
-									echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
-								}
-								?>
-							</select>
-						</div>
-						-->
 						<div style="margin:10px;">
 							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
 							<input type="submit" name="action" value="Activate Taxa" />

@@ -14,7 +14,7 @@ class WsOccurEditor extends WebServiceBase{
 	private $fieldTranslation;
 
 	public function __construct(){
-		parent::__construct(null, 'write');
+		parent::__construct(null);
 		$this->approvedFields = array('catalognumber', 'othercatalognumbers', 'occurrenceid','family', 'sciname',
 			'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
 			'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',

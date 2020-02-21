@@ -106,12 +106,12 @@ if($editable){
 			
 			<div style="float:right;" title="Go to taxonomy display">
 				<a href="taxonomydisplay.php?target=<?php echo $taxonEditorObj->getUnitName1();?>&showsynonyms=1">
-					<img style='border:0px;width:15px;' src='../../images/toparent.png'/>
+					<img style='border:0;width:15px;' src='../../images/toparent.png'/>
 				</a>
 			</div>
 			<div style="float:right;" title="Add a New Taxon">
 				<a href="taxonomyloader.php">
-					<img style='border:0px;width:15px;' src='../../images/add.png'/>
+					<img style='border:0;width:15px;' src='../../images/add.png'/>
 				</a>
 			</div>
 			<h1>
@@ -164,7 +164,7 @@ if($editable){
 						<div style="clear:both;">
 							<div style="float:left;width:110px;font-weight:bold;">UnitName3: </div>
 							<div class="editfield">
-								<?php echo $taxonEditorObj->getUnitInd3()." ".$taxonEditorObj->getUnitName3();?>
+								<?php echo $taxonEditorObj->getUnitInd3(). ' ' .$taxonEditorObj->getUnitName3();?>
 							</div>
 							<div class="editfield" style="display:none;">
 								<div style="float:left;">
@@ -204,7 +204,7 @@ if($editable){
 									<?php 
 									$rankArr = $taxonEditorObj->getRankArr();
 									foreach($rankArr as $rankId => $rName){
-										echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId()==$rankId?'SELECTED':'').'>'.$rName.'</option>';
+										echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId() === $rankId?'SELECTED':'').'>'.$rName.'</option>';
 									}
 									?>
 								</select>

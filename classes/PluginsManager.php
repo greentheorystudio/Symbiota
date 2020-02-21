@@ -1,13 +1,20 @@
 <?php
+include_once($SERVER_ROOT.'/classes/DbConnection.php');
+
 class PluginsManager {
 
- 	public function __construct(){
+	private $conn;
+
+	public function __construct(){
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
  	}
 
  	public function __destruct(){
 	}
 
-	public function createSlidewhow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval=7000){
+	public function createSlidewhow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval=7000): string
+	{
 		if($width > 800){
 			$width = 800;
 		}
@@ -17,14 +24,15 @@ class PluginsManager {
 		$ssInfo = $this->setSlidewhow($ssId,$numSlides,$numDays,$imageType,$clId,$dayInterval);
 		$imageArr = $ssInfo['files'];
 		$imageHtml = $this->getImageList($imageArr,$width);
-		$showHtml = $this->setShowHtml($imageHtml,$width,$interval);
-		return $showHtml;
+		return $this->setShowHtml($imageHtml,$width,$interval);
 	}
 
 	public function setSlidewhow($ssId,$numSlides,$numDays,$imageType,$clId,$dayInterval){
 		global $SERVER_ROOT, $IMAGE_DOMAIN;
-		$currentDate = date("Y-m-d");
+		$currentDate = date('Y-m-d');
 		$replace = 0;
+		$lastCLID = 0;
+		$previous = 0;
 		if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json')){
 			$oldArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json'), true);
 			$lastDate = $oldArr['lastDate'];
@@ -33,7 +41,7 @@ class PluginsManager {
 			$lastNumDays = $oldArr['numdays'];
 			$lastImageType = $oldArr['imagetype'];
 			$replaceDate = date('Y-m-d', strtotime($lastDate. ' + '.$dayInterval.' days'));
-			if(($currentDate > $replaceDate) || ($clId != $lastCLID) || ($numSlides != $lastNumSlides) || ($numDays != $lastNumDays) || ($imageType != $lastImageType)){
+			if(($currentDate > $replaceDate) || ($clId !== $lastCLID) || ($numSlides !== $lastNumSlides) || ($numDays !== $lastNumDays) || ($imageType !== $lastImageType)){
 				$replace = 1;
 			}
 		}
@@ -41,31 +49,27 @@ class PluginsManager {
 			$replace = 1;
 		}
 
-		if($replace == 1){
-			ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+		if($replace === 1){
+			ini_set('max_execution_time', 180);
 			$sinceDate = date('Y-m-d', strtotime($currentDate. ' - '.$numDays.' days'));
 
-			//Delete old files
 			if($clId){
 				$previous = array();
 				if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json')){
 					$previous = json_decode(file_get_contents($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json'), true);
 					unlink($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json');
-					if($clId != $lastCLID){
+					if($clId !== $lastCLID){
 						$previous = array();
 					}
 				}
 			}
-			else{
-				if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json')){
-					unlink($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json');
-				}
+			else if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json')){
+				unlink($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json');
 			}
 			if(file_exists($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json')){
 				unlink($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json');
 			}
 
-			//Create new files
 			$ssIdInfo = array();
 			$ssIdInfo['lastDate'] = $currentDate;
 			$ssIdInfo['clid'] = $clId;
@@ -94,10 +98,10 @@ class PluginsManager {
 			else{
 				$sql .= 'WHERE i.InitialTimeStamp < "'.$sinceDate.'" AND i.tid IS NOT NULL ';
 			}
-			if($imageType == 'specimen'){
+			if($imageType === 'specimen'){
 				$sql .= 'AND i.occid IS NOT NULL ';
 			}
-			elseif($imageType == 'field'){
+			elseif($imageType === 'field'){
 				$sql .= 'AND ISNULL(i.occid) ';
 			}
 			$sql .= 'ORDER BY i.sortsequence ';
@@ -107,24 +111,24 @@ class PluginsManager {
 			//echo '<div>'.$sql.'</div>';
 			$cnt = 1;
 			$imgIdArr = array();
- 			$conn = MySQLiConnectionFactory::getCon("readonly");
-			$rs = $conn->query($sql);
+ 			$rs = $this->conn->query($sql);
 			while(($row = $rs->fetch_object()) && ($cnt < ($numSlides + 1))){
-				$file = '';
 				$imgId = $row->imgid;
 				if($clId){
-					if(!in_array($imgId, $previous)){
-						if (substr($row->url, 0, 1) == '/'){
-							//If imageDomain variable is set within symbini file, image
+					if(!in_array($imgId, $previous, true)){
+						if (strpos($row->url, '/') === 0){
 							if($IMAGE_DOMAIN){
 								$file = $IMAGE_DOMAIN.$row->url;
 							}
 							else{
-								//Use local domain
-								$domain = "http://";
-								if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = "https://";
+								$domain = 'http://';
+								if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+									$domain = 'https://';
+								}
 								$domain .= $_SERVER['HTTP_HOST'];
-								if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $domain .= ':'.$_SERVER["SERVER_PORT"];
+								if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+									$domain .= ':' . $_SERVER['SERVER_PORT'];
+								}
 								$file = $domain.$row->url;
 							}
 						}
@@ -153,65 +157,64 @@ class PluginsManager {
 					}
 				}
 				else{
-					if (substr($row->url, 0, 1) == '/'){
-						//If imageDomain variable is set within symbini file, image
+					if (strpos($row->url, '/') === 0){
 						if($IMAGE_DOMAIN){
 							$file = $IMAGE_DOMAIN.$row->url;
 						}
 						else{
-							//Use local domain
-							$domain = "http://";
-							if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $domain = "https://";
+							$domain = 'http://';
+							if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+								$domain = 'https://';
+							}
 							$domain .= $_SERVER['HTTP_HOST'];
-							if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $domain .= ':'.$_SERVER["SERVER_PORT"];
+							if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+								$domain .= ':' . $_SERVER['SERVER_PORT'];
+							}
 							$file = $domain.$row->url;
 						}
 					}
 					else{
 						$file = $row->url;
 					}
-					if(fopen($file, "r")){
-						if($size = getimagesize(str_replace(' ', '%20', $file))){
-							$width = $size[0];
-							$height = $size[1];
-							$files[$imgId]['url'] = $file;
-							$files[$imgId]['width'] = $width;
-							$files[$imgId]['height'] = $height;
-							$files[$imgId]['imgid'] = $row->imgid;
-							$files[$imgId]['tid'] = $row->tid;
-							$files[$imgId]['occid'] = $row->occid;
-							$files[$imgId]['photographer'] = $row->photographer;
-							$files[$imgId]['owner'] = $row->owner;
-							$files[$imgId]['SciName'] = $row->SciName;
-							$files[$imgId]['occsciname'] = $row->occsciname;
-							$files[$imgId]['photographerName'] = $row->photographerName;
-							$files[$imgId]['identifier'] = $row->identifier;
-							$cnt++;
-						}
+					if(fopen($file, 'rb') && $size = getimagesize(str_replace(' ', '%20', $file))) {
+						$width = $size[0];
+						$height = $size[1];
+						$files[$imgId]['url'] = $file;
+						$files[$imgId]['width'] = $width;
+						$files[$imgId]['height'] = $height;
+						$files[$imgId]['imgid'] = $row->imgid;
+						$files[$imgId]['tid'] = $row->tid;
+						$files[$imgId]['occid'] = $row->occid;
+						$files[$imgId]['photographer'] = $row->photographer;
+						$files[$imgId]['owner'] = $row->owner;
+						$files[$imgId]['SciName'] = $row->SciName;
+						$files[$imgId]['occsciname'] = $row->occsciname;
+						$files[$imgId]['photographerName'] = $row->photographerName;
+						$files[$imgId]['identifier'] = $row->identifier;
+						$cnt++;
 					}
 				}
 			}
 			$rs->free();
-			$conn->close();
+			$this->conn->close();
 			$ssIdInfo['files'] = $files;
 			$previous = array_merge($previous,$imgIdArr);
 
 			if($clId){
-				$fp = fopen($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json', 'w');
+				$fp = fopen($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_previous.json', 'wb');
 				fwrite($fp, json_encode($previous));
 				fclose($fp);
 			}
-			$fp = fopen($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json', 'w');
+			$fp = fopen($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json', 'wb');
 			fwrite($fp, json_encode($ssIdInfo));
 			fclose($fp);
 		}
 
-		$infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json'), true);
-		//echo json_encode($infoArr);
-		return $infoArr;
+		return json_decode(file_get_contents($SERVER_ROOT.'/temp/slideshow/'.$ssId.'_info.json'), true);
 	}
 
-	public function getImageList($imageArr,$width){
+	public function getImageList($imageArr,$width): string
+	{
 		global $CLIENT_ROOT;
 		$windowHeight = $width + 75;
 		$imageHeight = $width + 50;
@@ -219,48 +222,47 @@ class PluginsManager {
 		$html .= '<div class="container">';
 		$html .= '<div id="slides">';
 		foreach($imageArr as $igmAr => $imgIdArr){
-			$imgSize = '';
-			if($imgIdArr["width"] > $imgIdArr["height"]){
-				$offSet = (($imgIdArr["width"]/$imgIdArr["height"])*$imageHeight)/2;
+			if($imgIdArr['width'] > $imgIdArr['height']){
+				$offSet = (($imgIdArr['width']/$imgIdArr['height'])*$imageHeight)/2;
 				$imgSize = 'height:'.$imageHeight.'px;position:absolute;left:50%;margin-left:-'.$offSet.'px;';
 			}
 			else{
-				$offSet = (($imgIdArr["height"]/$imgIdArr["width"])*$width)/2;
+				$offSet = (($imgIdArr['height']/$imgIdArr['width'])*$width)/2;
 				$imgSize = 'width:'.$width.'px;position:absolute;top:50%;margin-top:-'.$offSet.'px;';
 			}
 			$linkUrl = '';
-			if($imgIdArr["occid"]){
-				$linkUrl = $CLIENT_ROOT.'/collections/individual/index.php?occid='.$imgIdArr["occid"].'&clid=0';
+			if($imgIdArr['occid']){
+				$linkUrl = $CLIENT_ROOT.'/collections/individual/index.php?occid='.$imgIdArr['occid'].'&clid=0';
 			}
-			elseif($imgIdArr["tid"]){
-				$name = str_replace(' ','%20',$imgIdArr["SciName"]);
+			elseif($imgIdArr['tid']){
+				$name = str_replace(' ','%20',$imgIdArr['SciName']);
 				$linkUrl = $CLIENT_ROOT.'/taxa/index.php?taxon='.$name;
 			}
 			$html .= '<div style="width:'.$width.'px;height:'.$imageHeight.'px;position:relative;">';
 			$html .= '<div style="width:'.$width.'px;max-height:'.$imageHeight.'px;overflow:hidden;">';
 			$html .= '<a href="'.$linkUrl.'" target="_blank">';
-			$html .= '<img src="'.$imgIdArr["url"].'" style="'.$imgSize.'" alt="'.($imgIdArr["occsciname"]?$imgIdArr["occsciname"]:$imgIdArr["SciName"]).'">';
+			$html .= '<img src="'.$imgIdArr['url'].'" style="'.$imgSize.'" alt="'.($imgIdArr['occsciname']?:$imgIdArr['SciName']).'">';
 			$html .= '</a>';
 			$html .= '</div>';
 			$html .= '<div style="width:'.$width.'px;position:absolute;bottom:0;font-size:12px;background-color:rgba(255,255,255,0.8);">';
-			$onclickText = "toggle('slidecaption".$imgIdArr["imgid"]."');toggle('showcaption".$imgIdArr["imgid"]."');";
-			$html .= '<div id="slidecaption'.$imgIdArr["imgid"].'">';
-			$html .= '<a style="cursor:pointer;cursor:hand;font-size:9px;text-decoration:none;float:right;clear:both;margin-right:5px;" onclick="'.$onclickText.'">HIDE CAPTION</a>';
+			$onclickText = "toggle('slidecaption".$imgIdArr['imgid']."');toggle('showcaption".$imgIdArr['imgid']."');";
+			$html .= '<div id="slidecaption'.$imgIdArr['imgid'].'">';
+			$html .= '<a style="cursor:hand;font-size:9px;text-decoration:none;float:right;clear:both;margin-right:5px;" onclick="'.$onclickText.'">HIDE CAPTION</a>';
 			$html .= '<div style="clear:both;padding-left:3px;padding-right:3px;"><b>';
-			if($imgIdArr["SciName"] || $imgIdArr["identifier"]){
+			if($imgIdArr['SciName'] || $imgIdArr['identifier']){
 				$html .= '<a href="'.$linkUrl.'" target="_blank">';
-				$html .= ($imgIdArr["identifier"]?$imgIdArr["identifier"]:$imgIdArr["SciName"]);
+				$html .= ($imgIdArr['identifier']?:$imgIdArr['SciName']);
 				$html .= '</a>. ';
 			}
-			if($imgIdArr["photographer"] || $imgIdArr["photographerName"]){
-				$html .= 'Image by: '.($imgIdArr["photographer"]?$imgIdArr["photographer"]:$imgIdArr["photographerName"]).'. ';
+			if($imgIdArr['photographer'] || $imgIdArr['photographerName']){
+				$html .= 'Image by: '.($imgIdArr['photographer']?:$imgIdArr['photographerName']).'. ';
 			}
-			if($imgIdArr["owner"]){
-				$html .= 'Courtesy of: '.$imgIdArr["owner"].'. ';
+			if($imgIdArr['owner']){
+				$html .= 'Courtesy of: '.$imgIdArr['owner'].'. ';
 			}
 			$html .= '</b></div>';
 			$html .= '</div>';
-			$html .= '<a id="showcaption'.$imgIdArr["imgid"].'" style="cursor:pointer;cursor:hand;font-size:9px;text-decoration:none;float:right;clear:both;margin-right:5px;display:none;" onclick="'.$onclickText.'">SHOW CAPTION</a>';
+			$html .= '<a id="showcaption'.$imgIdArr['imgid'].'" style="cursor:hand;font-size:9px;text-decoration:none;float:right;clear:both;margin-right:5px;display:none;" onclick="'.$onclickText.'">SHOW CAPTION</a>';
 			$html .= '</div></div>';
 		}
 		$html .= '</div></div></div>';
@@ -268,7 +270,8 @@ class PluginsManager {
 		return $html;
 	}
 
-	public function setShowHtml($imageHtml,$width,$interval){
+	public function setShowHtml($imageHtml,$width,$interval): string
+	{
 		global $CLIENT_ROOT;
 		$height = $width + 50;
 		$html = '';
@@ -312,16 +315,17 @@ class PluginsManager {
 		return $html;
 	}
 
-	public function createQuickSearch($buttonText,$searchText='',$placeholderText=''){
+	public function createQuickSearch($buttonText,$searchText='',$placeholderText=''): string
+	{
 		global $CLIENT_ROOT;
 		$html = '';
 		$html .= '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="Stylesheet" />';
         $html .= "<script type='text/javascript'>if(!window.jQuery){";
-        $html .= 'var jqresource = document.createElement("script");';
+        $html .= 'const jqresource = document.createElement("script");';
         $html .= 'jqresource.src = "'.$CLIENT_ROOT.'/js/jquery.js";';
         $html .= 'document.getElementsByTagName("head")[0].appendChild(jqresource);';
         $html .= 'jqresource.onload = function(){';
-        $html .= 'var jquiresource = document.createElement("script");';
+        $html .= 'const jquiresource = document.createElement("script");';
         $html .= 'jquiresource.src = "'.$CLIENT_ROOT.'/js/jquery-ui.js";';
         $html .= 'document.getElementsByTagName("head")[0].appendChild(jquiresource);';
         $html .= 'jquiresource.onload = function() {initializeQuickSearch();};};}';
@@ -341,7 +345,7 @@ class PluginsManager {
         $html .= 'term: extractLast( request.term ), t: function() { return document.quicksearch.taxon.value; }}, response );},';
         $html .= 'appendTo: "#quicksearchdiv",';
         $html .= 'search: function() {';
-        $html .= 'var term = extractLast( this.value );';
+        $html .= 'let term = extractLast( this.value );';
         $html .= 'if ( term.length < 4 ) {';
         $html .= 'return false;}},';
         $html .= 'focus: function() {';
@@ -396,4 +400,3 @@ class PluginsManager {
 		return $html;
 	}
 }
-?>

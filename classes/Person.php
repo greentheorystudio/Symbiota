@@ -21,9 +21,8 @@ class Person{
 	private $biography;
 	private $isPublic = 0;
 	private $password;
-	private $userTaxonomy = array();		// = array($category => array($utid => array($fieldTitle => $fieldValue))); e.g. array("OccurrenceEditor" => array(24 => array("sciname" => "Asteraceae", "geographicScope" => "Maine")))
-	private $isTaxonomyEditor = false;
-	
+	private $userTaxonomy = array();
+
 	public  function __construct(){
 	}
 	
@@ -31,7 +30,8 @@ class Person{
 		return $this->uid;
 	} 
 	
-	public function setUid($id){
+	public function setUid($id): void
+	{
 		if(is_numeric($id)){
 			$this->uid = $id;
 		}
@@ -41,174 +41,181 @@ class Person{
 		return $this->cleanOutStr($this->userName);
 	}
 	
-	public function setUserName($idName){
-		if($idName) $this->userName = trim($idName);
+	public function setUserName($idName): void
+	{
+		if($idName) {
+			$this->userName = trim($idName);
+		}
 	}
 	
 	public function getFirstName(){
 		return $this->cleanOutStr($this->firstName);
 	}
 	
-	public function setFirstName($firstName){
-		if($firstName) $this->firstName = trim($firstName);
+	public function setFirstName($firstName): void
+	{
+		if($firstName) {
+			$this->firstName = trim($firstName);
+		}
 	}
 
     public function getMiddleInitial(){
         return $this->cleanOutStr($this->middleInitial);
     }
 
-    public function setMiddleInitial($middleInitial){
-        if($middleInitial) $this->middleInitial = trim($middleInitial);
+    public function setMiddleInitial($middleInitial): void
+	{
+        if($middleInitial) {
+			$this->middleInitial = trim($middleInitial);
+		}
     }
 	
 	public function getLastName(){
 		return $this->cleanOutStr($this->lastName);
 	}
 	
-	public function setLastName($lastName){
-		if($lastName) $this->lastName = trim($lastName);
+	public function setLastName($lastName): void
+	{
+		if($lastName) {
+			$this->lastName = trim($lastName);
+		}
 	}
 	
 	public function getDepartment(){
 		return $this->cleanOutStr($this->department);
 	}
 	
-	public function setDepartment($department){
-		if($department) $this->department = trim($department);
+	public function setDepartment($department): void
+	{
+		if($department) {
+			$this->department = trim($department);
+		}
 	}
 	
 	public function getTitle(){
 		return $this->cleanOutStr($this->title);
 	}
 	
-	public function setTitle($title){
-		if($title) $this->title = trim($title);
+	public function setTitle($title): void
+	{
+		if($title) {
+			$this->title = trim($title);
+		}
 	}
 	
 	public function getInstitution(){
 		return $this->cleanOutStr($this->institution);
 	}
 	
-	public function setInstitution($institution){
-		if($institution) $this->institution = trim($institution);
+	public function setInstitution($institution): void
+	{
+		if($institution) {
+			$this->institution = trim($institution);
+		}
 	}
 	
 	public function getAddress(){
 		return $this->cleanOutStr($this->address);
 	}
 	
-	public function setAddress($address){
-		if($address) $this->address = trim($address);
+	public function setAddress($address): void
+	{
+		if($address) {
+			$this->address = trim($address);
+		}
 	}
 	
 	public function getCity(){
 		return $this->cleanOutStr($this->city);
 	}
 	
-	public function setCity($city){
-		if($city) $this->city = trim($city);
+	public function setCity($city): void
+	{
+		if($city) {
+			$this->city = trim($city);
+		}
 	}
 
 	public function getState(){
 		return $this->cleanOutStr($this->state);
 	}
 	
-	public function setState($state){
-		if($state) $this->state = trim($state);
+	public function setState($state): void
+	{
+		if($state) {
+			$this->state = trim($state);
+		}
 	}
 	
 	public function getCountry(){
 		return $this->cleanOutStr($this->country);
 	}
 	
-	public function setCountry($country){
-		if($country) $this->country = trim($country);
+	public function setCountry($country): void
+	{
+		if($country) {
+			$this->country = trim($country);
+		}
 	}
 	
 	public function getZip(){
 		return $this->cleanOutStr($this->zip);
 	}
 	
-	public function setZip($zip){
-		if($zip) $this->zip = trim($zip);
+	public function setZip($zip): void
+	{
+		if($zip) {
+			$this->zip = trim($zip);
+		}
 	}
 	
 	public function getPhone (){
 		return $this->cleanOutStr($this->phone);
 	}
 	
-	public function setPhone($phone){
-		if($phone) $this->phone = trim($phone);
+	public function setPhone($phone): void
+	{
+		if($phone) {
+			$this->phone = trim($phone);
+		}
 	}
 	
 	public function getUrl(){
 		return $this->cleanOutStr($this->url);
 	}
 	
-	public function setUrl($url){
-		if($url) $this->url = trim($url);
+	public function setUrl($url): void
+	{
+		if($url) {
+			$this->url = trim($url);
+		}
 	}
 	
 	public function getBiography(){
 		return $this->cleanOutStr($this->biography);
 	}
 	
-	public function setBiography($bio){
-		if($bio) $this->biography = trim($bio);
+	public function setBiography($bio): void
+	{
+		if($bio) {
+			$this->biography = trim($bio);
+		}
 	}
 
 	public function getUserTaxonomy($cat = ''){
 		if($cat){
-			if(isset($this->userTaxonomy[$cat])){
-				return $this->userTaxonomy[$cat];
-			}
-			else{
-				return null;
-			}
+			return $this->userTaxonomy[$cat] ?? null;
 		}
 		return $this->userTaxonomy;
 	}
-	
-	public function setUserTaxonomy($utArr){
-		if(is_array($utArr)){
-			$this->userTaxonomy = $utArr;
-		}
-	}
 
-	public function addUserTaxonomy( $category, $id, $utKey, $utValue){
-		$this->userTaxonomy[$category][$id][$utKey] = $utValue;
-		if($category == 'OccurrenceEditor'){
-			$this->isTaxonomyEditor = true;
-		}
-	}
-
-    /** Test to see if person has any taxon interest 
-     * self expressed or assigned with or without an editor role. 
-     * 
-     * @return true if person has any entry in usertaxonomy, otherwise false. 
-     */ 
-    public function getIsHasTaxonInterest(){
-        if (count($this->userTaxonomy) > 0) {
-           return true;
-        } else {
-           return false;
-        }
-    }
-	
-	public function getIsTaxonomyEditor(){
-		return $this->isTaxonomyEditor;
+	public function getIsPublic(): bool
+	{
+		return $this->isPublic === 1;
 	}
 	
-	public function getIsPublic(){
-		if($this->isPublic == 1){
-			return 1;
-		}
-		else{
-			return 0;
-		}
-	}
-	
-	public function setIsPublic($isPub){
+	public function setIsPublic($isPub): void
+	{
 		$this->isPublic = $isPub;
 	}
 	
@@ -216,15 +223,19 @@ class Person{
 		return $this->cleanOutStr($this->email);
 	}
 	
-	public function setEmail($email){
-		if($email) $this->email = trim($email);
+	public function setEmail($email): void
+	{
+		if($email) {
+			$this->email = trim($email);
+		}
 	}
 	
 	public function getPassword(){
 		return $this->password;
 	}
 	
-	public function setPassword($password){
+	public function setPassword($password): void
+	{
 		$this->password = $password;
 	}
 	
@@ -232,15 +243,12 @@ class Person{
 		return $this->lastLoginDate;
 	}
 	
-	public function setLastLoginDate($loginDate){
+	public function setLastLoginDate($loginDate): void
+	{
 		$this->lastLoginDate = $loginDate;
 	}
 	
 	private function cleanOutStr($str){
-		$newStr = str_replace('"',"&quot;",$str);
-		$newStr = str_replace("'","&apos;",$newStr);
-		//$newStr = $this->con->real_escape_string($newStr);
-		return $newStr;
+		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 }
-?>

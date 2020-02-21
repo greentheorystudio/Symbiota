@@ -31,7 +31,7 @@ else{
 
 if($isEditor){
 	if($action == 'Download Records'){
-		$harvManager->exportCsvFile($_POST);
+		$harvManager->exportCsvFile();
 		exit;
 	}
 	else{

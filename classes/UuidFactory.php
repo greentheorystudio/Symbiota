@@ -117,7 +117,7 @@ class UuidFactory {
 		$recCnt = 0;
 		if($rs->num_rows){
 			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
+				$guid = self::getUuidV4();
 				$insSql = 'INSERT INTO guidimages(guid,imgid) '.
 					'VALUES("'.$guid.'",'.$r->imgid.')';
 				if(!$this->conn->query($insSql)){

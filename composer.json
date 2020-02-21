@@ -4,6 +4,7 @@
   "license": "proprietary",
   "require": {
     "phpoffice/phpword": "^0.17.0",
+    "ext-calendar": "*",
     "ext-ctype": "*",
     "ext-curl": "*",
     "ext-dom": "*",
@@ -15,6 +16,7 @@
     "ext-mbstring": "*",
     "ext-openssl": "*",
     "ext-simplexml": "*",
+    "ext-xml": "*",
     "ext-zip": "*"
   },
   "require-dev": {

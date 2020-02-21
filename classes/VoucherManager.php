@@ -262,22 +262,22 @@ class VoucherManager {
 	
 	public function addVoucher($vOccId, $vNotes, $vEditNotes): ?string
 	{
-		$vNotes = $this->cleanInStr($vNotes);
+		$returnStr = '';
+	    $vNotes = $this->cleanInStr($vNotes);
 		$vEditNotes = $this->cleanInStr($vEditNotes);
-		if(is_numeric($vOccId)){
-			if($vOccId && $this->clid){
-				$status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
-				if($status){
-					$sqlInsertCl = 'INSERT INTO fmchklsttaxalink ( clid, TID ) '.
-						'SELECT '.$this->clid.' AS clid, o.TidInterpreted '.
-						'FROM omoccurrences o WHERE (o.occid = '.$vOccId.')';
-					//echo "<div>sqlInsertCl: ".$sqlInsertCl."</div>";
-					if($this->conn->query($sqlInsertCl)){
-						return $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
-					}
-				}
-			}
-		}
+		if(is_numeric($vOccId) && $vOccId && $this->clid) {
+            $status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
+            if($status){
+                $sqlInsertCl = 'INSERT INTO fmchklsttaxalink ( clid, TID ) '.
+                    'SELECT '.$this->clid.' AS clid, o.TidInterpreted '.
+                    'FROM omoccurrences o WHERE (o.occid = '.$vOccId.')';
+                //echo "<div>sqlInsertCl: ".$sqlInsertCl."</div>";
+                if($this->conn->query($sqlInsertCl)){
+                    $returnStr = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
+                }
+            }
+        }
+		return $returnStr;
 	}
 
 	private function addVoucherRecord($vOccId, $vNotes, $vEditNotes): string

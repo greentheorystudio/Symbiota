@@ -44,7 +44,6 @@ if($isEditor){
 		<a href="taxonomydisplay.php">Taxonomy Tree Viewer</a> &gt;&gt; 
 		<b>Taxonomy Loader</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($status){
@@ -66,13 +65,13 @@ if($isEditor){
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Taxon Rank:</div>
 						<select id="rankid" name="rankid" title="Rank ID" style="border:inset;">
-							<option value="">Select Taxon Rank</option>
+							<option>Select Taxon Rank</option>
 							<option value="0">Non-Ranked Node</option>
-							<option value="">--------------------------------</option>
+							<option>--------------------------------</option>
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId==220?" SELECTED":"").">".$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".($rankId === 220?" SELECTED":"").">".$rankName."</option>\n";
 							}
 							?>
 						</select>

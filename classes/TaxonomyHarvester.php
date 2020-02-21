@@ -1072,7 +1072,7 @@ class TaxonomyHarvester extends Manager{
 			if(!$tidArr) {
 				return 0;
 			}
-			if(count($tidArr) == 1){
+			if(count($tidArr) === 1){
 				$tid = key($tidArr);
 			}
 			elseif(count($tidArr) > 1){

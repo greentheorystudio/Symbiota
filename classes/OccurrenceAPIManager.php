@@ -108,7 +108,6 @@ class OccurrenceAPIManager{
         $occManager = new OccurrenceEditorImages();
         $occId = ($pArr['occid']?:$this->getOccFromCatNum($pArr['collid'],$pArr['catnum']));
         if($occId){
-            $occManager->setSymbUid($PARAMS_ARR['uid']);
             $occManager->setOccId($occId);
             $occManager->setCollId($pArr['collid']);
             if($pArr['sciname'] && $pArr['determiner']){
@@ -156,7 +155,6 @@ class OccurrenceAPIManager{
             }
             $result->free();
             $occManager = new OccurrenceEditorDeterminations();
-            $occManager->setSymbUid($PARAMS_ARR['uid']);
             $occManager->setOccId($occId);
             $occManager->setCollId($pArr['collid']);
             $iArr = array(

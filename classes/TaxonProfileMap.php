@@ -10,6 +10,7 @@ class TaxonProfileMap {
 	private $synMap = array();
 	private $childLoopCnt = 0;
 	private $sqlWhere = '';
+    private $conn;
 
     public function __construct(){
 		$connection = new DbConnection();

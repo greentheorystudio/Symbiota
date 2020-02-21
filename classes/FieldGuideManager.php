@@ -556,7 +556,6 @@ class FieldGuideManager {
             }
             $result->free();
             $occManager = new OccurrenceEditorDeterminations();
-            $occManager->setSymbUid($PARAMS_ARR['uid']);
             $occManager->setOccId($occId);
             $occManager->setCollId($pArr['collid']);
             $iArr = array(

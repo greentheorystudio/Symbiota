@@ -49,7 +49,6 @@ $statusStr = '';
 
 if($SYMB_UID){
 	//Set variables
-	$occManager->setSymbUid($SYMB_UID);
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
 	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){

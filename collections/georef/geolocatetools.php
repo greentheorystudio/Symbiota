@@ -9,7 +9,7 @@ $collid = $_REQUEST['collid'];
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
-$geoLocateManager = new OccurrenceGeoLocate.php();
+$geoLocateManager = new OccurrenceGeoLocate();
 $geoLocateManager->setCollid($collid);
 
 $isEditor = 0; 

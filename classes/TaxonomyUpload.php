@@ -536,8 +536,8 @@ class TaxonomyUpload{
 	public function transferUpload(): void
 	{
 		$this->outputMsg('Starting data transfer...');
-		$sql = 'INSERT INTO taxa(SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-			'SELECT DISTINCT SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+		$sql = 'INSERT INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
+			'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
 			'FROM uploadtaxa '.
 			'WHERE ISNULL(TID) AND (rankid = 10)';
 		if($this->conn->query($sql)){
@@ -557,8 +557,8 @@ class TaxonomyUpload{
 		do{
 			$this->outputMsg('Starting loop '.$loopCnt);
 			$this->outputMsg('Transferring taxa to taxon table... ',1);
-			$sql = 'INSERT IGNORE INTO taxa(SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
-				'SELECT DISTINCT SciName, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
+			$sql = 'INSERT IGNORE INTO taxa(SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes) '.
+				'SELECT DISTINCT SciName, kingdomId, RankId, UnitInd1, UnitName1, UnitInd2, UnitName2, UnitInd3, UnitName3, Author, Source, Notes '.
 				'FROM uploadtaxa '.
 				'WHERE ISNULL(tid) AND (parenttid IS NOT NULL) AND (rankid IS NOT NULL) AND ISNULL(ErrorStatus) '.
 				'ORDER BY RankId ASC ';
@@ -671,7 +671,9 @@ class TaxonomyUpload{
 				$vernArr[] = $vernStr;
 			}
 			$langStr = $r->vernlang;
-			if(!$langStr) $langStr = 'en';
+			if(!$langStr) {
+                $langStr = 'en';
+            }
 			foreach($vernArr as $vStr){
 				if($vStr){
 					$sqlInsert = 'INSERT INTO taxavernaculars(tid, VernacularName, Language, Source) '.
@@ -732,6 +734,8 @@ class TaxonomyUpload{
         $retArr['vernlang'] = 'vernacular_language';
         $retArr['errorstatus'] = 'error_status';
         $retArr['sourceid'] = 'source_id';
+        $retArr['kingdomid'] = 'kingdom_id';
+        $retArr['kingdomname'] = 'kingdom_name';
         $retArr['rankid'] = 'rank_id';
         $retArr['rankname'] = 'rank_name';
         $retArr['author'] = 'taxon_author';

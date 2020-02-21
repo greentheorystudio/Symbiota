@@ -14,17 +14,19 @@ class OccurrenceLabel{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+			$this->conn->close();
+		}
 	}
 
-	//Label functions
-	public function queryOccurrences($postArr){
+	public function queryOccurrences($postArr): array
+	{
 		global $USER_RIGHTS, $IS_ADMIN, $SYMB_UID;
 		$canReadRareSpp = false;
-		if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+		if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 			$canReadRareSpp = true;
 		}
-		elseif((array_key_exists("CollEditor", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["CollEditor"])) || (array_key_exists("RareSppReader", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["RareSppReader"]))){
+		elseif((array_key_exists('CollEditor', $USER_RIGHTS) && in_array($this->collid, $USER_RIGHTS['CollEditor'], true)) || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($this->collid, $USER_RIGHTS['RareSppReader'], true))){
 			$canReadRareSpp = true;
 		}
 		$retArr = array();
@@ -48,17 +50,13 @@ class OccurrenceLabel{
 			}
 			$dateTarget = $this->cleanInStr($postArr['datetarget']);
 			if($date1){
-				$dateField = 'o.dateentered';
 				if($date2){
 					$sqlWhere .= 'AND (DATE('.$dateTarget.') BETWEEN "'.$date1.'" AND "'.$date2.'") ';
 				}
 				else{
 					$sqlWhere .= 'AND (DATE('.$dateTarget.') = "'.$date1.'") ';
 				}
-				
-				$sqlOrderBy .= ','.$dateTarget;
 			}
-			$rnIsNum = false;
 			if($postArr['recordnumber']){
 				$rnArr = explode(',',$this->cleanInStr($postArr['recordnumber']));
 				$rnBetweenFrag = array();
@@ -69,12 +67,13 @@ class OccurrenceLabel{
 						$term1 = trim(substr($v,0,$p));
 						$term2 = trim(substr($v,$p+3));
 						if(is_numeric($term1) && is_numeric($term2)){
-							$rnIsNum = true;
 							$rnBetweenFrag[] = '(o.recordnumber BETWEEN '.$term1.' AND '.$term2.')';
 						}
 						else{
 							$catTerm = 'o.recordnumber BETWEEN "'.$term1.'" AND "'.$term2.'"';
-							if(strlen($term1) == strlen($term2)) $catTerm .= ' AND length(o.recordnumber) = '.strlen($term2); 
+							if(strlen($term1) === strlen($term2)) {
+								$catTerm .= ' AND length(o.recordnumber) = ' . strlen($term2);
+							}
 							$rnBetweenFrag[] = '('.$catTerm.')';
 						}
 					}
@@ -93,14 +92,12 @@ class OccurrenceLabel{
 			}
 			if($postArr['recordedby']){
 				$recordedBy = $this->cleanInStr($postArr['recordedby']);
-				if(strlen($recordedBy) < 4 || strtolower($recordedBy) == 'best'){
-					//Need to avoid FULLTEXT stopwords interfering with return
+				if(strlen($recordedBy) < 4 || strtolower($recordedBy) === 'best'){
 					$sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
 				}
 				else{
 					$sqlWhere .= 'AND (MATCH(f.recordedby) AGAINST("'.$recordedBy.'")) ';
 				}
-				$sqlOrderBy .= ',(o.recordnumber'.($rnIsNum?'+1':'').')';
 			}
 			if($postArr['identifier']){
 				$iArr = explode(',',$this->cleanInStr($postArr['identifier']));
@@ -112,12 +109,13 @@ class OccurrenceLabel{
 						$term1 = trim(substr($v,0,$p));
 						$term2 = trim(substr($v,$p+3));
 						if(is_numeric($term1) && is_numeric($term2)){
-							$searchIsNum = true; 
 							$iBetweenFrag[] = '(o.catalogNumber BETWEEN '.$term1.' AND '.$term2.')';
 						}
 						else{
 							$catTerm = 'o.catalogNumber BETWEEN "'.$term1.'" AND "'.$term2.'"';
-							if(strlen($term1) == strlen($term2)) $catTerm .= ' AND length(o.catalogNumber) = '.strlen($term2); 
+							if(strlen($term1) === strlen($term2)) {
+								$catTerm .= ' AND length(o.catalogNumber) = ' . strlen($term2);
+							}
 							$iBetweenFrag[] = '('.$catTerm.')';
 						}
 					}
@@ -133,11 +131,12 @@ class OccurrenceLabel{
 					$iWhere .= 'OR (o.catalogNumber IN("'.implode('","',$iInFrag).'")) ';
 				}
 				$sqlWhere .= 'AND ('.substr($iWhere,3).') ';
-				$sqlOrderBy .= ',o.catalogNumber';
 			}
-			if($this->collArr['colltype'] == 'General Observations'){
+			if($this->collArr['colltype'] === 'General Observations'){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
-				if(!array_key_exists('extendedsearch', $postArr)) $sqlWhere .= ' AND (o.observeruid = '.$SYMB_UID.') ';
+				if(!array_key_exists('extendedsearch', $postArr)) {
+					$sqlWhere .= ' AND (o.observeruid = ' . $SYMB_UID . ') ';
+				}
 			}
 			elseif(!array_key_exists('extendedsearch', $postArr)){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
@@ -148,19 +147,19 @@ class OccurrenceLabel{
 			if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
 				$sql.= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
-			if($sqlWhere) $sql .= 'WHERE '.substr($sqlWhere, 4);
-			//if($sqlOrderBy) $sql .= ' ORDER BY '.substr($sqlOrderBy,1);
+			if($sqlWhere) {
+				$sql .= 'WHERE ' . substr($sqlWhere, 4);
+			}
 			$sql .= ' LIMIT 400';
 			//echo '<div>'.$sql.'</div>'; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$localitySecurity = $r->localitySecurity;
-				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid == $SYMB_UID)){
+				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid === $SYMB_UID)){
 					$occId = $r->occid;
 					$retArr[$occId]['collid'] = $r->collid;
 					$retArr[$occId]['q'] = $r->q;
 					$retArr[$occId]['c'] = $r->collector;
-					//$retArr[$occId]['f'] = $r->family;
 					$retArr[$occId]['s'] = $r->sciname;
 					$retArr[$occId]['l'] = $r->locality;
 					$retArr[$occId]['uid'] = $r->observeruid;
@@ -171,14 +170,16 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 
-	public function getLabelArray($occidArr, $speciesAuthors){
+	public function getLabelArray($occidArr, $speciesAuthors): array
+	{
 		global $SYMB_UID;
 		$retArr = array();
 		if($occidArr){
 			$authorArr = array();
 			$sqlWhere = 'WHERE (o.occid IN('.implode(',',$occidArr).')) ';
-			if($this->collArr['colltype'] == 'General Observations') $sqlWhere .= 'AND (o.observeruid = '.$SYMB_UID.') ';
-			//Get species authors for infraspecific taxa
+			if($this->collArr['colltype'] === 'General Observations') {
+				$sqlWhere .= 'AND (o.observeruid = ' . $SYMB_UID . ') ';
+			}
 			$sql1 = 'SELECT o.occid, t2.author '.
 				'FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
@@ -195,7 +196,6 @@ class OccurrenceLabel{
 				$rs1->free();
 			}
 				
-			//Get occurrence records
 			$sql2 = 'SELECT o.occid, o.collid, o.catalognumber, o.othercatalognumbers, '.
 				'o.family, o.sciname AS scientificname, o.genus, o.specificepithet, o.taxonrank, o.infraspecificepithet, '.
 				'o.scientificnameauthorship, "" AS parentauthor, o.identifiedby, o.dateidentified, o.identificationreferences, '.
@@ -223,12 +223,12 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 	
-	public function getAnnoArray($detidArr, $speciesAuthors){
+	public function getAnnoArray($detidArr, $speciesAuthors): array
+	{
 		$retArr = array();
 		if($detidArr){
 			$authorArr = array();
 			$sqlWhere = 'WHERE (d.detid IN('.implode(',',$detidArr).')) ';
-			//Get species authors for infraspecific taxa
 			$sql1 = 'SELECT d.detid, t2.author '.
 				'FROM (taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted) '.
 				'INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
@@ -246,7 +246,6 @@ class OccurrenceLabel{
 				$rs1->free();
 			}
 				
-			//Get determination records
 			$sql2 = 'SELECT d.detid, d.identifiedBy, d.dateIdentified, d.sciname, d.scientificNameAuthorship, '.
 				'd.identificationQualifier, d.identificationReferences, d.identificationRemarks '.
 				'FROM omoccurdeterminations d '.$sqlWhere;
@@ -265,7 +264,8 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 	
-	public function clearAnnoQueue($detidArr){
+	public function clearAnnoQueue($detidArr): string
+	{
 		$statusStr = '';
 		if($detidArr){
 			$sql = 'UPDATE omoccurdeterminations '.
@@ -279,19 +279,22 @@ class OccurrenceLabel{
 		return $statusStr;
 	}
 
-	public function getLabelProjects(){
+	public function getLabelProjects(): array
+	{
 		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT labelproject, observeruid '.
 				'FROM omoccurrences '.
 				'WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (observeruid = '.$SYMB_UID.') ';
+			if($this->collArr['colltype'] === 'General Observations') {
+				$sql .= 'AND (observeruid = ' . $SYMB_UID . ') ';
+			}
 			$sql .= 'ORDER BY labelproject';
 			$rs = $this->conn->query($sql);
 			$altArr = array();
 			while($r = $rs->fetch_object()){
-				if($SYMB_UID == $r->observeruid){
+				if($SYMB_UID === $r->observeruid){
 					$retArr[] = $r->labelproject;
 				}
 				else{
@@ -300,33 +303,17 @@ class OccurrenceLabel{
 			}
 			$rs->free();
 			if($altArr){
-				if($retArr) $retArr[] = '------------------';
+				if($retArr) {
+					$retArr[] = '------------------';
+				}
 				$retArr = array_merge($retArr,$altArr);
 			}
 		}
 		return $retArr;
 	}
 
-	public function getDatasetProjects(){
-		global $SYMB_UID;
-		$retArr = array();
-		if($this->collid){
-			$sql = 'SELECT DISTINCT ds.datasetid, ds.name '.
-				'FROM omoccurdatasets ds INNER JOIN userroles r ON ds.datasetid = r.tablepk '.
-				'INNER JOIN omoccurdatasetlink dl ON ds.datasetid = dl.datasetid '.
-				'INNER JOIN omoccurrences o ON dl.occid = o.occid '.
-				'WHERE (r.tablename = "omoccurdatasets") AND (o.collid = '.$this->collid.') ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (o.observeruid = '.$SYMB_UID.') ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid] = $r->name;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-	
-	public function getAnnoQueue(){
+	public function getAnnoQueue(): array
+	{
 		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
@@ -335,7 +322,7 @@ class OccurrenceLabel{
 				'CONCAT_WS(", ",d.identifiedBy,d.dateIdentified,d.identificationRemarks,d.identificationReferences) AS determination '.
 				'FROM omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
 				'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
-			if($this->collArr['colltype'] == 'General Observations'){
+			if($this->collArr['colltype'] === 'General Observations'){
 				$sql .= ' AND (o.observeruid = '.$SYMB_UID.') ';
 			}
 			$sql .= 'LIMIT 400 ';
@@ -353,14 +340,14 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 	
-	//General functions
-	public function exportCsvFile($postArr, $speciesAuthors){
+	public function exportCsvFile($postArr, $speciesAuthors): void
+	{
 		global $CHARSET;
 		$occidArr = $postArr['occid'];
 		if($occidArr){
 			$labelArr = $this->getLabelArray($occidArr, $speciesAuthors);
 			if($labelArr){
-				$fileName = 'labeloutput_'.time().".csv";
+				$fileName = 'labeloutput_'.time(). '.csv';
 				header('Content-Description: Symbiota Label Output File');
 				header ('Content-Type: text/csv');
 				header ('Content-Disposition: attachment; filename="'.$fileName.'"'); 
@@ -369,24 +356,22 @@ class OccurrenceLabel{
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');
 				
-				$fh = fopen('php://output','w');
-				$headerArr = array("occid","catalogNumber","otherCatalogNumbers","family","scientificName","genus","specificEpithet",
-					"taxonRank","infraSpecificEpithet","scientificNameAuthorship","parentAuthor","identifiedBy",
-					"dateIdentified","identificationReferences","identificationRemarks","taxonRemarks","identificationQualifier",
-		 			"typeStatus","recordedBy","recordNumber","associatedCollectors","eventDate","year","month","day","monthName",
-			 		"verbatimEventDate","habitat","substrate","occurrenceRemarks","associatedTaxa","verbatimAttributes",
-		 			"reproductiveCondition","establishmentMeans","country",
-		 			"stateProvince","county","municipality","locality","decimalLatitude","decimalLongitude",
-			 		"geodeticDatum","coordinateUncertaintyInMeters","verbatimCoordinates",
-		 			"minimumElevationInMeters","maximumElevationInMeters","verbatimElevation","disposition");
+				$fh = fopen('php://output', 'wb');
+				$headerArr = array('occid', 'catalogNumber', 'otherCatalogNumbers', 'family', 'scientificName', 'genus', 'specificEpithet',
+					'taxonRank', 'infraSpecificEpithet', 'scientificNameAuthorship', 'parentAuthor', 'identifiedBy',
+					'dateIdentified', 'identificationReferences', 'identificationRemarks', 'taxonRemarks', 'identificationQualifier',
+					'typeStatus', 'recordedBy', 'recordNumber', 'associatedCollectors', 'eventDate', 'year', 'month', 'day', 'monthName',
+					'verbatimEventDate', 'habitat', 'substrate', 'occurrenceRemarks', 'associatedTaxa', 'verbatimAttributes',
+					'reproductiveCondition', 'establishmentMeans', 'country',
+					'stateProvince', 'county', 'municipality', 'locality', 'decimalLatitude', 'decimalLongitude',
+					'geodeticDatum', 'coordinateUncertaintyInMeters', 'verbatimCoordinates',
+					'minimumElevationInMeters', 'maximumElevationInMeters', 'verbatimElevation', 'disposition');
 
 				fputcsv($fh,$headerArr);
-				//change header value to lower case
 				$headerLcArr = array();
 				foreach($headerArr as $k => $v){
 					$headerLcArr[strtolower($v)] = $k;
 				}
-				//Output records
 				foreach($labelArr as $occid => $occArr){
 					$dupCnt = $postArr['q-'.$occid];
 					for($i = 0;$i < $dupCnt;$i++){
@@ -401,30 +386,33 @@ class OccurrenceLabel{
 		}
 	}
 
-	//General setters and getters
-	public function setCollid($collid){
+	public function setCollid($collid): void
+	{
 		if(is_numeric($collid)){
 			$this->collid = $collid;
 			$this->setCollMetadata();
 		}
 	}
 	
-	public function getCollName(){
+	public function getCollName(): string
+	{
 		return $this->collArr['collname'].' ('.$this->collArr['instcode'].($this->collArr['collcode']?':'.$this->collArr['collcode']:'').')';
 	}
 	
-	public function getAnnoCollName(){
+	public function getAnnoCollName(): string
+	{
 		return $this->collArr['collname'].' ('.$this->collArr['instcode'].')';
 	}
 
 	public function getMetaDataTerm($key){
-		if(!$this->collArr) return;
 		if($this->collArr && array_key_exists($key,$this->collArr)){
 			return $this->collArr[$key];
 		}
+		return false;
 	}
 
-	private function setCollMetadata(){
+	private function setCollMetadata(): void
+	{
 		if($this->collid){
 			$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype '.
 				'FROM omcollections WHERE collid = '.$this->collid;
@@ -440,11 +428,11 @@ class OccurrenceLabel{
 		}
 	}
 
-	public function getErrorArr(){
+	public function getErrorArr(): array
+	{
 		return $this->errorArr;
 	}
 	
-	//Misc functions
 	private function cleanInStr($str){
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
@@ -452,4 +440,3 @@ class OccurrenceLabel{
 		return $newStr;
 	}
 }
-?>

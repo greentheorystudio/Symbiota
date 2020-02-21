@@ -11,7 +11,7 @@ if($IS_ADMIN || array_key_exists("RareSppAdmin",$USER_RIGHTS)){
 	$isEditor = 1;
 }
 
-$rsManager = new RareSpeciesManager($isEditor?'write':'readonly');
+$rsManager = new RareSpeciesManager();
 
 if($isEditor){
 	if($submitAction == "addspecies"){

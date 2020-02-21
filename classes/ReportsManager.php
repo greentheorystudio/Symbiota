@@ -11,18 +11,13 @@ class ReportsManager{
 	}
  
 	public function __destruct(){
-		if(!($this->conn === null)) $this->conn->close();
+		if(!($this->conn === null)) {
+            $this->conn->close();
+        }
 	}
 
-	/* 
-	 * Input: JSON array 
-	 * Input criteria: taxa (INT: tid), country (string), state (string), tag (string), 
-	 *     idNeeded (INT: 0,1), collid (INT), photographer (INT: photographerUid), 
-	 *     cntPerCategory (INT: 0-2), start (INT), limit (INT) 
-	 *     e.g. {"state": {"Arizona", "New Mexico"},"taxa":{"Pinus"}}
-	 * Output: Array of images 
-	 */
-    public function getNewIdentByDeterminerReport(){
+	public function getNewIdentByDeterminerReport(): array
+    {
         $retArr = array();
         $sql = 'SELECT COUNT(*) as numberOfDet, identifiedby FROM omoccurdeterminations WHERE ((dateIdentified '.
          'like "%2013%") OR (dateIdentified like "%2014%") OR (dateIdentified like "%2015%")) AND sciname like "% %" GROUP BY identifiedby;';
@@ -38,7 +33,8 @@ class ReportsManager{
         return $retArr;
     }
 
-	public function getNewIdentBySpecialistReport(){
+	public function getNewIdentBySpecialistReport(): array
+    {
 		$retArr = array();
 		$sql = 'SELECT CONCAT_WS(" ", firstname, lastname) as fullname, t.sciname AS family, c.numberOfDet FROM usertaxonomy ut ' .
             'INNER JOIN users u ON ut.uid = u.uid INNER JOIN userlogin l ON u.uid = l.uid INNER JOIN taxa t ' .
@@ -59,7 +55,8 @@ class ReportsManager{
         return $retArr;
 	}
 
-    public function getNewIdentByFamilyReport(){
+    public function getNewIdentByFamilyReport(): array
+    {
         $retArr = array();
         $sql = 'SELECT ts.family, count(*) as numberOfDet FROM omoccurdeterminations d INNER JOIN taxa t '.
             'ON d.sciname = t.sciname INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.rankid IN(220,230,240,260)) '.
@@ -77,4 +74,3 @@ class ReportsManager{
         return $retArr;
     }
 }
-?>
