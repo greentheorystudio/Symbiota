@@ -227,7 +227,7 @@
 
 #nodesc{
 	display:		block;
-	margin:			70px 0px 20px 50px;
+	margin:			70px 0 20px 50px;
 }
 
 #img-div{
@@ -305,13 +305,9 @@
 #centralimage img{
 	max-width:	450px;
 	max-height:	320px;
-	width: 		expression(this.width >= this.height ? 320: true);
-	height:		expression(this.height >= this.width ? 320: true);
+	width: 		320px;
+	height:		320px;
 	border:		1px dotted black;
-}
-
-#centralimage a{
-
 }
 
 #centralimage a:hover img{
@@ -320,12 +316,10 @@
 
 #centralimage div.photographer{
 	text-align:			right;
-  	margin: 		2px;
-	margin-right:	20px;
+	margin: 2px 20px 2px 2px;
 	font-size:		75%;
 }
 
-/*Text Description*/
 div.sptab{
 	height:		330px;
 	width:		94%;
@@ -366,14 +360,10 @@ div.imgthumb{
 div.imgthumb img{
   	display: 	inline;
 	max-height:	200px;
-	width: 		expression(this.width >= this.height ? 200: true);
-	height:		expression(this.height >= this.width ? 200: true);
-  	margin: 	0px;
+	width: 		200px;
+	height:		200px;
+  	margin: 	0;
 	border:		1px dotted grey;
-}
-
-div.imgthumb a{
-
 }
 
 div.imgthumb a:hover img {
@@ -384,13 +374,12 @@ div.imgthumb div.photographer{
 	font-size:		75%;
   	text-align: 	right;
   	width: 			auto;
-  	margin:			2px;
-  	margin-right:	15px;
+	margin: 2px 15px 2px 2px;
 }
 
 div.mapthumb{
   margin: 5px;
-  border: 0px;
+  border: 0;
   width: 175px;
   height: 220px;
   float: right;
@@ -399,7 +388,7 @@ div.mapthumb{
 
 div.mapthumb img{
   width: 165px;
-  margin: 0px;
+  margin: 0;
   border: 1px dotted black;
 }
 
@@ -425,42 +414,31 @@ div.sppimg{
 }
 
 div.sppimg img{
-	margin-left: 	auto;
-	margin-right: 	auto;
-	margin-top: 	5px;
-	margin-bottom: 	5px;
-  	border:			1px dotted gray;
+	margin: 5px auto;
+	border:			1px dotted gray;
 	max-width:		135px;
 	max-height:		135px;
-	width: 			expression(this.width >= this.height ? 135: true);
-	height:			expression(this.height >= this.width ? 135: true);
+	width: 			135px;
+	height:			135px;
 }
 
 div.sppmap{
-	margin-left: 	auto;
-	margin-right: 	auto;
-	margin: 	2px;
-	border: 	0px;
+	margin: 2px auto;
+	border: 	0;
 	width: 	160px;
 	height:	160px;
 	text-align: center;
 }
 
 div.sppmap img{
-	margin-left: 	auto;
-	margin-right: 	auto;
 	width: 130px;
 	height:	120px;
-	margin: 0px;
+	margin: 0 auto;
 	border: 1px dotted black;
 }
 
 div.sppmap a{
 	border: 1px solid #0000ff;
-}
-
-div.sppmap a:hover {
-
 }
 
 div.spptext{
