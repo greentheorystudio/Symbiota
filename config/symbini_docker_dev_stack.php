@@ -50,9 +50,6 @@ $GBIF_PASSWORD = '';                //GBIF password which portal will use to pub
 $GBIF_ORG_KEY = '';                 //GBIF organization key for organization which is hosting this portal
 
 //Misc variables
-$GOOGLE_MAP_KEY = '';				//Needed for Google Map; get from Google
-$GOOGLE_MAP_ZOOM = 6;                           // Set the map zoom level
-$MAPPING_BOUNDARIES = '';			//Project bounding box; default map centering; (e.g. 42.3;-100.5;18.0;-127)
 $SPATIAL_INITIAL_CENTER = '';	    //Initial map center for Spatial Module. Default: '[-110.90713, 32.21976]'
 $SPATIAL_INITIAL_ZOOM = '';			//Initial zoom for Spatial Module. Default: 7
 $TAXON_PROFILE_MAP_CENTER = '';			//Center for taxon profile maps
