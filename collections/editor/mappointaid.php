@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:0; 

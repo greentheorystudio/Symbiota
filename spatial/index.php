@@ -1,5 +1,5 @@
 <?php
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);

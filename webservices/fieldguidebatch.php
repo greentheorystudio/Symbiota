@@ -15,7 +15,7 @@
  *
  */
 
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
 
 $jobId = array_key_exists('job_id',$_POST)?$_POST['job_id']:'';
