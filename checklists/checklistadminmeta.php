@@ -18,7 +18,14 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 }
 ?>
 <script type="text/javascript">
-	function validateChecklistForm(f){
+    tinyMCE.init({
+        mode : "textareas",
+        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : ""
+    });
+
+    function validateChecklistForm(f){
 		if(f.name.value === ""){
 			alert("Checklist name field must have a value");
 			return false;
