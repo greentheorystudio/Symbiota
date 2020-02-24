@@ -1,64 +1,66 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/VoucherManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/VoucherManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:""; 
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:""; 
-$tabIndex = array_key_exists("tabindex",$_POST)?$_POST["tabindex"]:0; 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
+$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$tabIndex = array_key_exists('tabindex',$_POST)?$_POST['tabindex']:0;
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = true;
 }
 
 $vManager = new VoucherManager();
 
-$status = "";
+$status = '';
 $vManager->setTid($tid);
 $vManager->setClid($clid);
 $followUpAction = '';
 
-if($action == "Rename Taxon"){
+if($action === 'Rename Taxon'){
 	$rareLocality = '';
-	if($_POST['cltype'] == 'rarespp') $rareLocality = $_POST['locality'];
-	$vManager->renameTaxon($_POST["renametid"],$rareLocality);
-	$followUpAction = "removeTaxon()";
+	if($_POST['cltype'] === 'rarespp') {
+        $rareLocality = $_POST['locality'];
+    }
+	$vManager->renameTaxon($_POST['renametid'],$rareLocality);
+	$followUpAction = 'removeTaxon()';
 }
-elseif($action == "Submit Checklist Edits"){
+elseif($action === 'Submit Checklist Edits'){
 	$eArr = array();
-	$eArr["habitat"] = $_POST["habitat"];
-	$eArr["abundance"] = $_POST["abundance"];
-	$eArr["notes"] = $_POST["notes"];
-	$eArr["internalnotes"] = $_POST["internalnotes"];
-	$eArr["source"] = $_POST["source"];
-	$eArr["familyoverride"] = $_POST["familyoverride"];
+	$eArr['habitat'] = $_POST['habitat'];
+	$eArr['abundance'] = $_POST['abundance'];
+	$eArr['notes'] = $_POST['notes'];
+	$eArr['internalnotes'] = $_POST['internalnotes'];
+	$eArr['source'] = $_POST['source'];
+	$eArr['familyoverride'] = $_POST['familyoverride'];
 	$status = $vManager->editClData($eArr);
-	$followUpAction = "self.close()";
+	$followUpAction = 'self.close()';
 }
-elseif($action == "Delete Taxon From Checklist"){
+elseif($action === 'Delete Taxon'){
 	$rareLocality = '';
-	if($_POST['cltype'] == 'rarespp') $rareLocality = $_POST['locality'];
+	if($_POST['cltype'] === 'rarespp') {
+        $rareLocality = $_POST['locality'];
+    }
 	$status = $vManager->deleteTaxon($rareLocality);
-	$followUpAction = "removeTaxon()";
+	$followUpAction = 'removeTaxon()';
 }
-elseif($action == "Submit Voucher Edits"){
-	$status = $vManager->editVoucher($_POST["occid"],$_POST["notes"],$_POST["editornotes"]);
+elseif($action === 'Submit Voucher Edits'){
+	$status = $vManager->editVoucher($_POST['occid'],$_POST['notes'],$_POST['editornotes']);
 }
 elseif(array_key_exists('oiddel',$_POST)){
 	$status = $vManager->removeVoucher($_POST['oiddel']);
 }
-elseif( $action == "Add Voucher"){
-	//For processing requests sent from /collections/individual/index.php
-	$status = $vManager->addVoucher($_POST["voccid"],$_POST["vnotes"],$_POST["veditnotes"]);
+elseif( $action === 'Add Voucher'){
+	$status = $vManager->addVoucher($_POST['voccid'],$_POST['vnotes'],$_POST['veditnotes']);
 }
 $clArray = $vManager->getChecklistData();
 ?>
-
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-		<title>Species Details: <?php echo $vManager->getTaxonName()." of ".$vManager->getClName(); ?></title>
+		<title>Species Details: <?php echo $vManager->getTaxonName(). ' of ' .$vManager->getClName(); ?></title>
 		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />	
@@ -88,7 +90,7 @@ $clArray = $vManager->getChecklistData();
 			});
 
 			function validateRenameForm(f){
-				if(f.renamesciname.value == ""){
+				if(f.renamesciname.value === ""){
 					alert("Scientific name field is blank");
 				}
 				else{
@@ -104,7 +106,7 @@ $clArray = $vManager->getChecklistData();
 					data: { sciname: f.renamesciname.value }
 				}).done(function( renameTid ) {
 					if(renameTid){
-						if(f.renametid.value == "") f.renametid.value = renameTid;
+						if(f.renametid.value === "") f.renametid.value = renameTid;
 						f.submit();
 					}
 					else{
@@ -115,8 +117,8 @@ $clArray = $vManager->getChecklistData();
 			} 
 
 			function openPopup(urlStr,windowName){
-				newWindow = window.open(urlStr,windowName,'scrollbars=1,toolbar=1,resizable=1,width=800,height=650,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open(urlStr, windowName, 'scrollbars=1,toolbar=1,resizable=1,width=800,height=650,left=20,top=20');
+                if (newWindow.opener == null) newWindow.opener = self;
 			}
 
 			function removeTaxon(){
@@ -126,11 +128,10 @@ $clArray = $vManager->getChecklistData();
 		</script>
 		<script type="text/javascript" src="../js/symb/shared.js?ver=140107"></script>
 	</head>
-	<body onload="<?php  if(!$status) echo $followUpAction; ?>" >
-		<!-- This is inner text! -->
+	<body onload="<?php  echo (!$status?$followUpAction:''); ?>" >
 		<div id='innertext'>
 			<h1>
-				<?php echo "<i>".$vManager->getTaxonName()."</i> of ".$vManager->getClName();?>
+				<?php echo '<i>' .$vManager->getTaxonName(). '</i> of ' .$vManager->getClName();?>
 			</h1>
 			<?php 
 			if($status){
@@ -148,10 +149,7 @@ $clArray = $vManager->getChecklistData();
 				    <ul>
 						<li><a href="#gendiv">General Editing</a></li>
 						<li><a href="#voucherdiv">Voucher Admin</a></li>
-						<!--
-						<li><a href="#coorddiv">Coordinate Admin</a></li>
-						-->
-				    </ul>
+					</ul>
 					<div id="gendiv">
 						<form name='editcl' action="clsppeditor.php" method='post' >
 							<fieldset style='margin:5px;padding:15px'>
@@ -161,7 +159,7 @@ $clArray = $vManager->getChecklistData();
 										Habitat:
 									</div>
 									<div style="float:left;">
-										<input name='habitat' type='text' value="<?php echo $clArray["habitat"];?>" size='70' maxlength='250' />
+										<input name='habitat' type='text' value="<?php echo $clArray['habitat'];?>" size='70' maxlength='250' />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -169,7 +167,7 @@ $clArray = $vManager->getChecklistData();
 										Abundance:
 									</div>
 									<div style="float:left;">
-										<input type="text"  name="abundance" value="<?php echo $clArray["abundance"]; ?>" />
+										<input type="text"  name="abundance" value="<?php echo $clArray['abundance']; ?>" />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -177,7 +175,7 @@ $clArray = $vManager->getChecklistData();
 										Notes:
 									</div>
 									<div style="float:left;">
-										<input name='notes' type='text' value="<?php echo $clArray["notes"];?>" size='65' maxlength='2000' />
+										<input name='notes' type='text' value="<?php echo $clArray['notes'];?>" size='65' maxlength='2000' />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -185,7 +183,7 @@ $clArray = $vManager->getChecklistData();
 										Editor Notes:
 									</div>
 									<div style="float:left;">
-										<input name='internalnotes' type='text' value="<?php echo $clArray["internalnotes"];?>" size='65' maxlength='250' />
+										<input name='internalnotes' type='text' value="<?php echo $clArray['internalnotes'];?>" size='65' maxlength='250' />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -193,7 +191,7 @@ $clArray = $vManager->getChecklistData();
 										Source:
 									</div>
 									<div style="float:left;">
-										<input name='source' type='text' value="<?php echo $clArray["source"];?>" size='65' maxlength='250' />
+										<input name='source' type='text' value="<?php echo $clArray['source'];?>" size='65' maxlength='250' />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -201,7 +199,7 @@ $clArray = $vManager->getChecklistData();
 										Family Override: 
 									</div>
 									<div style="float:left;">
-										<input name='familyoverride' type='text' value="<?php echo $clArray["familyoverride"];?>" size='65' maxlength='250' />
+										<input name='familyoverride' type='text' value="<?php echo $clArray['familyoverride'];?>" size='65' maxlength='250' />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -245,7 +243,7 @@ $clArray = $vManager->getChecklistData();
 								<input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
 								<input type='hidden' name='cltype' value="<?php echo $clArray['cltype'];?>" />
 								<input type='hidden' name='locality' value="<?php echo $clArray['locality'];?>" />
-								<input type="submit" name="action" value="Delete Taxon From Checklist" />
+								<input type="submit" name="action" value="Delete Taxon" />
 							</fieldset>
 						</form>
 					</div>
@@ -254,15 +252,15 @@ $clArray = $vManager->getChecklistData();
 						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName()."&targetclid=".$vManager->getClid()."&targettid=".$tid;?>">
-									<img src="../images/link.png"  style="border:0px;" />
+								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
+									<img src="../images/link.png"  style="border:0;" />
 								</a>
 							</div>
 							<h3>Voucher Information</h3>
 							<?php
 							$vArray = $vManager->getVoucherData();
 							if(!$vArray){
-								echo "<div>No vouchers for this species has been assigned to checklist </div>";
+								echo '<div>No vouchers for this species has been assigned to checklist </div>';
 							}
 							?>
 							<ul>
@@ -273,10 +271,16 @@ $clArray = $vManager->getChecklistData();
 								
 									<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo $occid; ?>','indpane')"><?php echo $occid; ?></a>: 
 									<?php
-									if($iArray['catalognumber']) echo $iArray['catalognumber'].', ';
+									if($iArray['catalognumber']) {
+                                        echo $iArray['catalognumber'] . ', ';
+                                    }
 									echo '<b>'.$iArray['collector'].'</b>, ';
-									if($iArray['eventdate']) echo $iArray['eventdate'].', ';
-									if($iArray['sciname']) echo $iArray['sciname'];
+									if($iArray['eventdate']) {
+                                        echo $iArray['eventdate'] . ', ';
+                                    }
+									if($iArray['sciname']) {
+                                        echo $iArray['sciname'];
+                                    }
 									echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
 									?>
 									<a href="#" onclick="toggle('vouch-<?php echo $occid;?>')"><img src="../images/edit.png" /></a> 
@@ -289,7 +293,7 @@ $clArray = $vManager->getChecklistData();
 									</form>
 									<div id="vouch-<?php echo $occid;?>" style='margin:10px;clear:both;display:none;'>
 										<form action="clsppeditor.php" method='post' name='editvoucher'>
-											<fieldset style='margin:5px 0px 5px 5px;'>
+											<fieldset style='margin:5px 0 5px 5px;'>
 												<legend><b>Edit Voucher</b></legend>
 												<input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
 												<input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
@@ -297,11 +301,11 @@ $clArray = $vManager->getChecklistData();
 												<input type='hidden' name='tabindex' value="1" />
 												<div style='margin-top:0.5em;'>
 													<b>Notes:</b>
-													<input name='notes' type='text' value="<?php echo $iArray["notes"];?>" size='60' maxlength='250' />
+													<input name='notes' type='text' value="<?php echo $iArray['notes'];?>" size='60' maxlength='250' />
 												</div>
 												<div style='margin-top:0.5em;'>
 													<b>Editor Notes (editor display only):</b>
-													<input name='editornotes' type='text' value="<?php echo $iArray["editornotes"];?>" size='30' maxlength='50' />
+													<input name='editornotes' type='text' value="<?php echo $iArray['editornotes'];?>" size='30' maxlength='50' />
 												</div>
 												<div style='margin-top:0.5em;'>
 													<input type='submit' name='action' value='Submit Voucher Edits' />
@@ -318,16 +322,11 @@ $clArray = $vManager->getChecklistData();
 						} 
 						?>
 					</div>
-					<!-- 
-					<div id="coorddiv">
-					
-					</div>
-					-->
- 				</div>
+				</div>
 				<?php 
 			}
 			else{
-				echo "<div>You must be logged-in and have editing rights to edited species details</div>";
+				echo '<div>You must be logged-in and have editing rights to edited species details</div>';
 			} 
 			?>
 		</div>

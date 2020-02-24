@@ -39,8 +39,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
    "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -96,7 +95,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					</a>
 				</div>
 				<div id="newreferencediv" style="display:none;">
-					<form name="newreferenceform" action="refdetails.php" method="post" onsubmit="return verifyNewRefForm(this.form);">
+					<form name="newreferenceform" action="refdetails.php" method="post" onsubmit="return verifyNewRefForm();">
 						<fieldset>
 							<legend><b>Add New Reference</b></legend>
 							<div style="clear:both;padding-top:4px;float:left;">

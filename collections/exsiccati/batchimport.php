@@ -245,7 +245,7 @@ if($isEditor && $formSubmit){
 		}
 		else{
 			?>
-			<form name="queryform" action="batchimport.php" method="post" onsubmit="return verifyQueryForm(this)">
+			<form name="queryform" action="batchimport.php" method="post" onsubmit="return verifyQueryForm()">
 				<fieldset>
 					<legend><b>Batch Import Module</b></legend>
 					<?php 

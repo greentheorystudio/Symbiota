@@ -113,7 +113,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				if($editor){
 					?>
 					<div style="float:right;">
-						<form name="queryform" method="post" action="batchgeoreftool.php" onsubmit="return verifyQueryForm(this)">
+						<form name="queryform" method="post" action="batchgeoreftool.php" onsubmit="return verifyQueryForm()">
 							<fieldset style="padding:5px;width:600px;background-color:lightyellow;">
 								<legend><b>Query Form</b></legend>
 								<div style="height:20px;">
@@ -351,7 +351,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 											<b>Footprint WKT:</b>
 										</td>
 										<td colspan="4" style="vertical-align:middle">
-											<input id="footprintwkt" name="footprintwkt" type="text" value="" style="width:500px;" onchange="verifyFootprintWKT(this)" />
+											<input id="footprintwkt" name="footprintwkt" type="text" value="" style="width:500px;" />
 										</td>
 									</tr>
 									<tr>

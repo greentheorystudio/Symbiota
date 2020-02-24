@@ -7,8 +7,7 @@ $(document).ready(function() {
     }
 
     $( "#taxa" )
-    	// don't navigate away from the field on tab when selecting an item
-        .bind( "keydown", function( event ) {
+    	.bind( "keydown", function( event ) {
             if ( event.keyCode === $.ui.keyCode.TAB &&
                 $( this ).data( "autocomplete" ).menu.active ) {
                 event.preventDefault();
@@ -21,21 +20,17 @@ $(document).ready(function() {
                 }, response );
             },
             search: function() {
-                // custom minLength
-                var term = extractLast( this.value );
+                const term = extractLast(this.value);
                 if ( term.length < 4 ) {
                     return false;
                 }
             },
             focus: function() {
-                // prevent value inserted on focus
                 return false;
             },
             select: function( event, ui ) {
-                var terms = split( this.value );
-                // remove the current input
+                const terms = split(this.value);
                 terms.pop();
-                // add the selected item
                 terms.push( ui.item.value );
                 this.value = terms.join( ", " );
                 return false;
@@ -46,7 +41,7 @@ $(document).ready(function() {
 	
 
 function changeTableDisplay(){
-    if(document.getElementById("showtable").checked==true){
+    if(document.getElementById("showtable").checked === true){
         document.harvestparams.action = "listtabledisplay.php";
         sessionStorage.collsearchtableview = true;
     }
@@ -57,8 +52,8 @@ function changeTableDisplay(){
 }
 
 function checkUpperLat(){
-    if(document.harvestparams.upperlat.value != ""){
-        if(document.harvestparams.upperlat_NS.value=='N'){
+    if(document.harvestparams.upperlat.value !== ""){
+        if(document.harvestparams.upperlat_NS.value === 'N'){
             document.harvestparams.upperlat.value = Math.abs(parseFloat(document.harvestparams.upperlat.value));
         }
         else{
@@ -68,8 +63,8 @@ function checkUpperLat(){
 }
 
 function checkBottomLat(){
-    if(document.harvestparams.bottomlat.value != ""){
-        if(document.harvestparams.bottomlat_NS.value == 'N'){
+    if(document.harvestparams.bottomlat.value !== ""){
+        if(document.harvestparams.bottomlat_NS.value === 'N'){
             document.harvestparams.bottomlat.value = Math.abs(parseFloat(document.harvestparams.bottomlat.value));
         }
         else{
@@ -79,8 +74,8 @@ function checkBottomLat(){
 }
 
 function checkRightLong(){
-    if(document.harvestparams.rightlong.value != ""){
-        if(document.harvestparams.rightlong_EW.value=='E'){
+    if(document.harvestparams.rightlong.value !== ""){
+        if(document.harvestparams.rightlong_EW.value === 'E'){
             document.harvestparams.rightlong.value = Math.abs(parseFloat(document.harvestparams.rightlong.value));
         }
         else{
@@ -90,8 +85,8 @@ function checkRightLong(){
 }
 
 function checkLeftLong(){
-    if(document.harvestparams.leftlong.value != ""){
-        if(document.harvestparams.leftlong_EW.value=='E'){
+    if(document.harvestparams.leftlong.value !== ""){
+        if(document.harvestparams.leftlong_EW.value === 'E'){
             document.harvestparams.leftlong.value = Math.abs(parseFloat(document.harvestparams.leftlong.value));
         }
         else{
@@ -101,8 +96,8 @@ function checkLeftLong(){
 }
 
 function checkPointLat(){
-    if(document.harvestparams.pointlat.value != ""){
-        if(document.harvestparams.pointlat_NS.value=='N'){
+    if(document.harvestparams.pointlat.value !== ""){
+        if(document.harvestparams.pointlat_NS.value === 'N'){
             document.harvestparams.pointlat.value = Math.abs(parseFloat(document.harvestparams.pointlat.value));
         }
         else{
@@ -112,8 +107,8 @@ function checkPointLat(){
 }
 
 function checkPointLong(){
-    if(document.harvestparams.pointlong.value != ""){
-        if(document.harvestparams.pointlong_EW.value=='E'){
+    if(document.harvestparams.pointlong.value !== ""){
+        if(document.harvestparams.pointlong_EW.value === 'E'){
             document.harvestparams.pointlong.value = Math.abs(parseFloat(document.harvestparams.pointlong.value));
         }
         else{
@@ -123,55 +118,91 @@ function checkPointLong(){
 }
 
 function updateRadius(){
-    var radiusUnits = document.getElementById("radiusunits").value;
-    var radiusInMiles = document.getElementById("radiustemp").value;
-    if(radiusUnits == "km"){
+    const radiusUnits = document.getElementById("radiusunits").value;
+    let radiusInMiles = document.getElementById("radiustemp").value;
+    if(radiusUnits === "km"){
         radiusInMiles = radiusInMiles*0.6214;
     }
     document.getElementById("radius").value = radiusInMiles;
 }
 
 function setHarvestParamsForm(){
-    var stArr = JSON.parse(starrJson);
-    if(!stArr['usethes']){document.harvestparams.thes.checked = false;}
-    if(stArr['taxontype']){document.harvestparams.type.value = stArr['taxontype'];}
-    if(stArr['taxa']){document.harvestparams.taxa.value = stArr['taxa'];}
-    if(stArr['country']){
-    	countryStr = stArr['country'];
-    	countryArr = countryStr.split(";");
-    	if(countryArr.indexOf('USA') > -1 || countryArr.indexOf('usa') > -1) countryStr = countryArr[0];
-    	//if(countryStr.indexOf('United States') > -1) countryStr = 'United States';
-    	document.harvestparams.country.value = countryStr;
+    let coordArr;
+    const stArr = JSON.parse(starrJson);
+    if(!stArr['usethes']){
+        document.harvestparams.thes.checked = false;
     }
-    if(stArr['state']){document.harvestparams.state.value = stArr['state'];}
-    if(stArr['county']){document.harvestparams.county.value = stArr['county'];}
-    if(stArr['local']){document.harvestparams.local.value = stArr['local'];}
-    if(stArr['elevlow']){document.harvestparams.elevlow.value = stArr['elevlow'];}
-    if(stArr['elevhigh']){document.harvestparams.elevhigh.value = stArr['elevhigh'];}
-    if(stArr['assochost']){document.harvestparams.assochost.value = stArr['assochost'];}
+    if(stArr['taxontype']){
+        document.harvestparams.type.value = stArr['taxontype'];
+    }
+    if(stArr['taxa']){
+        document.harvestparams.taxa.value = stArr['taxa'];
+    }
+    let countryStr;
+    if (stArr['country']) {
+        countryStr = stArr['country'];
+        countryArr = countryStr.split(";");
+        if (countryArr.indexOf('USA') > -1 || countryArr.indexOf('usa') > -1) {
+            countryStr = countryArr[0];
+        }
+        document.harvestparams.country.value = countryStr;
+    }
+    if(stArr['state']){
+        document.harvestparams.state.value = stArr['state'];
+    }
+    if(stArr['county']){
+        document.harvestparams.county.value = stArr['county'];
+    }
+    if(stArr['local']){
+        document.harvestparams.local.value = stArr['local'];
+    }
+    if(stArr['elevlow']){
+        document.harvestparams.elevlow.value = stArr['elevlow'];
+    }
+    if(stArr['elevhigh']){
+        document.harvestparams.elevhigh.value = stArr['elevhigh'];
+    }
+    if(stArr['assochost']){
+        document.harvestparams.assochost.value = stArr['assochost'];
+    }
     if(stArr['llbound']){
-        var coordArr = stArr['llbound'].split(';');
+        coordArr = stArr['llbound'].split(';');
         document.harvestparams.upperlat.value = coordArr[0];
         document.harvestparams.bottomlat.value = coordArr[1];
         document.harvestparams.leftlong.value = coordArr[2];
         document.harvestparams.rightlong.value = coordArr[3];
     }
     if(stArr['llpoint']){
-        var coordArr = stArr['llpoint'].split(';');
+        coordArr = stArr['llpoint'].split(';');
         document.harvestparams.pointlat.value = coordArr[0];
         document.harvestparams.pointlong.value = coordArr[1];
         document.harvestparams.radiustemp.value = coordArr[2];
         document.harvestparams.radius.value = coordArr[2]*0.6214;
     }
-    if(stArr['collector']){document.harvestparams.collector.value = stArr['collector'];}
-    if(stArr['collnum']){document.harvestparams.collnum.value = stArr['collnum'];}
-    if(stArr['eventdate1']){document.harvestparams.eventdate1.value = stArr['eventdate1'];}
-    if(stArr['eventdate2']){document.harvestparams.eventdate2.value = stArr['eventdate2'];}
-    if(stArr['catnum']){document.harvestparams.catnum.value = stArr['catnum'];}
-    //if(!stArr['othercatnum']){document.harvestparams.includeothercatnum.checked = false;}
-    if(stArr['typestatus']){document.harvestparams.typestatus.checked = true;}
-    if(stArr['hasimages']){document.harvestparams.hasimages.checked = true;}
-    if(stArr['hasgenetic']){document.harvestparams.hasgenetic.checked = true;}
+    if(stArr['collector']){
+        document.harvestparams.collector.value = stArr['collector'];
+    }
+    if(stArr['collnum']){
+        document.harvestparams.collnum.value = stArr['collnum'];
+    }
+    if(stArr['eventdate1']){
+        document.harvestparams.eventdate1.value = stArr['eventdate1'];
+    }
+    if(stArr['eventdate2']){
+        document.harvestparams.eventdate2.value = stArr['eventdate2'];
+    }
+    if(stArr['catnum']){
+        document.harvestparams.catnum.value = stArr['catnum'];
+    }
+    if(stArr['typestatus']){
+        document.harvestparams.typestatus.checked = true;
+    }
+    if(stArr['hasimages']){
+        document.harvestparams.hasimages.checked = true;
+    }
+    if(stArr['hasgenetic']){
+        document.harvestparams.hasgenetic.checked = true;
+    }
     if(sessionStorage.collsearchtableview){
         document.getElementById('showtable').checked = true;
         changeTableDisplay();
@@ -188,7 +219,9 @@ function resetHarvestParamsForm(f){
 	f.local.value = '';
 	f.elevlow.value = '';
 	f.elevhigh.value = '';
-    if(f.assochost){f.assochost.value = '';}
+    if(f.assochost){
+        f.assochost.value = '';
+    }
 	f.upperlat.value = '';
 	f.bottomlat.value = '';
 	f.leftlong.value = '';
@@ -218,13 +251,17 @@ function resetHarvestParamsForm(f){
 }
 
 function openPointRadiusMap() {
-    mapWindow=open("mappointradius.php","pointradius","resizable=0,width=700,height=630,left=20,top=20");
-    if (mapWindow.opener == null) mapWindow.opener = self;
+    let mapWindow = open("mappointradius.php", "pointradius", "resizable=0,width=700,height=630,left=20,top=20");
+    if (mapWindow.opener == null) {
+        mapWindow.opener = self;
+    }
     mapWindow.focus();
 }
 
 function openBoundingBoxMap() {
-    mapWindow=open("mapboundingbox.php","boundingbox","resizable=0,width=700,height=630,left=20,top=20");
-    if (mapWindow.opener == null) mapWindow.opener = self;
+    let mapWindow = open("mapboundingbox.php", "boundingbox", "resizable=0,width=700,height=630,left=20,top=20");
+    if (mapWindow.opener == null) {
+        mapWindow.opener = self;
+    }
     mapWindow.focus();
 }

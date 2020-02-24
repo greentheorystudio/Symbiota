@@ -74,8 +74,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
    "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -163,7 +162,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						</form>	
 					</div>
 					<div id="refdetails" style="overflow:auto;">
-						<form name="referenceeditform" id="referenceeditform" action="refdetails.php" method="post" onsubmit="return verifyEditRefForm(this.form);">
+						<form name="referenceeditform" id="referenceeditform" action="refdetails.php" method="post" onsubmit="return verifyEditRefForm();">
 							<div style="width:400px;">
 								<div style="width:200px;padding-top:6px;float:left;">
 									<div>
@@ -183,7 +182,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 									</div>
 								</div>
 								<div style="width:100px;margin-top:25px;float:right;">
-									<b>Published: </b><input type="checkbox" id="ispublishedcheck" onchange="updateIspublished(this.form);" value="" <?php echo (!$refArr['ispublished']?'':'checked'); ?> />
+									<b>Published: </b><input type="checkbox" id="ispublishedcheck" onchange="updateIspublished();" value="" <?php echo (!$refArr['ispublished']?'':'checked'); ?> />
 								</div>
 							</div>
 							<?php

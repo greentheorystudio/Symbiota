@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
 $latName = array_key_exists("latname",$_REQUEST)?$_REQUEST["latname"]:"";

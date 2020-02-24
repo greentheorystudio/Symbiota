@@ -1,4 +1,5 @@
 $('html').hide();
+
 $(document).ready(function() {
 	$('html').show();
 });
@@ -70,58 +71,48 @@ jQuery(document).ready(function($) {
 });
 
 function submitImageForm(){
-	var taxavals = $('#taxa').manifest('values');
-	var commonvals = $('#common').manifest('values');
-	var countryvals = $('#country').manifest('values');
-	var statevals = $('#state').manifest('values');
-	var keywordsvals = $('#keywords').manifest('values');
-	var criteria = 0;
+	let taxastr;
+	const taxavals = $('#taxa').manifest('values');
+	const commonvals = $('#common').manifest('values');
+	const countryvals = $('#country').manifest('values');
+	const statevals = $('#state').manifest('values');
+	const keywordsvals = $('#keywords').manifest('values');
 	if(taxavals.length > 0){
-		var taxastr = taxavals.join();
+		taxastr = taxavals.join();
 		document.getElementById('taxastr').value = taxastr;
-		criteria = 1;
 	}
 	else if(commonvals.length > 0){
-		var taxastr = commonvals.join();
+		taxastr = commonvals.join();
 		document.getElementById('taxastr').value = taxastr;
-		criteria = 1;
 	}
 	else{
 		document.getElementById('taxastr').value = '';
 	}
 	if(countryvals.length > 0){
-		var countrystr = countryvals.join();
-		document.getElementById('countrystr').value = countrystr;
-		criteria = 1;
+		document.getElementById('countrystr').value = countryvals.join();
 	}
 	else{
 		document.getElementById('countrystr').value = '';
 	}
 	if(statevals.length > 0){
-		var statestr = statevals.join();
-		document.getElementById('statestr').value = statestr;
-		criteria = 1;
+		document.getElementById('statestr').value = statevals.join();
 	}
 	else{
 		document.getElementById('statestr').value = '';
 	}
 	if(keywordsvals.length > 0){
-		var keywordstr = keywordsvals.join();
-		document.getElementById('keywordstr').value = keywordstr;
-		criteria = 1;
+		document.getElementById('keywordstr').value = keywordsvals.join();
 	}
 	else{
 		document.getElementById('keywordstr').value = '';
 	}
 	if(phArr.length > 0){
-		var phids = [];
-		for(i = 0; i < phArr.length; i++){
+		const phids = [];
+		for(let i = 0; i < phArr.length; i++){
 			phids.push(phArr[i].id);
 		}
-		var phidstr = phids.join();
-		document.getElementById('phuidstr').value = phidstr;
+		document.getElementById('phuidstr').value = phids.join();
 		document.getElementById('phjson').value = JSON.stringify(phArr);
-		criteria = 1;
 	}
 	else{
 		document.getElementById('phuidstr').value = '';
@@ -131,17 +122,17 @@ function submitImageForm(){
 }
 
 function imageDisplayChanged(f){
-	if(f.imagedisplay.value == "taxalist" && $('#taxa').manifest('values') != ""){
+	if(f.imagedisplay.value === "taxalist" && $('#taxa').manifest('values') !== ""){
 		f.imagedisplay.value = "thumbnail";
 		alert("Only the thumbnail display is allowed when searching for a scientific name");
 	}
 }
 
 function toggle(target){
-	var ele = document.getElementById(target);
+	const ele = document.getElementById(target);
 	if(ele){
-		if(ele.style.display=="none"){
-			if(ele.id.substring(0,5) == "minus" || ele.id.substring(0,4) == "plus"){
+		if(ele.style.display === "none"){
+			if(ele.id.substring(0,5) === "minus" || ele.id.substring(0,4) === "plus"){
 				ele.style.display = "inline";
 	  		}
 			else{
@@ -155,12 +146,13 @@ function toggle(target){
 }
 
 function checkTaxonType(){
-	var newtaxontype = document.getElementById('taxontype').value;
-	var oldtaxontype = document.getElementById('taxtp').value;
-	if(newtaxontype==1||newtaxontype==2){
-		if(oldtaxontype==3){
-			var vals = $('#common').manifest('values');
-			for (i = 0; i < vals.length; i++) {
+	let vals;
+	const newtaxontype = document.getElementById('taxontype').value;
+	const oldtaxontype = document.getElementById('taxtp').value;
+	if(newtaxontype === 1||newtaxontype === 2){
+		if(oldtaxontype === 3){
+			vals = $('#common').manifest('values');
+			for (let i = 0; i < vals.length; i++) {
 				$('#common').manifest('remove', i);
 			}
 			document.getElementById('thesdiv').style.display = "block";
@@ -170,10 +162,10 @@ function checkTaxonType(){
 		}
 	
 	}
-	if(newtaxontype==3){
-		if(oldtaxontype==1||oldtaxontype==2){
-			var vals = $('#taxa').manifest('values');
-			for (i = 0; i < vals.length; i++) {
+	if(newtaxontype === 3){
+		if(oldtaxontype === 1||oldtaxontype === 2){
+			vals = $('#taxa').manifest('values');
+			for (let i = 0; i < vals.length; i++) {
 				$('#taxa').manifest('remove', i);
 			}
 			document.getElementById('commonbox').style.display = "block";
@@ -199,13 +191,15 @@ function togglePid(pid){
 }
 
 function selectAll(cb){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 	}
-	var f = cb.form;
-	for(var i=0;i<f.length;i++){
-		if(f.elements[i].name == "db[]" || f.elements[i].name == "cat[]") f.elements[i].checked = boxesChecked;
+	const f = cb.form;
+	for(let i=0; i<f.length; i++){
+		if(f.elements[i].name === "db[]" || f.elements[i].name === "cat[]") {
+			f.elements[i].checked = boxesChecked;
+		}
 	}
 }
 
@@ -222,51 +216,51 @@ function uncheckAll(){
 }
 
 function selectAllCat(cb,target){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 		uncheckAll();
 	}
-	var inputObjs = document.getElementsByTagName("input");
-  	for (i = 0; i < inputObjs.length; i++) {
-  		var inputObj = inputObjs[i];
-  		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
+	const inputObjs = document.getElementsByTagName("input");
+	for (let i = 0; i < inputObjs.length; i++) {
+		const inputObj = inputObjs[i];
+		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
   			inputObj.checked = boxesChecked;
   		}
   	}
 }
 
 function unselectCat(catTarget){
-	var catObj = document.getElementById(catTarget);
+	const catObj = document.getElementById(catTarget);
 	catObj.checked = false;
 	uncheckAll();
 }
 
 function selectAllPid(cb){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 	}
-	var target = "pid-"+cb.value;
-	var inputObjs = document.getElementsByTagName("input");
-  	for (i = 0; i < inputObjs.length; i++) {
-  		var inputObj = inputObjs[i];
-  		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
+	const target = "pid-" + cb.value;
+	const inputObjs = document.getElementsByTagName("input");
+	for (let i = 0; i < inputObjs.length; i++) {
+		const inputObj = inputObjs[i];
+		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
   			inputObj.checked = boxesChecked;
   		}
   	}
 }
 
 function verifyCollForm(f){
-	var formVerified = false;
-	for(var h=0;h<f.length;h++){
-		if(f.elements[h].name == "db[]" && f.elements[h].checked){
+	let formVerified = false;
+	for(let h=0; h<f.length; h++){
+		if(f.elements[h].name === "db[]" && f.elements[h].checked){
 			formVerified = true;
 		}
 		else{
             document.getElementById("dballcb").checked = false;
 		}
-		if(f.elements[h].name == "cat[]" && f.elements[h].checked){
+		if(f.elements[h].name === "cat[]" && f.elements[h].checked){
 			formVerified = true;
 		}
 	}
@@ -275,17 +269,16 @@ function verifyCollForm(f){
 		return false;
 	}
 	else{
-		for(var i=0;i<f.length;i++){
-			if(f.elements[i].name == "cat[]" && f.elements[i].checked){
-				//Uncheck all db input elements within cat div 
-				var childrenEle = document.getElementById('cat-'+f.elements[i].value).children;
-				for(var j=0;j<childrenEle.length;j++){
-					if(childrenEle[j].tagName == "DIV"){
-						var divChildren = childrenEle[j].children;
-						for(var k=0;k<divChildren.length;k++){
-							var divChildren2 = divChildren[k].children;
-							for(var l=0;l<divChildren2.length;l++){
-								if(divChildren2[l].tagName == "INPUT"){
+		for(let i=0; i<f.length; i++){
+			if(f.elements[i].name === "cat[]" && f.elements[i].checked){
+				const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
+				for(let j=0; j<childrenEle.length; j++){
+					if(childrenEle[j].tagName === "DIV"){
+						const divChildren = childrenEle[j].children;
+						for(let k=0; k<divChildren.length; k++){
+							const divChildren2 = divChildren[k].children;
+							for(let l=0; l<divChildren2.length; l++){
+								if(divChildren2[l].tagName === "INPUT"){
 									divChildren2[l].checked = false;
 								}
 							}
@@ -298,63 +291,62 @@ function verifyCollForm(f){
   	return formVerified;
 }
 
-function checkKey(e){
-	var key;
-	if(window.event){
-		key = window.event.keyCode;
-	}else{
-		key = e.keyCode;
-	}
-	if(key == 13){
-		document.collections.submit();
-	}
-}
-
 function openIndPU(occId,clid){
-	var wWidth = 900;
+	let wWidth = 900;
 	if(document.getElementById('maintable').offsetWidth){
 		wWidth = document.getElementById('maintable').offsetWidth*1.05;
 	}
 	else if(document.body.offsetWidth){
 		wWidth = document.body.offsetWidth*0.9;
 	}
-	if(wWidth > 1000) wWidth = 1000;
-	newWindow = window.open('../collections/individual/index.php?occid='+occId,'indspec' + occId,'scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-	if (newWindow.opener == null) newWindow.opener = self;
+	if(wWidth > 1000) {
+		wWidth = 1000;
+	}
+	let newWindow = window.open('../collections/individual/index.php?occid=' + occId, 'indspec' + occId, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+	if (newWindow.opener == null) {
+		newWindow.opener = self;
+	}
 	return false;
 }
 
 function openTaxonPopup(tid){
-	var wWidth = 900;
+	let wWidth = 900;
 	if(document.getElementById('maintable').offsetWidth){
 		wWidth = document.getElementById('maintable').offsetWidth*1.05;
 	}
 	else if(document.body.offsetWidth){
 		wWidth = document.body.offsetWidth*0.9;
 	}
-	if(wWidth > 1000) wWidth = 1000;
-	newWindow = window.open("../taxa/index.php?taxon="+tid,'taxon'+tid,'scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=700,left=20,top=20');
-	if (newWindow.opener == null) newWindow.opener = self;
+	if(wWidth > 1000) {
+		wWidth = 1000;
+	}
+	let newWindow = window.open("../taxa/index.php?taxon=" + tid, 'taxon' + tid, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
+	if (newWindow.opener == null) {
+		newWindow.opener = self;
+	}
 	return false;
 }
 
 function openImagePopup(imageId){
-	var wWidth = 900;
+	let wWidth = 900;
 	if(document.getElementById('maintable').offsetWidth){
 		wWidth = document.getElementById('maintable').offsetWidth*1.05;
 	}
 	else if(document.body.offsetWidth){
 		wWidth = document.body.offsetWidth*0.9;
 	}
-	if(wWidth > 1000) wWidth = 1000;
-	newWindow = window.open("imgdetails.php?imgid="+imageId,'image'+imageId,'scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-	if (newWindow.opener == null) newWindow.opener = self;
+	if(wWidth > 1000) {
+		wWidth = 1000;
+	}
+	let newWindow = window.open("imgdetails.php?imgid=" + imageId, 'image' + imageId, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+	if (newWindow.opener == null) {
+		newWindow.opener = self;
+	}
 	return false;
 }
 
 function changeImagePage(taxonIn,viewIn,starrIn,pageIn){
 	document.getElementById("imagebox").innerHTML = "<p>Loading...</p>";
-	
 	$.ajax( {
 		url: "rpc/changeimagepage.php",
 		method: "POST",
@@ -365,9 +357,8 @@ function changeImagePage(taxonIn,viewIn,starrIn,pageIn){
 			taxon: taxonIn
 		},
 		success: function( data ) {
-			var newImageList = JSON.parse(data);
-			document.getElementById("imagebox").innerHTML = newImageList;
-			if(viewIn == 'thumb'){
+			document.getElementById("imagebox").innerHTML = JSON.parse(data);
+			if(viewIn === 'thumb'){
 				document.getElementById("imagetab").innerHTML = 'Images';
 			}
 			else{

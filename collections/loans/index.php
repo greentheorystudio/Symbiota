@@ -84,8 +84,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
     <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/jquery-ui.css" rel="Stylesheet" type="text/css" />
@@ -281,7 +280,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 									<div style="padding-top:15px;float:right;">
 										<span>
 											<b>Loan Identifier: </b>
-											<input type="text" autocomplete="off" id="loanidentifierborr" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="inIdentCheck(loanidentifierborr,<?php echo $collId; ?>);" />
+											<input type="text" autocomplete="off" id="loanidentifierborr" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="inIdentCheck(<?php echo $collId; ?>);" />
 										</span>
 									</div>
 									<div style="clear:both;padding-top:6px;float:left;">

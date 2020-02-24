@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ChecklistVoucherAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $sciname = $_POST['sciname'];
 $occid = $_POST['occid'];
@@ -14,4 +14,3 @@ if($sciname && is_numeric($occid) && is_numeric($clid)){
 	$status = $clManager->linkVoucher($sciname,$occid);
 }
 echo $status;
-?>

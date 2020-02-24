@@ -1,46 +1,46 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
 
 $displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0);
 
 $clManager = new ChecklistVoucherAdmin();
 $clManager->setClid($clid);
 
-$statusStr = "";
+$statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = 1;
-	if($action == "SaveSearch"){
-		$statusStr = $clManager->saveQueryVariables($_POST);
+	if($action === 'SaveSearch'){
+		$clManager->saveQueryVariables($_POST);
 	}
-	elseif($action == 'DeleteVariables'){
+	elseif($action === 'DeleteVariables'){
 		$statusStr = $clManager->deleteQueryVariables();
 	}
-	elseif($action == 'Add Vouchers'){
+	elseif($action === 'Add Vouchers'){
 		$clManager->linkVouchers($_POST['occids']);
 	}
-	elseif($action == 'Add Taxa and Vouchers'){
+	elseif($action === 'Add Taxa and Vouchers'){
 		$clManager->linkTaxaVouchers($_POST['occids'],(array_key_exists('usecurrent',$_POST)?$_POST['usecurrent']:0));
 	}
-	elseif($action == 'resolveconflicts'){
+	elseif($action === 'resolveconflicts'){
 		$clManager->batchAdjustChecklist($_POST);
 	}
 }
 $clManager->setCollectionVariables();
 ?>
-
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -48,9 +48,9 @@ $clManager->setCollectionVariables();
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
-		var clid = <?php echo $clid; ?>;
-		var tabIndex = <?php echo $tabIndex; ?>;
-	</script>
+        let clid = <?php echo $clid; ?>;
+        let tabIndex = <?php echo $tabIndex; ?>;
+    </script>
 	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=130330"></script>
 	<style type="text/css">
 		li{margin:5px;}
@@ -59,7 +59,7 @@ $clManager->setCollectionVariables();
 
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div class="navpath">
 	<a href="../index.php">Home</a> &gt;&gt;
@@ -67,9 +67,8 @@ include($SERVER_ROOT.'/header.php');
 	<b>Checklist Administration</b>
 </div>
 
-<!-- This is inner text! -->
 <div id='innertext'>
-<div style="color:#990000;font-size:20px;font-weight:bold;margin:0px 10px 10px 0px;">
+<div style="color:#990000;font-size:20px;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
@@ -94,7 +93,7 @@ if($clid && $isEditor){
 			<?php
 			echo $clManager->getQueryVariableStr();
 			?>
-			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.png" style="width:15px;border:0px;"/></a></span>
+			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.png" style="width:15px;border:0;"/></a></span>
 		</div>
 	<?php
 	}
@@ -111,23 +110,23 @@ if($clid && $isEditor){
 						<td>
 							<div style="margin:2px;">
 								<b>Country:</b>
-								<input type="text" name="country" value="<?php echo isset($termArr['country'])?$termArr['country']:''; ?>" />
+								<input type="text" name="country" value="<?php echo $termArr['country'] ?? ''; ?>" />
 							</div>
 							<div style="margin:2px;">
 								<b>State:</b>
-								<input type="text" name="state" value="<?php echo isset($termArr['state'])?$termArr['state']:''; ?>" />
+								<input type="text" name="state" value="<?php echo $termArr['state'] ?? ''; ?>" />
 							</div>
 							<div style="margin:2px;">
 								<b>County:</b>
-								<input type="text" name="county" value="<?php echo isset($termArr['county'])?$termArr['county']:''; ?>" />
+								<input type="text" name="county" value="<?php echo $termArr['county'] ?? ''; ?>" />
 							</div>
 							<div style="margin:2px;">
 								<b>Locality:</b>
-								<input type="text" name="locality" value="<?php echo isset($termArr['locality'])?$termArr['locality']:''; ?>" />
+								<input type="text" name="locality" value="<?php echo $termArr['locality'] ?? ''; ?>" />
 							</div>
 							<div style="margin:2px;" title="Genus, family, or higher rank">
 								<b>Taxon:</b>
-								<input type="text" name="taxon" value="<?php echo isset($termArr['taxon'])?$termArr['taxon']:''; ?>" />
+								<input type="text" name="taxon" value="<?php echo $termArr['taxon'] ?? ''; ?>" />
 							</div>
 							<div>
 								<b>Collection:</b>
@@ -135,47 +134,47 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = isset($termArr['collid'])?$termArr['collid']:'';
+									$selCollid = $termArr['collid'] ?? '';
 									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid==$id?'SELECTED':'').'>'.$name.'</option>';
+										echo '<option value="'.$id.'" '.($selCollid === $id?'SELECTED':'').'>'.$name.'</option>';
 									}
 									?>
 								</select>
 							</div>
 							<div>
 								<b>Collector:</b>
-								<input name="recordedby" type="text" value="<?php echo isset($termArr['recordedby'])?$termArr['recordedby']:''; ?>" style="width:250px" title="Enter multiple collectors separated by semicolons" />
+								<input name="recordedby" type="text" value="<?php echo $termArr['recordedby'] ?? ''; ?>" style="width:250px" title="Enter multiple collectors separated by semicolons" />
 							</div>
 						</td>
 						<td style="padding-left:20px;">
 							<div style="float:left;">
 								<div>
 									<b>Lat North:</b>
-									<input id="upperlat" type="text" name="latnorth" style="width:70px;" value="<?php echo isset($termArr['latnorth'])?$termArr['latnorth']:''; ?>" title="Latitude North" />
-									<a href="#" onclick="openPopup('../collections/mapboundingbox.php','boundingbox')"><img src="../images/world.png" width="15px" title="Find Coordinate" /></a>
+									<input id="upperlat" type="text" name="latnorth" style="width:70px;" value="<?php echo $termArr['latnorth'] ?? ''; ?>" title="Latitude North" />
+									<a href="#" onclick="openPopup('../collections/mapboundingbox.php','boundingbox')"><img src="../images/world.png" style="width:15px;" title="Find Coordinate" /></a>
 								</div>
 								<div>
 									<b>Lat South:</b>
-									<input id="bottomlat" type="text" name="latsouth" style="width:70px;" value="<?php echo isset($termArr['latsouth'])?$termArr['latsouth']:''; ?>" title="Latitude South" />
+									<input id="bottomlat" type="text" name="latsouth" style="width:70px;" value="<?php echo $termArr['latsouth'] ?? ''; ?>" title="Latitude South" />
 								</div>
 								<div>
 									<b>Long East:</b>
-									<input id="rightlong" type="text" name="lngeast" style="width:70px;" value="<?php echo isset($termArr['lngeast'])?$termArr['lngeast']:''; ?>" title="Longitude East" />
+									<input id="rightlong" type="text" name="lngeast" style="width:70px;" value="<?php echo $termArr['lngeast'] ?? ''; ?>" title="Longitude East" />
 								</div>
 								<div>
 									<b>Long West:</b>
-									<input id="leftlong" type="text" name="lngwest" style="width:70px;" value="<?php echo isset($termArr['lngwest'])?$termArr['lngwest']:''; ?>" title="Longitude West" />
+									<input id="leftlong" type="text" name="lngwest" style="width:70px;" value="<?php echo $termArr['lngwest'] ?? ''; ?>" title="Longitude West" />
 								</div>
 								<div>
-									<input type="checkbox" name="latlngor" value="1" <?php if(isset($termArr['latlngor'])) echo 'CHECKED'; ?> />
+									<input type="checkbox" name="latlngor" value="1" <?php echo (isset($termArr['latlngor'])?'CHECKED':''); ?> />
                                     Include Lat/Long and locality as an "OR" condition
 								</div>
 								<div>
-									<input name="onlycoord" value="1" type="checkbox" <?php if(isset($termArr['onlycoord'])) echo 'CHECKED'; ?> />
+									<input name="onlycoord" value="1" type="checkbox" <?php echo (isset($termArr['onlycoord'])?'CHECKED':''); ?> />
                                     Only include occurrences with coordinates
 								</div>
 								<div>
-									<input name="excludecult" value="1" type="checkbox" <?php if(isset($termArr['excludecult'])) echo 'CHECKED'; ?> />
+									<input name="excludecult" value="1" type="checkbox" <?php echo (isset($termArr['excludecult'])?'CHECKED':''); ?> />
                                     Exclude cultivated species
 								</div>
 							</div>
@@ -218,7 +217,7 @@ if($clid && $isEditor){
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
 				<li><a href="#nonVoucheredDiv"><span>New Vouchers</span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex==1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex === 1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
 				<li><a href="vaconflicts.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span>Voucher Conflicts</span></a></li>
 				<li><a href="#reportDiv"><span>Reports</span></a></li>
 			</ul>
@@ -232,9 +231,8 @@ if($clid && $isEditor){
 							<b>Display Mode:</b>
 							<select name="displaymode" onchange="this.form.submit()">
 								<option value="0">Non-vouchered taxa list</option>
-								<option value="1" <?php echo ($displayMode==1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
-								<option value="2" <?php echo ($displayMode==2?'SELECTED':''); ?>>New occurrences for all taxa</option>
-								<!-- <option value="3" <?php //echo ($displayMode==3?'SELECTED':''); ?>>Non-species level or poorly identified vouchers</option> -->
+								<option value="1" <?php echo ($displayMode === 1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
+								<option value="2" <?php echo ($displayMode === 2?'SELECTED':''); ?>>New occurrences for all taxa</option>
 							</select>
 							<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 							<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -242,7 +240,7 @@ if($clid && $isEditor){
 						</form>
 					</div>
 					<?php
-					if(!$displayMode || $displayMode==1 || $displayMode==2){
+					if(!$displayMode || $displayMode === 1 || $displayMode === 2){
 						?>
 						<div style='float:left;margin-top:3px;height:30px;'>
 							<b>Taxa without Vouchers: <?php echo $nonVoucherCnt; ?></b>
@@ -253,7 +251,7 @@ if($clid && $isEditor){
 							?>
 						</div>
 						<div style='float:left;'>
-							<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><img src="../images/refresh.png" style="border:0px;" title="Refresh List" /></a>
+							<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><img src="../images/refresh.png" style="border:0;" title="Refresh List" /></a>
 						</div>
 					<?php
 					}
@@ -267,8 +265,8 @@ if($clid && $isEditor){
 								<?php
 								if($specArr = $clManager->getNewVouchers($startPos,$displayMode)){
 									?>
-									<form name="batchnonvoucherform" method="post" action="voucheradmin.php" onsubmit="return validateBatchNonVoucherForm(this)">
-										<table class="styledtable" style="font-family:Arial;font-size:12px;">
+									<form name="batchnonvoucherform" method="post" action="voucheradmin.php" onsubmit="return validateBatchNonVoucherForm()">
+										<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 											<tr>
 												<th>
 													<span title="Select All">
@@ -287,7 +285,9 @@ if($clid && $isEditor){
 													echo '<td><a href="../taxa/index.php?taxon='.$oArr['tid'].'" target="_blank">'.$oArr['sciname'].'</a></td>';
 													echo '<td>';
 													echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
-													if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
+													if($oArr['eventdate']) {
+                                                        echo $oArr['eventdate'] . '<br/>';
+                                                    }
 													echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
 													echo $oArr['collcode'];
 													echo '</a>';
@@ -328,7 +328,7 @@ if($clid && $isEditor){
 								if($nonVoucherArr = $clManager->getNonVoucheredTaxa($startPos)){
 									foreach($nonVoucherArr as $family => $tArr){
 										echo '<div style="font-weight:bold;">'.strtoupper($family).'</div>';
-										echo '<div style="margin:10px;text-decoration:italic;">';
+										echo '<div style="margin:10px;font-style:italic;">';
 										foreach($tArr as $tid => $sciname){
 											?>
 											<div>
@@ -343,14 +343,22 @@ if($clid && $isEditor){
 									}
 									$arrCnt = $nonVoucherArr;
 									if($startPos || $nonVoucherCnt > 100){
-										echo '<div style="text-weight:bold;">';
-										if($startPos > 0) echo '<a href="voucheradmin.php?clid='.$clid.'&pid='.$pid.'&start='.($startPos-100).'">';
+										echo '<div style="font-weight:bold;">';
+										if($startPos > 0) {
+                                            echo '<a href="voucheradmin.php?clid=' . $clid . '&pid=' . $pid . '&start=' . ($startPos - 100) . '">';
+                                        }
 										echo '&lt;&lt; Previous';
-										if($startPos > 0) echo '</a>';
+										if($startPos > 0) {
+                                            echo '</a>';
+                                        }
 										echo ' || <b>'.$startPos.'-'.($startPos+($arrCnt<100?$arrCnt:100)).' Records</b> || ';
-										if(($startPos + 100) <= $nonVoucherCnt) echo '<a href="voucheradmin.php?clid='.$clid.'&pid='.$pid.'&start='.($startPos+100).'">';
+										if(($startPos + 100) <= $nonVoucherCnt) {
+                                            echo '<a href="voucheradmin.php?clid=' . $clid . '&pid=' . $pid . '&start=' . ($startPos + 100) . '">';
+                                        }
 										echo 'Next &gt;&gt;';
-										if(($startPos + 100) <= $nonVoucherCnt) echo '</a>';
+										if(($startPos + 100) <= $nonVoucherCnt) {
+                                            echo '</a>';
+                                        }
 										echo '</div>';
 									}
 								}
@@ -386,18 +394,16 @@ if($clid && $isEditor){
 	<?php
 	}
 }
+else if(!$clid){
+    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>Checklist identifier not set</div>';
+}
 else{
-	if(!$clid){
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>Checklist identifier not set</div>';
-	}
-	else{
-		echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>You do not have administrative permission for this checklist</div>';
-	}
+    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>You do not have administrative permission for this checklist</div>';
 }
 ?>
 </div>
 <?php
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

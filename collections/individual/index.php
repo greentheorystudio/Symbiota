@@ -140,7 +140,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Detailed Collection Record Information</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<meta name="description" content="<?php echo 'Occurrence author: '.$occArr['recordedby'].','.$occArr['recordnumber']; ?>" />
 	<meta name="keywords" content="<?php echo $occArr['guid']; ?>">

@@ -29,7 +29,7 @@ else{
 			<div style="padding-top:10px;float:left;">
 				<span>
 					<b>Transaction Number:</b> 
-					<input type="text" autocomplete="off" id="identifier" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="exIdentCheck(identifier,<?php echo $collId; ?>);" />
+					<input type="text" autocomplete="off" id="identifier" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="exIdentCheck(<?php echo $collId; ?>);" />
 				</span>
 			</div>
 			<div style="clear:left;padding-top:6px;float:left;">

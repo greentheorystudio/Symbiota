@@ -70,7 +70,7 @@ else{
 }
 ?>
 <div id="querydiv" style="clear:both;width:830px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
-	<form name="queryform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
+	<form name="queryform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" onsubmit="return verifyQueryForm()">
 		<fieldset style="padding:5px;">
 			<legend><b>Record Search Form</b></legend>
 			<?php 
@@ -79,15 +79,15 @@ else{
 				<div style="margin:2px;">
 					<span title="Full name of collector as entered in database. To search just on last name, place the wildcard character (%) before name (%Gentry).">
 						<b>Collector:</b> 
-						<input type="text" name="q_recordedby" value="<?php echo $qRecordedBy; ?>" onchange="setOrderBy(this)" />
+						<input type="text" name="q_recordedby" value="<?php echo $qRecordedBy; ?>" />
 					</span>
 					<span style="margin-left:25px;"><b>Number:</b></span>
 					<span title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-						<input type="text" name="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" onchange="setOrderBy(this)" />
+						<input type="text" name="q_recordnumber" value="<?php echo $qRecordNumber; ?>" style="width:120px;" />
 					</span>
 					<span style="margin-left:15px;" title="Enter ranges separated by ' - ' (space before and after dash required), e.g.: 2002-01-01 - 2003-01-01">
 						<b>Date:</b> 
-						<input type="text" name="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						<input type="text" name="q_eventdate" value="<?php echo $qEventDate; ?>" style="width:160px" />
 					</span>
 				</div>
 				<?php 
@@ -96,7 +96,7 @@ else{
 			<div style="margin:2px;">
 				<b>Catalog Number:</b> 
 				<span title="Separate multiples by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-					<input type="text" name="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" onchange="setOrderBy(this)" />
+					<input type="text" name="q_catalognumber" value="<?php echo $qCatalogNumber; ?>" />
 				</span>
 				<?php 
 				if($crowdSourceMode){
@@ -138,20 +138,20 @@ else{
 					?>
 					<span style="margin-right:15px;<?php echo ($isGenObs?'display:none':''); ?>">
 						<b>Entered by:</b> 
-						<input type="text" name="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" onchange="setOrderBy(this)" />
+						<input type="text" name="q_recordenteredby" value="<?php echo $qRecordEnteredBy; ?>" style="width:70px;" />
 					</span>
 					<span style="margin-right:15px;" title="Enter ranges separated by ' - ' (space before and after dash required), e.g.: 2002-01-01 - 2003-01-01">
 						<b>Date entered:</b> 
-						<input type="text" name="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						<input type="text" name="q_dateentered" value="<?php echo $qDateEntered; ?>" style="width:160px" />
 					</span>
 					<span title="Enter ranges separated by ' - ' (space before and after dash required), e.g.: 2002-01-01 - 2003-01-01">
 						<b>Date modified:</b> 
-						<input type="text" name="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" onchange="setOrderBy(this)" />
+						<input type="text" name="q_datelastmodified" value="<?php echo $qDateLastModified; ?>" style="width:160px" />
 					</span>
 				</div>
 				<div style="margin:2px;">
 					<span><b>Processing Status:</b></span> 
-					<select name="q_processingstatus" onchange="setOrderBy(this)">
+					<select name="q_processingstatus">
 						<option value=''>All Records</option>
 						<option>-------------------</option>
 						<?php 

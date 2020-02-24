@@ -375,7 +375,7 @@ $specImgArr = $occManager->getImageMap();
 										</div>
 									</fieldset>
 								</form>
-								<form name="img<?php echo $imgId; ?>delform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgDelForm(this);">
+								<form name="img<?php echo $imgId; ?>delform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgDelForm();">
 									<fieldset style="padding:15px">
 										<legend><b>Delete Image</b></legend>
 										<input type="hidden" name="occid" value="<?php echo $occId; ?>" />

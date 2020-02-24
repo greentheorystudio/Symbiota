@@ -29,7 +29,6 @@ if($collid){
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Skeletal Record Submission</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -88,7 +87,7 @@ if($collid){
 						Skeletal data will not copy over existing field values.
 					</div>
  				</div>
-				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm(this)">
+				<form id="defaultform" name="defaultform" action="skeletalsubmit.php" method="post" autocomplete="off" onsubmit="return submitDefaultForm()">
 					<div id="optiondiv" style="display:none;position:absolute;background-color:white;">
 						<fieldset>
 							<legend><b>Options</b></legend>
@@ -153,7 +152,7 @@ if($collid){
 							</div> 
 							<div id="statediv" style="float:left;margin:3px 3px 3px 0px;">
 								<b>State/Province:</b><br/>
-								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck(this.form)" />
+								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck()" />
 							</div> 
 							<div id="countydiv" style="float:left;margin:3px 3px 3px 0px;">
 								<b>County/Parish:</b><br/>

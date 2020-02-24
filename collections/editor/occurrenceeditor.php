@@ -402,7 +402,6 @@ else{
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <?php
@@ -898,7 +897,7 @@ else{
 											?>
 											<div id="localSecurityDiv">
 												<div style="float:left;">
-													<input type="checkbox" name="localitysecurity" tabindex="0" value="1" <?php echo $lsHasValue?"CHECKED":""; ?> onchange="localitySecurityChanged(this.form);" title="Hide Locality Data from General Public" />
+													<input type="checkbox" name="localitysecurity" tabindex="0" value="1" <?php echo $lsHasValue?"CHECKED":""; ?> onchange="localitySecurityChanged();" title="Hide Locality Data from General Public" />
 													<?php echo (defined('LOCALITYSECURITYLABEL')?LOCALITYSECURITYLABEL:'Locality Security'); ?>
 													<a href="#" onclick="return dwcDoc('localitySecurity')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
 												</div>

@@ -1,12 +1,12 @@
 function processGbifOrgKey(){
-	var gbifInstOrgKey = document.getElementById("gbifInstOrgKey").value;
-	var gbifOrgKey = document.getElementById("gbifOrgKey").value;
-	var gbifInstKey = document.getElementById("gbifInstKey").value;
-	var gbifDatasetKey = document.getElementById("gbifDataKey").value;
-	var gbifEndpointKey = document.getElementById("gbifEndKey").value;
-	var dwcUri = document.getElementById("dwcUri").value;
-	var portalName = document.getElementById("portalname").value;
-	var collName = document.getElementById("collname").value;
+	const gbifInstOrgKey = document.getElementById("gbifInstOrgKey").value;
+	const gbifOrgKey = document.getElementById("gbifOrgKey").value;
+	let gbifInstKey = document.getElementById("gbifInstKey").value;
+	let gbifDatasetKey = document.getElementById("gbifDataKey").value;
+	let gbifEndpointKey = document.getElementById("gbifEndKey").value;
+	const dwcUri = document.getElementById("dwcUri").value;
+	const portalName = document.getElementById("portalname").value;
+	const collName = document.getElementById("collname").value;
 	if(!gbifInstKey){
 		gbifInstKey = findInstKey();
 	}
@@ -48,9 +48,9 @@ function processGbifOrgKey(){
 }
 
 function createGbifInstallation(gbifOrgKey,collName){
-	var type = 'POST';
-	var url = 'http://api.gbif.org/v1/installation';
-	var data = JSON.stringify({
+	const type = 'POST';
+	const url = 'http://api.gbif.org/v1/installation';
+	const data = JSON.stringify({
 		organizationKey: gbifOrgKey,
 		type: "SYMBIOTA_INSTALLATION",
 		title: collName
@@ -60,9 +60,9 @@ function createGbifInstallation(gbifOrgKey,collName){
 }
 
 function createGbifDataset(gbifInstKey,gbifOrgKey,collName){
-	var type = 'POST';
-	var url = 'http://api.gbif.org/v1/dataset';
-	var data = JSON.stringify({
+	const type = 'POST';
+	const url = 'http://api.gbif.org/v1/dataset';
+	const data = JSON.stringify({
 		installationKey: gbifInstKey,
 		publishingOrganizationKey: gbifOrgKey,
 		title: collName,
@@ -73,11 +73,10 @@ function createGbifDataset(gbifInstKey,gbifOrgKey,collName){
 }
 
 function createGbifEndpoint(gbifDatasetKey,dwcUri){
-	var type = 'POST';
-	var url = 'http://api.gbif.org/v1/dataset/'+gbifDatasetKey+'/endpoint';
-	var data = JSON.stringify({
+	const type = 'POST';
+	const url = 'http://api.gbif.org/v1/dataset/' + gbifDatasetKey + '/endpoint';
+	const data = JSON.stringify({
 		type: "DWC_ARCHIVE",
-		//url: "http://symbiota4.acis.ufl.edu/scan/portal/content/dwca/NAUF-CPMAB_DwC-A.zip"
 		url: dwcUri
 	});
 
@@ -85,16 +84,16 @@ function createGbifEndpoint(gbifDatasetKey,dwcUri){
 }
 
 function startGbifCrawl(gbifDatasetKey){
-	var type = 'POST';
-	var url = 'http://api.gbif.org/v1/dataset/'+gbifDatasetKey+'/crawl';
-	var data = '';
+	const type = 'POST';
+	const url = 'http://api.gbif.org/v1/dataset/' + gbifDatasetKey + '/crawl';
+	const data = '';
 
 	callGbifCurl(type,url,data);
 	alert('Your data is being updated in GBIF. Please allow 5-10 minutes for completion.')
 }
 
 function findInstKey(){
-	var key;
+	let key = '';
 	$.ajax({
 		type: "POST",
 		url: "rpc/checkgbifinstall.php",
@@ -110,7 +109,7 @@ function findInstKey(){
 }
 
 function callGbifCurl(type,url,data){
-	var key;
+	let key;
 	$.ajax({
 		type: "POST",
 		url: "rpc/getgbifcurl.php",

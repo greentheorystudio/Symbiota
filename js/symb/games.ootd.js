@@ -7,7 +7,6 @@ $(document).ready(function() {
 	}
 
 	$( "#family_answer" )
-		// don't navigate away from the field on tab when selecting an item
 		.bind( "keydown", function( event ) {
 			if ( event.keyCode === $.ui.keyCode.TAB &&
 					$( this ).data( "autocomplete" ).menu.active ) {
@@ -21,21 +20,17 @@ $(document).ready(function() {
 				}, response );
 			},
 			search: function() {
-				// custom minLength
-				var term = extractLast( this.value );
+				const term = extractLast(this.value);
 				if ( term.length < 4 ) {
 					return false;
 				}
 			},
 			focus: function() {
-				// prevent value inserted on focus
 				return false;
 			},
 			select: function( event, ui ) {
-				var terms = split( this.value );
-				// remove the current input
+				const terms = split(this.value);
 				terms.pop();
-				// add the selected item
 				terms.push( ui.item.label );
 				document.getElementById('family_answer').value = ui.item.value;
 				this.value = terms;
@@ -44,7 +39,6 @@ $(document).ready(function() {
 		},{});
 		
 	$( "#sciname_answer" )
-		// don't navigate away from the field on tab when selecting an item
 		.bind( "keydown", function( event ) {
 			if ( event.keyCode === $.ui.keyCode.TAB &&
 					$( this ).data( "autocomplete" ).menu.active ) {
@@ -58,21 +52,17 @@ $(document).ready(function() {
 				}, response );
 			},
 			search: function() {
-				// custom minLength
-				var term = extractLast( this.value );
+				const term = extractLast(this.value);
 				if ( term.length < 4 ) {
 					return false;
 				}
 			},
 			focus: function() {
-				// prevent value inserted on focus
 				return false;
 			},
 			select: function( event, ui ) {
-				var terms = split( this.value );
-				// remove the current input
+				const terms = split(this.value);
 				terms.pop();
-				// add the selected item
 				terms.push( ui.item.label );
 				document.getElementById('sciname_answer').value = '';
 				this.value = terms;

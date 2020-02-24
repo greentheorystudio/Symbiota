@@ -48,8 +48,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
    "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Author Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Author Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -98,7 +97,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				if(!$authId){
 					?>
 					<div id="newauthordiv" style="<?php echo ($addAuth?'display:block;width:400px;':'display:none;') ?>">
-						<form name="newauthorform" action="<?php echo ($addAuth?'':'authoreditor.php') ?>" method="post" onsubmit="return verifyNewAuthForm(this.form);">
+						<form name="newauthorform" action="<?php echo ($addAuth?'':'authoreditor.php') ?>" method="post" onsubmit="return verifyNewAuthForm();">
 							<fieldset>
 								<legend><b>New Author</b></legend>
 								<div style="clear:both;padding-top:4px;float:left;">
@@ -150,7 +149,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						
 						<div id="authdetaildiv" style="">
 							<div id="authdetails" style="overflow:auto;">
-								<form name="authoreditform" id="authoreditform" action="authoreditor.php" method="post" onsubmit="return verifyNewAuthForm(this.form);">
+								<form name="authoreditform" id="authoreditform" action="authoreditor.php" method="post" onsubmit="return verifyNewAuthForm();">
 									<div style="clear:both;padding-top:4px;float:left;">
 										<div style="">
 											<b>First Name: </b> <input type="text" name="firstname" id="firstname" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['firstname']; ?>" title="" />
