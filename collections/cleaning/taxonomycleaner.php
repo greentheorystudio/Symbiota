@@ -36,9 +36,9 @@ elseif($activeCollArr){
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Taxon Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/jquery-ui.min.css?ver=3" type="text/css" rel="Stylesheet" />
-		<script src="../../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
-		<script src="../../js/jquery-ui.min.js?ver=3" type="text/javascript"></script>
+		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="Stylesheet" />
+		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
 		<script>
 
 			var cache = {};
