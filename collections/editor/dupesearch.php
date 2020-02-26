@@ -341,7 +341,9 @@ if(!$IS_ADMIN){
                                     }
 									echo ' meters ';
 								}
-								if($occObj['verbatimElevation']) echo 'Verbatim elev: <span title="verbatimElevation">'.$occObj['verbatimElevation'].'</span>';
+								if($occObj['verbatimElevation']) {
+                                    echo 'Verbatim elev: <span title="verbatimElevation">' . $occObj['verbatimElevation'] . '</span>';
+                                }
 								?>
 							</div>
 							<?php

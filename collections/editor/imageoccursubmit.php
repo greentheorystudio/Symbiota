@@ -176,15 +176,15 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<div> 
 						<div style="float:left;margin:3px;">
 							<b>Country:</b><br/> 
-							<input id="country" name="country" type="text" value="<?php echo (isset($_POST['country'])?$_POST['country']:''); ?>" />
+							<input id="country" name="country" type="text" value="<?php echo ($_POST['country'] ?? ''); ?>" />
 						</div> 
 						<div style="float:left;margin:3px;">
 							<b>State/Province:</b><br/>
-							<input id="state" name="stateprovince" type="text" value="<?php echo (isset($_POST['stateprovince'])?$_POST['stateprovince']:''); ?>" />
+							<input id="state" name="stateprovince" type="text" value="<?php echo ($_POST['stateprovince'] ?? ''); ?>" />
 						</div> 
 						<div style="float:left;margin:3px;">
 							<b>County:</b><br/>
-							<input id="county" name="county" type="text" value="<?php echo (isset($_POST['county'])?$_POST['county']:''); ?>" />
+							<input id="county" name="county" type="text" value="<?php echo ($_POST['county'] ?? ''); ?>" />
 						</div> 
 					</div>
 					<div style="clear:both;margin:3px;">
@@ -192,7 +192,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
 							?>
 							<div style="float:left;">
-								<input name="tessocr" type="checkbox" value=1 <?php if(isset($_POST['tessocr'])) echo 'checked'; ?> /> 
+								<input name="tessocr" type="checkbox" value=1 <?php echo (isset($_POST['tessocr'])?'checked':''); ?> />
 								OCR Text using Tesseract OCR engine
 							</div>
 							<?php
