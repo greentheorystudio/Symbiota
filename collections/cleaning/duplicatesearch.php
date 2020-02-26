@@ -1,48 +1,60 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:200;
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/duplicatesearch.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/duplicatesearch.php?' . $_SERVER['QUERY_STRING']);
+}
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
-if(!is_numeric($start)) $start = 0;
-if(!is_numeric($limit)) $limit = 0;
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
+if(!is_numeric($start)) {
+    $start = 0;
+}
+if(!is_numeric($limit)) {
+    $limit = 0;
+}
 
 $cleanManager = new OccurrenceCleaner();
-if($SOLR_MODE) $solrManager = new SOLRManager();
-if($collid) $cleanManager->setCollId($collid);
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
+if($collid) {
+    $cleanManager->setCollId($collid);
+}
 $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])) || ($collMap['colltype'] == 'General Observations')){
+if($IS_ADMIN || ($collMap['colltype'] === 'General Observations') || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
-//If collection is a general observation project, limit to User
-if($collMap['colltype'] == 'General Observations'){
+if($collMap['colltype'] === 'General Observations'){
 	$cleanManager->setObsUid($SYMB_UID);
 }
 
 $dupArr = array();
-if($action == 'listdupscatalog'){
+if($action === 'listdupscatalog'){
 	$limit = 1000;
 	$dupArr = $cleanManager->getDuplicateCatalogNumber('cat',$start,$limit);
 }
-if($action == 'listdupsothercatalog'){
+if($action === 'listdupsothercatalog'){
 	$limit = 1000;
 	$dupArr = $cleanManager->getDuplicateCatalogNumber('other',$start,$limit);
 }
-elseif($action == 'listdupsrecordedby'){
+elseif($action === 'listdupsrecordedby'){
 	$dupArr = $cleanManager->getDuplicateCollectorNumber($start);
 }
 
@@ -56,23 +68,25 @@ elseif($action == 'listdupsrecordedby'){
 		table.styledtable td { white-space: nowrap; }
     </style>
 	<script type="text/javascript">
-		function validateMergeForm(f){
-			var dbElements = document.getElementsByName("dupid[]");
-			for(i = 0; i < dbElements.length; i++){
-				var dbElement = dbElements[i];
-				if(dbElement.checked) return true;
+		function validateMergeForm(){
+            const dbElements = document.getElementsByName("dupid[]");
+            for(let i = 0; i < dbElements.length; i++){
+                const dbElement = dbElements[i];
+                if(dbElement.checked) {
+                    return true;
+                }
 			}
 		   	alert("Please select occurrences to be merged!");
 	      	return false;
 		}
 
 		function selectAllDuplicates(f){
-			var boxesChecked = true;
-			if(!f.selectalldupes.checked){
+            let boxesChecked = true;
+            if(!f.selectalldupes.checked){
 				boxesChecked = false;
 			}
-			var dbElements = document.getElementsByName("dupid[]");
-			for(i = 0; i < dbElements.length; i++){
+            const dbElements = document.getElementsByName("dupid[]");
+            for(let i = 0; i < dbElements.length; i++){
 				dbElements[i].checked = boxesChecked;
 			}
 
@@ -80,12 +94,11 @@ elseif($action == 'listdupsrecordedby'){
 
 		function batchSwitchTargetSpecimens(cbElem){
 			cbElem.checked = false;
-			var dbElements = document.getElementsByTagName("input");
-			//var dbElements = $("input[type='radio']").val();
-			var elemName = '';
-			for(i = 0; i < dbElements.length; i++){
-				if(dbElements[i].type == "radio"){
-					if(dbElements[i].checked == false && elemName != dbElements[i].name){
+            const dbElements = document.getElementsByTagName("input");
+            let elemName = '';
+            for(let i = 0; i < dbElements.length; i++){
+				if(dbElements[i].type === "radio"){
+					if(dbElements[i].checked === false && elemName !== dbElements[i].name){
 						dbElements[i].checked = true;
 						elemName = dbElements[i].name;
 					}
@@ -94,7 +107,7 @@ elseif($action == 'listdupsrecordedby'){
 		}
 	</script>
 </head>
-<body style="background-color:white;margin-left:0px;margin-right:0px">
+<body style="background-color:white;margin-left:0;margin-right:0;">
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
@@ -102,21 +115,18 @@ elseif($action == 'listdupsrecordedby'){
 		<b>Duplicate Occurrences</b>
 	</div>
 
-	<!-- inner text -->
 	<div id="innertext" style="background-color:white;">
 		<?php
 		echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
 		if($isEditor){
-			if($action == 'listdupscatalog' || $action == 'listdupsothercatalog' || $action == 'listdupsrecordedby'){
-				//Look for duplicate catalognumbers
+			if($action === 'listdupscatalog' || $action === 'listdupsothercatalog' || $action === 'listdupsrecordedby'){
 				if($dupArr){
 					$recCnt = count($dupArr);
-					//Build table
 					?>
 					<div style="margin-bottom:10px;">
 						<b>Use the checkboxes to select the records you would like to merge, and the radio buttons to select which target record to merge into.</b>
 					</div>
-					<form name="mergeform" action="duplicatesearch.php" method="post" onsubmit="return validateMergeForm(this);">
+					<form name="mergeform" action="duplicatesearch.php" method="post" onsubmit="return validateMergeForm();">
 						<?php
 						if($recCnt > $limit){
 							$href = 'duplicatesearch.php?collid='.$collid.'&action='.$action.'&start='.($start+$limit);
@@ -124,7 +134,7 @@ elseif($action == 'listdupsrecordedby'){
 						}
 						echo '<div><b>'.($start+1).' to '.($start+$recCnt).' Duplicate Clusters </b></div>';
 						?>
-						<table class="styledtable" style="font-family:Arial;font-size:12px;">
+						<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 							<tr>
 								<th style="width:40px;">ID</th>
 								<th style="width:20px;"><input name="selectalldupes" type="checkbox" title="Select/Deselect All" onclick="selectAllDuplicates(this.form)" /></th>
@@ -145,11 +155,11 @@ elseif($action == 'listdupsrecordedby'){
 							</tr>
 							<?php
 							$setCnt = 0;
-							foreach($dupArr as $dupKey => $occArr){
+							foreach($dupArr as $dupKey => $occurArr){
 								$setCnt++;
 								$first = true;
-								foreach($occArr as $occId => $occArr){
-									echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
+								foreach($occurArr as $occId => $occArr){
+									echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
 									echo '<td><a href="../editor/occurrenceeditor.php?occid='.$occId.'" target="_blank">'.$occId.'</a></td>'."\n";
 									echo '<td><input name="dupid[]" type="checkbox" value="'.$dupKey.':'.$occId.'" /></td>'."\n";
 									echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
@@ -187,7 +197,7 @@ elseif($action == 'listdupsrecordedby'){
 					<?php
 				}
 			}
-			elseif($action == 'Merge Duplicate Records'){
+			elseif($action === 'Merge Duplicate Records'){
 				?>
 				<ul>
 					<li>Duplicate merging process started</li>
@@ -197,11 +207,15 @@ elseif($action == 'listdupsrecordedby'){
 						$vArr = explode(':',$v);
 						if(count($vArr) > 1){
 							$target = $_POST['dup'.$vArr[0].'target'];
-							if($target != $vArr[1]) $dupArr[$target][] = $vArr[1];
+							if($target !== $vArr[1]) {
+                                $dupArr[$target][] = $vArr[1];
+                            }
 						}
 					}
 					$cleanManager->mergeDupeArr($dupArr);
-                    if($SOLR_MODE) $solrManager->updateSOLR();
+                    if($SOLR_MODE) {
+                        $solrManager->updateSOLR();
+                    }
 					?>
 					<li>Done!</li>
 				</ul>

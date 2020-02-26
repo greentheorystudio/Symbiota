@@ -1,11 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/skeletalsubmit.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$collid  = $_REQUEST["collid"];
-$action = array_key_exists("formaction",$_REQUEST)?$_REQUEST["formaction"]:"";
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/editor/skeletalsubmit.php?' . $_SERVER['QUERY_STRING']);
+}
+
+$collid  = $_REQUEST['collid'];
+$action = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']: '';
 
 $skeletalManager = new OccurrenceSkeletal();
 if($collid){
@@ -19,10 +22,10 @@ if($collid){
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])){
+	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 		$isEditor = 1;
 	}
 }
@@ -40,14 +43,13 @@ if($collid){
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
 		<b>Occurrence Skeletal Record Submission</b>
 	</div>
-	<!-- inner text -->
 	<div id="innertext">
 		<div style="float:right;"><a href="#" onclick="toggle('descriptiondiv')"><b>Display Instructions</b></a></div>
 		<h1><?php echo $collMap['collectionname']; ?></h1>
@@ -57,7 +59,7 @@ if($collid){
 		}
 		if($isEditor){
 			?>
-			<fieldset style="padding:0px 15px 15px 15px;position:relative;">
+			<fieldset style="padding:0 15px 15px 15px;position:relative;">
 				<legend>
 					<b>Skeletal Data</b> 
 					<a id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="Display Options" /></a>
@@ -146,19 +148,19 @@ if($collid){
 							</div>
 						</div>
 						<div style="clear:both;padding-top:5px"> 
-							<div id="countrydiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="countrydiv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Country:</b><br/> 
 								<input id="fcountry" name="country" type="text" value="" autocomplete="off" />
 							</div> 
-							<div id="statediv" style="float:left;margin:3px 3px 3px 0px;">
+							<div id="statediv" style="float:left;margin:3px 3px 3px 0;">
 								<b>State/Province:</b><br/>
 								<input id="fstateprovince" name="stateprovince" type="text" value="" autocomplete="off" onchange="localitySecurityCheck()" />
 							</div> 
-							<div id="countydiv" style="float:left;margin:3px 3px 3px 0px;">
+							<div id="countydiv" style="float:left;margin:3px 3px 3px 0;">
 								<b>County/Parish:</b><br/>
 								<input id="fcounty" name="county" type="text" autocomplete="off" value="" />
 							</div> 
-							<div id="processingstatusdiv" style="display:none;float:left;margin:3px 3px 3px 0px">
+							<div id="processingstatusdiv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Processing Status:</b><br/>
 								<select id="fprocessingstatus" name="processingstatus">
 									<option>unprocessed</option>
@@ -174,32 +176,32 @@ if($collid){
 							</div> 
 						</div>
 						<div style="clear:both;padding-top:5px">
-							<div id="recordedbydiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="recordedbydiv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Collector:</b><br/> 
 								<input id="frecordedby" name="recordedby" type="text" value="" />
 							</div> 
-							<div id="recordnumberdiv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="recordnumberdiv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Collector Number:</b><br/> 
 								<input id="frecordnumber" name="recordnumber" type="text" value="" />
 							</div> 
-							<div id="eventdatediv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="eventdatediv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Date:</b><br/> 
 								<input id="feventdate" name="eventdate" type="text" value="" onchange="eventDateChanged(this)" />
 							</div> 
-							<div id="languagediv" style="display:none;float:left;margin:3px 3px 3px 0px;">
+							<div id="languagediv" style="display:none;float:left;margin:3px 3px 3px 0;">
 								<b>Language:</b><br/> 
 								<select id="flanguage" name="language">
 									<?php 
 									$langArr = $skeletalManager->getLanguageArr();
 									foreach($langArr as $code => $langStr){
-										echo '<option value="'.$code.'" '.($code == 'en'?'selected':'').'>'.$langStr.'</option>';
+										echo '<option value="'.$code.'" '.($code === 'en'?'selected':'').'>'.$langStr.'</option>';
 									}
 									?>
 								</select>
 							</div> 
 						</div> 
 						<div style="clear:both;padding:15px;">
-							<div style="float:right;margin:16px 30px 0px 0px;">
+							<div style="float:right;margin:16px 30px 0 0;">
 								<input name="clearform" type="reset" value="Clear Form" style="margin-right:40px" />
 							</div>
 							<div style="float:left;">
@@ -224,19 +226,17 @@ if($collid){
 			</fieldset>
 			<?php 
 		}
-		else{
-			if($collid){
-				echo 'You are not authorized to acces this page.<br/>';
-				echo 'Contact an administrator to obtain the necessary permissions.</b> ';
-			}
-			else{
-				echo 'ERROR: collection identifier not set';
-			}
-		}
+		else if($collid){
+            echo 'You are not authorized to acces this page.<br/>';
+            echo 'Contact an administrator to obtain the necessary permissions.</b> ';
+        }
+        else{
+            echo 'ERROR: collection identifier not set';
+        }
 		?>
 	</div>
 <?php 	
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

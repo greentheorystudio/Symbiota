@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/SpecUpload.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
@@ -30,39 +30,15 @@ $headerMapBase = array('catalognumber' => 'Catalog Number','occurrenceid' => 'Oc
 	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means',
 	'disposition' => 'disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified',
 	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','basisofrecord' => 'Basis Of Record','occid' => 'targetRecord (occid)');
-if($collMap['managementtype'] == 'Snapshot'){
+if($collMap['managementtype'] === 'Snapshot'){
 	$headerMapBase['dbpk'] = 'Source Identifier';
 }
 
-//$recCnt = $uploadManager->getUploadCount();
 $isEditor = 0;
-//$navStr = '<div style="float:right;">';
 if($SYMB_UID){
-	//Set variables
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 		$isEditor = 1;
 	}
-/*
-	if(($pageIndex) >= $recLimit){
-		$navStr .= '<a href="uploadviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex=0" title="First page">|&lt;&lt;</a> | ';
-		$navStr .= '<a href="uploadviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($pageIndex-1).'" title="Previous '.$recLimit.' record">&lt;&lt;</a>';
-	}
-	else{
-		$navStr .= '|&lt;&lt;</a> | &lt;&lt;';
-	}
-	$navStr .= ' | ';
-	$highRange = ($pageIndex*$recLimit)+$recLimit;
-	$navStr .= (($pageIndex*$recLimit)+1).'-'.($recCnt<$highRange?$recCnt:$highRange).' of '.$recCnt.' records';
-	$navStr .= ' | ';
-	if($recCnt > $highRange){
-		$navStr .= '<a href="uploadviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($pageIndex+1).'" title="Next '.$recLimit.' records">&gt;&gt;</a> | ';
-		$navStr .= '<a href="uploadviewer.php?collid='.$collid.'&reclimit='.$reclimit.'&pageindex='.($recCnt/$recLimit).'" title="Last page">&gt;&gt;|</a>';
-	}
-	else{
-		$navStr .= '&gt;&gt; | &gt;&gt;|';
-	}
-	$navStr .= '</div>';
-*/
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -76,29 +52,26 @@ if($SYMB_UID){
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 </head>
-<body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<!-- inner text -->
+<body style="margin-left:0;margin-right:0;background-color:white;">
 	<div id="">
 		<?php 
 		if($isEditor){
 			if($collMap){
 				echo '<h2>'.$collMap['name'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')</h2>';
 			}
-			//Setup header map
 			$recArr = $uploadManager->getPendingImportData(($recLimit*$pageIndex),$recLimit,$searchVar);
 			if($recArr){
-				//Check to see which headers have values
 				$headerArr = array();
 				foreach($recArr as $occurArr){
 					foreach($occurArr as $k => $v){
-						if(trim($v) && !array_key_exists($k,$headerArr)){
+						if(!array_key_exists($k,$headerArr) && trim($v)){
 							$headerArr[$k] = $k;
 						}
 					}
 				}
 				$headerMap = array_intersect_key($headerMapBase, $headerArr);
 				?>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 					<tr>
 						<?php 
 						foreach($headerMap as $k => $v){
@@ -109,15 +82,19 @@ if($SYMB_UID){
 					<?php 
 					$cnt = 0;
 					foreach($recArr as $id => $occArr){
-						if($occArr['sciname']) $occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
-						echo "<tr ".($cnt%2?'class="alt"':'').">\n";
+						if($occArr['sciname']) {
+                            $occArr['sciname'] = '<i>' . $occArr['sciname'] . '</i> ';
+                        }
+						echo '<tr ' .(($cnt%2)?'class="alt"':'').">\n";
 						foreach($headerMap as $k => $v){
 							$displayStr = $occArr[$k];
 							if(strlen($displayStr) > 60){
 								$displayStr = substr($displayStr,0,60).'...';
 							}
 							if($displayStr) {
-								if($k == 'occid') $displayStr = '<a href="../editor/occurrenceeditor.php?occid='.$displayStr.'" target="_blank">'.$displayStr.'</a>';
+								if($k === 'occid') {
+                                    $displayStr = '<a href="../editor/occurrenceeditor.php?occid=' . $displayStr . '" target="_blank">' . $displayStr . '</a>';
+                                }
 							}
 							else{
 								$displayStr = '&nbsp;';

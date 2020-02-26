@@ -1,17 +1,20 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:1;
-$taxonFilter = array_key_exists("taxonfilter",$_REQUEST)?$_REQUEST["taxonfilter"]:0;
-$targetTid = array_key_exists("targettid",$_REQUEST)?$_REQUEST["targettid"]:0;
-$cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:100;
-$pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:1;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:0;
+$targetTid = array_key_exists('targettid',$_REQUEST)?$_REQUEST['targettid']:0;
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
 
-//Sanitation
-if(!is_numeric($taxonFilter)) $taxonFilter = 1;
-if(!is_numeric($cntPerPage)) $cntPerPage = 100;
+if(!is_numeric($taxonFilter)) {
+    $taxonFilter = 1;
+}
+if(!is_numeric($cntPerPage)) {
+    $cntPerPage = 100;
+}
 
 $collManager = new OccurrenceListManager();
 $stArr = array();
@@ -23,21 +26,25 @@ $resetPageNum = false;
 if(isset($_REQUEST['taxa']) || isset($_REQUEST['country']) || isset($_REQUEST['state']) || isset($_REQUEST['county']) || isset($_REQUEST['local']) || isset($_REQUEST['elevlow']) || isset($_REQUEST['elevhigh']) || isset($_REQUEST['upperlat']) || isset($_REQUEST['pointlat']) || isset($_REQUEST['collector']) || isset($_REQUEST['collnum']) || isset($_REQUEST['eventdate1']) || isset($_REQUEST['eventdate2']) || isset($_REQUEST['catnum']) || isset($_REQUEST['typestatus']) || isset($_REQUEST['hasimages']) || isset($_REQUEST['hasgenetic'])){
     $stArr = $collManager->getSearchTerms();
     $stArrSearchJson = json_encode($stArr);
-    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) $resetPageNum = true;
+    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
+        $resetPageNum = true;
+    }
 }
 
 if(isset($_REQUEST['db'])){
-    $reqDBStrStr = str_replace("(","",$_REQUEST['db']);
-    $reqDBStrStr = str_replace(")","",$reqDBStrStr);
-    if(preg_match('/^[0-9,;]+$/', $reqDBStrStr) || $reqDBStrStr == 'all'){
+    $reqDBStrStr = str_replace(array('(', ')'), '', $_REQUEST['db']);
+    if($reqDBStrStr === 'all' || preg_match('/^[0-9,;]+$/', $reqDBStrStr)){
         $collArr['db'] = $reqDBStrStr;
         $stArrCollJson = json_encode($collArr);
-        if(!isset($_REQUEST['page']) || !$_REQUEST['page']) $resetPageNum = true;
+        if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
+            $resetPageNum = true;
+        }
     }
-    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) $resetPageNum = true;
+    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
+        $resetPageNum = true;
+    }
 }
 ?>
-
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
@@ -52,12 +59,12 @@ if(isset($_REQUEST['db'])){
 	<script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js"></script>
     <script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
-        var starrJson = '';
-        var collJson = '';
-        var listPage = <?php echo $pageNumber; ?>;
+        let starrJson = '';
+        let collJson = '';
+        let listPage = <?php echo $pageNumber; ?>;
 
         $(document).ready(function() {
             <?php
@@ -124,10 +131,7 @@ if(isset($_REQUEST['db'])){
 
         function setOccurrenceList(listPage){
             sessionStorage.collSearchPage = listPage;
-            document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' width='15px' /></p>";
-            <?php
-			//echo "console.log('rpc/getoccurrencelist.php?starr='+starrJson+'&jsoncollstarr='+collJson+'&page='+listPage+'&targettid=".$targetTid."');";
-            ?>
+            document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             $.ajax({
                 type: "POST",
                 url: "rpc/getoccurrencelist.php",
@@ -139,20 +143,22 @@ if(isset($_REQUEST['db'])){
                 },
                 dataType: "html"
             }).done(function(msg) {
-                if(!msg) msg = "<p>An error occurred retrieving records.</p>";
+                if(!msg) {
+                    msg = "<p>An error occurred retrieving records.</p>";
+                }
                 document.getElementById("queryrecords").innerHTML = msg;
             });
         }
 
 		function addAllVouchersToCl(clidIn){
-			var occJson = document.getElementById("specoccjson").value;
+            const occJson = document.getElementById("specoccjson").value;
 
-			$.ajax({
+            $.ajax({
 				type: "POST",
 				url: "rpc/addallvouchers.php",
-				data: { clid: clidIn, jsonOccArr: occJson, tid: <?php echo ($targetTid?$targetTid:'0'); ?> }
+				data: { clid: clidIn, jsonOccArr: occJson, tid: <?php echo ($targetTid?:'0'); ?> }
 			}).done(function( msg ) {
-				if(msg == "1"){
+				if(msg === "1"){
 					alert("Success! All vouchers added to checklist.");
 				}
 				else{
@@ -162,9 +168,9 @@ if(isset($_REQUEST['db'])){
 		}
 
         function copySearchUrl(){
-            var urlPrefix = document.getElementById('urlPrefixBox').value;
-            var urlFixed = urlPrefix+'&page='+sessionStorage.collSearchPage;
-            var copyBox = document.getElementById('urlFullBox');
+            const urlPrefix = document.getElementById('urlPrefixBox').value;
+            const urlFixed = urlPrefix + '&page=' + sessionStorage.collSearchPage;
+            const copyBox = document.getElementById('urlFullBox');
             copyBox.value = urlFixed;
             copyBox.focus();
             copyBox.setSelectionRange(0,copyBox.value.length);
@@ -175,15 +181,14 @@ if(isset($_REQUEST['db'])){
 </head>
 <body>
 <?php
-	include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../header.php');
 echo '<div class="navpath">';
 echo '<a href="../index.php">Home</a> &gt;&gt; ';
 echo '<a href="index.php">Collections</a> &gt;&gt; ';
 echo '<a href="harvestparams.php">Search Criteria</a> &gt;&gt; ';
 echo '<b>Specimen Records</b>';
 echo '</div>';
-	?>
-<!-- This is inner text! -->
+?>
 <div id="innertext">
 	<div id="tabs" style="width:95%;">
 		<ul>
@@ -274,7 +279,7 @@ echo '</div>';
 	</div>
 </div>
 <?php
-include($SERVER_ROOT."/footer.php");
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

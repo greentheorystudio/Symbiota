@@ -1,20 +1,21 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/index.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/datasets/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
-//Sanitize input variables
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
 
 $statusStr = '';
-if($action == 'Create New Dataset'){
-	if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$SYMB_UID)){
-		$statusStr = implode(',',$datasetManager->getErrorArr());
-	}
+if(($action === 'Create New Dataset') && !$datasetManager->createDataset($_POST['name'], $_POST['notes'], $SYMB_UID)) {
+    $statusStr = implode(',',$datasetManager->getErrorArr());
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -26,13 +27,13 @@ if($action == 'Create New Dataset'){
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 		<script type="text/javascript" src="../../js/symb/shared.js"></script>
-		<script language="javascript" type="text/javascript">
+		<script type="text/javascript">
 			function validateAddForm(f){
-				if(f.adduser.value == ""){
+				if(f.adduser.value === ""){
 					alert("Enter a user (login or last name)");
 					return false
 				}
-				if(f.adduser.value.indexOf(" [#") == -1){
+				if(f.adduser.value.indexOf(" [#") === -1){
 					$.ajax({
 						url: "rpc/getuserlist.php",
 						dataType: "json",
@@ -40,7 +41,7 @@ if($action == 'Create New Dataset'){
 							term: f.adduser.value
 						},
 						success: function(data) {
-							if(data && data != ""){
+							if(data && data !== ""){
 								f.adduser.value = data;
 								alert("Located login: "+data);
 								f.submit();
@@ -58,7 +59,7 @@ if($action == 'Create New Dataset'){
 	</head>
 	<body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -69,14 +70,19 @@ if($action == 'Create New Dataset'){
 			<b>Dataset Listing</b>
 		</a>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($statusStr){
 			$color = 'green';
-			if(strpos($statusStr,'ERROR') !== false) $color = 'red';
-			elseif(strpos($statusStr,'WARNING') !== false) $color = 'orange';
-			elseif(strpos($statusStr,'NOTICE') !== false) $color = 'yellow';
+			if(strpos($statusStr,'ERROR') !== false) {
+                $color = 'red';
+            }
+			elseif(strpos($statusStr,'WARNING') !== false) {
+                $color = 'orange';
+            }
+			elseif(strpos($statusStr,'NOTICE') !== false) {
+                $color = 'yellow';
+            }
 			echo '<div style="margin:15px;color:'.$color.';">';
 			echo $statusStr;
 			echo '</div>';
@@ -126,8 +132,8 @@ if($action == 'Create New Dataset'){
 						</div>
 						<div style="margin-left:15px;">
 							<?php 
-							echo ($dsArr["notes"]?$dsArr["notes"].'<br/>':'');
-							echo 'Created: '.$dsArr["ts"]; 
+							echo ($dsArr['notes']?$dsArr['notes'].'<br/>':'');
+							echo 'Created: '.$dsArr['ts'];
 							?>
 						</div>
 						<?php 
@@ -148,13 +154,13 @@ if($action == 'Create New Dataset'){
 						<div>
 							<?php 
 							$role = 'Dataset reader';
-							if($dsArr['role'] == 'DatasetAdmin'){
+							if($dsArr['role'] === 'DatasetAdmin'){
 								$role = 'Dataset Administator';
 							}
-							elseif($dsArr['role'] == 'DatasetEditor'){
+							elseif($dsArr['role'] === 'DatasetEditor'){
 								$role = 'Dataset Editor';
 							}
-							echo '<b>'.$dsArr["name"].' (#'.$dsid.')</b> - '.$role;
+							echo '<b>'.$dsArr['name'].' (#'.$dsid.')</b> - '.$role;
 							?>
 							<a href="datasetmanager.php?datasetid=<?php echo $dsid; ?>" title="Access Dataset">
 								<img src="../../images/list.png" style="width:13px;" />
@@ -162,8 +168,8 @@ if($action == 'Create New Dataset'){
 						</div>
 						<div style="margin-left:15px;">
 							<?php 
-							echo ($dsArr["notes"]?$dsArr["notes"].'<br/>':'');
-							echo 'Created: '.$dsArr["ts"]; 
+							echo ($dsArr['notes']?$dsArr['notes'].'<br/>':'');
+							echo 'Created: '.$dsArr['ts'];
 							?>
 						</div>
 						<?php
@@ -183,7 +189,7 @@ if($action == 'Create New Dataset'){
 		</div>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 	</body>
 </html>

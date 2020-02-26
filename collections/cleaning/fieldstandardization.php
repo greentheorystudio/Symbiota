@@ -1,33 +1,41 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php'); 
-include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/fieldstandardization.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/fieldstandardization.php?' . $_SERVER['QUERY_STRING']);
+}
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($obsUid)) $obsUid = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if(!is_numeric($obsUid)) {
+    $obsUid = 0;
+}
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
 
 
 $cleanManager = new OccurrenceCleaner();
-if($collid) $cleanManager->setCollId($collid);
+if($collid) {
+    $cleanManager->setCollId($collid);
+}
 $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0; 
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))
-	|| ($collMap['colltype'] == 'General Observations')){
+if($IS_ADMIN || ($collMap['colltype'] === 'General Observations')
+	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
-//If collection is a general observation project, limit to User
-if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
+if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 	$obsUid = $SYMB_UID;
 	$cleanManager->setObsUid($obsUid);
 }
@@ -44,7 +52,9 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 </head>
 <body>
 	<?php 	
-	if(!$dupArr) include($SERVER_ROOT.'/header.php');
+	if(!$dupArr) {
+        include(__DIR__ . '/../../header.php');
+    }
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
@@ -52,13 +62,12 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 		<b>Batch Field Cleaning Tools</b>
 	</div>
 
-	<!-- inner text -->
 	<div id="innertext">
 		<?php
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
@@ -70,33 +79,12 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 			<div>
 				Description...
 			</div>
-			<?php 
-			if($action){
-				
-			}
-			?>
 			<fieldset style="padding:20px;">
 				<legend><b>Country</b></legend>
 				<div style="margin:5px">
 					<select name="country_old">
 						<option value="">Select Target Field</option>
 						<option value="">--------------------------------</option>
-						<?php 
-						
-						
-						
-						
-						?>
-					</select>
-					<select name="country_old">
-						<option value="">Select Target Value</option>
-						<option value="">--------------------------------</option>
-						<?php 
-						
-						
-						
-						
-						?>
 					</select>
 				</div>
 				<div style="margin:5px">
@@ -113,7 +101,7 @@ if($collMap['colltype'] == 'General Observations' && $obsUid !== 0){
 	</div>
 <?php 	
 if(!$dupArr){
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 }
 ?>
 </body>

@@ -1,24 +1,31 @@
 <?php
-//TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ObservationSubmitManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-$collId  = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$clid  = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$recordedBy = array_key_exists("recordedby",$_REQUEST)?$_REQUEST["recordedby"]:0;
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?' . $_SERVER['QUERY_STRING']);
+}
 
-//Sanitation
-if(!is_numeric($clid)) $clid = 0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$collId  = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$clid  = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$recordedBy = array_key_exists('recordedby',$_REQUEST)?$_REQUEST['recordedby']:0;
+
+if(!is_numeric($clid)) {
+    $clid = 0;
+}
 
 $obsManager = new ObservationSubmitManager();
-if($SOLR_MODE) $solrManager = new SOLRManager();
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
 $obsManager->setCollid($collId);
 $collMap = $obsManager->getCollMap(); 
-if(!$collId && $collMap) $collId = $collMap['collid']; 
+if(!$collId && $collMap) {
+    $collId = $collMap['collid'];
+}
 
 $isEditor = 0;
 $occid = 0;
@@ -26,17 +33,21 @@ if($collMap){
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin'])){
+	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){
+	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
 		$isEditor = 1;
 	}
-	if($isEditor && $action == "Submit Observation"){
+	if($isEditor && $action === 'Submit Observation'){
 		$occid = $obsManager->addObservation($_POST);
-        if($SOLR_MODE) $solrManager->updateSOLR();
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
 	}
-	if(!$recordedBy) $recordedBy = $obsManager->getUserName();
+	if(!$recordedBy) {
+        $recordedBy = $obsManager->getUserName();
+    }
 }
 ?>
 
@@ -49,8 +60,10 @@ if($collMap){
 	<script type="text/javascript">
 		<?php 
 		$maxUpload = ini_get('upload_max_filesize');
-		$maxUpload = str_replace("M", "000000", $maxUpload);
-		if($maxUpload > 4000000) $maxUpload = 4000000;
+		$maxUpload = str_replace('M', '000000', $maxUpload);
+		if($maxUpload > 4000000) {
+            $maxUpload = 4000000;
+        }
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
@@ -62,13 +75,12 @@ if($collMap){
 <body>
 
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
-	<!-- inner text -->
 	<div id="innertext">
 		<h1><?php echo $collMap['collectionname']; ?></h1>
 		<?php
-		if($action || (isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post' && empty($_FILES) && empty($_POST))){
+		if($action || (isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) === 'post' && empty($_FILES) && empty($_POST))){
 			?>
 			<hr />
 			<div style="margin:15px;font-weight:bold;">
@@ -78,7 +90,7 @@ if($collMap){
 					<div style="color:green;">
 						SUCCESS: Image loaded successfully!
 					</div>
-					<div style="font:weight;font-size:120%;margin-top:10px;">
+					<div style="font-size:120%;margin-top:10px;">
 						Open  
 						<a href="../individual/index.php?occid=<?php echo $occid; ?>" target="_blank">Occurrence Details Viewer</a> to see the new record 
 					</div>
@@ -120,7 +132,7 @@ if($collMap){
 							<input type="text" name="scientificnameauthorship" maxlength="100" tabindex="0" style="" value="" />
 						</div>
 					</div>
-					<div style="clear:both;margin-left:10px;padding:3px 0px 0px 10px;">
+					<div style="clear:both;margin-left:10px;padding:3px 0 0 10px;">
 						<span>Family:</span>
 						<input type="text" name="family" size="30" maxlength="50" style="" tabindex="0" value="" />
 					</div>
@@ -140,28 +152,28 @@ if($collMap){
 							<br/>
 							<input type="text" id="eventdate" name="eventdate" tabindex="18" style="width:120px;background-color:lightyellow;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" />
 						</div>
-						<div style="float:left;margin:15px 0px 0px 5px;cursor:pointer;" onclick="toggle('obsextradiv')">
+						<div style="float:left;margin:15px 0 0 5px;cursor:pointer;" onclick="toggle('obsextradiv')">
 							<img src="../../images/editplus.png" style="width:15px;" />
 						</div>
 					</div>
-					<div id="obsextradiv" style="clear:both;padding:3px 0px 0px 10px;margin-bottom:20px;display:none;">
+					<div id="obsextradiv" style="clear:both;padding:3px 0 0 10px;margin-bottom:20px;display:none;">
 						<div style="clear:both;margin-top:5px;">
 							Associated Observers:<br />
 							<input type="text" name="associatedcollectors" tabindex="20" maxlength="255" style="width:530px;" value="" />
 						</div>
-						<div style="float:left;margin:3px 0px 0px 10px;">
+						<div style="float:left;margin:3px 0 0 10px;">
 							Identified By:
 							<input type="text" name="identifiedby" maxlength="255" tabindex="6" style="" value="" />
 						</div>
-						<div style="float:left;margin:3px 0px 0px 10px;">
+						<div style="float:left;margin:3px 0 0 10px;">
 							Date Identified:
 							<input type="text" name="dateidentified" maxlength="45" tabindex="8" style="" value="" />
 						</div>
-						<div style="clear:both;padding:3px 0px 0px 0px;" >
+						<div style="clear:both;padding:3px 0 0 0;" >
 							ID References:
 							<input type="text" name="identificationreferences" tabindex="10" style="width:450px;" title="cf, aff, etc" />
 						</div>
-						<div style="clear:both;padding:3px 0px 0px 0px;" >
+						<div style="clear:both;padding:3px 0 0 0;" >
 							ID Remarks:
 							<input type="text" name="taxonremarks" tabindex="12" style="width:500px;" value="" />
 						</div>
@@ -186,7 +198,7 @@ if($collMap){
 							<input type="text" name="county" tabindex="36" style="width:150px;" value="" />
 						</div>
 					</div>
-					<div style="clear:both;margin:4px 0px 2px 0px;">
+					<div style="clear:both;margin:4px 0 2px 0;">
 						Locality:<br />
 						<input type="text" name="locality" tabindex="40" style="width:95%;background-color:lightyellow;" value="" />
 					</div>
@@ -204,10 +216,10 @@ if($collMap){
 							Longitude
 							<br/>
 							<input type="text" id="pointlong" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
-							<span style="margin:15px 5px 0px 5px;cursor:pointer;" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');">
+							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');">
 								<img src="../../images/world.png" style="width:12px;" title="Coordinate Map Aid" />
 							</span>
-							<span style="margin:15px 2px 0px 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
+							<span style="margin:15px 2px 0 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
 								DMS
 							</span>
 						</div>
@@ -225,7 +237,7 @@ if($collMap){
 							Elev. (meters)
 							<br/>
 							<input type="text" name="minimumelevationinmeters" tabindex="52" maxlength="6" style="width:85px;" value="" onchange="verifyElevValue(this)" title="Minumum Elevation In Meters" />
-							<span style="margin:15px 3px 0px 3px;text-align:center;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('elevftdiv');">
+							<span style="margin:15px 3px 0 3px;text-align:center;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('elevftdiv');">
 								ft.
 							</span>
 						</div>
@@ -260,7 +272,7 @@ if($collMap){
 							<input type="button" value="Insert Lat/Long Values" onclick="insertLatLng(this.form)" />
 						</div>
 					</div>
-					<div id="elevftdiv" style="display:none;float:right;padding:15px;background-color:lightyellow;border:1px solid yellow;width:180px;margin:0px 160px 10px 0px;">
+					<div id="elevftdiv" style="display:none;float:right;padding:15px;background-color:lightyellow;border:1px solid yellow;width:180px;margin:0 160px 10px 0;">
 						Elevation: 
 						<input id="elevft" style="width:45px;" /> feet
 						<div style="margin:5px;">
@@ -317,7 +329,7 @@ if($collMap){
 							<option value="0">------------------------------</option>
 							<?php 
 							foreach($clArr as $id => $clName){
-								echo '<option value="'.$id.'" '.($id==$clid?'SELECTED':'').'>'.$clName.'</option>';
+								echo '<option value="'.$id.'" '.($id === $clid?'SELECTED':'').'>'.$clName.'</option>';
 							}
 							?>
 						</select>
@@ -327,9 +339,8 @@ if($collMap){
 				?>
 				<fieldset>
 					<legend><b>Images</b></legend>
-					<div style='padding:10px;width:675px;border:1px solid yellow;background-color:FFFF99;'>
-				    	<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
-						<input type='hidden' name='MAX_FILE_SIZE' value='4000000' />
+					<div style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;'>
+				    	<input type='hidden' name='MAX_FILE_SIZE' value='4000000' />
 						<div>
 							Image 1: <input name='imgfile1' type='file' size='70' style="background-color:lightyellow;" onchange="verifyImageSize(this)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile1.value = ''">
@@ -342,11 +353,11 @@ if($collMap){
 								<input name="notes1" type="text" style="width:275px;" />
 							</span>
 						</div>
-						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15;" onclick="toggle('img2div')" title="Add a Second Image">
+						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img2div')" title="Add a Second Image">
 							<img src="../../images/add.png" style="width:15px;" />
 						</div>
 					</div>
-					<div id="img2div" style='padding:10px;width:675px;border:1px solid yellow;background-color:FFFF99;display:none;'>
+					<div id="img2div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
 							Image 2: <input name="imgfile2" type="file" size="70" onchange="verifyImageSize(this)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile2.value = ''">
@@ -359,11 +370,11 @@ if($collMap){
 								<input name="notes2" type="text" style="width:275px;" />
 							</span>
 						</div>
-						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15;" onclick="toggle('img3div')" title="Add a third Image">
+						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img3div')" title="Add a third Image">
 							<img src="../../images/add.png" style="width:15px;" />
 						</div>
 					</div>
-					<div id="img3div" style='padding:10px;width:675px;border:1px solid yellow;background-color:FFFF99;display:none;'>
+					<div id="img3div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
 							Image 3: <input name="imgfile3" type="file" size="70" onchange="verifyImageSize(this)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile3.value = ''">
@@ -376,11 +387,11 @@ if($collMap){
 								<input name="notes3" type="text" style="width:275px;" />
 							</span>
 						</div>
-						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15;" onclick="toggle('img4div')" title="Add a forth Image">
+						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img4div')" title="Add a forth Image">
 							<img src="../../images/add.png" style="width:15px;" />
 						</div>
 					</div>
-					<div id="img4div" style='padding:10px;width:700px;border:1px solid yellow;background-color:FFFF99;display:none;'>
+					<div id="img4div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
 							Image 4: <input name="imgfile4" type="file" size="70" onchange="verifyImageSize(this)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile4.value = ''">
@@ -393,11 +404,11 @@ if($collMap){
 								<input name="notes4" type="text" style="width:275px;" />
 							</span>
 						</div>
-						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15;" onclick="toggle('img5div')" title="Add a fifth Image">
+						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img5div')" title="Add a fifth Image">
 							<img src="../../images/add.png" style="width:15px;" />
 						</div>
 					</div>
-					<div id="img5div" style='padding:10px;width:700px;border:1px solid yellow;background-color:FFFF99;display:none;'>
+					<div id="img5div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
 						<div>
 							Image 5: <input name="imgfile5" type="file" size="70" onchange="verifyImageSize(this)" />
 							<input type="button" value="Reset" onclick="document.obsform.imgfile5.value = ''">
@@ -428,7 +439,7 @@ if($collMap){
 		?>
 	</div>
 <?php 	
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

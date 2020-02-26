@@ -1,20 +1,35 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/SpecUpload.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:'';
-$collid = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$uspid = array_key_exists("uspid",$_REQUEST)?$_REQUEST["uspid"]:0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:0;
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($uspid)) $uspid = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if(!is_numeric($uspid)) {
+    $uspid = 0;
+}
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
 
-$DIRECTUPLOAD = 1;$DIGIRUPLOAD = 2; $FILEUPLOAD = 3; $STOREDPROCEDURE = 4; $SCRIPTUPLOAD = 5; $DWCAUPLOAD = 6; $SKELETAL = 7; $IPTUPLOAD = 8; $NFNUPLOAD = 9;
+$DIRECTUPLOAD = 1;
+$DIGIRUPLOAD = 2;
+$FILEUPLOAD = 3;
+$STOREDPROCEDURE = 4;
+$SCRIPTUPLOAD = 5;
+$DWCAUPLOAD = 6;
+$SKELETAL = 7;
+$IPTUPLOAD = 8;
+$NFNUPLOAD = 9;
 
 $duManager = new SpecUpload();
 
@@ -23,11 +38,11 @@ $duManager->setUspid($uspid);
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 if($isEditor){
-	if($action == "Save Edits"){
+	if($action === 'Save Edits'){
 		if($duManager->editUploadProfile($_POST)){
 			$statusStr = 'SUCCESS: Edits to import profile have been applied';
 		}
@@ -36,7 +51,7 @@ if($isEditor){
 		}
 		$action = '';
 	}
-	elseif($action == "Create Profile"){
+	elseif($action === 'Create Profile'){
 		if($duManager->createUploadProfile($_POST)){
 			$statusStr = 'SUCCESS: New upload profile added';
 		}
@@ -45,7 +60,7 @@ if($isEditor){
 		}
 		$action = '';
 	}
-	elseif($action == "Delete Profile"){
+	elseif($action === 'Delete Profile'){
 		if($duManager->deleteUploadProfile($uspid)){
 			$statusStr = 'SUCCESS: Upload Profile Deleted';
 		}
@@ -66,12 +81,16 @@ $duManager->readUploadParameters();
 	<script>
 		function checkUploadListForm(f){
 			if(f.uspid.length == null){
-				if(f.uspid.checked) return true;
+				if(f.uspid.checked) {
+				    return true;
+				}
 			}
 			else{
-				var radioCnt = f.uspid.length;
-				for(var counter = 0; counter < radioCnt; counter++){
-					if (f.uspid[counter].checked) return true; 
+                const radioCnt = f.uspid.length;
+                for(let counter = 0; counter < radioCnt; counter++){
+					if (f.uspid[counter].checked) {
+					    return true;
+					}
 				}
 			}
 			alert("Please select an Upload Option");
@@ -79,11 +98,11 @@ $duManager->readUploadParameters();
 		}
 
 		function checkParameterForm(f){
-			if(f.title.value == ""){
+			if(f.title.value === ""){
 				alert("Profile title is required");
 				return false;
 			}
-			else if(f.uploadtype.value == ""){
+			else if(f.uploadtype.value === ""){
 				alert("Select Upload Type");
 				return false;
 			}
@@ -91,7 +110,6 @@ $duManager->readUploadParameters();
 		}
 		
 		function adjustParameterForm(){
-			//Hide all
 			document.getElementById("platformDiv").style.display='none';
 			document.getElementById("serverDiv").style.display='none';
 			document.getElementById("portDiv").style.display='none';
@@ -103,9 +121,8 @@ $duManager->readUploadParameters();
 			document.getElementById("schemanameDiv").style.display='none';
 			document.getElementById("cleanupspDiv").style.display='none';
 			document.getElementById("querystrDiv").style.display='none';
-			//Then open according to upload type selection
-			selValue = document.parameterform.uploadtype.value;
-			if(selValue == 1){ //Direct Upload
+            const selValue = document.parameterform.uploadtype.value;
+            if(selValue === 1){
 				document.getElementById("platformDiv").style.display='block';
 				document.getElementById("serverDiv").style.display='block';
 				document.getElementById("portDiv").style.display='block';
@@ -115,7 +132,7 @@ $duManager->readUploadParameters();
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue == 2){ //DiGIR
+			else if(selValue === 2){
 				document.getElementById("serverDiv").style.display='block';
 				document.getElementById("portDiv").style.display='block';
 				document.getElementById("codeDiv").style.display='block';
@@ -125,67 +142,64 @@ $duManager->readUploadParameters();
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue == 3){ //File Upload
+			else if(selValue === 3){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue == 4){ //Stored Procedure
-				document.getElementById("cleanupspDiv").style.display='block';
-				document.getElementById("querystrDiv").style.display='block';
-			}
-			else if(selValue == 5){ //Script Upload
+			else if(selValue === 4){
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue == 6){ //Darwin Core Archive Manual Upload
-				//document.getElementById("pathDiv").style.display='block';
+			else if(selValue === 5){
+				document.getElementById("cleanupspDiv").style.display='block';
+				document.getElementById("querystrDiv").style.display='block';
+			}
+			else if(selValue === 6){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue == 7){ //Skeletal File Upload
+			else if(selValue === 7){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue == 8){ //IPT resource
+			else if(selValue === 8){
 				document.getElementById("pathDiv").style.display='block';
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
 		}
 	</script>
 </head>
-<body onload="<?php if($uspid && $action) echo 'adjustParameterForm()'; ?>">
+<body onload="<?php echo (($uspid && $action)?'adjustParameterForm()':''); ?>">
 <?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
     <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
     <b>Specimen Loader</b>
 </div>
-<!-- This is inner text! -->
 <div id="innertext">
 	<h1>Data Upload Management</h1>
 	<?php
 	
 	if($statusStr){
-		echo "<hr />";
+		echo '<hr />';
 		echo "<div>$statusStr</div>";
-		echo "<hr />";
+		echo '<hr />';
 	}
 
 	if($isEditor){
 		if($collid){
 			echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
-			if($duManager->getCollInfo("uploaddate")) {
-				echo "<div style='margin:0px 0px 15px 15px;'><b>Last Upload Date:</b> ".$duManager->getCollInfo("uploaddate")."</div>";
+			if($duManager->getCollInfo('uploaddate')) {
+				echo "<div style='margin:0 0 15px 15px;'><b>Last Upload Date:</b> ".$duManager->getCollInfo('uploaddate'). '</div>';
 			}
 			if(!$action){
-		 		//Collection has been selected, now display different upload options
-			 	$profileList = $duManager->getUploadList();
+		 		$profileList = $duManager->getUploadList();
 				?>
 				<form name="uploadlistform" action="specupload.php" method="post" onsubmit="return checkUploadListForm(this);">
 					<fieldset>
 						<legend style="font-weight:bold;font-size:120%;">Upload Options</legend>
 						<div style="float:right;">
 							<?php 
-							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><img src="'.$CLIENT_ROOT.'/images/add.png" style="width:15px;border:0px;" title="Add a New Upload Profile" /></a>';
+							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><img src="'.$CLIENT_ROOT.'/images/add.png" style="width:15px;border:0;" title="Add a New Upload Profile" /></a>';
 							?>
 						</div>
 						<?php 
@@ -193,10 +207,10 @@ $duManager->readUploadParameters();
 						 	foreach($profileList as $id => $v){
 						 		?>
 						 		<div style="margin:10px;">
-									<input type="radio" name="uspid" value="<?php echo $id.'-'.$v["uploadtype"];?>" />
-									<?php echo $v["title"]; ?> 
+									<input type="radio" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
+									<?php echo $v['title']; ?>
 									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo $collid.'&uspid='.$id; ?>" title="View/Edit Parameters"><img src="../../images/edit.png" /></a>
-									<input type="hidden" name="uploadtype" value="<?php echo $v["uploadtype"];?>" />
+									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype'];?>" />
 								</div>
 								<?php 
 						 	}
@@ -234,21 +248,21 @@ $duManager->readUploadParameters();
 						<form name="parameterform" action="specuploadmanagement.php" method="post" onsubmit="return checkParameterForm(this)">
 							<div id="updatetypeDiv" style="">
 								<b>Upload Type:</b> 
-								<select name="uploadtype" onchange="adjustParameterForm()" <?php if($uspid) echo 'DISABLED'; ?>>
+								<select name="uploadtype" onchange="adjustParameterForm()" <?php echo ($uspid?'DISABLED':''); ?>>
 									<option value="">Select an Upload Type</option>
 									<option value="">----------------------------------</option>
 									<?php 
 									$uploadType = $duManager->getUploadType();
-									echo '<option value="'.$DWCAUPLOAD.'" '.($uploadType==$DWCAUPLOAD?'SELECTED':'').'>Darwin Core Archive Manual Upload</option>';
-									echo '<option value="'.$IPTUPLOAD.'" '.($uploadType==$IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
-									echo '<option value="'.$FILEUPLOAD.'" '.($uploadType==$FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
-									echo '<option value="'.$SKELETAL.'" '.($uploadType==$SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
-									echo '<option value="'.$NFNUPLOAD.'" '.($uploadType==$NFNUPLOAD?'SELECTED':'').'>NfN File Upload</option>';
+									echo '<option value="'.$DWCAUPLOAD.'" '.($uploadType === $DWCAUPLOAD?'SELECTED':'').'>Darwin Core Archive Manual Upload</option>';
+									echo '<option value="'.$IPTUPLOAD.'" '.($uploadType === $IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
+									echo '<option value="'.$FILEUPLOAD.'" '.($uploadType === $FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
+									echo '<option value="'.$SKELETAL.'" '.($uploadType === $SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
+									echo '<option value="'.$NFNUPLOAD.'" '.($uploadType === $NFNUPLOAD?'SELECTED':'').'>NfN File Upload</option>';
 									echo '<option value="">......................................</option>';
-									echo '<option value="'.$DIGIRUPLOAD.'" '.($uploadType==$DIGIRUPLOAD?'SELECTED':'').'>DiGIR Provider</option>';
-									echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType==$DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';
-									echo '<option value="'.$STOREDPROCEDURE.'" '.($uploadType==$STOREDPROCEDURE?'SELECTED':'').'>Stored Procedure</option>';
-									echo '<option value="'.$SCRIPTUPLOAD.'" '.($uploadType==$SCRIPTUPLOAD?'SELECTED':'').'>Script Upload</option>';
+									echo '<option value="'.$DIGIRUPLOAD.'" '.($uploadType === $DIGIRUPLOAD?'SELECTED':'').'>DiGIR Provider</option>';
+									echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType === $DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';
+									echo '<option value="'.$STOREDPROCEDURE.'" '.($uploadType === $STOREDPROCEDURE?'SELECTED':'').'>Stored Procedure</option>';
+									echo '<option value="'.$SCRIPTUPLOAD.'" '.($uploadType === $SCRIPTUPLOAD?'SELECTED':'').'>Script Upload</option>';
 									?>
 								</select>
 							</div>
@@ -261,7 +275,7 @@ $duManager->readUploadParameters();
 								<select name="platform">
 									<option value="">None Selected</option>
 									<option value="">--------------------------------------------</option>
-									<option value="mysql" <?php echo ($duManager->getPlatform()=='mysql'?'SELECTED':''); ?>>MySQL Database</option>
+									<option value="mysql" <?php echo ($duManager->getPlatform() === 'mysql'?'SELECTED':''); ?>>MySQL Database</option>
 								</select> 
 							</div>
 							<div id="serverDiv" style="display:none">
@@ -354,7 +368,7 @@ $duManager->readUploadParameters();
 	?>
 </div>
 <?php 
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

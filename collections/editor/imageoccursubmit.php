@@ -1,15 +1,20 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorImages.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/OccurrenceEditorImages.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$collid  = $_REQUEST["collid"];
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . $_SERVER['QUERY_STRING']);
+}
+
+$collid  = $_REQUEST['collid'];
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $occurManager = new OccurrenceEditorImages();
-if($SOLR_MODE) $solrManager = new SOLRManager();
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
 $occurManager->setCollid($collid);
 $collMap = $occurManager->getCollMap();
 
@@ -19,31 +24,31 @@ if($collid){
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])){
+	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 		$isEditor = 1;
 	}
 }
-if($isEditor){
-	if($action == 'Submit Occurrence'){
-		if($occurManager->addImageOccurrence($_POST)){
-			$occid = $occurManager->getOccid();
-            if($SOLR_MODE) $solrManager->updateSOLR();
-			if($occid) $statusStr = 'New record has been created: <a href="occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$occid.'</a>';
-		}
-		else{
-			$statusStr = $occurManager->getErrorStr();
-		}
-	}
+if($isEditor && $action === 'Submit Occurrence') {
+    if($occurManager->addImageOccurrence($_POST)){
+        $occid = $occurManager->getOccid();
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
+        if($occid) {
+            $statusStr = 'New record has been created: <a href="occurrenceeditor.php?occid=' . $occid . '" target="_blank">' . $occid . '</a>';
+        }
+    }
+    else{
+        $statusStr = $occurManager->getErrorStr();
+    }
 }
 if($collid && file_exists('includes/config/occurVarColl'.$collid.'.php')){
-	//Specific to particular collection
 	include('includes/config/occurVarColl'.$collid.'.php');
 }
 elseif(file_exists('includes/config/occurVarDefault.php')){
-	//Specific to Default values for portal
 	include('includes/config/occurVarDefault.php');
 }
 ?>
@@ -59,32 +64,31 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<script src="../../js/symb/shared.js?ver=141119" type="text/javascript"></script>
 	<script type="text/javascript">
 	function validateImgOccurForm(f){
-		if(f.imgfile.value == "" && f.imgurl.value == ""){
+		if(f.imgfile.value === "" && f.imgurl.value === ""){
 			alert("Please select an image file to upload or enter a remote URL to link");
 			return false;
 		}
 		else{
-			if(f.imgfile.value != ""){
-				var fName = f.imgfile.value.toLowerCase();
-				if(fName.indexOf(".jpg") == -1 && fName.indexOf(".jpeg") == -1 && fName.indexOf(".gif") == -1 && fName.indexOf(".png") == -1){
+			if(f.imgfile.value !== ""){
+                const fName = f.imgfile.value.toLowerCase();
+                if(fName.indexOf(".jpg") === -1 && fName.indexOf(".jpeg") === -1 && fName.indexOf(".gif") === -1 && fName.indexOf(".png") === -1){
 					alert("Image file must be a JPG, GIF, or PNG");
 					return false;
 				}
 			} 
-			else if(f.imgurl.value != ""){
-				var fileName = f.imgurl.value;
-				if(fileName.substring(0,4).toLowerCase() != 'http'){
+			else if(f.imgurl.value !== ""){
+                const fileName = f.imgurl.value;
+                if(fileName.substring(0,4).toLowerCase() !== 'http'){
 					alert("Image path must be a URL ("+fileName.substring(0,4).toLowerCase()+")");
 					return false
 				}
-				//Test to make sure file is correct mime type
 				$.ajax({
 					type: "POST",
 					url: "rpc/getImageMime.php",
 					async: false,
 					data: { url: fileName }
 				}).success(function( retStr ) {
-					if(retStr == "image/jpeg" || retStr == "image/gif" || retStr == "image/png"){
+					if(retStr === "image/jpeg" || retStr === "image/gif" || retStr === "image/png"){
 						return true;
 					}
 					else{
@@ -100,14 +104,13 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
 		<b>Occurrence Image Submission</b>
 	</div>
-	<!-- inner text -->
 	<div id="innertext">
 		<h1><?php echo $collMap['collectionname']; ?></h1>
 		<?php 
@@ -125,7 +128,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<input name='imgfile' type='file' size='70' />
 						</div>
 						<div id="newimagediv"></div>
-						<div style="margin:10px 0px;">
+						<div style="margin:10px 0;">
 							* Uploading web-ready images recommended. Upload image size can not be greater than 10MB
 						</div>
 					</div>
@@ -161,14 +164,14 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					<legend><b>Skeletal Data</b></legend>
 					<div style="margin:3px;">
 						<b>Catalog Number:</b> 
-						<input name="catalognumber" type="text" onchange="<?php if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) echo 'searchDupesCatalogNumber(this.form,true)'; ?>" />
+						<input name="catalognumber" type="text" onchange="<?php echo ((!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK)?'searchDupesCatalogNumber(this.form,true);':''); ?>" />
 					</div>
 					<div style="margin:3px;">
 						<b>Scientific Name:</b> 
-						<input id="sciname" name="sciname" type="text" value="<?php echo (isset($_POST['sciname'])?$_POST['sciname']:''); ?>" style="width:300px"/> 
-						<input name="scientificnameauthorship" type="text" value="<?php echo (isset($_POST['scientificnameauthorship'])?$_POST['scientificnameauthorship']:''); ?>" /><br/>
-						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo (isset($_POST['tidinterpreted'])?$_POST['tidinterpreted']:''); ?>" />
-						<b>Family:</b> <input name="family" type="text" value="<?php echo (isset($_POST['family'])?$_POST['family']:''); ?>" />
+						<input id="sciname" name="sciname" type="text" value="<?php echo ($_POST['sciname'] ?? ''); ?>" style="width:300px"/>
+						<input name="scientificnameauthorship" type="text" value="<?php echo ($_POST['scientificnameauthorship'] ?? ''); ?>" /><br/>
+						<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="<?php echo ($_POST['tidinterpreted'] ?? ''); ?>" />
+						<b>Family:</b> <input name="family" type="text" value="<?php echo ($_POST['family'] ?? ''); ?>" />
 					</div>
 					<div> 
 						<div style="float:left;margin:3px;">
@@ -195,7 +198,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 							<?php
 						}
 						?>
-						<div style="float:left;margin:8px 0px 0px 20px;">(<a href="#" onclick="toggle('manualocr')">Manually add OCR</a>)</div>
+						<div style="float:left;margin:8px 0 0 20px;">(<a href="#" onclick="toggle('manualocr')">Manually add OCR</a>)</div>
 					</div>
 					<div id="manualocr" style="clear:both;display:none;margin:3px;">
 						<b>OCR Text</b><br/>
@@ -218,7 +221,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		?>
 	</div>
 <?php 	
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

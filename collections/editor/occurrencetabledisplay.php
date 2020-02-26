@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
@@ -14,10 +14,14 @@ $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'
 
 $occManager = new OccurrenceEditorManager();
 
-if($crowdSourceMode) $occManager->setCrowdSourceMode(1);
-if($SOLR_MODE) $solrManager = new SOLRManager();
+if($crowdSourceMode) {
+    $occManager->setCrowdSourceMode(1);
+}
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
 
-$isEditor = 0;		//If not editor, edits will be submitted to omoccuredits table but not applied to omoccurrences
+$isEditor = 0;
 $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
@@ -48,30 +52,28 @@ $qryCnt = 0;
 $statusStr = '';
 
 if($SYMB_UID){
-	//Set variables
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
 		$isEditor = 1;
 	}
 
-	if($collMap && $collMap['colltype']=='General Observations') $isGenObs = 1;
+	if($collMap && $collMap['colltype'] === 'General Observations') {
+        $isGenObs = 1;
+    }
 	if(!$isEditor){
 		if($isGenObs){
-			if(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
-				//Approved General Observation editors can add records
+			if(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
 				$isEditor = 2;
 			}
 			elseif($action){
-				//Lets assume that Edits where submitted and they remain on same specimen, user is still approved
 				 $isEditor = 2;
 			}
-			elseif($occManager->getObserverUid() == $SYMB_UID){
-				//User can only edit their own records
+			elseif($occManager->getObserverUid() === $SYMB_UID){
 				$isEditor = 2;
 			}
 		}
-		elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
+		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
 			$isEditor = 2;
 		}
 	}
@@ -85,7 +87,9 @@ if($SYMB_UID){
 		}
 		$occManager->setSqlWhere();
 		$statusStr = $occManager->batchUpdateField($_POST['bufieldname'],$_POST['buoldvalue'],$_POST['bunewvalue'],$_POST['bumatch']);
-        if($SOLR_MODE) $solrManager->updateSOLR();
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
 	}
 
 	if($ouid){
@@ -94,26 +98,26 @@ if($SYMB_UID){
 		$qryCnt = $occManager->getQueryRecordCount();
 	}
 	elseif($occIndex !== false){
-		//Query Form has been activated
-		if(!$reset) $occManager->setQueryVariables();
+		if(!$reset) {
+            $occManager->setQueryVariables();
+        }
 		$occManager->setSqlWhere($occIndex,$recLimit);
 		$qryCnt = $occManager->getQueryRecordCount(1);
 	}
 	elseif(isset($_SESSION['editorquery'])){
-		//Make sure query is null
 		unset($_SESSION['editorquery']);
 	}
 
 	$recArr = $occManager->getOccurMap();
 	$navStr = '<div style="float:right;">';
 	if($occIndex >= $recLimit){
-		$navStr .= '<a href="#" onclick="return submitQueryForm('.($occIndex-$recLimit).');" title="Previous '.$recLimit.' records">&lt;&lt;</a>';
+		$navStr .= '<a href="#" onclick="return submitQueryForm('.($occIndex-$recLimit). ')" title="Previous ' .$recLimit.' records">&lt;&lt;</a>';
 	}
 	$navStr .= ' | ';
 	$navStr .= ($occIndex+1).'-'.($qryCnt<$recLimit+$occIndex?$qryCnt:$recLimit+$occIndex).' of '.$qryCnt.' records';
 	$navStr .= ' | ';
 	if($qryCnt > ($recLimit+$occIndex)){
-		$navStr .= '<a href="#" onclick="return submitQueryForm('.($occIndex+$recLimit).');" title="Next '.$recLimit.' records">&gt;&gt;</a>';
+		$navStr .= '<a href="#" onclick="return submitQueryForm('.($occIndex+$recLimit). ')" title="Next ' .$recLimit.' records">&gt;&gt;</a>';
 	}
 	$navStr .= '</div>';
 }
@@ -135,8 +139,7 @@ else{
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=201711"></script>
 </head>
-<body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<!-- inner text -->
+<body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div id="">
 		<?php
 		if($collMap){
@@ -146,10 +149,10 @@ else{
 		}
 		if(($isEditor || $crowdSourceMode)){
 			?>
-			<div style="text-align:right;width:790px;margin:-30px 15px 5px 0px;">
+			<div style="text-align:right;width:790px;margin:-30px 15px 5px 0;">
 				<a href="#" title="Search / Filter" onclick="toggleSearch();return false;"><img src="../../images/find.png" style="width:14px;" /></a>
 				<?php
-				if($isEditor == 1 || $isGenObs){
+				if($isEditor === 1 || $isGenObs){
 					?>
 					<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img src="../../images/editplus.png" style="width:14px;" /></a>
 					<?php
@@ -157,14 +160,15 @@ else{
 				?>
 			</div>
 			<?php
-			if(!$recArr) $displayQuery = 1;
+			if(!$recArr) {
+                $displayQuery = 1;
+            }
 			include 'includes/queryform.php';
-			//Setup header map
 			if($recArr){
 				$headerArr = array();
 				foreach($recArr as $id => $occArr){
 					foreach($occArr as $k => $v){
-						if(trim($v) && !array_key_exists($k,$headerArr)){
+						if(!array_key_exists($k,$headerArr) && trim($v)){
 							$headerArr[$k] = $k;
 						}
 					}
@@ -180,7 +184,7 @@ else{
 				}
 				$headerMap = array_intersect_key($headerMapBase, $headerArr);
 			}
-			if($isEditor == 1 || $isGenObs){
+			if($isEditor === 1 || $isGenObs){
 				$buFieldName = (array_key_exists('bufieldname',$_REQUEST)?$_REQUEST['bufieldname']:'');
 				?>
 				<div id="batchupdatediv" style="width:600px;clear:both;display:<?php echo ($buFieldName?'block':'none'); ?>;">
@@ -195,10 +199,8 @@ else{
 										<option value="">----------------------</option>
 										<?php
 										foreach($headerMapBase as $k => $v){
-											//Scientific name fields are excluded because batch updates will not update tidinterpreted index and authors
-											//Scientific name updates should happen within
-											if($k != 'scientificnameauthorship' && $k != 'sciname' && $k != 'verbatimsciname'){
-												echo '<option value="'.$k.'" '.($buFieldName==$k?'SELECTED':'').'>'.$v.'</option>';
+											if($k !== 'scientificnameauthorship' && $k !== 'sciname' && $k !== 'verbatimsciname'){
+												echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
 											}
 										}
 										?>
@@ -212,20 +214,20 @@ else{
 									New Value:
 									<span id="bunewvaluediv">
 										<?php
-										if($buFieldName=='processingstatus'){
+										if($buFieldName === 'processingstatus'){
 											?>
 											<select name="bunewvalue">
-												<option value="unprocessed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='unprocessed'?'SELECTED':''); ?>>Unprocessed</option>
-												<option value="unprocessed/nlp" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='unprocessed/nlp'?'SELECTED':''); ?>>Unprocessed/NLP</option>
-												<option value="stage 1" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 1'?'SELECTED':''); ?>>Stage 1</option>
-												<option value="stage 2" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 2'?'SELECTED':''); ?>>Stage 2</option>
-												<option value="stage 3" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='stage 3'?'SELECTED':''); ?>>Stage 3</option>
-												<option value="pending review-nfn" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='pending review-nfn'?'SELECTED':''); ?>>Pending Review-NfN</option>
-												<option value="pending review" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='pending review'?'SELECTED':''); ?>>Pending Review</option>
-												<option value="expert required" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='expert required'?'SELECTED':''); ?>>Expert Required</option>
-												<option value="reviewed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='reviewed'?'SELECTED':''); ?>>Reviewed</option>
-												<option value="closed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='closed'?'SELECTED':''); ?>>Closed</option>
-												<option value="" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue']=='no set status'?'SELECTED':''); ?>>No Set Status</option>
+												<option value="unprocessed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'unprocessed'?'SELECTED':''); ?>>Unprocessed</option>
+												<option value="unprocessed/nlp" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'unprocessed/nlp'?'SELECTED':''); ?>>Unprocessed/NLP</option>
+												<option value="stage 1" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'stage 1'?'SELECTED':''); ?>>Stage 1</option>
+												<option value="stage 2" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'stage 2'?'SELECTED':''); ?>>Stage 2</option>
+												<option value="stage 3" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'stage 3'?'SELECTED':''); ?>>Stage 3</option>
+												<option value="pending review-nfn" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'pending review-nfn'?'SELECTED':''); ?>>Pending Review-NfN</option>
+												<option value="pending review" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'pending review'?'SELECTED':''); ?>>Pending Review</option>
+												<option value="expert required" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'expert required'?'SELECTED':''); ?>>Expert Required</option>
+												<option value="reviewed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'reviewed'?'SELECTED':''); ?>>Reviewed</option>
+												<option value="closed" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'closed'?'SELECTED':''); ?>>Closed</option>
+												<option value="" <?php echo (array_key_exists('bunewvalue',$_REQUEST)&&$_REQUEST['bunewvalue'] === 'no set status'?'SELECTED':''); ?>>No Set Status</option>
 											</select>
 											<?php
 										}
@@ -289,7 +291,7 @@ else{
 			<?php
 			if($recArr){
 				?>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 					<tr>
 						<th>Symbiota ID</th>
 						<?php
@@ -304,7 +306,7 @@ else{
 						if($occArr['sciname']){
 							$occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
 						}
-						echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
+						echo '<tr ' .(($recCnt%2)?'class="alt"':'').">\n";
 						echo '<td>';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" title="open in same window">'.$id.'</a> ';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
@@ -316,7 +318,9 @@ else{
 							if(strlen($displayStr) > 60){
 								$displayStr = substr($displayStr,0,60).'...';
 							}
-							if(!$displayStr) $displayStr = '&nbsp;';
+							if(!$displayStr) {
+                                $displayStr = '&nbsp;';
+                            }
 							echo '<td>'.$displayStr.'</td>'."\n";
 						}
 						echo "</tr>\n";
@@ -338,11 +342,9 @@ else{
 				<?php
 			}
 		}
-		else{
-			if(!$isEditor){
-				echo '<h2>You are not authorized to access this page</h2>';
-			}
-		}
+		else if(!$isEditor){
+            echo '<h2>You are not authorized to access this page</h2>';
+        }
 		?>
 	</div>
 </body>

@@ -1,18 +1,19 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php'); 
-include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$targetTid = array_key_exists("targettid",$_REQUEST)?$_REQUEST["targettid"]:0;
-$stArrCollJson = array_key_exists("jsoncollstarr",$_REQUEST)?$_REQUEST["jsoncollstarr"]:'';
-$stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
+$targetTid = array_key_exists('targettid',$_REQUEST)?$_REQUEST['targettid']:0;
+$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
+$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:1;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST)?$_REQUEST['sortfield1']:'collection';
 $sortField2 = array_key_exists('sortfield2',$_REQUEST)?$_REQUEST['sortfield2']:'';
 $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
 
-//Sanitation
-if(!is_numeric($occIndex)) $occIndex = 0;
+if(!is_numeric($occIndex)) {
+    $occIndex = 0;
+}
 
 $collManager = new OccurrenceListManager();
 $stArr = array();
@@ -24,12 +25,18 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
     'Family','Individual Count','Life Stage','Number','Scientific Name','Sex','State/Province');
 
 if($stArrCollJson || $stArrSearchJson){
-    $stArrSearchJson = str_replace("%apos;","'",$stArrSearchJson);
+    $stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
     $collStArr = json_decode($stArrCollJson, true);
     $searchStArr = json_decode($stArrSearchJson, true);
-    if($collStArr && $searchStArr) $stArr = array_merge($searchStArr,$collStArr);
-    if(!$collStArr && $searchStArr) $stArr = $searchStArr;
-    if($collStArr && !$searchStArr) $stArr = $collStArr;
+    if($collStArr && $searchStArr) {
+        $stArr = array_merge($searchStArr, $collStArr);
+    }
+    if(!$collStArr && $searchStArr) {
+        $stArr = $searchStArr;
+    }
+    if($collStArr && !$searchStArr) {
+        $stArr = $collStArr;
+    }
 }
 else{
     if(isset($_REQUEST['taxa']) || isset($_REQUEST['country']) || isset($_REQUEST['state']) || isset($_REQUEST['county']) || isset($_REQUEST['local']) || isset($_REQUEST['elevlow']) || isset($_REQUEST['elevhigh']) || isset($_REQUEST['upperlat']) || isset($_REQUEST['pointlat']) || isset($_REQUEST['collector']) || isset($_REQUEST['collnum']) || isset($_REQUEST['eventdate1']) || isset($_REQUEST['eventdate2']) || isset($_REQUEST['catnum']) || isset($_REQUEST['typestatus']) || isset($_REQUEST['hasimages'])){
@@ -58,15 +65,15 @@ else{
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
     <script src="../js/symb/collections.search.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
     <script type="text/javascript">
-        var starrJson = '';
-        var collJson = '';
-        var sortfield1 = '';
-        var sortfield2 = '';
-        var sortorder = '';
-        var tableIndex = <?php echo $occIndex; ?>;
+        let starrJson = '';
+        let collJson = '';
+        let sortfield1 = '';
+        let sortfield2 = '';
+        let sortorder = '';
+        let tableIndex = <?php echo $occIndex; ?>;
 
         $(document).ready(function() {
             <?php
@@ -113,7 +120,7 @@ else{
                 <?php
             }
             else{
-                echo "sessionStorage.collSearchTableIndex = tableIndex;";
+                echo 'sessionStorage.collSearchTableIndex = tableIndex;';
             }
             ?>
 
@@ -129,9 +136,7 @@ else{
             sortorder = document.sortform.sortorder.value;
             sessionStorage.collSearchTableIndex = index;
 
-            document.getElementById("tablediv").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' width='15px' /></p>";
-
-            //console.log('rpc/changetablepage.php?starr='+starrJson+'&jsoncollstarr='+collJson+'&occindex='+index+'&sortfield1='+sortfield1+'&sortfield2='+sortfield2+'&sortorder='+sortorder+'&targettid=<?php echo $targetTid; ?>');
+            document.getElementById("tablediv").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
 
             $.ajax({
                 type: "POST",
@@ -147,8 +152,6 @@ else{
                 }
             }).done(function(msg) {
                 if(msg){
-                    //var newRecordList = JSON.parse(msg);
-                    //document.getElementById("tablediv").innerHTML = newRecordList;
                     document.getElementById("tablediv").innerHTML = msg;
                 }
                 else{
@@ -158,9 +161,9 @@ else{
         }
 
         function copySearchUrl(){
-            var urlPrefix = document.getElementById('urlPrefixBox').value;
-            var urlFixed = urlPrefix+'&occindex='+sessionStorage.collSearchTableIndex+'&sortfield1='+sortfield1+'&sortfield2='+sortfield2+'&sortorder='+sortorder;
-            var copyBox = document.getElementById('urlFullBox');
+            const urlPrefix = document.getElementById('urlPrefixBox').value;
+            const urlFixed = urlPrefix + '&occindex=' + sessionStorage.collSearchTableIndex + '&sortfield1=' + sortfield1 + '&sortfield2=' + sortfield2 + '&sortorder=' + sortorder;
+            const copyBox = document.getElementById('urlFullBox');
             copyBox.value = urlFixed;
             copyBox.focus();
             copyBox.setSelectionRange(0,copyBox.value.length);
@@ -169,12 +172,11 @@ else{
         }
     </script>
 </head>
-<body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<!-- inner text -->
+<body style="margin-left: 0;margin-right: 0;background-color:white;">
 	<div id="">
 		<div style="width:725px;clear:both;margin-bottom:5px;">
 			<div style="float:right;">
-				<div class='button' style='margin:15px 15px 0px 0px;width:13px;height:13px;' title='Download occurrence data'>
+				<div class='button' style='margin:15px 15px 0 0;width:13px;height:13px;' title='Download occurrence data'>
 					<a id='dllink' href=''>
 						<img src='../images/dl.png'/>
 					</a>
@@ -188,7 +190,7 @@ else{
 						<select name="sortfield1">
 							<?php 
 							foreach($sortFields as $k){
-                                echo '<option value="'.$k.'" '.($k==$sortField1?'SELECTED':'').'>'.$k.'</option>';
+                                echo '<option value="'.$k.'" '.($k === $sortField1?'SELECTED':'').'>'.$k.'</option>';
 							}
 							?>
 						</select>
@@ -199,7 +201,7 @@ else{
 							<option value="">Select Field Name</option>
 							<?php 
 							foreach($sortFields as $k){
-                                echo '<option value="'.$k.'" '.($k==$sortField2?'SELECTED':'').'>'.$k.'</option>';
+                                echo '<option value="'.$k.'" '.($k === $sortField2?'SELECTED':'').'>'.$k.'</option>';
 							}
 							?>
 						</select>
@@ -207,8 +209,8 @@ else{
 					<div style="float:left;margin-left:10px;">
 						<b>Order:</b> 
 						<select name="sortorder">
-                            <option value="asc" <?php echo ($sortOrder=="asc"?'SELECTED':''); ?>>Ascending</option>
-                            <option value="desc" <?php echo ($sortOrder=="desc"?'SELECTED':''); ?>>Descending</option>
+                            <option value="asc" <?php echo ($sortOrder === 'asc' ?'SELECTED':''); ?>>Ascending</option>
+                            <option value="desc" <?php echo ($sortOrder === 'desc' ?'SELECTED':''); ?>>Descending</option>
 						</select>
 					</div>
 					<div style="float:right;margin-right:10px;">

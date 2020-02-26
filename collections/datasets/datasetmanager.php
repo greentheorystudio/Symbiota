@@ -1,38 +1,47 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDataset.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $datasetId = $_REQUEST['datasetid'];
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
-//Sanitation
-if(!is_numeric($datasetId)) $datasetId = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
+$datasetManager = new OccurrenceDataset();
+
+if(!is_numeric($datasetId)) {
+    $datasetId = 0;
+}
+if(!is_numeric($tabIndex)) {
+    $tabIndex = 0;
+}
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
 
 $mdArr = $datasetManager->getDatasetMetadata($datasetId);
 $role = '';
 $roleLabel = '';
 $isEditor = 0;
-if($SYMB_UID == $mdArr['uid']){
+if($SYMB_UID === $mdArr['uid']){
 	$isEditor = 1;
 	$role = 'owner';
 }
 elseif(isset($mdArr['roles'])){
-	if(in_array('DatasetAdmin',$mdArr['roles'])){
+	if(in_array('DatasetAdmin', $mdArr['roles'], true)){
 		$isEditor = 1;
 		$role = 'administrator';
 	}
-	elseif(in_array('DatasetEditor',$mdArr['roles'])){
+	elseif(in_array('DatasetEditor', $mdArr['roles'], true)){
 		$isEditor = 2;
 		$role = 'editor';
 		$roleLabel = 'Can add and remove occurrences only';
 	}
-	elseif(in_array('DatasetReader',$mdArr['roles'])){
+	elseif(in_array('DatasetReader', $mdArr['roles'], true)){
 		$isEditor = 3;
 		$role = 'read access only';
 	}
@@ -40,23 +49,20 @@ elseif(isset($mdArr['roles'])){
 
 $statusStr = '';
 if($isEditor){
-	if($action == 'Export Selected Occurrences'){
-		if($datasetManager->exportDataset()){
-			$datasetId = 0;
-		}
-	}
-	if($isEditor < 3){
-		if($action == 'Remove Selected Occurrences'){
-			if($datasetManager->removeSelectedOccurrences($datasetId,$_POST['occid'])){
-				//$statusStr = 'Selected occurrences removed successfully';
-			}
-			else{
-				$statusStr = implode(',',$datasetManager->getErrorArr());
-			}
-		}
-	}
-	if($isEditor == 1){
-		if($action == 'Save Edits'){
+	if(($action === 'Export Selected Occurrences')) {
+        $datasetManager->exportDataset();
+	    $datasetId = 0;
+    }
+	if(($isEditor < 3) && $action === 'Remove Selected Occurrences') {
+        if($datasetManager->removeSelectedOccurrences($datasetId,$_POST['occid'])){
+            $statusStr = 'Selected occurrences removed successfully';
+        }
+        else{
+            $statusStr = implode(',',$datasetManager->getErrorArr());
+        }
+    }
+	if($isEditor === 1){
+		if($action === 'Save Edits'){
 			if($datasetManager->editDataset($_POST['datasetid'],$_POST['name'],$_POST['notes'])){
 				$mdArr = $datasetManager->getDatasetMetadata($datasetId);
 			}
@@ -64,7 +70,7 @@ if($isEditor){
 				$statusStr = implode(',',$datasetManager->getErrorArr());
 			}
 		}
-		elseif($action == 'Merge'){
+		elseif($action === 'Merge'){
 			if($datasetManager->mergeDatasets($_POST['dsids[]'])){
 				$statusStr = 'Datasets merged successfully';
 			}
@@ -72,7 +78,7 @@ if($isEditor){
 				$statusStr = implode(',',$datasetManager->getErrorArr());
 			}
 		}
-		elseif($action == 'Clone (make copy)'){
+		elseif($action === 'Clone (make copy)'){
 			if($datasetManager->cloneDatasets($_POST['dsids[]'])){
 				$statusStr = 'Datasets cloned successfully';
 			}
@@ -80,9 +86,9 @@ if($isEditor){
 				$statusStr = implode(',',$datasetManager->getErrorArr());
 			}
 		}
-		elseif($action == 'Delete Dataset'){
+		elseif($action === 'Delete Dataset'){
 			if($datasetManager->deleteDataset($_POST['datasetid'])){
-				header("Location: index.php");
+				header('Location: index.php');
 			}
 			else{
 				$statusStr = implode(',',$datasetManager->getErrorArr());
@@ -96,7 +102,7 @@ if($isEditor){
 				$statusStr = implode(',',$datasetManager->getErrorArr());
 			}
 		}
-		elseif($action == 'DelUser'){
+		elseif($action === 'DelUser'){
 			if($datasetManager->deleteUser($datasetId,$_POST['uid'],$_POST['role'])){
 				$statusStr = 'User removed successfully';
 			}
@@ -117,11 +123,11 @@ if($isEditor){
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 		<script type="text/javascript" src="../../js/symb/shared.js"></script>
-		<script language="javascript" type="text/javascript">
+		<script type="text/javascript">
 			$(document).ready(function() {
-				var dialogArr = new Array("schemanative","schemadwc");
-				var dialogStr = "";
-				for(i=0;i<dialogArr.length;i++){
+                const dialogArr = ["schemanative", "schemadwc"];
+                let dialogStr = "";
+                for(let i = 0;i<dialogArr.length;i++){
 					dialogStr = dialogArr[i]+"info";
 					$( "#"+dialogStr+"dialog" ).dialog({
 						autoOpen: false,
@@ -150,52 +156,55 @@ if($isEditor){
 			});
 
 			function selectAll(cb){
-				boxesChecked = true;
-				if(!cb.checked){
-					boxesChecked = false;
-				}
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					dbElement.checked = boxesChecked;
+                const boxesChecked = cb.checked;
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    dbElement.checked = boxesChecked;
 				}
 			}
 
 			function validateDataSetForm(f){
-				var dbElements = document.getElementsByName("dsids[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked) return true;
+                const dbElements = document.getElementsByName("dsids[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked) {
+                        return true;
+                    }
 				}
 				alert("Please select at least one dataset!");
 
-				var confirmStr = '';
-				if(f.submitaction.value == "Merge"){
+                let confirmStr = '';
+                if(f.submitaction.value === "Merge"){
 					confirmStr = 'Are you sure you want to merge selected datasets?';
 				}
-				else if(f.submitaction.value == "Clone (make copy)"){
+				else if(f.submitaction.value === "Clone (make copy)"){
 					confirmStr = 'Are you sure you want to clone selected datasets?';
 				}
-				else if(f.submitaction.value == "Delete"){
+				else if(f.submitaction.value === "Delete"){
 					confirmStr = 'Are you sure you want to delete selected datasets?';
 				}
-				if(confirmStr == '') return true;
+				if(confirmStr === '') {
+				    return true;
+				}
 				return confirm(confirmStr);
 			}
 
 			function validateEditForm(f){
-				if(f.name.value == ''){
+				if(f.name.value === ''){
 					alert("Dataset name cannot be null");
 					return false;
 				}
 				return true;
 			}
 
-			function validateOccurForm(f){
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked) return true;
+			function validateOccurForm(){
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked) {
+                        return true;
+                    }
 				}
 			   	alert("Please select at least one specimen!");
 			  	return false;
@@ -206,15 +215,17 @@ if($isEditor){
 			}
 
 			function openPopup(urlStr){
-				var wWidth = 900;
-				if(document.getElementById('maintable').offsetWidth){
+                let wWidth = 900;
+                if(document.getElementById('maintable').offsetWidth){
 					wWidth = document.getElementById('maintable').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
 				}
-				newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 				newWindow.focus();
 				return false;
 			}
@@ -222,7 +233,7 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -234,20 +245,25 @@ if($isEditor){
 		</a> &gt;&gt;
 		<b>Dataset Manager</b> 
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($statusStr){
 			$color = 'green';
-			if(strpos($statusStr,'ERROR') !== false) $color = 'red';
-			elseif(strpos($statusStr,'WARNING') !== false) $color = 'orange';
-			elseif(strpos($statusStr,'NOTICE') !== false) $color = 'yellow';
+			if(strpos($statusStr,'ERROR') !== false) {
+                $color = 'red';
+            }
+			elseif(strpos($statusStr,'WARNING') !== false) {
+                $color = 'orange';
+            }
+			elseif(strpos($statusStr,'NOTICE') !== false) {
+                $color = 'yellow';
+            }
 			echo '<div style="margin:15px;color:'.$color.';">';
 			echo $statusStr;
 			echo '</div>';
 		}
 		if($datasetId){
-			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">'.$mdArr['name'].'</div>';
+			echo '<div style="margin:10px 0 5px 20px;font-weight:bold;font-size:130%;">'.$mdArr['name'].'</div>';
 			echo '<div style="margin-left:20px" title="'.$roleLabel.'">Role: '.$role.'</div>';
 			if($isEditor){
 				?>
@@ -255,7 +271,7 @@ if($isEditor){
 					<ul>
 						<li><a href="#occurtab"><span>Occurrence List</span></a></li>
 						<?php
-						if($isEditor == 1){ 
+						if($isEditor === 1){
 							?>
 							<li><a href="#admintab"><span>General Management</span></a></li>
 							<li><a href="#accesstab"><span>User Access</span></a></li>
@@ -267,11 +283,11 @@ if($isEditor){
 						<?php 
 						$occArr = $datasetManager->getOccurrences($datasetId);
 						?>
-						<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
+						<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm()">
 							<div style="float:right;margin-right:10px">
 								<b>Count: <?php echo count($occArr); ?> records</b>
 							</div>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<tr>
 									<th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all Specimens" /></th>
 									<th>catalog #</th>
@@ -284,7 +300,7 @@ if($isEditor){
 								foreach($occArr as $occid => $recArr){
 									$trCnt++;
 									?>
-									<tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
+									<tr <?php echo (($trCnt%2)?'class="alt"':''); ?>>
 										<td>
 											<input type="checkbox" name="occid[]" value="<?php echo $occid; ?>" />
 										</td>
@@ -324,13 +340,13 @@ if($isEditor){
 										<legend><b>Options</b></legend>
 										<table>
 											<tr>
-												<td valign="top">
+												<td style="vertical-align:top;">
 													<div style="margin:10px;">
 														<b>Structure:</b>
 													</div> 
 												</td>
 												<td>
-													<div style="margin:10px 0px;">
+													<div style="margin:10px 0;">
 														<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED /> 
 														Symbiota Native
 														<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
@@ -355,31 +371,31 @@ if($isEditor){
 												</td>
 											</tr>
 											<tr>
-												<td valign="top">
+												<td style="vertical-align:top;">
 													<div style="margin:10px;">
 														<b>File Format:</b>
 													</div> 
 												</td>
 												<td>
-													<div style="margin:10px 0px;">
+													<div style="margin:10px 0;">
 														<input type="radio" name="format" value="csv" CHECKED /> Comma Delimited (CSV)<br/>
 														<input type="radio" name="format" value="tab" /> Tab Delimited<br/>
 													</div> 
 												</td>
 											</tr>
 											<tr>
-												<td valign="top">
+												<td style="vertical-align:top;">
 													<div style="margin:10px;">
 														<b>Character Set:</b>
 													</div> 
 												</td>
 												<td>
-													<div style="margin:10px 0px;">
+													<div style="margin:10px 0;">
 														<?php 
 														$cSet = strtolower($CHARSET);
 														?>
-														<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-														<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
+														<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet === 'iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
+														<input type="radio" name="cset" value="utf-8" <?php echo ($cSet === 'utf-8'?'checked':''); ?> /> UTF-8 (unicode)
 													</div>
 												</td>
 											</tr>
@@ -390,7 +406,7 @@ if($isEditor){
 						</form>
 					</div>
 					<?php
-					if($isEditor == 1){ 
+					if($isEditor === 1){
 						?>
 						<div id="admintab">
 							<fieldset style="padding:15px;margin:15px;">
@@ -428,7 +444,7 @@ if($isEditor){
 								$roleArr = array('DatasetAdmin' => 'Full Access Users','DatasetEditor' => 'Read/Write Users','DatasetReader' => 'Read Only Users');
 								foreach($roleArr as $roleStr => $labelStr){
 									?>
-									<div style="margin:0px 15px;"><b><u><?php echo $labelStr; ?></u></b></div>
+									<div style="margin:0 15px;"><b><u><?php echo $labelStr; ?></u></b></div>
 									<div style="margin:15px;">
 										<?php 
 										if(array_key_exists($roleStr,$userArr)){
@@ -497,7 +513,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 	</body>
 </html>

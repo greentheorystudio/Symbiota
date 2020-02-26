@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 
-$collid = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$catNum = array_key_exists("catalognumber",$_REQUEST)?$_REQUEST["catalognumber"]:'';
-$sciName = array_key_exists("sciname",$_REQUEST)?$_REQUEST["sciname"]:'';
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$catNum = array_key_exists('catalognumber',$_REQUEST)?$_REQUEST['catalognumber']:'';
+$sciName = array_key_exists('sciname',$_REQUEST)?$_REQUEST['sciname']:'';
 
 $occManager = new OccurrenceEditorDeterminations();
 
@@ -14,4 +14,3 @@ if($collid){
 }
 
 echo $recordListHtml;
-?>

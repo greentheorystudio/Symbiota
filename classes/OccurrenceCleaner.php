@@ -855,6 +855,13 @@ class OccurrenceCleaner extends Manager{
 		}
 	}
 
+    public function setObsuid($obsUid): void
+    {
+        if(is_numeric($obsUid)){
+            $this->obsUid = $obsUid;
+        }
+    }
+
 	public function getFeatureCount(): int
 	{
 		return $this->featureCount;
