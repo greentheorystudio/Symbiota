@@ -1,12 +1,11 @@
 <?php
-
-use PhpOffice\PhpWord\PhpWord;
-
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
 header('Content-Type: text/html; charset=' .$CHARSET);
-ini_set('max_execution_time', 240); //240 seconds = 4 minutes
+ini_set('max_execution_time', 240);
+
+use PhpOffice\PhpWord\PhpWord;
 
 $ses_id = session_id();
 

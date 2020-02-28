@@ -1,21 +1,21 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$targetId = $_REQUEST["targetid"];
-$collid = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$action = array_key_exists("action",$_POST)?$_POST["action"]:'';
-$catalogNumber = array_key_exists("catalognumber",$_POST)?$_POST['catalognumber']:'';
-$otherCatalogNumbers = array_key_exists("othercatalognumbers",$_POST)?$_POST['othercatalognumbers']:'';
-$recordedBy = array_key_exists("recordedby",$_POST)?$_POST['recordedby']:'';
-$recordNumber = array_key_exists("recordnumber",$_POST)?$_POST['recordnumber']:'';
+$targetId = $_REQUEST['targetid'];
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$action = array_key_exists('action',$_POST)?$_POST['action']:'';
+$catalogNumber = array_key_exists('catalognumber',$_POST)?$_POST['catalognumber']:'';
+$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST)?$_POST['othercatalognumbers']:'';
+$recordedBy = array_key_exists('recordedby',$_POST)?$_POST['recordedby']:'';
+$recordNumber = array_key_exists('recordnumber',$_POST)?$_POST['recordnumber']:'';
 
 $collEditorArr = array();
-if(array_key_exists("CollAdmin",$USER_RIGHTS)){
+if(array_key_exists('CollAdmin',$USER_RIGHTS)){
 	$collEditorArr = $USER_RIGHTS['CollAdmin'];
 }
-if(array_key_exists("CollEditor",$USER_RIGHTS)){
+if(array_key_exists('CollEditor',$USER_RIGHTS)){
 	$collEditorArr = array_unique(array_merge($collEditorArr,$USER_RIGHTS['CollEditor']));
 }
 
@@ -33,7 +33,9 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 	<script type="text/javascript">
 	    function updateParentForm(occId) {
 	        opener.document.getElementById("<?php echo $targetId;?>").value = occId;
-            if(opener.document.getElementById("<?php echo $targetId;?>").hasAttribute("onchange")) opener.document.getElementById("<?php echo $targetId;?>").onchange();
+            if(opener.document.getElementById("<?php echo $targetId;?>").hasAttribute("onchange")) {
+                opener.document.getElementById("<?php echo $targetId;?>").onchange();
+            }
 	        self.close();
 	        return false;
 	    }
@@ -62,7 +64,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 					dataType: "json",
 					data: { collid: f.collid.value }
 				}).done(function( retObj ) {
-					if(retObj.status == "true"){
+					if(retObj.status === "true"){
 						updateParentForm(retObj.occid);
 					}
 					else{
@@ -73,13 +75,13 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 		}
 
 	    function isNumeric(inStr){
-	       	var validChars = "0123456789-.";
-	       	var isNumber = true;
-	       	var charVar;
+            const validChars = "0123456789-.";
+            let isNumber = true;
+            let charVar;
 
-	       	for(var i = 0; i < inStr.length && isNumber == true; i++){ 
+            for(let i = 0; i < inStr.length && isNumber === true; i++){
 	       		charVar = inStr.charAt(i); 
-	    		if(validChars.indexOf(charVar) == -1){
+	    		if(validChars.indexOf(charVar) === -1){
 	    			isNumber = false;
 	    			break;
 	          	}
@@ -89,7 +91,6 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 	</script>
 </head>
 <body style="background-color: white;">
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($IS_ADMIN || $collEditorArr){
@@ -105,7 +106,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 								<option value="">--------------------------------</option>
 								<?php
 								foreach($collArr as $id => $collName){
-									echo '<option value="'.$id.'" '.($id == $collid?'SELECTED':'').'>'.$collName.'</option>';
+									echo '<option value="'.$id.'" '.($id === $collid?'SELECTED':'').'>'.$collName.'</option>';
 								}  
 								?>
 							</select>
@@ -140,7 +141,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 					foreach($occArr as $occid => $vArr){
 						?>
 						<div style="margin:10px;">
-							<?php echo "<b>OccId ".$occid.":</b> ".$vArr["recordedby"]." [".($vArr["recordnumber"]?$vArr["recordnumber"]:$vArr["eventdate"])."]; ".$vArr["locality"];?>
+							<?php echo '<b>OccId ' .$occid. ':</b> ' .$vArr['recordedby']. ' [' .($vArr['recordnumber']?:$vArr['eventdate']). ']; ' .$vArr['locality'];?>
 							<div style="margin-left:10px;cursor:pointer;color:blue;" onclick="updateParentForm('<?php echo $occid;?>')">
 								Select Occurrence Record
 							</div>
@@ -152,7 +153,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 				}
 				else{
 					?>
-					<div style="margin:30 10px;">
+					<div style="margin:30px 10px;">
 						<b>No records were returned. Please modify your search and try again.</b> 
 					</div>
 					<?php 
@@ -167,7 +168,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 						<option value="">--------------------------------</option>
 						<?php
 						foreach($collArr as $id => $collName){
-							echo '<option value="'.$id.'" '.($id == $collid?'SELECTED':'').'>'.$collName.'</option>';
+							echo '<option value="'.$id.'" '.($id === $collid?'SELECTED':'').'>'.$collName.'</option>';
 						}  
 						?>
 					</select>
@@ -178,7 +179,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 		}
 		else{
 			?>
-			<div style="margin:30 10px;">
+			<div style="margin:30px 10px;">
 				<b>You are not authorized to link to any collections</b> 
 			</div>
 			<?php 

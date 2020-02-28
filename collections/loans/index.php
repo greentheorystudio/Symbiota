@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecLoans.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+include_once(__DIR__ . '/../../classes/SpecLoans.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+ini_set('max_execution_time', 180);
 
 $collId = $_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
@@ -16,66 +16,70 @@ $eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
 
 $isEditor = 0;
 if($SYMB_UID && $collId){
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))
-		|| (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
+		|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
 
 $loanManager = new SpecLoans();
-if($collId) $loanManager->setCollId($collId);
+if($collId) {
+    $loanManager->setCollId($collId);
+}
 
 $statusStr = '';
-if($isEditor){
-	if($formSubmit){
-		if($formSubmit == 'Create Loan Out'){
-			$statusStr = $loanManager->createNewLoanOut($_POST);
-			$loanId = $loanManager->getLoanId();
-			$loanType = 'out';
-		}
-		elseif($formSubmit == 'Create Loan In'){
-			$statusStr = $loanManager->createNewLoanIn($_POST);
-			$loanId = $loanManager->getLoanId();
-			$loanType = 'in';
-		}
-		elseif($formSubmit == 'Create Exchange'){
-			$statusStr = $loanManager->createNewExchange($_POST);
-			$exchangeId = $loanManager->getExchangeId();
-			$loanType = 'exchange';
-		}
-		elseif($formSubmit == 'Save Exchange'){
-			$statusStr = $loanManager->editExchange($_POST);
-			$loanType = 'exchange';
-		}
-		elseif($formSubmit == 'Save Outgoing'){
-			$statusStr = $loanManager->editLoanOut($_POST);
-			$loanType = 'out';
-		}
-		elseif($formSubmit == 'Delete Loan'){
-			$status = $loanManager->deleteLoan($loanId);
-			if($status) $loanId = 0;
-		}
-		elseif($formSubmit == 'Delete Exchange'){
-			$status = $loanManager->deleteExchange($exchangeId);
-			if($status) $exchangeId = 0;
-		}
-		elseif($formSubmit == 'Save Incoming'){
-			$statusStr = $loanManager->editLoanIn($_POST);
-			$loanType = 'in';
-		}
-		elseif($formSubmit == 'Perform Action'){
-			$statusStr = $loanManager->editSpecimen($_REQUEST);
-		}
-		elseif($formSubmit == 'Add New Determinations'){
-			include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-			$occManager = new OccurrenceEditorDeterminations();
-			$occidArr = $_REQUEST['occid'];
-			foreach($occidArr as $k){
-				$occManager->setOccId($k);
-				$occManager->addDetermination($_REQUEST,$isEditor);
-			}
-		}
-	}
+if($isEditor && $formSubmit) {
+    if($formSubmit === 'Create Loan Out'){
+        $statusStr = $loanManager->createNewLoanOut($_POST);
+        $loanId = $loanManager->getLoanId();
+        $loanType = 'out';
+    }
+    elseif($formSubmit === 'Create Loan In'){
+        $statusStr = $loanManager->createNewLoanIn($_POST);
+        $loanId = $loanManager->getLoanId();
+        $loanType = 'in';
+    }
+    elseif($formSubmit === 'Create Exchange'){
+        $statusStr = $loanManager->createNewExchange($_POST);
+        $exchangeId = $loanManager->getExchangeId();
+        $loanType = 'exchange';
+    }
+    elseif($formSubmit === 'Save Exchange'){
+        $statusStr = $loanManager->editExchange($_POST);
+        $loanType = 'exchange';
+    }
+    elseif($formSubmit === 'Save Outgoing'){
+        $statusStr = $loanManager->editLoanOut($_POST);
+        $loanType = 'out';
+    }
+    elseif($formSubmit === 'Delete Loan'){
+        $status = $loanManager->deleteLoan($loanId);
+        if($status) {
+            $loanId = 0;
+        }
+    }
+    elseif($formSubmit === 'Delete Exchange'){
+        $status = $loanManager->deleteExchange($exchangeId);
+        if($status) {
+            $exchangeId = 0;
+        }
+    }
+    elseif($formSubmit === 'Save Incoming'){
+        $statusStr = $loanManager->editLoanIn($_POST);
+        $loanType = 'in';
+    }
+    elseif($formSubmit === 'Perform Action'){
+        $loanManager->editSpecimen($_REQUEST);
+    }
+    elseif($formSubmit === 'Add New Determinations'){
+        include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
+        $occManager = new OccurrenceEditorDeterminations();
+        $occidArr = $_REQUEST['occid'];
+        foreach($occidArr as $k){
+            $occManager->setOccId($k);
+            $occManager->addDetermination($_REQUEST,$isEditor);
+        }
+    }
 }
 
 $loanOutList = $loanManager->getLoanOutList($searchTerm,$displayAll);
@@ -91,24 +95,22 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
 	<script type="text/javascript" src="../../js/symb/collections.loans.js"></script>
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
         <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
         <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management Main Menu</b></a>
     </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($SYMB_UID && $isEditor && $collId){
-			//Collection is defined and User is logged-in and have permissions
 			if($statusStr){
 				?>
 				<hr/>
@@ -121,7 +123,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 			
 			if(!$loanId && !$exchangeId){
 				?>
-				<div id="tabs" style="margin:0px;">
+				<div id="tabs" style="margin:0;">
 				    <ul>
 						<li><a href="#loanoutdiv"><span>Outgoing Loans</span></a></li>
 						<li><a href="#loanindiv"><span>Incoming Loans</span></a></li>
@@ -137,7 +139,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										<input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 									</div>
 									<div>
-										<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> Display outstanding loans only
+										<input type="radio" name="displayall" value="0"<?php echo ($displayAll === 0?'checked':'');?> /> Display outstanding loans only
 									</div>
 									<div>
 										<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> Display all loans
@@ -242,7 +244,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										<b>Search: </b><input type="text" autocomplete="off" name="searchterm" value="<?php echo $searchTerm;?>" size="20" />
 									</div>
 									<div>
-										<input type="radio" name="displayall" value="0"<?php echo ($displayAll==0?'checked':'');?> /> Display outstanding loans only
+										<input type="radio" name="displayall" value="0"<?php echo ($displayAll === 0?'checked':'');?> /> Display outstanding loans only
 									</div>
 									<div>
 										<input type="radio" name="displayall" value="1"<?php echo ($displayAll?'checked':'');?> /> Display all loans
@@ -358,42 +360,38 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 				</div>
 				<?php 
 			}
-			elseif($loanType == 'out'){
+			elseif($loanType === 'out'){
 				include_once('outgoingdetails.php');
 			}
-			elseif($loanType == 'in'){
+			elseif($loanType === 'in'){
 				include_once('incomingdetails.php');
 			}
-			elseif($loanType == 'exchange'){
+			elseif($loanType === 'exchange'){
 				include_once('exchangedetails.php');
 			}
-			else{
-				if(!$SYMB_UID){
-					echo '<h2>Please <a href="'.$CLIENT_ROOT.'/profile/index.php?collid='.$collId.'&refurl='.$CLIENT_ROOT.'/collections/loans/index.php?collid='.$collId.'">login</a></h2>';
-				}
-				elseif(!$collId){
-					echo '<h2>Collection not defined</h2>';
-				}
-				elseif(!$isEditor){
-					echo '<h2>You are not authorized to manage loans</h2>';
-				}
-			}
+			else if(!$SYMB_UID){
+                echo '<h2>Please <a href="'.$CLIENT_ROOT.'/profile/index.php?collid='.$collId.'&refurl='.$CLIENT_ROOT.'/collections/loans/index.php?collid='.$collId.'">login</a></h2>';
+            }
+            elseif(!$collId){
+                echo '<h2>Collection not defined</h2>';
+            }
+            elseif(!$isEditor){
+                echo '<h2>You are not authorized to manage loans</h2>';
+            }
 		}
-		else{
-			if(!$SYMB_UID){
-				echo 'Please <a href="../../profile/index.php?refurl=../collections/loans/index.php?collid='.$collId.'">login</a>';
-			}
-			elseif(!$isEditor){
-				echo '<h2>You are not authorized to add occurrence records</h2>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
-		}
+		else if(!$SYMB_UID){
+            echo 'Please <a href="../../profile/index.php?refurl=../collections/loans/index.php?collid='.$collId.'">login</a>';
+        }
+        elseif(!$isEditor){
+            echo '<h2>You are not authorized to add occurrence records</h2>';
+        }
+        else{
+            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

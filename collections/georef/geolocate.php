@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $locality = $_REQUEST['locality'];
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
@@ -8,31 +8,37 @@ $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']:'';
 $county = array_key_exists('county',$_REQUEST)?$_REQUEST['county']:'';
 
 if(!$country || !$state || !$county){
-	$locArr = explode(";",$locality);
+	$locArr = explode(';',$locality);
 	$locality = trim(array_pop($locArr));
-	if(!$country && $locArr) $country = trim(array_shift($locArr));
-	if(!$state && $locArr) $state = trim(array_shift($locArr));
-	if(!$county && $locArr) $county = trim(array_shift($locArr));
+	if(!$country && $locArr) {
+        $country = trim(array_shift($locArr));
+    }
+	if(!$state && $locArr) {
+        $state = trim(array_shift($locArr));
+    }
+	if(!$county && $locArr) {
+        $county = trim(array_shift($locArr));
+    }
 }
-//Modify TRS data to make it more compatable to the GeoLocate format (S23 needs to be Sec23)
-if(preg_match('/\d{1,2}[NS]{1}T\s\d{1,2}[EW]{1}R\s\d{1,2}S/',$locality)){
-	$locality = preg_replace('/(\d{1,2}[NS]{1})T\s(\d{1,2}[EW]{1})R\s(\d{1,2})S/', 'T$1 R$2 Sec$3', $locality);
+
+if(preg_match('/\d{1,2}[NS]T\s\d{1,2}[EW]R\s\d{1,2}S/',$locality)){
+	$locality = preg_replace('/(\d{1,2}[NS])T\s(\d{1,2}[EW])R\s(\d{1,2})S/', 'T$1 R$2 Sec$3', $locality);
 }
-elseif(preg_match('/R\d{1,2}[EW]{1}\sS\d{1,2}/i',$locality)){
+elseif(preg_match('/R\d{1,2}[EW]\sS\d{1,2}/i',$locality)){
 	$locality = preg_replace('/\sS(\d{1,2})/', ' Sec$1', $locality);
 }
-//Convert latin1 character sets to utf-8
-if(strtolower($CHARSET) == "iso-8859-1"){
-	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') == "UTF-8"){
+
+if(strtolower($CHARSET) === 'iso-8859-1'){
+	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') === 'UTF-8'){
 		$country = utf8_encode($country);
 	}
-	if(mb_detect_encoding($state,'UTF-8,ISO-8859-1') == "UTF-8"){
+	if(mb_detect_encoding($state,'UTF-8,ISO-8859-1') === 'UTF-8'){
 		$state = utf8_encode($state);
 	}
-	if(mb_detect_encoding($county,'UTF-8,ISO-8859-1') == "UTF-8"){
+	if(mb_detect_encoding($county,'UTF-8,ISO-8859-1') === 'UTF-8'){
 		$county = utf8_encode($county);
 	}
-	if(mb_detect_encoding($locality,'UTF-8,ISO-8859-1') == "UTF-8"){
+	if(mb_detect_encoding($locality,'UTF-8,ISO-8859-1') === 'UTF-8'){
 		$locality = utf8_encode($locality);
 	}
 }
@@ -56,7 +62,7 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 		iframe {
 			width: 1020px;
 			height:750px;
-			margin: 0px;
+			margin: 0;
 			border: 1px solid #000;
 		}
 	</style>
@@ -65,10 +71,10 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	        if(evt.origin.indexOf("geo-locate.org") < 0) {
 				alert("iframe url does not have permision to interact with me");
 	        }
-	        else {//alert(evt.data);
-	            var breakdown = evt.data.split("|");
-                if(breakdown.length == 4){
-                    if(breakdown[0] == ""){
+	        else {
+                const breakdown = evt.data.split("|");
+                if(breakdown.length === 4){
+                    if(breakdown[0] === ""){
                     	alert("There are no data points to tranfer");
                     }
                     else{
@@ -79,7 +85,6 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 	        }
 	    }
 	    if(window.addEventListener) {
-	        // For standards-compliant web browsers
 	        window.addEventListener("message", transferCoord, false);
 	    }
 	    else {
@@ -99,11 +104,11 @@ if(isset($PORTAL_GUID) && $PORTAL_GUID){
 <?php
 
 function removeAccents($string) {
-    if ( !preg_match('/[\x80-\xff]/', $string) )
-	return $string;
+    if ( !preg_match('/[\x80-\xff]/', $string) ) {
+        return $string;
+    }
 
 	$chars = array(
-	// Decompositions for Latin-1 Supplement
 	chr(195).chr(128) => 'A', chr(195).chr(129) => 'A',
 	chr(195).chr(130) => 'A', chr(195).chr(131) => 'A',
 	chr(195).chr(132) => 'A', chr(195).chr(133) => 'A',
@@ -132,7 +137,6 @@ function removeAccents($string) {
 	chr(195).chr(186) => 'u', chr(195).chr(187) => 'u',
 	chr(195).chr(188) => 'u', chr(195).chr(189) => 'y',
 	chr(195).chr(191) => 'y',
-	// Decompositions for Latin Extended-A
 	chr(196).chr(128) => 'A', chr(196).chr(129) => 'a',
 	chr(196).chr(130) => 'A', chr(196).chr(131) => 'a',
 	chr(196).chr(132) => 'A', chr(196).chr(133) => 'a',

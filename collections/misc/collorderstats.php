@@ -1,13 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
+include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+ini_set('max_execution_time', 1200);
 
-$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$totalCnt = array_key_exists("totalcnt",$_REQUEST)?$_REQUEST["totalcnt"]:0;
+$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
+    $catId = $DEFAULTCATID;
+}
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$totalCnt = array_key_exists('totalcnt',$_REQUEST)?$_REQUEST['totalcnt']:0;
 
 $collManager = new OccurrenceCollectionProfile();
 $orderArr = array();
@@ -31,12 +33,12 @@ $_SESSION['statsOrderArr'] = $orderArr;
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		?>
 		<div id="innertext">
 			<fieldset id="orderdistbox" style="clear:both;margin-top:15px;width:800px;">
 				<legend><b>Order Distribution</b></legend>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;width:780px;">
+				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:780px;">
 					<tr>
 						<th style="text-align:center;">Order</th>
 						<th style="text-align:center;">Specimens</th>
@@ -50,11 +52,11 @@ $_SESSION['statsOrderArr'] = $orderArr;
 						echo '<tr>';
 						echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 						echo '<td>';
-						if($data['SpecimensPerOrder'] == 1){
+						if($data['SpecimensPerOrder'] === 1){
 							echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
 						}
 						echo number_format($data['SpecimensPerOrder']);
-						if($data['SpecimensPerOrder'] == 1){
+						if($data['SpecimensPerOrder'] === 1){
 							echo '</a>';
 						}
 						echo '</td>';
@@ -62,7 +64,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 						echo '<td>'.($data['IDSpecimensPerOrder']?round(100*($data['IDSpecimensPerOrder']/$data['SpecimensPerOrder'])):0).'%</td>';
 						echo '<td>'.($data['IDGeorefSpecimensPerOrder']?round(100*($data['IDGeorefSpecimensPerOrder']/$data['SpecimensPerOrder'])):0).'%</td>';
 						echo '</tr>';
-						$total = $total + $data['SpecimensPerOrder'];
+						$total += $data['SpecimensPerOrder'];
 					}
 					?>
 				</table>
@@ -78,9 +80,8 @@ $_SESSION['statsOrderArr'] = $orderArr;
 				</div>
 			</fieldset>
 		</div>
-		<!-- end inner text -->
 		<?php
-			include($SERVER_ROOT.'/footer.php');		
+			include(__DIR__ . '/../../footer.php');
 		?>
 	</body>
 </html>

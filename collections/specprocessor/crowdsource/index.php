@@ -1,20 +1,20 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $catid = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:'';
 
-if(isset($DEFAULTCATID) && $DEFAULTCATID && $catid === '') $catid = $DEFAULTCATID;
+if(isset($DEFAULTCATID) && $DEFAULTCATID && $catid === '') {
+    $catid = $DEFAULTCATID;
+}
 
 $csManager = new OccurrenceCrowdSource();
 
 $pArr = array();
-if($SYMB_UID){
-	if(array_key_exists("CollAdmin",$USER_RIGHTS)){
-		$pArr = $USER_RIGHTS['CollAdmin'];
-	}
+if($SYMB_UID && array_key_exists('CollAdmin', $USER_RIGHTS)) {
+    $pArr = $USER_RIGHTS['CollAdmin'];
 }
 
 $statusStr = '';
@@ -30,20 +30,17 @@ $statusStr = '';
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../../header.php');
     echo "<div class='navpath'>";
     echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
-    echo "<b>Crowdsourcing Score Board</b>";
-    echo "</div>";
+    echo '<b>Crowdsourcing Score Board</b>';
+    echo '</div>';
 	?>
-
-	<!-- inner text -->
-	<div id="innertext">
+    <div id="innertext">
 		<h1>Crowdsourcing Score Board</h1>
-
-		<div style="margin-left:20px;float:left;">
+        <div style="margin-left:20px;float:left;">
 			<h2>Top Scores</h2>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;width:300px;">
+			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:300px;">
 				<tr><th><b>User</b></th><th><b>Score</b></th></tr>
 			<?php
 			$topScoreArr = $csManager->getTopScores($catid);
@@ -71,15 +68,29 @@ $statusStr = '';
 					?>
 					<b>Specimens processed as volunteer:</b> <?php echo number_format($userStats['totalcnt']); ?><br/>
 					<?php
-					if($userStats['nonvolcnt']) echo '&nbsp;&nbsp;&nbsp;(Additional as non-volunteer: '.number_format($userStats['nonvolcnt']).')<br/>';
+					if($userStats['nonvolcnt']) {
+                        echo '&nbsp;&nbsp;&nbsp;(Additional as non-volunteer: ' . number_format($userStats['nonvolcnt']) . ')<br/>';
+                    }
 					?>
 					<b>Pending points:</b> <?php echo number_format($userStats['ppoints']); ?>
-					<?php if($userStats['ppoints']) echo '(<a href="review.php?rstatus=5&uid='.$SYMB_UID.'">view records</a>)'; ?> <br/>
+					<?php
+                    if($userStats['ppoints']) {
+                        echo '(<a href="review.php?rstatus=5&uid=' . $SYMB_UID . '">view records</a>)';
+                    }
+                    ?>
+                    <br/>
 					<b>Approved points:</b> <?php echo number_format($userStats['apoints']); ?>
-					<?php if($userStats['apoints']) echo '(<a href="review.php?rstatus=10&uid='.$SYMB_UID.'">view records</a>)'; ?> <br/>
+					<?php
+                    if($userStats['apoints']) {
+                        echo '(<a href="review.php?rstatus=10&uid=' . $SYMB_UID . '">view records</a>)';
+                    }
+                    ?>
+                    <br/>
 					<b>Total Possible Score:</b> <?php echo number_format($userStats['ppoints']+$userStats['apoints']); ?><br/>
 					<?php
-					if($userStats['nonvolcnt']) echo '<div style="margin-top:10px">* Only specimens processed as a volunteer are eligible for points</div>';
+					if($userStats['nonvolcnt']) {
+                        echo '<div style="margin-top:10px">* Only specimens processed as a volunteer are eligible for points</div>';
+                    }
 				}
 				else{
 					?>
@@ -93,7 +104,7 @@ $statusStr = '';
 		</div>
 		<div style="padding:20px;clear:both;">
 			<h2>Your Stats by Collections</h2>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 				<tr>
 					<th><b>Collection</b></th>
 					<th><b>Specimen<br/>Count</b></th>
@@ -102,17 +113,16 @@ $statusStr = '';
 					<th><b>Open<br/>Records</b></th>
 				</tr>
 				<?php
-				unset($userStats['totalcnt']);
-				unset($userStats['nonvolcnt']);
-				unset($userStats['apoints']);
-				unset($userStats['ppoints']);
-				foreach($userStats as $collId => $sArr){
+                unset($userStats['totalcnt'], $userStats['nonvolcnt'], $userStats['apoints'], $userStats['ppoints']);
+                foreach($userStats as $collId => $sArr){
 					$pointArr = $sArr['points'];
 					$cntArr = $sArr['cnt'];
 					echo '<tr>';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
-					if($IS_ADMIN || in_array($collId, $pArr)) echo ' <a href="../index.php?tabindex=2&collid='.$collId.'"><img src="../../../images/edit.png" style="width:14px;" /></a>';
+					if($IS_ADMIN || in_array($collId, $pArr, true)) {
+                        echo ' <a href="../index.php?tabindex=2&collid=' . $collId . '"><img src="../../../images/edit.png" style="width:14px;" /></a>';
+                    }
 					echo '</td>';
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
 					echo '<td>'.number_format(array_key_exists(5,$pointArr)?$pointArr[5]:0).'</td>';
@@ -137,7 +147,7 @@ $statusStr = '';
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../../footer.php');
 	?>
 </body>
 </html>

@@ -1,16 +1,22 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($displayMode)) $displayMode = 0;
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if(!is_numeric($displayMode)) {
+    $displayMode = 0;
+}
 
-$customField = array(); $customType = array(); $customValue = array();
+$customField = array();
+$customType = array();
+$customValue = array();
+
 for($h=1;$h<4;$h++){
 	$customField[$h] = array_key_exists('customfield'.$h,$_REQUEST)?$_REQUEST['customfield'.$h]:'';
 	$customType[$h] = array_key_exists('customtype'.$h,$_REQUEST)?$_REQUEST['customtype'.$h]:'';
@@ -21,7 +27,7 @@ $dlManager = new OccurrenceDownload();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 
@@ -52,9 +58,9 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<script>
 
 			$(function() {
-				var dialogArr = new Array("schemanative","schemadwc","newrecs");
-				var dialogStr = "";
-				for(i=0;i<dialogArr.length;i++){
+                const dialogArr = ["schemanative", "schemadwc", "newrecs"];
+                let dialogStr = "";
+                for(let i=0;i<dialogArr.length;i++){
 					dialogStr = dialogArr[i]+"info";
 					$( "#"+dialogStr+"dialog" ).dialog({
 						autoOpen: false,
@@ -70,7 +76,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 			});
 
 			function validateDownloadForm(f){
-				if(f.newrecs && f.newrecs.checked == true && (f.processingstatus.value == "unprocessed" || f.processingstatus.value == "")){
+				if(f.newrecs && f.newrecs.checked === true && (f.processingstatus.value === "unprocessed" || f.processingstatus.value === "")){
 					alert("New records cannot have an unprocessed or undefined processing status. Please select a valid processing status.");
 					return false;
 				}
@@ -78,13 +84,13 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 			}
 
 			function extensionSelected(obj){
-				if(obj.checked == true){
+				if(obj.checked === true){
 					obj.form.zip.checked = true;
 				}
 			}
 
 			function zipChanged(cbObj){
-				if(cbObj.checked == false){
+				if(cbObj.checked === false){
 					cbObj.form.identifications.checked = false;
 					cbObj.form.images.checked = false;
 				}
@@ -92,7 +98,6 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		</script>
 	</head>
 	<body>
-		<!-- This is inner text! -->
 		<div id="innertext" style="background-color:white;">
 			<div style="float:right;width:165px;margin-right:30px">
 				<fieldset>
@@ -100,18 +105,18 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					<form name="submenuForm" method="post" action="index.php">
 						<select name="displaymode" onchange="this.form.submit()">
 							<option value="0">Custom Export</option>
-							<option value="1" <?php echo ($displayMode==1?'selected':''); ?>>Georeference Export</option>
+							<option value="1" <?php echo ($displayMode === 1?'selected':''); ?>>Georeference Export</option>
 						</select>
 						<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 						<input name="tabindex" type="hidden" value="5" />
 					</form>
 				</fieldset>
 			</div>
-			<div style="padding:15px 0px;">
+			<div style="padding:15px 0;">
 				This download module is designed to aid collection managers in extracting specimen data
 				for import into local management or research systems.
 				<?php
-				if($collMeta['manatype'] == 'Snapshot'){
+				if($collMeta['manatype'] === 'Snapshot'){
 					?>
 					<a href="#" onclick="toggle('moreinfodiv');this.style.display = 'none';return false;" style="font-size:90%">more info...</a>
 					<span id="moreinfodiv" style="display:none;">
@@ -136,8 +141,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 			if($collid && $isEditor){
 				echo '<div style="clear:both;">';
 				$filterOptions = array('EQUALS'=>'EQUALS','NOTEQUALS'=>'NOT EQUALS','STARTS'=>'STARTS WITH','LESSTHAN'=>'LESS THAN','GREATERTHAN'=>'GREATER THAN','LIKE'=>'CONTAINS','NOTLIKE'=>'NOT CONTAINS','NULL'=>'IS NULL','NOTNULL'=>'IS NOT NULL');
-				if($displayMode == 1){
-					if($collMeta['manatype'] == 'Snapshot'){
+				if($displayMode === 1){
+					if($collMeta['manatype'] === 'Snapshot'){
 						?>
 						<form name="exportgeorefform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExportGeorefForm(this);">
 							<fieldset>
@@ -157,7 +162,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											</div>
 										</td>
 										<td>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<select name="processingstatus">
 													<option value="">All Records</option>
 													<?php
@@ -171,44 +176,43 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</td>
 									</tr>
 									<tr>
-										<td valign="top">
+										<td style="vertical-align: top;">
 											<div style="margin:10px;">
 												<b>Compression:</b>
 											</div>
 										</td>
 										<td>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<input type="checkbox" name="zip" value="1" checked /> Archive Data Package (ZIP file)<br/>
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td valign="top">
+										<td style="vertical-align: top;">
 											<div style="margin:10px;">
 												<b>File Format:</b>
 											</div>
 										</td>
 										<td>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<input type="radio" name="format" value="csv" CHECKED /> Comma Delimited (CSV)<br/>
 												<input type="radio" name="format" value="tab" /> Tab Delimited<br/>
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td valign="top">
+										<td style="vertical-align: top;">
 											<div style="margin:10px;">
 												<b>Character Set:</b>
 											</div>
 										</td>
 										<td>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<?php
-												//$cSet = strtolower($CHARSET);
 												$cSet = 'iso-8859-1';
 												?>
-												<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-												<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
+												<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet === 'iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
+												<input type="radio" name="cset" value="utf-8" <?php echo ($cSet === 'utf-8'?'checked':''); ?> /> UTF-8 (unicode)
 											</div>
 										</td>
 									</tr>
@@ -230,7 +234,6 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 						</form>
 						<?php
 					}
-					//Export for georeferencing (e.g. GeoLocate)
 					?>
 					<form name="expgeoform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExpGeoForm(this);">
 						<fieldset>
@@ -250,7 +253,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="processingstatus">
 												<option value="">All Records</option>
 												<?php
@@ -270,7 +273,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<input name="customtype2" type="radio" value="NULL" checked /> are empty (is null)<br/>
 											<input name="customtype2" type="radio" value="NOTNULL" /> have values (e.g. need verification)
 											<input name="customfield2" type="hidden" value="decimallatitude" />
@@ -284,20 +287,20 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="customfield1" style="width:200px">
 												<option value="">Select Field Name</option>
 												<option value="">---------------------------------</option>
 												<?php
 												foreach($advFieldArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$customField[1]?'SELECTED':'').'>'.$v.'</option>';
+													echo '<option value="'.$k.'" '.($k === $customField[1]?'SELECTED':'').'>'.$v.'</option>';
 												}
 												?>
 											</select>
 											<select name="customtype1">
 												<?php
 												foreach($filterOptions as $filterValue => $filterDisplay){
-													echo '<option '.($customType[1]=='.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
+													echo '<option '.($customType[1] === '.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
 												}
 												?>
 											</select>
@@ -338,7 +341,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="processingstatus">
 												<option value="">All Records</option>
 												<?php
@@ -352,7 +355,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 									</td>
 								</tr>
 								<?php
-								if($collMeta['manatype'] == 'Snapshot'){
+								if($collMeta['manatype'] === 'Snapshot'){
 									?>
 									<tr>
 										<td>
@@ -361,7 +364,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											</div>
 										</td>
 										<td>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<input type="checkbox" name="newrecs" value="1" /> (e.g. records processed within portal)
 												<a id="newrecsinfo" href="#" onclick="return false" title="More Information">
 													<img src="../../images/info.png" style="width:13px;" />
@@ -388,20 +391,20 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										<?php
 										for($i=1;$i<4;$i++){
 											?>
-											<div style="margin:10px 0px;">
+											<div style="margin:10px 0;">
 												<select name="customfield<?php echo $i; ?>" style="width:200px">
 													<option value="">Select Field Name</option>
 													<option value="">---------------------------------</option>
 													<?php
 													foreach($advFieldArr as $k => $v){
-														echo '<option value="'.$k.'" '.($k==$customField[1]?'SELECTED':'').'>'.$v.'</option>';
+														echo '<option value="'.$k.'" '.($k === $customField[1]?'SELECTED':'').'>'.$v.'</option>';
 													}
 													?>
 												</select>
 												<select name="customtype<?php echo $i; ?>">
 													<?php
 													foreach($filterOptions as $filterValue => $filterDisplay){
-														echo '<option '.($customType[1]=='.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
+														echo '<option '.($customType[1] === '.$filterValue.'?'SELECTED':'').' value="'.$filterValue.'">'.$filterDisplay.'</option>';
 													}
 													?>
 												</select>
@@ -416,7 +419,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 								if($traitArr = $dlManager->getAttributeTraits($collid)){
 									?>
 									<tr>
-										<td valign="top">
+										<td style="vertical-align: top;">
 											<div style="margin:10px;">
 												<b>Occurrence Trait<br/>Filter:</b>
 											</div>
@@ -455,13 +458,13 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 								}
 								?>
 								<tr>
-									<td valign="top">
+									<td style="vertical-align: top;">
 										<div style="margin:10px;">
 											<b>Structure:</b>
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<input type="radio" name="schema" value="symbiota" CHECKED />
 											Symbiota Native
 											<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
@@ -480,18 +483,17 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												Darwin Core is a TDWG endorsed exchange standard specifically for biodiversity datasets.
 												For more information, visit the <a href="">Darwin Core Documentation</a> website.
 											</div>
-											<!--  <input type="radio" name="schema" value="specify" /> Specify -->
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td valign="top">
+									<td style="vertical-align: top;">
 										<div style="margin:10px;">
 											<b>Data Extensions:</b>
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<input type="checkbox" name="identifications" value="1" onchange="extensionSelected(this)" checked /> include Determination History<br/>
 											<input type="checkbox" name="images" value="1" onchange="extensionSelected(this)" checked /> include Image Records<br/>
 											<input type="checkbox" name="attributes" value="1" onchange="extensionSelected(this)" checked /> include Occurrence Trait Attributes (MeasurementOrFact extension)<br/>
@@ -500,44 +502,43 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 									</td>
 								</tr>
 								<tr>
-									<td valign="top">
+									<td style="vertical-align: top;">
 										<div style="margin:10px;">
 											<b>Compression:</b>
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<input type="checkbox" name="zip" value="1" onchange="zipChanged(this)" checked /> Archive Data Package (ZIP file)<br/>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td valign="top">
+									<td style="vertical-align: top;">
 										<div style="margin:10px;">
 											<b>File Format:</b>
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<input type="radio" name="format" value="csv" CHECKED /> Comma Delimited (CSV)<br/>
 											<input type="radio" name="format" value="tab" /> Tab Delimited<br/>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td valign="top">
+									<td style="vertical-align: top;">
 										<div style="margin:10px;">
 											<b>Character Set:</b>
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<?php
-											//$cSet = strtolower($CHARSET);
 											$cSet = 'iso-8859-1';
 											?>
-											<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet=='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-											<input type="radio" name="cset" value="utf-8" <?php echo ($cSet=='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
+											<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet === 'iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
+											<input type="radio" name="cset" value="utf-8" <?php echo ($cSet === 'utf-8'?'checked':''); ?> /> UTF-8 (unicode)
 										</div>
 									</td>
 								</tr>

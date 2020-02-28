@@ -1,9 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
@@ -41,40 +44,63 @@ $maximumElevationInMeters = array_key_exists('maximumelevationinmeters',$_POST)?
 $minimumElevationInFeet = array_key_exists('minimumelevationinfeet',$_POST)?$_POST['minimumelevationinfeet']:'';
 $maximumElevationInFeet = array_key_exists('maximumelevationinfeet',$_POST)?$_POST['maximumelevationinfeet']:'';
 
-if(!$georeferenceSources) $georeferenceSources = 'georef batch tool '.date('Y-m-d');
-if(!$georeferenceVerificationStatus) $georeferenceVerificationStatus = 'reviewed - high confidence';
+if(!$georeferenceSources) {
+    $georeferenceSources = 'georef batch tool ' . date('Y-m-d');
+}
+if(!$georeferenceVerificationStatus) {
+    $georeferenceVerificationStatus = 'reviewed - high confidence';
+}
 
 $geoManager = new OccurrenceGeorefTools();
-if($SOLR_MODE) $solrManager = new SOLRManager();
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
 $geoManager->setCollId($collId);
 
 $editor = false;
 if($IS_ADMIN
-	|| (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))
-	|| (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"]))){
+	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
+	|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
  	$editor = true;
 }
 
 $statusStr = '';
-$localArr;
 if($editor && $submitAction){
-	if($qCountry) $geoManager->setQueryVariables('qcountry',$qCountry);
-	if($qState) $geoManager->setQueryVariables('qstate',$qState);
-	if($qCounty) $geoManager->setQueryVariables('qcounty',$qCounty);
-	if($qMunicipality) $geoManager->setQueryVariables('qmunicipality',$qMunicipality);
-	if($qSciname) $geoManager->setQueryVariables('qsciname',$qSciname);
-	if($qDisplayAll) $geoManager->setQueryVariables('qdisplayall',$qDisplayAll);
-	if($qVStatus) $geoManager->setQueryVariables('qvstatus',$qVStatus);
-	if($qLocality) $geoManager->setQueryVariables('qlocality',$qLocality);
-	if($qProcessingStatus) $geoManager->setQueryVariables('qprocessingstatus',$qProcessingStatus);
-	if($submitAction == 'Update Coordinates'){
-		$statusStr = $geoManager->updateCoordinates($_POST);
-        if($SOLR_MODE) $solrManager->updateSOLR();
+	if($qCountry) {
+        $geoManager->setQueryVariables('qcountry', $qCountry);
+    }
+	if($qState) {
+        $geoManager->setQueryVariables('qstate', $qState);
+    }
+	if($qCounty) {
+        $geoManager->setQueryVariables('qcounty', $qCounty);
+    }
+	if($qMunicipality) {
+        $geoManager->setQueryVariables('qmunicipality', $qMunicipality);
+    }
+	if($qSciname) {
+        $geoManager->setQueryVariables('qsciname', $qSciname);
+    }
+	if($qDisplayAll) {
+        $geoManager->setQueryVariables('qdisplayall', $qDisplayAll);
+    }
+	if($qVStatus) {
+        $geoManager->setQueryVariables('qvstatus', $qVStatus);
+    }
+	if($qLocality) {
+        $geoManager->setQueryVariables('qlocality', $qLocality);
+    }
+	if($qProcessingStatus) {
+        $geoManager->setQueryVariables('qprocessingstatus', $qProcessingStatus);
+    }
+	if($submitAction === 'Update Coordinates'){
+		$geoManager->updateCoordinates($_POST);
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
 	}
 	$localArr = $geoManager->getLocalityArr();
 }
-
-header("Content-Type: text/html; charset=".$CHARSET);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
@@ -87,7 +113,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=161212"></script>
 	</head>
 	<body>
-		<!-- This is inner text! -->
 		<div  id='innertext'>
 			<div style="float:left;">
 				<div style="font-weight:bold;font-size:150%;margin-top:6px;">
@@ -125,7 +150,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<?php
 												$cArr = $geoManager->getCountryArr();
 												foreach($cArr as $c){
-													echo '<option '.($qCountry==$c?'SELECTED':'').'>'.$c.'</option>';
+													echo '<option '.($qCountry === $c?'SELECTED':'').'>'.$c.'</option>';
 												}
 												?>
 											</select>
@@ -137,7 +162,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<?php
 												$sArr = $geoManager->getStateArr();
 												foreach($sArr as $s){
-													echo '<option '.($qState==$s?'SELECTED':'').'>'.$s.'</option>';
+													echo '<option '.($qState === $s?'SELECTED':'').'>'.$s.'</option>';
 												}
 												?>
 											</select>
@@ -149,7 +174,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<?php
 												$coArr = $geoManager->getCountyArr($qState);
 												foreach($coArr as $c){
-													echo '<option '.($qCounty==$c?'SELECTED':'').'>'.$c.'</option>';
+													echo '<option '.($qCounty === $c?'SELECTED':'').'>'.$c.'</option>';
 												}
 												?>
 											</select>
@@ -163,7 +188,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<?php
 												$muArr = $geoManager->getMunicipalityArr($qState);
 												foreach($muArr as $m){
-													echo '<option '.($qMunicipality==$m?'SELECTED':'').'>'.$m.'</option>';
+													echo '<option '.($qMunicipality === $m?'SELECTED':'').'>'.$m.'</option>';
 												}
 												?>
 											</select>
@@ -175,7 +200,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 												<?php
 												$processingStatus = $geoManager->getProcessingStatus();
 												foreach($processingStatus as $pStatus){
-													echo '<option '.($qProcessingStatus==$pStatus?'SELECTED':'').'>'.$pStatus.'</option>';
+													echo '<option '.($qProcessingStatus === $pStatus?'SELECTED':'').'>'.$pStatus.'</option>';
 												}
 												?>
 											</select>
@@ -237,7 +262,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 								if(isset($localArr)){
 									$localCnt = count($localArr);
 								}
-								if($localCnt == 1000){
+								if($localCnt === 1000){
 									$localCnt = '1000 or more';
 								}
 								echo 'Return Count: '.$localCnt;
@@ -250,12 +275,24 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										if($localArr){
 											foreach($localArr as $k => $v){
 												$locStr = '';
-												if(!$qCountry && $v['country']) $locStr = $v['country'].'; ';
-												if(!$qState && $v['stateprovince']) $locStr .= $v['stateprovince'].'; ';
-												if(!$qCounty && $v['county']) $locStr .= $v['county'].'; ';
-												if(!$qMunicipality && $v['municipality']) $locStr .= $v['municipality'].'; ';
-												if($v['locality']) $locStr .= str_replace(';',',',$v['locality']);
-												if($v['verbatimcoordinates']) $locStr .= ', '.$v['verbatimcoordinates'];
+												if(!$qCountry && $v['country']) {
+                                                    $locStr = $v['country'] . '; ';
+                                                }
+												if(!$qState && $v['stateprovince']) {
+                                                    $locStr .= $v['stateprovince'] . '; ';
+                                                }
+												if(!$qCounty && $v['county']) {
+                                                    $locStr .= $v['county'] . '; ';
+                                                }
+												if(!$qMunicipality && $v['municipality']) {
+                                                    $locStr .= $v['municipality'] . '; ';
+                                                }
+												if($v['locality']) {
+                                                    $locStr .= str_replace(';', ',', $v['locality']);
+                                                }
+												if($v['verbatimcoordinates']) {
+                                                    $locStr .= ', ' . $v['verbatimcoordinates'];
+                                                }
 												if(array_key_exists('decimallatitude',$v) && $v['decimallatitude']){
 													$locStr .= ' ('.$v['decimallatitude'].', '.$v['decimallongitude'].') ';
 												}
@@ -313,7 +350,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<td>
 											<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" />
 											<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
-												<img src="../../images/world.png" style="border:0px;width:13px;" />
+												<img src="../../images/world.png" style="border:0;width:13px;" />
 											</span>
 										</td>
 									</tr>
@@ -342,7 +379,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 											<span style="margin-left:20px;font-weight:bold;">Datum:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
-												<img src="../../images/editplus.png" style="border:0px;width:14px;" />
+												<img src="../../images/editplus.png" style="border:0;width:14px;" />
 											</span>
 										</td>
 									</tr>
@@ -376,7 +413,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 															<option value="Southern">South</option>
 														</select>
 													</div>
-													<div style="margin:5px 0px 0px 15px;float:left;">
+													<div style="margin:5px 0 0 15px;float:left;">
 														<input type="button" value="Convert UTM values to lat/long " onclick="insertUtm(this.form)" />
 													</div>
 												</div>

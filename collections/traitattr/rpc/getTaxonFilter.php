@@ -1,10 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
-header("Content-Type: application/json; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceAttributes.php');
+header('Content-Type: application/json; charset=' .$CHARSET);
 
-$exact = isset($_REQUEST['exact'])&&$_REQUEST['exact']?true:false;
+$exact = (isset($_REQUEST['exact']) && $_REQUEST['exact']);
 
-$attrManager = new OccurrenceAttributes('readonly');
+$attrManager = new OccurrenceAttributes();
 echo $attrManager->getTaxonFilterSuggest($_REQUEST['term'],$exact);
-?>

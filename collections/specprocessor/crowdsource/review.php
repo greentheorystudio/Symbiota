@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/index.php?tabindex=2&'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/index.php?tabindex=2&' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $uid = array_key_exists('uid',$_REQUEST)?$_REQUEST['uid']:0;
@@ -13,11 +15,10 @@ $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:500;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $csManager = new OccurrenceCrowdSource();
-//If collid is null, it will be assumed that current user wants to review their own specimens (they can still edit pending, closed specimen can't be editted)
 $csManager->setCollid($collid);
 
 $isEditor = 0;
-if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 	$isEditor = 1;
 }
 
@@ -35,10 +36,12 @@ $projArr = $csManager->getProjectDetails();
     <link href="../../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript">
 		function selectAll(cbObj){
-			var cbStatus = cbObj.checked;
-			var f = cbObj.form;
-			for(var i = 0; i < f.length; i++) {
-				if(f.elements[i].name == "occid[]") f.elements[i].checked = cbStatus;
+            const cbStatus = cbObj.checked;
+            const f = cbObj.form;
+            for(let i = 0; i < f.length; i++) {
+				if(f.elements[i].name === "occid[]") {
+				    f.elements[i].checked = cbStatus;
+				}
 			}
 		}
 
@@ -55,20 +58,24 @@ $projArr = $csManager->getProjectDetails();
 		}
 
 		function validateReviewForm(f){
-			for(var i = 0; i < f.length; i++) {
-				if(f.elements[i].name == "occid[]" && f.elements[i].checked) return true;
+			for(let i = 0; i < f.length; i++) {
+				if(f.elements[i].name === "occid[]" && f.elements[i].checked) {
+				    return true;
+				}
 			}
 			alert("No records have been selected");
 			return false;
 		}
 	</script>
 </head>
-<body style="margin-left: 0px; margin-right: 0px;background-color:white;">
+<body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div class='navpath'>
 		<a href="../../../index.php">Home</a> &gt;&gt;
 		<a href="index.php">Source Board</a> &gt;&gt;
 		<?php
-		if($collid) echo '<a href="../index.php?tabindex=2&collid='.$collid.'">Control Panel</a> &gt;&gt;';
+		if($collid) {
+            echo '<a href="../index.php?tabindex=2&collid=' . $collid . '">Control Panel</a> &gt;&gt;';
+        }
 		?>
 		<b>Crowdsourcing Review</b>
 	</div>
@@ -77,7 +84,7 @@ $projArr = $csManager->getProjectDetails();
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
@@ -86,27 +93,41 @@ $projArr = $csManager->getProjectDetails();
 		if($recArr = $csManager->getReviewArr($start,$limit,$uid,$rStatus)){
 			$totalCnt = $recArr['totalcnt'];
 			unset($recArr['totalcnt']);
-			//Set up navigation string
 			$pageCnt = count($recArr);
-			//echo json_encode($recArr);
 			$end = ($start + $pageCnt);
 			$urlPrefix = 'review.php?collid='.$collid.'&uid='.$uid.'&rstatus='.$rStatus;
 			$navStr = '<b>';
-			if($start > 0) $navStr .= '<a href="'.$urlPrefix.'&start=0&limit='.$limit.'">';
+			if($start > 0) {
+                $navStr .= '<a href="' . $urlPrefix . '&start=0&limit=' . $limit . '">';
+            }
 			$navStr .= '|&lt; ';
-			if($start > 0) $navStr .= '</a>';
+			if($start > 0) {
+                $navStr .= '</a>';
+            }
 			$navStr .= '&nbsp;&nbsp;&nbsp;';
-			if($start > 0) $navStr .= '<a href="'.$urlPrefix.'&start='.($start-$limit).'&limit='.$limit.'">';
+			if($start > 0) {
+                $navStr .= '<a href="' . $urlPrefix . '&start=' . ($start - $limit) . '&limit=' . $limit . '">';
+            }
 			$navStr .= '&lt;&lt;';
-			if($start > 0) $navStr .= '</a>';
+			if($start > 0) {
+                $navStr .= '</a>';
+            }
 			$navStr .= '&nbsp;&nbsp;|&nbsp;&nbsp;'.($start + 1).' - '.($end).' of '.number_format($totalCnt).'&nbsp;&nbsp;|&nbsp;&nbsp;';
-			if($totalCnt > ($start+$limit)) $navStr .= '<a href="'.$urlPrefix.'&start='.($start+$limit).'&limit='.$limit.'">';
+			if($totalCnt > ($start+$limit)) {
+                $navStr .= '<a href="' . $urlPrefix . '&start=' . ($start + $limit) . '&limit=' . $limit . '">';
+            }
 			$navStr .= '&gt;&gt;';
-			if($totalCnt > ($start+$limit)) $navStr .= '</a>';
+			if($totalCnt > ($start+$limit)) {
+                $navStr .= '</a>';
+            }
 			$navStr .= '&nbsp;&nbsp;&nbsp;';
-			if(($start+$pageCnt) < $totalCnt) $navStr .= '<a href="'.$urlPrefix.'&start='.(floor($totalCnt/$limit)*$limit).'&limit='.$limit.'">';
+			if(($start+$pageCnt) < $totalCnt) {
+                $navStr .= '<a href="' . $urlPrefix . '&start=' . (floor($totalCnt / $limit) * $limit) . '&limit=' . $limit . '">';
+            }
 			$navStr .= '&gt;|';
-			if(($start+$pageCnt) < $totalCnt) $navStr .= '</a> ';
+			if(($start+$pageCnt) < $totalCnt) {
+                $navStr .= '</a> ';
+            }
 			$navStr .= '</b>';
 			?>
 			<div style="width:850px;">
@@ -119,8 +140,8 @@ $projArr = $csManager->getProjectDetails();
 								<select name="rstatus">
 									<option value="5,10">All Records</option>
 									<option value="5,10">----------------------</option>
-									<option value="5" <?php echo ($rStatus=='5'?'SELECTED':''); ?>>Pending Review</option>
-									<option value="10" <?php echo ($rStatus=='10'?'SELECTED':''); ?>>Closed (Approved)</option>
+									<option value="5" <?php echo ($rStatus === '5'?'SELECTED':''); ?>>Pending Review</option>
+									<option value="10" <?php echo ($rStatus === '10'?'SELECTED':''); ?>>Closed (Approved)</option>
 								</select>
 							</div>
 							<?php
@@ -134,7 +155,7 @@ $projArr = $csManager->getProjectDetails();
 										<?php
 										$editorArr = $csManager->getEditorList();
 										foreach($editorArr as $eUid => $eName){
-											echo '<option value="'.$eUid.'" '.($eUid==$uid?'SELECTED':'').'>'.$eName.'</option>'."\n";
+											echo '<option value="'.$eUid.'" '.($eUid === $uid?'SELECTED':'').'>'.$eName.'</option>'."\n";
 										}
 										?>
 									</select>
@@ -172,16 +193,17 @@ $projArr = $csManager->getProjectDetails();
 								echo '<input name="uid" type="hidden" value="'.$uid.'" />';
 							}
 							?>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<tr>
 									<?php
-									if($collid) echo '<th><span title="Select All"><input name="selectall" type="checkbox" onclick="selectAll(this)" /></span></th>';
+									if($collid) {
+                                        echo '<th><span title="Select All"><input name="selectall" type="checkbox" onclick="selectAll(this)" /></span></th>';
+                                    }
 									?>
 									<th>Points</th>
 									<th>Comments</th>
 									<th>Edit</th>
 									<?php
-									//Display table header
 									$header = $csManager->getHeaderArr();
 									foreach($header as $v){
 										echo '<th>'.$v.'</th>';
@@ -190,22 +212,19 @@ $projArr = $csManager->getProjectDetails();
 								</tr>
 								<?php
 								$cnt = 0;
-								//echo json_encode($recArr);
 								foreach($recArr as $occid => $rArr){
 									?>
-									<tr <?php echo ($cnt%2?'class="alt"':'') ?>>
+									<tr <?php echo (($cnt%2)?'class="alt"':'') ?>>
 										<?php
-										$notes = '';
-										if(isset($rArr['notes'])) $notes = $rArr['notes'];
-										$points = 2;
-										if(isset($rArr['points'])) $points = $rArr['points'];
-										if($collid){
+                                        $notes = $rArr['notes'] ?? '';
+                                        $points = $rArr['points'] ?? 2;
+                                        if($collid){
 											echo '<td><input id="o-'.$occid.'" name="occid[]" type="checkbox" value="'.$occid.'" /></td>';
 											echo '<td><select name="p-'.$occid.'" style="width:45px;" onchange="selectCheckbox('.$occid.')">';
-											echo '<option value="0" '.($points=='0'?'SELECTED':'').'>0</option>';
-											echo '<option value="1" '.($points=='1'?'SELECTED':'').'>1</option>';
-											echo '<option value="2" '.($points=='2'?'SELECTED':'').'>2</option>';
-											echo '<option value="3" '.($points=='3'?'SELECTED':'').'>3</option>';
+											echo '<option value="0" '.($points === '0'?'SELECTED':'').'>0</option>';
+											echo '<option value="1" '.($points === '1'?'SELECTED':'').'>1</option>';
+											echo '<option value="2" '.($points === '2'?'SELECTED':'').'>2</option>';
+											echo '<option value="3" '.($points === '3'?'SELECTED':'').'>3</option>';
 											echo '</select></td>';
 											echo '<td><input name="c-'.$occid.'" type="text" value="'.$notes.'" style="width:60px;" onfocus="expandNotes(this)" onblur="collapseNotes(this)" onchange="selectCheckbox('.$occid.')" /></td>';
 										}
@@ -216,7 +235,7 @@ $projArr = $csManager->getProjectDetails();
 										?>
 										<td>
 											<?php
-											if($isEditor || $rArr['reviewstatus'] == 5){
+											if($isEditor || $rArr['reviewstatus'] === 5){
 												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid='.$occid.'" target="_blank">';
 												echo '<img src="../../../images/edit.png" style="border:solid 1px gray;height:13px;" />';
 												echo '</a>';
@@ -258,30 +277,28 @@ $projArr = $csManager->getProjectDetails();
 					</div>
 					<?php
 				}
-				else{
-					if($collid && $rStatus == 5){
-						?>
-						<div style="clear:both;margin:30px 15px;font-weight:bold;">
-							<div style="font-size:120%;">
-								There are no more records to review for this user
-							</div>
-							<div style="margin:15px;">
-								Return to <a href="../index.php?tabindex=2&collid=<?php echo $collid; ?>">Control Panel</a>
-							</div>
-							<div style="margin:15px;">
-								Return to <a href="index.php">Source Board</a>
-							</div>
-						</div>
-						<?php
-					}
-					else{
-						?>
-						<div style="clear:both;font-size:120%;padding-top:30px;font-weight:bold;">
-							There are no records matching search criteria
-						</div>
-						<?php
-					}
-				}
+				else if($collid && $rStatus === 5){
+                    ?>
+                    <div style="clear:both;margin:30px 15px;font-weight:bold;">
+                        <div style="font-size:120%;">
+                            There are no more records to review for this user
+                        </div>
+                        <div style="margin:15px;">
+                            Return to <a href="../index.php?tabindex=2&collid=<?php echo $collid; ?>">Control Panel</a>
+                        </div>
+                        <div style="margin:15px;">
+                            Return to <a href="index.php">Source Board</a>
+                        </div>
+                    </div>
+                    <?php
+                }
+                else{
+                    ?>
+                    <div style="clear:both;font-size:120%;padding-top:30px;font-weight:bold;">
+                        There are no records matching search criteria
+                    </div>
+                    <?php
+                }
 				?>
 			</div>
 			<?php

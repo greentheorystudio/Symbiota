@@ -1,51 +1,63 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
-include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
+include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
+include_once(__DIR__ . '/../../classes/ImageProcessor.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-header("Content-Type: text/html; charset=".$CHARSET);
-
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $spprId = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
-//NLP and OCR variables
 $spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
 $procStatus = array_key_exists('procstatus',$_REQUEST)?$_REQUEST['procstatus']:'unprocessed';
 $displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0; 
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 
-//Sanitation
-if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) $action = '';
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($spprId)) $spprId = 0;
-if(!is_numeric($spNlpId)) $spNlpId = 0;
-if($procStatus && !preg_match('/^[a-zA-Z]+$/',$procStatus)) $procStatus = '';
-if(!is_numeric($displayMode)) $displayMode = 0;
-if(!is_numeric($tabIndex)) $tabIndex = 0;
-
+if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
+    $action = '';
+}
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if(!is_numeric($spprId)) {
+    $spprId = 0;
+}
+if(!is_numeric($spNlpId)) {
+    $spNlpId = 0;
+}
+if($procStatus && !preg_match('/^[a-zA-Z]+$/',$procStatus)) {
+    $procStatus = '';
+}
+if(!is_numeric($displayMode)) {
+    $displayMode = 0;
+}
+if(!is_numeric($tabIndex)) {
+    $tabIndex = 0;
+}
 
 $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 
 $fileName = '';
 $statusStr = '';
 if($isEditor){
-	if($action == 'Analyze Image Data File'){
-		if($_POST['projecttype'] == 'file'){
+	if($action === 'Analyze Image Data File'){
+		if($_POST['projecttype'] === 'file'){
 			$imgProcessor = new ImageProcessor();
 			$fileName = $imgProcessor->loadImageFile();
 		}
 	}
-	elseif($action == 'Save Profile'){
+	elseif($action === 'Save Profile'){
 		if($_POST['spprid']){
 			$specManager->editProject($_POST);
 		}
@@ -53,10 +65,10 @@ if($isEditor){
 			$specManager->addProject($_POST);
 		}
 	}
-	elseif($action == 'Delete Profile'){
+	elseif($action === 'Delete Profile'){
 		$specManager->deleteProject($_POST['sppriddel']);
 	}
-	elseif($action == 'Add to Queue'){
+	elseif($action === 'Add to Queue'){
 		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
 		$statusStr = $csManager->addToQueue($_POST['omcsid'],$_POST['family'],$_POST['taxon'],$_POST['country'],$_POST['stateprovince'],$_POST['limit']);
@@ -65,12 +77,12 @@ if($isEditor){
 		}
 		$action = '';
 	}
-	elseif($action == 'delqueue'){
+	elseif($action === 'delqueue'){
 		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
-		$statusStr = $csManager->deleteQueue($_GET['omcsid']);
+		$statusStr = $csManager->deleteQueue();
 	}
-	elseif($action == 'Edit Crowdsource Project'){
+	elseif($action === 'Edit Crowdsource Project'){
 		$omcsid = $_POST['omcsid'];
 		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
@@ -90,7 +102,7 @@ if($isEditor){
 		<script>
 			$(document).ready(function() {
 				$('#tabs').tabs({
-					select: function(event, ui) {
+					select: function() {
 						return true;
 					},
 					active: <?php echo $tabIndex; ?>,
@@ -104,20 +116,19 @@ if($isEditor){
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
         echo '<div class="navpath">';
         echo '<a href="../../index.php">Home</a> &gt;&gt; ';
         echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
         echo '<b>Specimen Processor Control Panel</b>';
         echo '</div>';
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<h2><?php echo $specManager->getCollectionName(); ?></h2>
 			<?php
 			if($statusStr){ 
 				?>
-				<div style='margin:20px 0px 20px 0px;'>
+				<div style='margin:20px 0 20px 0;'>
 					<hr/>
 					<div style="margin:15px;color:<?php echo (stripos($statusStr,'error') !== false?'red':'green'); ?>">
 						<?php echo $statusStr; ?>
@@ -182,13 +193,7 @@ if($isEditor){
 								The OCR module gives collection managers the ability to batch OCR specimen images using the Tesseract OCR 
 								engine or process and upload text files containing OCR obtained from other OCR software.   
 							</div>
-
-							<!--  
-							<h2>Natural Language Processing (NLP)</h2>
-							<div style="margin:15px 0px 40px 15px">Description to be added </div>
-							-->
-
-						</div>
+                        </div>
 					</div>
 				</div>
 				<?php 
@@ -203,7 +208,7 @@ if($isEditor){
 			?>
 		</div>
 		<?php
-			include($SERVER_ROOT.'/footer.php');
+			include(__DIR__ . '/../../footer.php');
 		?>
 	</body>
 </html>

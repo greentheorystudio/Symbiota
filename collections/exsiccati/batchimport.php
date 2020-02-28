@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ExsiccatiManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 if(!$SYMB_UID){
 	header('Location: ../../profile/index.php?refurl=../collections/exsiccati/batchimport.php?'.$_SERVER['QUERY_STRING']);
@@ -18,24 +18,23 @@ $isEditor = 0;
 if($IS_ADMIN){
 	$isEditor = 1;
 }
-elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 	$isEditor = 1;
 }
-elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])){
+elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 	$isEditor = 1;
 }
 
 $exsManager = new ExsiccatiManager();
 if($isEditor && $formSubmit){
-	if($formSubmit == 'Import Selected Records'){
+	if($formSubmit === 'Import Selected Records'){
 		$statusStr = $exsManager->batchImport($collid,$_POST);
 	}
-	elseif($formSubmit == 'Export Selected Records'){
-		$statusStr = $exsManager->exportAsCsv($_POST);
+	elseif($formSubmit === 'Export Selected Records'){
+		$exsManager->exportAsCsv($_POST);
 		exit;
 	}
 }
-
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -44,9 +43,9 @@ if($isEditor && $formSubmit){
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function verifyExsTableForm(f){
-			var formVerified = false;
-			for(var h=0;h<f.length;h++){
-				if(f.elements[h].name == "occid[]" && f.elements[h].checked){
+            let formVerified = false;
+            for(let h = 0; h<f.length; h++){
+				if(f.elements[h].name === "occid[]" && f.elements[h].checked){
 					formVerified = true;
 					break;
 				}
@@ -55,15 +54,11 @@ if($isEditor && $formSubmit){
 				alert("Select at least one record");
 				return false;
 			}
-			if(f.collid.value == ""){
-				//alert("Target collection must be selected");
-				//return false;
-			}
 			return true;
 		}
 
 		function verifyFirstForm(f){
-			if(f.ometid.value == ""){
+			if(f.ometid.value === ""){
 				alert("Exsiccati title must be selected");
 				return false;
 			}
@@ -71,63 +66,63 @@ if($isEditor && $formSubmit){
 		}
 
 		function checkRecord(textObj,occid){
-			var cbObj = document.getElementById(occid);
-			if(textObj.value == ""){
-				cbObj.checked = false;
-			}
-			else{
-				cbObj.checked = true;
-			}
+            const cbObj = document.getElementById(occid);
+            cbObj.checked = textObj.value !== "";
 		}
 
 		function selectAll(selectObj){
-			var boxesChecked = true;
-			if(!selectObj.checked){
+            let boxesChecked = true;
+            if(!selectObj.checked){
 				boxesChecked = false;
 			}
-			var f = selectObj.form;
-			for(var i=0;i<f.length;i++){
-				if(f.elements[i].name == "occid[]") f.elements[i].checked = boxesChecked;
+            const f = selectObj.form;
+            for(let i=0; i<f.length; i++){
+				if(f.elements[i].name === "occid[]") {
+				    f.elements[i].checked = boxesChecked;
+				}
 			}
 		}
 
 		function openIndPU(occId){
-			var wWidth = 900;
-			if(document.getElementById('maintable').offsetWidth){
+            let wWidth = 900;
+            if(document.getElementById('maintable').offsetWidth){
 				wWidth = document.getElementById('maintable').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
 			}
-			newWindow = window.open('../individual/index.php?occid='+occId,'indspec','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-			if(newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open('../individual/index.php?occid=' + occId, 'indspec', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+            if(newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 			return false;
 		}
 
 		function openExsPU(omenid){
-			var wWidth = 900;
-			if(document.getElementById('maintable').offsetWidth){
+            let wWidth = 900;
+            if(document.getElementById('maintable').offsetWidth){
 				wWidth = document.getElementById('maintable').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
 			}
-			newWindow = window.open('index.php?omenid='+omenid,'exsnum','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-			if(newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open('index.php?omenid=' + omenid, 'exsnum', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+            if(newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 			return false;
 		}
 	</script>
 </head>
 <body>
 	<?php 
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt; 
 		<a href="index.php">Exsiccati Index</a> &gt;&gt; 
 		<a href="batchimport.php">Batch Import Module</a>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($statusStr){
@@ -146,7 +141,6 @@ if($isEditor && $formSubmit){
 								<option value="">Choose Exsiccati Series</option>
 								<option value="">------------------------------------</option>
 								<?php 
-								//Get only titles with linked specimens
 								foreach($exsArr as $exid => $exTitle){
 									echo '<option value="'.$exid.'">'.$exTitle.'</option>';
 								}
@@ -162,7 +156,7 @@ if($isEditor && $formSubmit){
 				echo '<div style="margin:20px;font-size:120%;"><b>The system does not yet have occurrence linked to exsiccati that can be transferred</b></div>';
 			}				
 		}
-		elseif($formSubmit == 'Show Exsiccati Table'){
+		elseif($formSubmit === 'Show Exsiccati Table'){
 			$occurArr = $exsManager->getExsOccArr($ometid, 'ometid');
 			if($occurArr){
 				$exsMetadata = $exsManager->getTitleObj($ometid);
@@ -170,23 +164,22 @@ if($isEditor && $formSubmit){
 				echo '<div style="font-size:120%;"><b>'.$exstitle.'</b></div>';
 				?>
 				<form name="exstableform" method="post" action="batchimport.php" onsubmit="return verifyExsTableForm(this)">
-					<div style="margin:10px 0px;">
+					<div style="margin:10px 0;">
 						Enter your catalog numbers in field associated with record and then transfer into your collection or download as a spreadsheet (CSV) 
 						for import into a local database application.   
 					</div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 						<tr><th><input name="selectAllCB" type="checkbox" onchange="selectAll(this)" /></th><th>Catalog Number</th><th>Exsiccati #</th><th>Details</th></tr>
 						<?php 
 						foreach($occurArr as $omenid => $occArr){
-							//Sort by preferred source collections and ranking
 							$prefOcc = array();
 							if($source1 || $source2){
 								foreach($occArr as $id => $oArr){
-									if($oArr['collid'] == $source1){
+									if($oArr['collid'] === $source1){
 										array_unshift($prefOcc,$id);
 									}
-									if($oArr['collid'] == $source2){
-										array_push($prefOcc,$id);
+									if($oArr['collid'] === $source2){
+										$prefOcc[] = $id;
 									}
 								}
 							}
@@ -197,8 +190,7 @@ if($isEditor && $formSubmit){
 								$cnt++;
 							}
 							foreach($occArr as $occid => $oArr){
-								//List maximun of three occurrences for each exsiccati number
-								if($cnt < 3 || $oArr['collid'] == $collid){
+								if($cnt < 3 || $oArr['collid'] === $collid){
 									echo $exsManager->getExsTableRow($occid,$oArr,$omenid,$collid);
 									$cnt++;
 								}
@@ -206,13 +198,6 @@ if($isEditor && $formSubmit){
 						}
 						?>
 					</table>
-					<!-- 
-					<div style="margin:10px 0px">
-						<b>Dataset Title</b><br/>
-						<input name="dataset" type="text" value="" style="width:300px;" /><br/>
-						*Enter value to create a dataset to which imported records will be linked 
-					</div>
-					 -->
 					<?php
 					if($targetCollArr = $exsManager->getTargetCollArr()){
 						?>
@@ -222,7 +207,7 @@ if($isEditor && $formSubmit){
 								<option value="">----------------------------------</option>
 								<?php
 								foreach($targetCollArr as $id => $collName){
-									echo '<option value="'.$id.'" '.($id==$collid?'SELECTED':'').'>'.$collName.'</option>';
+									echo '<option value="'.$id.'" '.($id === $collid?'SELECTED':'').'>'.$collName.'</option>';
 								}
 								?>
 							</select>
@@ -257,13 +242,13 @@ if($isEditor && $formSubmit){
 							<div>
 								<b>Select up to two collections that are the preferred sources for occurrence records</b>
 							</div>
-							<div style="margin:5px 0px">
+							<div style="margin:5px 0;">
 								<select name="source1">
 									<option value="">Source Collection 1</option>
 									<option value="">------------------------------------</option>
 									<?php 
 									foreach($sourceCollArr as $id => $cTitle){
-										echo '<option value="'.$id.'" '.($source1==$id?'SELECTED':'').'>'.$cTitle.'</option>';
+										echo '<option value="'.$id.'" '.($source1 === $id?'SELECTED':'').'>'.$cTitle.'</option>';
 									}
 									?>
 								</select>
@@ -271,13 +256,13 @@ if($isEditor && $formSubmit){
 							<?php 
 							if(count($sourceCollArr) > 1){
 								?>
-								<div style="margin:5px 0px">
+								<div style="margin:5px 0;">
 									<select name="source2">
 										<option value="">Source Collection 2</option>
 										<option value="">------------------------------------</option>
 										<?php 
 										foreach($sourceCollArr as $id => $cTitle){
-											echo '<option value="'.$id.'" '.($source2==$id?'SELECTED':'').'>'.$cTitle.'</option>';
+											echo '<option value="'.$id.'" '.($source2 === $id?'SELECTED':'').'>'.$cTitle.'</option>';
 										}
 										?>
 									</select>
@@ -301,7 +286,7 @@ if($isEditor && $formSubmit){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

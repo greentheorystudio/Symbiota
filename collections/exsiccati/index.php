@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ExsiccatiManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $ometId = array_key_exists('ometid',$_REQUEST)?$_REQUEST['ometid']:0;
 $omenId = array_key_exists('omenid',$_REQUEST)?$_REQUEST['omenid']:0;
@@ -12,7 +12,6 @@ $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $imagesOnly = array_key_exists('imagesonly',$_REQUEST)?$_REQUEST['imagesonly']:0;
 $sortBy = array_key_exists('sortby',$_REQUEST)?$_REQUEST['sortby']:0;
 $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
-//if(!$formSubmit && !$ometId) $specimenOnly = 1;
 
 $statusStr = '';
 $isEditor = 0;
@@ -22,47 +21,51 @@ if($IS_ADMIN){
 
 $exsManager = new ExsiccatiManager();
 if($isEditor && $formSubmit){
-	if($formSubmit == 'Add Exsiccati Title'){
+	if($formSubmit === 'Add Exsiccati Title'){
 		$exsManager->addTitle($_POST,$PARAMS_ARR['un']);
 	}
-	elseif($formSubmit == 'Save'){
+	elseif($formSubmit === 'Save'){
 		$exsManager->editTitle($_POST,$PARAMS_ARR['un']);
 	}
-	elseif($formSubmit == 'Delete Exsiccati'){
+	elseif($formSubmit === 'Delete Exsiccati'){
 		$statusStr = $exsManager->deleteTitle($ometId);
-		if(!$statusStr) $ometId = 0;
+		if(!$statusStr) {
+            $ometId = 0;
+        }
 	}
-	elseif($formSubmit == 'Merge Exsiccati'){
+	elseif($formSubmit === 'Merge Exsiccati'){
 		$statusStr = $exsManager->mergeTitles($ometId,$_POST['targetometid']);
-		if(!$statusStr) $ometId = $_POST['targetometid'];
+		if(!$statusStr) {
+            $ometId = $_POST['targetometid'];
+        }
 	}
-	elseif($formSubmit == 'Add New Number'){
+	elseif($formSubmit === 'Add New Number'){
 		$exsManager->addNumber($_POST);
 	}
-	elseif($formSubmit == 'Save Edits'){
+	elseif($formSubmit === 'Save Edits'){
 		$exsManager->editNumber($_POST);
 	}
-	elseif($formSubmit == 'Delete Number'){
+	elseif($formSubmit === 'Delete Number'){
 		$exsManager->deleteNumber($omenId);
 		$omenId = 0;
 	}
-	elseif($formSubmit == 'Transfer Number'){
+	elseif($formSubmit === 'Transfer Number'){
 		$statusStr = $exsManager->transferNumber($omenId,trim($_POST['targetometid'],'k'));
 	}
-	elseif($formSubmit == 'Add Specimen Link'){
+	elseif($formSubmit === 'Add Specimen Link'){
 		$statusStr = $exsManager->addOccLink($_POST);
 	}
-	elseif($formSubmit == 'Save Specimen Link Edit'){
+	elseif($formSubmit === 'Save Specimen Link Edit'){
 		$exsManager->editOccLink($_POST);
 	}
-	elseif($formSubmit == 'Delete Link to Specimen'){
+	elseif($formSubmit === 'Delete Link to Specimen'){
 		$exsManager->deleteOccLink($omenId,$_POST['occid']);
 	}
-	elseif($formSubmit == 'Transfer Specimen'){
+	elseif($formSubmit === 'Transfer Specimen'){
 		$statusStr = $exsManager->transferOccurrence($omenId,$_POST['occid'],trim($_POST['targetometid'],'k'),$_POST['targetexsnumber']);
 	}
 }
-if($formSubmit == 'dlexsiccati'){
+if($formSubmit === 'dlexsiccati'){
 	$exsManager->exportExsiccatiAsCsv($searchTerm, $specimenOnly, $imagesOnly, $collId);
 	exit;
 }
@@ -95,7 +98,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verfifyExsAddForm(f){
-			if(f.title.value == ""){
+			if(f.title.value === ""){
 				alert("Title can't be empty");
 				return false;
 			}
@@ -103,7 +106,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyExsEditForm(f){
-			if(f.title.value == ""){
+			if(f.title.value === ""){
 				alert("Title can't be empty");
 				return false;
 			}
@@ -111,7 +114,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyExsMergeForm(f){
-			if(t.targetometid == ""){
+			if(f.targetometid === ""){
 				alert("You need to select a target exsiccati to merge into");
 				return false;
 			}
@@ -121,7 +124,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyNumAddForm(f){
-			if(f.exsnumber.value == ""){
+			if(f.exsnumber.value === ""){
 				alert("Number can't be empty");
 				return false;
 			}
@@ -129,7 +132,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyNumEditForm(f){
-			if(f.exsnumber.value == ""){
+			if(f.exsnumber.value === ""){
 				alert("Number can't be empty");
 				return false;
 			}
@@ -137,7 +140,7 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyNumTransferForm(f){
-			if(t.targetometid == ""){
+			if(f.targetometid === ""){
 				alert("You need to select a target exsiccati to merge into");
 				return false;
 			}
@@ -147,11 +150,11 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyOccAddForm(f){
-			if(f.occaddcollid.value == ""){
+			if(f.occaddcollid.value === ""){
 				alert("Please select a collection");
 				return false;
 			}
-			if(f.identifier.value == "" && (f.recordedby.value == "" || f.recordnumber.value == "")){
+			if(f.identifier.value === "" && (f.recordedby.value === "" || f.recordnumber.value === "")){
 				alert("Catalog Number or Collector needs to be filled in");
 				return false;
 			}
@@ -163,11 +166,11 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyOccEditForm(f){
-			if(f.collid.options[0].selected == true || f.collid.options[1].selected){
+			if(f.collid.options[0].selected === true || f.collid.options[1].selected){
 				alert("The Collection pulldown need to be selected");
 				return false;
 			}
-			if(f.occid.value == ""){
+			if(f.occid.value === ""){
 				alert("Occurrences ID can't be empty");
 				return false;
 			}
@@ -175,11 +178,11 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function verifyOccTransferForm(f){
-			if(f.targetometid.value == ""){
+			if(f.targetometid.value === ""){
 				alert("Please select an exsiccati title");
 				return false;
 			}
-			if(f.targetexsnumber.value == ""){
+			if(f.targetexsnumber.value === ""){
 				alert("Please enter an exsiccati number");
 				return false;
 			}
@@ -187,9 +190,9 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function specimenOnlyChanged(cbObj){
-			var divObj = document.getElementById('qryextradiv');
-			var f = cbObj.form;
-			if(cbObj.checked == true){
+            const divObj = document.getElementById('qryextradiv');
+            const f = cbObj.form;
+            if(cbObj.checked === true){
 				divObj.style.display = "block";
 			}
 			else{
@@ -201,38 +204,32 @@ if($formSubmit == 'dlexsiccati'){
 		}
 
 		function openIndPU(occId){
-			var wWidth = 900;
-			if(document.getElementById('maintable').offsetWidth){
+            let wWidth = 900;
+            if(document.getElementById('maintable').offsetWidth){
 				wWidth = document.getElementById('maintable').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
 			}
-			newWindow = window.open('../individual/index.php?occid='+occId,'indspec' + occId,'scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-			if(newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open('../individual/index.php?occid=' + occId, 'indspec' + occId, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+            if(newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 			return false;
 		}
 
 		<?php
 		if($omenId){
-			//Exsiccati number section can have a large number of ometid select look ups; using javascript makes page more efficient
 			$titleArr = $exsManager->getTitleArr();
 			$selectValues = '';
-			//Added "k" prefix to key so that Chrom would maintain the correct sort order
 			foreach($titleArr as $k => $v){
 				$selectValues .= ',k'.$k.': "'.$v.'"';
 			}
 			?>
 			function buildExsSelect(selectObj){
-				var selectValues = {<?php echo substr($selectValues,1); ?>};
-
-				for(key in selectValues) {
-					try{
-						selectObj.add(new Option(selectValues[key], key), null);
-					}
-					catch(e){ //IE
-						selectObj.add(new Option(selectValues[key], key));
-					}
+				const selectValues = {<?php echo substr($selectValues,1); ?>};
+                for(let key in selectValues) {
+                    selectObj.add(new Option(selectValues[key], key), null);
 				}
 			}
 			<?php
@@ -243,7 +240,7 @@ if($formSubmit == 'dlexsiccati'){
 
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
@@ -256,7 +253,6 @@ if($formSubmit == 'dlexsiccati'){
 		}
 		?>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext" style="width:95%;">
 		<?php
 		if($statusStr){
@@ -275,7 +271,7 @@ if($formSubmit == 'dlexsiccati'){
 							<input type="text" name="searchterm" value="<?php echo $searchTerm;?>" size="20" onchange="this.form.submit()" />
 						</div>
 						<div title="including without linked specimen records">
-							<input type="checkbox" name="specimenonly" value="1" <?php echo ($specimenOnly?"CHECKED":"");?> onchange="specimenOnlyChanged(this)" />
+							<input type="checkbox" name="specimenonly" value="1" <?php echo ($specimenOnly? 'CHECKED' : '');?>onchange="specimenOnlyChanged(this)" />
 							Display only those w/ specimens
 						</div>
 						<div id="qryextradiv" style="margin-left:15px;display:<?php echo ($specimenOnly?'block':'none'); ?>;" title="including without linked specimen records">
@@ -287,20 +283,20 @@ if($formSubmit == 'dlexsiccati'){
 									<?php
 									$acroArr = $exsManager->getCollArr('all');
 									foreach($acroArr as $id => $collTitle){
-										echo '<option value="'.$id.'" '.($id==$collId?'SELECTED':'').'>'.$collTitle.'</option>';
+										echo '<option value="'.$id.'" '.($id === $collId?'SELECTED':'').'>'.$collTitle.'</option>';
 									}
 									?>
 								</select>
 							</div>
 							<div>
-							    <input name='imagesonly' type='checkbox' value='1' <?php echo ($imagesOnly?"CHECKED":""); ?> onchange="this.form.submit()" />
+							    <input name='imagesonly' type='checkbox' value='1' <?php echo ($imagesOnly? 'CHECKED' : ''); ?>onchange="this.form.submit()" />
 							    Display only those w/ images
 							</div>
 						</div>
-						<div style="margin:5px 0px 0px 5px;">
+						<div style="margin:5px 0 0 5px;">
 							Display and sort by:<br />
-							<input type="radio" name="sortby" value="0" <?php echo ($sortBy == 0?"CHECKED":""); ?> onchange="this.form.submit()">Title
-							<input type="radio" name="sortby" value="1" <?php echo ($sortBy == 1?"CHECKED":""); ?> onchange="this.form.submit()">Abbreviation
+							<input type="radio" name="sortby" value="0" <?php echo ($sortBy === 0? 'CHECKED' : ''); ?>onchange="this.form.submit()">Title
+							<input type="radio" name="sortby" value="1" <?php echo ($sortBy === 1? 'CHECKED' : ''); ?>onchange="this.form.submit()">Abbreviation
 						</div>
 						<div style="float:right;" title="Download Exsiccati Records">
 							<?php
@@ -308,7 +304,7 @@ if($formSubmit == 'dlexsiccati'){
 							?>
 							<a href="<?php echo $dlUrl; ?>" target="_blank"><img src="../../images/dl.png" style="width:15px" /></a>
 						</div>
-						<div style="margin:5px 0px 0px 5px;">
+						<div style="margin:5px 0 0 5px;">
 							<input name="formsubmit" type="submit" value="Rebuild List" />
 						</div>
 					</fieldset>
@@ -319,7 +315,7 @@ if($formSubmit == 'dlexsiccati'){
 			if($isEditor){
 				?>
 				<div style="cursor:pointer;float:right;" onclick="toggle('exsadddiv');" title="Edit Exsiccati Number">
-					<img style="border:0px;" src="../../images/add.png" />
+					<img style="border:0;" src="../../images/add.png" />
 				</div>
 				<div id="exsadddiv" style="display:none;">
 					<form name="exsaddform" action="index.php" method="post" onsubmit="return verfifyExsAddForm(this)">
@@ -387,16 +383,18 @@ if($formSubmit == 'dlexsiccati'){
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="Edit Exsiccati">
-							<img style="border:0px;" src="../../images/edit.png" />
+							<img style="border:0;" src="../../images/edit.png" />
 						</span>
 						<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="Add Exsiccati Number">
-							<img style="border:0px;" src="../../images/add.png" />
+							<img style="border:0;" src="../../images/add.png" />
 						</span>
 					</div>
 					<?php
 				}
 				echo $exsArr['title'].', '.$exsArr['editor'].($exsArr['exsrange']?' ['.$exsArr['exsrange'].']':'');
-				if($exsArr['notes']) echo '<div>'.$exsArr['notes'].'</div>';
+				if($exsArr['notes']) {
+                    echo '<div>' . $exsArr['notes'] . '</div>';
+                }
 				?>
 			</div>
 			<div id="exseditdiv" style="display:none;">
@@ -494,9 +492,11 @@ if($formSubmit == 'dlexsiccati'){
 								<?php
 								echo '<div><a href="index.php?omenid='.$k.'">';
 								echo '#'.$numArr['number'].' - '.($numArr['sciname']?'<i>'.$numArr['sciname'].'</i>':'').
-								', '.($numArr['collector']?$numArr['collector']:'[collector undefined]');
+								', '.($numArr['collector']?:'[collector undefined]');
 								echo '</a></div>';
-								if($numArr['notes']) echo '<div style="margin-left:15px;">'.$numArr['notes'].'</div>';
+								if($numArr['notes']) {
+                                    echo '<div style="margin-left:15px;">' . $numArr['notes'] . '</div>';
+                                }
 								?>
 							</li>
 							<?php
@@ -518,10 +518,10 @@ if($formSubmit == 'dlexsiccati'){
 				?>
 				<div style="float:right;">
 					<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="Edit Exsiccati Number">
-						<img style="border:0px;" src="../../images/edit.png"/>
+						<img style="border:0;" src="../../images/edit.png"/>
 					</span>
 					<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="Add Occurrence to Exsiccati Number">
-						<img style="border:0px;" src="../../images/add.png" />
+						<img style="border:0;" src="../../images/add.png" />
 					</span>
 				</div>
 				<?php
@@ -536,8 +536,12 @@ if($formSubmit == 'dlexsiccati'){
 				<?php
 				echo $mdArr['abbreviation'].'</br>';
 				echo $mdArr['editor'];
-				if($mdArr['exsrange']) echo ' ['.$mdArr['exsrange'].']';
-				if($mdArr['notes']) echo '</br>'.$mdArr['notes'];
+				if($mdArr['exsrange']) {
+                    echo ' [' . $mdArr['exsrange'] . ']';
+                }
+				if($mdArr['notes']) {
+                    echo '</br>' . $mdArr['notes'];
+                }
 				?>
 			</div>
 			<div id="numeditdiv" style="display:none;">
@@ -602,7 +606,7 @@ if($formSubmit == 'dlexsiccati'){
 								<option value="occid">Symbiota Primary Key (occid)</option>
 							</select>
 						</div>
-						<div style="margin:10px 0px;height:40px;">
+						<div style="margin:10px 0;height:40px;">
 							<div style="margin:2px;float:left;">
 								Catalog Number <br/>
 								<input name="identifier" type="text" value="" />
@@ -635,7 +639,7 @@ if($formSubmit == 'dlexsiccati'){
 				</form>
 			</div>
 			<hr/>
-			<div style="margin:15px 10px 0px 0px;">
+			<div style="margin:15px 10px 0 0;">
 				<?php
 				$occurArr = $exsManager->getExsOccArr($omenId);
 				if($exsOccArr = array_shift($occurArr)){
@@ -685,7 +689,7 @@ if($formSubmit == 'dlexsiccati'){
 										?>
 									</div>
 									<div>
-										<?php echo ($occArr['notes']?$occArr['notes']:''); ?>
+										<?php echo ($occArr['notes']?:''); ?>
 									</div>
 									<div>
 										<a href="#" onclick="openIndPU(<?php echo $k; ?>)">
@@ -706,7 +710,7 @@ if($formSubmit == 'dlexsiccati'){
 									if($isEditor){
 										?>
 										<div style="cursor:pointer;float:right;" onclick="toggle('occeditdiv-<?php echo $k; ?>');" title="Edit Occurrence Link">
-											<img style="border:0px;" src="../../images/edit.png"/>
+											<img style="border:0;" src="../../images/edit.png"/>
 										</div>
 										<?php
 									}
@@ -764,7 +768,7 @@ if($formSubmit == 'dlexsiccati'){
 											</fieldset>
 										</form>
 									</div>
-									<div style="margin:10px 0px 10px 0px;">
+									<div style="margin:10px 0 10px 0;">
 										<hr/>
 									</div>
 								</td>
@@ -785,7 +789,7 @@ if($formSubmit == 'dlexsiccati'){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

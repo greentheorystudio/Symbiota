@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
@@ -13,9 +13,9 @@ $procManager->setProjVariables('OCR Harvest');
 ?>
 <script>
 	$(function() {
-		var dialogArr = new Array("speckeypattern","sourcepath","ocrfile","ocrsource");
-		var dialogStr = "";
-		for(i=0;i<dialogArr.length;i++){
+        const dialogArr = ["speckeypattern", "sourcepath", "ocrfile", "ocrsource"];
+        let dialogStr = "";
+        for(let i=0;i<dialogArr.length;i++){
 			dialogStr = dialogArr[i]+"info";
 			$( "#"+dialogStr+"dialog" ).dialog({
 				autoOpen: false,
@@ -31,7 +31,7 @@ $procManager->setProjVariables('OCR Harvest');
 	});
 	
 	function validateStatQueryForm(f){
-		if(f.pscrit.value == ""){
+		if(f.pscrit.value === ""){
 			alert("Please select a processing status");
 			return false;
 		}
@@ -39,7 +39,7 @@ $procManager->setProjVariables('OCR Harvest');
 	}
 
 	function validateOcrTessForm(f){
-		if(f.procstatus.value == ""){
+		if(f.procstatus.value === ""){
 			alert("Please select a processing status");
 			return false;
 		}
@@ -47,19 +47,19 @@ $procManager->setProjVariables('OCR Harvest');
 	}
 	
 	function validateOcrUploadForm(f){
-		if(f.speckeypattern.value == ""){
+		if(f.speckeypattern.value === ""){
 			alert("Please enter a pattern matching string for extracting the catalog number");
 			return false;
 		}
 
-		if(f.sourcepath.value == "" && f.ocrfile.value == ""){
+		if(f.sourcepath.value === "" && f.ocrfile.value === ""){
 			alert("Please select/enter an OCR input source file");
 			return false;
 		}
-		var fileName = f.ocrfile.value;
-		if(fileName != ""){
-			var ext = fileName.split('.').pop();
-			if(ext != 'zip' && ext != 'ZIP'){
+        const fileName = f.ocrfile.value;
+        if(fileName !== ""){
+            const ext = fileName.split('.').pop();
+            if(ext !== 'zip' && ext !== 'ZIP'){
 				alert("Upload file must be a ZIP file with a .zip extension");
 				return false;
 			}
@@ -72,7 +72,9 @@ $procManager->setProjVariables('OCR Harvest');
 	$cntTotal = $procManager->getSpecWithImage();
 	$cntUnproc = $procManager->getSpecWithImage($procStatus);
 	$cntUnprocNoOcr = $procManager->getSpecNoOcr($procStatus);
-	if($procStatus == 'null') $procStatus = 'No Status';
+	if($procStatus === 'null') {
+        $procStatus = 'No Status';
+    }
 	?>
 	<fieldset style="padding:20px;">
 		<legend><b>Specimen Image Statistics</b></legend>
@@ -118,7 +120,7 @@ $procManager->setProjVariables('OCR Harvest');
 						<?php 
 						$psList = $procManager->getProcessingStatusList();
 						foreach($psList as $psVal){
-							if($psVal != 'unprocessed'){
+							if($psVal !== 'unprocessed'){
 								echo '<option value="'.$psVal.'">'.$psVal.'</option>';
 							}
 						}

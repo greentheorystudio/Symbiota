@@ -1,13 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
 
 $customField1 = array_key_exists('customfield1',$_REQUEST)?$_REQUEST['customfield1']:'';
 $customType1 = array_key_exists('customtype1',$_REQUEST)?$_REQUEST['customtype1']:'';
@@ -23,7 +24,7 @@ $dlManager = new OccurrenceDownload();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 
@@ -52,12 +53,10 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
 	</head>
 	<body>
-		<!-- This is inner text! -->
 		<div id="innertext" style="background-color:white;">
 			<?php
 			if($collid && $isEditor){
 				if($ACTIVATE_GEOLOCATE_TOOLKIT){
-					//GeoLocate tools
 					?>
 					<form name="expgeolocateform" action="../download/downloadhandler.php" method="post" onsubmit="">
 						<fieldset>
@@ -74,7 +73,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="processingstatus" onchange="cogeUpdateCount(this)">
 												<option value="">All Records</option>
 												<?php
@@ -94,41 +93,41 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 										</div>
 									</td>
 									<td>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="customfield1" style="width:200px">
 												<option value="">Select Field Name</option>
 												<option value="">---------------------------------</option>
 												<?php
 												foreach($advFieldArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$customField1?'SELECTED':'').'>'.$v.'</option>';
+													echo '<option value="'.$k.'" '.($k === $customField1?'SELECTED':'').'>'.$v.'</option>';
 												}
 												?>
 											</select>
 											<select name="customtype1" onchange="cogeUpdateCount(this)">
 												<option value="EQUALS">EQUALS</option>
-												<option <?php echo ($customType1=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
-												<option <?php echo ($customType1=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-												<option <?php echo ($customType1=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
-												<option <?php echo ($customType1=='NOTNULL'?'SELECTED':''); ?> value="NOTNULL">IS NOT NULL</option>
+												<option <?php echo ($customType1 === 'STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
+												<option <?php echo ($customType1 === 'LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
+												<option <?php echo ($customType1 === 'NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
+												<option <?php echo ($customType1 === 'NOTNULL'?'SELECTED':''); ?> value="NOTNULL">IS NOT NULL</option>
 											</select>
 											<input name="customvalue1" type="text" value="<?php echo $customValue1; ?>" style="width:200px;" onchange="cogeUpdateCount(this)" />
 										</div>
-										<div style="margin:10px 0px;">
+										<div style="margin:10px 0;">
 											<select name="customfield2" style="width:200px">
 												<option value="">Select Field Name</option>
 												<option value="">---------------------------------</option>
 												<?php
 												foreach($advFieldArr as $k => $v){
-													echo '<option value="'.$k.'" '.($k==$customField2?'SELECTED':'').'>'.$v.'</option>';
+													echo '<option value="'.$k.'" '.($k === $customField2?'SELECTED':'').'>'.$v.'</option>';
 												}
 												?>
 											</select>
 											<select name="customtype2" onchange="cogeUpdateCount(this)">
 												<option value="EQUALS">EQUALS</option>
-												<option <?php echo ($customType2=='STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
-												<option <?php echo ($customType2=='LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
-												<option <?php echo ($customType2=='NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
-												<option <?php echo ($customType2=='NOTNULL'?'SELECTED':''); ?> value="NOTNULL">IS NOT NULL</option>
+												<option <?php echo ($customType2 === 'STARTS'?'SELECTED':''); ?> value="STARTS">STARTS WITH</option>
+												<option <?php echo ($customType2 === 'LIKE'?'SELECTED':''); ?> value="LIKE">CONTAINS</option>
+												<option <?php echo ($customType2 === 'NULL'?'SELECTED':''); ?> value="NULL">IS NULL</option>
+												<option <?php echo ($customType2 === 'NOTNULL'?'SELECTED':''); ?> value="NOTNULL">IS NOT NULL</option>
 											</select>
 											<input name="customvalue2" type="text" value="<?php echo $customValue2; ?>" style="width:200px;" onchange="cogeUpdateCount(this)" />
 										</div>
@@ -166,7 +165,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 												provide a required identifier, an optional descriptive name, and then click the Push Data to GeoLocate button.
 											</div>
 											<div style="margin:10px;">
-												<div id="coge-commlist" style="margin:15px 0px;padding:15px;border:1px solid orange;">
+												<div id="coge-commlist" style="margin:15px 0;padding:15px;border:1px solid orange;">
 													<span style="color:orange;">Login to GeoLocate and click check status button to list available communities</span>
 												</div>
 												<div id="coge-fieldDiv" style="display:none">

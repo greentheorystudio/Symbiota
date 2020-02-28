@@ -1,7 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceIndividualManager.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $occid = array_key_exists('occid',$_REQUEST)?trim($_REQUEST['occid']):0;
 $collid = array_key_exists('collid',$_REQUEST)?trim($_REQUEST['collid']):0;
@@ -134,8 +135,6 @@ if($displayLocality && is_numeric($occArr['decimallatitude']) && is_numeric($occ
 }
 $dupClusterArr = $indManager->getDuplicateArr();
 $commentArr = $indManager->getCommentArr($isEditor);
-
-header('Content-Type: text/html; charset=' .$CHARSET);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -187,9 +186,9 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 			  	for (let i = 0; i < divObjs.length; i++) {
 			  		const obj = divObjs[i];
 			  		if(obj.getAttribute("class") === target || obj.getAttribute("className") === target){
-							if(obj.style.display === "none"){
-								obj.style.display="inline";
-							}
+                        if(obj.style.display === "none"){
+                            obj.style.display="inline";
+                        }
 					 	else {
 					 		obj.style.display="none";
 					 	}
@@ -217,7 +216,9 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 
 		function openIndividual(target) {
 			let occWindow = open("index.php?occid="+target,"occdisplay","resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
-			if (occWindow.opener == null) occWindow.opener = self;
+			if (occWindow.opener == null) {
+			    occWindow.opener = self;
+			}
 		}
 
 		<?php
@@ -233,10 +234,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 					scaleControl: true
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-				const marker = new google.maps.Marker({
-					position: mLatLng,
-					map: map
-				});
 			}
 			<?php
 		}
@@ -277,7 +274,9 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 						<li><a href="#maptab"><span>Map</span></a></li>
 						<?php
 					}
-					if($genticArr) echo '<li><a href="#genetictab"><span>Genetic Data</span></a></li>';
+					if($genticArr) {
+                        echo '<li><a href="#genetictab"><span>Genetic Data</span></a></li>';
+                    }
 					if($dupClusterArr){
 						?>
 						<li><a href="#dupestab"><span>Duplicates</span></a></li>
