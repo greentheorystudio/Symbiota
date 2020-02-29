@@ -1,16 +1,18 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/glossary/termdetails.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
 $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -23,60 +25,60 @@ $glosManager->setGlossId($glossId);
 $closeWindow = false;
 $statusStr = '';
 if($formSubmit){
-	if($formSubmit == 'Edit Term'){
+	if($formSubmit === 'Edit Term'){
 		if(!$glosManager->editTerm($_POST)){
 			$statusStr = $glosManager->getErrorStr();
 		}
 	}
-	elseif($formSubmit == 'Submit New Image'){
-		$statusStr = $glosManager->addImage($_POST);
+	elseif($formSubmit === 'Submit New Image'){
+		$statusStr = $glosManager->addImage();
 	}
-	elseif($formSubmit == 'Save Image Edits'){
+	elseif($formSubmit === 'Save Image Edits'){
 		$statusStr = $glosManager->editImageData($_POST);
 	}
-	elseif($formSubmit == 'Delete Image'){
+	elseif($formSubmit === 'Delete Image'){
 		$statusStr = $glosManager->deleteImage($glimgId);
 	}
-	elseif($formSubmit == 'Link Translation'){
+	elseif($formSubmit === 'Link Translation'){
 		if(!$glosManager->linkTranslation($_POST['relglossid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 		$glosManager->setGlossId($glossId);
 	}
-	elseif($formSubmit == 'Link Related Term'){
+	elseif($formSubmit === 'Link Related Term'){
 		if(!$glosManager->linkRelation($_POST['relglossid'],$_POST['relationship'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 		$glosManager->setGlossId($glossId);
 	}
-	elseif($formSubmit == 'Remove Translation'){
+	elseif($formSubmit === 'Remove Translation'){
 		if(!$glosManager->removeRelation($_POST['gltlinkid'],$_POST['relglossid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 		$glosManager->setGlossId($glossId);
 	}
-	elseif($formSubmit == 'Remove Synonym'){
+	elseif($formSubmit === 'Remove Synonym'){
 		if(!$glosManager->removeRelation($_POST['gltlinkid'],$_POST['relglossid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 		$glosManager->setGlossId($glossId);
 	}
-	elseif($formSubmit == 'Unlink Related Term'){
+	elseif($formSubmit === 'Unlink Related Term'){
 		if(!$glosManager->removeRelation($_POST['gltlinkid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 	}
-	elseif($formSubmit == 'Add Taxa Group'){
+	elseif($formSubmit === 'Add Taxa Group'){
 		if(!$glosManager->addGroupTaxaLink($_POST['tid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 	}
-	elseif($formSubmit == 'Delete Taxa Group'){
+	elseif($formSubmit === 'Delete Taxa Group'){
 		if(!$glosManager->deleteGroupTaxaLink($_POST['tid'])){
 			$statusStr = $glosManager->getErrorStr();
 		}
 	}
-	elseif($formSubmit == 'Delete Term'){
+	elseif($formSubmit === 'Delete Term'){
 		if($glosManager->deleteTerm()){
 			$glossId = 0;
 			$closeWindow = true;
@@ -147,16 +149,16 @@ if($glossId){
 			return true;
 		}
 	
-		function verifyNewImageForm(f){
-			if(!document.getElementById("imgfile").files[0] && document.getElementById("imgurl").value == ""){
+		function verifyNewImageForm(){
+			if(!document.getElementById("imgfile").files[0] && document.getElementById("imgurl").value === ""){
 				alert("Please either upload an image or enter the url of an existing image.");
 				return false;
 			}
 			return true;
 		}
 	
-		function verifyImageEditForm(f){
-			if(document.getElementById("editurl").value == ""){
+		function verifyImageEditForm(){
+			if(document.getElementById("editurl").value === ""){
 				document.getElementById("editurl").value = document.getElementById("oldurl").value;
 				alert("Please enter a url for the image to save.");
 				return false;
@@ -170,7 +172,6 @@ if($glossId){
         <a href='../index.php'>Home</a> &gt;&gt;
         <a href='index.php?language=<?php echo $glosManager->getTermLanguage(); ?>'> <b>Glossary Management</b></a>
     </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($glossId && $isEditor){
@@ -182,7 +183,7 @@ if($glossId){
 				<?php 
 			}
 			?>
-			<div id="tabs" style="margin:0px;">
+			<div id="tabs" style="margin:0;">
 				<ul>
 					<li><a href="#termdetaildiv">Details</a></li>
 					<li><a href="#termrelateddiv">Related Terms</a></li>
@@ -219,7 +220,7 @@ if($glossId){
 										<?php 
 										$langArr = $glosManager->getLanguageArr('all');
 										foreach($langArr as $langStr ){
-											echo '<option '.($glosManager->getTermLanguage()==$langStr?'SELECTED':'').'>'.$langStr.'</option>';
+											echo '<option '.($glosManager->getTermLanguage() === $langStr?'SELECTED':'').'>'.$langStr.'</option>';
 										}
 										?>
 									</select> 
@@ -284,7 +285,7 @@ if($glossId){
 								<ul>
 									<?php
 									foreach($taxaArr as $taxId => $sciname){
-										echo '<li><form name="taxadelform" id="'.$sciname.'" action="termdetails.php" style="margin-top:0px;margin-bottom:0px;" method="post">';
+										echo '<li><form name="taxadelform" id="'.$sciname.'" action="termdetails.php" style="margin-top:0;margin-bottom:0;" method="post">';
 										echo $sciname;
 										echo '<input style="margin-left:15px;" type="image" src="../images/del.png" title="Delete Taxa Group">';
 										echo '<input name="glossid" type="hidden" value="'.$glossId.'" />';
@@ -319,7 +320,7 @@ if($glossId){
 					$otherRelationshipsArr = $glosManager->getOtherRelatedTerms();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$synonymArr||$otherRelationshipsArr?'display:none;':''); ?>" onclick="toggle('addsyndiv');" title="Add a New Synonym">
-						<img style="border:0px;width:12px;" src="../images/add.png" />
+						<img style="border:0;width:12px;" src="../images/add.png" />
 					</div>
 					<div id="addsyndiv" style="margin-bottom:10px;<?php echo ($synonymArr||$otherRelationshipsArr?'display:none;':''); ?>;">
 						<form name="relnewform" action="termdetails.php#termrelateddiv" method="post" onsubmit="return verifyRelLinkForm(this);">
@@ -370,22 +371,22 @@ if($glossId){
 									<?php
 									$disableRemoveSyn = false;
 									$removeSynTitle = 'Remove Synonym';
-									if($synGlossId == $glosManager->getGlossGroupId()){
+									if($synGlossId === $glosManager->getGlossGroupId()){
 										$removeSynTitle = 'Root term cannot be removed! Instead, go to root term and then remove other relations.';
 										$disableRemoveSyn = true;
 									}
 									?>
 									<div style="float:right;margin:5px;" title="<?php echo $removeSynTitle; ?>">
-										<form name="syndelform" action="termdetails.php#termrelateddiv" method="post" onsubmit="<?php if($disableRemoveSyn) echo 'return false'; ?>">
+										<form name="syndelform" action="termdetails.php#termrelateddiv" method="post" onsubmit="<?php echo ($disableRemoveSyn?'return false':''); ?>">
 											<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 											<input name="gltlinkid" type="hidden" value="<?php echo $synArr['gltlinkid']; ?>" />
 											<input name="relglossid" type="hidden" value="<?php echo $synGlossId; ?>" />
-											<input type="image" name="formsubmit" src='../images/del.png' value="Remove Synonym" style="width:12px" <?php if($disableRemoveSyn) echo 'disabled'; ?>>
+											<input type="image" name="formsubmit" src='../images/del.png' value="Remove Synonym" style="width:12px" <?php echo ($disableRemoveSyn?'disabled':''); ?>>
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
 										<a href="termdetails.php?glossid=<?php echo $synGlossId; ?>">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.png" />
 										</a>
 									</div>
 									<div style='' >
@@ -407,7 +408,6 @@ if($glossId){
 						</fieldset>	
 						<?php
 					}
-					//Other relationships (superclass, subclass, partOf, hasPart)
 					if($otherRelationshipsArr){
 						?>
 						<fieldset style='clear:both;padding:15px;margin-bottom:10px;'>
@@ -415,30 +415,38 @@ if($glossId){
 							<?php 
 							foreach($otherRelationshipsArr as $relType => $relTypeArr){
 								$relStr = 'is related to';
-								if($relType == 'partOf') $relStr = 'is part of';
-								elseif($relType == 'hasPart') $relStr = 'has part';
-								elseif($relType == 'subClassOf') $relStr = 'is subclass of (child of)';
-								elseif($relType == 'superClassOf') $relStr = 'is superclass of (parent of)';
+								if($relType === 'partOf') {
+                                    $relStr = 'is part of';
+                                }
+								elseif($relType === 'hasPart') {
+                                    $relStr = 'has part';
+                                }
+								elseif($relType === 'subClassOf') {
+                                    $relStr = 'is subclass of (child of)';
+                                }
+								elseif($relType === 'superClassOf') {
+                                    $relStr = 'is superclass of (parent of)';
+                                }
 								foreach($relTypeArr as $relGlossId => $relArr){
 									$disableRemoveRel = false;
 									$removeRelTitle = 'Unlink Related Term';
-									if($relGlossId == $glosManager->getGlossGroupId()){
+									if($relGlossId === $glosManager->getGlossGroupId()){
 										$removeRelTitle = 'Root term cannot be removed! Instead, go to root term and then remove other relations.';
 										$disableRemoveRel = true;
 									}
 									?>
 									<div style="margin:15px;padding:10px;border:1px solid gray">
 										<div style="float:right;margin:5px;" title="<?php echo $removeRelTitle; ?>">
-											<form name="reldelform" action="termdetails.php#termrelateddiv" method="post" onsubmit="<?php if($disableRemoveRel) echo 'return false'; ?>">
+											<form name="reldelform" action="termdetails.php#termrelateddiv" method="post" onsubmit="<?php echo ($disableRemoveRel?'return false':''); ?>">
 												<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 												<input name="gltlinkid" type="hidden" value="<?php echo $relArr['gltlinkid']; ?>" />
 												<input name="relglossid" type="hidden" value="<?php echo $relGlossId; ?>" />
-												<input type="image" name="formsubmit" src='../images/del.png' value="Unlink Related Term" style="width:13px" <?php if($disableRemoveRel) echo 'disabled'; ?>>
+												<input type="image" name="formsubmit" src='../images/del.png' value="Unlink Related Term" style="width:13px" <?php echo ($disableRemoveRel?'disabled':''); ?>>
 											</form>
 										</div>
 										<div style="float:right;margin:5px;" title="Edit Term">
 											<a href="termdetails.php?glossid=<?php echo $relGlossId; ?>">
-												<img style="border:0px;width:12px;" src="../images/edit.png" />
+												<img style="border:0;width:12px;" src="../images/edit.png" />
 											</a>
 										</div>
 										<div>
@@ -463,7 +471,7 @@ if($glossId){
 					$translationArr = $glosManager->getTranslations();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$translationArr?'display:none;':''); ?>" onclick="toggle('addtransdiv');" title="Add a New Translation">
-						<img style="border:0px;width:12px;" src="../images/add.png" />
+						<img style="border:0;width:12px;" src="../images/add.png" />
 					</div>
 					<div id="addtransdiv" style="margin-bottom:10px;<?php echo ($translationArr?'display:none;':''); ?>;">
 						<form name="translinkform" action="termdetails.php#termtransdiv" method="post" onsubmit="return verifyTransLinkForm(this);">
@@ -505,7 +513,7 @@ if($glossId){
 								?>
 								<div style="width:95%;margin:15px;padding:10px;border:1px solid gray">
 									<?php
-									if($transArr['gltlinkid'] && $transGlossId != $glosManager->getGlossGroupId()){
+									if($transArr['gltlinkid'] && $transGlossId !== $glosManager->getGlossGroupId()){
 										?>
 										<div style="float:right;margin:5px;" title="Remove Translation">
 											<form name="transdelform" action="termdetails.php#termtransdiv" method="post">
@@ -520,7 +528,7 @@ if($glossId){
 									?>
 									<div style="float:right;margin:5px;" title="Edit Term Data">
 										<a href="termdetails.php?glossid=<?php echo $transGlossId; ?>">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.png" />
 										</a>
 									</div>
 									<div>
@@ -549,18 +557,17 @@ if($glossId){
 				<div id="termimagediv" style="min-height:300px;">
 					<div id="imagediv" style="">
 						<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$termImgArr?'display:none;':''); ?>" onclick="toggle('addimgdiv');" title="Add a New Image">
-							<img style="border:0px;width:12px;" src="../images/add.png" />
+							<img style="border:0;width:12px;" src="../images/add.png" />
 						</div>
 						<div id="addimgdiv" style="<?php echo ($termImgArr?'display:none;':''); ?>;">
-							<form name="imgnewform" action="termdetails.php#termimagediv" method="post" enctype="multipart/form-data" onsubmit="return verifyNewImageForm(this);">
+							<form name="imgnewform" action="termdetails.php#termimagediv" method="post" enctype="multipart/form-data" onsubmit="return verifyNewImageForm();">
 								<fieldset style="padding:15px">
 									<legend><b>Add a New Image</b></legend>
-									<div style='padding:15px;border:1px solid yellow;background-color:FFFF99;'>
+									<div style='padding:15px;border:1px solid yellow;background-color:#FFFF99;'>
 										<div class="targetdiv" style="display:block;">
 											<div style="font-weight:bold;font-size:110%;margin-bottom:5px;">
 												Select an image file located on your computer that you want to upload:
 											</div>
-											<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
 											<div style="height:10px;float:right;text-decoration:underline;font-weight:bold;">
 												<a href="#" onclick="toggle('targetdiv');return false;">Enter URL</a>
 											</div>
@@ -620,53 +627,51 @@ if($glossId){
 							if($termImgArr){
 								foreach($termImgArr as $imgId => $imgArr){
 									$termImage = false;
-									if($imgArr["glossid"] == $glossId){
+									if($imgArr['glossid'] === $glossId){
 										$termImage = true;
 										$hasImages = true;
 									}
 									?>
 									<fieldset style="margin-top:10px;">
 										<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-											<img style="border:0px;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.png" />
 										</div>
 										<div style="float:left;">
 											<?php
-											$imgUrl = $imgArr["url"];
-											if($IMAGE_DOMAIN){
-												if(substr($imgUrl,0,1)=="/"){
-													$imgUrl = $IMAGE_DOMAIN.$imgUrl;
-												}
-											}			
+											$imgUrl = $imgArr['url'];
+											if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0) {
+                                                $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+                                            }
 											$displayUrl = $imgUrl;
 											?>
 											<a href="<?php echo $imgUrl;?>" target="_blank">
-												<img src="<?php echo $displayUrl;?>" style="width:250px;" title="<?php echo $imgArr["structures"]; ?>" />
+												<img src="<?php echo $displayUrl;?>" style="width:250px;" title="<?php echo $imgArr['structures']; ?>" />
 											</a>
 										</div>
 										<div style="float:left;margin-left:10px;padding:10px;width:350px;">
 											<div style="">
 												<?php
-												if($imgArr["createdBy"]){
+												if($imgArr['createdBy']){
 													?>
 													<div style="overflow:hidden;">
 														<b>Created By:</b> 
-														<?php echo wordwrap($imgArr["createdBy"], 150, "<br />\n"); ?>
+														<?php echo wordwrap($imgArr['createdBy'], 150, "<br />\n"); ?>
 													</div>
 													<?php
 												}
-												if($imgArr["structures"]){
+												if($imgArr['structures']){
 													?>
 													<div style="overflow:hidden;">
 														<b>Structures:</b> 
-														<?php echo wordwrap($imgArr["structures"], 150, "<br />\n"); ?>
+														<?php echo wordwrap($imgArr['structures'], 150, "<br />\n"); ?>
 													</div>
 													<?php
 												}
-												if($imgArr["notes"]){
+												if($imgArr['notes']){
 													?>
 													<div style="overflow:hidden;margin-top:8px;">
 														<b>Notes:</b> 
-														<?php echo wordwrap($imgArr["notes"], 150, "<br />\n"); ?>
+														<?php echo wordwrap($imgArr['notes'], 150, "<br />\n"); ?>
 													</div>
 													<?php
 												}
@@ -674,7 +679,7 @@ if($glossId){
 											</div>
 										</div>
 										<div id="img<?php echo $imgId; ?>editdiv" style="display:none;clear:both;">
-											<form name="img<?php echo $imgId; ?>editform" action="termdetails.php" method="post" onsubmit="return verifyImageEditForm(this);">
+											<form name="img<?php echo $imgId; ?>editform" action="termdetails.php" method="post" onsubmit="return verifyImageEditForm();">
 												<fieldset style="">
 													<legend><b>Edit Image Data</b></legend>
 													<div style="clear:both;">
@@ -682,7 +687,7 @@ if($glossId){
 															<b>Created By:</b>
 														</div>
 														<div style="float:left;margin-left:10px;">
-															<textarea name="createdBy" id="createdBy" rows="10" style="width:380px;height:50px;resize:vertical;" ><?php echo $imgArr["createdBy"]; ?></textarea>
+															<textarea name="createdBy" id="createdBy" rows="10" style="width:380px;height:50px;resize:vertical;" ><?php echo $imgArr['createdBy']; ?></textarea>
 														</div>
 													</div>
 													<div style="clear:both;">
@@ -690,7 +695,7 @@ if($glossId){
 															<b>Structures:</b>
 														</div>
 														<div style="float:left;margin-left:10px;">
-															<textarea name="structures" id="structures" rows="10" style="width:380px;height:50px;resize:vertical;" ><?php echo $imgArr["structures"]; ?></textarea>
+															<textarea name="structures" id="structures" rows="10" style="width:380px;height:50px;resize:vertical;" ><?php echo $imgArr['structures']; ?></textarea>
 														</div>
 													</div>
 													<div style="clear:both;padding-top:10px;">
@@ -698,7 +703,7 @@ if($glossId){
 															<b>Notes:</b> 
 														</div>
 														<div style="float:left;margin-left:10px;">
-															<textarea name="notes" id="notes" rows="10" style="width:380px;height:70px;resize:vertical;" ><?php echo $imgArr["notes"]; ?></textarea>
+															<textarea name="notes" id="notes" rows="10" style="width:380px;height:70px;resize:vertical;" ><?php echo $imgArr['notes']; ?></textarea>
 														</div>
 													</div>
 													<div style="clear:both;">
@@ -740,7 +745,7 @@ if($glossId){
 								echo '</div>';
 							}
 							?>
-							<input name="formsubmit" type="submit" value="Delete Term" <?php if($hasImages) echo 'DISABLED'; ?> />
+							<input name="formsubmit" type="submit" value="Delete Term" <?php echo ($hasImages?'DISABLED':''); ?> />
 							<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 						</fieldset>
 					</form>
@@ -753,8 +758,5 @@ if($glossId){
 		}
 		?>
 	</div>
-	<?php
-	//include($SERVER_ROOT."/footer.php");
-	?>
 </body>
 </html>

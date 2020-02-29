@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageImport.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ImageImport.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-$ulFileName = array_key_exists("ulfilename",$_POST)?$_POST["ulfilename"]:"";
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$ulFileName = array_key_exists('ulfilename',$_POST)?$_POST['ulfilename']: '';
 
 $isEditor = false;
 if($IS_ADMIN){
@@ -13,17 +13,18 @@ if($IS_ADMIN){
 
 $importManager = new ImageImport();
 
-$fieldMap = array();			//array(sourceField => symbIndex)
+$fieldMap = array();
 if($isEditor){
 	if($action){
 		$importManager->setUploadFile($ulFileName);
 	}
-	if(array_key_exists("sf",$_POST)){
-		//Grab field mapping, if mapping form was submitted
- 		$targetFields = $_POST["tf"];
- 		$sourceFields = $_POST["sf"];
-		for($x = 0;$x<count($targetFields);$x++){
-			if($targetFields[$x] !== "" && $sourceFields[$x]) $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+	if(array_key_exists('sf',$_POST)){
+		$targetFields = $_POST['tf'];
+ 		$sourceFields = $_POST['sf'];
+		for($x = 0, $xMax = count($targetFields); $x< $xMax; $x++){
+			if($targetFields[$x] !== '' && $sourceFields[$x]) {
+                $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+            }
 		}
 	}
 }
@@ -33,15 +34,10 @@ if($isEditor){
 	<title><?php echo $DEFAULT_TITLE; ?> Image Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
-		function verifyUploadForm(f){
-			return true;
-		}
-	</script>
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 
 ?>
 <div class="navpath">
@@ -55,7 +51,7 @@ include($SERVER_ROOT.'/header.php');
 		
 	</div> 
 	<div>
-		<form name="uploadform" action="imageloader.php" method="post" enctype="multipart/form-data" onsubmit="return verifyUploadForm(this)">
+		<form name="uploadform" action="imageloader.php" method="post" enctype="multipart/form-data">
 			<fieldset style="width:90%;">
 				<legend style="font-weight:bold;font-size:120%;">Image Upload Form</legend>
 				<div style="margin:10px;">
@@ -89,7 +85,7 @@ include($SERVER_ROOT.'/header.php');
 				else{ 
 					?>
 					<div id="mdiv" style="margin:15px;">
-						<table border="1" cellpadding="2" style="border:1px solid black">
+						<table style="border:1px solid black;border-spacing: 2px;">
 							<tr>
 								<th>
 									Source Field
@@ -113,30 +109,32 @@ include($SERVER_ROOT.'/header.php');
 											<option value="">Select Target</option>
 											<?php 
 											$sField = strtolower($sField);
-											//Check to see if field is mapped
 											$symbIndex = '';
 											if(array_key_exists($sField,$fieldMap)){
-												//Field is mapped
 												$symbIndex = $fieldMap[$sField];
 											}
 											if($symbIndex === ''){
 												$transStr = $importManager->getTranslation($sField);
-												if($transStr) $sField = $transStr;
+												if($transStr) {
+                                                    $sField = $transStr;
+                                                }
 											}
-											$selStr = "";
-											echo "<option value='unmapped' ".($symbIndex=="unmapped"?'SELECTED':'').">Leave Field Unmapped</option>";
+											$selStr = '';
+											echo "<option value='unmapped' ".($symbIndex === 'unmapped' ?'SELECTED':''). '>Leave Field Unmapped</option>';
 											echo '<option value="">-------------------------</option>';
 											foreach($tArr as $tKey => $tField){
 												if($selStr !== 0){
-													if($symbIndex === '' && $sField == strtolower($tField)){
-														$selStr = "SELECTED";
+													if($symbIndex === '' && $sField === strtolower($tField)){
+														$selStr = 'SELECTED';
 													}
-													elseif(is_numeric($symbIndex) && $symbIndex == $tKey){
-														$selStr = "SELECTED";
+													elseif(is_numeric($symbIndex) && $symbIndex === $tKey){
+														$selStr = 'SELECTED';
 													}
 												}
-												echo '<option value="'.$tKey.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
-												if($selStr) $selStr = 0;
+												echo '<option value="'.$tKey.'" '.($selStr?:'').'>'.$tField."</option>\n";
+												if($selStr) {
+                                                    $selStr = 0;
+                                                }
 											}
 											?>
 										</select>
@@ -153,7 +151,7 @@ include($SERVER_ROOT.'/header.php');
 							<input type="submit" name="action" value="Verify Mapping" /><br/>
 							<fieldset>
 								<legend>Large Image</legend>
-								<input name="lgimg" type="radio" value="0" SELECTED /> Leave blank<br/>
+								<input name="lgimg" type="radio" value="0" /> Leave blank<br/>
 								<input name="lgimg" type="radio" value="1" /> Map to remote images<br/>
 								<input name="lgimg" type="radio" value="2" /> Import to local storage
 							</fieldset>
@@ -169,7 +167,7 @@ include($SERVER_ROOT.'/header.php');
 	</div>
 </div>
 <?php  
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>
