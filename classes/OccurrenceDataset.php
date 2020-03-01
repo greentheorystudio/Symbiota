@@ -136,9 +136,10 @@ class OccurrenceDataset {
 		return true;
 	}
 
-	public function cloneDatasets($targetArr,$uid): bool
+	public function cloneDatasets($targetArr): bool
 	{
-		$status = true;
+        global $SYMB_UID;
+	    $status = true;
 		$sql = 'SELECT datasetid, name, notes, sortsequence FROM omoccurdatasets '.
 			'WHERE datasetid IN('.implode(',',$targetArr).')';
 		$rs = $this->conn->query($sql);
@@ -147,7 +148,7 @@ class OccurrenceDataset {
 			$newNameTemp = $newName;
 			$cnt = 1;
 			do{
-				$sql1 = 'SELECT datasetid FROM omoccurdatasets WHERE name = "'.$newNameTemp.'" AND uid = '.$uid;
+				$sql1 = 'SELECT datasetid FROM omoccurdatasets WHERE name = "'.$newNameTemp.'" AND uid = '.$SYMB_UID;
 				$nameExists = false;
 				$rs1 = $this->conn->query($sql1);
 				while($rs1->fetch_object()){
@@ -159,7 +160,7 @@ class OccurrenceDataset {
 			}while($nameExists);
 			$newName = $newNameTemp;
 			$sql2 = 'INSERT INTO omoccurdatasets(name, notes, sortsequence, uid) '.
-				'VALUES("'.$newName.'","'.$r->notes.'",'.($r->sortsequence?$r->sortsequence:'""').','.$uid.')';
+				'VALUES("'.$newName.'","'.$r->notes.'",'.($r->sortsequence?:'""').','.$SYMB_UID.')';
 			if($this->conn->query($sql2)){
 				$this->newDatasetId = $this->conn->insert_id;
 				$sql3 = 'INSERT INTO omoccurdatasetlink(occid, datasetid, notes) '.
@@ -408,7 +409,6 @@ class OccurrenceDataset {
 		flush();
 		readfile($outputFile);
 		unlink($outputFile);
-		
 	}
 
     public function getErrorArr(): array

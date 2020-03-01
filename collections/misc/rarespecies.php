@@ -1,31 +1,32 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/RareSpeciesManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/RareSpeciesManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$submitAction = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:'';
-$searchTaxon = array_key_exists("searchtaxon",$_POST)?$_POST["searchtaxon"]:'';
+$submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$searchTaxon = array_key_exists('searchtaxon',$_POST)?$_POST['searchtaxon']:'';
 
 $isEditor = 0;
-if($IS_ADMIN || array_key_exists("RareSppAdmin",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('RareSppAdmin',$USER_RIGHTS)){
 	$isEditor = 1;
 }
 
 $rsManager = new RareSpeciesManager();
 
 if($isEditor){
-	if($submitAction == "addspecies"){
-		$rsManager->addSpecies($_POST["tidtoadd"]);
+	if($submitAction === 'addspecies'){
+		$rsManager->addSpecies($_POST['tidtoadd']);
 	}
-	elseif($submitAction == "deletespecies"){
-		$rsManager->deleteSpecies($_REQUEST["tidtodel"]);
+	elseif($submitAction === 'deletespecies'){
+		$rsManager->deleteSpecies($_REQUEST['tidtodel']);
 	}
 }
-if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
+if($searchTaxon) {
+    $rsManager->setSearchTaxon($searchTaxon);
+}
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Rare, Threatened, Sensitive Species</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -44,11 +45,11 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 		});
 
 		function toggle(target){
-		  	var divs = document.getElementsByTagName("div");
-		  	for (var i = 0; i < divs.length; i++) {
-		  	var divObj = divs[i];
-				if(divObj.className == target){
-					if(divObj.style.display=="none"){
+            const divs = document.getElementsByTagName("div");
+            for (let i = 0; i < divs.length; i++) {
+                const divObj = divs[i];
+                if(divObj.className === target){
+					if(divObj.style.display === "none"){
 						divObj.style.display="block";
 					}
 				 	else {
@@ -57,11 +58,11 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 				}
 			}
 
-		  	var spans = document.getElementsByTagName("span");
-		  	for (var h = 0; h < spans.length; h++) {
-		  	var spanObj = spans[h];
-				if(spanObj.className == target){
-					if(spanObj.style.display=="none"){
+            const spans = document.getElementsByTagName("span");
+            for (let h = 0; h < spans.length; h++) {
+                const spanObj = spans[h];
+                if(spanObj.className === target){
+					if(spanObj.style.display === "none"){
 						spanObj.style.display="inline";
 					}
 				 	else {
@@ -72,8 +73,8 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 		}
 
 		function submitAddSpecies(f){
-			var sciName = f.speciestoadd.value;
-			if(sciName == ""){
+            const sciName = f.speciestoadd.value;
+            if(sciName === ""){
 				alert("Enter the scientific name of species you wish to add");
 				return false;
 			}
@@ -86,7 +87,7 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 			}).done(function( data ) {
 				f.tidtoadd.value = data;
 				f.submit();
-			}).fail(function(jqXHR){
+			}).fail(function(){
 				alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, it may have to be added to taxa table.");
 			});
 		}
@@ -94,22 +95,21 @@ if($searchTaxon) $rsManager->setSearchTaxon($searchTaxon);
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
-<!-- This is inner text! -->
 <div id="innertext">
 	<?php 
 	if($isEditor){
 		?>
-		<div style="float:right;cursor:pointer;" onclick="javascript:toggle('editobj');" title="Toggle Editing Functions">
-			<img style="border:0px;" src="../../images/edit.png" />
+		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
+			<img style="border:0;" src="../../images/edit.png" />
 		</div>
 		<?php 
 	}
 	?>
 	<h1>Rare, Threatened, Sensitive Species</h1>
 	<div style="float:right;">
-		<fieldset style="margin:0px 15px;padding:10px">
+		<fieldset style="margin:0 15px;padding:10px">
 			<legend><b>Taxon Search</b></legend>
 			<form name="searchform" action="rarespecies.php" method="post">
 				<input id="searchtaxon" name="searchtaxon" type="text" value="<?php echo $searchTaxon; ?>" />
@@ -160,12 +160,12 @@ include($SERVER_ROOT.'/header.php');
 							?>
 							<span class="editobj" style="display:none;">
 								<a href="rarespecies.php?submitaction=deletespecies&tidtodel=<?php echo $tid;?>">
-									<img src="../../images/del.png" style="width:13px;border:0px;" title="remove species from list" />
+									<img src="../../images/del.png" style="width:13px;border:0;" title="remove species from list" />
 								</a>
 							</span>
 							<?php
 						}
-						echo "</div>";
+						echo '</div>';
 					}
 					?>
 					</div>
@@ -187,12 +187,14 @@ include($SERVER_ROOT.'/header.php');
 			$stateList = $rsManager->getStateList();
 			$emptyList = true;
 			foreach($stateList as $clid => $stateArr){
-				if($isEditor || $stateArr['access'] == 'public'){
+				if($isEditor || $stateArr['access'] === 'public'){
 					echo '<div>';
 					echo '<a href="../../checklists/checklist.php?cl='.$clid.'">';
 					echo $stateArr['locality'].': '.$stateArr['name'];
 					echo '</a>';
-					if($stateArr['access'] == 'private') echo ' (private)';
+					if($stateArr['access'] === 'private') {
+                        echo ' (private)';
+                    }
 					echo '</div>';
 					$emptyList = false;
 				}
@@ -209,7 +211,7 @@ include($SERVER_ROOT.'/header.php');
 	</div>
 </div>
 <?php 		
-include($SERVER_ROOT.'/footer.php')
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

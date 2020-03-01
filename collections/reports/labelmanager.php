@@ -1,14 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-@include_once('Image/Barcode.php');
-@include_once('Image/Barcode2.php');
+include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+@include('Image/Barcode.php');
+@include('Image/Barcode2.php');
 
-include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?' . $_SERVER['QUERY_STRING']);
+}
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?'.$_SERVER['QUERY_STRING']);
-
-$collid = $_REQUEST["collid"];
+$collid = $_REQUEST['collid'];
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
@@ -23,23 +24,22 @@ if(is_writable($SERVER_ROOT.'/temp/report')){
 $isEditor = 0;
 $occArr = array();
 $annoArr = array();
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
-elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"])){
+elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 	$isEditor = 1;
 }
 if($isEditor){
 	$annoArr = $datasetManager->getAnnoQueue();
-	if($action == "Filter Specimen Records"){
+	if($action === 'Filter Specimen Records'){
 		$occArr = $datasetManager->queryOccurrences($_POST);
 	}
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
+	    <title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
@@ -63,7 +63,6 @@ if($isEditor){
 				});
 				
 				$( "#taxa" )
-				// don't navigate away from the field on tab when selecting an item
 				.bind( "keydown", function( event ) {
 					if ( event.keyCode === $.ui.keyCode.TAB &&
 							$( this ).data( "autocomplete" ).menu.active ) {
@@ -77,21 +76,17 @@ if($isEditor){
 						}, response );
 					},
 					search: function() {
-						// custom minLength
-						var term = extractLast( this.value );
-						if ( term.length < 4 ) {
+                        const term = extractLast(this.value);
+                        if ( term.length < 4 ) {
 							return false;
 						}
 					},
 					focus: function() {
-						// prevent value inserted on focus
 						return false;
 					},
 					select: function( event, ui ) {
-						var terms = split( this.value );
-						// remove the current input
-						terms.pop();
-						// add the selected item
+                        const terms = split(this.value);
+                        terms.pop();
 						terms.push( ui.item.value );
 						this.value = terms.join( ", " );
 						return false;
@@ -100,60 +95,67 @@ if($isEditor){
 			});
 			
 			function selectAll(cb){
-				boxesChecked = true;
-				if(!cb.checked){
+                let boxesChecked = true;
+                if(!cb.checked){
 					boxesChecked = false;
 				}
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					dbElement.checked = boxesChecked;
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    dbElement.checked = boxesChecked;
 				}
 			}
 			
 			function selectAllAnno(cb){
-				boxesChecked = true;
-				if(!cb.checked){
+                let boxesChecked = true;
+                if(!cb.checked){
 					boxesChecked = false;
 				}
-				var dbElements = document.getElementsByName("detid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					dbElement.checked = boxesChecked;
+                const dbElements = document.getElementsByName("detid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    dbElement.checked = boxesChecked;
 				}
 			}
 
 			function validateQueryForm(f){
-				if(!validateDateFields(f)){
-					return false;
-				}
-				return true;
+				return validateDateFields(f);
 			}
 
 			function validateDateFields(f){
-				var status = true;
-				var validformat1 = /^\s*\d{4}-\d{2}-\d{2}\s*$/ //Format: yyyy-mm-dd
-				if(f.date1.value !== "" && !validformat1.test(f.date1.value)) status = false;
-				if(f.date2.value !== "" && !validformat1.test(f.date2.value)) status = false;
-				if(!status) alert("Date entered must follow the format YYYY-MM-DD");
+                let status = true;
+                const validformat1 = /^\s*\d{4}-\d{2}-\d{2}\s*$/;
+                if(f.date1.value !== "" && !validformat1.test(f.date1.value)) {
+                    status = false;
+                }
+				if(f.date2.value !== "" && !validformat1.test(f.date2.value)) {
+				    status = false;
+				}
+				if(!status) {
+				    alert("Date entered must follow the format YYYY-MM-DD");
+				}
 				return status;
 			}
 
-			function validateSelectForm(f){
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked) return true;
+			function validateSelectForm(){
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked) {
+                        return true;
+                    }
 				}
 			   	alert("Please select at least one occurrence!");
 		      	return false;
 			}
 			
-			function validateAnnoSelectForm(f){
-				var dbElements = document.getElementsByName("detid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked) return true;
+			function validateAnnoSelectForm(){
+                const dbElements = document.getElementsByName("detid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked) {
+                        return true;
+                    }
 				}
 			   	alert("Please select at least one occurrence!");
 		      	return false;
@@ -168,15 +170,17 @@ if($isEditor){
 			}
 
 			function openPopup(urlStr){
-				var wWidth = 900;
-				if(document.getElementById('maintable').offsetWidth){
+                let wWidth = 900;
+                if(document.getElementById('maintable').offsetWidth){
 					wWidth = document.getElementById('maintable').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
 				}
-				newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 				return false;
 			}
 			
@@ -204,17 +208,16 @@ if($isEditor){
 					f.bconly.checked = false;
 				}
 			}
-
-		</script>
+        </script>
 	</head>
 	<body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<?php
-        if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
+        if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), 'observation') !== false){
             echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
         }
         else{
@@ -223,7 +226,6 @@ if($isEditor){
 		?>
 		<b>Label/Annotation Printing</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($isEditor){
@@ -234,10 +236,10 @@ if($isEditor){
 				</div>
 				<?php 
 			}
-			$isGeneralObservation = (($datasetManager->getMetaDataTerm('colltype') == 'General Observations')?true:false);
+			$isGeneralObservation = ($datasetManager->getMetaDataTerm('colltype') === 'General Observations');
 			echo '<h2>'.$datasetManager->getCollName().'</h2>';
 			?>
-			<div id="tabs" style="margin:0px;">
+			<div id="tabs" style="margin:0;">
 				<ul>
 					<li><a href="#labels">Labels</a></li>
 					<li><a href="#annotations">Annotations</a></li>
@@ -278,8 +280,8 @@ if($isEditor){
 									<input type="text" name="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
 									<select name="datetarget">
 										<option value="dateentered">Date Entered</option>
-										<option value="datelastmodified" <?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] == 'datelastmodified'?'SELECTED':''); ?>>Date Modified</option>
-										<option value="eventdate"<?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] == 'eventdate'?'SELECTED':''); ?>>Date Collected</option>
+										<option value="datelastmodified" <?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'datelastmodified'?'SELECTED':''); ?>>Date Modified</option>
+										<option value="eventdate"<?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'eventdate'?'SELECTED':''); ?>>Date Collected</option>
 									</select>
 								</div>
 							</div>
@@ -290,35 +292,23 @@ if($isEditor){
 									<option value="">-------------------------</option>
 									<?php 
 									$lProj = '';
-									if(array_key_exists('labelproject',$_REQUEST)) $lProj = $_REQUEST['labelproject'];
+									if(array_key_exists('labelproject',$_REQUEST)) {
+                                        $lProj = $_REQUEST['labelproject'];
+                                    }
 									$lProjArr = $datasetManager->getLabelProjects();
 									foreach($lProjArr as $projStr){
-										echo '<option '.($lProj==$projStr?'SELECTED':'').'>'.$projStr.'</option>'."\n";
+										echo '<option '.($lProj === $projStr?'SELECTED':'').'>'.$projStr.'</option>'."\n";
 									} 
 									?>
 								</select>
-								<!-- 
-								Dataset Projects: 
-								<select name="datasetproject" >
-									<option value=""></option>
-									<option value="">-------------------------</option>
-									<?php
-									/*
-									$datasetProj = '';
-									if(array_key_exists('datasetproject',$_REQUEST)) $datasetProj = $_REQUEST['datasetproject'];
-									$dProjArr = $datasetManager->getDatasetProjects();
-									foreach($dProjArr as $dsid => $dsProjStr){
-										echo '<option id="'.$dsid.'" '.($datasetProj==$dsProjStr?'SELECTED':'').'>'.$dsProjStr.'</option>'."\n";
-									}
-									*/
-									?>
-								</select>
-								-->
-								<?php 
+								<?php
 								echo '<span style="margin-left:15px;"><input name="extendedsearch" type="checkbox" value="1" '.(array_key_exists('extendedsearch', $_POST)?'checked':'').' /></span> ';
-								if($isGeneralObservation) 
-									echo 'Search outside user profile';
-								else echo 'Search within all collections';
+								if($isGeneralObservation) {
+                                    echo 'Search outside user profile';
+                                }
+								else {
+                                    echo 'Search within all collections';
+                                }
 								?>
 							</div>
 							<div style="clear:both;">
@@ -334,15 +324,15 @@ if($isEditor){
 					</form>
 					<div style="clear:both;">
 						<?php 
-						if($action == "Filter Specimen Records"){
+						if($action === 'Filter Specimen Records'){
 							if($occArr){
 								?>
-								<form name="selectform" id="selectform" action="defaultlabels.php" method="post" onsubmit="return validateSelectForm(this);">
+								<form name="selectform" id="selectform" action="defaultlabels.php" method="post" onsubmit="return validateSelectForm();">
 									<div style="margin-top: 15px; margin-left: 15px;">
 										<input name="" value="" type="checkbox" onclick="selectAll(this);" />
 										Select/Deselect all Specimens
 									</div>
-									<table class="styledtable" style="font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 										<tr>
 											<th></th>
 											<th>#</th>
@@ -355,20 +345,20 @@ if($isEditor){
 										foreach($occArr as $occId => $recArr){
 											$trCnt++;
 											?>
-											<tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
+											<tr <?php echo (($trCnt%2)?'class="alt"':''); ?>>
 												<td>
 													<input type="checkbox" name="occid[]" value="<?php echo $occId; ?>" />
 												</td>
 												<td>
-													<input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr["q"]; ?>" style="width:20px;border:inset;" />
+													<input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr['q']; ?>" style="width:20px;border:inset;" />
 												</td>
 												<td>
 													<a href="#" onclick="openIndPopup(<?php echo $occId; ?>); return false;">
-														<?php echo $recArr["c"]; ?>
+														<?php echo $recArr['c']; ?>
 													</a>
 													<?php
-													if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($recArr["collid"],$USER_RIGHTS["CollAdmin"])) || (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($recArr["collid"],$USER_RIGHTS["CollEditor"]))){
-														if(!$isGeneralObservation || $recArr['uid'] == $SYMB_UID){
+													if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($recArr['collid'], $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($recArr['collid'], $USER_RIGHTS['CollEditor'], true))){
+														if(!$isGeneralObservation || $recArr['uid'] === $SYMB_UID){
 															?>
 															<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
 																<img src="../../images/edit.png" />
@@ -379,10 +369,10 @@ if($isEditor){
 													?>
 												</td>
 												<td>
-													<?php echo $recArr["s"]; ?>
+													<?php echo $recArr['s']; ?>
 												</td>
 												<td>
-													<?php echo $recArr["l"]; ?>
+													<?php echo $recArr['l']; ?>
 												</td>
 											</tr>
 											<?php 
@@ -394,7 +384,7 @@ if($isEditor){
 										<div style="margin:4px;">
 											<b>Heading Prefix:</b>
 											<input type="text" name="lhprefix" value="" style="width:450px" /> (e.g. Plants of, Insects of, Vertebrates of)
-											<div style="margin:3px 0px 3px 0px;">
+											<div style="margin:3px 0 3px 0;">
 												<b>Heading Mid-Section:</b> 
 												<input type="radio" name="lhmid" value="1" />Country 
 												<input type="radio" name="lhmid" value="2" checked />State 
@@ -461,7 +451,7 @@ if($isEditor){
 							}
 							else{
 								?>
-								<div style="font-weight:bold;margin:20px;font-weight:150%;">
+								<div style="font-weight:bold;margin:20px;font-size:150%;">
 									Query returned no data!
 								</div>
 								<?php 
@@ -475,12 +465,12 @@ if($isEditor){
 						<?php 
 						if($annoArr){
 							?>
-							<form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateAnnoSelectForm(this);">
+							<form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateAnnoSelectForm();">
 								<div style="margin-top: 15px; margin-left: 15px;">
 									<input name="" value="" type="checkbox" onclick="selectAllAnno(this);" />
 									Select/Deselect all Specimens
 								</div>
-								<table class="styledtable" style="font-family:Arial;font-size:12px;">
+								<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 									<tr>
 										<th style="width:25px;text-align:center;"></th>
 										<th style="width:25px;text-align:center;">#</th>
@@ -493,7 +483,7 @@ if($isEditor){
 									foreach($annoArr as $detId => $recArr){
 										$trCnt++;
 										?>
-										<tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
+										<tr <?php echo (($trCnt%2)?'class="alt"':''); ?>>
 											<td>
 												<input type="checkbox" name="detid[]" value="<?php echo $detId; ?>" />
 											</td>
@@ -557,7 +547,7 @@ if($isEditor){
 						}
 						else{
 							?>
-							<div style="font-weight:bold;margin:20px;font-weight:150%;">
+							<div style="font-weight:bold;margin:20px;font-size:150%;">
 								There are no annotations queued to be printed.
 							</div>
 							<?php 
@@ -570,7 +560,7 @@ if($isEditor){
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-weight:150%;">
+			<div style="font-weight:bold;margin:20px;font-size:150%;">
 				You do not have permissions to print labels for this collection. 
 				Please contact the site administrator to obtain the necessary permissions.
 			</div>
@@ -579,7 +569,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 	</body>
 </html>

@@ -20,7 +20,6 @@ $(document).ready(function() {
 		}
 	});
 
-	//Misc fields with lookups
 	$("#country").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "rpc/lookupCountry.php", { term: request.term }, response );
@@ -45,13 +44,14 @@ $(document).ready(function() {
 		autoFocus: true
 	});
 
-	$("#catalognumber").keydown(function(evt){
-		var evt  = (evt) ? evt : ((event) ? event : null);
-		if ((evt.keyCode == 13)) { return false; }
+	$("#catalognumber").keydown(function(event){
+		const evt = (event) ? event : ((event) ? event : null);
+		if ((evt.keyCode === 13)) {
+			return false;
+		}
 	});
 });
 
-//Field changed and verification functions
 function verifySciName(){
 	$.ajax({
 		type: "POST",
@@ -63,14 +63,14 @@ function verifySciName(){
 			$( "#tidinterpreted" ).val(data.tid);
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			if(data.status == 1){ 
+			if(data.status === 1){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 			else{
 				if(data.tid){
-					var stateVal = $( 'input[name=stateprovince]' ).val();
-					if(stateVal != ""){
-						localitySecurityCheck($( "#imgoccurform" ));
+					const stateVal = $('input[name=stateprovince]').val();
+					if(stateVal !== ""){
+						localitySecurityCheck();
 					}
 				}
 			}
@@ -82,25 +82,24 @@ function verifySciName(){
 }
 
 function localitySecurityCheck(f){
-	var tidIn = f.tidinterpreted.value;
-	var stateIn = f.stateprovince.value;
-	if(tidIn != "" && stateIn != ""){
+	const tidIn = f.tidinterpreted.value;
+	const stateIn = f.stateprovince.value;
+	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
 			type: "POST",
 			url: "rpc/localitysecuritycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data == "1"){
+			if(data === "1"){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 		});
 	}
 }
 
-//Validate forms
 function validateImgOccurForm(f){
-	if(f.imgurl.value == "" && f.imgfile.value == ""){
+	if(f.imgurl.value === "" && f.imgfile.value === ""){
 		alert("Local image must be select or a image URL entered");
 		return false;
 	}
@@ -108,11 +107,11 @@ function validateImgOccurForm(f){
 	return true;
 }
 
-//Misc
 function dwcDoc(dcTag){
-	dwcWindow=open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
-	//dwcWindow=open("http://rs.tdwg.org/dwc/terms/index.htm#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
-	if(dwcWindow.opener == null) dwcWindow.opener = self;
+	let dwcWindow = open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
+	if(dwcWindow.opener == null) {
+		dwcWindow.opener = self;
+	}
 	dwcWindow.focus();
 	return false;
 }

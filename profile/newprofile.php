@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $login = array_key_exists('login',$_POST)?$_POST['login']:'';
@@ -65,6 +65,7 @@ if($action === 'Create Login'){
         function validateform(f){
 			const pwd1 = f.pwd.value;
 			const pwd2 = f.pwd2.value;
+            const enteredValue = document.getElementById("human-entry").value;
 			if(pwd1 === "" || pwd2 === ""){
 				alert("Both password fields must contain a value");
 				return false;
@@ -128,7 +129,7 @@ if($action === 'Create Login'){
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 	?>
 	<div id="innertext">
 	<h1>Create New Profile</h1>
@@ -264,7 +265,7 @@ if($action === 'Create Login'){
 					<tr>
 						<td><span style="font-weight:bold;">City:</span></td>
 						<td>
-							<span class="profile"><input id="city" name="city" size="40" value="<?php echo (isset($_POST['city'])?$_POST['city']:''); ?>"></span>
+							<span class="profile"><input id="city" name="city" size="40" value="<?php echo ($_POST['city'] ?? ''); ?>"></span>
 						</td>
 					</tr>
 					<tr>
@@ -302,7 +303,7 @@ if($action === 'Create Login'){
 					<tr>
 						<td colspan="2">
 							<span class="profile">
-								<input type="checkbox" name="ispublic" value="1" <?php if(isset($_POST['ispublic'])) echo 'CHECKED'; ?> /> Public can view email and bio within website (e.g. photographer listing)
+								<input type="checkbox" name="ispublic" value="1" <?php echo ((isset($_POST['ispublic']))?'CHECKED':''); ?> /> Public can view email and bio within website (e.g. photographer listing)
 							</span>
 						</td>
 					</tr>
@@ -322,7 +323,7 @@ if($action === 'Create Login'){
                     <tr>
                         <td colspan="2">
                             <div style="float:right;margin:20px;">
-                                <input type="submit" id="submitButton" value="Create Login" name="submit" id="submit" disabled />
+                                <input type="submit" id="submitButton" value="Create Login" name="submit" disabled />
                             </div>
                         </td>
                     </tr>
@@ -332,7 +333,7 @@ if($action === 'Create Login'){
 	</fieldset>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

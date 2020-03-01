@@ -1,22 +1,24 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageLibraryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$target = array_key_exists("target",$_REQUEST)?trim($_REQUEST["target"]):"";
-$cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:100;
-$pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1;
-$view = array_key_exists("imagedisplay",$_REQUEST)?$_REQUEST["imagedisplay"]:'';
-$stArrJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
-$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:'';
+$target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
+$view = array_key_exists('imagedisplay',$_REQUEST)?$_REQUEST['imagedisplay']:'';
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
+$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
+    $catId = $DEFAULTCATID;
+}
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $imgLibManager = new ImageLibraryManager();
 
 $collList = $imgLibManager->getFullCollectionList($catId);
-$specArr = (isset($collList['spec'])?$collList['spec']:null);
-$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$specArr = ($collList['spec'] ?? null);
+$obsArr = ($collList['obs'] ?? null);
 $stArr = array();
 $previousCriteria = array();
 $imageArr = array();
@@ -39,31 +41,29 @@ if($_REQUEST || $stArr){
 
 $dbArr = array();
 if(array_key_exists('db',$_REQUEST)){
-	$dbArr = $_REQUEST["db"];
+	$dbArr = $_REQUEST['db'];
 }
 elseif(array_key_exists('db',$previousCriteria)){
-    $dbArr = explode(';',$previousCriteria["db"]);
+    $dbArr = explode(';',$previousCriteria['db']);
 }
 
-if($action){
-	if($action == 'Load Images'){
-		if($stArr){
-			$imgLibManager->setSearchTermsArr($stArr);
-		}
-		else{
-            $imgLibManager->readRequestVariables();
-			$stArr = $imgLibManager->getSearchTermsArr();
-		}
-		$imgLibManager->setSqlWhere();
-		if($view == 'thumbnail'){
-			$imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
-		}
-		if($view == 'taxalist'){
-			$taxaList = $imgLibManager->getFamilyList();
-		}
-		$recordCnt = $imgLibManager->getRecordCnt();
-		$jsonStArr = json_encode($stArr);
-	}
+if($action && $action === 'Load Images') {
+    if($stArr){
+        $imgLibManager->setSearchTermsArr($stArr);
+    }
+    else{
+        $imgLibManager->readRequestVariables();
+        $stArr = $imgLibManager->getSearchTermsArr();
+    }
+    $imgLibManager->setSqlWhere();
+    if($view === 'thumbnail'){
+        $imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
+    }
+    if($view === 'taxalist'){
+        $taxaList = $imgLibManager->getFamilyList();
+    }
+    $recordCnt = $imgLibManager->getRecordCnt();
+    $jsonStArr = json_encode($stArr);
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -79,13 +79,14 @@ if($action){
 	<script src="../js/symb/images.index.js?ver=20170711" type="text/javascript"></script>
 	<meta name='keywords' content='' />
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
-		var phArr = <?php echo (isset($previousCriteria["phjson"])&&$previousCriteria["phjson"]?"JSON.parse('".$previousCriteria["phjson"]."')":"new Array()"); ?>;
+		let phArr = <?php echo (isset($previousCriteria['phjson'])&&$previousCriteria['phjson']?"JSON.parse('".$previousCriteria['phjson']."')": 'new Array()'); ?>;
 
         jQuery(document).ready(function($) {
-			$('#tabs').tabs({
+			let qtaxaArr;
+            $('#tabs').tabs({
 				active: <?php echo (($imageArr || $taxaList)?'2':'0'); ?>,
 				beforeLoad: function( event, ui ) {
 					$(ui.panel).html("<p>Loading...</p>");
@@ -107,21 +108,21 @@ if($action){
 			
 			<?php
 			if($stArr){
-				if(array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] != "3"){
+				if(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] !== '3'){
 					?>
 					if(document.getElementById('taxastr').value){
-						var qtaxaArr = document.getElementById('taxastr').value.split(",");
-						for(i = 0; i < qtaxaArr.length; i++){
+                        qtaxaArr = document.getElementById('taxastr').value.split(",");
+                        for(let i = 0; i < qtaxaArr.length; i++){
 							$('#taxa').manifest('add',qtaxaArr[i]);
 						}
 					}
 					<?php
 				}
-				elseif(array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "3"){
+				elseif(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3'){
 					?>
 					if(document.getElementById('taxastr').value){
-						var qtaxaArr = document.getElementById('taxastr').value.split(",");
-						for(i = 0; i < qtaxaArr.length; i++){
+                        qtaxaArr = document.getElementById('taxastr').value.split(",");
+                        for(let i = 0; i < qtaxaArr.length; i++){
 							$('#common').manifest('add',qtaxaArr[i]);
 						}
 					}
@@ -129,26 +130,26 @@ if($action){
 				}
 				?>
 				if(document.getElementById('countrystr').value){
-					var qcountryArr = document.getElementById('countrystr').value.split(",");
-					for(i = 0; i < qcountryArr.length; i++){
+                    const qcountryArr = document.getElementById('countrystr').value.split(",");
+                    for(let i = 0; i < qcountryArr.length; i++){
 						$('#country').manifest('add',qcountryArr[i]);
 					}
 				}
 				if(document.getElementById('statestr').value){
-					var qstateArr = document.getElementById('statestr').value.split(",");
-					for(i = 0; i < qstateArr.length; i++){
+                    const qstateArr = document.getElementById('statestr').value.split(",");
+                    for(let i = 0; i < qstateArr.length; i++){
 						$('#state').manifest('add',qstateArr[i]);
 					}
 				}
 				if(document.getElementById('keywordstr').value){
-					var qkeywordArr = document.getElementById('keywordstr').value.split(",");
-					for(i = 0; i < qkeywordArr.length; i++){
+                    const qkeywordArr = document.getElementById('keywordstr').value.split(",");
+                    for(let i = 0; i < qkeywordArr.length; i++){
 						$('#keywords').manifest('add',qkeywordArr[i]);
 					}
 				}
 				if(document.getElementById('phjson').value){
-					var qphArr = JSON.parse(document.getElementById('phjson').value);
-					for(i = 0; i < qphArr.length; i++){
+                    const qphArr = JSON.parse(document.getElementById('phjson').value);
+                    for(let i = 0; i < qphArr.length; i++){
 						$('#photographer').manifest('add',qphArr[i].name);
 					}
 				}
@@ -156,50 +157,49 @@ if($action){
 			}
 			?>
 			
-			$('#photographer').on('marcopoloselect', function (event, data, $item, initial) {
+			$('#photographer').on('marcopoloselect', function (event, data) {
 				phArr.push({name:data.name,id:data.id});
 			});
 			
-			$('#photographer').on('manifestremove',function (event, data, $item){
-				for (i = 0; i < phArr.length; i++) {
-					if(phArr[i].name == data){
+			$('#photographer').on('manifestremove',function (event, data){
+				for (let i = 0; i < phArr.length; i++) {
+					if(phArr[i].name === data){
 						phArr.splice(i,1);
 					}
 				}
 			});
 			<?php
 			
-			if($view == 'thumbnail' && !$imageArr){
+			if($view === 'thumbnail' && !$imageArr){
 				echo "alert('There were no images matching your search critera');";
 			}
 			?>
 		});
 		
-		var starr = JSON.stringify(<?php echo $jsonStArr; ?>);
-		var view = '<?php echo $view; ?>';
-		var selectedFamily = '';
-	</script>
+		const starr = JSON.stringify(<?php echo $jsonStArr; ?>);
+		const view = '<?php echo $view; ?>';
+        let selectedFamily = '';
+    </script>
 </head>
 <body>
 
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
     echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
     echo '<b>Image Search</b>';
-    echo "</div>";
+    echo '</div>';
 	?> 
-	<!-- This is inner text! -->
 	<div id="innertext">
-		<div id="tabs" style="margin:0px;">
+		<div id="tabs" style="margin:0;">
 			<ul>
 				<li><a href="#criteriadiv">Search Criteria</a></li>
 				<li><a href="#collectiondiv">Collections</a></li>
 				<?php
 				if($imageArr || $taxaList){
 					?>
-					<li><a href="#imagesdiv"><span id="imagetab"><?php echo ($view == 'thumbnail'?'Images':'Taxa List'); ?></span></a></li>
+					<li><a href="#imagesdiv"><span id="imagetab"><?php echo ($view === 'thumbnail'?'Images':'Taxa List'); ?></span></a></li>
 					<?php
 				}
 				?>
@@ -207,42 +207,25 @@ if($action){
 			
 			<form name="imagesearchform" id="imagesearchform" action="search.php" method="get" onsubmit="return submitImageForm();">
 				<div id="criteriadiv">
-					<div id="thesdiv" style="margin-left:160px;display:<?php echo ((array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "3")?'none':'block'); ?>;" >
-						<input type='checkbox' id='thes' name='thes' value='1' <?php if(!$action || (array_key_exists("thes",$previousCriteria) && $previousCriteria["thes"])) echo "CHECKED"; ?> >Include Synonyms
+					<div id="thesdiv" style="margin-left:160px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'none':'block'); ?>;" >
+						<input type='checkbox' id='thes' name='thes' value='1' <?php echo ((!$action || (array_key_exists('thes',$previousCriteria) && $previousCriteria['thes']))?'CHECKED':''); ?> >Include Synonyms
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;">
 							<select id="taxontype" name="nametype" onchange="checkTaxonType();" style="padding:5px;margin:5px 10px;">
-								<option id='sciname' value='2' <?php if(array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "2") echo "SELECTED"; ?> >Scientific Name</option>
-								<option id='commonname' value='3' <?php if(array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "3") echo "SELECTED"; ?> >Common Name</option>
+								<option id='sciname' value='2' <?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '2')?'SELECTED':''); ?> >Scientific Name</option>
+								<option id='commonname' value='3' <?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'SELECTED':''); ?> >Common Name</option>
 							</select>
-							<input id="taxtp" name="taxtp" type="hidden" value="<?php echo (array_key_exists("taxtp",$previousCriteria)?$previousCriteria["taxtp"]:'2'); ?>" />
+							<input id="taxtp" name="taxtp" type="hidden" value="<?php echo (array_key_exists('taxtp',$previousCriteria)?$previousCriteria['taxtp']:'2'); ?>" />
 						</div>
-						<div id="taxabox" style="float:left;margin-bottom:10px;display:<?php echo ((array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "3")?'none':'block'); ?>;">
+						<div id="taxabox" style="float:left;margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'none':'block'); ?>;">
 							<input id="taxa" type="text" style="width:450px;" name="taxa" value="" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
-						<div id="commonbox" style="margin-bottom:10px;display:<?php echo ((array_key_exists("nametype",$previousCriteria) && $previousCriteria["nametype"] == "3")?'block':'none'); ?>;">
+						<div id="commonbox" style="margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'block':'none'); ?>;">
 							<input id="common" type="text" style="width:450px;" name="common" value="" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 					</div>
-					<!-- <div style="clear:both;margin:5 0 5 0;"><hr /></div>
-					<div style="margin-top:5px;">
-						<div style="float:left;margin-right:8px;padding-top:8px;">
-							Country: 
-						</div>
-						<div style="float:left;">
-							<input type="text" id="country" style="width:350px;" name="country" value="" title="Separate multiple countries w/ commas" />
-						</div>
-					</div>
-					<div style="clear:both;margin-top:5px;">
-						<div style="float:left;margin-right:8px;padding-top:8px;">
-							State/Province: 
-						</div>
-						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="state" style="width:350px;" name="state" value="" title="Separate multiple states w/ commas" />
-						</div>
-					</div> -->
-					<div style="clear:both;margin:5 0 5 0;"><hr /></div>
+					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
 					<div>
 						<div style="float:left;margin-right:8px;padding-top:8px;">
 							Photographers: 
@@ -251,7 +234,7 @@ if($action){
 							<input type="text" id="photographer" style="width:450px;" name="photographer" value="" title="Separate multiple photographers w/ commas" />
 						</div>
 					</div>
-					<div style="clear:both;margin:5 0 5 0;"><hr /></div>
+					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
 					<?php
 					$tagArr = $imgLibManager->getTagArr();
 					if($tagArr){
@@ -263,7 +246,7 @@ if($action){
 								<option value="">--------------</option>
 								<?php 
 								foreach($tagArr as $k){
-									echo '<option value="'.$k.'" '.((array_key_exists("tags",$previousCriteria))&&($previousCriteria["tags"]==$k)?'SELECTED ':'').'>'.$k.'</option>';
+									echo '<option value="'.$k.'" '.((array_key_exists('tags',$previousCriteria))&&($previousCriteria['tags'] === $k)?'SELECTED ':'').'>'.$k.'</option>';
 								}
 								?>
 							</select>
@@ -284,24 +267,24 @@ if($action){
                             Date Uploaded:
                         </div>
                         <div style="float:left;margin-bottom:10px;">
-                            <input type="text" id="uploaddate1" size="32" name="uploaddate1" style="width:100px;" value="<?php echo (array_key_exists("uploaddate1",$previousCriteria)?$previousCriteria["uploaddate1"]:''); ?>" title="Single date or start date of range" /> -
-                            <input type="text" id="uploaddate2" size="32" name="uploaddate2" style="width:100px;" value="<?php echo (array_key_exists("uploaddate2",$previousCriteria)?$previousCriteria["uploaddate2"]:''); ?>" title="End date of range; leave blank if searching for single date" />
+                            <input type="text" id="uploaddate1" size="32" name="uploaddate1" style="width:100px;" value="<?php echo (array_key_exists('uploaddate1',$previousCriteria)?$previousCriteria['uploaddate1']:''); ?>" title="Single date or start date of range" /> -
+                            <input type="text" id="uploaddate2" size="32" name="uploaddate2" style="width:100px;" value="<?php echo (array_key_exists('uploaddate2',$previousCriteria)?$previousCriteria['uploaddate2']:''); ?>" title="End date of range; leave blank if searching for single date" />
                         </div>
                     </div>
-					<div style="clear:both;margin:5 0 5 0;"><hr /></div>
+					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
 					<div style="margin-top:5px;">
 						Limit Image Counts: 
 						<select id="imagecount" name="imagecount">
-							<option value="all" <?php echo ((array_key_exists("imagecount",$previousCriteria))&&($previousCriteria["imagecount"]=='all')?'SELECTED ':''); ?>>All images</option>
-							<option value="taxon" <?php echo ((array_key_exists("imagecount",$previousCriteria))&&($previousCriteria["imagecount"]=='taxon')?'SELECTED ':''); ?>>One per taxon</option>
-							<option value="specimen" <?php echo ((array_key_exists("imagecount",$previousCriteria))&&($previousCriteria["imagecount"]=='specimen')?'SELECTED ':''); ?>>One per occurrence</option>
+							<option value="all" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'all')?'SELECTED ':''); ?>>All images</option>
+							<option value="taxon" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'taxon')?'SELECTED ':''); ?>>One per taxon</option>
+							<option value="specimen" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'specimen')?'SELECTED ':''); ?>>One per occurrence</option>
 						</select>
 					</div>
 					<div style="margin-top:5px;">
 						Image Display: 
 						<select id="imagedisplay" name="imagedisplay" onchange="imageDisplayChanged(this.form)">
-							<option value="thumbnail" <?php echo ((array_key_exists("imagedisplay",$previousCriteria))&&($previousCriteria["imagedisplay"]=='thumbnail')?'SELECTED ':''); ?>>Thumbnails</option>
-							<option value="taxalist" <?php echo ((array_key_exists("imagedisplay",$previousCriteria))&&($previousCriteria["imagedisplay"]=='taxalist')?'SELECTED ':''); ?>>Taxa List</option>
+							<option value="thumbnail" <?php echo ((array_key_exists('imagedisplay',$previousCriteria))&&($previousCriteria['imagedisplay'] === 'thumbnail')?'SELECTED ':''); ?>>Thumbnails</option>
+							<option value="taxalist" <?php echo ((array_key_exists('imagedisplay',$previousCriteria))&&($previousCriteria['imagedisplay'] === 'taxalist')?'SELECTED ':''); ?>>Taxa List</option>
 						</select>
 					</div>
 					<table>
@@ -311,27 +294,27 @@ if($action){
 									<p><b>Limit Image Type:</b></p>
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='all' <?php if((!array_key_exists("imagetype",$previousCriteria)) || (array_key_exists("imagetype",$previousCriteria) && $previousCriteria["imagetype"] == 'all')) echo "CHECKED"; ?> > All Images
+									<input type='radio' name='imagetype' value='all' <?php echo (((!array_key_exists('imagetype',$previousCriteria)) || (array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'all'))?'CHECKED':''); ?> > All Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='specimenonly' <?php if(array_key_exists("imagetype",$previousCriteria) && $previousCriteria["imagetype"] == 'specimenonly') echo "CHECKED"; ?> > Occurrence Images
+									<input type='radio' name='imagetype' value='specimenonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'specimenonly')?'CHECKED':''); ?> > Occurrence Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='observationonly' <?php if(array_key_exists("imagetype",$previousCriteria) && $previousCriteria["imagetype"] == 'observationonly') echo "CHECKED"; ?> > Image Vouchered Observations
+									<input type='radio' name='imagetype' value='observationonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'observationonly')?'CHECKED':''); ?> > Image Vouchered Observations
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='fieldonly' <?php if(array_key_exists("imagetype",$previousCriteria) && $previousCriteria["imagetype"] == 'fieldonly') echo "CHECKED"; ?> > Field Images (lacking specific locality details)
+									<input type='radio' name='imagetype' value='fieldonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'fieldonly')?'CHECKED':''); ?> > Field Images (lacking specific locality details)
 								</div>
 							</td>
 						</tr>
 					</table>
 					<div><hr></div>
-					<input id="taxastr" name="taxastr" type="hidden" value="<?php if(array_key_exists("taxastr",$previousCriteria)) echo $previousCriteria["taxastr"]; ?>" />
-					<input id="countrystr" name="countrystr" type="hidden" value="<?php if(array_key_exists("countrystr",$previousCriteria)) echo $previousCriteria["countrystr"]; ?>" />
-					<input id="statestr" name="statestr" type="hidden" value="<?php if(array_key_exists("statestr",$previousCriteria)) echo $previousCriteria["statestr"]; ?>" />
-					<input id="keywordstr" name="keywordstr" type="hidden" value="<?php if(array_key_exists("keywordstr",$previousCriteria)) echo $previousCriteria["keywordstr"]; ?>" />
-					<input id="phuidstr" name="phuidstr" type="hidden" value="<?php if(array_key_exists("phuidstr",$previousCriteria)) echo $previousCriteria["phuidstr"]; ?>" />
-					<input id="phjson" name="phjson" type="hidden" value='<?php if(array_key_exists("phjson",$previousCriteria)) echo $previousCriteria["phjson"]; ?>' />
+					<input id="taxastr" name="taxastr" type="hidden" value="<?php echo ((array_key_exists('taxastr',$previousCriteria))?$previousCriteria['taxastr']:''); ?>" />
+					<input id="countrystr" name="countrystr" type="hidden" value="<?php echo ((array_key_exists('countrystr',$previousCriteria))?$previousCriteria['countrystr']:''); ?>" />
+					<input id="statestr" name="statestr" type="hidden" value="<?php echo ((array_key_exists('statestr',$previousCriteria))?$previousCriteria['statestr']:''); ?>" />
+					<input id="keywordstr" name="keywordstr" type="hidden" value="<?php echo ((array_key_exists('keywordstr',$previousCriteria))?$previousCriteria['keywordstr']:''); ?>" />
+					<input id="phuidstr" name="phuidstr" type="hidden" value="<?php echo ((array_key_exists('phuidstr',$previousCriteria))?$previousCriteria['phuidstr']:''); ?>" />
+					<input id="phjson" name="phjson" type="hidden" value='<?php echo ((array_key_exists('phjson',$previousCriteria))?$previousCriteria['phjson']:''); ?>' />
 					<button id="loadimages" style='margin: 20px' name="submitaction" type="submit" value="Load Images" >Load Images</button>
 					<div style="clear:both;"></div>
 				</div>
@@ -341,8 +324,8 @@ if($action){
 					if($specArr || $obsArr){
 						?>
 						<div id="specobsdiv">
-							<div style="margin:0px 0px 10px 20px;">
-								<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo ((!$dbArr || in_array('all',$dbArr))?'checked':''); ?>/>
+							<div style="margin:0 0 10px 20px;">
+								<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo ((!$dbArr || in_array('all', $dbArr, true))?'checked':''); ?>/>
 								Select/Deselect all <a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php">Collections</a>
 							</div>
 							<?php 
@@ -350,7 +333,9 @@ if($action){
 								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
 								$imgLibManager->outputFullMapCollArr($dbArr,$specArr);
 							}
-							if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>'; 
+							if($specArr && $obsArr) {
+                                echo '<hr style="clear:both;margin:20px 0;"/>';
+                            }
 							if($obsArr){
 								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
 								$imgLibManager->outputFullMapCollArr($dbArr,$obsArr);
@@ -383,11 +368,11 @@ if($action){
 								$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
 							}
 							for($x = $startPage; $x <= $endPage; $x++){
-								if($pageNumber != $x){
-									$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x."</a></span>";
+								if($pageNumber !== $x){
+									$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
 								}
 								else{
-									$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x."</span>";
+									$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
 								}
 							}
 							if(($lastPage - $startPage) >= 10){
@@ -397,11 +382,13 @@ if($action){
 							$pageBar .= "</div><div style='float:right;margin-top:4px;margin-bottom:8px;'>";
 							$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
 							$endNum = $beginNum + $cntPerPage - 1;
-							if($endNum > $recordCnt) $endNum = $recordCnt;
-							$pageBar .= "Page ".$pageNumber.", records ".$beginNum."-".$endNum." of ".$recordCnt."</div>";
+							if($endNum > $recordCnt) {
+                                $endNum = $recordCnt;
+                            }
+							$pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
 							$paginationStr = $pageBar;
 							echo '<div style="width:100%;">'.$paginationStr.'</div>';
-							echo '<div style="clear:both;margin:5 0 5 0;"><hr /></div>';
+							echo '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
 							echo '<div style="width:98%;margin-left:auto;margin-right:auto;">';
 							foreach($imageArr as $imgArr){
 								$imgId = $imgArr['imgid'];
@@ -409,11 +396,11 @@ if($action){
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
 									$imgUrl = $imgTn;
-									if($IMAGE_DOMAIN && substr($imgTn,0,1)=='/'){
+									if($IMAGE_DOMAIN && strpos($imgTn, '/') === 0){
 										$imgUrl = $IMAGE_DOMAIN.$imgTn;
 									}
 								}
-								elseif($IMAGE_DOMAIN && substr($imgUrl,0,1)=='/'){
+								elseif($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
 									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 								}
 								?>
@@ -434,32 +421,43 @@ if($action){
 										<?php 
 										$sciname = $imgArr['sciname'];
 										if($sciname){
-											if(strpos($imgArr['sciname'],' ')) $sciname = '<i>'.$sciname.'</i>';
-											if($imgArr['tid']) echo '<a href="#" onclick="openTaxonPopup('.$imgArr['tid'].');return false;" >';
+											if(strpos($imgArr['sciname'],' ')) {
+                                                $sciname = '<i>' . $sciname . '</i>';
+                                            }
+											if($imgArr['tid']) {
+                                                echo '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';
+                                            }
 											echo $sciname;
-											if($imgArr['tid']) echo '</a>';
+											if($imgArr['tid']) {
+                                                echo '</a>';
+                                            }
 											echo '<br />';
 										}
 										if($imgArr['catalognumber']){
 											echo '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-											if(strpos($imgArr['catalognumber'], $imgArr['instcode']) !== 0) echo $imgArr['instcode'] . ": ";
+											if(strpos($imgArr['catalognumber'], $imgArr['instcode']) !== 0) {
+                                                echo $imgArr['instcode'] . ': ';
+                                            }
 											echo $imgArr['catalognumber'];
 											echo '</a>';
 										}
 										elseif($imgArr['lastname']){
 											$pName = $imgArr['firstname'].' '.$imgArr['lastname'];
-											if(strlen($pName) < 20) echo $pName.'<br />';
-											else echo $imgArr['lastname'].'<br />';
+											if(strlen($pName) < 20) {
+                                                echo $pName . '<br />';
+                                            }
+											else {
+                                                echo $imgArr['lastname'] . '<br />';
+                                            }
 										}
-										//if($imgArr['stateprovince']) echo $imgArr['stateprovince'] . "<br />";
 										?>
 									</div>
 								</div>
 								<?php
 							}
-							echo "</div>";
+							echo '</div>';
 							if($lastPage > $startPage){
-								echo "<div style='clear:both;margin:5 0 5 0;'><hr /></div>";
+								echo "<div style='clear:both;margin:5px 0 5px 0;'><hr /></div>";
 								echo '<div style="width:100%;">'.$paginationStr.'</div>';
 							}
 							?>
@@ -484,7 +482,7 @@ if($action){
 		</div>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

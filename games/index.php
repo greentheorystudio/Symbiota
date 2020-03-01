@@ -1,9 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GamesManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GamesManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
+
 $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
 
@@ -14,12 +15,12 @@ $clArr = $gameManager->getChecklistArr($pid);
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
 		function checkForm(f){
-			if(f.clid.value == ""){
-				alert("Select a checklist from pulldown");
+			if(f.clid.value === ""){
+				alert("Please select a checklist from pulldown");
 				return false;
 			}
 			return true;
@@ -30,10 +31,9 @@ $clArr = $gameManager->getChecklistArr($pid);
 <body>
 
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 	?>
 	
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1><?php echo $DEFAULT_TITLE; ?> Games</h1>
 		
@@ -72,7 +72,7 @@ $clArr = $gameManager->getChecklistArr($pid);
 		</div>
 		
 		<h2>Flash Card Quiz</h2>
-		<div style='margin:10px 0px 50px 10px;'>
+		<div style='margin:10px 0 50px 10px;'>
 			What is this organism? In this game, you have to determine the name of the organism pictured 
 			in a set of images. There are typically several images of each species so before making your 
 			guess, make sure you have seen all the images by clicking on "Next Image".
@@ -94,9 +94,8 @@ $clArr = $gameManager->getChecklistArr($pid);
 			</div>
 		</div>
 	</div>
-	<!-- This ends inner text! -->
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

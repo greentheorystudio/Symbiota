@@ -1,32 +1,35 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCleaner.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/index.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
 
 $cleanManager = new OccurrenceCleaner();
-if($collid) $cleanManager->setCollId($collid);
+if($collid) {
+    $cleanManager->setCollId($collid);
+}
 $collMap = $cleanManager->getCollMap();
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])) || ($collMap['colltype'] == 'General Observations')){
+if($IS_ADMIN || ($collMap['colltype'] === 'General Observations') || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
-//If collection is a general observation project, limit to User
-if($collMap['colltype'] == 'General Observations'){
+if($collMap['colltype'] === 'General Observations'){
 	$cleanManager->setObsUid($SYMB_UID);
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -38,7 +41,7 @@ if($collMap['colltype'] == 'General Observations'){
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
@@ -46,24 +49,23 @@ if($collMap['colltype'] == 'General Observations'){
 		<b>Data Cleaning Module</b>
 	</div>
 
-	<!-- inner text -->
 	<div id="innertext" style="background-color:white;">
 		<?php
 		if($isEditor){
 			echo '<h2>'.$collMap['collectionname'].' ('.$collMap['code'].')</h2>';
 			?>
-			<div style="color:orange;margin:20px 0px">Downloading a backup of your collection data before running any batch updates is strongly recommended</div>
+			<div style="color:orange;margin:20px 0;">Downloading a backup of your collection data before running any batch updates is strongly recommended</div>
 			<?php
-			if($collMap['colltype'] != 'General Observations'){
+			if($collMap['colltype'] !== 'General Observations'){
 				?>
 				<h3>Duplicate Records</h3>
-				<div style="margin:0px 0px 40px 15px;">
+				<div style="margin:0 0 40px 15px;">
 					<div>
 						These tools will assist in searching this collection of records for duplicate records of the same occurrence.
 						If duplicate records exist, this feature offers the ability to merge record values, images,
 						and data relationships into a single record.
 					</div>
-					<fieldset style="margin:10px 0px;padding:5px;width:450px">
+					<fieldset style="margin:10px 0;padding:5px;width:450px">
 						<legend style="font-weight:bold"><b>List Duplicates based on...</b></legend>
 						<ul>
 							<li>
@@ -76,13 +78,6 @@ if($collMap['colltype'] == 'General Observations'){
 									Other Catalog Numbers
 								</a>
 							</li>
-							<!--
-							<li>
-								<a href="duplicatesearch.php?collid=<?php echo $collid; ?>&action=listdupsrecordedby">
-									Collector/Observer and numbers
-								</a>
-							</li>
-							 -->
 						</ul>
 					</fieldset>
 				</div>
@@ -91,13 +86,13 @@ if($collMap['colltype'] == 'General Observations'){
 			?>
 
 			<h3>Political Geography</h3>
-			<div style="margin:0px 0px 40px 15px;">
+			<div style="margin:0 0 40px 15px;">
 				<div>
 					These tools help standardize country, state/province, and county designations.
 					They are also useful for locating and correcting misspelled geographical political units,
 					and even mismatched units, such as a state designation that does not match the wrong country.
 				</div>
-				<fieldset style="margin:10px 0px;padding:5px;width:450px">
+				<fieldset style="margin:10px 0;padding:5px;width:450px">
 					<legend style="font-weight:bold">Statistics and Action Panel</legend>
 					<ul>
 						<li>
@@ -111,14 +106,14 @@ if($collMap['colltype'] == 'General Observations'){
 			</div>
 
 			<h3>Specimen Coordinates</h3>
-			<div style="margin:0px 0px 40px 15px;">
+			<div style="margin:0 0 40px 15px;">
 				<div>
 					These tools are to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.
 				</div>
-				<div style="margin:15px 0px;color:orange">
+				<div style="margin:15px 0;color:orange">
 					-- IN DEVELOPMENT - more to come soon --
 				</div>
-				<fieldset style="margin:10px 0px;padding:5px;width:450px">
+				<fieldset style="margin:10px 0;padding:5px;width:450px">
 					<legend style="font-weight:bold">Statistics and Action Panel</legend>
 					<ul>
 						<?php
@@ -143,7 +138,7 @@ if($collMap['colltype'] == 'General Observations'){
 									<img src="../../images/edit.png" style="width:10px" />
 								</a>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
-									<img src="../../images/edit.png" style="width:10px" /><span style="font-size:70%;margin-left:-3;">b-geo</span>
+									<img src="../../images/edit.png" style="width:10px" /><span style="font-size:70%;margin-left:-3px;">b-geo</span>
 								</a>
 								<?php
 							}
@@ -176,7 +171,7 @@ if($collMap['colltype'] == 'General Observations'){
 						</li>
 					</ul>
 				</fieldset>
-				<div style="margin:10px 0px">
+				<div style="margin:10px 0;">
 					<div style="font-weight:bold">Ranking Statistics</div>
 					<?php
 					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
@@ -189,7 +184,7 @@ if($collMap['colltype'] == 'General Observations'){
 							echo '<td>'.$rank.'</td>';
 							echo '<td>'.$protocol.'</td>';
 							echo '<td>';
-							echo '<a href="coordinatevalidator.php?collid='.$collid.'&ranking='.($rank == 'unranked'?'':$rank).'">';
+							echo '<a href="coordinatevalidator.php?collid='.$collid.'&ranking='.($rank === 'unranked'?'':$rank).'">';
 							echo $cnt;
 							echo '</a>';
 							echo '</td>';
@@ -202,11 +197,11 @@ if($collMap['colltype'] == 'General Observations'){
 			</div>
 
 			<h3>Taxonomy</h3>
-			<div style="margin:0px 0px 40px 15px;">
+			<div style="margin:0 0 40px 15px;">
 				<div>
 					These tools are meant to aid in locating and fixing taxonomic errors and inconsistencies.
 				</div>
-				<fieldset style="margin:10px 0px;padding:5px;width:450px">
+				<fieldset style="margin:10px 0;padding:5px;width:450px">
 					<legend style="font-weight:bold">Statistics and Action panel</legend>
 					<ul>
 						<li><a href="taxonomycleaner.php?collid=<?php echo $collid; ?>">Analyze taxonomic names...</a></li>
@@ -221,39 +216,6 @@ if($collMap['colltype'] == 'General Observations'){
 					</ul>
 				</fieldset>
 			</div>
-			<!--
-			<h3>Identification</h3>
-			<div style="margin:0px 0px 40px 15px;">
-				<div>
-					These tools are to aid collection managers in identifications associated with occurrence records.
-
-				</div>
-				<div style="margin:15px 0px;color:orange">
-					-- IN DEVELOPMENT - more to come soon --
-				</div>
-				<div>
-					<div style="font-weight:bold">Ranking Statistics</div>
-					<?php
-					/*
-					$idRankingArr = $cleanManager->getRankingStats('identification');
-					$rankArr = current($idRankingArr);
-					echo '<table class="styledtable">';
-					echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
-					foreach($rankArr as $rank => $protocolArr){
-						foreach($protocolArr as $protocol => $cnt){
-							echo '<tr>';
-							echo '<td>'.$rank.'</td>';
-							echo '<td>'.$protocol.'</td>';
-							echo '<td>'.$cnt.'</td>';
-							echo '</tr>';
-						}
-					}
-					echo '</table>';
-					*/
-					?>
-				</div>
-			</div>
-			 -->
 			<?php
 		}
 		else{
@@ -262,7 +224,7 @@ if($collMap['colltype'] == 'General Observations'){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

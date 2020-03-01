@@ -2,14 +2,13 @@ $('html').hide();
 $(document).ready(function() {
     $("#tabs").tabs();
     $('html').show();
-	//document.collections.onkeydown = checkKey;
 });
 
 function toggle(target){
-	var ele = document.getElementById(target);
+	const ele = document.getElementById(target);
 	if(ele){
-		if(ele.style.display=="none"){
-			if(ele.id.substring(0,5) == "minus" || ele.id.substring(0,4) == "plus"){
+		if(ele.style.display === "none"){
+			if(ele.id.substring(0,5) === "minus" || ele.id.substring(0,4) === "plus"){
 				ele.style.display = "inline";
 	  		}
 			else{
@@ -35,13 +34,15 @@ function togglePid(pid){
 }
 
 function selectAll(cb){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 	}
-	var f = cb.form;
-	for(var i=0;i<f.length;i++){
-		if(f.elements[i].name == "db[]" || f.elements[i].name == "cat[]") f.elements[i].checked = boxesChecked;
+	const f = cb.form;
+	for(let i=0; i<f.length; i++){
+		if(f.elements[i].name === "db[]" || f.elements[i].name === "cat[]") {
+			f.elements[i].checked = boxesChecked;
+		}
 	}
 }
 
@@ -58,49 +59,49 @@ function uncheckAll(){
 }
 
 function selectAllCat(cb,target){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 		uncheckAll();
 	}
-	var inputObjs = document.getElementsByTagName("input");
-  	for (i = 0; i < inputObjs.length; i++) {
-  		var inputObj = inputObjs[i];
-  		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
+	const inputObjs = document.getElementsByTagName("input");
+	for (let i = 0; i < inputObjs.length; i++) {
+		const inputObj = inputObjs[i];
+		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
   			inputObj.checked = boxesChecked;
   		}
   	}
 }
 
 function unselectCat(catTarget){
-	var catObj = document.getElementById(catTarget);
+	const catObj = document.getElementById(catTarget);
 	catObj.checked = false;
 	uncheckAll();
 }
 
 function selectAllPid(cb){
-	var boxesChecked = true;
+	let boxesChecked = true;
 	if(!cb.checked){
 		boxesChecked = false;
 	}
-	var target = "pid-"+cb.value;
-	var inputObjs = document.getElementsByTagName("input");
-  	for (i = 0; i < inputObjs.length; i++) {
-  		var inputObj = inputObjs[i];
-  		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
+	const target = "pid-" + cb.value;
+	const inputObjs = document.getElementsByTagName("input");
+	for (let i = 0; i < inputObjs.length; i++) {
+		const inputObj = inputObjs[i];
+		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
   			inputObj.checked = boxesChecked;
   		}
   	}
 }
 
 function verifyCollForm(f){
-	var formVerified = false;
-	for(var h=0;h<f.length;h++){
-		if(f.elements[h].name == "db[]" && f.elements[h].checked){
+	let formVerified = false;
+	for(let h=0; h<f.length; h++){
+		if(f.elements[h].name === "db[]" && f.elements[h].checked){
 			formVerified = true;
 			break;
 		}
-		if(f.elements[h].name == "cat[]" && f.elements[h].checked){
+		if(f.elements[h].name === "cat[]" && f.elements[h].checked){
 			formVerified = true;
 			break;
 		}
@@ -110,17 +111,16 @@ function verifyCollForm(f){
 		return false;
 	}
 	else{
-		for(var i=0;i<f.length;i++){
-			if(f.elements[i].name == "cat[]" && f.elements[i].checked){
-				//Uncheck all db input elements within cat div 
-				var childrenEle = document.getElementById('cat-'+f.elements[i].value).children;
-				for(var j=0;j<childrenEle.length;j++){
-					if(childrenEle[j].tagName == "DIV"){
-						var divChildren = childrenEle[j].children;
-						for(var k=0;k<divChildren.length;k++){
-							var divChildren2 = divChildren[k].children;
-							for(var l=0;l<divChildren2.length;l++){
-								if(divChildren2[l].tagName == "INPUT"){
+		for(let i=0; i<f.length; i++){
+			if(f.elements[i].name === "cat[]" && f.elements[i].checked){
+				const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
+				for(let j=0; j<childrenEle.length; j++){
+					if(childrenEle[j].tagName === "DIV"){
+						const divChildren = childrenEle[j].children;
+						for(let k=0; k<divChildren.length; k++){
+							const divChildren2 = divChildren[k].children;
+							for(let l=0; l<divChildren2.length; l++){
+								if(divChildren2[l].tagName === "INPUT"){
 									divChildren2[l].checked = false;
 								}
 							}
@@ -133,29 +133,17 @@ function verifyCollForm(f){
   	return formVerified;
 }
 
-function verifyOtherCatForm(f){
-	var pidElems = document.getElementsByName("pid[]");
-	for(i = 0; i < pidElems.length; i++){
-		var pidElem = pidElems[i];
+function verifyOtherCatForm(){
+	const pidElems = document.getElementsByName("pid[]");
+	for(let i = 0; i < pidElems.length; i++){
+		const pidElem = pidElems[i];
 		if(pidElem.checked) return true;
 	}
-	var clidElems = document.getElementsByName("clid[]");
-	for(i = 0; i < clidElems.length; i++){
-		var clidElem = clidElems[i];
+	const clidElems = document.getElementsByName("clid[]");
+	for(let i = 0; i < clidElems.length; i++){
+		const clidElem = clidElems[i];
 		if(clidElem.checked) return true;
 	}
    	alert("Please choose at least one search region!");
 	return false;
-}
-
-function checkKey(e){
-	var key;
-	if(window.event){
-		key = window.event.keyCode;
-	}else{
-		key = e.keyCode;
-	}
-	if(key == 13){
-		document.collections.submit();
-	}
 }

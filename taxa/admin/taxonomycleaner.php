@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
+include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
-$collId = $_REQUEST["collid"];
+$collId = $_REQUEST['collid'];
 $displayIndex = array_key_exists('displayindex',$_REQUEST)?$_REQUEST['displayindex']:0;
 $analyzeIndex = array_key_exists('analyzeindex',$_REQUEST)?$_REQUEST['analyzeindex']:0;
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:0;
@@ -23,66 +23,33 @@ $isEditor = false;
 if($IS_ADMIN){
 	$isEditor = true;
 }
+else if($collId){
+    if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
+        $isEditor = true;
+    }
+}
 else{
-	if($collId){
-		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
-			$isEditor = true;
-		}
-	}
-	else{
-		if(array_key_exists("Taxonomy",$USER_RIGHTS)) $isEditor = true;
-	}
+    if(array_key_exists('Taxonomy',$USER_RIGHTS)) $isEditor = true;
 }
 
-$status = "";
-
+$status = '';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Taxonomic Name Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-		<script language="javascript">
-			function toggle(divName){
-				divObj = document.getElementById(divName);
-				if(divObj != null){
-					if(divObj.style.display == "block"){
-						divObj.style.display = "none";
-					}
-					else{
-						divObj.style.display = "block";
-					}
-				}
-				else{
-					divObjs = document.getElementsByTagName("div");
-					divObjLen = divObjs.length;
-					for(i = 0; i < divObjLen; i++) {
-						var obj = divObjs[i];
-						if(obj.getAttribute("class") == target || obj.getAttribute("className") == target){
-							if(obj.style.display=="none"){
-								obj.style.display="inline";
-							}
-							else {
-								obj.style.display="none";
-							}
-						}
-					}
-				}
-			}
-			
-		</script>
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		?>
-		<!-- inner text block -->
 		<div id="innertext">
 			<?php 
 			if($SYMB_UID){
 				if($status){ 
 					?>
-					<div style='float:left;margin:20px 0px 20px 0px;'>
+					<div style='float:left;margin:20px 0 20px 0;'>
 						<hr/>
 						<?php echo $status; ?>
 						<hr/>
@@ -132,7 +99,7 @@ $status = "";
 							</form>
 							<?php
 						}
-						elseif($action == 'displaynames'){
+						elseif($action === 'displaynames'){
 							$nameArr = $cleanManager->getTaxaList($displayIndex);
 							echo '<ul>';
 							foreach($nameArr as $k => $sciName){
@@ -144,30 +111,27 @@ $status = "";
 							}
 							echo '</ul>';
 						}
-						elseif($action == 'analyzenames'){
-							$nameArr = $cleanManager->analyzeTaxa($analyzeIndex);
+						elseif($action === 'analyzenames'){
+							$nameArr = $cleanManager->analyzeTaxa($analyzeIndex,0);
 							echo '<ul>';
 							foreach($nameArr as $sn => $snArr){
 								echo '<li>'.$sn.'</li>';
-								if(array_key_exists('col',$snArr)){
-									
-								}
-								else{
-									echo '<div style="margin-left:15px;font-weight:bold;">';
-									echo '<form name="taxaremapform" method="get" action="" >';
-									echo 'Remap to: ';
-									echo '<input type="input" name="remaptaxon" value="'.$sn.'" />';
-									echo '<input type="submit" name="submitaction" value="Remap" />';
-									echo '</form>';
-									echo '</div>';
-									if(array_key_exists('soundex',$snArr)){
-										foreach($snArr['soundex'] as $t => $s){
-											echo '<div style="margin-left:15px;font-weight:bold;">';
-											echo $s;
-											echo ' <a href="" title="Remap to this name...">==>></a>';
-											echo '</div>';
-										}
-									}
+								if(!array_key_exists('col',$snArr)){
+                                    echo '<div style="margin-left:15px;font-weight:bold;">';
+                                    echo '<form name="taxaremapform" method="get" action="" >';
+                                    echo 'Remap to: ';
+                                    echo '<input type="input" name="remaptaxon" value="'.$sn.'" />';
+                                    echo '<input type="submit" name="submitaction" value="Remap" />';
+                                    echo '</form>';
+                                    echo '</div>';
+                                    if(array_key_exists('soundex',$snArr)){
+                                        foreach($snArr['soundex'] as $t => $s){
+                                            echo '<div style="margin-left:15px;font-weight:bold;">';
+                                            echo $s;
+                                            echo ' <a href="" title="Remap to this name...">==>></a>';
+                                            echo '</div>';
+                                        }
+                                    }
 								}
 							}
 							echo '</ul>';
@@ -181,7 +145,7 @@ $status = "";
 						</div>
 						<?php
 						$taxonomyAction = array_key_exists('taxonomysubmit',$_POST)?$_POST['taxonomysubmit']:'';
-						if($taxonomyAction == 'Validate Names'){
+						if($taxonomyAction === 'Validate Names'){
 							?>
 							<div style="margin:15px;">
 								<b>Validation Status:</b>
@@ -241,6 +205,6 @@ $status = "";
 			}
 			?>
 		</div>
-		<?php include($SERVER_ROOT.'/footer.php');?>
+		<?php include(__DIR__ . '/../../footer.php');?>
 	</body>
 </html>

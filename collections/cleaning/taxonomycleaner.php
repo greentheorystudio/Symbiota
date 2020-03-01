@@ -1,11 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
+include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST["collid"]:0;
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $autoClean = array_key_exists('autoclean',$_POST)?$_POST['autoclean']:0;
 $targetKingdom = array_key_exists('targetkingdom',$_POST)?$_POST['targetkingdom']:0;
 $taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:array();
@@ -14,13 +16,19 @@ $limit = array_key_exists('limit',$_POST)?$_POST['limit']:20;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $cleanManager = new TaxonomyCleaner();
-if(is_array($collid)) $collid = implode(',',$collid);
+if(is_array($collid)) {
+    $collid = implode(',', $collid);
+}
 $activeCollArr = explode(',', $collid);
 
 foreach($activeCollArr as $k => $id){
-	if(!isset($USER_RIGHTS["CollAdmin"]) || !in_array($id,$USER_RIGHTS["CollAdmin"])) unset($activeCollArr[$k]);
+	if(!isset($USER_RIGHTS['CollAdmin']) || !in_array($id, $USER_RIGHTS['CollAdmin'], true)) {
+        unset($activeCollArr[$k]);
+    }
 }
-if(!$activeCollArr && strpos($collid, ',')) $collid = 0;
+if(!$activeCollArr && strpos($collid, ',')) {
+    $collid = 0;
+}
 $cleanManager->setCollId($IS_ADMIN?$collid:implode(',',$activeCollArr));
 
 $isEditor = false;
@@ -36,13 +44,13 @@ elseif($activeCollArr){
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Taxon Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-		<link href="../../js/jquery-ui-1.12.1/jquery-ui.min.css?ver=3" type="text/css" rel="Stylesheet" />
-		<script src="../../js/jquery-3.2.1.min.js?ver=3" type="text/javascript"></script>
-		<script src="../../js/jquery-ui-1.12.1/jquery-ui.min.js?ver=3" type="text/javascript"></script>
+		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="Stylesheet" />
+		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
 		<script>
+            const cache = {};
 
-			var cache = {};
-			$( document ).ready(function() {
+            $( document ).ready(function() {
 				$(".displayOnLoad").show();
 				$(".hideOnLoad").hide();
 
@@ -51,18 +59,18 @@ elseif($activeCollArr){
 						minLength: 2,
 						autoFocus: true,
 						source: function( request, response ) {
-							var term = request.term;
-							if ( term in cache ) {
+                            const term = request.term;
+                            if ( term in cache ) {
 								response( cache[ term ] );
 								return;
 							}
-							$.getJSON( "rpc/taxasuggest.php", request, function( data, status, xhr ) {
+							$.getJSON( "rpc/taxasuggest.php", request, function( data ) {
 								cache[ term ] = data;
 								response( data );
 							});
 						},
 						change: function(event,ui) {
-							if(ui.item == null && this.value.trim() != ""){
+							if(ui.item == null && this.value.trim() !== ""){
 								alert("Scientific name not found in Thesaurus.");
 								this.focus();
 								this.form.tid.value = "";
@@ -85,7 +93,7 @@ elseif($activeCollArr){
 					dataType: "json",
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
-					if(res == "1"){
+					if(res === "1"){
 						$("#remapSpan-"+msgCode).text(" >>> Taxon remapped successfully!");
 						$("#remapSpan-"+msgCode).css('color', 'green');
 					}
@@ -98,7 +106,7 @@ elseif($activeCollArr){
 			}
 
 			function batchUpdate(f, oldName, itemCnt){
-				if(f.tid.value == ""){
+				if(f.tid.value === ""){
 					alert("Taxon not found within taxonomic thesaurus");
 					return false;
 				}
@@ -108,9 +116,9 @@ elseif($activeCollArr){
 			}
 
 			function checkSelectCollidForm(f){
-				var formVerified = false;
-				for(var h=0;h<f.length;h++){
-					if(f.elements[h].name == "collid[]" && f.elements[h].checked){
+                let formVerified = false;
+                for(let h=0; h<f.length; h++){
+					if(f.elements[h].name === "collid[]" && f.elements[h].checked){
 						formVerified = true;
 						break;
 					}
@@ -123,15 +131,15 @@ elseif($activeCollArr){
 			}
 
 			function selectAllCollections(cbObj){
-				var cbStatus = cbObj.checked
-				var f = cbObj.form;
-				for(var i=0;i<f.length;i++){
-					if(f.elements[i].name == "collid[]") f.elements[i].checked = cbStatus;
+                const cbStatus = cbObj.checked;
+                const f = cbObj.form;
+                for(let i=0; i<f.length; i++){
+					if(f.elements[i].name === "collid[]") f.elements[i].checked = cbStatus;
 				}
 			}
 
 			function verifyCleanerForm(f){
-				if(f.targetkingdom.value == ""){
+				if(f.targetkingdom.value === ""){
 					alert("Select target kingdom for collection");
 					return false;
 				}
@@ -142,7 +150,7 @@ elseif($activeCollArr){
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		?>
 		<div class='navpath'>
 			<a href="../../index.php">Home</a> &gt;&gt;
@@ -161,7 +169,6 @@ elseif($activeCollArr){
 			?>
 			<b>Taxonomic Name Cleaner</b>
 		</div>
-		<!-- inner text block -->
 		<div id="innertext">
 			<?php
 			$collMap = $cleanManager->getCollMap();
@@ -179,7 +186,7 @@ elseif($activeCollArr){
 						?>
 					</div>
 					<?php
-					if(count($collMap) > 1 && $activeCollArr){
+					if($activeCollArr && count($collMap) > 1){
 						?>
 						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" /></a></div>
 						<div style="clear:both">
@@ -189,9 +196,9 @@ elseif($activeCollArr){
 									<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> Select / Unselect All</div>
 									<?php
 									foreach($collMap as $id => $collArr){
-										if(in_array($id, $USER_RIGHTS["CollAdmin"])){
+										if(in_array($id, $USER_RIGHTS['CollAdmin'], true)){
 											echo '<div>';
-											echo '<input name="collid[]" type="checkbox" value="'.$id.'" '.(in_array($id,$activeCollArr)?'CHECKED':'').' /> ';
+											echo '<input name="collid[]" type="checkbox" value="'.$id.'" '.(in_array($id, $activeCollArr, true) ?'CHECKED':'').' /> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';
 											echo '</div>';
 										}
@@ -207,7 +214,7 @@ elseif($activeCollArr){
 						<?php
 					}
 					if(count($activeCollArr) > 1){
-						echo '<div id="collDiv" style="display:none;margin:0px 20px;clear:both;">';
+						echo '<div id="collDiv" style="display:none;margin:0 20px;clear:both;">';
 						foreach($activeCollArr as $activeCollid){
 							echo '<div>'.$collMap[$activeCollid]['collectionname'].' ('.$collMap[$activeCollid]['code'].')</div>';
 						}
@@ -217,10 +224,10 @@ elseif($activeCollArr){
 					<div style="margin:20px;clear:both;">
 						<?php
 						if($action){
-							if($action == 'deepindex'){
+							if($action === 'deepindex'){
 								$cleanManager->deepIndexTaxa();
 							}
-							elseif($action == 'AnalyzingNames'){
+							elseif($action === 'AnalyzingNames'){
 								echo '<ul>';
 								$cleanManager->setAutoClean($autoClean);
 								$cleanManager->setTargetKingdom($targetKingdom);
@@ -245,17 +252,17 @@ elseif($activeCollArr){
 								</div>
 								<hr/>
 								<div style="margin:20px 10px">
-									<div style="margin:10px 0px">
+									<div style="margin:10px 0;">
 										Following tool will crawl through unindexed names and attempt to resolve name discrepancies
 									</div>
 									<div style="margin:10px;">
 										<div style="margin-bottom:5px;">
-											<fieldset style="padding:15px;margin:10px 0px">
+											<fieldset style="padding:15px;margin:10px 0;">
 												<legend><b>Taxonomic Resource</b></legend>
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey,$taxResource)?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey, $taxResource, true) ?'checked':'').' /> '.$taValue.'<br/>';
 												}
 												?>
 											</fieldset>
@@ -268,7 +275,7 @@ elseif($activeCollArr){
 												<?php
 												$kingdomArr = $cleanManager->getKingdomArr();
 												foreach($kingdomArr as $kTid => $kSciname){
-													echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom==$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
+													echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === $kTid?'SELECTED':'').'>'.$kSciname.'</option>';
 												}
 												?>
 											</select>
@@ -282,7 +289,7 @@ elseif($activeCollArr){
 										<div style="height:50px;">
 											<div style="">Clean and Mapping Function:</div>
 											<div style="float:left;margin-left:15px;"><input name="autoclean" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> Semi-Manual</div>
-											<div style="float:left;margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean==1?'checked':''); ?> /> Fully Automatic</div>
+											<div style="float:left;margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean === 1?'checked':''); ?> /> Fully Automatic</div>
 										</div>
 										<div style="clear:both;">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
@@ -294,7 +301,7 @@ elseif($activeCollArr){
 							<hr/>
 							<form name="deepindexform" action="taxonomycleaner.php" method="post">
 								<div style="margin:20px 10px">
-									<div style="margin:10px 0px">
+									<div style="margin:10px 0;">
 										Following tool will run a set of algorithms that will run names through several filters to improve linkages to taxonomic thesaurus
 									</div>
 									<div style="margin:10px">
@@ -313,7 +320,7 @@ elseif($activeCollArr){
 			}
 			elseif($collMap){
 				?>
-				<div style="margin:0px 0px 20px 20xp;font-weight:bold;font-size:120%;">Batch Taxonomic Cleaning Tool</div>
+				<div style="margin:0 0 20px 20px;font-weight:bold;font-size:120%;">Batch Taxonomic Cleaning Tool</div>
 				<fieldset style="padding: 15px;margin:20px;">
 					<legend><b>Collection Selector</b></legend>
 					<form name="selectcollidform" action="taxonomycleaner.php" method="post" onsubmit="return checkSelectCollidForm(this)">
@@ -343,6 +350,6 @@ elseif($activeCollArr){
 			}
 			?>
 		</div>
-		<?php include($SERVER_ROOT.'/footer.php');?>
+		<?php include(__DIR__ . '/../../footer.php');?>
 	</body>
 </html>

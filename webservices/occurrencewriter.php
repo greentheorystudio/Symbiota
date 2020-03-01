@@ -13,33 +13,36 @@
  * 
  */
 
-date_default_timezone_set('America/Phoenix');
 include_once(__DIR__ . '/../config/symbini.php');
-require_once($SERVER_ROOT.'/classes/WsOccurEditor.php');
+require_once(__DIR__ . '/../classes/WsOccurEditor.php');
 
 $occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;
 $recordID = array_key_exists('recordid',$_REQUEST)?$_REQUEST['recordid']:'';
-$dwcObj = (isset($_REQUEST['dwcobj'])?$_REQUEST['dwcobj']:'');
+$dwcObj = ($_REQUEST['dwcobj'] ?? '');
 $editType = array_key_exists('edittype',$_REQUEST)?$_REQUEST['edittype']:'occurrence';
 $source = array_key_exists('source',$_REQUEST)?$_REQUEST['source']:'';
 $editor = array_key_exists('editor',$_REQUEST)?$_REQUEST['editor']:'';
 $origTimestamp = array_key_exists('timestamp',$_REQUEST)?$_REQUEST['timestamp']:'';
 $securityKey = array_key_exists('key',$_REQUEST)?$_REQUEST['key']:'';
 
-//Sanitation 
-if(!preg_match('/^[\d,]+$/', $occid)) $occid = 0;
-$recordID = preg_replace("/[^A-Za-z0-9\-]/","",$recordID);
-$securityKey = preg_replace("/[^A-Za-z0-9\-]/","",$securityKey);
+if(!preg_match('/^[\d,]+$/', $occid)) {
+	$occid = 0;
+}
+$recordID = preg_replace("/[^A-Za-z0-9\-]/", '',$recordID);
+$securityKey = preg_replace("/[^A-Za-z0-9\-]/", '',$securityKey);
 
 $servManager = new WsOccurEditor();
-if(!$occid && !$recordID)
+if(!$occid && !$recordID) {
 	exit('{"Result":{"Failure":[{"Message":"Occurrence identifier is null"}]}}');
+}
 	
-if(!$dwcObj)
+if(!$dwcObj) {
 	exit('{"Result":{"Failure":[{"Message":"dwcObj edit object is null"}]}}');
+}
 
-if(!$servManager->validateSecurityKey($securityKey))
+if(!$servManager->validateSecurityKey($securityKey)) {
 	exit('{"Result":{"Failure":[{"Message":"Security key validation failed!"}]}}');
+}
 	
 $servManager->setVerboseMode(1);
 if($occid){
@@ -61,4 +64,3 @@ if($servManager->setDwcArr($dwcObj)){
 else{
 	echo '{"Result":{"Failure":[{"Message":"dwcObj failed to validate"}]}}';
 }
-?>

@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAccessStats.php');
+include_once(__DIR__ . '/../../classes/OccurrenceAccessStats.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/reports/accessstatsreview.php?'.$_SERVER['QUERY_STRING']);
-header("Content-Type: text/html; charset=".$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/reports/accessstatsreview.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $display = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'summary';
@@ -19,7 +21,9 @@ $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $statManager = new OccurrenceAccessStats();
 $collName = 'All Collections';
-if($collid) $collName = $statManager->setCollid($collid);
+if($collid) {
+    $collName = $statManager->setCollid($collid);
+}
 
 $statManager->setDuration($duration);
 $statManager->setStartDate($startDate);
@@ -31,11 +35,11 @@ $statManager->setPageNum($pageNum);
 $statManager->setLimit($limitCnt);
 
 $isEditor = false;
-if($IS_ADMIN || ($collid && array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 
-if($action == 'export'){
+if($action === 'export'){
 	$statManager->exportCsvFile($display);
 	exit;
 }
@@ -43,7 +47,7 @@ if($action == 'export'){
 $statArr = array();
 $recCnt = 0;
 $headerStr = '';
-if($display == 'full'){
+if($display === 'full'){
 	$statArr = $statManager->getFullReport();
 	$recCnt = $statManager->getFullReportCount();
 	$headerStr = '<th>Date</th><th>Access Type</th><th>Record #</th><th>Record Count</th>';
@@ -65,7 +69,7 @@ else{
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
 		<script>
 			function validateFilterForm(f){
-				if(f.startdate.value != "" && f.enddate.value != "" && f.startdate.value > f.enddate.value){
+				if(f.startdate.value !== "" && f.enddate.value !== "" && f.startdate.value > f.enddate.value){
 					alert("Start date cannot be after end date");
 					return false;
 				}
@@ -92,22 +96,23 @@ else{
 			}
 
 			function openIndPU(occid){
-				var newWindow = window.open('../individual/index.php?occid='+occid,'indspec' + occid,'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open('../individual/index.php?occid=' + occid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 			}
 		</script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 		echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		echo '<b>Occurrence Access Reports</b>';
 		echo '</div>';
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext" style="min-width:1100px">
 			<div>
 				<div style="float:left;font-size:120%"><b><u>User Access Statistics</u></b></div>
@@ -121,9 +126,10 @@ else{
 			</div>
 			<?php
 			if($isEditor){
-				//Setup navigation bar
 				$subsetCnt = $limitCnt*($pageNum + 1);
-				if($subsetCnt > $recCnt) $subsetCnt = $recCnt;
+				if($subsetCnt > $recCnt) {
+                    $subsetCnt = $recCnt;
+                }
 				$navPageBase = 'accessreport.php?collid='.$collid.'&display='.$display.'&duration='.$duration.'&startdate='.$startDate.'&enddate='.$endDate.'&ip='.$ip.'&accesstype='.$accessType;
 				$navStr = '<div class="navbarDiv" style="float:right;">';
 				if($pageNum){
@@ -154,16 +160,16 @@ else{
 								Display:
 								<select name="display">
 									<option value="summary">Summary Count</option>
-									<option value="full" <?php echo ($display=='full'?'SELECTED':''); ?>>Full Records</option>
+									<option value="full" <?php echo ($display === 'full'?'SELECTED':''); ?>>Full Records</option>
 								</select>
 							</div>
 							<div style="margin:3px;">
 								Duration:
 								<select name="duration">
 									<option value="day">Daily</option>
-									<option value="week" <?php echo ($duration=='week'?'SELECTED':''); ?>>Weekly</option>
-									<option value="month" <?php echo ($duration=='month'?'SELECTED':''); ?>>Monthly</option>
-									<option value="year" <?php echo ($duration=='year'?'SELECTED':''); ?>>Yearly</option>
+									<option value="week" <?php echo ($duration === 'week'?'SELECTED':''); ?>>Weekly</option>
+									<option value="month" <?php echo ($duration === 'month'?'SELECTED':''); ?>>Monthly</option>
+									<option value="year" <?php echo ($duration === 'year'?'SELECTED':''); ?>>Yearly</option>
 								</select>
 							</div>
 							<div style="margin:3px;">
@@ -173,7 +179,7 @@ else{
 									<option value="">---------------------</option>
 									<?php
 									foreach($accessTypeArr as $k => $v){
-										echo '<option value="'.$k.'" '.($accessType==$k?'SELECTED':'').'>'.$v.'</option>';
+										echo '<option value="'.$k.'" '.($accessType === $k?'SELECTED':'').'>'.$v.'</option>';
 									}
 									?>
 								</select>
@@ -204,11 +210,11 @@ else{
 						</tr>
 						<?php
 						if($statArr){
-							if($display == 'full'){
+							if($display === 'full'){
 								foreach($statArr as $date => $arr1){
 									foreach($arr1 as $aType => $arr2){
 										foreach($arr2 as $recid => $cnt){
-											echo '<tr><td>'.$date.'</td><td>'.(isset($accessTypeArr[$aType])?$accessTypeArr[$aType]:'').'</td><td><a href="#" onclick="openIndPU('.$recid.');return false;">'.$recid.'</a></td><td>'.$cnt.'</td></tr>';
+											echo '<tr><td>'.$date.'</td><td>'.($accessTypeArr[$aType] ?? '').'</td><td><a href="#" onclick="openIndPU('.$recid. ');return false;">' .$recid.'</a></td><td>'.$cnt.'</td></tr>';
 										}
 									}
 								}
@@ -216,7 +222,7 @@ else{
 							else{
 								foreach($statArr as $date => $arr1){
 									foreach($arr1 as $aType => $cnt){
-										echo '<tr><td>'.$date.'</td><td>'.(isset($accessTypeArr[$aType])?$accessTypeArr[$aType]:'').'</td><td>'.$cnt.'</td></tr>';
+										echo '<tr><td>'.$date.'</td><td>'.($accessTypeArr[$aType] ?? '').'</td><td>'.$cnt.'</td></tr>';
 									}
 								}
 							}
@@ -242,6 +248,6 @@ else{
 			}
 			?>
 		</div>
-		<?php include($SERVER_ROOT.'/footer.php');?>
+		<?php include(__DIR__ . '/../../footer.php');?>
 	</body>
 </html>

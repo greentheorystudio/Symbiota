@@ -16,7 +16,7 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyAPIManager.php');
+include_once(__DIR__ . '/../classes/TaxonomyAPIManager.php');
 
 $queryString = $_REQUEST['term'];
 $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:0;
@@ -30,4 +30,3 @@ if($queryString){
     $listArr = $qHandler->generateVernacularList($queryString);
     echo json_encode($listArr);
 }
-?>

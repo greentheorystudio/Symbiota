@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
+}
 
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 $cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
@@ -12,62 +14,65 @@ $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
 
 $keyManager = new KeyCharAdmin();
 $keyManager->setLangId($langId);
-//$keyManager->setCollId($collId);
 
 $keyManager->setCid($cid);
 
 $statusStr = '';
 if($formSubmit){
-	if($formSubmit == 'Create'){
+	if($formSubmit === 'Create'){
 		$statusStr = $keyManager->createCharacter($_POST,$PARAMS_ARR['un']);
 		$cid = $keyManager->getCid();
 	}
-	elseif($formSubmit == 'Save Char'){
+	elseif($formSubmit === 'Save Char'){
 		$statusStr = $keyManager->editCharacter($_POST);
 	}
-	elseif($formSubmit == 'Add State'){
+	elseif($formSubmit === 'Add State'){
 		$keyManager->createCharState($_POST['charstatename'],$_POST['illustrationurl'],$_POST['description'],$_POST['notes'],$_POST['sortsequence'],$PARAMS_ARR['un']);
 		$tabIndex = 1;
 	}
-	elseif($formSubmit == 'Save State'){
+	elseif($formSubmit === 'Save State'){
 		$statusStr = $keyManager->editCharState($_POST);
 		$tabIndex = 1;
 	}
-	elseif($formSubmit == 'Delete Char'){
+	elseif($formSubmit === 'Delete Char'){
 		$statusStr = $keyManager->deleteChar();
-		if($statusStr == true) $cid = 0;
+		if($statusStr === true) {
+            $cid = 0;
+        }
 	}
-	elseif($formSubmit == 'Delete State'){
+	elseif($formSubmit === 'Delete State'){
 		$statusStr = $keyManager->deleteCharState($_POST['cs']);
 		$tabIndex = 1;
 	}
-	elseif($formSubmit == 'Upload Image'){
+	elseif($formSubmit === 'Upload Image'){
 		$statusStr = $keyManager->uploadCsImage($_POST);
 		$tabIndex = 1;
 	}
-	elseif($formSubmit == 'Delete Image'){
+	elseif($formSubmit === 'Delete Image'){
 		$statusStr = $keyManager->deleteCsImage($_POST['csimgid']);
 		$tabIndex = 1;
 	}
-	elseif($formSubmit == 'Save Taxonomic Relevance'){
+	elseif($formSubmit === 'Save Taxonomic Relevance'){
 		if(isset($_POST['tid']) && $_POST['tid']){
 			$statusStr = $keyManager->saveTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes']);
 			$tabIndex = 2;
 		}
 	}
-	elseif($formSubmit == 'deltaxon'){
+	elseif($formSubmit === 'deltaxon'){
 		$statusStr = $keyManager->deleteTaxonRelevance($_POST['tid']);
 		$tabIndex = 2;
 	}
 }
 
-if(!$cid) header('Location: index.php');
+if(!$cid) {
+    header('Location: index.php');
+}
 
+$headingAdminUrl = 'headingadmin.php';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title>Character Admin</title>
+    <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
@@ -75,7 +80,7 @@ if(!$cid) header('Location: index.php');
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		let tabIndex = <?php echo $tabIndex; ?>;
 
 		$(document).ready(function() {
 			$('#tabs').tabs({ 
@@ -92,8 +97,8 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function updateUnits(obj){
-			var unitObj = document.getElementById("units");
-			if(obj.value == "IN" || obj.value == "RN"){
+            const unitObj = document.getElementById("units");
+            if(obj.value === "IN" || obj.value === "RN"){
 				unitObj.style.display = "block";
 			}
 			else{
@@ -102,11 +107,11 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function validateCharEditForm(f){
-			if(f.charname.value == ""){
+			if(f.charname.value === ""){
 				alert("Character name must not be null");
 				return false;
 			} 
-			if(f.chartype.value == ""){
+			if(f.chartype.value === ""){
 				alert("Character type must not be null");
 				return false;
 			} 
@@ -118,7 +123,7 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function validateStateAddForm(f){
-			if(f.charstatename.value == ""){
+			if(f.charstatename.value === ""){
 				alert("Character state must not be null");
 				return false;
 			} 
@@ -146,18 +151,15 @@ if(!$cid) header('Location: index.php');
 		}
 		
 		function verifyCharStateDeletion(f){
-			var cid = f.cid.value;
-			var cs = f.cs.value;
+            const cid = f.cid.value;
+            const cs = f.cs.value;
 
-			//Restriction when images are linked
-			document.getElementById("delvercsimgspan-"+cs).style.display = "block";
+            document.getElementById("delvercsimgspan-"+cs).style.display = "block";
 			verifyCharStateImages(cid,cs);
 
-			//Restriction when language definitions are linked
 			document.getElementById("delvercslangspan-"+cs).style.display = "block";
 			verifyCharStateLang(cid,cs);
 
-			//Restriction when descriptions are linked
 			document.getElementById("delverdescrspan-"+cs).style.display = "block";
 			verifyDescr(cid,cs);
 
@@ -213,7 +215,7 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function validateTaxonAddForm(f){
-			if(f.tid.value == ''){
+			if(f.tid.value === ''){
 				alert("Please select a taxonomic name!");
 				return false;
 			}
@@ -221,20 +223,21 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function openHeadingAdmin(){
-			newWindow = window.open("headingadmin.php","headingWin","scrollbars=1,toolbar=1,resizable=1,width=800,height=600,left=50,top=50");
-			if (newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open("<?php echo $headingAdminUrl; ?>", "headingWin", "scrollbars=1,toolbar=1,resizable=1,width=800,height=600,left=50,top=50");
+            if (newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 		}
 	</script>
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<a href='index.php'> <b>Character Management</b></a>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($SYMB_UID){
@@ -247,11 +250,11 @@ if(!$cid) header('Location: index.php');
 				<hr/>
 				<?php 
 			}
-			$charStateArr = $keyManager->getCharStateArr($cid);
-			$charArr = $keyManager->getCharDetails($cid);
+			$charStateArr = $keyManager->getCharStateArr();
+			$charArr = $keyManager->getCharDetails();
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?php echo $charArr['charname']; ?></div>
-			<div id="tabs" style="margin:0px;">
+			<div id="tabs" style="margin:0;">
 			    <ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>
 					<li><a href="#charstatediv"><span>Character States</span></a></li>
@@ -271,11 +274,11 @@ if(!$cid) header('Location: index.php');
 									<b>Type</b><br />
 									<select id="type" name="chartype" style="width:180px;" onchange="updateUnits(this);">
 										<option value="UM">Unordered Multi-state</option>
-										<option value="IN" <?php echo ($charArr['chartype']=='IN'?'SELECTED':'');?>>Integer</option>
-										<option value="RN" <?php echo ($charArr['chartype']=='RN'?'SELECTED':'');?>>Real Number</option>
+										<option value="IN" <?php echo ($charArr['chartype'] === 'IN'?'SELECTED':'');?>>Integer</option>
+										<option value="RN" <?php echo ($charArr['chartype'] === 'RN'?'SELECTED':'');?>>Real Number</option>
 									</select>
 								</div>
-								<div id="units" style="display:<?php echo ((($charArr['chartype']=='IN')||($charArr['chartype']=='RN'))?'block':'none');?>;margin-left:15px;float:left;">
+								<div id="units" style="display:<?php echo ((($charArr['chartype'] === 'IN')||($charArr['chartype'] === 'RN'))?'block':'none');?>;margin-left:15px;float:left;">
 									<b>Units</b><br />
 									<input type="text" name="units" maxlength="45" style="width:100px;" value="<?php echo $charArr['units']; ?>" title="" />
 								</div>
@@ -283,9 +286,9 @@ if(!$cid) header('Location: index.php');
 									<b>Difficulty</b><br />
 									<select name="difficultyrank" style="width:100px;">
 										<option value="1">Easy</option>
-										<option value="2" <?php echo ($charArr['difficultyrank']=='2'?'SELECTED':'');?>>Intermediate</option>
-										<option value="3" <?php echo ($charArr['difficultyrank']=='3'?'SELECTED':'');?>>Advanced</option>
-										<option value="4" <?php echo ($charArr['difficultyrank']=='4'?'SELECTED':'');?>>Hidden</option>
+										<option value="2" <?php echo ($charArr['difficultyrank'] === '2'?'SELECTED':'');?>>Intermediate</option>
+										<option value="3" <?php echo ($charArr['difficultyrank'] === '3'?'SELECTED':'');?>>Advanced</option>
+										<option value="4" <?php echo ($charArr['difficultyrank'] === '4'?'SELECTED':'');?>>Hidden</option>
 									</select>
 								</div>
 								<div style="float:left;margin-left:15px;">
@@ -297,7 +300,7 @@ if(!$cid) header('Location: index.php');
 										$headingArr = $keyManager->getHeadingArr();
 										asort($headingArr);
 										foreach($headingArr as $k => $v){
-											echo '<option value="'.$k.'" '.($k==$charArr['hid']?'SELECTED':'').'>'.$v['name'].'</option>';
+											echo '<option value="'.$k.'" '.($k === $charArr['hid']?'SELECTED':'').'>'.$v['name'].'</option>';
 										}
 										?>
 									</select> 
@@ -410,7 +413,7 @@ if(!$cid) header('Location: index.php');
 													<input type="text" name="sortsequence" value="<?php echo $stateArr['sortsequence']; ?>" />
 												</div>
 											</div>
-											<div style="width:100%;margin:20px 0px 10px 20px;">
+											<div style="width:100%;margin:20px 0 10px 20px;">
 												<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 												<input name="cs" type="hidden" value="<?php echo $cs; ?>" />
 												<button name="formsubmit" type="submit" value="Save State">Save</button>
@@ -473,7 +476,7 @@ if(!$cid) header('Location: index.php');
 											<div id="delverimgdiv" style="margin:15px;">
 												<b>Image Links: </b>
 												<span id="delvercsimgspan-<?php echo $cs; ?>" style="color:orange;display:none;">checking image links...</span>
-												<div id="delcsimgfaildiv-<?php echo $cs; ?>" style="display:none;style:0px 10px 10px 10px;">
+												<div id="delcsimgfaildiv-<?php echo $cs; ?>" style="display:none;margin:0 10px 10px 10px;">
 													<span style="color:red;">Warning:</span> 
 													One or more images are linked to this charcter state. 
 													Deleting this character state will also permanently remove these images.  
@@ -486,7 +489,7 @@ if(!$cid) header('Location: index.php');
 											<div id="delverlangdiv" style="margin:15px;">
 												<b>Language Links: </b>
 												<span id="delvercslangspan-<?php echo $cs; ?>" style="color:orange;display:none;">checking language links...</span>
-												<div id="delcslangfaildiv-<?php echo $cs; ?>" style="display:none;style:0px 10px 10px 10px;">
+												<div id="delcslangfaildiv-<?php echo $cs; ?>" style="display:none;margin:0 10px 10px 10px;">
 													<span style="color:red;">Warning:</span> 
 													Charcter state has links to langauge records. 
 													Deleting this character state will also permanently remove this data.  
@@ -499,7 +502,7 @@ if(!$cid) header('Location: index.php');
 											<div id="delverdescrdiv" style="margin:15px;">
 												<b>Description Links: </b>
 												<span id="delverdescrspan-<?php echo $cs; ?>" style="color:orange;display:none;">checking description links...</span>
-												<div id="deldescrfaildiv-<?php echo $cs; ?>" style="display:none;style:0px 10px 10px 10px;">
+												<div id="deldescrfaildiv-<?php echo $cs; ?>" style="display:none;margin:0 10px 10px 10px;">
 													<span style="color:red;">Warning:</span> 
 													One or more descriptions are linked to this charcter state. 
 													Delete this character state will also permanently remove these descriptions.  
@@ -535,25 +538,23 @@ if(!$cid) header('Location: index.php');
 							}
 							?>
 							<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
-							<button name="formsubmit" type="submit" value="Delete Char" <?php if($charStateArr) echo 'DISABLED'; ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="Delete Char" <?php echo ($charStateArr?'DISABLED':''); ?>>Delete</button>
 						</fieldset>
 					</form>
 				</div>
 			</div>	
 			<?php 
 		}
-		else{
-			if(!$isEditor){
-				echo '<h2>You are not authorized to add characters</h2>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
-		}
+		else if(!$isEditor){
+            echo '<h2>You are not authorized to add characters</h2>';
+        }
+        else{
+            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
 		?>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

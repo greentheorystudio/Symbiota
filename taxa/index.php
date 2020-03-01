@@ -83,7 +83,6 @@ else{
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE. ' - ' .$spDisplay; ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/speciesprofilebase.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
@@ -100,8 +99,7 @@ else{
 		let tid = <?php echo $taxonManager->getTid(); ?>;
 	</script>
 	<script src="../js/symb/taxa.index.js?ver=20170310" type="text/javascript"></script>
-	<script src="../js/symb/taxa.editor.js?ver=20140619" type="text/javascript"></script>
-    <?php
+	<?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){
             echo '<link href="includes/config/'.$cssVal.'?ver=150106" type="text/css" rel="stylesheet" id="editorCssLink" />';

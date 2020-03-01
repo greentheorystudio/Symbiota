@@ -54,20 +54,3 @@ $SEARCHTEXT['OTHER_CATNUM'] = 'Other Catalog Number:';
 $SEARCHTEXT['TYPE'] = 'Limit to Type Specimens';
 $SEARCHTEXT['HAS_IMAGE'] = 'Limit to Specimens with Images';
 $SEARCHTEXT['HAS_GENETIC'] = 'Limit to Specimens with Genetic Data';
-
-//Following used in mapboundingbox.php
-$SEARCHTEXT['MBB_TITLE'] = 'Coordinate Mapper';
-$SEARCHTEXT['MBB_INSTRUCTIONS'] = 'Click once to start drawing and again to finish rectangle. Click on the Submit button to transfer Coordinates.';
-$SEARCHTEXT['MBB_NORTHERN'] = 'Northern Lat';
-$SEARCHTEXT['MBB_EASTERN'] = 'Eastern Long';
-$SEARCHTEXT['MBB_SOUTHERN'] = 'Southern Lat';
-$SEARCHTEXT['MBB_WESTERN'] = 'Western Long';
-
-//Following used in mappointradius.php
-$SEARCHTEXT['MPR_TITLE'] = 'Coordinate Mapper';
-$SEARCHTEXT['MPR_INSTRUCTIONS'] = 'Click once to capture coordinates. Click on the Submit Coordinate button to transfer Coordinates.';
-$SEARCHTEXT['MPR_LAT'] = 'Latitude';
-$SEARCHTEXT['MPR_LNG'] = 'Longitude';
-$SEARCHTEXT['SUBMIT'] = 'Submit';
-
-?>

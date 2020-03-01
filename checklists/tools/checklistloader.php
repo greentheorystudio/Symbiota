@@ -1,20 +1,22 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistLoaderManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/ChecklistLoaderManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:"";
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
-$thesId = array_key_exists("thes",$_REQUEST)?$_REQUEST["thes"]:0;
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$thesId = array_key_exists('thes',$_REQUEST)?$_REQUEST['thes']:0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 
 $clLoaderManager = new ChecklistLoaderManager();
 $clLoaderManager->setClid($clid);
 $clMeta = $clLoaderManager->getChecklistMetadata();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = true;
 }
 ?>
@@ -24,14 +26,14 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
-		function validateUploadForm(thisForm){
-			var testStr = document.getElementById("uploadfile").value;
-			if(testStr == ""){
+		function validateUploadForm(){
+            let testStr = document.getElementById("uploadfile").value;
+            if(testStr === ""){
 				alert("Please select a file to upload");
 				return false;
 			}
 			testStr = testStr.toLowerCase();
-			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
+			if(testStr.indexOf(".csv") === -1 && testStr.indexOf(".CSV") === -1){
 				alert("Document "+document.getElementById("uploadfile").value+" must be a CSV file (with a .csv extension)");
 				return false;
 			}
@@ -46,20 +48,21 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+    include_once(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt;
 		<?php
-		if($pid) echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+		if($pid) {
+            echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
+        }
 		echo '<a href="../checklist.php?cl='.$clid.'&pid='.$pid.'">Return to Checklist</a> &gt;&gt; ';
 		?>
 		<a href="checklistloader.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><b>Checklists Loader</b></a>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<h1>
-			<a href="<?php echo $CLIENT_ROOT."/checklists/checklist.php?cl=".$clid.'&pid='.$pid; ?>">
+			<a href="<?php echo $CLIENT_ROOT. '/checklists/checklist.php?cl=' .$clid.'&pid='.$pid; ?>">
 				<?php echo $clMeta['name']; ?>
 			</a>
 		</h1>
@@ -68,7 +71,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		</div>
 		<?php
 			if($isEditor){
-				if($action == "Upload Checklist"){
+				if($action === 'Upload Checklist'){
 					?>
 					<div style='margin:10px;'>
 						<ul>
@@ -122,7 +125,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 				}
 				else{
 					?>
-					<form enctype="multipart/form-data" action="checklistloader.php" method="post" onsubmit="return validateUploadForm(this);">
+					<form enctype="multipart/form-data" action="checklistloader.php" method="post" onsubmit="return validateUploadForm();">
 						<fieldset style="padding:15px;width:800px;">
 							<legend><b>Checklist Upload Form</b></legend>
 							<input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
@@ -137,7 +140,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 									<?php
 									$thesArr = $clLoaderManager->getThesauri();
 									foreach($thesArr as $k => $v){
-										echo "<option value='".$k."'>".$v."</option>";
+										echo "<option value='".$k."'>".$v. '</option>';
 									}
 									?>
 								</select>
@@ -166,12 +169,12 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 				}
 			}
 			else{
-				echo "<h2>You appear not to have rights to edit this checklist. If you think this is in error, contact an administrator</h2>";
+				echo '<h2>You appear not to have rights to edit this checklist. If you think this is in error, contact an administrator</h2>';
 			}
 		?>
 	</div>
 	<?php
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

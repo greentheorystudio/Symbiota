@@ -20,13 +20,13 @@ $(function() {
 				or hold down the shift button and hold a left-click while moving the mouse up or down for a more controlled zoom action.
 				Click and drag bottom right corner of image to resize display panel.  
 			</div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" />High Res.</div>
-			<div style="float:right;padding:0px 3px;margin:0px 3px;"><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" />Med Res.</div>
+			<div style="float:right;padding:0 3px;margin:0 3px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" />High Res.</div>
+			<div style="float:right;padding:0 3px;margin:0 3px;"><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" />Med Res.</div>
 			<?php
 			reset($imgArr);
 			$imgUrl = current($imgArr); 
 			if(strpos($imgUrl['web'],'bisque.cyverse')){
-				echo '<div style="float:right;padding:0px 3px;margin:2px 20px 0px 0px;">Rotate: <a href="#" onclick="rotateiPlantImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateiPlantImage(90)">&nbsp;R&nbsp;</a></div>';
+				echo '<div style="float:right;padding:0 3px;margin:2px 20px 0 0;">Rotate: <a href="#" onclick="rotateiPlantImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateiPlantImage(90)">&nbsp;R&nbsp;</a></div>';
 			}
 			?>
 		</div>
@@ -63,7 +63,7 @@ $(function() {
 							<?php
 							echo count($imgArr);
 							if(count($imgArr)>1){
-								echo '<a href="#" onclick="return nextLabelProcessingImage('.($imgCnt+1).');">=&gt;&gt;</a>';
+								echo '<a href="#" onclick="return nextLabelProcessingImage('.($imgCnt+1). ')">=&gt;&gt;</a>';
 							}
 							?>
 						</div>
@@ -104,16 +104,20 @@ $(function() {
 							if(array_key_exists($imgId,$fragArr)){
 								$fragCnt = 1;
 								$targetPrlid = '';
-								if(isset($newPrlid) && $newPrlid) $targetPrlid = $newPrlid;
-								if(array_key_exists('editprlid',$_REQUEST)) $targetPrlid = $_REQUEST['editprlid'];
+								if(isset($newPrlid) && $newPrlid) {
+                                    $targetPrlid = $newPrlid;
+                                }
+								if(array_key_exists('editprlid',$_REQUEST)) {
+                                    $targetPrlid = $_REQUEST['editprlid'];
+                                }
 								foreach($fArr as $prlid => $rArr){
 									$displayBlock = 'none';
 									if($targetPrlid){
-										if($prlid == $targetPrlid){
+										if($prlid === $targetPrlid){
 											$displayBlock = 'block';
 										}
 									}
-									elseif($fragCnt==1){
+									elseif($fragCnt === 1){
 										$displayBlock = 'block';
 									}
 									?>

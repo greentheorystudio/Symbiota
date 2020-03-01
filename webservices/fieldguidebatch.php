@@ -16,19 +16,16 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
+include_once(__DIR__ . '/../classes/FieldGuideManager.php');
 
 $jobId = array_key_exists('job_id',$_POST)?$_POST['job_id']:'';
 $resultUrl = array_key_exists('url',$_POST)?$_POST['url']:'';
-$jobArr = explode("_",$jobId,2);
+$jobArr = explode('_',$jobId,2);
 $collid = $jobArr[0];
 $token = $jobArr[1];
 $jobID = $collid.'_'.$token;
 
 $rHandler = new FieldGuideManager();
-if($jobId && $resultUrl){
-    if($rHandler->validateFGResults($collid,$jobId)){
-        $rHandler->logFGResults($collid,$token,$resultUrl);
-    }
+if($jobId && $resultUrl && $rHandler->validateFGResults($collid, $jobId)) {
+    $rHandler->logFGResults($collid,$token,$resultUrl);
 }
-?>

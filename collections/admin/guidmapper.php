@@ -1,16 +1,18 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/UuidFactory.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 3600);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$action = array_key_exists("formsubmit",$_POST)?$_POST["formsubmit"]:'';
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$action = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = 0;
-if($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"])){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
@@ -18,15 +20,14 @@ $uuidManager = new UuidFactory();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>UUID GUID Mapper</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" />
 	<script type="text/javascript">
 		function toggle(target){
-			var objDiv = document.getElementById(target);
-			if(objDiv){
-				if(objDiv.style.display=="none"){
+            const objDiv = document.getElementById(target);
+            if(objDiv){
+				if(objDiv.style.display === "none"){
 					objDiv.style.display = "block";
 				}
 				else{
@@ -34,11 +35,11 @@ $uuidManager = new UuidFactory();
 				}
 			}
 			else{
-			  	var divs = document.getElementsByTagName("div");
-			  	for (var h = 0; h < divs.length; h++) {
-			  	var divObj = divs[h];
-					if(divObj.className == target){
-						if(divObj.style.display=="none"){
+                const divs = document.getElementsByTagName("div");
+                for (let h = 0; h < divs.length; h++) {
+                    const divObj = divs[h];
+                    if(divObj.className === target){
+						if(divObj.style.display === "none"){
 							divObj.style.display="block";
 						}
 					 	else {
@@ -49,23 +50,12 @@ $uuidManager = new UuidFactory();
 			}
 			return false;
 		}
-
-		function verifyGuidForm(f){
-
-			return true;
-    	}
-
-		function verifyGuidAdminForm(f){
-
-			return true;
-    	}
     </script>
 </head>
 <body>
 <?php 
-include($SERVER_ROOT."/header.php");
+include(__DIR__ . '/../../header.php');
 ?>
-<!-- This is inner text! -->
 <div id="innertext">
 	<?php 
 	if($isEditor){
@@ -75,23 +65,24 @@ include($SERVER_ROOT."/header.php");
 			 
 		</div>
 		<?php 
-		if($action == 'Populate Collection GUIDs'){
+		if($action === 'Populate Collection GUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids($collId);
 			echo '</ul>';
 		}
-		elseif($action == 'Populate GUIDs'){
+		elseif($action === 'Populate GUIDs'){
 			echo '<ul>';
 			$uuidManager->populateGuids();
 			echo '</ul>';
 		}
 		
-		//$collCnt = $uuidManager->getCollectionCount();
 		$occCnt = $uuidManager->getOccurrenceCount($collId);
 		$detCnt = $uuidManager->getDeterminationCount($collId);
 		$imgCnt = $uuidManager->getImageCount($collId);
+		if($collId) {
+            echo '<h3>' . $uuidManager->getCollectionName($collId) . '</h3>';
+        }
 		?>
-		<?php if($collId) echo '<h3>'.$uuidManager->getCollectionName($collId).'</h3>'; ?>
 		<div style="font-weight:bold;">Records without GUIDs (UUIDs)</div>
 		<div style="margin:10px;">
 			<div><b>Occurrences: </b><?php echo $occCnt; ?></div>
@@ -101,7 +92,7 @@ include($SERVER_ROOT."/header.php");
 		<?php 
 		if($collId){
 			?>
-			<form name="guidform" action="guidmapper.php" method="post" onsubmit="return verifyGuidForm(this)">
+			<form name="guidform" action="guidmapper.php" method="post">
 				<fieldset style="padding:15px;">
 					<legend><b>GUID (UUID) Mapper</b></legend>
 					<div style="clear:both;">
@@ -115,7 +106,7 @@ include($SERVER_ROOT."/header.php");
 		elseif($IS_ADMIN){
 			?>
 			<div id="guidadmindiv">
-				<form name="dwcaguidform" action="guidmapper.php" method="post" onsubmit="return verifyGuidAdminForm(this)">
+				<form name="dwcaguidform" action="guidmapper.php" method="post">
 					<fieldset style="padding:15px;">
 						<legend><b>GUID (UUID) Mapper</b></legend>
 						<div style="clear:both;margin:10px;">
@@ -134,7 +125,7 @@ include($SERVER_ROOT."/header.php");
 	?>
 </div>
 <?php 
-include($SERVER_ROOT."/footer.php");
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

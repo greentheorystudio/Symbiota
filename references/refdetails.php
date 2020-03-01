@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once(__DIR__ . '/../classes/ReferenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -15,16 +16,7 @@ if($formSubmit){
 		$refId = $refManager->getRefId();
 	}
 	elseif($formSubmit === 'Edit Reference'){
-		/*if($_POST['refGroup'] == 1){
-			$statusStr = $refManager->editBookReference($_POST);
-		}
-		elseif($_POST['refGroup'] == 2){
-			$statusStr = $refManager->editPerReference($_POST);
-		}
-		else{
-			$statusStr = $refManager->editReference($_POST);
-		}*/
-        $statusStr = $refManager->editReference($_POST);
+		$statusStr = $refManager->editReference($_POST);
 	}
 }
 $refGroup = 0;
@@ -34,48 +26,42 @@ if($refId){
 	$refArr = $refManager->getRefArr($refId);
 	$childArr = $refManager->getChildArr($refId);
 	$authArr = $refManager->getRefAuthArr($refId);
-	$fieldArr = $refManager->getRefTypeFieldArr($refArr["ReferenceTypeId"]);
+	$fieldArr = $refManager->getRefTypeFieldArr($refArr['ReferenceTypeId']);
 	$refChecklistArr = $refManager->getRefChecklistArr($refId);
 	$refCollArr = $refManager->getRefCollArr($refId);
 	$refOccArr = $refManager->getRefOccArr($refId);
 	$refTaxaArr = $refManager->getRefTaxaArr($refId);
-	if($refArr["ReferenceTypeId"] == 3 || $refArr["ReferenceTypeId"] == 4 || $refArr["ReferenceTypeId"] == 6 || $refArr["ReferenceTypeId"] == 27){
+	if($refArr['ReferenceTypeId'] === 3 || $refArr['ReferenceTypeId'] === 4 || $refArr['ReferenceTypeId'] === 6 || $refArr['ReferenceTypeId'] === 27){
 		$refGroup = 1;
 		$parentChild = 1;
-		if($refArr["ReferenceTypeId"] === 4){
+		if($refArr['ReferenceTypeId'] === 4){
 			$refRank = 1;
 		}
-		if($refArr["ReferenceTypeId"] === 3 || $refArr["ReferenceTypeId"] === 6){
+		if($refArr['ReferenceTypeId'] === 3 || $refArr['ReferenceTypeId'] === 6){
 			$refRank = 2;
 		}
-		if($refArr["ReferenceTypeId"] === 27){
+		if($refArr['ReferenceTypeId'] === 27){
 			$refRank = 3;
 		}
 	}
-	if($refArr["ReferenceTypeId"] === 2 || $refArr["ReferenceTypeId"] === 7 || $refArr["ReferenceTypeId"] === 8 || $refArr["ReferenceTypeId"] === 30){
+	if($refArr['ReferenceTypeId'] === 2 || $refArr['ReferenceTypeId'] === 7 || $refArr['ReferenceTypeId'] === 8 || $refArr['ReferenceTypeId'] === 30){
 		$refGroup = 2;
 		$parentChild = 1;
-		if($refArr["ReferenceTypeId"] == 2 || $refArr["ReferenceTypeId"] == 7 || $refArr["ReferenceTypeId"] == 8){
+		if($refArr['ReferenceTypeId'] === 2 || $refArr['ReferenceTypeId'] === 7 || $refArr['ReferenceTypeId'] === 8){
 			$refRank = 1;
 		}
-		if($refArr["ReferenceTypeId"] == 30){
+		if($refArr['ReferenceTypeId'] === 30){
 			$refRank = 2;
 		}
 	}
 }
 else{
-	header("Location: index.php");
+	header('Location: index.php');
 }
-
-header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -90,7 +76,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=3"></script>
 	<script type="text/javascript">
-		var refid = <?php echo $refId; ?>;
+		let refid = <?php echo $refId; ?>;
 
 		<?php
 		if($parentChild){
@@ -101,13 +87,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
         <a href='index.php'> <b>Reference Management</b></a>
     </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($SYMB_UID){
@@ -119,7 +104,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<?php 
 			}
 			?>
-			<div id="tabs" style="margin:0px;">
+			<div id="tabs" style="margin:0;">
 				<ul>
 					<li><a href="#refdetaildiv">Reference Details</a></li>
 					<li><a href="#reflinksdiv">Links</a></li>
@@ -136,7 +121,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b>Add Author By Last Name: </b>
 									</div>
 									<div>
-										<input type="text" name="addauthorsearch" id="addauthorsearch" style="width:200px;" value="" size="20" />
+										<input type="text" name="addauthorsearch" id="addauthorsearch" style="width:200px;" size="20" />
 										<input id="refauthorid" name="refauthorid" type="hidden" value="" />
                                         <input name="refid" type="hidden" value="<?php echo $refId; ?>" />
 									</div>
@@ -163,7 +148,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 						</form>	
 					</div>
 					<div id="refdetails" style="overflow:auto;">
-						<form name="referenceeditform" id="referenceeditform" action="refdetails.php" method="post" onsubmit="return verifyEditRefForm(this.form);">
+						<form name="referenceeditform" id="referenceeditform" action="refdetails.php" method="post" onsubmit="return verifyEditRefForm();">
 							<div style="width:400px;">
 								<div style="width:200px;padding-top:6px;float:left;">
 									<div>
@@ -176,14 +161,14 @@ header("Content-Type: text/html; charset=".$CHARSET);
 											<?php 
 											$typeArr = $refManager->getRefTypeArr();
 											foreach($typeArr as $k => $v){
-												echo '<option value="'.$k.'" '.($refArr['ReferenceTypeId']==$k?'SELECTED':'').'>'.$v.'</option>';
+												echo '<option value="'.$k.'" '.($refArr['ReferenceTypeId'] === $k?'SELECTED':'').'>'.$v.'</option>';
 											}
 											?>
 										</select>
 									</div>
 								</div>
 								<div style="width:100px;margin-top:25px;float:right;">
-									<b>Published: </b><input type="checkbox" id="ispublishedcheck" onchange="updateIspublished(this.form);" value="" <?php echo (!$refArr['ispublished']?'':'checked'); ?> />
+									<b>Published: </b><input type="checkbox" id="ispublishedcheck" onchange="updateIspublished();" value="" <?php echo (!$refArr['ispublished']?'':'checked'); ?> />
 								</div>
 							</div>
 							<?php
@@ -206,7 +191,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Pages']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="pages" id="pages" tabindex="100" maxlength="45" style="width:200px;" value="<?php echo $refArr['pages']; ?>" onchange="" title="" />
+										<input type="text" name="pages" id="pages" tabindex="100" maxlength="45" style="width:200px;" value="<?php echo $refArr['pages']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -230,7 +215,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Section']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="section" id="section" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['section']; ?>" onchange="" title="" />
+										<input type="text" name="section" id="section" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['section']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -278,7 +263,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['ShortTitle']; ?>: </b>
 									</div>
 									<div>
-										<textarea name="shorttitle" id="shorttitle" onchange="" rows="10" style="width:380px;height:40px;resize:vertical;" ><?php echo $refArr['shorttitle']; ?></textarea>
+										<textarea name="shorttitle" id="shorttitle" rows="10" style="width:380px;height:40px;resize:vertical;" ><?php echo $refArr['shorttitle']; ?></textarea>
 									</div>
 								</div>
 								<?php
@@ -290,7 +275,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Volume']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="volume" id="volume" onchange="" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['volume']; ?>" onchange="" title="" />
+										<input type="text" name="volume" id="volume" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['volume']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -302,7 +287,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Number']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="number" id="number" onchange="" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['number']; ?>" onchange="" title="" />
+										<input type="text" name="number" id="number" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['number']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -314,7 +299,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['NumberVolumes']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="numbervolumnes" id="numbervolumnes" onchange="" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['numbervolumnes']; ?>" onchange="" title="" />
+										<input type="text" name="numbervolumnes" id="numbervolumnes" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['numbervolumnes']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -326,7 +311,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Date']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="pubdate" id="pubdate" onchange="" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['pubdate']; ?>" onchange="" title="" />
+										<input type="text" name="pubdate" id="pubdate" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['pubdate']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -338,7 +323,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Edition']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="edition" id="edition" onchange="" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['edition']; ?>" onchange="" title="" />
+										<input type="text" name="edition" id="edition" tabindex="100" maxlength="45" style="width:150px;" value="<?php echo $refArr['edition']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -350,7 +335,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['Publisher']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="publisher" id="publisher" onchange="" tabindex="100" maxlength="150" style="width:300px;" value="<?php echo $refArr['publisher']; ?>" onchange="" title="" />
+										<input type="text" name="publisher" id="publisher" tabindex="100" maxlength="150" style="width:300px;" value="<?php echo $refArr['publisher']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -362,7 +347,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['PlacePublished']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="placeofpublication" id="placeofpublication" onchange="" tabindex="100" maxlength="45" style="width:300px;" value="<?php echo $refArr['placeofpublication']; ?>" onchange="" title="" />
+										<input type="text" name="placeofpublication" id="placeofpublication" tabindex="100" maxlength="45" style="width:300px;" value="<?php echo $refArr['placeofpublication']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -374,7 +359,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										<b><?php echo $fieldArr['ISBN_ISSN']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="isbn_issn" id="isbn_issn" onchange="" tabindex="100" maxlength="45" style="width:300px;" value="<?php echo $refArr['isbn_issn']; ?>" onchange="" title="" />
+										<input type="text" name="isbn_issn" id="isbn_issn" tabindex="100" maxlength="45" style="width:300px;" value="<?php echo $refArr['isbn_issn']; ?>" />
 									</div>
 								</div>
 								<?php
@@ -519,7 +504,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 								echo '</div>';
 							}
 							?>
-							<input name="formsubmit" type="submit" value="Delete Reference" <?php if($childArr || $refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr) echo 'DISABLED'; ?> />
+							<input name="formsubmit" type="submit" value="Delete Reference" <?php echo (($childArr || $refChecklistArr || $refCollArr || $refOccArr || $refTaxaArr)?'DISABLED':''); ?> />
 							<input name="refid" type="hidden" value="<?php echo $refId; ?>" />
 						</fieldset>
 					</form>
@@ -527,18 +512,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 			<?php 
 		}
-		else{
-			if(!$SYMB_UID){
-				echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
-		}
+		else if(!$SYMB_UID){
+            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
+        }
+        else{
+            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

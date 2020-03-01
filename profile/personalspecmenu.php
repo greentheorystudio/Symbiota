@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ProfileManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$formSubmit = array_key_exists("formsubmit",$_REQUEST)?$_REQUEST["formsubmit"]:"";
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']: '';
 
 $specHandler = new ProfileManager();
 
@@ -20,7 +20,6 @@ $statusStr = '';
 <div style="margin:10px;">
 <?php 
 if($SYMB_UID){
-	//Collection is defined and User is logged-in and have permissions
 	if($statusStr){
 		?>
 		<hr/>
@@ -72,21 +71,11 @@ if($SYMB_UID){
 							Review/Verify Occurrence Edits
 						</a>
 					</li>
-					<!-- 
-					<li>Import csv file</li>
-					 -->
 					<li>
 						<a href="#" onclick="newWindow = window.open('personalspecbackup.php?collid=<?php echo $collId; ?>','bucollid','scrollbars=1,toolbar=1,resizable=1,width=400,height=200,left=20,top=20');">
 							Backup file download (CSV extract)
 						</a>
 					</li>
-					<!-- 
-					<li>
-						<a href="../collections/cleaning/index.php?collid=<?php echo $collId; ?>">
-							Data Cleaning Module
-						</a>
-					</li>
-					 -->
 				</ul>
 			</fieldset>
 			<?php

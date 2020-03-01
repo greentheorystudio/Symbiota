@@ -436,8 +436,8 @@ function buildTaxaKey(){
 }
 
 function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
-    keyHTML = '';
-    keyLabel = "'"+key+"'";
+    let keyHTML = '';
+    let keyLabel = "'" + key + "'";
     const color = taxaSymbology[key]['color'];
     keyHTML += '<div id="'+key+'keyrow">';
     keyHTML += '<div style="display:table-row;">';
@@ -3212,7 +3212,6 @@ function setClusterSymbol(feature) {
     if(feature.get('features')){
         const size = feature.get('features').length;
         if(size > 1){
-            const features = feature.get('features');
             if(selections.length > 0){
                 clusterindex = feature.get('identifiers');
                 for(let i in selections){
@@ -3524,8 +3523,8 @@ function setSymbol(feature){
     if(dateSliderActive){
         showPoint = validateFeatureDate(feature);
     }
-    let style = '';
-    let stroke = '';
+    let style;
+    let stroke;
     let selected = false;
     const cKey = feature.get(clusterKey);
     let recType = feature.get('CollType');
@@ -3652,7 +3651,7 @@ function spiderifyPoints(features){
         a = 0;
         let radius;
         const d = 30;
-        max = Math.min(60, spiderFeatures.length);
+        Math.min(60, spiderFeatures.length);
         for(let i in spiderFeatures){
             if(spiderFeatures.hasOwnProperty(i)){
                 radius = d/2 + d*a/(2*Math.PI);

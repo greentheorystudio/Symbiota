@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 
-$collid = $_REQUEST["collid"];
+$collid = $_REQUEST['collid'];
 
 if($collid && is_numeric($collid)){
 	$dwcaManager = new DwcArchiverCore();
@@ -15,4 +15,3 @@ if($collid && is_numeric($collid)){
 	$xmlDom = $dwcaManager->getEmlDom();
 	echo $xmlDom->saveXML();
 }
-?>
