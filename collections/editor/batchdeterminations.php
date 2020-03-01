@@ -1,17 +1,21 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$collid = $_REQUEST["collid"];
+$collid = $_REQUEST['collid'];
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $occManager = new OccurrenceEditorDeterminations();
-if($SOLR_MODE) $solrManager = new SOLRManager();
+if($SOLR_MODE) {
+    $solrManager = new SOLRManager();
+}
 
 $occManager->setCollId($collid);
 $occManager->getCollMap();
@@ -22,16 +26,16 @@ $nomTBody = '';
 $catArr = array();
 $jsonCatArr = '';
 $occArr = array();
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
-elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"])){
+elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 	$isEditor = 1;
 }
 if($isEditor){
-	if($formSubmit == 'Add New Determinations'){
+	if($formSubmit === 'Add New Determinations'){
 		$occidArr = $_REQUEST['occid'];
-		$occStr = implode(",",$occidArr);
+		$occStr = implode(',',$occidArr);
 		$catArr = $occManager->getCatNumArr($occStr);
 		$jsonCatArr = json_encode($catArr);
 		foreach($occidArr as $k){
@@ -39,31 +43,34 @@ if($isEditor){
 			$occManager->addDetermination($_REQUEST,$isEditor);
 		}
 		$catTBody = $occManager->getBulkDetRows($collid,'','',$occStr);
-        if($SOLR_MODE) $solrManager->updateSOLR();
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
 	}
-	if($formSubmit == 'Adjust Nomenclature'){
+	if($formSubmit === 'Adjust Nomenclature'){
 		$occidArr = $_REQUEST['occid'];
-		$occStr = implode(",",$occidArr);
+		$occStr = implode(',',$occidArr);
 		foreach($occidArr as $k){
 			$occManager->setOccId($k);
 			$occManager->addNomAdjustment($_REQUEST,$isEditor);
 		}
 		$nomTBody = $occManager->getBulkDetRows($collid,'','',$occStr);
-        if($SOLR_MODE) $solrManager->updateSOLR();
+        if($SOLR_MODE) {
+            $solrManager->updateSOLR();
+        }
 	}
 }
 ?>
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> Batch Determinations/Nomenclatural Adjustments</title>
+	    <title><?php echo $DEFAULT_TITLE; ?> Batch Determinations/Nomenclatural Adjustments</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-		<script language="javascript" type="text/javascript">
+		<script type="text/javascript">
 			$(document).ready(function() {
 				if(!navigator.cookieEnabled){
 					alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
@@ -72,9 +79,9 @@ if($isEditor){
 					active: <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>
 				});
 			});
-			
-			var catalogNumbers = <?php echo ($jsonCatArr?$jsonCatArr:'[]'); ?>;
-			
+
+			let catalogNumbers = <?php echo ($jsonCatArr?:'[]'); ?>;
+
 			function adjustAccTab(){
 				if(catalogNumbers.length > 0){
 					document.getElementById("accrecordlistdviv").style.display = "block";
@@ -85,7 +92,7 @@ if($isEditor){
 			}
 			
 			function clearAccForm(){
-				if(confirm("Clearing the form will clear the form and restart the process. Are you sure you want to do this?") == true){
+				if(confirm("Clearing the form will clear the form and restart the process. Are you sure you want to do this?") === true){
 					catalogNumbers.length = 0;
 					adjustAccTab();
 					document.getElementById("catrecordstbody").innerHTML = '';
@@ -95,7 +102,7 @@ if($isEditor){
 			}
 			
 			function clearNomForm(){
-				if(confirm("Clearing the form will clear the form and restart the process. Are you sure you want to do this?") == true){
+				if(confirm("Clearing the form will clear the form and restart the process. Are you sure you want to do this?") === true){
 					document.getElementById("nomrecordlistdviv").style.display = "none";
 					document.getElementById("nomrecordstbody").innerHTML = '';
 					document.getElementById("nomsciname").value = '';
@@ -103,13 +110,12 @@ if($isEditor){
 				}
 			}
 			
-			function submitAccForm(f){
-				var continueSubmit = true;
-				var catNum = document.getElementById("fcatalognumber").value;
-				if(catalogNumbers.length < 401){
-					if(continueSubmit && $( "#fcatalognumber" ).val() != ""){
+			function submitAccForm(){
+                const continueSubmit = true;
+                const catNum = document.getElementById("fcatalognumber").value;
+                if(catalogNumbers.length < 401){
+					if(continueSubmit && $( "#fcatalognumber" ).val() !== ""){
 						if(catalogNumbers.indexOf(catNum) < 0){
-							//Add new occurrence 
 							$.ajax({
 								type: "POST",
 								url: "rpc/getnewdetspeclist.php",
@@ -119,9 +125,8 @@ if($isEditor){
 								}
 							}).done(function( retStr ) {
 								if(retStr){
-									var oldList = document.getElementById("catrecordstbody").innerHTML;
-									var newList = retStr+oldList;
-									document.getElementById("catrecordstbody").innerHTML = newList;
+                                    const oldList = document.getElementById("catrecordstbody").innerHTML;
+                                    document.getElementById("catrecordstbody").innerHTML = retStr + oldList;
 									catalogNumbers.push(catNum);
 									adjustAccTab();
 									document.getElementById("fcatalognumber").value = '';
@@ -145,13 +150,12 @@ if($isEditor){
 				return false;
 			}
 			
-			function submitNomForm(f){
+			function submitNomForm(){
 				document.getElementById("nomrecordsubmit").disabled = true;
 				document.getElementById("workingcircle").style.display = "inline";
-				var continueSubmit = true;
-				var sciName = document.getElementById("nomsciname").value;
-				if(continueSubmit && $( "#nomsciname" ).val() != ""){
-					//Add new occurrence 
+                const continueSubmit = true;
+                const sciName = document.getElementById("nomsciname").value;
+                if(continueSubmit && $( "#nomsciname" ).val() !== ""){
 					$.ajax({
 						type: "POST",
 						url: "rpc/getnewdetspeclist.php",
@@ -181,22 +185,21 @@ if($isEditor){
 			}
 			
 			function selectAll(cb){
-				boxesChecked = true;
-				if(!cb.checked){
-					boxesChecked = false;
-				}
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					dbElement.checked = boxesChecked;
+                const boxesChecked = cb.checked;
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    dbElement.checked = boxesChecked;
 				}
 			}
 
-			function validateSelectForm(f){
-				var dbElements = document.getElementsByName("occid[]");
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked) return true;
+			function validateSelectForm(){
+                const dbElements = document.getElementsByName("occid[]");
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked) {
+                        return true;
+                    }
 				}
 			   	alert("Please select at least one occurrence!");
 		      	return false;
@@ -211,24 +214,24 @@ if($isEditor){
 			}
 
 			function openPopup(urlStr){
-				var wWidth = 900;
-				if(document.getElementById('maintable').offsetWidth){
+                let wWidth = 900;
+                if(document.getElementById('maintable').offsetWidth){
 					wWidth = document.getElementById('maintable').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
 				}
-				newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 				return false;
 			}
 			
 			function initNomAdjAutocomplete(f){
 				$( f.sciname ).autocomplete({ 
 					source: "rpc/getspeciessuggest.php", 
-					minLength: 3,
-					change: function(event, ui) {
-					}
+					minLength: 3
 				});
 			}
 			
@@ -236,7 +239,7 @@ if($isEditor){
 				$( f.sciname ).autocomplete({ 
 					source: "rpc/getspeciessuggest.php", 
 					minLength: 3,
-					change: function(event, ui) {
+					change: function() {
 						if(f.sciname.value){
 							pauseSubmit = true;
 							verifyDetSciName(f);
@@ -272,46 +275,47 @@ if($isEditor){
 			}
 			
 			function verifyCatDet(f){
-				if(f.sciname.value == ""){
+				if(f.sciname.value === ""){
 					alert("Scientific Name field must have a value");
 					return false;
 				}
-				if(f.identifiedby.value == ""){
+				if(f.identifiedby.value === ""){
 					alert("Determiner field must have a value (enter 'unknown' if not defined)");
 					return false;
 				}
-				if(f.dateidentified.value == ""){
+				if(f.dateidentified.value === ""){
 					alert("Determination Date field must have a value (enter 'unknown' if not defined)");
 					return false;
 				}
-				//If sciname was changed and submit was clicked immediately afterward, wait 5 seconds so that name can be verified 
 				if(pauseSubmit){
-					var date = new Date();
-					var curDate = null;
-					do{ 
+                    const date = new Date();
+                    let curDate = null;
+                    do{
 						curDate = new Date(); 
-					}while(curDate - date < 5000 && pauseSubmit);
+					}
+                    while(curDate - date < 5000 && pauseSubmit);
 				}
 				return true;
 			}
 			
 			function verifyNomDet(f){
-				var firstTaxon = document.getElementById("nomsciname").value;
-				if(f.sciname.value == ""){
+                const firstTaxon = document.getElementById("nomsciname").value;
+                if(f.sciname.value === ""){
 					alert("Scientific Name field must have a value");
 					return false;
 				}
-				if(f.sciname.value == firstTaxon){
+				if(f.sciname.value === firstTaxon){
 					f.sciname.value = '';
 					alert("Taxon must be different than taxon to be adjusted.");
 					return false;
 				}
 				if(pauseSubmit){
-					var date = new Date();
-					var curDate = null;
-					do{ 
+                    const date = new Date();
+                    let curDate = null;
+                    do{
 						curDate = new Date(); 
-					}while(curDate - date < 5000 && pauseSubmit);
+					}
+                    while(curDate - date < 5000 && pauseSubmit);
 				}
 				return true;
 			}
@@ -319,7 +323,7 @@ if($isEditor){
 	</head>
 	<body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -328,27 +332,26 @@ if($isEditor){
 		?>
 		<b>Batch Determinations/Nomenclatural Adjustments</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';
 			?>
-			<div id="tabs" style="margin:0px;">
+			<div id="tabs" style="margin:0;">
 				<ul>
 					<li><a href="#batchdet">Batch Determinations</a></li>
 					<li><a href="#nomadjust">Nomenclatural Adjustments</a></li>
 				</ul>
 				
 				<div id="batchdet">
-					<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
+					<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm();">
 						<fieldset>
 							<legend><b>Define Specimen Recordset</b></legend>
 							<div style="margin:3px;">
-								<div style="clear:both;padding:8px 0px 0px 0px;">
+								<div style="clear:both;padding:8px 0 0 0;">
 									* Specimen list is limited to 400 records
 								</div>
-								<div style="clear:both;padding:15px 0px 0px 20px;">
+								<div style="clear:both;padding:15px 0 0 20px;">
 									<div style="float:right;">
 										<button name="clearaccform"  type="button" style="margin-right:40px" onclick='clearAccForm();' >Clear Form</button>
 									</div>
@@ -361,12 +364,12 @@ if($isEditor){
 						</fieldset>
 					</form>
 					<div id="accrecordlistdviv" style="display:<?php echo ($catTBody?'block;':'none;'); ?>none;">
-						<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm(this);">
+						<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm();">
 							<div style="margin-top: 15px; margin-left: 15px;">
 								<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
 								Select/Deselect all Specimens
 							</div>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<thead>
 									<tr>
 										<th style="width:25px;text-align:center;">&nbsp;</th>
@@ -375,10 +378,10 @@ if($isEditor){
 										<th style="text-align:center;">Collector/Locality</th>
 									</tr>
 								</thead>
-								<tbody id="catrecordstbody"><?php echo ($catTBody?$catTBody:''); ?></tbody>
+								<tbody id="catrecordstbody"><?php echo ($catTBody?:''); ?></tbody>
 							</table>
 							<div id="newdetdiv" style="">
-								<fieldset style="margin: 15px 15px 0px 15px;padding:15px;">
+								<fieldset style="margin: 15px 15px 0 15px;padding:15px;">
 									<legend><b>Add a New Determination</b></legend>
 									<div style='margin:3px;'>
 										<b>Identification Qualifier:</b>
@@ -438,14 +441,14 @@ if($isEditor){
 				</div>
 				
 				<div id="nomadjust">
-					<form name="nomqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitNomForm(this);">
+					<form name="nomqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitNomForm();">
 						<fieldset>
 							<legend><b>Taxon To Be Adjusted</b></legend>
 							<div style="margin:3px;">
-								<div style="clear:both;padding:8px 0px 0px 0px;">
+								<div style="clear:both;padding:8px 0 0 0;">
 									* Specimen list is limited to 400 records
 								</div>
-								<div style="clear:both;padding:15px 0px 0px 20px;">
+								<div style="clear:both;padding:15px 0 0 20px;">
 									<div style="float:right;">
 										<button name="clearnomform"  type="button" style="margin-right:15px" onclick='clearNomForm();' >Clear Form</button>
 									</div>
@@ -461,12 +464,12 @@ if($isEditor){
 						</fieldset>
 					</form>
 					<div id="nomrecordlistdviv" style="display:<?php echo ($nomTBody?'block;':'none;'); ?>none;">
-						<form name="nomselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm(this);">
+						<form name="nomselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm();">
 							<div style="margin-top: 15px; margin-left: 15px;">
 								<input type="checkbox" name="nomselectall" value="" onclick="selectAll(this);" checked />
 								Select/Deselect all Specimens
 							</div>
-							<table class="styledtable" style="font-family:Arial;font-size:12px;">
+							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<thead>
 									<tr>
 										<th style="width:25px;text-align:center;">&nbsp;</th>
@@ -475,10 +478,10 @@ if($isEditor){
 										<th style="text-align:center;">Collector/Locality</th>
 									</tr>
 								</thead>
-								<tbody id="nomrecordstbody"><?php echo ($nomTBody?$nomTBody:''); ?></tbody>
+								<tbody id="nomrecordstbody"><?php echo ($nomTBody?:''); ?></tbody>
 							</table>
-							<div id="newdetdiv" style="">
-								<fieldset style="margin: 15px 15px 0px 15px;padding:15px;">
+							<div id="newdetdiv">
+								<fieldset style="margin: 15px 15px 0 15px;padding:15px;">
 									<legend><b>Adjust To Taxon</b></legend>
 									<div style='margin:3px;'>
 										<b>Scientific Name:</b> 
@@ -519,7 +522,7 @@ if($isEditor){
 		}
 		else{
 			?>
-			<div style="font-weight:bold;margin:20px;font-weight:150%;">
+			<div style="font-weight:bold;margin:20px;font-size:150%;">
 				You do not have permissions to set batch determinations for this collection. 
 				Please contact the site administrator to obtain the necessary permissions.
 			</div>
@@ -528,7 +531,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 	</body>
 </html>

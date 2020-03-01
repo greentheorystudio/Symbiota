@@ -5,8 +5,9 @@
 	<title>For testing GeoLocate web services</title>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script>
-		var cogeUrl = "https://coge.geo-locate.org/symbiota/";
-		var d;
+		const cogeUrl = "https://coge.geo-locate.org/symbiota/";
+		let d;
+
 		function cogeCheckStatus(){
 			$.ajax({
 				type: "GET",
@@ -16,23 +17,21 @@
 				dataType: 'json'
 			})
 			.done(function( data ) {
-					$("#coge-status").html("Connected");
-					$("#coge-status").css("color", "green");
-					var result = data.result;
-					if  (result != "authentication required")
-					{
-						$("#coge-name").html(result.name);
-						$("#coge-name").css("color", "green");
-						$("#coge-description").html(result.description);
-						$("#coge-description").css("color", "green");
-						$("#coge-version").html(result.version);
-						$("#coge-version").css("color", "green");
-					}
-					else
-					{
-						$("#coge-status").html("Unauthorized");
-						$("#coge-status").css("color", "red");
-					}
+				$("#coge-status").html("Connected");
+				$("#coge-status").css("color", "green");
+				const result = data.result;
+				if  (result !== "authentication required") {
+					$("#coge-name").html(result.name);
+					$("#coge-name").css("color", "green");
+					$("#coge-description").html(result.description);
+					$("#coge-description").css("color", "green");
+					$("#coge-version").html(result.version);
+					$("#coge-version").css("color", "green");
+				}
+				else {
+					$("#coge-status").html("Unauthorized");
+					$("#coge-status").css("color", "red");
+				}
 			})
 			.fail(function(){
 				$("#coge-status").html("Failed");

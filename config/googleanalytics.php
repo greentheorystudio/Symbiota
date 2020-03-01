@@ -11,4 +11,3 @@ if(isset($GOOGLE_ANALYTICS_KEY) && $GOOGLE_ANALYTICS_KEY) {
 	<?php 
 } 
 ?>
-

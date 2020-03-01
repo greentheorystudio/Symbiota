@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
 $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']:'';
@@ -12,15 +12,11 @@ $collType = array_key_exists('colltype',$_POST)?$_POST['colltype']:0;
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
-//Remove country, state, county from beginning of string
 if(!$country || !$state || !$county){
-	$locArr = explode(";",$locality);
+	$locArr = explode(';',$locality);
 	$locality = trim(array_pop($locArr));
-	//if(!$country && $locArr) $country = trim(array_shift($locArr));
-	//if(!$state && $locArr) $state = trim(array_shift($locArr));
-	//if(!$county && $locArr) $county = trim(array_shift($locArr));
 }
-$locality = trim(preg_replace('/[\[\]\)\d\.\-,\s]*$/', '', $locality),'( ');
+$locality = trim(preg_replace('/[\[\])\d.\-,\s]*$/', '', $locality),'( ');
 
 $geoManager = new OccurrenceGeorefTools();
 
@@ -28,8 +24,8 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
 
 $latCen = 41.0;
 $lngCen = -95.0;
-$coorArr = explode(";",$MAPPING_BOUNDARIES);
-if($coorArr && count($coorArr) == 4){
+$coorArr = explode(';',$MAPPING_BOUNDARIES);
+if($coorArr && count($coorArr) === 4){
 	$latCen = ($coorArr[0] + $coorArr[2])/2;
 	$lngCen = ($coorArr[1] + $coorArr[3])/2;
 }
@@ -44,18 +40,18 @@ if($coorArr && count($coorArr) == 4){
 		<script src="//www.google.com/jsapi"></script>
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 		<script type="text/javascript">
-			var map;
-			var infoWins = new Array();
+            let map;
+            const infoWins = [];
 
-			function initialize(){
-				var dmLatLng = new google.maps.LatLng(<?php echo $latCen.",".$lngCen; ?>);
-				var dmOptions = {
-					zoom: 3,
-					center: dmLatLng,
-					mapTypeId: google.maps.MapTypeId.TERRAIN,
-					scaleControl: true
-				};
-				map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
+            function initialize(){
+				const dmLatLng = new google.maps.LatLng(<?php echo $latCen. ',' .$lngCen; ?>);
+                const dmOptions = {
+                    zoom: 3,
+                    center: dmLatLng,
+                    mapTypeId: google.maps.MapTypeId.TERRAIN,
+                    scaleControl: true
+                };
+                map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
 
 				<?php
 				$minLng = 180;
@@ -64,46 +60,60 @@ if($coorArr && count($coorArr) == 4){
 				$maxLat = -90;
 
 				foreach($clones as $id => $occArr){
-					if($occArr['lat'] < $minLat) $minLat = $occArr['lat'];
-					if($occArr['lat'] > $maxLat) $maxLat = $occArr['lat'];
-					if($occArr['lng'] < $minLng) $minLng = $occArr['lng'];
-					if($occArr['lng'] > $maxLng) $maxLng = $occArr['lng'];
+					if($occArr['lat'] < $minLat) {
+                        $minLat = $occArr['lat'];
+                    }
+					if($occArr['lat'] > $maxLat) {
+                        $maxLat = $occArr['lat'];
+                    }
+					if($occArr['lng'] < $minLng) {
+                        $minLng = $occArr['lng'];
+                    }
+					if($occArr['lng'] > $maxLng) {
+                        $maxLng = $occArr['lng'];
+                    }
 					
 					$outStr = '<div>'.$occArr['lat'].' '.$occArr['lng'].' ';
-					if($occArr['err']) $outStr .= ' (+-'.$occArr['err'].'m)';
-					if($occArr['georefby']) $outStr .= '<br/>Georeferenced by: '.$occArr['georefby'];
+					if($occArr['err']) {
+                        $outStr .= ' (+-' . $occArr['err'] . 'm)';
+                    }
+					if($occArr['georefby']) {
+                        $outStr .= '<br/>Georeferenced by: ' . $occArr['georefby'];
+                    }
 					$outStr .= '<br/>'.$occArr['cnt'].' matching records<br/>';
 					$outStr .= $occArr['locality'].'<br/>';
 					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?$occArr['err']:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
 					$outStr .= '</div>';
 					?>
-					var m<?php echo $id; ?> = new google.maps.Marker({
+					const m<?php echo $id; ?> = new google.maps.Marker({
 						position: new google.maps.LatLng(<?php echo $occArr['lat'].','.$occArr['lng']; ?>),
 						map: map
 					});
 
 					google.maps.event.addListener(m<?php echo $id; ?>, 'click', function(){
-						for( var w = 0; w < infoWins.length; w++ ) {
-							var win = infoWins[w];
-							win.close();
+						for(let w = 0; w < infoWins.length; w++ ) {
+                            const win = infoWins[w];
+                            win.close();
 						}
-						var iWin = new google.maps.InfoWindow({ content: <?php echo '"'.$outStr.'"'; ?> });
+						const iWin = new google.maps.InfoWindow({ content: <?php echo '"'.$outStr.'"'; ?> });
 						infoWins.push( iWin );
 						iWin.open(map,m<?php echo $id; ?>);
 					});
 					<?php 
 				}
 				?>
-				
-				var swLatLng = new google.maps.LatLng(<?php echo $minLat.','.$minLng; ?>);
-				var neLatLng = new google.maps.LatLng(<?php echo $maxLat.','.$maxLng; ?>);
-				var llBounds = new google.maps.LatLngBounds(swLatLng, neLatLng);
-				map.fitBounds(llBounds);
+
+				const swLatLng = new google.maps.LatLng(<?php echo $minLat.','.$minLng; ?>);
+				const neLatLng = new google.maps.LatLng(<?php echo $maxLat.','.$maxLng; ?>);
+                const llBounds = new google.maps.LatLngBounds(swLatLng, neLatLng);
+                map.fitBounds(llBounds);
 			}
 
 			function cloneCoord(lat,lng,err){
 				try{
-					if(err == 0) err = "";
+					if(err === 0) {
+					    err = "";
+					}
 					opener.document.getElementById("decimallatitude").value = lat;
 					opener.document.getElementById("decimallongitude").value = lng;
 					opener.document.getElementById("coordinateuncertaintyinmeters").value = err;
@@ -113,20 +123,19 @@ if($coorArr && count($coorArr) == 4){
 				}
 				catch(myErr){
 				}
-				finally{
-					self.close();
-					return false;
-				}
+                self.close();
+                return false;
 			}
 
+
 			function verifyCloneForm(f){
-				if(f.locality.value == ""){
+				if(f.locality.value === ""){
 					alert("Locality field must have a value");
 					return false
 				}
-				if(document.getElementById("deepsearch").checked == true){
-					var locArr = f.locality.value.split(" ");
-					if(locArr.length > 4){
+				if(document.getElementById("deepsearch").checked === true){
+                    const locArr = f.locality.value.split(" ");
+                    if(locArr.length > 4){
 						alert("Locality field cannot contain more than 4 words while doing a Deep Search. Just enter a few keywords.");
 						return false
 					}
@@ -136,7 +145,6 @@ if($coorArr && count($coorArr) == 4){
 		</script>
 	</head>
 	<body style="background-color:#ffffff;" onload="initialize()">
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<fieldset style="padding:10px;">
 				<legend><b>Search Form</b></legend>
@@ -146,9 +154,9 @@ if($coorArr && count($coorArr) == 4){
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
-						<input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType=='1'?'checked':''); ?> /> Exact Match
-						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType=='2'?'checked':''); ?> /> Contains
-						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType=='3'?'checked':''); ?> /> Deep Search
+						<input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType === '1'?'checked':''); ?> /> Exact Match
+						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType === '2'?'checked':''); ?> /> Contains
+						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType === '3'?'checked':''); ?> /> Deep Search
 					</div>
 					<?php 
 					if($collid){

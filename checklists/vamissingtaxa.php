@@ -1,27 +1,27 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
 
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:"";
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0);
-$startIndex = array_key_exists("start",$_REQUEST)?$_REQUEST["start"]:0;
+$startIndex = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
 
 $vManager = new ChecklistVoucherAdmin();
 $vManager->setClid($clid);
 $vManager->setCollectionVariables();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = true;
 }
-//Get records
+
 $missingArr = array();
-if($displayMode==1){
+if($displayMode === 1){
 	$missingArr = $vManager->getMissingTaxaSpecimens($startIndex);
 }
-elseif($displayMode==2){
+elseif($displayMode === 2){
 	$missingArr = $vManager->getMissingProblemTaxa();
 }
 else{
@@ -33,7 +33,7 @@ else{
 	<div style='float:left;font-weight:bold;margin-left:5px'>
 
 		<?php
-		if($displayMode == 2){
+		if($displayMode === 2){
 			echo 'Problem Taxa: ';
 		}
 		else{
@@ -43,11 +43,11 @@ else{
 		?>
 	</div>
 	<div style="float:left;margin-left:5px">
-		<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><img src="../images/refresh.png" style="border:0px;" title="Refresh List" /></a>
+		<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><img src="../images/refresh.png" style="border:0;" title="Refresh List" /></a>
 	</div>
 	<div style="float:left;margin-left:5px;">
-		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode==2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
-			<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="border:0px;" />
+		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode === 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
+			<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="border:0;" />
 		</a>
 	</div>
 	<div style="float:right;">
@@ -55,8 +55,8 @@ else{
 			<b>Display Mode:</b>
 			<select name="displaymode" onchange="this.form.submit()">
 				<option value="0">Species List</option>
-				<option value="1" <?php echo ($displayMode==1?'SELECTED':''); ?>>Batch Linking</option>
-				<option value="2" <?php echo ($displayMode==2?'SELECTED':''); ?>>Problem Taxa</option>
+				<option value="1" <?php echo ($displayMode === 1?'SELECTED':''); ?>>Batch Linking</option>
+				<option value="2" <?php echo ($displayMode === 2?'SELECTED':''); ?>>Problem Taxa</option>
 			</select>
 			<input name="clid" id="clvalue" type="hidden" value="<?php echo $clid; ?>" />
 			<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -66,15 +66,15 @@ else{
 	<div>
 		<?php
 		$recCnt = 0;
-		if($displayMode==1){
+		if($displayMode === 1){
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">
 					Listed below are specimens identified to a species not found in the checklist. Use the form to add the
 					names and link the vouchers as a batch action.
 				</div>
-				<form name="batchmissingform" method="post" action="voucheradmin.php" onsubmit="return validateBatchMissingForm(this.form);">
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+				<form name="batchmissingform" method="post" action="voucheradmin.php" onsubmit="return validateBatchMissingForm();">
+					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 						<tr>
 							<th>
 								<span title="Select All">
@@ -94,7 +94,9 @@ else{
 								echo '<td><a href="../taxa/index.php?taxon='.$oArr['tid'].'" target="_blank">'.$sciname.'</a></td>';
 								echo '<td>';
 								echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
-								if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
+								if($oArr['eventdate']) {
+                                    echo $oArr['eventdate'] . '<br/>';
+                                }
 								echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
 								echo $oArr['collcode'];
 								echo '</a>';
@@ -117,10 +119,12 @@ else{
 				<?php
 				echo 'Specimen count: '.$recCnt;
 				$queryStr = 'tabindex=1&displaymode=1&clid='.$clid.'&pid='.$pid.'&start='.(++$startIndex);
-				if($recCnt > 399) echo '<a style="margin-left:10px;" href="voucheradmin.php?'.$queryStr.'">View Next 400</a>';
+				if($recCnt > 399) {
+                    echo '<a style="margin-left:10px;" href="voucheradmin.php?' . $queryStr . '">View Next 400</a>';
+                }
 			}
 		}
-		elseif($displayMode==2){
+		elseif($displayMode === 2){
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">
@@ -129,7 +133,7 @@ else{
 					type the correct name from the checklist, and then click the Link Voucher button.
 					The correct name must already be added to the checklist before voucher can be linked.
 				</div>
-				<table class="styledtable" style="font-family:Arial;font-size:12px;">
+				<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 					<tr>
 						<th>Specimen ID</th>
 						<th>Link to</th>
@@ -150,7 +154,9 @@ else{
 								<?php
 								echo '<td>';
 								echo $oArr['recordedby'].' '.$oArr['recordnumber'].'<br/>';
-								if($oArr['eventdate']) echo $oArr['eventdate'].'<br/>';
+								if($oArr['eventdate']) {
+                                    echo $oArr['eventdate'] . '<br/>';
+                                }
 								echo '<a href="../collections/individual/index.php?occid='.$occid.'" target="_blank">';
 								echo $oArr['collcode'];
 								echo '</a>';
@@ -167,31 +173,29 @@ else{
 				<?php
 			}
 		}
-		else{
-			if($missingArr){
-				?>
-				<div style="margin:20px;clear:both;">
-					<div style="clear:both;margin:10px;">
-						Listed below are species name not found in the checklist but are represented by one or more specimens
-						that have a locality matching the above search term.
-					</div>
-					<?php
-					foreach($missingArr as $tid => $sn){
-						?>
-						<div>
-							<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
-							<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-								<img src="../images/link.png" style="width:13px;" title="Link Voucher Specimens" />
-							</a>
-						</div>
-						<?php
-						$recCnt++;
-					}
-					?>
-				</div>
-				<?php
-			}
-		}
+		else if($missingArr){
+            ?>
+            <div style="margin:20px;clear:both;">
+                <div style="clear:both;margin:10px;">
+                    Listed below are species name not found in the checklist but are represented by one or more specimens
+                    that have a locality matching the above search term.
+                </div>
+                <?php
+                foreach($missingArr as $tid => $sn){
+                    ?>
+                    <div>
+                        <a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
+                        <a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
+                            <img src="../images/link.png" style="width:13px;" title="Link Voucher Specimens" />
+                        </a>
+                    </div>
+                    <?php
+                    $recCnt++;
+                }
+                ?>
+            </div>
+            <?php
+        }
 		?>
 	</div>
 </div>

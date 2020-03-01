@@ -1,25 +1,28 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryUpload.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/glossary/glossaryloader.php');
+include_once(__DIR__ . '/../classes/GlossaryUpload.php');
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-$ulFileName = array_key_exists("ulfilename",$_REQUEST)?$_REQUEST["ulfilename"]:"";
-$ulOverride = array_key_exists("uloverride",$_REQUEST)?$_REQUEST["uloverride"]:"";
-$batchTaxaStr = array_key_exists("batchtid",$_REQUEST)?$_REQUEST["batchtid"]:"";
-$batchSource = array_key_exists("batchsources",$_REQUEST)?str_replace("'","&#39;",$_REQUEST["batchsources"]):"";
+if(!$SYMB_UID) {
+    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/glossaryloader.php');
+}
+
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';
+$ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']: '';
+$batchTaxaStr = array_key_exists('batchtid',$_REQUEST)?$_REQUEST['batchtid']: '';
+$batchSource = array_key_exists('batchsources',$_REQUEST)?str_replace("'", '&#39;',$_REQUEST['batchsources']): '';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
 $loaderManager = new GlossaryUpload();
 $glosManager = new GlossaryManager();
 
-$status = "";
+$status = '';
 $fieldMap = array();
 if($isEditor){
 	if($ulFileName){
@@ -29,18 +32,19 @@ if($isEditor){
 		$loaderManager->setUploadFile($ulOverride);
 	}
 	
-	if(array_key_exists("sf",$_REQUEST)){
-		//Grab field mapping, if mapping form was submitted
- 		$targetFields = $_REQUEST["tf"];
- 		$sourceFields = $_REQUEST["sf"];
-		for($x = 0;$x<count($targetFields);$x++){
-			if($targetFields[$x] && $sourceFields[$x]) $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+	if(array_key_exists('sf',$_REQUEST)){
+		$targetFields = $_REQUEST['tf'];
+ 		$sourceFields = $_REQUEST['sf'];
+		for($x = 0, $xMax = count($targetFields); $x< $xMax; $x++){
+			if($targetFields[$x] && $sourceFields[$x]) {
+                $fieldMap[$sourceFields[$x]] = $targetFields[$x];
+            }
 		}
-		$languageArr = json_decode($_REQUEST["ullanguages"],true);
-		$tidStr = $_REQUEST["ultids"];
-		$ulSource = (array_key_exists("ulsources",$_REQUEST)?json_decode($_REQUEST["ulsources"]):'');
+		$languageArr = json_decode($_REQUEST['ullanguages'],true);
+		$tidStr = $_REQUEST['ultids'];
+		$ulSource = (array_key_exists('ulsources',$_REQUEST)? json_decode($_REQUEST['ulsources'], true) :'');
 	}
-	if($action == 'downloadcsv'){
+	if($action === 'downloadcsv'){
 		$loaderManager->exportUploadTerms();
 		exit;
 	}
@@ -49,7 +53,6 @@ if($isEditor){
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Glossary Term Loader</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>" />
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -59,9 +62,9 @@ if($isEditor){
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
 	<script type="text/javascript">
-		var taxArr = new Array();
-		
-		$(document).ready(function() {
+        const taxArr = [];
+
+        $(document).ready(function() {
 			$('#batchtaxagroup').manifest({
 				marcoPolo: {
 					url: 'rpc/taxalist.php',
@@ -75,13 +78,13 @@ if($isEditor){
 				required: true
 			});
 			
-			$('#batchtaxagroup').on('marcopoloselect', function (event, data, $item, initial) {
+			$('#batchtaxagroup').on('marcopoloselect', function (event, data) {
 				taxArr.push({name:data.name,id:data.id});
 			});
 			
-			$('#batchtaxagroup').on('manifestremove',function (event, data, $item){
-				for (i = 0; i < taxArr.length; i++) {
-					if(taxArr[i].name == data){
+			$('#batchtaxagroup').on('manifestremove',function (event, data){
+				for (let i = 0; i < taxArr.length; i++) {
+					if(taxArr[i].name === data){
 						taxArr.splice(i,1);
 					}
 				}
@@ -89,9 +92,9 @@ if($isEditor){
 		});
 		
 		function verifyUploadForm(f){
-			var inputValue = f.uploadfile.value;
-			var taxavals = $('#batchtaxagroup').manifest('values');
-			if(inputValue.indexOf(".csv") == -1 && inputValue.indexOf(".CSV") == -1 && inputValue.indexOf(".zip") == -1){
+            const inputValue = f.uploadfile.value;
+            const taxavals = $('#batchtaxagroup').manifest('values');
+            if(inputValue.indexOf(".csv") === -1 && inputValue.indexOf(".CSV") === -1 && inputValue.indexOf(".zip") === -1){
 				alert("Upload file must be a .csv or .zip file.");
 				return false;
 			}
@@ -100,24 +103,19 @@ if($isEditor){
 				return false;
 			}
 			if(taxArr.length > 0){
-				var tids = [];
-				for(i = 0; i < taxArr.length; i++){
+                const tids = [];
+                for(let i = 0; i < taxArr.length; i++){
 					tids.push(taxArr[i].id);
 				}
-				var tidstr = tids.join();
-				document.getElementById('batchtid').value = tidstr;
+                document.getElementById('batchtid').value = tids.join();
 			}
-			return true;
-		}
-	
-		function checkTransferForm(f){
 			return true;
 		}
 	</script>
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div class="navpath">
     <a href="../index.php">Home</a> &gt;&gt;
@@ -135,14 +133,14 @@ if($isEditor){
 				This page allows a Taxonomic Administrator to batch upload glossary data files. 
 			</div> 
 			<?php 
-			if($action == 'Map Input File' || $action == 'Verify Mapping'){
+			if($action === 'Map Input File' || $action === 'Verify Mapping'){
 				?>
 				<form name="mapform" action="glossaryloader.php" method="post">
 					<fieldset style="width:90%;">
 						<legend style="font-weight:bold;font-size:120%;">Term Upload Form</legend>
 						<div style="margin:10px;">
 						</div>
-						<table border="1" cellpadding="2" style="border:1px solid black">
+						<table style="border:1px solid black;border-spacing: 2px;">
 							<tr>
 								<th>
 									Source Field
@@ -168,19 +166,19 @@ if($isEditor){
 											<option value="">Field Unmapped</option>
 											<option value="">-------------------------</option>
 											<?php 
-											$selStr = "";
-											echo "<option value='unmapped' ".$selStr.">Leave Field Unmapped</option>";
+											$selStr = '';
+											echo "<option value='unmapped' ".$selStr. '>Leave Field Unmapped</option>';
 											if($selStr){
 												$selStr = 0;
 											}
 											foreach($tArr as $k => $tField){
-												if($selStr !== 0 && $tField==$sField){
-													$selStr = "SELECTED";
+												if($selStr !== 0 && $tField === $sField){
+													$selStr = 'SELECTED';
 												}
-												elseif($selStr !== 0 && $tField==$sField.'_term'){
-													$selStr = "SELECTED";
+												elseif($selStr !== 0 && $tField === $sField.'_term'){
+													$selStr = 'SELECTED';
 												}
-												echo '<option value="'.$tField.'" '.($selStr?$selStr:'').'>'.$tField."</option>\n";
+												echo '<option value="'.$tField.'" '.($selStr?:'').'>'.$tField."</option>\n";
 												if($selStr){
 													$selStr = 0;
 												}
@@ -204,16 +202,14 @@ if($isEditor){
 				</form>
 				<?php 
 			}
-			elseif($action == 'Upload Terms'){
+			elseif($action === 'Upload Terms'){
 				echo '<ul>';
-				if($action == 'Upload Terms'){
-					$loaderManager->loadFile($fieldMap,$languageArr,$tidStr,$ulSource);
-					$loaderManager->cleanUpload($tidStr);
-				}
-				$reportArr = $loaderManager->analysisUpload();
+                $loaderManager->loadFile($fieldMap,$languageArr,$tidStr,$ulSource);
+                $loaderManager->cleanUpload($tidStr);
+				$loaderManager->analysisUpload();
 				echo '</ul>';
 				?>
-				<form name="transferform" action="glossaryloader.php" method="post" onsubmit="return checkTransferForm(this)">
+				<form name="transferform" action="glossaryloader.php" method="post">
 					<fieldset style="width:450px;">
 						<legend style="font-weight:bold;font-size:120%;">Transfer Terms To Central Table</legend>
 						<div style="margin:10px;">
@@ -223,10 +219,12 @@ if($isEditor){
 							<?php 
 							$statArr = $loaderManager->getStatArr();
 							if($statArr){
-								if(isset($statArr['upload'])) echo '<u>Terms uploaded</u>: <b>'.$statArr['upload'].'</b><br/>';
+								if(isset($statArr['upload'])) {
+                                    echo '<u>Terms uploaded</u>: <b>' . $statArr['upload'] . '</b><br/>';
+                                }
 								echo '<u>Total terms</u>: <b>'.$statArr['total'].'</b><br/>';
-								echo '<u>Terms already in database</u>: <b>'.(isset($statArr['exist'])?$statArr['exist']:0).'</b><br/>';
-								echo '<u>New terms</u>: <b>'.(isset($statArr['new'])?$statArr['new']:0).'</b><br/>';
+								echo '<u>Terms already in database</u>: <b>'.($statArr['exist'] ?? 0).'</b><br/>';
+								echo '<u>New terms</u>: <b>'.($statArr['new'] ?? 0).'</b><br/>';
 							}
 							else{
 								echo 'Upload statistics are unavailable';
@@ -243,10 +241,10 @@ if($isEditor){
 				</form>
 				<?php 
 			}
-			elseif($action == "Activate Terms"){
+			elseif($action === 'Activate Terms'){
 				echo '<ul>';
 				$loaderManager->transferUpload();
-				echo "<li>Terms upload appears to have been successful.</li>";
+				echo '<li>Terms upload appears to have been successful.</li>';
 				echo "<li>Go to <a href='index.php'>Glossary Search</a> page to search for a loaded name.</li>";
 				echo '</ul>';
 			}
@@ -316,8 +314,7 @@ else{
 	<?php 
 }
 
-
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

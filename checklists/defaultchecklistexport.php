@@ -1,27 +1,29 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-require_once $SERVER_ROOT.'/vendor/autoload.php';
+include_once(__DIR__ . '/../classes/ChecklistManager.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 header('Content-Type: text/html; charset=' .$CHARSET);
-ini_set('max_execution_time', 240); //240 seconds = 4 minutes
+ini_set('max_execution_time', 240);
+
+use PhpOffice\PhpWord\PhpWord;
 
 $ses_id = session_id();
 
 $clManager = new ChecklistManager();
 
-$clValue = array_key_exists("cl",$_REQUEST)?$_REQUEST["cl"]:0; 
-$dynClid = array_key_exists("dynclid",$_REQUEST)?$_REQUEST["dynclid"]:0;
-$pageNumber = array_key_exists("pagenumber",$_REQUEST)?$_REQUEST["pagenumber"]:1;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
-$thesFilter = array_key_exists("thesfilter",$_REQUEST)?$_REQUEST["thesfilter"]:0;
-$taxonFilter = array_key_exists("taxonfilter",$_REQUEST)?$_REQUEST["taxonfilter"]:""; 
-$showAuthors = array_key_exists("showauthors",$_REQUEST)?$_REQUEST["showauthors"]:0; 
-$showCommon = array_key_exists("showcommon",$_REQUEST)?$_REQUEST["showcommon"]:0; 
-$showImages = array_key_exists("showimages",$_REQUEST)?$_REQUEST["showimages"]:0; 
-$showVouchers = array_key_exists("showvouchers",$_REQUEST)?$_REQUEST["showvouchers"]:0; 
-$showAlphaTaxa = array_key_exists("showalphataxa",$_REQUEST)?$_REQUEST["showalphataxa"]:0; 
-$searchCommon = array_key_exists("searchcommon",$_REQUEST)?$_REQUEST["searchcommon"]:0;
-$searchSynonyms = array_key_exists("searchsynonyms",$_REQUEST)?$_REQUEST["searchsynonyms"]:0;
+$clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
+$pageNumber = array_key_exists('pagenumber',$_REQUEST)?$_REQUEST['pagenumber']:1;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:0;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']: '';
+$showAuthors = array_key_exists('showauthors',$_REQUEST)?$_REQUEST['showauthors']:0;
+$showCommon = array_key_exists('showcommon',$_REQUEST)?$_REQUEST['showcommon']:0;
+$showImages = array_key_exists('showimages',$_REQUEST)?$_REQUEST['showimages']:0;
+$showVouchers = array_key_exists('showvouchers',$_REQUEST)?$_REQUEST['showvouchers']:0;
+$showAlphaTaxa = array_key_exists('showalphataxa',$_REQUEST)?$_REQUEST['showalphataxa']:0;
+$searchCommon = array_key_exists('searchcommon',$_REQUEST)?$_REQUEST['searchcommon']:0;
+$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?$_REQUEST['searchsynonyms']:0;
 
 $exportEngine = '';
 $exportExtension = '';
@@ -39,36 +41,45 @@ if($clValue || $dynClid){
 	$clArray = $clManager->getClMetaData();
 }
 $showDetails = 0;
-/*if($clValue && $clArray["defaultSettings"]){
-	$defaultArr = json_decode($clArray["defaultSettings"], true);
-	$showDetails = $defaultArr["ddetails"];
-	if($action != "Rebuild List"){
-		$showCommon = $defaultArr["dcommon"];
-		$showImages = $defaultArr["dimages"]; 
-		$showVouchers = $defaultArr["dvouchers"];
-		$showAuthors = $defaultArr["dauthors"];
-		$showAlphaTaxa = $defaultArr["dalpha"];
-	}
-}*/
-if($pid) $clManager->setProj($pid);
-elseif(array_key_exists("proj",$_REQUEST)) $pid = $clManager->setProj($_REQUEST['proj']);
-if($thesFilter) $clManager->setThesFilter($thesFilter);
-if($taxonFilter) $clManager->setTaxonFilter($taxonFilter);
+if($pid) {
+	$clManager->setProj($pid);
+}
+elseif(array_key_exists('proj',$_REQUEST)) {
+	$pid = $clManager->setProj($_REQUEST['proj']);
+}
+if($thesFilter) {
+	$clManager->setThesFilter($thesFilter);
+}
+if($taxonFilter) {
+	$clManager->setTaxonFilter($taxonFilter);
+}
 if($searchCommon){
 	$showCommon = 1;
 	$clManager->setSearchCommon();
 }
-if($searchSynonyms) $clManager->setSearchSynonyms();
-if($showAuthors) $clManager->setShowAuthors();
-if($showCommon) $clManager->setShowCommon();
-if($showImages) $clManager->setShowImages();
-if($showVouchers) $clManager->setShowVouchers();
-if($showAlphaTaxa) $clManager->setShowAlphaTaxa();
+if($searchSynonyms) {
+	$clManager->setSearchSynonyms();
+}
+if($showAuthors) {
+	$clManager->setShowAuthors();
+}
+if($showCommon) {
+	$clManager->setShowCommon();
+}
+if($showImages) {
+	$clManager->setShowImages();
+}
+if($showVouchers) {
+	$clManager->setShowVouchers();
+}
+if($showAlphaTaxa) {
+	$clManager->setShowAlphaTaxa();
+}
 $clid = $clManager->getClid();
 $pid = $clManager->getPid();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = true;
 }
 $taxaArray = array();
@@ -76,7 +87,7 @@ if($clValue || $dynClid){
 	$taxaArray = $clManager->getTaxaList($pageNumber,0);
 }
 
-$phpWord = new \PhpOffice\PhpWord\PhpWord();
+$phpWord = new PhpWord();
 $phpWord->addParagraphStyle('defaultPara', array('align'=>'left','lineHeight'=>1.0,'spaceBefore'=>0,'spaceAfter'=>0,'keepNext'=>true));
 $phpWord->addFontStyle('titleFont', array('bold'=>true,'size'=>20,'name'=>'Arial'));
 $phpWord->addFontStyle('topicFont', array('bold'=>true,'size'=>12,'name'=>'Arial'));
@@ -95,51 +106,46 @@ $imageCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borde
 $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borderColor'=>'000000');
 
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
-$title = str_replace('&quot;','"',$clManager->getClName());
-$title = str_replace('&apos;',"'",$title);
+$title = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clManager->getClName());
 $textrun = $section->addTextRun('defaultPara');
-$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clValue."&proj=".$pid."&dynclid=".$dynClid,htmlspecialchars($title),'titleFont');
+$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
 $textrun->addTextBreak(1);
 if($clValue){
-	if($clArray['type'] == 'rarespp'){
-		$locality = str_replace('&quot;','"',$clArray["locality"]);
-		$locality = str_replace('&apos;',"'",$locality);
+	if($clArray['type'] === 'rarespp'){
+		$locality = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['locality']);
 		$textrun->addText(htmlspecialchars('Sensitive species checklist for: '),'topicFont');
 		$textrun->addText(htmlspecialchars($locality),'textFont');
 		$textrun->addTextBreak(1);
 	}
-	$authors = str_replace('&quot;','"',$clArray["authors"]);
-	$authors = str_replace('&apos;',"'",$authors);
+	$authors = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['authors']);
 	$textrun->addText(htmlspecialchars('Authors: '),'topicFont');
 	$textrun->addText(htmlspecialchars($authors),'textFont');
 	$textrun->addTextBreak(1);
-	if($clArray["publication"]){
-		$publication = str_replace('&quot;','"',preg_replace('/\s+/',' ',$clArray["publication"]));
-		$publication = str_replace('&apos;',"'",$publication);
+	if($clArray['publication']){
+		$publication = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['publication']));
 		$textrun->addText(htmlspecialchars('Publication: '),'topicFont');
 		$textrun->addText(htmlspecialchars($publication),'textFont');
 		$textrun->addTextBreak(1);
 	}
 }
-if(($clArray["locality"] || ($clValue && ($clArray["latcentroid"] || $clArray["abstract"])) || $clArray["notes"])){
-	$locStr = str_replace('&quot;','"',$clArray["locality"]);
-	$locStr = str_replace('&apos;',"'",$locStr);
-	if($clValue && $clArray["latcentroid"]) $locStr .= " (".$clArray["latcentroid"].", ".$clArray["longcentroid"].")";
+if(($clArray['locality'] || ($clValue && ($clArray['latcentroid'] || $clArray['abstract'])) || $clArray['notes'])){
+	$locStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['locality']);
+	if($clValue && $clArray['latcentroid']) {
+		$locStr .= ' (' . $clArray['latcentroid'] . ', ' . $clArray['longcentroid'] . ')';
+	}
 	if($locStr){
 		$textrun->addText(htmlspecialchars('Locality: '),'topicFont');
 		$textrun->addText(htmlspecialchars($locStr),'textFont');
 		$textrun->addTextBreak(1);
 	}
-	if($clValue && $clArray["abstract"]){
-		$abstract = str_replace('&quot;','"',preg_replace('/\s+/',' ',$clArray["abstract"]));
-		$abstract = str_replace('&apos;',"'",$abstract);
+	if($clValue && $clArray['abstract']){
+		$abstract = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['abstract']));
 		$textrun->addText(htmlspecialchars('Abstract: '),'topicFont');
 		$textrun->addText(htmlspecialchars($abstract),'textFont');
 		$textrun->addTextBreak(1);
 	}
-	if($clValue && $clArray["notes"]){
-		$notes = str_replace('&quot;','"',preg_replace('/\s+/',' ',$clArray["notes"]));
-		$notes = str_replace('&apos;',"'",$notes);
+	if($clValue && $clArray['notes']){
+		$notes = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['notes']));
 		$textrun->addText(htmlspecialchars('Notes: '),'topicFont');
 		$textrun->addText(htmlspecialchars($notes),'textFont');
 		$textrun->addTextBreak(1);
@@ -169,10 +175,12 @@ if($showImages){
 		$family = $sppArr['family'];
 		$tu = (array_key_exists('tnurl',$sppArr)?$sppArr['tnurl']:'');
 		$u = (array_key_exists('url',$sppArr)?$sppArr['url']:'');
-		$imgSrc = ($tu?$tu:$u);
-		if($imageCnt%4 == 1) $table->addRow();
+		$imgSrc = ($tu?:$u);
+		if($imageCnt%4 === 1) {
+			$table->addRow();
+		}
 		if($imgSrc){
-			$imgSrc = ($IMAGE_DOMAIN&&substr($imgSrc,0,4)!="http"?$IMAGE_DOMAIN:"").$imgSrc;
+			$imgSrc = ($IMAGE_DOMAIN && strpos($imgSrc, 'http') !== 0 ?$IMAGE_DOMAIN: '').$imgSrc;
 			$cell = $table->addCell(null,$imageCellStyle);
 			$textrun = $cell->addTextRun('imagePara');
 			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
@@ -180,16 +188,13 @@ if($showImages){
 			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
 			$textrun->addTextBreak(1);
 			if(array_key_exists('vern',$sppArr)){
-				$vern = str_replace('&quot;','"',$sppArr["vern"]);
-				$vern = str_replace('&apos;',"'",$vern);
+				$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
 				$textrun->addText(htmlspecialchars($vern),'topicFont');
 				$textrun->addTextBreak(1);
 			}
-			if(!$showAlphaTaxa){
-				if($family != $prevfam){
-					$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
-					$prevfam = $family;
-				}
+			if(!$showAlphaTaxa && $family !== $prevfam) {
+				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
+				$prevfam = $family;
 			}
 		}
 		else{
@@ -208,7 +213,7 @@ else{
 	foreach($taxaArray as $tid => $sppArr){
 		if(!$showAlphaTaxa){
 			$family = $sppArr['family'];
-			if($family != $prevfam){
+			if($family !== $prevfam){
 				$textrun = $section->addTextRun('familyPara');
 				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
 				$prevfam = $family;
@@ -216,14 +221,12 @@ else{
 		}
 		$textrun = $section->addTextRun('scinamePara');
 		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
-		if(array_key_exists("author",$sppArr)){ 
-			$sciAuthor = str_replace('&quot;','"',$sppArr["author"]);
-			$sciAuthor = str_replace('&apos;',"'",$sciAuthor);
+		if(array_key_exists('author',$sppArr)){
+			$sciAuthor = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['author']);
 			$textrun->addText(htmlspecialchars(' '.$sciAuthor),'textFont');
 		}
 		if(array_key_exists('vern',$sppArr)){
-			$vern = str_replace('&quot;','"',$sppArr["vern"]);
-			$vern = str_replace('&apos;',"'",$vern);
+			$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
 			$textrun->addText(htmlspecialchars(' - '.$vern),'topicFont');
 		}
 		if($showVouchers){
@@ -231,16 +234,16 @@ else{
 				$textrun = $section->addTextRun('notesvouchersPara');
 			}
 			if(array_key_exists('notes',$sppArr)){
-				$noteStr = str_replace('&quot;','"',trim($sppArr['notes']));
-				$noteStr = str_replace('&apos;',"'",$noteStr);
+				$noteStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), trim($sppArr['notes']));
 				$textrun->addText(htmlspecialchars($noteStr.($noteStr && array_key_exists($tid,$voucherArr)?'; ':'')),'textFont');
 			}
 			if(array_key_exists($tid,$voucherArr)){
 				$i = 0;
 				foreach($voucherArr[$tid] as $occid => $collName){
-					if($i > 0) $textrun->addText(htmlspecialchars(', '),'textFont');
-					$voucStr = str_replace('&quot;','"',$collName);
-					$voucStr = str_replace('&apos;',"'",$voucStr);
+					if($i > 0) {
+						$textrun->addText(htmlspecialchars(', '), 'textFont');
+					}
+					$voucStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $collName);
 					$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occid,htmlspecialchars($voucStr),'textFont');
 					$i++;
 				}
@@ -261,4 +264,3 @@ header('Content-Transfer-Encoding: binary');
 header('Content-Length: '.filesize($targetFile));
 readfile($targetFile);
 unlink($targetFile);
-?>

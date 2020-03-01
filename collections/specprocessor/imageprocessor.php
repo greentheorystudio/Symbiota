@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
-include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl='.$CLIENT_ROOT.'/collections/specprocessor/index.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -14,27 +16,29 @@ $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
 $editable = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$editable = true;
 }
 
-if($spprid) $specManager->setProjVariables($spprid);
+if($spprid) {
+    $specManager->setProjVariables($spprid);
+}
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
 		<title>Image Processor</title>
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-		<style type="text/css">.profileDiv{ clear:both; margin:2px 0px } </style>
-		<link href="../../js/jquery-ui-1.12.1/jquery-ui.css" type="text/css" rel="Stylesheet" />	
-		<script src="../../js/jquery-3.2.1.min.js" type="text/javascript"></script>
-		<script src="../../js/jquery-ui-1.12.1/jquery-ui.js" type="text/javascript"></script>
+		<style type="text/css">.profileDiv{ clear:both; margin:2px 0 } </style>
+		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+		<script src="../../js/jquery.js" type="text/javascript"></script>
+		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script>
 			$(function() {
-				var dialogArr = new Array("speckeypattern","patternreplace","replacestr","sourcepath","targetpath","imgurl","webpixwidth","tnpixwidth","lgpixwidth","jpgcompression");
-				var dialogStr = "";
-				for(i=0;i<dialogArr.length;i++){
+                const dialogArr = ["speckeypattern", "patternreplace", "replacestr", "sourcepath", "targetpath", "imgurl", "webpixwidth", "tnpixwidth", "lgpixwidth", "jpgcompression"];
+                let dialogStr = "";
+                for(let i=0;i<dialogArr.length;i++){
 					dialogStr = dialogArr[i]+"info";
 					$( "#"+dialogStr+"dialog" ).dialog({
 						autoOpen: false,
@@ -50,38 +54,44 @@ if($spprid) $specManager->setProjVariables($spprid);
 			});
 
 			function uploadTypeChanged(){
-				var uploadType = document.getElementById('projecttype').value;
-				if(uploadType == 'local'){
+                const uploadType = document.getElementById('projecttype').value;
+                if(uploadType === 'local'){
 					$("div.profileDiv").show();
 					$("#sourcePathInfoIplant").hide();
 					$("#chooseFileDiv").hide();
-					if($("[name='sourcepath']").val() == "-- Use Default Path --") $("[name='sourcepath']").val("");
+					if($("[name='sourcepath']").val() === "-- Use Default Path --") {
+					    $("[name='sourcepath']").val("");
+					}
 					$("#profileEditSubmit").val("Save Profile");
 					$("#submitDiv").show();
 				}
-				else if(uploadType == 'file'){
+				else if(uploadType === 'file'){
 					$("div.profileDiv").hide();
 					$("#chooseFileDiv").show();
 					$("#profileEditSubmit").val("Analyze Image Data File");
 					$("#submitDiv").show();
 				}
-				else if(uploadType == 'idigbio'){
+				else if(uploadType === 'idigbio'){
 					$("div.profileDiv").hide();
 					$("#specKeyPatternDiv").show();
 					$("#patternReplaceDiv").show();
 					$("#replaceStrDiv").show();
-					if($("[name='sourcepath']").val() == "-- Use Default Path --") $("[name='sourcepath']").val("");
+					if($("[name='sourcepath']").val() === "-- Use Default Path --") {
+					    $("[name='sourcepath']").val("");
+					}
 					$("#profileEditSubmit").val("Save Profile");
 					$("#submitDiv").show();
 				}
-				else if(uploadType == 'iplant'){
+				else if(uploadType === 'iplant'){
 					$("div.profileDiv").hide();
 					$("#specKeyPatternDiv").show();
 					$("#patternReplaceDiv").show();
 					$("#replaceStrDiv").show();
 					$("#sourcePathDiv").show();
 					$("#sourcePathInfoIplant").show();
-					if($("[name='sourcepath']").val() == "") $("[name='sourcepath']").val("-- Use Default Path --");
+					if($("[name='sourcepath']").val() === "") {
+					    $("[name='sourcepath']").val("-- Use Default Path --");
+					}
 					$("#profileEditSubmit").val("Save Profile");
 					$("#submitDiv").show();
 				}
@@ -91,12 +101,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 			}
 
 			function validateProjectForm(f){
-				if(f.projecttype.value == ""){
+				if(f.projecttype.value === ""){
 					alert("Image Mapping/Import type must be selected");
 					return false;
 				}
-				if(f.projecttype.value != 'file'){
-					if(f.speckeypattern.value == ""){
+				if(f.projecttype.value !== 'file'){
+					if(f.speckeypattern.value === ""){
 						alert("Pattern matching term must have a value");
 						return false;
 					}
@@ -105,11 +115,11 @@ if($spprid) $specManager->setProjVariables($spprid);
 						return false;
 					}
 				}
-				if(f.projecttype.value == 'file' && f.uploadfile.value == ""){
+				if(f.projecttype.value === 'file' && f.uploadfile.value === ""){
 					alert("Select a CSV file to upload");
 					return false;
 				}
-				if(f.projecttype.value == 'local'){
+				if(f.projecttype.value === 'local'){
 					if(!isNumeric(f.webpixwidth.value)){
 						alert("Central image pixel width can only be a numeric value");
 						return false;
@@ -122,7 +132,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 						alert("Large image pixel width can only be a numeric value");
 						return false;
 					}
-					else if(f.title.value == ""){
+					else if(f.title.value === ""){
 						alert("Title cannot be empty");
 						return false;
 					}
@@ -130,37 +140,43 @@ if($spprid) $specManager->setProjVariables($spprid);
 						alert("JPG compression needs to be a numeric value between 30 and 100");
 						return false;
 					}
-					else if(f.sourcepath.value == ""){
+					else if(f.sourcepath.value === ""){
 						alert("Image source path must have a value");
 						return false;
 					}
-					else if(f.imgurl.value == ""){
+					else if(f.imgurl.value === ""){
 						alert("Image URL base must have a value");
 						return false;
 					}
 				}
-				if(f.patternreplace.value == "-- Optional --") f.patternreplace.value = "";
-				if(f.replacestr.value == "-- Optional --") f.replacestr.value = "";
-				if(f.sourcepath.value == "-- Use Default Path --") f.sourcepath.value = "";
+				if(f.patternreplace.value === "-- Optional --") {
+				    f.patternreplace.value = "";
+				}
+				if(f.replacestr.value === "-- Optional --") {
+				    f.replacestr.value = "";
+				}
+				if(f.sourcepath.value === "-- Use Default Path --") {
+				    f.sourcepath.value = "";
+				}
 				return true;
 			}
 			
 			function validateProcForm(f){
-				if(f.projtype.value == 'idigbio'){
+				if(f.projtype.value === 'idigbio'){
 					if(!document.getElementById("idigbiofile").files[0]){
-						alert("Select the output file from the iDigBio Image Appliance that will be uploaded into the system");
+						alert("Please select the output file from the iDigBio Image Appliance that will be uploaded into the system");
 						return false;
 					}
 				}
-				else if(f.projtype.value == 'iplant'){
-					var regexObj = /^\d{4}-\d{2}-\d{2}$/;
-					var startDate = f.startdate.value;
-					if(startDate != "" && !regexObj.test(startDate)){
+				else if(f.projtype.value === 'iplant'){
+                    const regexObj = /^\d{4}-\d{2}-\d{2}$/;
+                    const startDate = f.startdate.value;
+                    if(startDate !== "" && !regexObj.test(startDate)){
 						alert("Processing Start Date needs to be in the format YYYY-MM-DD (e.g. 2015-10-18)");
 						return false;
 					}
 				}
-				if($("[name='matchcatalognumber']").prop("checked") == false && $("[name='matchothercatalognumbers']").prop("checked") == false){
+				if($("[name='matchcatalognumber']").prop("checked") === false && $("[name='matchothercatalognumbers']").prop("checked") === false){
 					alert("At least one of the Match Term checkboxes need to be checked");
 					return false;
 				}
@@ -168,18 +184,18 @@ if($spprid) $specManager->setProjVariables($spprid);
 			}
 
 			function validateFileUploadForm(f){
-				var sfArr = [];
-				var tfArr = [];
-				for(var i=0;i<f.length;i++){
-					var obj = f.elements[i];
-					if(obj.name.indexOf("tf[") == 0){
+                const sfArr = [];
+                const tfArr = [];
+                for(let i=0; i<f.length; i++){
+                    const obj = f.elements[i];
+                    if(obj.name.indexOf("tf[") === 0){
 						if(tfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Target field names must be unique (duplicate field: "+obj.value+")");
 							return false;
 						}
 						tfArr[tfArr.length] = obj.value;
 					}
-					if(obj.name.indexOf("sf[") == 0){
+					if(obj.name.indexOf("sf[") === 0){
 						if(sfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Source field names must be unique (duplicate field: "+obj.value+")");
 							return false;
@@ -196,7 +212,6 @@ if($spprid) $specManager->setProjVariables($spprid);
 		</script>
 	</head>
 	<body>
-		<!-- This is inner text! -->
 		<div id="innertext" style="background-color:white;">
 			<div style="padding:15px;">
 				These tools are designed to aid collection managers in batch processing specimen images. 
@@ -215,7 +230,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 							<fieldset>
 								<legend><b>Image File Upload Mapping</b></legend>
 								<div style="margin:15px;">
-									<table class="styledtable" style="width:600px;font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="width:600px;font-family:Arial,serif;font-size:12px;">
 										<tr><th>Source Field</th><th>Target Field</th></tr>
 										<?php 
 										$imgProcessor = new ImageProcessor();
@@ -268,7 +283,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 									if($spprid){
 										?>
 										<div style="position:absolute;top:10px;right:10px;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
-											<img src="../../images/edit.png" style="border:0px" />
+											<img src="../../images/edit.png" style="border:0;" />
 										</div>
 										<input name="projecttype" type="hidden" value="<?php echo $projectType; ?>" />
 										<?php
@@ -292,7 +307,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 										<?php 
 									}
 									?>
-									<div id="titleDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="titleDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Title:</b>
 										</div>
@@ -322,7 +337,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<b>Replacement term:</b> 
 										</div>
 										<div style="float:left;">
-											<input name="patternreplace" type="text" style="width:300px;" value="<?php echo ($specManager->getPatternReplace()?$specManager->getPatternReplace():'-- Optional --'); ?>" />
+											<input name="patternreplace" type="text" style="width:300px;" value="<?php echo ($specManager->getPatternReplace()?:'-- Optional --'); ?>" />
 											<a id="patternreplaceinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -338,7 +353,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<b>Replacement string:</b> 
 										</div>
 										<div style="float:left;">
-											<input name="replacestr" type="text" style="width:300px;" value="<?php echo ($specManager->getReplaceStr()?$specManager->getReplaceStr():'-- Optional --'); ?>" />
+											<input name="replacestr" type="text" style="width:300px;" value="<?php echo ($specManager->getReplaceStr()?:'-- Optional --'); ?>" />
 											<a id="replacestrinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -347,7 +362,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="sourcePathDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'||$projectType=='iplant'?'block':'none'); ?>">
+									<div id="sourcePathDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'||$projectType === 'iplant'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Image source path:</b>
 										</div>
@@ -357,7 +372,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
 											<div id="sourcepathinfodialog">
-												<div id="sourcePathInfoIplant" class="profileDiv" style="display:<?php echo ($projectType == 'iplant'?'block':'none'); ?>">
+												<div id="sourcePathInfoIplant" class="profileDiv" style="display:<?php echo ($projectType === 'iplant'?'block':'none'); ?>">
 													iPlant server path to source images. The path should be accessible to the iPlant Data Service API.
 													Scripts will crawl through all child directories within the target.
 													Instances of --INSTITUTION_CODE-- and --COLLECTION_CODE-- will be dynamically replaced with 
@@ -366,10 +381,10 @@ if($spprid) $specManager->setProjVariables($spprid);
 													Contact portal manager for more details.
 													Leave blank to use default path:  
 													<?php
-													echo (isset($IPLANT_IMAGE_IMPORT_PATH)?$IPLANT_IMAGE_IMPORT_PATH:'Not Activated');
+													echo ($IPLANT_IMAGE_IMPORT_PATH ?? 'Not Activated');
 													?>
 												</div>
-												<div id="sourcePathInfoOther" class="profileDiv" style="display:<?php echo ($projectType == 'iplant'?'none':'block'); ?>">
+												<div id="sourcePathInfoOther" class="profileDiv" style="display:<?php echo ($projectType === 'iplant'?'none':'block'); ?>">
 													Server path or URL to source image location. Server paths should be absolute and writable to web server (e.g. apache). 
 													If a URL (e.g. http://) is supplied, the web server needs to be configured to publically list 
 													all files within the directory, or the html output can simply list all images within anchor tags.
@@ -378,12 +393,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="targetPathDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="targetPathDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Image target path:</b>
 										</div>
 										<div style="float:left;"> 
-											<input name="targetpath" type="text" style="width:400px;" value="<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$IMAGE_ROOT_PATH); ?>" />
+											<input name="targetpath" type="text" style="width:400px;" value="<?php echo ($specManager->getTargetPath()?:$IMAGE_ROOT_PATH); ?>" />
 											<a id="targetpathinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -394,12 +409,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="urlBaseDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="urlBaseDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Image URL base:</b>
 										</div>
 										<div style="float:left;"> 
-											<input name="imgurl" type="text" style="width:400px;" value="<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$IMAGE_ROOT_URL); ?>" />
+											<input name="imgurl" type="text" style="width:400px;" value="<?php echo ($specManager->getImgUrlBase()?:$IMAGE_ROOT_URL); ?>" />
 											<a id="imgurlinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -411,12 +426,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="centralWidthDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="centralWidthDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Central pixel width:</b>
 										</div>
 										<div style="float:left;"> 
-											<input name="webpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getWebPixWidth()?$specManager->getWebPixWidth():$IMG_WEB_WIDTH); ?>" /> 
+											<input name="webpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getWebPixWidth()?:$IMG_WEB_WIDTH); ?>" />
 											<a id="webpixwidthinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -426,12 +441,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="thumbWidthDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="thumbWidthDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Thumbnail pixel width:</b> 
 										</div>
 										<div style="float:left;">
-											<input name="tnpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getTnPixWidth()?$specManager->getTnPixWidth():$IMG_TN_WIDTH); ?>" /> 
+											<input name="tnpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getTnPixWidth()?:$IMG_TN_WIDTH); ?>" />
 											<a id="tnpixwidthinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -440,12 +455,12 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="largeWidthDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="largeWidthDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>Large pixel width:</b>
 										</div>
 										<div style="float:left;"> 
-											<input name="lgpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getLgPixWidth()?$specManager->getLgPixWidth():$IMG_LG_WIDTH); ?>" /> 
+											<input name="lgpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getLgPixWidth()?:$IMG_LG_WIDTH); ?>" />
 											<a id="lgpixwidthinfo" href="#" onclick="return false" title="More Information">
 												<img src="../../images/info.png" style="width:15px;" />
 											</a>
@@ -458,7 +473,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="jpgQualityDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="jpgQualityDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div style="width:180px;float:left;">
 											<b>JPG quality:</b>
 										</div>
@@ -475,30 +490,30 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 									</div>
-									<div id="thumbnailDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="thumbnailDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div>
 											<b>Thumbnail:</b>
 											<div style="margin:5px 15px;">
-												<input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg()==1?'CHECKED':''); ?> /> Create new thumbnail from source image<br/>
-												<input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg()==2?'CHECKED':''); ?> /> Import thumbnail from source location (source name with _tn.jpg suffix)<br/>
-												<input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg()==3?'CHECKED':''); ?> /> Map to thumbnail at source location (source name with _tn.jpg suffix)<br/>
+												<input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg() === 1?'CHECKED':''); ?> /> Create new thumbnail from source image<br/>
+												<input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg() === 2?'CHECKED':''); ?> /> Import thumbnail from source location (source name with _tn.jpg suffix)<br/>
+												<input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg() === 3?'CHECKED':''); ?> /> Map to thumbnail at source location (source name with _tn.jpg suffix)<br/>
 												<input name="createtnimg" type="radio" value="0" <?php echo (!$specManager->getCreateTnImg()?'CHECKED':''); ?> /> Exclude thumbnail <br/>
 											</div>
 										</div>
 									</div>
-									<div id="largeImageDiv" class="profileDiv" style="display:<?php echo ($projectType=='local'?'block':'none'); ?>">
+									<div id="largeImageDiv" class="profileDiv" style="display:<?php echo ($projectType === 'local'?'block':'none'); ?>">
 										<div>
 											<b>Large Image:</b>
 											<div style="margin:5px 15px;">
-												<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg()==1?'CHECKED':''); ?> /> Import source image as large version<br/>
-												<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg()==2?'CHECKED':''); ?> /> Map to source image as large version<br/>
-												<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg()==3?'CHECKED':''); ?> /> Import large version from source location (source name with _lg.jpg suffix)<br/>
-												<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg()==4?'CHECKED':''); ?> /> Map to large version at source location (source name with _lg.jpg suffix)<br/>
+												<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() === 1?'CHECKED':''); ?> /> Import source image as large version<br/>
+												<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() === 2?'CHECKED':''); ?> /> Map to source image as large version<br/>
+												<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() === 3?'CHECKED':''); ?> /> Import large version from source location (source name with _lg.jpg suffix)<br/>
+												<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() === 4?'CHECKED':''); ?> /> Map to large version at source location (source name with _lg.jpg suffix)<br/>
 												<input name="createlgimg" type="radio" value="0" <?php echo (!$specManager->getCreateLgImg()?'CHECKED':''); ?> /> Exclude large version<br/>
 											</div>
 										</div>
 									</div>
-									<div id="chooseFileDiv" class="profileDiv" style="clear:both;padding:15px 0px;display:none">
+									<div id="chooseFileDiv" class="profileDiv" style="clear:both;padding:15px 0;display:none">
 										<b>Select image data file:</b>
 										<div style="margin:5px 15px;">
 											<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
@@ -539,13 +554,13 @@ if($spprid) $specManager->setProjVariables($spprid);
 									<fieldset style="padding:15px;">
 										<legend><b><?php echo $specManager->getTitle(); ?></b></legend>
 										<div style="position:absolute;top:10px;right:35px;" title="Show all saved profiles or add a new one...">
-											<a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><img src="../../images/add.png" style="border:0px" /></a>
+											<a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><img src="../../images/add.png" style="border:0;" /></a>
 										</div>
 										<div style="position:absolute;top:10px;right:10px;" title="Open Editor">
-											<a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.png" style="border:0px;width:15px;" /></a>
+											<a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.png" style="border:0;width:15px;" /></a>
 										</div>
 										<?php
-										if($projectType == 'idigbio'){
+										if($projectType === 'idigbio'){
 											?>
 											<div style="font-weight:bold;">Select iDigBio Image Appliance output file</div>
 											<div style="" title="Upload output file created by iDigBio Image Upload Appliance here.">
@@ -554,8 +569,8 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 											<?php
 										}
-										elseif($projectType == 'iplant'){
-											$lastRunDate = ($specManager->getLastRunDate()?$specManager->getLastRunDate():'no run date');
+										elseif($projectType === 'iplant'){
+											$lastRunDate = ($specManager->getLastRunDate()?:'no run date');
 											?>
 											<div style="margin-top:10px">
 												<div style="width:200px;float:left;">
@@ -615,7 +630,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 										</div>
 										<?php
-										if($projectType != 'idigbio'){ 
+										if($projectType !== 'idigbio'){
 											?>
 											<div style="clear:both;">
 												<div style="width:200px;float:left;">
@@ -630,14 +645,14 @@ if($spprid) $specManager->setProjVariables($spprid);
 											</div>
 											<?php
 										}
-										if($projectType != 'idigbio' && $projectType != 'iplant'){ 
+										if($projectType !== 'idigbio' && $projectType !== 'iplant'){
 											?>
 											<div style="clear:both;">
 												<div style="width:200px;float:left;">
 													<b>Target folder:</b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getTargetPath()?$specManager->getTargetPath():$IMAGE_ROOT_PATH); ?>
+													<?php echo ($specManager->getTargetPath()?:$IMAGE_ROOT_PATH); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -645,7 +660,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 													<b>URL prefix:</b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getImgUrlBase()?$specManager->getImgUrlBase():$IMAGE_ROOT_URL); ?>
+													<?php echo ($specManager->getImgUrlBase()?:$IMAGE_ROOT_URL); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -653,7 +668,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 													<b>Web image width:</b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getWebPixWidth()?$specManager->getWebPixWidth():$IMG_WEB_WIDTH); ?>
+													<?php echo ($specManager->getWebPixWidth()?:$IMG_WEB_WIDTH); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -661,7 +676,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 													<b>Thumbnail width:</b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getTnPixWidth()?$specManager->getTnPixWidth():$IMG_TN_WIDTH); ?>
+													<?php echo ($specManager->getTnPixWidth()?:$IMG_TN_WIDTH); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -669,7 +684,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 													<b>Large image width:</b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getLgPixWidth()?$specManager->getLgPixWidth():$IMG_LG_WIDTH); ?>
+													<?php echo ($specManager->getLgPixWidth()?:$IMG_LG_WIDTH); ?>
 												</div>
 											</div>
 											<div style="clear:both;">
@@ -677,7 +692,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 													<b>JPG quality (1-100): </b> 
 												</div>
 												<div style="float:left;"> 
-													<?php echo ($specManager->getJpgQuality()?$specManager->getJpgQuality():80); ?>
+													<?php echo ($specManager->getJpgQuality()?:80); ?>
 												</div>
 											</div>
 											<div style="clear:both;padding-top:10px;">
@@ -694,9 +709,9 @@ if($spprid) $specManager->setProjVariables($spprid);
 												<div>
 													<b>Thumbnail:</b>
 													<div style="margin:5px 15px"> 
-														<input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg() == 1?'CHECKED':'') ?> /> Create new from source image<br/>
-														<input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg() == 2?'CHECKED':'') ?> /> Import existing source thumbnail (source name with _tn.jpg suffix)<br/>
-														<input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg() == 3?'CHECKED':'') ?> /> Map to existing source thumbnail (source name with _tn.jpg suffix)<br/>
+														<input name="createtnimg" type="radio" value="1" <?php echo ($specManager->getCreateTnImg() === 1?'CHECKED':'') ?> /> Create new from source image<br/>
+														<input name="createtnimg" type="radio" value="2" <?php echo ($specManager->getCreateTnImg() === 2?'CHECKED':'') ?> /> Import existing source thumbnail (source name with _tn.jpg suffix)<br/>
+														<input name="createtnimg" type="radio" value="3" <?php echo ($specManager->getCreateTnImg() === 3?'CHECKED':'') ?> /> Map to existing source thumbnail (source name with _tn.jpg suffix)<br/>
 														<input name="createtnimg" type="radio" value="0" <?php echo (!$specManager->getCreateTnImg()?'CHECKED':'') ?> /> Exclude thumbnail <br/>
 													</div>
 												</div>
@@ -705,10 +720,10 @@ if($spprid) $specManager->setProjVariables($spprid);
 												<div>
 													<b>Large Image:</b>
 													<div style="margin:5px 15px"> 
-														<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() == 1?'CHECKED':'') ?> /> Import source image as large version<br/>
-														<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() == 2?'CHECKED':'') ?> /> Map to source image as large version<br/>
-														<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() == 3?'CHECKED':'') ?> /> Import existing large version (source name with _lg.jpg suffix)<br/>
-														<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() == 4?'CHECKED':'') ?> /> Map to existing large version (source name with _lg.jpg suffix)<br/>
+														<input name="createlgimg" type="radio" value="1" <?php echo ($specManager->getCreateLgImg() === 1?'CHECKED':'') ?> /> Import source image as large version<br/>
+														<input name="createlgimg" type="radio" value="2" <?php echo ($specManager->getCreateLgImg() === 2?'CHECKED':'') ?> /> Map to source image as large version<br/>
+														<input name="createlgimg" type="radio" value="3" <?php echo ($specManager->getCreateLgImg() === 3?'CHECKED':'') ?> /> Import existing large version (source name with _lg.jpg suffix)<br/>
+														<input name="createlgimg" type="radio" value="4" <?php echo ($specManager->getCreateLgImg() === 4?'CHECKED':'') ?> /> Map to existing large version (source name with _lg.jpg suffix)<br/>
 														<input name="createlgimg" type="radio" value="0" <?php echo (!$specManager->getCreateLgImg()?'CHECKED':'') ?> /> Exclude large version<br/>
 													</div>
 												</div>
@@ -756,14 +771,14 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 											<input name="projtype" type="hidden" value="<?php echo $projectType; ?>" />
 											<input name="tabindex" type="hidden" value="1" />
-											<input name="submitaction" type="submit" value="Process <?php echo ($projectType=='idigbio'?'Output File':'Images') ?>" />
+											<input name="submitaction" type="submit" value="Process <?php echo ($projectType === 'idigbio'?'Output File':'Images') ?>" />
 										</div>
 										<div style="margin:20px;">
 											<fieldset style="padding:15px;">
 												<legend><b>Log Files</b></legend>
 												<?php 
 												$logArr = $specManager->getLogListing();
-												$LOG_PATH = '../../content/logs/'.($projectType == 'local'?'imgProccessing':$projectType).'/';
+												$LOG_PATH = '../../content/logs/'.($projectType === 'local'?'imgProccessing':$projectType).'/';
 												if($logArr){
 													foreach($logArr as $logFile){
 														echo '<div><a href="'.$LOG_PATH.$logFile.'" target="_blank">'.$logFile.'</a></div>';

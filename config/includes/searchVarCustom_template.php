@@ -67,5 +67,3 @@
 //$SEARCHTEXT['MPR_LAT'] = '';
 //$SEARCHTEXT['MPR_LNG'] = '';
 //$SEARCHTEXT['SUBMIT'] = '';
-
-?>

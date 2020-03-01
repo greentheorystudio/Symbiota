@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyCleaner.php');
-header("Content-Type: text/html; charset=UTF-8");
+include_once(__DIR__ . '/../../../classes/TaxonomyCleaner.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = $_REQUEST['collid'];
 $oldSciname = $_REQUEST['oldsciname'];
 $tid = $_REQUEST['tid'];
-$idQualifier = (isset($_REQUEST['idq'])?$_REQUEST['idq']:'');
+$idQualifier = ($_REQUEST['idq'] ?? '');
 
 $status = '0';
 if($collid && $oldSciname && $tid){
@@ -16,4 +16,3 @@ if($collid && $oldSciname && $tid){
 	}
 }
 echo $status;
-?>

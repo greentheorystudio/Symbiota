@@ -1,24 +1,25 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
+include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+ini_set('max_execution_time', 1200);
 
-$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$cPartentTaxon = array_key_exists("taxon",$_REQUEST)?$_REQUEST["taxon"]:'';
-$cCountry = array_key_exists("country",$_REQUEST)?$_REQUEST["country"]:'';
-$days = array_key_exists("days",$_REQUEST)?$_REQUEST["days"]:365;
-$months = array_key_exists("months",$_REQUEST)?$_REQUEST["months"]:12;
+$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
+    $catId = $DEFAULTCATID;
+}
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
+$cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
+$days = array_key_exists('days',$_REQUEST)?$_REQUEST['days']:365;
+$months = array_key_exists('months',$_REQUEST)?$_REQUEST['months']:12;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $collManager = new OccurrenceCollectionProfile();
 
-//if($collId) $collManager->setCollectionId($collId);
 $collList = $collManager->getStatCollectionList($catId);
-$specArr = (isset($collList['spec'])?$collList['spec']:null);
-$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$specArr = ($collList['spec'] ?? null);
+$obsArr = ($collList['obs'] ?? null);
 
 $collIdArr = array();
 $collectionArr = array();
@@ -27,36 +28,34 @@ $countryArr = array();
 $results = array();
 $collStr = '';
 if($collId){
-	$collIdArr = explode(",",$collId);
-	if($action == "Run Statistics" && (!$cPartentTaxon && !$cCountry)){
+	$collIdArr = explode(',',$collId);
+	if($action === 'Run Statistics' && (!$cPartentTaxon && !$cCountry)){
 		$resultsTemp = $collManager->runStatistics($collId);
 		$results['FamilyCount'] = $resultsTemp['familycnt'];
 		$results['GeneraCount'] = $resultsTemp['genuscnt'];
 		$results['SpeciesCount'] = $resultsTemp['speciescnt'];
 		$results['TotalTaxaCount'] = $resultsTemp['TotalTaxaCount'];
 		$results['TotalImageCount'] = $resultsTemp['TotalImageCount'];
-		unset($resultsTemp['familycnt']);
-		unset($resultsTemp['genuscnt']);
-		unset($resultsTemp['speciescnt']);
-		unset($resultsTemp['TotalTaxaCount']);
-		unset($resultsTemp['TotalImageCount']);
-		ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
+        unset($resultsTemp['familycnt'], $resultsTemp['genuscnt'], $resultsTemp['speciescnt'], $resultsTemp['TotalTaxaCount'], $resultsTemp['TotalImageCount']);
+        ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
 		$c = 0;
-		foreach($resultsTemp as $k => $collArr){
+		foreach($resultsTemp as $i => $collArr){
 			$dynPropTempArr = array();
 			$familyTempArr = array();
 			$countryTempArr = array();
-			if($c>0) $collStr .= ", ";
+			if($c>0) {
+                $collStr .= ', ';
+            }
 			$collStr .= $collArr['CollectionName'];
-			if(array_key_exists("SpecimenCount",$results)){
-				$results['SpecimenCount'] = $results['SpecimenCount'] + $collArr['recordcnt'];
+			if(array_key_exists('SpecimenCount',$results)){
+				$results['SpecimenCount'] += $collArr['recordcnt'];
 			}
 			else{
 				$results['SpecimenCount'] = $collArr['recordcnt'];
 			}
 
-			if(array_key_exists("GeorefCount",$results)){
-				$results['GeorefCount'] = $results['GeorefCount'] + $collArr['georefcnt'];
+			if(array_key_exists('GeorefCount',$results)){
+				$results['GeorefCount'] += $collArr['georefcnt'];
 			}
 			else{
 				$results['GeorefCount'] = $collArr['georefcnt'];
@@ -64,33 +63,32 @@ if($collId){
 
 			if($collArr['dynamicProperties']){
 				$dynPropTempArr = json_decode($collArr['dynamicProperties'],true);
+                if(is_array($dynPropTempArr)){
+					$resultsTemp[$i]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
+					$resultsTemp[$i]['types'] = $dynPropTempArr['TypeCount'];
 
-				if(is_array($dynPropTempArr)){
-					$resultsTemp[$k]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
-					$resultsTemp[$k]['types'] = $dynPropTempArr['TypeCount'];
-
-					if(array_key_exists("SpecimensCountID",$results)){
-						$results['SpecimensCountID'] = $results['SpecimensCountID'] + $dynPropTempArr['SpecimensCountID'];
+					if(array_key_exists('SpecimensCountID',$results)){
+						$results['SpecimensCountID'] += $dynPropTempArr['SpecimensCountID'];
 					}
 					else{
 						$results['SpecimensCountID'] = $dynPropTempArr['SpecimensCountID'];
 					}
 
-					if(array_key_exists("TypeCount",$results)){
-						$results['TypeCount'] = $results['TypeCount'] + $dynPropTempArr['TypeCount'];
+					if(array_key_exists('TypeCount',$results)){
+						$results['TypeCount'] += $dynPropTempArr['TypeCount'];
 					}
 					else{
 						$results['TypeCount'] = $dynPropTempArr['TypeCount'];
 					}
 
-					if(array_key_exists("families",$dynPropTempArr)){
+					if(array_key_exists('families',$dynPropTempArr)){
 						$familyTempArr = $dynPropTempArr['families'];
 						foreach($familyTempArr as $k => $famArr){
 							if(array_key_exists($k,$familyArr)){
-								$familyArr[$k]['SpecimensPerFamily'] = $familyArr[$k]['SpecimensPerFamily'] + $famArr['SpecimensPerFamily'];
-								$familyArr[$k]['GeorefSpecimensPerFamily'] = $familyArr[$k]['GeorefSpecimensPerFamily'] + $famArr['GeorefSpecimensPerFamily'];
-								$familyArr[$k]['IDSpecimensPerFamily'] = $familyArr[$k]['IDSpecimensPerFamily'] + $famArr['IDSpecimensPerFamily'];
-								$familyArr[$k]['IDGeorefSpecimensPerFamily'] = $familyArr[$k]['IDGeorefSpecimensPerFamily'] + $famArr['IDGeorefSpecimensPerFamily'];
+								$familyArr[$k]['SpecimensPerFamily'] += $famArr['SpecimensPerFamily'];
+								$familyArr[$k]['GeorefSpecimensPerFamily'] += $famArr['GeorefSpecimensPerFamily'];
+								$familyArr[$k]['IDSpecimensPerFamily'] += $famArr['IDSpecimensPerFamily'];
+								$familyArr[$k]['IDGeorefSpecimensPerFamily'] += $famArr['IDGeorefSpecimensPerFamily'];
 							}
 							else{
 								$familyArr[$k]['SpecimensPerFamily'] = $famArr['SpecimensPerFamily'];
@@ -102,14 +100,14 @@ if($collId){
 						ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
 					}
 
-					if(array_key_exists("countries",$dynPropTempArr)){
+					if(array_key_exists('countries',$dynPropTempArr)){
 						$countryTempArr = $dynPropTempArr['countries'];
 						foreach($countryTempArr as $k => $countArr){
 							if(array_key_exists($k,$countryArr)){
-								$countryArr[$k]['CountryCount'] = $countryArr[$k]['CountryCount'] + $countArr['CountryCount'];
-								$countryArr[$k]['GeorefSpecimensPerCountry'] = $countryArr[$k]['GeorefSpecimensPerCountry'] + $countArr['GeorefSpecimensPerCountry'];
-								$countryArr[$k]['IDSpecimensPerCountry'] = $countryArr[$k]['IDSpecimensPerCountry'] + $countArr['IDSpecimensPerCountry'];
-								$countryArr[$k]['IDGeorefSpecimensPerCountry'] = $countryArr[$k]['IDGeorefSpecimensPerCountry'] + $countArr['IDGeorefSpecimensPerCountry'];
+								$countryArr[$k]['CountryCount'] += $countArr['CountryCount'];
+								$countryArr[$k]['GeorefSpecimensPerCountry'] += $countArr['GeorefSpecimensPerCountry'];
+								$countryArr[$k]['IDSpecimensPerCountry'] += $countArr['IDSpecimensPerCountry'];
+								$countryArr[$k]['IDGeorefSpecimensPerCountry'] += $countArr['IDGeorefSpecimensPerCountry'];
 							}
 							else{
 								$countryArr[$k]['CountryCount'] = $countArr['CountryCount'];
@@ -126,94 +124,94 @@ if($collId){
 		}
 		$results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
 	}
-    elseif($action == "Run Statistics" && ($cPartentTaxon || $cCountry)){
+    elseif($action === 'Run Statistics' && ($cPartentTaxon || $cCountry)){
         $resultsTemp = $collManager->runStatisticsQuery($collId,$cPartentTaxon,$cCountry);
         $familyArr = $resultsTemp['families'];
         ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
         $countryArr = $resultsTemp['countries'];
         ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
-        unset($resultsTemp['families']);
-        unset($resultsTemp['countries']);
+        unset($resultsTemp['families'], $resultsTemp['countries']);
         ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
         $c = 0;
         foreach($resultsTemp as $k => $collArr){
-            if($c>0) $collStr .= ", ";
+            if($c>0) {
+                $collStr .= ', ';
+            }
             $collStr .= $collArr['CollectionName'];
-            if(array_key_exists("SpecimenCount",$results)){
-                $results['SpecimenCount'] = $results['SpecimenCount'] + $collArr['recordcnt'];
+            if(array_key_exists('SpecimenCount',$results)){
+                $results['SpecimenCount'] += $collArr['recordcnt'];
             }
             else{
                 $results['SpecimenCount'] = $collArr['recordcnt'];
             }
 
-            if(array_key_exists("GeorefCount",$results)){
-                $results['GeorefCount'] = $results['GeorefCount'] + $collArr['georefcnt'];
+            if(array_key_exists('GeorefCount',$results)){
+                $results['GeorefCount'] += $collArr['georefcnt'];
             }
             else{
                 $results['GeorefCount'] = $collArr['georefcnt'];
             }
 
-            if(array_key_exists("FamilyCount",$results)){
-                $results['FamilyCount'] = $results['FamilyCount'] + $collArr['familycnt'];
+            if(array_key_exists('FamilyCount',$results)){
+                $results['FamilyCount'] += $collArr['familycnt'];
             }
             else{
                 $results['FamilyCount'] = $collArr['familycnt'];
             }
 
-            if(array_key_exists("GeneraCount",$results)){
-                $results['GeneraCount'] = $results['GeneraCount'] + $collArr['genuscnt'];
+            if(array_key_exists('GeneraCount',$results)){
+                $results['GeneraCount'] += $collArr['genuscnt'];
             }
             else{
                 $results['GeneraCount'] = $collArr['genuscnt'];
             }
 
-            if(array_key_exists("SpeciesCount",$results)){
-                $results['SpeciesCount'] = $results['SpeciesCount'] + $collArr['speciescnt'];
+            if(array_key_exists('SpeciesCount',$results)){
+                $results['SpeciesCount'] += $collArr['speciescnt'];
             }
             else{
                 $results['SpeciesCount'] = $collArr['speciescnt'];
             }
 
-            if(array_key_exists("TotalTaxaCount",$results)){
-                $results['TotalTaxaCount'] = $results['TotalTaxaCount'] + $collArr['TotalTaxaCount'];
+            if(array_key_exists('TotalTaxaCount',$results)){
+                $results['TotalTaxaCount'] += $collArr['TotalTaxaCount'];
             }
             else{
                 $results['TotalTaxaCount'] = $collArr['TotalTaxaCount'];
             }
 
-            if(array_key_exists("TotalImageCount",$results)){
-                $results['TotalImageCount'] = $results['TotalImageCount'] + $collArr['OccurrenceImageCount'];
+            if(array_key_exists('TotalImageCount',$results)){
+                $results['TotalImageCount'] += $collArr['OccurrenceImageCount'];
             }
             else{
                 $results['TotalImageCount'] = $collArr['OccurrenceImageCount'];
             }
 
-            if(array_key_exists("SpecimensCountID",$results)){
-                $results['SpecimensCountID'] = $results['SpecimensCountID'] + $collArr['speciesID'];
+            if(array_key_exists('SpecimensCountID',$results)){
+                $results['SpecimensCountID'] += $collArr['speciesID'];
             }
             else{
                 $results['SpecimensCountID'] = $collArr['speciesID'];
             }
 
-            if(array_key_exists("TypeCount",$results)){
-                $results['TypeCount'] = $results['TypeCount'] + $collArr['types'];
+            if(array_key_exists('TypeCount',$results)){
+                $results['TypeCount'] += $collArr['types'];
             }
             else{
                 $results['TypeCount'] = $collArr['types'];
             }
-
             $c++;
         }
         $results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
     }
-	if($action == "Update Statistics"){
+	if($action === 'Update Statistics'){
 		$collManager->batchUpdateStatistics($collId);
 		echo '<script type="text/javascript">window.location="collstats.php?collid='.$collId.'"</script>';
 	}
     $_SESSION['statsFamilyArr'] = $familyArr;
     $_SESSION['statsCountryArr'] = $countryArr;
 }
-if($action != "Update Statistics"){
+if($action !== 'Update Statistics'){
 	?>
 	<html lang="<?php echo $DEFAULT_LANG; ?>">
 		<head>
@@ -227,7 +225,7 @@ if($action != "Update Statistics"){
 			<script type="text/javascript" src="../../js/symb/collections.index.js"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
-					$("#tabs").tabs({<?php echo ($action == "Run Statistics"?'active: 1':''); ?>});
+					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
 
                     function split( val ) {
                         return val.split( /,\s*/ );
@@ -237,7 +235,6 @@ if($action != "Update Statistics"){
                     }
 
                     $( "#taxon" )
-                    // don't navigate away from the field on tab when selecting an item
                         .bind( "keydown", function( event ) {
                             if ( event.keyCode === $.ui.keyCode.TAB &&
                                 $( this ).data( "autocomplete" ).menu.active ) {
@@ -251,21 +248,17 @@ if($action != "Update Statistics"){
                                 }, response );
                             },
                             search: function() {
-                                // custom minLength
-                                var term = extractLast( this.value );
+                                const term = extractLast(this.value);
                                 if ( term.length < 4 ) {
                                     return false;
                                 }
                             },
                             focus: function() {
-                                // prevent value inserted on focus
                                 return false;
                             },
                             select: function( event, ui ) {
-                                var terms = split( this.value );
-                                // remove the current input
+                                const terms = split(this.value);
                                 terms.pop();
-                                // add the selected item
                                 terms.push( ui.item.value );
                                 this.value = terms.join( ", " );
                                 return false;
@@ -317,8 +310,8 @@ if($action != "Update Statistics"){
 
 				function toggleById(target){
 					if(target != null){
-						var obj = document.getElementById(target);
-						if(obj.style.display=="none" || obj.style.display==""){
+                        const obj = document.getElementById(target);
+                        if(obj.style.display === "none" || obj.style.display === ""){
 							obj.style.display="block";
 						}
 						else {
@@ -329,20 +322,22 @@ if($action != "Update Statistics"){
 				}
 
 				function changeCollForm(f){
-					var dbElements = document.getElementsByName("db[]");
-					var c = false;
-					var collid = "";
-					for(i = 0; i < dbElements.length; i++){
-						var dbElement = dbElements[i];
-						if(dbElement.checked && !isNaN(dbElement.value)){
-							if(c == true) collid = collid+",";
+                    const dbElements = document.getElementsByName("db[]");
+                    let c = false;
+                    let collid = "";
+                    for(let i = 0; i < dbElements.length; i++){
+                        const dbElement = dbElements[i];
+                        if(dbElement.checked && !isNaN(dbElement.value)){
+							if(c === true) {
+							    collid = collid+",";
+							}
 							collid = collid + dbElement.value;
 							c = true;
 						}
 					}
-					if(c == true){
-						var collobj = document.getElementById("colltxt");
-						collobj.value = collid;
+					if(c === true){
+                        const collobj = document.getElementById("colltxt");
+                        collobj.value = collid;
 						document.getElementById("collform").submit();
 					}
 					else{
@@ -354,21 +349,20 @@ if($action != "Update Statistics"){
 		</head>
 		<body>
 			<?php
-			include($SERVER_ROOT.'/header.php');
+			include(__DIR__ . '/../../header.php');
             ?>
             <div class='navpath'>
                 <a href='../../index.php'>Home</a> &gt;&gt;
                 <a href='collprofiles.php'>Collections</a> &gt;&gt;
                 <b>Collection Statistics</b>
             </div>
-			<!-- This is inner text! -->
 			<div id="innertext">
 				<h1>Select Collections to be Analyzed</h1>
-				<div id="tabs" style="margin:0px;">
+				<div id="tabs" style="margin:0;">
 					<ul>
 						<li><a href="#specobsdiv">Collections</a></li>
 						<?php
-                        if($action == "Run Statistics"){
+                        if($action === 'Run Statistics'){
 							echo '<li><a href="#statsdiv">Statistics</a></li>';
 						}
 						?>
@@ -380,9 +374,9 @@ if($action != "Update Statistics"){
 							?>
 							<form name="collections" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
                                 <?php
-                                if($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin",$USER_RIGHTS))){
+                                if($SYMB_UID && ($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS))){
                                     ?>
-                                    <fieldset style="padding:10px;padding-left:25px;">
+                                    <fieldset style="padding: 10px 10px 10px 25px;">
                                         <legend><b>Record Criteria</b></legend>
                                         <div style="margin:10px;float:left;">
                                             Parent Taxon: <input type="text" id="taxon" size="43" name="taxon" value="<?php echo $cPartentTaxon; ?>" />
@@ -394,7 +388,7 @@ if($action != "Update Statistics"){
                                     <?php
                                 }
                                 ?>
-                                <div style="margin:20px 0px 10px 20px;">
+                                <div style="margin:20px 0 10px 20px;">
 									<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
 									Select/Deselect all <a href="collprofiles.php">Collections</a>
 								</div>
@@ -424,20 +418,20 @@ if($action != "Update Statistics"){
 											$cnt = 0;
 											foreach($categoryArr as $catid => $catArr){
 												$name = $catArr['name'];
-												if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
+												if($catArr['acronym']) {
+                                                    $name .= ' (' . $catArr['acronym'] . ')';
+                                                }
 												$catIcon = $catArr['icon'];
-												unset($catArr['name']);
-												unset($catArr['acronym']);
-												unset($catArr['icon']);
-												$idStr = $collArrIndex.'-'.$catid;
+                                                unset($catArr['name'], $catArr['acronym'], $catArr['icon']);
+                                                $idStr = $collArrIndex.'-'.$catid;
 												?>
 												<tr>
 													<td style="padding:6px;width:25px;">
-														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
+														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr === array_keys($catArr))?'checked':''); ?> />
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -450,23 +444,25 @@ if($action != "Update Statistics"){
 												</tr>
 												<tr>
 													<td colspan="3">
-														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){
 																	?>
 																	<tr>
 																		<td style="padding:6px;width:25px;">
-																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr && in_array($collid, $collIdArr, true) ?'checked':''); ?> />
 																		</td>
 																		<td style="padding:6px">
 																			<div class="collectiontitle">
 																				<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																					<?php
 																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																					if($collName2['collcode']) {
+                                                                                        $codeStr .= '-' . $collName2['collcode'];
+                                                                                    }
 																					$codeStr .= ')';
-																					echo $collName2["collname"].$codeStr;
+																					echo $collName2['collname'].$codeStr;
 																					?>
 																				</a>
 																				<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -499,16 +495,18 @@ if($action != "Update Statistics"){
 												?>
 												<tr>
 													<td style="padding:6px;width:25px;">
-														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr && in_array($collid, $collIdArr, true) ?'checked':''); ?> />
 													</td>
 													<td style="padding:6px">
 														<div class="collectiontitle">
 															<a href='collprofiles.php?collid=<?php echo $collid; ?>'>
 																<?php
 																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																if($cArr['collcode']) {
+                                                                    $codeStr .= '-' . $cArr['collcode'];
+                                                                }
 																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
+																echo $cArr['collname'].$codeStr;
 																?>
 															</a>
 															<a href='collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -540,7 +538,9 @@ if($action != "Update Statistics"){
 									}
 									$collArrIndex++;
 								}
-								if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0px;"/>';
+								if($specArr && $obsArr) {
+                                    echo '<hr style="clear:both;margin:20px 0;"/>';
+                                }
 								if($obsArr){
 									$collCnt = 0;
 									if(isset($obsArr['cat'])){
@@ -565,20 +565,20 @@ if($action != "Update Statistics"){
 											$cnt = 0;
 											foreach($categoryArr as $catid => $catArr){
 												$name = $catArr['name'];
-												if($catArr['acronym']) $name .= ' ('.$catArr['acronym'].')';
+												if($catArr['acronym']) {
+                                                    $name .= ' (' . $catArr['acronym'] . ')';
+                                                }
 												$catIcon = $catArr['icon'];
-												unset($catArr['name']);
-												unset($catArr['acronym']);
-												unset($catArr['icon']);
-												$idStr = $collArrIndex.'-'.$catid;
+                                                unset($catArr['name'], $catArr['acronym'], $catArr['icon']);
+                                                $idStr = $collArrIndex.'-'.$catid;
 												?>
 												<tr>
 													<td style="padding:6px;width:25px;">
-														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr==array_keys($catArr))?'checked':''); ?> />
+														<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" <?php echo ($collIdArr&&($collIdArr === array_keys($catArr))?'checked':''); ?> />
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>" />
+                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -591,23 +591,25 @@ if($action != "Update Statistics"){
 												</tr>
 												<tr>
 													<td colspan="3">
-                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID != $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){
 																	?>
 																	<tr>
 																		<td style="padding:6px;width:25px;">
-																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+																			<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" <?php echo ($collIdArr&& in_array($collid, $collIdArr, true) ?'checked':''); ?> />
 																		</td>
 																		<td style="padding:6px">
 																			<div class="collectiontitle">
 																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																					<?php
 																					$codeStr = ' ('.$collName2['instcode'];
-																					if($collName2['collcode']) $codeStr .= '-'.$collName2['collcode'];
+																					if($collName2['collcode']) {
+                                                                                        $codeStr .= '-' . $collName2['collcode'];
+                                                                                    }
 																					$codeStr .= ')';
-																					echo $collName2["collname"].$codeStr;
+																					echo $collName2['collname'].$codeStr;
 																					?>
 																				</a>
 																				<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -640,16 +642,18 @@ if($action != "Update Statistics"){
 												?>
 												<tr>
 													<td style="padding:6px;width:25px;">
-														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr&&in_array($collid,$collIdArr)?'checked':''); ?> />
+														<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll();" <?php echo ($collIdArr && in_array($collid, $collIdArr, true) ?'checked':''); ?> />
 													</td>
 													<td style="padding:6px">
 														<div class="collectiontitle">
 															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>'>
 																<?php
 																$codeStr = ' ('.$cArr['instcode'];
-																if($cArr['collcode']) $codeStr .= '-'.$cArr['collcode'];
+																if($cArr['collcode']) {
+                                                                    $codeStr .= '-' . $cArr['collcode'];
+                                                                }
 																$codeStr .= ')';
-																echo $cArr["collname"].$codeStr;
+																echo $cArr['collname'].$codeStr;
 																?>
 															</a>
 															<a href = 'collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
@@ -696,7 +700,7 @@ if($action != "Update Statistics"){
 					</div>
 
                     <?php
-					if($action == "Run Statistics"){
+					if($action === 'Run Statistics'){
 						?>
 						<div id="statsdiv">
 							<div style="min-height:300px;">
@@ -709,47 +713,44 @@ if($action != "Update Statistics"){
 										</div>
 									</div>
 									<fieldset style="float:left;width:400px;margin-bottom:15px;margin-right:15px;">
-										<ul style="margin:0px;padding-left:10px;">
+										<ul style="margin:0;padding-left:10px;">
 											<?php
-											echo "<li>";
-											echo ($results['SpecimenCount']?number_format($results['SpecimenCount']):0)." occurrence records";
-											echo "</li>";
-											echo "<li>";
+											echo '<li>';
+											echo ($results['SpecimenCount']?number_format($results['SpecimenCount']):0). ' occurrence records';
+											echo '</li>';
+											echo '<li>';
 											$percGeo = '';
 											if($results['SpecimenCount'] && $results['GeorefCount']){
 												$percGeo = (100* ($results['GeorefCount'] / $results['SpecimenCount']));
 											}
-											echo ($results['GeorefCount']?number_format($results['GeorefCount']):0).($percGeo?" (".($percGeo>1?round($percGeo):round($percGeo,2))."%)":'')." georeferenced";
-											echo "</li>";
-											echo "<li>";
+											echo ($results['GeorefCount']?number_format($results['GeorefCount']):0).($percGeo? ' (' .($percGeo>1?round($percGeo):round($percGeo,2)). '%)' :''). ' georeferenced';
+											echo '</li>';
+											echo '<li>';
 											$percImg = '';
 											if($results['SpecimenCount'] && $results['TotalImageCount']){
 												$percImg = (100* ($results['TotalImageCount'] / $results['SpecimenCount']));
 											}
-											echo ($results['TotalImageCount']?number_format($results['TotalImageCount']):0).($percImg?" (".($percImg>1?round($percImg):round($percImg,2))."%)":'')." imaged";
-											echo "</li>";
-											echo "<li>";
+											echo ($results['TotalImageCount']?number_format($results['TotalImageCount']):0).($percImg? ' (' .($percImg>1?round($percImg):round($percImg,2)). '%)' :''). ' imaged';
+											echo '</li>';
+											echo '<li>';
 											$percId = '';
 											if($results['SpecimenCount'] && $results['SpecimensCountID']){
 												$percId = (100* ($results['SpecimensCountID'] / $results['SpecimenCount']));
 											}
-											echo ($results['SpecimensCountID']?number_format($results['SpecimensCountID']):0).($percId?" (".($percId>1?round($percId):round($percId,2))."%)":'')." identified to species";
-											echo "</li>";
-											echo "<li>";
-											echo ($results['FamilyCount']?number_format($results['FamilyCount']):0)." families";
-											echo "</li>";
-											echo "<li>";
-											echo ($results['GeneraCount']?number_format($results['GeneraCount']):0)." genera";
-											echo "</li>";
-											echo "<li>";
-											echo ($results['SpeciesCount']?number_format($results['SpeciesCount']):0)." species";
-											echo "</li>";
-											echo "<li>";
-											echo ($results['TotalTaxaCount']?number_format($results['TotalTaxaCount']):0)." total taxa (including subsp. and var.)";
-											echo "</li>";
-											/*echo "<li>";
-											echo ($results['TypeCount']?number_format($results['TypeCount']):0)." type specimens";
-											echo "</li>";*/
+											echo ($results['SpecimensCountID']?number_format($results['SpecimensCountID']):0).($percId? ' (' .($percId>1?round($percId):round($percId,2)). '%)' :''). ' identified to species';
+											echo '</li>';
+											echo '<li>';
+											echo ($results['FamilyCount']?number_format($results['FamilyCount']):0). ' families';
+											echo '</li>';
+											echo '<li>';
+											echo ($results['GeneraCount']?number_format($results['GeneraCount']):0). ' genera';
+											echo '</li>';
+											echo '<li>';
+											echo ($results['SpeciesCount']?number_format($results['SpeciesCount']):0). ' species';
+											echo '</li>';
+											echo '<li>';
+											echo ($results['TotalTaxaCount']?number_format($results['TotalTaxaCount']):0). ' total taxa (including subsp. and var.)';
+											echo '</li>';
 											?>
 										</ul>
 										<form name="statscsv" id="statscsv" action="collstatscsv.php" method="post" onsubmit="">
@@ -766,13 +767,12 @@ if($action != "Update Statistics"){
                                                     <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 													<input type="hidden" name="action" id="action" value='Download Stats per Coll' />
 													<input type="image" name="action" src="../../images/dl.png" onclick="" />
-													<!--input type="submit" name="action" value="Download Stats per Coll" src="../../images/dl.png" / -->
 												</div>
 											</div>
 										</form>
 									</fieldset>
 									<div style="">
-										<fieldset style="width:275px;margin:20px 0px 10px 20px;background-color:#FFFFCC;">
+										<fieldset style="width:275px;margin:20px 0 10px 20px;background-color:#FFFFCC;">
 											<form name="famstatscsv" id="famstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 												<div class='legend'><b>Extra Statistics</b></div>
 												<div style="margin-top:8px;">
@@ -806,13 +806,11 @@ if($action != "Update Statistics"){
                                             if(!$cPartentTaxon && !$cCountry){
                                                 ?>
                                                 <div style="margin-top:25px;">
-                                                    <form name="orderstats" style="margin-bottom:0px"
+                                                    <form name="orderstats" style="margin-bottom:0;"
                                                           action="collorderstats.php" method="post" target="_blank"
                                                           onsubmit="">
-                                                        <input type="hidden" name="collid" id="collid"
-                                                               value='<?php echo $collId; ?>'/>
-                                                        <input type="hidden" name="totalcnt" id="totalcnt"
-                                                               value='<?php echo $results['SpecimenCount']; ?>'/>
+                                                        <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
+                                                        <input type="hidden" name="totalcnt" id="totalcnt" value='<?php echo $results['SpecimenCount']; ?>'/>
                                                         <input type="submit" name="action" value="Load Order Distribution"/>
                                                     </form>
                                                 </div>
@@ -821,29 +819,23 @@ if($action != "Update Statistics"){
                                             ?>
 										</fieldset>
 										<?php
-										if(!$cPartentTaxon && !$cCountry){
-                                            if ($SYMB_UID && ($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS))) {
-                                                ?>
-                                                <fieldset id="yearstatsbox" style="width:275px;">
-                                                    <legend><b>Year Stats</b></legend>
-                                                    <form name="yearstats" style="margin-bottom:0px"
-                                                          action="collyearstats.php" method="post" target="_blank"
-                                                          onsubmit="">
-                                                        <input type="hidden" name="collid" id="collid"
-                                                               value='<?php echo $collId; ?>'/>
-                                                        <input type="hidden" name="days" value="<?php echo $days; ?>"/>
-                                                        <input type="hidden" name="months"
-                                                               value="<?php echo $months; ?>"/>
-                                                        <div style="float:left;">
-                                                            Years: <input type="text" id="years" size="5" name="years" value="1" />
-                                                        </div>
-                                                        <div style="margin-left:10px;float:left;">
-                                                            <input type="submit" name="action" value="Load Stats"/>
-                                                        </div>
-                                                    </form>
-                                                </fieldset>
-                                                <?php
-                                            }
+										if(!$cPartentTaxon && !$cCountry && $SYMB_UID && ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS))) {
+                                            ?>
+                                            <fieldset id="yearstatsbox" style="width:275px;">
+                                                <legend><b>Year Stats</b></legend>
+                                                <form name="yearstats" style="margin-bottom:0;" action="collyearstats.php" method="post" target="_blank">
+                                                    <input type="hidden" name="collid" id="collid" value='<?php echo $collId; ?>'/>
+                                                    <input type="hidden" name="days" value="<?php echo $days; ?>"/>
+                                                    <input type="hidden" name="months" value="<?php echo $months; ?>"/>
+                                                    <div style="float:left;">
+                                                        Years: <input type="text" id="years" size="5" name="years" value="1" />
+                                                    </div>
+                                                    <div style="margin-left:10px;float:left;">
+                                                        <input type="submit" name="action" value="Load Stats"/>
+                                                    </div>
+                                                </form>
+                                            </fieldset>
+                                            <?php
                                         }
                                         ?>
 									</div>
@@ -852,7 +844,7 @@ if($action != "Update Statistics"){
 
 								<fieldset id="statspercollbox" style="clear:both;margin-top:15px;width:90%;display:none;">
 									<legend><b>Statistics per Collection</b></legend>
-									<table class="styledtable" style="font-family:Arial;font-size:12px;">
+									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 										<tr>
 											<th style="text-align:center;">Collection</th>
 											<th style="text-align:center;">Specimens</th>
@@ -863,7 +855,6 @@ if($action != "Update Statistics"){
 											<th style="text-align:center;">Genera</th>
 											<th style="text-align:center;">Species</th>
 											<th style="text-align:center;">Total Taxa</th>
-											<!-- <th style="text-align:center;">Types</th> -->
 										</tr>
 										<?php
 										foreach($resultsTemp as $name => $data){
@@ -877,7 +868,6 @@ if($action != "Update Statistics"){
 											echo '<td>'.(array_key_exists('genuscnt',$data)?$data['genuscnt']:0).'</td>';
 											echo '<td>'.(array_key_exists('speciescnt',$data)?$data['speciescnt']:0).'</td>';
 											echo '<td>'.(array_key_exists('TotalTaxaCount',$data)?$data['TotalTaxaCount']:0).'</td>';
-											//echo '<td>'.(array_key_exists('types',$data)?$data['types']:0).'</td>';
 											echo '</tr>';
 										}
 										?>
@@ -885,7 +875,7 @@ if($action != "Update Statistics"){
 								</fieldset>
 								<fieldset id="famdistbox" style="clear:both;margin-top:15px;width:800px;display:none;">
 									<legend><b>Family Distribution</b></legend>
-									<table class="styledtable" style="font-family:Arial;font-size:12px;width:780px;">
+									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:780px;">
 										<tr>
 											<th style="text-align:center;">Family</th>
 											<th style="text-align:center;">Specimens</th>
@@ -899,11 +889,11 @@ if($action != "Update Statistics"){
 											echo '<tr>';
 											echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 											echo '<td>';
-											if(count($resultsTemp) == 1){
+											if(count($resultsTemp) === 1){
 												echo '<a href="../list.php?db[]='.$collId.'&reset=1&taxa='.$name.'" target="_blank">';
 											}
 											echo number_format($data['SpecimensPerFamily']);
-											if(count($resultsTemp) == 1){
+											if(count($resultsTemp) === 1){
 												echo '</a>';
 											}
 											echo '</td>';
@@ -911,7 +901,7 @@ if($action != "Update Statistics"){
 											echo '<td>'.($data['IDSpecimensPerFamily']?round(100*($data['IDSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</td>';
 											echo '<td>'.($data['IDGeorefSpecimensPerFamily']?round(100*($data['IDGeorefSpecimensPerFamily']/$data['SpecimensPerFamily'])):0).'%</td>';
 											echo '</tr>';
-											$total = $total + $data['SpecimensPerFamily'];
+											$total += $data['SpecimensPerFamily'];
 										}
 										?>
 									</table>
@@ -922,7 +912,7 @@ if($action != "Update Statistics"){
 								</fieldset>
 								<fieldset id="geodistbox" style="margin-top:15px;width:800px;display:none;">
 									<legend><b>Geographic Distribution</b></legend>
-									<table class="styledtable" style="font-family:Arial;font-size:12px;width:780px;">
+									<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:780px;">
 										<tr>
 											<th style="text-align:center;">Country</th>
 											<th style="text-align:center;">Specimens</th>
@@ -936,11 +926,11 @@ if($action != "Update Statistics"){
 											echo '<tr>';
 											echo '<td>'.wordwrap($name,52,"<br />\n",true).'</td>';
 											echo '<td>';
-											if(count($resultsTemp) == 1){
+											if(count($resultsTemp) === 1){
 												echo '<a href="../list.php?db[]='.$collId.'&reset=1&country='.$name.'" target="_blank">';
 											}
 											echo number_format($data['CountryCount']);
-											if(count($resultsTemp) == 1){
+											if(count($resultsTemp) === 1){
 												echo '</a>';
 											}
 											echo '</td>';
@@ -948,7 +938,7 @@ if($action != "Update Statistics"){
 											echo '<td>'.($data['IDSpecimensPerCountry']?round(100*($data['IDSpecimensPerCountry']/$data['CountryCount'])):0).'%</td>';
 											echo '<td>'.($data['IDGeorefSpecimensPerCountry']?round(100*($data['IDGeorefSpecimensPerCountry']/$data['CountryCount'])):0).'%</td>';
 											echo '</tr>';
-											$total = $total + $data['CountryCount'];
+											$total += $data['CountryCount'];
 										}
 										?>
 									</table>
@@ -964,9 +954,8 @@ if($action != "Update Statistics"){
 					?>
 				</div>
 			</div>
-			<!-- end inner text -->
 			<?php
-				include($SERVER_ROOT.'/footer.php');
+				include(__DIR__ . '/../../footer.php');
 			?>
 		</body>
 	</html>

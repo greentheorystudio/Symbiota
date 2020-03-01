@@ -1,7 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecLoans.php');
-require_once $SERVER_ROOT.'/vendor/autoload.php';
+include_once(__DIR__ . '/../../../classes/SpecLoans.php');
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use PhpOffice\PhpWord\PhpWord;
 
 $loanManager = new SpecLoans();
 
@@ -19,15 +21,17 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 $export = false;
 $exportEngine = '';
 $exportExtension = '';
-if($printMode == 'doc'){
+if($printMode === 'doc'){
 	$export = true;
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
 }
 
-if($collId) $loanManager->setCollId($collId);
+if($collId) {
+    $loanManager->setCollId($collId);
+}
 
-$spanish = ($language == 'span'?1:0);
+$spanish = ($language === 'span'?1:0);
 
 $identifier = 0;
 if($loanId){
@@ -43,7 +47,7 @@ $specTotal = $loanManager->getSpecTotal($loanId);
 $specList = $loanManager->getSpecList($loanId);
 
 if($export){
-	$phpWord = new \PhpOffice\PhpWord\PhpWord();
+	$phpWord = new PhpWord();
 	$phpWord->addParagraphStyle('header', array('align'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 	$phpWord->addFontStyle('headerFont', array('size'=>14,'name'=>'Arial'));
 	$phpWord->addParagraphStyle('info', array('align'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
@@ -102,7 +106,7 @@ else{
 			<title><?php echo $identifier; ?> Specimen List</title>
 			<style type="text/css">
 				<?php 
-					include_once($SERVER_ROOT.'/css/main.css');
+					include_once(__DIR__ . '/../../../css/main.css');
 				?>
 				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}

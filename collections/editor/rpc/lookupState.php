@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once(__DIR__ . '/../../../classes/DbConnection.php');
+
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $retArr = array();
@@ -18,11 +19,9 @@ $sql .= $sqlWhere.'ORDER BY s.statename';
 $result = $con->query($sql);
 while ($row = $result->fetch_object()) {
 	$stateStr = $row->statename;
-	if($CHARSET === 'ISO-8859-1'){
-		if(mb_detect_encoding($stateStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-			$stateStr = utf8_encode($stateStr);
-		}
-	}
+	if(($CHARSET === 'ISO-8859-1') && mb_detect_encoding($stateStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+        $stateStr = utf8_encode($stateStr);
+    }
 	$retArr[] = $stateStr;
 }
 $result->close();
@@ -33,4 +32,3 @@ if($retArr){
 else{
 	echo '';
 }
-

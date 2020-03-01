@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $occId = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -22,18 +22,18 @@ $occManager->setOccId($occId);
 $detArr = $occManager->getDetMap($identBy, $dateIdent, $sciName);
 $idRanking = $occManager->getIdentificationRanking();
 
-$specImgArr = $occManager->getImageMap();  // find out if there are images in order to show/hide the button to display/hide images.
+$specImgArr = $occManager->getImageMap();
 
 ?>
 <div id="determdiv" style="width:795px;">
-	<div style="margin:15px 0px 40px 15px;">
+	<div style="margin:15px 0 40px 15px;">
 		<div>
 			<b><u>Identification Confidence Ranking</u></b>
 			<?php
 			if($editMode < 3){ 
 				?>
 				<a href="#" title="Modify current identification ranking" onclick="toggle('idrankeditdiv');toggle('idrankdiv');return false;">
-					<img src="../../images/edit.png" style="border:0px;width:12px;" />
+					<img src="../../images/edit.png" style="border:0;width:12px;" />
 				</a>
 				<?php
 			} 
@@ -49,19 +49,21 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						<select name="confidenceranking">
 							<?php 
 							$currentRanking = 5;
-							if($idRanking) $currentRanking = $idRanking['ranking'];
+							if($idRanking) {
+                                $currentRanking = $idRanking['ranking'];
+                            }
 							?>
-							<option value="10" <?php echo ($currentRanking==10?'SELECTED':''); ?>>10 - Absolute</option>
-							<option value="9" <?php echo ($currentRanking==9?'SELECTED':''); ?>>9 - High</option>
-							<option value="8" <?php echo ($currentRanking==8?'SELECTED':''); ?>>8 - High</option>
-							<option value="7" <?php echo ($currentRanking==7?'SELECTED':''); ?>>7 - High</option>
-							<option value="6" <?php echo ($currentRanking==6?'SELECTED':''); ?>>6 - Medium</option>
-							<option value="5" <?php echo ($currentRanking==5?'SELECTED':''); ?>>5 - Medium</option>
-							<option value="4" <?php echo ($currentRanking==4?'SELECTED':''); ?>>4 - Medium</option>
-							<option value="3" <?php echo ($currentRanking==3?'SELECTED':''); ?>>3 - Low</option>
-							<option value="2" <?php echo ($currentRanking==2?'SELECTED':''); ?>>2 - Low</option>
-							<option value="1" <?php echo ($currentRanking==1?'SELECTED':''); ?>>1 - Low</option>
-							<option value="0" <?php echo ($currentRanking==0?'SELECTED':''); ?>>0 - Unlikely</option>
+							<option value="10" <?php echo ($currentRanking === 10?'SELECTED':''); ?>>10 - Absolute</option>
+							<option value="9" <?php echo ($currentRanking === 9?'SELECTED':''); ?>>9 - High</option>
+							<option value="8" <?php echo ($currentRanking === 8?'SELECTED':''); ?>>8 - High</option>
+							<option value="7" <?php echo ($currentRanking === 7?'SELECTED':''); ?>>7 - High</option>
+							<option value="6" <?php echo ($currentRanking === 6?'SELECTED':''); ?>>6 - Medium</option>
+							<option value="5" <?php echo ($currentRanking === 5?'SELECTED':''); ?>>5 - Medium</option>
+							<option value="4" <?php echo ($currentRanking === 4?'SELECTED':''); ?>>4 - Medium</option>
+							<option value="3" <?php echo ($currentRanking === 3?'SELECTED':''); ?>>3 - Low</option>
+							<option value="2" <?php echo ($currentRanking === 2?'SELECTED':''); ?>>2 - Low</option>
+							<option value="1" <?php echo ($currentRanking === 1?'SELECTED':''); ?>>1 - Low</option>
+							<option value="0" <?php echo ($currentRanking === 0?'SELECTED':''); ?>>0 - Unlikely</option>
 						</select>
 					</div>
 					<div style='margin:3px;'>
@@ -95,12 +97,11 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 					echo ' - high ';
 				}
 				echo '</div>';
-				echo '<div><b>Set by:</b> '.($idRanking['username']?$idRanking['username']:'undefined').'</div>';
-				if($idRanking['notes']) echo '<div><b>Notes:</b> '.$idRanking['notes'].'</div>';
+				echo '<div><b>Set by:</b> '.($idRanking['username']?:'undefined').'</div>';
+				if($idRanking['notes']) {
+                    echo '<div><b>Notes:</b> ' . $idRanking['notes'] . '</div>';
+                }
 			}
-			/*else{
-				echo 'not ranked';
-			}*/
 			?>
 		</div>
 	</div>
@@ -108,7 +109,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 		<fieldset style="margin:15px;padding:15px;">
 			<legend><b>Determination History</b></legend>
 			<div style="float:right;">
-				<a href="#" onclick="toggle('newdetdiv');return false;" title="Add New Determination" ><img style="border:0px;width:12px;" src="../../images/add.png" /></a>
+				<a href="#" onclick="toggle('newdetdiv');return false;" title="Add New Determination" ><img style="border:0;width:12px;" src="../../images/add.png" /></a>
 			</div>
 			<?php 
 			if(!$detArr){
@@ -123,7 +124,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 				<form name="detaddform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this)">
 					<fieldset style="margin:15px;padding:15px;">
 						<legend><b>Add a New Determination</b></legend>
-						<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
+						<div style="float:right;margin:-7px -4px 0 0;font-weight:bold;">
 							<span id="imgProcOnSpanDet" style="display:block;">
 								<?php 
 								if($specImgArr){  
@@ -144,7 +145,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							</span>
 						</div>
 						<?php 
-						if($editMode == 3){
+						if($editMode === 3){
 							?>
 							<div style="color:red;margin:10px;">
 								While you are a Taxonomy Editor for this taxon, you have not been given explicit editing rights for this collection. 
@@ -208,8 +209,9 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							<input type="hidden" name="institutioncode" value="<?php echo $institutioncode; ?>" />
 							<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 							<?php 
-							if (isset($_GET['collectioncode']))
-								echo '<input type="hidden" name="collectioncode" value="'.$_GET['collectioncode'].'" />'; 
+							if (isset($_GET['collectioncode'])) {
+                                echo '<input type="hidden" name="collectioncode" value="' . $_GET['collectioncode'] . '" />';
+                            }
 							?>
 							
 							<div style="float:left;">
@@ -222,21 +224,23 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 			<?php
 			foreach($detArr as $detId => $detRec){
 				$canEdit = 0;
-				if($editMode < 3 || !$detRec['appliedstatus']) $canEdit = 1;
+				if($editMode < 3 || !$detRec['appliedstatus']) {
+                    $canEdit = 1;
+                }
 				?>
 				<div id="detdiv-<?php echo $detId;?>">
 					<div>
 						<?php 
-						if($detRec['identificationqualifier']) echo $detRec['identificationqualifier'].' ';
+						if($detRec['identificationqualifier']) {
+                            echo $detRec['identificationqualifier'] . ' ';
+                        }
 						echo '<b><i>'.$detRec['sciname'].'</i></b> '.$detRec['scientificnameauthorship'];
-						if($detRec['iscurrent']){
-							if($detRec['appliedstatus']){
-								echo '<span style="margin-left:10px;color:red;">CURRENT DETERMINATION</span>';
-							}
-						}
+						if($detRec['iscurrent'] && $detRec['appliedstatus']) {
+                            echo '<span style="margin-left:10px;color:red;">CURRENT DETERMINATION</span>';
+                        }
 						if($canEdit){
 							?>
-							<a href="#" onclick="toggle('editdetdiv-<?php echo $detId;?>');return false;" title="Edit Determination"><img style="border:0px;width:12px;" src="../../images/edit.png" /></a>
+							<a href="#" onclick="toggle('editdetdiv-<?php echo $detId;?>');return false;" title="Edit Determination"><img style="border:0;width:12px;" src="../../images/edit.png" /></a>
 							<?php
 						}
 						if(!$detRec['appliedstatus']){
@@ -248,7 +252,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						}
 						?>
 					</div>
-					<div style='margin:3px 0px 0px 15px;'>
+					<div style='margin:3px 0 0 15px;'>
 						<b>Determiner:</b> <?php echo $detRec['identifiedby']; ?>
 						<span style="margin-left:40px;">
 							<b>Date:</b> <?php echo $detRec['dateidentified']; ?>
@@ -257,14 +261,14 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 					<?php 
 					if($detRec['identificationreferences']){
 						?>
-						<div style='margin:3px 0px 0px 15px;'>
+						<div style='margin:3px 0 0 15px;'>
 							<b>Reference:</b> <?php echo $detRec['identificationreferences']; ?>
 						</div>
 						<?php 
 					}
 					if($detRec['identificationremarks']){
 						?>
-						<div style='margin:3px 0px 0px 15px;'>
+						<div style='margin:3px 0 0 15px;'>
 							<b>Notes:</b> <?php echo $detRec['identificationremarks']; ?>
 						</div>
 						<?php 
@@ -364,7 +368,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 					<?php 
 				}
 				?>
-				<hr style='margin:10px 0px 10px 0px;' />
+				<hr style='margin:10px 0 10px 0;' />
 				<?php 
 			}
 			?>

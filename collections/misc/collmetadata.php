@@ -1,17 +1,21 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:""; 
-$collid = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
 $statusStr = '';
 
 $collManager = new OccurrenceCollectionProfile();
-if(!$collManager->setCollid($collid)) $collid = '';
+if(!$collManager->setCollid($collid)) {
+    $collid = '';
+}
 
 $isEditor = 0;
 $collPubArr = array();
@@ -22,19 +26,19 @@ if($IS_ADMIN){
 	$isEditor = 1;
 }
 elseif($collid){
-	if(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])){
+	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
 }
 
 if($isEditor){
-	if($action == 'Save Edits'){
+	if($action === 'Save Edits'){
 		$statusStr = $collManager->submitCollEdits($_POST);
-		if($statusStr == true){
+		if($statusStr === true){
 			header('Location: collprofiles.php?collid='.$collid);
 		}
 	}
-	elseif($action == "Create New Collection"){
+	elseif($action === 'Create New Collection'){
 		if($IS_ADMIN){
 			$newCollid = $collManager->submitCollAdd($_POST);
 			if(is_numeric($newCollid)){
@@ -46,7 +50,7 @@ if($isEditor){
 			}
 		}
 	}
-	elseif($action == 'Link Address'){
+	elseif($action === 'Link Address'){
 		if(!$collManager->linkAddress($_POST['iid'])){
 			$statusStr = $collManager->getErrorStr();
 		}
@@ -57,7 +61,7 @@ if($isEditor){
 		}
 	}
 }
-if(isset($GBIF_USERNAME) && $GBIF_USERNAME && isset($GBIF_PASSWORD) && $GBIF_PASSWORD && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY && $collid){
+if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY && $collid){
 	$collPubArr = $collManager->getCollPubArr($collid);
 	if($collPubArr[$collid]['publishToGbif']){
 		$publishGBIF = true;
@@ -71,18 +75,17 @@ $collManager->cleanOutArr($collData);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE." ".($collid?$collData["collectionname"]:"") ; ?> Collection Profiles</title>
+	<title><?php echo $DEFAULT_TITLE. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
-
-		$(function() {
-			var dialogArr = new Array("instcode","collcode","pedits","pubagg","rights","rightsholder","accessrights","guid","colltype","management","icon","collectionguid","sourceurl","sort");
-			var dialogStr = "";
-			for(i=0;i<dialogArr.length;i++){
+        $(function() {
+            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort"];
+            let dialogStr = "";
+            for(let i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
 				$( "#"+dialogStr+"dialog" ).dialog({
 					autoOpen: false,
@@ -98,20 +101,22 @@ $collManager->cleanOutArr($collData);
 		});
 	
 		function openMappingAid() {
-		    mapWindow=open("../../tools/mappointaid.php?formname=colleditform&latname=latitudedecimal&longname=longitudedecimal","mappointaid","resizable=0,width=800,height=700,left=20,top=20");
-		    if (mapWindow.opener == null) mapWindow.opener = self;
+            const mapWindow = open("../../tools/mappointaid.php?formname=colleditform&latname=latitudedecimal&longname=longitudedecimal", "mappointaid", "resizable=0,width=800,height=700,left=20,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
 		}
 
 		function verifyCollEditForm(f){
-			if(f.institutioncode.value == ''){
+			if(f.institutioncode.value === ''){
 				alert("Institution Code must have a value");
 				return false;
 			}
-			else if(f.collectionname.value == ''){
+			else if(f.collectionname.value === ''){
 				alert("Collection Name must have a value");
 				return false;
 			}
-			else if(f.managementtype.value == "Snapshot" && f.guidtarget.value == "symbiotaUUID"){
+			else if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
 				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
@@ -119,7 +124,7 @@ $collManager->cleanOutArr($collData);
 				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
 				return false;
 			}
-			else if(f.rights.value == ""){
+			else if(f.rights.value === ""){
 				alert("Rights field (e.g. Creative Commons license) must have a selection");
 				return false;
 			}
@@ -134,10 +139,10 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function mtypeguidChanged(f){
-			if(f.managementtype.value == "Snapshot" && f.guidtarget.value == "symbiotaUUID"){
+			if(f.managementtype.value === "Snapshot" && f.guidtarget.value === "symbiotaUUID"){
 				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 			}
-			else if(f.managementtype.value == "Aggregate" && f.guidtarget.value != "" && f.guidtarget.value != "occurrenceId"){
+			else if(f.managementtype.value === "Aggregate" && f.guidtarget.value !== "" && f.guidtarget.value !== "occurrenceId"){
 				alert("An Aggregate dataset (e.g. occurrences coming from multiple collections) can only have occurrenceID selected for the GUID source");
 				f.guidtarget.value = 'occurrenceId';
 			}
@@ -147,7 +152,7 @@ $collManager->cleanOutArr($collData);
 		}
 		
 		function checkGUIDSource(f){
-			if(f.publishToGbif.checked == true){
+			if(f.publishToGbif.checked === true){
 				if(!f.guidtarget.value){
 					alert("You must select a GUID source in order to publish to data aggregators.");
 					f.publishToGbif.checked = false;
@@ -156,7 +161,7 @@ $collManager->cleanOutArr($collData);
 		}
 
 		function verifyAddAddressForm(f){
-			if(f.iid.value == ""){
+			if(f.iid.value === ""){
 				alert("Select an institution to be linked");
 				return false;
 			}
@@ -164,9 +169,9 @@ $collManager->cleanOutArr($collData);
 		}
 		
 		function toggle(target){
-			var objDiv = document.getElementById(target);
-			if(objDiv){
-				if(objDiv.style.display=="none"){
+            const objDiv = document.getElementById(target);
+            if(objDiv){
+				if(objDiv.style.display==="none"){
 					objDiv.style.display = "block";
 				}
 				else{
@@ -174,11 +179,11 @@ $collManager->cleanOutArr($collData);
 				}
 			}
 			else{
-				var divs = document.getElementsByTagName("div");
-				for (var h = 0; h < divs.length; h++) {
-				var divObj = divs[h];
-					if(divObj.className == target){
-						if(divObj.style.display=="none"){
+                const divs = document.getElementsByTagName("div");
+                for (let h = 0; h < divs.length; h++) {
+                    const divObj = divs[h];
+                    if(divObj.className === target){
+						if(divObj.style.display === "none"){
 							divObj.style.display="block";
 						}
 						else {
@@ -189,20 +194,20 @@ $collManager->cleanOutArr($collData);
 			}
 		}
 		
-		function verifyIconImage(f){
-			var iconImageFile = document.getElementById("iconfile").value;
-			if(iconImageFile){
-				var iconExt = iconImageFile.substr(iconImageFile.length-4);
-				iconExt = iconExt.toLowerCase();
-				if((iconExt != '.jpg') && (iconExt != 'jpeg') && (iconExt != '.png') && (iconExt != '.gif')){
+		function verifyIconImage(){
+            const iconImageFile = document.getElementById("iconfile").value;
+            if(iconImageFile){
+                let iconExt = iconImageFile.substr(iconImageFile.length - 4);
+                iconExt = iconExt.toLowerCase();
+				if((iconExt !== '.jpg') && (iconExt !== 'jpeg') && (iconExt !== '.png') && (iconExt !== '.gif')){
 					document.getElementById("iconfile").value = '';
 					alert("The file you have uploaded is not a supported image file. Please upload a jpg, png, or gif file.");
 				}
 				else{
-					var fr = new FileReader;
-					fr.onload = function(){
-						var img = new Image;
-						img.onload = function(){
+                    const fr = new FileReader;
+                    fr.onload = function(){
+                        let img = new Image;
+                        img.onload = function(){
 							if((img.width>350) || (img.height>350)){
 								document.getElementById("iconfile").value = '';
 								img = '';
@@ -216,22 +221,22 @@ $collManager->cleanOutArr($collData);
 			}
 		}
 		
-		function verifyIconURL(f){
-			var iconImageFile = document.getElementById("iconurl").value;
-			if((iconImageFile.substr(iconImageFile.length-4) != '.jpg') && (iconImageFile.substr(iconImageFile.length-4) != '.png') && (iconImageFile.substr(iconImageFile.length-4) != '.gif')){
+		function verifyIconURL(){
+            const iconImageFile = document.getElementById("iconurl").value;
+            if((iconImageFile.substr(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substr(iconImageFile.length-4) !== '.png') && (iconImageFile.substr(iconImageFile.length-4) !== '.gif')){
 				document.getElementById("iconurl").value = '';
 				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
 			}
 		}
 
 		function isNumeric(sText){
-		   	var ValidChars = "0123456789-.";
-		   	var IsNumber = true;
-		   	var Char;
-		 
-		   	for(var i = 0; i < sText.length && IsNumber == true; i++){ 
+            const ValidChars = "0123456789-.";
+            let IsNumber = true;
+            let Char;
+
+            for(let i = 0; i < sText.length && IsNumber === true; i++){
 			   Char = sText.charAt(i); 
-				if(ValidChars.indexOf(Char) == -1){
+				if(ValidChars.indexOf(Char) === -1){
 					IsNumber = false;
 					break;
 		      	}
@@ -242,7 +247,7 @@ $collManager->cleanOutArr($collData);
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	echo '<div class="navpath">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     if($collid){
@@ -252,10 +257,9 @@ $collManager->cleanOutArr($collData);
     else{
         echo '<b>Create New Collection Profile</b>';
     }
-	echo "</div>";
+	echo '</div>';
 	?>
 
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($statusStr){ 
@@ -282,7 +286,7 @@ $collManager->cleanOutArr($collData);
 									Institution Code:
 								</td>
 								<td>
-									<input type="text" name="institutioncode" value="<?php echo ($collid?$collData["institutioncode"]:'');?>" style="width:75px;" />
+									<input type="text" name="institutioncode" value="<?php echo ($collid?$collData['institutioncode']:'');?>" style="width:75px;" />
 									<a id="instcodeinfo" href="#" onclick="return false" title="More information about Institution Code">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
@@ -297,7 +301,7 @@ $collManager->cleanOutArr($collData);
 									Collection Code:
 								</td>
 								<td>
-									<input type="text" name="collectioncode" value="<?php echo ($collid?$collData["collectioncode"]:'');?>" style="width:75px;" />
+									<input type="text" name="collectioncode" value="<?php echo ($collid?$collData['collectioncode']:'');?>" style="width:75px;" />
 									<a id="collcodeinfo" href="#" onclick="return false" title="More information about Collection Code">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
@@ -312,7 +316,7 @@ $collManager->cleanOutArr($collData);
 									Collection Name: 
 								</td>
 								<td>
-									<input type="text" name="collectionname" value="<?php echo ($collid?$collData["collectionname"]:'');?>" style="width:95%;" title="Required field" />
+									<input type="text" name="collectionname" value="<?php echo ($collid?$collData['collectionname']:'');?>" style="width:95%;" title="Required field" />
 								</td>
 							</tr>
 							<tr>
@@ -321,7 +325,7 @@ $collManager->cleanOutArr($collData);
 									(2000 character max): 
 								</td>
 								<td>
-									<textarea name="fulldescription" style="width:95%;height:90px;"><?php echo ($collid?$collData["fulldescription"]:'');?></textarea>
+									<textarea name="fulldescription" style="width:95%;height:90px;"><?php echo ($collid?$collData['fulldescription']:'');?></textarea>
 								</td>
 							</tr>
 							<tr>
@@ -329,7 +333,7 @@ $collManager->cleanOutArr($collData);
 									Homepage:
 								</td>
 								<td>
-									<input type="text" name="homepage" value="<?php echo ($collid?$collData["homepage"]:'');?>" style="width:90%;" />
+									<input type="text" name="homepage" value="<?php echo ($collid?$collData['homepage']:'');?>" style="width:90%;" />
 								</td>
 							</tr>
 							<tr>
@@ -337,7 +341,7 @@ $collManager->cleanOutArr($collData);
 								Contact: 
 									</td>
 								<td>
-									<input type="text" name="contact" value="<?php echo ($collid?$collData["contact"]:'');?>" style="width:90%;" />
+									<input type="text" name="contact" value="<?php echo ($collid?$collData['contact']:'');?>" style="width:90%;" />
 								</td>
 							</tr>
 							<tr>
@@ -345,7 +349,7 @@ $collManager->cleanOutArr($collData);
 									Email:
 								</td>
 								<td>
-									<input type="text" name="email" value="<?php echo ($collid?$collData["email"]:'');?>" style="width:90%;" />
+									<input type="text" name="email" value="<?php echo ($collid?$collData['email']:'');?>" style="width:90%;" />
 								</td>
 							</tr>
 							<tr>
@@ -353,7 +357,7 @@ $collManager->cleanOutArr($collData);
 									Latitude:
 								</td>
 								<td>
-									<input id="latdec" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData["latitudedecimal"]:'');?>" />
+									<input id="latdec" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
 									<span style="cursor:pointer;" onclick="openMappingAid();">
 										<img src="../../images/world.png" style="width:12px;" />
 									</span>
@@ -364,7 +368,7 @@ $collManager->cleanOutArr($collData);
 									Longitude:
 								</td>
 								<td>
-									<input id="lngdec" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData["longitudedecimal"]:'');?>" />
+									<input id="lngdec" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
 								</td>
 							</tr>
 							<?php 
@@ -421,14 +425,14 @@ $collManager->cleanOutArr($collData);
 											$hasOrphanTerm = true; 
 											foreach($RIGHTS_TERMS as $k => $v){
 												$selectedTerm = '';
-												if($collid && strtolower($collData["rights"])==strtolower($v)){
+												if($collid && strtolower($collData['rights']) === strtolower($v)){
 													$selectedTerm = 'SELECTED';
 													$hasOrphanTerm = false;
 												}
 												echo '<option value="'.$v.'" '.$selectedTerm.'>'.$k.'</option>'."\n";
 											}
-											if($hasOrphanTerm && array_key_exists("rights",$collData)){
-												echo '<option value="'.$collData["rights"].'" SELECTED>'.$collData["rights"].' [orphaned term]</option>'."\n";
+											if($hasOrphanTerm && array_key_exists('rights',$collData)){
+												echo '<option value="'.$collData['rights'].'" SELECTED>'.$collData['rights'].' [orphaned term]</option>'."\n";
 											}
 											?>
 										</select>
@@ -436,7 +440,7 @@ $collManager->cleanOutArr($collData);
 									}
 									else{
 										?>
-										<input type="text" name="rights" value="<?php echo ($collid?$collData["rights"]:'');?>" style="width:90%;" />
+										<input type="text" name="rights" value="<?php echo ($collid?$collData['rights']:'');?>" style="width:90%;" />
 										<?php 
 									}
 									?>
@@ -455,7 +459,7 @@ $collManager->cleanOutArr($collData);
 									Rights Holder:
 								</td>
 								<td>
-									<input type="text" name="rightsholder" value="<?php echo ($collid?$collData["rightsholder"]:'');?>" style="width:90%;" />
+									<input type="text" name="rightsholder" value="<?php echo ($collid?$collData['rightsholder']:'');?>" style="width:90%;" />
 									<a id="rightsholderinfo" href="#" onclick="return false" title="More information about Rights Holder">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
@@ -470,7 +474,7 @@ $collManager->cleanOutArr($collData);
 									Access Rights:
 								</td>
 								<td>
-									<input type="text" name="accessrights" value="<?php echo ($collid?$collData["accessrights"]:'');?>" style="width:90%;" />
+									<input type="text" name="accessrights" value="<?php echo ($collid?$collData['accessrights']:'');?>" style="width:90%;" />
 									<a id="accessrightsinfo" href="#" onclick="return false" title="More information about Access Rights">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
@@ -488,9 +492,9 @@ $collManager->cleanOutArr($collData);
 									<select name="guidtarget" onchange="mtypeguidChanged(this.form)">
 										<option value="">Not defined</option>
 										<option value="">-------------------</option>
-										<option value="occurrenceId" <?php echo ($collid && $collData["guidtarget"]=='occurrenceId'?'SELECTED':''); ?>>Occurrence Id</option>
-										<option value="catalogNumber" <?php echo ($collid && $collData["guidtarget"]=='catalogNumber'?'SELECTED':''); ?>>Catalog Number</option>
-										<option value="symbiotaUUID" <?php echo ($collid && $collData["guidtarget"]=='symbiotaUUID'?'SELECTED':''); ?>>Symbiota Generated GUID (UUID)</option>
+										<option value="occurrenceId" <?php echo ($collid && $collData['guidtarget'] === 'occurrenceId'?'SELECTED':''); ?>>Occurrence Id</option>
+										<option value="catalogNumber" <?php echo ($collid && $collData['guidtarget'] === 'catalogNumber'?'SELECTED':''); ?>>Catalog Number</option>
+										<option value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] === 'symbiotaUUID'?'SELECTED':''); ?>>Symbiota Generated GUID (UUID)</option>
 									</select>
 									<a id="guidinfo" href="#" onclick="return false" title="More information about Global Unique Identifier">
 										<img src="../../images/info.png" style="width:15px;" />
@@ -508,7 +512,7 @@ $collManager->cleanOutArr($collData);
 								</td>
 							</tr>
                             <?php
-                            if(isset($GBIF_USERNAME) && $GBIF_USERNAME && isset($GBIF_PASSWORD) && $GBIF_PASSWORD && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY) {
+                            if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY) {
                                 ?>
 	                            <tr>
 	                                <td>
@@ -523,15 +527,6 @@ $collManager->cleanOutArr($collData);
                                                 <img src="../../images/info.png" style="width:15px;"/>
                                             </a>
                                         </div>
-	                                    <!-- 
-	                                    <div>
-	                                        iDigBio <input type="checkbox" name="publishToIdigbio" value="1" onchange="checkGUIDSource(this.form);" <?php echo($publishIDIGBIO?'CHECKED':''); ?> />
-	                                    </div>
-	                                    <div id="pubagginfodialog">
-	                                        Check boxes to make Darwin Core Archives published from this collection
-	                                        available to iDigBio and/or GBIF (if activated in this portal).
-	                                    </div>
-	                                    -->
 	                                </td>
 	                            </tr>
                                 <?php
@@ -542,7 +537,7 @@ $collManager->cleanOutArr($collData);
 									Source Record URL:
 								</td>
 								<td>
-									<input type="text" name="individualurl" style="width:90%;" value="<?php echo ($collid?$collData["individualurl"]:'');?>" title="Dynamic link to source database individual record page" />
+									<input type="text" name="individualurl" style="width:90%;" value="<?php echo ($collid?$collData['individualurl']:'');?>" title="Dynamic link to source database individual record page" />
 									<a id="sourceurlinfo" href="#" onclick="return false" title="More information about Source Records URL">
 										<img src="../../images/info.png" style="width:15px;" />
 									</a>
@@ -560,20 +555,19 @@ $collManager->cleanOutArr($collData);
 									Icon URL:
 								</td>
 								<td>
-									<div style='float:left;width:90%;margin-top:0px;'>
-										<div class="targetdiv" style="<?php echo (($collid&&$collData["icon"])?'display:none;':'display:block;'); ?>margin-top:0px;">
-											<!-- following line sets MAX_FILE_SIZE (must precede the file input field)  -->
+									<div style='float:left;width:90%;margin-top:0;'>
+										<div class="targetdiv" style="<?php echo (($collid&&$collData['icon'])?'display:none;':'display:block;'); ?>margin-top:0;">
 											<div style="float:left;">
 												<input type='hidden' name='MAX_FILE_SIZE' value='20000000' />
-												<input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage(this.form);" />
+												<input name='iconfile' id='iconfile' type='file' size='70' onchange="verifyIconImage();" />
 											</div>
 											<div style="margin-right:15px;text-decoration:underline;float:right;font-weight:bold;">
 												<a href="#" onclick="toggle('targetdiv');return false;">Enter URL</a>
 											</div>
 										</div>
-										<div class="targetdiv" style="<?php echo (($collid&&$collData["icon"])?'display:block;':'display:none;'); ?>margin-top:0px;">
+										<div class="targetdiv" style="<?php echo (($collid&&$collData['icon'])?'display:block;':'display:none;'); ?>margin-top:0;">
 											<div style="float:left;width:65%;">
-												<input style="width:100%;margin-top:0px;" type='text' name='iconurl' id='iconurl' value="<?php echo ($collid?$collData["icon"]:'');?>" onchange="verifyIconURL(this.form);" />
+												<input style="width:100%;margin-top:0;" type='text' name='iconurl' id='iconurl' value="<?php echo ($collid?$collData['icon']:'');?>" onchange="verifyIconURL();" />
 											</div>
 											<div style="margin-right:15px;text-decoration:underline;float:right;font-weight:bold;">
 												<a href="#" onclick="toggle('targetdiv');return false;">
@@ -601,8 +595,8 @@ $collManager->cleanOutArr($collData);
 									<td>
 										<select name="colltype">
 											<option>Preserved Specimens</option>
-											<option <?php echo ($collid && $collData["colltype"]=='Observations'?'SELECTED':''); ?>>Observations</option>
-											<option <?php echo ($collid && $collData["colltype"]=='General Observations'?'SELECTED':''); ?>>General Observations</option>
+											<option <?php echo ($collid && $collData['colltype'] === 'Observations'?'SELECTED':''); ?>>Observations</option>
+											<option <?php echo ($collid && $collData['colltype'] === 'General Observations'?'SELECTED':''); ?>>General Observations</option>
 										</select>
 										<a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
 											<img src="../../images/info.png" style="width:15px;" />
@@ -626,8 +620,8 @@ $collManager->cleanOutArr($collData);
 									<td>
 										<select name="managementtype" onchange="mtypeguidChanged(this.form)">
 											<option>Snapshot</option>
-											<option <?php echo ($collid && $collData["managementtype"]=='Live Data'?'SELECTED':''); ?>>Live Data</option>
-											<option <?php echo ($collid && $collData["managementtype"]=='Aggregate'?'SELECTED':''); ?>>Aggregate</option>
+											<option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
+											<option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
 										</select>
 										<a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
 											<img src="../../images/info.png" style="width:15px;" />
@@ -644,7 +638,7 @@ $collManager->cleanOutArr($collData);
 										Sort Sequence:
 									</td>
 									<td>
-										<input type="text" name="sortseq" value="<?php echo ($collid?$collData["sortseq"]:'');?>" />
+										<input type="text" name="sortseq" value="<?php echo ($collid?$collData['sortseq']:'');?>" />
 										<a id="sortinfo" href="#" onclick="return false" title="More information about Sorting">
 											<img src="../../images/info.png" style="width:15px;" />
 										</a>
@@ -663,7 +657,7 @@ $collManager->cleanOutArr($collData);
 									</td>
 									<td>
 										<?php 
-										echo $collData["guid"];
+										echo $collData['guid'];
 										?> 
 										<a id="collectionguidinfo" href="#" onclick="return false" title="More information">
 											<img src="../../images/info.png" style="width:15px;" />
@@ -687,7 +681,6 @@ $collManager->cleanOutArr($collData);
 								<?php
 							}
 							else{
-								//New collection 
 								?>
 								<tr>
 									<td>
@@ -752,21 +745,38 @@ $collManager->cleanOutArr($collData);
 							</a>
 							<?php 
 							echo '</div>';
-							if($instArr['address1']) echo '<div>'.$instArr['address1'].'</div>';
-							if($instArr['address2']) echo '<div>'.$instArr['address2'].'</div>';
-							if($instArr['city'] || $instArr['stateprovince']) echo '<div>'.$instArr['city'].', '.$instArr['stateprovince'].' '.$instArr['postalcode'].'</div>';
-							if($instArr['country']) echo '<div>'.$instArr['country'].'</div>';
-							if($instArr['phone']) echo '<div>'.$instArr['phone'].'</div>';
-							if($instArr['contact']) echo '<div>'.$instArr['contact'].'</div>';
-							if($instArr['email']) echo '<div>'.$instArr['email'].'</div>';
-							if($instArr['url']) echo '<div><a href="'.$instArr['url'].'">'.$instArr['url'].'</a></div>';
-							if($instArr['notes']) echo '<div>'.$instArr['notes'].'</div>';
+							if($instArr['address1']) {
+                                echo '<div>' . $instArr['address1'] . '</div>';
+                            }
+							if($instArr['address2']) {
+                                echo '<div>' . $instArr['address2'] . '</div>';
+                            }
+							if($instArr['city'] || $instArr['stateprovince']) {
+                                echo '<div>' . $instArr['city'] . ', ' . $instArr['stateprovince'] . ' ' . $instArr['postalcode'] . '</div>';
+                            }
+							if($instArr['country']) {
+                                echo '<div>' . $instArr['country'] . '</div>';
+                            }
+							if($instArr['phone']) {
+                                echo '<div>' . $instArr['phone'] . '</div>';
+                            }
+							if($instArr['contact']) {
+                                echo '<div>' . $instArr['contact'] . '</div>';
+                            }
+							if($instArr['email']) {
+                                echo '<div>' . $instArr['email'] . '</div>';
+                            }
+							if($instArr['url']) {
+                                echo '<div><a href="' . $instArr['url'] . '">' . $instArr['url'] . '</a></div>';
+                            }
+							if($instArr['notes']) {
+                                echo '<div>' . $instArr['notes'] . '</div>';
+                            }
 							?>
 						</div>
 						<?php 
 					}
 					else{
-						//Link new institution
 						?>
 						<div style="margin:40px;"><b>No addesses linked</b></div>
 						<div style="margin:20px;">
@@ -800,7 +810,7 @@ $collManager->cleanOutArr($collData);
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

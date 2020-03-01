@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
-include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 
 $connection = new DbConnection();
 $con = $connection->getConnection();

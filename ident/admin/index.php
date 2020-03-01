@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../ident/admin/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
 
@@ -14,25 +16,25 @@ $charArr = $charManager->getCharacterArr();
 $headingArr = $charManager->getHeadingArr();
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('KeyAdmin',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
+$headingAdminUrl = 'headingadmin.php';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title>Character Admin</title>
+    <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript">
 		function validateNewCharForm(f){
-			if(f.charname.value == ""){
+			if(f.charname.value === ""){
 				alert("Character name must have a value");
 				return false;
 			}
-			if(f.chartype.value == ""){
+			if(f.chartype.value === ""){
 				alert("A character type must be selected");
 				return false;
 			} 
@@ -44,23 +46,21 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 		}
 
 		function openHeadingAdmin(){
-			newWindow = window.open("headingadmin.php","headingWin","scrollbars=1,toolbar=1,resizable=1,width=800,height=600,left=50,top=50");
-			if (newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open("<?php echo $headingAdminUrl; ?>", "headingWin", "scrollbars=1,toolbar=1,resizable=1,width=800,height=600,left=50,top=50");
+            if (newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 		}
 	</script>
-	<style type="text/css">
-		input{ autocomplete: off; } 
-	</style>
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<b>Character Management</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($isEditor){
@@ -77,7 +77,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							<legend><b>New Character</b></legend>
 							<div>
 								Character Name:<br />
-								<input type="text" name="charname" maxlength="255" style="width:400px;" />
+								<input type="text" name="charname" maxlength="255" style="width:400px;" autocomplete="off" />
 							</div>
 							<div style="padding-top:6px;">
 								<div style="float:left;">
@@ -114,7 +114,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							</div>
 							<div style="padding-top:6px;clear:both;">
 								<b>Sort Sequence</b><br />
-								<input type="text" name="sortsequence" />
+								<input type="text" name="sortsequence" autocomplete="off" />
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<button name="formsubmit" type="submit" value="Create">Create</button>
@@ -187,7 +187,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 		?>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

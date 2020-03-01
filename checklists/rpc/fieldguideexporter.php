@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistFGExportManager.php');
+include_once(__DIR__ . '/../../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;

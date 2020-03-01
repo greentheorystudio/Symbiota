@@ -338,9 +338,7 @@ class OccurrenceCollectionProfile {
 		$accessRights = $this->cleanInStr($postArr['accessrights']);
 		$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
         $gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
-        if(array_key_exists('publishToIdigbio',$postArr)){
-            $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
-        }
+        $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
         $guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
 		if($_FILES['iconfile']['name']){
 			$icon = $this->addIconImageFile();

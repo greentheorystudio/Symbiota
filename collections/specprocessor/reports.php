@@ -1,7 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = $_REQUEST['collid'];
 $menu = array_key_exists('menu',$_REQUEST)&&$_REQUEST['menu']?$_REQUEST['menu']:0;
@@ -12,7 +15,7 @@ $procManager->setCollId($collid);
 $tabIndex = 4;
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 ?>
@@ -26,7 +29,7 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 			<select name="menu" onchange="this.form.submit()">
 				<?php
 				foreach($reportTypes as $k => $v){
-					echo '<option value="'.$k.'" '.($menu==$k?'SELECTED':'').'>'.$v.'</option>';
+					echo '<option value="'.$k.'" '.($menu === $k?'SELECTED':'').'>'.$v.'</option>';
 				}
 				?>
 			</select>
@@ -41,7 +44,6 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 			$eUrl = '../editor/occurrenceeditor.php?collid='.$collid;
 			$beUrl = '../editor/occurrencetabledisplay.php?collid='.$collid;
 			if(!$menu){
-				//General stats
 				$statsArr = $procManager->getProcessingStats();
 				?>
 				<div style="margin:10px;height:400px;">
@@ -127,7 +129,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 							<tr><th>Processing Status</th><th>Count</th></tr>
 							<?php
 							foreach($statsArr['ps'] as $processingStatus => $cnt){
-								if(!$processingStatus) $processingStatus = 'No Status Set';
+								if(!$processingStatus) {
+                                    $processingStatus = 'No Status Set';
+                                }
 								echo '<tr>';
 								echo '<td>'.$processingStatus.'</td>';
 								echo '<td>';
@@ -147,13 +151,13 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 				</div>
 				<?php
 			}
-			elseif($menu == 1){
-				$uid = (isset($_GET['uid'])?$_GET['uid']:'');
-				$interval= (isset($_GET['interval'])?$_GET['interval']:'day');
-				$startDate = (isset($_GET['startdate'])?$_GET['startdate']:'');
-				$endDate = (isset($_GET['enddate'])?$_GET['enddate']:'');
-				$processingStatus = (isset($_GET['processingstatus'])?$_GET['processingstatus']:0);
-				$excludeBatch = (isset($_GET['excludebatch'])?$_GET['excludebatch']:'');
+			elseif($menu === 1){
+				$uid = ($_GET['uid'] ?? '');
+				$interval= ($_GET['interval'] ?? 'day');
+				$startDate = ($_GET['startdate'] ?? '');
+				$endDate = ($_GET['enddate'] ?? '');
+				$processingStatus = ($_GET['processingstatus'] ?? 0);
+				$excludeBatch = ($_GET['excludebatch'] ?? '');
 				?>
 				<fieldset style="padding:15px;width:400px">
 					<legend><b>Filter</b></legend>
@@ -166,7 +170,7 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 								<?php
 								$userArr = $procManager->getUserList();
 								foreach($userArr as $id => $uname){
-									echo '<option value="'.$id.'" '.($uid==$id?'SELECTED':'').'>'.$uname.'</option>';
+									echo '<option value="'.$id.'" '.($uid === $id?'SELECTED':'').'>'.$uname.'</option>';
 								}
 								?>
 							</select>
@@ -174,27 +178,27 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 						<div style="margin:2px">
 							Interval:
 							<select name="interval">
-								<option value="hour" <?php echo ($interval=='hour'?'SELECTED':''); ?>>Hour</option>
-								<option value="day" <?php echo ($interval=='day'?'SELECTED':''); ?>>Day</option>
-								<option value="week" <?php echo ($interval=='week'?'SELECTED':''); ?>>Week</option>
-								<option value="month" <?php echo ($interval=='month'?'SELECTED':''); ?>>Month</option>
+								<option value="hour" <?php echo ($interval === 'hour'?'SELECTED':''); ?>>Hour</option>
+								<option value="day" <?php echo ($interval === 'day'?'SELECTED':''); ?>>Day</option>
+								<option value="week" <?php echo ($interval === 'week'?'SELECTED':''); ?>>Week</option>
+								<option value="month" <?php echo ($interval === 'month'?'SELECTED':''); ?>>Month</option>
 							</select>
 						</div>
 						<div style="margin:2px">
 							Date: <input name="startdate" type="date" value="<?php echo $startDate; ?>" />
-							to <input name="enddate" type="date" value="<?php echo (isset($_GET['enddate'])?$_GET['enddate']:''); ?>" />
+							to <input name="enddate" type="date" value="<?php echo ($_GET['enddate'] ?? ''); ?>" />
 						</div>
 						<div style="margin:2px">
 							Processing Status set to:
 							<select name="processingstatus">
 								<option value="0">Ignore Processing Status</option>
-								<option value="all" <?php echo ($processingStatus && $processingStatus=='all'?'SELECTED':''); ?>>Any Processing Status</option>
+								<option value="all" <?php echo ($processingStatus && $processingStatus === 'all'?'SELECTED':''); ?>>Any Processing Status</option>
 								<option value="0">-----------------------</option>
 								<?php
 								$psArr = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Duplicate','Pending Review-NfN','Pending Review','Expert Required','Reviewed','Closed');
 								foreach($psArr as $psValue){
 									$psValue = strtolower($psValue);
-									echo '<option value="'.$psValue.'" '.($processingStatus && $processingStatus==$psValue?'SELECTED':'').'>'.$psValue.'</option>';
+									echo '<option value="'.$psValue.'" '.($processingStatus && $processingStatus === $psValue?'SELECTED':'').'>'.$psValue.'</option>';
 								}
 								?>
 							</select>
@@ -214,17 +218,20 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 					</form>
 				</fieldset>
 				<?php
-				if($formAction && $formAction == 'displayReport'){
+				if($formAction && $formAction === 'displayReport'){
 					echo '<table class="styledtable" style="width:500px;font-size:12px;">';
 					echo '<tr><th>Time Period</th>';
 					echo '<th>User</th>';
-					if($processingStatus) echo '<th>Previous Status</th><th>Saved Status</th><th>Current Status</th>';
+					if($processingStatus) {
+                        echo '<th>Previous Status</th><th>Saved Status</th><th>Current Status</th>';
+                    }
 					echo '<th>All Edits</th>';
-					if($procManager->hasEditType()) echo '<th>Excluding Batch Edits</th>';
+					if($procManager->hasEditType()) {
+                        echo '<th>Excluding Batch Edits</th>';
+                    }
 					echo '</tr>';
 					$repArr = $procManager->getFullStatReport($_GET);
 					if($repArr){
-						//$editReviewUrl = '../editor/editreviewer.php?collid='.$collid.'&editor='.$uid.'&startdate='.$startDate.'&enddate='.$endDate;
 						foreach($repArr as $t => $arr2){
 							foreach($arr2 as $u => $arr3){
 								echo '<tr><td>'.$t.'</td>';
@@ -235,7 +242,9 @@ if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,
 									echo '<td>'.$arr3['cs'].'</td>';
 								}
 								echo '<td>'.$arr3['cnt'].'</td>';
-								if(array_key_exists('cntexcbatch', $arr3)) echo '<td>'.$arr3['cntexcbatch'].'</td>';
+								if(array_key_exists('cntexcbatch', $arr3)) {
+                                    echo '<td>' . $arr3['cntexcbatch'] . '</td>';
+                                }
 								echo '</tr>';
 							}
 						}

@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
 $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -24,7 +24,9 @@ if($glossId){
 		$newID = '';
 		foreach($synonymArr as $sID => $sArr){
 			$newID = $sID;
-			if($sArr['definition']) break;
+			if($sArr['definition']) {
+                break;
+            }
 		}
 		if($newID){
 			$redirectStr = 'redirected from '.$termArr['term'];
@@ -51,18 +53,17 @@ if($glossId){
 
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
-	<!-- This is inner text! -->
-	<div id="innertext" style="width:680px;margin-left:0px;margin-right:0px;">
-		<div id="tabs" style="padding:10px;margin:0px;">
+	<div id="innertext" style="width:680px;margin-left:0;margin-right:0;">
+		<div id="tabs" style="padding:10px;margin:0;">
 			<div style="clear:both;">
 				<?php
 				if($isEditor){
 					?>
 					<div style="float:right;margin-right:15px;" title="Edit Term Data">
 						<a href="termdetails.php?glossid=<?php echo $glossId;?>" onclick="self.resizeTo(1250, 900);">
-							<img style="border:0px;width:12px;" src="../images/edit.png" />
+							<img style="border:0;width:12px;" src="../images/edit.png" />
 						</a>
 					</div>
 					<?php
@@ -101,7 +102,9 @@ if($glossId){
 								echo '<div style="margin-top:8px;" ><b>Synonyms:</b> ';
 								$i = 0;
 								foreach($synonymArr as $synGlossId => $synArr){
-									if($i) echo ', ';
+									if($i) {
+                                        echo ', ';
+                                    }
 									echo '<a href="individual.php?glossid='.$synGlossId.'">'.$synArr['term'].'</a>';
 									$i++;
 								}
@@ -112,7 +115,9 @@ if($glossId){
 								echo '<div style="margin-top:8px;" ><b>Translations:</b> ';
 								$i = 0;
 								foreach($translationArr as $transGlossId => $transArr){
-									if($i) echo ', ';
+									if($i) {
+                                        echo ', ';
+                                    }
 									echo '<a href="individual.php?glossid='.$transGlossId.'">'.$transArr['term'].'</a> ('.$transArr['language'].')';
 									$i++;
 								}
@@ -124,10 +129,18 @@ if($glossId){
 								$delimter = '';
 								foreach($otherRelationshipsArr as $relType => $relTypeArr){
 									$relStr = '';
-									if($relType == 'partOf') $relStr = 'has part';
-									elseif($relType == 'hasPart') $relStr = 'part of';
-									elseif($relType == 'subClassOf') $relStr = 'superclass or parent term';
-									elseif($relType == 'superClassOf') $relStr = 'subclass or child term';
+									if($relType === 'partOf') {
+                                        $relStr = 'has part';
+                                    }
+									elseif($relType === 'hasPart') {
+                                        $relStr = 'part of';
+                                    }
+									elseif($relType === 'subClassOf') {
+                                        $relStr = 'superclass or parent term';
+                                    }
+									elseif($relType === 'superClassOf') {
+                                        $relStr = 'subclass or child term';
+                                    }
 									foreach($relTypeArr as $relGlossId => $relArr){
 										echo $delimter.'<a href="individual.php?glossid='.$relGlossId.'">'.$relArr['term'].'</a> ('.$relStr.')';
 										$delimter = ', ';
@@ -145,8 +158,8 @@ if($glossId){
 							}
 							if($termArr['resourceurl']){
 								$resource = '';
-								if(substr($termArr['resourceurl'],0,4)=="http" || substr($termArr['resourceurl'],0,4)=="www."){
-									$resource = "<a href='".$termArr['resourceurl']."' target='_blank'>".wordwrap($termArr['resourceurl'],($termImgArr?37:70),'<br />\n',true)."</a>";
+								if(strpos($termArr['resourceurl'], 'http') === 0 || strpos($termArr['resourceurl'], 'www.') === 0){
+									$resource = "<a href='".$termArr['resourceurl']."' target='_blank'>".wordwrap($termArr['resourceurl'],($termImgArr?37:70),'<br />\n',true). '</a>';
 								}
 								else{
 									$resource = $termArr['resourceurl'];
@@ -168,7 +181,7 @@ if($glossId){
 							}
 							?>
 						</div>
-						<div style="clear:both;margin:15px 0px;">
+						<div style="clear:both;margin:15px 0;">
 							<b>Relevant Taxa:</b> 
 							<?php
 							$sourceArr = $glosManager->getTaxonSources();
@@ -187,21 +200,25 @@ if($glossId){
 					<div id="termimagediv" style="float:right;width:250px;padding:10px;">
 						<?php
 						foreach($termImgArr as $imgId => $imgArr){
-							$imgUrl = $imgArr["url"];
-							if(substr($imgUrl,0,1)=="/"){
+							$imgUrl = $imgArr['url'];
+							if(strpos($imgUrl, '/') === 0){
 								if($IMAGE_DOMAIN){
 									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 								}
 								else{
-									$urlPrefix = "http://";
-									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
+									$urlPrefix = 'http://';
+									if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                                        $urlPrefix = 'https://';
+                                    }
 									$urlPrefix .= $_SERVER['HTTP_HOST'];
-									if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
+									if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+                                        $urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
+                                    }
 									$imgUrl = $urlPrefix.$imgUrl;
 								}
 							}
 							?>
-							<fieldset style='clear:both;border:0px;padding:0px;margin-top:10px;'>
+							<fieldset style='clear:both;border:0;padding:0;margin-top:10px;'>
 								<div style='width:250px;'>
 									<?php 
 									$imgWidth = 0;
@@ -231,7 +248,7 @@ if($glossId){
 										?>
 										<div style='overflow:hidden;width:250px;margin-top:8px;' >
 											<b>Structures:</b> 
-											<?php echo wordwrap($imgArr["structures"], 370, "<br />\n"); ?>
+											<?php echo wordwrap($imgArr['structures'], 370, "<br />\n"); ?>
 										</div>
 										<?php
 									}
@@ -239,7 +256,7 @@ if($glossId){
 										?>
 										<div style='overflow:hidden;width:250px;margin-top:8px;' >
 											<b>Notes:</b> 
-											<?php echo wordwrap($imgArr["notes"], 370, "<br />\n"); ?>
+											<?php echo wordwrap($imgArr['notes'], 370, "<br />\n"); ?>
 										</div>
 										<?php
 									}

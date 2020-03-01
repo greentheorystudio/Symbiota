@@ -296,7 +296,7 @@ class PluginsManager {
 		$html .= 'background-image: url('.$CLIENT_ROOT.'/css/images/pagination.png);';
 		$html .= 'background-position: 0 0;}';
 		$html .= '</style>';
-		$html .= '<script src="'.$CLIENT_ROOT.'/js/jquery-1.9.1.js"></script>';
+		$html .= '<script src="'.$CLIENT_ROOT.'/js/jquery.js"></script>';
 		$html .= '<script src="'.$CLIENT_ROOT.'/js/jquery.slides.js"></script>';
 		$html .= '<script src="'.$CLIENT_ROOT.'/js/symb/plugins.js"></script>';
 		$html .= $imageHtml;

@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once(__DIR__ . '/../../../classes/DbConnection.php');
 	
 $collId = $_REQUEST['collid'];
-$idType = array_key_exists('idtype',$_REQUEST)?$_REQUEST['idtype']:'out';		//in, out, ex 
+$idType = array_key_exists('idtype',$_REQUEST)?$_REQUEST['idtype']:'out';
 
 $retMsg = '';
 if($collId && is_numeric($collId)){

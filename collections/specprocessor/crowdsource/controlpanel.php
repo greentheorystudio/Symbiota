@@ -1,21 +1,23 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCrowdSource.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid= array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $omcsid= array_key_exists('omcsid',$_REQUEST)?$_REQUEST['omcsid']:0;
 
 $csManager = new OccurrenceCrowdSource();
 $csManager->setCollid($collid);
-if(!$omcsid) $omcsid = $csManager->getOmcsid();
+if(!$omcsid) {
+    $omcsid = $csManager->getOmcsid();
+}
 
 $isEditor = 0;
 if($IS_ADMIN){
 	$isEditor = 1;
 }
 elseif($collid){
-	if(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])){
+	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
 }
@@ -23,13 +25,12 @@ elseif($collid){
 $statusStr = '';
 $projArr = $csManager->getProjectDetails();
 ?>
-<!-- inner text -->
 <div id="innertext" style="background-color:white;">
 	<?php
 	if($statusStr){
 		?>
 		<hr/>
-		<div style="margin:20px;color:<?php echo (substr($statusStr,0,5)=='ERROR'?'red':'green');?>">
+		<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
 			<?php echo $statusStr; ?>
 		</div>
 		<hr/>
@@ -65,20 +66,26 @@ $projArr = $csManager->getProjectDetails();
 			</fieldset>
 		</div>
 		<?php
-		if($projArr['instr']) echo '<div style="margin-left:15px;"><b>Instructions: </b>'.$projArr['instr'].'</div>';
-		if($projArr['url']) echo '<div style="margin-left:15px;"><b>Training:</b> <a href="'.$projArr['url'].'">'.$projArr['url'].'</a></div>';
+		if($projArr['instr']) {
+            echo '<div style="margin-left:15px;"><b>Instructions: </b>' . $projArr['instr'] . '</div>';
+        }
+		if($projArr['url']) {
+            echo '<div style="margin-left:15px;"><b>Training:</b> <a href="' . $projArr['url'] . '">' . $projArr['url'] . '</a></div>';
+        }
 		?>
 		<div style="margin:15px;">
 			<?php
 			if($statsArr = $csManager->getProjectStats()){
 				?>
 				<div style="font-weight:bold;text-decoration:underline">Total Counts:</div>
-				<div style="margin:15px 0px 25px 15px;">
+				<div style="margin:15px 0 25px 15px;">
 					<div>
 						<b>Records in Queue:</b>
 						<?php
 						$unprocessedCnt = 0;
-						if(isset($statsArr[0]) && $statsArr[0]) $unprocessedCnt = $statsArr[0];
+						if(isset($statsArr[0]) && $statsArr[0]) {
+                            $unprocessedCnt = $statsArr[0];
+                        }
 						if($unprocessedCnt){
 							echo '<a href="../editor/occurrencetabledisplay.php?csmode=1&occindex=0&displayquery=1&reset=1&collid='.$collid.'" target="_blank">';
 							echo $unprocessedCnt;
@@ -95,9 +102,8 @@ $projArr = $csManager->getProjectDetails();
 					<div>
 						<b>Pending Approval:</b>
 						<?php
-						$pendingCnt = 0;
-						if(isset($statsArr[5])) $pendingCnt = $statsArr[5];
-						echo $pendingCnt;
+                        $pendingCnt = $statsArr[5] ?? 0;
+                        echo $pendingCnt;
 						if($pendingCnt){
 							echo ' (<a href="crowdsource/review.php?rstatus=5&collid='.$collid.'" target="_blank">Review</a>)';
 						}
@@ -106,9 +112,8 @@ $projArr = $csManager->getProjectDetails();
 					<div>
 						<b>Closed (Approved):</b>
 						<?php
-						$reviewedCnt = 0;
-						if(isset($statsArr[10])) $reviewedCnt = $statsArr[10];
-						echo $reviewedCnt;
+                        $reviewedCnt = $statsArr[10] ?? 0;
+                        echo $reviewedCnt;
 						if($reviewedCnt){
 							echo ' (<a href="crowdsource/review.php?rstatus=10&collid='.$collid.'" target="_blank">Review</a>)';
 						}
@@ -197,12 +202,12 @@ $projArr = $csManager->getProjectDetails();
 				</div>
 				<?php
 				$stats = $csManager->getProcessingStats();
-				$volStats = (array_key_exists('v',$stats)?$stats['v']:null);
-				$editStats = (array_key_exists('e',$stats)?$stats['e']:null);
+				$volStats = ($stats['v'] ?? null);
+				$editStats = ($stats['e'] ?? null);
 				?>
 				<div style="margin:15px;">
 					<div style="font-weight:bold;text-decoration:underline;margin-bottom:15px;">Volunteers</div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;width:500px;">
+					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:500px;">
 						<tr>
 							<th>User</th>
 							<th>Score</th>
@@ -215,16 +220,19 @@ $projArr = $csManager->getProjectDetails();
 								echo '<tr>';
 								echo '<td>'.$uArr['name'].'</td>';
 								echo '<td>'.$uArr['score'].'</td>';
-								$pendingCnt = (isset($uArr[5])?$uArr[5]:0);
+								$pendingCnt = ($uArr[5] ?? 0);
 								echo '<td>';
 								echo $pendingCnt;
-								if($pendingCnt) echo ' (<a href="crowdsource/review.php?rstatus=5&collid='.$collid.'&uid='.$uid.'">Review</a>)';
+								if($pendingCnt) {
+                                    echo ' (<a href="crowdsource/review.php?rstatus=5&collid=' . $collid . '&uid=' . $uid . '">Review</a>)';
+                                }
 								echo '</td>';
-								//Closed
-								$closeCnt = (isset($uArr[10])?$uArr[10]:0);
+								$closeCnt = ($uArr[10] ?? 0);
 								echo '<td>';
 								echo $closeCnt;
-								if($closeCnt) echo ' (<a href="crowdsource/review.php?rstatus=10&collid='.$collid.'&uid='.$uid.'">Review</a>)';
+								if($closeCnt) {
+                                    echo ' (<a href="crowdsource/review.php?rstatus=10&collid=' . $collid . '&uid=' . $uid . '">Review</a>)';
+                                }
 								echo '</td>';
 								echo '</tr>';
 							}
@@ -237,7 +245,7 @@ $projArr = $csManager->getProjectDetails();
 				</div>
 				<div style="margin:25px 15px">
 					<div style="font-weight:bold;text-decoration:underline;margin-bottom:15px;">Approved Editors</div>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;width:500px;">
+					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:500px;">
 						<tr>
 							<th>User</th>
 							<th>Score</th>
@@ -250,16 +258,19 @@ $projArr = $csManager->getProjectDetails();
 								echo '<tr>';
 								echo '<td>'.$uArr['name'].'</td>';
 								echo '<td>'.$uArr['score'].'</td>';
-								$pendingCnt = (isset($uArr[5])?$uArr[5]:0);
+								$pendingCnt = ($uArr[5] ?? 0);
 								echo '<td>';
 								echo $pendingCnt;
-								if($pendingCnt) echo ' (<a href="crowdsource/review.php?rstatus=5&collid='.$collid.'&uid='.$uid.'">Review</a>)';
+								if($pendingCnt) {
+                                    echo ' (<a href="crowdsource/review.php?rstatus=5&collid=' . $collid . '&uid=' . $uid . '">Review</a>)';
+                                }
 								echo '</td>';
-								//Closed
-								$closeCnt = (isset($uArr[10])?$uArr[10]:0);
+								$closeCnt = ($uArr[10] ?? 0);
 								echo '<td>';
 								echo $closeCnt;
-								if($closeCnt) echo ' (<a href="crowdsource/review.php?rstatus=10&collid='.$collid.'&uid='.$uid.'">Review</a>)';
+								if($closeCnt) {
+                                    echo ' (<a href="crowdsource/review.php?rstatus=10&collid=' . $collid . '&uid=' . $uid . '">Review</a>)';
+                                }
 								echo '</td>';
 								echo '</tr>';
 							}

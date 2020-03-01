@@ -1,7 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecLoans.php');
-require_once $SERVER_ROOT.'/vendor/autoload.php';
+include_once(__DIR__ . '/../../../classes/SpecLoans.php');
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use PhpOffice\PhpWord\PhpWord;
 
 $loanManager = new SpecLoans();
 
@@ -19,17 +21,19 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 $export = false;
 $exportEngine = '';
 $exportExtension = '';
-if($printMode == 'doc'){
+if($printMode === 'doc'){
 	$export = true;
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
 }
 
-if($collId) $loanManager->setCollId($collId);
+if($collId) {
+    $loanManager->setCollId($collId);
+}
 
-$english = ($languageDef == 0 || $languageDef == 1);
-$engspan = ($languageDef == 1);
-$spanish = ($languageDef == 1 || $languageDef == 2);
+$english = ($languageDef === 0 || $languageDef === 1);
+$engspan = ($languageDef === 1);
+$spanish = ($languageDef === 1 || $languageDef === 2);
 
 $identifier = 0;
 if($loanId){
@@ -46,7 +50,7 @@ $specTotal = $loanManager->getSpecTotal($loanId);
 $exchangeValue = $loanManager->getExchangeValue($exchangeId);
 $exchangeTotal = $loanManager->getExchangeTotal($exchangeId);
 
-if($loanType == 'exchange'){
+if($loanType === 'exchange'){
 	$transType = 0;
 	if(($invoiceArr['totalexunmounted'] || $invoiceArr['totalexmounted']) && (!$invoiceArr['totalgift'] && !$invoiceArr['totalgiftdet'])){
 		$transType = 'ex';
@@ -60,33 +64,45 @@ if($loanType == 'exchange'){
 }
 
 $numSpecimens = 0;
-if($loanType == 'exchange'){$numSpecimens = $exchangeTotal;}
+if($loanType === 'exchange'){
+    $numSpecimens = $exchangeTotal;
+}
+else if($specList){
+    if(count($specList) === 1){
+        $numSpecimens = 1;
+    }
+    else{
+        $numSpecimens = count($specList);
+    }
+}
+else if($invoiceArr['numspecimens'] === 1){
+    $numSpecimens = 1;
+}
 else{
-	if($specList){
-		if(count($specList) == 1){$numSpecimens = 1;}
-		else{$numSpecimens = count($specList);}
-	}
-	else{
-		if($invoiceArr['numspecimens'] == 1){$numSpecimens = 1;}
-		else{$numSpecimens = $invoiceArr['numspecimens'];}
-	}
+    $numSpecimens = $invoiceArr['numspecimens'];
 }
 
 $numBoxes = 0;
-if($loanType == 'exchange'){$numBoxes = $invoiceArr['totalboxes'];}
+if($loanType === 'exchange'){
+    $numBoxes = $invoiceArr['totalboxes'];
+}
+else if($loanType === 'out'){
+    if($invoiceArr['totalboxes'] === 1){
+        $numBoxes = 1;
+    }
+    else{
+        $numBoxes = $invoiceArr['totalboxes'];
+    }
+}
+else if($invoiceArr['totalboxesreturned'] === 1){
+    $numBoxes = 1;
+}
 else{
-	if($loanType == 'out'){
-		if($invoiceArr['totalboxes'] == 1){$numBoxes = 1;}
-		else{$numBoxes = $invoiceArr['totalboxes'];}
-	}
-	else{
-		if($invoiceArr['totalboxesreturned'] == 1){$numBoxes = 1;}
-		else{$numBoxes = $invoiceArr['totalboxesreturned'];}
-	}
+    $numBoxes = $invoiceArr['totalboxesreturned'];
 }
 
 if($export){
-	$phpWord = new \PhpOffice\PhpWord\PhpWord();
+	$phpWord = new PhpWord();
 	$phpWord->addParagraphStyle('header', array('align'=>'center','lineHeight'=>1.0,'spaceAfter'=>450));
 	$phpWord->addFontStyle('headerFont', array('size'=>12,'bold'=>true,'name'=>'Arial'));
 	$phpWord->addParagraphStyle('toAddress', array('align'=>'left','lineHeight'=>1.0,'spaceBefore'=>0,'spaceAfter'=>0));
@@ -156,22 +172,22 @@ if($export){
 	$textrun = $cell->addTextRun('identifier');
 	$textrun->addText(htmlspecialchars(date('l').', '.date('F').' '.date('j').', '.date('Y')),'identifierFont');
 	$textrun->addTextBreak(1);
-	if($loanType == 'out'){
+	if($loanType === 'out'){
 		$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Loan ID: '.$invoiceArr['loanidentifierown']),'identifierFont');
 	}
-	elseif($loanType == 'in'){
+	elseif($loanType === 'in'){
 		$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Loan-in ID: '.$invoiceArr['loanidentifierborr']),'identifierFont');
 	}
-	elseif($loanType == 'exchange'){
+	elseif($loanType === 'exchange'){
 		$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Transaction ID: '.$invoiceArr['identifier']),'identifierFont');
 	}
 	$section->addTextBreak(1);
 	$textrun = $section->addTextRun('sendwhom');
 	if($english){
-		$textrun->addText(htmlspecialchars('We are sending you '.($numBoxes == 1?'1 box ':$numBoxes.' boxes ')),'sendwhomFont');
-		$textrun->addText(htmlspecialchars('containing '.($numSpecimens == 1?'1 occurrence. ':$numSpecimens.' occurrences. ')),'sendwhomFont');
-		if(($loanType == 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
-			$textrun->addText(htmlspecialchars(($numBoxes == 1?'This package was ':'These packages were ').'delivered via '.($loanType == 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('We are sending you '.($numBoxes === 1?'1 box ':$numBoxes.' boxes ')),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('containing '.($numSpecimens === 1?'1 occurrence. ':$numSpecimens.' occurrences. ')),'sendwhomFont');
+		if(($loanType === 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
+			$textrun->addText(htmlspecialchars(($numBoxes === 1?'This package was ':'These packages were ').'delivered via '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
 		}
 		$textrun->addText(htmlspecialchars('Upon arrival of the shipment, kindly verify its contents and acknowledge '),'sendwhomFont');
 		$textrun->addText(htmlspecialchars('receipt by signing and returning the duplicate invoice to us.'),'sendwhomFont');
@@ -180,15 +196,15 @@ if($export){
 		$textrun->addTextBreak(2);
 	}
 	if($spanish){
-		$textrun->addText(htmlspecialchars('Estámos remitiendo a Uds. '.($numBoxes == 1?'1 caja ':$numBoxes.' cajas ')),'sendwhomFont');
-		$textrun->addText(htmlspecialchars('de '.($numSpecimens == 1?'1 ejemplar. ':$numSpecimens.' ejemplares. ')),'sendwhomFont');
-		if(($loanType == 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
-			$textrun->addText(htmlspecialchars(($numBoxes == 1?'Esta remesa hubiera enviado ':'Estas remesas hubieran enviado ').'por '.($loanType == 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('Estámos remitiendo a Uds. '.($numBoxes === 1?'1 caja ':$numBoxes.' cajas ')),'sendwhomFont');
+		$textrun->addText(htmlspecialchars('de '.($numSpecimens === 1?'1 ejemplar. ':$numSpecimens.' ejemplares. ')),'sendwhomFont');
+		if(($loanType === 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
+			$textrun->addText(htmlspecialchars(($numBoxes === 1?'Esta remesa hubiera enviado ':'Estas remesas hubieran enviado ').'por '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. '),'sendwhomFont');
 		}
 		$textrun->addText(htmlspecialchars('Al llegar la remesa, por favor verifique los contenidos y sírvase acusar '),'sendwhomFont');
 		$textrun->addText(htmlspecialchars('recibo de esta remesa firmiendo una de las copias y devolviéndo la por correo.'),'sendwhomFont');
 	}
-	if($loanType == 'out'){
+	if($loanType === 'out'){
 		$textrun->addTextBreak(2);
 		if($english){
 			$textrun->addText(htmlspecialchars('This shipment is a LOAN for study by '.$invoiceArr['forwhom']),'sendwhomFont');
@@ -226,7 +242,7 @@ if($export){
 			$textrun->addText(htmlspecialchars('proveniente del uso de este material.'),'otherFont');
 		}
 	}
-	elseif($loanType == 'in'){
+	elseif($loanType === 'in'){
 		$section->addTextBreak(1);
 		$textrun = $section->addTextRun('returnamtdue');
 		if($english){
@@ -241,8 +257,8 @@ if($export){
 			$textrun->addText(htmlspecialchars('de '.$invoiceArr['institutioncode'].', recibido '.$invoiceArr['datereceivedborr']),'returnamtdueFont');
 		}
 	}
-	elseif($loanType == 'exchange'){
-		if($transType == 'ex' || $transType == 'both'){
+	elseif($loanType === 'exchange'){
+		if($transType === 'ex' || $transType === 'both'){
 			$section->addTextBreak(1);
 			$textrun = $section->addTextRun('returnamtdue');
 			if($english){
@@ -258,21 +274,21 @@ if($export){
 				$textrun->addText(htmlspecialchars((($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'y ':'').($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' ejemplares montados ':'')),'returnamtdueFont');
 				$textrun->addText(htmlspecialchars('con un valor de intercambio de '.$exchangeValue.'. Favor de notarse que las ejemplares montados son de valor 2.'),'returnamtdueFont');
 			}
-			if($transType == 'both'){
+			if($transType === 'both'){
 				$textrun->addTextBreak(2);
 				if($english){
 					$textrun->addText(htmlspecialchars('This shipment also contains '),'returnamtdueFont');
 					if($invoiceArr['totalgift']){
-						$textrun->addText(htmlspecialchars(($invoiceArr['totalgift'] == 1?'1 gift specimen':$invoiceArr['totalgift'].' gift')),'returnamtdueFont');
+						$textrun->addText(htmlspecialchars(($invoiceArr['totalgift'] === 1?'1 gift specimen':$invoiceArr['totalgift'].' gift')),'returnamtdueFont');
 					}
-					if($invoiceArr['totalgift'] == 1 && !$invoiceArr['totalgiftdet']){
+					if($invoiceArr['totalgift'] === 1 && !$invoiceArr['totalgiftdet']){
 						$textrun->addText(htmlspecialchars('.'),'returnamtdueFont');
 					}
 					if($invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
 						$textrun->addText(htmlspecialchars(' and '),'returnamtdueFont');
 					}
 					if($invoiceArr['totalgiftdet']){
-						$textrun->addText(htmlspecialchars(($invoiceArr['totalgiftdet'] == 1?'1 gift-for-det specimen.':$invoiceArr['totalgiftdet'].' gift-for-det')),'returnamtdueFont');
+						$textrun->addText(htmlspecialchars(($invoiceArr['totalgiftdet'] === 1?'1 gift-for-det specimen.':$invoiceArr['totalgiftdet'].' gift-for-det')),'returnamtdueFont');
 					}
 					if($invoiceArr['totalgift'] > 1 || $invoiceArr['totalgiftdet'] > 1){
 						$textrun->addText(htmlspecialchars(' specimens.'),'returnamtdueFont');
@@ -284,13 +300,13 @@ if($export){
 				if($spanish){
 					$textrun->addText(htmlspecialchars('Esta remesa también contiene '),'returnamtdueFont');
 					if($invoiceArr['totalgift']){
-						$textrun->addText(htmlspecialchars(($invoiceArr['totalgift'] == 1?'1 ejemplar de regalo':$invoiceArr['totalgift'].' ejemplares de regalo')),'returnamtdueFont');
+						$textrun->addText(htmlspecialchars(($invoiceArr['totalgift'] === 1?'1 ejemplar de regalo':$invoiceArr['totalgift'].' ejemplares de regalo')),'returnamtdueFont');
 					}
 					if($invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
 						$textrun->addText(htmlspecialchars(' y '),'returnamtdueFont');
 					}
 					if($invoiceArr['totalgiftdet']){
-						$textrun->addText(htmlspecialchars(($invoiceArr['totalgiftdet'] == 1?'1 ejemplar de regalo para identificación':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificación')),'returnamtdueFont');
+						$textrun->addText(htmlspecialchars(($invoiceArr['totalgiftdet'] === 1?'1 ejemplar de regalo para identificación':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificación')),'returnamtdueFont');
 					}
 					$textrun->addText(htmlspecialchars('.'),'returnamtdueFont');
 				}
@@ -309,7 +325,7 @@ if($export){
 				$textrun->addText(htmlspecialchars('registros se dífieren de una manera apreciable.'),'otherFont');
 			}
 		}
-		elseif($transType == 'gift'){
+		elseif($transType === 'gift'){
 			$section->addTextBreak(1);
 			$textrun = $section->addTextRun('returnamtdue');
 			if($english){
@@ -345,17 +361,17 @@ if($export){
 	$textrun = $section->addTextRun('returnamtdue');
 	$textrun->addText(htmlspecialchars(($english?'DESCRIPTION OF THE SPECIMENS':'').($engspan?' / ':'').($spanish?'DESCRIPCIÓN DE LOS EJEMPLARES':'').':'),'returnamtdueFont');
 	$textrun->addTextBreak(2);
-	$textrun->addText(htmlspecialchars(($invoiceArr['description']?$invoiceArr['description']:'')),'otherFont');
+	$textrun->addText(htmlspecialchars(($invoiceArr['description']?:'')),'otherFont');
 	$textrun->addTextBreak(2);
 	if(array_key_exists('invoicemessage',$invoiceArr) || array_key_exists('invoicemessageown',$invoiceArr) || array_key_exists('invoicemessageborr',$invoiceArr)){
-		if($loanType == 'exchange'){
-			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessage']?$invoiceArr['invoicemessage']:'')),'otherFont');
+		if($loanType === 'exchange'){
+			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessage']?:'')),'otherFont');
 		}
-		elseif($loanType == 'out'){
-			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessageown']?$invoiceArr['invoicemessageown']:'')),'otherFont');
+		elseif($loanType === 'out'){
+			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessageown']?:'')),'otherFont');
 		}
-		elseif($loanType == 'in'){
-			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessageborr']?$invoiceArr['invoicemessageborr']:'')),'otherFont');
+		elseif($loanType === 'in'){
+			$textrun->addText(htmlspecialchars(($invoiceArr['invoicemessageborr']?:'')),'otherFont');
 		}
 		$textrun->addTextBreak(2);
 	}
@@ -396,7 +412,7 @@ else{
 			<title><?php echo $identifier; ?> Invoice</title>
 			<style type="text/css">
 				<?php 
-					include_once($SERVER_ROOT.'/css/main.css');
+					include_once(__DIR__ . '/../../../css/main.css');
 				?>
 				body {font-family:arial,sans-serif;}
 				p.printbreak {page-break-after:always;}
@@ -421,7 +437,7 @@ else{
 				<tr>
 					<td>
 						<div>
-							<table class="header" align="center">
+							<table class="header" style="text-align:center;">
 								<tr>
 									<td><?php echo $addressArr['institutionname']; ?> (<?php echo $addressArr['institutioncode']; ?>)</td>
 								</tr>
@@ -441,7 +457,7 @@ else{
 									</tr>
 								<?php } ?>
 								<tr>
-									<td><?php echo $addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode']; ?> <?php if($international){echo $addressArr['country'];} ?></td>
+									<td><?php echo $addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode']; ?> <?php echo ($international?$addressArr['country']:''); ?></td>
 								</tr>
 								<tr>
 									<td><?php echo $addressArr['phone']; ?></td>
@@ -484,13 +500,13 @@ else{
 										<div class="identifier">
 											<?php 
 											echo date('l').', '.date('F').' '.date('j').', '.date('Y').'<br />';
-											if($loanType == 'out'){
+											if($loanType === 'out'){
 												echo $addressArr['institutioncode'].' Loan ID: '.$invoiceArr['loanidentifierown'];
 											}
-											elseif($loanType == 'in'){
+											elseif($loanType === 'in'){
 												echo $addressArr['institutioncode'].' Loan-in ID: '.$invoiceArr['loanidentifierborr'];
 											}
-											elseif($loanType == 'exchange'){
+											elseif($loanType === 'exchange'){
 												echo $addressArr['institutioncode'].' Transaction ID: '.$invoiceArr['identifier'];
 											}
 											?>
@@ -502,19 +518,19 @@ else{
 							<div class="sending">
 								<?php 
 								if($english){
-									echo '<div>We are sending you '.($numBoxes == 1?'1 box ':$numBoxes.' boxes ');
-									echo 'containing '.($numSpecimens == 1?'1 specimen. ':$numSpecimens.' specimens. ');
-									if(($loanType == 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
-										echo ($numBoxes == 1?'This package was ':'These packages were ').'delivered via '.($loanType == 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. ';
+									echo '<div>We are sending you '.($numBoxes === 1?'1 box ':$numBoxes.' boxes ');
+									echo 'containing '.($numSpecimens === 1?'1 specimen. ':$numSpecimens.' specimens. ');
+									if(($loanType === 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
+										echo ($numBoxes === 1?'This package was ':'These packages were ').'delivered via '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. ';
 									}
 									echo 'Upon arrival of the shipment, kindly verify its contents and acknowledge ';
 									echo 'receipt by signing and returning the duplicate invoice to us.</div><br />';
 								}
 								if($spanish){
-									echo '<div>Est&aacute;mos remitiendo a Uds. '.($numBoxes == 1?'1 caja ':$numBoxes.' cajas ');
-									echo 'de '.($numSpecimens == 1?'1 ejemplar. ':$numSpecimens.' ejemplares. ');
-									if(($loanType == 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
-										echo ($numBoxes == 1?'Esta remesa hubiera enviado ':'Estas remesas hubieran enviado ').'por '.($loanType == 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. ';
+									echo '<div>Est&aacute;mos remitiendo a Uds. '.($numBoxes === 1?'1 caja ':$numBoxes.' cajas ');
+									echo 'de '.($numSpecimens === 1?'1 ejemplar. ':$numSpecimens.' ejemplares. ');
+									if(($loanType === 'in' && $invoiceArr['shippingmethodreturn']) || $invoiceArr['shippingmethod']){
+										echo ($numBoxes === 1?'Esta remesa hubiera enviado ':'Estas remesas hubieran enviado ').'por '.($loanType === 'in'?$invoiceArr['shippingmethodreturn']:$invoiceArr['shippingmethod']).'. ';
 									}
 									echo 'Al llegar la remesa, por favor verifique los contenidos y s&iacute;rvase acusar ';
 									echo 'recibo de esta remesa firmiendo una de las copias y devolvi&eacute;ndo la por correo.</div><br />';
@@ -522,7 +538,7 @@ else{
 								?>
 							</div>
 							<?php 
-							if($loanType == 'out'){ ?>
+							if($loanType === 'out'){ ?>
 								<?php if($english){ ?>
 									<div class="forwhom">This shipment is a LOAN for study by <?php echo $invoiceArr['forwhom']; ?>.</div><br />
 								<?php }
@@ -549,7 +565,7 @@ else{
 									</div><br />
 								<?php }
 							}	
-							elseif($loanType == 'in'){ ?>
+							elseif($loanType === 'in'){ ?>
 								<?php if($english){ ?>
 									<div class="loanreturn">This shipment is a return of <?php echo $invoiceArr['institutioncode']; ?>
 										loan <?php echo $invoiceArr['loanidentifierown']; ?>, received <?php echo $invoiceArr['datereceivedborr']; ?>.</div><br />
@@ -559,8 +575,8 @@ else{
 										de <?php echo $invoiceArr['institutioncode']; ?>, recibido <?php echo $invoiceArr['datereceivedborr']; ?>.</div><br />
 								<?php } ?>
 							<?php }
-							elseif($loanType == 'exchange'){
-								if($transType == 'ex' || $transType == 'both'){
+							elseif($loanType === 'exchange'){
+								if($transType === 'ex' || $transType === 'both'){
 									if($english){ ?>
 										<div class="exchangeamts">This shipment is an EXCHANGE, consisting of <?php echo ($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' unmounted ':''); ?>
 											<?php echo (($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'and ':''); ?><?php echo ($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' mounted ':''); ?>
@@ -573,22 +589,22 @@ else{
 											con un valor de intercambio de <?php echo $exchangeValue; ?>. Favor de notarse que las ejemplares montados son de valor 2.
 										</div><br />
 									<?php }
-									if($transType == 'both'){
+									if($transType === 'both'){
 										if($english){ ?>
 											<div class="exchangeamts">
 												<?php
 													echo 'This shipment also contains ';
 													if($invoiceArr['totalgift']){
-														echo ($invoiceArr['totalgift'] == 1?'1 gift specimen':$invoiceArr['totalgift'].' gift');
+														echo ($invoiceArr['totalgift'] === 1?'1 gift specimen':$invoiceArr['totalgift'].' gift');
 													}
-													if($invoiceArr['totalgift'] == 1 && !$invoiceArr['totalgiftdet']){
+													if($invoiceArr['totalgift'] === 1 && !$invoiceArr['totalgiftdet']){
 														echo '.';
 													}
 													if($invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
 														echo ' and ';
 													}
 													if($invoiceArr['totalgiftdet']){
-														echo ($invoiceArr['totalgiftdet'] == 1?'1 gift-for-det specimen.':$invoiceArr['totalgiftdet'].' gift-for-det');
+														echo ($invoiceArr['totalgiftdet'] === 1?'1 gift-for-det specimen.':$invoiceArr['totalgiftdet'].' gift-for-det');
 													}
 													if($invoiceArr['totalgift'] > 1 || $invoiceArr['totalgiftdet'] > 1){
 														echo ' specimens.';
@@ -601,13 +617,13 @@ else{
 												<?php
 													echo 'Esta remesa tambi&eacute;n contiene ';
 													if($invoiceArr['totalgift']){
-														echo ($invoiceArr['totalgift'] == 1?'1 ejemplar de regalo':$invoiceArr['totalgift'].' ejemplares de regalo');
+														echo ($invoiceArr['totalgift'] === 1?'1 ejemplar de regalo':$invoiceArr['totalgift'].' ejemplares de regalo');
 													}
 													if($invoiceArr['totalgift'] && $invoiceArr['totalgiftdet']){
 														echo ' y ';
 													}
 													if($invoiceArr['totalgiftdet']){
-														echo ($invoiceArr['totalgiftdet'] == 1?'1 ejemplar de regalo para identificaci&oacute;n':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificaci&oacute;n');
+														echo ($invoiceArr['totalgiftdet'] === 1?'1 ejemplar de regalo para identificaci&oacute;n':$invoiceArr['totalgiftdet'].' ejemplares de regalo para identificaci&oacute;n');
 													}
 													echo '.';
 												?>
@@ -626,7 +642,7 @@ else{
 										</div><br />
 									<?php }
 								}
-								elseif($transType == 'gift'){
+								elseif($transType === 'gift'){
 									if($english){ ?>
 										<div class="exchangeamts">
 											<?php
@@ -665,7 +681,7 @@ else{
 							<div class="description">
 								<?php
 									echo '<b>'.($english?'DESCRIPTION OF THE SPECIMENS':'').($engspan?' / ':'').($spanish?'DESCRIPCI&Oacute;N DE LOS EJEMPLARES':'').':</b><br /><br />' ;
-									echo ($invoiceArr['description']?$invoiceArr['description']:'');
+									echo ($invoiceArr['description']?:'');
 								?>
 								
 							</div>
@@ -673,14 +689,14 @@ else{
 							<?php 
 							if(array_key_exists('invoicemessage',$invoiceArr) || array_key_exists('invoicemessageown',$invoiceArr) || array_key_exists('invoicemessageborr',$invoiceArr)){
 								echo '<div class="message">';
-								if($loanType == 'exchange'){
-									echo ($invoiceArr['invoicemessage']?$invoiceArr['invoicemessage']:'');
+								if($loanType === 'exchange'){
+									echo ($invoiceArr['invoicemessage']?:'');
 								}
-								elseif($loanType == 'out'){
-									echo ($invoiceArr['invoicemessageown']?$invoiceArr['invoicemessageown']:'');
+								elseif($loanType === 'out'){
+									echo ($invoiceArr['invoicemessageown']?:'');
 								}
-								elseif($loanType == 'in'){
-									echo ($invoiceArr['invoicemessageborr']?$invoiceArr['invoicemessageborr']:'');
+								elseif($loanType === 'in'){
+									echo ($invoiceArr['invoicemessageborr']?:'');
 								}
 								echo '</div><br /><br />';
 							} ?>

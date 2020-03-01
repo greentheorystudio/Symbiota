@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyDisplayManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']: '';
@@ -26,7 +26,6 @@ if($target){
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE. ' Taxonomy Explorer: ' .$taxonDisplayObj->getTargetStr(); ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />
@@ -64,7 +63,7 @@ if($target){
 </head>
 <body class="claro">
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
@@ -178,7 +177,7 @@ include($SERVER_ROOT.'/header.php');
                     }, "tree");
 
                     taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
-						function(path){
+						function(){
 							win.scrollIntoView(taxonTree.selectedNode.id);        
 						}
 					);
@@ -191,7 +190,7 @@ include($SERVER_ROOT.'/header.php');
 		?>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 
 </body>

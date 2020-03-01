@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../profile/index.php?refurl='.$CLIENT_ROOT.'/glossary/addterm.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/addterm.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $relatedGlossId = array_key_exists('relglossid',$_REQUEST)?$_REQUEST['relglossid']:'';
 $taxaTid  = array_key_exists('taxatid',$_REQUEST)?$_REQUEST['taxatid']:0;
@@ -15,11 +17,15 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 if(!$relatedLanguage){
 	$relatedLanguage = $DEFAULT_LANG;
 }
-if($relatedLanguage == 'en') $relatedLanguage = 'English';
-if($relatedLanguage == 'es') $relatedLanguage = 'Spanish';
+if($relatedLanguage === 'en') {
+    $relatedLanguage = 'English';
+}
+if($relatedLanguage === 'es') {
+    $relatedLanguage = 'Spanish';
+}
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -27,28 +33,26 @@ $glosManager = new GlossaryManager();
 
 $closeWindow = false;
 $statusStr = '';
-if($isEditor){
-	if($formSubmit == 'Create Term'){
-		if($glosManager->createTerm($_POST)){
-			if(isset($_POST['tid']) && $_POST['tid']){
-				header('Location: termdetails.php?glossid='.$glosManager->getGlossId());
-			}
-			elseif($relatedGlossId && isset($_POST['relation'])){
-				if($_POST['relation'] == "translation"){
-					header('Location: termdetails.php?glossid='.$relatedGlossId.'#termtransdiv');
-				}
-				else{
-					header('Location: termdetails.php?glossid='.$relatedGlossId.'#termrelateddiv');
-				}
-			}
-			else{
-				$closeWindow = true;
-			}
-		}
-		else{
-			$statusStr = $glosManager->getErrorStr();
-		}
-	}
+if($isEditor && $formSubmit === 'Create Term') {
+    if($glosManager->createTerm($_POST)){
+        if(isset($_POST['tid']) && $_POST['tid']){
+            header('Location: termdetails.php?glossid='.$glosManager->getGlossId());
+        }
+        elseif($relatedGlossId && isset($_POST['relation'])){
+            if($_POST['relation'] === 'translation'){
+                header('Location: termdetails.php?glossid='.$relatedGlossId.'#termtransdiv');
+            }
+            else{
+                header('Location: termdetails.php?glossid='.$relatedGlossId.'#termrelateddiv');
+            }
+        }
+        else{
+            $closeWindow = true;
+        }
+    }
+    else{
+        $statusStr = $glosManager->getErrorStr();
+    }
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -84,8 +88,8 @@ if($isEditor){
 				return false;
 			}
 
-			var tidValue = '';
-			if(f.tid) tidValue = f.tid.value;
+            let tidValue = '';
+            if(f.tid) tidValue = f.tid.value;
 			if(!f.relglossid.value && !tidValue){
 				alert("Please enter a taxonomic group or a related term to which new term will be linked");
 				return false;
@@ -96,7 +100,7 @@ if($isEditor){
 				url: "rpc/checkterm.php",
 				data: { term: f.term.value, language: f.language.value, tid: tidValue, relglossid: f.relglossid.value }
 			}).success(function( data ) {
-				if(data == "1"){
+				if(data === "1"){
 					alert("Term already exists in database in that language and taxonomic group.");
 				}
 				else{
@@ -111,7 +115,6 @@ if($isEditor){
 	<script src="../js/symb/glossary.index.js?ver=20160720" type="text/javascript"></script>
 </head>
 <body>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($statusStr){
@@ -154,8 +157,8 @@ if($isEditor){
 									<?php 
 									$langArr = $glosManager->getLanguageArr('all');
 									foreach($langArr as $langKey => $langValue ){
-										if($relationship != 'translation' || $relatedLanguage != $langValue){
-											echo '<option '.($relatedLanguage==$langValue || $relatedLanguage==$langKey?'SELECTED':'').'>'.$langValue.'</option>';
+										if($relationship !== 'translation' || $relatedLanguage !== $langValue){
+											echo '<option '.($relatedLanguage === $langValue || $relatedLanguage === $langKey?'SELECTED':'').'>'.$langValue.'</option>';
 										}
 									}
 									?>
@@ -235,22 +238,22 @@ if($isEditor){
 								<div style="margin:10px">
 									<div style="margin:3px">
 										<b>Relationship:</b> 
-										<select name="relation" <?php if($relationship) echo 'readonly'; ?>>
+										<select name="relation" <?php echo ($relationship?'readonly':''); ?>>
 											<option value="">Select Relationship</option>
 											<option value="">----------------------------</option>
-											<option value="synonym" <?php echo ($relationship=='synonym'?'selected':''); ?>>Synonym</option>
-											<option value="translation" <?php echo ($relationship=='translation'?'selected':''); ?>>Translation</option>
+											<option value="synonym" <?php echo ($relationship === 'synonym'?'selected':''); ?>>Synonym</option>
+											<option value="translation" <?php echo ($relationship === 'translation'?'selected':''); ?>>Translation</option>
 										</select>
 									</div>
 									<div style="margin:3px">
 										<b>Related Term:</b> 
-										<select name="relglossid" <?php if($relatedGlossId) echo 'readonly'; ?>>
+										<select name="relglossid" <?php echo ($relatedGlossId?'readonly':''); ?>>
 											<option value="">Select Term to be Link</option>
 											<option value="">----------------------------</option>
 											<?php 
 											$termList = $glosManager->getTermList($relatedGlossId,$relatedLanguage);
 											foreach($termList as $id => $termName){
-												echo '<option value="'.$id.'" '.($relatedGlossId==$id?'selected':'').'>'.$termName.'</option>';
+												echo '<option value="'.$id.'" '.($relatedGlossId === $id?'selected':'').'>'.$termName.'</option>';
 											}
 											?>
 										</select>

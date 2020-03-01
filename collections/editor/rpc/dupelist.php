@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
+include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $recordedBy = array_key_exists('recordedby',$_REQUEST)?trim(urldecode($_REQUEST['recordedby'])):'';
 $recordNumber = array_key_exists('recordnumber',$_REQUEST)?trim($_REQUEST['recordnumber']):'';
@@ -18,35 +19,27 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title><?php echo $DEFAULT_TITLE; ?> Duplicate Linker</title>
 	<script>
 		<?php 
-		if($action == 'Link as Duplicate'){
+		if($action === 'Link as Duplicate'){
 			$dupeManager->linkDuplicates($currentOccid,$dupeOccid,$dupeTitle);
 			echo 'window.opener.document.getElementById("dupeRefreshForm").submit();';
 			echo 'self.close();';
 		}
 		?>
 		
-		function validateDupeForm(f){
-
-
-			return true;
-		}
-
 		function openIndWindow(occid){
-			$url = "../../individual/index.php?occid="+occid;
-			indWindow=open($url,"indlist","resizable=1,scrollbars=1,toolbar=1,width=1000,height=800,left=100,top=100");
-		}
+            const url = "../../individual/index.php?occid=" + occid;
+            open(url, "indlist", "resizable=1,scrollbars=1,toolbar=1,width=1000,height=800,left=100,top=100");
+        }
 	</script>
 </head>
 <body>
-	<!-- inner text -->
 	<div id="innertext">
 		<fieldset style="padding:15px;">
 			<legend><b>Link New Specimen</b></legend>
-			<form name="adddupform" method="post" action="dupelist.php" onsubmit="return validateDupeForm(this)">
+			<form name="adddupform" method="post" action="dupelist.php">
 				<div style="margin:3px;">
 					<b>Last Name:</b>
 					<input name="recordedby" type="text" value="<?php echo $recordedBy; ?>" />
@@ -88,7 +81,9 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 						<div>
 							<?php 
 							echo $occArr['recordedby'].' '.$occArr['recordnumber'].' <span style="margin-left:15px">'.$occArr['eventdate'];
-							if($occArr['verbatimeventdate']) echo ' ('.$occArr['verbatimeventdate'].')';
+							if($occArr['verbatimeventdate']) {
+                                echo ' (' . $occArr['verbatimeventdate'] . ')';
+                            }
 							echo '</span>';
 							echo '<span style="margin-left:50px">'.$occArr['catalognumber'].'</span>';
 							?>
@@ -101,7 +96,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 						<div>
 							<a href="#" onclick="openIndWindow(<?php echo $dupOccid; ?>)">More Details</a>
 						</div>
-						<div style="margin:5px 0px 20px 15px;">
+						<div style="margin:5px 0 20px 15px;">
 							<form action="dupelist.php" method="post">
 								<input name="curoccid" type="hidden" value="<?php echo $currentOccid; ?>" />
 								<input name="dupeoccid" type="hidden" value="<?php echo $dupOccid; ?>" />

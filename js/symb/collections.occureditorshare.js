@@ -1,46 +1,42 @@
-//Query form 
 function submitQueryForm(qryIndex){
 	if(verifyLeaveForm()){
-		var f = document.queryform;
-		if(qryIndex) f.occindex.value = qryIndex;
-		if(verifyQueryForm(f)) f.submit();
+		const f = document.queryform;
+		if(qryIndex) {
+			f.occindex.value = qryIndex;
+		}
+		if(verifyQueryForm()) {
+			f.submit();
+		}
 	}
 	return false;
 }
 
 function verifyLeaveForm(){
-	if(document.fullform && document.fullform.submitaction.disabled == false && document.fullform.submitaction.type == "submit"){
+	if(document.fullform && document.fullform.submitaction.disabled === false && document.fullform.submitaction.type === "submit"){
 		return confirm("It appears that you didn't save your changes. Are you sure you want to leave without saving?"); 
 	}
 	return true;
 }
 
 function submitQueryEditor(f){
-	f.action = "occurrenceeditor.php"
-	if(verifyQueryForm(f)) f.submit();
+	f.action = "occurrenceeditor.php";
+	if(verifyQueryForm(f)) {
+		f.submit();
+	}
 	return true;
 }
 
 function submitQueryTable(f){
-	f.action = "occurrencetabledisplay.php"
-	if(verifyQueryForm(f)) f.submit();
+	f.action = "occurrencetabledisplay.php";
+	if(verifyQueryForm(f)) {
+		f.submit();
+	}
 	return true;
 }
-
-function setOrderBy(formObject){
-	/*
-	if(formObject.value != ""){
-		var inputName = formObject.name;
-		inputName.substring(2)
-		if(formObject.form.orderby.value == "") formObject.form.orderby.value = inputName.substring(2);
-	}
-	*/
-}
-
 function detectBatchUpdateField(){
-	var fieldSelected = document.getElementById('bufieldname').value;
-	if(fieldSelected == "processingstatus"){
-		var buNewValue = '<select name="bunewvalue">';
+	const fieldSelected = document.getElementById('bufieldname').value;
+	if(fieldSelected === "processingstatus"){
+		let buNewValue = '<select name="bunewvalue">';
 		buNewValue += '<option value="unprocessed">Unprocessed</option>';
 		buNewValue += '<option value="unprocessed/nlp">Unprocessed/NLP</option>';
 		buNewValue += '<option value="stage 1">Stage 1</option>';
@@ -61,24 +57,17 @@ function detectBatchUpdateField(){
 }
 
 function verifyQueryForm(f){
-	//if(f.q_catalognumber.value == "" && f.q_othercatalognumbers.value == ""  
-	//	&& f.q_recordedby.value == "" && f.q_recordnumber.value == "" && f.q_eventdate.value == ""
-	//	&& f.q_recordenteredby.value == "" && f.q_processingstatus.value == "" && f.q_datelastmodified.value == "" 
-	//	&& (f.q_customfield1.selectedIndex == 0 && (f.q_customvalue1.value == "" || f.q_customtype1.selectedIndex != 1)) 
-	//	&& ((f.q_observeruid.type == "hidden" && f.q_observeruid.value == "") || (f.q_observeruid.type == "checkbox" && f.q_observeruid.checked == false))){
-	//	alert("Query form is empty! Please enter a value to query by.");
-	//	return false;
-	//}
+	if(!verifyLeaveForm()) {
+		return false;
+	}
 
-	if(!verifyLeaveForm()) return false;
-
-	var validformat1 = /^\s*[<>]{0,1}\s{0,1}\d{4}-\d{2}-\d{2}\s*$/ //Format: yyyy-mm-dd, >yyyy-mm-dd, <yyyy-mm-dd
-	var validformat2 = /^\s*\d{4}-\d{2}-\d{2}\s{1,3}-\s{1,3}\d{4}-\d{2}-\d{2}\s*$/ //Format: yyyy-mm-dd - yyyy-mm-dd
-	var validformat3 = /^\s*\d{4}-\d{2}-\d{2}\s{1,3}to\s{1,3}\d{4}-\d{2}-\d{2}\s*$/ //Format: yyyy-mm-dd to yyyy-mm-dd
-	var validformat4 = /^\s*>{1}\s{0,1}\d{4}-\d{2}-\d{2}\s{1,3}AND\s{1,3}<{1}\s{0,1}\d{4}-\d{2}-\d{2}\s*$/i //Format: >yyyy-mm-dd AND <yyyy-mm-dd
+	const validformat1 = /^\s*[<>]?\s?\d{4}-\d{2}-\d{2}\s*$/;
+	const validformat2 = /^\s*\d{4}-\d{2}-\d{2}\s{1,3}-\s{1,3}\d{4}-\d{2}-\d{2}\s*$/;
+	const validformat3 = /^\s*\d{4}-\d{2}-\d{2}\s{1,3}to\s{1,3}\d{4}-\d{2}-\d{2}\s*$/;
+	const validformat4 = /^\s*>\s?\d{4}-\d{2}-\d{2}\s{1,3}AND\s{1,3}<\s?\d{4}-\d{2}-\d{2}\s*$/i;
 
 	if(f.q_eventdate){
-		var edDateStr = f.q_eventdate.value;
+		const edDateStr = f.q_eventdate.value;
 		if(edDateStr){
 			try{
 				if(!validformat1.test(edDateStr) && !validformat2.test(edDateStr) && !validformat3.test(edDateStr) && !validformat4.test(edDateStr)){
@@ -86,13 +75,12 @@ function verifyQueryForm(f){
 					return false;
 				}
 			}
-			catch(ex){
-			}
+			catch(ex){}
 		}
 	}
 	
 	if(f.q_datelastmodified){
-		var modDateStr = f.q_datelastmodified.value;
+		const modDateStr = f.q_datelastmodified.value;
 		if(modDateStr){
 			try{
 				if(!validformat1.test(modDateStr) && !validformat2.test(modDateStr) && !validformat3.test(modDateStr) && !validformat4.test(edDateStr)){
@@ -100,12 +88,11 @@ function verifyQueryForm(f){
 					return false;
 				}
 			}
-			catch(ex){
-			}
+			catch(ex){}
 		}
 	}
 	if(f.q_dateentered){
-		var dateEnteredStr = f.q_dateentered.value;
+		const dateEnteredStr = f.q_dateentered.value;
 		if(dateEnteredStr){
 			try{
 				if(!validformat1.test(dateEnteredStr) && !validformat2.test(dateEnteredStr) && !validformat3.test(dateEnteredStr) && !validformat4.test(edDateStr)){
@@ -118,42 +105,52 @@ function verifyQueryForm(f){
 		}
 	}
     if(f.q_customopenparen1){
-        var open = 0;
-        var closed = 0;
-        if(f.q_customopenparen1.value == '(') open++;
-		if(f.q_customcloseparen1.value == ')'){
+		let open = 0;
+		let closed = 0;
+		if(f.q_customopenparen1.value === '(') {
+			open++;
+		}
+		if(f.q_customcloseparen1.value === ')'){
             closed++;
             if(closed > open){
                 alert("You have selected a closed parenthesis in Custom Field 1 that does not have a corresponding selected open parenthesis.");
                 return false;
 			}
 		}
-        if(f.q_customopenparen2.value == '(') open++;
-        if(f.q_customcloseparen2.value == ')'){
+        if(f.q_customopenparen2.value === '(') {
+        	open++;
+        }
+        if(f.q_customcloseparen2.value === ')'){
             closed++;
             if(closed > open){
                 alert("You have selected a closed parenthesis in Custom Field 2 that does not have a corresponding selected open parenthesis.");
                 return false;
             }
         }
-        if(f.q_customopenparen3.value == '(') open++;
-        if(f.q_customcloseparen3.value == ')'){
+        if(f.q_customopenparen3.value === '(') {
+        	open++;
+        }
+        if(f.q_customcloseparen3.value === ')'){
             closed++;
             if(closed > open){
                 alert("You have selected a closed parenthesis in Custom Field 3 that does not have a corresponding selected open parenthesis.");
                 return false;
             }
         }
-        if(f.q_customopenparen4.value == '(') open++;
-        if(f.q_customcloseparen4.value == ')'){
+        if(f.q_customopenparen4.value === '(') {
+        	open++;
+        }
+        if(f.q_customcloseparen4.value === ')'){
             closed++;
             if(closed > open){
                 alert("You have selected a closed parenthesis in Custom Field 4 that does not have a corresponding selected open parenthesis.");
                 return false;
             }
         }
-        if(f.q_customopenparen5.value == '(') open++;
-        if(f.q_customcloseparen5.value == ')'){
+        if(f.q_customopenparen5.value === '(') {
+        	open++;
+        }
+        if(f.q_customcloseparen5.value === ')'){
             closed++;
             if(closed > open){
                 alert("You have selected a closed parenthesis in Custom Field 5 that does not have a corresponding selected open parenthesis.");
@@ -218,11 +215,13 @@ function resetQueryForm(f){
 }
 
 function submitBatchUpdate(f){
-	var fieldName = f.bufieldname.options[f.bufieldname.selectedIndex].value;
-	var oldValue = f.buoldvalue.value;
-	var newValue = f.bunewvalue.value;
-	var buMatch = 0;
-	if(f.bumatch[1].checked) buMatch = 1;
+	const fieldName = f.bufieldname.options[f.bufieldname.selectedIndex].value;
+	const oldValue = f.buoldvalue.value;
+	const newValue = f.bunewvalue.value;
+	let buMatch = 0;
+	if(f.bumatch[1].checked) {
+		buMatch = 1;
+	}
 	if(!fieldName){
 		alert("Please select a target field name");
 		return false;
@@ -231,7 +230,7 @@ function submitBatchUpdate(f){
 		alert("Please enter a value in the current or new value fields");
 		return false;
 	}
-	if(oldValue == newValue){
+	if(oldValue === newValue){
 		alert("The values within current and new fields cannot be equal to one another");
 		return false;
 	}
@@ -249,31 +248,31 @@ function submitBatchUpdate(f){
 }
 
 function customSelectChanged(targetSelect){
-	var sourceObj = document.queryform.q_customfield1;
-	var targetObj = document.queryform.q_customtype1;
-	if(targetSelect == 2){
+	let sourceObj = document.queryform.q_customfield1;
+	let targetObj = document.queryform.q_customtype1;
+	if(targetSelect === 2){
 		sourceObj = document.queryform.q_customfield2;
 		targetObj = document.queryform.q_customtype2;
 	}
-	else if(targetSelect == 3){
+	else if(targetSelect === 3){
 		sourceObj = document.queryform.q_customfield3;
 		targetObj = document.queryform.q_customtype3;
 	}
-    else if(targetSelect == 4){
+    else if(targetSelect === 4){
         sourceObj = document.queryform.q_customfield4;
         targetObj = document.queryform.q_customtype4;
     }
-    else if(targetSelect == 5){
+    else if(targetSelect === 5){
         sourceObj = document.queryform.q_customfield5;
         targetObj = document.queryform.q_customtype5;
     }
-	if(sourceObj.value == "ocrFragment"){
+	if(sourceObj.value === "ocrFragment"){
 		targetObj.value = "LIKE";
 	}
 }
 
 function toggleCustomDiv2(){
-	var f = document.queryform;
+	const f = document.queryform;
 	f.q_customandor2.options[0].selected = true;
     f.q_customopenparen2.options[0].selected = true;
     f.q_customfield2.options[0].selected = true;
@@ -291,8 +290,8 @@ function toggleCustomDiv2(){
 }
 
 function toggleCustomDiv3(){
-    var f = document.queryform;
-    f.q_customandor3.options[0].selected = true;
+	const f = document.queryform;
+	f.q_customandor3.options[0].selected = true;
     f.q_customopenparen3.options[0].selected = true;
     f.q_customfield3.options[0].selected = true;
     f.q_customtype3.options[0].selected = true;
@@ -309,8 +308,8 @@ function toggleCustomDiv3(){
 }
 
 function toggleCustomDiv4(){
-    var f = document.queryform;
-    f.q_customandor4.options[0].selected = true;
+	const f = document.queryform;
+	f.q_customandor4.options[0].selected = true;
     f.q_customopenparen4.options[0].selected = true;
     f.q_customfield4.options[0].selected = true;
     f.q_customtype4.options[0].selected = true;
@@ -327,8 +326,8 @@ function toggleCustomDiv4(){
 }
 
 function toggleCustomDiv5(){
-	var f = document.queryform;
-    f.q_customandor5.options[0].selected = true;
+	const f = document.queryform;
+	f.q_customandor5.options[0].selected = true;
     f.q_customopenparen5.options[0].selected = true;
 	f.q_customfield5.options[0].selected = true;
 	f.q_customtype5.options[0].selected = true;
@@ -338,9 +337,9 @@ function toggleCustomDiv5(){
 }
 
 function toggle(target){
-	var ele = document.getElementById(target);
+	const ele = document.getElementById(target);
 	if(ele){
-		if(ele.style.display=="none" || ele.style.display==""){
+		if(ele.style.display === "none" || ele.style.display === ""){
 			ele.style.display="block";
   		}
 	 	else {
@@ -348,11 +347,11 @@ function toggle(target){
 	 	}
 	}
 	else{
-		var divObjs = document.getElementsByTagName("div");
-	  	for (i = 0; i < divObjs.length; i++) {
-	  		var divObj = divObjs[i];
-	  		if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
-				if(divObj.style.display=="none"){
+		const divObjs = document.getElementsByTagName("div");
+		for (let i = 0; i < divObjs.length; i++) {
+			const divObj = divObjs[i];
+			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+				if(divObj.style.display === "none"){
 					divObj.style.display="";
 				}
 			 	else {
@@ -364,7 +363,9 @@ function toggle(target){
 }
 
 function toggleSearch(){
-	if(document.getElementById("batchupdatediv")) document.getElementById("batchupdatediv").style.display = "none";
+	if(document.getElementById("batchupdatediv")) {
+		document.getElementById("batchupdatediv").style.display = "none";
+	}
 	toggle("querydiv");
 }
 

@@ -1,7 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageLibraryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $pManager = new ImageLibraryManager();
 ?>
@@ -14,7 +14,7 @@ $pManager = new ImageLibraryManager();
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 	?>
 	<div class="navpath">
 		<a href="../index.php">Home</a> &gt;&gt; 
@@ -22,7 +22,6 @@ $pManager = new ImageLibraryManager();
 		<b>Image contributors</b> 
 	</div>
 
-	<!-- This is inner text! -->
 	<div id="innertext" style="height:100%">
 		<?php 
 		$pList = $pManager->getPhotographerList();
@@ -72,7 +71,7 @@ $pManager = new ImageLibraryManager();
 		</div>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

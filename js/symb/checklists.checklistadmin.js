@@ -13,15 +13,17 @@ $(document).ready(function() {
 });
 
 function openPointAid(latDef,lngDef) {
-	var tid = document.pointaddform.pointtid.value;
-	pointWindow=open("tools/mappointaid.php?latcenter="+latDef+"&lngcenter="+lngDef+"&tid="+tid,"pointaid","resizable=0,width=800,height=700,left=20,top=20");
-    if(pointWindow.opener == null) pointWindow.opener = self;
+	const tid = document.pointaddform.pointtid.value;
+	let pointWindow = open("tools/mappointaid.php?latcenter=" + latDef + "&lngcenter=" + lngDef + "&tid=" + tid, "pointaid", "resizable=0,width=800,height=700,left=20,top=20");
+    if(pointWindow.opener == null) {
+    	pointWindow.opener = self;
+    }
 }
 
 function togglePoint(f){
-	var objDiv = document.getElementById('pointlldiv');
+	const objDiv = document.getElementById('pointlldiv');
 	if(objDiv){
-		if(f.pointtid.value == ""){
+		if(f.pointtid.value === ""){
 			objDiv.style.display = "none";
 		}
 		else{
@@ -31,11 +33,11 @@ function togglePoint(f){
 }
 
 function verifyPointAddForm(f){
-	if(f.pointtid.value == ""){
+	if(f.pointtid.value === ""){
 		alert("Please select a taxon");
 		return false;
 	}
-	if(f.pointlat.value == "" || f.pointlng.value == ""){
+	if(f.pointlat.value === "" || f.pointlng.value === ""){
 		alert("Please enter coordinates");
 		return false;
 	}
@@ -53,8 +55,4 @@ function showImagesDefaultChecked(f){
 		f.dvouchers.disabled = false; 
 		f.dauthors.disabled = false; 
 	}
-}
-
-function validateAddChildForm(f){
-	
 }

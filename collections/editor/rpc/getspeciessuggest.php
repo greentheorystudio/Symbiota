@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once(__DIR__ . '/../../../classes/DbConnection.php');
+
 $connection = new DbConnection();
 header('Content-Type: application/json; charset=' .$CHARSET);
 $con = $connection->getConnection();

@@ -89,4 +89,3 @@ elseif($taxonValue){
 else{
     $topRowElements = Array('ERROR!');
 }
-?>

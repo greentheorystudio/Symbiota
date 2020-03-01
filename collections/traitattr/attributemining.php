@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/traitattr/attributemining.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/traitattr/attributemining.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
 $selectAll = array_key_exists('selectall',$_POST)?$_POST['selectall']:'';
@@ -14,32 +16,42 @@ $fieldName = array_key_exists('fieldname',$_POST)?$_POST['fieldname']:'';
 $traitID = array_key_exists('traitid',$_POST)?$_POST['traitid']:'';
 $submitForm = array_key_exists('submitform',$_POST)?$_POST['submitform']:'';
 
-//Sanitation
-if(!is_numeric($tidFilter)) $tidFilter = 0;
-if(!is_numeric($traitID)) $traitID = 0;
+if(!is_numeric($tidFilter)) {
+    $tidFilter = 0;
+}
+if(!is_numeric($traitID)) {
+    $traitID = 0;
+}
 
 $collRights = array();
-if(array_key_exists("CollAdmin",$USER_RIGHTS)) $collRights = $USER_RIGHTS["CollAdmin"];
-if(array_key_exists("CollEditor",$USER_RIGHTS)) $collRights = array_merge($collRights,$USER_RIGHTS["CollEditor"]);
+if(array_key_exists('CollAdmin',$USER_RIGHTS)) {
+    $collRights = $USER_RIGHTS['CollAdmin'];
+}
+if(array_key_exists('CollEditor',$USER_RIGHTS)) {
+    $collRights = array_merge($collRights, $USER_RIGHTS['CollEditor']);
+}
 
 $isEditor = 0; 
 if($SYMB_UID){
-	if(!$IS_ADMIN && count($collRights) == 1){
-		//User only has right to a single collection, thus we will auto-select as the default
+	if(!$IS_ADMIN && count($collRights) === 1){
 		$collid = current($collRights);
 	}
 	elseif($selectAll){
 		$collid = 'all';
 	}
 	elseif(is_array($collid)){
-		if(!$IS_ADMIN) $collid = array_intersect($collid, $collRights);
+		if(!$IS_ADMIN) {
+            $collid = array_intersect($collid, $collRights);
+        }
 		$collid = implode(',',$collid);
 	}
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
 	elseif(is_numeric($collid)){
-		if(in_array($collid, $collRights)) $isEditor = 1;
+		if(in_array($collid, $collRights, true)) {
+            $isEditor = 1;
+        }
 	}
 	elseif($collid){
 		$isEditor = 1;
@@ -51,29 +63,27 @@ $attrManager->setCollid($collid);
 $collArr = $attrManager->getCollectionList($IS_ADMIN?'':$collRights);
 
 $statusStr = '';
-if($isEditor){
-	if($submitForm == 'Batch Assign State(s)'){
-		if($collid && $fieldName){
-			$fieldValueArr = array_key_exists('fieldvalue',$_POST)?$_POST['fieldvalue']:'';
-			if(!is_array($fieldValueArr)) $fieldValueArr = array($fieldValueArr);
-			$stateIDArr = array();
-			foreach($_POST as $postKey => $postValue){
-				if(substr($postKey,0,8) == 'stateid-'){
-					if(is_array($postValue)){
-						$stateIDArr = array_merge($stateIDArr,$postValue);
-					}
-					else{
-						$stateIDArr[] = $postValue;
-					}
-				}
-			}
-			if($stateIDArr && $fieldValueArr){
-				if(!$attrManager->submitBatchAttributes($traitID, $fieldName, $tidFilter, $stateIDArr, $fieldValueArr, $_POST['notes'],$_POST['reviewstatus'])){
-					$statusStr = $attrManager->getErrorMessage();
-				}
-			}
-		}
-	}
+if($isEditor && $submitForm === 'Batch Assign State(s)' && $collid && $fieldName) {
+    $fieldValueArr = array_key_exists('fieldvalue',$_POST)?$_POST['fieldvalue']:'';
+    if(!is_array($fieldValueArr)) {
+        $fieldValueArr = array($fieldValueArr);
+    }
+    $stateIDArr = array();
+    foreach($_POST as $postKey => $postValue){
+        if(strpos($postKey, 'stateid-') === 0){
+            if(is_array($postValue)){
+                foreach($postValue as $post){
+                    $stateIDArr[] = $post;
+                }
+            }
+            else{
+                $stateIDArr[] = $postValue;
+            }
+        }
+    }
+    if($stateIDArr && $fieldValueArr && !$attrManager->submitBatchAttributes($traitID, $fieldName, $tidFilter, $stateIDArr, $fieldValueArr, $_POST['notes'], $_POST['reviewstatus'])) {
+        $statusStr = $attrManager->getErrorMessage();
+    }
 }
 
 $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenceremarks' => 'Occurrence Remarks (notes)',
@@ -90,13 +100,12 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
-
-			function verifyFilterForm(f){
-				if(f.traitid.value == ""){
+            function verifyFilterForm(f){
+				if(f.traitid.value === ""){
 					alert("You must select a trait");
 					return false;
 				}
-				if(f.fieldname.value == ""){
+				if(f.fieldname.value === ""){
 					alert("A source field must be selected");
 					return false;
 				}
@@ -104,14 +113,14 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 
 			function verifyMiningForm(f){
-				if(f.elements["fieldvalue[]"].selectedIndex == -1){
+				if(f.elements["fieldvalue[]"].selectedIndex === -1){
 					alert("You muct select at least one field value");
 					return false;
 				}
-				
-				var formVerified = false;
-				$('input[name^="stateid-"]').each(function(){
-					if(this.checked == true){
+
+                let formVerified = false;
+                $('input[name^="stateid-"]').each(function(){
+					if(this.checked === true){
 						formVerified = true;
 						return false;
 					}
@@ -124,20 +133,24 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 
 			function selectAll(cb){
-				var boxesChecked = true;
-				if(!cb.checked) boxesChecked = false;
-				var dbElements = cb.form.elements["collid[]"];
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					dbElement.checked = boxesChecked;
+                let boxesChecked = true;
+                if(!cb.checked) {
+                    boxesChecked = false;
+                }
+                const dbElements = cb.form.elements["collid[]"];
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    dbElement.checked = boxesChecked;
 				}
 			}
 
 			function verifyCollForm(f){
-				var dbElements = f.elements["collid[]"];
-				for(i = 0; i < dbElements.length; i++){
-					var dbElement = dbElements[i];
-					if(dbElement.checked == true) return true;
+                const dbElements = f.elements["collid[]"];
+                for(let i = 0; i < dbElements.length; i++){
+                    const dbElement = dbElements[i];
+                    if(dbElement.checked === true) {
+                        return true;
+                    }
 				}
 				alert('Select at last on collect to harvest from');
 				return false;
@@ -157,13 +170,17 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 	</head>
 	<body style="width:900px">
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		?>
 		<div class="navpath">
 			<a href="../../index.php">Home</a> &gt;&gt;
 			<?php 
-			if(is_numeric($collid)) echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management</a> &gt;&gt;';
-			if($IS_ADMIN || count($collRights) > 1) echo '<a href="attributemining.php">Adjust Collection Selection</a> &gt;&gt;';
+			if(is_numeric($collid)) {
+                echo '<a href="../misc/collprofiles.php?collid=' . $collid . '&emode=1">Collection Management</a> &gt;&gt;';
+            }
+			if($IS_ADMIN || count($collRights) > 1) {
+                echo '<a href="attributemining.php">Adjust Collection Selection</a> &gt;&gt;';
+            }
 			?>
 			<b>Attribute Mining Tool</b>
 		</div>
@@ -174,11 +191,10 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			echo '</div>';
 		}
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<?php 
 			if($collid){
-				if($collid == 'all'){
+				if($collid === 'all'){
 					echo '<h2 class="heading">Searching All Collections</h2>';
 				}
 				elseif(is_numeric($collid)){
@@ -193,7 +209,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 						echo '<div>'.$collArr[$id].'</div>';
 					}
 					echo '</div>';
-					echo '<div id="displayDiv" style="margin:0px 20px"><a href="#" onclick="toggleCollections()">click to display collection list</a></div>';
+					echo '<div id="displayDiv" style="margin:0 20px;"><a href="#" onclick="toggleCollections()">click to display collection list</a></div>';
 					echo '</fieldset>';
 				}
 				?>
@@ -210,7 +226,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 									$traitNameArr = $attrManager->getTraitNames();
 									if($traitNameArr){
 										foreach($traitNameArr as $ID => $aName){
-											echo '<option value="'.$ID.'" '.($traitID==$ID?'SELECTED':'').'>'.$aName.'</option>';
+											echo '<option value="'.$ID.'" '.($traitID === $ID?'SELECTED':'').'>'.$aName.'</option>';
 										}
 									}
 									else{
@@ -226,7 +242,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 									<option value="">------------------------------------</option>
 									<?php 
 									foreach($fieldArr as $k => $fName){
-										echo '<option value="'.$k.'" '.($k==$fieldName?'SELECTED':'').'>'.$fName.'</option>';
+										echo '<option value="'.$k.'" '.($k === $fieldName?'SELECTED':'').'>'.$fName.'</option>';
 									}
 									?>
 								</select>
@@ -262,7 +278,9 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 									<select name="fieldvalue[]" size="15" multiple="multiple" style="width:100%">
 										<?php 
 										foreach($valueArr as $v){
-											if($v) echo '<option value="'.$v.'">'.$v.'</option>';
+											if($v) {
+                                                echo '<option value="' . $v . '">' . $v . '</option>';
+                                            }
 										}
 										?>
 									</select>
