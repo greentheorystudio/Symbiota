@@ -127,9 +127,9 @@ class KeyManager{
 						$retArr[] = $targetTid;
 					}
 			    }
+                $rs->free();
 			}
-			$rs->free();
- 		}
+		}
 		return $retArr;
 	}
 

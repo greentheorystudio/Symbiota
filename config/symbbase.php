@@ -121,3 +121,7 @@ $RIGHTS_TERMS_DEFS = array(
         'def' => 'Users can copy and redistribute the material in any medium or format. The licensor cannot revoke these freedoms as long as you follow the license terms.'
     )
 );
+
+if(!isset($MAPPING_BOUNDARIES) || !$MAPPING_BOUNDARIES){
+    $MAPPING_BOUNDARIES = '42.3;-100.5;18.0;-127';
+}
