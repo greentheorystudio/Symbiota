@@ -1,13 +1,12 @@
-var sec = 0;
-var count = 0;
+let sec = 0;
+let count = 0;
 
 $(document).ready(function() {
-
-	$("#fsciname").autocomplete({ 
+	$("#fsciname").autocomplete({
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,
 		autoFocus: true,
-		change: function(event, ui) {
+		change: function() {
 			$( "#ftidinterpreted" ).val("");
 			$( '#fscientificnameauthorship' ).val("");
 			$( '#ffamily' ).val("");
@@ -18,7 +17,6 @@ $(document).ready(function() {
 		}
 	});
 
-	//Misc fields with lookups
 	$("#fcountry").autocomplete({
 		source: "rpc/lookupCountry.php", 
 		minLength: 2,
@@ -41,10 +39,9 @@ $(document).ready(function() {
 		autoFocus: true
 	});
 
-	//Initiate timer
 	setInterval( function(){
 		$("#seconds").html(pad(++sec%60));
-		$("#minutes").html(pad(parseInt(sec/60,10)));
+		$("#minutes").html(pad(sec/60,10));
 	}, 1000);
 });
 
@@ -58,7 +55,6 @@ function hideOptions(){
 	$( "#hidespan" ).hide();
 }
 
-//Field changed and verification functions
 function verifySciName(){
 	$.ajax({
 		type: "POST",
@@ -70,14 +66,14 @@ function verifySciName(){
 			$( "#ftidinterpreted" ).val(data.tid);
 			$( '#ffamily' ).val(data.family);
 			$( '#fscientificnameauthorship' ).val(data.author);
-			if(data.status == 1){ 
+			if(data.status === 1){
 				$( '#flocalitysecurity' ).prop('checked', true);
 			}
 			else{
 				if(data.tid){
-					var stateVal = $( '#fstateprovince' ).val();
-					if(stateVal != ""){
-						localitySecurityCheck($( "#faultform" ));
+					const stateVal = $('#fstateprovince').val();
+					if(stateVal !== ""){
+						localitySecurityCheck();
 					}
 				}
 			}
@@ -88,56 +84,45 @@ function verifySciName(){
 	});
 }
 
-function localitySecurityCheck(f){
-	var tidIn = $( "#ftidinterpreted" ).val();
-	var stateIn = $( "#stateprovince" ).val();
-	if(tidIn != "" && stateIn != ""){
+function localitySecurityCheck(){
+	const tidIn = $("#ftidinterpreted").val();
+	const stateIn = $("#stateprovince").val();
+	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
 			type: "POST",
 			url: "rpc/localitysecuritycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data == "1"){
+			if(data === "1"){
 				$( '#flocalitysecurity' ).prop('checked', true);
 			}
 		});
 	}
 }
 
-function stateProvinceChanged(stateVal){ 
-	var tidVal = $( "#ftidinterpreted" ).val();
-	if(tidVal != "" && stateVal != ""){
-		localitySecurityCheck($( "#faultform" ));
+function stateProvinceChanged(stateVal){
+	const tidVal = $("#ftidinterpreted").val();
+	if(tidVal !== "" && stateVal !== ""){
+		localitySecurityCheck();
 	}
 }
 
-function submitDefaultForm(f){
-	var continueSubmit = true;
-	if($("#feventdate").val() != ""){
-		var dateStr = $("#feventdate").val();
+function submitDefaultForm(){
+	const continueSubmit = true;
+	if($("#feventdate").val() !== ""){
+		const dateStr = $("#feventdate").val();
 		try{
-			var validformat1 = /^\s*[<>]{0,1}\s{0,1}\d{4}-\d{2}-\d{2}\s*$/ //Format: yyyy-mm-dd, >yyyy-mm-dd, <yyyy-mm-dd
+			const validformat1 = /^\s*[<>]?\s?\d{4}-\d{2}-\d{2}\s*$/;
 			if(!validformat1.test(dateStr)){
 				alert("Event date must follow YYYY-MM-DD format. Note that 00 can be entered for a non-determined month or day.");
 				return false;
 			}
 		}
-		catch(ex){
-		}
+		catch(ex){}
 	}
 
-	if(continueSubmit && $( "#fcatalognumber" ).val() != ""){
-		/*
-		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&localitysecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
-		url = url + '&country='+$( "#fcountry" ).val()+'&stateprovince='+$( "#fstateprovince" ).val()+'&county='+$( "#fcounty" ).val();
-		url = url + '&processingstatus='+$( "#fprocessingstatus" ).val()+'&recordedby='+$( "#frecordedby" ).val()+'&recordnumber='+$( "#frecordnumber" ).val(); 
-		url = url + '&eventdate='+$( "#feventdate" ).val()+'&language='+$( "#flanguage" ).val()+'&othercatalognumbers='+$( "#fothercatalognumbers" ).val();
-		url = url + '&catalognumber='+$( "#fcatalognumber" ).val()+'&collid='+$( "#fcollid" ).val()+'&addaction='+$( "input[name=addaction]:checked" ).val();
-		alert(url);
-		*/
-
-		//Add new occurrence 
+	if(continueSubmit && $( "#fcatalognumber" ).val() !== ""){
 		$.ajax({
 			type: "POST",
 			url: "rpc/occurAddData.php",
@@ -161,19 +146,17 @@ function submitDefaultForm(f){
 				addaction: $( "input[name=addaction]:checked" ).val()
 			}
 		}).done(function( retObj ) {
-			if(retObj.status == "true"){
-				var newDiv = createOccurDiv($( "#fcatalognumber" ).val(), retObj.occid, retObj.action);
+			if(retObj.status === "true"){
+				const newDiv = createOccurDiv($("#fcatalognumber").val(), retObj.occid, retObj.action);
 
-				var listElem = document.getElementById("occurlistdiv");
+				const listElem = document.getElementById("occurlistdiv");
 				listElem.insertBefore(newDiv,listElem.childNodes[0]);
 
 				incrementCount();
-				catalognumber: $( "#fcatalognumber" ).val("");
-				othercatalognumbers: $( "#fothercatalognumbers" ).val("");
 			}
 			else{
 				if(retObj.error){
-					if(retObj.error == 'dupeCatalogNumber'){
+					if(retObj.error === 'dupeCatalogNumber'){
 						if(confirm("Another record exists with the same catalog number, which is set as not allowed within options. Do you want to view the other record(s)?")){
 							openEditPopup(retObj.occid);
 						}
@@ -194,31 +177,29 @@ function submitDefaultForm(f){
 }
 
 function createOccurDiv(catalogNumber, occid, action){
-
-	var newAnchor = document.createElement('a');
+	const newAnchor = document.createElement('a');
 	newAnchor.setAttribute("id", "a-"+occid);
 	newAnchor.setAttribute("href", "#");
 	newAnchor.setAttribute("onclick", "openEditPopup("+occid+",false);return false;");
-	var newText = document.createTextNode(catalogNumber);
+	const newText = document.createTextNode(catalogNumber);
 	newAnchor.appendChild(newText);
 
-	//Image submission  
-	var newAnchor2 = document.createElement('a');
+	const newAnchor2 = document.createElement('a');
 	newAnchor2.setAttribute("id", "a2-"+occid);
 	newAnchor2.setAttribute("href", "#");
 	newAnchor2.setAttribute("onclick", "openEditPopup("+occid+",true);return false;");
-	var newImg = document.createElement('img');
+	const newImg = document.createElement('img');
 	newImg.setAttribute("src", "../../images/jpg.png");
 	newImg.setAttribute("style", "width:13px;margin-left:5px;");
 	newAnchor2.appendChild(newImg);
 
-	var newDiv = document.createElement('div');
+	const newDiv = document.createElement('div');
 	newDiv.setAttribute("id", "o-"+occid);
 	newDiv.appendChild(newAnchor);
 	newDiv.appendChild(newAnchor2);
-	if(action == "update"){
-		var newSpan = document.createElement("span");
-		var spanText = document.createTextNode(" (update of existing record)");
+	if(action === "update"){
+		const newSpan = document.createElement("span");
+		const spanText = document.createTextNode(" (update of existing record)");
 		newSpan.appendChild(spanText);
 		newDiv.appendChild(newSpan);
 	}
@@ -228,56 +209,53 @@ function createOccurDiv(catalogNumber, occid, action){
 
 function deleteOccurrence(occid){
 	if(imgAssocCleared && voucherAssocCleared){
-		var elem = document.getElementById("delapprovediv");
+		const elem = document.getElementById("delapprovediv");
 		elem.style.display = "block";
 	}
 }
 
 function eventDateChanged(eventDateInput){
-	var dateStr = eventDateInput.value;
-	if(dateStr == "") return true;
+	const dateStr = eventDateInput.value;
+	if(dateStr === "") {
+		return true;
+	}
 
-	var dateArr = parseDate(dateStr);
-	if(dateArr['y'] == 0){
+	const dateArr = parseDate(dateStr);
+	if(dateArr['y'] === 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 		return false;
 	}
 	else{
-		//Check to see if date is in the future 
 		try{
-			var testDate = new Date(dateArr['y'],dateArr['m']-1,dateArr['d']);
-			var today = new Date();
+			const testDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
+			const today = new Date();
 			if(testDate > today){
 				alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
 				return false;
 			}
 		}
-		catch(e){
-		}
+		catch(e){}
 
-		//Invalid format is month > 12
 		if(dateArr['m'] > 12){
 			alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
 			return false;
 		}
 
-		//Check to see if day is valid
 		if(dateArr['d'] > 28){
 			if(dateArr['d'] > 31 
-				|| (dateArr['d'] == 30 && dateArr['m'] == 2) 
-				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
+				|| (dateArr['d'] === 30 && dateArr['m'] === 2)
+				|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 				return false;
 			}
 		}
 
-		//Enter date into date fields
-		var mStr = dateArr['m'];
-		if(mStr.length == 1){
+		let mStr = dateArr['m'];
+		if(mStr.length === 1){
 			mStr = "0" + mStr;
 		}
-		var dStr = dateArr['d'];
-		if(dStr.length == 1){
+		let dStr = dateArr['d'];
+		if(dStr.length === 1){
 			dStr = "0" + dStr;
 		}
 		eventDateInput.value = dateArr['y'] + "-" + mStr + "-" + dStr;
@@ -286,61 +264,56 @@ function eventDateChanged(eventDateInput){
 }
 
 function parseDate(dateStr){
-	var y = 0;
-	var m = 0;
-	var d = 0;
-	try{
-		var validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
-		var validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
-		var validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
-		if(validformat1.test(dateStr)){
-			var dateTokens = dateStr.split("-");
+	const dateObj = new Date(dateStr);
+	let dateTokens;
+	let y = 0;
+	let m = 0;
+	let d = 0;
+	let mText;
+	try {
+		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
+		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
+		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/;
+		if (validformat1.test(dateStr)) {
+			dateTokens = dateStr.split("-");
 			y = dateTokens[0];
 			m = dateTokens[1];
 			d = dateTokens[2];
-		}
-		else if(validformat2.test(dateStr)){
-			var dateTokens = dateStr.split("/");
+		} else if (validformat2.test(dateStr)) {
+			dateTokens = dateStr.split("/");
 			m = dateTokens[0];
 			d = dateTokens[1];
 			y = dateTokens[2];
-			if(y.length == 2){
-				if(y < 20){
+			if (y.length === 2) {
+				if (y < 20) {
 					y = "20" + y;
-				}
-				else{
+				} else {
 					y = "19" + y;
 				}
 			}
-		}
-		else if(validformat3.test(dateStr)){
-			var dateTokens = dateStr.split(" ");
+		} else if (validformat3.test(dateStr)) {
+			dateTokens = dateStr.split(" ");
 			d = dateTokens[0];
 			mText = dateTokens[1];
 			y = dateTokens[2];
-			if(y.length == 2){
-				if(y < 15){
+			if (y.length === 2) {
+				if (y < 15) {
 					y = "20" + y;
-				}
-				else{
+				} else {
 					y = "19" + y;
 				}
 			}
-			mText = mText.substring(0,3);
+			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();
-			var mNames = new Array("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec");
-			m = mNames.indexOf(mText)+1;
-		}
-		else if(dateObj instanceof Date && dateObj != "Invalid Date"){
-			var dateObj = new Date(dateStr);
+			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+			m = mNames.indexOf(mText) + 1;
+		} else if (dateObj instanceof Date) {
 			y = dateObj.getFullYear();
 			m = dateObj.getMonth() + 1;
 			d = dateObj.getDate();
 		}
-	}
-	catch(ex){
-	}
-	var retArr = new Array();
+	} catch (ex) {}
+	const retArr = [];
 	retArr["y"] = y.toString();
 	retArr["m"] = m.toString();
 	retArr["d"] = d.toString();
@@ -348,18 +321,20 @@ function parseDate(dateStr){
 }
 
 function openEditPopup(occidStr,targetImgTab){
-	collid = $( "#fcollid" ).val();
-	var urlStr = "occurrenceeditor.php?collid="+collid+"&q_catalognumber=occid"+occidStr+"&occindex=0";
-	if(targetImgTab) urlStr = urlStr + '&tabtarget=2';
-	
-	var wWidth = 900;
+	let collid = $("#fcollid").val();
+	let urlStr = "occurrenceeditor.php?collid=" + collid + "&q_catalognumber=occid" + occidStr + "&occindex=0";
+	if(targetImgTab) {
+		urlStr = urlStr + '&tabtarget=2';
+	}
+
+	let wWidth = 900;
 	if(document.getElementById('maintable').offsetWidth){
 		wWidth = document.getElementById('maintable').offsetWidth*1.05;
 	}
 	else if(document.body.offsetWidth){
 		wWidth = document.body.offsetWidth*0.9;
 	}
-	var newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
+	const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
 	if(newWindow != null){
 		if (newWindow.opener == null) newWindow.opener = self;
 	}
@@ -369,15 +344,14 @@ function openEditPopup(occidStr,targetImgTab){
 	return false;
 }
 
-//Misc functions
 function isNumeric(sText){
-   	var validChars = "0123456789-.";
-   	var isNumber = true;
-   	var charVar;
+	const validChars = "0123456789-.";
+	let isNumber = true;
+	let charVar;
 
-   	for(var i = 0; i < sText.length && isNumber == true; i++){ 
+	for(let i = 0; i < sText.length && isNumber === true; i++){
    		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) == -1){
+		if(validChars.indexOf(charVar) === -1){
 			isNumber = false;
 			break;
 	  	}

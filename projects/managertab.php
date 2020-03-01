@@ -1,16 +1,16 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$pid = $_REQUEST["pid"]; 
+$pid = $_REQUEST['pid'];
 
 $projManager = new InventoryProjectManager();
 $projManager->setPid($pid);
 
 ?>
 <div id="managertab">
-	<div style="font-weight:bold;margin:10px 0px">Inventory Project Managers</div>
+	<div style="font-weight:bold;margin:10px 0;">Inventory Project Managers</div>
 	<ul style="margin:30px 10px">
 	<?php 
 	$managerArr = $projManager->getManagers();

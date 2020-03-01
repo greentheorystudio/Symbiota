@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GamesManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GamesManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']:"");
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:"";
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:"";
+$clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
+$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']: '';
 
 if(!$clName){
 	$gameManager = new GamesManager();
@@ -17,9 +17,6 @@ if(!$clName){
 	}
 	$clName = $gameManager->getClName();
 }
-
-$imgloc = "../images/games/namegame/";
-
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -30,25 +27,104 @@ $imgloc = "../images/games/namegame/";
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<style type="text/css">
-		.lettertable{border:1px solid #000000;border-spacing:3px;}
-		.tableplain{border:1px}
-		#charactertable td{margin-left: auto;margin-right: auto;vertical-align: middle;border:1px solid #000000;width:50px;cursor:hand;cursor:pointer;font-family:times new roman;font-size:25;font-weight:bold;color:#000000}
-		.buttonover{border:5px outset gray;cursor:hand;cursor:pointer;font-weight:normal;font-weight:bold}
-		.buttonout{border:5px outset #CCCC99;font-weight:normal}
-		.buttondown{border:5px inset gray;cursor:hand;cursor:pointer;font-weight:bold}
-		.buttonup{border:5px outset #CCCC99;cursor:hand;cursor:pointer;font-weight:normal;font-weight:bold}
-		.question{font-size:30px}
-		#rw{margin-left:auto;margin-right:auto}
+		.lettertable{
+            border:1px solid #000000;
+            border-spacing:3px;
+        }
+
+        #charactertable td{
+            margin-left: auto;
+            margin-right: auto;
+            vertical-align: middle;
+            border:1px solid #000000;
+            width:50px;
+            cursor:pointer;
+            font-family: times new roman, serif;
+            font-size:25px;
+            font-weight:bold;
+            color:#000000
+        }
+
+        .buttonout{
+            border:5px outset #CCCC99;
+            font-weight:normal
+        }
+
+        .question{
+            font-size:30px;
+        }
+		#rw{
+            margin-left:auto;
+            margin-right:auto
+        }
 	</style>
-	<script> 
-		//COLLAPSE MENU
-		function toggle(divID, linkID) {
-			var ele = document.getElementById(divID);
-			var text = document.getElementById(linkID);
-			if(ele.style.display == "block") {
+	<script>
+        let mainList = [['','']];
+        const hangpics = [
+            ["../images/games/namegame/man1_0.gif","../images/games/namegame/man1_1.gif","../images/games/namegame/man1_2.gif","../images/games/namegame/man1_3.gif","../images/games/namegame/man1_4.gif","../images/games/namegame/man1_5.gif","../images/games/namegame/gallow.gif","../images/games/namegame/gallow5.gif","../images/games/namegame/gallow4.gif","../images/games/namegame/gallow3.gif","../images/games/namegame/gallow2.gif","../images/games/namegame/gallow1.gif","../images/games/namegame/spacer.gif","../images/games/namegame/man1win.gif"],
+            ["../images/games/namegame/woman1_0.gif","../images/games/namegame/woman1_1.gif","../images/games/namegame/woman1_2.gif","../images/games/namegame/woman1_3.gif","../images/games/namegame/woman1_4.gif","../images/games/namegame/woman1_5.gif","../images/games/namegame/gallow.gif","../images/games/namegame/gallow5.gif","../images/games/namegame/gallow4.gif","../images/games/namegame/gallow3.gif","../images/games/namegame/gallow2.gif","../images/games/namegame/gallow1.gif","../images/games/namegame/spacer.gif","../images/games/namegame/woman1win.gif"],
+            ["../images/games/namegame/man2_0.gif","../images/games/namegame/man2_1.gif","../images/games/namegame/man2_2.gif","../images/games/namegame/man2_3.gif","../images/games/namegame/man2_4.gif","../images/games/namegame/man2_5.gif","../images/games/namegame/gallow.gif","../images/games/namegame/gallow5.gif","../images/games/namegame/gallow4.gif","../images/games/namegame/gallow3.gif","../images/games/namegame/gallow2.gif","../images/games/namegame/gallow1.gif","../images/games/namegame/spacer.gif","../images/games/namegame/man2win.gif"],
+            ["../images/games/namegame/woman2_0.gif","../images/games/namegame/woman2_1.gif","../images/games/namegame/woman2_2.gif","../images/games/namegame/woman2_3.gif","../images/games/namegame/woman2_4.gif","../images/games/namegame/woman2_5.gif","../images/games/namegame/gallow.gif","../images/games/namegame/gallow5.gif","../images/games/namegame/gallow4.gif","../images/games/namegame/gallow3.gif","../images/games/namegame/gallow2.gif","../images/games/namegame/gallow1.gif","../images/games/namegame/spacer.gif","../images/games/namegame/woman2win.gif"],
+            ["../images/games/namegame/wwoman0.gif","../images/games/namegame/wwoman1.gif","../images/games/namegame/wwoman2.gif","../images/games/namegame/wwoman3.gif","../images/games/namegame/wwoman4.gif","../images/games/namegame/wwoman5.gif","../images/games/namegame/gallow.gif","../images/games/namegame/gallow5.gif","../images/games/namegame/gallow4.gif","../images/games/namegame/gallow3.gif","../images/games/namegame/gallow2.gif","../images/games/namegame/gallow1.gif","../images/games/namegame/spacer.gif","../images/games/namegame/wwomanwin.gif"],
+            ["../images/games/namegame/flower0.gif","../images/games/namegame/flower1.gif","../images/games/namegame/flower2.gif","../images/games/namegame/flower3.gif","../images/games/namegame/flower4.gif","../images/games/namegame/flower5.gif","../images/games/namegame/flower6.gif","../images/games/namegame/flower7.gif","../images/games/namegame/flower8.gif","../images/games/namegame/flower9.gif","../images/games/namegame/flower10.gif","../images/games/namegame/flower11.gif","../images/games/namegame/flower12.gif","../images/games/namegame/flowerwin.gif"],
+            ["../images/games/namegame/plant0.gif","../images/games/namegame/plant1.gif","../images/games/namegame/plant2.gif","../images/games/namegame/plant3.gif","../images/games/namegame/plant4.gif","../images/games/namegame/plant5.gif","../images/games/namegame/plant6.gif","../images/games/namegame/plant7.gif","../images/games/namegame/plant8.gif","../images/games/namegame/plant9.gif","../images/games/namegame/plant10.gif","../images/games/namegame/plant11.gif","../images/games/namegame/plant12.gif","../images/games/namegame/plantwin.gif"],
+            ["../images/games/namegame/tempcover0.jpg","../images/games/namegame/tempcover1.jpg","../images/games/namegame/tempcover2.jpg","../images/games/namegame/tempcover3.jpg","../images/games/namegame/tempcover4.jpg","../images/games/namegame/tempcover5.jpg","../images/games/namegame/tempcover6.jpg","../images/games/namegame/plant7.gif","../images/games/namegame/plant8.gif","../images/games/namegame/plant9.gif","../images/games/namegame/plant10.gif","../images/games/namegame/plant11.gif","../images/games/namegame/plant12.gif","../images/games/namegame/tempcover0.jpg"],
+            ["../images/games/namegame/apple_0.gif","../images/games/namegame/apple_1.gif","../images/games/namegame/apple_2.gif","../images/games/namegame/apple_3.gif","../images/games/namegame/apple_4.gif","../images/games/namegame/apple_5.gif","../images/games/namegame/apple_6.gif","../images/games/namegame/apple_7.gif","../images/games/namegame/apple_8.gif","../images/games/namegame/apple_9.gif","../images/games/namegame/apple_10.gif","../images/games/namegame/apple_11.gif","../images/games/namegame/apple_12.gif","../images/games/namegame/apple_win.gif"]
+        ];
+
+        const PreImage0 = new Image();
+        const PreImage1 = new Image();
+        const PreImage2 = new Image();
+        const PreImage3 = new Image();
+        const PreImage4 = new Image();
+        const PreImage5 = new Image();
+        const PreImage6 = new Image();
+
+        const defaultImage = "../images/games/namegame/plant7.gif";
+        const maxWildCards = 1;
+
+        const imgSetId = "imageset";
+        let lastImgId = "img7";
+        const imgSetVal = "6";
+        let lastImg = "";
+
+        let firstload = "1";
+        const levelSet = "levelset";
+        let lastLevelId = "level2";
+        let levelSetVal = "6";
+        let lastLevelImg = "";
+        let won = 0;
+        let gameover = 0;
+        let played = 0;
+        let running = 0;
+        let lastChar = "";
+        let hintShown = 0;
+        let wordChosen = "";
+        let avatar = 0;
+        let wordCount = 0;
+        let selectedNums = [];
+        let secondWord = '';
+        let RealName = '';
+        let wildCount = 0;
+        let last = '';
+        let guessCount = 0;
+        let chosenWord = '';
+        let currentNum;
+        let done = 0;
+        let sFont = 0;
+        let lFont = 0;
+        let wildCardArr = [];
+        const ns = document.getElementById&&!document.all;
+
+        const step = 5;
+        let repeat = "";
+        
+        function toggle(divID) {
+            const ele = document.getElementById(divID);
+            if(ele.style.display === "block") {
 		    	ele.style.display = "none";
 			}
 			else {
@@ -56,7 +132,6 @@ $imgloc = "../images/games/namegame/";
 			}
 		} 
 
-		//CHANGE WORDLIST SCRIPT
 		function getWordList(){
 			$.ajax({
 				method: "POST",
@@ -67,15 +142,15 @@ $imgloc = "../images/games/namegame/";
 					dynclid: <?php echo $dynClid; ?> 
 				},
 				success: function(data) {
-					mainList = data;
-					generate();
+                    mainList = data;
+                    generate();
 				}
 			});
 		}
 		
 		function openPopup(urlStr,windowName){
-			var wWidth = 900;
-			try{
+            let wWidth = 900;
+            try{
 				if(document.getElementById('maintable').offsetWidth){
 					wWidth = document.getElementById('maintable').offsetWidth*1.05;
 				}
@@ -85,74 +160,40 @@ $imgloc = "../images/games/namegame/";
 			}
 			catch(e){
 			}
-			newWindow = window.open(urlStr,windowName,'scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
+            const newWindow = window.open(urlStr, windowName, 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+            if (newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 		}
 		
-		mainList = [['','']];
-		hangpics=[
-			["<?php echo $imgloc; ?>man1_0.gif","<?php echo $imgloc; ?>man1_1.gif","<?php echo $imgloc; ?>man1_2.gif","<?php echo $imgloc; ?>man1_3.gif","<?php echo $imgloc; ?>man1_4.gif","<?php echo $imgloc; ?>man1_5.gif","<?php echo $imgloc; ?>gallow.gif","<?php echo $imgloc; ?>gallow5.gif","<?php echo $imgloc; ?>gallow4.gif","<?php echo $imgloc; ?>gallow3.gif","<?php echo $imgloc; ?>gallow2.gif","<?php echo $imgloc; ?>gallow1.gif","<?php echo $imgloc; ?>spacer.gif","<?php echo $imgloc; ?>man1win.gif"],
-			["<?php echo $imgloc; ?>woman1_0.gif","<?php echo $imgloc; ?>woman1_1.gif","<?php echo $imgloc; ?>woman1_2.gif","<?php echo $imgloc; ?>woman1_3.gif","<?php echo $imgloc; ?>woman1_4.gif","<?php echo $imgloc; ?>woman1_5.gif","<?php echo $imgloc; ?>gallow.gif","<?php echo $imgloc; ?>gallow5.gif","<?php echo $imgloc; ?>gallow4.gif","<?php echo $imgloc; ?>gallow3.gif","<?php echo $imgloc; ?>gallow2.gif","<?php echo $imgloc; ?>gallow1.gif","<?php echo $imgloc; ?>spacer.gif","<?php echo $imgloc; ?>woman1win.gif"],
-			["<?php echo $imgloc; ?>man2_0.gif","<?php echo $imgloc; ?>man2_1.gif","<?php echo $imgloc; ?>man2_2.gif","<?php echo $imgloc; ?>man2_3.gif","<?php echo $imgloc; ?>man2_4.gif","<?php echo $imgloc; ?>man2_5.gif","<?php echo $imgloc; ?>gallow.gif","<?php echo $imgloc; ?>gallow5.gif","<?php echo $imgloc; ?>gallow4.gif","<?php echo $imgloc; ?>gallow3.gif","<?php echo $imgloc; ?>gallow2.gif","<?php echo $imgloc; ?>gallow1.gif","<?php echo $imgloc; ?>spacer.gif","<?php echo $imgloc; ?>man2win.gif"],
-			["<?php echo $imgloc; ?>woman2_0.gif","<?php echo $imgloc; ?>woman2_1.gif","<?php echo $imgloc; ?>woman2_2.gif","<?php echo $imgloc; ?>woman2_3.gif","<?php echo $imgloc; ?>woman2_4.gif","<?php echo $imgloc; ?>woman2_5.gif","<?php echo $imgloc; ?>gallow.gif","<?php echo $imgloc; ?>gallow5.gif","<?php echo $imgloc; ?>gallow4.gif","<?php echo $imgloc; ?>gallow3.gif","<?php echo $imgloc; ?>gallow2.gif","<?php echo $imgloc; ?>gallow1.gif","<?php echo $imgloc; ?>spacer.gif","<?php echo $imgloc; ?>woman2win.gif"],
-			["<?php echo $imgloc; ?>wwoman0.gif","<?php echo $imgloc; ?>wwoman1.gif","<?php echo $imgloc; ?>wwoman2.gif","<?php echo $imgloc; ?>wwoman3.gif","<?php echo $imgloc; ?>wwoman4.gif","<?php echo $imgloc; ?>wwoman5.gif","<?php echo $imgloc; ?>gallow.gif","<?php echo $imgloc; ?>gallow5.gif","<?php echo $imgloc; ?>gallow4.gif","<?php echo $imgloc; ?>gallow3.gif","<?php echo $imgloc; ?>gallow2.gif","<?php echo $imgloc; ?>gallow1.gif","<?php echo $imgloc; ?>spacer.gif","<?php echo $imgloc; ?>wwomanwin.gif"],
-			["<?php echo $imgloc; ?>flower0.gif","<?php echo $imgloc; ?>flower1.gif","<?php echo $imgloc; ?>flower2.gif","<?php echo $imgloc; ?>flower3.gif","<?php echo $imgloc; ?>flower4.gif","<?php echo $imgloc; ?>flower5.gif","<?php echo $imgloc; ?>flower6.gif","<?php echo $imgloc; ?>flower7.gif","<?php echo $imgloc; ?>flower8.gif","<?php echo $imgloc; ?>flower9.gif","<?php echo $imgloc; ?>flower10.gif","<?php echo $imgloc; ?>flower11.gif","<?php echo $imgloc; ?>flower12.gif","<?php echo $imgloc; ?>flowerwin.gif"],
-			["<?php echo $imgloc; ?>plant0.gif","<?php echo $imgloc; ?>plant1.gif","<?php echo $imgloc; ?>plant2.gif","<?php echo $imgloc; ?>plant3.gif","<?php echo $imgloc; ?>plant4.gif","<?php echo $imgloc; ?>plant5.gif","<?php echo $imgloc; ?>plant6.gif","<?php echo $imgloc; ?>plant7.gif","<?php echo $imgloc; ?>plant8.gif","<?php echo $imgloc; ?>plant9.gif","<?php echo $imgloc; ?>plant10.gif","<?php echo $imgloc; ?>plant11.gif","<?php echo $imgloc; ?>plant12.gif","<?php echo $imgloc; ?>plantwin.gif"],
-			["<?php echo $imgloc; ?>tempcover0.jpg","<?php echo $imgloc; ?>tempcover1.jpg","<?php echo $imgloc; ?>tempcover2.jpg","<?php echo $imgloc; ?>tempcover3.jpg","<?php echo $imgloc; ?>tempcover4.jpg","<?php echo $imgloc; ?>tempcover5.jpg","<?php echo $imgloc; ?>tempcover6.jpg","<?php echo $imgloc; ?>plant7.gif","<?php echo $imgloc; ?>plant8.gif","<?php echo $imgloc; ?>plant9.gif","<?php echo $imgloc; ?>plant10.gif","<?php echo $imgloc; ?>plant11.gif","<?php echo $imgloc; ?>plant12.gif","<?php echo $imgloc; ?>tempcover0.jpg"],
-			["<?php echo $imgloc; ?>apple_0.gif","<?php echo $imgloc; ?>apple_1.gif","<?php echo $imgloc; ?>apple_2.gif","<?php echo $imgloc; ?>apple_3.gif","<?php echo $imgloc; ?>apple_4.gif","<?php echo $imgloc; ?>apple_5.gif","<?php echo $imgloc; ?>apple_6.gif","<?php echo $imgloc; ?>apple_7.gif","<?php echo $imgloc; ?>apple_8.gif","<?php echo $imgloc; ?>apple_9.gif","<?php echo $imgloc; ?>apple_10.gif","<?php echo $imgloc; ?>apple_11.gif","<?php echo $imgloc; ?>apple_12.gif","<?php echo $imgloc; ?>apple_win.gif"]
-		];
-
-		PreImage0 = new Image();
-		PreImage1 = new Image();
-		PreImage2 = new Image();
-		PreImage3 = new Image();
-		PreImage4 = new Image();
-		PreImage5 = new Image();
-		PreImage6 = new Image();
-	
-		defaultImage="<?php echo $imgloc; ?>plant7.gif";
-		maxWildCards=1;
-
-		imgSetId="imageset"; //  default avatar
-		lastImgId = "img7";
-		imgSetVal="6";
-		lastImg="";
-
-		firstload="1";
-		levelSet="levelset"; //  default level
-		lastLevelId = "level2";
-		levelSetVal="6";
-		lastLevelImg="";
-		won=0;
-		gameover=0;
-		played=0;
-		running=0;
-		lastChar="";
-		hintShown=0;
-		wordChosen="";
-		ns=document.getElementById&&!document.all;
-
-		step=5;
-		repeat="";
-
 		function initNameGame(){
-			
-			mClick(imgSetId,lastImgId,imgSetVal,'<?php echo $imgloc; ?>plant_on.gif','<?php echo $imgloc; ?>plant_off.gif');
-			mClick(levelSet,lastLevelId,levelSetVal,'<?php echo $imgloc; ?>radio_on4.gif','<?php echo $imgloc; ?>radio_off4.gif');
-			
-			tds=document.getElementById("charactertable").getElementsByTagName("TD");
-			
-			for(var i=0 ; i<tds.length ; i++){
-				tds[i].getElementsByTagName("span")[0].onmouseover=function(){this.offsetParent.bgColor='#CCCC99';};
-				tds[i].getElementsByTagName("span")[0].onmousedown=function(){/*this.offsetParent.bgColor='#FFFFFF';*/this.offsetParent.style.color='#FFFFFF';};
-				tds[i].getElementsByTagName("span")[0].onmouseout=function(){this.offsetParent.bgColor='';this.offsetParent.style.color='#000000';};
+			mClick(imgSetId,lastImgId,imgSetVal,'../images/games/namegame/plant_on.gif','../images/games/namegame/plant_off.gif');
+			mClick(levelSet,lastLevelId,levelSetVal,'../images/games/namegame/radio_on4.gif','../images/games/namegame/radio_off4.gif');
+
+            const tds = document.getElementById("charactertable").getElementsByTagName("TD");
+
+            for(let i=0 ; i<tds.length ; i++){
+				tds[i].getElementsByTagName("span")[0].onmouseover = function(){
+				    this.offsetParent.bgColor='#CCCC99';
+				};
+				tds[i].getElementsByTagName("span")[0].onmousedown = function(){
+				    this.offsetParent.style.color='#FFFFFF';
+				};
+				tds[i].getElementsByTagName("span")[0].onmouseout = function(){
+				    this.offsetParent.bgColor='';
+				    this.offsetParent.style.color='#000000';
+				};
 			
 				if(i<tds.length-1){
-					tds[i].getElementsByTagName("span")[0].onclick=function(){getKey(this.id);};
+					tds[i].getElementsByTagName("span")[0].onclick = function(){
+					    getKey(this.id);
+					};
 				}
 			
-				if(i==tds.length-1){
-					tds[i].getElementsByTagName("span")[0].onclick=function(){wildCard();};
+				if(i === tds.length-1){
+					tds[i].getElementsByTagName("span")[0].onclick = function(){
+					    wildCard();
+					};
 				}
 			}
 			getWordList();
@@ -160,320 +201,325 @@ $imgloc = "../images/games/namegame/";
 		}
 
 		function mOver(setId,imgId,imgOn){
-			if(setId==imgSetId&&running==0){
-				(lastImgId != imgId?document.getElementById(imgId).src = imgOn:"");
+			if(setId === imgSetId && running === 0){
+				(lastImgId !== imgId?document.getElementById(imgId).src = imgOn:"");
 			}
 		}
 
 		function mOut(setId,imgId,imgOff){
-			if(setId==imgSetId&&running==0){
-				(lastImgId != imgId?document.getElementById(imgId).src = imgOff:"");
+			if(setId === imgSetId && running === 0){
+				(lastImgId !== imgId?document.getElementById(imgId).src = imgOff:"");
 			}
 		}
 
 		function mClick(setId,imgId,imgVal,imgOn,imgOff){
-			if(running==1) return;
-		
-			if(setId==imgSetId){
-				document.getElementById(imgId).src = imgOn;
-				
-				if (lastImgId != ""){
-					(lastImgId != imgId?document.getElementById(lastImgId).src = lastImg:"");
-				}
-
-				lastImgId = imgId;
-				lastImg=imgOff;
-				avatar=imgVal;
+			if(running === 1) {
+			    return;
 			}
+
+            if (setId === imgSetId) {
+                document.getElementById(imgId).src = imgOn;
+
+                if (lastImgId !== "") {
+                    (lastImgId !== imgId ? document.getElementById(lastImgId).src = lastImg : "");
+                }
+
+                lastImgId = imgId;
+                lastImg = imgOff;
+                avatar = imgVal;
+            }
 		
-			if(setId==levelSet){
+			if(setId === levelSet){
 				document.getElementById(imgId).src = imgOn;
 
-				if (lastLevelId != ""){
-					(lastLevelId != imgId?document.getElementById(lastLevelId).src = lastLevelImg:"");
+				if (lastLevelId !== ""){
+					(lastLevelId !== imgId?document.getElementById(lastLevelId).src = lastLevelImg:"");
 				}
 
 				lastLevelId = imgId;
-				lastLevelImg=imgOff;
-				levelSetVal=imgVal;
+				lastLevelImg = imgOff;
+				levelSetVal = imgVal;
 			}
 			level();
 		}
 
 		function generate(){
-			numbersRange=mainList.length; //range
-			firstRun=true;
-			selectedNums = new Array();
-			
-			for(var i=0;i<numbersRange;i++){
-				wordChosen=false; 
-				rndnum=Math.floor(Math.random()*numbersRange);
-				
-				if(!firstRun){
-					for(var j=0;j<selectedNums.length;j++){
-						if(rndnum==selectedNums[j]){
-							wordChosen=true; 
-							i--;
-						}
-					} 
-				} 
-				
-				if(!wordChosen){ 
-					selectedNums[i]=rndnum; 
-					firstRun=false;
-				} 
-			}
-			wordCount=0;
+            const numbersRange = mainList.length;
+            let firstRun = true;
+            selectedNums = [];
+
+            let rndnum;
+            for (let i = 0; i < numbersRange; i++) {
+                wordChosen = false;
+                rndnum = Math.floor(Math.random() * numbersRange);
+
+                if (!firstRun) {
+                    for (let j = 0; j < selectedNums.length; j++) {
+                        if (rndnum === selectedNums[j]) {
+                            wordChosen = true;
+                            i--;
+                        }
+                    }
+                }
+
+                if (!wordChosen) {
+                    selectedNums[i] = rndnum;
+                    firstRun = false;
+                }
+            }
+            wordCount = 0;
 			newWord();
 		}
 
 		function newWord(){
-			if(wordCount==selectedNums.length){ 
-				// generate random list 
-				// Does this when you run out of words in current list
+			if(wordCount === selectedNums.length){
 				getWordList();
 				return;
 			}
 			
-			lastChar="";
-			running=0;
-			clearTimeout(repeat);  // splash
-			done=0;
-			temp="";
-			wildCount=0;
-			hintShown=0;
-			document.getElementById("hintdisplay").innerHTML="";
-			charDisplay=document.getElementById("charactertable").getElementsByTagName('span');
-			
-			for(var k=0;k<charDisplay.length;k++){
-				charDisplay[k].style.visibility="visible"; // show all hidden alphabet characters
+			lastChar = "";
+			running = 0;
+			clearTimeout(Number(repeat));
+            let temp;
+            wildCount = 0;
+            hintShown = 0;
+			document.getElementById("hintdisplay").innerHTML = "";
+            const charDisplay = document.getElementById("charactertable").getElementsByTagName('span');
+
+            for(let k=0; k<charDisplay.length; k++){
+				charDisplay[k].style.visibility = "visible";
 			}
-		
-			currentNum=selectedNums[wordCount];
-			chosenWord=mainList[currentNum][0].toLowerCase(); // chosen word
-			RealName=chosenWord;
-		
-			/////////////////////////TAKE OUT THE VAR. or SUBSP. BECUASE IT'S TOO LONG///////////////////////////
-			tempWord=chosenWord;
-			varpos=tempWord.indexOf(" var.");
-			ssppos=tempWord.indexOf(" subsp.");
-			secondWord='';
-			if (varpos != -1){
-				subWord=tempWord.substring(0, varpos);
-				secondWord=tempWord.substring(varpos);
-				secondWord=secondWord.toUpperCase();
-				chosenWord=subWord;
-			}
-			else if (ssppos != -1){
-				subWord=tempWord.substring(0, ssppos);
-				secondWord=tempWord.substring(ssppos);
-				secondWord=secondWord.toUpperCase();
-				chosenWord=subWord;
-			}
-			lengthofword=chosenWord;
-			wordanswer=chosenWord;
-			tempchosen = chosenWord;
-			templength = 0;
-			tempbuilder = "";
-			wordLength = tempchosen.length;
-			for(var m=0;m<wordLength;m++){
-				if(tempchosen.charAt(m)!=" "){
-					tempbuilder+=tempchosen.charAt(m);
+
+            currentNum = selectedNums[wordCount];
+            chosenWord = mainList[currentNum][0].toLowerCase();
+            RealName = chosenWord;
+
+            const tempWord = chosenWord;
+            const varpos = tempWord.indexOf(" var.");
+            const ssppos = tempWord.indexOf(" subsp.");
+            secondWord = '';
+            let subWord;
+            if (varpos !== -1) {
+                subWord = tempWord.substring(0, varpos);
+                secondWord = tempWord.substring(varpos);
+                secondWord = secondWord.toUpperCase();
+                chosenWord = subWord;
+            } else if (ssppos !== -1) {
+                subWord = tempWord.substring(0, ssppos);
+                secondWord = tempWord.substring(ssppos);
+                secondWord = secondWord.toUpperCase();
+                chosenWord = subWord;
+            }
+            const lengthofword = chosenWord;
+            const tempchosen = chosenWord;
+            let templength = 0;
+            let tempbuilder = "";
+            let wordLength = tempchosen.length;
+            for(let m=0; m<wordLength; m++){
+				if(tempchosen.charAt(m) !== " "){
+					tempbuilder += tempchosen.charAt(m);
 				}
 				else{
-					tempbuilder+="\u00A0\u00A0\u00A0\u00A0";
-					templength+=3;
+					tempbuilder += "\u00A0\u00A0\u00A0\u00A0";
+					templength += 3;
 				}
 			}
 			chosenWord = tempbuilder;
 			
 			initWildCard(chosenWord);
-			wordLength=lengthofword.length; // word length
+			wordLength=lengthofword.length;
 			wordLength+=templength;
 			temp="";
-			addedlength = 0;
-			
-			for(var n=0;n<wordLength;n++){
-				if((chosenWord.charAt(n)!=" ")&&(chosenWord.charAt(n)!="\u00A0")){
-					if(chosenWord.charAt(n)==".")
-						temp+="."; // displays the periods
+
+            for(let n=0; n<wordLength; n++){
+				if((chosenWord.charAt(n) !== " ") && (chosenWord.charAt(n) !== "\u00A0")){
+					if(chosenWord.charAt(n) === ".")
+						temp += ".";
 					else
-						temp+="_"; // replace the characters in chosen word with empty places
+						temp += "_";
 				}
 				else{
-					temp+="\u00A0";
+					temp += "\u00A0";
 				}
 			}
-			document.getElementById("attempt").innerHTML=temp; // display empty places
-			if ( firstload == "1"){
+			document.getElementById("attempt").innerHTML=temp;
+			if (firstload === "1"){
 				firstload = "0";
 			}
-			last=temp; // remember last attempt
-			wordChosen=1; // word has been selected
+            last = temp;
+            wordChosen = 1;
 			wordCount++;
-			document.getElementById("showhint").disabled=false;
-			
-			var now = new Date();
-		
-			PreImage0.src = 'tempcover0.jpg?' + now.getTime();
-			PreImage1.src = 'tempcover1.jpg?' + now.getTime();
-			PreImage2.src = 'tempcover2.jpg?' + now.getTime();
-			PreImage3.src = 'tempcover3.jpg?' + now.getTime();
-			PreImage4.src = 'tempcover4.jpg?' + now.getTime();
-			PreImage5.src = 'tempcover5.jpg?' + now.getTime();
-			PreImage6.src = 'tempcover6.jpg?' + now.getTime();
+			document.getElementById("showhint").disabled = false;
+
+            const now = new Date();
+
+            PreImage0.src = '../images/games/namegame/tempcover0.jpg?' + now.getTime();
+			PreImage1.src = '../images/games/namegame/tempcover1.jpg?' + now.getTime();
+			PreImage2.src = '../images/games/namegame/tempcover2.jpg?' + now.getTime();
+			PreImage3.src = '../images/games/namegame/tempcover3.jpg?' + now.getTime();
+			PreImage4.src = '../images/games/namegame/tempcover4.jpg?' + now.getTime();
+			PreImage5.src = '../images/games/namegame/tempcover5.jpg?' + now.getTime();
+			PreImage6.src = '../images/games/namegame/tempcover6.jpg?' + now.getTime();
 			level();
 		}
 
 		function newGame (){
-			if (gameover == 0)
-				played++;
-			document.getElementById("plays").innerHTML=played;
-			document.getElementById("rate").innerHTML=((won/played)*100).toFixed(2)+"%";
+			if (gameover === 0) {
+			    played++;
+			}
+			document.getElementById("plays").innerHTML = played.toString();
+			document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(2)+"%";
 			gameover = 0;
 			newWord();
 		}
 
 		function level(){
-			if(running==1)return;
-			guessCount=levelSetVal;
+			if(running === 1){
+			    return;
+			}
+            guessCount = levelSetVal;
+
+            if(avatar === 5){
+				if(guessCount === 12)
+					document.getElementById("hpic").src = "../images/games/namegame/flower12.gif";
+				else if(guessCount === 6)
+					document.getElementById("hpic").src = "../images/games/namegame/flower6.gif";
+				else if(guessCount === 3)
+					document.getElementById("hpic").src = "../images/games/namegame/flower3.gif";
+			}
+			else if(avatar === 6){
+				if(guessCount === 12)
+					document.getElementById("hpic").src = "../images/games/namegame/plant12.gif";
+				else if(guessCount === 6)
+					document.getElementById("hpic").src = "../images/games/namegame/plant7.gif";
+				else if(guessCount === 3)
+					document.getElementById("hpic").src = "../images/games/namegame/plant4.gif";
+			}
+			else if(avatar === 7){
+				if(guessCount === 12)
+					document.getElementById("hpic").src = "../images/games/namegame/plant12.gif";
+				else if(guessCount === 6)
+					document.getElementById("hpic").src = "../images/games/namegame/tempcover6.jpg";
+				else if(guessCount === 3)
+					document.getElementById("hpic").src = "../images/games/namegame/tempcover3.jpg";
+			}
+			else if(avatar === 8){
+				if(guessCount === 12)
+					document.getElementById("hpic").src = "../images/games/namegame/apple_12.gif";
+				else if(guessCount === 6)
+					document.getElementById("hpic").src = "../images/games/namegame/apple_6.gif";
+				else if(guessCount === 3)
+					document.getElementById("hpic").src = "../images/games/namegame/apple_6.gif";
+			}
+			else if(guessCount === 12){
+				document.getElementById("hpic").src = "../images/games/namegame/spacer.gif";
+			}
+			else if((avatar >= 0)&&(avatar <= 4)){
+				document.getElementById("hpic").src = "../images/games/namegame/gallows.gif";
+			}
 			
-			if(avatar=="5"){
-				if(guessCount=="12") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>flower12.gif";
-				else if(guessCount=="6") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>flower6.gif";
-				else if(guessCount=="3") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>flower3.gif";
-			}
-			else if(avatar=="6"){
-				if(guessCount=="12") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>plant12.gif";
-				else if(guessCount=="6") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>plant7.gif";
-				else if(guessCount=="3") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>plant4.gif";
-			}
-			else if(avatar=="7"){				// IF IT'S THE REVEALING PLANT PICTURE
-				if(guessCount=="12") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>plant12.gif";
-				else if(guessCount=="6") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>tempcover6.jpg";
-				else if(guessCount=="3") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>tempcover3.jpg";
-			}
-			else if(avatar=="8"){				// IF IT'S THE REVEALING PLANT PICTURE
-				if(guessCount=="12") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>apple_12.gif";
-				else if(guessCount=="6") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>apple_6.gif";
-				else if(guessCount=="3") 	
-					document.getElementById("hpic").src="<?php echo $imgloc; ?>apple_6.gif";
-			}
-			else if(guessCount=="12"){
-				document.getElementById("hpic").src="<?php echo $imgloc; ?>spacer.gif";
-			}
-			else if((avatar>="0")&&(avatar<="4")){
-				document.getElementById("hpic").src="<?php echo $imgloc; ?>gallows.gif";
-			}
-			
-			document.getElementById("counter").innerHTML="Chances left = "+guessCount; // visual counter
-			document.getElementById("splash").style.display="none";  // splash
+			document.getElementById("counter").innerHTML = "Chances left = "+guessCount;
+			document.getElementById("splash").style.display = "none";
 		}
 
 		function getKey(e){
-			running=1;
-			keyCode=(!ns)?event.keyCode:e.which; // which key has been pressed
-			chkChar=e;
-			temp="";
-			
-			if(keyCode){
-				if(keyCode>=65&&keyCode<=90){ // if caps on
-					keyCode+=32;
-				}
-				currentChar=keyCode; // character chosen by key
-			}
-			else{
-				currentChar=chkChar.charCodeAt(0) // character chosen by mouse
-			}
+			let myNewString;
+            running = 1;
+            let keyCode = (!ns) ? event.keyCode : e.which;
+            const chkChar = e;
+            let temp = "";
 
-			if(currentChar==13){ // press return key to choose a new word
+            let currentChar;
+            if (keyCode) {
+                if (keyCode >= 65 && keyCode <= 90) {
+                    keyCode += 32;
+                }
+                currentChar = keyCode;
+            } else {
+                currentChar = chkChar.charCodeAt(0);
+            }
+
+			if(currentChar === 13){
 				newWord();
 				return;
 			}
 
-			if(wordChosen==0){return;} // word not selected
+			if(wordChosen === 0){
+			    return;
+			}
 
-			for(var k=0;k<wildCardArr.length;k++){ // remove from wildCardArr
-				if(wildCardArr[k]==String.fromCharCode(currentChar)){
+			for(let k=0; k<wildCardArr.length; k++){
+				if(wildCardArr[k] === String.fromCharCode(currentChar)){
 					wildCardArr.splice(k, 1);
 				}
 			}
 
-			if(lastChar==currentChar||currentChar<44||currentChar>46&&currentChar<97||currentChar>122){
-				return; // if not lowercase alphabet or if current key is the same as the last key pressed
+			if(lastChar === currentChar||currentChar<44||currentChar>46&&currentChar<97||currentChar>122){
+				return;
 			}
 
-			if(document.getElementById(String.fromCharCode(currentChar)).style.visibility=="hidden"){return;}
+			if(document.getElementById(String.fromCharCode(currentChar)).style.visibility === "hidden"){
+			    return;
+			}
 
-			correct=false
-			document.getElementById(String.fromCharCode(currentChar)).style.visibility="hidden"; // hide chosen character
+            let correct = false;
+            document.getElementById(String.fromCharCode(currentChar)).style.visibility = "hidden";
 
-			for(var n=0;n<last.length;n++){ // run through chosen word characters
-				if(String.fromCharCode(currentChar)==chosenWord.charAt(n)){ // if selected character is in the chosen word
-					temp+=chosenWord.charAt(n); // replace empty place with character
-					correct=true;
+			for(let n=0; n<last.length; n++){
+				if(String.fromCharCode(currentChar) === chosenWord.charAt(n)){
+					temp += chosenWord.charAt(n);
+					correct = true;
 				}
 				else{
-					temp+=last.charAt(n); // replace with empty place
+					temp += last.charAt(n);
 				}
 			}
 
-			if(correct==false&&guessCount>0){ // if selected character not correct
-				guessCount--; // deduct 1 from guesses left
-				document.getElementById("hpic").src=hangpics[avatar][guessCount]; // show pic
+			if(correct === false && guessCount > 0){
+				guessCount--;
+				document.getElementById("hpic").src = hangpics[avatar][guessCount];
 			}
 			
-			document.getElementById("attempt").innerHTML=temp.toUpperCase(); // change correct character chosen to uppercase
-			document.getElementById("counter").innerHTML="Chances left = "+guessCount; // visual counter
+			document.getElementById("attempt").innerHTML = temp.toUpperCase();
+			document.getElementById("counter").innerHTML = "Chances left = "+guessCount;
 			
-			last=temp; // remember last attempt
-			lastChar=currentChar; // remember last character selected
+			last = temp;
+			lastChar = currentChar;
 			
-			if(guessCount==0){ // if counter reaches zero
-				wordChosen=0;
-				gameover=1;
-				document.getElementById("counter").innerHTML="<div id='rw' style='width:190px;text-align:center;' onmouseover=\"this.className='buttonover'\" onmouseout=\"this.className='buttonout'\" onmousedown=\"this.className='buttondown'\" onmouseup=\"this.className='buttonup'\" class='buttonout' onclick='showWord()'><b>Reveal the Species</b></div>";
+			if(guessCount === 0){
+				wordChosen = 0;
+				gameover = 1;
+				document.getElementById("counter").innerHTML = "<div id='rw' style='width:190px;text-align:center;' onmouseover=\"this.className='buttonover'\" onmouseout=\"this.className='buttonout'\" onmousedown=\"this.className='buttondown'\" onmouseup=\"this.className='buttonup'\" class='buttonout' onclick='showWord()'><b>Reveal the Species</b></div>";
 				played++;
-				document.getElementById("plays").innerHTML=played;
-				var myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
-				document.getElementById("splash").innerHTML="<div style='font-size:20px;color:red;text-align:center;'>Too Bad</div><div style='font-size:16px;color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>"; // splash
-				document.getElementById("splash").style.display="";  // splash
-				document.getElementById("rate").innerHTML=((won/played)*100).toFixed(0)+"%";
-				gameEnd(); // splash
+				document.getElementById("plays").innerHTML = played.toString();
+                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                document.getElementById("splash").innerHTML = "<div style='font-size:20px;color:red;text-align:center;'>Too Bad</div><div style='font-size:16px;color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>";
+				document.getElementById("splash").style.display = "";
+				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
+				gameEnd();
 			}
 
-			if(temp==chosenWord){ // if correct word found
-				wordChosen=0;
-				gameover=1;
+			if(temp === chosenWord){
+				wordChosen = 0;
+				gameover = 1;
 				played++;
-				document.getElementById("plays").innerHTML=played;
+				document.getElementById("plays").innerHTML = played.toString();
 				won++;
-				document.getElementById("wins").innerHTML=won;
-				var myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
-				if (secondWord!='')
-					document.getElementById("attempt").innerHTML=chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>"; // change chosen word to uppercase
+				document.getElementById("wins").innerHTML = won.toString();
+                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                if (secondWord !== '')
+					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>";
 				else
-					document.getElementById("attempt").innerHTML=chosenWord.toUpperCase(); // change chosen word to uppercase
-				document.getElementById("splash").innerHTML="<font color = \"#336699\">You Win!</font><br><a href = \"#\" onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin')\"> <font size = \"4\" color = \"#0000FF\"><center><u><b><br>Click here for more about this species</b></u></center></font></a><br>"; // splash
-				document.getElementById("hintdisplay").innerHTML=mainList[currentNum][1]; //show the family
-				document.getElementById("splash").style.display="";  // splash
-				document.getElementById("rate").innerHTML=((won/played)*100).toFixed(0)+"%";
-				document.getElementById("hpic").src=hangpics[avatar][13];
-				gameEnd(); // splash
+					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase();
+				document.getElementById("splash").innerHTML = "<span style='color:#336699'>You Win!</span><br><a href = '#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin')\"> <span style='font-size:4px;color:#0000FF;text-align:center;'><u><b><br>Click here for more about this species</b></u></span></a><br>";
+                document.getElementById("hintdisplay").innerHTML = mainList[currentNum][1];
+				document.getElementById("splash").style.display = "";
+				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
+				document.getElementById("hpic").src = hangpics[avatar][13];
+				gameEnd();
 			}
 			
-			if(guessCount==1){
+			if(guessCount === 1){
 				document.getElementById("showhint").disabled=true;
 				document.getElementById("?").style.visibility="hidden";
 			}
@@ -481,74 +527,81 @@ $imgloc = "../images/games/namegame/";
 
 		function showHint(){
 			running=1;
-			if(guessCount<=1||done==1){return;}
-			if(hintShown==0){
-				guessCount--;
-				hintShown=1;
-				document.getElementById("hintdisplay").innerHTML=mainList[currentNum][1]; //show the family
-				document.getElementById("counter").innerHTML="Chances left = "+guessCount; // visual counter
-				document.getElementById("hpic").src=hangpics[avatar][guessCount];
+			if(guessCount <= 1){
+			    return;
 			}
-			document.getElementById("showhint").disabled=true;
+			if(hintShown === 0){
+				guessCount--;
+				hintShown = 1;
+				document.getElementById("hintdisplay").innerHTML = mainList[currentNum][1];
+				document.getElementById("counter").innerHTML = "Chances left = "+guessCount;
+				document.getElementById("hpic").src = hangpics[avatar][guessCount];
+			}
+			document.getElementById("showhint").disabled = true;
 		}
 
-		function showWord(){ // reveals the chosen word if counter reaches zero
-			if(wordChosen==0&&guessCount!=0)
-				{return;}
-			if (secondWord!='')
-				document.getElementById("attempt").innerHTML=chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>"; // change chosen word to uppercase
-			else
-				document.getElementById("attempt").innerHTML=chosenWord.toUpperCase(); // change chosen word to uppercase
-			hintShown=1;
-			document.getElementById("hintdisplay").innerHTML=/*list+"<br>"+*/mainList[currentNum][1];
-			clearTimeout(repeat);  // splash
+		function showWord(){
+			if(wordChosen === 0 && guessCount !== 0){
+			    return;
+			}
+			if (secondWord !== '') {
+                document.getElementById("attempt").innerHTML = chosenWord.toUpperCase() + "<br><span style=\"font-size:12px\">" + secondWord + "</span>";
+            }
+			else {
+                document.getElementById("attempt").innerHTML = chosenWord.toUpperCase();
+            }
+			hintShown = 1;
+			document.getElementById("hintdisplay").innerHTML = mainList[currentNum][1];
+			clearTimeout(repeat);
 			document.getElementById("rw").style.display="none";
 		}
 
 		function gameEnd(){
-			done=1;
-			sFont=1; // Smallest font size
-			lFont=50; // Largest font size
+			done = 1;
+			sFont = 1;
+			lFont = 50;
 			goSplash();
 		}
 
 		function goSplash(){
-			document.getElementById("splash").style.visibility="visible";
-			document.getElementById("splash").style.fontSize=30;
-			sFont+=step;
-			repeat=setTimeout("goSplash()",10); // Speed
-			if(sFont>lFont){
+			document.getElementById("splash").style.visibility = "visible";
+			document.getElementById("splash").style.fontSize = '30px';
+			sFont += step;
+			repeat = setTimeout("goSplash()",10);
+			if(sFont > lFont){
 				clearTimeout(repeat);
 			}
 		}
 
 		function initWildCard(str){
-			wildCardArr=[];
-			wildCardArr[0]=str.charAt(0);
-			for(var i=0;i<str.length;i++){
-				isIn=0;
-				for(var j=0;j<wildCardArr.length;j++){
-					if(str.charAt(i)==wildCardArr[j]){
-						isIn=1;
-					}
-				}
-				if(isIn==0&&str.charAt(i)!=" "){
-					wildCardArr[wildCardArr.length]=str.charAt(i);
-				}
-			}
-			wildWordLength=wildCardArr.length; // for checking how may wild cards used against length of word
+			wildCardArr = [];
+			wildCardArr[0] = str.charAt(0);
+            let isIn;
+            for (let i = 0; i < str.length; i++) {
+                isIn = 0;
+                for (let j = 0; j < wildCardArr.length; j++) {
+                    if (str.charAt(i) === wildCardArr[j]) {
+                        isIn = 1;
+                    }
+                }
+                if (isIn === 0 && str.charAt(i) !== " ") {
+                    wildCardArr[wildCardArr.length] = str.charAt(i);
+                }
+            }
 		}
 
 		function wildCard(){
-			if(wildCardArr.length==0||guessCount<=1){return;}
+			if(wildCardArr.length === 0||guessCount <= 1){
+			    return;
+			}
 			wildCount++;
-			rdm=Math.floor(Math.random()*wildCardArr.length);
-			wildCardChar=wildCardArr[rdm]; //.splice(rdm, 1).toString()
-			if(wildCount==maxWildCards){
+            const rdm = Math.floor(Math.random() * wildCardArr.length);
+            const wildCardChar = wildCardArr[rdm]; //.splice(rdm, 1).toString()
+			if(wildCount === maxWildCards){
 				document.getElementById("?").style.visibility="hidden";
 			}
 			guessCount--;
-			document.getElementById("hpic").src=hangpics[avatar][guessCount];
+			document.getElementById("hpic").src = hangpics[avatar][guessCount];
 			getKey(wildCardChar);
 		}
 
@@ -558,7 +611,7 @@ $imgloc = "../images/games/namegame/";
 <body onload="initNameGame()">
 
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 	echo '<div class="navpath">';
 	echo '<a href="../index.php">Home</a> &gt;&gt; ';
     echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
@@ -568,7 +621,6 @@ $imgloc = "../images/games/namegame/";
 	echo '</div>';
 	?>
 	
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<div style="width:100%;text-align:center;">
 			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
@@ -578,22 +630,16 @@ $imgloc = "../images/games/namegame/";
 			What am I thinking of? 
 		</div>
 		<div style="width:140px;margin-left:auto;margin-right:auto;margin-top:20px;">
-			<div id="imageset" style="cursor:hand;cursor:pointer;">
-				<img onclick="mClick(this.parentNode.id,this.id,'6','<?php echo $imgloc; ?>plant_on.gif','<?php echo $imgloc; ?>plant_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>plant_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>plant_off.gif')" src="<?php echo $imgloc; ?>plant_off.gif" id="img7">
-				<img onclick="mClick(this.parentNode.id,this.id,'5','<?php echo $imgloc; ?>flower_on.gif','<?php echo $imgloc; ?>flower_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>flower_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>flower_off.gif')" src="<?php echo $imgloc; ?>flower_off.gif" id="img6">
-				<img onclick="mClick(this.parentNode.id,this.id,'8','<?php echo $imgloc; ?>apple_on.gif','<?php echo $imgloc; ?>apple_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>apple_off.gif')" src="<?php echo $imgloc; ?>apple_off.gif" id="img8">
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'0','<?php echo $imgloc; ?>man1_head_on.gif','<?php echo $imgloc; ?>man1_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man1_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man1_head_off.gif')" src="<?php echo $imgloc; ?>man1_head_off.gif" id="img1">-->
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'1','<?php echo $imgloc; ?>woman1_head_on.gif','<?php echo $imgloc; ?>woman1_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman1_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman1_head_off.gif')" src="<?php echo $imgloc; ?>woman1_head_off.gif" id="img2">-->
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'2','<?php echo $imgloc; ?>man2_head_on.gif','<?php echo $imgloc; ?>man2_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man2_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>man2_head_off.gif')" src="<?php echo $imgloc; ?>man2_head_off.gif" id="img3">-->
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'3','<?php echo $imgloc; ?>woman2_head_on.gif','<?php echo $imgloc; ?>woman2_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman2_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>woman2_head_off.gif')" src="<?php echo $imgloc; ?>woman2_head_off.gif" id="img4">-->
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'4','<?php echo $imgloc; ?>wwoman_head_on.gif','<?php echo $imgloc; ?>wwoman_head_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>wwoman_head_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>wwoman_head_off.gif')" src="<?php echo $imgloc; ?>wwoman_head_off.gif" id="img5">-->
-				<!--<img onclick="mClick(this.parentNode.id,this.id,'7','<?php echo $imgloc; ?>hidden_on.gif','<?php echo $imgloc; ?>hidden_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'<?php echo $imgloc; ?>hidden_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'<?php echo $imgloc; ?>hidden_off.gif')" src="<?php echo $imgloc; ?>hidden_off.gif" id="img8">-->
+			<div id="imageset" style="cursor:pointer;">
+				<img onclick="mClick(this.parentNode.id,this.id,'6','../images/games/namegame/plant_on.gif','../images/games/namegame/plant_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'../images/games/namegame/plant_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'../images/games/namegame/plant_off.gif')" src="../images/games/namegame/plant_off.gif" id="img7">
+				<img onclick="mClick(this.parentNode.id,this.id,'5','../images/games/namegame/flower_on.gif','../images/games/namegame/flower_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'../images/games/namegame/flower_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'../images/games/namegame/flower_off.gif')" src="../images/games/namegame/flower_off.gif" id="img6">
+				<img onclick="mClick(this.parentNode.id,this.id,'8','../images/games/namegame/apple_on.gif','../images/games/namegame/apple_off.gif')" onmouseover="mOver(this.parentNode.id,this.id,'../images/games/namegame/apple_on.gif')" onmouseout="mOut(this.parentNode.id,this.id,'../images/games/namegame/apple_off.gif')" src="../images/games/namegame/apple_off.gif" id="img8">
 			</div> 
 		</div>
 		<div style="width:600px;margin-left:auto;margin-right:auto;margin-top:20px;">
 			<div style="float:left;width:250px;">
 				<div style="width:150px;margin-left:auto;margin-right:auto;">
-					<img id="hpic" style="width:150px;" src="<?php echo $imgloc; ?>plant7.gif">
+					<img id="hpic" style="width:150px;" src="../images/games/namegame/plant7.gif">
 				</div>
 				<div id="counter" style="text-align:center;width:190px;margin-left:auto;margin-right:auto;">Chances left = 6</div>
 			</div> 
@@ -602,10 +648,10 @@ $imgloc = "../images/games/namegame/";
 					<div style="margin-top:30px;">
 						<b>Difficulty</b>
 					</div>
-					<div id="levelset" style="cursor:hand;cursor:pointer">
-						Hard <img onclick="mClick(this.parentNode.id,this.id,'3','<?php echo $imgloc; ?>radio_on4.gif','<?php echo $imgloc; ?>radio_off4.gif')" src="<?php echo $imgloc; ?>radio_off4.gif" id="level1">
-						<img onclick="mClick(this.parentNode.id,this.id,'6','<?php echo $imgloc; ?>radio_on4.gif','<?php echo $imgloc; ?>radio_off4.gif')" src="<?php echo $imgloc; ?>radio_off4.gif" id="level2">
-						<img onclick="mClick(this.parentNode.id,this.id,'12','<?php echo $imgloc; ?>radio_on4.gif','<?php echo $imgloc; ?>radio_off4.gif')" src="<?php echo $imgloc; ?>radio_off4.gif" id="level3"> Easy
+					<div id="levelset" style="cursor:pointer">
+						Hard <img onclick="mClick(this.parentNode.id,this.id,'3','../images/games/namegame/radio_on4.gif','../images/games/namegame/radio_off4.gif')" src="../images/games/namegame/radio_off4.gif" id="level1">
+						<img onclick="mClick(this.parentNode.id,this.id,'6','../images/games/namegame/radio_on4.gif','../images/games/namegame/radio_off4.gif')" src="../images/games/namegame/radio_off4.gif" id="level2">
+						<img onclick="mClick(this.parentNode.id,this.id,'12','../images/games/namegame/radio_on4.gif','../images/games/namegame/radio_off4.gif')" src="../images/games/namegame/radio_off4.gif" id="level3"> Easy
 					</div>
 					<div style="margin-top:10px;">
 						Games Played <span id="plays">0</span><br>
@@ -620,7 +666,7 @@ $imgloc = "../images/games/namegame/";
 			</div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:20px;">
-			<div id="hintdisplay" style="font-size:20;"></div>
+			<div id="hintdisplay" style="font-size:20px;"></div>
 		</div>
 		<div style="clear:both;width:100%;text-align:center;padding-top:20px;">
 			<div id="attempt" style="letter-spacing:5px;font-weight:bold;font-size:20px"></div>
@@ -629,8 +675,8 @@ $imgloc = "../images/games/namegame/";
 			<div id="splash" style="color:#336699"></div>
 		</div>
 		<div style="clear:both;width:450px;margin-left:auto;margin-right:auto;margin-top:10px;">
-			<table id="charactertable" class="lettertable" border="0" width="450">
-				<tr align="center" height = '40' valign = "middle">
+			<table id="charactertable" class="lettertable" style="border:0;width:450px;">
+				<tr style="text-align:center;height:40px;vertical-align:middle;">
 					<td><span id="a" style="display:block">A</span></td>
 					<td><span id="b" style="display:block">B</span></td>
 					<td><span id="c" style="display:block">C</span></td>
@@ -641,7 +687,7 @@ $imgloc = "../images/games/namegame/";
 					<td><span id="h" style="display:block">H</span></td>
 					<td><span id="i" style="display:block">I</span></td>
 				</tr>
-				<tr align="center" height = '40'>
+				<tr style="text-align:center;height:40px;">
 					<td><span id="j" style="display:block">J</span></td>
 					<td><span id="k" style="display:block">K</span></td>
 					<td><span id="l" style="display:block">L</span></td>
@@ -652,7 +698,7 @@ $imgloc = "../images/games/namegame/";
 					<td><span id="q" style="display:block">Q</span></td>
 					<td><span id="r" style="display:block">R</span></td>
 				</tr>
-				<tr align="center" height = '40'>
+				<tr style="text-align:center;height:40px;">
 					<td><span id="s" style="display:block">S</span></td>
 					<td><span id="t" style="display:block">T</span></td>
 					<td><span id="u" style="display:block">U</span></td>
@@ -661,7 +707,7 @@ $imgloc = "../images/games/namegame/";
 					<td><span id="x" style="display:block">X</span></td>
 					<td><span id="y" style="display:block">Y</span></td>
 					<td><span id="z" style="display:block">Z</span></td>
-					<td valign="center">
+					<td style="vertical-align: center;">
 						<span id="qmark" style="display:block;" class="question"  title="Wild Card">?</span>
 					</td>
 				</tr>
@@ -682,9 +728,8 @@ $imgloc = "../images/games/namegame/";
 			</div>
 		</div>
 	</div>
-	<!-- This ends inner text! -->
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

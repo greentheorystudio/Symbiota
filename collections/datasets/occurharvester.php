@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSupport.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
@@ -15,71 +15,63 @@ if($IS_ADMIN){
 	$collList[] = 'all';
 }
 else{
-	if(array_key_exists("CollEditor",$USER_RIGHTS)){
-		if(in_array($collid,$USER_RIGHTS["CollEditor"])){
+	if(array_key_exists('CollEditor',$USER_RIGHTS)){
+		if(in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 			$isEditor = 1;
 		}
-		$collList = $USER_RIGHTS["CollEditor"];
+		$collList = $USER_RIGHTS['CollEditor'];
 	}
-	if(array_key_exists("CollAdmin",$USER_RIGHTS)){
-		if(in_array($collid,$USER_RIGHTS["CollAdmin"])){
+	if(array_key_exists('CollAdmin',$USER_RIGHTS)){
+		if(in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 			$isEditor = 1;
 		}
-		$collList = array_merge($collList,$USER_RIGHTS["CollAdmin"]);
+		$collList = array_merge($collList,$USER_RIGHTS['CollAdmin']);
 	}
 }
 
-if($isEditor){
-	if($action == 'Download Records'){
-		$harvManager->exportCsvFile();
-		exit;
-	}
-	else{
-		
-	}
+if($isEditor && $action === 'Download Records') {
+    $harvManager->exportCsvFile();
+    exit;
 }
 ?>
 <!DOCTYPE HTML>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE; ?> - Occurrence Harvester</title>
+	    <title><?php echo $DEFAULT_TITLE; ?> - Occurrence Harvester</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-		<script language="javascript" type="text/javascript">
-			function validateDownloadForm(f){
-				
-				return true;
-			}
-
+		<script type="text/javascript">
 			function loadOccurRecord(fieldObj){
-				var occid = fieldObj.value;
-				fieldObj.value = "";
-				if(!occid) return false;
-				if(document.getElementById("occid-"+occid)) return false;
+                const occid = fieldObj.value;
+                fieldObj.value = "";
+				if(!occid) {
+				    return false;
+				}
+				if(document.getElementById("occid-"+occid)) {
+				    return false;
+				}
 
-				var newAnchor = document.createElement('a');
-				newAnchor.setAttribute("id", "a-"+occid);
+                const newAnchor = document.createElement('a');
+                newAnchor.setAttribute("id", "a-"+occid);
 				newAnchor.setAttribute("href", "#");
 				newAnchor.setAttribute("onclick", "openIndPopup("+occid+");return false;");
-				var newText = document.createTextNode(occid);
-				newAnchor.appendChild(newText);
+                const newText = document.createTextNode(occid);
+                newAnchor.appendChild(newText);
 
-				var newDiv = document.createElement('div');
-				newDiv.setAttribute("id", "occid-"+occid);
+                const newDiv = document.createElement('div');
+                newDiv.setAttribute("id", "occid-"+occid);
 				newDiv.appendChild(newAnchor);
 
-				var newInput = document.createElement('input');
-				newInput.setAttribute("type", "hidden");
+                const newInput = document.createElement('input');
+                newInput.setAttribute("type", "hidden");
 				newInput.setAttribute("name", "occid[]");
 				newInput.setAttribute("value", occid);
 
-				var listElem = document.getElementById("occidlist");
-				//listElem.appendChild(newDiv);
-				listElem.insertBefore(newDiv,listElem.childNodes[0]);
+                const listElem = document.getElementById("occidlist");
+                listElem.insertBefore(newDiv,listElem.childNodes[0]);
 				listElem.appendChild(newInput);
 
 				document.getElementById("emptylistdiv").style.display = "none";
@@ -95,9 +87,9 @@ if($isEditor){
 					dataType: "json",
 					data: { occid: occidInVal }
 				}).done(function( data ) {
-					var aElem = document.getElementById("a-"+occidInVal);
-					var newText;
-					if(data != ""){
+                    const aElem = document.getElementById("a-" + occidInVal);
+                    let newText;
+                    if(data !== ""){
 						newText = document.createTextNode(" - "+data.recordedby+" #"+data.recordnumber+" ("+data.eventdate+")");
 					}
 					else{
@@ -108,23 +100,25 @@ if($isEditor){
 			}
 
 			function openIndPopup(occid){
-				var urlStr = '../individual/index.php?occid=' + occid;
-				var wWidth = 900;
-				if(document.getElementById('maintable').offsetWidth){
+                const urlStr = '../individual/index.php?occid=' + occid;
+                let wWidth = 900;
+                if(document.getElementById('maintable').offsetWidth){
 					wWidth = document.getElementById('maintable').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
 				}
-				newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+                const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 				return false;
 			}
 		</script>
 	</head>
 	<body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'>Home</a> &gt;&gt; 
@@ -137,7 +131,7 @@ if($isEditor){
 			Once list is complete, you can enter your catalog number in the text field and then transfer to your collection 
 			or file export to a file that can be imported into your local database. 
 		</div>
-		<div style="margin:20px 0px">
+		<div style="margin:20px 0;">
 			<hr/>
 		</div>
 		<div style="width:450px;float:right;">
@@ -171,7 +165,7 @@ if($isEditor){
 
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../../footer.php');
 	?>
 	</body>
 </html>

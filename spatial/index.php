@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
-ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+ini_set('max_execution_time', 180);
 
 if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
@@ -44,11 +44,8 @@ $dbArr = array();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=16" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-1.10.2.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.mobile-1.4.0.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-1.9.1.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui-1.10.4.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
@@ -66,6 +63,7 @@ $dbArr = array();
             document.getElementById('spatialpanel').style.height = winHeight;
 
             $("#accordion").accordion({
+                icons: null,
                 collapsible: true,
                 heightStyle: "fill"
             });
@@ -177,7 +175,7 @@ $dbArr = array();
                             </div>
                         </div>
                         <div id="searchcriteria">
-                            <div name="spatialcriteriasearchform" id="spatialcriteriasearchform">
+                            <div id="spatialcriteriasearchform">
                                 <div style="height:25px;">
                                     <div style="float:right;">
                                         <button data-role="none" type=button id="resetform" name="resetform" onclick='window.open("index.php", "_self");' >Reset</button>
@@ -1017,7 +1015,6 @@ $dbArr = array();
         showWorking();
         const overlay = document.getElementById("vectorizesourcelayer").value;
         const overlaySource = overlayLayers[overlay]['source'];
-        const overlayName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+overlay;
         const features = selectInteraction.getFeatures().getArray();
         const boundsFeature = features[0].clone();
         const geoJSONFormat = new ol.format.GeoJSON();
@@ -1093,7 +1090,6 @@ $dbArr = array();
             operation: function (pixels, data) {
                 let result;
                 const operator = data.operator;
-                const rgbarr = data.rgbarr;
                 const value1 = pixels[0][4];
                 const value2 = pixels[1][4];
                 if(operator === '+') {
@@ -1379,7 +1375,6 @@ $dbArr = array();
                             infoArr['DefaultCRS'] = '';
                             const sourceIndex = dragDropTarget + 'Source';
                             const format = new ol.format.GeoJSON();
-                            const res = map.getView().getResolution();
                             const features = format.readFeatures(geojson, {
                                 featureProjection: 'EPSG:3857'
                             });
@@ -1404,7 +1399,6 @@ $dbArr = array();
     pointInteraction.on('select', function(event) {
         let clusterCnt;
         let newfeature;
-        let f;
         let cFeatures;
         const newfeatures = event.selected;
         const zoomLevel = map.getView().getZoom();
@@ -1487,17 +1481,17 @@ $dbArr = array();
         }
     });
 
-    selectedFeatures.on('add', function(event) {
+    selectedFeatures.on('add', function() {
         setSpatialParamBox();
         buildQueryStrings();
     });
 
-    selectedFeatures.on('remove', function(event) {
+    selectedFeatures.on('remove', function() {
         setSpatialParamBox();
         buildQueryStrings();
     });
 
-    selectsource.on('change', function(event) {
+    selectsource.on('change', function() {
         if(!draw){
             const featureCnt = selectsource.getFeatures().length;
             if(featureCnt > 0){

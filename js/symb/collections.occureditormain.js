@@ -1,7 +1,7 @@
-var pauseSubmit = false;
-var imgAssocCleared = false;
-var voucherAssocCleared = false;
-var abortFormVerification = false;
+let pauseSubmit = false;
+let imgAssocCleared = false;
+let voucherAssocCleared = false;
+let abortFormVerification = false;
 
 $(document).ready(function() {
 
@@ -12,20 +12,15 @@ $(document).ready(function() {
 		return split( term ).pop();
 	}
 
-	if(/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
-		var ffversion=new Number(RegExp.$1);
-		if(ffversion < 7 ) alert("You are using an older version of Firefox. For best results, we recommend that you update your browser.");
-	}
-
 	$("#occedittabs").tabs({
-		select: function(event, ui) {
+		select: function() {
 			if(verifyLeaveForm()){
 				document.fullform.submitaction.disabled = true;
 			}
 			else{
 				return false;
 			}
-			var statusObj = document.getElementById("statusdiv");
+			const statusObj = document.getElementById("statusdiv");
 			if(statusObj){
 				statusObj.style.display = "none";
 			}
@@ -51,18 +46,18 @@ $(document).ready(function() {
 				fieldChanged('ometid');
 			}
 		},
-		change: function( event, ui ) {
-			if($( this ).val() == ""){
+		change: function() {
+			if($( this ).val() === ""){
 				$( "#ometidinput" ).val("");
 			}
 			else{
-				if($( "#ometidinput" ).val() == ""){
+				if($( "#ometidinput" ).val() === ""){
 					$.ajax({
 						type: "POST",
 						url: "rpc/exsiccativalidation.php",
 						data: { term: $( this ).val() }
 					}).done(function( msg ) {
-						if(msg == ""){
+						if(msg === ""){
 							alert("Exsiccati title not found within system");
 						}
 						else{
@@ -78,7 +73,7 @@ $(document).ready(function() {
 	$("#ffsciname").autocomplete({ 
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,
-		change: function(event, ui) {
+		change: function() {
 			$( "#tidinterpreted" ).val("");
 			$( 'input[name=scientificnameauthorship]' ).val("");
 			$( 'input[name=family]' ).val("");
@@ -100,17 +95,17 @@ $(document).ready(function() {
 		}
 	});
 
-	var cookies = document.cookie
+	const cookies = document.cookie;
 	if(cookies.indexOf("localauto") > -1){
-		var cookieName = "localauto=";
-		var ca = document.cookie.split(';');
-		for(var i = 0; i <ca.length; i++) {
-			var c = ca[i];
-			while (c.charAt(0)==' ') {
+		const cookieName = "localauto=";
+		const ca = document.cookie.split(';');
+		for(let i = 0; i <ca.length; i++) {
+			let c = ca[i];
+			while (c.charAt(0) === ' ') {
 				c = c.substring(1);
 			}
-			if(c.indexOf(cookieName) == 0) {
-				if(c.substring(cookieName.length) == "1") $( 'input[name=localautodeactivated]' ).prop('checked', true);
+			if(c.indexOf(cookieName) === 0) {
+				if(c.substring(cookieName.length) === "1") $( 'input[name=localautodeactivated]' ).prop('checked', true);
 			}
 		}
 	}
@@ -132,9 +127,8 @@ $(document).ready(function() {
 			},
 			minLength: 4,
 			select: function( event, ui ) {
-				var editForm = document.fullform;
 				$.each(ui.item, function(k, v) {
-					if($( "input[name="+k+"]" ).val() == ""){
+					if($( "input[name="+k+"]" ).val() === ""){
 						$( "input[name="+k+"]" ).val(v);
 						$( "input[name="+k+"]" ).css("backgroundColor","lightblue");
 						fieldChanged(k);
@@ -148,14 +142,13 @@ $(document).ready(function() {
 		}
 	}
 
-	//Misc fields with lookups
 	$("#ffcountry").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "rpc/lookupCountry.php", { term: request.term }, response );
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(event, ui){
+		change: function(){
 			fieldChanged("country");
 		}
 	});
@@ -166,7 +159,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(event, ui){
+		change: function(){
 			fieldChanged("stateprovince");
 		}
 	});
@@ -177,7 +170,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(event, ui){
+		change: function(){
 			fieldChanged("county");
 		}
 	});
@@ -188,7 +181,7 @@ $(document).ready(function() {
 		},
 		minLength: 2,
 		autoFocus: true,
-		change: function(event, ui){
+		change: function(){
 			fieldChanged("municipality");
 		}
 	});
@@ -198,19 +191,17 @@ $(document).ready(function() {
 			$.getJSON( "rpc/getassocspp.php", { term: extractLast( request.term ) }, response );
 		},
 		search: function() {
-			// custom minLength
-			var term = extractLast( this.value );
-			if ( term.length < 4 ) return false;
+			const term = extractLast(this.value);
+			if ( term.length < 4 ) {
+				return false;
+			}
 		},
 		focus: function() {
-			// prevent value inserted on focus
 			return false;
 		},
 		select: function( event, ui ) {
-			var terms = split( this.value );
-			// remove the current input
+			const terms = split(this.value);
 			terms.pop();
-			// add the selected item
 			terms.push( ui.item.value );
 			this.value = terms.join( ", " );
 			return false;
@@ -218,35 +209,38 @@ $(document).ready(function() {
 	},{autoFocus: true});
 
 
-	$("#catalognumber").keydown(function(evt){
-		var evt  = (evt) ? evt : ((event) ? event : null);
-		if ((evt.keyCode == 13)) { return false; }
+	$("#catalognumber").keydown(function(event){
+		if ((event.keyCode === 13)) {
+			return false;
+		}
 	});
 	
 	if(document.getElementById('hostDiv')){
 		$("#quickhost").autocomplete({
 			source: function( request, response ) {
-				var name = request.term.replace(" ","+");
+				const name = request.term.replace(" ", "+");
 				$.getJSON( "rpc/getcolspeciessuggest.php", { term: name }, response );
 			},
 			minLength: 4,
 			autoFocus: true,
-			change: function(event, ui){
+			change: function(){
 				fieldChanged("host");
 			}
 		});
 	}
-	
-	//Remember Auto Processing Status
-	var apstatus = getCookie("autopstatus");
-	if(getCookie("autopstatus")) document.fullform.autoprocessingstatus.value = apstatus;
-	//Remember Auto Duplicate search status 
-	if(getCookie("autodupe") == 1) document.fullform.autodupe.checked = true; 
+
+	const apstatus = getCookie("autopstatus");
+	if(getCookie("autopstatus")) {
+		document.fullform.autoprocessingstatus.value = apstatus;
+	}
+	if(getCookie("autodupe") === 1) {
+		document.fullform.autodupe.checked = true;
+	}
 });
 
 function toggleStyle(){
-	var cssObj = document.getElementById('editorCssLink');
-	if(cssObj.href == "../../css/occureditorcrowdsource.css?ver=20150402"){
+	const cssObj = document.getElementById('editorCssLink');
+	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20150402"){
 		cssObj.href = "../../css/occureditor.css?ver=20150402";
 	}
 	else{
@@ -256,11 +250,12 @@ function toggleStyle(){
 
 function toggleQueryForm(){
 	toggle("querydiv");
-	var statusDiv = document.getElementById('statusdiv');
-	if(statusDiv) statusDiv.style.display = 'none';
+	const statusDiv = document.getElementById('statusdiv');
+	if(statusDiv) {
+		statusDiv.style.display = 'none';
+	}
 }
 
-//Field changed and verification functions
 function verifyFullFormSciName(){
 	$.ajax({
 		type: "POST",
@@ -272,21 +267,13 @@ function verifyFullFormSciName(){
 			$( "#tidinterpreted" ).val(data.tid);
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			/*
-			if(data.rankid < 220){
-				$( 'select[name=confidenceranking]' ).val(2);
-			}
-			else{
-				$( 'select[name=confidenceranking]' ).val(8);
-			}
-			*/
-			if(data.status == 1){
+			if(data.status === 1){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 			else{
 				if(data.tid){
-					var stateVal = $( 'input[name=stateprovince]' ).val();
-					if(stateVal != ""){
+					const stateVal = $('input[name=stateprovince]').val();
+					if(stateVal !== ""){
 						localitySecurityCheck();
 					}
 				}
@@ -300,16 +287,16 @@ function verifyFullFormSciName(){
 }
 
 function localitySecurityCheck(){
-	var tidIn = $( "input[name=tidinterpreted]" ).val();
-	var stateIn = $( "input[name=stateprovince]" ).val();
-	if(tidIn != "" && stateIn != ""){
+	const tidIn = $("input[name=tidinterpreted]").val();
+	const stateIn = $("input[name=stateprovince]").val();
+	if(tidIn !== "" && stateIn !== ""){
 		$.ajax({
 			type: "POST",
 			url: "rpc/localitysecuritycheck.php",
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data == "1"){
+			if(data === "1"){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 		});
@@ -317,7 +304,7 @@ function localitySecurityCheck(){
 }
 
 function localAutoChanged(cbObj){
-	if(cbObj.checked == true){
+	if(cbObj.checked === true){
 		$( "#fflocality" ).autocomplete( "option", "disabled", true );
 		$( "#fflocality" ).attr('autocomplete','on');
 		document.cookie = "localauto=1";
@@ -333,8 +320,7 @@ function fieldChanged(fieldName){
 	try{
 		document.fullform.editedfields.value = document.fullform.editedfields.value + fieldName + ";";
 	}
-	catch(ex){
-	}
+	catch(ex){}
 	document.fullform.submitaction.disabled = false;
 }
 
@@ -345,15 +331,14 @@ function recordNumberChanged(){
 
 function stateProvinceChanged(stateVal){ 
 	fieldChanged('stateprovince');
-	var tidVal = $( "#tidinterpreted" ).val();
-	if(tidVal != "" && stateVal != ""){
+	const tidVal = $("#tidinterpreted").val();
+	if(tidVal !== "" && stateVal !== ""){
 		localitySecurityCheck();
 	}
 }
 
 function decimalLatitudeChanged(f){
 	verifyDecimalLatitude(f);
-	//verifyCoordinates(f);
 	fieldChanged('decimallatitude');
 }
 
@@ -397,33 +382,38 @@ function verbatimElevationChanged(f){
 
 function parseVerbatimElevation(f){
 	if(f.verbatimelevation.value){
-		var min = "";
-		var max = "";
-		var verbElevStr = f.verbatimelevation.value;
+		let min = "";
+		let max = "";
+		let verbElevStr = f.verbatimelevation.value;
 		verbElevStr = verbElevStr.replace(/,/g ,"");
-		
-		var regEx1 = /(\d+)\s*-\s*(\d+)\s*[ft|feet|']/i; 
-		var regEx2 = /(\d+)\s*[ft|feet|']/i; 
-		var regEx3 = /(\d+)\s*-\s*(\d+)\s{0,1}m{1}/i; 
-		var regEx4 = /(\d+)\s{0,1}-\s{0,1}(\d+)\s{0,1}m{1}/i; 
-		var regEx5 = /(\d+)\s{0,1}m{1}/i; 
-		var extractStr = "";
-		if(extractArr = regEx1.exec(verbElevStr)){
+
+		const regEx1 = /(\d+)\s*-\s*(\d+)\s*[fte|']/i;
+		const regEx2 = /(\d+)\s*[fte|']/i;
+		const regEx3 = /(\d+)\s*-\s*(\d+)\s?m/i;
+		const regEx4 = /(\d+)\s?-\s?(\d+)\s?m/i;
+		const regEx5 = /(\d+)\s?m/i;
+		let extractArr = [];
+		if(regEx1.exec(verbElevStr)){
+			extractArr = regEx1.exec(verbElevStr);
 			min = Math.round(extractArr[1]*.3048);
 			max = Math.round(extractArr[2]*.3048);
 		}
-		else if(extractArr = regEx2.exec(verbElevStr)){
+		else if(regEx2.exec(verbElevStr)){
+			extractArr = regEx2.exec(verbElevStr);
 			min = Math.round(extractArr[1]*.3048);
 		}
-		else if(extractArr = regEx3.exec(verbElevStr)){
+		else if(regEx3.exec(verbElevStr)){
+			extractArr = regEx3.exec(verbElevStr);
 			min = extractArr[1];
 			max = extractArr[2];
 		}
-		else if(extractArr = regEx4.exec(verbElevStr)){
+		else if(regEx4.exec(verbElevStr)){
+			extractArr = regEx4.exec(verbElevStr);
 			min = extractArr[1];
 			max = extractArr[2];
 		}
-		else if(extractArr = regEx5.exec(verbElevStr)){
+		else if(regEx5.exec(verbElevStr)){
+			extractArr = regEx5.exec(verbElevStr);
 			min = extractArr[1];
 		}
 
@@ -462,67 +452,81 @@ function verbatimCoordinatesChanged(f){
 }
 
 function parseVerbatimCoordinates(f,verbose){
+	let lngDeg;
+	let lngMin;
+	let latDeg;
+	let latMin;
 	if(f.verbatimcoordinates.value){
-		var latDec = null;
-		var lngDec = null;
-		var verbCoordStr = f.verbatimcoordinates.value;
+		let latDec = null;
+		let lngDec = null;
+		let verbCoordStr = f.verbatimcoordinates.value;
 		verbCoordStr = verbCoordStr.replace(/’/g,"'");
-		
-		var tokenArr = verbCoordStr.split(" ");
-		
-		var z = null;
-		var e = null;
-		var n = null;
-		var zoneEx = /^\D{0,1}(\d{1,2})\D*$/;
-		var eEx1 = /^(\d{6,7})E/i;
-		var nEx1 = /^(\d{7})N/i;
-		var eEx2 = /^E(\d{6,7})\D*$/i;
-		var nEx2 = /^N(\d{4,7})\D*$/i;
-		var eEx3 = /^0{0,1}(\d{6})\D*$/i;
-		var nEx3 = /^(\d{7})\D*$/i;
-		for(var i = 0; i < tokenArr.length; i++) {
-			if(extractArr = zoneEx.exec(tokenArr[i])){
+
+		const tokenArr = verbCoordStr.split(" ");
+
+		let z = null;
+		let e = null;
+		let n = null;
+		const zoneEx = /^\D?(\d{1,2})\D*$/;
+		const eEx1 = /^(\d{6,7})E/i;
+		const nEx1 = /^(\d{7})N/i;
+		const eEx2 = /^E(\d{6,7})\D*$/i;
+		const nEx2 = /^N(\d{4,7})\D*$/i;
+		const eEx3 = /^0?(\d{6})\D*$/i;
+		const nEx3 = /^(\d{7})\D*$/i;
+		let extractArr = [];
+		for(let i = 0; i < tokenArr.length; i++) {
+			if(zoneEx.exec(tokenArr[i])){
+				extractArr = zoneEx.exec(tokenArr[i]);
 				z = extractArr[1];
 			}
-			else if(extractArr = eEx1.exec(tokenArr[i])){
+			else if(eEx1.exec(tokenArr[i])){
+				extractArr = eEx1.exec(tokenArr[i]);
 				e = extractArr[1];
 			}
-			else if(extractArr = nEx1.exec(tokenArr[i])){
+			else if(nEx1.exec(tokenArr[i])){
+				extractArr = nEx1.exec(tokenArr[i]);
 				n = extractArr[1];
 			}
-			else if(extractArr = eEx2.exec(tokenArr[i])){
+			else if(eEx2.exec(tokenArr[i])){
+				extractArr = eEx2.exec(tokenArr[i]);
 				e = extractArr[1];
 			}
-			else if(extractArr = nEx2.exec(tokenArr[i])){
+			else if(nEx2.exec(tokenArr[i])){
+				extractArr = nEx2.exec(tokenArr[i]);
 				n = extractArr[1];
 			}
-			else if(extractArr = eEx3.exec(tokenArr[i])){
+			else if(eEx3.exec(tokenArr[i])){
+				extractArr = eEx3.exec(tokenArr[i]);
 				e = extractArr[1];
 			}
-			else if(extractArr = nEx3.exec(tokenArr[i])){
+			else if(nEx3.exec(tokenArr[i])){
+				extractArr = nEx3.exec(tokenArr[i]);
 				n = extractArr[1];
 			}
 		}
 		
 		if(z && e && n){
-			var datum = f.geodeticdatum.value
-			var llStr = utm2LatLng(z, e, n, datum);
+			const datum = f.geodeticdatum.value;
+			const llStr = utm2LatLng(z, e, n, datum);
 			if(llStr){
-				var llArr = llStr.split(",");
-				if(llArr.length == 2){
+				const llArr = llStr.split(",");
+				if(llArr.length === 2){
 					latDec = Math.round(llArr[0]*1000000)/1000000;
 					lngDec = Math.round(llArr[1]*1000000)/1000000;
 				}
 			}
 		}
-		//Check to see if there are embedded lat/lng
+
 		if(!latDec || !lngDec){
-			var llEx1 = /(\d{1,2})[\D\s]{1,2}(\d{1,2}\.{0,1}\d*)['m]{1}\s*(\d{1,2}\.{0,1}\d*)['"s]{1,2}\s*([NS]{0,1})[\D\s]*(\d{1,3})[\D\s]{1,2}(\d{1,2}\.{0,1}\d*)['m]{1}\s*(\d{1,2}\.{0,1}\d*)['"s]{1,2}\s*([EW]{0,1})/i 
-			var llEx2 = /(\d{1,2})[\D\s]{1,2}(\d{1,2}\.{0,1}\d*)['m]{1}\s*([NS]{0,1})\D*\s*(\d{1,3})[\D\s]{1,2}(\d{1,2}\.{0,1}\d*)['m]{1}\s*([EW]{0,1})/i 
-			if(extractArr = llEx1.exec(verbCoordStr)){
-				var latDeg = parseInt(extractArr[1]);
-				var latMin = parseInt(extractArr[2]);
-				var latSec = parseFloat(extractArr[3]);
+			const llEx1 = /(\d{1,2})[\D\s]{1,2}(\d{1,2}\.?\d*)['m]\s*(\d{1,2}\.?\d*)['"s]{1,2}\s*([NS]?)[\D\s]*(\d{1,3})[\D\s]{1,2}(\d{1,2}\.?\d*)['m]\s*(\d{1,2}\.?\d*)['"s]{1,2}\s*([EW]?)/i;
+			const llEx2 = /(\d{1,2})[\D\s]{1,2}(\d{1,2}\.?\d*)['m]\s*([NS]?)\D*\s*(\d{1,3})[\D\s]{1,2}(\d{1,2}\.?\d*)['m]\s*([EW]?)/i;
+			let extractArr = [];
+			if(llEx1.exec(verbCoordStr)){
+				extractArr = llEx1.exec(verbCoordStr);
+				latDeg = parseInt(extractArr[1]);
+				latMin = parseInt(extractArr[2]);
+				const latSec = parseFloat(extractArr[3]);
 				if(latDeg > 90){
 					alert("Latitude degrees cannot be greater than 90");
 					return '';
@@ -535,9 +539,9 @@ function parseVerbatimCoordinates(f,verbose){
 					alert("Latitude seconds cannot be greater than 60");
 					return '';
 				}
-				var lngDeg = parseInt(extractArr[5]);
-				var lngMin = parseInt(extractArr[6]);
-				var lngSec = parseFloat(extractArr[7]);
+				lngDeg = parseInt(extractArr[5]);
+				lngMin = parseInt(extractArr[6]);
+				const lngSec = parseFloat(extractArr[7]);
 				if(lngDeg > 180){
 					alert("Longitude degrees cannot be greater than 180");
 					return '';
@@ -550,15 +554,19 @@ function parseVerbatimCoordinates(f,verbose){
 					alert("Longitude seconds cannot be greater than 60");
 					return '';
 				}
-				//Convert to decimal format
 				latDec = latDeg+(latMin/60)+(latSec/3600);
 				lngDec = lngDeg+(lngMin/60)+(lngSec/3600);
-				if((extractArr[4] == "S" || extractArr[4] == "s") && latDec > 0) latDec = latDec*-1;
-				if(lngDec > 0 && extractArr[8] != "E" && extractArr[8] != "e") lngDec = lngDec*-1;
+				if((extractArr[4] === "S" || extractArr[4] === "s") && latDec > 0) {
+					latDec = latDec*-1;
+				}
+				if(lngDec > 0 && extractArr[8] !== "E" && extractArr[8] !== "e") {
+					lngDec = lngDec*-1;
+				}
 			}
-			else if(extractArr = llEx2.exec(verbCoordStr)){
-				var latDeg = parseInt(extractArr[1]);
-				var latMin = parseFloat(extractArr[2]);
+			else if(llEx2.exec(verbCoordStr)){
+				extractArr = llEx2.exec(verbCoordStr);
+				latDeg = parseInt(extractArr[1]);
+				latMin = parseFloat(extractArr[2]);
 				if(latDeg > 90){
 					alert("Latitude degrees cannot be greater than 90");
 					return '';
@@ -567,8 +575,8 @@ function parseVerbatimCoordinates(f,verbose){
 					alert("Latitude minutes cannot be greater than 60");
 					return '';
 				}
-				var lngDeg = parseInt(extractArr[4]);
-				var lngMin = parseFloat(extractArr[5]);
+				lngDeg = parseInt(extractArr[4]);
+				lngMin = parseFloat(extractArr[5]);
 				if(lngDeg > 180){
 					alert("Longitude degrees cannot be greater than 180");
 					return '';
@@ -577,11 +585,14 @@ function parseVerbatimCoordinates(f,verbose){
 					alert("Longitude minutes cannot be greater than 60");
 					return '';
 				}
-				//Convert to decimal format
 				latDec = latDeg+(latMin/60);
 				lngDec = lngDeg+(lngMin/60);
-				if((extractArr[3] == "S" || extractArr[3] == "s") && latDec > 0) latDec = latDec*-1;
-				if(lngDec > 0 && extractArr[6] != "E" && extractArr[6] != "e") lngDec = lngDec*-1;
+				if((extractArr[3] === "S" || extractArr[3] === "s") && latDec > 0) {
+					latDec = latDec*-1;
+				}
+				if(lngDec > 0 && extractArr[6] !== "E" && extractArr[6] !== "e") {
+					lngDec = lngDec*-1;
+				}
 			}
 		}
 
@@ -597,14 +608,17 @@ function parseVerbatimCoordinates(f,verbose){
 	}
 }
 
-//Form verification code
 function verifyFullForm(f){
 	f.submitaction.focus();
-	if(abortFormVerification) return true;
+	if(abortFormVerification) {
+		return true;
+	}
 
-	if(searchDupesCatalogNumber(f,false)) return false;
-	var validformat1 = /^\d{4}-[0]{1}[0-9]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
-	var validformat2 = /^\d{4}-[1]{1}[0-2]{1}-\d{1,2}$/; //Format: yyyy-mm-dd
+	if(searchDupesCatalogNumber(f,false)) {
+		return false;
+	}
+	const validformat1 = /^\d{4}-[0][0-9]-\d{1,2}$/;
+	const validformat2 = /^\d{4}-[1][0-2]-\d{1,2}$/;
 	if(f.eventdate.value && !(validformat1.test(f.eventdate.value) || validformat2.test(f.eventdate.value))){
 		alert("Event date is invalid");
 		return false;
@@ -629,7 +643,7 @@ function verifyFullForm(f){
 		alert("End day of year field must be numeric only");
 		return false;
 	}
-	if(f.ometid && ((f.ometid.value != "" && f.exsnumber.value == "") || (f.ometid.value == "" && f.exsnumber.value != ""))){
+	if(f.ometid && ((f.ometid.value !== "" && f.exsnumber.value === "") || (f.ometid.value === "" && f.exsnumber.value !== ""))){
 		alert("You must have both an exsiccati title and exsiccati number or neither");
 		return false;
 	}
@@ -667,7 +681,7 @@ function verifyFullForm(f){
 }
 
 function verifyFullFormEdits(f){
-	if(f.editedfields && f.editedfields.value == ""){
+	if(f.editedfields && f.editedfields.value === ""){
 		setTimeout(function () { 
 			if(f.editedfields.value){
 				f.submitaction.click();
@@ -704,7 +718,7 @@ function verifyDecimalLatitude(f){
 }
 
 function verifyDecimalLongitude(f){
-	var lngValue = f.decimallongitude.value;
+	const lngValue = f.decimallongitude.value;
 	if(!isNumeric(lngValue)){
 		alert("Input value for Decimal Longitude must be a number value only! " );
 		return false;
@@ -745,12 +759,10 @@ function verifyMaximumElevationInMeters(f){
 }
 
 function verifyDeletion(f){
-	var occId = f.occid.value;
-	//Restriction when images are linked
+	const occId = f.occid.value;
 	document.getElementById("delverimgspan").style.display = "block";
 	verifyAssocImages(occId);
 	
-	//Restriction when vouchers are linked
 	document.getElementById("delvervouspan").style.display = "block";
 	verifyAssocVouchers(occId);
 }
@@ -782,11 +794,13 @@ function verifyAssocVouchers(occidIn){
 		data: { occid: occidIn }
 	}).done(function( vList ) {
 		document.getElementById("delvervouspan").style.display = "none";
-		if(vList != ''){
+		if(vList !== ''){
 			document.getElementById("delvoulistdiv").style.display = "block";
-			var strOut = "";
-			for(var key in vList){
-				strOut = strOut + "<li><a href='../../checklists/checklist.php?cl="+key+"' target='_blank'>"+vList[key]+"</a></li>";
+			let strOut = "";
+			for(const key in vList){
+				if(vList.hasOwnProperty(key)){
+					strOut = strOut + "<li><a href='../../checklists/checklist.php?cl="+key+"' target='_blank'>"+vList[key]+"</a></li>";
+				}
 			}
 			document.getElementById("voucherlist").innerHTML = strOut;
 		}
@@ -800,55 +814,50 @@ function verifyAssocVouchers(occidIn){
 
 function displayDeleteSubmit(){
 	if(imgAssocCleared && voucherAssocCleared){
-		var elem = document.getElementById("delapprovediv");
+		const elem = document.getElementById("delapprovediv");
 		elem.style.display = "block";
 	}
 }
 
 function eventDateChanged(eventDateInput){
-	var dateStr = eventDateInput.value;
-	if(dateStr != ""){
-		var dateArr = parseDate(dateStr);
-		if(dateArr['y'] == 0){
+	const dateStr = eventDateInput.value;
+	if(dateStr !== ""){
+		const dateArr = parseDate(dateStr);
+		if(dateArr['y'] === 0){
 			alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 			return false;
 		}
 		else{
-			//Check to see if date is in the future 
 			try{
-				var testDate = new Date(dateArr['y'],dateArr['m']-1,dateArr['d']);
-				var today = new Date();
+				const testDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
+				const today = new Date();
 				if(testDate > today){
 					alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
 					return false;
 				}
 			}
-			catch(e){
-			}
+			catch(e){}
 	
-			//Invalid format is month > 12
 			if(dateArr['m'] > 12){
 				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
 				return false;
 			}
 	
-			//Check to see if day is valid
 			if(dateArr['d'] > 28){
 				if(dateArr['d'] > 31 
-					|| (dateArr['d'] == 30 && dateArr['m'] == 2) 
-					|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
+					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
+					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
 					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 					return false;
 				}
 			}
-	
-			//Enter date into date fields
-			var mStr = dateArr['m'];
-			if(mStr.length == 1){
+
+			let mStr = dateArr['m'];
+			if(mStr.length === 1){
 				mStr = "0" + mStr;
 			}
-			var dStr = dateArr['d'];
-			if(dStr.length == 1){
+			let dStr = dateArr['d'];
+			if(dStr.length === 1){
 				dStr = "0" + dStr;
 			}
 			eventDateInput.value = dateArr['y'] + "-" + mStr + "-" + dStr;
@@ -856,25 +865,27 @@ function eventDateChanged(eventDateInput){
 		}
 	}
 	fieldChanged('eventdate');
-	var f = eventDateInput.form;
-	if(!eventDateInput.form.recordnumber.value && f.recordedby.value) autoDupeSearch();
+	const f = eventDateInput.form;
+	if(!eventDateInput.form.recordnumber.value && f.recordedby.value) {
+		autoDupeSearch();
+	}
 	return true;
 }
 
 function distributeEventDate(y,m,d){
-	var f = document.fullform;
-	if(y != "0000"){
+	const f = document.fullform;
+	if(y !== "0000"){
 		f.year.value = y;
 		fieldChanged("year");
 	}
-	if(m == "00"){
+	if(m === "00"){
 		f.month.value = "";
 	}
 	else{
 		f.month.value = m;
 		fieldChanged("year");
 	}
-	if(d == "00"){
+	if(d === "00"){
 		f.day.value = "";
 	}
 	else{
@@ -882,124 +893,112 @@ function distributeEventDate(y,m,d){
 		fieldChanged("day");
 	}
 	f.startdayofyear.value = "";
-	try{
-		if(m == 0 || d == 0){
+	let eDate;
+	try {
+		if (m === 0 || d === 0) {
 			f.startdayofyear.value = "";
-		}
-		else{
-			eDate = new Date(y,m-1,d);
-			if(eDate instanceof Date && eDate != "Invalid Date"){
-				var onejan = new Date(y,0,1);
+		} else {
+			eDate = new Date(y, m - 1, d);
+			if (eDate instanceof Date && eDate !== "Invalid Date") {
+				const onejan = new Date(y, 0, 1);
 				f.startdayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
 				fieldChanged("startdayofyear");
 			}
 		}
-	}
-	catch(e){
-	}
+	} catch (e) {}
 }
 
 function endDateChanged(){
-    var dateStr = document.getElementById("endDate").value;
-    if(dateStr != ""){
-        var dateArr = parseDate(dateStr);
-        if(dateArr['y'] == 0){
-            alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-            return false;
-        }
-        else{
-            //Check to see if date is in the future
-            try{
-                var testDate = new Date(dateArr['y'],dateArr['m']-1,dateArr['d']);
-                var today = new Date();
-                if(testDate > today){
-                    alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
-                    return false;
-                }
-            }
-            catch(e){
-            }
-
-            //Invalid format is month > 12
-            if(dateArr['m'] > 12){
-                alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-                return false;
-            }
-
-            //Check to see if day is valid
-            if(dateArr['d'] > 28){
-                if(dateArr['d'] > 31
-                    || (dateArr['d'] == 30 && dateArr['m'] == 2)
-                    || (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
-                    alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-                    return false;
-                }
-            }
-
-            //Enter date into date fields
-            var mStr = dateArr['m'];
-            if(mStr.length == 1){
-                mStr = "0" + mStr;
-            }
-            var dStr = dateArr['d'];
-            if(dStr.length == 1){
-                dStr = "0" + dStr;
-            }
-            document.getElementById("endDate").value = dateArr['y'] + "-" + mStr + "-" + dStr;
-            if(dateArr['y'] > 0){
-                var f = document.fullform;
-                f.enddayofyear.value = "";
-                try{
-                    if(dateArr['m'] == 0 || dateArr['d'] == 0){
-                        f.enddayofyear.value = "";
-                    }
-                    else{
-                        eDate = new Date(dateArr['y'],dateArr['m']-1,dateArr['d']);
-                        if(eDate instanceof Date && eDate != "Invalid Date"){
-                            var onejan = new Date(dateArr['y'],0,1);
-                            f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
-                            fieldChanged("enddayofyear");
-                        }
-                    }
-                }
-                catch(e){
-                }
+	const dateStr = document.getElementById("endDate").value;
+	let eDate;
+	if (dateStr !== "") {
+		const dateArr = parseDate(dateStr);
+		if (dateArr['y'] === 0) {
+			alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
+			return false;
+		} else {
+			try {
+				const testDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
+				const today = new Date();
+				if (testDate > today) {
+					alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
+					return false;
+				}
+			} catch (e) {
 			}
-        }
-    }
+
+			if (dateArr['m'] > 12) {
+				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
+				return false;
+			}
+
+			if (dateArr['d'] > 28) {
+				if (dateArr['d'] > 31
+					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
+					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))) {
+					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
+					return false;
+				}
+			}
+
+			let mStr = dateArr['m'];
+			if (mStr.length === 1) {
+				mStr = "0" + mStr;
+			}
+			let dStr = dateArr['d'];
+			if (dStr.length === 1) {
+				dStr = "0" + dStr;
+			}
+			document.getElementById("endDate").value = dateArr['y'] + "-" + mStr + "-" + dStr;
+			if (dateArr['y'] > 0) {
+				const f = document.fullform;
+				f.enddayofyear.value = "";
+				try {
+					if (dateArr['m'] === 0 || dateArr['d'] === 0) {
+						f.enddayofyear.value = "";
+					} else {
+						eDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
+						if (eDate instanceof Date) {
+							const onejan = new Date(dateArr['y'], 0, 1);
+							f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
+							fieldChanged("enddayofyear");
+						}
+					}
+				} catch (e) {}
+			}
+		}
+	}
     return true;
 }
 
 function verbatimEventDateChanged(vedObj){
 	fieldChanged('verbatimeventdate');
-
-	var f = vedObj.form;
-
-	var vedValue = vedObj.value;
+	const f = vedObj.form;
+	let vedValue = vedObj.value;
 	vedValue = vedValue.replace(" - "," to ");
 	vedValue = vedValue.replace(" / "," to ");
 	
 	if(vedValue.indexOf(" to ") > -1){
-		if(f.eventdate.value == ""){
-			var startDate = vedValue.substring(0,vedValue.indexOf(" to "));
-			var startDateArr = parseDate(startDate);
-			var mStr = startDateArr['m'];
-			if(mStr.length == 1){
+		if(f.eventdate.value === ""){
+			const startDate = vedValue.substring(0, vedValue.indexOf(" to "));
+			const startDateArr = parseDate(startDate);
+			let mStr = startDateArr['m'];
+			if(mStr.length === 1){
 				mStr = "0" + mStr;
 			}
-			var dStr = startDateArr['d'];
-			if(dStr.length == 1){
+			let dStr = startDateArr['d'];
+			if(dStr.length === 1){
 				dStr = "0" + dStr;
 			}
 			f.eventdate.value = startDateArr['y'] + "-" + mStr + "-" + dStr;
 			distributeEventDate(startDateArr['y'],mStr,dStr);
 		}
-		var endDate = vedValue.substring(vedValue.indexOf(" to ")+4);
-		var endDateArr = parseDate(endDate);
+		const endDate = vedValue.substring(vedValue.indexOf(" to ") + 4);
+		const endDateArr = parseDate(endDate);
 		try{
-			var eDate = new Date(endDateArr["y"],endDateArr["m"]-1,endDateArr["d"]);
-			if(eDate instanceof Date && eDate != "Invalid Date"){
-				var onejan = new Date(endDateArr["y"],0,1);
+			const eDate = new Date(endDateArr["y"], endDateArr["m"] - 1, endDateArr["d"]);
+			if(eDate instanceof Date){
+				const onejan = new Date(endDateArr["y"], 0, 1);
 				f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
 				fieldChanged("enddayofyear");
 			}
@@ -1010,73 +1009,67 @@ function verbatimEventDateChanged(vedObj){
 }
 
 function parseDate(dateStr){
-	var y = 0;
-	var m = 0;
-	var d = 0;
-	try{
-		var validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
-		var validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
-		var validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
-		if(validformat1.test(dateStr)){
-			var dateTokens = dateStr.split("-");
+	const dateObj = new Date(dateStr);
+	let dateTokens;
+	let y = 0;
+	let m = 0;
+	let d = 0;
+	let mText;
+	try {
+		const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
+		const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
+		const validformat3 = /^\d{1,2} \D+ \d{2,4}$/;
+		if (validformat1.test(dateStr)) {
+			dateTokens = dateStr.split("-");
 			y = dateTokens[0];
 			m = dateTokens[1];
 			d = dateTokens[2];
-		}
-		else if(validformat2.test(dateStr)){
-			var dateTokens = dateStr.split("/");
+		} else if (validformat2.test(dateStr)) {
+			dateTokens = dateStr.split("/");
 			m = dateTokens[0];
 			d = dateTokens[1];
 			y = dateTokens[2];
-			if(y.length == 2){
-				if(y < 20){
+			if (y.length === 2) {
+				if (y < 20) {
 					y = "20" + y;
-				}
-				else{
+				} else {
 					y = "19" + y;
 				}
 			}
-		}
-		else if(validformat3.test(dateStr)){
-			var dateTokens = dateStr.split(" ");
+		} else if (validformat3.test(dateStr)) {
+			dateTokens = dateStr.split(" ");
 			d = dateTokens[0];
 			mText = dateTokens[1];
 			y = dateTokens[2];
-			if(y.length == 2){
-				if(y < 15){
+			if (y.length === 2) {
+				if (y < 15) {
 					y = "20" + y;
-				}
-				else{
+				} else {
 					y = "19" + y;
 				}
 			}
-			mText = mText.substring(0,3);
+			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();
-			var mNames = new Array("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec");
-			m = mNames.indexOf(mText)+1;
-		}
-		else if(dateObj instanceof Date && dateObj != "Invalid Date"){
-			var dateObj = new Date(dateStr);
+			const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+			m = mNames.indexOf(mText) + 1;
+		} else if (dateObj instanceof Date) {
 			y = dateObj.getFullYear();
 			m = dateObj.getMonth() + 1;
 			d = dateObj.getDate();
 		}
-	}
-	catch(ex){
-	}
-	var retArr = new Array();
+	} catch (ex) {}
+	const retArr = [];
 	retArr["y"] = y.toString();
 	retArr["m"] = m.toString();
 	retArr["d"] = d.toString();
 	return retArr;
 }
 
-//Determination form methods 
 function initDetAutocomplete(f){
 	$( f.sciname ).autocomplete({ 
 		source: "rpc/getspeciessuggest.php", 
 		minLength: 3,
-		change: function(event, ui) {
+		change: function() {
 			if(f.sciname.value){
 				pauseSubmit = true;
 				verifyDetSciName(f);
@@ -1112,15 +1105,17 @@ function verifyDetSciName(f){
 } 
 
 function detDateChanged(f){
-	var isNew = false;
-	var newDateStr = f.dateidentified.value;
+	let isNew = false;
+	const newDateStr = f.dateidentified.value;
 	if(newDateStr){
-		var dateIdentified = document.fullform.dateidentified.value;
-		if(dateIdentified == "") dateIdentified = document.fullform.eventdate.value;
+		let dateIdentified = document.fullform.dateidentified.value;
+		if(dateIdentified === "") {
+			dateIdentified = document.fullform.eventdate.value;
+		}
 		if(dateIdentified){
-			var yearPattern = /[1,2]{1}\d{3}/;
-			var newYear = newDateStr.match(yearPattern);
-			var curYear = dateIdentified.match(yearPattern);
+			const yearPattern = /[1,2]\d{3}/;
+			const newYear = newDateStr.match(yearPattern);
+			const curYear = dateIdentified.match(yearPattern);
 			if(curYear && newYear && newYear[0] > curYear[0]){
 				isNew = true;
 			}
@@ -1133,15 +1128,15 @@ function detDateChanged(f){
 }
 
 function verifyDetForm(f){
-	if(f.sciname.value == ""){
+	if(f.sciname.value === ""){
 		alert("Scientific Name field must have a value");
 		return false;
 	}
-	if(f.identifiedby.value == ""){
+	if(f.identifiedby.value === ""){
 		alert("Determiner field must have a value (enter 'unknown' if not defined)");
 		return false;
 	}
-	if(f.dateidentified.value == ""){
+	if(f.dateidentified.value === ""){
 		alert("Determination Date field must have a value (enter 'unknown' if not defined)");
 		return false;
 	}
@@ -1149,22 +1144,21 @@ function verifyDetForm(f){
 		alert("Sort Sequence field must be a numeric value only");
 		return false;
 	}
-	//If sciname was changed and submit was clicked immediately afterward, wait 5 seconds so that name can be verified 
 	if(pauseSubmit){
-		var date = new Date();
-		var curDate = null;
+		const date = new Date();
+		let curDate = null;
 		do{ 
 			curDate = new Date(); 
-		}while(curDate - date < 5000 && pauseSubmit);
+		}
+		while(curDate - date < 5000 && pauseSubmit);
 	}
 	return true;
 }
 
-//Image tab form methods 
 function verifyImgAddForm(f){
-    if(f.elements["imgfile"].value.replace(/\s/g, "") == ""){
-    	var imgUrl = f.elements["imgurl"].value.replace(/\s/g, "");
-    	if(imgUrl == ""){
+    if(f.elements["imgfile"].value.replace(/\s/g, "") === ""){
+		const imgUrl = f.elements["imgurl"].value.replace(/\s/g, "");
+		if(imgUrl === ""){
         	alert("Select an image file or enter a URL to an existing image");
 			return false;
         }
@@ -1173,52 +1167,52 @@ function verifyImgAddForm(f){
 }
 
 function verifyImgEditForm(f){
-	if(f.url.value == ""){
+	if(f.url.value === ""){
 		alert("Web URL field must have a value");
 		return false;
 	}
 	return true;
 }
 
-function verifyImgDelForm(f){
-	if(confirm('Are you sure you want to delete this image? Note that the physical image will be deleted from the server if checkbox is selected.')){
-		return true;
-	}
-	return false;
+function verifyImgDelForm(){
+	return confirm('Are you sure you want to delete this image? Note that the physical image will be deleted from the server if checkbox is selected.');
+
 }
 
 function verifyImgRemapForm(f){
-	if(f.targetoccid.value == ''){
+	if(f.targetoccid.value === ''){
 		alert("Enter the occurrence record identifier (occid) of the occurrence record you want to transfer to");
 		return false;
 	}
 	return true;
 }
 
-//Misc
 function dwcDoc(dcTag){
-	dwcWindow=open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
-	//dwcWindow=open("http://rs.tdwg.org/dwc/terms/index.htm#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
-	if(dwcWindow.opener == null) dwcWindow.opener = self;
+	let dwcWindow = open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
+	if(dwcWindow.opener == null) {
+		dwcWindow.opener = self;
+	}
 	dwcWindow.focus();
 	return false;
 }
 
 function openOccurrenceSearch(target) {
 	collId = document.fullform.collid.value;
-	occWindow=open("../misc/occurrencesearch.php?targetid="+target+"&collid="+collId,"occsearch","resizable=1,scrollbars=1,toolbar=1,width=750,height=600,left=20,top=20");
+	let occWindow = open("../misc/occurrencesearch.php?targetid=" + target + "&collid=" + collId, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=750,height=600,left=20,top=20");
 	occWindow.focus();
-	if (occWindow.opener == null) occWindow.opener = self;
+	if (occWindow.opener == null) {
+		occWindow.opener = self;
+	}
 }
 
-function localitySecurityChanged(f){
+function localitySecurityChanged(){
 	fieldChanged('localitysecurity');
 	$("#locsecreason").show();
 }
 
 function localitySecurityReasonChanged(){
 	fieldChanged('localitysecurityreason');
-	if($("input[name=localitysecurityreason]").val() == ''){
+	if($("input[name=localitysecurityreason]").val() === ''){
 		$("input[name=lockLocalitySecurity]").prop('checked', false);
 	}
 	else{
@@ -1227,8 +1221,10 @@ function localitySecurityReasonChanged(){
 }
 
 function securityLockChanged(cb){
-	if(cb.checked == true){
-		if($("input[name=localitysecurityreason]").val() == '') $("input[name=localitysecurityreason]").val("<Security Setting Locked>");
+	if(cb.checked === true){
+		if($("input[name=localitysecurityreason]").val() === '') {
+			$("input[name=localitysecurityreason]").val("<Security Setting Locked>");
+		}
 	}
 	else{
 		$("input[name=localitysecurityreason]").val("")
@@ -1237,7 +1233,7 @@ function securityLockChanged(cb){
 }
 
 function autoProcessingStatusChanged(selectObj){
-	var selValue = selectObj.value;
+	const selValue = selectObj.value;
 	if(selValue){
 		document.cookie = "autopstatus=" + selValue;
 	}
@@ -1262,13 +1258,13 @@ function inputIsNumeric(inputObj, titleStr){
 }
 
 function isNumeric(sText){
-   	var validChars = "0123456789-.";
-   	var isNumber = true;
-   	var charVar;
+	const validChars = "0123456789-.";
+	let isNumber = true;
+	let charVar;
 
-   	for(var i = 0; i < sText.length && isNumber == true; i++){ 
+	for(let i = 0; i < sText.length && isNumber === true; i++){
    		charVar = sText.charAt(i); 
-		if(validChars.indexOf(charVar) == -1){
+		if(validChars.indexOf(charVar) === -1){
 			isNumber = false;
 			break;
       	}
@@ -1277,13 +1273,13 @@ function isNumeric(sText){
 }
 
 function getCookie(cName){
-	var i,x,y;
-	var cookieArr = document.cookie.split(";");
-	for(i=0;i<cookieArr.length;i++){
-		x=cookieArr[i].substr(0,cookieArr[i].indexOf("="));
-		y=cookieArr[i].substr(cookieArr[i].indexOf("=")+1);
-		x=x.replace(/^\s+|\s+$/g,"");
-		if (x==cName){
+	let x, y;
+	const cookieArr = document.cookie.split(";");
+	for(let i = 0;i<cookieArr.length;i++){
+		x = cookieArr[i].substr(0,cookieArr[i].indexOf("="));
+		y = cookieArr[i].substr(cookieArr[i].indexOf("=")+1);
+		x = x.replace(/^\s+|\s+$/g,"");
+		if (x === cName){
 			return unescape(y);
 		}
 	}

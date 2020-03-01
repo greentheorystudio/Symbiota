@@ -1,15 +1,13 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
+include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
-
 ?>
-<!-- inner text -->
 <div id="innertext" style="background-color:white;">
 	<div style="float:right;">
 		<a href="#" onclick="toggle('addchilddiv')"><img src="../images/add.png" /></a>
@@ -26,7 +24,7 @@ $clManager->setClid($clid);
 	<div id="addchilddiv" style="margin:15px;display:none;">
 		<fieldset style="padding:15px;">
 			<legend><b>Link New Checklist</b></legend>
-			<form name="addchildform" target="checklistadmin.php" method="post" onsubmit="validateAddChildForm(this)">
+			<form name="addchildform" target="checklistadmin.php" method="post">
 				<div style="margin:10px;">
 					<select name="clidadd">
 						<option value="">Select Child Checklist</option>
@@ -57,7 +55,7 @@ $clManager->setClid($clid);
 					<li>
 						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
 						<?php 
-						if($cArr['pclid'] == $clid){
+						if($cArr['pclid'] === $clid){
 							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><img src="../images/del.png" style="width:14px;" /></a>';
 						}
 						?>

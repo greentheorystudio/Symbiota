@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -17,22 +17,22 @@ $occManager->setOccId($occid);
 	if($editArr || $externalEdits){
 		if($editArr){
 			?>
-			<fieldset style="padding:15px;margin:10px 0px;">
+			<fieldset style="padding:15px;margin:10px 0;">
 				<legend><b>History of Internal Edits</b></legend>
 				<?php 
-				if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin'])){
+				if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
 					?>
 					<div style="float:right;" title="Manage Edit History">
-						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.png" style="border:0px;width:14px;" /></a>
+						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.png" style="border:0;width:14px;" /></a>
 					</div>
 					<?php
 				}
 				foreach($editArr as $ts => $eArr){
 					$reviewStr = 'OPEN';
-					if($eArr['reviewstatus'] == 2){
+					if($eArr['reviewstatus'] === 2){
 						$reviewStr = 'PENDING';
 					}
-					elseif($eArr['reviewstatus'] == 3){
+					elseif($eArr['reviewstatus'] === 3){
 						$reviewStr = 'CLOSED';
 					}
 					?>
@@ -53,7 +53,7 @@ $occManager->setOccId($occid);
 						echo '<b>New Value:</b> '.$vArr['new'].'<br/>';
 						echo '</div>';
 					}
-					echo '<div style="margin:5px 0px;">&nbsp;</div>';
+					echo '<div style="margin:5px 0;">&nbsp;</div>';
 				}
 				?>
 			</fieldset>
@@ -67,8 +67,12 @@ $occManager->setOccId($occid);
 				foreach($externalEdits as $orid => $eArr){
 					foreach($eArr as $appliedStatus => $eArr2){
 						$reviewStr = 'OPEN';
-						if($eArr2['reviewstatus'] == 2) $reviewStr = 'PENDING';
-						elseif($eArr2['reviewstatus'] == 3) $reviewStr = 'CLOSED';
+						if($eArr2['reviewstatus'] === 2) {
+                            $reviewStr = 'PENDING';
+                        }
+						elseif($eArr2['reviewstatus'] === 3) {
+                            $reviewStr = 'CLOSED';
+                        }
 						?>
 						<div>
 							<b>Editor:</b> <?php echo $eArr2['editor']; ?>
@@ -88,7 +92,7 @@ $occManager->setOccId($occid);
 							echo '<b>New Value:</b> '.$vArr['new'].'<br/>';
 							echo '</div>';
 						}
-						echo '<div style="margin:15px 0px;"><hr/></div>';
+						echo '<div style="margin:15px 0;"><hr/></div>';
 					}
 				}
 				?>
@@ -103,7 +107,7 @@ $occManager->setOccId($occid);
 	unset($collAdminList[$collId]);
 	if($collAdminList){
 		?>
-		<fieldset style="padding:15px;margin:10px 0px;">
+		<fieldset style="padding:15px;margin:10px 0;">
 			<legend><b>Transfer Specimen</b></legend>
 			<form name="transrecform" method="post" target="occurrenceeditor.php">
 				<div>
@@ -129,7 +133,7 @@ $occManager->setOccId($occid);
 		<?php
 	}
 	?>
-	<fieldset style="padding:15px;margin:10px 0px;">
+	<fieldset style="padding:15px;margin:10px 0;">
 		<legend><b>Delete Occurrence Record</b></legend>
 		<form name="deleteform" method="post" action="occurrenceeditor.php" onsubmit="return confirm('Are you sure you want to delete this record?')">
 			<div style="margin:15px">
@@ -144,7 +148,7 @@ $occManager->setOccId($occid);
 				<div id="delverimgdiv" style="margin:15px;">
 					<b>Image Links: </b>
 					<span id="delverimgspan" style="color:orange;display:none;">checking image links...</span>
-					<div id="delimgfailspan" style="display:none;style:0px 10px 10px 10px;">
+					<div id="delimgfailspan" style="display:none;margin:0 10px 10px 10px;">
 						<span style="color:red;">Warning:</span>
 						One or more images are linked to this occurrence.
 						Continuing will remove all images linked to this occurrence record.
@@ -163,7 +167,7 @@ $occManager->setOccId($occid);
 						<span style="color:green;">Approved for deletion.</span>
 						No checklists have been linked to this occurrence record.
 					</div>
-					<div id="delvoulistdiv" style="display:none;style:0px 10px 10px 10px;">
+					<div id="delvoulistdiv" style="display:none;margin:0 10px 10px 10px;">
 						<span style="color:red;">Warning:</span>
 						This occurrence serves as an occurrence voucher for the following species checklists.
 						Deleting this occurrence will remove these association.

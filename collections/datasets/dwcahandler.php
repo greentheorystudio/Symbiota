@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverPublisher.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 	
 $collStr = $argv[1];
 $serverDomain = $argv[2];
@@ -29,9 +29,8 @@ if($collStr){
 	$dwcaManager->setIncludeAttributes($includeAttributes);
 	$dwcaManager->setRedactLocalities($redactLocalities);
 	$dwcaManager->setServerDomain($serverDomain);
-	$dwcaManager->setTargetPath($SERVER_ROOT.(substr($SERVER_ROOT,-1)=='/'?'':'/').'content/dwca/');
+	$dwcaManager->setTargetPath($SERVER_ROOT.(substr($SERVER_ROOT,-1) === '/'?'':'/').'content/dwca/');
 	$dwcaManager->setVerboseMode(0);
 	$collArr = explode(',',$collStr);
 	$dwcaManager->batchCreateDwca($collArr);
 }
-?>

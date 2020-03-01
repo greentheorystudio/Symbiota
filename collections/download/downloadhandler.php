@@ -1,16 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDownload.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
-$schema = array_key_exists("schema",$_REQUEST)?$_REQUEST["schema"]:"symbiota";
-$cSet = array_key_exists("cset",$_POST)?$_POST["cset"]:'';
-$taxonFilterCode = array_key_exists("taxonFilterCode",$_POST)?$_POST["taxonFilterCode"]:0;
-$stArrCollJson = array_key_exists("jsoncollstarr",$_REQUEST)?$_REQUEST["jsoncollstarr"]:'';
-$stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
+$schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']: 'symbiota';
+$cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
+$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?$_POST['taxonFilterCode']:0;
+$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
+$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
@@ -20,15 +20,17 @@ $solrManager = new SOLRManager();
 $occWhereStr = '';
 
 if($stArrSearchJson){
-	$stArrSearchJson = str_replace("%apos;","'",$stArrSearchJson);
+	$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
 	$collStArr = json_decode($stArrCollJson, true);
 	$searchArr = json_decode($stArrSearchJson, true);
-	if($collStArr) $searchArr = array_merge($searchArr,$collStArr);
+	if($collStArr) {
+		$searchArr = array_merge($searchArr, $collStArr);
+	}
 	$occurManager->setSearchTermsArr($searchArr);
 
     if($SOLR_MODE){
     	$solrManager->setSearchTermsArr($searchArr);
-        if($schema == 'checklist'){
+        if($schema === 'checklist'){
             if($taxonFilterCode){
                 $solrArr = $solrManager->getTaxaArr();
                 $tidArr = $solrManager->getSOLRTidList($solrArr);
@@ -39,11 +41,11 @@ if($stArrSearchJson){
                 $dlManager->setOccArr($occArr);
             }
         }
-        elseif($schema == 'georef'){
+        elseif($schema === 'georef'){
             $occArr = $solrManager->getOccArr(true);
             $dlManager->setOccArr($occArr);
         }
-        elseif(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
+        elseif(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
             $occArr = $solrManager->getOccArr();
             if($occArr){
                 $occWhereStr = 'WHERE o.occid IN('.implode(',',$occArr).') ';
@@ -52,11 +54,10 @@ if($stArrSearchJson){
     }
 }
 
-if($schema == "backup"){
-    $collid = $_POST["collid"];
+if($schema === 'backup'){
+    $collid = $_POST['collid'];
 	if($collid && is_numeric($collid)){
-		//check permissions due to sensitive localities not being redacted
-		if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+		if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 			$dwcaHandler->setSchemaType('backup');
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setVerboseMode(0);
@@ -69,7 +70,6 @@ if($schema == "backup"){
 			$archiveFile = $dwcaHandler->createDwcArchive();
 
 			if($archiveFile){
-				//ob_start();
 				header('Content-Description: Symbiota Occurrence Backup File (DwC-Archive data package)');
 				header('Content-Type: application/zip');
 				header('Content-Disposition: attachment; filename='.basename($archiveFile));
@@ -78,7 +78,6 @@ if($schema == "backup"){
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');
 				header('Content-Length: ' . filesize($archiveFile));
-				//od_end_clean();
 				readfile($archiveFile);
 				unlink($archiveFile);
 			}
@@ -95,10 +94,10 @@ else{
 
 	$redactLocalities = 1;
 	$rareReaderArr = array();
-	if($IS_ADMIN || array_key_exists("CollAdmin", $USER_RIGHTS)){
+	if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)){
 		$redactLocalities = 0;
 	}
-	elseif(array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+	elseif(array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 		$redactLocalities = 0;
 	}
 	else{
@@ -109,9 +108,11 @@ else{
 			$rareReaderArr = array_unique(array_merge($rareReaderArr,$USER_RIGHTS['RareSppReader']));
 		}
 	}
-	if($schema == "georef"){
-		if(array_key_exists("publicsearch",$_POST)) $dlManager->setIsPublicDownload();
-		if(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
+	if($schema === 'georef'){
+		if(array_key_exists('publicsearch',$_POST)) {
+			$dlManager->setIsPublicDownload();
+		}
+		if(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
@@ -132,8 +133,8 @@ else{
 		}
 		$dlManager->downloadData();
 	}
-	elseif($schema == 'checklist'){
-		if(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
+	elseif($schema === 'checklist'){
+		if(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
@@ -145,8 +146,8 @@ else{
 	}
 	else{
 		$dwcaHandler->setVerboseMode(0);
-		if($schema == "coge"){
-			$dwcaHandler->setCollArr($_POST["collid"]);
+		if($schema === 'coge'){
+			$dwcaHandler->setCollArr($_POST['collid']);
 			$dwcaHandler->setCharSetOut('UTF-8');
 			$dwcaHandler->setSchemaType('coge');
 			$dwcaHandler->setExtended(false);
@@ -170,16 +171,19 @@ else{
 			}
 		}
 		else{
-			//Is an occurrence download
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
 			$dwcaHandler->setDelimiter($format);
 			$dwcaHandler->setRedactLocalities($redactLocalities);
-			if($rareReaderArr) $dwcaHandler->setRareReaderArr($rareReaderArr);
+			if($rareReaderArr) {
+				$dwcaHandler->setRareReaderArr($rareReaderArr);
+			}
 
-			if(array_key_exists("publicsearch",$_POST)) $dwcaHandler->setIsPublicDownload();
-			if(array_key_exists("publicsearch",$_POST) && $_POST["publicsearch"]){
+			if(array_key_exists('publicsearch',$_POST)) {
+				$dwcaHandler->setIsPublicDownload();
+			}
+			if(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
                 if($SOLR_MODE && $occWhereStr){
                     $dwcaHandler->setCustomWhereSql($occWhereStr);
                 }
@@ -188,7 +192,6 @@ else{
                 }
 			}
 			else{
-				//Request is coming from exporter.php for collection manager tools
 				$dwcaHandler->setCollArr($_POST['targetcollid']);
 				if(array_key_exists('processingstatus',$_POST) && $_POST['processingstatus']){
 					$dwcaHandler->addCondition('processingstatus','EQUALS',$_POST['processingstatus']);
@@ -208,7 +211,7 @@ else{
 				elseif(array_key_exists('traitid',$_POST) && $_POST['traitid']){
 					$dwcaHandler->addCondition('traitid','EQUALS',$_POST['traitid']);
 				}
-				if(array_key_exists('newrecs',$_POST) && $_POST['newrecs'] == 1){
+				if(array_key_exists('newrecs',$_POST) && $_POST['newrecs'] === 1){
 					$dwcaHandler->addCondition('dbpk','NULL');
 					$dwcaHandler->addCondition('catalognumber','NOTNULL');
 				}
@@ -216,25 +219,20 @@ else{
 		}
 		$outputFile = null;
 		if($zip){
-			//Ouput file is a zip file
 			$includeIdent = (array_key_exists('identifications',$_POST)?1:0);
 			$dwcaHandler->setIncludeDets($includeIdent);
 			$includeImages = (array_key_exists('images',$_POST)?1:0);
 			$dwcaHandler->setIncludeImgs($includeImages);
 			$includeAttributes = (array_key_exists('attributes',$_POST)?1:0);
 			$dwcaHandler->setIncludeAttributes($includeAttributes);
-
 			$outputFile = $dwcaHandler->createDwcArchive('webreq');
-
 		}
 		else{
-			//Output file is a flat occurrence file (not a zip file)
 			$outputFile = $dwcaHandler->getOccurrenceFile();
 		}
 		if($outputFile){
-			//ob_start();
 			$contentDesc = '';
-			if($schema == 'dwc'){
+			if($schema === 'dwc'){
 				$contentDesc = 'Darwin Core ';
 			}
 			else{
@@ -250,7 +248,7 @@ else{
 			if($zip){
 				header('Content-Type: application/zip');
 			}
-			elseif($format == 'csv'){
+			elseif($format === 'csv'){
 				header('Content-Type: text/csv; charset='.$CHARSET);
 			}
 			else{
@@ -265,15 +263,13 @@ else{
 			header('Content-Length: ' . filesize($outputFile));
 			ob_clean();
 			flush();
-			//od_end_clean();
 			readfile($outputFile);
 			unlink($outputFile);
 		}
 		else{
-			header("Content-type: text/plain");
-			header("Content-Disposition: attachment; filename=NoData.txt");
+			header('Content-type: text/plain');
+			header('Content-Disposition: attachment; filename=NoData.txt');
 			echo 'The query failed to return records. Please modify query criteria and try again.';
 		}
 	}
 }
-?>

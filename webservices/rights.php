@@ -32,7 +32,7 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';
 $uId = array_key_exists('uid',$_POST)?$_POST['uid']:'';
@@ -46,14 +46,11 @@ if(!$un && $uId){
     $un = $pHandler->getUserName($uId);
 }
 
-if($un && $token){
-    if($pHandler->setUserName($un)){
-        $pHandler->setToken($token);
-        $pHandler->setTokenAuthSql();
-        if($pHandler->authenticate()){
-            $accessPacket = $pHandler->generateAccessPacket();
-            echo json_encode($accessPacket);
-        }
+if($un && $token && $pHandler->setUserName($un)) {
+    $pHandler->setToken($token);
+    $pHandler->setTokenAuthSql();
+    if($pHandler->authenticate()){
+        $accessPacket = $pHandler->generateAccessPacket();
+        echo json_encode($accessPacket);
     }
 }
-?>

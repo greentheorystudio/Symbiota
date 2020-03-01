@@ -44,10 +44,8 @@ be installed to enable barcode generation on specimen labels.
 ### Setup the database
 
 - Create a new database for your Symbiota portal using the utf8 character set and utf8_general_ci collation.
-- Execute the `config/schema-1.0/utf8/db_schema-1.0.sql` file within your Symbiota installation on your database to setup 
+- Execute the `config/schema-1.0/utf8/db_schema_compiled-1.x.sql` file within your Symbiota installation on your database to setup 
   the initial schema.
-- Execute the `config/schema-1.0/utf8/db_schema_patch-1.1.sql` file within your Symbiota installation on your database to 
-  update the schema to version 1.1.
 - Create a new user in your database server and grant them DELETE, EXECUTE, INSERT, SELECT, and UPDATE 
   privileges on your Symbiota database. 
 
@@ -58,11 +56,24 @@ be installed to enable barcode generation on specimen labels.
 - Edit the `config/symbini.php` file within your Symbiota installation with your configuration preferences for your Symbiota portal.
 
 ### Customize your Symbiota installation
+
 - Edit the `css/main.css` file within your Symbiota installation to customize the css styling in your Symbiota portal.
 - Edit the `footer.php`, `header.php`, and `index.php` files within your Symbiota installation to customize the layout, 
   top menu bar, and homepage of your Symbiota portal.
 - Edit the `misc/usagepolicy.php` file within your Symbiota portal to customize the usage policy for your portal.
 - An initial admin user has been installed with the login: `admin` and the password: `admin`. Use this initial user account to 
   create new admin users and then delete the initial user account.
+
+### Converting a database from the original Symbiota
+
+If you would like to use a database created using the original Symbiota, follow these steps to upgrade the database:
+- Ensure that your database is using schema 1.0 or higher. If it isn't, run the necessary database patches in the original 
+  Symbiota installation to upgrade to schema version 1.0.
+- Execute the `config/schema-1.0/utf8/greentheorystudio_patch.sql` file within your Symbiota installation on your database 
+  to make necessary schema adjustments.
+- If your database schema is version 1.0, execute the `config/schema-1.0/utf8/db_schema_patch-1.1.sql` file within your Symbiota 
+  installation on your database to upgrade the schema version to 1.1.
+- Execute the `config/schema-1.0/utf8/db_schema_patch-1.2.sql` file within your Symbiota installation on your database to 
+  upgrade the schema version to 1.2.
 
 [Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)

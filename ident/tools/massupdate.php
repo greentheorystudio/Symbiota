@@ -1,24 +1,28 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyMassUpdate.php');
-header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/tools/massupdate.php?'.$_SERVER['QUERY_STRING']);
+include_once(__DIR__ . '/../../classes/KeyMassUpdate.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
+
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../ident/tools/massupdate.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $clid = $_REQUEST['clid'];
-$taxonFilter = array_key_exists("tf",$_REQUEST)?$_REQUEST["tf"]:'';
-$generaOnly = array_key_exists("generaonly",$_POST)?$_POST["generaonly"]:0; 
-$cidValue = array_key_exists("cid",$_REQUEST)?$_REQUEST["cid"]:'';
-$removeAttrs = array_key_exists("r",$_REQUEST)?$_REQUEST["r"]:""; 
-$addAttrs = array_key_exists("a",$_REQUEST)?$_REQUEST["a"]:""; 
-$langValue = array_key_exists("lang",$_REQUEST)?$_REQUEST["lang"]:""; 
+$taxonFilter = array_key_exists('tf',$_REQUEST)?$_REQUEST['tf']:'';
+$generaOnly = array_key_exists('generaonly',$_POST)?$_POST['generaonly']:0;
+$cidValue = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:'';
+$removeAttrs = array_key_exists('r',$_REQUEST)?$_REQUEST['r']: '';
+$addAttrs = array_key_exists('a',$_REQUEST)?$_REQUEST['a']: '';
+$langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 
 $muManager = new KeyMassUpdate();
 $muManager->setClid($clid);
-if($langValue) $muManager->setLang($langValue);
-if($cidValue) $muManager->setCid($cidValue);
+if($cidValue) {
+    $muManager->setCid($cidValue);
+}
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("KeyEditor",$USER_RIGHTS) || array_key_exists("KeyAdmin",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS) || array_key_exists('KeyAdmin',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -34,21 +38,12 @@ if($isEditor){
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<script>
-		var addStr = ";";
-		var removeStr = ";";
-		var dataChanged = false;
-		
-		window.onbeforeunload = verifyClose();
+        let addStr = ";";
+        let removeStr = ";";
 
-		function verifyClose() { 
-			if(dataChanged == true) { 
-				return "You will lose any unsaved data if you don't first save your changes!"; 
-			}
-		}
-
-		function addAttr(target){
-			var indexOfAdd = addStr.indexOf(";"+target+";");
-			if(indexOfAdd == -1){
+        function addAttr(target){
+            const indexOfAdd = addStr.indexOf(";" + target + ";");
+            if(indexOfAdd === -1){
 				addStr += target + ";";
 			}
 			else{
@@ -57,8 +52,8 @@ if($isEditor){
 		}
 		
 		function removeAttr(target){
-			var indexOfRemove = removeStr.indexOf(";"+target+";");
-			if(indexOfRemove == -1){
+            const indexOfRemove = removeStr.indexOf(";" + target + ";");
+            if(indexOfRemove === -1){
 				removeStr += target + ";";
 			}
 			else{
@@ -67,18 +62,19 @@ if($isEditor){
 		}
 	
 		function submitAttrs(){
-			var sform = document.submitform;
-			var a;
-			var r;
-			var submitForm = false;
-			
-			if(addStr.length > 1){
-				var addAttrs = addStr.split(";");
-				for(a in addAttrs){
-					var addValue = addAttrs[a];
-					if(addValue.length > 1){
-						var newInput = document.createElement("input");
-						newInput.setAttribute("type","hidden");
+            let newInput;
+            const sform = document.submitform;
+            let a;
+            let r;
+            let submitForm = false;
+
+            if(addStr.length > 1){
+                const addAttrs = addStr.split(";");
+                for(a in addAttrs){
+                    const addValue = addAttrs[a];
+                    if(addValue.length > 1){
+                        newInput = document.createElement("input");
+                        newInput.setAttribute("type","hidden");
 						newInput.setAttribute("name","a[]");
 						newInput.setAttribute("value",addValue);
 						sform.appendChild(newInput);
@@ -88,12 +84,12 @@ if($isEditor){
 			}
 	
 			if(removeStr.length > 1){
-				var removeAttrs = removeStr.split(";");
-				for(r in removeAttrs){
-					var removeValue = removeAttrs[r];
-					if(removeValue.length > 1){
-						var newInput = document.createElement("input");
-						newInput.setAttribute("type","hidden");
+                const removeAttrs = removeStr.split(";");
+                for(r in removeAttrs){
+                    const removeValue = removeAttrs[r];
+                    if(removeValue.length > 1){
+                        newInput = document.createElement("input");
+                        newInput.setAttribute("type","hidden");
 						newInput.setAttribute("name","r[]");
 						newInput.setAttribute("value",removeValue);
 						sform.appendChild(newInput);
@@ -112,7 +108,7 @@ if($isEditor){
 </head>
 <body>
 <?php 
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
@@ -133,46 +129,44 @@ include($SERVER_ROOT.'/header.php');
 	}
 	?>
 </div>
-<!-- This is inner text! -->
 <div id="innertext">
 	<?php
 	if($clid && $isEditor){
 		if(!$cidValue){
 			?>
 			<form id="filterform" action="massupdate.php" method="post" onsubmit="return verifyFilterForm(this)">
-		  			<div style="margin: 10px 0px;">Select character to edit</div>
-		  			<div>
-						<select name="tf">
-				 			<option value="">All Taxa</option>
-				 			<option value="">--------------------------</option>
-					  		<?php 
-					  		$selectList = $muManager->getTaxaQueryList();
-				  			foreach($selectList as $tid => $scinameValue){
-				  				echo '<option value="'.$tid.'" '.($tid==$taxonFilter?"SELECTED":"").'>'.$scinameValue."</option>";
-				  			}
-					  		?>
-						</select>
-						<?php 
-						count($selectList);
-						?>
-					</div>
-					<div style="margin: 10px 0px;">
-						<input type="checkbox" name="generaonly" value="1" <?php if($generaOnly) echo "checked"; ?> /> 
-						Exclude Species Rank
-					</div>
-			 		<?php 
-	 				$cList = $muManager->getCharList($taxonFilter);			//Array(Heading => Array(CID => CharName))
-					foreach($cList as $h => $charData){
-						echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
-						ksort($charData);
-						foreach($charData as $cidKey => $charValue){
-							echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()">'.$charValue.'</div>'."\n";
-						}
-					}
-			 		?>
-					<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
-					<input type="hidden" name="lang" value="<?php echo $langValue; ?>" />
-			 	</fieldset>
+                <div style="margin: 10px 0;">Select character to edit</div>
+                <div>
+                    <select name="tf">
+                        <option value="">All Taxa</option>
+                        <option value="">--------------------------</option>
+                        <?php
+                        $selectList = $muManager->getTaxaQueryList();
+                        foreach($selectList as $tid => $scinameValue){
+                            echo '<option value="'.$tid.'" '.($tid === $taxonFilter? 'SELECTED' : '').'>'.$scinameValue. '</option>';
+                        }
+                        ?>
+                    </select>
+                    <?php
+                    count($selectList);
+                    ?>
+                </div>
+                <div style="margin: 10px 0;">
+                    <input type="checkbox" name="generaonly" value="1" <?php echo ($generaOnly?'checked':''); ?> />
+                    Exclude Species Rank
+                </div>
+                <?php
+                $cList = $muManager->getCharList($taxonFilter);
+                foreach($cList as $h => $charData){
+                    echo "<div style='margin-top:1em;font-size:125%;font-weight:bold;'>$h</div>\n";
+                    ksort($charData);
+                    foreach($charData as $cidKey => $charValue){
+                        echo '<div> <input name="cid" type="radio" value="'.$cidKey.'" onclick="this.form.submit()">'.$charValue.'</div>'."\n";
+                    }
+                }
+                ?>
+                <input type='hidden' name='clid' value='<?php echo $clid; ?>' />
+                <input type="hidden" name="lang" value="<?php echo $langValue; ?>" />
 			</form>
 			<?php
 		}
@@ -180,7 +174,7 @@ include($SERVER_ROOT.'/header.php');
 			$inheritStr = "&nbsp;<span title='State has been inherited from parent taxon'><b>(i)</b></span>";
 			?>
 			<div><?php echo $inheritStr; ?> = character state is inherited as true from a parent taxon (genus, family, etc)</div>
-		 	<table class="styledtable" style="font-family:Arial;font-size:12px;">
+		 	<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 				<?php 
 				$muManager->echoTaxaList($taxonFilter,$generaOnly);
 				?>
@@ -195,12 +189,12 @@ include($SERVER_ROOT.'/header.php');
 	 	}
 	}
 	else{  
-		echo "<h1>You appear not to have necessary premissions to edit character data.</h1>";
+		echo '<h1>You appear not to have necessary premissions to edit character data.</h1>';
 	}
 	?>
 </div>
 <?php  
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

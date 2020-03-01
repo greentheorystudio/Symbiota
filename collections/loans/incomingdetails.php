@@ -1,7 +1,7 @@
 <?php 
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<div id="tabs" style="margin:0px;">
+<div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#loandiv"><span>Loan Details</span></a></li>
 		<?php 
@@ -23,7 +23,7 @@ $specList = $loanManager->getSpecList($loanId);
 				<legend>Loan In Details</legend>
 				<div style="padding-top:18px;float:left;">
 					<span>
-						<b>Loan Number:</b> <input type="text" autocomplete="off" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="<?php echo ($loanArr['loanidentifierborr']?$loanArr['loanidentifierborr']:$loanArr['loanidentifierown']); ?>" />
+						<b>Loan Number:</b> <input type="text" autocomplete="off" name="loanidentifierborr" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="<?php echo ($loanArr['loanidentifierborr']?:$loanArr['loanidentifierown']); ?>" />
 					</span>
 				</div>
 				<div style="margin-left:20px;padding-top:4px;float:left;">
@@ -31,7 +31,7 @@ $specList = $loanManager->getSpecList($loanId);
 						Entered By:
 					</span><br />
 					<span>
-						<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo ($loanArr['createdbyborr']?$loanArr['createdbyborr']:$PARAMS_ARR['un']); ?>" onchange=" " disabled />
+						<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo ($loanArr['createdbyborr']?:$PARAMS_ARR['un']); ?>" onchange=" " disabled />
 					</span>
 				</div>
 				<div style="margin-left:20px;padding-top:4px;float:left;">
@@ -68,7 +68,7 @@ $specList = $loanManager->getSpecList($loanId);
 								<?php 
 								$instArr = $loanManager->getInstitutionArr();
 								foreach($instArr as $k => $v){
-									echo '<option value="'.$k.'" '.($loanArr['iidowner']==$k?'SELECTED':'').'>'.$v.'</option>';
+									echo '<option value="'.$k.'" '.($loanArr['iidowner'] === $k?'SELECTED':'').'>'.$v.'</option>';
 								}
 								?>
 							</select>
@@ -177,7 +177,7 @@ $specList = $loanManager->getSpecList($loanId);
 				</div>
 			</fieldset>
 		</form>
-		<form name="reportsform" onsubmit="return ProcessReport();" method="post" onsubmit="" >
+		<form name="reportsform" onsubmit="return ProcessReport();" method="post">
 			<fieldset>
 				<legend>Generate Loan Paperwork</legend>
 				<div style="float:right;">
@@ -210,7 +210,7 @@ $specList = $loanManager->getSpecList($loanId);
 	if($specList){
 		?>
 		<div id="specdiv">
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 				<tr>
 					<th style="width:100px;text-align:center;">Catalog Number</th>
 					<th style="width:375px;text-align:center;">Details</th>
@@ -228,7 +228,9 @@ $specList = $loanManager->getSpecList($loanId);
 						<td>
 							<?php 
 							$loc = $specArr['locality'];
-							if(strlen($loc) > 500) $loc = substr($loc,400);
+							if(strlen($loc) > 500) {
+                                $loc = substr($loc, 400);
+                            }
 							echo '<i>'.$specArr['sciname'].'</i>; ';
 							echo  $specArr['collector'].'; '.$loc;
 							?> 
@@ -255,7 +257,7 @@ $specList = $loanManager->getSpecList($loanId);
 					echo '</div>';
 				}
 				?>
-				<input name="formsubmit" type="submit" value="Delete Loan" <?php if($specList) echo 'DISABLED'; ?> />
+				<input name="formsubmit" type="submit" value="Delete Loan" <?php echo ($specList?'DISABLED':''); ?> />
 				<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
 				<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
 			</fieldset>

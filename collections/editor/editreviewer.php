@@ -1,10 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditReview.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?'.$_SERVER['QUERY_STRING']);
-header("Content-Type: text/html; charset=".$CHARSET);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = $_REQUEST['collid'];
 $displayMode = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'1';
@@ -37,14 +39,14 @@ $reviewManager->setLimitNumber($limitCnt);
 
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
  	$isEditor = true;
 }
 elseif($reviewManager->getObsUid()){
 	$isEditor = true;
 }
 
-$statusStr = "";
+$statusStr = '';
 if($isEditor){
 	if(array_key_exists('updatesubmit', $_POST)){
 		if(!$reviewManager->updateRecords($_POST)){
@@ -68,23 +70,23 @@ if($isEditor){
 		if($reviewManager->exportCsvFile($idStr)){
 			exit();
 		}
-		else{
-			$statusStr = $reviewManager->getErrorMessage();
-		}
-	}
+
+        $statusStr = $reviewManager->getErrorMessage();
+    }
 	elseif(array_key_exists('dlallsubmit', $_POST)){
 		if($reviewManager->exportCsvFile('', true)){
 			exit();
 		}
-		else{
-			$statusStr = $reviewManager->getErrorMessage();
-		}
-	}
+
+        $statusStr = $reviewManager->getErrorMessage();
+    }
 }
 $recCnt = $reviewManager->getEditCnt();
 
 $subCnt = $limitCnt*($pageNum + 1);
-if($subCnt > $recCnt) $subCnt = $recCnt;  
+if($subCnt > $recCnt) {
+    $subCnt = $recCnt;
+}
 $navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
@@ -123,30 +125,27 @@ $navStr .= '</div>';
 			}
 
 			function selectAllId(cbObj){
-				var eElements = document.getElementsByName("id[]");
-				for(i = 0; i < eElements.length; i++){
-					var elem = eElements[i];
-					if(cbObj.checked){
-						elem.checked = true;
-					}
-					else{
-						elem.checked = false;
-					}
+                const eElements = document.getElementsByName("id[]");
+                for(let i = 0; i < eElements.length; i++){
+                    const elem = eElements[i];
+                    elem.checked = !!cbObj.checked;
 				}
 			}
 
-			function validateEditForm(f){
-				var elements = document.getElementsByName("id[]");
-				for(i = 0; i < elements.length; i++){
-					var elem = elements[i];
-					if(elem.checked) return true;
+			function validateEditForm(){
+                const elements = document.getElementsByName("id[]");
+                for(let i = 0; i < elements.length; i++){
+                    const elem = elements[i];
+                    if(elem.checked) {
+                        return true;
+                    }
 				}
 			   	alert("Please check at least one edit from list below!");
 		      	return false;
 			}
 
-			function validateDelete(f){
-				 if(validateEditForm(f)){
+			function validateDelete(){
+				 if(validateEditForm()){
 					 return confirm('Are you sure you want to permanently remove selected edits from history?');
 				 }
 				 return false;
@@ -173,16 +172,18 @@ $navStr .= '</div>';
 				}
 			}
 
-			function openIndPU(occid,clid){
-				var newWindow = window.open('../editor/occurrenceeditor.php?occid='+occid,'indspec' + occid,'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
-				if (newWindow.opener == null) newWindow.opener = self;
+			function openIndPU(occid){
+                const newWindow = window.open('../editor/occurrenceeditor.php?occid=' + occid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
+                if (newWindow.opener == null) {
+                    newWindow.opener = self;
+                }
 			}
 		</script>
 		<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 		if($reviewManager->getObsUid()){
@@ -194,7 +195,6 @@ $navStr .= '</div>';
 		echo '<b>Specimen Edits Reviewer</b>';
 		echo '</div>';
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext" style="min-width:1100px">
 			<?php 
 			if($collid && $isEditor){
@@ -219,18 +219,18 @@ $navStr .= '</div>';
 								Applied Status: 
 								<select name="fastatus">
 									<option value="">All Records</option>
-									<option value="0" <?php echo ($faStatus=='0'?'SELECTED':''); ?>>Not Applied</option>
-									<option value="1" <?php echo ($faStatus=='1'?'SELECTED':''); ?>>Applied</option>
+									<option value="0" <?php echo ($faStatus === '0'?'SELECTED':''); ?>>Not Applied</option>
+									<option value="1" <?php echo ($faStatus === '1'?'SELECTED':''); ?>>Applied</option>
 								</select>
 							</div>
 							<div style="margin:3px;">
 								Review Status: 
 								<select name="frstatus">
 									<option value="0">All Records</option>
-									<option value="1,2" <?php echo ($frStatus=='1,2'?'SELECTED':''); ?>>Open/Pending</option>
-									<option value="1" <?php echo ($frStatus=='1'?'SELECTED':''); ?>>Open Only</option>
-									<option value="2" <?php echo ($frStatus=='2'?'SELECTED':''); ?>>Pending Only</option>
-									<option value="3" <?php echo ($frStatus=='3'?'SELECTED':''); ?>>Closed</option>
+									<option value="1,2" <?php echo ($frStatus === '1,2'?'SELECTED':''); ?>>Open/Pending</option>
+									<option value="1" <?php echo ($frStatus === '1'?'SELECTED':''); ?>>Open Only</option>
+									<option value="2" <?php echo ($frStatus === '2'?'SELECTED':''); ?>>Pending Only</option>
+									<option value="3" <?php echo ($frStatus === '3'?'SELECTED':''); ?>>Closed</option>
 								</select>
 							</div>
 							<div style="margin:3px;">
@@ -241,7 +241,7 @@ $navStr .= '</div>';
 									<?php 
 									$editorArr = $reviewManager->getEditorList();
 									foreach($editorArr as $id => $e){
-										echo '<option value="'.$id.'" '.($editor==$id?'SELECTED':'').'>'.$e.'</option>'."\n";
+										echo '<option value="'.$id.'" '.($editor === $id?'SELECTED':'').'>'.$e.'</option>'."\n";
 									}
 									?>
 								</select>
@@ -262,7 +262,7 @@ $navStr .= '</div>';
 									Editing Source: 
 									<select name="display">
 										<option value="1">Internal</option>
-										<option value="2" <?php if($displayMode == 2) echo 'SELECTED'; ?>>External</option>
+										<option value="2" <?php echo (($displayMode === 2)?'SELECTED':''); ?>>External</option>
 									</select>
 								</div>
 								<?php 
@@ -290,7 +290,7 @@ $navStr .= '</div>';
 									</select>
 								</div>
 								<div style="clear:both;margin:15px 5px;">
-									<input name="updatesubmit" type="submit" value="Update Selected Records" onclick="return validateEditForm(this.form);" />
+									<input name="updatesubmit" type="submit" value="Update Selected Records" onclick="return validateEditForm();" />
 									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
 									<input name="fastatus" type="hidden" value="<?php echo $faStatus; ?>" />
 									<input name="frstatus" type="hidden" value="<?php echo $frStatus; ?>" />
@@ -301,21 +301,21 @@ $navStr .= '</div>';
 									<input name="display" type="hidden" value="<?php echo $displayMode; ?>" />
 								</div>
 							</div>
-							<div style="clear:both;margin:15px 0px;">
+							<div style="clear:both;margin:15px 0;">
 								<hr/>
 								<a href="#" onclick="toggle('additional')"><b>Additional Actions</b></a>
 							</div>
 							<div id="additional" style="display:none">
 								<div style="margin:10px 15px;">
-									<input name="delsubmit" type="submit" value="Delete Selected Edits" onclick="return validateDelete(this.form)" />
-									<div style="margin:5px 0px 10px 10px;">* Permanently clear selected edit from versioning history. Warning: this action can not be undone!</div>
+									<input name="delsubmit" type="submit" value="Delete Selected Edits" onclick="return validateDelete()" />
+									<div style="margin:5px 0 10px 10px;">* Permanently clear selected edit from versioning history. Warning: this action can not be undone!</div>
 								</div>
-								<div style="margin:5px 0px 10px 15px;">
-									<input name="dlsubmit" type="submit" value="Download Selected Records" onclick="return validateEditForm(this.form);" />
+								<div style="margin:5px 0 10px 15px;">
+									<input name="dlsubmit" type="submit" value="Download Selected Records" onclick="return validateEditForm();" />
 								</div>
-								<div style="margin:5px 0px 10px 15px;">
+								<div style="margin:5px 0 10px 15px;">
 									<input name="dlallsubmit" type="submit" value="Download All Records" />
-									<div style="margin:5px 0px 10px 10px;">* Based on search parameters in Filter Pane to the right</div>
+									<div style="margin:5px 0 10px 10px;">* Based on search parameters in Filter Pane to the right</div>
 								</div>
 								<div style="margin:10px 15px;">
 									<input name="printsubmit" type="button" value="Print Friendly Page" onclick="printFriendlyMode(true)" />
@@ -326,7 +326,7 @@ $navStr .= '</div>';
 					<?php
 					echo '<div style="clear:both">'.$navStr.'</div>'; 
 					?>
-					<table class="styledtable" style="font-family:Arial;font-size:12px;">
+					<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 						<tr>
 							<th title="Select/Unselect All"><input name='selectall' type="checkbox" onclick="selectAllId(this)" /></th>
 							<th>Record #</th>
@@ -350,7 +350,7 @@ $navStr .= '</div>';
 										$displayAll = true;
 										foreach($fieldArr as $fieldName => $fieldObj){
 											?>
-											<tr <?php echo ($recCnt%2?'class="alt"':'') ?>>
+											<tr <?php echo (($recCnt%2)?'class="alt"':'') ?>>
 												<td>
 													<?php 
 													if($displayAll){
@@ -371,7 +371,11 @@ $navStr .= '</div>';
 												</td>
 												<td>
 													<div title="Catalog Number">
-														<?php if($displayAll) echo $edObj['catnum']; ?>
+														<?php
+                                                        if($displayAll) {
+                                                            echo $edObj['catnum'];
+                                                        }
+                                                        ?>
 													</div>
 												</td>
 												<td>
@@ -379,13 +383,13 @@ $navStr .= '</div>';
 														<?php
 														if($displayAll){
 															$rStatus = $edObj['rstatus'];
-															if($rStatus == 1){
+															if($rStatus === 1){
 																echo 'OPEN';
 															}
-															elseif($rStatus == 2){
+															elseif($rStatus === 2){
 																echo 'PENDING';
 															}
-															elseif($rStatus == 3){
+															elseif($rStatus === 3){
 																echo 'CLOSED';
 															}
 															else{
@@ -399,7 +403,7 @@ $navStr .= '</div>';
 													<div title="Applied Status">
 														<?php 
 														if($displayAll){
-															if($appliedStatus == 1){
+															if($appliedStatus === 1){
 																echo 'APPLIED';
 															}
 															else{
@@ -415,9 +419,13 @@ $navStr .= '</div>';
 														
 														if($displayAll){
 															$editorStr = $edObj['editor'];
-															if($displayMode == 2){
-																if(!$editorStr) $editorStr = $edObj['exeditor'];
-																if($edObj['exsource']) $editorStr = $edObj['exsource'].($editorStr?': '.$editorStr:''); 
+															if($displayMode === 2){
+																if(!$editorStr) {
+                                                                    $editorStr = $edObj['exeditor'];
+                                                                }
+																if($edObj['exsource']) {
+                                                                    $editorStr = $edObj['exsource'] . ($editorStr ? ': ' . $editorStr : '');
+                                                                }
 															}
 															echo $editorStr;
 														}
@@ -426,7 +434,11 @@ $navStr .= '</div>';
 												</td>
 												<td>
 													<div title="Timestamp">
-														<?php if($displayAll) echo $edObj['ts']; ?>
+														<?php
+                                                        if($displayAll) {
+                                                            echo $edObj['ts'];
+                                                        }
+                                                        ?>
 													</div>
 												</td>
 												<td>
@@ -476,6 +488,6 @@ $navStr .= '</div>';
 			}
 			?>
 		</div>
-		<?php include($SERVER_ROOT.'/footer.php');?>
+		<?php include(__DIR__ . '/../../footer.php');?>
 	</body>
 </html>

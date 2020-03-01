@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageLibraryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ImageLibraryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$taxon = array_key_exists("taxon",$_REQUEST)?trim($_REQUEST["taxon"]):"";
-$cntPerPage = array_key_exists("cntperpage",$_REQUEST)?$_REQUEST["cntperpage"]:100;
-$pageNumber = array_key_exists("page",$_REQUEST)?$_REQUEST["page"]:1; 
-$stArrJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
-$view = array_key_exists("view",$_REQUEST)?$_REQUEST["view"]:'';
+$taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
+$view = array_key_exists('view',$_REQUEST)?$_REQUEST['view']:'';
 $stArr = array();
 $imageArr = array();
 $taxaList = array();
@@ -19,7 +19,7 @@ $imgLibManager = new ImageLibraryManager();
 $imgLibManager->setSearchTermsArr($stArr);
 
 $recordListHtml = '';
-if($view == 'thumb'){
+if($view === 'thumb'){
 	
 	$imgLibManager->setTaxon($taxon);
 	$imgLibManager->setSqlWhere();
@@ -38,11 +38,11 @@ if($view == 'thumb'){
 			$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
 		}
 		for($x = $startPage; $x <= $endPage; $x++){
-			if($pageNumber != $x){
-				$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x."</a></span>";
+			if($pageNumber !== $x){
+				$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
 			}
 			else{
-				$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x."</span>";
+				$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
 			}
 		}
 		if(($lastPage - $startPage) >= 10){
@@ -52,14 +52,16 @@ if($view == 'thumb'){
 		$pageBar .= "</div><div style='float:right;margin-top:4px;margin-bottom:8px;'>";
 		$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
 		$endNum = $beginNum + $cntPerPage - 1;
-		if($endNum > $recordCnt) $endNum = $recordCnt;
-		$pageBar .= "Page ".$pageNumber.", records ".$beginNum."-".$endNum." of ".$recordCnt."</div>";
+		if($endNum > $recordCnt) {
+			$endNum = $recordCnt;
+		}
+		$pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
 		$paginationStr = $pageBar;
 		
 		$recordListHtml .= '<div style="width:100%;">';
 		$recordListHtml .= $paginationStr;
 		$recordListHtml .= '</div>';
-		$recordListHtml .= '<div style="clear:both;margin:5 0 5 0;"><hr /></div>';
+		$recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
 	}
 	$recordListHtml .= '<div style="width:98%;margin-left:auto;margin-right:auto;">';
 	if($imageArr){
@@ -69,11 +71,11 @@ if($view == 'thumb'){
 			$imgTn = $imgArr['thumbnailurl'];
 			if($imgTn){
 				$imgUrl = $imgTn;
-				if($IMAGE_DOMAIN && substr($imgTn,0,1)=='/'){
+				if($IMAGE_DOMAIN && strpos($imgTn, '/') === 0){
 					$imgUrl = $IMAGE_DOMAIN.$imgTn;
 				}
 			}
-			elseif($IMAGE_DOMAIN && substr($imgUrl,0,1)=='/'){
+			elseif($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
 				$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 			}
 			$recordListHtml .= '<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">';
@@ -90,29 +92,38 @@ if($view == 'thumb'){
 			$recordListHtml .= '<div>';
 			$sciname = $imgArr['sciname'];
 			if($sciname){
-				if(strpos($imgArr['sciname'],' ')) $sciname = '<i>'.$sciname.'</i>';
-				if($imgArr['tid']) $recordListHtml .= '<a href="#" onclick="openTaxonPopup('.$imgArr['tid'].');return false;" >';
+				if(strpos($imgArr['sciname'],' ')) {
+					$sciname = '<i>' . $sciname . '</i>';
+				}
+				if($imgArr['tid']) {
+					$recordListHtml .= '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';
+				}
 				$recordListHtml .= $sciname;
-				if($imgArr['tid']) $recordListHtml .= '</a>';
+				if($imgArr['tid']) {
+					$recordListHtml .= '</a>';
+				}
 				$recordListHtml .= '<br />';
 			}
 			if($imgArr['catalognumber']){
 				$recordListHtml .= '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-				$recordListHtml .= $imgArr['instcode'] . ": " . $imgArr['catalognumber'];
+				$recordListHtml .= $imgArr['instcode'] . ': ' . $imgArr['catalognumber'];
 				$recordListHtml .= '</a>';
 			}
 			elseif($imgArr['lastname']){
 				$pName = $imgArr['firstname'].' '.$imgArr['lastname'];
-				if(strlen($pName) < 20) $recordListHtml .= $pName.'<br />';
-				else $recordListHtml .= $imgArr['lastname'].'<br />';
+				if(strlen($pName) < 20) {
+					$recordListHtml .= $pName . '<br />';
+				}
+				else {
+					$recordListHtml .= $imgArr['lastname'] . '<br />';
+				}
 			}
-			//if($imgArr['stateprovince']) $recordListHtml .= $imgArr['stateprovince'] . "<br />";
 			$recordListHtml .= '</div>';
 			$recordListHtml .= '</div>';
 		}
 		$recordListHtml .= '</div>';
 		if($lastPage > $startPage){
-			$recordListHtml .= '<div style="clear:both;margin:5 0 5 0;"><hr /></div>';
+			$recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
 			$recordListHtml .= '<div style="width:100%;">'.$paginationStr.'</div>';
 		}
 		$recordListHtml .= '<div style="clear:both;"></div>';
@@ -123,7 +134,7 @@ if($view == 'thumb'){
 		$recordListHtml .= '</div>';
 	}
 }
-elseif($view == 'famlist'){
+elseif($view === 'famlist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getFamilyList();
 	
@@ -134,7 +145,7 @@ elseif($view == 'famlist'){
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
 	}
 }
-elseif($view == 'genlist'){
+elseif($view === 'genlist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getGenusList($taxon);
 	
@@ -146,7 +157,7 @@ elseif($view == 'genlist'){
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
 	}
 }
-elseif($view == 'splist'){
+elseif($view === 'splist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getSpeciesList($taxon);
 	
@@ -159,6 +170,4 @@ elseif($view == 'splist'){
 	}
 }
 
-//output the response
 echo json_encode($recordListHtml);
-?>

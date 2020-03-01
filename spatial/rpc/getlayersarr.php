@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 
 $spatialManager = new SpatialModuleManager();
 $layersArr = array();

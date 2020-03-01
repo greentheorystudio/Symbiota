@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
+include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 
-$tid = $_REQUEST["tid"];
-$genusStr = array_key_exists('genusstr',$_REQUEST)?$_REQUEST["genusstr"]:'';
+$tid = $_REQUEST['tid'];
+$genusStr = array_key_exists('genusstr',$_REQUEST)?$_REQUEST['genusstr']:'';
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
@@ -11,8 +11,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 ?>
 <script>
 	$(document).ready(function() {
-	
-		$("#remapvalue").autocomplete({ 
+        $("#remapvalue").autocomplete({
 				source: "rpc/gettaxasuggest.php",  
 				minLength: 2
 			}
@@ -20,7 +19,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	});
 	
 	function submitRemapTaxonForm(f){
-		if(f.remapvalue.value == ""){
+		if(f.remapvalue.value === ""){
 			alert("Target taxon does not appear to be null. Please submit a taxon to remap the resources");
 			return false;
 		}
@@ -29,7 +28,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			url: "rpc/gettid.php",
 			data: { sciname: f.remapvalue.value }
 		}).done(function( msg ) {
-			if(msg == 0){
+			if(msg === 0){
 				alert("ERROR: Remapping taxon not found in thesaurus. Is the name spelled correctly?");
 				f.remaptid.value = "";
 			}
@@ -40,8 +39,8 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		});
 	}
 </script>
-<div style="min-height:400px; height:auto !important; height:400px; ">
-	<div style="margin:15px 0px">
+<div style="min-height:400px;height:400px;">
+	<div style="margin:15px 0;">
 		Taxon record first needs to be evaluated before it can be deleted from the system. 
 		The evaluation ensures that the deletion of this record will not interfer with 
 		data integrity.      
@@ -277,15 +276,23 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	<div style="margin:15px;">
 		<fieldset style="padding:15px;">
 			<legend><b>Delete Taxon and Existing Resources</b></legend>
-			<div style="margin:10px 0px;">
+			<div style="margin:10px 0;">
 			</div>
 			<form name="deletetaxonform" method="post" action="taxonomyeditor.php" onsubmit="return confirm('Are you sure you want to delete this taxon? Action can not be undone!')">
 				<?php
 				$deactivateStr = '';
-				if(array_key_exists('child',$verifyArr)) $deactivateStr = 'disabled';
-				if(array_key_exists('syn',$verifyArr)) $deactivateStr = 'disabled';
-				if($verifyArr['img'] > 0) $deactivateStr = 'disabled';
-				if(array_key_exists('tdesc',$verifyArr)) $deactivateStr = 'disabled';
+				if(array_key_exists('child',$verifyArr)) {
+                    $deactivateStr = 'disabled';
+                }
+				if(array_key_exists('syn',$verifyArr)) {
+                    $deactivateStr = 'disabled';
+                }
+				if($verifyArr['img'] > 0) {
+                    $deactivateStr = 'disabled';
+                }
+				if(array_key_exists('tdesc',$verifyArr)) {
+                    $deactivateStr = 'disabled';
+                }
 				?>
 				<input name="submitaction" type="submit" value="Delete Taxon" <?php echo $deactivateStr; ?> /> 
 				<input name="tid" type="hidden" value="<?php echo $tid; ?>" /> 

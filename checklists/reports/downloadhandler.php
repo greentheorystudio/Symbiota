@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverCore.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 ini_set('max_execution_time', 300);
 
 $schema = array_key_exists('schema',$_POST)?$_POST['schema']: 'symbiota';
@@ -11,7 +11,6 @@ $clid = $_POST['clid'];
 
 $dwcaHandler = new DwcArchiverCore();
 
-//Set locality redaction variables
 $redactLocalities = 1;
 $rareReaderArr = array();
 if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)){

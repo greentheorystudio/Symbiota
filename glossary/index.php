@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
 $glossgrpId = array_key_exists('glossgrpid',$_REQUEST)?$_REQUEST['glossgrpid']:0;
@@ -11,12 +11,18 @@ $searchTerm = array_key_exists('searchterm',$_REQUEST)?$_REQUEST['searchterm']:'
 $deepSearch = array_key_exists('deepsearch',$_POST)?$_POST['deepsearch']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
-if(!$language) $language = $DEFAULT_LANG;
-if($language == 'en') $language = 'English';
-if($language == 'es') $language = 'Spanish';
+if(!$language) {
+    $language = $DEFAULT_LANG;
+}
+if($language === 'en') {
+    $language = 'English';
+}
+if($language === 'es') {
+    $language = 'Spanish';
+}
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -24,14 +30,20 @@ $glosManager = new GlossaryManager();
 
 $statusStr = '';
 if($formSubmit){
-	if($formSubmit == 'Add Source'){
-		if(!$glosManager->addSource($_POST)) $statusStr = $glosManager->getErrorStr();
+	if($formSubmit === 'Add Source'){
+		if(!$glosManager->addSource($_POST)) {
+            $statusStr = $glosManager->getErrorStr();
+        }
 	}
-	elseif($formSubmit == 'Edit Source'){
-		if(!$glosManager->editSource($_POST)) $statusStr = $glosManager->getErrorStr();
+	elseif($formSubmit === 'Edit Source'){
+		if(!$glosManager->editSource($_POST)) {
+            $statusStr = $glosManager->getErrorStr();
+        }
 	}
-	elseif($formSubmit == 'Delete Source'){
-		if(!$glosManager->deleteSource($_POST['tid'])) $statusStr = $glosManager->getErrorStr();
+	elseif($formSubmit === 'Delete Source'){
+		if(!$glosManager->deleteSource($_POST['tid'])) {
+            $statusStr = $glosManager->getErrorStr();
+        }
 	}
 }
 $languageArr = $glosManager->getLanguageArr();
@@ -40,6 +52,9 @@ unset($languageArr['all']);
 
 $taxaArr = $glosManager->getTaxaGroupArr();
 $taxonName = ($tid?$taxaArr[$tid]:'');
+
+$addTermUrl = 'addterm.php';
+$indTermUrl = 'individual.php';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -50,7 +65,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
-		var langArr = {<?php 
+		const langArr = {<?php
 			$d = '';
 			foreach($languageArr as $k => $v){ 
 				echo $d.'"'.$k.'":['.$v.']';
@@ -59,9 +74,9 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		?>};
 
 		function verifySearchForm(f){
-			var language = f.searchlanguage.value;
-			var taxon = f.searchtaxa.value;
-			if(!language || !taxon){
+            const language = f.searchlanguage.value;
+            const taxon = f.searchtaxa.value;
+            if(!language || !taxon){
 				alert("Please select a language and taxonomic group to see term list.");
 				return false;
 			}
@@ -69,25 +84,25 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		}
 
 		function verifyDownloadForm(f){
-			var searchForm = document.searchform;
-			f.searchlanguage.value = searchForm.searchlanguage.value;
+            const searchForm = document.searchform;
+            f.searchlanguage.value = searchForm.searchlanguage.value;
 			f.searchtaxa.value = searchForm.searchtaxa.value;
 			f.searchterm.value = searchForm.searchterm.value;
 			f.deepsearch.value = searchForm.deepsearch.value;
-			var language = f.searchlanguage.value;
-			var taxon = f.searchtaxa.value;
-			if(!language || !taxon){
+            const language = f.searchlanguage.value;
+            const taxon = f.searchtaxa.value;
+            if(!language || !taxon){
 				alert("Please select a primary language and taxonomic group to download.");
 				return false;
 			}
-			
-			var downloadtype = f.exporttype.value;
-			if(downloadtype == 'translation'){
-				var numTranslations = 0;
-				var e = f.getElementsByTagName("input");
-				for(var i=0;i<e.length;i++){
-					if(e[i].name == "language[]"){ 
-						if(e[i].checked == true){
+
+            const downloadtype = f.exporttype.value;
+            if(downloadtype === 'translation'){
+                let numTranslations = 0;
+                const e = f.getElementsByTagName("input");
+                for(let i=0; i<e.length; i++){
+					if(e[i].name === "language[]"){
+						if(e[i].checked === true){
 							numTranslations++;
 						}
 					}
@@ -104,16 +119,20 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 			return true;
 		}
 
-		function openNewTermPopup(glossid,relation){
-			var urlStr = 'addterm.php?rellanguage=<?php echo $language.'&taxatid='.$tid.'&taxaname='.$taxonName; ?>';
-			newWindow = window.open(urlStr,'addnewpopup','toolbar=1,status=1,scrollbars=1,width=1250,height=900,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
+		function openNewTermPopup(){
+            const urlStr = '<?php echo $addTermUrl; ?>?rellanguage=<?php echo $language; ?>& taxatid=<?php echo $tid; ?>&taxaname=<?php echo $taxonName; ?>';
+            const newWindow = window.open(urlStr, 'addnewpopup', 'toolbar=1,status=1,scrollbars=1,width=1250,height=900,left=20,top=20');
+            if (newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 		}
 
 		function openTermPopup(glossid){
-			var urlStr = 'individual.php?glossid='+glossid;
-			newWindow = window.open(urlStr,'popup','toolbar=1,status=1,scrollbars=1,width=800,height=750,left=20,top=20');
-			if (newWindow.opener == null) newWindow.opener = self;
+            let urlStr = '<?php echo $indTermUrl; ?>?glossid=' + glossid;
+            const newWindow = window.open(urlStr, 'popup', 'toolbar=1,status=1,scrollbars=1,width=800,height=750,left=20,top=20');
+            if (newWindow.opener == null) {
+                newWindow.opener = self;
+            }
 			return false;
 		}
 
@@ -122,16 +141,15 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 </head>
 <body>
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
         <a href='index.php'> <b>Glossary</b></a>
     </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($statusStr){
@@ -143,7 +161,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		}
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
 			$bannerUrl = $GLOSSARY_BANNER;
-			if(substr($bannerUrl,0,4) != 'http' && substr($bannerUrl,0,1) != '/'){
+			if(strpos($bannerUrl, 'http') !== 0 && strpos($bannerUrl, '/') !== 0){
 				$bannerUrl = '../images/layout/'.$bannerUrl;
 			}
 			echo '<div id="glossaryBannerDiv"><img src="'.$bannerUrl.'" /></div>';
@@ -174,7 +192,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 					</a>
 				</div>
 			</div>
-			<div id="downloadoptionsdiv" style="display:none;clear:both;position:absolute;right:0px;margin-top:45px;background-color:white;">
+			<div id="downloadoptionsdiv" style="display:none;clear:both;position:absolute;right:0;margin-top:45px;background-color:white;">
 				<form name="downloadform" action="glossdocexport.php" method="post" onsubmit="return verifyDownloadForm(this);">
 					<fieldset style="padding:8px">
 						<legend><b>Download Options</b></legend>
@@ -230,7 +248,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							<select id="searchtaxa" name="searchtaxa" style="margin-top:2px;width:300px;" onchange="resetLanguageSelect(this.form)">
 								<?php 
 								foreach($taxaArr as $k => $v){
-									echo '<option value="'.$k.'" '.($k==$tid?'SELECTED':'').'>'.$v.'</option>';
+									echo '<option value="'.$k.'" '.($k === $tid?'SELECTED':'').'>'.$v.'</option>';
 								}
 								?>
 							</select>
@@ -247,7 +265,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 							<select id="searchlanguage" name="searchlanguage" style="margin-top:2px;" onchange="">
 								<?php 
 								foreach($langArr as $k => $v){
-									echo '<option value="'.$v.'" '.($v==$language||$k==$language?'SELECTED':'').'>'.$v.'</option>';
+									echo '<option value="'.$v.'" '.($v === $language || $k === $language?'SELECTED':'').'>'.$v.'</option>';
 								}
 								?>
 							</select>
@@ -297,15 +315,13 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 								</div>
 								<?php
 							}
-							else{
-								if($isEditor){
-									?>
-									<div style="float:left;margin-left:5px;">
-										<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>">(Add Sources)</a>
-									</div>
-									<?php
-								}
-							}
+							else if($isEditor){
+                                ?>
+                                <div style="float:left;margin-left:5px;">
+                                    <a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>">(Add Sources)</a>
+                                </div>
+                                <?php
+                            }
 							?>
 						</div>
 						<?php
@@ -358,7 +374,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 						echo '<div style="clear:both;padding:10px;"><ul>';
 						foreach($termList as $glossId => $termName){
 							echo '<li>';
-							echo '<a href="#" onclick="openTermPopup('.$glossId.'); return false;"><b>'.$termName.'</b></a>';
+							echo '<a href="#" onclick="openTermPopup('.$glossId.');return false;"><b>'.$termName.'</b></a>';
 							echo '</li>';
 						}
 						echo '</ul></div>';
@@ -372,7 +388,7 @@ $taxonName = ($tid?$taxaArr[$tid]:'');
 		</div>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

@@ -1,53 +1,49 @@
 <?php
 	include_once(__DIR__ . '/../../config/symbini.php');
-	include_once($SERVER_ROOT.'/classes/InventoryDynSqlManager.php');
-	header("Content-Type: text/html; charset=".$CHARSET);
-	$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:"";
-	$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-	$sqlFrag = array_key_exists("sqlfrag",$_REQUEST)?$_REQUEST["sqlfrag"]:"";
+	include_once(__DIR__ . '/../../classes/InventoryDynSqlManager.php');
+	header('Content-Type: text/html; charset=' .$CHARSET);
+
+	$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+	$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+	$sqlFrag = array_key_exists('sqlfrag',$_REQUEST)?$_REQUEST['sqlfrag']: '';
 	
 	$dynSqlManager = new InventoryDynSqlManager($clid);
 	$isEditable = false;
-	$statusStr = "";
-	if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid(),$USER_RIGHTS["ClAdmin"]))){
+	$statusStr = '';
+	if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid(), $USER_RIGHTS['ClAdmin'], true))){
 		$isEditable = true;
 		
-		//Submit checklist MetaData edits
-		if($action == "Save SQL Fragment"){
-	 		$statusStr = $dynSqlManager->saveSql();
+		if($action === 'Save SQL Fragment'){
+	 		$dynSqlManager->saveSql($sqlFrag);
 	 	}
-	 	elseif($action == "Test SQL Fragment"){
+	 	elseif($action === 'Test SQL Fragment'){
 	 		if($dynSqlManager->testSql($sqlFrag)){
-	 			$statusStr = "SQL fragment valid";
+	 			$statusStr = 'SQL fragment valid';
 	 		}
 	 		else{
-	 			$statusStr = "ERROR: SQL fragment failed";
+	 			$statusStr = 'ERROR: SQL fragment failed';
 	 		}
 	 	}
 	}
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en_US" xml:lang="en_US">
+<html lang="en">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<title><?php echo $DEFAULT_TITLE; ?> Flora Linkage Builder </title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-	<script language=javascript>
+	<script>
 		function updateSql(){
-			country = document.getElementById("countryinput").value;
-			state = document.getElementById("stateinput").value;
-			county = document.getElementById("countyinput").value;
-			locality = document.getElementById("localityinput").value;
-			latNorth = document.getElementById("latnorthinput").value;
-			lngWest = document.getElementById("lngwestinput").value;
-			lngEast = document.getElementById("lngeastinput").value;
-			latSouth = document.getElementById("latsouthinput").value;
-			sqlFragStr = "";
+            const country = document.getElementById("countryinput").value;
+            const state = document.getElementById("stateinput").value;
+            const county = document.getElementById("countyinput").value;
+            const locality = document.getElementById("localityinput").value;
+            const latNorth = document.getElementById("latnorthinput").value;
+            const lngWest = document.getElementById("lngwestinput").value;
+            const lngEast = document.getElementById("lngeastinput").value;
+            const latSouth = document.getElementById("latsouthinput").value;
+            let sqlFragStr = "";
 			if(country){
 				sqlFragStr = "AND (o.country = \"" + country + "\") ";
 			}
@@ -78,9 +74,8 @@
 
 <body>
 <?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
-	<!-- This is inner text! -->
 	<div id='innertext'>
 		<?php
 		if($clid  && $isEditable){ ?>
@@ -93,7 +88,7 @@
 		<div>
 			
 		</div>
-			<div style="margin:10px 0px 15px 0px;">
+			<div style="margin:10px 0 15px 0;">
 				This editing module will aid you in building an SQL fragment that will be used to help link vouchers to species names within the checklist. 
 				When a dynamic SQL fragment exists, the checklist editors will have access to 
 				editing tools that will dynamically query occurrence records matching the criteria within the SQL statement. 
@@ -103,7 +98,7 @@
 			<div style="margin-top:10px;">
 				<fieldset>
 					<legend><b>Current Dynamic SQL Fragment</b></legend>
-					<?php echo $dynSqlManager->getDynamicSql()?$dynSqlManager->getDynamicSql():"SQL not yet set"?>
+					<?php echo $dynSqlManager->getDynamicSql()?: 'SQL not yet set' ?>
 				</fieldset>
 			</div>
 			<form name="sqlbuilder" action="" onsubmit="return buildSql();" style="margin-bottom:15px;">
@@ -116,25 +111,25 @@
 					</div>
 					<div>
 						<b>Country:</b>
-						<input id="countryinput" type="text" name="country" onchange="" />
+						<input id="countryinput" type="text" name="country" />
 					</div>
 					<div>
 						<b>State:</b>
-						<input id="stateinput" type="text" name="state" onchange="" />
+						<input id="stateinput" type="text" name="state" />
 					</div>
 					<div>
 						<b>County:</b>
-						<input id="countyinput" type="text" name="county" onchange="" />
+						<input id="countyinput" type="text" name="county" />
 					</div>
 					<div>
 						<b>Locality:</b>
-						<input id="localityinput" type="text" name="locality" onchange="" />
+						<input id="localityinput" type="text" name="locality" />
 					</div>
 					<div>
 						<b>Latitude/Longitude:</b>
 					</div>
 					<div style="margin-left:75px;">
-						<input id="latnorthinput" type="text" name="latnorth" style="width:70px;" onchange="" title="Latitude North" />
+						<input id="latnorthinput" type="text" name="latnorth" style="width:70px;" title="Latitude North" />
 					</div>
 					<div>
 						<span style="">
@@ -161,7 +156,7 @@
 				<fieldset>
 					<legend><b>New SQL Fragment</b></legend>
 					<input type="hidden" name="clid" value="<?php echo $clid; ?>"/>
-					<textarea id="sqlfrag" rows="5" cols="70"><?php echo $sqlFrag?$sqlFrag:$dynSqlManager->getDynamicSql();?></textarea>
+					<textarea id="sqlfrag" rows="5" cols="70"><?php echo $sqlFrag?:$dynSqlManager->getDynamicSql();?></textarea>
 					<input type="submit" name="action" value="Test SQL Fragment" />
 					<input type="submit" name="action" value="Save SQL Fragment" />
 				</fieldset>
@@ -169,7 +164,7 @@
 		<?php } ?>
 	</div>
 	<?php
- 	include($SERVER_ROOT.'/footer.php');
+ 	include(__DIR__ . '/../../footer.php');
 	?>
 
 </body>

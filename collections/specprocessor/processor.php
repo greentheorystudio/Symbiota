@@ -1,20 +1,20 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorManager.php');
-include_once($SERVER_ROOT.'/classes/ImageLocalProcessor.php');
-include_once($SERVER_ROOT.'/classes/ImageProcessor.php');
-include_once($SERVER_ROOT.'/classes/SpecProcessorOcr.php');
+include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+include_once(__DIR__ . '/../../classes/ImageLocalProcessor.php');
+include_once(__DIR__ . '/../../classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-header("Content-Type: text/html; charset=".$CHARSET);
-
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/specprocessor/processor.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../collections/specprocessor/processor.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 
-//NLP and OCR variables
 $spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
 $procStatus = array_key_exists('procstatus',$_REQUEST)?$_REQUEST['procstatus']:'unprocessed';
 
@@ -22,7 +22,7 @@ $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"]))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -31,7 +31,7 @@ if(in_array($action, array('dlnoimg','unprocnoimg','noskel','unprocwithdata'))){
 	exit;
 }
 
-$statusStr = "";
+$statusStr = '';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
@@ -41,7 +41,7 @@ $statusStr = "";
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
+		include(__DIR__ . '/../../header.php');
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 		echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
@@ -49,14 +49,13 @@ $statusStr = "";
 		echo '<b>Processing Handler</b>';
 		echo '</div>';
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<h2><?php echo $specManager->getCollectionName(); ?></h2>
 			<?php
 			if($isEditor){
 				$specManager->setProjVariables($spprid);
-				if($action == 'Process Images'){
-					if($specManager->getProjectType() == 'iplant'){
+				if($action === 'Process Images'){
+					if($specManager->getProjectType() === 'iplant'){
 						$imageProcessor = new ImageProcessor($specManager->getConn());
 						echo '<ul>';
 						$imageProcessor->setLogMode(3);
@@ -70,11 +69,15 @@ $statusStr = "";
 						$imageProcessor = new ImageLocalProcessor();
 
 						$imageProcessor->setLogMode(3);
-						$LOG_PATH = $SERVER_ROOT.(substr($SERVER_ROOT,-1) == '/'?'':'/').'content/logs/imgProccessing';
-						if(!file_exists($LOG_PATH)) mkdir($LOG_PATH);
+						$LOG_PATH = $SERVER_ROOT.(substr($SERVER_ROOT,-1) === '/'?'':'/').'content/logs/imgProccessing';
+						if(!file_exists($LOG_PATH) && !mkdir($LOG_PATH) && !is_dir($LOG_PATH)) {
+                            throw new RuntimeException(sprintf('Directory "%s" was not created', $LOG_PATH));
+                        }
 						$imageProcessor->setLogPath($LOG_PATH);
 						$logFile = $collid.'_'.$specManager->getInstitutionCode();
-						if($specManager->getCollectionCode()) $logFile .= '-'.$specManager->getCollectionCode();
+						if($specManager->getCollectionCode()) {
+                            $logFile .= '-' . $specManager->getCollectionCode();
+                        }
 						$imageProcessor->initProcessor($logFile);
 						$imageProcessor->setCollArr(array($collid => array('pmterm' => $specManager->getSpecKeyPattern(),'prpatt' => $specManager->getPatternReplace(),'prrepl' => $specManager->getReplaceStr())));
 						$imageProcessor->setMatchCatalogNumber((array_key_exists('matchcatalognumber', $_POST)?1:0));
@@ -84,12 +87,24 @@ $statusStr = "";
 						$imageProcessor->setTargetPathBase($specManager->getTargetPath());
 						$imageProcessor->setImgUrlBase($specManager->getImgUrlBase());
 						$imageProcessor->setServerRoot($SERVER_ROOT);
-						if($specManager->getWebPixWidth()) $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
-						if($specManager->getTnPixWidth()) $imageProcessor->setTnPixWidth($specManager->getTnPixWidth());
-						if($specManager->getLgPixWidth()) $imageProcessor->setLgPixWidth($specManager->getLgPixWidth());
-						if($specManager->getWebMaxFileSize()) $imageProcessor->setWebFileSizeLimit($specManager->getWebMaxFileSize());
-						if($specManager->getLgMaxFileSize()) $imageProcessor->setLgFileSizeLimit($specManager->getLgMaxFileSize());
-						if($specManager->getJpgQuality()) $imageProcessor->setJpgQuality($specManager->getJpgQuality());
+						if($specManager->getWebPixWidth()) {
+                            $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
+                        }
+						if($specManager->getTnPixWidth()) {
+                            $imageProcessor->setTnPixWidth($specManager->getTnPixWidth());
+                        }
+						if($specManager->getLgPixWidth()) {
+                            $imageProcessor->setLgPixWidth($specManager->getLgPixWidth());
+                        }
+						if($specManager->getWebMaxFileSize()) {
+                            $imageProcessor->setWebFileSizeLimit($specManager->getWebMaxFileSize());
+                        }
+						if($specManager->getLgMaxFileSize()) {
+                            $imageProcessor->setLgFileSizeLimit($specManager->getLgMaxFileSize());
+                        }
+						if($specManager->getJpgQuality()) {
+                            $imageProcessor->setJpgQuality($specManager->getJpgQuality());
+                        }
 						$imageProcessor->setUseImageMagick($specManager->getUseImageMagick());
 						$imageProcessor->setWebImg($_POST['webimg']);
 						$imageProcessor->setTnImg($_POST['createtnimg']);
@@ -99,13 +114,11 @@ $statusStr = "";
 						$imageProcessor->setKeepOrig(0);
 						$imageProcessor->setSkeletalFileProcessing($_POST['skeletalFileProcessing']);
 
-						//Run process
 						$imageProcessor->batchLoadImages();
 						echo '</div>'."\n";
 					}
 				}
-				elseif($action == 'Process Output File'){
-					//Process iDigBio Image ingestion appliance ouput file
+				elseif($action === 'Process Output File'){
 					$imageProcessor = new ImageProcessor($specManager->getConn());
 					echo '<ul>';
 					$imageProcessor->setLogMode(3);
@@ -115,8 +128,7 @@ $statusStr = "";
 					echo '</ul>';
 
 				}
-				elseif($action == 'Load Image Data'){
-					//Process csv file with remote image urls
+				elseif($action === 'Load Image Data'){
 					$imageProcessor = new ImageProcessor($specManager->getConn());
 					echo '<ul>';
 					$imageProcessor->setLogMode(3);
@@ -124,16 +136,18 @@ $statusStr = "";
 					$imageProcessor->loadFileData($_POST);
 					echo '</ul>';
 				}
-				elseif($action == 'Run Batch OCR'){
+				elseif($action === 'Run Batch OCR'){
 					$ocrManager = new SpecProcessorOcr();
 					$ocrManager->setVerbose(2);
 					$batchLimit = 100;
-					if(array_key_exists('batchlimit',$_POST)) $batchLimit = $_POST['batchlimit'];
+					if(array_key_exists('batchlimit',$_POST)) {
+                        $batchLimit = $_POST['batchlimit'];
+                    }
 					echo '<ul>';
 					$ocrManager->batchOcrUnprocessed($collid,$procStatus,$batchLimit,0);
 					echo '</ul>';
 				}
-				elseif($action == 'Load OCR Files'){
+				elseif($action === 'Load OCR Files'){
 					$specManager->addProject($_POST);
 					$ocrManager = new SpecProcessorOcr();
 					$ocrManager->setVerbose(2);
@@ -143,7 +157,7 @@ $statusStr = "";
 				}
 				if($statusStr){
 					?>
-					<div style='margin:20px 0px 20px 0px;'>
+					<div style='margin:20px 0 20px 0;'>
 						<hr/>
 						<div style="margin:15px;color:<?php echo (stripos($statusStr,'error') !== false?'red':'green'); ?>">
 							<?php echo $statusStr; ?>
@@ -157,7 +171,7 @@ $statusStr = "";
 			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Specimen Processor</b></a></div>
 		</div>
 		<?php
-			include($SERVER_ROOT.'/footer.php');
+			include(__DIR__ . '/../../footer.php');
 		?>
 	</body>
 </html>

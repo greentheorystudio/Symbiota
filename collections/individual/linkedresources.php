@@ -1,22 +1,28 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceIndividualManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$occid = $_GET["occid"];
-$tid = $_GET["tid"];
-$collId = $_GET["collid"];
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
+$occid = $_GET['occid'];
+$tid = $_GET['tid'];
+$collId = $_GET['collid'];
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
 
-//Sanitize input variables
-if(!is_numeric($occid)) $occid = 0;
-if(!is_numeric($tid)) $tid = 0;
-if(!is_numeric($collId)) $collId = 0;
-if(!is_numeric($clid)) $clid = 0;
+if(!is_numeric($occid)) {
+    $occid = 0;
+}
+if(!is_numeric($tid)) {
+    $tid = 0;
+}
+if(!is_numeric($collId)) {
+    $collId = 0;
+}
+if(!is_numeric($clid)) {
+    $clid = 0;
+}
 
 $indManager = new OccurrenceIndividualManager();
 $indManager->setOccid($occid);
-
 ?>
 <div id='innertext' style='width:95%;min-height:400px;clear:both;background-color:white;'>
 	<fieldset style="padding:20px;margin:15px;">
@@ -25,12 +31,13 @@ $indManager->setOccid($occid);
 		$vClArr = $indManager->getVoucherChecklists();
 		if($vClArr){
 			echo '<div style="font-weight:bold"><u>Specimen voucher of the following checklists</u></div>';
-			echo '<ul style="margin:15px 0px 25px 0px;">';
+			echo '<ul style="margin:15px 0 25px 0;">';
 			foreach($vClArr as $id => $clName){
 				echo '<li>';
 				echo '<a href="../../checklists/checklist.php?showvouchers=1&cl='.$id.'" target="_blank">'.$clName.'</a>&nbsp;&nbsp;';
-				if(isset($USER_RIGHTS['ClAdmin']) && in_array($id,$USER_RIGHTS['ClAdmin'])){
-					echo '<a href="index.php?delvouch='.$id.'&occid='.$occid.'" title="Delete voucher link" onclick="return confirm(\"Are you sure you want to remove this voucher link?\")"><img src="../../images/drop.png" style="width:12px;" /></a>';
+				if(isset($USER_RIGHTS['ClAdmin']) && in_array($id, $USER_RIGHTS['ClAdmin'], true)){
+					$confirmLine = "'Are you sure you want to remove this voucher link ? '";
+				    echo '<a href="index.php?delvouch='.$id.'&occid='.$occid.'" title="Delete voucher link" onclick="return confirm('.$confirmLine.')"><img src="../../images/drop.png" style="width:12px;" /></a>';
 				}
 				echo '</li>';
 			}
@@ -39,7 +46,7 @@ $indManager->setOccid($occid);
 		else{
 			echo '<h3>Specimen has not been designated as a voucher for a species checklist</h3>';
 		}
-		if($IS_ADMIN || array_key_exists("ClAdmin",$USER_RIGHTS)){
+		if($IS_ADMIN || array_key_exists('ClAdmin',$USER_RIGHTS)){
 			?>
 			<div style='margin-top:15px;'>
 				<?php 
@@ -61,16 +68,16 @@ $indManager->setOccid($occid);
 							  				<option value='0'>--------------------------</option>
 							  				<?php 
 								  			foreach($clArr as $clKey => $clValue){
-								  				echo "<option value='".$clKey."' ".($clid==$clKey?"SELECTED":"").">$clValue</option>\n";
+								  				echo "<option value='".$clKey."' ".($clid === $clKey? 'SELECTED' : '').">$clValue</option>\n";
 											}
 											?>
 										</select>
 									</div>
-									<div style='margin:5px 0px 0px 10px;'>
+									<div style='margin:5px 0 0 10px;'>
 										Notes: 
 										<input name='vnotes' type='text' size='50' title='Viewable to public'>
 									</div>
-									<div style='margin:5px 0px 0px 10px;'>
+									<div style='margin:5px 0 0 10px;'>
 										Editor Notes: 
 										<input name='veditnotes' type='text' size='50' title='Viewable only to checklist editors'>
 									</div>
@@ -111,7 +118,9 @@ $indManager->setOccid($occid);
 				if(array_key_exists('linked',$dsArr)){
 					$displayStr .= '<li>';
 					$displayStr .= '<a href="../datasets/datasetmanager.php?datasetid='.$dsid.'" target="_blank">'.$dsArr['name'].'</a>';
-					if($dsArr['linked']) $displayStr .= ' ('.$dsArr['linked'].')';
+					if($dsArr['linked']) {
+                        $displayStr .= ' (' . $dsArr['linked'] . ')';
+                    }
 					$displayStr .= '</li>';
 				}
 			}
@@ -164,5 +173,4 @@ $indManager->setOccid($occid);
 		<?php
 	} 
 	?>
-	
 </div>

@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherPensoftExcel.php');
+include_once(__DIR__ . '/../../classes/ChecklistVoucherPensoftExcel.php');
 
 $clid = $_REQUEST['clid'];
 $rType = $_REQUEST['rtype'];

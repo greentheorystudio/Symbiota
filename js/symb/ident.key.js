@@ -4,11 +4,11 @@ function toggleAll(){
 }
 
 function toggleChars(name){
-  var chars = document.getElementsByTagName("div");
-  for (i = 0; i < chars.length; i++) {
-  	var obj = chars[i];
-		if(obj.className == name){
-			if(obj.style.display=="none"){
+	const chars = document.getElementsByTagName("div");
+	for (let i = 0; i < chars.length; i++) {
+		const obj = chars[i];
+		if(obj.className === name){
+			if(obj.style.display === "none"){
 				obj.style.display="block";
 				setCookie("all");
 			}
@@ -25,34 +25,37 @@ function setCookie(status){
 }
 
 function getCookie(name){
-	var pos = document.cookie.indexOf(name + "=");
-	if(pos == -1){
+	const pos = document.cookie.indexOf(name + "=");
+	if(pos === -1){
 		return null;
 	} else {
-		var pos2 = document.cookie.indexOf(";", pos);
-		if(pos2 == -1){
+		const pos2 = document.cookie.indexOf(";", pos);
+		if(pos2 === -1){
 			return unescape(document.cookie.substring(pos + name.length + 1));
-		}else{
+		}
+		else{
 			return unescape(document.cookie.substring(pos + name.length + 1, pos2));
 		}
 	}
 }
 
 function setDisplayStatus(){
-	var showStatus = getCookie("showchars");
-	if(showStatus == "all"){
+	const showStatus = getCookie("showchars");
+	if(showStatus === "all"){
 		toggleAll();
-	} else {
-		//If everything is hid, show all; if everything is not hid, do nothing
-		if(allClosed()) toggleAll();
+	}
+	else {
+		if(allClosed()) {
+			toggleAll();
+		}
 	}
 }
 
 function allClosed(){
-  var objs = document.getElementsByTagName("div");
-  for (i = 0; i < objs.length; i++) {
-  	var obj = objs[i]; 
-		if(obj.id != "showall" && obj.style.display != "none"){
+	const objs = document.getElementsByTagName("div");
+	for (let i = 0; i < objs.length; i++) {
+		const obj = objs[i];
+		if(obj.id !== "showall" && obj.style.display !== "none"){
 			return false;
 		}
 	}
@@ -60,14 +63,14 @@ function allClosed(){
 }
 
 function setLang(list){
-  var langName = list.options[list.selectedIndex].value;
-  var objs = document.getElementsByTagName("span");
-  for (i = 0; i < objs.length; i++) {
-  	var obj = objs[i]; 
-		if(obj.lang == langName){
+	const langName = list.options[list.selectedIndex].value;
+	const objs = document.getElementsByTagName("span");
+	for (let i = 0; i < objs.length; i++) {
+		const obj = objs[i];
+		if(obj.lang === langName){
 			obj.style.display="";
 		}
-		else if(obj.lang != ""){
+		else if(obj.lang !== ""){
 	 		obj.style.display="none";
 		}
 	}

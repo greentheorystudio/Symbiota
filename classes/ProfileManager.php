@@ -218,7 +218,8 @@ class ProfileManager extends Manager{
 			$connection = new DbConnection();
 			$editCon = $connection->getConnection();
 			if($isSelf){
-				if($this->encryption === 'password'){
+                $sqlTest = '';
+			    if($this->encryption === 'password'){
                     $sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
                         'AND (ul.password = PASSWORD("'.$this->cleanInStr($oldPwd).'"))';
                 }
@@ -231,6 +232,7 @@ class ProfileManager extends Manager{
 					return false;
 				}
 			}
+            $sql = '';
 			if($this->encryption === 'password'){
                 $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPwd).'") '.
                     'WHERE (uid = '.$this->uid.')';
@@ -256,6 +258,7 @@ class ProfileManager extends Manager{
 		if($un){
 			$connection = new DbConnection();
 			$editCon = $connection->getConnection();
+            $sql = '';
 			if($this->encryption === 'password'){
                 $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
                     'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
@@ -268,7 +271,7 @@ class ProfileManager extends Manager{
 			$editCon->close();
 		}
 		if($status){
-			$emailAddr = "";
+			$emailAddr = '';
 			$sql = 'SELECT u.email FROM users u INNER JOIN userlogin ul ON u.uid = ul.uid '.
 				'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
 			$result = $this->conn->query($sql);

@@ -1,37 +1,35 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ProfileManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$collId = $_REQUEST["collid"];
-$action = array_key_exists("formsubmit",$_REQUEST)?$_REQUEST["formsubmit"]:'';
-$cSet = array_key_exists("cset",$_REQUEST)?$_REQUEST["cset"]:'utf8';
-$zipFile = array_key_exists("zipfile",$_REQUEST)?$_REQUEST["zipfile"]:0;
+$collId = $_REQUEST['collid'];
+$action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+$cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'utf8';
+$zipFile = array_key_exists('zipfile',$_REQUEST)?$_REQUEST['zipfile']:0;
 
 $dlManager = new ProfileManager();
 $dlManager->setUid($SYMB_UID);
 
 $editable = 0;
 if($IS_ADMIN 
-	|| array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]) 
-	|| array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollEditor"])){
+	|| (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
+	|| (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
 		$editable = 1;
 }
 ?>
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Personal Specimen Backup</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 </head>
 <body>
-<!-- This is inner text! -->
 <div id="innertext">
 	<?php 
 	if($editable){
-		if($action == 'Perform Backup'){
+		if($action === 'Perform Backup'){
 			echo '<ul>';
 			$dlFile = $dlManager->dlSpecBackup($collId,$cSet,$zipFile);
 			if($dlFile){
@@ -53,8 +51,8 @@ if($IS_ADMIN
 						<?php 
 						$cSet = str_replace('-','',strtolower($CHARSET));
 						?>
-						<input type="radio" name="cset" value="latin1" <?php echo ($cSet=='iso88591'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-						<input type="radio" name="cset" value="utf8" <?php echo ($cSet=='utf8'?'checked':''); ?> /> UTF-8 (unicode)
+						<input type="radio" name="cset" value="latin1" <?php echo ($cSet === 'iso88591'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
+						<input type="radio" name="cset" value="utf8" <?php echo ($cSet === 'utf8'?'checked':''); ?> /> UTF-8 (unicode)
 					</div>
 					<div style="clear:both;">
 						<input name="zipfile" type="checkbox" value="1" CHECKED /> 

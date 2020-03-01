@@ -1,22 +1,28 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$stArrCollJson = $_REQUEST["jsoncollstarr"];
-$stArrSearchJson = $_REQUEST["starr"];
-$targetTid = $_REQUEST["targettid"];
+$stArrCollJson = $_REQUEST['jsoncollstarr'];
+$stArrSearchJson = $_REQUEST['starr'];
+$targetTid = $_REQUEST['targettid'];
 $occIndex = $_REQUEST['occindex'];
 $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArrSearchJson = str_replace("%apos;","'",$stArrSearchJson);
+$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
 $collStArr = json_decode($stArrCollJson, true);
 $searchStArr = json_decode($stArrSearchJson, true);
-if($collStArr && $searchStArr) $stArr = array_merge($searchStArr,$collStArr);
-if(!$collStArr && $searchStArr) $stArr = $searchStArr;
-if($collStArr && !$searchStArr) $stArr = $collStArr;
+if($collStArr && $searchStArr) {
+    $stArr = array_merge($searchStArr, $collStArr);
+}
+if(!$collStArr && $searchStArr) {
+    $stArr = $searchStArr;
+}
+if($collStArr && !$searchStArr) {
+    $stArr = $collStArr;
+}
 
 if($SOLR_MODE){
     $collManager = new SOLRManager();
@@ -32,7 +38,7 @@ else{
     $recArr = $collManager->getRecordArr($occIndex,1000);
 }
 
-$targetClid = $collManager->getSearchTerm("targetclid");
+$targetClid = $collManager->getSearchTerm('targetclid');
 
 $urlPrefix = (isset($_SERVER['HTTPS'])?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/listtabledisplay.php';
 
@@ -41,13 +47,13 @@ $recordListHtml = '';
 $qryCnt = $collManager->getRecordCnt();
 $navStr = '<div style="float:right;">';
 if(($occIndex*1000) > 1000){
-    $navStr .= "<a href='' title='Previous 1000 records' onclick='changeTablePage(".($occIndex-1).");return false;'>&lt;&lt;</a>";
+    $navStr .= "<a href='' title='Previous 1000 records' onclick='changeTablePage(".($occIndex-1). ");return false;'>&lt;&lt;</a>";
 }
 $navStr .= ' | ';
 $navStr .= ($occIndex <= 1?1:(($occIndex-1)*1000)+1).'-'.($qryCnt<1000+$occIndex?$qryCnt:(($occIndex-1)*1000)+1000).' of '.$qryCnt.' records';
 $navStr .= ' | ';
 if($qryCnt > (1000+$occIndex)){
-    $navStr .= "<a href='' title='Next 1000 records' onclick='changeTablePage(".($occIndex+1).");return false;'>&gt;&gt;</a>";
+    $navStr .= "<a href='' title='Next 1000 records' onclick='changeTablePage(".($occIndex+1). ");return false;'>&gt;&gt;</a>";
 }
 $navStr .= '</div>';
 
@@ -59,7 +65,7 @@ if($recArr){
     }
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div style="clear:both;height:5px;"></div>';
-    $recordListHtml .= '<table class="styledtable" style="font-family:Arial;font-size:12px;"><tr>';
+    $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
     $recordListHtml .= '<th>Symbiota ID</th>';
     $recordListHtml .= '<th>Collection</th>';
     $recordListHtml .= '<th>Catalog Number</th>';
@@ -70,7 +76,9 @@ if($recArr){
     $recordListHtml .= '<th>County</th>';
     $recordListHtml .= '<th>Locality</th>';
     $recordListHtml .= '<th>Habitat</th>';
-    if($QUICK_HOST_ENTRY_IS_ACTIVE) $recordListHtml .= '<th>Host</th>';
+    if($QUICK_HOST_ENTRY_IS_ACTIVE) {
+        $recordListHtml .= '<th>Host</th>';
+    }
     $recordListHtml .= '<th>Elevation</th>';
     $recordListHtml .= '<th>Event Date</th>';
     $recordListHtml .= '<th>Collector</th>';
@@ -83,17 +91,21 @@ if($recArr){
     foreach($recArr as $id => $occArr){
         $isEditor = false;
         if($SYMB_UID && ($IS_ADMIN
-                || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($occArr['collid'],$USER_RIGHTS['CollAdmin']))
-                || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($occArr['collid'],$USER_RIGHTS['CollEditor'])))){
+                || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($occArr['collid'], $USER_RIGHTS['CollAdmin'], true))
+                || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($occArr['collid'], $USER_RIGHTS['CollEditor'], true)))){
             $isEditor = true;
         }
         $collection = $occArr['institutioncode'];
-        if($occArr['collectioncode']) $collection .= ':'.$occArr['collectioncode'];
-        if($occArr['sciname']) $occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
-        $recordListHtml .= "<tr ".($recCnt%2?'class="alt"':'').">\n";
+        if($occArr['collectioncode']) {
+            $collection .= ':' . $occArr['collectioncode'];
+        }
+        if($occArr['sciname']) {
+            $occArr['sciname'] = '<i>' . $occArr['sciname'] . '</i> ';
+        }
+        $recordListHtml .= '<tr ' .(($recCnt%2)?'class="alt"':'').">\n";
         $recordListHtml .= '<td>';
-        $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.",".($targetClid?$targetClid:"0").');">'.$id.'</a> ';
-        if($isEditor || ($SYMB_UID && $SYMB_UID == $fieldArr['observeruid'])){
+        $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
+        if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
             $recordListHtml .= '<img src="../images/edit.png" style="height:13px;" title="Edit Record" />';
             $recordListHtml .= '</a>';
@@ -105,7 +117,7 @@ if($recArr){
         $recordListHtml .= '<td>'.$collection.'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['accession'].'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['family'].'</td>'."\n";
-        $recordListHtml .= '<td>'.$occArr['sciname'].($occArr['author']?" ".$occArr['author']:"").'</td>'."\n";
+        $recordListHtml .= '<td>'.$occArr['sciname'].($occArr['author']? ' ' .$occArr['author']: '').'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['country'].'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['state'].'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['county'].'</td>'."\n";
@@ -119,13 +131,13 @@ if($recArr){
                 $recordListHtml .= '<td></td>'."\n";
             }
         }
-        $recordListHtml .= '<td>'.(array_key_exists("elev",$occArr)?$occArr['elev']:"").'</td>'."\n";
-        $recordListHtml .= '<td>'.(array_key_exists("date",$occArr)?$occArr['date']:"").'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('elev',$occArr)?$occArr['elev']: '').'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('date',$occArr)?$occArr['date']: '').'</td>'."\n";
         $recordListHtml .= '<td>'.$occArr['collector'].'</td>'."\n";
-        $recordListHtml .= '<td>'.(array_key_exists("collnumber",$occArr)?$occArr['collnumber']:"").'</td>'."\n";
-        $recordListHtml .= '<td>'.(array_key_exists("individualCount",$occArr)?$occArr['individualCount']:"").'</td>'."\n";
-        $recordListHtml .= '<td>'.(array_key_exists("lifeStage",$occArr)?$occArr['lifeStage']:"").'</td>'."\n";
-        $recordListHtml .= '<td>'.(array_key_exists("sex",$occArr)?$occArr['sex']:"").'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('collnumber',$occArr)?$occArr['collnumber']: '').'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('individualCount',$occArr)?$occArr['individualCount']: '').'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('lifeStage',$occArr)?$occArr['lifeStage']: '').'</td>'."\n";
+        $recordListHtml .= '<td>'.(array_key_exists('sex',$occArr)?$occArr['sex']: '').'</td>'."\n";
         $recordListHtml .= "</tr>\n";
         $recCnt++;
     }
@@ -141,7 +153,4 @@ if($recArr){
 else{
     $recordListHtml .= '<div style="font-weight:bold;font-size:120%;">No records found matching the query</div>';
 }
-//output the response
 echo $recordListHtml;
-//echo json_encode($recordListHtml);
-?>

@@ -1,24 +1,26 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/OccurrenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$catId = array_key_exists("catid",$_REQUEST)?$_REQUEST["catid"]:0;
-if(!is_numeric($catId)) $catId = 0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) $catId = $DEFAULTCATID;
+$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+if(!is_numeric($catId)) {
+    $catId = 0;
+}
+if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
+    $catId = $DEFAULTCATID;
+}
 
 $collManager = new OccurrenceManager();
-//$collManager->reset();
 
 $collList = $collManager->getFullCollectionList($catId);
-$specArr = (isset($collList['spec'])?$collList['spec']:null);
-$obsArr = (isset($collList['obs'])?$collList['obs']:null);
+$specArr = ($collList['spec'] ?? null);
+$obsArr = ($collList['obs'] ?? null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 		<title><?php echo $DEFAULT_TITLE; ?> Collections Search</title>
 		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
@@ -27,27 +29,34 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../js/symb/collections.index.js?ver=1" type="text/javascript"></script> 
 		<script type="text/javascript">
-			<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+			<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 		</script>
 	</head>
 	<body>
 	
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
     echo '<b>Collections</b>';
-    echo "</div>";
+    echo '</div>';
 	?>
-	<!-- This is inner text! -->
 	<div id="innertext">
-        <div id="tabs" style="margin:0px;">
+        <div id="tabs" style="margin:0;">
 			<ul>
 				<?php 
-				if($specArr && $obsArr) echo '<li><a href="#specobsdiv">Specimens &amp; Observations</a></li>';
-				if($specArr) echo '<li><a href="#specimendiv">Specimens</a></li>';
-				if($obsArr) echo '<li><a href="#observationdiv">Observations</a></li>';
-				if($otherCatArr) echo '<li><a href="#otherdiv">Federal Units</a></li>';
+				if($specArr && $obsArr) {
+                    echo '<li><a href="#specobsdiv">Specimens &amp; Observations</a></li>';
+                }
+				if($specArr) {
+                    echo '<li><a href="#specimendiv">Specimens</a></li>';
+                }
+				if($obsArr) {
+                    echo '<li><a href="#observationdiv">Observations</a></li>';
+                }
+				if($otherCatArr) {
+                    echo '<li><a href="#otherdiv">Federal Units</a></li>';
+                }
 				?>
 			</ul>
 			<?php 
@@ -61,7 +70,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 						</div>
 						<?php 
 						$collManager->outputFullCollArr($specArr, $catId); 
-						if($specArr && $obsArr) echo '<hr style="clear:both;margin:20px 0;"/>';
+						if($specArr && $obsArr) {
+                            echo '<hr style="clear:both;margin:20px 0;"/>';
+                        }
 						$collManager->outputFullCollArr($obsArr, $catId);
 						?>
 						<div style="clear:both;">&nbsp;</div>
@@ -106,7 +117,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				asort($catTitleArr);
 				?>
 				<div id="otherdiv">
-					<form id="othercatform" action="harvestparams.php" method="post" onsubmit="return verifyOtherCatForm(this)">
+					<form id="othercatform" action="harvestparams.php" method="post" onsubmit="return verifyOtherCatForm()">
 						<?php
 						foreach($catTitleArr as $catPid => $catTitle){
 							?>
@@ -154,7 +165,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		</div>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../footer.php');
 	?>
 	</body>
 </html>

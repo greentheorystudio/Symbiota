@@ -1,8 +1,6 @@
 function verifyCoordinates(f){
-	//Used within occurrenceeditor.php and observationsubmit.php
-	//Check to see if coordinates are within country/state/county boundaries
-	var lngValue = f.decimallongitude.value;
-	var latValue = f.decimallatitude.value;
+	const lngValue = f.decimallongitude.value;
+	const latValue = f.decimallatitude.value;
 	if(latValue && lngValue){
 		
 		$.ajax({
@@ -12,51 +10,49 @@ function verifyCoordinates(f){
 			data: { latlng: latValue+","+lngValue }
 		}).done(function( data ) {
 			if(data){
-				if(data.status != "ZERO_RESULTS"){
-					var result = data.results[0];
+				if(data.status !== "ZERO_RESULTS"){
+					const result = data.results[0];
 					if(result.address_components){
-						var compArr = result.address_components;
-						var coordCountry = "";
-						var coordState = "";
-						var coordCounty = "";
-						for (var p1 in compArr) {
-							var compObj = compArr[p1];
-							if(compObj.long_name && compObj.types){
-								var longName = compObj.long_name;
-								var types = compObj.types;
-								if(types[0] == "country"){
-									var coordCountry = longName;
-								}
-								else if(types[0] == "administrative_area_level_1"){
-									var coordState = longName;
-								}
-								else if(types[0] == "administrative_area_level_2"){
-									var coordCounty = longName;
+						const compArr = result.address_components;
+						let coordCountry = "";
+						let coordState = "";
+						let coordCounty = "";
+						for (const p1 in compArr) {
+							if(compArr.hasOwnProperty(p1)){
+								const compObj = compArr[p1];
+								if(compObj.long_name && compObj.types){
+									const longName = compObj.long_name;
+									const types = compObj.types;
+									if(types[0] === "country"){
+										coordCountry = longName;
+									}
+									else if(types[0] === "administrative_area_level_1"){
+										coordState = longName;
+									}
+									else if(types[0] === "administrative_area_level_2"){
+										coordCounty = longName;
+									}
 								}
 							}
 						}
-						var coordValid = true;
-						if(f.country.value != ""){
-							//if(f.country.value.toLowerCase().indexOf(coordCountry.toLowerCase()) == -1) coordValid = false;
-						}
-						else if(coordCountry != ""){
+						let coordValid = true;
+						if(f.country.value === "" && coordCountry !== ""){
 							f.country.value = coordCountry;
 						}
-						if(coordState != ""){
-							if(f.stateprovince.value != ""){
-								if(f.stateprovince.value.toLowerCase().indexOf(coordState.toLowerCase()) == -1) coordValid = false;
+						if(coordState !== ""){
+							if(f.stateprovince.value !== ""){
+								if(f.stateprovince.value.toLowerCase().indexOf(coordState.toLowerCase()) === -1) coordValid = false;
 							}
 							else{
 								f.stateprovince.value = coordState;
 							}
 						}
-						if(coordCounty != ""){
-							var coordCountyIn = coordCounty.replace(" County","");
+						if(coordCounty !== ""){
+							let coordCountyIn = coordCounty.replace(" County", "");
 							coordCountyIn = coordCountyIn.replace(" Parish","");
-							if(f.county.value != ""){
-								var fCounty = f.county.value;
-								if(f.county.value.toLowerCase().indexOf(coordCountyIn.toLowerCase()) == -1){
-									if(f.county.value.toLowerCase() != coordCountyIn.toLowerCase()){
+							if(f.county.value !== ""){
+								if(f.county.value.toLowerCase().indexOf(coordCountyIn.toLowerCase()) === -1){
+									if(f.county.value.toLowerCase() !== coordCountyIn.toLowerCase()){
 										coordValid = false;
 									}
 								}
@@ -66,7 +62,7 @@ function verifyCoordinates(f){
 							}
 						}
 						if(!coordValid){
-							var msg = "Are coordinates accurate? They currently map to: "+coordCountry+", "+coordState;
+							let msg = "Are coordinates accurate? They currently map to: " + coordCountry + ", " + coordState;
 							if(coordCounty) msg = msg + ", " + coordCounty;
 							msg = msg + ", which differs from what is in the form. Click globe symbol to display coordinates in map.";
 							alert(msg);
@@ -74,7 +70,7 @@ function verifyCoordinates(f){
 					}
 				}
 				else{
-					if(f.country.value != ""){
+					if(f.country.value !== ""){
 						alert("Unable to identify country! Are coordinates accurate? Click globe symbol to display coordinates in map.");
 					}
 				}
