@@ -1,12 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SpecLoans.php');
+include_once(__DIR__ . '/../../classes/SpecLoans.php');
 
 $collId = $_REQUEST['collid'];
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
 
 $loanManager = new SpecLoans();
-if($collId) $loanManager->setCollId($collId);
+if($collId) {
+    $loanManager->setCollId($collId);
+}
 
 $transInstList = $loanManager->getTransInstList();
 if($transInstList){
@@ -29,7 +31,7 @@ else{
 			<div style="padding-top:10px;float:left;">
 				<span>
 					<b>Transaction Number:</b> 
-					<input type="text" autocomplete="off" id="identifier" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="exIdentCheck(identifier,<?php echo $collId; ?>);" />
+					<input type="text" autocomplete="off" id="identifier" name="identifier" maxlength="255" style="width:120px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="" onchange="exIdentCheck(<?php echo $collId; ?>);" />
 				</span>
 			</div>
 			<div style="clear:left;padding-top:6px;float:left;">
@@ -85,10 +87,15 @@ else{
 	if($transInstList){
 		echo '<h3>Transaction Records by Institution</h3>';
 		echo '<ul>';
-		foreach($transInstList as $k => $transArr){
+		foreach($transInstList as $k => $transInstArr){
 			echo '<li>';
-			echo '<a href="#" onclick="toggle(\''.$k.'\');">'.$transArr['institutioncode'].'</a>';
-			echo ' (Balance: '.($transArr['invoicebalance']?($transArr['invoicebalance'] < 0?'<span style="color:red;font-weight:bold;">'.$transArr['invoicebalance'].'</span>':$transArr['invoicebalance']):0).')';
+			echo '<a href="#" onclick="toggle(\''.$k.'\');">'.$transInstArr['institutioncode'].'</a>';
+			if($transInstArr['invoicebalance'] < 0){
+                echo ' (Balance: <span style="color:red;font-weight:bold;">'.$transInstArr['invoicebalance'].'</span>)';
+            }
+			else{
+                echo ' (Balance: '.($transInstArr['invoicebalance']?:0).')';
+            }
 			echo '<div id="'.$k.'" style="display:none;">';
 			$transList = $loanManager->getTransactions($collId,$k);
 			echo '<ul>';
@@ -96,8 +103,8 @@ else{
 				echo '<li>';
 				echo '<a href="index.php?collid='.$collId.'&exchangeid='.$t.'&loantype=exchange">';
 				echo '#'.$transArr['identifier'].'</a>: ';
-				if($transArr['transactiontype'] == 'Shipment'){
-					if($transArr['in_out'] == 'Out'){
+				if($transArr['transactiontype'] === 'Shipment'){
+					if($transArr['in_out'] === 'Out'){
 						echo 'Outgoing exchange; Sent ';
 						echo $transArr['datesent'].'; Including: ';
 					}

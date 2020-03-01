@@ -1,35 +1,35 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistVoucherAdmin.php');
+include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
 
-$action = array_key_exists("submitaction",$_REQUEST)?$_REQUEST["submitaction"]:""; 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0; 
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
+$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
 
 $vManager = new ChecklistVoucherAdmin();
 $vManager->setClid($clid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USER_RIGHTS["ClAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
 	$isEditor = true;
 }
 
 ?>
 <script>
 	function selectAll(cbox){
-		var boxesChecked = true;
-		if(!cbox.checked) boxesChecked = false;
-		var f = cbox.form;
-		for(var i=0;i<f.length;i++){
-			if(f.elements[i].name == "occid[]") f.elements[i].checked = boxesChecked;
+        let boxesChecked = true;
+        if(!cbox.checked) boxesChecked = false;
+        const f = cbox.form;
+        for(let i=0; i<f.length; i++){
+			if(f.elements[i].name === "occid[]") f.elements[i].checked = boxesChecked;
 		}
 	}
 	
 	function validateBatchConflictForm(f){
-		var formVerified = false;
-		for(var h=0;h<f.length;h++){
-			if(f.elements[h].name == "occid[]" && f.elements[h].checked){
+        let formVerified = false;
+        for(let h=0; h<f.length; h++){
+			if(f.elements[h].name === "occid[]" && f.elements[h].checked){
 				formVerified = true;
 				break;
 			}
@@ -53,7 +53,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 		echo '<div style="font-weight:bold;">Conflict Count: '.count($conflictArr).'</div>';
 		?>
 		<form name="batchConflictForm" method="post" action="voucheradmin.php">
-			<table class="styledtable" style="font-family:Arial;font-size:12px;">
+			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 				<tr>
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b>Checklist ID</b></th>
@@ -69,13 +69,15 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 							<input name="occid[]" type="checkbox" value="<?php echo $vArr['occid']; ?>" /> 
 						</td>
 						<td>
-							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $vArr['tid']."&clid=".$vArr['clid']; ?>','editorwindow');">
+							<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $vArr['tid']. '&clid=' .$vArr['clid']; ?>','editorwindow');">
 								<?php 
 								echo $vArr['listid'];
 								?>
 							</a>
 							<?php 
-							if($vArr['clid'] != $clid) echo '<br/>(from child checklists)';
+							if($vArr['clid'] !== $clid) {
+                                echo '<br/>(from child checklists)';
+                            }
 							?>
 						</td>
 						<td>
@@ -97,7 +99,7 @@ if($IS_ADMIN || (array_key_exists("ClAdmin",$USER_RIGHTS) && in_array($clid,$USE
 			<div>
 				<input name="removeOldIn" type="checkbox" value="1" checked /> Remove old ID if all vouchers have been transferred
 			</div>
-			<div style="margin: 10px 0px">
+			<div style="margin: 10px 0;">
 				<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 				<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
 				<input name="tabindex" type="hidden" value="2" />

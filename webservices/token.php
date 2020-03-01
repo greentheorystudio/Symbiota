@@ -22,7 +22,7 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';
 $pw = array_key_exists('pw',$_POST)?$_POST['pw']:'';
@@ -41,4 +41,3 @@ if($un && $pw){
         echo 'Incorrect username/password.';
     }
 }
-?>

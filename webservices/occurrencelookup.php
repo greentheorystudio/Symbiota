@@ -46,8 +46,8 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAPIManager.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/OccurrenceAPIManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';
 $uId = array_key_exists('uid',$_POST)?$_POST['uid']:'';
@@ -83,4 +83,3 @@ if($collid){
     $occArr = $qHandler->getOccLookupArr();
     echo json_encode($occArr);
 }
-?>

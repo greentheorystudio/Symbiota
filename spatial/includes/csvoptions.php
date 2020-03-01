@@ -3,7 +3,7 @@
 	<h2>Download CSV Data</h2>
 	<div style="margin:15px;width:550px;">
 		By downloading data, the user confirms that he/she has read and agrees with the general
-		<a href="../misc/usagepolicy.php#images" target="_blank">data usage terms</a>.
+		<a href="../misc/usagepolicy.php" target="_blank">data usage terms</a>.
 		Note that additional terms of use specific to the individual collections
 		may be distributed with the data download. When present, the terms
 		supplied by the owning institution should take precedence over the

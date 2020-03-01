@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -20,11 +20,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 ?>
 <script>
 	function validateVoucherAddForm(f){
-		if(f.clidvoucher.value == ""){
+		if(f.clidvoucher.value === ""){
 			alert("Select a checklist to which you want to link the voucher");
 			return false;
 		}
-		if(f.tidvoucher.value == ""){
+		if(f.tidvoucher.value === ""){
 			alert("Voucher cannot be linked to a checklist until the taxonomic name has been resolved (e.g. name not linked to taxonomic thesaurus");
 			return false;
 		}
@@ -32,9 +32,11 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function openDupeWindow(){
-		$url = "rpc/dupelist.php?curoccid=<?php echo $occid.'&recordedby='.urlencode($occArr['recordedby']).'&recordnumber='.$occArr['recordnumber'].'&eventdate='.$occArr['eventdate']; ?>";
-		dupeWindow=open($url,"dupelist","resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
-		if (dupeWindow.opener == null) dupeWindow.opener = self;
+        const url = "rpc/dupelist.php?curoccid=<?php echo $occid . '&recordedby=' . urlencode($occArr['recordedby']) . '&recordnumber=' . $occArr['recordnumber'] . '&eventdate=' . $occArr['eventdate']; ?>";
+        const dupeWindow = open(url, "dupelist", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
+        if (dupeWindow.opener == null) {
+            dupeWindow.opener = self;
+        }
 	}
 
 	function deleteDuplicateLink(dupid, occid){
@@ -45,7 +47,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 				dataType: "json",
 				data: { dupid: dupid, occid: occid }
 			}).done(function( retStr ) {
-				if(retStr == "1"){
+				if(retStr === "1"){
 					$("#dupediv-"+occid).hide();
 				}
 				else{
@@ -56,12 +58,14 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function openIndividual(target) {
-		occWindow=open("../individual/index.php?occid="+target,"occdisplay","resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
-		if (occWindow.opener == null) occWindow.opener = self;
+        const occWindow = open("../individual/index.php?occid=" + target, "occdisplay", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
+        if (occWindow.opener == null) {
+            occWindow.opener = self;
+        }
 	}
 
 	function submitEditGeneticResource(f){
-		if(f.resourcename.value == ""){
+		if(f.resourcename.value === ""){
 			alert("Genetic resource name must not be blank");
 		}
 		else{
@@ -76,7 +80,7 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 	}
 
 	function submitAddGeneticResource(f){
-		if(f.resourcename.value == ""){
+		if(f.resourcename.value === ""){
 			alert("Genetic resource name must not be blank");
 		}
 		else{
@@ -84,7 +88,6 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 		}
 	}
 </script>
-
 <?php
 $userChecklists = $occManager->getUserChecklists();
 $checklistArr = $occManager->getVoucherChecklists();
@@ -119,7 +122,6 @@ if($userChecklists || $checklistArr){
                 </div>
                 <?php
             }
-            //Display list of checklists specimen is linked to
             if($checklistArr){
                 foreach($checklistArr as $vClid => $vClName){
                     echo '<div style="margin:3px">';
@@ -131,7 +133,7 @@ if($userChecklists || $checklistArr){
                     }
                     echo '</div>';
                 }
-                echo '<div style="margin:15px 0px">* If a red X is not display to right of checklist name, you do not have editing rights for that checklist and therefore cannot remove the voucher link without contacting checklist owner';
+                echo '<div style="margin:15px 0;">* If a red X is not display to right of checklist name, you do not have editing rights for that checklist and therefore cannot remove the voucher link without contacting checklist owner';
             }
             ?>
         </fieldset>
@@ -159,12 +161,14 @@ if($userChecklists || $checklistArr){
 					echo '<button name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">Remove this Occurrence from Cluster</button>';
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
-					if($note) echo ' - '.$notes;
+					if($note) {
+                        echo ' - ' . $notes;
+                    }
 					echo '</div>';
 					echo '<div style="20px 0px"><hr/><hr/></div>';
 					$innerDupArr = $dupArr['o'];
 					foreach($innerDupArr as $dupeOccid => $dArr){
-						if($occid != $dupeOccid){
+						if($occid !== $dupeOccid){
 							?>
 							<div id="dupediv-<?php echo $dupeOccid; ?>" style="clear:both;margin:15px;">
 								<div style="font-weight:bold;font-size:120%;">
@@ -175,21 +179,39 @@ if($userChecklists || $checklistArr){
 								</div>
 								<?php
 								echo '<div style="float:left;margin:5px 15px">';
-								if($dArr['recordedby']) echo '<div>'.$dArr['recordedby'].' '.$dArr['recordnumber'].'<span style="margin-left:40px;">'.$dArr['eventdate'].'</span></div>';
-								if($dArr['catnum']) echo '<div><b>Catalog Number:</b> '.$dArr['catnum'].'</div>';
-								if($dArr['occurrenceid']) echo '<div><b>GUID:</b> '.$dArr['occurrenceid'].'</div>';
-								if($dArr['sciname']) echo '<div><b>Latest Identification:</b> '.$dArr['sciname'].'</div>';
-								if($dArr['identifiedby']) echo '<div><b>Identified by:</b> '.$dArr['identifiedby'].'<span stlye="margin-left:30px;">'.$dArr['dateidentified'].'</span></div>';
-								if($dArr['notes']) echo '<div>'.$dArr['notes'].'</div>';
+								if($dArr['recordedby']) {
+                                    echo '<div>' . $dArr['recordedby'] . ' ' . $dArr['recordnumber'] . '<span style="margin-left:40px;">' . $dArr['eventdate'] . '</span></div>';
+                                }
+								if($dArr['catnum']) {
+                                    echo '<div><b>Catalog Number:</b> ' . $dArr['catnum'] . '</div>';
+                                }
+								if($dArr['occurrenceid']) {
+                                    echo '<div><b>GUID:</b> ' . $dArr['occurrenceid'] . '</div>';
+                                }
+								if($dArr['sciname']) {
+                                    echo '<div><b>Latest Identification:</b> ' . $dArr['sciname'] . '</div>';
+                                }
+								if($dArr['identifiedby']) {
+                                    echo '<div><b>Identified by:</b> ' . $dArr['identifiedby'] . '<span style="margin-left:30px;">' . $dArr['dateidentified'] . '</span></div>';
+                                }
+								if($dArr['notes']) {
+                                    echo '<div>' . $dArr['notes'] . '</div>';
+                                }
 								echo '<div><a href="#" onclick="openIndividual('.$dupeOccid.')">Show Full Details</a></div>';
 								echo '</div>';
 								if($dArr['url']){
 									$url = $dArr['url'];
 									$tnUrl = $dArr['tnurl'];
-									if(!$tnUrl) $tnUrl = $url;
+									if(!$tnUrl) {
+                                        $tnUrl = $url;
+                                    }
 									if($IMAGE_DOMAIN){
-										if(substr($url,0,1) == '/') $url = $IMAGE_DOMAIN.$url;
-										if(substr($tnUrl,0,1) == '/') $tnUrl = $IMAGE_DOMAIN.$tnUrl;
+										if(strpos($url, '/') === 0) {
+                                            $url = $IMAGE_DOMAIN . $url;
+                                        }
+										if(strpos($tnUrl, '/') === 0) {
+                                            $tnUrl = $IMAGE_DOMAIN . $tnUrl;
+                                        }
 									}
 									echo '<div style="float:left;margin:10px;">';
 									echo '<a href="'.$url.'" target="_blank">';
@@ -197,7 +219,7 @@ if($userChecklists || $checklistArr){
 									echo '</a>';
 									echo '</div>';
 								}
-								echo '<div style="margin:10px 0px;clear:both"><hr/></div>';
+								echo '<div style="margin:10px 0;clear:both"><hr/></div>';
 								?>
 							</div>
 							<?php
@@ -206,14 +228,12 @@ if($userChecklists || $checklistArr){
 					echo '</div>';
 				}
 			}
-			else{
-				if($dupClusterArr === false){
-					echo $dupManager->getErrorStr();
-				}
-				else{
-					echo '<div style="font-weight:bold;font-size:120%;margin:15px 0px;">No Linked Duplicate Records</div>';
-				}
-			}
+			else if($dupClusterArr === false){
+                echo $dupManager->getErrorStr();
+            }
+            else{
+                echo '<div style="font-weight:bold;font-size:120%;margin:15px 0;">No Linked Duplicate Records</div>';
+            }
 			?>
 		</div>
 	</fieldset>
@@ -343,16 +363,15 @@ if($userChecklists || $checklistArr){
 	</fieldset>
 </div>
 <?php
-if(isset($GENBANK_SUB_TOOL_PATH) && file_exists($GENBANK_SUB_TOOL_PATH."/genbankgen/plugin.php")){
+if(isset($GENBANK_SUB_TOOL_PATH) && file_exists($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php')){
     ?>
     <div id="geneticdiv"  style="width:795px;">
         <fieldset>
             <legend><b>GenBank Submission</b></legend>
             <?php
-            $lib_path = $GENBANK_SUB_TOOL_PATH."/genbankgen/plugin.php";
-            include_once $lib_path;
+            include_once($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php');
             if(class_exists('\GenBankGen\Plugin')) {
-                $defaults->SYMB_UID = $SYMB_UID;
+                $defaults['SYMB_UID'] = $SYMB_UID;
                 $p = new \GenBankGen\Plugin($defaults);
                 echo $p->embed();
             }

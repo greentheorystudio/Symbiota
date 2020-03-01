@@ -1,11 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReportsManager.php');
+include_once(__DIR__ . '/../classes/ReportsManager.php');
 
 $rm = new ReportsManager();
-
 ?>
-
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title>SCAN Reports</title>
@@ -22,7 +20,7 @@ $rm = new ReportsManager();
     $report = $rm->getNewIdentByDeterminerReport();
 
     foreach($report as $row) {
-        echo "<tr><td>".$row['identifiedby']."</td><td>".$row['numberOfDet']."</td></tr>";
+        echo '<tr><td>' .$row['identifiedby']. '</td><td>' .$row['numberOfDet']. '</td></tr>';
     }
 
     ?>
@@ -34,7 +32,7 @@ $rm = new ReportsManager();
     $report = $rm->getNewIdentBySpecialistReport();
 
     foreach($report as $row) {
-        echo "<tr><td>".$row['fullname']."</td><td>".$row['family']."</td><td>".$row['numberOfDet']."</td></tr>";
+        echo '<tr><td>' .$row['fullname']. '</td><td>' .$row['family']. '</td><td>' .$row['numberOfDet']. '</td></tr>';
     }
 
     ?>
@@ -46,7 +44,7 @@ $rm = new ReportsManager();
     $report = $rm->getNewIdentByFamilyReport();
 
     foreach($report as $row) {
-        echo "<tr><td>".$row['family']."</td><td>".$row['numberOfDet']."</td></tr>";
+        echo '<tr><td>' .$row['family']. '</td><td>' .$row['numberOfDet']. '</td></tr>';
     }
 
     ?>

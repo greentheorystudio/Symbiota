@@ -1,15 +1,16 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceChecklistManager.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../classes/OccurrenceChecklistManager.php');
+include_once(__DIR__ . '/../classes/SOLRManager.php');
 
 $checklistManager = new OccurrenceChecklistManager();
-$taxonFilter = array_key_exists("taxonfilter",$_REQUEST)?$_REQUEST["taxonfilter"]:'';
-$stArrCollJson = array_key_exists("jsoncollstarr",$_REQUEST)?$_REQUEST["jsoncollstarr"]:'';
-$stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:'';
+$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
+$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
-//Sanitation
-if(!is_numeric($taxonFilter)) $taxonFilter = 1;
+if(!is_numeric($taxonFilter)) {
+    $taxonFilter = 1;
+}
 
 $checklistArr = array();
 $taxaCnt = 0;
@@ -18,7 +19,7 @@ $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
 
 if($stArrCollJson || $stArrSearchJson){
-	$stArrSearchJson = str_replace("%apos;","'",$stArrSearchJson);
+	$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
 	$collStArr = ($stArrCollJson?json_decode($stArrCollJson, true):Array());
 	$searchStArr = ($stArrSearchJson?json_decode($stArrSearchJson, true):Array());
 	$stArr = array_merge($searchStArr,$collStArr);
@@ -46,7 +47,7 @@ if($stArrCollJson || $stArrSearchJson){
 <div>
     <div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Download Checklist Data'>
 		<a href='download/index.php?starr=<?php echo htmlentities($stArrSearchJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&jsoncollstarr=<?php echo htmlentities($stArrCollJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&dltype=checklist&taxonFilterCode=<?php echo $taxonFilter; ?>'>
-			<img width="15px" src="../images/dl.png" />
+			<img style="width:15px;" src="../images/dl.png" />
 		</a>
 	</div>
 	<?php
@@ -54,7 +55,7 @@ if($stArrCollJson || $stArrSearchJson){
 	?>
 		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Interactive Key Interface'>
 			<a href='checklistsymbiota.php?starr=<?php echo htmlentities($stArrSearchJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&jsoncollstarr=<?php echo htmlentities($stArrCollJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&taxonfilter=<?php echo $taxonFilter; ?>&interface=key'>
-				<img width='15px' src='../images/key.png'/>
+				<img style='width:15px;' src='../images/key.png'/>
 			</a>
 		</div>
 	<?php
@@ -63,7 +64,7 @@ if($stArrCollJson || $stArrSearchJson){
 	?>
 		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Checklist Explorer Interface'>
 			<a href='checklistsymbiota.php?starr=<?php echo htmlentities($stArrSearchJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&jsoncollstarr=<?php echo htmlentities($stArrCollJson, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>&taxonfilter=<?php echo $taxonFilter; ?>&interface=checklist'>
-				<img width='15px' src='../images/list.png'/>
+				<img style='width:15px;' src='../images/list.png'/>
 			</a>
 		</div>
 	<?php
@@ -77,7 +78,7 @@ if($stArrCollJson || $stArrSearchJson){
                 <?php
                     $taxonAuthList = $checklistManager->getTaxonAuthorityList();
                     foreach($taxonAuthList as $taCode => $taValue){
-                        echo "<option value='".$taCode."' ".($taCode == $taxonFilter?"SELECTED":"").">".$taValue."</option>";
+                        echo "<option value='".$taCode."' ".($taCode === $taxonFilter? 'SELECTED' : ''). '>' .$taValue. '</option>';
                     }
                     ?>
             </select>
@@ -88,22 +89,22 @@ if($stArrCollJson || $stArrSearchJson){
 	<?php
 		echo '<div style="font-weight:bold;font-size:125%;">Taxa Count: '.$taxaCnt.'</div>';
 		$undFamilyArray = array();
-		if(array_key_exists("undefined",$checklistArr)){
-			$undFamilyArray = $checklistArr["undefined"];
-			unset($checklistArr["undefined"]);
+		if(array_key_exists('undefined',$checklistArr)){
+			$undFamilyArray = $checklistArr['undefined'];
+			unset($checklistArr['undefined']);
 		}
 		ksort($checklistArr);
 		foreach($checklistArr as $family => $sciNameArr){
 			sort($sciNameArr);
-			echo '<div style="margin-left:5;margin-top:5;"><h3>'.$family.'</h3></div>';
+			echo '<div style="margin-left:5px;margin-top:5px;"><h3>'.$family.'</h3></div>';
 			foreach($sciNameArr as $sciName){
-				echo '<div style="margin-left:20;font-style:italic;"><a target="_blank" href="../taxa/index.php?taxon='.$sciName.'">'.$sciName.'</a></div>';
+				echo '<div style="margin-left:20px;font-style:italic;"><a target="_blank" href="../taxa/index.php?taxon='.$sciName.'">'.$sciName.'</a></div>';
 			}
 		}
 		if($undFamilyArray){
-			echo '<div style="margin-left:5;margin-top:5;"><h3>Family Not Defined</h3></div>';
+			echo '<div style="margin-left:5px;margin-top:5px;"><h3>Family Not Defined</h3></div>';
 			foreach($undFamilyArray as $sciName){
-				echo '<div style="margin-left:20;font-style:italic;"><a target="_blank" href="../taxa/index.php?taxon='.$sciName.'">'.$sciName.'</a></div>';
+				echo '<div style="margin-left:20px;font-style:italic;"><a target="_blank" href="../taxa/index.php?taxon='.$sciName.'">'.$sciName.'</a></div>';
 			}
 		}
 	?>

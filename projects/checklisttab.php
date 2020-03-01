@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$pid = $_REQUEST["pid"]; 
+$pid = $_REQUEST['pid'];
 
 $projManager = new InventoryProjectManager();
 $projManager->setPid($pid);

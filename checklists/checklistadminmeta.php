@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:"";
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -13,18 +13,25 @@ $isEditor = 0;
 
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
-if(isset($clArray["defaultsettings"]) && $clArray["defaultsettings"]){
-	$defaultArr = json_decode($clArray["defaultsettings"], true);
+if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
+	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
 ?>
 <script type="text/javascript">
-	function validateChecklistForm(f){
-		if(f.name.value == ""){
+    tinyMCE.init({
+        mode : "textareas",
+        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : ""
+    });
+
+    function validateChecklistForm(f){
+		if(f.name.value === ""){
 			alert("Checklist name field must have a value");
 			return false;
 		}
-		if(f.latcentroid.value != ""){
-			if(f.longcentroid.value == ""){
+		if(f.latcentroid.value !== ""){
+			if(f.longcentroid.value === ""){
 				alert("If latitude has a value, longitude must also have a value");
 				return false;
 			}
@@ -37,8 +44,8 @@ if(isset($clArray["defaultsettings"]) && $clArray["defaultsettings"]){
 				return false;
 			}
 		}
-		if(f.longcentroid.value != ""){
-			if(f.latcentroid.value == ""){
+		if(f.longcentroid.value !== ""){
+			if(f.latcentroid.value === ""){
 				alert("If longitude has a value, latitude must also have a value");
 				return false;
 			}
@@ -56,7 +63,7 @@ if(isset($clArray["defaultsettings"]) && $clArray["defaultsettings"]){
 			return false;
 		}
 		if(f.type){
-			if(f.type.value == "rarespp" && f.locality.value == ""){
+			if(f.type.value === "rarespp" && f.locality.value === ""){
 				alert("Rare species checklists must have a state value entered into the locality field");
 				return false;
 			}
@@ -65,15 +72,15 @@ if(isset($clArray["defaultsettings"]) && $clArray["defaultsettings"]){
 	}
 
 	function openMappingAid() {
-		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid","mapaid","resizable=0,width=800,height=700,left=20,top=20");
-	    if(mapWindow.opener == null) mapWindow.opener = self;
+        const mapWindow = open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid", "mapaid", "resizable=0,width=800,height=700,left=20,top=20");
+        if(mapWindow.opener == null) mapWindow.opener = self;
 	}
 
 	function openMappingPolyAid() {
-		var latDec = document.getElementById("latdec").value;
-		var lngDec = document.getElementById("lngdec").value;
-		mapWindow=open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef="+latDec+"&lngdef="+lngDec,"mapaid","resizable=0,width=850,height=700,left=20,top=20");
-	    if(mapWindow.opener == null) mapWindow.opener = self;
+        const latDec = document.getElementById("latdec").value;
+        const lngDec = document.getElementById("lngdec").value;
+        const mapWindow = open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef=" + latDec + "&lngdef=" + lngDec, "mapaid", "resizable=0,width=850,height=700,left=20,top=20");
+        if(mapWindow.opener == null) mapWindow.opener = self;
 	}
 </script>
 <?php
@@ -104,7 +111,7 @@ if(!$clid){
 					<b>Checklist Type</b><br/>
 					<select name="type">
 						<option value="static">General Checklist</option>
-						<option value="rarespp" <?php echo ($clArray && $clArray["type"]=='rarespp'?'SELECTED':'') ?>>Rare, threatened, protected species list</option>
+						<option value="rarespp" <?php echo ($clArray && $clArray['type'] === 'rarespp'?'SELECTED':'') ?>>Rare, threatened, protected species list</option>
 					</select>
 				</div>
 			<?php
@@ -112,19 +119,19 @@ if(!$clid){
 			?>
 			<div>
 				<b>Locality</b><br/>
-				<input type="text" name="locality" style="width:95%" value="<?php echo ($clArray?$clArray["locality"]:''); ?>" />
+				<input type="text" name="locality" style="width:95%" value="<?php echo ($clArray?$clArray['locality']:''); ?>" />
 			</div>
 			<div>
 				<b>Citation</b><br/>
-				<input type="text" name="publication" style="width:95%" value="<?php echo ($clArray?$clArray["publication"]:''); ?>" />
+				<input type="text" name="publication" style="width:95%" value="<?php echo ($clArray?$clArray['publication']:''); ?>" />
 			</div>
 			<div>
 				<b>Abstract:</b><br/>
-				<textarea name="abstract" style="width:95%" rows="3"><?php echo ($clArray?$clArray["abstract"]:''); ?></textarea>
+				<textarea name="abstract" style="width:95%" rows="3"><?php echo ($clArray?$clArray['abstract']:''); ?></textarea>
 			</div>
 			<div>
 				<b>Notes</b><br/>
-				<input type="text" name="notes" style="width:95%" value="<?php echo ($clArray?$clArray["notes"]:''); ?>" />
+				<input type="text" name="notes" style="width:95%" value="<?php echo ($clArray?$clArray['notes']:''); ?>" />
 			</div>
 			<div>
 				<b>More Inclusive Reference Checklist:</b><br/>
@@ -134,7 +141,7 @@ if(!$clid){
 					<?php
 					$refClArr = $clManager->getReferenceChecklists();
 					foreach($refClArr as $id => $name){
-						echo '<option value="'.$id.'" '.($clArray && $id==$clArray['parentclid']?'SELECTED':'').'>'.$name.'</option>';
+						echo '<option value="'.$id.'" '.($clArray && $id === $clArray['parentclid']?'SELECTED':'').'>'.$name.'</option>';
 					}
 					?>
 				</select>
@@ -142,29 +149,29 @@ if(!$clid){
 			<div style="width:100%;">
 				<div style="float:left;">
 					<b>Latitude</b><br/>
-					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["latcentroid"]:''); ?>" />
+					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['latcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Longitude</b><br/>
-					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray["longcentroid"]:''); ?>" />
+					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['longcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
 					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:12px;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Point Radius (meters)</b><br/>
-					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray["pointradiusmeters"]:''); ?>" />
+					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray['pointradiusmeters']:''); ?>" />
 				</div>
-				<div style="float:left;margin:8px 0px 0px 25px;">
+				<div style="float:left;margin:8px 0 0 25px;">
 					<fieldset style="width:275px;padding:10px">
 						<legend><b>Polygon Footprint</b></legend>
 						<div style="float:right;margin:10px;">
 							<a href="#" onclick="openMappingPolyAid();return false;" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a>
 						</div>
-						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'block':'none'); ?>;">
+						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
                             'Polygon footprint defined<br/>Click globe to view/edit'
 						</div>
-						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray["hasfootprintwkt"]?'none':'block'); ?>;">
+						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'none':'block'); ?>;">
                             'Polygon footprint not defined<br/>Click globe to create polygon'
 						</div>
 						<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
@@ -175,45 +182,49 @@ if(!$clid){
 				<fieldset style="width:300px;">
 					<legend><b>Default Display Settings</b></legend>
 					<div>
-						<!-- Display Details: 0 = false, 1 = true  -->
-						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["ddetails"])?"checked":""); ?> />
+						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['ddetails'])? 'checked' : ''); ?> />
                         Show Details
 					</div>
 					<div>
 						<?php
-						//Display Common Names: 0 = false, 1 = true
-						if($DISPLAY_COMMON_NAMES) echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' ".(($defaultArr&&$defaultArr["dcommon"])?"checked":"")." /> Display Common Names";
+						if($DISPLAY_COMMON_NAMES) {
+                            echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' " . (($defaultArr && $defaultArr['dcommon']) ? 'checked' : '') . ' /> Display Common Names';
+                        }
 						?>
 					</div>
 					<div>
-						<!-- Display as Images: 0 = false, 1 = true  -->
-						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"checked":""); ?> onclick="showImagesDefaultChecked(this.form);" />
+						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['dimages'])? 'checked' : ''); ?>onclick="showImagesDefaultChecked(this.form);" />
                         Display as Images
 					</div>
+                    <?php
+                    $text = '';
+                    if($defaultArr && $defaultArr['dimages']) {
+                        $text = 'disabled';
+                    }
+                    elseif($defaultArr && ($defaultArr['dvouchers'] || $defaultArr['dauthors'])) {
+                        $text = 'disabled';
+                    }
+                    ?>
 					<div>
-						<!-- Display as Vouchers: 0 = false, 1 = true  -->
-						<input name='dvouchers' id='dvouchers' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"disabled":(($defaultArr&&$defaultArr["dvouchers"])?"checked":"")); ?>/>
+						<input name='dvouchers' id='dvouchers' type='checkbox' value='1' <?php echo $text; ?>/>
                         Show Notes &amp; Vouchers
 					</div>
 					<div>
-						<!-- Display Taxon Authors: 0 = false, 1 = true  -->
-						<input name='dauthors' id='dauthors' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr["dimages"])?"disabled":(($defaultArr&&$defaultArr["dauthors"])?"checked":"")); ?>/>
+						<input name='dauthors' id='dauthors' type='checkbox' value='1' <?php echo $text; ?>/>
                         Dislay Taxon Authors
 					</div>
 					<div>
-						<!-- Display Taxa Alphabetically: 0 = false, 1 = true  -->
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr["dalpha"]?"checked":""); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr['dalpha']? 'checked' : ''); ?> />
                         Display Taxa Alphabetically
 					</div>
 					<div>
 						<?php
-						// Activate Identification key: 0 = false, 1 = true
 						$activateKey = $KEY_MOD_IS_ACTIVE;
 						if(array_key_exists('activatekey', $defaultArr)){
-							$activateKey = $defaultArr["activatekey"];
+							$activateKey = $defaultArr['activatekey'];
 						}
 						?>
-						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey?"checked":""); ?> />
+						<input name='activatekey' type='checkbox' value='1' <?php echo ($activateKey? 'checked' : ''); ?> />
                         Activate Identification Key
 					</div>
 				</fieldset>
@@ -222,7 +233,7 @@ if(!$clid){
 				<b>Access</b><br/>
 				<select name="access">
 					<option value="private">Private</option>
-					<option value="public" <?php echo ($clArray && $clArray["access"]=="public"?"selected":""); ?>>Public</option>
+					<option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
 				</select>
 			</div>
 			<div style="clear:both;float:left;margin-top:15px;">
@@ -250,9 +261,9 @@ if(!$clid){
 
 <div>
 	<?php
-	if(array_key_exists("userid",$_REQUEST)){
-		$userId = $_REQUEST["userid"];
-		echo '<div style="font-weight:bold;font:bold 14pt;">Checklists assigned to your account</div>';
+	if(array_key_exists('userid',$_REQUEST)){
+		$userId = $_REQUEST['userid'];
+		echo '<div style="font-weight:bold;font-size:14px;">Checklists assigned to your account</div>';
 		$listArr = $clManager->getManagementLists($userId);
 		if(array_key_exists('cl',$listArr)){
 			$clArr = $listArr['cl'];
@@ -266,7 +277,7 @@ if(!$clid){
 						<?php echo $vName; ?>
 					</a>
 					<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="Edit Checklist" />
+						<img src="../images/edit.png" style="width:15px;border:0;" title="Edit Checklist" />
 					</a>
 				</li>
 				<?php
@@ -286,7 +297,7 @@ if(!$clid){
 			<?php
 		}
 
-		echo '<div style="font-weight:bold;font:bold 14pt;margin-top:25px;">Inventory Project Administration</div>'."\n";
+		echo '<div style="font-weight:bold;font-size:14px;margin-top:25px;">Inventory Project Administration</div>'."\n";
 		if(array_key_exists('proj',$listArr)){
 			$projArr = $listArr['proj'];
 			?>
@@ -299,7 +310,7 @@ if(!$clid){
 						<?php echo $projName; ?>
 					</a>
 					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0px;" title="Edit Project" />
+						<img src="../images/edit.png" style="width:15px;border:0;" title="Edit Project" />
 					</a>
 				</li>
 				<?php

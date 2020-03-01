@@ -40,7 +40,7 @@ class ImageProcessor {
 		}
 	}
 
-	private function initProcessor($processorType): void
+	public function initProcessor($processorType = ''): void
 	{
 		global $SERVER_ROOT;
 		if($this->logFH) {

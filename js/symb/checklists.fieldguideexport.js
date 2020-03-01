@@ -4,33 +4,33 @@ $(document).ready(function() {
         scrolllock: true
     });
 });
-var pdfDocGenerator = '';
-var lazyLoadCnt = 100;
-var loadIndex = 0;
-var zipIndex = 1;
-var procIndex = 0;
-var processed = 0;
-var dataArr = [];
-var imagesExist = false;
-var tempImgArr = [];
-var imgDataArr = [];
-var contentArr = [];
-var titlePageContent = [];
-var leftColContent = [];
-var rightColContent = [];
-var priDescSource = '';
-var secDescSource = '';
-var anyDescSource = 0;
-var photog = [];
-var photoNum = 0;
-var zipFile = '';
-var zipFolder = '';
-var pdfFileNum = 0;
-var pdfFileTot = 0;
-var projFileName = '';
-var savedPDFs = 0;
-var t0 = 0;
-var t1 = 0;
+let pdfDocGenerator = '';
+const lazyLoadCnt = 100;
+let loadIndex = 0;
+let zipIndex = 1;
+let procIndex = 0;
+let processed = 0;
+let dataArr = [];
+let imagesExist = false;
+let tempImgArr = [];
+let imgDataArr = [];
+let contentArr = [];
+let titlePageContent = [];
+let leftColContent = [];
+let rightColContent = [];
+let priDescSource = '';
+let secDescSource = '';
+let anyDescSource = 0;
+let photog = [];
+let photoNum = 0;
+let zipFile = '';
+let zipFolder = '';
+let pdfFileNum = 0;
+let pdfFileTot = 0;
+let projFileName = '';
+let savedPDFs = 0;
+const t0 = 0;
+const t1 = 0;
 
 function hideWorking(){
     $('#loadingOverlay').popup('hide');
@@ -46,7 +46,6 @@ function showWorking(){
 }
 
 function openFieldGuideExporter(){
-    var taxonFilter = document.getElementById("thesfilter").value;
     $("#fieldguideexport").popup("show");
 }
 
@@ -98,13 +97,13 @@ function processSettings(){
     priDescSource = document.getElementById("fgPriDescSource").value;
     secDescSource = document.getElementById("fgSecDescSource").value;
     anyDescSource = document.getElementById("fgUseAltDesc").checked;
-    if(document.getElementById("fgUseAllPhotog").checked == true){
+    if(document.getElementById("fgUseAllPhotog").checked === true){
         photog = 'all';
     }
     else{
         photog = [];
-        var dbElements = document.getElementsByName("photog[]");
-        for(i = 0; i < dbElements.length; i++){
+        const dbElements = document.getElementsByName("photog[]");
+        for(let i = 0; i < dbElements.length; i++){
             if(dbElements[i].checked){
                 photog.push(dbElements[i].value);
             }
@@ -114,43 +113,57 @@ function processSettings(){
 }
 
 function processDataResponse(res){
-    var tempArr = JSON.parse(res);
-    for(i in tempArr) {
-        var family = tempArr[i]['family'];
-        if(!family) family = "Family Undefined";
-        var sciname = tempArr[i]['sciname'];
-        if(!dataArr[family]) dataArr[family] = [];
-        if(!dataArr[family][sciname]) dataArr[family][sciname] = [];
-        dataArr[family][sciname]['author'] = tempArr[i]['author'];
-        dataArr[family][sciname]['order'] = tempArr[i]['order'];
-        if(tempArr[i]['vern']) dataArr[family][sciname]['common'] = tempArr[i]['vern'][0];
-        if(tempArr[i]['desc']){
-            if(tempArr[i]['desc'][priDescSource]){
-                dataArr[family][sciname]['desc'] = tempArr[i]['desc'][priDescSource];
+    const tempArr = JSON.parse(res);
+    for(let i in tempArr) {
+        if(tempArr.hasOwnProperty(i)){
+            let family = tempArr[i]['family'];
+            if(!family) {
+                family = "Family Undefined";
             }
-            else if(tempArr[i]['desc'][secDescSource]){
-                dataArr[family][sciname]['desc'] = tempArr[i]['desc'][secDescSource];
+            const sciname = tempArr[i]['sciname'];
+            if(!dataArr[family]) {
+                dataArr[family] = [];
             }
-            else if(anyDescSource){
-                var x = 0;
-                do{
-                    for(de in tempArr[i]['desc']){
-                        dataArr[family][sciname]['desc'] = tempArr[i]['desc'][de];
-                        x++;
-                    }
+            if(!dataArr[family][sciname]) {
+                dataArr[family][sciname] = [];
+            }
+            dataArr[family][sciname]['author'] = tempArr[i]['author'];
+            dataArr[family][sciname]['order'] = tempArr[i]['order'];
+            if(tempArr[i]['vern']) {
+                dataArr[family][sciname]['common'] = tempArr[i]['vern'][0];
+            }
+            if(tempArr[i]['desc']){
+                if(tempArr[i]['desc'][priDescSource]){
+                    dataArr[family][sciname]['desc'] = tempArr[i]['desc'][priDescSource];
                 }
-                while(x < 1);
+                else if(tempArr[i]['desc'][secDescSource]){
+                    dataArr[family][sciname]['desc'] = tempArr[i]['desc'][secDescSource];
+                }
+                else if(anyDescSource){
+                    let x = 0;
+                    do{
+                        for(let de in tempArr[i]['desc']){
+                            if(tempArr[i]['desc'].hasOwnProperty(de)){
+                                dataArr[family][sciname]['desc'] = tempArr[i]['desc'][de];
+                                x++;
+                            }
+                        }
+                    }
+                    while(x < 1);
+                }
             }
-        }
-        dataArr[family][sciname]['images'] = [];
-        if(tempArr[i]['img']){
-            imagesExist = true;
-            for(im in tempArr[i]['img']){
-                var imgId = tempArr[i]['img'][im]['id'];
-                var imgUrl = tempArr[i]['img'][im]['url'];
-                if(imgId && imgUrl){
-                    dataArr[family][sciname]['images'].push(tempArr[i]['img'][im]);
-                    tempImgArr.push(imgId);
+            dataArr[family][sciname]['images'] = [];
+            if(tempArr[i]['img']){
+                imagesExist = true;
+                for(let im in tempArr[i]['img']){
+                    if(tempArr[i]['img'].hasOwnProperty(im)){
+                        const imgId = tempArr[i]['img'][im]['id'];
+                        const imgUrl = tempArr[i]['img'][im]['url'];
+                        if(imgId && imgUrl){
+                            dataArr[family][sciname]['images'].push(tempArr[i]['img'][im]);
+                            tempImgArr.push(imgId);
+                        }
+                    }
                 }
             }
         }
@@ -159,11 +172,11 @@ function processDataResponse(res){
 }
 
 function splitArray(arr,size){
-    var index = 0;
-    var arrLength = arr.length;
-    var tempArr = [];
+    let index;
+    const arrLength = arr.length;
+    const tempArr = [];
     for (index = 0; index < arrLength; index += size) {
-        var subArr = arr.slice(index,(index+size));
+        const subArr = arr.slice(index, (index + size));
         tempArr.push(subArr);
     }
 
@@ -182,15 +195,15 @@ function prepImageResponse(){
 
 function processImageResponse(){
     //console.log(tempImgArr.length);
-    var reqArrStr = JSON.stringify(tempImgArr[0]);
+    const reqArrStr = JSON.stringify(tempImgArr[0]);
     loadImageDataUri(reqArrStr,function(res){
         if(res){
-            var tempDataArr = res.split("-****-");
-            for(d in tempDataArr){
-                if(tempDataArr[d]){
-                    var imgArr = tempDataArr[d].toString().split("-||-");
-                    var resId = imgArr[0];
-                    var resData = imgArr[1];
+            const tempDataArr = res.split("-****-");
+            for(let d in tempDataArr){
+                if(tempDataArr.hasOwnProperty(d) && tempDataArr[d]){
+                    const imgArr = tempDataArr[d].toString().split("-||-");
+                    const resId = imgArr[0];
+                    const resData = imgArr[1];
                     if(resData) imgDataArr[resId] = resData;
                     //t1 = performance.now();
                     //console.log(resId+" processed at " + ((t1 - t0)/1000) + " seconds.");
@@ -209,7 +222,7 @@ function processImageResponse(){
 
 function createPDFGuides(){
     pdfFileNum = 1;
-    var taxonNum = 0;
+    let taxonNum = 0;
     zipFile = new JSZip();
     zipFolder = zipFile.folder("files");
     contentArr = [];
@@ -220,15 +233,15 @@ function createPDFGuides(){
         },
         pageBreak: 'after'
     });
-    var familyKeys = Object.keys(dataArr);
+    const familyKeys = Object.keys(dataArr);
     familyKeys.sort();
-    for(i in familyKeys){
-        var familyName = familyKeys[i];
+    for(let i in familyKeys){
+        const familyName = familyKeys[i];
         if(typeof familyName === "string"){
-            var scinameKeys = Object.keys(dataArr[familyName]);
+            const scinameKeys = Object.keys(dataArr[familyName]);
             scinameKeys.sort();
-            for(s in scinameKeys){
-                if(taxonNum == 100){
+            for(let s in scinameKeys){
+                if(taxonNum === 100){
                     savePDFFile(contentArr);
                     taxonNum = 0;
                     contentArr = [];
@@ -240,7 +253,7 @@ function createPDFGuides(){
                         pageBreak: 'after'
                     });
                 }
-                var sciname = scinameKeys[s];
+                const sciname = scinameKeys[s];
                 if(typeof sciname === "string"){
                     createPDFPage(familyName,sciname);
                     taxonNum++;
@@ -252,10 +265,15 @@ function createPDFGuides(){
 }
 
 function createTitlePage(){
-    if(zipIndex > 1) var fileNumber = ((zipIndex * 3) + pdfFileNum);
-    else var fileNumber = pdfFileNum;
-    var titlePageHead = checklistName+' Vol. '+fileNumber;
-    var titleTextArr = [];
+    let fileNumber;
+    if(zipIndex > 1) {
+        fileNumber = ((zipIndex * 3) + pdfFileNum);
+    }
+    else {
+        fileNumber = pdfFileNum;
+    }
+    const titlePageHead = checklistName + ' Vol. ' + fileNumber;
+    const titleTextArr = [];
     titlePageContent = [];
     titlePageContent.push({text: titlePageHead, style: 'titleHeader'});
     if(checklistAuthors){
@@ -295,12 +313,11 @@ function createPDFPage(familyName,sciname){
     //console.log(sciname);
     leftColContent = [];
     rightColContent = [];
-    var taxonOrder = dataArr[familyName][sciname]['order'];
-    var scinameAuthor = dataArr[familyName][sciname]['author'];
-    var commonName = '';
-    var descArr = [];
-    var imgArr = [];
-    var imgBodyArr = [];
+    const taxonOrder = dataArr[familyName][sciname]['order'];
+    const scinameAuthor = dataArr[familyName][sciname]['author'];
+    let commonName = '';
+    let descArr = [];
+    let imgArr = [];
     if(dataArr[familyName][sciname]['common']) commonName = dataArr[familyName][sciname]['common'];
     if(dataArr[familyName][sciname]['desc']) descArr = dataArr[familyName][sciname]['desc'];
     if(dataArr[familyName][sciname]['images']) imgArr = dataArr[familyName][sciname]['images'];
@@ -317,16 +334,18 @@ function createPDFPage(familyName,sciname){
     }
     leftColContent.push('\n\n');
     if(Object.keys(descArr).length !== 0){
-        var source = descArr.source;
+        const source = descArr.source;
         delete descArr.source;
-        for(d in descArr){
-            if(descArr[d]['heading']){
-                leftColContent.push({text: descArr[d]['heading']+':', style: 'descheadtext'});
-                leftColContent.push(' ');
-            }
-            if(descArr[d]['statement']){
-                leftColContent.push({text: descArr[d]['statement'], style: 'descstattext'});
-                leftColContent.push(' ');
+        for(let d in descArr){
+            if(descArr.hasOwnProperty(d)){
+                if(descArr[d]['heading']){
+                    leftColContent.push({text: descArr[d]['heading']+':', style: 'descheadtext'});
+                    leftColContent.push(' ');
+                }
+                if(descArr[d]['statement']){
+                    leftColContent.push({text: descArr[d]['statement'], style: 'descstattext'});
+                    leftColContent.push(' ');
+                }
             }
         }
         if(source){
@@ -338,36 +357,39 @@ function createPDFPage(familyName,sciname){
         leftColContent.push({text: 'No Description Available', style: 'nodesctext'});
     }
     if(imgArr.length > 0){
-        for(p in imgArr){
-            var imgid = imgArr[p]['id'];
-            var owner = imgArr[p]['owner'];
-            var photographer = imgArr[p]['photographer'];
-            if(imgDataArr[imgid]){
-                var tempArr = [];
-                var creditStr = '';
-                tempArr.push({image: imgDataArr[imgid], width: 150, alignment: 'right'});
-                rightColContent.push(tempArr);
-                if(photographer){
-                    creditStr = 'Photograph by: '+photographer;
-                }
-                if(owner){
-                    creditStr += (photographer?'\n':'')+owner;
-                }
-                if(creditStr){
-                    tempArr = [];
-                    tempArr.push({text: creditStr, style: 'imageCredit', alignment: 'right'});
+        for(let p in imgArr){
+            if(imgArr.hasOwnProperty(p)){
+                const imgid = imgArr[p]['id'];
+                const owner = imgArr[p]['owner'];
+                const photographer = imgArr[p]['photographer'];
+                if(imgDataArr[imgid]){
+                    let tempArr = [];
+                    let creditStr = '';
+                    tempArr.push({image: imgDataArr[imgid], width: 150, alignment: 'right'});
                     rightColContent.push(tempArr);
+                    if(photographer){
+                        creditStr = 'Photograph by: '+photographer;
+                    }
+                    if(owner){
+                        creditStr += (photographer?'\n':'')+owner;
+                    }
+                    if(creditStr){
+                        tempArr = [];
+                        tempArr.push({text: creditStr, style: 'imageCredit', alignment: 'right'});
+                        rightColContent.push(tempArr);
+                    }
                 }
             }
         }
     }
 
-    var leftColArr = {
+    const leftColArr = {
         width: 340,
         text: leftColContent
     };
+    let rightColArr;
     if(rightColContent.length > 1){
-        var rightColArr = {
+        rightColArr = {
             table: {
                 widths: [160],
                 body: rightColContent
@@ -377,7 +399,7 @@ function createPDFPage(familyName,sciname){
         };
     }
     else{
-        var rightColArr = {
+        rightColArr = {
             table: {
                 widths: [160],
                 body: [rightColContent]
@@ -386,30 +408,38 @@ function createPDFPage(familyName,sciname){
 
         };
     }
-    var pageArr = {
+    const pageArr = {
         columns: [leftColArr, rightColArr],
         pageBreak: 'after'
     };
-    var TOCString = familyName+': '+sciname;
+    const TOCString = familyName + ': ' + sciname;
     contentArr.push({text: TOCString, tocItem: true, alignment: 'left', margin: [-500, 0, 0, 0]});
     contentArr.push(pageArr);
 }
 
 function savePDFFile(content){
-    if(zipIndex > 1) var fileNumber = ((zipIndex * 3) + pdfFileNum);
-    else var fileNumber = pdfFileNum;
-    var filename = projFileName+'-'+fileNumber+'.pdf';
+    let fileNumber;
+    if(zipIndex > 1) {
+        fileNumber = ((zipIndex * 3) + pdfFileNum);
+    }
+    else {
+        fileNumber = pdfFileNum;
+    }
+    const filename = projFileName + '-' + fileNumber + '.pdf';
     pdfFileNum++;
-    var docDefinition = {
+    const docDefinition = {
         content: content,
-        footer: function(page){
+        footer: function (page) {
             return [
-                {canvas: [{ type: 'line', x1: 20, y1: 0, x2: 595-20, y2: 0, lineWidth: 1 }]},
+                {canvas: [{type: 'line', x1: 20, y1: 0, x2: 595 - 20, y2: 0, lineWidth: 1}]},
                 {
                     columns: [
                         {
                             width: 400,
-                            text: checklistName+' Vol. '+fileNumber, alignment: 'right', style: 'checkListName', margin: [20, 10, 20, 10]
+                            text: checklistName + ' Vol. ' + fileNumber,
+                            alignment: 'right',
+                            style: 'checkListName',
+                            margin: [20, 10, 20, 10]
                         },
                         {
                             width: 200,
@@ -420,7 +450,10 @@ function savePDFFile(content){
                                 },
                                 {
                                     width: 140,
-                                    text: 'Back to Contents', alignment: 'right', style: 'TOCLink', margin: [0, 10, 40, 10],
+                                    text: 'Back to Contents',
+                                    alignment: 'right',
+                                    style: 'TOCLink',
+                                    margin: [0, 10, 40, 10],
                                     linkToPage: 1
                                 }
 
@@ -489,7 +522,7 @@ function savePDFFile(content){
             },
             imageCredit: {
                 fontSize: 6,
-                margin: [ 0, 0, 0, 13 ]
+                margin: [0, 0, 0, 13]
             }
         }
     };
@@ -497,9 +530,9 @@ function savePDFFile(content){
     pdfDocGenerator.getBase64((data) => {
         zipFolder.file(filename, data.substr(data.indexOf(',')+1), {base64: true});
         savedPDFs++;
-        if(savedPDFs == pdfFileTot){
+        if(savedPDFs === pdfFileTot){
             zipFile.generateAsync({type:"blob"}).then(function(content) {
-                var zipfilename = projFileName+zipIndex+'.zip';
+                const zipfilename = projFileName + zipIndex + '.zip';
                 saveAs(content,zipfilename);
                 hideWorking();
             });
@@ -508,14 +541,14 @@ function savePDFFile(content){
 }
 
 function loadImageDataUri(imgid,callback){
-    var http = new XMLHttpRequest();
-    var url = "rpc/fieldguideimageprocessor.php";
-    var params = 'imgid='+imgid;
+    const http = new XMLHttpRequest();
+    const url = "rpc/fieldguideimageprocessor.php";
+    const params = 'imgid=' + imgid;
     //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState === 4 && http.status === 200) {
             callback(http.responseText);
         }
     };
@@ -523,22 +556,24 @@ function loadImageDataUri(imgid,callback){
 }
 
 function selectAllPhotog(){
-    var boxesChecked = true;
-    var selectAll = document.getElementById("fgUseAllPhotog");
+    let boxesChecked = true;
+    const selectAll = document.getElementById("fgUseAllPhotog");
     if(!selectAll.checked){
         boxesChecked = false;
     }
-    var dbElements = document.getElementsByName("photog[]");
-    for(i = 0; i < dbElements.length; i++){
+    const dbElements = document.getElementsByName("photog[]");
+    for(let i = 0; i < dbElements.length; i++){
         dbElements[i].checked = boxesChecked;
     }
 }
 
 function checkPhotogSelections(){
-    var boxesChecked = true;
-    var dbElements = document.getElementsByName("photog[]");
-    for(i = 0; i < dbElements.length; i++){
-        if(!dbElements[i].checked) boxesChecked = false;
+    let boxesChecked = true;
+    const dbElements = document.getElementsByName("photog[]");
+    for(let i = 0; i < dbElements.length; i++){
+        if(!dbElements[i].checked) {
+            boxesChecked = false;
+        }
     }
     document.getElementById("fgUseAllPhotog").checked = boxesChecked;
 }

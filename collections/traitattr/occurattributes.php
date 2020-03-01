@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/traitattr/occurattributes.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $collid = $_REQUEST['collid'];
 $submitForm = array_key_exists('submitform',$_POST)?$_POST['submitform']:'';
@@ -20,13 +22,24 @@ $reviewDate = array_key_exists('reviewdate',$_POST)?$_POST['reviewdate']:'';
 $reviewStatus = array_key_exists('reviewstatus',$_POST)?$_POST['reviewstatus']:0;
 $start = array_key_exists('start',$_POST)?$_POST['start']:0;
 
-//Sanitation
-if(!is_numeric($collid)) $collid = 0;
-if(!is_numeric($traitID)) $traitID = '';
-if(!is_numeric($tidFilter)) $tidFilter = '';
-if(!is_numeric($paneX)) $paneX = '';
-if(!is_numeric($paneY)) $paneY = '';
-if(!is_numeric($start)) $start = 0;
+if(!is_numeric($collid)) {
+    $collid = 0;
+}
+if(!is_numeric($traitID)) {
+    $traitID = '';
+}
+if(!is_numeric($tidFilter)) {
+    $tidFilter = '';
+}
+if(!is_numeric($paneX)) {
+    $paneX = '';
+}
+if(!is_numeric($paneY)) {
+    $paneY = '';
+}
+if(!is_numeric($start)) {
+    $start = 0;
+}
 
 $isEditor = 0; 
 if($SYMB_UID){
@@ -34,29 +47,30 @@ if($SYMB_UID){
 		$isEditor = 2;
 	}
 	elseif($collid){
-		//If a page related to collections, one maight want to... 
-		if(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])){
+		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 			$isEditor = 2;
 		}
-		elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"])){
+		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 			$isEditor = 1;
 		}
 	}
 }
 
 $attrManager = new OccurrenceAttributes();
-if($tidFilter) $attrManager->setTidFilter($tidFilter);
+if($tidFilter) {
+    $attrManager->setTidFilter($tidFilter);
+}
 $attrManager->setCollid($collid);
 
 $statusStr = '';
 if($isEditor){
-	if($submitForm == 'Save and Next'){
+	if($submitForm === 'Save and Next'){
 		$attrManager->setTargetOccid($_POST['targetoccid']);
 		if(!$attrManager->saveAttributes($_POST,$_POST['notes'],$SYMB_UID)){
 			$statusStr = $attrManager->getErrorMessage();
 		}
 	}
-	elseif($submitForm == 'Set Status and Save'){
+	elseif($submitForm === 'Set Status and Save'){
 		$attrManager->setTargetOccid($_POST['targetoccid']);
 		$attrManager->saveReviewStatus($traitID,$_POST);
 	}
@@ -66,20 +80,24 @@ $occid = 0;
 $catNum = '';
 if($traitID){
 	$imgRetArr = array();
-	if($mode == 1){
+	if($mode === 1){
 		$imgRetArr = $attrManager->getImageUrls();
 		$imgArr = current($imgRetArr);
 	}
-	elseif($mode == 2){
+	elseif($mode === 2){
 		$imgRetArr = $attrManager->getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start);
-		if($imgRetArr) $imgArr = current($imgRetArr);
+		if($imgRetArr) {
+            $imgArr = current($imgRetArr);
+        }
 		
 	}
 	if($imgRetArr){
 		$catNum = $imgArr['catnum'];
 		unset($imgArr['catnum']);
 		$occid = key($imgRetArr);
-		if($occid) $attrManager->setTargetOccid($occid);
+		if($occid) {
+            $attrManager->setTargetOccid($occid);
+        }
 	}
 }
 ?>
@@ -93,26 +111,33 @@ if($traitID){
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
 		<script type="text/javascript">
-			var activeImgIndex = 1;
-			var imgArr = [];
-			var imgLgArr = [];
-			<?php
+            let activeImgIndex = 1;
+            const imgArr = [];
+            const imgLgArr = [];
+
+            <?php
 			$imgDomain = $IMAGE_DOMAIN;
 			if(!$imgDomain){
 				$imgDomain = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $imgDomain = 'https://';
+				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                    $imgDomain = 'https://';
+                }
 				$imgDomain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80) $imgDomain .= ':'.$_SERVER["SERVER_PORT"];
+				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+                    $imgDomain .= ':' . $_SERVER['SERVER_PORT'];
+                }
 			}
 			foreach($imgArr as $cnt => $iArr){
-				//Regular url
 				$url = $iArr['web'];
-				if(substr($url,0,1) == '/') $url = $imgDomain.$url;
+				if(strpos($url, '/') === 0) {
+                    $url = $imgDomain . $url;
+                }
 				echo 'imgArr['.$cnt.'] = "'.$url.'";'."\n";
-				//Large Url
 				$lgUrl = $iArr['lg'];
 				if($lgUrl){
-					if(substr($lgUrl,0,1) == '/') $lgUrl = $imgDomain.$lgUrl;
+					if(strpos($lgUrl, '/') === 0) {
+                        $lgUrl = $imgDomain . $lgUrl;
+                    }
 					echo 'imgLgArr['.$cnt.'] = "'.$lgUrl.'";'."\n";
 				}
 			}
@@ -129,33 +154,32 @@ if($traitID){
 
 			function setImgRes(){
 				if(imgLgArr[activeImgIndex] != null){
-					if($("#imgres1").val() == 'lg') changeImgRes('lg');
+					if($("#imgres1").val() === 'lg') {
+					    changeImgRes('lg');
+					}
 				}
 				else{
 					if(imgArr[activeImgIndex] != null){
 						$("#specimg").attr("src",imgArr[activeImgIndex]);
 						document.getElementById("imgresmed").checked = true;
-						var imgResLgRadio = document.getElementById("imgreslg");
-						imgResLgRadio.disabled = true;
+                        const imgResLgRadio = document.getElementById("imgreslg");
+                        imgResLgRadio.disabled = true;
 						imgResLgRadio.title = "Large resolution image not available";
 					}
-				}
-				if(imgArr[activeImgIndex] != null){
-					//Do nothing
 				}
 				else{
 					if(imgLgArr[activeImgIndex] != null){
 						$("#specimg").attr("src",imgLgArr[activeImgIndex]);
 						document.getElementById("imgreslg").checked = true;
-						var imgResMedRadio = document.getElementById("imgresmed");
-						imgResMedRadio.disabled = true;
+                        const imgResMedRadio = document.getElementById("imgresmed");
+                        imgResMedRadio.disabled = true;
 						imgResMedRadio.title = "Medium resolution image not available";
 					}
 				}
 			}
 
 			function changeImgRes(resType){
-				if(resType == 'lg'){
+				if(resType === 'lg'){
 					$("#imgres1").val("lg");
 					$("#imgres2").val("lg");
 			    	if(imgLgArr[activeImgIndex]){
@@ -182,14 +206,15 @@ if($traitID){
 
 			function nextImage(){
 				activeImgIndex = activeImgIndex + 1;
-				if(activeImgIndex >= imgArr.length) activeImgIndex = 1;
+				if(activeImgIndex >= imgArr.length) {
+				    activeImgIndex = 1;
+				}
 				$("#specimg").attr("src",imgArr[activeImgIndex]);
 				$("#specimg").imagetool({
 					maxWidth: 6000
 					,viewportWidth: $("#panex1").val()
 			        ,viewportHeight: $("#paney1").val()
 				});
-				//setImgRes();
 				$("#labelcnt").html(activeImgIndex);
 				return false;
 			}
@@ -199,11 +224,11 @@ if($traitID){
 			}
 
 			function verifyFilterForm(f){
-				if(f.traitid.value == ""){
+				if(f.traitid.value === ""){
 					alert("An occurrence trait must be selected");
 					return false;
 				}
-				if(f.taxonfilter.value != "" && f.tidfilter.value == ""){
+				if(f.taxonfilter.value !== "" && f.tidfilter.value === ""){
 					alert("Taxon filter not syncronized with thesaurus");
 					return false;
 				}
@@ -211,7 +236,7 @@ if($traitID){
 			}
 
 			function verifyReviewForm(f){
-				if(f.traitid.value == ""){
+				if(f.traitid.value === ""){
 					alert("An occurrence trait must be selected");
 					return false;
 				}
@@ -219,26 +244,20 @@ if($traitID){
 			}
 
 			function nextReviewRecord(startValue){
-				var f = document.getElementById("reviewform");
-				f.start.value = startValue;
+                const f = document.getElementById("reviewform");
+                f.start.value = startValue;
 				f.submit();
 			}
-
-			function verifySubmitForm(f){
-
-				return true;
-			}
-
-		</script>
+        </script>
 		<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js?ver=151229" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php
-		include($SERVER_ROOT.'/header.php');
-		if($isEditor == 2){
-			echo '<div style="float:right;margin:0px 3px;font-size:90%">';
-			if($mode == 1){
+		include(__DIR__ . '/../../header.php');
+		if($isEditor === 2){
+			echo '<div style="float:right;margin:0 3px;font-size:90%">';
+			if($mode === 1){
 				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.png" style="" />review</a>';
 			}
 			else{
@@ -251,7 +270,7 @@ if($traitID){
 			<a href="../../index.php">Home</a> &gt;&gt; 
 			<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
 			<?php 
-			if($mode == 2){
+			if($mode === 2){
 				echo '<b>Attribute Reviewer</b>';
 			}
 			else{
@@ -266,7 +285,6 @@ if($traitID){
 			echo '</div>';
 		}
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext" style="position:relative;">
 		<?php
 		if($collid){
@@ -274,7 +292,7 @@ if($traitID){
 			<div style="float:right;width:290px;">
 				<?php
 				$attrNameArr = $attrManager->getTraitNames();
-				if($mode == 1){ 
+				if($mode === 1){
 					?>
 					<fieldset style="margin-top:25px">
 						<legend><b>Filter</b></legend>
@@ -291,7 +309,7 @@ if($traitID){
 									<?php 
 									if($attrNameArr){
 										foreach($attrNameArr as $ID => $aName){
-											echo '<option value="'.$ID.'" '.($traitID==$ID?'SELECTED':'').'>'.$aName.'</option>';
+											echo '<option value="'.$ID.'" '.($traitID === $ID?'SELECTED':'').'>'.$aName.'</option>';
 										}
 									}
 									else{
@@ -310,13 +328,17 @@ if($traitID){
 								<span id="notvalid-span" style="display:none;font-weight:bold;color:red;">taxon not valid...</span>
 							</div>
 							<div style="margin:10px">
-								<?php if($traitID) echo '<b>Target Specimens:</b> '.$attrManager->getSpecimenCount(); ?>
+								<?php
+                                if($traitID) {
+                                    echo '<b>Target Specimens:</b> ' . $attrManager->getSpecimenCount();
+                                }
+                                ?>
 							</div>
 						</form>
 					</fieldset>
 				<?php
 				} 
-				elseif($mode == 2){
+				elseif($mode === 2){
 					?>
 					<fieldset style="margin-top:25px">
 						<legend><b>Reviewer</b></legend>
@@ -328,7 +350,7 @@ if($traitID){
 									<?php 
 									if($attrNameArr){
 										foreach($attrNameArr as $ID => $aName){
-											echo '<option value="'.$ID.'" '.($traitID==$ID?'SELECTED':'').'>'.$aName.'</option>';
+											echo '<option value="'.$ID.'" '.($traitID === $ID?'SELECTED':'').'>'.$aName.'</option>';
 										}
 									}
 									else{
@@ -344,7 +366,7 @@ if($traitID){
 									<?php 
 									$editorArr = $attrManager->getEditorArr();
 									foreach($editorArr as $uid => $name){
-										echo '<option value="'.$uid.'" '.($uid==$reviewUid?'SELECTED':'').'>'.$name.'</option>';
+										echo '<option value="'.$uid.'" '.($uid === $reviewUid?'SELECTED':'').'>'.$name.'</option>';
 									}
 									?>
 								</select>
@@ -356,7 +378,7 @@ if($traitID){
 									<?php 
 									$dateArr = $attrManager->getEditDates();
 									foreach($dateArr as $date){
-										echo '<option '.($date==$reviewDate?'SELECTED':'').'>'.$date.'</option>';
+										echo '<option '.($date === $reviewDate?'SELECTED':'').'>'.$date.'</option>';
 									}
 									?>
 								</select>
@@ -364,8 +386,8 @@ if($traitID){
 							<div style="margin:3px">
 								<select name="reviewstatus">
 									<option value="0">Not reviewed</option>
-									<option value="5" <?php echo  ($reviewStatus==5?'SELECTED':''); ?>>Expert Needed</option>
-									<option value="10" <?php echo  ($reviewStatus==10?'SELECTED':''); ?>>Reviewed</option>
+									<option value="5" <?php echo  ($reviewStatus === 5?'SELECTED':''); ?>>Expert Needed</option>
+									<option value="10" <?php echo  ($reviewStatus === 10?'SELECTED':''); ?>>Reviewed</option>
 								</select>
 							</div>
 							<div style="margin:10px;">
@@ -384,7 +406,9 @@ if($traitID){
 									echo '<b>'.($rCnt?$start+1:0).' of '.$rCnt.' records</b>';
 									if($rCnt > 1){
 										$next = ($start+1);
-										if($next >= $rCnt) $next = 0; 
+										if($next >= $rCnt) {
+                                            $next = 0;
+                                        }
 										echo ' (<a href="#" onclick="nextReviewRecord('.($next).')">Next record &gt;&gt;</a>)';
 									} 
 								} 
@@ -395,21 +419,21 @@ if($traitID){
 					<?php
 				} 
 				if($imgArr){
-					$traitArr = $attrManager->getTraitArr($traitID,($mode==2?true:false));
+					$traitArr = $attrManager->getTraitArr($traitID,($mode === 2));
 					?>
 					<fieldset style="margin-top:20px">
 						<legend><b>Action Panel - <?php echo $traitArr[$traitID]['name']; ?></b></legend>
-						<form name="submitform" method="post" action="occurattributes.php" onsubmit="return verifySubmitForm(this)" >
+						<form name="submitform" method="post" action="occurattributes.php">
 							<div>
 								<?php 
 								$attrManager->echoFormTraits($traitID);
 								?>
 							</div>
-							<div style="margin-left:5;">
+							<div style="margin-left:5px;">
 								Status: 
 								<select name="setstatus">
 									<?php
-									if($mode == 2){
+									if($mode === 2){
 										?>
 										<option value="0">Not reviewed</option>
 										<option value="5">Expert Needed</option>
@@ -439,7 +463,7 @@ if($traitID){
 								<input name="reviewdate" type="hidden" value="<?php echo $reviewDate; ?>" /> 
 								<input name="reviewstatus" type="hidden" value="<?php echo $reviewStatus; ?>" /> 
 								<?php 
-								if($mode == 2){
+								if($mode === 2){
 									echo '<input name="submitform" type="submit" value="Set Status and Save" />';
 								}
 								else{
@@ -462,31 +486,39 @@ if($traitID){
 						<span style="margin-left:6px;"><input id="imgreslg" name="resradio" type="radio" onchange="changeImgRes('lg')" />High Res.</span>
 						<?php 
 						if($occid){
-							if(!$catNum) $catNum = 'Specimen Details';
+							if(!$catNum) {
+                                $catNum = 'Specimen Details';
+                            }
 							echo '<span style="margin-left:50px;">';
 							echo '<a href="../individual/index.php?occid='.$occid.'" target="_blank" title="Specimen Details">'.$catNum.'</a>';
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);
-						if($imgTotal > 1) echo '<span id="labelcnt" style="margin-left:60px;">1</span> of '.$imgTotal.' images '.($imgTotal>1?'<a href="#" onclick="nextImage()">&gt;&gt; next</a>':'');
-						if($occid && $mode != 2) echo '<span style="margin-left:80px" title="Skip Specimen"><a href="#" onclick="skipSpecimen()">SKIP &gt;&gt;</a></span>';
+						if($imgTotal > 1) {
+                            echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage()">&gt;&gt; next</a>' : '');
+                        }
+						if($occid && $mode !== 2) {
+                            echo '<span style="margin-left:80px" title="Skip Specimen"><a href="#" onclick="skipSpecimen()">SKIP &gt;&gt;</a></span>';
+                        }
 						?>
 					</div>
 					<div>
 						<?php
 						$url = $imgArr[1]['web'];
-						if(substr($url,0,1) == '/') $url = $imgDomain.$url;
+						if(strpos($url, '/') === 0) {
+                            $url = $imgDomain . $url;
+                        }
 						echo '<img id="specimg" src="'.$url.'" />';
 						?>
 					</div>
 					<?php
 				}
-				else{
-					if($submitForm)
-						echo '<div style="margin:50px;color:red;font-weight:bold;font-size:140%">No images available matching taxon search criteria</div>';
-					else 
-						echo '<div style="margin:50px;font-weight:bold;font-size:140%">Select a trait and submit filter in the form to the right to display images that have not yet been scored</div>';
-				}
+				else if($submitForm) {
+                    echo '<div style="margin:50px;color:red;font-weight:bold;font-size:140%">No images available matching taxon search criteria</div>';
+                }
+                else {
+                    echo '<div style="margin:50px;font-weight:bold;font-size:140%">Select a trait and submit filter in the form to the right to display images that have not yet been scored</div>';
+                }
 				?>
 			</div>
 			<?php
@@ -497,7 +529,7 @@ if($traitID){
 		?>
 		</div>
 		<?php 
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/../../footer.php');
 		?>
 	</body>
 </html>

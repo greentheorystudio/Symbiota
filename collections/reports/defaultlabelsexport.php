@@ -1,11 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceLabel.php');
+include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
+require_once __DIR__ . '/../../vendor/autoload.php';
 @include('Image/Barcode.php');
 @include('Image/Barcode2.php');
-require_once $SERVER_ROOT.'/vendor/autoload.php';
 header('Content-Type: text/html; charset=' .$CHARSET);
-ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+ini_set('max_execution_time', 180);
+
+use PhpOffice\PhpWord\PhpWord;
 
 $ses_id = session_id();
 
@@ -18,7 +20,7 @@ elseif(class_exists('Image_Barcode')){
 
 $labelManager = new OccurrenceLabel();
 
-$collid = $_POST["collid"];
+$collid = $_POST['collid'];
 $hPrefix = $_POST['lhprefix'];
 $hMid = $_POST['lhmid'];
 $hSuffix = $_POST['lhsuffix'];
@@ -34,21 +36,21 @@ $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $exportEngine = '';
 $exportExtension = '';
-if($action == 'Export to DOCX'){
+if($action === 'Export to DOCX'){
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
 }
 
 $sectionStyle = array();
-if($rowsPerPage==1){
+if($rowsPerPage === 1){
 	$lineWidth = 740;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
 }
-if($rowsPerPage==2){
+if($rowsPerPage === 2){
 	$lineWidth = 350;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>2,'colsSpace'=>690,'breakType'=>'continuous');
 }
-if($rowsPerPage==3){
+if($rowsPerPage === 3){
 	$lineWidth = 220;
 	$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0,'colsNum'=>3,'colsSpace'=>690,'breakType'=>'continuous');
 }
@@ -57,7 +59,7 @@ $labelManager->setCollid($collid);
 
 $isEditor = 0;
 if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollAdmin"])) || (array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS["CollEditor"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
@@ -66,7 +68,7 @@ if($isEditor && $action){
 	$labelArr = $labelManager->getLabelArray($_POST['occid'], $speciesAuthors);
 }
 
-$phpWord = new \PhpOffice\PhpWord\PhpWord();
+$phpWord = new PhpWord();
 $phpWord->addParagraphStyle('firstLine', array('lineHeight'=>.1,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 $phpWord->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1));
 $phpWord->addFontStyle('dividerFont', array('size'=>1));
@@ -98,7 +100,7 @@ foreach($labelArr as $occid => $occArr){
 	if($barcodeOnly){
 		if($occArr['catalognumber']){
 			$textrun = $section->addTextRun('cnbarcode');
-			$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
+			$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
 			imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
 			$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
 			imagedestroy($bc);
@@ -106,16 +108,16 @@ foreach($labelArr as $occid => $occArr){
 	}
 	else{
 		$midStr = '';
-		if($hMid == 1){
+		if($hMid === 1){
 			$midStr = $occArr['country'];
 		}
-		elseif($hMid == 2){
+		elseif($hMid === 2){
 			$midStr = $occArr['stateprovince'];
 		}
-		elseif($hMid == 3){
+		elseif($hMid === 3){
 			$midStr = $occArr['county'];
 		}
-		elseif($hMid == 4){
+		elseif($hMid === 4){
 			$midStr = $occArr['family'];
 		}
 		$headerStr = '';
@@ -124,7 +126,7 @@ foreach($labelArr as $occid => $occArr){
 			$headerStrArr[] = trim($hPrefix);
 			$headerStrArr[] = trim($midStr);
 			$headerStrArr[] = trim($hSuffix);
-			$headerStr = implode(" ",$headerStrArr);
+			$headerStr = implode(' ',$headerStrArr);
 		}
 		$dupCnt = $_POST['q-'.$occid];
 		for($i = 0;$i < $dupCnt;$i++){
@@ -132,77 +134,101 @@ foreach($labelArr as $occid => $occArr){
 			if($headerStr){
 				$section->addText(htmlspecialchars($headerStr),'lheaderFont','lheader');
 			}
-			if($hMid != 4) $section->addText(htmlspecialchars($occArr['family']),'familyFont','family');
+			if($hMid !== 4) {
+				$section->addText(htmlspecialchars($occArr['family']), 'familyFont', 'family');
+			}
 			$textrun = $section->addTextRun('scientificname');
-			if($occArr['identificationqualifier']) $textrun->addText(htmlspecialchars($occArr['identificationqualifier']).' ','scientificnameauthFont');
+			if($occArr['identificationqualifier']) {
+				$textrun->addText(htmlspecialchars($occArr['identificationqualifier']) . ' ', 'scientificnameauthFont');
+			}
 			$scinameStr = $occArr['scientificname'];
 			$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
 			if(strpos($scinameStr,' sp.') !== false){
-				$scinameArr = explode(" sp. ",$scinameStr);
+				$scinameArr = explode(' sp. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('sp.','scientificnameinterFont');
 			}
 			elseif(strpos($scinameStr,'subsp.') !== false){
-				$scinameArr = explode(" subsp. ",$scinameStr);
+				$scinameArr = explode(' subsp. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('subsp. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'ssp.') !== false){
-				$scinameArr = explode(" ssp. ",$scinameStr);
+				$scinameArr = explode(' ssp. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('ssp. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'var.') !== false){
-				$scinameArr = explode(" var. ",$scinameStr);
+				$scinameArr = explode(' var. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('var. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'variety') !== false){
-				$scinameArr = explode(" variety ",$scinameStr);
+				$scinameArr = explode(' variety ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('var. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'Variety') !== false){
-				$scinameArr = explode(" Variety ",$scinameStr);
+				$scinameArr = explode(' Variety ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('var. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'v.') !== false){
-				$scinameArr = explode(" v. ",$scinameStr);
+				$scinameArr = explode(' v. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('var. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,' f.') !== false){
-				$scinameArr = explode(" f. ",$scinameStr);
+				$scinameArr = explode(' f. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('f. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'cf.') !== false){
-				$scinameArr = explode(" cf. ",$scinameStr);
+				$scinameArr = explode(' cf. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('cf. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
 			elseif(strpos($scinameStr,'aff.') !== false){
-				$scinameArr = explode(" aff. ",$scinameStr);
+				$scinameArr = explode(' aff. ',$scinameStr);
 				$textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-				if($parentAuthor) $textrun->addText(htmlspecialchars($parentAuthor).' ','scientificnameauthFont');
+				if($parentAuthor) {
+					$textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+				}
 				$textrun->addText('aff. ','scientificnameinterFont');
 				$textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
 			}
@@ -225,13 +251,17 @@ foreach($labelArr as $occid => $occArr){
 			$textrun->addText(htmlspecialchars($occArr['stateprovince'].($occArr['stateprovince']?', ':'')),'countrystateFont');
 			$countyStr = trim($occArr['county']);
 			if($countyStr){
-				if(!stripos($occArr['county'],' County') && !stripos($occArr['county'],' Parish')) $countyStr .= ' County';
+				if(!stripos($occArr['county'],' County') && !stripos($occArr['county'],' Parish')) {
+					$countyStr .= ' County';
+				}
 				$countyStr .= ', ';
 			}
 			$textrun->addText(htmlspecialchars($countyStr),'countrystateFont');
 			$textrun->addText(htmlspecialchars($occArr['municipality'].($occArr['municipality']?', ':'')),'localityFont');
 			$locStr = trim($occArr['locality']);
-			if(substr($locStr,-1) != '.'){$locStr .= '.';}
+			if(substr($locStr,-1) !== '.'){
+				$locStr .= '.';
+			}
 			$textrun->addText(htmlspecialchars($locStr),'localityFont');
 			if($occArr['decimallatitude'] || $occArr['verbatimcoordinates']){
 				$textrun = $section->addTextRun('other');
@@ -242,30 +272,42 @@ foreach($labelArr as $occid => $occArr){
 					$textrun->addText(htmlspecialchars($occArr['decimallatitude']).($occArr['decimallatitude']>0?'N, ':'S, '),'otherFont');
 					$textrun->addText(htmlspecialchars($occArr['decimallongitude']).($occArr['decimallongitude']>0?'E':'W'),'otherFont');
 				}
-				if($occArr['coordinateuncertaintyinmeters']) $textrun->addText(htmlspecialchars(' +-'.$occArr['coordinateuncertaintyinmeters'].' meters'),'otherFont');
-				if($occArr['geodeticdatum']) $textrun->addText(htmlspecialchars(' '.$occArr['geodeticdatum']),'otherFont');
+				if($occArr['coordinateuncertaintyinmeters']) {
+					$textrun->addText(htmlspecialchars(' +-' . $occArr['coordinateuncertaintyinmeters'] . ' meters'), 'otherFont');
+				}
+				if($occArr['geodeticdatum']) {
+					$textrun->addText(htmlspecialchars(' ' . $occArr['geodeticdatum']), 'otherFont');
+				}
 			}
 			if($occArr['minimumelevationinmeters']){
 				$textrun = $section->addTextRun('other');
 				$textrun->addText(htmlspecialchars('Elev: '.$occArr['minimumelevationinmeters'].($occArr['maximumelevationinmeters']?' - '.$occArr['maximumelevationinmeters']:'').'m. '),'otherFont');
-				if($occArr['verbatimelevation']) $textrun->addText(htmlspecialchars(' ('.$occArr['verbatimelevation'].')'),'otherFont');
+				if($occArr['verbatimelevation']) {
+					$textrun->addText(htmlspecialchars(' (' . $occArr['verbatimelevation'] . ')'), 'otherFont');
+				}
 			}
 			if($occArr['habitat']){
 				$textrun = $section->addTextRun('other');
 				$habStr = trim($occArr['habitat']);
-				if(substr($habStr,-1) != '.'){$habStr .= '.';}
+				if(substr($habStr,-1) !== '.'){
+					$habStr .= '.';
+				}
 				$textrun->addText(htmlspecialchars($habStr),'otherFont');
 			}
 			if($occArr['substrate']){
 				$textrun = $section->addTextRun('other');
 				$substrateStr = trim($occArr['substrate']);
-				if(substr($substrateStr,-1) != '.'){$substrateStr .= '.';}
+				if(substr($substrateStr,-1) !== '.'){
+					$substrateStr .= '.';
+				}
 				$textrun->addText(htmlspecialchars($substrateStr),'otherFont');
 			}
 			if($occArr['verbatimattributes'] || $occArr['establishmentmeans']){
 				$textrun = $section->addTextRun('other');
 				$textrun->addText(htmlspecialchars($occArr['verbatimattributes']),'otherFont');
-				if($occArr['verbatimattributes'] && $occArr['establishmentmeans']) $textrun->addText(htmlspecialchars('; '),'otherFont');
+				if($occArr['verbatimattributes'] && $occArr['establishmentmeans']) {
+					$textrun->addText(htmlspecialchars('; '), 'otherFont');
+				}
 				$textrun->addText(htmlspecialchars($occArr['establishmentmeans']),'otherFont');
 			}
 			if($occArr['associatedtaxa']){
@@ -288,7 +330,7 @@ foreach($labelArr as $occid => $occArr){
 			}
 			if($useBarcode && $occArr['catalognumber']){
 				$textrun = $section->addTextRun('cnbarcode');
-				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']),"Code39","png",false,40);
+				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
 				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
 				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
 				if($occArr['othercatalognumbers']){
@@ -317,7 +359,7 @@ foreach($labelArr as $occid => $occArr){
 				$textrun->addTextBreak(1);
 				$textrun->addLine(array('weight'=>2,'width'=>$lineWidth,'height'=>0,'dash'=>'dash'));
 				$textrun->addTextBreak(1);
-				$bc = $bcObj->draw(strtoupper($occid),"Code39","png",false,40);
+				$bc = $bcObj->draw(strtoupper($occid), 'Code39', 'png',false,40);
 				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png');
 				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
 				if($occArr['catalognumber']){
@@ -342,10 +384,7 @@ header('Content-Length: '.filesize($targetFile));
 readfile($targetFile);
 $files = glob($SERVER_ROOT.'/temp/report/*');
 foreach($files as $file){
-	if(is_file($file)){
-		if(strpos($file,$ses_id) !== false){
-			unlink($file);
-		}
+	if(is_file($file) && strpos($file, $ses_id) !== false) {
+		unlink($file);
 	}
 }
-?>

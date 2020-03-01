@@ -7,7 +7,6 @@ $clid = $_REQUEST['clid'];
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title>Collections Search Download</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>"/>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -15,9 +14,9 @@ $clid = $_REQUEST['clid'];
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			var dialogArr = ["schemanative","schemadwc"];
-			var dialogStr = "";
-			for(i=0;i<dialogArr.length;i++){
+            const dialogArr = ["schemanative", "schemadwc"];
+            let dialogStr = "";
+            for(let i=0; i<dialogArr.length; i++){
 				dialogStr = dialogArr[i]+"info";
 				$( "#"+dialogStr+"dialog" ).dialog({
 					autoOpen: false,
@@ -44,7 +43,7 @@ $clid = $_REQUEST['clid'];
 			}
 		}
 
-		function validateDownloadForm(f){
+		function validateDownloadForm(){
 			return true;
 		}
 
@@ -60,21 +59,21 @@ $clid = $_REQUEST['clid'];
 		<h2>Data Usage Guidelines</h2>
 	 	 <div style="margin:15px;">
 	 	 	By downloading data, the user confirms that he/she has read and agrees with the general
-	 	 	<a href="../../misc/usagepolicy.php#images">data usage terms</a>.
+	 	 	<a href="../../misc/usagepolicy.php">data usage terms</a>.
 	 	 	Note that additional terms of use specific to the individual collections
 	 	 	may be distributed with the data download. When present, the terms
 	 	 	supplied by the owning institution should take precedence over the
 	 	 	general terms posted in the above link.
 	 	 </div>
 		<div style='margin:30px;'>
-			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
+			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm();">
 				<fieldset>
 					<?php
 					echo '<legend><b>Download Checklist Specimen Vouchers</b></legend>';
 					?>
 					<table>
 						<tr>
-							<td valign="top">
+							<td style="vertical-align:top">
 								<div style="margin:10px;">
 									<b>Structure:</b>
 								</div>
@@ -105,7 +104,7 @@ $clid = $_REQUEST['clid'];
 							</td>
 						</tr>
 						<tr>
-							<td valign="top">
+							<td style="vertical-align:top">
 								<div style="margin:10px;">
 									<b>Data Extensions:</b>
 								</div>
@@ -114,13 +113,12 @@ $clid = $_REQUEST['clid'];
 								<div style="margin:10px 0;">
 									<input type="checkbox" name="identifications" value="1" onchange="extensionSelected(this)" checked /> include Determination History<br/>
 									<input type="checkbox" name="images" value="1" onchange="extensionSelected(this)" checked /> include Image Records<br/>
-									<!--  <input type="checkbox" name="attributes" value="1" onchange="extensionSelected(this)" checked /> include Occurrence Trait Attributes (MeasurementOrFact extension)<br/>  -->
 									*Output must be a compressed archive
 								</div>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top">
+							<td style="vertical-align:top">
 								<div style="margin:10px;">
 									<b>File Format:</b>
 								</div>
@@ -133,7 +131,7 @@ $clid = $_REQUEST['clid'];
 							</td>
 						</tr>
 						<tr>
-							<td valign="top">
+							<td style="vertical-align:top">
 								<div style="margin:10px;">
 									<b>Character Set:</b>
 								</div>
@@ -149,7 +147,7 @@ $clid = $_REQUEST['clid'];
 							</td>
 						</tr>
 						<tr>
-							<td valign="top">
+							<td style="vertical-align:top">
 								<div style="margin:10px;">
 									<b>Compression:</b>
 								</div>

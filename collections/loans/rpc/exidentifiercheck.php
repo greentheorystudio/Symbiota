@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DbConnection.php');
+include_once(__DIR__ . '/../../../classes/DbConnection.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $connection = new DbConnection();
@@ -18,6 +18,8 @@ while ($row = $result->fetch_object()) {
 	$returnArr[] = $row->exchangeid;
 }
 $result->close();
-if(!($con === false)) $con->close();
+if(!($con === false)) {
+    $con->close();
+}
 
 echo json_encode($returnArr);

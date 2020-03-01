@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$taxon = array_key_exists("taxon",$_POST)?$_POST["taxon"]:'';
-$jobId = array_key_exists("jobid",$_POST)?$_POST["jobid"]:0;
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$taxon = array_key_exists('taxon',$_POST)?$_POST['taxon']:'';
+$jobId = array_key_exists('jobid',$_POST)?$_POST['jobid']:0;
 
 $apiManager = new FieldGuideManager();
 $currentJobs = array();
@@ -17,26 +17,30 @@ $imagesExist = $apiManager->checkImages($collId);
 
 $isEditor = 0;		 
 if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
 		$isEditor = 1;
 	}
 }
 
 if($isEditor){
-    if($action == 'Initiate Process'){
+    if($action === 'Initiate Process'){
         $apiManager->setCollID($collId);
         $apiManager->setTaxon($taxon);
         $statusStr = $apiManager->initiateFGBatchProcess();
     }
-    if($action == 'Cancel Job'){
+    if($action === 'Cancel Job'){
         $statusStr = $apiManager->cancelFGBatchProcess($collId,$jobId);
     }
-    if($action == 'Delete Results'){
+    if($action === 'Delete Results'){
         $statusStr = $apiManager->deleteFGBatchResults($collId,$jobId);
     }
     $logData = $apiManager->checkFGLog($collId);
-    if(isset($logData['jobs'])) $currentJobs = $apiManager->processCurrentJobs($logData['jobs']);
-    if(isset($logData['results'])) $currentResults = $logData['results'];
+    if(isset($logData['jobs'])) {
+        $currentJobs = $apiManager->processCurrentJobs($logData['jobs']);
+    }
+    if(isset($logData['results'])) {
+        $currentResults = $logData['results'];
+    }
     $currentCount = count($currentJobs);
 }
 ?>
@@ -60,7 +64,6 @@ if($isEditor){
 
             if(document.getElementById("taxon")){
                 $( "#taxon" )
-                // don't navigate away from the field on tab when selecting an item
                     .bind( "keydown", function( event ) {
                         if ( event.keyCode === $.ui.keyCode.TAB &&
                             $( this ).data( "autocomplete" ).menu.active ) {
@@ -74,7 +77,7 @@ if($isEditor){
                             }, response );
                         },
                         search: function() {
-                            var term = extractLast( this.value );
+                            const term = extractLast(this.value);
                             if ( term.length < 4 ) {
                                 return false;
                             }
@@ -83,7 +86,7 @@ if($isEditor){
                             return false;
                         },
                         select: function( event, ui ) {
-                            var terms = split( this.value );
+                            const terms = split(this.value);
                             terms.pop();
                             terms.push( ui.item.value );
                             this.value = terms.join( ", " );
@@ -102,7 +105,7 @@ if($isEditor){
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
@@ -110,7 +113,6 @@ if($isEditor){
         <b>Fieldguide Batch Processing</b>
     </div>
 
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
         if($statusStr){
@@ -151,7 +153,7 @@ if($isEditor){
                 ?>
                 <div style="width:650px;margin-left:auto;margin-right:auto;">
                     <h2>Current Jobs:</h2>
-                    <table class="styledtable" style="font-family:Arial;font-size:12px;width:570px;margin-left:auto;margin-right:auto;">
+                    <table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:570px;margin-left:auto;margin-right:auto;">
                         <tr>
                             <th style="width:100px;">Date Initiated</th>
                             <th style="width:200px;">Status</th>
@@ -165,7 +167,9 @@ if($isEditor){
                             echo '<tr>';
                             echo '<td>'.$jArr['date'].'</td>';
                             echo '<td>';
-                            if($status) echo $status.': '.$progress['processed'].' of '.$progress['total'].' complete';
+                            if($status) {
+                                echo $status . ': ' . $progress['processed'] . ' of ' . $progress['total'] . ' complete';
+                            }
                             echo '</td>';
                             echo '<td>'.$jArr['taxon'].'</td>';
                             echo '<td>';
@@ -186,7 +190,7 @@ if($isEditor){
                 ?>
                 <div style="width:650px;margin-left:auto;margin-right:auto;">
                     <h2>Current Results:</h2>
-                    <table class="styledtable" style="font-family:Arial;font-size:12px;width:570px;margin-left:auto;margin-right:auto;">
+                    <table class="styledtable" style="font-family:Arial,serif;font-size:12px;width:570px;margin-left:auto;margin-right:auto;">
                         <tr>
                             <th style="width:100px;"> </th>
                             <th style="width:100px;">Date Initiated</th>
@@ -231,7 +235,7 @@ if($isEditor){
 		?>
 	</div>
 	<?php
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/../../footer.php');
 	?>
 
 </body>

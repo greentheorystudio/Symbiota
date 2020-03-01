@@ -1,7 +1,7 @@
-var rankLimit;
-var rankLow;
-var rankHigh;
-var taxAuthId;
+let rankLimit;
+let rankLow;
+let rankHigh;
+let taxAuthId;
 
 $(document).ready(function() {
 
@@ -34,9 +34,9 @@ function toggleEditFields(){
 }
 
 function toggle(target){
-	var ele = document.getElementById(target);
+	const ele = document.getElementById(target);
 	if(ele){
-		if(ele.style.display=="none"){
+		if(ele.style.display === "none"){
 			ele.style.display="";
   		}
 	 	else {
@@ -44,12 +44,11 @@ function toggle(target){
 	 	}
 	}
 	else{
-	  	var divs = document.getElementsByTagName("div");
-	  	var i;
-	  	for(i = 0; i < divs.length; i++) {
-		  	var divObj = divs[i];
-			if(divObj.className == target){
-				if(divObj.style.display=="none"){
+		const divs = document.getElementsByTagName("div");
+		for(let i = 0; i < divs.length; i++) {
+			const divObj = divs[i];
+			if(divObj.className === target){
+				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
 			 	else {
@@ -57,13 +56,12 @@ function toggle(target){
 			 	}
 			}
 		}
-	
-	  	var spans = document.getElementsByTagName("span");
-	  	var j;
-	  	for(j = 0; j < spans.length; j++) {
-		  	var spanObj = spans[j];
-			if(spanObj.className == target){
-				if(spanObj.style.display=="none"){
+
+		const spans = document.getElementsByTagName("span");
+		for(let j = 0; j < spans.length; j++) {
+			const spanObj = spans[j];
+			if(spanObj.className === target){
+				if(spanObj.style.display === "none"){
 					spanObj.style.display="inline";
 				}
 			 	else {
@@ -75,7 +73,7 @@ function toggle(target){
 }
 
 function validateTaxonEditForm(f){
-	if(f.unitname1.value.trim() == ""){
+	if(f.unitname1.value.trim() === ""){
 		alert('Unitname 1 field must have a value');
 		return false;
 	}
@@ -83,23 +81,21 @@ function validateTaxonEditForm(f){
 }
 
 function verifyAcceptEditsForm(f){
-	if(f.acceptedstr.value == ""){
+	if(f.acceptedstr.value === ""){
 		alert("Please enter an accepted name to link this name to!");
 		return false;
 	}
 	submitLinkToAccepted(f);
 	return false;
-	//Form submission will take place within the submitLinkToAccepted method
 }
 
 function verifyChangeToNotAcceptedForm(f){
-	if(f.acceptedstr.value == ""){
+	if(f.acceptedstr.value === ""){
 		alert("Please enter an accepted name to link this name to!");
 		return false;
 	}
 	submitLinkToAccepted(f);
 	return false;
-	//Form submission will take place within the submitLinkToAccepted method
 }
 
 function submitLinkToAccepted(f){
@@ -108,7 +104,7 @@ function submitLinkToAccepted(f){
 		url: "rpc/gettid.php",
 		data: { sciname: f.acceptedstr.value }
 	}).done(function( msg ) {
-		if(msg == 0){
+		if(msg === 0){
 			alert("ERROR: Accepted taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{
@@ -124,7 +120,7 @@ function submitTaxStatusForm(f){
 		url: "rpc/gettid.php",
 		data: { sciname: f.parentstr.value }
 	}).done(function( msg ) {
-		if(msg == 0){
+		if(msg === 0){
 			alert("ERROR: Parent taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{

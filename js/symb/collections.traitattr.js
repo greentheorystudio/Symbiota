@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 	$("#taxonfilter").change(function(){
 		$("#tidfilter").val("");
-		if($( this ).val() != ""){
+		if($( this ).val() !== ""){
 			$( "#filtersubmit" ).prop( "disabled", true );
 			$( "#verify-span" ).show();
 			$( "#notvalid-span" ).hide();
@@ -20,7 +20,7 @@ $(document).ready(function() {
 				url: "rpc/getTaxonFilter.php",
 				data: { term: $( this ).val(), exact: 1 }
 			}).done(function( msg ) {
-				if(msg == ""){
+				if(msg === ""){
 					$( "#notvalid-span" ).show();
 				}
 				else{
@@ -41,8 +41,12 @@ function traitChanged(traitID){
 		}
 		else{
 			$("div.child-"+this.value).hide();
-			$("input:checkbox.child-"+this.value).each(function(){ this.checked = false; });
-			$("input:radio.child-"+this.value).each(function(){ this.checked = false; });
+			$("input:checkbox.child-"+this.value).each(function(){
+				this.checked = false;
+			});
+			$("input:radio.child-"+this.value).each(function(){
+				this.checked = false;
+			});
 		}
 	});
 	$('input[name="submitform"]').prop('disabled', false);

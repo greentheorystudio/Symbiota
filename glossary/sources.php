@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GlossaryManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/GlossaryManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:'';
 $searchTerm = array_key_exists('keyword',$_REQUEST)?$_REQUEST['keyword']:'';
@@ -10,7 +10,7 @@ $taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
 $editMode = array_key_exists('emode',$_REQUEST)?1:0;
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
 
@@ -29,14 +29,13 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../header.php');
 	?>
 	<div class='navpath'>
 		<a href='../index.php'>Home</a> &gt;&gt; 
 		<a href='index.php'> <b>Main Glossary</b></a> &gt;&gt;
 		<b>Glossary Contributors</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($editMode){
@@ -107,50 +106,47 @@ $sourceArr = $glosManager->getTaxonSources($tid);
 				echo '<h2>You need to login or perhaps do not have the necessary permissions to edit glossary data, please contact your portal manager</h2>';
 			}
 		}
-		else{
-			//Display list of contributors
-			if($sourceArr){
-				echo '<h1>Contributors</h1>';
-				foreach($sourceArr as $tid => $sArr){
-					echo '<div style="font-size:130%;margin:25px 10px 0px 10px;"><i><b><u>'.$sArr['sciname'].'</u></b></i></div>';
-					if($sArr['contributorTerm']){
-						echo '<div style="margin:8px 10px 0px 20px;"><i>Terms and Definitions contributed by:</i></div>';
-						$termArr = explode(';', $sArr['contributorTerm']);
-						foreach($termArr as $term){
-							$term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
-							echo '<div style="margin:8px 10px 0px 30px;">'.$term.'</div>';
-						}
-					}
-					if($sArr['contributorImage']){
-						echo '<div style="margin:8px 10px 0px 20px;"><i>Images contributed by:</i></div>';
-						$termArr = explode(';', $sArr['contributorImage']);
-						foreach($termArr as $term){
-							$term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
-							echo '<div style="margin:8px 10px 0px 30px;">'.$term.'</div>';
-						}
-					}
-					if($sArr['translator']){
-						echo '<div style="margin:8px 10px 0px 20px;"><i>Translations by:</i></div>';
-						$termArr = explode(';', $sArr['translator']);
-						foreach($termArr as $term){
-							$term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
-							echo '<div style="margin:8px 10px 0px 30px;">'.$term.'</div>';
-						}
-					}
-					if($sArr['additionalSources']){
-						echo '<div style="margin-top:8px;margin-left:10px;padding: 0px 10px;"><i>Translations and images were also sourced from the following references:</i></div>';
-						echo '<div style="margin-top:8px;margin-left:20px;padding: 0px 10px;">'.$sArr['additionalSources'].'</div>';
-					}
-				}
-			}
-			else{
-				echo '<div>Contributor list is not available</div>';
-			}
-		}
+		else if($sourceArr){
+            echo '<h1>Contributors</h1>';
+            foreach($sourceArr as $tid => $sArr){
+                echo '<div style="font-size:130%;margin:25px 10px 0 10px;"><i><b><u>'.$sArr['sciname'].'</u></b></i></div>';
+                if($sArr['contributorTerm']){
+                    echo '<div style="margin:8px 10px 0 20px;"><i>Terms and Definitions contributed by:</i></div>';
+                    $termArr = explode(';', $sArr['contributorTerm']);
+                    foreach($termArr as $term){
+                        $term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
+                        echo '<div style="margin:8px 10px 0 30px;">'.$term.'</div>';
+                    }
+                }
+                if($sArr['contributorImage']){
+                    echo '<div style="margin:8px 10px 0 20px;"><i>Images contributed by:</i></div>';
+                    $termArr = explode(';', $sArr['contributorImage']);
+                    foreach($termArr as $term){
+                        $term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
+                        echo '<div style="margin:8px 10px 0 30px;">'.$term.'</div>';
+                    }
+                }
+                if($sArr['translator']){
+                    echo '<div style="margin:8px 10px 0 20px;"><i>Translations by:</i></div>';
+                    $termArr = explode(';', $sArr['translator']);
+                    foreach($termArr as $term){
+                        $term = '<b>'.str_replace('-', '</b>-', $term).(strpos($term,'-')?'':'</b>');
+                        echo '<div style="margin:8px 10px 0 30px;">'.$term.'</div>';
+                    }
+                }
+                if($sArr['additionalSources']){
+                    echo '<div style="margin-top:8px;margin-left:10px;padding: 0 10px;"><i>Translations and images were also sourced from the following references:</i></div>';
+                    echo '<div style="margin-top:8px;margin-left:20px;padding: 0 10px;">'.$sArr['additionalSources'].'</div>';
+                }
+            }
+        }
+        else{
+            echo '<div>Contributor list is not available</div>';
+        }
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

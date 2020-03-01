@@ -1,13 +1,14 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
-include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$userId = $_REQUEST["userid"];
+$userId = $_REQUEST['userid'];
 
-//Sanitation
-if(!is_numeric($userId)) $userId = 0;
+if(!is_numeric($userId)) {
+    $userId = 0;
+}
 
 $pHandler = new ProfileManager();
 $clManager = new ChecklistAdmin();
@@ -16,9 +17,19 @@ $pHandler->setUid($userId);
 $person = $pHandler->getPerson();
 $tokenCount = $pHandler->getTokenCnt();
 $isSelf = true;
-if($userId != $SYMB_UID) $isSelf = false;
+if($userId !== $SYMB_UID) {
+    $isSelf = false;
+}
 $listArr = $clManager->getManagementLists($userId);
 ?>
+<script type="text/javascript">
+    tinyMCE.init({
+        mode : "textareas",
+        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : ""
+    });
+</script>
 <div style="padding:15px;">
 	<div>
 		<div>
@@ -27,17 +38,35 @@ $listArr = $clManager->getManagementLists($userId);
 		<div style="margin:20px;">
 			<?php
 			echo '<div>'.$person->getFirstName().' '.($middle?$person->getMiddleInitial().' ':'').$person->getLastName().'</div>';
-			if($person->getTitle()) echo '<div>'.$person->getTitle().'</div>';
-			if($person->getInstitution()) echo '<div>'.$person->getInstitution().'</div>';
-            if($person->getDepartment()) echo '<div>'.$person->getDepartment().'</div>';
-            if($person->getAddress()) echo '<div>'.$person->getAddress().'</div>';
+			if($person->getTitle()) {
+                echo '<div>' . $person->getTitle() . '</div>';
+            }
+			if($person->getInstitution()) {
+                echo '<div>' . $person->getInstitution() . '</div>';
+            }
+            if($person->getDepartment()) {
+                echo '<div>' . $person->getDepartment() . '</div>';
+            }
+            if($person->getAddress()) {
+                echo '<div>' . $person->getAddress() . '</div>';
+            }
 			$cityStateStr = trim($person->getCity().', '.$person->getState().' '.$person->getZip(),' ,');
-			if($cityStateStr) echo '<div>'.$cityStateStr.'</div>';
-			if($person->getCountry()) echo '<div>'.$person->getCountry().'</div>';
-			if($person->getEmail()) echo '<div>'.$person->getEmail().'</div>';
-			if($person->getUrl()) echo '<div><a href="'.$person->getUrl().'">'.$person->getUrl().'</a></div>';
-			if($person->getBiography()) echo '<div style="margin:10px;">'.$person->getBiography().'</div>';
-			echo '<div>Login name: '.($person->getUserName()?$person->getUserName():'not registered').'</div>';
+			if($cityStateStr) {
+                echo '<div>' . $cityStateStr . '</div>';
+            }
+			if($person->getCountry()) {
+                echo '<div>' . $person->getCountry() . '</div>';
+            }
+			if($person->getEmail()) {
+                echo '<div>' . $person->getEmail() . '</div>';
+            }
+			if($person->getUrl()) {
+                echo '<div><a href="' . $person->getUrl() . '">' . $person->getUrl() . '</a></div>';
+            }
+			if($person->getBiography()) {
+                echo '<div style="margin:10px;">' . $person->getBiography() . '</div>';
+            }
+			echo '<div>Login name: '.($person->getUserName()?:'not registered').'</div>';
 			echo '<div>User information: '.($person->getIsPublic()?'public':'private').'</div>';
 			?>
 			<div style="font-weight:bold;margin-top:10px;">
@@ -52,7 +81,7 @@ $listArr = $clManager->getManagementLists($userId);
 		<form name="editprofileform" action="viewprofile.php" method="post" onsubmit="return verifyEditProfileForm(this);">
 			<fieldset>
 				<legend><b>Edit User Profile</b></legend>
-				<table cellspacing='1' style="width:100%;">
+				<table style="border-spacing:1px;width:100%;">
 				    <tr>
 				        <td><b>First Name:</b></td>
 				        <td>
@@ -175,7 +204,7 @@ $listArr = $clManager->getManagementLists($userId);
 				    <tr>
 				        <td colspan="2">
 							<div>
-								<input type="checkbox" name="ispublic" value="1" <?php if($person->getIsPublic()) echo "CHECKED"; ?> />
+								<input type="checkbox" name="ispublic" value="1" <?php echo (($person->getIsPublic())?'CHECKED':''); ?> />
 								Make user information displayable to public
 			        		</div>
 						</td>
@@ -196,7 +225,7 @@ $listArr = $clManager->getManagementLists($userId);
 		    	<legend><b>Delete Profile</b></legend>
                 <?php
                 if($listArr){
-                    echo '<div style="color:red;dockerfont-weight:bold;margin-bottom:15px;">';
+                    echo '<div style="color:red;font-weight:bold;margin-bottom:15px;">';
                     echo 'Profile cannot be deleted until all checklists associated with the account are removed';
                     echo '</div>';
                 }
@@ -274,7 +303,7 @@ $listArr = $clManager->getManagementLists($userId);
         <fieldset style='padding:15px;width:500px;'>
             <legend><b>Manage Access Tokens</b></legend>
             <form name="cleartokenform" action="viewprofile.php" method="post" onsubmit="">
-                <div>You currently have <b><?php echo ($tokenCount?$tokenCount:0); ?></b> access tokens linked to your account.
+                <div>You currently have <b><?php echo ($tokenCount?:0); ?></b> access tokens linked to your account.
                     Tokens are created when you select "Remember Me" when logging in, or access the portal
                     from an external app. If the number of access tokens you have seems high, please click on the button below to
                     clear the tokens linked to your account.</div>
@@ -289,7 +318,7 @@ $listArr = $clManager->getManagementLists($userId);
 		<div>
 			<b><u>Taxonomic Relationships</u></b>
 			<a href="#" onclick="toggle('addtaxonrelationdiv')" title="Add a new taxonomic relationship">
-				<img style='border:0px;width:15px;' src='../images/add.png'/>
+				<img style='border:0;width:15px;' src='../images/add.png'/>
 			</a>
 		</div>
 		<div id="addtaxonrelationdiv" style="display:none;">
@@ -309,20 +338,16 @@ $listArr = $clManager->getManagementLists($userId);
 						<b>Scope of Relationship</b><br/>
 						<select name="editorstatus">
 							<option value="RegionOfInterest">Region Of Interest</option>
-							<!-- <option value="OccurrenceEditor">Occurrence Editor</option> -->
 						</select>
-
-					</div>
+                    </div>
 					<div style="margin:3px;">
 						<b>Geographic Scope Limits</b><br/>
 						<input name="geographicscope" type="text" value="" style="width:90%;"/>
-
-					</div>
+                    </div>
 					<div style="margin:3px;">
 						<b>Notes</b><br/>
 						<input name="notes" type="text" value="" style="width:90%;" />
-
-					</div>
+                    </div>
 					<div style="margin:20px 10px;">
 						<input name="action" type="submit" value="Add Taxonomic Relationship" />
 					</div>
@@ -334,17 +359,27 @@ $listArr = $clManager->getManagementLists($userId);
 		if($userTaxonomy){
 			ksort($userTaxonomy);
 			foreach($userTaxonomy as $cat => $userTaxArr){
-				if($cat == 'RegionOfInterest') $cat = 'Region Of Interest';
-				elseif($cat == 'OccurrenceEditor') $cat = 'Occurrence Editor';
-				elseif($cat == 'TaxonomicThesaurusEditor') $cat = 'Taxonomic Thesaurus Editor';
+				if($cat === 'RegionOfInterest') {
+                    $cat = 'Region Of Interest';
+                }
+				elseif($cat === 'OccurrenceEditor') {
+                    $cat = 'Occurrence Editor';
+                }
+				elseif($cat === 'TaxonomicThesaurusEditor') {
+                    $cat = 'Taxonomic Thesaurus Editor';
+                }
 				echo '<div style="margin:10px;">';
 				echo '<div><b>'.$cat.'</b></div>';
 				echo '<ul style="margin:10px;">';
 				foreach($userTaxArr as $utid => $utArr){
 					echo '<li>';
 					echo $utArr['sciname'];
-					if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
-					if($utArr['notes']) echo ', '.$utArr['notes'];
+					if($utArr['geographicScope']) {
+                        echo ' - ' . $utArr['geographicScope'] . ' ';
+                    }
+					if($utArr['notes']) {
+                        echo ', ' . $utArr['notes'];
+                    }
 					echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><img src="../images/drop.png" style="width:14px;" /></a>';
 					echo '</li>';
 				}

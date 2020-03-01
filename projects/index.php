@@ -1,34 +1,40 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/InventoryProjectManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$pid = array_key_exists("pid",$_REQUEST)?$_REQUEST["pid"]:""; 
-$editMode = array_key_exists("emode",$_REQUEST)?$_REQUEST["emode"]:0; 
-$newProj = array_key_exists("newproj",$_REQUEST)?1:0;
-$projSubmit = array_key_exists("projsubmit",$_REQUEST)?$_REQUEST["projsubmit"]:'';
-$tabIndex = array_key_exists("tabindex",$_REQUEST)?$_REQUEST["tabindex"]:0; 
+$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$newProj = array_key_exists('newproj',$_REQUEST)?1:0;
+$projSubmit = array_key_exists('projsubmit',$_REQUEST)?$_REQUEST['projsubmit']:'';
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $statusStr = '';
 
-if(!$pid && array_key_exists("proj",$_GET) && is_numeric($_GET['proj'])) $pid = $_GET['proj'];
+if(!$pid && array_key_exists('proj',$_GET) && is_numeric($_GET['proj'])) {
+    $pid = $_GET['proj'];
+}
 
 $projManager = new InventoryProjectManager();
-if($pid) $projManager->setPid($pid);
+if($pid) {
+    $projManager->setPid($pid);
+}
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists("ProjAdmin",$USER_RIGHTS) && in_array($pid,$USER_RIGHTS["ProjAdmin"]))){
+if($IS_ADMIN || (array_key_exists('ProjAdmin',$USER_RIGHTS) && in_array($pid, $USER_RIGHTS['ProjAdmin'], true))){
 	$isEditor = 1;
 }
 
 if($isEditor && $projSubmit){
-	if($projSubmit == 'addnewproj'){
+	if($projSubmit === 'addnewproj'){
 		$pid = $projManager->addNewProject($_POST);
-		if(!$pid) $statusStr = $projManager->getErrorStr();
+		if(!$pid) {
+            $statusStr = $projManager->getErrorStr();
+        }
 	}
-	elseif($projSubmit == 'subedit'){
+	elseif($projSubmit === 'subedit'){
 		$projManager->submitProjEdits($_POST);
 	}
-	elseif($projSubmit == 'subdelete'){
+	elseif($projSubmit === 'subdelete'){
 		if($projManager->deleteProject($_POST['pid'])){
 			$pid = 0;
 		}
@@ -36,20 +42,20 @@ if($isEditor && $projSubmit){
 			$statusStr = $projManager->getErrorStr();
 		}
 	}
-	elseif($projSubmit == 'deluid'){
+	elseif($projSubmit === 'deluid'){
 		if(!$projManager->deleteManager($_GET['uid'])){
 			$statusStr = $projManager->getErrorStr();
 		}
 	}
-	elseif($projSubmit == 'Add to Manager List'){
+	elseif($projSubmit === 'Add to Manager List'){
 		if(!$projManager->addManager($_POST['uid'])){
 			$statusStr = $projManager->getErrorStr();
 		}
 	}
-	elseif($projSubmit == 'Add Checklist'){
+	elseif($projSubmit === 'Add Checklist'){
 		$projManager->addChecklist($_POST['clid']);
 	}
-	elseif($projSubmit == 'Delete Checklist'){
+	elseif($projSubmit === 'Delete Checklist'){
 		$projManager->deleteChecklist($_POST['clid']);
 	}
 }
@@ -60,7 +66,9 @@ $managerArr = $projManager->getManagers();
 if(!$researchList && !$editMode){
 	$editMode = 1;
 	$tabIndex = 2;
-	if(!$managerArr) $tabIndex = 1;
+	if(!$managerArr) {
+        $tabIndex = 1;
+    }
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -72,10 +80,10 @@ if(!$researchList && !$editMode){
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
-		<?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
+		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
 	<script type="text/javascript">
-		var tabIndex = <?php echo $tabIndex; ?>;
+		let tabIndex = <?php echo $tabIndex; ?>;
 
 		$(document).ready(function() {
 			$('#tabs').tabs(
@@ -84,8 +92,8 @@ if(!$researchList && !$editMode){
 		});
 
 		function toggleById(target){
-			var obj = document.getElementById(target);
-			if(obj.style.display=="none"){
+            const obj = document.getElementById(target);
+            if(obj.style.display === "none"){
 				obj.style.display="block";
 			}
 			else {
@@ -94,38 +102,37 @@ if(!$researchList && !$editMode){
 		}
 
 		function toggleResearchInfoBox(anchorObj){
-			var obj = document.getElementById("researchlistpopup");
-			var pos = findPos(anchorObj);
-			var posLeft = pos[0];
-			if(posLeft > 550){
+            const obj = document.getElementById("researchlistpopup");
+            const pos = findPos(anchorObj);
+            let posLeft = pos[0];
+            if(posLeft > 550){
 				posLeft = 550;
 			}
-			obj.style.left = posLeft - 40;
-			obj.style.top = pos[1] + 25;
-			if(obj.style.display=="block"){
+			obj.style.left = String(posLeft - 40);
+			obj.style.top = String(pos[1] + 25);
+			if(obj.style.display === "block"){
 				obj.style.display="none";
 			}
 			else {
 				obj.style.display="block";
 			}
-			var targetStr = "document.getElementById('researchlistpopup').style.display='none'";
-			var t=setTimeout(targetStr,25000);
-		}
+        }
 
 		function findPos(obj){
-			var curleft = 0; 
-			var curtop = 0;
-			if(obj.offsetParent) {
+            let curleft = 0;
+            let curtop = 0;
+            if(obj.offsetParent) {
 				do{
 					curleft += obj.offsetLeft;
 					curtop += obj.offsetTop;
-				}while(obj = obj.offsetParent);
+				}
+				while(obj === obj.offsetParent);
 			}
 			return [curleft,curtop];
 		}
 
 		function validateProjectForm(f){
-			if(f.projname.value == ""){
+			if(f.projname.value === ""){
 				alert("Project name field cannot be empty.");
 				return false;
 			}
@@ -141,7 +148,7 @@ if(!$researchList && !$editMode){
 		}
 
 		function validateChecklistForm(f){
-			if(f.clid.value == ""){
+			if(f.clid.value === ""){
 				alert("Choose a checklist from the pull-down");
 				return false;
 			}
@@ -149,7 +156,7 @@ if(!$researchList && !$editMode){
 		}
 
 		function validateManagerAddForm(f){
-			if(f.uid.value == ""){
+			if(f.uid.value === ""){
 				alert("Choose a user from the pull-down");
 				return false;
 			}
@@ -157,30 +164,35 @@ if(!$researchList && !$editMode){
 		}
 		
 		function isNumeric(sText){
-		   	var validChars = "0123456789-.";
-		   	var ch;
-		 
-		   	for(var i = 0; i < sText.length; i++){ 
+            const validChars = "0123456789-.";
+            let ch;
+
+            for(let i = 0; i < sText.length; i++){
 				ch = sText.charAt(i);
-				if(validChars.indexOf(ch) == -1) return false;
+				if(validChars.indexOf(ch) === -1) {
+				    return false;
+				}
 		   	}
 			return true;
 		}
 	</script>
 	<style>
-		fieldset.form-color{background-color:#FFF380;margin:15px;padding:20px;}
+		fieldset.form-color{
+            background-color:#FFF380;
+            margin:15px;
+            padding:20px;
+        }
 	</style>
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 	echo "<div class='navpath'>";
     echo "<a href='../index.php'>Home</a> &gt;&gt; ";
 	echo '<b><a href="index.php?pid='.$pid.'">'.($projArr?$projArr['projname']:'Inventory Project List').'</a></b>';
-	echo "</div>";
+	echo '</div>';
 	?>
 	
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($statusStr){
@@ -196,23 +208,23 @@ if(!$researchList && !$editMode){
 			if($isEditor && !$newProj){
 				?>
 				<div style="float:right;" title="Toggle Editing Functions">
-					<a href="#" onclick="toggleById('tabs');return false;"><img style="border:0px;" src="../images/edit.png"/></a>
+					<a href="#" onclick="toggleById('tabs');return false;"><img style="border:0;" src="../images/edit.png"/></a>
 				</div>
 				<?php 
 			}
 			if($projArr){
 				?>
-				<h1><?php echo $projArr["projname"]; ?></h1>
+				<h1><?php echo $projArr['projname']; ?></h1>
 				<div style='margin: 10px;'>
 					<div>
 						<b>Project Managers:</b>
-						<?php echo $projArr["managers"];?>
+						<?php echo $projArr['managers'];?>
 					</div>
 					<div style='margin-top:10px;'>
-						<?php echo $projArr["fulldescription"];?>
+						<?php echo $projArr['fulldescription'];?>
 					</div>
 					<div style='margin-top:10px;'>
-						<?php echo $projArr["notes"]; ?>
+						<?php echo $projArr['notes']; ?>
 					</div>
 				</div>
 				<?php 
@@ -241,7 +253,7 @@ if(!$researchList && !$editMode){
                                             Project Name:
 										</td>
 										<td>
-											<input type="text" name="projname" value="<?php if($projArr) echo htmlentities($projArr["projname"]); ?>" style="width:95%;"/>
+											<input type="text" name="projname" value="<?php echo ($projArr?htmlentities($projArr['projname']):''); ?>" style="width:95%;"/>
 										</td>
 									</tr>	
 									<tr>
@@ -249,7 +261,7 @@ if(!$researchList && !$editMode){
                                             Managers:
 										</td>
 										<td>
-											<input type="text" name="managers" value="<?php if($projArr) echo htmlentities($projArr["managers"]); ?>" style="width:95%;"/>
+											<input type="text" name="managers" value="<?php echo ($projArr?htmlentities($projArr['managers']):''); ?>" style="width:95%;"/>
 										</td>
 									</tr>	
 									<tr>
@@ -257,7 +269,7 @@ if(!$researchList && !$editMode){
                                             Description:
 										</td>
 										<td>
-											<textarea rows="8" cols="45" name="fulldescription" maxlength="2000" style="width:95%"><?php if($projArr) echo htmlentities($projArr["fulldescription"]);?></textarea>
+											<textarea rows="8" cols="45" name="fulldescription" maxlength="2000" style="width:95%"><?php echo ($projArr?htmlentities($projArr['fulldescription']):'');?></textarea>
 										</td>
 									</tr>	
 									<tr>
@@ -265,7 +277,7 @@ if(!$researchList && !$editMode){
                                             Notes:
 										</td>
 										<td>
-											<input type="text" name="notes" value="<?php if($projArr) echo htmlentities($projArr["notes"]);?>" style="width:95%;"/>
+											<input type="text" name="notes" value="<?php echo ($projArr?htmlentities($projArr['notes']):'');?>" style="width:95%;"/>
 										</td>
 									</tr>	
 									<tr>
@@ -275,20 +287,10 @@ if(!$researchList && !$editMode){
 										<td>
 											<select name="ispublic">
 												<option value="0">Private</option>
-												<option value="1" <?php echo ($projArr&&$projArr['ispublic']?'SELECTED':''); ?>>Public</option>
+												<option value="1" <?php echo ($projArr && $projArr['ispublic']?'SELECTED':''); ?>>Public</option>
 											</select>
 										</td>
 									</tr>
-									<!-- 
-									<tr>
-										<td>
-											Sort Sequence:
-										</td>
-										<td>
-											<input type="text" name="sortsequence" value="<?php if($projArr) echo $projArr["sortsequence"];?>" style="width:40;"/>
-										</td>
-									</tr>
-									-->	
 									<tr>
 										<td colspan="2">
 											<div style="margin:15px;">
@@ -373,7 +375,7 @@ if(!$researchList && !$editMode){
 							</div>
 							<?php
 						}
-						$gMapUrl = $projManager->getGoogleStaticMap("research");
+						$gMapUrl = $projManager->getGoogleStaticMap();
 						if($gMapUrl){
 							?>
 							<div style="float:right;text-align:center;">
@@ -392,14 +394,14 @@ if(!$researchList && !$editMode){
 								foreach($researchList as $key=>$value){
 									?>
 									<li>
-										<a href='../checklists/checklist.php?cl=<?php echo $key."&pid=".$pid; ?>'>
+										<a href='../checklists/checklist.php?cl=<?php echo $key. '&pid=' .$pid; ?>'>
 											<?php echo $value; ?>
 										</a> 
 										<?php 
 										if($KEY_MOD_IS_ACTIVE){
 											?>
 											<a href='../ident/key.php?cl=<?php echo $key; ?>&proj=<?php echo $pid; ?>&taxon=All+Species'>
-												<img style='width:12px;border:0px;' src='../images/key.png'/>
+												<img style='width:12px;border:0;' src='../images/key.png'/>
 											</a>
 											<?php
 										}
@@ -422,10 +424,10 @@ if(!$researchList && !$editMode){
 			$projectArr = $projManager->getProjectList();
 			foreach($projectArr as $pid => $projList){
 				?>
-				<h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList["projname"]; ?></a></h2>
+				<h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
 				<div style="margin:0 0 30px 15px;">
-					<div><b>Managers:</b> <?php echo ($projList["managers"]?$projList["managers"]:'Not defined'); ?></div>
-					<div style='margin-top:10px;'><?php echo $projList["descr"]; ?></div>
+					<div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
+					<div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
 				</div>
 				<?php 
 			}
@@ -433,7 +435,7 @@ if(!$researchList && !$editMode){
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

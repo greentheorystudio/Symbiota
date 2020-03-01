@@ -40,7 +40,6 @@ body{
 }
 
 
-/* Field entry divs and input objects */
 #catalogNumberDiv {
 	display: none;
 }
@@ -294,18 +293,18 @@ body{
 
 #googleDiv{
 	float:left;
-	margin: 17px 2px 0px 2px;
+	margin: 17px 2px 0 2px;
 	cursor:	pointer;
 }
 
 #googleDiv img{
-	border:	0px;
+	border:	0;
 	width:	13px;
 }
 
 #geoLocateDiv{
 	float:left;
-	margin: 12px 2px 0px 2px;
+	margin: 12px 2px 0 2px;
 }
 
 #geoLocateDiv img{
@@ -314,7 +313,7 @@ body{
 
 #geoToolsDiv{
 	float:left;
-	margin: 12px 2px 0px 2px;
+	margin: 12px 2px 0 2px;
 	z-index: 10; 
 }
 
@@ -606,7 +605,6 @@ body{
 	display:none;
 }
 
-/* Button Controls */
 #addButtonDiv{
 	display:none;
 }
@@ -615,7 +613,6 @@ body{
 	float: left;
 }
 
-/*Tabs */
 #detTab{
 	display: none;
 }
@@ -636,9 +633,8 @@ body{
 	display: none;
 }
 
-/* Misc styling */
 #fullform fieldset{
-	border: 0px;
+	border: 0;
 }
 
 #fullform fieldset legend {
@@ -646,7 +642,7 @@ body{
 }
 
 img.docimg { 
-	border:			0px;
+	border:			0;
 	width:			9px;
 	margin-bottom:	2px; 
 }

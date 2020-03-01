@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/FieldGuideManager.php');
-ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
+ini_set('max_execution_time', 180);
 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:"";
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
-$resultId = array_key_exists("resid",$_REQUEST)?$_REQUEST["resid"]:0;
-$viewMode = array_key_exists("viewmode",$_REQUEST)?$_REQUEST["viewmode"]:'full';
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$resultId = array_key_exists('resid',$_REQUEST)?$_REQUEST['resid']:0;
+$viewMode = array_key_exists('viewmode',$_REQUEST)?$_REQUEST['viewmode']:'full';
 
 $apiManager = new FieldGuideManager();
 $resultArr = array();
@@ -37,10 +37,11 @@ if($resultId){
     if($resultArr){
         $outputArr = array();
         $i = 0;
+        $prevOccId = 0;
+        $prevImgId = 0;
         foreach($resultArr as $occId => $occArr){
-            if($prevOccId != $occId){
+            if($prevOccId !== $occId){
                 $prevOccId = $occId;
-                $setCnt++;
                 $firstOcc = true;
                 $firstRadio = true;
                 $recResults = false;
@@ -48,16 +49,15 @@ if($resultId){
                 $collCode = $occArr['CollectionCode'];
                 $currID = $occArr['sciname'];
                 $family = $occArr['family'];
-                unset($occArr['InstitutionCode']);
-                unset($occArr['CollectionCode']);
-                unset($occArr['sciname']);
-                unset($occArr['family']);
+                unset($occArr['InstitutionCode'], $occArr['CollectionCode'], $occArr['sciname'], $occArr['family']);
                 foreach($occArr as $imgId => $imgArr){
-                    if($imgArr['results']) $recResults = true;
+                    if($imgArr['results']) {
+                        $recResults = true;
+                    }
                 }
             }
             foreach($occArr as $imgId => $imgArr){
-                if($prevImgId != $imgId){
+                if($prevImgId !== $imgId){
                     $prevImgId = $imgId;
                     $imgurl = $imgArr['url'];
                     $fgStatus = $imgArr['status'];
@@ -70,17 +70,15 @@ if($resultId){
                         $note = '';
                         $tId = 0;
                         if(array_key_exists($name,$tidArr) && $tidArr[$name]){
-                            if($currID == $name){
+                            if($currID === $name){
                                 $note = 'Current determination';
                             }
+                            else if(count($tidArr[$name]) === 1){
+                                $valid = true;
+                                $tId = $tidArr[$name][0];
+                            }
                             else{
-                                if(count($tidArr[$name]) == 1){
-                                    $valid = true;
-                                    $tId = $tidArr[$name][0];
-                                }
-                                else{
-                                    $note = 'Name ambiguous';
-                                }
+                                $note = 'Name ambiguous';
                             }
                         }
                         else{
@@ -98,13 +96,15 @@ if($resultId){
                         $outputArr[$i]['note'] = $note;
                         $firstOcc = false;
                         $firstImg = false;
-                        if($valid) $firstRadio = false;
+                        if($valid) {
+                            $firstRadio = false;
+                        }
                         $i++;
                     }
                 }
-                elseif($viewMode == 'full'){
+                elseif($viewMode === 'full'){
                     $note = '';
-                    if($fgStatus == 'OK' && !$fgidarr){
+                    if($fgStatus === 'OK' && !$fgidarr){
                         $note = 'No results provided.';
                     }
                     $outputArr[$i]['name'] = $occId;
@@ -124,7 +124,7 @@ if($resultId){
             }
         }
 
-        $outstream = fopen("php://output", "w");
+        $outstream = fopen('php://output', 'wb');
         fputcsv($outstream,$headerArr);
 
         foreach($outputArr as $row){
@@ -136,4 +136,3 @@ if($resultId){
         echo "Recordset is empty.\n";
     }
 }
-?>

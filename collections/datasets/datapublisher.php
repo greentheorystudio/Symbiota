@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DwcArchiverPublisher.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
+include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
+include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -23,7 +23,7 @@ $installationKey = '';
 $datasetKey = '';
 $endpointKey = '';
 $idigbioKey = '';
-if($collId && isset($GBIF_USERNAME) && $GBIF_USERNAME && isset($GBIF_PASSWORD) && $GBIF_PASSWORD && isset($GBIF_ORG_KEY) && $GBIF_ORG_KEY){
+if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $collId && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY){
     $collPubArr = $collManager->getCollPubArr($collId);
     if($collPubArr[$collId]['publishToGbif']){
         $publishGBIF = true;
@@ -33,7 +33,7 @@ if($collId && isset($GBIF_USERNAME) && $GBIF_USERNAME && isset($GBIF_PASSWORD) &
     }
 }
 if($action){
-	if($action == 'Save Key'){
+	if($action === 'Save Key'){
 		$collManager->setAggKeys($_POST['aggKeysStr']);
         $collManager->updateAggKeys($collId);
 	}
@@ -50,10 +50,10 @@ if($action){
 			$redactLocalities = 0;
 			$dwcaManager->setRedactLocalities(0);
 		}
-		$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) == '/' ? '' : '/') . 'content/dwca/');
+		$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) === '/' ? '' : '/') . 'content/dwca/');
 	}
 }
-if(isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY)){
+if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY)){
 	$installationKey = $collManager->getInstallationKey();
     $datasetKey = $collManager->getDatasetKey();
     $endpointKey = $collManager->getEndpointKey();
@@ -67,7 +67,7 @@ if(isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY)){
 }
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollAdmin']))){
+if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
@@ -76,15 +76,12 @@ if($collId){
 	$dwcaManager->setCollArr($collId);
 	$collArr = $dwcaManager->getCollArr($collId);
 }
-if($isEditor){
-	if(array_key_exists('colliddel',$_POST)){
-		$dwcaManager->deleteArchive($_POST['colliddel']);
-	}
+if($isEditor && array_key_exists('colliddel', $_POST)) {
+    $dwcaManager->deleteArchive($_POST['colliddel']);
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET; ?>">
 	<title>Darwin Core Archiver Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet">
@@ -97,9 +94,9 @@ if($isEditor){
 	<script type="text/javascript" src="../../js/symb/collections.gbifpublisher.js"></script>
 	<script type="text/javascript">
 		function toggle(target){
-			var objDiv = document.getElementById(target);
-			if(objDiv){
-				if(objDiv.style.display=="none"){
+            const objDiv = document.getElementById(target);
+            if(objDiv){
+				if(objDiv.style.display==="none"){
 					objDiv.style.display = "block";
 				}
 				else{
@@ -107,11 +104,11 @@ if($isEditor){
 				}
 			}
 			else{
-			  	var divs = document.getElementsByTagName("div");
-			  	for (var h = 0; h < divs.length; h++) {
-			  	var divObj = divs[h];
-					if(divObj.className == target){
-						if(divObj.style.display=="none"){
+                const divs = document.getElementsByTagName("div");
+                for (let h = 0; h < divs.length; h++) {
+                    const divObj = divs[h];
+                    if(divObj.className === target){
+						if(divObj.style.display === "none"){
 							divObj.style.display="block";
 						}
 					 	else {
@@ -123,32 +120,29 @@ if($isEditor){
 			return false;
 		}
 
-		function verifyDwcaForm(f){
-
-			return true;
-		}
-
-    	function verifyDwcaAdminForm(f){
-			var dbElements = document.getElementsByName("coll[]");
-			for(i = 0; i < dbElements.length; i++){
-				var dbElement = dbElements[i];
-				if(dbElement.checked) return true;
+		function verifyDwcaAdminForm(){
+            const dbElements = document.getElementsByName("coll[]");
+            for(let i = 0; i < dbElements.length; i++){
+                const dbElement = dbElements[i];
+                if(dbElement.checked) {
+                    return true;
+                }
 			}
 		   	alert("Please choose at least one collection!");
 			return false;
     	}
 
 		function checkAllColl(cb){
-			var boxesChecked = true;
-			if(!cb.checked){
+            let boxesChecked = true;
+            if(!cb.checked){
 				boxesChecked = false;
 			}
-			var cName = cb.className;
-			var dbElements = document.getElementsByName("coll[]");
-			for(i = 0; i < dbElements.length; i++){
-				var dbElement = dbElements[i];
-				if(dbElement.className == cName){
-					if(dbElement.disabled == false) dbElement.checked = boxesChecked;
+            const cName = cb.className;
+            const dbElements = document.getElementsByName("coll[]");
+            for(let i = 0; i < dbElements.length; i++){
+                const dbElement = dbElements[i];
+                if(dbElement.className === cName){
+					if(dbElement.disabled === false) dbElement.checked = boxesChecked;
 				}
 				else{
 					dbElement.checked = false;
@@ -159,7 +153,7 @@ if($isEditor){
 </head>
 <body>
 <?php
-include($SERVER_ROOT. '/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class='navpath'>
 	<a href="../../index.php">Home</a> &gt;&gt;
@@ -177,7 +171,6 @@ include($SERVER_ROOT. '/header.php');
 	?>
 	<b>Darwin Core Archive Publisher</b>
 </div>
-<!-- This is inner text! -->
 <div id="innertext">
 	<?php
 	if(!$collId && $IS_ADMIN){
@@ -231,7 +224,7 @@ include($SERVER_ROOT. '/header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$CLIENT_ROOT.(substr($CLIENT_ROOT,-1)=='/'?'':'/');
+		$urlPrefix = $dwcaManager->getServerDomain().$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/');
 		if(file_exists('../../webservices/dwc/rss.xml')){
 			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
@@ -243,7 +236,7 @@ include($SERVER_ROOT. '/header.php');
 	</div>
 	<?php
 	if($collId){
-		if($action == 'Create/Refresh Darwin Core Archive'){
+		if($action === 'Create/Refresh Darwin Core Archive'){
             $dwcaManager->setCollID($collId);
 		    echo '<ul>';
 			$dwcaManager->setVerboseMode(3);
@@ -257,7 +250,7 @@ include($SERVER_ROOT. '/header.php');
 		}
 		if($dwcaArr = $dwcaManager->getDwcaItems($collId)){
 			$dArr = current($dwcaArr);
-			$dwcUri = ($dArr['collid'] == $collId?$dArr['link']:'');
+			$dwcUri = ($dArr['collid'] === $collId?$dArr['link']:'');
 			?>
 			<div style="margin:10px;">
 				<div>
@@ -285,18 +278,17 @@ include($SERVER_ROOT. '/header.php');
 		<fieldset style="margin:15px;padding:15px;">
 			<legend><b>Publishing Information</b></legend>
 			<?php
-			//Data integrity checks
 			$blockSubmitMsg = '';
 			$recFlagArr = $dwcaManager->verifyCollRecords($collId);
 			if($collArr['guidtarget']){
 				echo '<div style="margin:10px;"><b>GUID source:</b> '.$collArr['guidtarget'].'</div>';
 				if($recFlagArr['nullGUIDs']){
 					echo '<div style="margin:10px;">';
-					if($collArr['guidtarget'] == 'occurrenceId'){
+					if($collArr['guidtarget'] === 'occurrenceId'){
 						echo '<b>Records missing <a href="" target="_blank">OccurrenceID GUIDs</a>:</b> '.$recFlagArr['nullGUIDs'];
 						echo ' <span style="color:red;margin-left:15px;">These records will not be published!</span> ';
 					}
-					elseif($collArr['guidtarget'] == 'catalogNumber'){
+					elseif($collArr['guidtarget'] === 'catalogNumber'){
 						echo '<b>Records missing Catalog Numbers:</b> '.$recFlagArr['nullGUIDs'];
 						echo ' <span style="color:red;margin-left:15px;">These records will not be published!</span> ';
 					}
@@ -308,7 +300,9 @@ include($SERVER_ROOT. '/header.php');
 				}
 				if($collArr['dwcaurl']){
 					$serverName = $_SERVER['HTTP_HOST'];
-					if(substr($serverName, 0, 4) == 'www.') $serverName = substr($serverName, 4);
+					if(strpos($serverName, 'www.') === 0) {
+                        $serverName = substr($serverName, 4);
+                    }
 					if(!strpos($collArr['dwcaurl'],$serverName)){
 						$baseUrl = substr($collArr['dwcaurl'],0,strpos($collArr['dwcaurl'],'/content')).'/collections/datasets/datapublisher.php';
 						$blockSubmitMsg = 'Already published on sister portal (<a href="'.$baseUrl.'" target="_blank">'.substr($baseUrl,0,strpos($baseUrl,'/',10)).'</a>) ';
@@ -322,7 +316,7 @@ include($SERVER_ROOT. '/header.php');
 			if($recFlagArr['nullBasisRec']){
 				echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec'].' records missing basisOfRecord and will not be published. Please go to <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_eventdate=&q_catalognumber=&q_othercatalognumbers=&q_observeruid=&q_recordenteredby=&q_dateentered=&q_datelastmodified=&q_processingstatus=&q_customfield1=basisOfRecord&q_customtype1=NULL&q_customvalue1=Something&q_customfield2=&q_customtype2=EQUALS&q_customvalue2=&q_customfield3=&q_customtype3=EQUALS&q_customvalue3=&collid='.$collId.'&csmode=0&occid=&occindex=0&orderby=&orderbydir=ASC">Edit Existing Occurrence Records</a> to correct this.</div>';
 			}
-			if(($publishGBIF || $publishIDIGBIO) && $dwcUri && isset($GBIF_USERNAME) && isset($GBIF_PASSWORD) && isset($GBIF_ORG_KEY)){
+			if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && ($publishGBIF || $publishIDIGBIO) && $dwcUri){
 				if($publishGBIF && !$datasetKey) {
 					?>
 					<div style="margin:10px;">
@@ -372,7 +366,7 @@ include($SERVER_ROOT. '/header.php');
 		</fieldset>
 		<fieldset style="padding:15px;margin:15px;">
 			<legend><b>Publish/Refresh DwC-A File</b></legend>
-			<form name="dwcaform" action="datapublisher.php" method="post" onsubmit="return verifyDwcaForm(this)">
+			<form name="dwcaform" action="datapublisher.php" method="post">
 				<div>
 					<input type="checkbox" name="dets" value="1" <?php echo ($includeDets?'CHECKED':''); ?> /> Include Determination History<br/>
 					<input type="checkbox" name="imgs" value="1" <?php echo ($includeImgs?'CHECKED':''); ?> /> Include Image URLs<br/>
@@ -380,7 +374,7 @@ include($SERVER_ROOT. '/header.php');
 				</div>
 				<div style="clear:both;margin:10px;">
 					<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-					<input type="submit" name="formsubmit" value="Create/Refresh Darwin Core Archive" <?php if($blockSubmitMsg) echo 'disabled'; ?> />
+					<input type="submit" name="formsubmit" value="Create/Refresh Darwin Core Archive" <?php echo ($blockSubmitMsg?'disabled':''); ?> />
 					<?php
 					if($blockSubmitMsg){
 						echo '<span style="color:red;margin-left:10px;">'.$blockSubmitMsg.'</span>';
@@ -388,7 +382,7 @@ include($SERVER_ROOT. '/header.php');
 					?>
 				</div>
 				<?php
-				if($collArr['managementtype'] != 'Live Data' || $collArr['guidtarget'] != 'symbiotaUUID'){
+				if($collArr['managementtype'] !== 'Live Data' || $collArr['guidtarget'] !== 'symbiotaUUID'){
 					?>
 					<div style="margin:10px;font-weight:bold">
 						NOTE: all records lacking occurrenceID GUIDs will be excluded
@@ -401,10 +395,10 @@ include($SERVER_ROOT. '/header.php');
 		<?php
 	}
 	else{
-		$catID = (isset($DEFAULTCATID)?$DEFAULTCATID:0);
+		$catID = ($DEFAULTCATID ?? 0);
 		$catTitle = $dwcaManager->getCategoryName($catID);
 		if($IS_ADMIN){
-			if($action == 'Create/Refresh Darwin Core Archive(s)'){
+			if($action === 'Create/Refresh Darwin Core Archive(s)'){
 				echo '<ul>';
 				$dwcaManager->setVerboseMode(3);
 				$dwcaManager->setLimitToGuids(true);
@@ -416,7 +410,7 @@ include($SERVER_ROOT. '/header.php');
 			}
 			?>
 			<div id="dwcaadmindiv" style="margin:10px;display:<?php echo ($emode?'block':'none'); ?>;" >
-				<form name="dwcaadminform" action="datapublisher.php" method="post" onsubmit="return verifyDwcaAdminForm(this)">
+				<form name="dwcaadminform" action="datapublisher.php" method="post" onsubmit="return verifyDwcaAdminForm()">
 					<fieldset style="padding:15px;">
 						<legend><b>Publish / Refresh <?php echo $catTitle; ?> DwC-A Files</b></legend>
 						<div style="margin:10px;">
@@ -434,7 +428,9 @@ include($SERVER_ROOT. '/header.php');
 								}
 								echo '<input name="coll[]" type="checkbox" value="'.$k.'" '.($errMsg?'DISABLED':'').' />';
 								echo '<a href="../misc/collprofiles.php?collid='.$k.'" target="_blank">'.$v['name'].'</a>';
-								if($errMsg) echo '<span style="color:red;margin-left:15px;">'.$errMsg.'</span>';
+								if($errMsg) {
+                                    echo '<span style="color:red;margin-left:15px;">' . $errMsg . '</span>';
+                                }
 								echo '<br/>';
 							}
 							?>
@@ -455,9 +451,11 @@ include($SERVER_ROOT. '/header.php');
 			<?php
 		}
 		if($dwcaArr = $dwcaManager->getDwcaItems()){
-			if($catTitle) echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">'.$catTitle.' DwC-Archive Files</div>';
+			if($catTitle) {
+                echo '<div style="font-weight:bold;font-size:140%;margin:50px 0 15px 0;">' . $catTitle . ' DwC-Archive Files</div>';
+            }
 			?>
-			<table class="styledtable" style="font-family:Arial;font-size:12px;margin:10px;">
+			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin:10px;">
 				<tr><th>Code</th><th>Collection Name</th><th>DwC-Archive</th><th>Metadata</th><th>Pub Date</th></tr>
 				<?php
 				foreach($dwcaArr as $k => $v){
@@ -494,21 +492,19 @@ include($SERVER_ROOT. '/header.php');
 		else{
 			echo '<div style="margin:10px;font-weight:bold;">There are no publishable collections</div>';
 		}
-		if($catID){
-			if($addDwca = $dwcaManager->getAdditionalDWCA($catID)){
-				echo '<div style="font-weight:bold;font-size:140%;margin:50px 0px 15px 0px;">Additional Data Sources within the Portal Network</div>';
-				echo '<ul>';
-				foreach($addDwca as $domanName => $domainArr){
-					echo '<li><a href="'.$domainArr['url'].'/collections/datasets/datapublisher.php'.'" target="_blank">http://'.$domanName.'</a> - '.$domainArr['cnt'].' Archives</li>';
-				}
-				echo '</ul>';
-			}
-		}
+		if($catID && $addDwca = $dwcaManager->getAdditionalDWCA($catID)) {
+            echo '<div style="font-weight:bold;font-size:140%;margin:50px 0 15px 0;">Additional Data Sources within the Portal Network</div>';
+            echo '<ul>';
+            foreach($addDwca as $domanName => $domainArr){
+                echo '<li><a href="'.$domainArr['url'].'/collections/datasets/datapublisher.php'.'" target="_blank">http://'.$domanName.'</a> - '.$domainArr['cnt'].' Archives</li>';
+            }
+            echo '</ul>';
+        }
 	}
 	?>
 </div>
 <?php
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

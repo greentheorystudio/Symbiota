@@ -1,5 +1,5 @@
 <?php
-$DEFAULT_LANG = 'en';			//Default language
+$DEFAULT_LANG = 'en';
 $DEFAULT_PROJ_ID = 1;
 $DEFAULTCATID = 0;
 $DEFAULT_TITLE = '';
@@ -14,12 +14,10 @@ $SERVER_ROOT = '/symbiota';				//Full path to Symbiota project root folder
 $TEMP_DIR_ROOT = $SERVER_ROOT.'/temp';				//Must be writable by Apache; will use system default if not specified
 $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
-//the root for the image directory
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
 $IMAGE_ROOT_URL = '';				//URL path to images
 $IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
 
-//Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
 $IMG_TN_WIDTH = 200;
 $IMG_LG_WIDTH = 3200;
@@ -29,7 +27,6 @@ $IPLANT_IMAGE_IMPORT_PATH = '';		//Path used to map/import images uploaded to th
 //$USE_IMAGE_MAGICK = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
 $TESSERACT_PATH = ''; 			//Needed for OCR function in the occurrence editor page
 
-//Module activations
 $OCCURRENCE_MOD_IS_ACTIVE = 1;
 $FLORA_MOD_IS_ACTIVE = 1;
 $KEY_MOD_IS_ACTIVE = 1;
@@ -82,6 +79,4 @@ $CSS_VERSION_LOCAL = '20170414';		//Changing this variable will force a refresh 
 //set terms for reproductiveCondition drop-down menu
 //$REPRODUCTIVE_CONDITION_TERMS = array("term1", "term2", "term3", "term4", "term5", "etc..");
 
-//Base code shared by all pages; leave as is
-include_once("symbbase.php");
-/* --DO NOT ADD ANY EXTRA SPACES BELOW THIS LINE-- */
+include_once('symbbase.php');

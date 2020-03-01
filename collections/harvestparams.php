@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/config/includes/searchVarDefault.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
+include_once(__DIR__ . '/../classes/OccurrenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
-    include($SERVER_ROOT.'/config/includes/searchVarCustom.php');
+    include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 
 $collManager = new OccurrenceManager();
@@ -20,13 +20,12 @@ if(isset($_REQUEST['taxa']) || isset($_REQUEST['country']) || isset($_REQUEST['s
 }
 
 if(isset($_REQUEST['db'])){
-    if(is_array($_REQUEST['db']) || $_REQUEST['db'] == 'all'){
+    if(is_array($_REQUEST['db']) || $_REQUEST['db'] === 'all'){
         $collArr['db'] = $collManager->getSearchTerm('db');
         $stArrCollJson = json_encode($collArr);
     }
 }
 ?>
-
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title><?php echo $DEFAULT_TITLE.' '.$SEARCHTEXT['PAGE_TITLE']; ?></title>
@@ -37,7 +36,7 @@ if(isset($_REQUEST['db'])){
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=9"></script>
     <script type="text/javascript">
-        var starrJson = '';
+        let starrJson = '';
 
         $(document).ready(function() {
             <?php
@@ -67,15 +66,14 @@ if(isset($_REQUEST['db'])){
             <?php
             if(!$SOLR_MODE){
                 ?>
-                //make sure they have filled out at least one field.
-                if ((frm.taxa.value == '') && (frm.country.value == '') && (frm.state.value == '') && (frm.county.value == '') &&
-                    (frm.locality.value == '') && (frm.upperlat.value == '') && (frm.pointlat.value == '') && (frm.catnum.value == '') &&
-                    (frm.elevhigh.value == '') && (frm.eventdate2.value == '') && (frm.typestatus.checked == false) && (frm.hasimages.checked == false) && (frm.hasgenetic.checked == false) &&
-                    (frm.collector.value == '') && (frm.collnum.value == '') && (frm.eventdate1.value == '') && (frm.elevlow.value == '')) {
+                if ((frm.taxa.value === '') && (frm.country.value === '') && (frm.state.value === '') && (frm.county.value === '') &&
+                    (frm.locality.value === '') && (frm.upperlat.value === '') && (frm.pointlat.value === '') && (frm.catnum.value === '') &&
+                    (frm.elevhigh.value === '') && (frm.eventdate2.value === '') && (frm.typestatus.checked === false) && (frm.hasimages.checked === false) && (frm.hasgenetic.checked === false) &&
+                    (frm.collector.value === '') && (frm.collnum.value === '') && (frm.eventdate1.value === '') && (frm.elevlow.value === '')) {
                     if(sessionStorage.jsoncollstarr){
-                        var jsonArr = JSON.parse(sessionStorage.jsoncollstarr);
-                        for(i in jsonArr){
-                            if(jsonArr[i] == 'all'){
+                        const jsonArr = JSON.parse(sessionStorage.jsoncollstarr);
+                        for(let i in jsonArr){
+                            if(jsonArr.hasOwnProperty(i) && jsonArr[i] === 'all'){
                                 alert("Please fill in at least one search parameter!");
                                 return false;
                             }
@@ -90,14 +88,12 @@ if(isset($_REQUEST['db'])){
             }
             ?>
 
-            if(frm.upperlat.value != '' || frm.bottomlat.value != '' || frm.leftlong.value != '' || frm.rightlong.value != ''){
-                // if Lat/Long field is filled in, they all should have a value!
-                if(frm.upperlat.value == '' || frm.bottomlat.value == '' || frm.leftlong.value == '' || frm.rightlong.value == ''){
+            if(frm.upperlat.value !== '' || frm.bottomlat.value !== '' || frm.leftlong.value !== '' || frm.rightlong.value !== ''){
+                if(frm.upperlat.value === '' || frm.bottomlat.value === '' || frm.leftlong.value === '' || frm.rightlong.value === ''){
                     alert("Error: Please make all Lat/Long bounding box values contain a value or all are empty");
                     return false;
                 }
 
-                // Check to make sure lat/longs are valid.
                 if(Math.abs(frm.upperlat.value) > 90 || Math.abs(frm.bottomlat.value) > 90 || Math.abs(frm.pointlat.value) > 90){
                     alert("Latitude values can not be greater than 90 or less than -90.");
                     return false;
@@ -116,9 +112,8 @@ if(isset($_REQUEST['db'])){
                 }
             }
 
-            //Same with point radius fields
-            if(frm.pointlat.value != '' || frm.pointlong.value != '' || frm.radius.value != ''){
-                if(frm.pointlat.value == '' || frm.pointlong.value == '' || frm.radius.value == ''){
+            if(frm.pointlat.value !== '' || frm.pointlong.value !== '' || frm.radius.value !== ''){
+                if(frm.pointlat.value === '' || frm.pointlong.value === '' || frm.radius.value === ''){
                     alert("Error: Please make all Lat/Long point-radius values contain a value or all are empty");
                     return false;
                 }
@@ -138,7 +133,7 @@ if(isset($_REQUEST['db'])){
 <body>
 
 <?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
 ?>
 <div class='navpath'>
     <a href="../index.php">Home</a> &gt;&gt;
@@ -153,7 +148,7 @@ if(isset($_REQUEST['db'])){
 			<input type='checkbox' name='showtable' id='showtable' value='1' onchange="changeTableDisplay();" /> Show results in table view
 		</div>
 		<form name="harvestparams" id="harvestparams" action="list.php" method="post" onsubmit="return checkHarvestparamsForm(this);">
-			<div style="margin:10 0 10 0;"><hr></div>
+			<div style="margin:10px 0 10px 0;"><hr></div>
 			<div style='float:right;margin:5px 10px;'>
 				<div style="margin-bottom:10px"><input type="submit" class="nextbtn" value="Next" /></div>
 				<div><button type="button" class="resetbtn" onclick='resetHarvestParamsForm(this.form);'>Reset Form</button></div>
@@ -174,7 +169,7 @@ if(isset($_REQUEST['db'])){
 					<input id="taxa" type="text" size="60" name="taxa" value="" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
 				</div>
 			</div>
-			<div style="margin:10 0 10 0;"><hr></div>
+			<div style="margin:10px 0 10px 0;"><hr></div>
 			<div>
 				<h1><?php echo $SEARCHTEXT['LOCALITY_HEADER']; ?></h1>
 			</div>
@@ -203,7 +198,7 @@ if(isset($_REQUEST['db'])){
                 <?php
             }
             ?>
-			<div style="margin:10 0 10 0;">
+			<div style="margin:10px 0 10px 0;">
 				<hr>
 				<h1><?php echo $SEARCHTEXT['LAT_LNG_HEADER']; ?></h1>
 			</div>
@@ -219,28 +214,28 @@ if(isset($_REQUEST['db'])){
 					</select>
 				</div>
 				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_SLAT']; ?> <input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="javascript:checkBottomLat();" style="margin-left:7px;">
+					<?php echo $SEARCHTEXT['LL_BOUND_SLAT']; ?> <input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="checkBottomLat();" style="margin-left:7px;">
 					<select id="bottomlat_NS" name="bottomlat_NS" onchange="checkBottomLat();">
 						<option id="blN" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
 						<option id="blS" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
 					</select>
 				</div>
 				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_WLNG']; ?> <input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="javascript:checkLeftLong();">
+					<?php echo $SEARCHTEXT['LL_BOUND_WLNG']; ?> <input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="checkLeftLong();">
 					<select id="leftlong_EW" name="leftlong_EW" onchange="checkLeftLong();">
 						<option id="llW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
 						<option id="llE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
 					</select>
 				</div>
 				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_ELNG']; ?> <input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="javascript:checkRightLong();" style="margin-left:3px;">
+					<?php echo $SEARCHTEXT['LL_BOUND_ELNG']; ?> <input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="checkRightLong();" style="margin-left:3px;">
 					<select id="rightlong_EW" name="rightlong_EW" onchange="checkRightLong();">
 						<option id="rlW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
 						<option id="rlE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
 					</select>
 				</div>
 				<div style="clear:both;float:right;margin-top:8px;cursor:pointer;" onclick="openBoundingBoxMap();">
-					<img src="../images/world.png" width="15px" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
+					<img src="../images/world.png" style="width:15px;" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
 				</div>
 			</div>
 			<div style="width:260px; float:left;border:2px solid brown;padding:10px;margin-left:10px;">
@@ -248,14 +243,14 @@ if(isset($_REQUEST['db'])){
 					<?php echo $SEARCHTEXT['LL_P-RADIUS_TEXT']; ?>
 				</div>
 				<div>
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?> <input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="javascript:checkPointLat();" style="margin-left:11px;">
+					<?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?> <input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="checkPointLat();" style="margin-left:11px;">
 					<select id="pointlat_NS" name="pointlat_NS" onchange="checkPointLat();">
 						<option id="N" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
 						<option id="S" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
 					</select>
 				</div>
 				<div>
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?> <input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="javascript:checkPointLong();">
+					<?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?> <input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="checkPointLong();">
 					<select id="pointlong_EW" name="pointlong_EW" onchange="checkPointLong();">
 						<option id="W" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
 						<option id="E" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
@@ -270,7 +265,7 @@ if(isset($_REQUEST['db'])){
 					<input type="hidden" id="radius" name="radius" value="" />
 				</div>
 				<div style="clear:both;float:right;margin-top:8px;cursor:pointer;" onclick="openPointRadiusMap();">
-					<img src="../images/world.png" width="15px" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
+					<img src="../images/world.png" style="width:15px;" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
 				</div>
 			</div>
 			<div style=";clear:both;"><hr/></div>
@@ -314,7 +309,7 @@ if(isset($_REQUEST['db'])){
 		</form>
     </div>
 	<?php
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

@@ -18,6 +18,3 @@
  */
 
 //ADD PLUGINS BELOW THIS LINE
-
-
-?>

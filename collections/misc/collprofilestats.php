@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
+include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 
 $statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
 
-if($statDisplay == 'geography'){
+if($statDisplay === 'geography'){
 	$countryDist = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';
 	$stateDist = array_key_exists('state',$_REQUEST)?htmlspecialchars($_REQUEST['state']):'';
 	$distArr = $collManager->getGeographyStats($countryDist,$stateDist);
@@ -27,13 +27,22 @@ if($statDisplay == 'geography'){
 			<ul>
 				<?php
 				foreach($distArr as $term => $cnt){
-					$countryTerm = ($countryDist?$countryDist:$term);
-					$stateTerm = ($countryDist?($stateDist?$stateDist:$term):'');
+					$countryTerm = ($countryDist?:$term);
+					if($countryDist){
+                        $stateTerm = ($stateDist?:$term);
+                    }
+					else{
+                        $stateTerm = '';
+                    }
 					$countyTerm = ($countryDist && $stateDist?$term:'');
 					echo '<li>';
-					if(!$stateDist) echo '<a href="collprofiles.php?collid='.$collid.'&stat=geography&country='.$countryTerm.'&state='.$stateTerm.'#geographystats">';
+					if(!$stateDist) {
+                        echo '<a href="collprofiles.php?collid=' . $collid . '&stat=geography&country=' . $countryTerm . '&state=' . $stateTerm . '#geographystats">';
+                    }
 					echo $term;
-					if(!$stateDist) echo '</a>';
+					if(!$stateDist) {
+                        echo '</a>';
+                    }
 					echo ' (<a href="../list.php?db='.$collid.'&reset=1&country='.$countryTerm.'&state='.$stateTerm.'&county='.$countyTerm.'" target="_blank">'.$cnt.'</a>)';
 					echo '</li>';
 				}
@@ -43,7 +52,7 @@ if($statDisplay == 'geography'){
 		<?php
 	}
 }
-elseif($statDisplay == 'taxonomy'){
+elseif($statDisplay === 'taxonomy'){
 	$famArr = $collManager->getTaxonomyStats();
 	?>
 	<fieldset id="taxonomystats" style="margin:20px;width:90%;">

@@ -1,22 +1,22 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/ReferenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$uid = array_key_exists("uid",$_REQUEST)?$_REQUEST["uid"]:'';
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:'';
+$uid = array_key_exists('uid',$_REQUEST)?$_REQUEST['uid']:'';
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$refAuthId = array_key_exists("refauthid",$_REQUEST)?$_REQUEST["refauthid"]:0;
-$firstName = array_key_exists("firstname",$_REQUEST)?$_REQUEST["firstname"]:'';
-$middleName = array_key_exists("midname",$_REQUEST)?$_REQUEST["midname"]:'';
-$lastName = array_key_exists("lastname",$_REQUEST)?$_REQUEST["lastname"]:'';
-$table = array_key_exists("table",$_REQUEST)?$_REQUEST["table"]:'';
-$field = array_key_exists("field",$_REQUEST)?$_REQUEST["field"]:'';
-$id = array_key_exists("id",$_REQUEST)?$_REQUEST["id"]:'';
-$type = array_key_exists("type",$_REQUEST)?$_REQUEST["type"]:'';
+$refAuthId = array_key_exists('refauthid',$_REQUEST)?$_REQUEST['refauthid']:0;
+$firstName = array_key_exists('firstname',$_REQUEST)?$_REQUEST['firstname']:'';
+$middleName = array_key_exists('midname',$_REQUEST)?$_REQUEST['midname']:'';
+$lastName = array_key_exists('lastname',$_REQUEST)?$_REQUEST['lastname']:'';
+$table = array_key_exists('table',$_REQUEST)?$_REQUEST['table']:'';
+$field = array_key_exists('field',$_REQUEST)?$_REQUEST['field']:'';
+$id = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:'';
+$type = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 
 $refManager = new ReferenceManager();
-if($action=="addauthor"){
+if($action === 'addauthor'){
 	$refManager->addAuthor($refId,$refAuthId);
 	$authArr = $refManager->getRefAuthArr($refId);
 	$listHtml = '';
@@ -35,7 +35,7 @@ if($action=="addauthor"){
 	}
 	echo $listHtml;
 }
-if($action=="createauthor"){
+if($action === 'createauthor'){
 	$refManager->createAuthor($firstName,$middleName,$lastName);
 	$refAuthId = $refManager->getRefAuthId();
 	$refManager->addAuthor($refId,$refAuthId);
@@ -56,7 +56,7 @@ if($action=="createauthor"){
 	}
 	echo $listHtml;
 }
-if($action=="deleterefauthor"){
+if($action === 'deleterefauthor'){
 	$refManager->deleteRefAuthor($refId,$refAuthId);
 	$authArr = $refManager->getRefAuthArr($refId);
 	$listHtml = '';
@@ -75,14 +75,14 @@ if($action=="deleterefauthor"){
 	}
 	echo $listHtml;
 }
-if($action=="deletereflink"){
+if($action === 'deletereflink'){
 	$refManager->deleteRefLink($refId,$table,$field,$id);
 	$authArr = $refManager->getRefAuthArr($refId);
 	$listHtml = '';
 	if($authArr){
 		$listHtml .= '<ul>';
 		foreach($authArr as $k => $v){
-			$onClick = "deleteRefLink('".$table."','".$field."','".$type."',".$k.");";
+			$onClick = "deleteRefLink('".$table."','".$field."','".$type."',".$k. ');';
 			$listHtml .= '<li>';
 			$listHtml .= $v;
 			$listHtml .= '</li>';
@@ -94,4 +94,3 @@ if($action=="deletereflink"){
 	}
 	echo $listHtml;
 }
-?>

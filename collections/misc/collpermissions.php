@@ -1,16 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/PermissionsManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/PermissionsManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_REQUEST)?$_REQUEST["action"]:""; 
-$collId = array_key_exists("collid",$_REQUEST)?$_REQUEST["collid"]:0;
+$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
 $permManager = new PermissionsManager();
 
 $isEditor = 0;		 
 if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
+	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
 		$isEditor = 1;
 	}
 }
@@ -31,54 +31,42 @@ if($isEditor){
 			$permManager->deletePermission($_GET['delidenteditor'],'CollTaxon',$collId,'all');
 		}
 	}
-	elseif($action == 'Add Permissions for User'){
+	elseif($action === 'Add Permissions for User'){
 		$rightType = $_POST['righttype'];
-		if($rightType == 'admin'){
-			$permManager->addPermission($_POST['uid'],"CollAdmin",$collId);
+		if($rightType === 'admin'){
+			$permManager->addPermission($_POST['uid'], 'CollAdmin',$collId);
 		}
-		elseif($rightType == 'editor'){
-			$permManager->addPermission($_POST['uid'],"CollEditor",$collId);
+		elseif($rightType === 'editor'){
+			$permManager->addPermission($_POST['uid'], 'CollEditor',$collId);
 		}
-		elseif($rightType == 'rare'){
-			$permManager->addPermission($_POST['uid'],"RareSppReader",$collId);
+		elseif($rightType === 'rare'){
+			$permManager->addPermission($_POST['uid'], 'RareSppReader',$collId);
 		}
-		/*
-		$userRight = '';
-		if($rightType == 'admin'){
-			$userRight = 'CollAdmin-'.$collId;
-		}
-		elseif($rightType == 'editor'){
-			$userRight = 'CollEditor-'.$collId;
-		}
-		elseif($rightType == 'rare'){
-			$userRight = 'RareSppReader-'.$collId;
-		}
-		$permManager->addPermission($_POST['uid'],$userRight);
-		*/
 	}
-	elseif($action == 'Add Identification Editor'){
+	elseif($action === 'Add Identification Editor'){
 		$identEditor = $_POST['identeditor'];
 		$pTokens = explode(':',$identEditor);
 		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
-		//$permManager->addPermission($pTokens[0],'CollTaxon-'.$collId.':'.$pTokens[1]);
 	}
 }
 $collMetadata = current($permManager->getCollectionMetadata($collId));
 $isGenObs = 0;
-if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
+if($collMetadata['colltype'] === 'General Observations') {
+    $isGenObs = 1;
+}
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $collMetadata['collectionname']; ?> Collection Permissions</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-	<script language=javascript>
+	<script>
 		function verifyAddRights(f){
-			if(f.uid.value == ""){
+			if(f.uid.value === ""){
 				alert("Please select a user from list");
 				return false;
 			}
-			else if(f.righttype.value == ""){
+			else if(f.righttype.value === ""){
 				alert("Please select the permissions you wish to assign this user");
 				return false;
 			}
@@ -89,7 +77,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
     ?>
     <div class='navpath'>
         <a href='../../index.php'>Home</a> &gt;&gt;
@@ -97,7 +85,6 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
         <b><?php echo $collMetadata['collectionname'].' Permissions'; ?></b>
     </div>
 
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php
 		if($isEditor){
@@ -221,7 +208,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 							?>
 						</select> 
 					</div>
-					<div style="margin:5px 0px 5px 0px;">
+					<div style="margin:5px 0 5px 0;">
 					<?php 
 					if($isGenObs){
 						?>
@@ -252,13 +239,13 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 					<legend><b>Identification Editors</b></legend>
 					<div style="float:right;" title="Add a new user">
 						<a href="#" onclick="toggle('addUserDiv');return false;">
-							<img style='border:0px;width:15px;' src='../../images/add.png'/>
+							<img style='border:0;width:15px;' src='../../images/add.png'/>
 						</a>
 					</div>
 					<div id="addUserDiv" style="display:none;">
 						<fieldset style="margin:15px;padding:15px;">
 							<legend><b>Add Identification Editor</b></legend>
-							<div style="margin:0px 20px 10px 10px;">
+							<div style="margin:0 20px 10px 10px;">
 								The user list below contains only Identification Editors that been approved by a portal manager. 
 								Contact your portal manager to request the addition of a new user.
 							</div>
@@ -273,16 +260,20 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 											foreach($taxonSelectArr as $uid => $uArr){
 												$username = $uArr['username'];
 												unset($uArr['username']);
-												if(!isset($taxonEditorArr[$uid]['all'])) echo '<option value="'.$uid.':all">'.$username.' - All Approved Taxonomy</option>';
+												if(!isset($taxonEditorArr[$uid]['all'])) {
+                                                    echo '<option value="' . $uid . ':all">' . $username . ' - All Approved Taxonomy</option>';
+                                                }
 												unset($uArr['all']);
 												foreach($uArr as $utid => $sciname){
-													if(!isset($taxonEditorArr[$uid]['utid'][$utid])) echo '<option value="'.$uid.':'.$utid.'">'.$username.' - '.$sciname.'</option>';
+													if(!isset($taxonEditorArr[$uid]['utid'][$utid])) {
+                                                        echo '<option value="' . $uid . ':' . $utid . '">' . $username . ' - ' . $sciname . '</option>';
+                                                    }
 												}
 											}
 											?>
 										</select> 
 									</div>
-									<div style="margin:15px 0px">
+									<div style="margin:15px 0;">
 										<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 										<input name="action" type="submit" value="Add Identification Editor" />
 									</div> 
@@ -357,8 +348,7 @@ if($collMetadata['colltype'] == 'General Observations') $isGenObs = 1;
 		?>
 	</div>
 	<?php
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/../../footer.php');
 	?>
-
 </body>
 </html>

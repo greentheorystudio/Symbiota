@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceSkeletal.php');
+include_once(__DIR__ . '/../../../classes/OccurrenceSkeletal.php');
 
 $collid = array_key_exists('collid',$_REQUEST);
 $responseArr = array();
@@ -9,10 +9,10 @@ if($collid){
 	if($IS_ADMIN){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollAdmin'])){
+	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists("CollEditor",$USER_RIGHTS) && in_array($collid,$USER_RIGHTS['CollEditor'])){
+	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
 		$isEditor = 1;
 	}
 	if($isEditor){
@@ -20,12 +20,12 @@ if($collid){
 		$skelHandler->setCollid($_REQUEST['collid']);
 		if(array_key_exists('catalognumber',$_REQUEST) && $skelHandler->catalogNumberExists($_REQUEST['catalognumber'])){
 			$responseArr['occid'] = implode(',', $skelHandler->getOccidArr());
-			if($_REQUEST['addaction'] == '1'){
+			if($_REQUEST['addaction'] === '1'){
 				$responseArr['action'] = 'none';
 				$responseArr['status'] = 'false';
 				$responseArr['error'] = 'dupeCatalogNumber';
 			}
-			elseif($_REQUEST['addaction'] == '2'){
+			elseif($_REQUEST['addaction'] === '2'){
 				$responseArr['action'] = 'update';
 				$responseArr['status'] = 'true';
 				if(!$skelHandler->updateOccurrence($_REQUEST)){
@@ -48,4 +48,3 @@ if($collid){
 	}
 }
 echo json_encode($responseArr);
-?>

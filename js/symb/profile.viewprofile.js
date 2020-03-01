@@ -17,11 +17,11 @@ function initTaxonAutoComplete(){
 }
 
 function verifyAddTaxonomyForm(f){
-	if(f.editorstatus.value == ""){
+	if(f.editorstatus.value === ""){
 		alert("Select the Scope of Relationship");
 		return false;
 	}
-	if(f.taxoninput.value == ""){
+	if(f.taxoninput.value === ""){
 		alert("Select the Taxonomic Name");
 		return false;
 	}
@@ -29,29 +29,29 @@ function verifyAddTaxonomyForm(f){
 }
 
 function verifyEditProfileForm(f){
-    if(f.firstname.value.replace(/\s/g, "") == "" ){
+    if(f.firstname.value.replace(/\s/g, "") === "" ){
         window.alert("First Name field must have a value ");
         return false;
-    };
-    if(f.lastname.value.replace(/\s/g, "") == "" ){
+    }
+    if(f.lastname.value.replace(/\s/g, "") === "" ){
         window.alert("Last Name field must have a value ");
         return false;
-    };
-    if(f.email.value.replace(/\s/g, "") == "" ){
+    }
+    if(f.email.value.replace(/\s/g, "") === "" ){
         window.alert("Email field must have a value ");
         return false;
-    };
+    }
     return true;
 }
 
 function verifyPwdForm(f){
-    var pwd1 = f.newpwd.value;
-    var pwd2 = f.newpwd2.value;
-    if(pwd1 == "" || pwd2 == ""){
+	const pwd1 = f.newpwd.value;
+	const pwd2 = f.newpwd2.value;
+	if(pwd1 === "" || pwd2 === ""){
         window.alert("Both password fields must contain a value.");
         return false;
     }
-	if(pwd1.charAt(0) == " " || pwd1.slice(-1) == " "){
+	if(pwd1.charAt(0) === " " || pwd1.slice(-1) === " "){
 		alert("Password cannot start or end with a space, but they can include spaces within the password");
 		return false;
 	}
@@ -59,7 +59,7 @@ function verifyPwdForm(f){
 		alert("Password must be greater than 6 characters");
 		return false;
 	}
-    if(pwd1 != pwd2){
+    if(pwd1 !== pwd2){
         window.alert("Password do not match. Please enter again.");
         f.newpwd.value = "";
         f.newpwd2.value = "";
@@ -70,8 +70,8 @@ function verifyPwdForm(f){
 }
 
 function verifyModifyLoginForm(f){
-    var newLogin = f.newlogin.value;
-    if(newLogin == ""){
+	const newLogin = f.newlogin.value;
+	if(newLogin === ""){
         window.alert("New login must have a value");
         return false;
     }
@@ -80,7 +80,7 @@ function verifyModifyLoginForm(f){
         return false;
     }
     if(f.newloginpwd){
-		if(f.newloginpwd.value == "") {
+		if(f.newloginpwd.value === "") {
 			window.alert("Enter your password");
 			return false;
 		}

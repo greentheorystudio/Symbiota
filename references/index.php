@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once(__DIR__ . '/../classes/ReferenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -17,7 +18,7 @@ if($formSubmit){
 	if($formSubmit === 'Search References'){
 		$refArr = $refManager->getRefList($_POST['searchtitlekeyword'],$_POST['searchauthor']);
 		foreach($refArr as $refName => $valueArr){
-			if($valueArr["title"]){
+			if($valueArr['title']){
 				$refExist = true;
 			}
 		}
@@ -26,21 +27,15 @@ if($formSubmit){
 if(!$formSubmit || $formSubmit !== 'Search References'){
 	$refArr = $refManager->getRefList('','');
 	foreach($refArr as $refName => $valueArr){
-		if($valueArr["title"]){
+		if($valueArr['title']){
 			$refExist = true;
 		}
 	}
 }
-
-header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-	<title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
+    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -50,13 +45,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT."/header.php");
+	include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
         <a href='index.php'> <b>Reference Management</b></a>
     </div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($SYMB_UID){
@@ -76,11 +70,11 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				    	<div>
 							<div>
 								<b>Title Keyword:</b> 
-								<input type="text" autocomplete="off" name="searchtitlekeyword" id="searchtitlekeyword" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchtitlekeyword']:''); ?>" />
+								<input type="text" autocomplete="off" name="searchtitlekeyword" id="searchtitlekeyword" size="25" value="<?php echo ($formSubmit === 'Search References'?$_POST['searchtitlekeyword']:''); ?>" />
 							</div>
 							<div>
 								<b>Author's Last Name:</b> 
-								<input type="text" name="searchauthor" id="searchauthor" size="25" value="<?php echo ($formSubmit == 'Search References'?$_POST['searchauthor']:''); ?>" />
+								<input type="text" name="searchauthor" id="searchauthor" size="25" value="<?php echo ($formSubmit === 'Search References'?$_POST['searchauthor']:''); ?>" />
 							</div>
 							<div style="padding-top:8px;float:right;">
 								<button name="formsubmit" type="submit" value="Search References">Filter List</button>
@@ -96,7 +90,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					</a>
 				</div>
 				<div id="newreferencediv" style="display:none;">
-					<form name="newreferenceform" action="refdetails.php" method="post" onsubmit="return verifyNewRefForm(this.form);">
+					<form name="newreferenceform" action="refdetails.php" method="post" onsubmit="return verifyNewRefForm();">
 						<fieldset>
 							<legend><b>Add New Reference</b></legend>
 							<div style="clear:both;padding-top:4px;float:left;">
@@ -134,21 +128,21 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					echo '<div><ul>';
 					foreach($refArr as $refId => $recArr){
 						echo '<li>';
-						echo '<a href="refdetails.php?refid='.$refId.'"><b>'.$recArr["title"].'</b></a>';
-						if($recArr["ReferenceTypeId"] == 27){
+						echo '<a href="refdetails.php?refid='.$refId.'"><b>'.$recArr['title'].'</b></a>';
+						if($recArr['ReferenceTypeId'] === 27){
 							echo ' series.';
 						}
-						if($recArr["tertiarytitle"] != $recArr["title"]){
-							echo ($recArr["tertiarytitle"]?', '.$recArr["tertiarytitle"]:'');
+						if($recArr['tertiarytitle'] !== $recArr['title']){
+							echo ($recArr['tertiarytitle']?', '.$recArr['tertiarytitle']:'');
 						}
-						echo ($recArr["volume"]?' Vol. '.$recArr["volume"].'.':'');
-						echo ($recArr["number"]?' No. '.$recArr["number"].'.':'');
-						if(($recArr["tertiarytitle"] != $recArr["secondarytitle"]) && ($recArr["title"] != $recArr["secondarytitle"])){
-							echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'.');
+						echo ($recArr['volume']?' Vol. '.$recArr['volume'].'.':'');
+						echo ($recArr['number']?' No. '.$recArr['number'].'.':'');
+						if(($recArr['tertiarytitle'] !== $recArr['secondarytitle']) && ($recArr['title'] !== $recArr['secondarytitle'])){
+							echo ($recArr['secondarytitle']?', '.$recArr['secondarytitle'].'.':'.');
 						}
-						echo ($recArr["edition"]?' '.$recArr["edition"].' Ed.':'');
-						echo ($recArr["pubdate"]?' '.$recArr["pubdate"].'.':'');
-						echo ($recArr["authline"]?' '.$recArr["authline"]:'');
+						echo ($recArr['edition']?' '.$recArr['edition'].' Ed.':'');
+						echo ($recArr['pubdate']?' '.$recArr['pubdate'].'.':'');
+						echo ($recArr['authline']?' '.$recArr['authline']:'');
 						echo '</li>';
 					}
 					echo '</ul></div>';
@@ -163,18 +157,16 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 			<?php 
 		}
-		else{
-			if(!$SYMB_UID){
-				echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
-		}
+		else if(!$SYMB_UID){
+            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
+        }
+        else{
+            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
 		?>
 	</div>
 	<?php
-	include($SERVER_ROOT."/footer.php");
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

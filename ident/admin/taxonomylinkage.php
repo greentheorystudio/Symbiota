@@ -1,7 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
@@ -13,7 +13,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
+    <title>Taxonomy Linkage</title>
     <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -33,14 +33,14 @@ $tLinks = $keyManager->getTaxonRelevance();
 						$( "#relevancetidinput" ).val("");
 					}
 				},
-				change: function( event, ui ) {
-					if($( "#relevancetidinput" ).val() == ""){
+				change: function() {
+					if($( "#relevancetidinput" ).val() === ""){
 						$.ajax({
 							type: "POST",
 							url: "rpc/taxonvalidation.php",
 							data: { term: $( this ).val() }
 						}).done(function( msg ) {
-							if(msg == ""){
+							if(msg === ""){
 								alert("Taxonomic name not found with thesaurus ");
 							}
 							else{
@@ -57,11 +57,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 		});
 
 		function validateRelevanceForm(f){
-			if(f.relsciname.value == ""){
+			if(f.relsciname.value === ""){
 				alert("Taxon field is empty");
 				return false;
 			}
-			if(f.tid.value == ""){
+			if(f.tid.value === ""){
 				alert("unable to obtain taxonomic thesaurus identifier for " + f.relsciname.value);
 				return false;
 			}
@@ -90,7 +90,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 								<?php 
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?');">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
@@ -114,7 +114,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 								<?php 
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?');">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
