@@ -204,7 +204,7 @@ $listArr = $clManager->getManagementLists($userId);
 				    <tr>
 				        <td colspan="2">
 							<div>
-								<input type="checkbox" name="ispublic" value="1" <?php if($person->getIsPublic()) echo "CHECKED"; ?> />
+								<input type="checkbox" name="ispublic" value="1" <?php echo (($person->getIsPublic())?'CHECKED':''); ?> />
 								Make user information displayable to public
 			        		</div>
 						</td>

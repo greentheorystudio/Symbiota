@@ -1,27 +1,27 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyEditorManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?' . $_SERVER['QUERY_STRING']);
+}
 
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:"";
-$status = "";
+$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$status = '';
 
 $loaderObj = new TaxonomyEditorManager();
  
 $isEditor = false;
-if($IS_ADMIN || array_key_exists("Taxonomy",$USER_RIGHTS)){
+if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	$isEditor = true;
 }
  
-if($isEditor){
-	if(array_key_exists('sciname',$_POST)){
-		$status = $loaderObj->loadNewName($_POST);
-		if(is_int($status)){
-		 	header("Location: taxonomyeditor.php?tid=".$status);
-		}
-	}
+if($isEditor && array_key_exists('sciname', $_POST)) {
+    $status = $loaderObj->loadNewName($_POST);
+    if(is_int($status)){
+         header('Location: taxonomyeditor.php?tid=' .$status);
+    }
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -36,7 +36,7 @@ if($isEditor){
 </head>
 <body>
 <?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../../header.php');
 	?>
 	<div class="navpath">
 		<a href="../../index.php">Home</a> &gt;&gt; 
@@ -46,7 +46,7 @@ if($isEditor){
 	<div id="innertext">
 		<?php 
 		if($status){
-			echo "<div style='color:red;font-size:120%;'>".$status."</div>";
+			echo "<div style='color:red;font-size:120%;'>".$status. '</div>';
 		}
 		if($isEditor){
 			?>
@@ -70,7 +70,7 @@ if($isEditor){
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId === 220?" SELECTED":"").">".$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".($rankId === 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
 							}
 							?>
 						</select>
@@ -145,7 +145,7 @@ if($isEditor){
 			</div>
 			<?php 
 		}
-		include($SERVER_ROOT.'/footer.php');
+		include(__DIR__ . '/../../footer.php');
 		?>
 	</div>
 </body>

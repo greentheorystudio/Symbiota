@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
@@ -126,7 +126,7 @@ else{
 <body>
 
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext" style="padding-left:0;margin-left:0;">
 	
@@ -190,6 +190,8 @@ include($SERVER_ROOT.'/header.php');
 		</div>
 	</div>
 </div>
-<?php include($SERVER_ROOT.'/footer.php'); ?>
+<?php
+include(__DIR__ . '/../footer.php');
+?>
 </body>
 </html>	

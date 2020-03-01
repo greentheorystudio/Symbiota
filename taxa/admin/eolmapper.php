@@ -1,9 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/EOLManager.php');
+include_once(__DIR__ . '/../../classes/EOLManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?'.$_SERVER['QUERY_STRING']);
+if(!$SYMB_UID) {
+    header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?' . $_SERVER['QUERY_STRING']);
+}
 
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $statusStr = array_key_exists('status',$_REQUEST)?$_REQUEST['status']:'';
@@ -24,7 +26,7 @@ $eolManager = new EOLManager();
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/../../header.php');
 ?>
 <div class='navpath'>";
 	<a href="../index.php">Home</a> &gt;&gt;
@@ -125,7 +127,7 @@ include($SERVER_ROOT.'/header.php');
 		?>
 	</div>
 	<?php 
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

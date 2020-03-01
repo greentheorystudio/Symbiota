@@ -27,7 +27,7 @@
  */
 
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonomyAPIManager.php');
+include_once(__DIR__ . '/../classes/TaxonomyAPIManager.php');
 
 $queryString = $_REQUEST['term'];
 $hideAuth = array_key_exists('hideauth',$_REQUEST)?$_REQUEST['hideauth']:false;
@@ -53,4 +53,3 @@ if($queryString){
     $listArr = $qHandler->generateSciNameList($queryString);
     echo json_encode($listArr);
 }
-?>

@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/UserTaxonomy.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/../classes/UserTaxonomy.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$action = array_key_exists("action",$_POST)?$_POST["action"]:""; 
+$action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $utManager = new UserTaxonomy();
 
@@ -19,7 +19,7 @@ else{
 
 $statusStr = '';
 if($isEditor){
-	if($action == 'Add Taxonomic Relationship'){
+	if($action === 'Add Taxonomic Relationship'){
 		$uid = $_POST['uid'];
 		$taxon = $_POST['taxon'];
 		$editorStatus = $_POST['editorstatus'];
@@ -43,7 +43,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script language=javascript>
+	<script>
 		$(document).ready(function() {
 			$( "#taxoninput" ).autocomplete({
 				source: "rpc/taxasuggest.php",
@@ -53,15 +53,15 @@ $editorArr = $utManager->getTaxonomyEditors();
 		});
 
 		function verifyUserAddForm(f){
-			if(f.uid.value == ""){
+			if(f.uid.value === ""){
 				alert("Select a User");
 				return false;
 			}
-			if(f.editorstatus.value == ""){
+			if(f.editorstatus.value === ""){
 				alert("Select the Scope of Relationship");
 				return false;
 			}
-			if(f.taxoninput.value == ""){
+			if(f.taxoninput.value === ""){
 				alert("Select the Taxonomic Name");
 				return false;
 			}
@@ -72,7 +72,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 </head>
 <body>
 	<?php
-	include($SERVER_ROOT.'/header.php');
+	include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
@@ -91,12 +91,11 @@ $editorArr = $utManager->getTaxonomyEditors();
 	}
 	if($isEditor){
 		?>
-		<!-- This is inner text! -->
 		<div id="innertext">
 			<h2>Taxonomic Interest User Permissions</h2>
 			<div style="float:right;" title="Add a new taxonomic relationship">
 				<a href="#" onclick="toggle('addUserDiv')">
-					<img style='border:0px;width:15px;' src='../images/add.png'/>
+					<img style='border:0;width:15px;' src='../images/add.png'/>
 				</a>
 			</div>
 			<div id="addUserDiv" style="display:none;">
@@ -149,9 +148,15 @@ $editorArr = $utManager->getTaxonomyEditors();
 				<?php 
 				foreach($editorArr as $editorStatus => $userArr){
 					$cat = 'Undefined';
-					if($editorStatus == 'RegionOfInterest') $cat = 'Region Of Interest';
-					elseif($editorStatus == 'OccurrenceEditor') $cat = 'Occurrence Identification Editor';
-					elseif($editorStatus == 'TaxonomicThesaurusEditor') $cat = 'Taxonomic Thesaurus Editor';
+					if($editorStatus === 'RegionOfInterest') {
+                        $cat = 'Region Of Interest';
+                    }
+					elseif($editorStatus === 'OccurrenceEditor') {
+                        $cat = 'Occurrence Identification Editor';
+                    }
+					elseif($editorStatus === 'TaxonomicThesaurusEditor') {
+                        $cat = 'Taxonomic Thesaurus Editor';
+                    }
 					?>
 					<div><b><u><?php echo $cat; ?></u></b></div>
 					<ul style="margin:10px;">
@@ -170,8 +175,12 @@ $editorArr = $utManager->getTaxonomyEditors();
 							<?php
 							foreach($uArr as $utid => $utArr){
 								echo '<li style="margin-left:15px;">'.$utArr['sciname'];
-								if($utArr['geoscope']) echo ' ('.$utArr['geoscope'].')';
-								if($utArr['notes']) echo ': '.$utArr['notes'];
+								if($utArr['geoscope']) {
+                                    echo ' (' . $utArr['geoscope'] . ')';
+                                }
+								if($utArr['notes']) {
+                                    echo ': ' . $utArr['notes'];
+                                }
 								?>
 								<a href="usertaxonomymanager.php?delutid=<?php echo $utid; ?>" onclick="return confirm('Are you sure you want to remove this taxonomy links for this user?');" title="Delete this user taxonomic relationship">
 									<img src="../images/drop.png" style="width:12px;" />
@@ -195,6 +204,6 @@ $editorArr = $utManager->getTaxonomyEditors();
 	else{
 		echo '<div style="color:red;">You are not authorized to access this page</div>';
 	}
-	include($SERVER_ROOT.'/footer.php');
+	include(__DIR__ . '/../footer.php');
 	?>
 </body>

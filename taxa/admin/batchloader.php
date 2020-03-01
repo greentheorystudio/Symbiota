@@ -306,7 +306,7 @@ if($isEditor){
 										<?php
 										$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 										foreach($taxonAuthArr as $k => $v){
-											echo '<option value="'.$k.'" '.($k==$taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+											echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 										}
 										?>
 									</select>

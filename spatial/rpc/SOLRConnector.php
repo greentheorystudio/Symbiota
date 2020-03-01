@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
 $pArr = array();
 $pArr['q'] = ($_REQUEST['q'] ?? '*:*');

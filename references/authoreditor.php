@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ReferenceManager.php');
+include_once(__DIR__ . '/../classes/ReferenceManager.php');
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $authId = array_key_exists('authid',$_REQUEST)?$_REQUEST['authid']:0;
@@ -34,18 +35,13 @@ if(!$addAuth){
 	else{
 		$authArr = $refManager->getAuthList();
 		foreach($authArr as $authName => $valueArr){
-			if($valueArr["authorName"]){
+			if($valueArr['authorName']){
 				$authExist = true;
 			}
 		}
 	}
 }
-
-header("Content-Type: text/html; charset=".$CHARSET);
 ?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Author Management</title>
@@ -56,13 +52,13 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=2"></script>
 	<script type="text/javascript">
-		var refid = <?php echo $refId; ?>;
+		let refid = <?php echo $refId; ?>;
 	</script>
 </head>
 <body <?php echo ($addAuth?'style="width:400px;"':'') ?>>
 	<?php
 	if(!$addAuth){
-		include($SERVER_ROOT."/header.php");
+		include(__DIR__ . '/../header.php');
         ?>
         <div class='navpath'>
             <a href='../index.php'>Home</a> &gt;&gt;
@@ -71,7 +67,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
         <?php
 	}
 	?>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<?php 
 		if($SYMB_UID){
@@ -128,7 +123,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 							echo '<div><ul>';
 							foreach($authArr as $authId => $recArr){
 								echo '<li>';
-								echo '<a href="authoreditor.php?authid='.$authId.'"><b>'.$recArr["authorName"].'</b></a>';
+								echo '<a href="authoreditor.php?authid='.$authId.'"><b>'.$recArr['authorName'].'</b></a>';
 								echo '</li>';
 							}
 							echo '</ul></div>';
@@ -140,7 +135,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				}
 				else{
 					?>
-					<div id="tabs" style="margin:0px;">
+					<div id="tabs" style="margin:0;">
 						<ul>
 							<li><a href="#authdetaildiv">Author Details</a></li>
 							<li><a href="#authlinksdiv">Publications</a></li>
@@ -181,10 +176,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 									echo '<div><ul>';
 									foreach($authPubArr as $refId => $recArr){
 										echo '<li>';
-										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr["title"].'</b></a>';
-										echo ($recArr["secondarytitle"]?', '.$recArr["secondarytitle"].'.':'');
-										echo ($recArr["shorttitle"]?', '.$recArr["shorttitle"].'.':'');
-										echo ($recArr["pubdate"]?$recArr["pubdate"].'.':'');
+										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr['title'].'</b></a>';
+										echo ($recArr['secondarytitle']?', '.$recArr['secondarytitle'].'.':'');
+										echo ($recArr['shorttitle']?', '.$recArr['shorttitle'].'.':'');
+										echo ($recArr['pubdate']?$recArr['pubdate'].'.':'');
 										echo '</li>';
 									}
 									echo '</ul></div>';
@@ -207,7 +202,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 										echo '</div>';
 									}
 									?>
-									<input name="formsubmit" type="submit" value="Delete Author" <?php if($authPubArr) echo 'DISABLED'; ?> />
+									<input name="formsubmit" type="submit" value="Delete Author" <?php echo ($authPubArr?'DISABLED':''); ?> />
 									<input name="authid" type="hidden" value="<?php echo $authId; ?>" />
 								</fieldset>
 							</form>
@@ -219,19 +214,17 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			</div>
 			<?php 
 		}
-		else{
-			if(!$SYMB_UID){
-				echo 'Please <a href="../profile/index.php?refurl=../references/authoreditor.php">login</a>';
-			}
-			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-			}
-		}
+		else if(!$SYMB_UID){
+            echo 'Please <a href="../profile/index.php?refurl=../references/authoreditor.php">login</a>';
+        }
+        else{
+            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
 		?>
 	</div>
 	<?php
 	if(!$addAuth){
-		include($SERVER_ROOT."/footer.php");
+		include(__DIR__ . '/../footer.php');
 	}
 	?>
 </body>
