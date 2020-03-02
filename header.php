@@ -1,9 +1,9 @@
 <table id="maintable" style="border-spacing: 0;">
     <tr>
         <td class="header">
-            <div style="clear:both;">
-                <div style="clear:both;">
-                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/defaultheader.jpg" />
+            <div style="background-image:url(<?php echo $CLIENT_ROOT; ?>/images/layout/background.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:150px;border-bottom:1px solid #333333;">
+                <div style="float:left;">
+                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/BioMNA.jpg" />
                 </div>
             </div>
             <div id="top_navbar">
@@ -47,50 +47,26 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
+                        <a>Search</a>
+                        <ul>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
+							</li>
+							<li>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
+							</li>
+						</ul>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Browse Images</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?" >Inventories</a>
-                        <!-- <ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" >Project 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2" >Project 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=3" >Project 3</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=4" >Project 4</a>
-							</li>
-						</ul> -->
-                    </li>
-                    <li>
-                        <a href="#" >Interactive Tools</a>
-                        <!-- <ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" >Dynamic Checklist 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" >Dynamic Checklist 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" >Dynamic Checklist 3</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" >Dynamic Checklist 4</a>
-							</li>
-						</ul> -->
+                        <a>Images</a>
+                        <ul>
+                            <li>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Browse Images</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>

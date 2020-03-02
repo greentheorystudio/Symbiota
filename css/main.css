@@ -1,7 +1,11 @@
-body{
+body {
+	margin: 0 auto 8px;
 	width: 80%;
-	min-width:950px;
-	margin-top:0;
+	min-width: 950px;
+	background-color: #598F90;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
 }
 
 #maintable{
@@ -16,7 +20,6 @@ body{
 
 td.header{
 	color:#FFFFFF;
-	background-color:#026B6E;
 	text-align:left;
 	padding: 0;
 }
@@ -100,17 +103,22 @@ div.menuitem a:hover {
 	color: 	#00008B;
 }
 
-#innertext{
-	min-height:400px;
+#innertext {
+	font-size: 12px;
+	background-color: #ffffff;
+	min-height: 300px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 }
 
-#innertext a{
-
+#innertext a {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #2C405E;
+	text-decoration: none;
 }
-#innertext a:hover{
-
+#innertext a:hover {
+	color: black;
+	text-decoration: underline;
 }
 
 div.navpath {
