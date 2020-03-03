@@ -429,9 +429,11 @@ class OccurrenceCollectionProfile {
 		$fileName .= $imgExt;
 
 		$fullUrl = '';
-		if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
-			$fullUrl = $urlBase . $fileName;
-		}
+		if(is_writable($targetPath)){
+            if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
+                $fullUrl = $urlBase . $fileName;
+            }
+        }
 
 		return $fullUrl;
 	}
