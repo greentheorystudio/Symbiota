@@ -34,7 +34,7 @@ elseif($collid){
 if($isEditor){
 	if($action === 'Save Edits'){
 		$statusStr = $collManager->submitCollEdits($_POST);
-		if($statusStr === true){
+		if($statusStr === 'Edits saved'){
 			header('Location: collprofiles.php?collid='.$collid);
 		}
 	}
