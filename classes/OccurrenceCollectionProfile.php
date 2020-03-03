@@ -191,12 +191,16 @@ class OccurrenceCollectionProfile {
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
-			if(strpos($rights, 'http') === 0){
-				$rightsUrl = $rights;
-				if($RIGHTS_TERMS && $rightsArr = array_keys($RIGHTS_TERMS, $rights)) {
-					$rights = $rightsArr;
-				}
-			}
+            if(strpos($rights, 'http') === 0){
+                $rightsUrl = $rights;
+                if($RIGHTS_TERMS) {
+                    foreach($RIGHTS_TERMS as $name => $url){
+                        if($url === $rights){
+                            $rights = $name;
+                        }
+                    }
+                }
+            }
 			if($rightsUrl) {
 				$outStr .= '<a href="' . $rightsUrl . '" target="_blank">';
 			}
