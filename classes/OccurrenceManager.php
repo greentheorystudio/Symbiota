@@ -302,7 +302,7 @@ class OccurrenceManager{
 				}
 			}
 			elseif(count($collectorArr) > 1){
-				$collStr = $collectorArr;
+				$collStr = current($collectorArr);
 				if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
 					$tempInnerArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collStr).'%")';
 				}
