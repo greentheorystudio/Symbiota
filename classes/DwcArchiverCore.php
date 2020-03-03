@@ -480,7 +480,7 @@ class DwcArchiverCore extends Manager{
 	{
 		if(!$fileNameSeed){
 			if(count($this->collArr) === 1){
-				$firstColl = current($this->collArr);
+				$firstColl = $this->collArr;
 				if($firstColl){
 					$fileNameSeed = $firstColl['instcode'];
 					if($firstColl['collcode']) {

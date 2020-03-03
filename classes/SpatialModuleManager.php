@@ -116,7 +116,7 @@ class SpatialModuleManager{
         $targetTidArr = array();
         $searchStr = '';
         if(is_array($searchTarget)){
-            if(is_numeric(current($searchTarget))){
+            if(is_numeric($searchTarget)){
                 $targetTidArr = $searchTarget;
             }
             else{

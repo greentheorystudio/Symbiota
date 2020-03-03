@@ -302,7 +302,7 @@ class OccurrenceManager{
 				}
 			}
 			elseif(count($collectorArr) > 1){
-				$collStr = current($collectorArr);
+				$collStr = $collectorArr;
 				if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
 					$tempInnerArr[] = '(o.recordedBy LIKE "%'.$this->cleanInStr($collStr).'%")';
 				}
@@ -1238,7 +1238,7 @@ class OccurrenceManager{
 		$targetTidArr = array();
 		$searchStr = '';
 		if(is_array($searchTarget)){
-			if(is_numeric(current($searchTarget))){
+			if(is_numeric($searchTarget)){
 				$targetTidArr = $searchTarget;
 			}
 			else{

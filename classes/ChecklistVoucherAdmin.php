@@ -805,7 +805,7 @@ class ChecklistVoucherAdmin {
 		$retStr = '';
 		if(isset($this->queryVariablesArr['collid'])){
 			$collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
-			$retStr .= current($collArr).'; ';
+			$retStr .= $collArr.'; ';
 		}
 		if(isset($this->queryVariablesArr['country'])) {
 			$retStr .= $this->queryVariablesArr['country'] . '; ';

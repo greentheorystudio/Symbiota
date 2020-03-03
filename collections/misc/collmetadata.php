@@ -70,7 +70,7 @@ if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GB
 		$publishIDIGBIO = true;
 	}
 }
-$collData = current($collManager->getCollectionMetadata());
+$collData = $collManager->getCollectionMetadata();
 $collManager->cleanOutArr($collData);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
