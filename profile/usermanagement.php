@@ -334,7 +334,7 @@ if($IS_ADMIN){
 					}
 					?>
 					<form name="addpermissions" action="usermanagement.php" method="post">
-						<fieldset style="margin-top:10px;color:#FFFFCC;padding:0 10px 10px 10px;">
+						<fieldset style="margin-top:10px;padding:0 10px 10px 10px;">
 							<legend style="font-weight:bold;">Assign New Permissions</legend>
 							<div style="margin:5px;">
 								<div style="float:right;margin:10px">
