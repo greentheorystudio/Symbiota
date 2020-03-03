@@ -186,7 +186,7 @@ class ProfileManager extends Manager{
 			$values .= ', email="'.$this->cleanInStr($person->getEmail()).'"';
 			$values .= ', url="'.$this->cleanInStr($person->getUrl()).'"';
 			$values .= ', biography="'.$this->cleanInStr($person->getBiography()).'"';
-			$values .= ', ispublic='.$this->cleanInStr($person->getIsPublic()).' ';
+			$values .= ', ispublic='.($this->cleanInStr($person->getIsPublic())?1:0).' ';
 			$sql = $fields. ' ' .$values. ' ' .$where;
 			//echo $sql;
 			$success = $editCon->query($sql);
