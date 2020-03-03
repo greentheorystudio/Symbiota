@@ -84,7 +84,7 @@ class DichoKeyManager{
         ksort($stmtArr);
         foreach($stmtArr as $p => $sArr){
             while(is_array($sArr) && count($sArr) === 1){
-                $taxon = current($sArr);
+                $taxon = $sArr;
                 $key = key($sArr);
                 if(array_key_exists($key,$stmtArr)){
                     $sArr = $stmtArr[$key];

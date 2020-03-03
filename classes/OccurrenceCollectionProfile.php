@@ -194,7 +194,7 @@ class OccurrenceCollectionProfile {
 			if(strpos($rights, 'http') === 0){
 				$rightsUrl = $rights;
 				if($RIGHTS_TERMS && $rightsArr = array_keys($RIGHTS_TERMS, $rights)) {
-					$rights = current($rightsArr);
+					$rights = $rightsArr;
 				}
 			}
 			if($rightsUrl) {
