@@ -1144,12 +1144,14 @@ class OccurrenceCollectionProfile {
 		return $this->errorStr;
 	}
 
-	public function cleanOutArr(&$arr): void
-	{
-		foreach($arr as $k => $v){
-			$arr[$k] = $this->cleanOutStr($v);
-		}
-	}
+    public function cleanOutArr($arr): void
+    {
+        if(is_array($arr)){
+            foreach($arr as $k => $v){
+                $arr[$k] = $this->cleanOutStr($v);
+            }
+        }
+    }
 
 	private function cleanOutStr($str){
 		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
