@@ -305,7 +305,7 @@ $indTermUrl = 'individual.php';
 							<?php 
 							echo '<div style="float:left;font-weight:bold;font-size:120%;">'.$title.'</div>'; 
 							$sourceArrFull = $glosManager->getTaxonSources($tid);
-							$sourceArr = $sourceArrFull;
+                            $sourceArr = current($sourceArrFull);
 							if($sourceArr){
 								?>
 								<div style="float:left;margin-left:5px;">

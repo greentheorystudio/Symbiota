@@ -49,7 +49,8 @@ if($isEditor){
 		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
 	}
 }
-$collMetadata = $permManager->getCollectionMetadata($collId);
+$collMetadataFull = $permManager->getCollectionMetadata($collId);
+$collMetadata = $collMetadataFull[$collId];
 $isGenObs = 0;
 if($collMetadata['colltype'] === 'General Observations') {
     $isGenObs = 1;

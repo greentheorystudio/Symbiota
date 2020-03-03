@@ -116,8 +116,8 @@ class SpatialModuleManager{
         $targetTidArr = array();
         $searchStr = '';
         if(is_array($searchTarget)){
-            if(is_numeric($searchTarget)){
-                $targetTidArr = $searchTarget;
+            if(is_numeric(current($searchTarget))){
+                $targetTidArr[] = $searchTarget;
             }
             else{
                 $searchStr = implode('","',$searchTarget);
@@ -193,7 +193,7 @@ class SpatialModuleManager{
                     <tr>
                         <td>
                             <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'':'display:none;') ?>" />
+                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
                             </a>
                         </td>
                         <td>
