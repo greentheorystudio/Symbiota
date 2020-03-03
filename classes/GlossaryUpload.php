@@ -44,7 +44,9 @@ class GlossaryUpload{
 		}
 		elseif(array_key_exists('uploadfile',$_FILES)){
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+			if(is_writable($this->uploadTargetPath)){
+                move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+            }
 		}
 		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
 			$zip = new ZipArchive;

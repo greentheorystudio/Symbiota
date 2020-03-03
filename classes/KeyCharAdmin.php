@@ -299,7 +299,9 @@ class KeyCharAdmin{
 				
 				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$IMAGE_ROOT_URL);
 				$imagePath = $IMAGE_ROOT_PATH.str_replace('.','_temp.',$fileName);
-				move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
+				if(is_writable($IMAGE_ROOT_PATH)){
+                    move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
+                }
 				if(file_exists($imagePath)){
 					if($this->createNewCsImage($imagePath)){
 						$notes = $this->cleanInStr($formArr['notes']);
