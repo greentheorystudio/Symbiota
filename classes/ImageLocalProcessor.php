@@ -1224,7 +1224,7 @@ class ImageLocalProcessor {
 			if(true){
 				$fileName = substr($filePath,strrpos($filePath,'/')).'.orig_'.time();
 				if(!file_exists($this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !is_dir($concurrentDirectory)) {
-					throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+					throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 				}
 				if(!rename($filePath,$this->targetPathBase.$this->targetPathFrag.'orig_skeletal'.$fileName)){
 					$this->logOrEcho('ERROR: unable to move (' .$filePath. ') ',1);

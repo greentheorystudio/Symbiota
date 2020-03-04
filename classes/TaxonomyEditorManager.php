@@ -537,7 +537,7 @@ class TaxonomyEditorManager{
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.$this->cleanInStr($dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.$this->cleanInStr($dataArr['author']).'"':'NULL').','.
-			($dataArr['rankid']?$dataArr['rankid']:'NULL').','.
+			($dataArr['rankid']?:'NULL').','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
 			$this->cleanInStr($dataArr['unitname1']).'",'.
 			($dataArr['unitind2']?'"'.$this->cleanInStr($dataArr['unitind2']).'"':'NULL').','.

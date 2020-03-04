@@ -1238,12 +1238,7 @@ class OccurrenceManager{
 		$targetTidArr = array();
 		$searchStr = '';
 		if(is_array($searchTarget)){
-			if(is_numeric($searchTarget)){
-				$targetTidArr = $searchTarget;
-			}
-			else{
-				$searchStr = implode('","',$searchTarget);
-			}
+            $searchStr = implode('","',$searchTarget);
 		}
 		elseif(is_numeric($searchTarget)){
             $targetTidArr[] = $searchTarget;

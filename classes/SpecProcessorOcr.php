@@ -882,7 +882,7 @@ class SpecProcessorOcr{
 		$retStr = $this->encodeString($inStr);
 
 		$replacements = array("/\." => 'A.', "/-\\" => 'A', "\X/" => 'W', "\Y/" => 'W', "`\‘i/" => 'W', chr(96) => "'", chr(145) => "'", chr(146) => "'",
-			'�' => "'", '�' => '"', '�' => '"', '�' => '"', chr(147) => '"', chr(148) => '"', chr(152) => '"', chr(239) => '�');
+			'�' => "'", chr(147) => '"', chr(148) => '"', chr(152) => '"', chr(239) => '�');
 		$retStr = str_replace(array_keys($replacements), $replacements, $retStr);
 
 		$false_num_class = "[OSZl|I!\d]";

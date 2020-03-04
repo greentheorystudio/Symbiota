@@ -82,7 +82,7 @@ if($coorArr && count($coorArr) === 4){
                     }
 					$outStr .= '<br/>'.$occArr['cnt'].' matching records<br/>';
 					$outStr .= $occArr['locality'].'<br/>';
-					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?$occArr['err']:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
+					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
 					$outStr .= '</div>';
 					?>
 					const m<?php echo $id; ?> = new google.maps.Marker({

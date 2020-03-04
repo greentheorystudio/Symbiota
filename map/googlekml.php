@@ -45,4 +45,4 @@ if($kmlFields){
 $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 
 $kmlFilePath = $sharedMapManager->writeKMLFile($coordArr);
-?>
+

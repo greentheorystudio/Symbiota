@@ -184,10 +184,8 @@ if(is_numeric($errRad)){
 				}
 				catch(myErr){
 				}
-				finally{
-		            self.close();
-	    	        return false;
-				}
+                self.close();
+                return false;
 	        }
 	    </script>
 	</head> 

@@ -152,7 +152,7 @@ class ChecklistLoaderManager {
 	public function resolveProblemTaxa(): void
 	{
 		if($this->problemTaxa){
-			echo '<table class="styledtable" style="font-family:Arial;font-size:12px;">';
+			echo '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">';
 			echo '<tr><th>Cnt</th><th>Name</th><th>Actions</th></tr>';
 			$cnt = 1;
 			foreach($this->problemTaxa as $nameStr){

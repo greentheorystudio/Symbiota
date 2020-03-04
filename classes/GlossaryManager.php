@@ -1014,10 +1014,10 @@ class GlossaryManager{
 	{
  		$folderName = date('Y-m');
 		if(!file_exists($this->imageRootPath . 'glossimg') && !mkdir($concurrentDirectory = $this->imageRootPath . 'glossimg', 0775) && !is_dir($concurrentDirectory)) {
-			throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
 		if(!file_exists($this->imageRootPath . 'glossimg/' . $folderName) && !mkdir($concurrentDirectory = $this->imageRootPath . 'glossimg/' . $folderName, 0775) && !is_dir($concurrentDirectory)) {
-			throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
 		$path = $this->imageRootPath. 'glossimg/' .$folderName. '/';
 		$url = $this->imageRootUrl. 'glossimg/' .$folderName. '/';
@@ -1068,7 +1068,7 @@ class GlossaryManager{
 			}
 			$sql = 'SELECT DISTINCT g.glossid, g.term, g.definition, g.language, g.source, g.translator, g.author, gt.glossgrpid '.
 				'FROM glossary g LEFT JOIN glossarytermlink gt ON gt.glossid = g.glossid '.
-				'WHERE (g.`language` IN("'.implode('","',$translations).'")) AND (g.`language` != "'.$language.'") '.
+				'WHERE (g.`language` IN("'.implode((array)'","',$translations).'")) AND (g.`language` != "'.$language.'") '.
 				'AND (g.glossid IN('.implode(',',$glossIdArr).') OR gt.glossgrpid IN('.implode(',',$glossIdArr).'))';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);

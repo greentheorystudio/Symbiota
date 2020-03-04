@@ -540,7 +540,7 @@ class OccurrenceIndividualManager extends Manager{
 			return false;
 		}
 		$sql = 'INSERT INTO fmvouchers(occid,clid,tid,notes,editornotes) '.
-			'VALUES('.$this->occid.','.$postArr['vclid'].','.($postArr['vtid']?$postArr['vtid']:'NULL').','.
+			'VALUES('.$this->occid.','.$postArr['vclid'].','.($postArr['vtid']?:'NULL').','.
 			($postArr['vnotes']?'"'.$this->cleanInStr($postArr['vnotes']).'"':'NULL').','.
 			($postArr['veditnotes']?'"'.$this->cleanInStr($postArr['veditnotes']).'"':'NULL').')';
 		if(!$this->conn->query($sql)){

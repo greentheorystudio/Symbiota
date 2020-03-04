@@ -1066,7 +1066,7 @@ class OccurrenceEditorManager {
 				if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occid.')')){
 					$status .= '(WARNING: Symbiota GUID mapping failed) ';
 				}
-				if(isset($occArr['ometid']) && isset($occArr['exsnumber'])){
+				if(isset($occArr['ometid'], $occArr['exsnumber'])){
 					$ometid = $this->cleanInStr($occArr['ometid']);
 					$exsNumber = $this->cleanInStr($occArr['exsnumber']);
 					if($ometid && $exsNumber){

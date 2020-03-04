@@ -19,6 +19,6 @@ cite {border-bottom:1px dashed blue}
 acronym {border-bottom:1px dotted #CCC; cursor:help}
 abbr {border-bottom:1px dashed #CCC; cursor:help}
 
-img:-moz-broken {-moz-force-broken-image-icon:1; width:24px; height:24px}
+img:-moz-broken {width:24px; height:24px}
 font[face=mceinline] {font-family:inherit !important}
 *[contentEditable]:focus {outline:0}

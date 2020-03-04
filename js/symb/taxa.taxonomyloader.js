@@ -133,7 +133,7 @@ function parseName(f){
 }
 
 function setParent(f){
-	const rankId = f.rankid.value;
+	const rankId = Number(f.rankid.value);
 	const unitName1 = f.unitname1.value;
 	const unitName2 = f.unitname2.value;
 	let parentName = "";

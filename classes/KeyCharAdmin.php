@@ -211,7 +211,7 @@ class KeyCharAdmin{
 				($illustrationUrl?'"'.$illustrationUrl.'"':'NULL').','.
 				($description?'"'.$description.'"':'NULL').','.
 				($notes?'"'.$notes.'"':'NULL').','.
-				($sortSequence?$sortSequence:100).',"'.$un.'") ';
+				($sortSequence?:100).',"'.$un.'") ';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				trigger_error('ERROR: Creation of new character failed: '.$this->conn->error);

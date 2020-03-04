@@ -20,7 +20,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	{
 		$localFolder = $this->collMetadataArr['institutioncode'].($this->collMetadataArr['collectioncode']?$this->collMetadataArr['collectioncode'].'_':'').time();
 		if (!mkdir($concurrentDirectory = $this->uploadTargetPath . $localFolder) && !is_dir($concurrentDirectory)) {
-			throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
 		$fullPath = $this->uploadTargetPath.$localFolder.'/dwca.zip';
 		

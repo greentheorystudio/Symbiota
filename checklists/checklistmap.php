@@ -70,7 +70,7 @@ $coordArr = $clManager->getCoordinates(0);
 				var polyPointArr = [];
 				<?php
 				$footPrintWkt = $clMeta['footprintwkt'];
-				if(substr($footPrintWkt, 0, 7) == 'POLYGON'){
+				if(strpos($footPrintWkt, 'POLYGON') === 0){
 					$footPrintWkt = substr($footPrintWkt, 10, -2);
 					$pointArr = explode(',', $footPrintWkt);
 					foreach($pointArr as $pointStr){

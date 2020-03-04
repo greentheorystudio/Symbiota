@@ -195,7 +195,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 						var markerIcon = {path:google.maps.SymbolPath.CIRCLE,fillColor:"#<?php echo $iconColor; ?>",fillOpacity:1,scale:7,strokeColor:"#000000",strokeWeight:1};
 						<?php
 					}
-					echo 'var m'.$markerCnt.' = getMarker('.$spArr['latLngStr'].',"'.addslashes($displayStr).'",markerIcon,"'.$type.'","'.($spArr['tidinterpreted']?$spArr['tidinterpreted']:0).'",'.$occId.','.($clid?$clid:'0').');',"\n";
+					echo 'var m'.$markerCnt.' = getMarker('.$spArr['latLngStr'].',"'.addslashes($displayStr).'",markerIcon,"'.$type.'","'.($spArr['tidinterpreted']?:0).'",'.$occId.','.($clid?:'0').');',"\n";
 					echo 'oms.addMarker(m'.$markerCnt.');',"\n";
 					$markerCnt++;
 				}
@@ -208,7 +208,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 					maxZoom: 13,
 					gridSize: <?php echo $gridSize; ?>,
 					minimumClusterSize: <?php echo $minClusterSize; ?>
-				}
+				};
 				
 				//Initialize clusterer with options
 				var markerCluster<?php echo $spCnt; ?> = new MarkerClusterer(map, markers, mcOptions<?php echo $spCnt; ?>);

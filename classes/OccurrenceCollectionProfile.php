@@ -245,7 +245,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function submitCollEdits($postArr){
+	public function submitCollEdits($postArr): string
+    {
         $status = 'Edits saved';
 		if($this->collid){
 			$instCode = $this->cleanInStr($postArr['institutioncode']);
