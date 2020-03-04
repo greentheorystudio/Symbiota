@@ -659,7 +659,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 						if($occArr['verbatimattributes']){
 							?>
 							<div style="clear:both;">
-								<b>Description:</b>
+								<b>Verbatim Attributes:</b>
 								<?php echo $occArr['verbatimattributes']; ?>
 							</div>
 							<?php

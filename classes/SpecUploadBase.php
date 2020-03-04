@@ -218,7 +218,7 @@ class SpecUploadBase extends SpecUpload{
 				'location'=>'locality','field:localitydescription'=>'locality','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude',
 				'elevationmeters'=>'minimumelevationinmeters','field:associatedspecies'=>'associatedtaxa',
 				'specimennotes'=>'occurrenceremarks','notes'=>'occurrenceremarks','generalnotes'=>'occurrenceremarks',
-				'plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
+				'description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
 				'subject_references'=>'tempfield01','subject_recordid'=>'tempfield02');
 		if($mode === 'ident'){
 			$prefix = 'ID-';
