@@ -819,12 +819,10 @@ class GlossaryManager{
 	{
 		$imgFile = basename($_FILES['imgfile']['name']);
 		$fileName = $this->cleanFileName($imgFile);
-		if(is_writable($this->targetPath)){
-            if(move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath.$fileName.$this->imgExt)){
-                $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
-                $this->imgName = $fileName;
-                return true;
-            }
+		if(is_writable($this->targetPath) && move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+            $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
+            $this->imgName = $fileName;
+            return true;
         }
 		return false;
 	}

@@ -137,7 +137,7 @@ class ChecklistManager {
 	public function getTaxonAuthorityList(): array
 	{
     	$taxonAuthList = array();
-		$sql = "SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)";
+		$sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)';
  		$rs = $this->conn->query($sql);
 		while ($row = $rs->fetch_object()){
 			$taxonAuthList[$row->taxauthid] = $row->name;

@@ -3927,13 +3927,10 @@ $.widget( "ui.resizable", $.ui.mouse, {
 	_setOption: function( key, value ) {
 		this._super( key, value );
 
-		switch ( key ) {
-		case "handles":
+		if (key === "handles") {
 			this._removeHandles();
 			this._setupHandles();
-			break;
-		default:
-			break;
+		} else {
 		}
 	},
 

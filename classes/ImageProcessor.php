@@ -488,7 +488,7 @@ class ImageProcessor {
 								break;
 							}
 
-							if($fileExt === 'jpg' && in_array($fnExt,$highResList)) {
+							if($fileExt === 'jpg' && in_array($fnExt, $highResList, true)) {
 								$this->conn->query('DELETE FROM images WHERE imgid = '.$imgId);
 							}
 						}

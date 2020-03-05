@@ -552,7 +552,7 @@ include(__DIR__ . '/../../header.php');
                                 <option value="">--------------------------------------</option>
                                 <?php
                                 foreach($fullCollList as $collid => $collArr){
-                                    if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS["CollAdmin"] && in_array($collid, $USER_RIGHTS['CollAdmin'], true)))){
+                                    if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS['CollAdmin'] && in_array($collid, $USER_RIGHTS['CollAdmin'], true)))){
                                         echo '<option value="'.$collid.'"'.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
                                     }
                                 }

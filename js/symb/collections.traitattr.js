@@ -35,17 +35,19 @@ $(document).ready(function() {
 });
 
 function traitChanged(traitID){
+	const el_id = 'stateid-' + traitID;
+	const inputElement = document.getElementById(el_id);
 	$('input[name="stateid-'+traitID+'[]"]').each(function(){
-		if(this.checked == true){
+		if(inputElement.checked === true){
 			$("div.child-"+this.value).show();
 		}
 		else{
 			$("div.child-"+this.value).hide();
 			$("input:checkbox.child-"+this.value).each(function(){
-				this.checked = false;
+				inputElement.checked = false;
 			});
 			$("input:radio.child-"+this.value).each(function(){
-				this.checked = false;
+				inputElement.checked = false;
 			});
 		}
 	});

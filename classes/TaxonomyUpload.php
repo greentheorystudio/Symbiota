@@ -652,7 +652,9 @@ class TaxonomyUpload{
 	private function transferVernaculars($secondRound = 0): void
 	{
 		$sql = 'SELECT tid, vernacular, vernlang, source FROM uploadtaxa WHERE tid IS NOT NULL AND Vernacular IS NOT NULL ';
-		if($secondRound) $sql .= 'AND tidaccepted IS NOT NULL';
+		if($secondRound) {
+            $sql .= 'AND tidaccepted IS NOT NULL';
+        }
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()){
 			$vernArr = array();

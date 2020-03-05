@@ -918,7 +918,9 @@ class TaxonomyHarvester extends Manager{
 			}
 			if($taxonArr['rankid'] > 140){
 				$familyStr = $this->defaultFamily;
-				if(isset($taxonArr['family']) && $taxonArr['family']) $familyStr = $taxonArr['family'];
+				if(isset($taxonArr['family']) && $taxonArr['family']) {
+                    $familyStr = $taxonArr['family'];
+                }
 				if($familyStr){
 					$sqlFam = 'SELECT tid FROM taxa WHERE (sciname = "'.$this->cleanInStr($this->defaultFamily).'") AND (rankid = 140)';
 					//echo $sqlFam;

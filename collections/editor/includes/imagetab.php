@@ -313,7 +313,7 @@ $specImgArr = $occManager->getImageMap();
 										</div>
 										<div>
 											<b>Web URL: </b><br/>
-											<input name="url" type="text" value="<?php echo $imgArr["url"]; ?>" style="width:95%;" />
+											<input name="url" type="text" value="<?php echo $imgArr['url']; ?>" style="width:95%;" />
 											<?php if(stripos($imgArr['url'],$IMAGE_ROOT_URL) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameweburl" value="1" />

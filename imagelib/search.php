@@ -469,7 +469,7 @@ if($action && $action === 'Load Images') {
 							foreach($taxaList as $value){
 								$onChange = '"'.$value.'","genlist",starr,1';
 								$famChange = '"'.$value.'"';
-								echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
+								echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange. ');changeImagePage(' .$onChange."); return false;'>".strtoupper($value). '</a></div>';
 							}
 						}
 						?>

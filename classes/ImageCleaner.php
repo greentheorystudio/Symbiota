@@ -82,7 +82,7 @@ class ImageCleaner extends Manager{
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
 				}
-				elseif($testR->url == 'empty' || (strpos($testR->url, 'processing') === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
+				elseif($testR->url === 'empty' || (strpos($testR->url, 'processing') === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
 					$tagSql = 'UPDATE images SET url = "processing '.date('Y-m-d').'" '.
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);

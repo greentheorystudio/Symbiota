@@ -117,9 +117,9 @@ if($coorArr && count($coorArr) === 4){
 					opener.document.getElementById("decimallatitude").value = lat;
 					opener.document.getElementById("decimallongitude").value = lng;
 					opener.document.getElementById("coordinateuncertaintyinmeters").value = err;
-					opener.document.getElementById("decimallatitude").onchange();
-					opener.document.getElementById("decimallongitude").onchange();
-					opener.document.getElementById("coordinateuncertaintyinmeters").onchange();
+					opener.document.getElementById("decimallatitude").onchange(undefined);
+					opener.document.getElementById("decimallongitude").onchange(undefined);
+					opener.document.getElementById("coordinateuncertaintyinmeters").onchange(undefined);
 				}
 				catch(myErr){
 				}

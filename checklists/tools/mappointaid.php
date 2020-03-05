@@ -2,13 +2,13 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
-$formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
-$latName = array_key_exists("latname",$_REQUEST)?$_REQUEST["latname"]:"";
-$longName = array_key_exists("longname",$_REQUEST)?$_REQUEST["longname"]:"";
-$latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:0;
-$lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:0;
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
-if($latDef == 0 && $lngDef == 0){
+$formName = array_key_exists('formname',$_REQUEST)?$_REQUEST['formname']: '';
+$latName = array_key_exists('latname',$_REQUEST)?$_REQUEST['latname']: '';
+$longName = array_key_exists('longname',$_REQUEST)?$_REQUEST['longname']: '';
+$latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:0;
+$lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:0;
+$zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
+if($latDef === 0 && $lngDef === 0){
 	$latDef = '';
 	$lngDef = '';
 }
@@ -19,7 +19,7 @@ if(is_numeric($latDef) && is_numeric($lngDef)){
 	$lng = $lngDef;
 }
 elseif($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+	$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 	$lat = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 	$lng = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 }
@@ -57,11 +57,10 @@ else{
 		    	map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
 				if(latValue && lngValue){
 					var mLatLng = new google.maps.LatLng(latValue,lngValue);
-					var marker = new google.maps.Marker({
+                    currentMarker = new google.maps.Marker({
 						position: mLatLng,
 						map: map
 					});
-					currentMarker = marker;
 				}
 
 				google.maps.event.addListener(map, 'click', function(event) {
@@ -73,16 +72,15 @@ else{
 
 	        function placeMarker() {
 	    		if(currentMarker) currentMarker.setMap();
-	            if(mapZoom == map.getZoom()){
-	                var marker = new google.maps.Marker({
+	            if(mapZoom === map.getZoom()){
+                    currentMarker = new google.maps.Marker({
 	                    position: startLocation,
 	                    map: map
 	                });
-	    			currentMarker = marker;
 
 	    	        var latValue = startLocation.lat();
 	    	        var lonValue = startLocation.lng();
-					latValue = latValue.toFixed(5);;
+					latValue = latValue.toFixed(5);
 					lonValue = lonValue.toFixed(5);
 					document.getElementById("latbox").value = latValue;
 					document.getElementById("lngbox").value = lonValue;

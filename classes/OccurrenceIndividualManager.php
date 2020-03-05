@@ -351,7 +351,9 @@ class OccurrenceIndividualManager extends Manager{
 	{
 		global $ADMIN_EMAIL, $CLIENT_ROOT, $DEFAULT_TITLE;
 		$status = true;
-		if(!is_numeric($repComId)) return false;
+		if(!is_numeric($repComId)) {
+            return false;
+        }
 		if(isset($ADMIN_EMAIL)){
 			if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
 				$this->errorMessage = 'ERROR changing comment status to needing review, Err msg: '.$this->conn->error;

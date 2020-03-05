@@ -1146,7 +1146,9 @@ class OccurrenceEditorManager {
 				while($r = $rs->fetch_assoc()){
 					$detId = $r['detid'];
 					foreach($r as $k => $v){
-						if($v) $detArr[$detId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+						if($v) {
+                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                        }
 					}
 					$detObj = json_encode($detArr[$detId]);
 					$sqlArchive = 'UPDATE guidoccurdeterminations '.

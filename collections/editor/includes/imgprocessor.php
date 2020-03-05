@@ -37,7 +37,7 @@ $(function() {
 				$iUrl = $iArr['web'];
 				$imgId = $iArr['imgid'];
 				?>
-				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:<?php echo ($imgCnt==1?'block':'none'); ?>;">
+				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:<?php echo ($imgCnt === 1?'block':'none'); ?>;">
 					<div>
 						<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo $iUrl; ?>" style="width:400px;height:400px" />
 					</div>

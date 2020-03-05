@@ -1031,7 +1031,7 @@ class ImageLocalProcessor {
 								}
 							}
 							if(array_key_exists('ometid',$recMap) && $recMap['ometid']){
-								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber'])," #num");
+								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber']), ' #num');
 								$sql = 'SELECT omenid FROM omexsiccatinumbers '.
 									'WHERE ometid = ('.$recMap['ometid'].') AND (exsnumber = "'.$numStr.'")';
 								$rs = $this->conn->query($sql);

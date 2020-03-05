@@ -484,14 +484,14 @@ if($clArray['locality']){
 								<?php
                                 if($clValue){
                                     ?>
-									<div style='display:<?php echo ($showImages?"none":"block");?>' id="showvouchersdiv">
+									<div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showvouchersdiv">
 										<input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?>/>
                                         Notes &amp; Vouchers
 									</div>
 								    <?php
                                 }
                                 ?>
-								<div style='display:<?php echo ($showImages?"none":"block");?>' id="showauthorsdiv">
+								<div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showauthorsdiv">
 									<input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?>/>
                                     Taxon Authors
 								</div>

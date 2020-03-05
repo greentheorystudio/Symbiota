@@ -28,8 +28,8 @@ else if($collId){
         $isEditor = true;
     }
 }
-else{
-    if(array_key_exists('Taxonomy',$USER_RIGHTS)) $isEditor = true;
+else if(array_key_exists('Taxonomy',$USER_RIGHTS)) {
+	$isEditor = true;
 }
 
 $status = '';
