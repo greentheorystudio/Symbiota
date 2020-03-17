@@ -92,7 +92,7 @@ if($editorCode){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
 	<link type="text/css" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
-	<link type="text/css" href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" />
+	<link type="text/css" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
 	<script>
 		function toggle(target){
             const tDiv = document.getElementById(target);
