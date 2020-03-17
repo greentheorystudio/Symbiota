@@ -1,8 +1,10 @@
+<link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.min.css" type="text/css" >
 <link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/uw.css" type="text/css" >
 <link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/uw-ie.css" type="text/css">
 <link rel="stylesheet" type="text/css" href="<?php echo $CLIENT_ROOT; ?>/fonts/fonts.0.0.1.css">
 <link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/fonts/foundation-icons.css">
 <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 
 <!-- UW-Madison Top Header, Accessible -->

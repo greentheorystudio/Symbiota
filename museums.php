@@ -2,20 +2,11 @@
 include_once(__DIR__ . '/config/symbini.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 ?>
-
-<!-- Template begins -->
-<?php include($SERVER_ROOT.'/template-begins.php'); ?>
-
-<!-- Page-Specific Styles -->
-
-<!-- Page-Specific JavaScript -->
-
-<!-- Google Analytics -->
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 <title><?php echo $DEFAULT_TITLE; ?> Museums &amp; Collections</title>
 <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-<link href="css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+<link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 <script type="text/javascript">
 	<?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
 </script>

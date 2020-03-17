@@ -12,7 +12,7 @@ $target = array_key_exists("target",$_REQUEST)?trim($_REQUEST["target"]):"";
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+    <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
     <meta name='keywords' content='' />
     <script type="text/javascript">
