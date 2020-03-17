@@ -158,13 +158,13 @@
                         </a>
                         <ul aria-hidden="true" aria-label="News submenu" class="uw-child-menu">
                             <li>
-                                <a href="http://localhost:8001/about/">About</a>
+                                <a href="https://www.wisc.edu/about/">About</a>
                             </li>
                             <li>
-                                <a href="http://localhost:8001/contact-us/our-location/">Our Location</a>
+                                <a href="https://map.wisc.edu/">Our Location</a>
                             </li>
                             <li>
-                                <a href="http://localhost:8001/news/">News</a>
+                                <a href="https://news.wisc.edu/">News</a>
                             </li>
                         </ul>
                     </li>
