@@ -20,16 +20,20 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 		$taxaArr = $penArr['taxa'];
 		$letters = range('A', 'Z');
 
-		$objPHPExcel->getActiveSheet()->setTitle('Taxa');
+        try {
+            $objPHPExcel->getActiveSheet()->setTitle('Taxa');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
-		$columnCnt = 0;
+        $columnCnt = 0;
 		foreach($headerArr as $headerValue){
 			$colLet = $letters[$columnCnt%26].'1';
 			if($columnCnt > 26) {
 				$colLet .= $letters[floor($columnCnt / 26)];
 			}
-			$objPHPExcel->getActiveSheet()->setCellValue($colLet, $headerValue);
-			$columnCnt++;
+            try {
+                $objPHPExcel->getActiveSheet()->setCellValue($colLet, $headerValue);
+            } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
+            $columnCnt++;
 		}
 
 		$rowCnt = 2;
@@ -41,16 +45,22 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 					$colLet .= $letters[floor($columnCnt / 26)];
 				}
 				$cellValue = ($recArr[$headerKey] ?? '');
-				$objPHPExcel->getActiveSheet()->setCellValue($colLet, $cellValue);
-				$columnCnt++;
+                try {
+                    $objPHPExcel->getActiveSheet()->setCellValue($colLet, $cellValue);
+                } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
+                $columnCnt++;
 			}
 			$rowCnt++;
 		}
 
-		$objPHPExcel->createSheet(1)->setTitle('Materials');
-		$objPHPExcel->setActiveSheetIndex(1);
+        try {
+            $objPHPExcel->createSheet(1)->setTitle('Materials');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
+        try {
+            $objPHPExcel->setActiveSheetIndex(1);
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
-		$dwcaHandler = new DwcArchiverCore();
+        $dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
 		$dwcaHandler->setCharSetOut('ISO-8859-1');
 		$dwcaHandler->setSchemaType('pensoft');
@@ -66,8 +76,10 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 				if($columnCnt > 25) {
 					$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
 				}
-				$objPHPExcel->getActiveSheet()->setCellValue($colLet.'1', $headerValue);
-				$columnCnt++;
+                try {
+                    $objPHPExcel->getActiveSheet()->setCellValue($colLet . '1', $headerValue);
+                } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
+                $columnCnt++;
 			}
 			foreach($dwcArr as $cnt => $rowArr){
 				$rowCnt = $cnt+2;
@@ -77,17 +89,23 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 					if($columnCnt > 25) {
 						$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
 					}
-					$objPHPExcel->getActiveSheet()->setCellValue($colLet.$rowCnt, $cellValue);
-					$columnCnt++;
+                    try {
+                        $objPHPExcel->getActiveSheet()->setCellValue($colLet . $rowCnt, $cellValue);
+                    } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
+                    $columnCnt++;
 				}
 			}
 		}
 
-		$objPHPExcel->createSheet(2)->setTitle('ExternalLinks');
+        try {
+            $objPHPExcel->createSheet(2)->setTitle('ExternalLinks');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
-		$objPHPExcel->setActiveSheetIndex(0);
+        try {
+            $objPHPExcel->setActiveSheetIndex(0);
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
-		$file = $this->getExportFileName().'.xlsx';
+        $file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
 		header('Content-Disposition: attachment; filename='.basename($file));
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -95,6 +113,8 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 		header('Pragma: public');
 
 		$objWriter = new Xlsx($objPHPExcel);
-		$objWriter->save('php://output');
-	}
+        try {
+            $objWriter->save('php://output');
+        } catch (\PhpOffice\PhpSpreadsheet\Writer\Exception $e) {}
+    }
 }

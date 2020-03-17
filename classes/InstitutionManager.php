@@ -225,8 +225,7 @@ class InstitutionManager {
 	}
 	
  	private function cleanOutStr($str){
-		$newStr = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-		return $newStr;
+        return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 
 	private function cleanInStr($str){

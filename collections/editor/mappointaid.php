@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:0; 
-$lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:0; 
-$errRad = array_key_exists("errrad",$_REQUEST)?$_REQUEST["errrad"]:0;
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
-if($latDef == 0 && $lngDef == 0){
+$latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:0;
+$lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:0;
+$errRad = array_key_exists('errrad',$_REQUEST)?$_REQUEST['errrad']:0;
+$zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
+if($latDef === 0 && $lngDef === 0){
 	$latDef = '';
 	$lngDef = '';
 } 
@@ -17,7 +17,7 @@ if(is_numeric($latDef) && is_numeric($lngDef)){
 	$lng = $lngDef; 
 }
 elseif($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+	$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 	$lat = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 	$lng = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 }
@@ -37,7 +37,7 @@ if(is_numeric($errRad)){
 			var errCircle;
 		    
 			function initialize(){
-		    	var dmLatLng = new google.maps.LatLng(<?php echo $lat.",".$lng; ?>);
+		    	var dmLatLng = new google.maps.LatLng(<?php echo $lat. ',' .$lng; ?>);
 		    	var dmOptions = {
 					zoom: <?php echo $zoom; ?>,
 					center: dmLatLng,
@@ -65,7 +65,7 @@ if(is_numeric($errRad)){
 				<?php
 				if(is_numeric($latDef) && is_numeric($lngDef)){
 					?>
-					var mLatLng = new google.maps.LatLng(<?php echo $latDef.",".$lngDef; ?>);
+					var mLatLng = new google.maps.LatLng(<?php echo $latDef. ',' .$lngDef; ?>);
 					var marker = new google.maps.Marker({
 						position: mLatLng,
 						map: map
@@ -184,10 +184,8 @@ if(is_numeric($errRad)){
 				}
 				catch(myErr){
 				}
-				finally{
-		            self.close();
-	    	        return false;
-				}
+                self.close();
+                return false;
 	        }
 	    </script>
 	</head> 

@@ -34,7 +34,7 @@ if(array_key_exists('CollEditor',$USER_RIGHTS)) {
 $isEditor = 0; 
 if($SYMB_UID){
 	if(!$IS_ADMIN && count($collRights) === 1){
-		$collid = current($collRights);
+        $collid = current($collRights);
 	}
 	elseif($selectAll){
 		$collid = 'all';

@@ -102,7 +102,7 @@ if(!$clid){
 			</div>
 			<div>
 				<b>Authors</b><br/>
-				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray["authors"]:''); ?>" />
+				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray['authors']:''); ?>" />
 			</div>
 			<?php
 			if(isset($USER_RIGHTS['RareSppAdmin']) || $IS_ADMIN){

@@ -177,7 +177,7 @@ class PermissionsManager{
 			$rs = $this->conn->query($sql);
 			if(!$rs->num_rows){
 				$sql1 = 'INSERT INTO userroles(uid,role,tablepk,secondaryVariable,uidassignedby) '.
-					'VALUES('.$uid.',"'.$role.'",'.($tablePk?$tablePk:'NULL').','.
+					'VALUES('.$uid.',"'.$role.'",'.($tablePk?:'NULL').','.
 					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$SYMB_UID.')';
 				if(!$this->conn->query($sql1)){
 					$statusStr = 'ERROR adding user permission: '.$this->conn->error;

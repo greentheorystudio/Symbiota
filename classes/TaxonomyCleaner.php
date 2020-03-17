@@ -435,9 +435,6 @@ class TaxonomyCleaner extends Manager{
 		if($rs = $this->conn->query($sql)){
 			while($accArr = $rs->fetch_assoc()){
 				$externalTaxonObj = array();
-				if($verSource === 'col') {
-					//$externalTaxonObj = $this->getTaxonObjSpecies2000($accArr['sciname']);
-				}
 				if($externalTaxonObj){
 					$this->verifyTaxonObj($externalTaxonObj,$accArr,$accArr['tid']);
 				}
@@ -453,7 +450,7 @@ class TaxonomyCleaner extends Manager{
 		}
 		$this->logOrEcho('Finished accepted taxa verification');
 
-		$this->logOrEcho("Starting remaining taxa verification");
+		$this->logOrEcho('Starting remaining taxa verification');
 		$sql = 'SELECT t.sciname, t.tid, t.author, ts.tidaccepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'WHERE (ts.taxauthid = '.$this->taxAuthId.') '.
 			'AND (t.verificationStatus IS NULL OR t.verificationStatus = 0 OR t.verificationStatus = 2 OR t.verificationStatus = 3)';

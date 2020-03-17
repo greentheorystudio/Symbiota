@@ -102,7 +102,7 @@ class KeyMassUpdate extends KeyManager{
 		}
 		
 		$this->setStates();
-		$this->headerStr = '<tr><th/>';
+		$this->headerStr = '<tr>';
  		foreach($this->stateArr as $cs => $csName){
  			$this->headerStr .= '<th>'.str_replace(' ', '<br/>',$csName).'</th>';
  		}

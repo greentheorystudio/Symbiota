@@ -24,7 +24,7 @@ $(function() {
 			<div style="float:right;padding:0 3px;margin:0 3px;"><input id="imgresmed" name="resradio"  type="radio" checked onchange="changeImgRes('med')" />Med Res.</div>
 			<?php
 			reset($imgArr);
-			$imgUrl = current($imgArr); 
+            $imgUrl = current($imgArr);
 			if(strpos($imgUrl['web'],'bisque.cyverse')){
 				echo '<div style="float:right;padding:0 3px;margin:2px 20px 0 0;">Rotate: <a href="#" onclick="rotateiPlantImage(-90)">&nbsp;L&nbsp;</a> &lt;&gt; <a href="#" onclick="rotateiPlantImage(90)">&nbsp;R&nbsp;</a></div>';
 			}
@@ -37,7 +37,7 @@ $(function() {
 				$iUrl = $iArr['web'];
 				$imgId = $iArr['imgid'];
 				?>
-				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:<?php echo ($imgCnt==1?'block':'none'); ?>;">
+				<div id="labeldiv-<?php echo $imgCnt; ?>" style="display:<?php echo ($imgCnt === 1?'block':'none'); ?>;">
 					<div>
 						<img id="activeimg-<?php echo $imgCnt; ?>" src="<?php echo $iUrl; ?>" style="width:400px;height:400px" />
 					</div>

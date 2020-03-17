@@ -218,7 +218,7 @@ class SpecUploadBase extends SpecUpload{
 				'location'=>'locality','field:localitydescription'=>'locality','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude',
 				'elevationmeters'=>'minimumelevationinmeters','field:associatedspecies'=>'associatedtaxa',
 				'specimennotes'=>'occurrenceremarks','notes'=>'occurrenceremarks','generalnotes'=>'occurrenceremarks',
-				'plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
+				'description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
 				'subject_references'=>'tempfield01','subject_recordid'=>'tempfield02');
 		if($mode === 'ident'){
 			$prefix = 'ID-';
@@ -252,7 +252,9 @@ class SpecUploadBase extends SpecUpload{
 		sort($symbFields);
 		$autoMapArr = array();
 		foreach($sourceArr as $fieldName){
-			if($fieldName === 'coreid') continue;
+			if($fieldName === 'coreid') {
+                continue;
+            }
 			$diplayFieldName = $fieldName;
 			$fieldName = strtolower(trim($fieldName));
 			if($this->uploadType === $this->NFNUPLOAD && ($fieldName === 'subject_recordid' || $fieldName === 'subject_references')){
@@ -1509,7 +1511,7 @@ class SpecUploadBase extends SpecUpload{
 		    }
 		    curl_setopt($handle, CURLOPT_HEADER, false);
 		    curl_setopt($handle, CURLOPT_FAILONERROR, true);
-		    curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15") ); // request as if Firefox
+		    curl_setopt($handle, CURLOPT_HTTPHEADER, Array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15') ); // request as if Firefox
 		    curl_setopt($handle, CURLOPT_NOBODY, true);
 		    curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
 		    $exists = curl_exec($handle);

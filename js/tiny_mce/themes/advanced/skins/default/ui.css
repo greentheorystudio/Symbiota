@@ -40,7 +40,8 @@
 .defaultSkin .mceButtonDisabled .mceIcon {opacity:0.3; -ms-filter:'alpha(opacity=30)'; filter:alpha(opacity=30)}
 .defaultSkin .mceButtonLabeled {width:auto}
 .defaultSkin .mceButtonLabeled span.mceIcon {float:left}
-.defaultSkin span.mceButtonLabel {display:block; font-size:10px; padding:4px 6px 0 22px; font-family:Tahoma,Verdana,Arial,Helvetica}
+.defaultSkin span.mceButtonLabel {display:block; font-size:10px; padding:4px 6px 0 22px;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif}
 .defaultSkin .mceButtonDisabled .mceButtonLabel {color:#888}
 
 /* Separator */
@@ -48,7 +49,8 @@
 
 /* ListBox */
 .defaultSkin .mceListBox, .defaultSkin .mceListBox a {display:block}
-.defaultSkin .mceListBox .mceText {padding-left:4px; width:70px; text-align:left; border:1px solid #CCC; border-right:0; background:#FFF; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; height:20px; line-height:20px; overflow:hidden}
+.defaultSkin .mceListBox .mceText {padding-left:4px; width:70px; text-align:left; border:1px solid #CCC; border-right:0; background:#FFF;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; font-size:11px; height:20px; line-height:20px; overflow:hidden}
 .defaultSkin .mceListBox .mceOpen {width:9px; height:20px; background:url(../../img/icons.gif) -741px 0; margin-right:2px; border:1px solid #CCC;}
 .defaultSkin table.mceListBoxEnabled:hover .mceText, .defaultSkin .mceListBoxHover .mceText, .defaultSkin .mceListBoxSelected .mceText {border:1px solid #A2ABC0; border-right:0; background:#FFF}
 .defaultSkin table.mceListBoxEnabled:hover .mceOpen, .defaultSkin .mceListBoxHover .mceOpen, .defaultSkin .mceListBoxSelected .mceOpen {background-color:#FFF; border:1px solid #A2ABC0}
@@ -76,7 +78,8 @@
 .defaultSkin .mceColorSplitMenu td {padding:2px}
 .defaultSkin .mceColorSplitMenu a {display:block; width:9px; height:9px; overflow:hidden; border:1px solid #808080}
 .defaultSkin .mceColorSplitMenu td.mceMoreColors {padding:1px 3px 1px 1px}
-.defaultSkin .mceColorSplitMenu a.mceMoreColors {width:100%; height:auto; text-align:center; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; line-height:20px; border:1px solid #FFF}
+.defaultSkin .mceColorSplitMenu a.mceMoreColors {width:100%; height:auto; text-align:center;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; font-size:11px; line-height:20px; border:1px solid #FFF}
 .defaultSkin .mceColorSplitMenu a.mceMoreColors:hover {border:1px solid #0A246A; background-color:#B6BDD2}
 .defaultSkin a.mceMoreColors:hover {border:1px solid #0A246A}
 .defaultSkin .mceColorPreview {margin-left:2px; width:16px; height:4px; overflow:hidden; background:#9a9b9a}
@@ -90,9 +93,12 @@
 .defaultSkin .mceMenu a, .defaultSkin .mceMenu span, .defaultSkin .mceMenu {display:block}
 .defaultSkin .mceMenu td {height:20px}
 .defaultSkin .mceMenu a {position:relative;padding:3px 0 4px 0}
-.defaultSkin .mceMenu .mceText {position:relative; display:block; font-family:Tahoma,Verdana,Arial,Helvetica; color:#000; cursor:default; margin:0; padding:0 25px 0 25px; display:block}
+.defaultSkin .mceMenu .mceText {position:relative; display:block;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; color:#000; cursor:default; margin:0; padding:0 25px 0 25px;
+}
 .defaultSkin .mceMenu span.mceText, .defaultSkin .mceMenu .mcePreview {font-size:11px}
-.defaultSkin .mceMenu pre.mceText {font-family:Monospace}
+.defaultSkin .mceMenu pre.mceText {
+    font-family: Monospace, serif}
 .defaultSkin .mceMenu .mceIcon {position:absolute; top:0; left:0; width:22px;}
 .defaultSkin .mceMenu .mceMenuItemEnabled a:hover, .defaultSkin .mceMenu .mceMenuItemActive {background-color:#dbecf3}
 .defaultSkin td.mceMenuItemSeparator {background:#DDD; height:1px}

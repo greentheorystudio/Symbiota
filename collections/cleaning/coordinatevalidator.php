@@ -98,7 +98,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 				<div style="font-weight:bold">Ranking Statistics</div>
 				<?php
 				$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-				$rankArr = current($coordRankingArr);
+				$rankArr = $coordRankingArr['coordinate'];
 				echo '<table class="styledtable">';
 				echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
 				foreach($rankArr as $rank => $protocolArr){

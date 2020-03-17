@@ -82,7 +82,7 @@ if($traitID){
 	$imgRetArr = array();
 	if($mode === 1){
 		$imgRetArr = $attrManager->getImageUrls();
-		$imgArr = current($imgRetArr);
+        $imgArr = current($imgRetArr);
 	}
 	elseif($mode === 2){
 		$imgRetArr = $attrManager->getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start);

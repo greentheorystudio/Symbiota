@@ -1,25 +1,23 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0;
-$formSubmit = array_key_exists("formsubmit",$_POST)?$_POST["formsubmit"]:0;
-$latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
-$lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:0;
+$latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:'';
+$lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:'';
+$zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
 
-if($formSubmit){
-	if($formSubmit == 'save'){
-		$clManager->savePolygon($_POST['footprintwkt']);
-		$formSubmit = "exit";
-	}
+if($formSubmit && $formSubmit === 'save') {
+	$clManager->savePolygon($_POST['footprintwkt']);
+	$formSubmit = "exit";
 }
 
-if($latDef == 0 && $lngDef == 0){
+if($latDef === 0 && $lngDef === 0){
 	$latDef = '';
 	$lngDef = '';
 }
@@ -31,7 +29,7 @@ if(is_numeric($latDef) && is_numeric($lngDef)){
 	$zoom = 12;
 }
 elseif($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+	$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 	$latCenter = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 	$lngCenter = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 }
@@ -50,14 +48,14 @@ else{
 			var map;
 			var selectedShape = null;
 			<?php
-			if($formSubmit && $formSubmit == 'exit'){
+			if($formSubmit && $formSubmit === 'exit'){
 				echo 'window.close();';
 			}
 			?>
 
 			function initialize(){
-				if(opener.document.getElementById("footprintwkt") && opener.document.getElementById("footprintwkt").value != ""){
-					if(document.getElementById('footprintwkt').value == ""){
+				if(opener.document.getElementById("footprintwkt") && opener.document.getElementById("footprintwkt").value !== ""){
+					if(document.getElementById('footprintwkt').value === ""){
 						document.getElementById('footprintwkt').value = opener.document.getElementById("footprintwkt").value;
 					}
 				}

@@ -577,8 +577,12 @@ class SOLRManager extends OccurrenceManager{
             $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
             $lastDate = ($infoArr['lastFullImport'] ?? '');
             if($lastDate){
-                $lastDate = new DateTime($lastDate);
-                $now = new DateTime($now);
+                try {
+                    $lastDate = new DateTime($lastDate);
+                } catch (Exception $e) {}
+                try {
+                    $now = new DateTime($now);
+                } catch (Exception $e) {}
                 $interval = $now->diff($lastDate);
                 $hours = $interval->h;
                 $hours += ($interval->days * 24);

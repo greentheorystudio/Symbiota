@@ -581,7 +581,7 @@ class ExsiccatiManager {
 						}
 					}
 					else{
-						$statusStr .= '<b/>ERROR transferring record #'.$occid.': '.$this->conn->error;
+						$statusStr .= 'ERROR transferring record #'.$occid.': '.$this->conn->error;
 					}
 				}
 			}

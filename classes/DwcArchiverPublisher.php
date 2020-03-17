@@ -3,11 +3,7 @@ include_once('DwcArchiverCore.php');
 
 class DwcArchiverPublisher extends DwcArchiverCore{
 
-	public function __construct(){
-		parent::__construct('write');
-	}
-
-	private function resetCollArr($collTarget): void
+    private function resetCollArr($collTarget): void
 	{
 		unset($this->collArr);
 		$this->collArr = array();
@@ -196,7 +192,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$cnt = 0;
 			foreach($items as $i ){
 				$id = $i->getAttribute('collid');
-				if(!$collid || $collid == $id){
+				if(!$collid || $collid === $id){
 					$titles = $i->getElementsByTagName('title');
 					$retArr[$cnt]['title'] = $titles->item(0)->nodeValue;
 					$descriptions = $i->getElementsByTagName('description');

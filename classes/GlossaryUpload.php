@@ -44,7 +44,9 @@ class GlossaryUpload{
 		}
 		elseif(array_key_exists('uploadfile',$_FILES)){
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+			if(is_writable($this->uploadTargetPath)){
+                move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+            }
 		}
 		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
 			$zip = new ZipArchive;
@@ -128,7 +130,12 @@ class GlossaryUpload{
 					}
 					if($term){
 						$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,newGroupId) ';
-						$sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($source?'"'.$source.'"':($batchSources?'"'.$batchSources.'"':'null')).',';
+						if($source){
+                            $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
+                        }
+						else{
+                            $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
+                        }
 						$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",'.$id.')';
 						//echo "<div>".$sql."</div>";
 						if($this->conn->query($sql)){
@@ -144,7 +151,12 @@ class GlossaryUpload{
 						}
 						if($synonym){
 							$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
-							$sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($source?'"'.$source.'"':($batchSources?'"'.$batchSources.'"':'null')).',';
+							if($source){
+                                $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
+                            }
+							else{
+                                $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
+                            }
 							$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",1,'.$id.')';
 							//echo "<div>".$sql."</div>";
 							if($this->conn->query($sql)){

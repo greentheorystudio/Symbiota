@@ -254,7 +254,7 @@ function buildCollKeyPiece(key){
     keyLabel = "'"+key+"'";
     const color = collSymbology[key]['color'];
     keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
+    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
     keyHTML += '<div style="display:table-cell;width:250px;vertical-align:middle;padding-left:8px;">'+key+'</div>';
     keyHTML += '</div>';
@@ -441,7 +441,7 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
     const color = taxaSymbology[key]['color'];
     keyHTML += '<div id="'+key+'keyrow">';
     keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
+    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
     if(!tidinterpreted){
         keyHTML += "<div style='display:table-cell;vertical-align:middle;padding-left:8px;'><i>"+sciname+"</i></div>";
@@ -2627,7 +2627,7 @@ function parseDate(dateStr){
             const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
             m = mNames.indexOf(mText)+1;
         }
-        else if(dateObj instanceof Date && dateObj !== "Invalid Date"){
+        else if(dateObj instanceof Date){
             y = dateObj.getFullYear();
             m = dateObj.getMonth() + 1;
             d = dateObj.getDate();

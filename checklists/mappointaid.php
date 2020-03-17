@@ -1,19 +1,19 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistAdmin.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$latCenter = array_key_exists("latcenter",$_REQUEST)?$_REQUEST["latcenter"]:0; 
-$lngCenter = array_key_exists("lngcenter",$_REQUEST)?$_REQUEST["lngcenter"]:0; 
-$clid = array_key_exists("clid",$_REQUEST)?$_REQUEST["clid"]:0; 
-$tid = array_key_exists("tid",$_REQUEST)?$_REQUEST["tid"]:0; 
+$latCenter = array_key_exists('latcenter',$_REQUEST)?$_REQUEST['latcenter']:0;
+$lngCenter = array_key_exists('lngcenter',$_REQUEST)?$_REQUEST['lngcenter']:0;
+$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
 
 if(!is_numeric($latCenter) || !is_numeric($lngCenter) || (!$latCenter && !$lngCenter)){
 	if(isset($MAPPING_BOUNDARIES) && $MAPPING_BOUNDARIES){
-		$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+		$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 		$latCenter = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 		$lngCenter = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 	}
@@ -64,13 +64,12 @@ if(!is_numeric($latCenter) || !is_numeric($lngCenter) || (!$latCenter && !$lngCe
 	        function placeNewMarker() {
 		        //Remove previous marker
 	    		if(currentMarker) currentMarker.setMap();
-	            if(mapZoom == map.getZoom()){
-	                var marker = new google.maps.Marker({
+	            if(mapZoom === map.getZoom()){
+                    currentMarker = new google.maps.Marker({
 	                    position: newPoint,
 	                    map: map,
 	                    icon: newIcon
 	                });
-					currentMarker = marker;
 
 					//Add coordinate values to text boxes
 	    	        var latValue = newPoint.lat();

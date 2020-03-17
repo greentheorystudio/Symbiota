@@ -117,7 +117,6 @@ if(!$clName){
         let sFont = 0;
         let lFont = 0;
         let wildCardArr = [];
-        const ns = document.getElementById&&!document.all;
 
         const step = 5;
         let repeat = "";
@@ -425,7 +424,7 @@ if(!$clName){
 		function getKey(e){
 			let myNewString;
             running = 1;
-            let keyCode = (!ns) ? event.keyCode : e.which;
+            let keyCode = e.keyCode;
             const chkChar = e;
             let temp = "";
 

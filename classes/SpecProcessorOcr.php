@@ -312,31 +312,38 @@ class SpecProcessorOcr{
 		if(file_exists($zipPath)) {
 			unlink($zipPath);
 		}
-		if(move_uploaded_file($_FILES['ocrfile']['tmp_name'], $zipPath)){
-			$zip = new ZipArchive;
-			$res = $zip->open($zipPath);
-			if($res === true) {
-				$extractPath = $this->tempPath.'ocrtext_'.time().'/';
-				if (!mkdir($extractPath) && !is_dir($extractPath)) {
-					throw new RuntimeException(sprintf('Directory "%s" was not created', $extractPath));
-				}
-				if($zip->extractTo($extractPath)){
-					$retPath = $extractPath;
-				}
-				$zip->close();
-				unlink($zipPath);
-			}
-			else{
-				$this->errorStr = 'ERROR unpacking OCR file: '.$res;
-				$this->logMsg($this->errorStr);
-				return false;
-			}
-		}
+		if(is_writable($this->tempPath)){
+            if(move_uploaded_file($_FILES['ocrfile']['tmp_name'], $zipPath)){
+                $zip = new ZipArchive;
+                $res = $zip->open($zipPath);
+                if($res === true) {
+                    $extractPath = $this->tempPath.'ocrtext_'.time().'/';
+                    if (!mkdir($extractPath) && !is_dir($extractPath)) {
+                        throw new RuntimeException(sprintf('Directory "%s" was not created', $extractPath));
+                    }
+                    if($zip->extractTo($extractPath)){
+                        $retPath = $extractPath;
+                    }
+                    $zip->close();
+                    unlink($zipPath);
+                }
+                else{
+                    $this->errorStr = 'ERROR unpacking OCR file: '.$res;
+                    $this->logMsg($this->errorStr);
+                    return false;
+                }
+            }
+            else{
+                $this->errorStr = 'ERROR loading OCR file: input file lacks zip extension';
+                $this->logMsg($this->errorStr);
+                return false;
+            }
+        }
 		else{
-			$this->errorStr = 'ERROR loading OCR file: input file lacks zip extension';
-			$this->logMsg($this->errorStr);
-			return false;
-		}
+            $this->errorStr = 'ERROR loading OCR file: Destination is not writable to server';
+            $this->logMsg($this->errorStr);
+            return false;
+        }
 		return $retPath;
 	}
 	
@@ -875,7 +882,7 @@ class SpecProcessorOcr{
 		$retStr = $this->encodeString($inStr);
 
 		$replacements = array("/\." => 'A.', "/-\\" => 'A', "\X/" => 'W', "\Y/" => 'W', "`\‘i/" => 'W', chr(96) => "'", chr(145) => "'", chr(146) => "'",
-			'�' => "'", '�' => '"', '�' => '"', '�' => '"', chr(147) => '"', chr(148) => '"', chr(152) => '"', chr(239) => '�');
+			'�' => "'", chr(147) => '"', chr(148) => '"', chr(152) => '"', chr(239) => '�');
 		$retStr = str_replace(array_keys($replacements), $replacements, $retStr);
 
 		$false_num_class = "[OSZl|I!\d]";

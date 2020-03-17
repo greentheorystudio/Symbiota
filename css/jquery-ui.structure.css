@@ -373,7 +373,6 @@ button.ui-button::-moz-focus-inner {
 .ui-controlgroup-vertical .ui-spinner-input {
 
 	/* Support: IE8 only, Android < 4.4 only */
-	width: 75%;
 	width: calc( 100% - 2.4em );
 }
 .ui-controlgroup-vertical .ui-spinner .ui-spinner-up {
@@ -804,10 +803,8 @@ button.ui-button::-moz-focus-inner {
 	background: none;
 	color: inherit;
 	padding: .222em 0;
-	margin: .2em 0;
 	vertical-align: middle;
-	margin-left: .4em;
-	margin-right: 2em;
+	margin: .2em 2em .2em .4em;
 }
 .ui-spinner-button {
 	width: 1.6em;

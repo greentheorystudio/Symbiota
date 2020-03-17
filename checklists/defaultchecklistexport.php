@@ -252,8 +252,7 @@ else{
 	}
 }
 
-$fileName = str_replace(' ','_',$clManager->getClName());
-$fileName = str_replace('/','_',$fileName);
+$fileName = str_replace(array(' ', '/'), '_', $clManager->getClName());
 $targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'.'.$exportExtension;
 $phpWord->save($targetFile, $exportEngine);
 

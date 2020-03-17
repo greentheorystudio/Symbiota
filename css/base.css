@@ -18,20 +18,8 @@ body{
 	font-size: 12px;
 }
 
-td.middleleft{
-	width:		160px;
-}
-
-td.middleleftnomenu{
-	width:	20px;	
-}
-
 td.middlecenter{
  	height:	350px;		
-}
-
-td.middleright{
-	width:	15px;
 }
 
 #innertext{
@@ -166,11 +154,6 @@ div.button:hover {
 #keytaxacolumn{
 	vertical-align:	top;
 	width:	65%;
-}
-
-.dynamlang{
-	margin-top:0.5em;
-	font-weight: bold;
 }
 
 #cloptiondiv{

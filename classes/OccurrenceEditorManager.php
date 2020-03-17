@@ -1066,7 +1066,7 @@ class OccurrenceEditorManager {
 				if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occid.')')){
 					$status .= '(WARNING: Symbiota GUID mapping failed) ';
 				}
-				if(isset($occArr['ometid']) && isset($occArr['exsnumber'])){
+				if(isset($occArr['ometid'], $occArr['exsnumber'])){
 					$ometid = $this->cleanInStr($occArr['ometid']);
 					$exsNumber = $this->cleanInStr($occArr['exsnumber']);
 					if($ometid && $exsNumber){
@@ -1146,7 +1146,9 @@ class OccurrenceEditorManager {
 				while($r = $rs->fetch_assoc()){
 					$detId = $r['detid'];
 					foreach($r as $k => $v){
-						if($v) $detArr[$detId][$k] = $this->encodeStrTargeted($v,$CHARSET,'utf8');
+						if($v) {
+                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                        }
 					}
 					$detObj = json_encode($detArr[$detId]);
 					$sqlArchive = 'UPDATE guidoccurdeterminations '.

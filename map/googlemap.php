@@ -4,15 +4,15 @@ include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/MappingShared.php');
 include_once($SERVER_ROOT.'/classes/TaxonProfileMap.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:0;
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
 $mapType = array_key_exists('maptype',$_REQUEST)?$_REQUEST['maptype']:0;
 $gridSize = array_key_exists('gridSizeSetting',$_REQUEST)?$_REQUEST['gridSizeSetting']:10;
 $minClusterSize = array_key_exists('minClusterSetting',$_REQUEST)?$_REQUEST['minClusterSetting']:50;
-$stArrCollJson = array_key_exists("jsoncollstarr",$_REQUEST)?$_REQUEST["jsoncollstarr"]:'';
-$stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
+$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
+$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $sharedMapManager = new MappingShared();
 $solrManager = new SOLRManager();
@@ -23,7 +23,7 @@ $mapWhere = '';
 $stArr = array();
 $genObs = $sharedMapManager->getGenObsInfo();
 
-if($mapType == 'taxa'){
+if($mapType === 'taxa'){
 	$taxaMapManager = new TaxonProfileMap();
 	$taxaMapManager->setTaxon($taxonValue);
 	$synMap = $taxaMapManager->getSynMap();
@@ -33,7 +33,7 @@ if($mapType == 'taxa'){
 	$sharedMapManager->setTaxaArr($tArr);
     $sharedMapManager->setSearchTermsArr($stArr);
 }
-elseif($mapType == 'occquery'){
+elseif($mapType === 'occquery'){
 	$occurManager = new OccurrenceManager();
 	if($stArrCollJson && $stArrSearchJson){
 		$collStArr = json_decode($stArrCollJson, true);
@@ -45,7 +45,9 @@ elseif($mapType == 'occquery'){
 	$tArr = $occurManager->getTaxaArr();
 	$stArr = $occurManager->getSearchTermsArr();
 	$sharedMapManager->setSearchTermsArr($stArr);
-    if($SOLR_MODE) $solrManager->setSearchTermsArr($stArr);
+    if($SOLR_MODE) {
+		$solrManager->setSearchTermsArr($stArr);
+	}
 }
 
 /*if($SOLR_MODE){
@@ -77,7 +79,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 		var map = null;
 		var markerClusterer = null;
 		var useLLDecimal = true;
-	    var infoWins = new Array();
+	    var infoWins = [];
 	    var puWin;
 		var markers = [];
 		
@@ -90,8 +92,8 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 			$latCen = 41.0;
 			$longCen = -95.0;
 			if(isset($MAPPING_BOUNDARIES)){
-				$coorArr = explode(";",$MAPPING_BOUNDARIES);
-				if($coorArr && count($coorArr) == 4){
+				$coorArr = explode(';',$MAPPING_BOUNDARIES);
+				if($coorArr && count($coorArr) === 4){
 					$boundLatMin = $coorArr[2];
 					$boundLatMax = $coorArr[0];
 					$boundLngMin = $coorArr[3];
@@ -149,21 +151,29 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 				?>
 				markers = [];
 				<?php
-				$iconColor = $valueArr["color"];
+				$iconColor = $valueArr['color'];
 				if($iconColor) {
 					$iconKey = '<div><svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:12px;margin-bottom:-2px;"><g><rect x="1" y="1" width="11" height="10" fill="#'.$iconColor.'" stroke="#000000" stroke-width="1px" /></g></svg>';
 					$iconKey .= ' = <i>'.$sciName.'</i></div>';
 					$iconKeys[] = $iconKey;
 				}
-				unset($valueArr["color"]);
+				unset($valueArr['color']);
 				foreach($valueArr as $occId => $spArr){
 					$coordExist = true;
 					//Find max/min point values
 					$llArr = explode(',',$spArr['latLngStr']);
-					if($llArr[0] < $minLat) $minLat = $llArr[0];
-					if($llArr[0] > $maxLat) $maxLat = $llArr[0];
-					if($llArr[1] < $minLng) $minLng = $llArr[1];
-					if($llArr[1] > $maxLng) $maxLng = $llArr[1];
+					if($llArr[0] < $minLat) {
+						$minLat = $llArr[0];
+					}
+					if($llArr[0] > $maxLat) {
+						$maxLat = $llArr[0];
+					}
+					if($llArr[1] < $minLng) {
+						$minLng = $llArr[1];
+					}
+					if($llArr[1] > $maxLng) {
+						$maxLng = $llArr[1];
+					}
 					//Create marker
 					$spStr = '';
 					$functionStr = '';
@@ -182,8 +192,8 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 					else{
 						$displayStr = $spArr['catalognumber'];
 					}
-					if($spArr['collid'] == $genObs){
-						$displayStr = "General Observation";
+					if($spArr['collid'] === $genObs){
+						$displayStr = 'General Observation';
 						$type = 'obs';
 						?>
 						var markerIcon = {path:"m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z",fillColor:"#<?php echo $iconColor; ?>",fillOpacity:1,scale:1,strokeColor:"#000000",strokeWeight:1};
@@ -195,7 +205,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 						var markerIcon = {path:google.maps.SymbolPath.CIRCLE,fillColor:"#<?php echo $iconColor; ?>",fillOpacity:1,scale:7,strokeColor:"#000000",strokeWeight:1};
 						<?php
 					}
-					echo 'var m'.$markerCnt.' = getMarker('.$spArr['latLngStr'].',"'.addslashes($displayStr).'",markerIcon,"'.$type.'","'.($spArr['tidinterpreted']?$spArr['tidinterpreted']:0).'",'.$occId.','.($clid?$clid:'0').');',"\n";
+					echo 'var m'.$markerCnt.' = getMarker('.$spArr['latLngStr'].',"'.addslashes($displayStr).'",markerIcon,"'.$type.'","'.($spArr['tidinterpreted']?:0).'",'.$occId.','.($clid?:'0').');',"\n";
 					echo 'oms.addMarker(m'.$markerCnt.');',"\n";
 					$markerCnt++;
 				}
@@ -208,7 +218,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 					maxZoom: 13,
 					gridSize: <?php echo $gridSize; ?>,
 					minimumClusterSize: <?php echo $minClusterSize; ?>
-				}
+				};
 				
 				//Initialize clusterer with options
 				var markerCluster<?php echo $spCnt; ?> = new MarkerClusterer(map, markers, mcOptions<?php echo $spCnt; ?>);
@@ -216,15 +226,31 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 				<?php
 				$spCnt++;
 			}
-			if($boundLatMin > $minLat) $minLat = $boundLatMin;
-			if($boundLatMax < $maxLat) $maxLat = $boundLatMax;
-			if($boundLngMin > $minLng) $minLng = $boundLngMin;
-			if($boundLngMax < $maxLng) $maxLng = $boundLngMax;
+			if($boundLatMin > $minLat) {
+				$minLat = $boundLatMin;
+			}
+			if($boundLatMax < $maxLat) {
+				$maxLat = $boundLatMax;
+			}
+			if($boundLngMin > $minLng) {
+				$minLng = $boundLngMin;
+			}
+			if($boundLngMax < $maxLng) {
+				$maxLng = $boundLngMax;
+			}
 			//Add some padding
-			if($minLat > -80) $minLat -= 5;
-			if($maxLat < 80) $maxLat += 5;
-			if($minLng > -170) $minLng -= 5;
-			if($maxLng < 170) $maxLng += 5;
+			if($minLat > -80) {
+				$minLat -= 5;
+			}
+			if($maxLat < 80) {
+				$maxLat += 5;
+			}
+			if($minLng > -170) {
+				$minLng -= 5;
+			}
+			if($maxLng < 170) {
+				$maxLng += 5;
+			}
 			?>
 			var swLatLng = new google.maps.LatLng(<?php echo $minLat.','.$minLng; ?>);
 			var neLatLng = new google.maps.LatLng(<?php echo $maxLat.','.$maxLng; ?>);
@@ -321,12 +347,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 					}
 				}
 			}
-			if(useLLDecimal){
-				useLLDecimal = false;
-			}
-			else{
-				useLLDecimal = true;
-			}
+			useLLDecimal = !useLLDecimal;
 		}
 		
 	</script>
@@ -402,7 +423,7 @@ $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 									Longitude decimal: <input name='lng' id='lng' size='10' type='text' /> eg: -112.38
 								</div>
 								<div style='font-size:80%;margin-top:5px;'>
-									<a href='#' onclick='javascript: toggleLatLongDivs();'>Enter in D:M:S format</a>
+									<a href='#' onclick='toggleLatLongDivs();'>Enter in D:M:S format</a>
 								</div>
 							</div>
 							<div class='latlongdiv' style='display:none;'>

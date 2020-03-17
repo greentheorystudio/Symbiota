@@ -191,12 +191,16 @@ class OccurrenceCollectionProfile {
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
-			if(strpos($rights, 'http') === 0){
-				$rightsUrl = $rights;
-				if($RIGHTS_TERMS && $rightsArr = array_keys($RIGHTS_TERMS, $rights)) {
-					$rights = current($rightsArr);
-				}
-			}
+            if(strpos($rights, 'http') === 0){
+                $rightsUrl = $rights;
+                if($RIGHTS_TERMS) {
+                    foreach($RIGHTS_TERMS as $name => $url){
+                        if($url === $rights){
+                            $rights = $name;
+                        }
+                    }
+                }
+            }
 			if($rightsUrl) {
 				$outStr .= '<a href="' . $rightsUrl . '" target="_blank">';
 			}
@@ -241,8 +245,9 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function submitCollEdits($postArr){
-        $status = true;
+	public function submitCollEdits($postArr): string
+    {
+        $status = 'Edits saved';
 		if($this->collid){
 			$instCode = $this->cleanInStr($postArr['institutioncode']);
 			$collCode = $this->cleanInStr($postArr['collectioncode']);
@@ -309,17 +314,14 @@ class OccurrenceCollectionProfile {
 						return $status;
 					}
 				}
-				else{
-					if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-						$status = 'ERROR inserting collection category link(1): '.$this->conn->error;
-						return $status;
-					}
-				}
+				else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
+                    $status = 'ERROR inserting collection category link(1): '.$this->conn->error;
+                    return $status;
+                }
 			}
 			else{
 				$this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
 			}
-			$this->conn->close();
 		}
 		return $status;
 	}
@@ -367,8 +369,8 @@ class OccurrenceCollectionProfile {
 			($homepage?'"'.$homepage.'"':'NULL').','.
 			($contact?'"'.$contact.'"':'NULL').','.
 			($email?'"'.$email.'"':'NULL').','.
-			($postArr['latitudedecimal']?$postArr['latitudedecimal']:'NULL').','.
-			($postArr['longitudedecimal']?$postArr['longitudedecimal']:'NULL').','.$publicEdits.','.$gbifPublish.','.
+			($postArr['latitudedecimal']?:'NULL').','.
+			($postArr['longitudedecimal']?:'NULL').','.$publicEdits.','.$gbifPublish.','.
             (array_key_exists('publishToIdigbio',$postArr)?$idigPublish.',':'').
 			($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 			($rights?'"'.$rights.'"':'NULL').','.
@@ -378,7 +380,7 @@ class OccurrenceCollectionProfile {
 			($managementType?'"'.$managementType.'"':'Snapshot').','.
 			($collType?'"'.$collType.'"':'Preserved Specimens').',"'.
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
-			($sortSeq?$sortSeq:'NULL').') ';
+			($sortSeq?:'NULL').') ';
 		//echo "<div>$sql</div>";
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
@@ -428,9 +430,9 @@ class OccurrenceCollectionProfile {
 		$fileName .= $imgExt;
 
 		$fullUrl = '';
-		if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
-			$fullUrl = $urlBase . $fileName;
-		}
+		if(is_writable($targetPath) && move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath . $fileName)) {
+            $fullUrl = $urlBase . $fileName;
+        }
 
 		return $fullUrl;
 	}
@@ -718,7 +720,7 @@ class OccurrenceCollectionProfile {
 			$sql = 'SELECT uploaddate, recordcnt, georefcnt, familycnt, genuscnt, speciescnt, dynamicProperties FROM omcollectionstats WHERE collid = '.$this->collid;
 			$rs = $this->conn->query($sql);
 			if($row = $rs->fetch_object()){
-				$uDate = "";
+				$uDate = '';
 				if($row->uploaddate){
 					$uDate = $row->uploaddate;
 					$month = substr($uDate,5,2);
@@ -1144,12 +1146,14 @@ class OccurrenceCollectionProfile {
 		return $this->errorStr;
 	}
 
-	public function cleanOutArr(&$arr): void
-	{
-		foreach($arr as $k => $v){
-			$arr[$k] = $this->cleanOutStr($v);
-		}
-	}
+    public function cleanOutArr($arr): void
+    {
+        if(is_array($arr)){
+            foreach($arr as $k => $v){
+                $arr[$k] = $this->cleanOutStr($v);
+            }
+        }
+    }
 
 	private function cleanOutStr($str){
 		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);

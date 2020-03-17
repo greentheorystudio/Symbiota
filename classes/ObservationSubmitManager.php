@@ -93,7 +93,7 @@ class ObservationSubmitManager {
 			($postArr['geodeticdatum']?'"'.$this->cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
 			($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
 			($postArr['georeferenceremarks']?'"'.$this->cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
-			($postArr['minimumelevationinmeters']?$postArr['minimumelevationinmeters']:'NULL').','.
+			($postArr['minimumelevationinmeters']?:'NULL').','.
 				$SYMB_UID.',"'.date('Y-m-d H:i:s').'") ';
 			//echo $sql;
 			if($this->conn->query($sql)){

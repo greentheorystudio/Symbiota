@@ -1,15 +1,15 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
-$formName = array_key_exists("formname",$_REQUEST)?$_REQUEST["formname"]:"";
-$latName = array_key_exists("latname",$_REQUEST)?$_REQUEST["latname"]:"";
-$longName = array_key_exists("longname",$_REQUEST)?$_REQUEST["longname"]:"";
-$latDef = array_key_exists("latdef",$_REQUEST)?$_REQUEST["latdef"]:'';
-$lngDef = array_key_exists("lngdef",$_REQUEST)?$_REQUEST["lngdef"]:'';
-$zoom = array_key_exists("zoom",$_REQUEST)&&$_REQUEST["zoom"]?$_REQUEST["zoom"]:5;
+$formName = array_key_exists('formname',$_REQUEST)?$_REQUEST['formname']: '';
+$latName = array_key_exists('latname',$_REQUEST)?$_REQUEST['latname']: '';
+$longName = array_key_exists('longname',$_REQUEST)?$_REQUEST['longname']: '';
+$latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:'';
+$lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:'';
+$zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
 
-if($latDef == 0 && $lngDef == 0){
+if($latDef === 0 && $lngDef === 0){
 	$latDef = '';
 	$lngDef = '';
 }
@@ -21,7 +21,7 @@ if(is_numeric($latDef) && is_numeric($lngDef)){
 	$zoom = 12;
 }
 elseif($MAPPING_BOUNDARIES){
-	$boundaryArr = explode(";",$MAPPING_BOUNDARIES);
+	$boundaryArr = explode(';',$MAPPING_BOUNDARIES);
 	$latCenter = ($boundaryArr[0]>$boundaryArr[2]?((($boundaryArr[0]-$boundaryArr[2])/2)+$boundaryArr[2]):((($boundaryArr[2]-$boundaryArr[0])/2)+$boundaryArr[0]));
 	$lngCenter = ($boundaryArr[1]>$boundaryArr[3]?((($boundaryArr[1]-$boundaryArr[3])/2)+$boundaryArr[3]):((($boundaryArr[3]-$boundaryArr[1])/2)+$boundaryArr[1]));
 }

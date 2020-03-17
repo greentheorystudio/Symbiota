@@ -45,7 +45,8 @@ class TaxonomyCleanerOccurrences extends TaxonomyCleaner{
 		return $retArr;
 	}
 
-	private function getHierarchy($tid){
+	private function getHierarchy($tid): string
+    {
 		$parentArr = Array($tid);
 		$parCnt = 0;
 		$targetTid = $tid;

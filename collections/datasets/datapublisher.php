@@ -249,7 +249,7 @@ include(__DIR__ . '/../../header.php');
 			}
 		}
 		if($dwcaArr = $dwcaManager->getDwcaItems($collId)){
-			$dArr = current($dwcaArr);
+            $dArr = current($dwcaArr);
 			$dwcUri = ($dArr['collid'] === $collId?$dArr['link']:'');
 			?>
 			<div style="margin:10px;">

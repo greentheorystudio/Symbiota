@@ -165,7 +165,7 @@ var win = self,
                     else if(fract){ val = NaN; }
                     else{ val = Infinity; }
                 }else if(fract){ val = Math.pow(2, 1 - bias) * fract; }
-                if(NaN != val && sign){ val *= -1; }
+                if(!isNaN(val) && sign){ val *= -1; }
             }
             return val;
         },
@@ -183,7 +183,7 @@ var win = self,
             for(var i = 0; i < 5; i++){
                 var num = this.readByteAt(this._offset++);
                 val = val | ((num & 0x7f) << (7 * i));
-                if(!(num & 0x80)){ break; }
+                if(!(num && 0x80)){ break; }
             }
             return val;
         },
@@ -202,8 +202,8 @@ var win = self,
                     t._bitBuffer = t.readUI8();
                     t._bitOffset = 0;
                 }
-                if(lsb){ val |= (t._bitBuffer & (0x01 << t._bitOffset++) ? 1 : 0) << i; }
-                else{ val = (val << 1) | (t._bitBuffer & (0x80 >> t._bitOffset++) ? 1 : 0); }
+                if(lsb){ val |= (t._bitBuffer && (0x01 << t._bitOffset++) ? 1 : 0) << i; }
+                else{ val = (val << 1) | (t._bitBuffer && (0x80 >> t._bitOffset++) ? 1 : 0); }
             }
             return val;
         },
@@ -338,7 +338,7 @@ var win = self,
             var cxform = {
                 multR: multR, multG: multG, multB: multB, multA: multA,
                 addR: addR, addG: addG, addB: addB, addA: addA
-            }
+            };
             t.align();
             return cxform;
         },

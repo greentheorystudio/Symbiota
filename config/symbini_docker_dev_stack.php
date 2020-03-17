@@ -47,6 +47,7 @@ $GBIF_PASSWORD = '';                //GBIF password which portal will use to pub
 $GBIF_ORG_KEY = '';                 //GBIF organization key for organization which is hosting this portal
 
 //Misc variables
+$MAPPING_BOUNDARIES = '';
 $SPATIAL_INITIAL_CENTER = '';	    //Initial map center for Spatial Module. Default: '[-110.90713, 32.21976]'
 $SPATIAL_INITIAL_ZOOM = '';			//Initial zoom for Spatial Module. Default: 7
 $TAXON_PROFILE_MAP_CENTER = '';			//Center for taxon profile maps
