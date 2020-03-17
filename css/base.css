@@ -1,56 +1,61 @@
 body{
 	margin: 8px auto;
-	width:		900px; 
 	background-color: #FFFFFF;
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 }
 
-#maintable{
+#maintable {
 	border-spacing: 0;
-	width:		900px; 
-	height:		500px;
+	height: 500px;
 }
 
 #maintable td{
- 	vertical-align: top;
-	font-size: 12px;
+	vertical-align: top;
 }
 
-td.middlecenter{
- 	height:	350px;		
+#middleleft{
+	width:	160px;
+}
+
+#middleleftnomenu{
+	width:	20px;
+}
+
+#middlecenter{
+	height:	350px;
 }
 
 #innertext{
-	margin:	10px;	
+	margin:	10px;
 	background-color: #FFFFFF;
 	min-height:400px;
 	padding-top: 15px;
 }
 
-form div {
+form input {
 	margin-top:	2px;
 }
 
 a{
 	color: 		#2C405E;
-    text-decoration: none;	
+	text-decoration: none;
 }
 
 a:hover{
 	color: black;
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 span[class=link] {
 	color: 		#2C405E;
-    text-decoration: none;	
+	text-decoration: none;
 }
 
-span[class=link]:hover { 
+span[class=link]:hover {
 	color: black;
-    text-decoration: underline;	
+	text-decoration: underline;
 }
 
 div.tndiv{
@@ -70,10 +75,6 @@ div.tnimg{
 	border:	1px solid gray;
 }
 
-div.tnimg a{
-
-}
-
 div.tnimg img{
 	position: absolute;
 	max-height: 160px;
@@ -85,30 +86,26 @@ div.tnimg img{
 	left: -9999px;
 	right: -9999px;
 	margin: auto;
-}	
+}
 
 table.styledtable{
-	width:				100%; 
-	border-collapse:	collapse; 
+	width:				100%;
+	border-collapse:	collapse;
 }
-
 table.styledtable th {
-	text-align:			left; 
+	text-align:			left;
 	padding:			4px;
-	border:				1px solid gray; 
-	background-color:	#dbe5f1; 
-	color:				black; 
+	border:				1px solid gray;
+	background-color:	#dbe5f1;
+	color:				black;
 }
-
 table.styledtable td {
-	font-size:		1em; 
 	padding:		3px;
-	border:			1px solid gray; 
+	border:			1px solid gray;
 	background-color: #efefef;
 }
-
 table.styledtable tr.alt td {
-	color:				#000000; 
+	color:				#000000;
 	background-color: #dfdfdf;
 }
 
@@ -148,7 +145,6 @@ div.button:hover {
 
 #keymidcolumn {
 	width:	20px;
-	background-image: url(../images/layout/brown_hor_strip.gif);
 }
 
 #keytaxacolumn{
@@ -156,11 +152,17 @@ div.button:hover {
 	width:	65%;
 }
 
+.dynamlang{
+	margin-top:0.5em;
+	font-weight: bold;
+}
+
 #cloptiondiv{
 	margin:		5px;
 	width:		250px;
 	text-align:	left;
 	float:		right;
+	min-height:	325px;
 }
 
 #taxonfilterdiv{
@@ -170,68 +172,66 @@ div.button:hover {
 }
 
 #taxonfilterdiv{
-	 margin:	3px;
+	margin:	3px;
 }
 
 
+.collectiontable{
+	float: left;
+}
+
+.collectiontable td{
+	vertical-align: middle;
+}
+
 .categorytitle a{
-	font-weight: bold; 
-	color:		black; 
-	font-size:	110%; 
+	font-weight: bold;
+	font-size:	110%;
+}
+
+.collectiontitle{
+	font-size:12px;
 }
 
 .collectiontitle a{
-	font-weight: bold;
-	color: 		 #000000;
+	font-size: 80%;
+	margin-left: 3px;
 }
 
 .collectiontitle a:hover{
-	color: 	#000000;
+	font-weight: bold;
+	color: grey;
+}
+
+.collectionname{
+	float:left;
+	font-weight: bold;
+	margin-left: 3px;
+}
+
+.collectioncode{
+	float:left;
+	margin-left: 3px;
 }
 
 #omlisttable{
-	 width:	90%;
+	width:	90%;
 }
 
 #omlisttable img{
-    border: medium double #990000;
+	border: medium double #990000;
 }
 
-#quicksearchdiv{
-	float: right;
-	width: 335px;
-	margin: 8px;
-	padding: 5px 5px 0 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border: 1px solid black;	
-}
-
-#quicksearchtext{
-	margin-top:0;
-	padding-bottom:0;
-}
-
-#quicksearchtaxon{
-	width: 250px;
-	margin-bottom:0;
-	padding-bottom:0;
-	font-family: Arial, Helvetica, sans-serif;
-}
-
-#quicksearchbutton{
-	margin-left:10px;
-	margin-top:0;
-	margin-bottom:0;
-	padding-bottom:0;
-}
-
+/* Slideshow Plugin */
 #slideshowcontainer{
 	border: 2px solid black;
 	border-radius:10px;
 	padding:10px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
+/* misc */
 div.genericpopup{
 	position:				absolute;
 	display:				none;
@@ -245,11 +245,11 @@ div.genericpopup{
 
 .nextbtn {
 	font-weight: bold;
-	background-color: #c0c0c0;
+	background-color: #dddddd;
 	border-color: #999;
-    color: black;
-	width: 90px;
-	padding: 6px 10px;
+	color: black;
+	width: 110px;
+	padding: 5px 8px;
 	border-radius: 5px;
 }
 
@@ -262,17 +262,18 @@ div.genericpopup{
 	font-weight: bold;
 	background-color: #c0c0c0;
 	border-color: #999;
-    color: black;
+	color: black;
 	width: 90px;
 	padding: 4px 6px;
-	border-radius: 5px;
+	border-radius: 2px;
 }
 
 .resetbtn:hover {
 	background-color: #e5f1fd;
-    color: black;
+	color: black;
 }
 
+/* JQuery Manifest alterations */
 div.mf_container {
 	border: 1px solid #aaa;
 	cursor: text;

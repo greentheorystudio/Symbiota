@@ -51,9 +51,9 @@ if(isset($_SESSION['userrights'])){
     $USER_RIGHTS = $_SESSION['userrights'];
 }
 
-$CSS_VERSION = '6';
-if(!isset($CSS_VERSION_LOCAL)) {
-    $CSS_VERSION_LOCAL = $CSS_VERSION;
+$CSS_VERSION = '13';
+if(isset($CSS_VERSION_LOCAL) && ($CSS_VERSION_LOCAL > $CSS_VERSION)) {
+    $CSS_VERSION = $CSS_VERSION_LOCAL;
 }
 if(!isset($EML_PROJECT_ADDITIONS)) {
     $EML_PROJECT_ADDITIONS = array();

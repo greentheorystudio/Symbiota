@@ -23,7 +23,7 @@ $statusStr = '';
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Crowdsourcing Score Board</title>
     <link href="../../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
+    <link href="../../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript">
 
 	</script>

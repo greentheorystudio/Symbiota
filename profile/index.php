@@ -98,7 +98,7 @@ else{
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Login</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		if(!navigator.cookieEnabled){
 			alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
