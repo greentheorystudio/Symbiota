@@ -11,9 +11,9 @@
 <header>
     <a class="uw-show-on-focus" href="#main" id="uw-skip-link">Skip to main content</a>
     <div class="uw-global-bar" role="navigation">
-        <a class="uw-global-name-link" href="http://www.wisc.edu"
-           aria-label="University home page">U<span>niversity <span
-                        class="uw-of">of</span> </span>W<span>isconsin</span>-Madison</a>
+        <a class="uw-global-name-link" href="http://www.wisc.edu" aria-label="University home page">
+            U<span>niversity <span class="uw-of">of</span> </span>W<span>isconsin</span>-Madison
+        </a>
     </div>
 
     <!-- UW-Madison Brand, Site Main Header -->
@@ -22,16 +22,16 @@
             <div class="uw-header-crest-title">
                 <div class="uw-header-crest">
                     <!-- <a href="http://www.wisc.edu"><img class="uw-crest-svg" src="<?php //echo $CLIENT_ROOT.'/images/uw-crest.svg' ?>" alt="Link to University of Wisconsin-Madison home page"></a> -->
-                    <a href="http://www.wisc.edu"><img class="uw-crest-svg"
-                                                       src="http://geoscience.wisc.edu/museum/wp-content/themes/madisonwp2015-1/images/hybrid_logo.svg"
-                                                       alt="Link to University of Wisconsin-Madison home page"></a>
+                    <a href="http://www.wisc.edu">
+                        <img class="uw-crest-svg" src="http://geoscience.wisc.edu/museum/wp-content/themes/madisonwp2015-1/images/hybrid_logo.svg" alt="Link to University of Wisconsin-Madison home page">
+                    </a>
                 </div>
                 <div class="uw-title-tagline">
                     <h1 id="site-title" class="uw-site-title">
                         <a href="" rel="home">UW-Madison Integrated Specimen Portal</a>
                     </h1>
-                    <div id="site-description" class="uw-site-tagline">A Gateway to Biodiversity, Human, and
-                        Environmental Specimens from our Natural History Museums
+                    <div id="site-description" class="uw-site-tagline">
+                        A Gateway to Biodiversity, Human, and Environmental Specimens from our Natural History Museums
                     </div>
                 </div>
             </div>
@@ -39,8 +39,7 @@
     </header>
 
     <!-- Toggle Menu for mobile -->
-    <button class="uw-mobile-menu-button-bar uw-mobile-menu-button-bar-reversed uw-is-closed " data-menu="uw-top-menus"
-            aria-label="Open menu" aria-expanded="false" aria-controls="uw-top-menus">Menu
+    <button class="uw-mobile-menu-button-bar uw-mobile-menu-button-bar-reversed uw-is-closed " data-menu="uw-top-menus" aria-label="Open menu" aria-expanded="false" aria-controls="uw-top-menus">Menu
         <svg aria-hidden="true" focusable="false">
             <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-menu"></use>
         </svg>
@@ -61,8 +60,7 @@
                         <a href="fallback_url_for_no_js" role="button" aria-haspopup="true" aria-expanded="false">
                             Search
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="#uw-symbol-caret-down"></use>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-down"></use>
                             </svg>
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-up"></use>
@@ -87,8 +85,7 @@
                         <a href="fallback_url_for_no_js" role="button" aria-haspopup="true" aria-expanded="false">
                             Taxa
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="#uw-symbol-caret-down"></use>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-down"></use>
                             </svg>
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-up"></use>
@@ -112,8 +109,7 @@
                         <a href="fallback_url_for_no_js" role="button" aria-haspopup="true" aria-expanded="false">
                             Images
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="#uw-symbol-caret-down"></use>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-down"></use>
                             </svg>
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-up"></use>
@@ -151,8 +147,7 @@
                         <a href="http://news.wisc.edu" aria-haspopup="true" aria-expanded="false">
                             News
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="#uw-symbol-caret-down"></use>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-down"></use>
                             </svg>
                             <svg aria-hidden="true" class="uw-caret" focusable="false">
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#uw-symbol-caret-up"></use>
