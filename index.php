@@ -64,7 +64,7 @@ include(__DIR__ . '/header.php');
                                 if($randomTaxon){
                                     foreach ($randomTaxon as $key => $value) {
                                         echo "<div style='font-style:italic;'>";
-                                        echo "<a href='../portal/taxa/index.php?taxon=".$key."' target='_blank'>".$value."</a>";
+                                        echo "<a href='../taxa/index.php?taxon=".$key."' target='_blank'>".$value."</a>";
                                         echo "</div>";
                                     }
                                 }
@@ -140,7 +140,7 @@ include(__DIR__ . '/header.php');
                             <a href=""><i class="fi-results"></i></a>
                         </div>
                         <div class="uw-card-copy">
-                            <h2 class="uw-mini-bar"><a href="1">Collections</a></h2>
+                            <h2 class="uw-mini-bar"><a href="collections/misc/collprofiles.php">Collections</a></h2>
                             <p>Browse our Museums and Collections.</p>
                         </div>
                     </div>
