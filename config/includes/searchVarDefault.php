@@ -48,6 +48,7 @@ $SEARCHTEXT['COLLECTOR_DATE'] = 'Collection Date:';
 $SEARCHTEXT['TITLE_TEXT_3'] = 'Single date or start date of range';
 $SEARCHTEXT['TITLE_TEXT_4'] = 'End date of range; leave blank if searching for single date';
 $SEARCHTEXT['SPECIMEN_HEADER'] = 'Specimen Criteria:';
+$SEARCHTEXT['OCCURRENCE_REMARKS'] = 'Remarks:';
 $SEARCHTEXT['CATALOG_NUMBER'] = 'Catalog Number:';
 $SEARCHTEXT['INCLUDE_OTHER_CATNUM'] = 'Include other catalog numbers and GUIDs';
 $SEARCHTEXT['OTHER_CATNUM'] = 'Other Catalog Number:';

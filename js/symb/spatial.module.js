@@ -2029,6 +2029,7 @@ function getTextParams(){
     let collnumval = document.getElementById("collnum").value.trim();
     let colldate1 = document.getElementById("eventdate1").value.trim();
     let colldate2 = document.getElementById("eventdate2").value.trim();
+    let occurrenceremarksval = document.getElementById("occurrenceRemarks").value.trim();
     let catnumval = document.getElementById("catnum").value.trim();
     let othercatnumval = document.getElementById("othercatnum").value.trim();
     const typestatus = document.getElementById("typestatus").checked;
@@ -2042,6 +2043,7 @@ function getTextParams(){
     searchTermsArr['collnum'] = '';
     searchTermsArr['eventdate1'] = '';
     searchTermsArr['eventdate2'] = '';
+    searchTermsArr['occurrenceRemarks'] = '';
     searchTermsArr['catnum'] = '';
     searchTermsArr['othercatnum'] = '';
     searchTermsArr['typestatus'] = '';
@@ -2244,6 +2246,36 @@ function getTextParams(){
             if(colldate1 && colldate2){
                 searchTermsArr['eventdate2'] = colldate2;
             }
+        }
+        textParams = true;
+    }
+    if(occurrenceremarksval){
+        if(SOLRMODE) {
+            const occurrenceremarksvals = occurrenceremarksval.split(',');
+            let occurrenceremarksSolrqString = '';
+            for(let i = 0; i < occurrenceremarksvals.length; i++){
+                if(occurrenceremarksSolrqString) occurrenceremarksSolrqString += " OR ";
+                occurrenceremarksSolrqString += "(";
+                if(occurrenceremarksvals[i].indexOf(" ") !== -1){
+                    let tempremarksSolrqString = '';
+                    const vals = occurrenceremarksvals[i].split(" ");
+                    for(i = 0; i < vals.length; i++){
+                        if(tempremarksSolrqString) tempremarksSolrqString += " AND ";
+                        tempremarksSolrqString += '((occurrenceRemarks:*'+vals[i]+'*))';
+                    }
+                    occurrenceremarksSolrqString += tempremarksSolrqString;
+                }
+                else{
+                    occurrenceremarksSolrqString += '(occurrenceRemarks:*'+occurrenceremarksvals[i]+'*)';
+                }
+                occurrenceremarksSolrqString += ")";
+            }
+            solrqfrag = '('+occurrenceremarksSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            occurrenceremarksval = occurrenceremarksval.replace(",", ";");
+            searchTermsArr['occurrenceRemarks'] = occurrenceremarksval;
         }
         textParams = true;
     }
