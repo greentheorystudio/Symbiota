@@ -15,7 +15,7 @@
                     CONCAT_WS(' to ',IFNULL(DATE_FORMAT(o.eventDate,'%d %M %Y'),''),DATE_FORMAT(MAKEDATE(o.year,o.endDayOfYear),'%d %M %Y')) AS displayDate,
                     o.`year`, o.`month`, o.`day`, o.habitat, o.associatedTaxa,
                     o.cultivationStatus, o.`country`, o.stateProvince, o.`county`, o.municipality, o.locality,
-                    o.localitySecurity, o.localitySecurityReason, o.decimalLatitude, o.decimalLongitude,
+                    o.localitySecurity, o.localitySecurityReason, o.occurrenceRemarks, o.decimalLatitude, o.decimalLongitude,
                     CONCAT('POINT(',o.decimalLongitude,' ',o.decimalLatitude,')') as pointLocation, o.minimumElevationInMeters,
                     o.maximumElevationInMeters, o.observeruid, o.lifeStage, o.sex, o.individualCount,
                     c.InstitutionCode, c.CollectionCode, c.CollectionName, c.icon, c.CollType, c.SortSeq
@@ -27,7 +27,7 @@
                     CONCAT_WS(' to ',IFNULL(DATE_FORMAT(o.eventDate,'%d %M %Y'),''),DATE_FORMAT(MAKEDATE(o.year,o.endDayOfYear),'%d %M %Y')) AS displayDate,
                     o.`year`, o.`month`, o.`day`, o.habitat, o.associatedTaxa,
                     o.cultivationStatus, o.`country`, o.stateProvince, o.`county`, o.municipality, o.locality,
-                    o.localitySecurity, o.localitySecurityReason, o.decimalLatitude, o.decimalLongitude,
+                    o.localitySecurity, o.localitySecurityReason, o.occurrenceRemarks, o.decimalLatitude, o.decimalLongitude,
                     CONCAT('POINT(',o.decimalLongitude,' ',o.decimalLatitude,')') as pointLocation, o.minimumElevationInMeters,
                     o.maximumElevationInMeters, o.observeruid, o.lifeStage, o.sex, o.individualCount,
                     c.InstitutionCode, c.CollectionCode, c.CollectionName, c.icon, c.CollType, c.SortSeq
@@ -65,6 +65,7 @@
                 <field column="locality" name="locality"/>
                 <field column="localitySecurity" name="localitySecurity"/>
                 <field column="localitySecurityReason" name="localitySecurityReason"/>
+                <field column="occurrenceRemarks" name="occurrenceRemarks"/>
                 <field column="decimalLatitude" name="decimalLatitude"/>
                 <field column="decimalLongitude" name="decimalLongitude"/>
                 <field column="pointLocation" name="geo"/>
