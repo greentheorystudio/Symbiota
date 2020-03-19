@@ -21,6 +21,7 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count(DISTINCT o
     SET edittype = 1;
 
 ALTER TABLE `omoccurrences`
+  ADD INDEX `Index_occurrenceRemarks`(`occurrenceRemarks`(100)),
   CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
   DROP INDEX `idx_occrecordedby`;
 
