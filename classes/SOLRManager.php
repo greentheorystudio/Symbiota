@@ -913,6 +913,30 @@ class SOLRManager extends OccurrenceManager{
                 $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
             }
         }
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr)){
+            $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
+            $remarksArr = explode(';',$searchStr);
+            $tempArr = array();
+            foreach($remarksArr as $k => $value){
+                if(strpos($value,' ')){
+                    $wordArr = explode(' ',$value);
+                    $tempStrArr = array();
+                    foreach($wordArr as $w => $word){
+                        $tempStrArr[] = '((occurrenceRemarks:*'.trim($word).'*))';
+                    }
+                    $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
+                }
+                else if($value === 'NULL'){
+                    $tempArr[] = '-occurrenceRemarks:["" TO *]';
+                    $remarksArr[$k] = 'Occurrence Remarks IS NULL';
+                }
+                else{
+                    $tempArr[] = '((occurrenceRemarks:*'.trim($value).'*))';
+                }
+            }
+            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
+        }
         if(array_key_exists('catnum',$this->searchTermsArr)){
             $catStr = $this->searchTermsArr['catnum'];
             $includeOtherCatNum = array_key_exists('othercatnum',$this->searchTermsArr)?true:false;
