@@ -51,7 +51,7 @@ $dbArr = array();
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jscolor/jscolor.js?ver=2" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
