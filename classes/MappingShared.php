@@ -202,7 +202,7 @@ class MappingShared{
 						echo '<Data>' .$pointArr[$v]."</Data>\n";
 					}
 				}
-				echo "<Data>Data retrieved from ".$DEFAULT_TITLE." Data Portal</Data>\n";
+				echo '<Data>Data retrieved from ' .$DEFAULT_TITLE." Data Portal</Data>\n";
 				$url = 'http://' .$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '/collections/individual/index.php?occid=' .$occId;
 				echo '<Data>' .$url."</Data>\n";
 				echo "</ExtendedData>\n";

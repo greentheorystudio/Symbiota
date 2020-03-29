@@ -260,7 +260,7 @@ class OccurrenceAttributes extends Manager {
 				$depTraitId = $sArr['dependTraitID'];
 			}
 			if($controlType === 'checkbox' || $controlType === 'radio'){
-				$innerStr .= '<div title="'.$sArr['description'].'"><input name="stateid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged('.$traitID.')" /> '.$sArr['name'].'</div>';
+				$innerStr .= '<div title="'.$sArr['description'].'"><input id="stateid-'.$traitID.'" name="stateid-'.$traitID.'[]" class="'.$classStr.'" type="'.$controlType.'" value="'.$sid.'" '.($isCoded?'checked':'').' onchange="traitChanged('.$traitID.')" /> '.$sArr['name'].'</div>';
 			}
 			elseif($controlType === 'select'){
 				$innerStr .= '<option value="'.$sid.'" '.($isCoded?'selected':'').'>'.$sArr['name'].'</option>';

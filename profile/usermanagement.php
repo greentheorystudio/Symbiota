@@ -39,7 +39,7 @@ if($IS_ADMIN){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> User Management</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -334,7 +334,7 @@ if($IS_ADMIN){
 					}
 					?>
 					<form name="addpermissions" action="usermanagement.php" method="post">
-						<fieldset style="margin-top:10px;color:#FFFFCC;padding:0 10px 10px 10px;">
+						<fieldset style="margin-top:10px;padding:0 10px 10px 10px;">
 							<legend style="font-weight:bold;">Assign New Permissions</legend>
 							<div style="margin:5px;">
 								<div style="float:right;margin:10px">

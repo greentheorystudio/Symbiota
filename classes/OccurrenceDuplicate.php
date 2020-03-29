@@ -129,7 +129,7 @@ class OccurrenceDuplicate {
 		$targetId = 0;
 		if(count($dupArr)>1){
 			$targetId = min($dupArr);
-			unset($dupArr[array_search($targetId, $dupArr)]);
+			unset($dupArr[array_search($targetId, $dupArr, true)]);
 			$sql = 'UPDATE omoccurduplicatelink SET duplicateid = '.$targetId.' WHERE duplicateid IN('.$dupArr.')';
 			if($this->conn->query($sql)){
 				if(!$this->conn->query('DELETE FROM omoccurduplicates WHERE duplicateid IN('.$dupArr.')')){

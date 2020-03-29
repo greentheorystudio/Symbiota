@@ -158,7 +158,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 						$status .= '; ' . $idStatus;
 					}
 				}
-				$sql = 'UPDATE images SET tid = '.($tidToAdd?$tidToAdd:'NULL').' WHERE (occid = '.$this->occid.')';
+				$sql = 'UPDATE images SET tid = '.($tidToAdd?:'NULL').' WHERE (occid = '.$this->occid.')';
 				//echo $sql;
 				if(!$this->conn->query($sql)){
 					$status = 'ERROR: Annotation added but failed to remap images to new name';
@@ -375,7 +375,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retHtml .= '<tr>';
 			$retHtml .= '<td><input type="checkbox" name="occid[]" value="'.$r->occid.'" checked /></td>';
 			$retHtml .= '<td>';
-			$retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?$r->catalogNumber:'[no catalog number]').'</a>';
+			$retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?:'[no catalog number]').'</a>';
 			$retHtml .= '<a href="#" onclick="openEditorPopup('.$r->occid.'); return false;"><img src="../../images/edit.png" /></a>';
 			$retHtml .= '</td>';
 			$retHtml .= '<td>'.$r->sciname.'</td>';

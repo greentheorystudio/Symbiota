@@ -222,11 +222,12 @@ function parseLink(link) {
 	// Is function name a template function
 	var template = templates[fnName];
 	if (template) {
-		// Build regexp
+		let i;
+// Build regexp
 		var variableNames = template.match(new RegExp("'?\\$\\{[A-Za-z0-9\.]*\\}'?", "gi"));
 		var regExp = "\\s*[A-Za-z0-9\.]*\\s*\\(";
 		var replaceStr = "";
-		for (var i=0; i<variableNames.length; i++) {
+		for (i = 0; i<variableNames.length; i++) {
 			// Is string value
 			if (variableNames[i].indexOf("'${") != -1)
 				regExp += "'(.*)'";
@@ -251,7 +252,7 @@ function parseLink(link) {
 		var variables = [];
 		variables["_function"] = fnName;
 		var variableValues = link.replace(new RegExp(regExp, "gi"), replaceStr).split('<delim>');
-		for (var i=0; i<variableNames.length; i++)
+		for (i = 0; i<variableNames.length; i++)
 			variables[variableNames[i]] = variableValues[i];
 
 		return variables;

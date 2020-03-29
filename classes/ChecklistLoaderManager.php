@@ -152,7 +152,7 @@ class ChecklistLoaderManager {
 	public function resolveProblemTaxa(): void
 	{
 		if($this->problemTaxa){
-			echo '<table class="styledtable" style="font-family:Arial;font-size:12px;">';
+			echo '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">';
 			echo '<tr><th>Cnt</th><th>Name</th><th>Actions</th></tr>';
 			$cnt = 1;
 			foreach($this->problemTaxa as $nameStr){
@@ -241,7 +241,7 @@ class ChecklistLoaderManager {
 		$inStr= str_replace($search, $replace, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) === "utf-8" || strtolower($CHARSET) === "utf8"){
+			if(strtolower($CHARSET) === 'utf-8' || strtolower($CHARSET) === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
 				}

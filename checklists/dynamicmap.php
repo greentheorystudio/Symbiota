@@ -11,13 +11,15 @@ $dynClManager = new DynamicChecklistManager();
 
 $latCen = 41.0;
 $longCen = -95.0;
-$coorArr = explode(";",$MAPPING_BOUNDARIES);
-if($coorArr && count($coorArr) == 4){
+$coorArr = explode(';',$MAPPING_BOUNDARIES);
+if($coorArr && count($coorArr) === 4){
 	$latCen = ($coorArr[0] + $coorArr[2])/2;
 	$longCen = ($coorArr[1] + $coorArr[3])/2;
 }
 $coordRange = 50;
-if($coorArr && count($coorArr) == 4) $coordRange = ($coorArr[0] - $coorArr[2]);
+if($coorArr && count($coorArr) === 4) {
+	$coordRange = ($coorArr[0] - $coorArr[2]);
+}
 $zoomInt = 5;
 if($coordRange < 20){
 	$zoomInt = 7;
@@ -33,7 +35,7 @@ elseif($coordRange > 40){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Dynamic Checklist Generator</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -63,7 +65,7 @@ elseif($coordRange > 40){
         });
 
 	    function initialize(){
-	    	var dmLatLng = new google.maps.LatLng(<?php echo $latCen.",".$longCen; ?>);
+	    	var dmLatLng = new google.maps.LatLng(<?php echo $latCen. ',' .$longCen; ?>);
 	    	var dmOptions = {
 				zoom: <?php echo $zoomInt; ?>,
 				center: dmLatLng,
@@ -81,12 +83,11 @@ elseif($coordRange > 40){
 	
 	    function placeMarker() {
 			if(currentMarker) currentMarker.setMap();
-	        if(mapZoom == map.getZoom()){
-	            var marker = new google.maps.Marker({
+	        if(mapZoom === map.getZoom()){
+                currentMarker = new google.maps.Marker({
 	                position: startLocation,
 	                map: map
 	            });
-				currentMarker = marker;
 
 		        var latValue = startLocation.lat();
 		        var lonValue = startLocation.lng();

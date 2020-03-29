@@ -117,7 +117,7 @@ class SpatialModuleManager{
         $searchStr = '';
         if(is_array($searchTarget)){
             if(is_numeric(current($searchTarget))){
-                $targetTidArr = $searchTarget;
+                $targetTidArr[] = $searchTarget;
             }
             else{
                 $searchStr = implode('","',$searchTarget);
@@ -193,7 +193,7 @@ class SpatialModuleManager{
                     <tr>
                         <td>
                             <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'':'display:none;') ?>" />
+                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
                             </a>
                         </td>
                         <td>
@@ -514,6 +514,15 @@ class SpatialModuleManager{
             }
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
+        }
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
+            $remarksArr = explode(';',$this->searchTermsArr['occurrenceRemarks']);
+            $tempArr = array();
+            foreach($remarksArr as $value){
+                $tempArr[] = "(o.occurrenceRemarks LIKE '%".trim($value)."%')";
+            }
+            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
         }
         if(array_key_exists('collnum',$this->searchTermsArr)&&$this->searchTermsArr['collnum']){
             $collNumArr = explode(';',$this->searchTermsArr['collnum']);

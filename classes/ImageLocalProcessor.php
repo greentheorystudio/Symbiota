@@ -792,21 +792,21 @@ class ImageLocalProcessor {
 						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename): '.$this->conn->error,1);
 					}
 					if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
-						$urlPath = current(parse_url($r->url, PHP_URL_PATH));
+						$urlPath = parse_url($r->url, PHP_URL_PATH);
 						if($urlPath && strpos($urlPath, $this->imgUrlBase) === 0){
 							$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlPath);
 							if(file_exists($wFile) && is_writable($wFile)) {
 								unlink($wFile);
 							}
 						}
-						$urlTnPath = current(parse_url($r->thumbnailurl, PHP_URL_PATH));
+						$urlTnPath = parse_url($r->thumbnailurl, PHP_URL_PATH);
 						if($urlTnPath && strpos($urlTnPath, $this->imgUrlBase) === 0){
 							$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlTnPath);
 							if(file_exists($wFile) && is_writable($wFile)) {
 								unlink($wFile);
 							}
 						}
-						$urlLgPath = current(parse_url($r->url, PHP_URL_PATH));
+						$urlLgPath = parse_url($r->url, PHP_URL_PATH);
 						if($urlLgPath && strpos($urlLgPath, $this->imgUrlBase) === 0){
 							$wFile = str_replace($this->imgUrlBase,$this->targetPathBase,$urlLgPath);
 							if(file_exists($wFile) && is_writable($wFile)) {
@@ -1031,7 +1031,7 @@ class ImageLocalProcessor {
 								}
 							}
 							if(array_key_exists('ometid',$recMap) && $recMap['ometid']){
-								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber'])," #num");
+								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber']), ' #num');
 								$sql = 'SELECT omenid FROM omexsiccatinumbers '.
 									'WHERE ometid = ('.$recMap['ometid'].') AND (exsnumber = "'.$numStr.'")';
 								$rs = $this->conn->query($sql);
@@ -1224,7 +1224,7 @@ class ImageLocalProcessor {
 			if(true){
 				$fileName = substr($filePath,strrpos($filePath,'/')).'.orig_'.time();
 				if(!file_exists($this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !is_dir($concurrentDirectory)) {
-					throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+					throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 				}
 				if(!rename($filePath,$this->targetPathBase.$this->targetPathFrag.'orig_skeletal'.$fileName)){
 					$this->logOrEcho('ERROR: unable to move (' .$filePath. ') ',1);

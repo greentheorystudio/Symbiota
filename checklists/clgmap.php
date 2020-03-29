@@ -1,13 +1,15 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ChecklistManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $projValue = $_REQUEST['proj'];
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'checklists';
 
 $clManager = new ChecklistManager();
-if(!$projValue && isset($DEFAULT_PROJ_ID)) $projValue = $DEFAULT_PROJ_ID;
+if(!$projValue && isset($DEFAULT_PROJ_ID)) {
+	$projValue = $DEFAULT_PROJ_ID;
+}
 $clManager->setProj($projValue);
 
 ?>
@@ -18,8 +20,8 @@ $clManager->setProj($projValue);
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 		<script type="text/javascript">
 		    var map;
-		    var points = new Array();
-		    var infoWins = new Array();
+		    var points = [];
+		    var infoWins = [];
 		  	
 		    function initialize(){
 		    	var dmLatLng = new google.maps.LatLng(41.0, -95.0);

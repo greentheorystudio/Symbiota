@@ -92,7 +92,7 @@ if($editorCode){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
 	<link type="text/css" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
-	<link type="text/css" href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" />
+	<link type="text/css" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
 	<script>
 		function toggle(target){
             const tDiv = document.getElementById(target);
@@ -552,7 +552,7 @@ include(__DIR__ . '/../../header.php');
                                 <option value="">--------------------------------------</option>
                                 <?php
                                 foreach($fullCollList as $collid => $collArr){
-                                    if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS["CollAdmin"] && in_array($collid, $USER_RIGHTS['CollAdmin'], true)))){
+                                    if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS['CollAdmin'] && in_array($collid, $USER_RIGHTS['CollAdmin'], true)))){
                                         echo '<option value="'.$collid.'"'.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
                                     }
                                 }

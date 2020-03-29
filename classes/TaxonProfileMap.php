@@ -43,7 +43,7 @@ class TaxonProfileMap {
 			$result->close();
 			if($this->tid){
 				$this->taxArr[$this->tid] = $this->sciName;
-				$this->taxArr += $this->getChildren(array($this->tid));
+				$this->taxArr = array_merge($this->taxArr, $this->getChildren(array($this->tid)));
 				$taxaKeys = array_keys($this->taxArr);
 				$this->synMap = array_combine($taxaKeys,$taxaKeys);
 				$this->setTaxaSynonyms($taxaKeys);
@@ -64,7 +64,7 @@ class TaxonProfileMap {
 	        }
 			$rs->close();
 			if($retArr && $this->childLoopCnt < 5 && count(array_intersect($retArr,$inArr)) < count($retArr)){
-				$retArr += $this->getChildren(array_keys($retArr));
+				$retArr = array_merge($retArr, $this->getChildren(array_keys($retArr)));
 			}
 			$this->childLoopCnt++;
 		}

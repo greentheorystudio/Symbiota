@@ -173,11 +173,11 @@ class ChecklistAdmin{
 			'WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'") AND uid <> '.$SYMB_UID;
 		$rs1 = $this->conn->query($sql1);
 		if($rs1->num_rows === 0){
-			$sql2 = "DELETE FROM fmvouchers WHERE (clid = ".$delClid.')';
+			$sql2 = 'DELETE FROM fmvouchers WHERE (clid = ' .$delClid.')';
 			if($this->conn->query($sql2)){
-				$sql3 = "DELETE FROM fmchklsttaxalink WHERE (clid = ".$delClid.')';
+				$sql3 = 'DELETE FROM fmchklsttaxalink WHERE (clid = ' .$delClid.')';
 				if($this->conn->query($sql3)){
-					$sql4 = "DELETE FROM fmchecklists WHERE (clid = ".$delClid.')';
+					$sql4 = 'DELETE FROM fmchecklists WHERE (clid = ' .$delClid.')';
 					if($this->conn->query($sql4)){
 						$sql5 = 'DELETE FROM userroles WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'")';
 						$this->conn->query($sql5);
@@ -550,8 +550,12 @@ class ChecklistAdmin{
 				'WHERE (uid = '.$uid.') AND (role = "ClAdmin" OR role = "ProjAdmin") ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				if($r->role == 'ClAdmin') $clStr .= ','.$r->tablepk;
-				if($r->role == 'ProjAdmin') $projStr .= ','.$r->tablepk;
+				if($r->role === 'ClAdmin') {
+                    $clStr .= ',' . $r->tablepk;
+                }
+				if($r->role === 'ProjAdmin') {
+                    $projStr .= ',' . $r->tablepk;
+                }
 			}
 			$rs->free();
 			if($clStr){

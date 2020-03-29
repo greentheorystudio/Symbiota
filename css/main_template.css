@@ -29,17 +29,8 @@ td.header a:hover{
 
 }
 
-td.middleleft{
-}
-
-td.middleleftnomenu{
-}
-
 td.middlecenter{
 	padding:0;
-}
-
-td.middleright{
 }
 
 td.footer{
@@ -57,26 +48,11 @@ div.menu {
 	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
 }
 
-div.menuheader{
-	background-color:   #C0C0C0;
-	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size:   		13px;
-	color:   			white;
-	overflow:   		hidden;
-	text-align:   		center;
-	padding:   			3px;
-	margin:			   	0;
-}
-
 div.menuheader a{
 
 }
 
 div.menuheader a:hover {
-
-}
-
-div.menusubheader{
 
 }
 

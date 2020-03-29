@@ -17,7 +17,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
         $taxaSheet = null;
         $materialsSheet = null;
 	    $spreadsheet = new Spreadsheet();
-        $taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
+        try {
+            $taxaSheet = $spreadsheet->getActiveSheet()->setTitle('Taxa');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
         $penArr = $this->getPensoftArr();
 		$headerArr = $penArr['header'];
 		$taxaArr = $penArr['taxa'];
@@ -48,7 +50,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			$rowCnt++;
 		}
 
-        $materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
+        try {
+            $materialsSheet = $spreadsheet->createSheet(1)->setTitle('Materials');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
         $dwcaHandler = new DwcArchiverCore();
 		$dwcaHandler->setVerboseMode(0);
@@ -84,7 +88,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			}
 		}
 
-        $spreadsheet->createSheet(2)->setTitle('ExternalLinks');
+        try {
+            $spreadsheet->createSheet(2)->setTitle('ExternalLinks');
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {}
 
         $file = $this->getExportFileName().'.xlsx';
 		header('Content-Description: Checklist Pensoft Export');
@@ -94,7 +100,9 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		header('Pragma: public');
 
 		$writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
+        try {
+            $writer->save('php://output');
+        } catch (\PhpOffice\PhpSpreadsheet\Writer\Exception $e) {}
     }
 
 	protected function getPensoftArr(): array

@@ -22,7 +22,7 @@ if(!$clName){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -117,7 +117,6 @@ if(!$clName){
         let sFont = 0;
         let lFont = 0;
         let wildCardArr = [];
-        const ns = document.getElementById&&!document.all;
 
         const step = 5;
         let repeat = "";
@@ -425,7 +424,7 @@ if(!$clName){
 		function getKey(e){
 			let myNewString;
             running = 1;
-            let keyCode = (!ns) ? event.keyCode : e.which;
+            let keyCode = e.keyCode;
             const chkChar = e;
             let temp = "";
 

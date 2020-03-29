@@ -1,4 +1,4 @@
-<div id="tabs" style="margin:0px;">
+<div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#exchangedetaildiv"><span>Exchange Details</span></a></li>
 		<li><a href="#exchangedeldiv"><span>Admin</span></a></li>

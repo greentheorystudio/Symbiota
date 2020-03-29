@@ -51,9 +51,9 @@ if(isset($_SESSION['userrights'])){
     $USER_RIGHTS = $_SESSION['userrights'];
 }
 
-$CSS_VERSION = '6';
-if(!isset($CSS_VERSION_LOCAL)) {
-    $CSS_VERSION_LOCAL = $CSS_VERSION;
+$CSS_VERSION = '20200317';
+if(isset($CSS_VERSION_LOCAL) && ($CSS_VERSION_LOCAL > $CSS_VERSION)) {
+    $CSS_VERSION = $CSS_VERSION_LOCAL;
 }
 if(!isset($EML_PROJECT_ADDITIONS)) {
     $EML_PROJECT_ADDITIONS = array();
@@ -121,7 +121,3 @@ $RIGHTS_TERMS_DEFS = array(
         'def' => 'Users can copy and redistribute the material in any medium or format. The licensor cannot revoke these freedoms as long as you follow the license terms.'
     )
 );
-
-if(!isset($MAPPING_BOUNDARIES) || !$MAPPING_BOUNDARIES){
-    $MAPPING_BOUNDARIES = '42.3;-100.5;18.0;-127';
-}

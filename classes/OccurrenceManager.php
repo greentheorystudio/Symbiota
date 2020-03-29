@@ -160,8 +160,7 @@ class OccurrenceManager{
 			}
 			$sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
 		}
-
-		if(array_key_exists('country',$this->searchTermsArr)){
+        if(array_key_exists('country',$this->searchTermsArr)){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);
 			$countryArr = explode(';',$searchStr);
 			$tempArr = array();
@@ -220,11 +219,8 @@ class OccurrenceManager{
 					$tempArr[] = '(o.locality IS NULL)';
 					$localArr[$k] = 'Locality IS NULL';
 				}
-				else if(strlen($value) < 4 || strtolower($value) === 'best'){
+				else{
                     $tempArr[] = '(o.municipality LIKE "'.$this->cleanInStr($value).'%" OR o.Locality LIKE "%'.$this->cleanInStr($value).'%")';
-                }
-                else{
-                    $tempArr[] = '(MATCH(f.locality) AGAINST(\'"'.$this->cleanInStr($value).'"\' IN BOOLEAN MODE)) ';
                 }
 			}
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
@@ -377,6 +373,23 @@ class OccurrenceManager{
 				$this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
 			}
 		}
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr)){
+            $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
+            $remarksArr = explode(';',$searchStr);
+            $tempArr = array();
+            foreach($remarksArr as $k => $value){
+                $value = trim($value);
+                if($value === 'NULL'){
+                    $tempArr[] = '(o.occurrenceRemarks IS NULL)';
+                    $remarksArr[$k] = 'Occurrence Remarks IS NULL';
+                }
+                else{
+                    $tempArr[] = '(o.occurrenceRemarks LIKE "%'.$this->cleanInStr($value).'%")';
+                }
+            }
+            $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
+        }
 		if(array_key_exists('catnum',$this->searchTermsArr)){
 			$catStr = $this->searchTermsArr['catnum'];
 			$includeOtherCatNum = array_key_exists('othercatnum',$this->searchTermsArr)?true:false;
@@ -622,8 +635,7 @@ class OccurrenceManager{
         if(!$targetCatID && $DEFAULTCATID) {
             $targetCatID = $DEFAULTCATID;
         }
-        $collCnt = 0;
-		echo '<div style="position:relative">';
+        echo '<div style="position:relative">';
         if(isset($occArr['cat'])){
 			$categoryArr = $occArr['cat'];
 			?>
@@ -632,7 +644,6 @@ class OccurrenceManager{
 			</div>
 			<table style="float:left;width:80%;">
 				<?php
-				$cnt = 0;
 				foreach($categoryArr as $catid => $catArr){
 					$name = $catArr['name'];
 					if($catArr['acronym']) {
@@ -656,7 +667,7 @@ class OccurrenceManager{
 						</td>
 						<td style="padding:9px 5px;width:10px;">
 							<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-								<img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($targetCatID != $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($targetCatID != $catid?'display:none;':'') ?>" />
+								<img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($targetCatID !== $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($targetCatID !== $catid?'display:none;':'') ?>" />
 							</a>
 						</td>
 						<td style="padding-top:8px;">
@@ -1001,7 +1012,6 @@ class OccurrenceManager{
 				unset($this->searchTermsArr['taxa']);
 			}
 		}
-		$searchArr = array();
 		if(array_key_exists('country',$_REQUEST)){
 			$country = $this->cleanInputStr($_REQUEST['country']);
 			if($country){
@@ -1136,6 +1146,16 @@ class OccurrenceManager{
 				unset($this->searchTermsArr['eventdate1']);
 			}
 		}
+        if(array_key_exists('occurrenceRemarks',$_REQUEST)){
+            $remarks = $this->cleanInputStr($_REQUEST['occurrenceRemarks']);
+            if($remarks){
+                $str = str_replace(',', ';',$remarks);
+                $this->searchTermsArr['occurrenceRemarks'] = $str;
+            }
+            else{
+                unset($this->searchTermsArr['occurrenceRemarks']);
+            }
+        }
 		if(array_key_exists('catnum',$_REQUEST)){
 			$catNum = $this->cleanInputStr($_REQUEST['catnum']);
 			if($catNum){
@@ -1238,12 +1258,7 @@ class OccurrenceManager{
 		$targetTidArr = array();
 		$searchStr = '';
 		if(is_array($searchTarget)){
-			if(is_numeric(current($searchTarget))){
-				$targetTidArr = $searchTarget;
-			}
-			else{
-				$searchStr = implode('","',$searchTarget);
-			}
+            $searchStr = implode('","',$searchTarget);
 		}
 		elseif(is_numeric($searchTarget)){
             $targetTidArr[] = $searchTarget;

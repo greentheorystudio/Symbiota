@@ -452,7 +452,9 @@ class SpecUpload{
 			$this->verboseMode = $vMode;
 			if(($this->verboseMode === 2) && $SERVER_ROOT) {
 				$LOG_PATH = $SERVER_ROOT;
-				if(substr($SERVER_ROOT,-1) !== '/' && substr($SERVER_ROOT,-1) !== '\\') $LOG_PATH .= '/';
+				if(substr($SERVER_ROOT,-1) !== '/' && substr($SERVER_ROOT,-1) !== '\\') {
+                    $LOG_PATH .= '/';
+                }
 				$LOG_PATH .= 'content/logs/';
 				if($logTitle){
 					$LOG_PATH .= $logTitle;

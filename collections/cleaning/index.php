@@ -32,7 +32,7 @@ if($collMap['colltype'] === 'General Observations'){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<style type="text/css">
 		table.styledtable {  width: 300px }
 		table.styledtable td { white-space: nowrap; }
@@ -175,7 +175,7 @@ if($collMap['colltype'] === 'General Observations'){
 					<div style="font-weight:bold">Ranking Statistics</div>
 					<?php
 					$coordRankingArr = $cleanManager->getRankingStats('coordinate');
-					$rankArr = current($coordRankingArr);
+					$rankArr = $coordRankingArr['coordinate'];
 					echo '<table class="styledtable">';
 					echo '<tr><th>Ranking</th><th>Protocol</th><th>Count</th></tr>';
 					foreach($rankArr as $rank => $protocolArr){

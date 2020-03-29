@@ -14,6 +14,7 @@ $recordCnt = array_key_exists('rows',$_REQUEST)?$_REQUEST['rows']:0;
 
 $selections = array();
 $allSelected = false;
+$occArr = array();
 
 $solrManager = new SOLRManager();
 $spatialManager = new SpatialModuleManager();

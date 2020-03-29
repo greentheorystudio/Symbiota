@@ -639,7 +639,7 @@ class ChecklistVoucherAdmin {
 				$headerArr[] = $val->name;
 			}
 			$rareSpeciesReader = $this->isRareSpeciesReader();
-			$out = fopen('php://output', 'w');
+			$out = fopen('php://output', 'wb');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
@@ -805,7 +805,7 @@ class ChecklistVoucherAdmin {
 		$retStr = '';
 		if(isset($this->queryVariablesArr['collid'])){
 			$collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
-			$retStr .= current($collArr).'; ';
+			$retStr .= $collArr[$this->queryVariablesArr['collid']].'; ';
 		}
 		if(isset($this->queryVariablesArr['country'])) {
 			$retStr .= $this->queryVariablesArr['country'] . '; ';
@@ -864,7 +864,9 @@ class ChecklistVoucherAdmin {
 	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname FROM omcollections ';
-		if($collId) $sql .= 'WHERE collid = '.$collId;
+		if($collId) {
+            $sql .= 'WHERE collid = ' . $collId;
+        }
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid] = $r->collectionname;

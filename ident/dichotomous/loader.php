@@ -46,7 +46,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 <head>
 <title><?php echo $DEFAULT_TITLE; ?> Dichotomous Key Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
 	<script>
         let cseXmlHttp;
