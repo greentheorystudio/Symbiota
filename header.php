@@ -1,9 +1,22 @@
 <table id="maintable" style="border-spacing: 0;">
     <tr>
         <td class="header">
-            <div style="clear:both;">
-                <div style="clear:both;">
-                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/defaultheader.jpg" />
+            <div style="width:100%;position:relative;height:200px;border-bottom:1px solid #333333;">
+                <div style="background-color:#000000;width:100%;height:200px;">
+                    <div style="float:left;">
+                        <img style="border:0;height:200px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Welcome_Image.jpg" />
+                    </div>
+                    <div style="float:right;height:150px;display:flex;align-items:center;">
+                        <img style="height:68px;margin-right:30px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/headerMastHead_sms.jpg" />
+                    </div>
+                </div>
+                <div style="background-color:#FFFFFF;width:100%;height:50px;z-index:9;opacity:0.7;position:absolute;bottom:0;left:0;"></div>
+                <div style="width:100%;height:50px;z-index:10;position:absolute;bottom:0;left:0;">
+                    <div style="width:100%;color:black;opacity:1;display:flex;justify-content:space-evenly;align-items:center;">
+                        <img style="border:0;height:45px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Smithsonian-Logo.png" />
+                        in partnership with
+                        <img style="border:0;height:45px;padding:2px;background-color:white;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/HorzCoBrandLogo.jpg" />
+                    </div>
                 </div>
             </div>
             <div id="top_navbar">
@@ -47,50 +60,105 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
+                        <a href="#" >Search</a>
+                        <ul>
+							<li>
+								<a href="#" >Search by Word or Phrase</a>
+							</li>
+							<li>
+								<a href="#" >Go to Species Reports</a>
+							</li>
+							<li>
+								<a href="#" >Alphabetized Species Lists</a>
+							</li>
+							<li>
+								<a href="#" >Expanded Species Reports</a>
+							</li>
+                            <li>
+                                <a href="#" >Special Status Species</a>
+                            </li>
+                            <li>
+                                <a href="#" >Non-Native Species</a>
+                            </li>
+                            <li>
+                                <a href="#" >Species Names and Taxonomy</a>
+                            </li>
+                            <li>
+                                <a href="#" >Marine Invertebrates</a>
+                            </li>
+                            <li>
+                                <a href="#" >What's New</a>
+                            </li>
+						</ul>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
+                        <a href="#" >The IRL</a>
+                        <ul>
+                            <li>
+                                <a href="#" >The IRL</a>
+                            </li>
+                            <li>
+                                <a href="#" >What is a Lagoon</a>
+                            </li>
+                            <li>
+                                <a href="#" >What is Biodiversity</a>
+                            </li>
+                            <li>
+                                <a href="#" >Documented IRL Biodiversity</a>
+                            </li>
+                            <li>
+                                <a href="#" >IRL Animal Biodiversity</a>
+                            </li>
+                            <li>
+                                <a href="#" >IRL Plant Biodiversity</a>
+                            </li>
+                            <li>
+                                <a href="#" >IRL Protist Biodiversity</a>
+                            </li>
+                            <li>
+                                <a href="#" >IRL Habitats</a>
+                            </li>
+                            <li>
+                                <a href="#" >Threats to IRL Habitats</a>
+                            </li>
+                            <li>
+                                <a href="#" >Climate Change and the IRL</a>
+                            </li>
+                        </ul>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>
+                        <a href="#">Stewardship</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Browse Images</a>
+                        <a href="#" >Photo Gallery</a>
+                        <ul>
+                            <li>
+                                <a href="#" >Photo Gallery</a>
+                            </li>
+                            <li>
+                                <a href="#" >Species Image Collection</a>
+                            </li>
+                        </ul>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?" >Inventories</a>
-                        <!-- <ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" >Project 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2" >Project 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=3" >Project 3</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=4" >Project 4</a>
-							</li>
-						</ul> -->
+                        <a href="#">Links and Events</a>
                     </li>
                     <li>
-                        <a href="#" >Interactive Tools</a>
-                        <!-- <ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" >Dynamic Checklist 1</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" >Dynamic Checklist 2</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" >Dynamic Checklist 3</a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" >Dynamic Checklist 4</a>
-							</li>
-						</ul> -->
+                        <a href="#" >About Us</a>
+                        <ul>
+                            <li>
+                                <a href="#" >Project Background</a>
+                            </li>
+                            <li>
+                                <a href="#" >Acknowledgements</a>
+                            </li>
+                            <li>
+                                <a href="#" >Contact</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="https://naturalhistory.si.edu/research/smithsonian-marine-station">SMS Home</a>
                     </li>
                 </ul>
             </div>

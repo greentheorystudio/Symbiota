@@ -1,7 +1,11 @@
 body{
 	width: 80%;
-	min-width:950px;
+	min-width:665px;
 	margin-top:0;
+	background-color:#336699;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 16px;
 }
 
 #maintable{
@@ -16,7 +20,7 @@ body{
 
 td.header{
 	color:#FFFFFF;
-	background-color:#026B6E;
+	background-color:#000000;
 	text-align:left;
 	padding: 0;
 }
@@ -142,7 +146,9 @@ table{
 }
 
 h1{
-
+	font-family: georgia, serif;
+	font-size: 24px;
+	font-weight: normal;
 }
 
 h2{
