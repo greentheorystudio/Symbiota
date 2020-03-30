@@ -123,9 +123,9 @@ include(__DIR__ . '/header.php');
     </div>
     <div style="margin-top:15px;padding: 0 10px;">
         <div style="display:flex;justify-content:space-evenly;flex-wrap:wrap;align-items:center;margin-top:8px;margin-bottom:8px;">
-            <img src="images/layout/eol_logo.jpg" width="150" height="95" alt="EOL Logo" />
+            <img src="images/layout/eol_logo.jpg" style="width:150px;height:95px;" alt="EOL Logo" />
             <p style="width:300px;">Did you know that the IRL Species Inventory contributes species information to the Encyclopedia of Life? Visit <a href="http://eol.org">EOL</a> to find out more.</p>
-            <img src="images/layout/IRLPlate3.gif" width="190" height="156" alt="Plate" />
+            <img src="images/layout/IRLPlate3.gif" style="width:190px;height:156px;" alt="Plate" />
         </div>
     </div>
     <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
