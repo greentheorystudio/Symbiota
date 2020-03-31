@@ -6,16 +6,8 @@
                     <div style="float:left;">
                         <img style="border:0;height:200px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Welcome_Image.jpg" />
                     </div>
-                    <div style="float:right;height:150px;display:flex;align-items:center;">
+                    <div style="float:right;height:200px;display:flex;align-items:center;">
                         <img style="height:68px;margin-right:30px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/headerMastHead_sms.jpg" />
-                    </div>
-                </div>
-                <div style="background-color:#FFFFFF;width:100%;height:50px;z-index:9;opacity:0.7;position:absolute;bottom:0;left:0;"></div>
-                <div style="width:100%;height:50px;z-index:10;position:absolute;bottom:0;left:0;">
-                    <div style="width:100%;color:black;opacity:1;display:flex;justify-content:space-evenly;align-items:center;">
-                        <img style="border:0;height:45px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Smithsonian-Logo.png" />
-                        in partnership with
-                        <img style="border:0;height:45px;padding:2px;background-color:white;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/HorzCoBrandLogo.jpg" />
                     </div>
                 </div>
             </div>

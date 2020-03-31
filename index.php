@@ -131,9 +131,12 @@ include(__DIR__ . '/header.php');
     <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
         <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
     </div>
-    <div style="margin-top:15px;padding: 0 10px;">
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:15px;padding: 0 10px;">
         Submit additional information, photos or comments to: <br />
         <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a>
+    </div>
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
+        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
     </div>
 </div>
 
