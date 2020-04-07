@@ -65,13 +65,30 @@
 	left: -50%;
 	padding: 5px;
 	display: block;
-	width: 400px;
 	z-index: 3;
-	font-family: Arial, serif;
+	font-family: Arial, sans-serif;
 	-moz-border-radius: 5px ! important;
 	border-width: 1px 1px 0 0;
 	background-color: #3c668d;
 	opacity: 0.85;
+}
+
+.topToolboxRow {
+	height: 25px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.middleToolboxRow {
+	height: 25px;
+	display: flex;
+	justify-content: flex-start;
+}
+
+.bottomToolboxRow {
+	height: 20px;
+	display: flex;
+	justify-content: space-around;
 }
 
 #drawcontrol {
