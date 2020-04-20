@@ -42,7 +42,7 @@ $dbArr = array();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=16" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=17" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
@@ -94,10 +94,6 @@ $dbArr = array();
                 scrolllock: true
             });
             $('#mapsettings').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#maptools').popup({
                 transition: 'all 0.3s',
                 scrolllock: true
             });
@@ -522,48 +518,49 @@ $dbArr = array();
 
     <div id="maptoolcontainer">
         <div id="maptoolbox">
-            <div id="drawcontrol">
-                <span class="maptext">Draw</span>
-                <select id="drawselect">
-                    <option value="None">None</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="Circle">Circle</option>
-                    <option value="LineString">Line</option>
-                    <option value="Point">Point</option>
-                </select>
+            <div class="topToolboxRow">
+                <div id="drawcontrol">
+                    <span class="maptext">Draw</span>
+                    <select id="drawselect">
+                        <option value="None">None</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="Circle">Circle</option>
+                        <option value="LineString">Line</option>
+                        <option value="Point">Point</option>
+                    </select>
+                </div>
+                <div id="basecontrol">
+                    <span class="maptext">Base Layer</span>
+                    <select data-role="none" id="base-map" onchange="changeBaseMap();">
+                        <option value="worldtopo">ESRI World Topo</option>
+                        <option value="openstreet">OpenStreetMap</option>
+                        <option value="blackwhite">Stamen Design Black &amp; White</option>
+                        <option value="worldimagery">ESRI World Imagery</option>
+                        <option value="ocean">ESRI Ocean</option>
+                        <option value="ngstopo">National Geographic Topo</option>
+                        <option value="natgeoworld">National Geographic World</option>
+                        <option value="esristreet">ESRI StreetMap</option>
+                    </select>
+                </div>
             </div>
-            <div id="basecontrol">
-                <span class="maptext">Base Layer</span>
-                <select data-role="none" id="base-map" onchange="changeBaseMap();">
-                    <option value="worldtopo">ESRI World Topo</option>
-                    <option value="openstreet">OpenStreetMap</option>
-                    <option value="blackwhite">Stamen Design Black &amp; White</option>
-                    <option value="worldimagery">ESRI World Imagery</option>
-                    <option value="ocean">ESRI Ocean</option>
-                    <option value="ngstopo">National Geographic Topo</option>
-                    <option value="natgeoworld">National Geographic World</option>
-                    <option value="esristreet">ESRI StreetMap</option>
-                </select>
+            <div class="middleToolboxRow">
+                <div id="selectcontrol">
+                    <span class="maptext">Active Layer</span>
+                    <select id="selectlayerselect" onchange="setActiveLayer();">
+                        <option id="lsel-none" value="none">None</option>
+                    </select>
+                </div>
             </div>
-            <div style="clear:both;"></div>
-            <div id="selectcontrol">
-                <span class="maptext">Active Layer</span>
-                <select id="selectlayerselect" onchange="setActiveLayer();">
-                    <option id="lsel-none" value="none">None</option>
-                </select>
-            </div>
-            <div style="clear:both;"></div>
-            <div id="settingsLink" style="margin-left:22px;float:left;">
-                <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
-            </div>
-            <div id="toolsLink" style="margin-left:22px;float:left;">
-                <span class="maptext"><a class="maptools_open" href="#maptools"><b>Tools</b></a></span>
-            </div>
-            <div id="layerControllerLink" style="margin-left:22px;float:left;">
-                <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
-            </div>
-            <div id="deleteSelections" style="margin-left:60px;float:left;">
-                <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
+            <div class="bottomToolboxRow">
+                <div id="settingsLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
+                </div>
+                <div id="layerControllerLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
+                </div>
+                <div id="deleteSelections" style="margin-left:60px;float:left;">
+                    <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
+                </div>
             </div>
             <div style="clear:both;"></div>
             <div id="dateslidercontrol" style="margin-top:5px;display:none;">
@@ -1753,8 +1750,6 @@ $dbArr = array();
 </script>
 
 <?php include_once('includes/mapsettings.php'); ?>
-
-<?php include_once('includes/maptools.php'); ?>
 
 <?php include_once('includes/layercontroller.php'); ?>
 
