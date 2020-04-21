@@ -1,0 +1,736 @@
+<!doctype html><html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+
+<head>
+
+<!--
+
+  ++ nmnh_base.dwt
+
+  ++ version 1.1 - 06 February 2007
+
+  -->
+
+
+
+<meta charset="utf-8">
+
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" --> 
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" --> 
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" --> 
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" --> 
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title></title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+ 
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+
+<script type="text/javascript" src="/_js/functions.js"></script>
+
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+
+<!-- InstanceEndEditable -->
+
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+
+<script language="javascript" type="text/javascript">
+
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+
+
+function popDef(definition, wingo) {
+
+alert("Definition: " + definition);
+
+window.location = wingo;
+
+}
+
+//-->
+
+</script>
+
+</head>
+
+<body onLoad="do_onload();">
+
+<div id="wrap">
+
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+
+    <div id="searchForm">
+
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+
+        <fieldset>
+
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+
+          <label for="qt">Search Field:</label>
+
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+
+          <label for="submit">Search Submit:</label>
+
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+
+          <input type="hidden" name="site" value="sms">
+
+          <input type="hidden" name="client" value="sms">
+
+          <input type="hidden" name="proxystylesheet" value="sms">
+
+          <input type="hidden" name="output" value="xml_no_dtd">
+
+        </fieldset>
+
+      </form>
+
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+
+    </div>
+
+    <!-- searchForm --> 
+
+  </div>
+
+  <!-- mastHead -->
+
+  <div id="globalNav">
+
+    <ul>
+
+      <li><a href="../index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+
+      <li><a href="../Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+
+      <li><a href="../Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+
+      <li><a href="../PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+
+      <li><a href="../IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+
+      <li><a href="../Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+
+    </ul>
+
+  </div>
+
+  <!-- globalNav --> 
+
+  
+<div id="sideContent">	  
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" -->
+<a href="../images/Lontra_canad1a.jpg"><img src="../images/Lontra_canad1a.jpg" width="226"></a><br>
+    <span class="caption">The river otter, <i>Lontra canadensis.</i> Photo courtesy of S. Reed, Smithsonian Marine Station.</span><br /><br />
+    <a href="../images/Lontra_canad2.jpg"><img src="../images/Lontra_canad2.jpg" width="225"></a><br>
+    <span class="caption">River otter exploring the patio of a Ft. Pierce home. Photo courtesy of S. Reed, Smithsonian Marine Station.</span>
+<!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent"> 
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+        <ul>
+        <li><a href="../Animals.htm">Animals</a> &#8250;</li>
+          <li><a href="../Cl_Mammal.htm">Mammals</a> &#8250;</li>
+          <li><a href="../Lspecies.htm">Alphabetized Species List</a> &#8250;</li>
+          <li><a href="../Compl_Reports.htm">Expanded Species Reports</a> &#8250;</li>
+          <li>Lontra canadensis </li>
+        </ul>
+        <h1 class="heading">Indian River Lagoon Species Inventory</h1>
+
+        <!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+<!--msnavigation-->
+<br>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+    	<td>
+        	<table cellpadding="0" cellspacing="0" class="species-table">
+    <tr>
+          <td class="label">Species Name:</td>
+      <td><span class="specie-name">Lontra canadensis</span> Schreber, 1777</td>
+    </tr>
+    <tr>
+      <td class="label">Common Name:</td>
+      <td>River otter</td>
+    </tr>
+    <tr>
+    	<td class="label">Synonymy:</td>
+        <td><i>Lutra canadenis</i> Schreber, 1777</td>
+    </tr>
+  </table>
+        <ol class="report-caterories">
+    	  <li>
+  	<p class="heading">TAXONOMY</p>
+
+      <table CELLSPACING="0" BORDER="0" CELLPADDING="2" WIDTH="100%" class="table-border no-border alternate">
+      <tr>
+        <th>Kingdom</th>
+        <th>Phylum/Division</th>
+        <th>Class:</th>
+        <th>Order:</th>
+        <th>Family:</th>
+        <th>Genus:</th>
+      </tr>
+      <tr>
+        <td>Animalia</td>
+        <td>Chordata</td>
+        <td>Mammalia</td>
+        <td>Carnivora</td>
+        <td>Mustelidae</td>
+        <td class="genus_italics">Lontra</td>
+      </tr>
+  </table>
+  
+  <p class="title">Other Taxonomic Groupings</p>
+    <p class="body"><b>Subphylum</b>: Vertebrata<br>
+    <b>Subclass</b>: Theria<br>
+    <b>Infraclass</b>: Eutheria<br>
+    <b>Suborder</b>: Caniformia<br>
+    <b>Subfamily</b>: Lutrinae</p>
+    
+    <p class="title">Species Description</p>
+<p class="body">The accepted taxonomic designation for this species is <i>Lontra canadensis</i>.
+It was formerly called <i>Lutra canadensis</i>.</p>
+    <p class="body"><i>Lontra canadensis</i> is
+the largest member of the family Mustelidae, which includes the weasel, skunk,
+badger, and mink. Adults measure approximately 1 m (3 feet) or more in body
+length, including the tail, and may weigh 3-15 kg (7-35 pounds).</p>
+
+<p class="body"> There is some degree of <a href="#sexual dimorphism" onClick="popDef('differences in physical characteristics between males and females within a species', '#sexual dimorphism');" name="sexual dimorphism">sexual dimorphism</a> in that males are generally larger than females. The
+body is slender, with nose and whiskers prominent. The tail measures as much as
+31-46 cm (12 - 18 inches). It is thick nearest the body, tapering towards the
+tip. River otters have short legs and webbed feet, with 5 toes on each foot.
+Eyes are located near the top of the skull, allowing otters to view above the
+water's surface while swimming. Another adaptation to the otter's aquatic
+lifestyle is the presence of a nictitating membrane which coves the eyes while
+swimming. Additionally, the nose and small ears close while the animal is
+submerged. Otters are protected from the cold by a thick layer of fat beneath
+the skin and dense, oily fur. Body color is generally black to shades of
+red-brown on the dorsal surface, and a lighter gray-brown ventrally. The throat
+and cheeks tend toward a yellow-gray color.</p>
+<p class="body">River otters have an acute sense of touch, aided by
+facial whiskers that enable otters to locate prey even in turbid water. Their
+sense of smell is also keen; but hearing and sight are somewhat less well
+developed.</p>
+    	  </li>
+  <li>
+  	<p class="heading">HABITAT AND DISTRIBUTION</p>
+    <p class="title">Regional Occurrence</p>
+<p class="body">Historically, river otters ranged over the most of
+the United States and Canada, but became rare, or were extirpated during the fur
+trading period. Presently, they are distributed from approximately 25<font FACE="Symbol">'</font>
+N latitude in Florida through the Gulf of Mexico, to 70<font FACE="Symbol">&deg;</font>
+N latitude in Alaska; and from eastern Newfoundland west throughout Canada,
+Alaska and the Aleutian Islands (Chapman and Feldhamer 1982).</p>
+<p class="title">IRL Distribution</p>
+<p class="body">River otters occur throughout the Indian River
+Lagoon system.</p>
+</li>
+   <li>
+   		<p class="heading">LIFE HISTORY AND POPULATION BIOLOGY</p>
+      <p class="title">Age, Size, Lifespan</p>
+<p class="body">Captive otters have been documented to live 16
+years or more (Banfield 1974). Body size of adults is generally 1 m (3 feet) or
+more in length, including the tail. The tail measures as much as 31-46 cm (12
+- 18 inches). Adults can weigh from 3-15 kg (7-35 pounds), with males
+typically outweighing females.</p>
+
+<p class="title">Abundance</p>
+<p class="body">Chapman and Feldhamer (1982) suggested that otter
+populations in many areas are apparently stable and may be slowly increasing.
+Large populations of river otter exist in many states throughout the northern
+U.S. (including Alaska) and Canada where the river otter is still trapped for
+its fur. In Florida, however, river otters are not considered abundant in the
+Indian River Lagoon area. Intense pressure from coastal development and
+resulting loss of habitat have caused otter populations in this area to decline.
+There are apparently several population strongholds including the Merritt Island
+National Wildlife Refuge -Canaveral National Seashore complex, as well as other
+relatively undeveloped areas (Ehrhart 1995).</p>
+<p class="title">Locomotion</p>
+<p class="body"><i>Lontra canadensis </i>actively swims, and
+crawls. They are capable of achieving running speeds of 29 km/hr (18 miles/hr),
+and have been observed to remain submerged for as long as 8 minutes.</p>
+<p class="title">Reproduction</p>
+<p class="body">Breeding occurs in late winter and early spring (Banfield
+1974; Chapman and Feldhamer 1982). Females are considered sexually mature at 2
+years of age, but do not necessarily breed upon first reaching maturity.&nbsp;
+Some evidence suggests that females do not breed every year (Melquist and
+Hornocker 1983; Dronkert-Egnew 1991). Males mature at approximately 2 years of
+age, but may not successfully breed until they are 5-7 years old (Chapman and
+Feldhamer 1982). Copulation occurs in water.</p>
+<p class="title">Embryology</p>
+<p class="body">There is much discrepancy in the scientific
+literature regarding the length of river otter gestation periods, with reports
+ranging from 288 - 375 days (Chapman 1974; Wren 1991). This extreme difference
+has been attributed to a process known as delayed implantation, in which young
+are born following a period of arrested development. In this process, fertilized
+eggs develop to the blastocyst stage, and then remain floating in the uterus for
+a variable period of time before implanting into the uterine wall. Litters are
+born nearly a year following conception, generally from November to May; though
+in the Pacific northwest, pups are delivered from March through May. The actual
+gestation period following implantation is estimated to be 60-62 days (Chapman
+and Feldhamer 1982; Dronkert-Egnew 1991; Nebraska Game and Parks Commission
+2001).</p>
+<p class="body">Litter size ranges from 1- 6 pups per litter, with 2-4
+being most common (Chapman 1982). Pups open their eyes at 21-35 days. At 25-42
+days, they begin to play. Parents introduce pups to water at 48 days, and they
+begin to venture outside the den alone at 59-70 days. Pups are fully weaned by
+91 days, and will leave parents at approximately 1 year old (Chapman 1982).</p>
+</li>
+   <li>
+   	<p class="heading">PHYSICAL TOLERANCES</p>
+    <p class="title">Salinity</p>
+<p class="body">River otters are well adapted to various aquatic
+environments from marine to fresh water.</p>
+<p class="title">Physical Tolerances</p>
+<p class="body"><b>Disease</b>: <i>L. canadensis </i>is susceptible to a variety of
+diseases including roundworm infections, canine distemper, jaundice, hepatitis,
+and feline panleucopenia (Chapman 1982).</p>
+</li>
+   <li>
+   	<p class="heading">COMMUNITY ECOLOGY</p>
+	<p class="title">Trophic Mode</p>
+<p class="body">In the absence of large mammalian predators such as
+wolves and bears, river otters are top predators in some of the ecosystems where
+they occur, including the Indian River Lagoon. Though often blamed for damaging
+or depleting commercial fish stocks, the bulk of the diet consists of slow
+moving or schooling non-game fish species (Chapman 1982). Common prey types
+include: cyprinids, suckers (<i>Catostomus</i> spp.), chubs (<i>Semotilus</i>
+spp.), shiners (<i>Notropis</i> spp.), catfish (<i>Ictalurus</i> spp.), and
+perch (<i>Perca</i> spp.) (Banfield 1974; Chapman 1982).</p>
+<p class="body">Besides non-game fish, river otters also consume
+crustaceans (primarily crayfish), amphibians, insects, small birds and
+waterfowl, mammals and plants (Meehan 1974; Chapman 1982; Davis et al. 1992).</p>
+<p class="title">Competitors</p>
+<p class="body">River otters practice mutual avoidance behaviors in
+order to reduce <a href="#intraspecific competition" onClick="popDef('competition for resources that occurs among members of the same population', '#intraspecific competition');" name="intraspecific competition">intraspecific competition</a>. Melquist and Hornocker (1983)
+observed otters to practice &quot;personal space dispersion&quot; whereby
+individuals defended territories based on their current location, rather than
+upon fixed environmental parameters. They postulated that this behavior probably
+had the effect of reducing direct competition for resources. Mutual avoidance is
+practiced primarily through vocalization and scent marking rather than by direct
+confrontation.</p>
+<p class="title">Predators</p>
+<p class="body">River otters have few natural predators other
+than man; however, young otters are placed at risk for predation from foxes,
+bobcats, wolves, coyotes and snapping turtles when they leave water to traverse
+land areas.</p>
+
+<p class="title">Habitats</p>
+<p class="body">River otters have somewhat large home ranges of
+approximately 8-78 square km. They utilize a wide variety of <a href="#riparian" onClick="popDef('The vegetated areas that occur along either side of a stream or river and are heavily influenced by the water table', '#riparian');" name="riparian">riparian</a>
+communities including cattails (<i>Typha</i> spp), sedges (<i>Carex</i> spp.)
+and grasslands (Chabreck 1971; Dronkert-Egnew 1991; Waller 1992).</p>
+
+<p class="body"><i>Lontra canadensis</i> is
+well adapted to aquatic habitats from marine to fresh water. Optimum otter
+habitat, according to Chapman (1982) is in highly vegetated areas having slow
+moving waters with deep pools, and abundant fish. Otters tend to be most
+abundant in coastal areas, or in the lower portions of rivers and estuaries. The
+total habitat area must provide otters with escape cover, den sites, and resting
+sites.</p>
+<p class="body">Otters do not dig their own dens; rather, they rely on
+those dug by other animals, or on natural shelters such as the hollows of trees,
+tall marsh grasses, or riverbank thickets (Banfield 1974; Chapman 1982).</p>
+<p class="title">Activity Time</p>
+<p class="body"><i>Lontra canadensis </i>is primarily nocturnal.
+However, it is also highly active in the early morning and in late afternoon (Banfield
+1974).</p>
+   </li>
+
+   <li>
+     <p class="heading">ADDITIONAL INFORMATION</p>
+     <p class="title">Special Status</p>
+<p class="body"><i>Lontra canadensis</i> is a top predator in the
+Indian River Lagoon system.</p>
+
+<p class="title">Benefit in IRL</p>
+<p class="body">Their aesthetic value aside, river otters may help
+reduce direct competition between commercially valuable fish species and other
+fishes. Otters have historically been blamed for depleting game fish stocks;
+however, they may actually be of benefit to commercial species due to their
+preference for slow moving, non-game species of fishes. Through removal of
+non-game fishes, commercial species thus enjoy reduced competition for food
+(Davis et al. 1992).</p>
+<p class="title">Economic Importance</p>
+<p class="body">River otter fur is still highly prized today in the
+fur trade and nearly all U.S. states allow the export of otter pelts, subject to
+regulation by state wildlife authorities. In some states, river otter
+populations are low enough to have gained them threatened or endangered status.
+They are thus protected and managed for in these areas. However, in all Canadian
+provinces, Alaska, and approximately half of the remaining U.S. states otters
+are still trapped seasonally under highly regulated conditions. Perhaps
+surprisingly, Louisiana generally has the highest harvest of river otters in the
+U.S., with annual totals sometimes exceeding 10,000 animals (Nebraska Game and
+Parks Commission 2001). River otter pelts in 2001 were valued at an average of
+$48.00 USD (North American Fur Auctions 2001).</p>
+   </li>
+	 <li>
+     <p class="heading">REFERENCES</p>
+     <p class="body">Banfield, A.W.F. 1974. The mammals of Canada.
+University of Toronto Press, Toronto, Canada. 438 pp.</p>
+<p class="body">Beckel, A.L. 1990. Foraging success rates of North
+American river otters, <i>Lutra canadensis</i>, hunting alone and hunting in pairs.
+Canadian Field-Naturalist. 104(4):586-588.</p>
+<p class="body">Ben-David, M., R.T. Bowyer, and J.B. Faro. 1995. Niche
+separation by mink and river otters: coexistence in a marine environment.
+Oikos. 75:41-48.</p>
+<p class="body">Chabreck, R.H. 1971. Ponds and lakes of the Louisiana
+coastal marshes and their value to fish and wildlife. Proceedings, 25<sup>th</sup>
+annual conference of Southeastern Association of Game and Fish
+Commissioners. pp. 206-215.</p>
+<p class="body">Chapman, J.A., and G.A. Feldhamer, eds. 1982. Wild
+mammals of North America. The Johns Hopkins University Press, Baltimore
+MD. 1147 pp.</p>
+<p class="body">Davis, H.G., R.J. Aulerich, S.J. Bursian, et al. 1992.
+Feed consumption and food transit time in northern river otters (<i>Lutra
+canadensis</i>). Journal of Zoo and Wildlife Medicine. 23(2): 241-244.</p>
+<p class="body">Dronkert-Egnew, A.E. 1991. River otter population
+status and habitat use in northwestern Montana. University of Montana, Missoula,
+MT. 112 pp. Thesis</p>
+<p class="body">Duffy, D.C. 1995. Apparent river otter predation at an
+Aleutian tern colony. Colonial Waterbirds. 18(1):91-92.</p>
+<p class="body">Ehrhart, L. 1995. Mammals of Indian River marshes and
+maritime hammocks status and threats. Bull. Mar. Sci. 57(1): 280-285.</p>
+<p class="body">Halbrook, R.S., J.H. Jenkins, P.B. Bush and N.D.
+Seabolt. 1994. Sublethal concentrations of mercury in river otters: monitoring
+environmental contamination. Archives of Environmental Contamination
+and Toxicology. 27:306-310.</p>
+<p class="body">Humphrey, S.R. and T.L. Zinn. 1982. Seasonal habitat
+use by river otters and Everglades mink in Florida. Journal of Wildlife
+Management. 46(2): 375-381.</p>
+<p class="body">Jenkins, J.H. 1983. The status and management of the
+river otter (<i>Lutra canadensis</i>) in North America. Acta Zool. Fennica
+174:233-235.</p>
+<p class="body">McCall, R. 1995. A novel foraging association between
+southern river otters <i>Lutra longicaudis</i> and great egrets <i>Casmerodius
+albus</i>. Bull B.O.C. 116(3): 199-200.</p>
+<p class="body">Meehan, W.R. 1974. The forest ecosystem of southeast
+Alaska: 4. Wildlife habitats. U.S. Department of Agriculture, Forest
+Service, Pacific Northwest Forest and Range Experiment Station. Gen. Tech. Rep.
+PNW-16. Portland, OR. 32 pp.</p>
+<p class="body">Melquist, W.E. and M.G. Hornocker. 1983. Ecology of
+river otters in west central Idaho. Wildlife Monographs 83:1-60.</p>
+<p class="body">Nebraska Game and Parks Commission. 2001. The river
+otter. Online wildlife publication: <a href="http://rarespecies.nebraska.gov/portfolio/river-otter/">www.ngpc.state.ne.us/wildlife/otters.html</a>.</p>
+<p class="body">Newman, D.G., and C.R. Griffith. 1994. Wetland use by
+river otters in Massachusetts. Journal of Wildlife Management.
+58(1):18-23.</p>
+<p class="body">North America Fur Auctions. 2001. Online Auction sales
+results, September 5 and 6, 2001. Toronto, Ontario, Canada. Online
+publication: <a href="http://www.nafa.ca/sales/results_sept2001.asp">www.nafa.ca/sales/results_sept2001.asp</a>.</p>
+<p class="body">Reid, D.G., T.E. Code, A.C. Reid, and S.M. Herrero.
+1994a. Food habits of the river otter in a boreal ecosystem. Canadian Journal of
+Zoology. 72:1306-1313.</p>
+<p class="body">Reid, D.G., T.E. Code, A.C. Reid, and S.M. Herrero.
+1994b. Spacing, movements and habitat selection of the river otter in
+boreal Alberta. Canadian Journal of Zoology. 72:1314-1324.</p>
+<p class="body">Rock, K.R., E.S. Rock, R.T. Bowyer and J.B. Faro. 1994.
+Degree of association and use of a helper by coastal river
+otters, <i>Lutra canadensis</i>, in Prince William Sound, Alaska. Canadian
+Field-Naturalist. 08(3):367-369.</p>
+<p class="body">Serfass, T.L. 1995. Cooperative foraging by north
+American river otters, <i>Lutra canadensis</i>. The Canadian Field-Naturalist. 109:
+458-459.</p>
+<p class="body">Shirley, M.G., R.G. Linscombe, N.W. Kinler, et al.
+1988. Population estimates of river otters in a Louisiana coastal marshland.
+Journal of Wildlife Management. 52(3):512-515.</p>
+<p class="body">St.-Georges, M., S. Nadeau, D. Lambert and R. Decarie.
+1995. Winter habitat use by ptarmigan, snowshoe hares, red foxes, and river
+otters in the boreal forest - tundra transition zone of western Quebec.
+Canadian Journal of Zoology. 73:755-764.</p>
+<p class="body">Stenson, G.B., G.A. Badgero, and H.D. Fisher. 1984.
+Food habits of the river otter <i>Lutra canadensis</i> in the marine environment
+of British Columbia. Canadian Journal of Zoology. 62:88-91.</p>
+<p class="body">Stoskopf, M.K., L.H. Spelman, P.W. Sumner, et al. 1997.
+The impact of water temperature on core body temperature of north American
+river otters (<i>Lutra canadensis</i>) during simulated oil spill recovery
+washing protocols. Journal of Zoo and Wildlife Medicine. 28(4):407-412.</p>
+<p class="body">Tumlison, R. and M. Karnes. 1987. Seasonal changes in
+food habits of river otters in southwestern Arkansas beaver swamps. Mammalia.
+51(2):225-231.</p>
+<p class="body">Waller, A.J. 1992. Seasonal habitat use of river otters
+in northwestern Montana. University of Montana, Missoula, MT. 75 pp. Thesis.</p>
+<p class="body">Wren, C.D. and K.L. Fischer. 1986. Mercury levels in
+Ontario mink and otter relative to food levels and environmental
+acidification. Canadian Journal of Zoology. 64:2854-2859.</p>
+<p class="body">Wren, C.D. 1991. Cause-effect linkages between
+chemicals and populations of mink (Mustela vison) and otter (<i>Lutra canadensis</i>)
+in the Great Lakes Basin. Journal of Toxicology and Environmental Health.
+33:549-585.</p>
+   </li>
+  	  </ol>
+
+			<div class="centered">
+				<p class="body centered">
+                Report by: K. Hill,
+Smithsonian Marine Station<br>
+Submit additional information, photos or comments to<br />
+<a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a><br>
+Page last updated: Oct. 17, 2001
+				</p>
+			</div>
+
+</td><!--msnavigation-->
+	</tr><!--msnavigation-->
+    </table>
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" --> 
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+
+  <div class="clear"></div>
+
+</div>
+
+<!-- wrap -->
+
+<div id="footer">
+
+  <ul>
+
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright 
+
+      <script type="text/javascript">document.write(year)</script> 
+
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+
+  </ul>
+
+</div>
+
+<!-- footer --> 
+
+ 
+
+<script>
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('create', 'UA-966290-15', 'auto');
+
+ga('send', 'pageview');
+
+</script> 
+
+
+
+</body>
+
+<!-- START OF SmartSource Data Collector TAG -->
+
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+
+<!-- Version: 9.4.0 -->
+
+<!-- Tag Builder Version: 4.1  -->
+
+<!-- Created: 5/30/2013 4:39:15 PM -->
+
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+var _tag=new WebTrends();
+
+_tag.dcsGetId();
+
+//]]>
+
+</script>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+_tag.dcsCustom=function(){
+
+// Add custom parameters here.
+
+//_tag.DCSext.param_name=param_value;
+
+}
+
+_tag.dcsCollect();
+
+//]]>
+
+</script>
+
+<noscript>
+
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+
+</noscript>
+
+<!-- END OF SmartSource Data Collector TAG -->
+
+<!-- InstanceEnd --></html>

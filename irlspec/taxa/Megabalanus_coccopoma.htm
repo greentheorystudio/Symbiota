@@ -1,0 +1,617 @@
+<!doctype html><html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+
+<head>
+
+<!--
+
+  ++ nmnh_base.dwt
+
+  ++ version 1.1 - 06 February 2007
+
+  -->
+
+
+
+<meta charset="utf-8">
+
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" --> 
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" --> 
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" --> 
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" --> 
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title></title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+ 
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+
+<script type="text/javascript" src="/_js/functions.js"></script>
+
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+
+<!-- InstanceEndEditable -->
+
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+
+<script language="javascript" type="text/javascript">
+
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+
+
+function popDef(definition, wingo) {
+
+alert("Definition: " + definition);
+
+window.location = wingo;
+
+}
+
+//-->
+
+</script>
+
+</head>
+
+<body onLoad="do_onload();">
+
+<div id="wrap">
+
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+
+    <div id="searchForm">
+
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+
+        <fieldset>
+
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+
+          <label for="qt">Search Field:</label>
+
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+
+          <label for="submit">Search Submit:</label>
+
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+
+          <input type="hidden" name="site" value="sms">
+
+          <input type="hidden" name="client" value="sms">
+
+          <input type="hidden" name="proxystylesheet" value="sms">
+
+          <input type="hidden" name="output" value="xml_no_dtd">
+
+        </fieldset>
+
+      </form>
+
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+
+    </div>
+
+    <!-- searchForm --> 
+
+  </div>
+
+  <!-- mastHead -->
+
+  <div id="globalNav">
+
+    <ul>
+
+      <li><a href="../index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+
+      <li><a href="../Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+
+      <li><a href="../Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+
+      <li><a href="../PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+
+      <li><a href="../IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+
+      <li><a href="../Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+
+    </ul>
+
+  </div>
+
+  <!-- globalNav --> 
+
+  
+<div id="sideContent">	  
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" -->
+<a href="../images/mcoccopoma1.jpg"><img src="../images/mcoccopoma1.jpg" width="250"></a><br>
+  <span class="caption">The non-native titan acorn barnacle, <i>Megabalanus coccopoma</i>. Photograph courtesy
+  South Carolina DNR.</span><br /><br />
+  <a href="../images/mcoccopoma2.jpg"><img src="../images/mcoccopoma2.jpg" width="250"></a><br>
+  <span class="caption"><i>M. coccopoma</i> present in the hard-fouling community at Mayport Naval Station Beach, Jacksonville, FLorida. Photograph courtesy jaxshells.org.</span>
+<!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent"> 
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+        <ul>
+        <li><a href="../Animals.htm">Animals</a> &#8250;</li>
+          <li><a href="../Phyl_Arthrop7.htm">Maxillopoda</a> &#8250;</li>
+          <li><a href="../Mspecies.htm">Alphabetized Species List</a> &#8250;</li>
+          <li><a href="../Compl_Reports.htm">Expanded Species Reports</a> &#8250;</li>
+          <li> </li>
+        </ul>
+        <h1 class="heading">Indian River Lagoon Species Inventory</h1>
+
+        <!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+<!--msnavigation-->
+<br>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+    	<td>
+        	<table cellpadding="0" cellspacing="0" class="species-table">
+    <tr>
+          <td class="label">Species Name:</td>
+      <td><span class="specie-name">Megabalanus coccopoma</span> Darwin,1854</td>
+    </tr>
+    <tr>
+      <td class="label">Common Name:</td>
+      <td>Titan Acorn Barnacle</td>
+    </tr>
+    <tr>
+    	<td class="label">Synonymy:</td>
+        <td>Studies are ongoing to determine if <i>Megabalanmus coccopoma</i> and the
+Asian-Pacific species <i>M. rosa</i> are the same species (Powers et al. 2006).
+ If so, the native range and introduced distribution of the species will need
+to be reassessed.</td>
+    </tr>
+  </table>
+        <ol class="report-caterories">
+    	  <li>
+  	<p class="heading">TAXONOMY</p>
+
+      <table CELLSPACING="0" BORDER="0" CELLPADDING="2" WIDTH="100%" class="table-border no-border alternate">
+      <tr>
+        <th>Kingdom</th>
+        <th>Phylum/Division</th>
+        <th>Class:</th>
+        <th>Order:</th>
+        <th>Family:</th>
+        <th>Genus:</th>
+      </tr>
+      <tr>
+        <td>Animalia</td>
+      	<td>Arthopoda</td>
+        <td>Maxillopoda</td>
+        <td>Sessilia</td>
+        <td>Balanidae</td>
+        <td class="genus_italics">Megabalanus</td>
+      </tr>
+  </table>
+  
+  <p class="title">Species Description</p>
+<p class="body">The titan acorn barnacle <i>Megabalanmus coccopoma</i>, is not native to the
+Atlantic but now occurs along the U.S. Atlantic coast and in the Gulf of
+Mexico. It is a very large balanid (acorn barnacle family), pink in color and
+growing to over 5 cm in height and width (Kerckhof 2002, <a href="http://www.jaxshells.org/barnacle.htm" target="new">Jaxshells</a>).</p>
+
+<p class="title">Potentially Misidentified Species</p>
+<p class="body">A number of non-native balanid barnacles occur in Florida and have introduced
+ranges that potentially overlap that of <i>Megabalanmus coccopoma</i>. The
+Mediterranean barnacle <i>Megabalanus antillensis</i> (= <i>Balanus
+tintinnabulum</i>) and the Pacific barnacle <i>Balanus trigonus</i> are two such species that are similar
+in color to <i>M. coccopoma</i>. <i>Balanus trigonus</i> is distinguishable by
+size, only growing to around 8 mm, while differentiating between
+<i>Megabalanus</i> species may require taxonomic expertise beyond that of most
+amateur naturalists. In the IRL region, however, <i>M. coccopoma</i> appears
+thus far to occur primarily to the extreme northern part of the system while
+<i>M. antillensis</i> has been found primarily at the southern end of the IRL
+region, i.e., in the Loxahatchee River Estuary (McPherson et al. 1984). <i>M.
+coccopoma</i> was reported from Port St. Lucie in 2006, however (Florida
+Wildlife 2007). If this report is valid, then the IRL distribution of the two
+non-native <i>Megabalanus</i> species may overlap.</p>
+    	  </li>
+  <li>
+  	<p class="heading">HABITAT AND DISTRIBUTION</p>
+    <p class="title">Regional Occurrence</p>
+<p class="body"><i>Megabalanus coccopoma</i> is native to the Pacific coast of the Americas
+from southern California to Ecuador. The animal now occurs in the Gulf of
+Mexico and along the southeastern U.S coast from northern Florida to southern
+North Carolina.
+
+<p class="title">IRL Distribution</p>
+<p class="body"><i>Megabalanus coccopoma</i > was first collected from the Cape Canaveral area
+in 2006. Several specimens have also been collected around Ponce De Leon Inlet
+at the northern end of the IRL system. The USGS Nonindigenous Aquatic Species
+(NAS) program considers <i>M. coccopoma</i> <a
+href="http://nas.er.usgs.gov/queries/specimenviewer.asp?SpecimenID=238413"
+target="new">to be established</a> in the Volusia County portions of the
+system.</p>
+</li>
+   <li>
+   		<p class="heading">LIFE HISTORY AND POPULATION BIOLOGY</p>
+      <p class="title">Age, Size, Lifespan</p>
+<p class="body"><i>Megabalanus coccopoma</i > grows to around 5 cm in height and width.
+Tibbetts (2007) reports that non-native <i>M. coccopoma</i > from South
+Carolina attain a body mass 100 times greater than that of native barnacle species.
+
+<p class="title">Abundance</p>
+<p class="body">Collection information reported from Florida to date do not yet indicate the
+presence of <i>Megabalanus coccopoma</i > in large numbers.
+
+<p class="title">Reproduction</p>
+<p class="body">Details on reproduction in <i>Megabalanus coccopoma</i > remain unpublished.
+Reproduction in nearly all barnacles employs outcrossing of neighboring adult
+individuals as the norm, with individual animals occurring as simultaneous
+hermaphrodites. Fertilization is internal, occurring through the deposit of
+sperm into the mantle cavities of adjacent animals via an elongated
+intromittent tube.</p>
+
+
+<p class="title">Embryology</p>
+<p class="body">Details on larval development in <i>Megabalanus coccopoma</i > remain
+unpublished. As with other barnacle species, <i>M. coccopoma</i > larvae
+progress through several sequential nauplius stages and one cypris larval stages prior to
+settling to suitable hard substrata to spend the rest of their lives as sessile
+animals.</p>
+</li>
+   <li>
+   	<p class="heading">PHYSICAL TOLERANCES</p>
+    <p class="title">Temperature</p>
+<p class="body">Cool water temperatures appear capable of limiting the distribution of this
+tropical species. A 1982-1983 El Ni&ntilde;o event allowed a brief northern range
+expansion along the southern California coast into ephemeral warm water off of
+San Diego (Newman and McConnaughey 1987).</p>
+
+<p class="title">Salinity</p>
+<p class="body"><i>Megabalanus coccopoma</i > appears to favor high salinity conditions
+(Kerckhof 2002). If 2006 reports of the species from estuarine waters near
+Port St. Lucie, Florida, are valid, however, then <i>M. coccopoma</i > also
+appears capable of inhabiting more brackish environments.</p>
+</li>
+   <li>
+   	<p class="heading">COMMUNITY ECOLOGY</p>
+	<p class="title">Trophic Mode</p>
+<p class="body">Like other acorn barnacles, <i> Megabalanus coccopoma </i> filter feeds when
+submerged by means of a set of extensible sieving appendages called cirri
+(barnacles belong to infraclass Cirripedia). The extended cirri are oriented
+perpendicular to the general flow direction and varying food concentrations and
+water velocities can elicit different patterns and rates of movement of the
+cirri to maximize particle intake (LaBarbera 1984, Crisp and Bourget 1985).</p>
+
+<p class="title">Associated Species</p>
+<p class="body"><i> Megabalanus coccopoma </i> occur alongside a number of different animal and
+algal taxa that comprise hard fouling intertidal communities, although none of
+these associations are likely to be obligate.</p>
+   </li>
+
+   <li>
+     <p class="heading">ADDITIONAL INFORMATION</p>
+     <p class="title">Invasion History</p>
+<p class="body"><i>Megabalanus coccopoma</i> is native to the eastern Pacific, historically
+known to occur from Baja California (occassionally as far north as San Diego)
+through Central and South America southern Equador.</p>
+<p class="body"><i>M. coccopoma</i> was reported as a non-native species established in
+southern Brazil in the late 1980s and along the coast of Belgium in 2002
+(Newman and McConnaughey 1987, Kerckhof 2002). The species was found in
+Louisiana in 2002, and from Florida, Georgia, and South Carolina in 2006.
+<p class="body">Ship hull fouling and ballast water transport are the most probable
+introduction vectors.</p>
+
+<p class="title">Potential to Compete With Natives</p>
+<p class="body">If <i>Megabalanus coccopoma</i> begins to occur in consistently large numbers
+within its non-native range in Florida and elsewhere, it would be expected to
+compete with other intertidal hardbottom organisms for space and also possibly
+with a variety of filter-feeding animals for food.</p>
+<p class="body">Young (1994) suggests <i>M. coccopoma</i>, now established along southern
+Brazil, may outcompete the native congeneric barnacle, <i>M. tintinnabulum</i>.</p>
+
+<p class="title">Possible Economic Consequences of Invasion</p>
+<p class="body">Boat hulls props, and drive shafts, coastal navigation buoys, and other
+submerged man-made hard surfaces are readily colonized by settling
+<i>Megabalanus coccopoma</i> (Kerckhof, 2002). If the
+species becomes established, costs associated with removing animals from such
+structures may be significant.</p>
+<p class="body"><p class="body">Factors such as gregarious settlement, rapid growth, and large size suggest
+<i>M. coccopoma</i> has the potential to become an economically important
+nuisance species in Florida.</p>
+   </li>
+	 <li>
+     <p class="heading">REFERENCES</p>
+     <p class="body">Crisp D.J. and E. Bourget. 1985. Growth In barnacles. Advances In Marine
+Biology 22:199-244.</p>
+<p class="body">Florida Wildlife. 2007. New, bigger barnacle discovered on Florida's East
+Coast. Florida Wildlife 2007:13.</p>
+<p class="body">Kerckhof, F. 2002. Barnacles (Cirripedia, Balanomorpha) in Belgian waters: an
+overview of the species and recent evolutions, with emphasis on exotic species.
+Bulletin van het Koninklijk Belgisch Instituut voor Natuurwetenschappen.
+Biologie 72(Suppl.):93-104.</p>
+<p class="body">LaBarbera M. 1984. Feeding currents and particle capture mechanisms in
+suspension feeding animals. American Zoology 24:71-84.</p>
+<p class="body">McPherson B.F., Sonntag W.H., and M. Sabanskas. 1984. Fouling Community of the
+Loxahatchee River Estuary, Florida, 1980-81. Estuaries 7:149-157.</p>
+<p class="body">Newman, W.A., and R.R. McConnaughey. 1987. A tropical eastern Pacific barnacle,
+<i>Megabalanus coccopoma</i> (Darwin), in southern California, following El
+Ni&mdash;o 1982-83. Pacific Science 41:31-36.</p>
+<p class="body">Powers A., Mitchell M., Walker R., Posey M., Alphin T., and C. Belcher. 2006.
+Baseline Port Surveys for Introduced Marine Molluskan, Crustacean and
+Polychaete Species in the South Atlantic Bight . NOAA's National Sea Grant
+Aquatic Nuisance Species Program. Project Number R/HAB-15; Grant number
+NA06RG0029. 310 pgs.</p>
+<p class="body">Tibbetts J.H. 2007. Knocking Back Biological Invaders. Coastal Heritage, South
+Carolina Sea Grant Consortium 21:3-11. Available <a href="http://www.scseagrant.org/Content/?cid=187" target="new">online</a>.</p>
+<p class="body">Young P. S.1994 The Balanoidea (Cirripedia) from the Brazilian coast. Bolm.
+Mus. Nac., s&#381;rie Zoologia, 356:1-36.</p>
+   </li>
+  	  </ol>
+
+			<div class="centered">
+				<p class="body centered">
+                Report by:
+       J. Masterson, Smithsonian Marine Station<br>
+       Submit additional information, photos or comments
+       to:<br>
+       <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a><br>
+       Page last updated: December 1, 2007
+				</p>
+			</div>
+
+</td><!--msnavigation-->
+	</tr><!--msnavigation-->
+    </table>
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" --> 
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+
+  <div class="clear"></div>
+
+</div>
+
+<!-- wrap -->
+
+<div id="footer">
+
+  <ul>
+
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright 
+
+      <script type="text/javascript">document.write(year)</script> 
+
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+
+  </ul>
+
+</div>
+
+<!-- footer --> 
+
+ 
+
+<script>
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+
+
+ga('create', 'UA-966290-15', 'auto');
+
+ga('send', 'pageview');
+
+</script> 
+
+
+
+</body>
+
+<!-- START OF SmartSource Data Collector TAG -->
+
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+
+<!-- Version: 9.4.0 -->
+
+<!-- Tag Builder Version: 4.1  -->
+
+<!-- Created: 5/30/2013 4:39:15 PM -->
+
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+var _tag=new WebTrends();
+
+_tag.dcsGetId();
+
+//]]>
+
+</script>
+
+<script type="text/javascript">
+
+//<![CDATA[
+
+_tag.dcsCustom=function(){
+
+// Add custom parameters here.
+
+//_tag.DCSext.param_name=param_value;
+
+}
+
+_tag.dcsCollect();
+
+//]]>
+
+</script>
+
+<noscript>
+
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+
+</noscript>
+
+<!-- END OF SmartSource Data Collector TAG -->
+
+<!-- InstanceEnd --></html>

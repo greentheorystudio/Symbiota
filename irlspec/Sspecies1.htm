@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!--
+  ++ nmnh_base.dwt
+  ++ version 1.1 - 06 February 2007
+  -->
+
+<meta charset="utf-8">
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" --> 
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" --> 
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" --> 
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" --> 
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title></title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+ 
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+<script type="text/javascript" src="/_js/functions.js"></script>
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+<script language="javascript" type="text/javascript">
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+function popDef(definition, wingo) {
+alert("Definition: " + definition);
+window.location = wingo;
+}
+//-->
+</script>
+</head>
+<body onLoad="do_onload();">
+<div id="wrap">
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+    <div id="searchForm">
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+        <fieldset>
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+          <label for="qt">Search Field:</label>
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+          <label for="submit">Search Submit:</label>
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+          <input type="hidden" name="site" value="sms">
+          <input type="hidden" name="client" value="sms">
+          <input type="hidden" name="proxystylesheet" value="sms">
+          <input type="hidden" name="output" value="xml_no_dtd">
+        </fieldset>
+      </form>
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+    </div>
+    <!-- searchForm --> 
+  </div>
+  <!-- mastHead -->
+  <div id="globalNav">
+    <ul>
+      <li><a href="index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+      <li><a href="Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+      <li><a href="Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+      <li><a href="PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+      <li><a href="IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+      <li><a href="Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+    </ul>
+  </div>
+  <!-- globalNav --> 
+  
+<div id="sideContent">	  
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" -->
+<!-- #BeginLibraryItem "/Library/IRLSI-search-leftnav.lbi" --><ul class="navlist">
+  <li><a href="Search.htm" title="Search by Word or Phrase">Search by Word or Phrase</a></li>
+  <li><a href="Species_Rpts.htm" title="Go to Species Reports">Go to Species Reports</a></li>
+  <li><a href="Alpha_List.htm" title="Alphabetized Species Lists">Alphabetized Species Lists</a></li>
+  <li><a href="Compl_Reports.htm" title="Expanded Species Reports">Expanded Species Reports</a></li>
+  <li><a href="ListedSpec.htm" title="Special Status Species">Special Status Species</a></li>
+  <li><a href="Nonnatives.htm" title="Non-Native Species">Non-Native Species</a></li>
+ 
+  <li><a href="NamSpecies.htm" title="Species Names and Taxonomy">Species Names and Taxonomy</a></li>
+  <li><a href="INVERTS.htm" title="Marine Invertebrates">Marine Invertebrates</a></li>
+  <li><a href="Whats_New.htm" title="What's New">What's New</a></li>
+</ul>
+<!-- #EndLibraryItem --></p>
+<!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent"> 
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+        <ul>
+          <li><a href="http://www.sms.si.edu/" title="SMS Home">SMS Home</a> &#8250;</li>
+          <li><a href="index.htm" title="IRLSI Home">IRLSI Home</a> &#8250;</li>
+          <li><a href="Search.htm" title="Search the Inventory">Search the Inventory</a> &#8250;</li>
+         
+          <li><a href="Alpha_List.htm" title="Alphabetized Species Lists">Alphabetized Species Lists</a> &#8250;</li>
+         
+           
+          <li><a href="Sspecies1.htm" title="S Species (1 of 2))" class="lastCrumb">S Species (1 of 2)</a> &#8250;<br /><br />
+         </li>
+        </ul>
+        <h1 class="heading">Indian River Lagoon Species Inventory</h1>
+        <h2 class="subheading">Alphabetized Species Listing S Species</h2>
+<br />
+<table width="700">
+<tr>
+    <td>
+      <p class="body">
+<a href="Alpha_List.htm">Back to Alphabetized List</a></p>
+      <p class="body">Page 1 <a href="Sspecies2.htm">&nbsp;2&nbsp;</a></p>
+      <p class="body">Select a highlighted species link below for more
+information</p>
+    </td>
+  </tr>
+</table>
+
+
+
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="2" WIDTH="700" class="table-border no-border alternate">
+    <tr>
+      <th>Common Name</th>
+      <th>Scientific Name</th>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Cabbage Palm</p></td>
+      <td>
+        <span><i><a href="taxa/Sabal_palmet.htm">Sabal palmetto</a></i></span></td>
+    </tr>
+    <tr>
+      <td>  <p class="label">Sugarcane Plumgrass</p></td>
+      <td>  <span><i>Saccharum giganteum</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sabella microphthalma</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">American Cupscale</p></td>
+      <td>
+        <span><i>Sacciolepis striata</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Saggita enflata</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Saggita hispida</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Saggita</i> sp.</span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Saggita tenuis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+          <p class="label">Bulltongue Arrowhead</p>
+      </td>
+      <td>
+        <span><i><a href="taxa/Sagitt_lancif.htm">Sagittaria lancifolia</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Annual Glasswort</p></td>
+      <td>
+        <span><i>Salicornia bigelovii</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Perrenial Glasswort</p></td>
+      <td>
+        <span><i>Salicornia depressa</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Carolina Willow</p></td>
+      <td>
+        <span><i>Salix caroliniana</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Salmoneus artmanni</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Saltwort</p></td>
+      <td>
+        <span><i>Salsola kali</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Water Fern
+      	</p></td>
+      	<td><span><i>Salvinia minima</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Elderberry</p></td>
+      <td>
+        <span><i>Sambucus nigra</i> ssp. <i>canadensis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Samolus parviflorus</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Pineland Pimpernel</p></td>
+      <td>
+        <span><i>Samolus valerandi</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">Iguanatail</p></td>
+      	<td><span><i>Sansevieria hyacinthoides</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sarcocornia perennis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Spanish Sardine</p></td>
+      <td>
+        <span><i><a href="taxa/Sardin_aurita.htm">Sardinella aurita</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum hystrix</i> var.<i> buxifolium</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum hystrix</i> var.<i> buxifolium</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum natans</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum natans</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum polyceratium</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sargassum polyceratium</i></span></td>
+    </tr>
+    
+     <tr>
+      <td>
+        <p class="label">Blackchin Tilapia</p></td>
+      <td><span><a href="taxa/Sarotherodon_melanotheron.htm"><i>Sarotherodon
+        melanotheron</i></a> <font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sarsiella disparalis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sarsiella spinosa</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sarsiella texana</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sarsiella zostericola</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i><a href="taxa/Savign_lafont.htm">Savignyella lafontii</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sayella crosseana</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Eastern Phoebe</p></td>
+      <td>
+        <span><i>Sayornis phoebe</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Beach Naupaka
+      	</p></td>
+      	<td><span><i>Scaevola taccada</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>&nbsp;</td>
+      <td>  <span><i>Scalibregma stenocerum</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Molly Miller</p></td>
+      <td>
+        <span><i>Scartella cristata</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Blue Parrotfish</p></td>
+      <td>
+        <span><i>Scarus coeruleus</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Stripped Parrotfish</p></td>
+      <td>
+        <span><i>Scarus iseri</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Rainbow Parrotfish</p></td>
+      <td>
+        <span><i>Scarus guacamaia</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Princess Parrotfish</p></td>
+      <td>
+        <span><i>Scarus taeniopterus</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Octopus Tree
+      	</p></td>
+      	<td><span><i>Schefflera actinophylla</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+     <tr> 
+        <td> <p class="label">Brazilian Pepper</p></td>
+        <td><span><i><a href="taxa/Schinus_terebinthifolius.htm">Schinus terebinthifolius</a></i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+     </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Schistomeringos pectinata</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>  <span><i>Schistomeringos rudolphii</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i><a href="taxa/Schizo_cornut.htm">Schizoporella cornuta</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i><a href="taxa/Schizo_florid.htm">Schizoporella floridana</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Schizoporella sp.</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Red Drum</p></td>
+      <td>
+        <span><i><a href="taxa/Sciaen_ocella.htm">Sciaenops ocellatus</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Salt Marsh Bulrush</p></td>
+      <td>
+        <span><i>Scirpus robustus</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Gray Squirrel</p></td>
+      <td>
+        <span><i>Sciurus carolinensis</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Lakeshore Nutrush
+      	</p></td>
+      	<td><span><i>Scleria lacustris</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Scleria reticularis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sclerobregma stenocera</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Palp Worm</p></td>
+      <td>
+        <span><i>Scolelepis squamata</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Palp Worm</p></td>
+      <td>
+        <span><i>Scolelepis texana</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">American Woodcock</p></td>
+      <td>
+        <span><i>Scolopax minor</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Scoloplos rubra</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">King Mackerel</p></td>
+      <td>
+        <span><i><a href="taxa/Scombe_cavall.htm">Scomberomorus cavalla</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Spanish Mackerel</p></td>
+      <td>
+        <span><i><a href="taxa/Scombe_macula.htm">Scomberomorus maculatus</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Cero</p></td>
+      <td>
+        <span><i><a href="taxa/Scombe_regali.htm">Scomberomorus regalis</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Barbfish</p></td>
+      <td>
+        <span><i>Scorpaena brasiliensis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Hunchback Scorpionfish</p></td>
+      <td>
+        <span><i>Scorpaena dispar</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Plumed Scorpionfish</p></td>
+      <td>
+        <span><i>Scorpaena grandicornis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Spotted Scorpionfish</p></td>
+      <td>
+        <span><i>Scorpaena plumieri</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Scottolana canadensis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Scrupocellaria bertholettii</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i><a href="taxa/Scrupo_regula.htm">Scrupocellaria regularis</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Scutuloris</i> sp.</span></td>
+    </tr>
+    
+     <tr> 
+        <td> <p class="label">Serrated Swimming Crab</p></td>
+        <td><span><a href="taxa/Scylla_serrata.htm"><i>Scylla serrata</i></a>  <font color="#FF0000"><b>*Non-native*</b></font></span></td>
+     </tr>
+     
+     
+    <tr>
+      <td>
+        <p class="label">Sargassum Nudibranch</p></td>
+      <td>
+        <span><i>Scyllaea pelagica</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Seila adamsi</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Louisiana Waterthrush</p></td>
+      <td>
+        <span><i>Seiurus motacilla</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Bigeye Scad</p></td>
+      <td>
+        <span><i><a href="taxa/Selar_crumeno.htm">Selar crumenophthalmus</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Atlantic Moonfish</p></td>
+      <td>
+        <span><i>Selene setapinnis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Lookdown</p></td>
+      <td>
+        <span><i><a href="taxa/Selene_vomer.htm">Selene vomer</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Nut Semele</p></td>
+      <td>
+        <span><i>Semele nuculoides</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Atlantic Semele</p></td>
+      <td>
+        <span><i>Semele proficua</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Purplish Semele</p></td>
+      <td>
+        <span><i>Semele purpurascens</i></span></td>
+    </tr>
+    <tr>
+      <td>  <p class="label">Nut Semele</p></td>
+      <td>  <span><i>Semelina nuculoides </i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Butterweed</p></td>
+      <td>
+        <span><i>Senecio glabellus</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Valamuerto
+      	</p></td>
+      	<td><span><i>Senna pendula glabrata</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>
+        <p class="label">Saw Palmetto</p></td>
+      <td>
+        <span><i><a href="taxa/Sereno_repens.htm">Serenoa repens</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>  <span><i>Sergio guassutinga</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Serpula sp.</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Lantern Bass</p></td>
+      <td>
+        <span><i>Serranus baldwini</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Belted Sandfish</p></td>
+      <td>
+        <span><i>Serranus subligarius</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sesarma cinereum</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sesarma curacaoense</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sesarma ricordi</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sesarma</i> sp.</span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Rattlebox
+      	</p></td>
+      	<td><span><i>Sesbania punicea</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>
+        <p class="label">Sea Purslane</p></td>
+      <td>
+        <span><i>Sesuvium maritimum</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Sea Purslane</p></td>
+      <td>
+        <span><i>Sesuvium portulacastrum</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Knotroot Foxtail</p></td>
+      <td>
+        <span><i>Setaria geniculata</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Giant Bristlegrass</p></td>
+      <td>
+        <span><i>Setaria magna</i></span></td>
+    </tr>
+    <tr>
+      <td>  <p class="label">Knotroot</strong> <strong>Bristlegrass</p></td>
+      <td>  <span><i>Setaria parviflora</i></span></td>
+    </tr>
+    <tr>
+      <td>
+          <p class="label">Brown Rock Shrimp</b></span></td>
+      <td>
+          <span><i><a href="taxa/Sicyon_brevir.htm">Sicyonia brevirostris</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sicyonia dorsalis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sicyonia laevigata</i></span></td>
+    </tr>
+    <tr>
+      <td>
+          <p class="label">Lesser Starlet Coral</p></td>
+      <td>
+          <span><i><a href="taxa/Sidera_radian.htm">Siderastrea
+        radians</a></i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sigambra tentaculata</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>  <span><i>Sige macroceros</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sigmadocia caerulea</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sigmavirgulina tortuosa</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Hispid Cotton Rat</p></td>
+      <td>
+        <span><i>Sigmodon hispidus littoralis</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>  <span><i>Silvetia babingtonii</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">White Baby-ear</p></td>
+      <td>
+        <span><i>Sinum perspectivum</i></span></td>
+    </tr>
+     <tr>
+       <td HEIGHT="20" align="left">&nbsp;</td>
+       <td>  <span><i>Siphonaperta agglutinans</i></span></td>
+     </tr>
+     <tr> 
+        <td> <p class="label">Striped Falselimpet</p></td>
+        <td><span><i><a href="taxa/Siphonaria_pectinata.htm">Siphonaria pectinata</a></i>&nbsp;<font color="#FF0000"><b>*Cryptogenic*</b></font></span></td>
+     </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Siphonosoma cumanense</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Siphonosoma ingens</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Siphonosoma</i> sp.</span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sipunculus nudus</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Sipunculus polymyotus</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Skeletonema costatum</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Skeletonema menzelii</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Skeletonema tropicum</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Emerald Nerite</p></td>
+      <td>
+        <span><i>Smaragdia viridis viridemaris</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Cat Brier</p></td>
+      <td>
+        <span><i>Smilax laurifolia</i></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Twoleaf Nightshade
+      	</p></td>
+      	<td><span><i>Solanum diphyllum</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      	<td> <p class="label">
+     	Tropical Soda Apple
+      	</p></td>
+      	<td><span><i>Solanum viarum</i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+    </tr>
+    
+    <tr>
+      <td>
+        <p class="label">West Indian Awningclam</p></td>
+      <td>
+        <span><i>Solemya occidentalis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Green Jackknife</p></td>
+      <td>
+        <span><i>Solen viridis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        <p class="label">Seaside Goldenrod</p></td>
+      <td>
+        <span><i>Solidago sempervirens</i></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+        
+      </td>
+      <td>
+        <span><i>Solieria filiformis</i></span></td>
+    </tr>
+    
+     <tr> 
+        <td> <p class="label">Red Imported Fire Ant</p></td>
+        <td><span><i><a href="taxa/Solenopsis_invicta.htm">Solenopsis invicta</a></i>&nbsp;<font color="#FF0000"><b>*Non-native*</b></font></span></td>
+     </tr>
+     
+    <tr>
+      <td>
+          <p class="label">Necklace Pod</p></td>
+      <td>
+          <span><i><a href="taxa/Sophor_toment.htm">Sophora tomentosa</a></i></span></td>
+    </tr>
+    <tr>
+      <td>
+      </td>
+      <td>
+          <span><i>Sorites marginalis</i></span></td>
+    </tr>
+    <tr>
+      <td>
+        </td>
+      <td align="right"><span><a href="Sspecies2.htm">Next&gt;&gt;&gt;</a></span>
+      </td>
+    </tr>
+  </table>
+<!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+
+
+
+
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" --> 
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+  <div class="clear"></div>
+</div>
+<!-- wrap -->
+<div id="footer">
+  <ul>
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright 
+      <script type="text/javascript">document.write(year)</script> 
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+  </ul>
+</div>
+<!-- footer --> 
+ 
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-966290-15', 'auto');
+ga('send', 'pageview');
+</script> 
+
+</body>
+<!-- START OF SmartSource Data Collector TAG -->
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+<!-- Version: 9.4.0 -->
+<!-- Tag Builder Version: 4.1  -->
+<!-- Created: 5/30/2013 4:39:15 PM -->
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+<script type="text/javascript">
+//<![CDATA[
+var _tag=new WebTrends();
+_tag.dcsGetId();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+_tag.dcsCustom=function(){
+// Add custom parameters here.
+//_tag.DCSext.param_name=param_value;
+}
+_tag.dcsCollect();
+//]]>
+</script>
+<noscript>
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+</noscript>
+<!-- END OF SmartSource Data Collector TAG -->
+<!-- InstanceEnd --></html>

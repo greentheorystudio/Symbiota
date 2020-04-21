@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!--
+  ++ nmnh_base.dwt
+  ++ version 1.1 - 06 February 2007
+  -->
+
+<meta charset="utf-8">
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" --> 
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" --> 
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" --> 
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" --> 
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Elops saurus</title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+ 
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+<script type="text/javascript" src="/_js/functions.js"></script>
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+<script language="javascript" type="text/javascript">
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+function popDef(definition, wingo) {
+alert("Definition: " + definition);
+window.location = wingo;
+}
+//-->
+</script>
+</head>
+<body onLoad="do_onload();">
+<div id="wrap">
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+    <div id="searchForm">
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+        <fieldset>
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+          <label for="qt">Search Field:</label>
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+          <label for="submit">Search Submit:</label>
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+          <input type="hidden" name="site" value="sms">
+          <input type="hidden" name="client" value="sms">
+          <input type="hidden" name="proxystylesheet" value="sms">
+          <input type="hidden" name="output" value="xml_no_dtd">
+        </fieldset>
+      </form>
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+    </div>
+    <!-- searchForm --> 
+  </div>
+  <!-- mastHead -->
+  <div id="globalNav">
+    <ul>
+      <li><a href="../index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+      <li><a href="../Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+      <li><a href="../Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+      <li><a href="../PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+      <li><a href="../IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+      <li><a href="../Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+    </ul>
+  </div>
+  <!-- globalNav --> 
+  
+<div id="sideContent">	  
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" -->
+<a href="../images/esaurus1.jpg"><img src="../images/esaurus1.jpg" width="250"></a><br>
+    <span class="caption">Ladyfish, <i>Elops saurus</i>. Illustration by Diana Rome Peebles. Courtesy of Florida FWC, Division of Marine Fisheries.</span>
+<!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent"> 
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+        <ul>
+        <li><a href="../Animals.htm">Animals</a> &#8250;</li>
+          <li><a href="../Cl_Osteic.htm">Osteichthyes</a> &#8250;</li>
+          <li><a href="../Especies.htm">Alphabetized Species List</a> &#8250;</li>
+          <li><a href="../Compl_Reports.htm">Expanded Species Reports</a> &#8250;</li>
+          <li>Elops saurus </li>
+        </ul>
+        <h1 class="heading">Indian River Lagoon Species Inventory</h1>
+
+        <!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+<!--msnavigation-->
+<br>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr>
+    	<td>
+        	<table cellpadding="0" cellspacing="0" class="species-table">
+    <tr>
+          <td class="label">Species Name:</td>
+      <td><span class="specie-name">Elops saurus</span> Linnaeus, 1766</td>
+    </tr>
+    <tr>
+      <td class="label">Common Name:</td>
+      <td>Ladyfish</td>
+    </tr>
+    <tr>
+    	<td class="label">Synonymy:</td>
+        <td>None</td>
+    </tr>
+  </table>
+        <ol class="report-caterories">
+    	  <li>
+  	<p class="heading">TAXONOMY</p>
+
+      <table CELLSPACING="0" BORDER="0" CELLPADDING="2" WIDTH="100%" class="table-border no-border alternate">
+      <tr>
+        <th>Kingdom</th>
+        <th>Phylum/Division</th>
+        <th>Class:</th>
+        <th>Order:</th>
+        <th>Family:</th>
+        <th>Genus:</th>
+      </tr>
+      <tr>
+        <td>Animalia</td>
+      	<td>Chordata</td>
+        <td>Actinopterygii</td>
+        <td>Elopiformes</td>
+        <td>Elopidae</td>
+        <td class="genus_italics">Elops</td>
+      </tr>
+  </table>
+  <p class="title">Species Description</p>
+<p class="body">The ladyfish, <i>Elops saurus</i>, is a medium-sized fish with an elongate body
+covered with small, silvery scales.  The overall body color is silver, bluish
+dorsally with yellowish lower sides and a yellow to white ventral surface.  The
+head is small and pointed, with a large terminal mouth whose maxillary extends
+well behind the eye. The symmetrical caudal lobes of the tail are long and
+slender, and the dorsal fin inserts just behind the insertion point of the
+pelvics (Hoese and Moore 1977, Zale and Merrifield 1989).</p>
+<p class="body">The scale count along the straight lateral line is 103-120, the dorsal ray
+count is 21-25, and the anal ray count is 14-17 (Hoese and Moore 1977).</p>
+
+<p class="title">Potentially Misidentified Species</p>
+<p class="body">Ladyfish belong to an ancestral order of bony fish called the Elopiformes.
+Tarpon (<i>Megalops atlanticus</i>) belong to the same order, and both species
+are placed in the same family, Elopidae.  Both of these species are
+herring-like in appearance, but can be distinguished from the clupeids not just
+by size, but by the presence of a gular plate-a bony structure located at the
+center of the lower jaw.  Ladyfish can be differentiated from tarpon by a
+smaller body size, thinner profile, and finer body scales (Hoese and Moore
+1977).</p>
+<p class="body">Bonefish (<i>Albula vulpes</i>) belong to Order Elopiformes as well, but they
+are placed into a separate family, the Albulidae.  Bonefish lack the gular
+plate that the elopids possess, the inferior mouth is smaller than that of
+ladyfish, the snout somewhat more rounded, and the body profile not as thin
+(Hoese and Moore 1977, Robbins et al. 1986).</p>
+<p class="body">Larval ladyfish develop into an elongate, flat, nearly transparent larval type
+known as a leptocephalus.  The leptocephalus is an ancestral larval form that
+today is found only in ladyfish, tarpon, bonefish, and a number of eel
+families.   All of these species are considered to be among the more ancestral
+of living teleost fish groups.</p>
+    	  </li>
+  <li>
+  	<p class="heading">HABITAT AND DISTRIBUTION</p>
+    <p class="title">Regional Occurrence</p>
+<p class="body"><i>Elops saurus</i> can be found in the western Atlantic from southern New
+England (but uncommon north of Cape Hatteras, NC) south to Bermuda, Florida,
+and throughout the Gulf of Mexico to southern Brazil (Zale and Merrifield 1989,
+FWRI 2006).  The species also occurs in the western Pacific and the Indian
+Ocean (Bigelow and Schroeder 1953).</p>
+<p class="body">Two phenotypically distinct, sympatric (overlapping distributions) ladyfish
+stocks occur in Florida waters (McBride and Horodysky 2004).  The more northern
+stock is characterized by a high myomere count while the more southern stock
+exhibits a low myomere count (Smith 1989).</p>
+
+<p class="title">IRL Distribution</p>
+<p class="body">Ladyfish occur throughout the IRL system.  McBride at al. (2001) confirm that
+the species is broadly distributed in both the Indian River and Banana River
+basins throughout the year, with larger individuals (> 300 lm SL) more common
+in the Banana River basin.</p>
+</li>
+   <li>
+   		<p class="heading">LIFE HISTORY AND POPULATION BIOLOGY</p>
+      <p class="title">Age, Size, Lifespan</p>
+<p class="body">Zale and Merrifield (1989) report that ladyfish attain a maximum length of
+nearly 1 m (but usually less than 60 cm).  Although they can reach a maximum
+weight of nearly 7 kg, most individuals are less than 1.5 kg (Hoese and Moore
+1977).</p>
+<p class="body">Palko (1984) suggests ladyfish can live as long as 6 years.</p>
+
+<p class="title">Abundance</p>
+<p class="body">The abundance of <i>Elops saurus</i> in Florida is sufficient to support a
+recreational fishery as well as an incidental commercial fishery.  The
+estimated total Florida landings (commercial and recreational) of the species
+in 2005 exceeded 725,000 kg (FWRI 2006).</p>
+
+<p class="title">Reproduction</p>
+<p class="body">Ladyfish are known to be offshore spawners (McBride et al. 2001).  Field larval
+collections analyzed by Hildenbrand (1943) suggest that offshore spawning
+occurs in the fall.</p>
+<p class="body">McBride et al. (2001) indicated that few individuals older than 2-3 years were
+collected in surveys conducted in Tampa Bay and in the Indian River Lagoon, and
+nearly all inshore fish of this age were reproductively immature.  The authors
+agree with other published reports (e.g., Hildebrand 1963, Palko1984)
+suggesting that ladyfish leave the estuaries at 2-3 years of age to mature and
+spawn offshore.</p>
+
+<p class="title">Embryology</p>
+<p class="body">Post yolk-sac animals progress through three distinct larval stages (Zale and
+Merrifield 1989).  Stage I is the leptocephalus stage in which individuals are
+40-45 mm long (SL), ribbonlike and colorless, with a small head and small fins.
+ Large, fang-like teeth are present though, paradoxically, the gut is not fully
+formed.  Gills and red blood cells are absent. Gas exchange occurs across the
+body surface and nutrient uptake probably occurs in this manner as well (i.e.,
+osmotrophy).</p>
+<p class="body">Stage II larvae decrease measurably in length (SL = 18-20 mm) compared to Stage
+I animals, and they become less ribbon-like over time.  Stage III larvae again
+increase in length before undergoing metamorphosis into the juvenile stage at
+around SL 30-35 mm.  Morphological changes accompanying this transition include
+an increase in body depth, head and snout length, fin hight/size, and the
+gradual emergence of body colors analogous to those of juvenile and adult
+animals (Hildebrand 1934, Zale and Merrifield 1989).</p>
+<p class="body">Research reports provide varying larval duration estimates, with some authors
+noting the combined duration of Stages II and III as just 9 days (Gehringer
+1959a), while other investigators observed combined Stages II and III durations
+of roughly 71 days (Alikunhi and Rao 1951).</p>
+<p class="body">McBride et al. (2001) observed that numbers of new cohorts of late-metamorphic
+ladyfish larvae in Tampa Bay peaked in April.  In the Indian River Lagoon,
+these authors note the presence of early- and mid-metamorphic larvae from at
+least December to May, and a peak concentration of late-metamorphic larvae in
+the spring.</p>
+</li>
+   <li>
+   	<p class="heading">PHYSICAL TOLERANCES</p>
+    <p class="title">Temperature</p>
+<p class="body">Zale and Merrifield (1989) consider ladyfish to be a thermophilic species.  It
+has been involved in documented cold-related fish kills in the Indian River
+Lagoon (Snelson and Bradley 1978) and elsewhere in Florida (Springer and
+Woodburn 1960).  Ladyfish seem to be slightly more tolerant of cold snaps than
+tarpon, however, and are less frequently harmed in thermal kills (Storey 1937).</p>
+<p class="body">Adults have been collectd from waters ranging from 11&#176;C to 35&#176;C, while
+early-stage larvae are found exclusively in warm oceanic waters at temperatures
+of 22.2-30&#176;C (Eldred and Lyons 1966, Zale and Merrifield 1989).
+</p>
+
+<p class="title">Salinity</p>
+<p class="body"><i>Elops saurus</i> is found in marine and brackish waters throughout most
+stages of their life (Nelson 1984), although early larvae appear to be confined
+to oceanic salinities (Smith 1980).  Juveniles are typically found at moderate
+salinities of around 23-25 ppt (McBride et al. 2001), but they have also been
+collected from a much broader range of 0-45 ppt (Govoni and Merriner 1978,
+Thompson and Deegan 1982).</p>
+<p class="body">Adult ladyfish have been collected from Florida waters at salinities as low as
+0.5 ppt (Zale and Merrifield 1989).</p>
+
+<p class="title">Dissolved Oxygen</p>
+<p class="body">Although they are not obligate air-breathers like tarpon, ladyfish do appear to
+be relatively tolerant of hypoxia.  Rose et al. (1975) record ladyfish
+inhabiting a Louisiana coastal impoundment that experienced an oxygen minimum
+concentration of 2.0 mg/L.</p>
+</li>
+   <li>
+   	<p class="heading">COMMUNITY ECOLOGY</p>
+	<p class="title">Trophic Mode</p>
+<p class="body">As adults, <i>Elops saurus</i> are primarily piscivorous midwater predators,
+with various investigators reporting that fish accounted for between 34 and 94%
+of stomach contents (FWRI 2006).  Decapod crustaceans are also important
+components of the diet of ladyfish.</p>
+<p class="body">Stage II and III ladyfish larvae feed almost exclusively on zooplankton.  As
+they grow, juveniles take in increasing amounts of larger prey items such as
+small fish and shrimp as they grow, simultaneously reducing their reliance on
+zooplankton (Harrington and Harrington 1961).
+</p>
+
+<p class="title">Competitors</p>
+<p class="body">Potential competitors with <i>Elops saurus</i> for food resources is likely to
+include a number of similarly sized piscivorous species, including tarpon,
+bonefish, needlefish, and others.</p>
+
+<p class="title">Predators</p>
+<p class="body">Relatively large size protects adult ladyfish from most would-be predators,
+although some mortality occurs via predation by piscivorous birds, sharks,
+dolphins, and alligators (Zale and Merrifield 1989).</p>
+<p class="body">Pelagic eggs and larvae are susceptible to predation by small fish and
+carnivorous zooplankton (Zale and Merrifield 1989).</p>
+
+<p class="title">Parasites</p>
+<p class="body">Corkum (1959) reported parasitic tremetodes of genera <i>Bucephalus</i> and
+<i>Prosorhynchus</i> living within the intestine of ladyfish collected from the
+Mississippi Gulf coast.</p>
+
+<p class="title">Habitats</p>
+<p class="body">Ladyfish can be found in several coastal and estuarine habitats, including
+seagrass beds, mangrove marsh, and sand flats.  Settlement-stage larvae and
+juveniles occur along beaches and in rivers, canals, and impounded estuarine
+marshes (Gilmore et al. 1981).</p>
+
+<p class="title">Activity Time</p>
+<p class="body">Diel activity studies conducted by Sogard et al. (1989) indicate that <i>Elops
+saurus</i> exhibits a high degree of nocturnal activity, evident as increased
+capture rates occurred starting at dusk and continued through the first few
+hours after dark before declining through the later nighttime hours.  These
+authors report that <i>E. saurus</i> was captured exclusively at night at
+Florida Bay sampling sites with high water clarity, but was caught in low
+numbers during daylight hours as well where water clarity was low.</p>
+   </li>
+
+   <li>
+     <p class="heading">ADDITIONAL INFORMATION</p>
+     <p class="title">Economic Importance</p>
+<p class="body">Although ladyfish are not widely sought as an edible species owing to its
+boniness, a moderate commercial fishery does exist in Florida.  Total Florida
+landings of ladyfish in 2005 exceeded 725,000 kg, with 85% of that total landed
+commercially (FWRI 2006).  96% of the 2005 catch was taken on the Florida Gulf
+coast.</p>
+<p class="body">The 1995 Florida inshore net ban severely impacted the commercial ladyfish
+fishery.  It may also have allowed stocks to rebound after several decades of
+exploitation; landing totals in 2005 were 25% higher than the average landings
+from the previous 5 years (FWRI 2006).</p>
+<p class="body">A significant recreational ladyfish fishery exists throughout coastal Florida,
+which exhibits many of the same sportfish attributes as tarpon but can be
+caught on light tackle.</p>
+   </li>
+	 <li>
+     <p class="heading">REFERENCES</p>
+     <p class="body">Alikunhi KH and SN Rao. 1951. Notes on the metamorphosis of <i>Elops saurus</i>
+Linn. and <i>Megalops cyprinoides</i> (Broussonet) with observations on their
+growth. Journal of the Zoological Society of India 3:99-109.</p>
+<p class="body">Bigelow HB and WC Schroeder.1953. Fishes of the Gulf of Maine. US Fish and
+Wildlife Services Fishery Bulletin  74. Volume 53. 577 p.</p>
+<p class="body">Corkum KC. 1959. Some trematode parasites of fishes from the Mississippi gulf
+coast. Proceedings of the Louisiana Academy of Science 22:17-29.</p>
+<p class="body">Eldred B. and WG Lyons. 1966. Larval ladyfish, <i>Elops saurus</i> Linnaeus
+1766, (Elopidae) in Florida and adjacent waters. Florida Board of Conservation
+Marine Laboratory Leaflet Service 4(2).  6 p.</p>
+<p class="body">FWRI. 2006. Ladyfish, <i>Elops saurus</i>. Florida Fish and Wildlife
+Conservation Commission, Fish and Wildlife Research Institute. 9 p.</p>
+<p class="body">Gehringer JW. 1959. Early development and metamorphosis of the ten-pounder,
+<i>Elops saurus</i> Linnaeus. US Fish and Wildlife Service Fishery Bulletin
+59:619-647.</p>
+<p class="body">Gilmore RG, Jr., Donohoe CJ, Cooke DW, and DJ Herrema. 1981. Fishes of the
+Indian River Lagoon and adjacent waters, Florida. Harbor Branch Foundation
+Technical Report 41. 36 p.</p>
+<p class="body">Govoni JJ and JV Merriner. 1978. The occurrence of ladyfish, <i>Elops
+saurus</i>, larvae in low salinity water and another record for Chesapeake Bay.
+Estuaries 1:205-206.</p>
+<p class="body">Harrington RW, Jr. and ES Harrington. 1961. Food selection among fishes
+invading a high subtropical salt marsh: from onset of flooding through the
+progress of a mosquito brood. Ecology 42:646-666.</p>
+<p class="body">Hildebrand SF. 1943. Notes on the affinity, anatomy and development of <i>Elops
+saurus</i> Linnaeus. Journal of the Washington Academy of Science 33:90-94.</p>
+<p class="body">Hildebrand SF. 1963. Family Elopidae: fishes of the western North Atlantic.
+Memoirs of the Sears Foundation for Marine Research, Yale University. 1963,
+part 3:123-131.</p>
+<p class="body">Hoese HD and RH Moore. 1977. Fishes of the Gulf of Mexico. Texas, Louisiana,
+and Adjacent Waters. Texas A&M University Press, College Station TX. 327 p.</p>
+<p class="body">McBride RS, MacDonald TC, Matheson RE Jr., Rydene DA, and PB Hood. 2001.
+Nursery habitats for ladyfish, <i>Elops saurus</i>, along salinity gradients in
+two Florida estuaries. Fishery Bulletin 99:443-458.</p>
+<p class="body">McBride RS and AZ Horodysky. 2004. Mechanisms maintaining sympatric
+distributions of two ladyfish (Elopidae: <i>Elops</i>) morphs in the Gulf of
+Mexico and western North Atlantic Ocean. Limnology and Oceanography
+49:1173-1181.</p>
+<p class="body">Moffett AW and JE Randall. 1957. The Roger Firestone tarpon investigation.
+University of Miami Marine Laboratory Progress Report 57-22. 18 p.</p>
+<p class="body">Nelson JS. 1984. Fishes of the World. John Wiley and Sons, NY. 523 p.</p>
+<p class="body">Palko BJ. 1984. An evaluation of hard parts for age determination of pompano
+(Trachinotus carolinus), ladyfi sh (<i>Elops saurus</i>), crevalle jack
+(<i>Caranx hippos</i>), gulf flounder (<i>Paralichthys albigutta</i>), and
+southern flounder (<i>Paralichthys lethostigma</i>). US Department of Commerce
+NOAA Technical Memorandum NMFS-SEFC 132. 11 p.</p>
+<p class="body">Robins CR, Ray GC, and J Douglas. 1986. A Field Guide to Atlantic Coast Fishes.
+The Peterson Field Guide Series.  Houghton Mifflin Co., Boston. 354 p.</p>
+<p class="body">Rose CD, Harris AH, and B Wilson. 1975. Extensive culture of penaeid shrimp in
+Louisiana saltmarsh impoundments. Transactions of the American Fisheries
+Society 104:296-307.</p>
+<p class="body">Smith DG. 1980. Early larvae of the tarpon, <i>Megalops atlantica</i>
+Valenciennes (Pisces: Elopidae), with notes on spawning in the Gulf of Mexico
+and the Yucatan Channel. Bulletin of Marine Science 30:136-141.</p>
+<p class="body">Smith DG. 1989. Order Elopiformes; Families Elopidae, Megalopidae, and
+Albulidae: Leptocephali. Fishes of the Western North Atlantic. Memoirs of the
+Sears Foundation for Marine Research, Yale University. 1989, part 1:961-972.</p>
+<p class="body">Snelson FF, Jr. and W.K. Bradley, Jr. 1978. Mortality of fishes due to cold on
+the east coast  of  Florida, January, 1977. Florida. Scientist 41:1-12.</p>
+<p class="body">Sogard SM, Powell GVN, and JG Holmquist. 1989. Utilization by fishes of
+shallow, seagrass-covered banks in Florida Bay: 2. Diel and tidal patterns.
+Environmental Biology of Fishes 24:81-92.</p>
+<p class="body">Springer VG and KD Woodburn. 1960. An ecological study of the fishes of the
+Tampa Bay area. Florida Board of Conservation Marine Laboratory Professional
+Paper Service. 1,104 p.</p>
+<p class="body">Storey M. 1937. The relation between normal range and mortality of fishes due
+to cold at Sanibel Island, Florida. Ecology 18:10-26.</p>
+<p class="body">Thompson BA and LA Deegan. 1982. Distributi on of ladyfish (<i>Elops
+saurus</i>) and bonefish (<i>Albula vulpes</i>) leptocephali in Louisiana.
+Bulletin of Marine Science 32:936-939.</p>
+<p class="body">Zale AV and SG Merrifield. 1989. Life Histories and Environmental Requirements
+of Coastal Fishes and Invertebrates (South Florida): Ladyfish and Tarpon. US
+Fish and Wildlife Service Biological Report 82(11.104). US Army Corps of
+Engineers report TR EL-82-4. 17 p.</p>
+   </li>
+  	  </ol>
+
+			<div class="centered">
+				<p class="body centered">
+                Report by:
+              J. Masterson, Smithsonian Marine Station<br>
+              Submit additional information, photos or comments
+              to:<br>
+              <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a><br>
+              Page last updated: September 1, 2008
+				</p>
+			</div>
+
+</td><!--msnavigation-->
+	</tr><!--msnavigation-->
+    </table>
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" --> 
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+  <div class="clear"></div>
+</div>
+<!-- wrap -->
+<div id="footer">
+  <ul>
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright 
+      <script type="text/javascript">document.write(year)</script> 
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+  </ul>
+</div>
+<!-- footer --> 
+ 
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-966290-15', 'auto');
+ga('send', 'pageview');
+</script> 
+
+</body>
+<!-- START OF SmartSource Data Collector TAG -->
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+<!-- Version: 9.4.0 -->
+<!-- Tag Builder Version: 4.1  -->
+<!-- Created: 5/30/2013 4:39:15 PM -->
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+<script type="text/javascript">
+//<![CDATA[
+var _tag=new WebTrends();
+_tag.dcsGetId();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+_tag.dcsCustom=function(){
+// Add custom parameters here.
+//_tag.DCSext.param_name=param_value;
+}
+_tag.dcsCollect();
+//]]>
+</script>
+<noscript>
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+</noscript>
+<!-- END OF SmartSource Data Collector TAG -->
+<!-- InstanceEnd --></html>

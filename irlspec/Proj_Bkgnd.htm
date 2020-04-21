@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!--
+  ++ nmnh_base.dwt
+  ++ version 1.1 - 06 February 2007
+  -->
+
+<meta charset="utf-8">
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" -->
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" -->
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" -->
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" -->
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title></title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+<script type="text/javascript" src="/_js/functions.js"></script>
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+<script language="javascript" type="text/javascript">
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+function popDef(definition, wingo) {
+alert("Definition: " + definition);
+window.location = wingo;
+}
+//-->
+</script>
+</head>
+<body onLoad="do_onload();">
+<div id="wrap">
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+    <div id="searchForm">
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+        <fieldset>
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+          <label for="qt">Search Field:</label>
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+          <label for="submit">Search Submit:</label>
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+          <input type="hidden" name="site" value="sms">
+          <input type="hidden" name="client" value="sms">
+          <input type="hidden" name="proxystylesheet" value="sms">
+          <input type="hidden" name="output" value="xml_no_dtd">
+        </fieldset>
+      </form>
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+    </div>
+    <!-- searchForm -->
+  </div>
+  <!-- mastHead -->
+  <div id="globalNav">
+    <ul>
+      <li><a href="index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+      <li><a href="Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+      <li><a href="Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+      <li><a href="PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+      <li><a href="IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+      <li><a href="Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+    </ul>
+  </div>
+  <!-- globalNav -->
+
+<div id="sideContent">
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" --><br />
+<!-- #BeginLibraryItem "/Library/IRLSI-about-leftnav.lbi" --><ul class="navlist">
+  <li><a href="Proj_Bkgnd.htm" title="Project Background">Project Background</a></li>
+  <li><a href="acknowledge.htm" title="Acknowledgements">Acknowledgements</a></li>
+  <li><a href="contact.htm" title="Contact">Contact</a></li>
+</ul>
+<!-- #EndLibraryItem --><!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent">
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+        <ul>
+          <li><a href="http://www.sms.si.edu/" title="SMS Home">SMS Home</a> &#8250;</li>
+          <li><a href="index.htm" title="IRLSI Home">IRLSI Home</a> &#8250;</li>
+          <li><a href="http://www.sms.si.edu/IRLSpec/Species_Rpts.htm" title="About Us" class="lastCrumb">About Us</a> &#8250;</li>
+        </ul>
+        <h1 class="heading">Indian River Lagoon Species Inventory</h1>
+        <h2 class="subheading">Project Background</h2>
+        <!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+<br />
+
+<table width="700" cellpadding="0">
+	<tr>
+    	<td align="center">
+        	<p class="title">An Overview of the IRL Species Inventory Project</p>
+        </td>
+    </tr>
+  <tr>
+    <td align="center"><img src="images/IRLCAMPBELL11.jpg" width="436" height="328" /></td>
+    </tr>
+</table>
+<br />
+<table width="700" cellpadding="0">
+  <tr>
+    <td><p class="body">The geographical position of the Indian River Lagoon (IRL), straddling the zone of overlap between temperate and subtropical biotic provinces, contributes to its vast species richness. The IRL had often been purported to be one of the most diverse estuarine systems in the continental United States; however, evidence to support this status was lacking. Having no documentation of the high biodiversity of the IRL not only hampered scientific understanding of this complex system, but also was seen as a major drawback to developing a comprehensive management strategy to protect biodiversity in the Indian River Lagoon.</p>
+    <p class="body">Following the first IRL Conference on Biodiversity held in 1994, the apparent lack of evidence to support claims of high biodiversity in the IRL prompted Dr. Hilary Swain and her colleagues Susan E. Hopkins and Clarissa L. Thornton to compile the Indian River Lagoon Species Inventory, a taxonomic listing of 2,493 species of protists, plants and animals occurring in the IRL. The inventory provided the first substantial evidence that attested to the high species richness of the IRL system. </p>
+        <br />
+     <p class="body">The initial IRL Species Inventory was compiled by performing literature searches, and by surveying colleagues with taxonomic and ecological expertise in IRL biota. Over 70 people contributed information to the project. Species included in the inventory were those which: 1) occur within the IRL during some stage in their life cycles; 2) those which utilize adjacent wetland habitat areas; 3) those bird species which frequent the flyway above the lagoon; and 4) species which occur most often in adjacent upland habitats (scrub, shoreline plants, etc.), but which are also tolerant of estuarine conditions.</p>
+      <p class="body">
+        Clearly, some taxonomic groups have been studied more extensively than others, thus the initial inventory was somewhat biased in coverage. Taxonomic groups such as mollusks, fishes, birds, echinoderms, sipunculids, and some protozoan groups have extensive and possibly complete species listings, while other groups such as the vascular plants, amphibians, reptiles, macroalgae, sponges and other groups would benefit from more extensive documentation in the IRL.</p>
+
+  <p class="title">Our Goal:</p>
+	<p class="body">
+        The Smithsonian Marine Station (SMS) at Fort Pierce became the depository for the Indian River Lagoon Species Inventory in 1997 thanks, in large part, to the efforts of Mary Rice (then Director of SMS) and Joseph Dineen (Research Associate). Funding was subsequently procurred to ensure initial efforts were not lost and that the inventory would continue to be expanded as new IRL information became available. The IRL Species Inventory went on-line in 1999. Since becoming Director of the marine station in 2002, Valerie Paul has continued to prioritize the IRL Species Inventory as a valuable component of the Smithsonian Marine Station's public outreach program.</p>
+        <p class="body">Our goal in obtaining the Inventory is to enhance scientific knowledge of the IRL ecosystem and to further the promotion of public awareness and the need for stewardship of the IRL.In order to accomplish this objective, we have: substantially expanded the initial taxonomic species database; added ecological and life history information; included extensive documentation of IRL's many habitats; and have added a wealth of information for IRL citizenry including information on personal behavior modification relative to improved IRL water quality.</p>
+        </td>
+        </tr>
+        <tr>
+        <td align="center"><img src="images/IRLSI_DIAGRAM.jpg" width="455" height="267" /></td>
+        </tr>
+        <tr>
+        <td>
+      <p class="body">Improving awareness and increasing knowledge about all aspects of the Indian River Lagoon is perhaps the most important step in increasing stewardship of the lagoon, and preserving and sustaining this invaluable natural resource for future generations. We have and will continue to strive over the years to make the Indian River Lagoon Species Inventory a useful, relevant, and current educational tool for the scientific research community, resource managerial and academic groups and the general public.</p></td>
+  </tr>
+</table>
+<table width="700">
+<tr>
+<td>
+<p class="footer_note">Submit additional information, photos or comments to: <br />
+  <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a><br />
+  Page last updated: May 2, 2014</p>
+</td>
+</tr>
+</table>
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" -->
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+  <div class="clear"></div>
+</div>
+<!-- wrap -->
+<div id="footer">
+  <ul>
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright
+      <script type="text/javascript">document.write(year)</script>
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+  </ul>
+</div>
+<!-- footer -->
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-966290-15', 'auto');
+ga('send', 'pageview');
+</script>
+
+</body>
+<!-- START OF SmartSource Data Collector TAG -->
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+<!-- Version: 9.4.0 -->
+<!-- Tag Builder Version: 4.1  -->
+<!-- Created: 5/30/2013 4:39:15 PM -->
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+<script type="text/javascript">
+//<![CDATA[
+var _tag=new WebTrends();
+_tag.dcsGetId();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+_tag.dcsCustom=function(){
+// Add custom parameters here.
+//_tag.DCSext.param_name=param_value;
+}
+_tag.dcsCollect();
+//]]>
+</script>
+<noscript>
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+</noscript>
+<!-- END OF SmartSource Data Collector TAG -->
+<!-- InstanceEnd --></html>

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en"><!-- InstanceBegin template="/Templates/irlsi-parent_2_column.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!--
+  ++ nmnh_base.dwt
+  ++ version 1.1 - 06 February 2007
+  -->
+
+<meta charset="utf-8">
+
+
+<!--
+  ++ nmnh_2_column.dwt
+  ++ version 0.2
+  -->
+
+<!-- InstanceParam name="palette" type="text" value="11" -->
+<!-- InstanceParam name="show_topnav" type="boolean" value="true" -->
+<!-- InstanceParam name="show_toplink" type="boolean" value="true" passthrough="true" -->
+<!-- InstanceParam name="use_black_title" type="boolean" value="false" -->
+<!-- InstanceParam name="show_left_column_top" type="boolean" value="false" -->
+
+<!-- InstanceBeginEditable name="doctitle" -->
+<title></title>
+<!-- InstanceEndEditable -->
+
+<link href="../_css/default.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_SMS.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="../_css/layout_2_column.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/color/color_11.css" rel="stylesheet" type="text/css" media="screen" />
+<style type="text/css" media="screen">
+	#wrap {
+		background: white url(../_img/11_layoutTwoColumn.gif) repeat-y;
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="../_css/custom.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="_css/ie6.css" media="screen" /><![endif]-->
+
+
+
+
+
+
+<style type="text/css" media="screen">
+	#left_column_top {
+		display: none;
+	}
+</style>
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+<meta name="Title" content="" />
+<meta name="Creator" content="" />
+<meta name="Subject" content="" />
+<meta name="Description" content="" />
+<meta name="Publisher" content="" />
+<meta name="Contributor" content="" />
+<meta name="Date" content="" />
+<meta name="Type" content="" />
+<meta name="Format" content="" />
+<meta name="Identifier" content="" />
+<meta name="Source" content="" />
+<meta name="Language" content="" />
+<meta name="Relation" content="" />
+<meta name="Coverage" content="" />
+<meta name="Rights" content="" />
+<meta name="Keywords" content="" />
+<!-- InstanceEndEditable -->
+<script type="text/javascript" src="/_js/swfobject.js"></script>
+<script type="text/javascript" src="/_js/functions.js"></script>
+<script type="text/javascript" src="/_js/rewrite.js"></script>
+<!-- These changes are being added to the NMNH Main Site only for the purposes of enabling the future Virtual Tour (the one that NKI created the templates for, not the one created by Loren Ybarrondo). -->
+<script type="text/javascript" src="/_js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="/_js/jquery-ui-personalized-1.5.2.packed.js"></script>
+<!-- InstanceBeginEditable name="dept-custom-head" -->
+<link href="../_css/SMSstyles.css" rel="stylesheet" type="text/css" />
+<link href="../_css/IRLSI.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="onload" -->
+<script type="text/javascript">
+	function do_onload () {
+		framebust();
+	}
+</script>
+
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="short_header" type="boolean" value="false" passthrough="true" -->
+<!-- InstanceParam name="add_ga" type="boolean" value="true" -->
+<script language="javascript" type="text/javascript">
+<!-- //This function pops up an alert box with a definition and then routes back to the internal link
+// <a href="[this is the internal link = #link name]" onclick="popDef('[definition]', '[internal link]');">blah</a>
+
+function popDef(definition, wingo) {
+alert("Definition: " + definition);
+window.location = wingo;
+}
+//-->
+</script>
+</head>
+<body onLoad="do_onload();">
+<div id="wrap">
+  <div id="mastHead" @@@@(short_header == true ? "class='short-header'" : "")@@@@ >
+    <h1 id="top"><a href="http://www.sms.si.edu/"><span>Smithsonian Marine Station at Fort Pierce</span></a></h1>
+    <!-- <div id="donate_button"> <a href="https://support.si.edu/05/naturalhistory?source=nmnh_donatebutton" title="Donate - Support Natural History" class="donate_button" id="donate_button">Donate</a> </div> -->
+    <div id="searchForm">
+      <form class="tb" action="http://si-pwebsrch02.si.edu/search" method="get">
+        <fieldset>
+          <legend style="display:none; visibility:collapse">Website Search Box</legend>
+          <label for="qt">Search Field:</label>
+          <input type="text" value="SMS Website Search" id="qt" name="q" onClick="do_museum_search_first_click();">
+          <label for="submit">Search Submit:</label>
+          <input src="../_img/headerSearchSubmit.gif" type="image" id="submit" alt="Submit" name="btnG">
+          <input type="hidden" name="site" value="sms">
+          <input type="hidden" name="client" value="sms">
+          <input type="hidden" name="proxystylesheet" value="sms">
+          <input type="hidden" name="output" value="xml_no_dtd">
+        </fieldset>
+      </form>
+      <p><a href="http://si-pwebsrch02.si.edu/search?access=p&output=xml_no_dtd&sort=date%3AD%3AL%3Ad1&site=sms&ie=UTF-8&client=sms&oe=UTF-8&proxystylesheet=sms&proxycustom=%3CADVANCED/%3E">Advanced Search</a></p>
+    </div>
+    <!-- searchForm -->
+  </div>
+  <!-- mastHead -->
+  <div id="globalNav">
+    <ul>
+      <li><a href="index.htm" title="Indian River Lagoon Species Inventory Home">IRLSI Home</a></li>
+      <li><a href="search.htm" title=">Search by Word or Phrase">Search the Inventory</a></li>
+      <li><a href="Maps.htm" title="The Indian River Lagoon">The IRL</a></li>
+      <li><a href="Protect-IRL.htm" title="Stewardship">Stewardship</a></li>
+      <li><a href="PhotoGallery_Intro.htm" title="Indian River Lagoon Photo Gallery">IRL Photo Gallery</a></li>
+      <li><a href="IRL_Links.htm" title="Links and Events">Links and Events</a></li>
+      <li><a href="Proj_Bkgnd.htm" title="Project Background">About Us</a></li>
+      <li><a href="http://www.sms.si.edu" title="SMS Home" class="lastlist">SMS Home</a></li>
+    </ul>
+  </div>
+  <!-- globalNav -->
+
+<div id="sideContent">
+<div id="left_column_top" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnTop" --> <!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+
+<div id="left_column_image">
+<!-- InstanceBeginEditable name="leftColumnImage" --> <!-- InstanceEndEditable -->
+</div>
+
+<div id="left_column_bottom" class="sideGutter">
+<!-- InstanceBeginEditable name="leftColumnBot" -->
+
+<p><!-- #BeginLibraryItem "/Library/IRLSI-search-leftnav.lbi" --><ul class="navlist">
+  <li><a href="Search.htm" title="Search by Word or Phrase">Search by Word or Phrase</a></li>
+  <li><a href="Species_Rpts.htm" title="Go to Species Reports">Go to Species Reports</a></li>
+  <li><a href="Alpha_List.htm" title="Alphabetized Species Lists">Alphabetized Species Lists</a></li>
+  <li><a href="Compl_Reports.htm" title="Expanded Species Reports">Expanded Species Reports</a></li>
+  <li><a href="ListedSpec.htm" title="Special Status Species">Special Status Species</a></li>
+  <li><a href="Nonnatives.htm" title="Non-Native Species">Non-Native Species</a></li>
+
+  <li><a href="NamSpecies.htm" title="Species Names and Taxonomy">Species Names and Taxonomy</a></li>
+  <li><a href="INVERTS.htm" title="Marine Invertebrates">Marine Invertebrates</a></li>
+  <li><a href="Whats_New.htm" title="What's New">What's New</a></li>
+</ul>
+<!-- #EndLibraryItem --></p>
+<!-- InstanceEndEditable -->
+</div> <!-- sideGutter -->
+</div> <!-- sideContent -->
+
+<div id="mainContent">
+
+<div id="mainGutter">
+
+<div id="breadCrumb">
+	<!-- InstanceBeginEditable name="main_head" -->
+<ul>
+          <li><a href="http://www.sms.si.edu/" title="SMS Home">SMS Home</a> &#8250;</li>
+          <li><a href="index.htm" title="IRLSI Home">IRLSI Home</a> &#8250;</li>
+          <li><a href="Search.htm" title="Search the Inventory">Search the Inventory</a> &#8250;&nbsp;&nbsp;&nbsp;</li>
+          <li><a href="NamSpecies.htm" title="Species Names and Taxonomy" class="lastCrumb"> Species Names and Taxonomy </a> &#8250;<br /><br />
+         </li>
+        </ul><h1 class="heading">Indian River Lagoon Species Inventory</h1>
+        <h2 class="subheading">A Word About Species Names...</h2>
+
+ <!-- InstanceEndEditable -->
+</div> <!-- breadCrumb -->
+
+<div id="mainArticle">
+<!-- InstanceBeginEditable name="main_content" -->
+<table width="700">
+          <tr>
+            <td><p class="body">Many people wonder why scientists use complicated, hard to pronounce names when speaking about familiar animals and plants. Common names such as blue crab, redfish, and dolphin are successfully used in casual communication, and convey an immediate idea of what a particular animal or plant looks like. Scientists avoid using common names because they are often not specific to a particular species. For instance, the blue crab is only one of many species of crabs that can be described as blue. In the Indian River Lagoon alone, there are several species of "blue crabs": the blue crab (Callinectes sapidus), the lesser blue crab (Callinectes similis), the red blue crab (Callinectes bocourti), the ornate blue crab (Callinectes ornatus), and the blue land crab (Cardisoma guanhumi).<br />
+              <br />
+            Common names can also be confusing in other respects. Another familiar problem occurs when a species has more than one common name. For example, the striped mullet, Mugil cephalus, is found all over the world, and has a variety of common names (striped mullet, black mullet, sea mullet, flathead mullet, and gray mullet) which are used in different regions. Still another problem arises when a species is so obscure that it has no common name. Thus, to avoid any confusion or ambiguity in scientific research, biologists use scientific names in identifying species.<br />
+            </p>
+            <p class="title">What's in a Name?</p>
+           <table width="300" class="image_left">
+           	<tr>
+            	<td><img border="0" src="../irlspec/images/CommonNames.jpg" hspace="2" vspace="2" width="299" height="177"></td>
+            </tr>
+           </table>
+           <p class="body">
+            The system of naming species was first developed by Swedish botanist and physician, Carolus Linnaeus in the mid- 1700s. Linnaeus is the father of the branch of biology called taxonomy, which seeks to describe, name and classify organisms. His system of naming species, still in use today, begins with assigning all species a two-part Latin name called a binomial. The first word of the binomial is the genus name of the species, and the second word is the specific epithet for the species. For example (see figure above), the scientific name for the blue crab is Callinectes sapidus. Callinectes, the genus name, is the collective term which includes many species of crabs closely related to the blue crab. The specific epithet, sapidus, describes exactly which of the Callinectes species is being identified.</p>
+
+            <p class="title">How does Taxonomy Work?</p>
+
+             <table width="200" cellpadding="0" cellspacing="0" class="image_left">
+             	<tr>
+                	<td><img src="../irlspec/images/CatSpecies.jpg" width="201" height="106"></td>
+                </tr>
+             </table>
+            <p class="body">Linnaeus' original classification system is based on 2 main goals. The first is to distinguish between closely related species and assign them as separate species based on differences in specific traits called diagnostic characters. The second goal of taxonomy is to organize groups of similar species into broader and more collective categories. For example, the species name for the domestic cat is Felis catus. Felis denotes the genus name for this species, while catus denotes the unique specific epithet for the species.</p>
+            <table width="200" class="image_left">
+             	<tr>
+                	<td><img border="0" src="images/CatGenus.jpg" width="244" height="106"></td>
+                </tr>
+             </table>
+             <p class="body">The housecat is closely related to several other feline species
+such as the bobcat, <i>Felis rufus</i>, and the cougar, <i>Felis concolor</i>,
+so they are all placed in the same genus.</p>
+<div class="clear"></div><br />
+
+<table width="200" class="image_left">
+             	<tr>
+                	<td><img border="0" src="images/CatFamily.jpg" width="249" height="182"></td>
+                </tr>
+             </table>
+<p class="body">Members of the genus <i>Felis</i> are also
+related, though less closely, to other cat genera such as <i>Panthera</i>, which
+includes lions, leopards and tigers; and <i>Leopardus</i>, which includes
+the ocelots. Because the members of all of these genera are cats, they can
+be grouped together under the family Felidae.</p>
+<div class="clear"></div><br />
+<table width="200" class="image_left">
+             	<tr>
+                	<td><img border="0" src="images/CatOrder.jpg" width="276" height="142" align="left"></td>
+                </tr>
+             </table>
+<p class="body">At the Order level, cats are grouped with
+other animals that are quite different in physical appearance and general
+behavior, but with whom they share other basic attributes. In this case,
+cats, dogs, bears and some other groups are all predators that hunt and prey
+upon other animals. They are thus grouped together in the Order Carnivora,
+which includes meat eating animals.</p>
+<div class="clear"></div><br />
+
+<table width="200" class="image_left">
+             	<tr>
+                	<td><img border="0" src="images/CatClass.jpg" width="293" height="182"></td>
+                </tr>
+             </table>
+<p class="body">At the Class level, cats and other
+predatory animals are grouped with non-predators with whom they share specific
+biological traits. In this case cats, dogs, bears, sheep, horses, cows,
+giraffes, whales, and many other groups, including people, belong
+to Class Mammalia (mammals). All mammals have hair, are warm-blooded, and give birth to live young which feed
+via mammary glands.</p>
+
+<p class="body">At the Phylum level, cats are included with all other vertebrate animals in the subphylum Vertebrata, in the Phylum Chordata. This large grouping includes all animals having either a notochord, or an actual spine. Lastly, the most inclusive taxonomic grouping is the Kingdom. Biologists often delimit the basic taxonomic groupings used to classify all living things into a 5 kingdom scheme. Kingdom Monera includes all the bacteria and other Prokaryotic cell types; Kingdom Protista includes all the algae and single celled Eukaryotes; Kingdom Animalia includes all the animals; Kingdom Plantae includes all the plants; and Kingdom Fungi includes all of the fungi and molds.</p>
+</td>
+          </tr>
+        </table>
+<!-- InstanceEndEditable -->
+</div> <!-- mainArticle -->
+
+<div  id="mainFoot">
+	<!-- TemplateBeginPassthroughIf cond="show_toplink == true" -->
+	<p>[ <a href="#top" title="Return to Top" class="top">TOP</a> ]</p>
+	<!-- TemplateEndPassthroughIf -->
+</div> <!-- mainFoot -->
+
+</div> <!-- mainGutter -->
+
+</div> <!-- mainContent -->
+
+
+  <div class="clear"></div>
+</div>
+<!-- wrap -->
+<div id="footer">
+  <ul>
+    <li><a href="http://www.si.edu/termsofuse/" title="Copyright" class="firstlist">&copy; Copyright
+      <script type="text/javascript">document.write(year)</script>
+      </a> <a href="http://www.si.edu/" title="Smithsonian Institution" class="firstlist">Smithsonian Institution</a></li>
+    <li><a href="http://www.si.edu/privacy/" title="Privacy">Privacy</a></li>
+    <li><a href="/index.htm" title="SMS Home">SMS Home</a></li>
+    <li><a href="/staff.htm" title="Contact Us">Contact Us</a></li>
+    <li><a href="http://si-pwebsrch02.si.edu/search?access=p&amp;output=xml_no_dtd&amp;sort=date%3AD%3AL%3Ad1&amp;site=sms&amp;ie=UTF-8&amp;client=sms&amp;oe=UTF-8&amp;proxystylesheet=sms&amp;proxycustom=&lt;ADVANCED/&gt;" title="SMS Website Search">Search</a></li>
+    <li><a href="/NMNH_link.html" title="NMNH Home"  target="_blank" class="lastlist">NMNH Home</a></li>
+  </ul>
+</div>
+<!-- footer -->
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-966290-15', 'auto');
+ga('send', 'pageview');
+</script>
+
+</body>
+<!-- START OF SmartSource Data Collector TAG -->
+<!-- Copyright (c) 1996-2013 Webtrends Inc.  All rights reserved. -->
+<!-- Version: 9.4.0 -->
+<!-- Tag Builder Version: 4.1  -->
+<!-- Created: 5/30/2013 4:39:15 PM -->
+<script src="/_js/webtrends.js" type="text/javascript"></script>
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+<script type="text/javascript">
+//<![CDATA[
+var _tag=new WebTrends();
+_tag.dcsGetId();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+_tag.dcsCustom=function(){
+// Add custom parameters here.
+//_tag.DCSext.param_name=param_value;
+}
+_tag.dcsCollect();
+//]]>
+</script>
+<noscript>
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="//logs1.smithsonian.museum/dcslepbvhadzpxzbsshxty4bp_8b3v/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.sms.si.edu"></div>
+</noscript>
+<!-- END OF SmartSource Data Collector TAG -->
+<!-- InstanceEnd --></html>
