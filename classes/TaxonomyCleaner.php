@@ -156,7 +156,6 @@ class TaxonomyCleaner extends Manager{
 				$taxaCnt++;
 				$endIndex = preg_replace("/[^A-Za-z\-. ]/", '', $r->sciname );
 				flush();
-				ob_flush();
 			}
 			$rs->free();
 			if($taxaAdded) {
@@ -190,7 +189,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Cleaning double spaces inbedded within name...');
 		$sql = 'UPDATE omoccurrences '.
@@ -200,7 +198,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records cleaned',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->indexOccurrenceTaxa();
 
@@ -220,7 +217,6 @@ class TaxonomyCleaner extends Manager{
 		$rs->free();
 		$this->logOrEcho($triCnt.' occurrence records remapped',1);
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names ending in &quot;sp.&quot;...');
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON SUBSTRING(o.sciname,1, CHAR_LENGTH(o.sciname) - 4) = t.sciname '.
@@ -233,7 +229,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names containing &quot;spp.&quot;...');
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," spp.","") = t.sciname '.
@@ -246,7 +241,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names containing &quot;cf.&quot;...');
 		$cnt = 0;
@@ -270,7 +264,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($cnt.' occurrence records mapped',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names containing &quot;aff.&quot;...');
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," aff. "," ") = t.sciname '.
@@ -283,7 +276,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names containing &quot;group&quot; statements...');
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON REPLACE(o.sciname," group"," ") = t.sciname '.
@@ -296,7 +288,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
 		}
 		flush();
-		ob_flush();
 	}
 
 	private function indexOccurrenceTaxa(): void
@@ -313,7 +304,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho('ERROR updating kingdoms: '.$this->conn->error);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Populating null family tags...');
 		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
@@ -328,7 +318,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho('ERROR family tags: '.$this->conn->error);
 		}
 		flush();
-		ob_flush();
 
 		$this->logOrEcho('Indexing names based on exact matches...');
 		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname '.
@@ -344,7 +333,6 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho('ERROR linking new data to occurrences: '.$this->conn->error);
 		}
 		flush();
-		ob_flush();
 	}
 
 	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifierIn = ''): int

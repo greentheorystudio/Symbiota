@@ -41,7 +41,6 @@ $pManager = new ImageLibraryManager();
 
 		<div style="float:left">
 			<?php
-			ob_flush();
 			flush();
 			$collList = $pManager->getCollectionImageList();
 			$specList = $collList['coll'];

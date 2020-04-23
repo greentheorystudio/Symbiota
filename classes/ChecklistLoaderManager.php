@@ -44,7 +44,6 @@ class ChecklistLoaderManager {
 		}
 		if(array_key_exists('sciname',$headerArr)){
 			$cnt = 0;
-			ob_flush();
 			flush();
 			while($valueArr = fgetcsv($fh)){
 				$sciNameStr = $this->cleanInStr($valueArr[$headerArr['sciname']]);
@@ -132,7 +131,6 @@ class ChecklistLoaderManager {
 					$cnt++;
 					if($cnt%500 === 0) {
 						echo '<li style="margin-left:10px;">'.$cnt.' taxa loaded</li>';
-						ob_flush();
 						flush();
 					}
 				}
@@ -163,7 +161,6 @@ class ChecklistLoaderManager {
 				echo '</td>';
 				echo '</tr>';
 				flush();
-				ob_flush();
 				$cnt++;
 			}
 			echo '</table>';

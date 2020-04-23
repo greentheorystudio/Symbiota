@@ -216,7 +216,6 @@ class UuidFactory {
 	{
 		if(!$this->silent){
 			echo '<li>'.$str.'</li>';
-			ob_flush();
 			flush();
 		}
 	}

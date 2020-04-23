@@ -45,21 +45,23 @@ class TaxonomyUtilities {
 					$retArr['unitind1'] = array_shift($sciNameArr);
 				}
 				$retArr['unitname1'] = ucfirst(strtolower(array_shift($sciNameArr)));
-				if(strtolower($sciNameArr[0]) === 'x'){
-					$retArr['unitind2'] = array_shift($sciNameArr);
-					$retArr['unitname2'] = array_shift($sciNameArr);
-				}
-				elseif(strpos($sciNameArr[0],'.') !== false){
-					$retArr['author'] = implode(' ',$sciNameArr);
-					unset($sciNameArr);
-				}
-				else{
-					if(strpos($sciNameArr[0],'(') !== false){
-						$retArr['author'] = implode(' ',$sciNameArr);
-						array_shift($sciNameArr);
-					}
-					$retArr['unitname2'] = array_shift($sciNameArr);
-				}
+				if(count($sciNameArr)){
+                    if(strtolower($sciNameArr[0]) === 'x'){
+                        $retArr['unitind2'] = array_shift($sciNameArr);
+                        $retArr['unitname2'] = array_shift($sciNameArr);
+                    }
+                    elseif(strpos($sciNameArr[0],'.') !== false){
+                        $retArr['author'] = implode(' ',$sciNameArr);
+                        unset($sciNameArr);
+                    }
+                    else{
+                        if(strpos($sciNameArr[0],'(') !== false){
+                            $retArr['author'] = implode(' ',$sciNameArr);
+                            array_shift($sciNameArr);
+                        }
+                        $retArr['unitname2'] = array_shift($sciNameArr);
+                    }
+                }
 				if($retArr['unitname2'] && !preg_match('/^[\-a-z]+$/', $retArr['unitname2'])) {
 					$retArr['unitname2'] = strtolower($retArr['unitname2']);
 					if(!preg_match('/^[a-z]+$/',$retArr['unitname2'])){
