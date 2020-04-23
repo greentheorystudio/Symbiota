@@ -8,7 +8,7 @@ $longName = array_key_exists('longname',$_REQUEST)?$_REQUEST['longname']: '';
 $latDef = array_key_exists('latdef',$_REQUEST)?$_REQUEST['latdef']:0;
 $lngDef = array_key_exists('lngdef',$_REQUEST)?$_REQUEST['lngdef']:0;
 $zoom = array_key_exists('zoom',$_REQUEST)&&$_REQUEST['zoom']?$_REQUEST['zoom']:5;
-if($latDef === 0 && $lngDef === 0){
+if($latDef == 0 && $lngDef == 0){
 	$latDef = '';
 	$lngDef = '';
 }

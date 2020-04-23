@@ -136,7 +136,7 @@ if($clid && $isEditor){
 									<?php
 									$selCollid = $termArr['collid'] ?? '';
 									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid === $id?'SELECTED':'').'>'.$name.'</option>';
+										echo '<option value="'.$id.'" '.($selCollid == $id?'SELECTED':'').'>'.$name.'</option>';
 									}
 									?>
 								</select>
@@ -217,7 +217,7 @@ if($clid && $isEditor){
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
 				<li><a href="#nonVoucheredDiv"><span>New Vouchers</span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex === 1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex == 1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
 				<li><a href="vaconflicts.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span>Voucher Conflicts</span></a></li>
 				<li><a href="#reportDiv"><span>Reports</span></a></li>
 			</ul>
@@ -231,8 +231,8 @@ if($clid && $isEditor){
 							<b>Display Mode:</b>
 							<select name="displaymode" onchange="this.form.submit()">
 								<option value="0">Non-vouchered taxa list</option>
-								<option value="1" <?php echo ($displayMode === 1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
-								<option value="2" <?php echo ($displayMode === 2?'SELECTED':''); ?>>New occurrences for all taxa</option>
+								<option value="1" <?php echo ($displayMode == 1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
+								<option value="2" <?php echo ($displayMode == 2?'SELECTED':''); ?>>New occurrences for all taxa</option>
 							</select>
 							<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 							<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -240,7 +240,7 @@ if($clid && $isEditor){
 						</form>
 					</div>
 					<?php
-					if(!$displayMode || $displayMode === 1 || $displayMode === 2){
+					if(!$displayMode || $displayMode == 1 || $displayMode == 2){
 						?>
 						<div style='float:left;margin-top:3px;height:30px;'>
 							<b>Taxa without Vouchers: <?php echo $nonVoucherCnt; ?></b>

@@ -20,12 +20,12 @@ if($collid){
 		$skelHandler->setCollid($_REQUEST['collid']);
 		if(array_key_exists('catalognumber',$_REQUEST) && $skelHandler->catalogNumberExists($_REQUEST['catalognumber'])){
 			$responseArr['occid'] = implode(',', $skelHandler->getOccidArr());
-			if($_REQUEST['addaction'] === '1'){
+			if($_REQUEST['addaction'] == '1'){
 				$responseArr['action'] = 'none';
 				$responseArr['status'] = 'false';
 				$responseArr['error'] = 'dupeCatalogNumber';
 			}
-			elseif($_REQUEST['addaction'] === '2'){
+			elseif($_REQUEST['addaction'] == '2'){
 				$responseArr['action'] = 'update';
 				$responseArr['status'] = 'true';
 				if(!$skelHandler->updateOccurrence($_REQUEST)){

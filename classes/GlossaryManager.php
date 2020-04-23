@@ -629,11 +629,11 @@ class GlossaryManager{
 		if($this->conn->query($sql)){
 			$imgUrl2 = '';
 			$domain = $this->getServerDomain();
-			if(stripos($imgUrl,$domain) === 0){
+			if(stripos($imgUrl,$domain) == 0){
 				$imgUrl2 = $imgUrl;
 				$imgUrl = substr($imgUrl,strlen($domain));
 			}
-			elseif(stripos($imgUrl,$this->imageRootUrl) === 0){
+			elseif(stripos($imgUrl,$this->imageRootUrl) == 0){
 				$imgUrl2 = $domain.$imgUrl;
 			}
 			
@@ -649,7 +649,7 @@ class GlossaryManager{
 				}
 				
 				if($imgTnUrl){
-					if(stripos($imgTnUrl,$domain) === 0){
+					if(stripos($imgTnUrl,$domain) == 0){
 						$imgTnUrl = substr($imgTnUrl,strlen($domain));
 					}				
 					$imgTnDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgTnUrl);
@@ -700,7 +700,7 @@ class GlossaryManager{
 		$imgLgUrl = '';
 		if($this->mapLargeImg){
 			if($this->sourceWidth > ($this->webPixWidth*1.2) || $fileSize > $this->webFileSizeLimit){
-				if(strpos($this->sourcePath, 'http://') === 0 || strpos($this->sourcePath, 'https://') === 0) {
+				if(strpos($this->sourcePath, 'http://') == 0 || strpos($this->sourcePath, 'https://') == 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
 				else if($this->sourceWidth < ($this->lgPixWidth*1.2)){
@@ -716,7 +716,7 @@ class GlossaryManager{
 
 		$imgWebUrl = '';
 		if($this->sourceWidth < ($this->webPixWidth*1.2) && $fileSize < $this->webFileSizeLimit){
-			if(stripos($this->sourcePath, 'http://') === 0 || stripos($this->sourcePath, 'https://') === 0){
+			if(stripos($this->sourcePath, 'http://') == 0 || stripos($this->sourcePath, 'https://') == 0){
 				if(copy($this->sourcePath, $this->targetPath.$this->imgName.$this->imgExt)){
 					$imgWebUrl = $this->imgName.$this->imgExt;
 				}
@@ -768,7 +768,7 @@ class GlossaryManager{
 	public function cleanFileName($fPath){
 		$fName = $fPath;
 		$imgInfo = null;
-		if(stripos($fPath, 'http://') === 0 || stripos($fPath, 'https://') === 0){
+		if(stripos($fPath, 'http://') == 0 || stripos($fPath, 'https://') == 0){
 			$imgInfo = getimagesize(str_replace(' ', '%20', $fPath));
 			[$this->sourceWidth, $this->sourceHeight] = $imgInfo;
 		
@@ -782,13 +782,13 @@ class GlossaryManager{
 		}
 		
 		if(!$this->imgExt && $imgInfo){
-			if($imgInfo[2] === IMAGETYPE_GIF){
+			if($imgInfo[2] == IMAGETYPE_GIF){
 				$this->imgExt = 'gif';
 			}
-			elseif($imgInfo[2] === IMAGETYPE_PNG){
+			elseif($imgInfo[2] == IMAGETYPE_PNG){
 				$this->imgExt = 'png';
 			}
-			elseif($imgInfo[2] === IMAGETYPE_JPEG){
+			elseif($imgInfo[2] == IMAGETYPE_JPEG){
 				$this->imgExt = 'jpg';
 			}
 		}
@@ -855,11 +855,11 @@ class GlossaryManager{
 		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
  		$exists = false;
 		$localUrl = '';
-		if(strpos($url, '/') === 0){
+		if(strpos($url, '/') == 0){
 			if($IMAGE_DOMAIN){
 				$url = $IMAGE_DOMAIN.$url;
 			}
-			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) === 0){
+			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) == 0){
 				$localUrl = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$url);
 			}
 			else{
@@ -992,7 +992,7 @@ class GlossaryManager{
 	public function getSourceFileSize(){
 		$fileSize = 0;
 		if($this->sourcePath){
-			if(stripos($this->sourcePath, 'http://') === 0 || stripos($this->sourcePath, 'https://') === 0){
+			if(stripos($this->sourcePath, 'http://') == 0 || stripos($this->sourcePath, 'https://') == 0){
 				$x = array_change_key_case(get_headers($this->sourcePath, 1),CASE_LOWER); 
 				if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
 					$fileSize = $x['content-length'][1]; 

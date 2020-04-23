@@ -12,12 +12,12 @@ $dynClManager = new DynamicChecklistManager();
 $latCen = 41.0;
 $longCen = -95.0;
 $coorArr = explode(';',$MAPPING_BOUNDARIES);
-if($coorArr && count($coorArr) === 4){
+if($coorArr && count($coorArr) == 4){
 	$latCen = ($coorArr[0] + $coorArr[2])/2;
 	$longCen = ($coorArr[1] + $coorArr[3])/2;
 }
 $coordRange = 50;
-if($coorArr && count($coorArr) === 4) {
+if($coorArr && count($coorArr) == 4) {
 	$coordRange = ($coorArr[0] - $coorArr[2]);
 }
 $zoomInt = 5;
