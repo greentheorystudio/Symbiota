@@ -971,43 +971,6 @@ function endDateChanged(){
     return true;
 }
 
-function verbatimEventDateChanged(vedObj){
-	fieldChanged('verbatimeventdate');
-	const f = vedObj.form;
-	let vedValue = vedObj.value;
-	vedValue = vedValue.replace(" - "," to ");
-	vedValue = vedValue.replace(" / "," to ");
-	
-	if(vedValue.indexOf(" to ") > -1){
-		if(f.eventdate.value === ""){
-			const startDate = vedValue.substring(0, vedValue.indexOf(" to "));
-			const startDateArr = parseDate(startDate);
-			let mStr = startDateArr['m'];
-			if(mStr.length === 1){
-				mStr = "0" + mStr;
-			}
-			let dStr = startDateArr['d'];
-			if(dStr.length === 1){
-				dStr = "0" + dStr;
-			}
-			f.eventdate.value = startDateArr['y'] + "-" + mStr + "-" + dStr;
-			distributeEventDate(startDateArr['y'],mStr,dStr);
-		}
-		const endDate = vedValue.substring(vedValue.indexOf(" to ") + 4);
-		const endDateArr = parseDate(endDate);
-		try{
-			const eDate = new Date(endDateArr["y"], endDateArr["m"] - 1, endDateArr["d"]);
-			if(eDate instanceof Date){
-				const onejan = new Date(endDateArr["y"], 0, 1);
-				f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
-				fieldChanged("enddayofyear");
-			}
-		}
-		catch(e){
-		}
-	}
-}
-
 function parseDate(dateStr){
 	const dateObj = new Date(dateStr);
 	let dateTokens;
