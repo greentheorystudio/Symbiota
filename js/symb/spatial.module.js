@@ -1428,10 +1428,25 @@ function downloadShapesLayer(){
 }
 
 function exportMapPNG(filename,zip){
-    map.once('postcompose', function(event) {
-        const canvas = document.getElementsByTagName('canvas').item(0);
+    map.once('rendercomplete', function() {
+        const currentCanvas = document.getElementsByTagName('canvas').item(0);
+        let mapCanvas = document.createElement('canvas');
+        mapCanvas.width = currentCanvas.width;
+        mapCanvas.height = currentCanvas.height;
+        const mapContext = mapCanvas.getContext('2d');
+        Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), function(canvas) {
+            if (canvas.width > 0) {
+                const opacity = canvas.parentNode.style.opacity;
+                mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                const transform = canvas.style.transform;
+                const matrix = transform.match(/^matrix\(([^(]*)\)$/)[1].split(',').map(Number);
+                CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                mapContext.drawImage(canvas, 0, 0);
+            }
+        });
         if(zip){
-            const image = canvas.toDataURL('image/png', 1.0);
+            const image = mapCanvas.toDataURL('image/png', 1.0);
+            mapCanvas = '';
             zipFolder.file(filename, image.substr(image.indexOf(',')+1), {base64: true});
             if(dsAnimImageSave && dsAnimStop){
                 zipFile.generateAsync({type:"blob"}).then(function(content) {
@@ -1441,11 +1456,13 @@ function exportMapPNG(filename,zip){
             }
         }
         else if(navigator.msSaveBlob) {
-            navigator.msSaveBlob(canvas.msToBlob(),filename);
+            navigator.msSaveBlob(mapCanvas.msToBlob(),filename);
+            mapCanvas = '';
         }
         else{
-            canvas.toBlob(function(blob) {
+            mapCanvas.toBlob(function(blob) {
                 saveAs(blob,filename);
+                mapCanvas = '';
             });
         }
     });

@@ -2,24 +2,24 @@ version: '3'
 
 services:
   nginx:
-    image: nginx:alpine
+    image: devilbox/nginx-stable
     container_name: nginx
-    working_dir: /symbiota
+    environment:
+      PHP_FPM_ENABLE: 1
+      PHP_FPM_SERVER_ADDR: php
     volumes:
-      - ./:/symbiota
-      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/default/htdocs
     networks:
       - symbiota
     ports:
       - 80:80
 
   php:
-    build: ./docker/php-fpm
+    image: devilbox/php-fpm:7.4-work
     container_name: php
-    working_dir: /symbiota
     volumes:
-      - ./:/symbiota
-      - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
+      - ./:/var/www/default/htdocs
+      - ./docker/php-fpm/php-ini-overrides.ini:/etc/php-custom.d/php-ini-overrides.ini
     networks:
       - symbiota
 

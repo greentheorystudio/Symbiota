@@ -8,6 +8,9 @@
         <b>Cluster Distance</b> <input data-role="none" type="text" id="setclusterdistance" style="width:50px;" name="setclusterdistance" value="50" onchange="changeClusterDistance();" />
     </div>
     <div style="margin-top:5px;">
+        <b>Display Heat Map</b> <input data-role="none" type='checkbox' name='heatmapswitch' id='heatmapswitch' onchange="toggleHeatMap();" value='1' >
+    </div>
+    <div style="margin-top:5px;">
         <b>Heat Map Radius</b> <input data-role="none" type="text" id="heatmapradius" style="width:50px;" value="5" onchange="changeHeatMapRadius();" />
     </div>
     <div style="margin-top:5px;">
