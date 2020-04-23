@@ -121,7 +121,7 @@ $duManager->readUploadParameters();
 			document.getElementById("schemanameDiv").style.display='none';
 			document.getElementById("cleanupspDiv").style.display='none';
 			document.getElementById("querystrDiv").style.display='none';
-            const selValue = document.parameterform.uploadtype.value;
+            const selValue = Number(document.parameterform.uploadtype.value);
             if(selValue === 1){
 				document.getElementById("platformDiv").style.display='block';
 				document.getElementById("serverDiv").style.display='block';
