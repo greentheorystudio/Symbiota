@@ -4,13 +4,13 @@ $url = $_REQUEST['url'];
 if($url){
 	$typeCode = exif_imagetype($url);
 	if($typeCode){
-		if($typeCode === 1){
+		if($typeCode == 1){
 			$mimeType = 'image/gif';
 		}
-		elseif($typeCode === 2){
+		elseif($typeCode == 2){
 			$mimeType = 'image/jpeg';
 		}
-		elseif($typeCode === 3){
+		elseif($typeCode == 3){
 			$mimeType = 'image/png';
 		}
 	}

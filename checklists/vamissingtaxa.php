@@ -18,10 +18,10 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 }
 
 $missingArr = array();
-if($displayMode === 1){
+if($displayMode == 1){
 	$missingArr = $vManager->getMissingTaxaSpecimens($startIndex);
 }
-elseif($displayMode === 2){
+elseif($displayMode == 2){
 	$missingArr = $vManager->getMissingProblemTaxa();
 }
 else{
@@ -33,7 +33,7 @@ else{
 	<div style='float:left;font-weight:bold;margin-left:5px'>
 
 		<?php
-		if($displayMode === 2){
+		if($displayMode == 2){
 			echo 'Problem Taxa: ';
 		}
 		else{
@@ -46,7 +46,7 @@ else{
 		<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><img src="../images/refresh.png" style="border:0;" title="Refresh List" /></a>
 	</div>
 	<div style="float:left;margin-left:5px;">
-		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode === 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
+		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode == 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
 			<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="border:0;" />
 		</a>
 	</div>
@@ -55,8 +55,8 @@ else{
 			<b>Display Mode:</b>
 			<select name="displaymode" onchange="this.form.submit()">
 				<option value="0">Species List</option>
-				<option value="1" <?php echo ($displayMode === 1?'SELECTED':''); ?>>Batch Linking</option>
-				<option value="2" <?php echo ($displayMode === 2?'SELECTED':''); ?>>Problem Taxa</option>
+				<option value="1" <?php echo ($displayMode == 1?'SELECTED':''); ?>>Batch Linking</option>
+				<option value="2" <?php echo ($displayMode == 2?'SELECTED':''); ?>>Problem Taxa</option>
 			</select>
 			<input name="clid" id="clvalue" type="hidden" value="<?php echo $clid; ?>" />
 			<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -66,7 +66,7 @@ else{
 	<div>
 		<?php
 		$recCnt = 0;
-		if($displayMode === 1){
+		if($displayMode == 1){
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">
@@ -124,7 +124,7 @@ else{
                 }
 			}
 		}
-		elseif($displayMode === 2){
+		elseif($displayMode == 2){
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">

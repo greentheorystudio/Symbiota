@@ -65,7 +65,7 @@ if($isEditor){
             if(document.getElementById("taxon")){
                 $( "#taxon" )
                     .bind( "keydown", function( event ) {
-                        if ( event.keyCode === $.ui.keyCode.TAB &&
+                        if ( event.keyCode == $.ui.keyCode.TAB &&
                             $( this ).data( "autocomplete" ).menu.active ) {
                             event.preventDefault();
                         }

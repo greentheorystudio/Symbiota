@@ -17,7 +17,7 @@ if($formSubmit && $formSubmit === 'save') {
 	$formSubmit = "exit";
 }
 
-if($latDef === 0 && $lngDef === 0){
+if($latDef == 0 && $lngDef == 0){
 	$latDef = '';
 	$lngDef = '';
 }

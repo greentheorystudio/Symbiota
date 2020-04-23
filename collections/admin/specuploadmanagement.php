@@ -122,7 +122,7 @@ $duManager->readUploadParameters();
 			document.getElementById("cleanupspDiv").style.display='none';
 			document.getElementById("querystrDiv").style.display='none';
             const selValue = Number(document.parameterform.uploadtype.value);
-            if(selValue === 1){
+            if(selValue == 1){
 				document.getElementById("platformDiv").style.display='block';
 				document.getElementById("serverDiv").style.display='block';
 				document.getElementById("portDiv").style.display='block';
@@ -132,7 +132,7 @@ $duManager->readUploadParameters();
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue === 2){
+			else if(selValue == 2){
 				document.getElementById("serverDiv").style.display='block';
 				document.getElementById("portDiv").style.display='block';
 				document.getElementById("codeDiv").style.display='block';
@@ -142,24 +142,24 @@ $duManager->readUploadParameters();
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue === 3){
+			else if(selValue == 3){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue === 4){
-				document.getElementById("cleanupspDiv").style.display='block';
-				document.getElementById("querystrDiv").style.display='block';
-			}
-			else if(selValue === 5){
+			else if(selValue == 4){
 				document.getElementById("cleanupspDiv").style.display='block';
 				document.getElementById("querystrDiv").style.display='block';
 			}
-			else if(selValue === 6){
+			else if(selValue == 5){
+				document.getElementById("cleanupspDiv").style.display='block';
+				document.getElementById("querystrDiv").style.display='block';
+			}
+			else if(selValue == 6){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue === 7){
+			else if(selValue == 7){
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
-			else if(selValue === 8){
+			else if(selValue == 8){
 				document.getElementById("pathDiv").style.display='block';
 				document.getElementById("cleanupspDiv").style.display='block';
 			}
@@ -253,16 +253,16 @@ $duManager->readUploadParameters();
 									<option value="">----------------------------------</option>
 									<?php 
 									$uploadType = $duManager->getUploadType();
-									echo '<option value="'.$DWCAUPLOAD.'" '.($uploadType === $DWCAUPLOAD?'SELECTED':'').'>Darwin Core Archive Manual Upload</option>';
-									echo '<option value="'.$IPTUPLOAD.'" '.($uploadType === $IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
-									echo '<option value="'.$FILEUPLOAD.'" '.($uploadType === $FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
-									echo '<option value="'.$SKELETAL.'" '.($uploadType === $SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
-									echo '<option value="'.$NFNUPLOAD.'" '.($uploadType === $NFNUPLOAD?'SELECTED':'').'>NfN File Upload</option>';
+									echo '<option value="'.$DWCAUPLOAD.'" '.($uploadType == $DWCAUPLOAD?'SELECTED':'').'>Darwin Core Archive Manual Upload</option>';
+									echo '<option value="'.$IPTUPLOAD.'" '.($uploadType == $IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
+									echo '<option value="'.$FILEUPLOAD.'" '.($uploadType == $FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
+									echo '<option value="'.$SKELETAL.'" '.($uploadType == $SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
+									echo '<option value="'.$NFNUPLOAD.'" '.($uploadType == $NFNUPLOAD?'SELECTED':'').'>NfN File Upload</option>';
 									echo '<option value="">......................................</option>';
-									echo '<option value="'.$DIGIRUPLOAD.'" '.($uploadType === $DIGIRUPLOAD?'SELECTED':'').'>DiGIR Provider</option>';
-									echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType === $DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';
-									echo '<option value="'.$STOREDPROCEDURE.'" '.($uploadType === $STOREDPROCEDURE?'SELECTED':'').'>Stored Procedure</option>';
-									echo '<option value="'.$SCRIPTUPLOAD.'" '.($uploadType === $SCRIPTUPLOAD?'SELECTED':'').'>Script Upload</option>';
+									echo '<option value="'.$DIGIRUPLOAD.'" '.($uploadType == $DIGIRUPLOAD?'SELECTED':'').'>DiGIR Provider</option>';
+									echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType == $DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';
+									echo '<option value="'.$STOREDPROCEDURE.'" '.($uploadType == $STOREDPROCEDURE?'SELECTED':'').'>Stored Procedure</option>';
+									echo '<option value="'.$SCRIPTUPLOAD.'" '.($uploadType == $SCRIPTUPLOAD?'SELECTED':'').'>Script Upload</option>';
 									?>
 								</select>
 							</div>
