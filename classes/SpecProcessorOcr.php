@@ -218,7 +218,6 @@ class SpecProcessorOcr{
 							$source = 'Tesseract: '.date('Y-m-d');
 							$this->databaseRawStr($r->imgid,$rawStr,$notes,$source);
 						}
-						ob_flush();
 						flush();
 						$recCnt++;
 					}

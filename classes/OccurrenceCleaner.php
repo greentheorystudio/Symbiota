@@ -189,7 +189,6 @@ class OccurrenceCleaner extends Manager{
 	{
 		echo '<div style="margin-left:15px;">Preparing countries index...</div>';
 		flush();
-		ob_flush();
 		$occArr = array();
 		$sql = 'SELECT occid FROM omoccurrences WHERE ((country LIKE " %") OR (country LIKE "% ")) AND collid = '.$this->collid;
 		$rs = $this->conn->query($sql);
@@ -207,7 +206,6 @@ class OccurrenceCleaner extends Manager{
 
 		echo '<div style="margin-left:15px;">Preparing state index...</div>';
 		flush();
-		ob_flush();
 		unset($occArr);
 		$occArr = array();
 		$sql = 'SELECT occid FROM omoccurrences WHERE ((stateprovince LIKE " %") OR (stateprovince LIKE "% ")) AND collid = '.$this->collid;
@@ -226,7 +224,6 @@ class OccurrenceCleaner extends Manager{
 
 		echo '<div style="margin-left:15px;">Preparing county index...</div>';
 		flush();
-		ob_flush();
 		unset($occArr);
 		$occArr = array();
 		$sql = 'SELECT occid FROM omoccurrences WHERE ((county LIKE " %") OR (county LIKE "% ")) AND collid = '.$this->collid;
@@ -663,7 +660,6 @@ class OccurrenceCleaner extends Manager{
 				echo '<li style="margin-left:15px;">Unable to set verification status</li>';
 			}
 			flush();
-			ob_flush();
 		}
 		$rs->free();
 	}

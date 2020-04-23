@@ -473,7 +473,6 @@ class SpecUpload{
 	{
 		if($this->verboseMode == 1){
 			echo $str;
-			ob_flush();
 			flush();
 		}
 		elseif($this->verboseMode == 2){

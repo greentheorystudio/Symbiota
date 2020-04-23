@@ -327,7 +327,8 @@ class SpecUploadDwca extends SpecUploadBase{
 		$fullPath = $this->uploadTargetPath.$this->baseFolderName;
 		if(file_exists($fullPath)){
 			$this->prepUploadData();
-			if(isset($this->metaArr['occur']['fields']) && $this->readMetaFile()){
+            $this->readMetaFile();
+			if(isset($this->metaArr['occur']['fields'])){
 				$fullPath .= $this->extensionFolderName;
 				if(isset($this->metaArr['occur']['fieldsTerminatedBy']) && $this->metaArr['occur']['fieldsTerminatedBy']){
 					if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
@@ -400,7 +401,6 @@ class SpecUploadDwca extends SpecUploadBase{
 					$this->conn->query('SET unique_checks=1');
 					$this->conn->query('SET foreign_key_checks=1');
 					$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->getTransferCount().' records loaded</li>');
-					ob_flush();
 					flush();
 
 					if($this->includeIdentificationHistory){

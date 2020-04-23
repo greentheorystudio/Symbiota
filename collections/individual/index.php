@@ -1228,7 +1228,6 @@ $commentArr = $indManager->getCommentArr($isEditor);
 				<div>Checking archive...</div>
 				<div style="margin:10px">
 					<?php
-					ob_flush();
 					flush();
 					$rawArchArr = $indManager->checkArchive();
 					if($rawArchArr && $rawArchArr['obj']){

@@ -631,7 +631,6 @@ class ImageProcessor {
 		}
 		if($this->logMode === 1 || $this->logMode === 3){
 			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
-			ob_flush();
 			flush();
 		}
 	}

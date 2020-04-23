@@ -468,7 +468,6 @@ if($action && $isEditor){
 							echo '<div style="margin-bottom:15px;">';
 							echo '<div style="font-weight:bold;">General cleaning... </div>';
 							flush();
-							ob_flush();
 							$cleanManager->countryCleanFirstStep();
 							echo '</div>';
 						}

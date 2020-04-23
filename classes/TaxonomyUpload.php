@@ -182,7 +182,6 @@ class TaxonomyUpload{
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 === 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
-									ob_flush();
 									flush();
 								}
 							}
@@ -897,7 +896,6 @@ class TaxonomyUpload{
 	{
 		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
 			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
-			ob_flush();
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
