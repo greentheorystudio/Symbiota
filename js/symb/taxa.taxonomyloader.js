@@ -26,16 +26,16 @@ function verifyLoadForm(f){
 		alert("Unit Name 1 (genus or uninomial) field required.");
 		return false;
 	}
-	const rankId = f.rankid.value;
+	const rankId = Number(f.rankid.value);
 	if(rankId === ""){
 		alert("Taxon rank field required.");
 		return false;
 	}
-	if(f.parentname.value === "" && rankId > "10"){
+	if(f.parentname.value === "" && rankId > 10){
 		alert("Parent taxon required");
 		return false;
 	}
-	if(f.parenttid.value === "" && rankId > "10"){
+	if(f.parenttid.value === "" && rankId > 10){
 		if(!checkParentExistance(f)) return false;
 	}
 	$.ajax({
