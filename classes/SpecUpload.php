@@ -71,28 +71,28 @@ class SpecUpload{
 			while($row = $result->fetch_object()){
 				$uploadType = $row->uploadtype;
 				$uploadStr = '';
-				if($uploadType === $this->DIRECTUPLOAD){
+				if($uploadType == $this->DIRECTUPLOAD){
 					$uploadStr = 'Direct Upload';
 				}
-				elseif($uploadType === $this->DIGIRUPLOAD){
+				elseif($uploadType == $this->DIGIRUPLOAD){
 					$uploadStr = 'DiGIR Provider Upload';
 				}
-				elseif($uploadType === $this->FILEUPLOAD){
+				elseif($uploadType == $this->FILEUPLOAD){
 					$uploadStr = 'File Upload';
 				}
-				elseif($uploadType === $this->SKELETAL){
+				elseif($uploadType == $this->SKELETAL){
 					$uploadStr = 'Skeletal File Upload';
 				}
-				elseif($uploadType === $this->NFNUPLOAD){
+				elseif($uploadType == $this->NFNUPLOAD){
 					$uploadStr = 'NfN File Upload';
 				}
-				elseif($uploadType === $this->STOREDPROCEDURE){
+				elseif($uploadType == $this->STOREDPROCEDURE){
 					$uploadStr = 'Stored Procedure';
 				}
-				elseif($uploadType === $this->DWCAUPLOAD){
+				elseif($uploadType == $this->DWCAUPLOAD){
 					$uploadStr = 'Darwin Core Archive Upload';
 				}
-				elseif($uploadType === $this->IPTUPLOAD){
+				elseif($uploadType == $this->IPTUPLOAD){
 					$uploadStr = 'IPT Resource';
 				}
 				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
@@ -159,7 +159,7 @@ class SpecUpload{
 		elseif(!isset($this->collMetadataArr['securitykey'])){
 			$this->setCollInfo();
 		}
-		return $k === $this->collMetadataArr['securitykey'];
+		return $k == $this->collMetadataArr['securitykey'];
 	}
 
 	public function exportPendingImport($searchVariables): array
@@ -450,7 +450,7 @@ class SpecUpload{
 		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
-			if(($this->verboseMode === 2) && $SERVER_ROOT) {
+			if(($this->verboseMode == 2) && $SERVER_ROOT) {
 				$LOG_PATH = $SERVER_ROOT;
 				if(substr($SERVER_ROOT,-1) !== '/' && substr($SERVER_ROOT,-1) !== '\\') {
                     $LOG_PATH .= '/';
@@ -471,12 +471,11 @@ class SpecUpload{
 
 	protected function outputMsg($str, $indent = 0): void
 	{
-		if($this->verboseMode === 1){
+		if($this->verboseMode == 1){
 			echo $str;
-			ob_flush();
 			flush();
 		}
-		elseif($this->verboseMode === 2){
+		elseif($this->verboseMode == 2){
 			if($this->logFH) {
 				fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 			}

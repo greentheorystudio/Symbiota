@@ -17,7 +17,6 @@ class OccurrenceAssociations extends Manager {
 		set_time_limit(900);
 		echo '<ul>';
 		echo '<li>Starting to parse associated species text blocks </li>';
-		ob_flush();
 		flush();
 		$sql = 'SELECT o.occid, o.associatedtaxa '.
 			'FROM omoccurrences o LEFT JOIN omoccurassociations a ON o.occid = a.occid '.
@@ -27,7 +26,6 @@ class OccurrenceAssociations extends Manager {
 		}
 		$rs = $this->conn->query($sql);
 		echo '<li>Parsing new associated species text blocks (target count: '.$rs->num_rows.')... </li>';
-		ob_flush();
 		flush();
 		$cnt = 1;
 		while($r = $rs->fetch_object()){
@@ -39,7 +37,6 @@ class OccurrenceAssociations extends Manager {
 		$rs->free();
 		
 		echo '<li>Populate tid field using taxa table... </li>';
-		ob_flush();
 		flush();
 		if($collid){
 			$sql2 = 'UPDATE omoccurassociations a INNER JOIN taxa t ON a.verbatimsciname = t.sciname '.
@@ -57,7 +54,6 @@ class OccurrenceAssociations extends Manager {
 		}
 
 		echo '<li>Populate tid field using taxavernaculars table... </li>';
-		ob_flush();
 		flush();
 		if($collid){
 			$sql3 = 'UPDATE omoccurassociations a INNER JOIN taxavernaculars v ON a.verbatimsciname = v.vernacularname '.
@@ -75,7 +71,6 @@ class OccurrenceAssociations extends Manager {
 		}
 		
 		echo '<li>Populate tid field by linking back to omoccurassociations table... </li>';
-		ob_flush();
 		flush();
 		if($collid){
 			$sql4 = 'UPDATE omoccurassociations a INNER JOIN omoccurassociations a2 ON a.verbatimsciname = a2.verbatimsciname '.
@@ -93,7 +88,6 @@ class OccurrenceAssociations extends Manager {
 		}
 		
 		echo '<li>Mining database for the more difficult matches... </li>';
-		ob_flush();
 		flush();
 		if($collid){
 			$sql5 = 'SELECT DISTINCT a.verbatimsciname '.
@@ -122,7 +116,6 @@ class OccurrenceAssociations extends Manager {
 		
 		echo '<li>DONE!</li>';
 		echo '</ul>';
-		ob_flush();
 		flush();
 	}
 

@@ -749,19 +749,16 @@ class OccurrenceCollectionProfile {
 			$occurMaintenance->setVerbose(true);
 			echo '<li>General cleaning in preparation for collecting stats...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->generalOccurrenceCleaning($this->collid);
 		if($verbose){
 			echo '<li>Updating statistics...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->updateCollectionStats($this->collid, true);
 		if($verbose){
 			echo '<li>Finished updating collection statistics</li>';
 			flush();
-			ob_flush();
 		}
 	}
 
@@ -829,7 +826,6 @@ class OccurrenceCollectionProfile {
 		echo 'Updating collection statistics...';
 		echo '<ul>';
 		flush();
-		ob_flush();
 		$occurMaintenance = new OccurrenceMaintenance();
 		$sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN('.$collId.') ';
 		//echo $sql;
@@ -837,14 +833,12 @@ class OccurrenceCollectionProfile {
 		while($r = $rs->fetch_object()){
 			echo '<li style="margin-left:15px;">Cleaning statistics for: '.$r->collectionname.'</li>';
 			flush();
-			ob_flush();
 			$occurMaintenance->updateCollectionStats($r->collid, true);
 		}
 		$rs->free();
 		echo '<li>Statistics update complete!</li>';
 		echo '</ul>';
 		flush();
-		ob_flush();
 	}
 
 	public function runStatistics($collId): array

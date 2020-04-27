@@ -33,7 +33,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 				return false;
 			}
 			testStr = testStr.toLowerCase();
-			if(testStr.indexOf(".csv") === -1 && testStr.indexOf(".CSV") === -1){
+			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
 				alert("Document "+document.getElementById("uploadfile").value+" must be a CSV file (with a .csv extension)");
 				return false;
 			}

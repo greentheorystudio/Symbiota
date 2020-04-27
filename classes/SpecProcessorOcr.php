@@ -100,7 +100,7 @@ class SpecProcessorOcr{
 			$output = array();
 			$outputFile = substr($url,0, -4);
 			if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
-				if(strpos($TESSERACT_PATH, 'C:') === 0){
+				if(strpos($TESSERACT_PATH, 'C:') == 0){
 					exec('"'.$TESSERACT_PATH.'" '.$url.' '.$outputFile,$output);
 				}
 				else{
@@ -156,7 +156,7 @@ class SpecProcessorOcr{
 		global $IMAGE_DOMAIN;
 		$status = false;
 		if($imgUrl){
-			if(strpos($imgUrl, '/') === 0){
+			if(strpos($imgUrl, '/') == 0){
 				if($IMAGE_DOMAIN){
 					$imgUrl = $IMAGE_DOMAIN.$imgUrl;
 				}
@@ -218,7 +218,6 @@ class SpecProcessorOcr{
 							$source = 'Tesseract: '.date('Y-m-d');
 							$this->databaseRawStr($r->imgid,$rawStr,$notes,$source);
 						}
-						ob_flush();
 						flush();
 						$recCnt++;
 					}
@@ -252,7 +251,7 @@ class SpecProcessorOcr{
 			$this->logMsg($this->errorStr);
 			return false;
 		}
-		if(strpos($sourcePath, 'http') === 0){
+		if(strpos($sourcePath, 'http') == 0){
 			$headerArr = get_headers($sourcePath);
 			if(!$headerArr){
 				$this->errorStr = 'ERROR loading OCR files: sourcePath returned bad headers ('.$sourcePath.')';
@@ -284,7 +283,7 @@ class SpecProcessorOcr{
 		if(substr($sourcePath,-1) !== '/') {
 			$sourcePath .= '/';
 		}
-		if(strpos($sourcePath, 'http') === 0){
+		if(strpos($sourcePath, 'http') == 0){
 			$this->processOcrHtml($sourcePath);
 		}
 		else{
@@ -538,7 +537,7 @@ class SpecProcessorOcr{
 			}
 		}
 
-		if ($bTop === $height) {
+		if ($bTop == $height) {
 			return false;
 		}
 
@@ -659,7 +658,7 @@ class SpecProcessorOcr{
 								if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i === 176) {
 									$goodChars++;
 								}
-								else if(($i < 44 || $i > 59) && !($i === 32 || $i === 35 || $i === 34 || $i === 39 || $i === 38 || $i === 40 || $i === 41 || $i === 61)) {
+								else if(($i < 44 || $i > 59) && !($i == 32 || $i == 35 || $i == 34 || $i == 39 || $i == 38 || $i == 40 || $i == 41 || $i == 61)) {
 									$badChars++;
 								}
 							}
@@ -669,7 +668,7 @@ class SpecProcessorOcr{
 						}
 					}
 				}
-				else if($numBadLines === 1) {
+				else if($numBadLines == 1) {
 					if($numBadLinesIncremented) {
 						$numBadLines++;
 					}
@@ -685,11 +684,11 @@ class SpecProcessorOcr{
 			$numBadChars = 1;
 			$numBadIncremented = false;
 			foreach (count_chars($rawStr, 1) as $i => $val) {
-				if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i === 176) {
+				if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i == 176) {
 					$numGoodChars += $val;
 				}
-				else if(($i < 44 || $i > 59) && !($i === 32 || $i === 35 || $i === 34 || $i === 39 || $i === 38 || $i === 40 || $i === 41 || $i === 61)) {
-					if($numBadChars === 1) {
+				else if(($i < 44 || $i > 59) && !($i == 32 || $i == 35 || $i == 34 || $i == 39 || $i == 38 || $i == 40 || $i == 41 || $i == 61)) {
+					if($numBadChars == 1) {
 						if($numBadIncremented) {
 							$numBadChars += $val;
 						}
@@ -828,7 +827,7 @@ class SpecProcessorOcr{
 	public function setVerbose($s): void
 	{
 		$this->verbose = $s;
-		if($this->verbose === 1 || $this->verbose === 3){
+		if($this->verbose == 1 || $this->verbose == 3){
 			if($this->tempPath){
 				$LOG_PATH = $this->tempPath.'log_'.date('Ymd').'.log';
 				$this->logFH = fopen($LOG_PATH, 'ab');
@@ -864,7 +863,7 @@ class SpecProcessorOcr{
 
 	private function logMsg($msg,$indent = 0): void
 	{
-		if($this->verbose === 1 || $this->verbose === 3){
+		if($this->verbose == 1 || $this->verbose == 3){
 			if($this->logFH){
 				$msg .= "\n";
 				if($indent) {

@@ -134,7 +134,6 @@ class SpecUploadDigir extends SpecUploadBase {
 			}
 			echo "<li style='font-weight:bold;'>Records Returned: ".$this->transferCount. ' of ' .$matchCount. ' (' .($this->recCount-$this->transferCount). ' failed)</li>';
 			$this->searchStart += $this->searchLimit;
-			ob_flush();
 			flush();
 			if($currentReturn){
 				$zeroReturnCnt = 0;

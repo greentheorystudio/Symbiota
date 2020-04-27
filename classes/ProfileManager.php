@@ -719,7 +719,6 @@ class ProfileManager extends Manager{
     	$cSet = str_replace('-','',strtolower($CHARSET));
 		echo '<li style="font-weight:bold;">Zip Archive created</li>';
 		echo '<li style="font-weight:bold;">Adding occurrence records to archive...';
-		ob_flush();
 		flush();
 
 		$fileName = $tempPath.$buFileName;
@@ -755,7 +754,6 @@ class ProfileManager extends Manager{
 			$zipArchive->renameName($fileName.'_spec.csv','occurrences.csv');
 
 			echo 'Done!</li> ';
-			ob_flush();
 			flush();
 			$fileUrl = str_replace($SERVER_ROOT,$CLIENT_ROOT,$tempPath.$buFileName.'.zip');
 			$zipArchive->close();

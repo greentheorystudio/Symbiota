@@ -93,7 +93,7 @@ elseif($activeCollArr){
 					dataType: "json",
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
-					if(res === "1"){
+					if(res == "1"){
 						$("#remapSpan-"+msgCode).text(" >>> Taxon remapped successfully!");
 						$("#remapSpan-"+msgCode).css('color', 'green');
 					}

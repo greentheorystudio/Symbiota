@@ -86,7 +86,7 @@ class OccurrenceUtilities {
 			$y = $match[1];
 		}
 		if($y){
-			if(strlen($m) === 1) {
+			if(strlen($m) == 1) {
 				$m = '0' . $m;
 			}
 			if(strlen($d) === 1) {

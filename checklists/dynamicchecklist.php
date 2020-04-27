@@ -26,6 +26,5 @@ if($interface === 'key'){
 else{
 	header('Location: ' .$CLIENT_ROOT. '/checklists/checklist.php?dynclid=' .$dynClid);
 }
-ob_flush();
 flush();
 $dynClManager->removeOldChecklists();
