@@ -39,7 +39,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		});
 	}
 </script>
-<div style="min-height:400px;height:400px;">
+<div style="min-height:400px;">
 	<div style="margin:15px 0;">
 		Taxon record first needs to be evaluated before it can be deleted from the system. 
 		The evaluation ensures that the deletion of this record will not interfer with 
