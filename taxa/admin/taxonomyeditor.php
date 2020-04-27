@@ -185,7 +185,7 @@ if($editable){
 							</div>
 						</div>
 						<div id="kingdomdiv" style="clear:both;">
-							<div style="float:left;width:130px;font-weight:bold;">Kingdom: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Kingdom: </div>
 							<div class="editfield">
 								<?php
 								echo $taxonEditorObj->getKingdomName();
