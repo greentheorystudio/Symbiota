@@ -134,7 +134,7 @@ if($editable){
 					</div>
 					<form id="taxoneditform" name="taxoneditform" action="taxonomyeditor.php" method="post" onsubmit="return validateTaxonEditForm(this)">
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">UnitName1: </div>
+							<div style="float:left;width:140px;font-weight:bold;">UnitName1: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getUnitInd1(). ' ' .$taxonEditorObj->getUnitName1();?>
 							</div>
@@ -148,7 +148,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">UnitName2: </div>
+							<div style="float:left;width:140px;font-weight:bold;">UnitName2: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getUnitInd2(). ' ' .$taxonEditorObj->getUnitName2();?>
 							</div>
@@ -162,7 +162,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">UnitName3: </div>
+							<div style="float:left;width:140px;font-weight:bold;">UnitName3: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getUnitInd3(). ' ' .$taxonEditorObj->getUnitName3();?>
 							</div>
@@ -176,7 +176,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Author: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Author: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getAuthor();?>
 							</div>
@@ -185,7 +185,7 @@ if($editable){
 							</div>
 						</div>
 						<div id="kingdomdiv" style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Kingdom: </div>
+							<div style="float:left;width:130px;font-weight:bold;">Kingdom: </div>
 							<div class="editfield">
 								<?php
 								echo $taxonEditorObj->getKingdomName();
@@ -193,7 +193,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Rank Name: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Rank Name: </div>
 							<div class="editfield">
 								<?php echo ($taxonEditorObj->getRankName()?:'Non-Ranked Node'); ?>
 							</div>
@@ -211,7 +211,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Notes: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Notes: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getNotes();?>
 							</div>
@@ -220,7 +220,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Source: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Source: </div>
 							<div class="editfield">
 								<?php echo $taxonEditorObj->getSource();?>
 							</div>
@@ -229,7 +229,7 @@ if($editable){
 							</div>
 						</div>
 						<div style="clear:both;">
-							<div style="float:left;width:110px;font-weight:bold;">Locality Security: </div>
+							<div style="float:left;width:140px;font-weight:bold;">Locality Security: </div>
 							<div class="editfield">
 								<?php 
 									switch($taxonEditorObj->getSecurityStatus()){
