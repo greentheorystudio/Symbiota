@@ -47,6 +47,20 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 include(__DIR__ . '/header.php');
 ?>
 <div  id="innertext">
+    <div style="float:right;width:380px;">
+        <div style="clear:both;float:right;width:320px;margin-top:8px;margin-right:8px;padding:5px;-moz-border-radius:5px;-webkit-border-radius:5px;border:1px solid black;" >
+            <div style="float:left;width:350px;">
+                <?php
+                $searchText = 'Taxon Search';
+                $buttonText = 'Search';
+                include_once(__DIR__ . '/classes/PluginsManager.php');
+                $pluginManager = new PluginsManager();
+                $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
+                echo $quicksearch;
+                ?>
+            </div>
+        </div>
+    </div>
     <div style="float:left;width:200px;">
         <div style="width:100%;display:flex;justify-content:center;">
             <img src="images/layout/IRL_GRAPHIC.jpg" style="width:175px;height:399px;" />
