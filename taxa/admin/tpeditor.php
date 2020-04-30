@@ -361,7 +361,7 @@ if($editable && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								*Most of the synonym management must be done in the Taxonomic Thesaurus editing module (see <a href="../../sitemap.php">sitemap</a>). 
+								Synonym management is done in the <a href="taxonomyeditor.php?tid=<?php echo $tid; ?>">Taxonomy Editor</a>.
 							</div>
 						</fieldset>
 					</div>
