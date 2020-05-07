@@ -155,20 +155,18 @@ $smManager = new SiteMapManager();
 								<li>
                                     You are authorized to edit Identification Keys.
 								</li>
-								<li>
-                                    <?php
-									if($clAdmin){
-	                                    echo 'For coding characters in a table format, open the Mass-Update Editor for the following checklists. <br/>';
-										echo '<ul>';
-										foreach($clAdmin as $vClid => $name){
-											echo "<li><a href='".$CLIENT_ROOT. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
-										}
-										echo '</ul>';
-									}
-									?>
-								</li>
-								<?php
-							}
+                                <?php
+                                if($clAdmin){
+                                    echo '<li>';
+                                    echo 'For coding characters in a table format, open the Mass-Update Editor for the following checklists. <br/>';
+                                    echo '<ul>';
+                                    foreach($clAdmin as $vClid => $name){
+                                        echo "<li><a href='".$CLIENT_ROOT. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
+                                    }
+                                    echo '</ul>';
+                                    echo '</li>';
+                                }
+                            }
 							else{
 								?>
 								<li>You are not authorized to edit Identification Keys</li>
