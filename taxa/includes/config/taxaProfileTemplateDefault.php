@@ -18,7 +18,7 @@ if($taxonRank){
         $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
-    elseif($taxonRank === 180){
+    elseif($taxonRank == 180){
         $topRowElements = array();
         $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);

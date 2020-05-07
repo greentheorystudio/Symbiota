@@ -40,7 +40,7 @@ else{
     <div id="scinameheader" class="<?php echo $styleClass; ?>">
     <?php
     $displayName = $spDisplay;
-    if($taxonRank === 180) {
+    if($taxonRank == 180) {
         $displayName = '<i>' . $displayName . '</i> spp. ';
     }
     if($taxonRank > 140){
@@ -77,7 +77,7 @@ if($ambiguous){
 $ambiguousDiv = ob_get_clean();
 
 ob_start();
-if($links && $links[0]['sortseq'] === 1){
+if($links && $links[0]['sortseq'] == 1){
     $uStr = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$links[0]['url']);
     ?>
     <div id="weblinks">

@@ -70,7 +70,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId === 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".($rankId == 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
 							}
 							?>
 						</select>

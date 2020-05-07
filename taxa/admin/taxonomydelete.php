@@ -28,7 +28,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			url: "rpc/gettid.php",
 			data: { sciname: f.remapvalue.value }
 		}).done(function( msg ) {
-			if(msg === 0){
+			if(msg == 0){
 				alert("ERROR: Remapping taxon not found in thesaurus. Is the name spelled correctly?");
 				f.remaptid.value = "";
 			}
