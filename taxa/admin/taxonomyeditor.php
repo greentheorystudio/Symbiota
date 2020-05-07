@@ -204,7 +204,7 @@ if($editable){
 									<?php 
 									$rankArr = $taxonEditorObj->getRankArr();
 									foreach($rankArr as $rankId => $rName){
-										echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId() === $rankId?'SELECTED':'').'>'.$rName.'</option>';
+										echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId() == $rankId?'SELECTED':'').'>'.$rName.'</option>';
 									}
 									?>
 								</select>
@@ -249,8 +249,8 @@ if($editable){
 								<select id="securitystatus" name="securitystatus">
 									<option value="0">select a locality setting</option>
 									<option value="0">---------------------------------</option>
-									<option value="0" <?php echo (($taxonEditorObj->getSecurityStatus() === 0)?'SELECTED':''); ?>>show all locality data</option>
-									<option value="1" <?php echo (($taxonEditorObj->getSecurityStatus() === 1)?'SELECTED':''); ?>>hide locality data</option>
+									<option value="0" <?php echo (($taxonEditorObj->getSecurityStatus() == 0)?'SELECTED':''); ?>>show all locality data</option>
+									<option value="1" <?php echo (($taxonEditorObj->getSecurityStatus() == 1)?'SELECTED':''); ?>>hide locality data</option>
 								</select>
 								<input type='hidden' name='securitystatusstart' value='<?php echo $taxonEditorObj->getSecurityStatus(); ?>' />
 							</div>
@@ -273,7 +273,7 @@ if($editable){
 									<?php 
 										$ttIdArr = $taxonEditorObj->getTaxonomicThesaurusIds();
 										foreach($ttIdArr as $ttID => $ttName){
-											echo '<option value='.$ttID.' '.($taxAuthId === $ttID?'SELECTED':'').'>'.$ttName.'</option>';
+											echo '<option value='.$ttID.' '.($taxAuthId == $ttID?'SELECTED':'').'>'.$ttName.'</option>';
 										}
 									?>
 								</select>
@@ -337,7 +337,7 @@ if($editable){
 										$aArr = $taxonEditorObj->getAcceptedArr();
 										$aStr = key($aArr); 
 									?>
-									<input type="hidden" name="tidaccepted" value="<?php echo ($taxonEditorObj->getIsAccepted() === 1?$taxonEditorObj->getTid():$aStr); ?>" />
+									<input type="hidden" name="tidaccepted" value="<?php echo ($taxonEditorObj->getIsAccepted() == 1?$taxonEditorObj->getTid():$aStr); ?>" />
 									<input type="hidden" name="tabindex" value="1" />
 									<input type="hidden" name="submitaction" value="updatetaxstatus" />
 									<input type='button' name='taxstatuseditsubmit' value='Submit Upper Taxonomy Edits' onclick="submitTaxStatusForm(this.form)" />

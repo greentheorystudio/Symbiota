@@ -30,7 +30,7 @@ if($editable && $action){
 	if($action === 'Edit Synonym Sort Order'){
 		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && (strpos($sortKey, 'syn-') === 0)){
+			if($sortValue && (strpos($sortKey, 'syn-') == 0)){
 				$synSortArr[substr($sortKey,4)] = $sortValue;
 			}
 		}
@@ -99,7 +99,7 @@ if($editable && $action){
 	elseif($action === 'Submit Image Sort Edits'){
 		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && strpos($sortKey, 'imgid-') === 0){
+			if($sortValue && strpos($sortKey, 'imgid-') == 0){
 				$imgSortArr[substr($sortKey,6)]  = $sortValue;
 			}
 		}
