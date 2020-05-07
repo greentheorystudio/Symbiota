@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 header('Content-Type: application/json; charset=' .$CHARSET);
+ini_set('max_execution_time', 300);
 
 $stArrJson = $_REQUEST['starr'];
 $occIndex = $_REQUEST['start'];
