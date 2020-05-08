@@ -57,7 +57,7 @@ function verifyLoadForm(f){
 			alert("Accepted name needs to have a value");
 			return false
 		}
-		if(f.tidaccepted.value === "" && checkAcceptedExistance(f) === false){
+		if(f.tidaccepted.value === "" && checkAcceptedExistance(f) == false){
 			return false;
 		}
 	}

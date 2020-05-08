@@ -16,7 +16,7 @@ function toggle(target){
 	const divObjs = document.getElementsByTagName("span");
 	for (let i = 0; i < divObjs.length; i++) {
 		const divObj = divObjs[i];
-		if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+		if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
 			if(divObj.style.display === "none"){
 				divObj.style.display="";
 			}
@@ -46,7 +46,7 @@ function toggleMap(mapObj){
 	for(let x = 0;x<mapObjs.length;x++){
 		const mObj = mapObjs[x];
 		if(mObj.classname === "mapdiv"){
-			if(mObj === mapObj){
+			if(mObj == mapObj){
 				mObj.style.display = "block";
 			}
 			else{

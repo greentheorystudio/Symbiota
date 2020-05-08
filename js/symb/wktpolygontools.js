@@ -37,7 +37,7 @@ function validatePolygon(footprintWktInput){
 		newStr = '';
 		const coordArr = footprintWkt.split(",");
 		for(let i=0; i < coordArr.length; i++){
-			if((i % 2) === 1){
+			if((i % 2) == 1){
 				newStr = newStr + ", " + parseFloat(coordArr[i-1]).toFixed(6) + " " + parseFloat(coordArr[i]).toFixed(6);
 			}
 		}
@@ -64,7 +64,7 @@ function validatePoints(footprintWkt, switchPoints){
 	const strArr = footprintWkt.split(",");
 	for(let i=0; i < strArr.length; i++){
 		const xy = strArr[i].trim().split(" ");
-		if(!switchPoints && i === 0){
+		if(!switchPoints && i == 0){
 			if(Math.abs(parseInt(xy[0])) > 90) {
 				switchPoints = true;
 			}

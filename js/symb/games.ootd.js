@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 	$( "#family_answer" )
 		.bind( "keydown", function( event ) {
-			if ( event.keyCode === $.ui.keyCode.TAB &&
+			if ( event.keyCode == $.ui.keyCode.TAB &&
 					$( this ).data( "autocomplete" ).menu.active ) {
 				event.preventDefault();
 			}
@@ -40,7 +40,7 @@ $(document).ready(function() {
 		
 	$( "#sciname_answer" )
 		.bind( "keydown", function( event ) {
-			if ( event.keyCode === $.ui.keyCode.TAB &&
+			if ( event.keyCode == $.ui.keyCode.TAB &&
 					$( this ).data( "autocomplete" ).menu.active ) {
 				event.preventDefault();
 			}

@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     $( "#taxa" )
         .bind( "keydown", function( event ) {
-            if ( event.keyCode === $.ui.keyCode.TAB &&
+            if ( event.keyCode == $.ui.keyCode.TAB &&
                 $( this ).data( "autocomplete" ).menu.active ) {
                 event.preventDefault();
             }
@@ -26,20 +26,20 @@ $(document).ready(function() {
                 let rankHigh = '';
                 let rankLimit = '';
                 let source = '';
-                if(t === 5){
+                if(t == 5){
                     source = '../webservices/autofillvernacular.php';
                 }
                 else{
                     source = '../webservices/autofillsciname.php';
                 }
-                if(t === 4){
+                if(t == 4){
                     rankLow = 21;
                     rankHigh = 139;
                 }
-                else if(t === 2){
+                else if(t == 2){
                     rankLimit = 140;
                 }
-                else if(t === 3){
+                else if(t == 3){
                     rankLow = 141;
                 }
                 else{
@@ -98,7 +98,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         const activeTab = $('#recordstab').tabs("option", "active");
-        if(activeTab === 3){
+        if(activeTab == 3){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }
