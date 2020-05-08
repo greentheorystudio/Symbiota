@@ -138,13 +138,13 @@ function rotateiPlantImage(rotationAngle){
 			imgSrc = imgSrc.substring(0,imgSrc.indexOf('&rotate='));
 		}
 		angle = angle + rotationAngle;
-		if(angle === -180){
+		if(angle == -180){
 			angle = 180;
 		}
-		else if(angle === 270){
+		else if(angle == 270){
 			angle = -90;
 		}
-		if(angle === 0){
+		if(angle == 0){
 			imgObj.src = imgSrc + "&format=jpeg";
 		}
 		else{

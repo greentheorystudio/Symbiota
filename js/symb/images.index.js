@@ -149,8 +149,8 @@ function checkTaxonType(){
 	let vals;
 	const newtaxontype = document.getElementById('taxontype').value;
 	const oldtaxontype = document.getElementById('taxtp').value;
-	if(newtaxontype === 1||newtaxontype === 2){
-		if(oldtaxontype === 3){
+	if(newtaxontype == 1||newtaxontype == 2){
+		if(oldtaxontype == 3){
 			vals = $('#common').manifest('values');
 			for (let i = 0; i < vals.length; i++) {
 				$('#common').manifest('remove', i);
@@ -162,8 +162,8 @@ function checkTaxonType(){
 		}
 	
 	}
-	if(newtaxontype === 3){
-		if(oldtaxontype === 1||oldtaxontype === 2){
+	if(newtaxontype == 3){
+		if(oldtaxontype == 1||oldtaxontype == 2){
 			vals = $('#taxa').manifest('values');
 			for (let i = 0; i < vals.length; i++) {
 				$('#taxa').manifest('remove', i);
@@ -224,7 +224,7 @@ function selectAllCat(cb,target){
 	const inputObjs = document.getElementsByTagName("input");
 	for (let i = 0; i < inputObjs.length; i++) {
 		const inputObj = inputObjs[i];
-		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
+		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
   			inputObj.checked = boxesChecked;
   		}
   	}
@@ -245,7 +245,7 @@ function selectAllPid(cb){
 	const inputObjs = document.getElementsByTagName("input");
 	for (let i = 0; i < inputObjs.length; i++) {
 		const inputObj = inputObjs[i];
-		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
+		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
   			inputObj.checked = boxesChecked;
   		}
   	}

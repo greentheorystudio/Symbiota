@@ -38,7 +38,7 @@ function traitChanged(traitID){
 	const el_id = 'stateid-' + traitID;
 	const inputElement = document.getElementById(el_id);
 	$('input[name="stateid-'+traitID+'[]"]').each(function(){
-		if(inputElement.checked === true){
+		if(inputElement.checked == true){
 			$("div.child-"+this.value).show();
 		}
 		else{
