@@ -186,7 +186,7 @@ if($descArr = $taxonManager->getDescriptions()){
                         $cap = 'Description #'.$capCnt;
                         $capCnt++;
                     }
-                    echo '<li><a href="#tab'.$id.'" class="selected">'.$cap.'</a></li>';
+                    echo '<li><a href="#tab'.$id.'" class="taxon-desc-tab-text">'.$cap.'</a></li>';
                 }
             }
             ?>
