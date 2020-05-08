@@ -264,3 +264,7 @@ h3{
 	border-radius:10px;
 	padding:10px;
 }
+
+.taxon-desc-tab-text {
+	font-size: 14px;
+}

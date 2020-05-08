@@ -206,7 +206,7 @@
 }
 
 #desctabs{
-	height:			400px;
+	height:			450px;
 }
 
 #desctabs.species{
@@ -321,14 +321,14 @@
 }
 
 div.sptab{
-	height:		330px;
-	width:		94%;
+	height:		340px;
+	width:		92%;
 	overflow: 	auto;
 }
 
 div.spptab{
-	height:		330px;
-	width:		94%;
+	height:		340px;
+	width:		92%;
 	overflow: 	auto;
 }
 
@@ -458,4 +458,8 @@ div.spptext{
 
 .taxonimage{
 	z-index:			-1;
+}
+
+.ui-tabs {
+	height: 450px;
 }
