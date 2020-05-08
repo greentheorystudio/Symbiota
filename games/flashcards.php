@@ -97,7 +97,7 @@ $sciArr = array();
             const idIndexSelected = idSelect.value;
             if(idIndexSelected > 0){
 				totalTried++;
-				if(idIndexSelected === activeIndex){
+				if(idIndexSelected == activeIndex){
 					alert("Correct! Try another");
 					document.getElementById("numcomplete").innerHTML = (sciNameArr.length - toBeIdentified.length).toString();
 					if(firstTry){

@@ -58,7 +58,7 @@ if($taxId === 'root'){
 			$rankName = 'Unknown';
 		}
 		$label = '2-'.$row1->rankid.'-'.$rankName.'-'.$row1->sciname;
-		if($row1->tid === $targetId){
+		if($row1->tid == $targetId){
 			$sciName = '<b>'.$row1->sciname.'</b>';
 		}
 		else{
@@ -120,11 +120,11 @@ else{
 		else{
 			$sciName = $row2->sciname;
 		}
-		if($row2->tid === $targetId){
+		if($row2->tid == $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row2->author:'');
-		if($row2->tid === $taxId){
+		if($row2->tid == $taxId){
 			$retArr['id'] = $row2->tid;
 			$retArr['label'] = $label;
 			$retArr['name'] = $sciName;
@@ -190,7 +190,7 @@ else{
 		else{
 			$sciName = $row->sciname;
 		}
-		if($row->tid === $targetId){
+		if($row->tid == $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = '['.$sciName.']';

@@ -68,7 +68,7 @@ if($taxonRank){
         $bottomRowElements = array();
         $footerRowElements = array();
     }
-    elseif($taxonRank === 180){ //Template for genera taxa pages.
+    elseif($taxonRank == 180){ //Template for genera taxa pages.
         $topRowElements = array();
         $leftColumnElements = array();
         $rightColumnElements = array();
