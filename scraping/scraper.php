@@ -68,7 +68,7 @@ class ScrapeManager{
             }
 
             //Get Images
-            if(preg_match_all("'<a href=\"../images/(.*?)</span>'si",$contents,$m)){
+            /*if(preg_match_all("'<a href=\"../images/(.*?)</span>'si",$contents,$m)){
                 foreach($m[0] as $chunklet){
                     $imgFile = '';
                     $caption = '';
@@ -85,6 +85,8 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             elseif(preg_match_all("'<img border=\"0\"(.*?)</span>'si",$contents,$m)){
@@ -99,6 +101,7 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             elseif(preg_match_all("'<a href=\"images/(.*?)</span>'si",$contents,$m)){
@@ -113,6 +116,7 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             elseif(preg_match_all("'<p class=\"CAPTION\"><img(.*?)</p>'si",$contents,$m)){
@@ -127,6 +131,7 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             elseif(preg_match_all("'<img src=\"../images(.*?)</span>'si",$contents,$m)){
@@ -141,6 +146,7 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             elseif(preg_match_all("'<img border=\"0\"(.*?)</font>'si",$contents,$m)){
@@ -161,11 +167,12 @@ class ScrapeManager{
                     }
                     echo $imgFile . '<br />';
                     echo $caption . '<br />';
+                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
             }
             else{
                 //echo $this->file . '<br />';
-            }
+            }*/
 
             //Get Species Name & Author
             /*if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
@@ -218,6 +225,15 @@ class ScrapeManager{
                 }
             }*/
         }
+    }
+
+    public function saveImageRecord($sciname,$image,$caption){
+        $status = true;
+        $sql = "INSERT INTO `scraping-images`(`sciname`,`imageFile`,`caption`) VALUES ('".$this->cleanInStr($sciname)."','".$this->cleanInStr($image)."','".$this->cleanInStr($caption)."') ";
+        if(!$this->conn->query($sql)){
+            $status = false;
+        }
+        return $status;
     }
 
     public function saveSubheadingArr(){
