@@ -1,0 +1,378 @@
+<?php
+include_once('../classes/DbConnection.php');
+include_once('../config/symbini.php');
+ini_set('max_execution_time', 10000);
+//ini_set('error_reporting', E_CORE_ERROR);
+
+class ScrapeManager{
+
+    private $basrUrl = '/var/www/default/htdocs/irlspec/taxa/';
+    private $file = '';
+    private $sciname = '';
+    private $headingArr = array();
+    private $subheadingArr = array();
+    private $conn;
+
+    public function __construct() {
+        $connection = new DbConnection();
+        $this->conn = $connection->getConnection();
+    }
+
+    public function __destruct(){
+        if(!($this->conn === false)) {
+            $this->conn->close();
+        }
+    }
+
+    public function getTaxaFileList() {
+        $retArr = array();
+        $sql = 'SELECT Files FROM `scraping-taxa-files` ';
+        //echo "<div>SQL: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        while($r = $result->fetch_object()){
+            $retArr[] = $r->Files;
+        }
+        $result->close();
+        return $retArr;
+    }
+
+    public function parseAllFiles($fileArr) {
+        foreach($fileArr as $file){
+            $this->setFile($file);
+            $this->parseUrl();
+        }
+
+        //$this->saveSubheadingArr();
+        //$this->saveHeadingArr();
+    }
+
+    public function parseUrl(){
+        $parsedData = array();
+        $sciname = '';
+        $scientificName = '';
+        $author = '';
+        $url = $this->basrUrl . $this->file;
+
+        if($this->urlExists($url)){
+            $fh = fopen($url, 'rb');
+            $contents = stream_get_contents($fh);
+            fclose($fh);
+
+            //Get SciName
+            if(preg_match("'<title>(.*?)</title>'si",$contents,$m)){
+                if (strpos($m[1], '_') !== false) {
+                    $m[1] = str_replace('_',' ',$m[1]);
+                }
+                $sciname = $m[1];
+                echo $sciname . '<br />';
+            }
+
+            //Get Images
+            if(preg_match_all("'<a href=\"../images/(.*?)</span>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'<img src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(!$imgFile){
+                        if(preg_match("'<img border=\"0\" src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                    }
+                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                        $caption = substr($chunklet, $pos + 22);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            elseif(preg_match_all("'<img border=\"0\"(.*?)</span>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                        $caption = substr($chunklet, $pos + 22);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            elseif(preg_match_all("'<a href=\"images/(.*?)</span>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'src=\"images/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                        $caption = substr($chunklet, $pos + 22);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            elseif(preg_match_all("'<p class=\"CAPTION\"><img(.*?)</p>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(($pos = strpos($chunklet, '">')) !== false) {
+                        $caption = substr($chunklet, $pos + 22);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            elseif(preg_match_all("'<img src=\"../images(.*?)</span>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                        $caption = substr($chunklet, $pos + 22);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            elseif(preg_match_all("'<img border=\"0\"(.*?)</font>'si",$contents,$m)){
+                foreach($m[0] as $chunklet){
+                    $imgFile = '';
+                    $caption = '';
+                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                        $imgFile = $imgText[0];
+                    }
+                    if(($pos = strpos($chunklet, '<font size="2">')) !== false) {
+                        $caption = substr($chunklet, $pos + 15);
+                    }
+                    if(($pos = strpos($chunklet, '<font color="#000080" size="2">')) !== false) {
+                        $caption = substr($chunklet, $pos + 15);
+                    }
+                    if(($pos = strpos($chunklet, '<font size="2" color="#000080">')) !== false) {
+                        $caption = substr($chunklet, $pos + 31);
+                    }
+                    echo $imgFile . '<br />';
+                    echo $caption . '<br />';
+                }
+            }
+            else{
+                //echo $this->file . '<br />';
+            }
+
+            //Get Species Name & Author
+            /*if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
+                if(preg_match('"<span class=\"specie-name\">(.*?)</span>"si',$m[1],$scienName)){
+                    $scientificName = $scienName[1];
+                    //echo $scientificName . '<br />';
+                }
+                if(($pos = strpos($m[1], "</span>")) !== false) {
+                    $author = substr($m[1], $pos + 7);
+                    //echo $author . '<br />';
+                }
+            }
+
+            if(!$scientificName){
+                if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
+                    if(preg_match('"<span class=\"specie-name\">(.*?)</span>"si',$m[1],$scienName)){
+                        $scientificName = $scienName[1];
+                        //echo $scientificName . '<br />';
+                    }
+                    if(($pos = strpos($m[1], "</span>")) !== false) {
+                        $author = substr($m[1], $pos + 7);
+                        //echo $author . '<br />';
+                    }
+                }
+            }
+
+            if(!$scientificName){
+                echo $this->file . '<br />';
+            }*/
+
+            //echo json_encode($this->subheadingArr);
+            //echo json_encode($this->headingArr);
+
+
+
+            //Get common name
+            /*if(preg_match("'<h3>Common name</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
+                $commonArr = explode(',',$m[1]);
+                foreach($commonArr as $v){
+                    if(trim($v)){
+                        $parsedData['commonName'][] = trim($v);
+                    }
+                }
+            }*/
+
+            //Get ident_adult
+            /*if(preg_match("'<h3>Adult</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
+                if(trim($m[1])){
+                    $parsedData['descAdult'][] = preg_replace( '/\s+/', ' ',trim($m[1]));
+                }
+            }*/
+        }
+    }
+
+    public function saveSubheadingArr(){
+        $status = true;
+        foreach($this->subheadingArr as $heading){
+            $sql = "INSERT INTO `scraping-subheading`(`heading`) VALUES ('".$this->cleanInStr($heading)."') ";
+            if(!$this->conn->query($sql)){
+                $status = false;
+            }
+        }
+        return $status;
+    }
+
+    public function saveSciname($name){
+        $status = true;
+        $sql = "INSERT INTO `scraping-taxa-scinames`(`sciname`) VALUES ('".$this->cleanInStr($name)."') ";
+        if(!$this->conn->query($sql)){
+            $status = false;
+        }
+        return $status;
+    }
+
+    public function saveHeadingArr(){
+        $status = true;
+        foreach($this->subheadingArr as $heading){
+            $sql = "INSERT INTO `symbiota`.`scraping-heading`(`heading`) VALUES ('".$this->cleanInStr($heading)."') ";
+            if(!$this->conn->query($sql)){
+                $status = false;
+            }
+        }
+        return $status;
+    }
+
+    public function saveCommonName($commonStr){
+        //Target tables: taxavernaculars
+        $status = true;
+        if($commonStr && $this->tid){
+            $sql = 'INSERT INTO taxavernaculars (tid,varnacularname,source) '.
+                'VALULES('.$this->tid.',"'.$this->cleanInStr($commonStr).'","STRI") ';
+            if(!$this->conn->query($sql)){
+                $status = false;
+            }
+        }
+        return $status;
+    }
+
+    //Setters and getters
+    public function setFile($file){
+        $this->file = $file;
+    }
+
+    public function setSciname($s){
+        $this->sciname = $this->cleanInStr($s);
+        if(!$this->tid){
+            //Set tid
+            $sql = 'SELECT tid FROM taxa WHERE sciname = "'.$this->sciname.'"';
+            $rs = $this->conn->query($sql);
+            if($r = $rs->fetch_object()){
+                $this->tid = $r->tid;
+            }
+            $rs->free();
+        }
+    }
+
+    public function setTid($t){
+        if(is_numeric($t)){
+            $this->tid = $t;
+        }
+    }
+
+    public function getTid(){
+        return $this->tid;
+    }
+
+    private function urlExists($url) {
+        $exists = false;
+        if(file_exists($url)){
+            return true;
+        }
+
+        if(!$exists){
+            $handle = curl_init($url);
+            curl_setopt($handle, CURLOPT_HEADER, false);
+            curl_setopt($handle, CURLOPT_FAILONERROR, true);
+            curl_setopt($handle, CURLOPT_HTTPHEADER, Array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15') ); // request as if Firefox
+            curl_setopt($handle, CURLOPT_NOBODY, true);
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
+            $exists = curl_exec($handle);
+            curl_close($handle);
+        }
+
+        if(!$exists){
+            $exists = (@fclose(@fopen($url, 'rb')));
+        }
+        return $exists;
+    }
+
+    private function cleanInStr($str){
+        $newStr = trim($str);
+        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
+        $newStr = $this->conn->real_escape_string($newStr);
+        return $newStr;
+    }
+}
+
+$parser = new ScrapeManager();
+$files = $parser->getTaxaFileList();
+
+if(isset($_POST['formsubmit'])){
+    if($_POST['formsubmit'] === 'Parse File') {
+        $parser->setFile($_POST['file']);
+        $result = $parser->parseUrl();
+        //echo json_encode($result);
+    }
+
+    if($_POST['formsubmit'] === 'Parse Everything') {
+        $parser->parseAllFiles($files);
+    }
+
+
+    /*if(array_key_exists('link',$resultArr)){
+        ?>
+        <div>
+            <div><b>Links</b></div>
+            <div style="margin:15px;">
+                <?php
+                echo '<form name="linksaveform" method="post" action="" target="_blank" >';
+                $linkArr = $resultArr['link'];
+                foreach($linkArr as $k => $linkStr){
+                    echo '<input type="checkbox" name="num-'.$k.'" value="1" /> ';
+                    //Allow user to edit value before submitting
+                    echo '<input type="text" style="width:300px;" name="val-'.$k.'" value="'.$linkStr['name'].'" /><br />';
+                    echo '<input type="text" style="width:700px;" name="val-'.$k.'" value="'.$linkStr['url'].'" /><br />';
+                }
+                echo '<input type="hidden" name="tid" value="'.$parser->getTid().'" />';
+                echo '<input type="submit" name="formsubmit" value="Save Links" ';
+                echo '</form>';
+                ?>
+            </div>
+        </div>
+        <?php
+    }*/
+}
+?>
+
+<form method="post" action="scraper.php" >
+    <select name="file" style="width:200px" >
+        <option value="">Select File</option>
+        <option value="">----</option>
+        <?php
+        foreach($files as $file){
+            echo '<option value="'.$file.'">'.$file.'</option>';
+        }
+        ?>
+    </select>
+    <input type="submit" name="formsubmit" value="Parse File" />
+    <input type="submit" name="formsubmit" value="Parse Everything" />
+</form>
