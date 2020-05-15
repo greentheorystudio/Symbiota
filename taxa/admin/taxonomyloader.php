@@ -32,7 +32,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20200426"></script>
+	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20200514"></script>
 </head>
 <body>
 <?php
