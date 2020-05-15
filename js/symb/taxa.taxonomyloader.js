@@ -38,18 +38,6 @@ function verifyLoadForm(f){
 	if(f.parenttid.value === "" && rankId > 10){
 		if(!checkParentExistance(f)) return false;
 	}
-	$.ajax({
-		type: "POST",
-		url: "rpc/gettid.php",
-		async: false,
-		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
-	}).done(function( msg ) {
-		if(msg !== '0'){
-			const sciName = document.getElementById("sciname").value;
-			alert("Taxon "+sciName+" "+f.author.value+" ("+msg+") already exists in database");
-			return false;
-		}
-	});
 
 	const accStatusObj = f.acceptstatus;
 	if(accStatusObj[0].checked === false){
@@ -62,7 +50,21 @@ function verifyLoadForm(f){
 		}
 	}
 
-	return true;
+	$.ajax({
+		type: "POST",
+		url: "rpc/gettid.php",
+		async: false,
+		data: { sciname: f.sciname.value, rankid: f.rankid.value, author: f.author.value }
+	}).done(function( msg ) {
+		if(msg !== '0'){
+			const sciName = document.getElementById("sciname").value;
+			alert("Taxon "+sciName+" "+f.author.value+" ("+msg+") already exists in database");
+			return false;
+		}
+		else{
+			return true;
+		}
+	});
 }
 
 function parseName(f){
