@@ -32,8 +32,7 @@ if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-
-			$("#taxontarget").autocomplete({
+            $("#taxontarget").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
 				}

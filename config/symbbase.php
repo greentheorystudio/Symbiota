@@ -51,7 +51,7 @@ if(isset($_SESSION['userrights'])){
     $USER_RIGHTS = $_SESSION['userrights'];
 }
 
-$CSS_VERSION = '20200509';
+$CSS_VERSION = '20200516';
 if(isset($CSS_VERSION_LOCAL) && ($CSS_VERSION_LOCAL > $CSS_VERSION)) {
     $CSS_VERSION = $CSS_VERSION_LOCAL;
 }
