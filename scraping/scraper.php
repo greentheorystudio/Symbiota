@@ -64,7 +64,13 @@ class ScrapeManager{
                     $m[1] = str_replace('_',' ',$m[1]);
                 }
                 $sciname = $m[1];
-                echo $sciname . '<br />';
+                //echo $sciname . '<br />';
+            }
+
+            if((strpos($contents, 'Common Name:')) !== false) {
+                if((strpos($contents, '<td class="label">Common Name:</td>')) === false) {
+                    echo $this->file . '<br />';
+                }
             }
 
             //Get Images
