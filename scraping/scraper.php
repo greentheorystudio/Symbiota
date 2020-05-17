@@ -9,6 +9,7 @@ class ScrapeManager{
     private $basrUrl = '/var/www/default/htdocs/irlspec/taxa/';
     private $file = '';
     private $sciname = '';
+    private $tid = 0;
     private $headingArr = array();
     private $subheadingArr = array();
     private $conn;
@@ -47,11 +48,9 @@ class ScrapeManager{
     }
 
     public function parseUrl(){
-        $parsedData = array();
-        $sciname = '';
-        $scientificName = '';
-        $author = '';
         $url = $this->basrUrl . $this->file;
+        $this->tid = 0;
+        $this->sciname = '';
 
         if($this->urlExists($url)){
             $fh = fopen($url, 'rb');
@@ -63,137 +62,146 @@ class ScrapeManager{
                 if (strpos($m[1], '_') !== false) {
                     $m[1] = str_replace('_',' ',$m[1]);
                 }
-                $sciname = $m[1];
-                //echo $sciname . '<br />';
+                $this->sciname = $m[1];
+                $this->setTid();
+                echo $this->sciname . '<br />';
+                echo $this->tid . '<br />';
             }
 
-            if((strpos($contents, 'Common Name:')) !== false) {
-                if((strpos($contents, '<td class="label">Common Name:</td>')) === false) {
-                    echo $this->file . '<br />';
-                }
-            }
+            if($this->sciname && $this->tid){
+                echo $this->file . '<br />';
 
-            //Get Images
-            /*if(preg_match_all("'<a href=\"../images/(.*?)</span>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'<img src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                /*if(preg_match('"<tr>\s*<td class=\"label\">Common Name:</td>\s*<td>(.*?)</td>\s*</tr>"si',$contents,$m)){
+                    $commonNameArr = explode("<br />", $m[1]);
+                    //$this->processCommonNames($commonNameArr);
+                }*/
+
+                /*if(preg_match('"<tr>\s*<td class=\"label\">Synonymy:</td>\s*<td>(.*?)</td>\s*</tr>"si',$contents,$m)){
+                    $synonymArr = explode("<br />", $m[1]);
+                    //$this->processSynonyms($synonymArr);
+                }*/
+
+                /*if((strpos($contents, 'Synonymy:')) !== false) {
+                    if((strpos($contents, '<tr><td class="label">Synonymy:</td>')) === false) {
+                        echo $this->file . '<br />';
                     }
-                    if(!$imgFile){
-                        if(preg_match("'<img border=\"0\" src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                }*/
+
+                /*if((strpos($contents, 'Synonymy:')) !== false) {
+                    if(preg_match('"<tr>\s*<td class=\"label\">Synonymy:</td>(.*?)</tr>"si',$contents,$m)){
+                        echo $this->file . '<br />';
+                    }
+                }*/
+
+                //Get Images
+                /*if(preg_match_all("'<a href=\"../images/(.*?)</span>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'<img src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
                             $imgFile = $imgText[0];
                         }
-                    }
-                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
-                        $caption = substr($chunklet, $pos + 22);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
+                        if(!$imgFile){
+                            if(preg_match("'<img border=\"0\" src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                                $imgFile = $imgText[0];
+                            }
+                        }
+                        if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                            $caption = substr($chunklet, $pos + 22);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
 
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
+                    }
                 }
-            }
-            elseif(preg_match_all("'<img border=\"0\"(.*?)</span>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                elseif(preg_match_all("'<img border=\"0\"(.*?)</span>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                        if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                            $caption = substr($chunklet, $pos + 22);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
                     }
-                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
-                        $caption = substr($chunklet, $pos + 22);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
-            }
-            elseif(preg_match_all("'<a href=\"images/(.*?)</span>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'src=\"images/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                elseif(preg_match_all("'<a href=\"images/(.*?)</span>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'src=\"images/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                        if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                            $caption = substr($chunklet, $pos + 22);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
                     }
-                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
-                        $caption = substr($chunklet, $pos + 22);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
-            }
-            elseif(preg_match_all("'<p class=\"CAPTION\"><img(.*?)</p>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                elseif(preg_match_all("'<p class=\"CAPTION\"><img(.*?)</p>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                        if(($pos = strpos($chunklet, '">')) !== false) {
+                            $caption = substr($chunklet, $pos + 22);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
                     }
-                    if(($pos = strpos($chunklet, '">')) !== false) {
-                        $caption = substr($chunklet, $pos + 22);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
-            }
-            elseif(preg_match_all("'<img src=\"../images(.*?)</span>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                elseif(preg_match_all("'<img src=\"../images(.*?)</span>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                        if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
+                            $caption = substr($chunklet, $pos + 22);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
                     }
-                    if(($pos = strpos($chunklet, '<span class="caption">')) !== false) {
-                        $caption = substr($chunklet, $pos + 22);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
-            }
-            elseif(preg_match_all("'<img border=\"0\"(.*?)</font>'si",$contents,$m)){
-                foreach($m[0] as $chunklet){
-                    $imgFile = '';
-                    $caption = '';
-                    if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
-                        $imgFile = $imgText[0];
+                elseif(preg_match_all("'<img border=\"0\"(.*?)</font>'si",$contents,$m)){
+                    foreach($m[0] as $chunklet){
+                        $imgFile = '';
+                        $caption = '';
+                        if(preg_match("'src=\"../images/(.*?)\"'si",$chunklet,$imgText)){
+                            $imgFile = $imgText[0];
+                        }
+                        if(($pos = strpos($chunklet, '<font size="2">')) !== false) {
+                            $caption = substr($chunklet, $pos + 15);
+                        }
+                        if(($pos = strpos($chunklet, '<font color="#000080" size="2">')) !== false) {
+                            $caption = substr($chunklet, $pos + 15);
+                        }
+                        if(($pos = strpos($chunklet, '<font size="2" color="#000080">')) !== false) {
+                            $caption = substr($chunklet, $pos + 31);
+                        }
+                        echo $imgFile . '<br />';
+                        echo $caption . '<br />';
+                        $this->saveImageRecord($sciname,$imgFile,$caption);
                     }
-                    if(($pos = strpos($chunklet, '<font size="2">')) !== false) {
-                        $caption = substr($chunklet, $pos + 15);
-                    }
-                    if(($pos = strpos($chunklet, '<font color="#000080" size="2">')) !== false) {
-                        $caption = substr($chunklet, $pos + 15);
-                    }
-                    if(($pos = strpos($chunklet, '<font size="2" color="#000080">')) !== false) {
-                        $caption = substr($chunklet, $pos + 31);
-                    }
-                    echo $imgFile . '<br />';
-                    echo $caption . '<br />';
-                    $this->saveImageRecord($sciname,$imgFile,$caption);
                 }
-            }
-            else{
-                //echo $this->file . '<br />';
-            }*/
+                else{
+                    //echo $this->file . '<br />';
+                }*/
 
-            //Get Species Name & Author
-            /*if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
-                if(preg_match('"<span class=\"specie-name\">(.*?)</span>"si',$m[1],$scienName)){
-                    $scientificName = $scienName[1];
-                    //echo $scientificName . '<br />';
-                }
-                if(($pos = strpos($m[1], "</span>")) !== false) {
-                    $author = substr($m[1], $pos + 7);
-                    //echo $author . '<br />';
-                }
-            }
-
-            if(!$scientificName){
-                if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
+                //Get Species Name & Author
+                /*if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
                     if(preg_match('"<span class=\"specie-name\">(.*?)</span>"si',$m[1],$scienName)){
                         $scientificName = $scienName[1];
                         //echo $scientificName . '<br />';
@@ -203,34 +211,120 @@ class ScrapeManager{
                         //echo $author . '<br />';
                     }
                 }
-            }
 
-            if(!$scientificName){
-                echo $this->file . '<br />';
-            }*/
-
-            //echo json_encode($this->subheadingArr);
-            //echo json_encode($this->headingArr);
-
-
-
-            //Get common name
-            /*if(preg_match("'<h3>Common name</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
-                $commonArr = explode(',',$m[1]);
-                foreach($commonArr as $v){
-                    if(trim($v)){
-                        $parsedData['commonName'][] = trim($v);
+                if(!$scientificName){
+                    if(preg_match('"<td class=\"label\">Species Name:</td>\s*<td>(.*?)</td>"si',$contents,$m)){
+                        if(preg_match('"<span class=\"specie-name\">(.*?)</span>"si',$m[1],$scienName)){
+                            $scientificName = $scienName[1];
+                            //echo $scientificName . '<br />';
+                        }
+                        if(($pos = strpos($m[1], "</span>")) !== false) {
+                            $author = substr($m[1], $pos + 7);
+                            //echo $author . '<br />';
+                        }
                     }
                 }
-            }*/
 
-            //Get ident_adult
-            /*if(preg_match("'<h3>Adult</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
-                if(trim($m[1])){
-                    $parsedData['descAdult'][] = preg_replace( '/\s+/', ' ',trim($m[1]));
-                }
-            }*/
+                if(!$scientificName){
+                    echo $this->file . '<br />';
+                }*/
+
+                //echo json_encode($this->subheadingArr);
+                //echo json_encode($this->headingArr);
+
+
+
+                //Get common name
+                /*if(preg_match("'<h3>Common name</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
+                    $commonArr = explode(',',$m[1]);
+                    foreach($commonArr as $v){
+                        if(trim($v)){
+                            $parsedData['commonName'][] = trim($v);
+                        }
+                    }
+                }*/
+
+                //Get ident_adult
+                /*if(preg_match("'<h3>Adult</h3>\s*<p>(.*?)</p>'si",$contents,$m)){
+                    if(trim($m[1])){
+                        $parsedData['descAdult'][] = preg_replace( '/\s+/', ' ',trim($m[1]));
+                    }
+                }*/
+            }
         }
+    }
+
+    public function processCommonNames($inArr){
+        $currentNameArr = $this->getCurrentCommonNames();
+        $tempArr = array();
+        foreach($inArr as $newTempName){
+            $tempArr[] = strtolower($newTempName);
+        }
+        foreach($currentNameArr as $id => $currentName){
+            if(in_array(strtolower($currentName),$tempArr)){
+                echo $currentName . '<br />';
+                foreach($inArr as $newTemp2Name){
+                    if(strtolower($newTemp2Name) == strtolower($currentName)){
+                        $sql = 'UPDATE taxavernaculars SET VernacularName = "'.$newTemp2Name.'" WHERE VID = '.$id;
+                        //echo $sql . '<br />';
+                        if(!$this->conn->query($sql)){
+                            $status = false;
+                        }
+                        $index = array_search($newTemp2Name,$inArr,true);
+                        unset($inArr[$index]);
+                    }
+                }
+            }
+        }
+        foreach($inArr as $newName){
+            if($newName != 'None'){
+                $sql = 'INSERT INTO taxavernaculars(`TID`,`VernacularName`,`Language`,`langid`,`SortSequence`) VALUES ('.$this->tid.',"'.trim($newName).'","English",1,1) ';
+                //echo $sql . '<br />';
+                if(!$this->conn->query($sql)){
+                    $status = false;
+                }
+            }
+        }
+    }
+
+    public function processSynonyms($inArr){
+        foreach($inArr as $newSynonym){
+            $synAuthor = '';
+            if((strpos($newSynonym, '</i>')) !== false) {
+                $synNameArr = explode("</i>", $newSynonym);
+                $synSciname = trim(str_replace('<i>','',$synNameArr[0]));
+                $synAuthor = trim($synNameArr[1]);
+            }
+            elseif((strpos($newSynonym, '</em>')) !== false) {
+                $synNameArr = explode("</em>", $newSynonym);
+                $synSciname = trim(str_replace('<em>','',$synNameArr[0]));
+                $synAuthor = trim($synNameArr[1]);
+            }
+            else{
+                $synSciname = trim($newSynonym);
+            }
+            if(substr($synAuthor, -1) === ','){
+                $synAuthor = substr($synAuthor, 0, -1);
+            }
+            if($synSciname && $synSciname != 'None'){
+                $sql = 'INSERT INTO `scraping-synonyms`(`tid`,`synSciname`,`synAuthor`,`acceptedName`) VALUES ('.$this->tid.',"'.$synSciname.'",'.($synAuthor?'"'.$synAuthor.'"':'null').',"'.$this->sciname.'") ';
+                //echo $sql . '<br />';
+                if(!$this->conn->query($sql)){
+                    $status = false;
+                }
+            }
+        }
+    }
+
+    public function getCurrentCommonNames(){
+        $returnArr = array();
+        $sql = 'SELECT VID, VernacularName FROM taxavernaculars WHERE TID = '.$this->tid;
+        $rs = $this->conn->query($sql);
+        if($r = $rs->fetch_object()){
+            $returnArr[$r->VID] = $r->VernacularName;
+        }
+        $rs->free();
+        return $returnArr;
     }
 
     public function saveImageRecord($sciname,$image,$caption){
@@ -291,23 +385,13 @@ class ScrapeManager{
         $this->file = $file;
     }
 
-    public function setSciname($s){
-        $this->sciname = $this->cleanInStr($s);
-        if(!$this->tid){
-            //Set tid
-            $sql = 'SELECT tid FROM taxa WHERE sciname = "'.$this->sciname.'"';
-            $rs = $this->conn->query($sql);
-            if($r = $rs->fetch_object()){
-                $this->tid = $r->tid;
-            }
-            $rs->free();
+    public function setTid(){
+        $sql = 'SELECT tid FROM taxa WHERE sciname = "'.$this->sciname.'"';
+        $rs = $this->conn->query($sql);
+        if($r = $rs->fetch_object()){
+            $this->tid = $r->tid;
         }
-    }
-
-    public function setTid($t){
-        if(is_numeric($t)){
-            $this->tid = $t;
-        }
+        $rs->free();
     }
 
     public function getTid(){
