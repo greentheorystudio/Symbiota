@@ -38,10 +38,22 @@ class ScrapeManager{
     }
 
     public function parseAllFiles($fileArr) {
+        $this->headingArr = array();
+        $this->subheadingArr = array();
+
         foreach($fileArr as $file){
             $this->setFile($file);
             $this->parseUrl();
         }
+
+        /*foreach($this->subheadingArr as $text){
+            echo $text . '<br />';
+        }*/
+
+        /*foreach($this->headingArr as $text){
+            echo $text . '<br />';
+            //$i++;
+        }*/
 
         //$this->saveSubheadingArr();
         //$this->saveHeadingArr();
@@ -64,12 +76,157 @@ class ScrapeManager{
                 }
                 $this->sciname = $m[1];
                 $this->setTid();
-                echo $this->sciname . '<br />';
-                echo $this->tid . '<br />';
+                //echo $this->sciname . '<br />';
+                //echo $this->tid . '<br />';
             }
 
             if($this->sciname && $this->tid){
                 echo $this->file . '<br />';
+
+                /*if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$contents,$m)){
+                    foreach($m[0] as $text){
+                        if(!in_array($text,$this->subheadingArr)){
+                            $this->subheadingArr[] = $text;
+                        }
+                    }
+                }*/
+
+                if(preg_match('"<p class=\"heading\">TAXONOMY</p>(.*?)<p class=\"heading\">HABITAT AND DISTRIBUTION</p>"si',$contents,$m)){
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$m[1],$t)){
+                        foreach($t[1] as $text){
+                            echo 'TAXONOMY: ' . $text . '<br />';
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">HABITAT AND DISTRIBUTION</p>(.*?)<p class=\"heading\">LIFE HISTORY AND POPULATION BIOLOGY</p>"si',$contents,$section)){
+                    $habTitleArr = array();
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$section[1],$t)){
+                        foreach($t[1] as $text){
+                            $habTitleArr[] = $text;
+                        }
+                    }
+
+                    foreach($habTitleArr as $title){
+                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">LIFE HISTORY AND POPULATION BIOLOGY</p>(.*?)<p class=\"heading\">PHYSICAL TOLERANCES</p>"si',$contents,$section)){
+                    $habTitleArr = array();
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$section[1],$t)){
+                        foreach($t[1] as $text){
+                            $habTitleArr[] = $text;
+                        }
+                    }
+
+                    foreach($habTitleArr as $title){
+                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">PHYSICAL TOLERANCES</p>(.*?)<p class=\"heading\">COMMUNITY ECOLOGY</p>"si',$contents,$section)){
+                    $habTitleArr = array();
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$section[1],$t)){
+                        foreach($t[1] as $text){
+                            $habTitleArr[] = $text;
+                        }
+                    }
+
+                    foreach($habTitleArr as $title){
+                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">COMMUNITY ECOLOGY</p>(.*?)<p class=\"heading\">ADDITIONAL INFORMATION</p>"si',$contents,$section)){
+                    $habTitleArr = array();
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$section[1],$t)){
+                        foreach($t[1] as $text){
+                            $habTitleArr[] = $text;
+                        }
+                    }
+
+                    foreach($habTitleArr as $title){
+                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">ADDITIONAL INFORMATION</p>(.*?)<p class=\"heading\">REFERENCES</p>"si',$contents,$section)){
+                    $habTitleArr = array();
+                    if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$section[1],$t)){
+                        foreach($t[1] as $text){
+                            $habTitleArr[] = $text;
+                        }
+                    }
+
+                    foreach($habTitleArr as $title){
+                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
+                            echo $title . ': ' . $m[1];
+                        }
+                    }
+                }
+
+                if(preg_match('"<p class=\"heading\">REFERENCES</p>(.*?)</li>\s*</ol>"si',$contents,$section)){
+                    echo 'REFERENCES: ' . $section[1] . '<br />';
+                }
+
+                /*if(preg_match_all('"<p class=\"heading\">(.*?)\s*</p>"si',$contents,$m)){
+                    //$i = 1;
+                    foreach($m[0] as $text){
+                        //echo $i . ': ' . $text . '<br />';
+                        //$i++;
+
+                        if(!in_array($text,$this->headingArr)){
+                            $this->headingArr[] = $text;
+                        }
+                    }
+                }*/
+
+                /*if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$contents,$m)){
+                    $i = 1;
+                    foreach($m[0] as $text){
+                        echo $i . ': ' . $text . '<br />';
+                        $i++;
+                    }
+                }*/
 
                 /*if(preg_match('"<tr>\s*<td class=\"label\">Common Name:</td>\s*<td>(.*?)</td>\s*</tr>"si',$contents,$m)){
                     $commonNameArr = explode("<br />", $m[1]);
