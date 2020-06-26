@@ -1,3 +1,12 @@
+var sciNameValid = false;
+var unitName1Valid = false;
+var rankIdValid = false;
+var parentNameValid = false;
+var parentIdValid = false;
+var acceptedNameValid = false;
+var acceptedIdValid = false;
+var taxonExistsValid = false;
+
 $(document).ready(function() {
 	$("#acceptedstr").autocomplete({ 
 		source: "rpc/getacceptedsuggest.php",
@@ -17,27 +26,83 @@ $(document).ready(function() {
 	});
 });
 
-function verifyLoadForm(f){
+function clearValidations(){
+	document.getElementById("submitButton").disabled = true;
+	sciNameValid = false;
+	unitName1Valid = false;
+	rankIdValid = false;
+	parentNameValid = false;
+	parentIdValid = false;
+	acceptedNameValid = false;
+	acceptedIdValid = false;
+	taxonExistsValid = false;
+}
+
+function checkValidations(){
+	if(sciNameValid && unitName1Valid && rankIdValid && parentNameValid && parentIdValid && acceptedNameValid && acceptedIdValid && taxonExistsValid){
+		document.getElementById("submitButton").disabled = false;
+	}
+}
+
+function validateLoadForm(f){
+	clearValidations();
 	if(f.sciname.value === ""){
 		alert("Scientific Name field required.");
-		return false;
 	}
+	else{
+		sciNameValid = true;
+	}
+
 	if(f.unitname1.value === ""){
 		alert("Unit Name 1 (genus or uninomial) field required.");
-		return false;
 	}
+	else{
+		unitName1Valid = true;
+	}
+
 	const rankId = Number(f.rankid.value);
 	if(rankId === ""){
 		alert("Taxon rank field required.");
-		return false;
 	}
+	else{
+		rankIdValid = true;
+	}
+
 	if(f.parentname.value === "" && rankId > 10){
 		alert("Parent taxon required");
-		return false;
 	}
+	else{
+		parentNameValid = true;
+	}
+
 	if(f.parenttid.value === "" && rankId > 10){
-		if(!checkParentExistance(f)) return false;
+		checkParentExistance(f);
 	}
+	else{
+		parentIdValid = true;
+	}
+
+	const accStatusObj = f.acceptstatus;
+	if(accStatusObj[0].checked === false){
+		if(f.acceptedstr.value === ""){
+			alert("Accepted name needs to have a value");
+		}
+		else{
+			acceptedNameValid = true;
+		}
+
+		if(f.tidaccepted.value === ""){
+			checkAcceptedExistance(f);
+		}
+		else{
+			acceptedIdValid = true;
+		}
+	}
+	else{
+		acceptedNameValid = true;
+		acceptedIdValid = true;
+	}
+
 	$.ajax({
 		type: "POST",
 		url: "rpc/gettid.php",
@@ -47,22 +112,12 @@ function verifyLoadForm(f){
 		if(msg !== '0'){
 			const sciName = document.getElementById("sciname").value;
 			alert("Taxon "+sciName+" "+f.author.value+" ("+msg+") already exists in database");
-			return false;
+		}
+		else{
+			taxonExistsValid = true;
+			checkValidations();
 		}
 	});
-
-	const accStatusObj = f.acceptstatus;
-	if(accStatusObj[0].checked === false){
-		if(f.acceptedstr.value === ""){
-			alert("Accepted name needs to have a value");
-			return false
-		}
-		if(f.tidaccepted.value === "" && checkAcceptedExistance(f) === false){
-			return false;
-		}
-	}
-
-	return true;
 }
 
 function parseName(f){
@@ -169,16 +224,15 @@ function checkAcceptedExistance(f){
 		}).done(function( msg ) {
 			if(msg === 0){
 				alert("Accepted does not exist. Add parent to thesaurus before adding this name.");
-				return false;
 			}
 			else{
 				if(msg.indexOf(",") === -1){
 					f.tidaccepted.value = msg;
-					return true;
+					acceptedIdValid = true;
+					checkValidations();
 				}
 				else{
 					alert("Accepted is matching two different names in the thesaurus. Please select taxon with the correct author.");
-					return false;
 				}
 			}
 		});
@@ -197,18 +251,17 @@ function checkParentExistance(f){
 			async: false,
 			data: { sciname: parentStr }
 		}).done(function( msg ) {
-			if(msg === 0){
+			if(msg == 0){
 				alert("Parent does not exist. Please first add parent to system.");
-				return false;
 			}
 			else{
 				if(msg.indexOf(",") === -1){
 					f.parenttid.value = msg;
-					return true;
+					parentIdValid = true;
+					checkValidations();
 				}
 				else{
 					alert("Parent is matching two different names in the thesaurus. Please select taxon with the correct author.");
-					return false;
 				}
 			}
 		});

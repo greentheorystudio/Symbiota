@@ -67,7 +67,7 @@ function selectAllCat(cb,target){
 	const inputObjs = document.getElementsByTagName("input");
 	for (let i = 0; i < inputObjs.length; i++) {
 		const inputObj = inputObjs[i];
-		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
+		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
   			inputObj.checked = boxesChecked;
   		}
   	}
@@ -88,7 +88,7 @@ function selectAllPid(cb){
 	const inputObjs = document.getElementsByTagName("input");
 	for (let i = 0; i < inputObjs.length; i++) {
 		const inputObj = inputObjs[i];
-		if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
+		if(inputObj.getAttribute("class") == target || inputObj.getAttribute("className") == target){
   			inputObj.checked = boxesChecked;
   		}
   	}

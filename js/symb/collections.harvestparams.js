@@ -8,7 +8,7 @@ $(document).ready(function() {
 
     $( "#taxa" )
     	.bind( "keydown", function( event ) {
-            if ( event.keyCode === $.ui.keyCode.TAB &&
+            if ( event.keyCode == $.ui.keyCode.TAB &&
                 $( this ).data( "autocomplete" ).menu.active ) {
                 event.preventDefault();
             }
@@ -41,7 +41,7 @@ $(document).ready(function() {
 	
 
 function changeTableDisplay(){
-    if(document.getElementById("showtable").checked === true){
+    if(document.getElementById("showtable").checked == true){
         document.harvestparams.action = "listtabledisplay.php";
         sessionStorage.collsearchtableview = true;
     }

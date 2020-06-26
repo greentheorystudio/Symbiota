@@ -447,7 +447,7 @@ function toggle(target){
 		const divs = document.getElementsByTagName("div");
 		for (let h = 0; h < divs.length; h++) {
 			const divObj = divs[h];
-			if(divObj.className === target){
+			if(divObj.className == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
@@ -464,7 +464,7 @@ function isNumeric(sText){
 	let isNumber = true;
 	let charVar;
 
-	for(let i = 0; i < sText.length && isNumber === true; i++){
+	for(let i = 0; i < sText.length && isNumber == true; i++){
    		charVar = sText.charAt(i); 
 		if(validChars.indexOf(charVar) === -1){
 			isNumber = false;

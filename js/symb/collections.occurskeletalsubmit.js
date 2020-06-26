@@ -66,7 +66,7 @@ function verifySciName(){
 			$( "#ftidinterpreted" ).val(data.tid);
 			$( '#ffamily' ).val(data.family);
 			$( '#fscientificnameauthorship' ).val(data.author);
-			if(data.status === 1){
+			if(data.status == 1){
 				$( '#flocalitysecurity' ).prop('checked', true);
 			}
 			else{
@@ -94,7 +94,7 @@ function localitySecurityCheck(){
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data === "1"){
+			if(data == "1"){
 				$( '#flocalitysecurity' ).prop('checked', true);
 			}
 		});
@@ -221,7 +221,7 @@ function eventDateChanged(eventDateInput){
 	}
 
 	const dateArr = parseDate(dateStr);
-	if(dateArr['y'] === 0){
+	if(dateArr['y'] == 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 		return false;
 	}
@@ -243,8 +243,8 @@ function eventDateChanged(eventDateInput){
 
 		if(dateArr['d'] > 28){
 			if(dateArr['d'] > 31 
-				|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-				|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+				|| (dateArr['d'] == 30 && dateArr['m'] == 2)
+				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 				return false;
 			}
@@ -349,7 +349,7 @@ function isNumeric(sText){
 	let isNumber = true;
 	let charVar;
 
-	for(let i = 0; i < sText.length && isNumber === true; i++){
+	for(let i = 0; i < sText.length && isNumber == true; i++){
    		charVar = sText.charAt(i); 
 		if(validChars.indexOf(charVar) === -1){
 			isNumber = false;

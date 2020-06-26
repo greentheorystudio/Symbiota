@@ -48,7 +48,7 @@ function toggle(target){
 		const divObjs = document.getElementsByTagName("div");
 		for (let i = 0; i < divObjs.length; i++) {
 			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
@@ -155,11 +155,11 @@ function verifyObsForm(f){
 		window.alert("Coordinate uncertainty (in meters) is required.");
 		return false;
     }
-    if(isNumeric(f.decimallatitude.value) === false){
+    if(isNumeric(f.decimallatitude.value) == false){
 		window.alert("Latitude must be in the decimal format with numeric characters only (34.5335). ");
 		return false;
     }
-    if(isNumeric(f.decimallongitude.value) === false){
+    if(isNumeric(f.decimallongitude.value) == false){
 		window.alert("Longitude must be in the decimal format with numeric characters only. Note that the western hemisphere is represented as a negitive number (-110.5335). ");
 		return false;
     }
@@ -167,11 +167,11 @@ function verifyObsForm(f){
 		window.alert("For North America, the decimal format of longitude should be negitive value. ");
 		return false;
     }
-    if(isNumeric(f.coordinateuncertaintyinmeters.value) === false){
+    if(isNumeric(f.coordinateuncertaintyinmeters.value) == false){
 		window.alert("Coordinate Uncertainty must be a numeric value only (in meters). ");
 		return false;
     }
-    if(isNumeric(f.minimumelevationinmeters.value) === false){
+    if(isNumeric(f.minimumelevationinmeters.value) == false){
 		window.alert("Elevation must be a numeric value only. ");
 		return false;
     }
@@ -189,7 +189,7 @@ function verifyDate(eventDateInput){
 	}
 
 	const dateArr = parseDate(dateStr);
-	if(dateArr['y'] === 0){
+	if(dateArr['y'] == 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 		return false;
 	}
@@ -206,8 +206,8 @@ function verifyDate(eventDateInput){
 
 		if(dateArr['d'] > 28){
 			if(dateArr['d'] > 31 
-				|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-				|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+				|| (dateArr['d'] == 30 && dateArr['m'] == 2)
+				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 				return false;
 			}
@@ -332,7 +332,7 @@ function isNumeric(sText){
 	if(sText){
 		const ValidChars = "0123456789-.";
 		let Char;
-		for(let i = 0; i < sText.length && IsNumber === true; i++){
+		for(let i = 0; i < sText.length && IsNumber == true; i++){
 		   Char = sText.charAt(i); 
 			if(ValidChars.indexOf(Char) === -1){
 				IsNumber = false;
