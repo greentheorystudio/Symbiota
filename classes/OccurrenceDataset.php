@@ -196,8 +196,7 @@ class OccurrenceDataset {
 			$this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
 			return false;
 		}
-		return true;
-		
+
 		$sql3 = 'DELETE FROM omoccurdatasetlink WHERE datasetid = '.$dsid;
 		if(!$this->conn->query($sql3)){
 			$this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;

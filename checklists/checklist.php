@@ -181,7 +181,7 @@ if($clArray['locality']){
 	<title><?php echo $DEFAULT_TITLE; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
     <link type="text/css" href="../css/bootstrap.css" rel="stylesheet" />
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
@@ -395,7 +395,7 @@ if($clArray['locality']){
 				<?php 
 				if($clArray['publication']){
 					$pubStr = $clArray['publication'];
-					if(strpos($pubStr, 'http') === 0 && !strpos($pubStr,' ')) {
+					if(strpos($pubStr, 'http') == 0 && !strpos($pubStr,' ')) {
                         $pubStr = '<a href="' . $pubStr . '" target="_blank">' . $pubStr . '</a>';
                     }
 					echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
@@ -465,7 +465,7 @@ if($clArray['locality']){
 										<?php 
 											$taxonAuthList = $clManager->getTaxonAuthorityList();
 											foreach($taxonAuthList as $taCode => $taValue){
-												echo "<option value='".$taCode."' " .($taCode === $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
+												echo "<option value='".$taCode."' " .($taCode == $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
 											}
 										?>
 									</select>
@@ -484,14 +484,14 @@ if($clArray['locality']){
 								<?php
                                 if($clValue){
                                     ?>
-									<div style='display:<?php echo ($showImages?"none":"block");?>' id="showvouchersdiv">
+									<div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showvouchersdiv">
 										<input data-role='none' name='showvouchers' type='checkbox' value='1' <?php echo ($showVouchers? 'checked' : ''); ?>/>
                                         Notes &amp; Vouchers
 									</div>
 								    <?php
                                 }
                                 ?>
-								<div style='display:<?php echo ($showImages?"none":"block");?>' id="showauthorsdiv">
+								<div style='display:<?php echo ($showImages? 'none' : 'block');?>' id="showauthorsdiv">
 									<input data-role='none' name='showauthors' type='checkbox' value='1' <?php echo ($showAuthors? 'checked' : ''); ?>/>
                                     Taxon Authors
 								</div>
@@ -653,14 +653,14 @@ if($clArray['locality']){
 							if($x>1) {
                                 echo ' | ';
                             }
-							if(($pageNumber) === $x){
+							if(($pageNumber) == $x){
 								echo '<b>';
 							}
 							else{
 								echo "<a href='checklist.php?pagenumber=".$x.$argStr."'>";
 							}
 							echo ($x);
-							if(($pageNumber) === $x){
+							if(($pageNumber) == $x){
 								echo '</b>';
 							}
 							else{
@@ -783,7 +783,7 @@ if($clArray['locality']){
 									$voucCnt = 0;
 									foreach($voucherArr[$tid] as $occid => $collName){
 										$voucStr .= ', ';
-										if($voucCnt === 4 && !$printMode){
+										if($voucCnt == 4 && !$printMode){
 											$voucStr .= '<a href="#" id="morevouch-'.$tid.'" onclick="return toggleVoucherDiv('.$tid. ')">more...</a>' .
 												'<span id="voucdiv-'.$tid.'" style="display:none;">';
 										}
@@ -887,7 +887,7 @@ if($clArray['locality']){
                         foreach($photogList as $name => $id){
                             if($name){
                                 $value = $id.'---'.$name;
-                                if((($i % 3) === 1)) {
+                                if((($i % 3) == 1)) {
                                     $innerHtml .= '</tr><tr>';
                                 }
                                 $innerHtml .= '<td style="width:190px;">';

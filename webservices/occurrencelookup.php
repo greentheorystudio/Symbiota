@@ -65,12 +65,10 @@ if(!$un && $uId){
     $un = $pHandler->getUserName($uId);
 }
 
-if($un && $token){
-    if($pHandler->setUserName($un)){
-        $pHandler->setToken($token);
-        $pHandler->setTokenAuthSql();
-        $pHandler->authenticate();
-    }
+if($un && $token && $pHandler->setUserName($un)) {
+    $pHandler->setToken($token);
+    $pHandler->setTokenAuthSql();
+    $pHandler->authenticate();
 }
 
 if($collid){

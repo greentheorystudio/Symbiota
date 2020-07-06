@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 	$("#catalognumber").keydown(function(event){
 		const evt = (event) ? event : ((event) ? event : null);
-		if ((evt.keyCode === 13)) {
+		if ((evt.keyCode == 13)) {
 			return false;
 		}
 	});
@@ -63,7 +63,7 @@ function verifySciName(){
 			$( "#tidinterpreted" ).val(data.tid);
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			if(data.status === 1){
+			if(data.status == 1){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 			else{
@@ -91,7 +91,7 @@ function localitySecurityCheck(f){
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data === "1"){
+			if(data == "1"){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 		});

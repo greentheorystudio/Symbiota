@@ -13,7 +13,7 @@ $(document).ready(function() {
 
 	$( "#taxagroup" )
 		.bind( "keydown", function( event ) {
-			if ( event.keyCode === $.ui.keyCode.TAB && $( this ).data( "ui-autocomplete" ).menu.active ) {
+			if ( event.keyCode == $.ui.keyCode.TAB && $( this ).data( "ui-autocomplete" ).menu.active ) {
 				event.preventDefault();
 			}
 		})

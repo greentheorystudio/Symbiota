@@ -104,8 +104,8 @@ $(document).ready(function() {
 			while (c.charAt(0) === ' ') {
 				c = c.substring(1);
 			}
-			if(c.indexOf(cookieName) === 0) {
-				if(c.substring(cookieName.length) === "1") $( 'input[name=localautodeactivated]' ).prop('checked', true);
+			if(c.indexOf(cookieName) == 0) {
+				if(c.substring(cookieName.length) == "1") $( 'input[name=localautodeactivated]' ).prop('checked', true);
 			}
 		}
 	}
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
 
 	$("#catalognumber").keydown(function(event){
-		if ((event.keyCode === 13)) {
+		if ((event.keyCode == 13)) {
 			return false;
 		}
 	});
@@ -233,7 +233,7 @@ $(document).ready(function() {
 	if(getCookie("autopstatus")) {
 		document.fullform.autoprocessingstatus.value = apstatus;
 	}
-	if(getCookie("autodupe") === 1) {
+	if(getCookie("autodupe") == 1) {
 		document.fullform.autodupe.checked = true;
 	}
 });
@@ -267,7 +267,7 @@ function verifyFullFormSciName(){
 			$( "#tidinterpreted" ).val(data.tid);
 			$( 'input[name=family]' ).val(data.family);
 			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			if(data.status === 1){
+			if(data.status == 1){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 			else{
@@ -296,7 +296,7 @@ function localitySecurityCheck(){
 			dataType: "json",
 			data: { tid: tidIn, state: stateIn }
 		}).done(function( data ) {
-			if(data === "1"){
+			if(data == "1"){
 				$( 'input[name=localitysecurity]' ).prop('checked', true);
 			}
 		});
@@ -304,7 +304,7 @@ function localitySecurityCheck(){
 }
 
 function localAutoChanged(cbObj){
-	if(cbObj.checked === true){
+	if(cbObj.checked == true){
 		$( "#fflocality" ).autocomplete( "option", "disabled", true );
 		$( "#fflocality" ).attr('autocomplete','on');
 		document.cookie = "localauto=1";
@@ -511,7 +511,7 @@ function parseVerbatimCoordinates(f,verbose){
 			const llStr = utm2LatLng(z, e, n, datum);
 			if(llStr){
 				const llArr = llStr.split(",");
-				if(llArr.length === 2){
+				if(llArr.length == 2){
 					latDec = Math.round(llArr[0]*1000000)/1000000;
 					lngDec = Math.round(llArr[1]*1000000)/1000000;
 				}
@@ -823,7 +823,7 @@ function eventDateChanged(eventDateInput){
 	const dateStr = eventDateInput.value;
 	if(dateStr !== ""){
 		const dateArr = parseDate(dateStr);
-		if(dateArr['y'] === 0){
+		if(dateArr['y'] == 0){
 			alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 			return false;
 		}
@@ -845,8 +845,8 @@ function eventDateChanged(eventDateInput){
 	
 			if(dateArr['d'] > 28){
 				if(dateArr['d'] > 31 
-					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+					|| (dateArr['d'] == 30 && dateArr['m'] == 2)
+					|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 					return false;
 				}
@@ -969,43 +969,6 @@ function endDateChanged(){
 		}
 	}
     return true;
-}
-
-function verbatimEventDateChanged(vedObj){
-	fieldChanged('verbatimeventdate');
-	const f = vedObj.form;
-	let vedValue = vedObj.value;
-	vedValue = vedValue.replace(" - "," to ");
-	vedValue = vedValue.replace(" / "," to ");
-	
-	if(vedValue.indexOf(" to ") > -1){
-		if(f.eventdate.value === ""){
-			const startDate = vedValue.substring(0, vedValue.indexOf(" to "));
-			const startDateArr = parseDate(startDate);
-			let mStr = startDateArr['m'];
-			if(mStr.length === 1){
-				mStr = "0" + mStr;
-			}
-			let dStr = startDateArr['d'];
-			if(dStr.length === 1){
-				dStr = "0" + dStr;
-			}
-			f.eventdate.value = startDateArr['y'] + "-" + mStr + "-" + dStr;
-			distributeEventDate(startDateArr['y'],mStr,dStr);
-		}
-		const endDate = vedValue.substring(vedValue.indexOf(" to ") + 4);
-		const endDateArr = parseDate(endDate);
-		try{
-			const eDate = new Date(endDateArr["y"], endDateArr["m"] - 1, endDateArr["d"]);
-			if(eDate instanceof Date){
-				const onejan = new Date(endDateArr["y"], 0, 1);
-				f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
-				fieldChanged("enddayofyear");
-			}
-		}
-		catch(e){
-		}
-	}
 }
 
 function parseDate(dateStr){

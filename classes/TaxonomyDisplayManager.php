@@ -366,7 +366,6 @@ class TaxonomyDisplayManager{
 			echo 'This may take a few minutes, but only needs to be done once.<br/>';
 			echo 'Do not terminate this process early.';
 			echo '</div>';
-			ob_flush();
 			flush();
 			(new TaxonomyUtilities)->buildHierarchyEnumTree($this->taxAuthId);
 		}

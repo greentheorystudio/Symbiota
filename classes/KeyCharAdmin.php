@@ -81,7 +81,7 @@ class KeyCharAdmin{
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->cid = $this->conn->insert_id;
-			if(($pArr['chartype'] == 'IN') || ($pArr['chartype'] == 'RN')){
+			if(($pArr['chartype'] === 'IN') || ($pArr['chartype'] === 'RN')){
 				//If new character is a numeric type, automatically load character sets with set values 
 				$sql2 = 'INSERT INTO kmcs(cid,cs,charstatename) '.
 					'VALUES('.$this->cid.',"+High","Upper value of unspecified range (could be µ+s.d., but not known)"),'.
@@ -211,7 +211,7 @@ class KeyCharAdmin{
 				($illustrationUrl?'"'.$illustrationUrl.'"':'NULL').','.
 				($description?'"'.$description.'"':'NULL').','.
 				($notes?'"'.$notes.'"':'NULL').','.
-				($sortSequence?$sortSequence:100).',"'.$un.'") ';
+				($sortSequence?:100).',"'.$un.'") ';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				trigger_error('ERROR: Creation of new character failed: '.$this->conn->error);
@@ -375,7 +375,7 @@ class KeyCharAdmin{
 		global $IMAGE_ROOT_PATH;
 		$statusStr = 'SUCCESS: image uploaded successful';
 		if(substr($IMAGE_ROOT_PATH,-1) !== '/') {
-			$IMAGE_ROOT_PATH .= "/";
+			$IMAGE_ROOT_PATH .= '/';
 		}
 		$IMAGE_ROOT_PATH .= 'ident/csimgs/';
 		$sql = 'SELECT url FROM kmcsimages WHERE csimgid = '.$csImgId;

@@ -137,12 +137,10 @@ class ImageShared{
 			if(file_exists($this->targetPath)){
 				$imgFileName = basename($_FILES[$imgFile]['name']);
 				$fileName = $this->cleanFileName($imgFileName);
-				if(is_writable($this->targetPath)){
-                    if(move_uploaded_file($_FILES[$imgFile]['tmp_name'], $this->targetPath.$fileName.$this->imgExt)){
-                        $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
-                        $this->imgName = $fileName;
-                        return true;
-                    }
+				if(is_writable($this->targetPath) && move_uploaded_file($_FILES[$imgFile]['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+                    $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
+                    $this->imgName = $fileName;
+                    return true;
                 }
 
 				$this->errArr[] = 'FATAL ERROR: unable to move image to target ('.$this->targetPath.$fileName.$this->imgExt.')';

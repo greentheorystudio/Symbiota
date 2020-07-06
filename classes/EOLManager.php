@@ -126,7 +126,6 @@ class EOLManager {
 		else{
 			echo '<li style="color:red;">ERROR attempting to open url: '.$url.'</li>';
 		}
-		ob_flush();
 		flush();
 		sleep(2);
 		return $retStatus;
@@ -298,7 +297,6 @@ class EOLManager {
 		else{
 			echo '<li style="color:red;">ERROR attempting to open url: '.$url.'</li>';
 		}
-		ob_flush();
 		flush();
 		sleep(1);
 		return $retStatus;
@@ -358,7 +356,6 @@ class EOLManager {
 					',"field image",40)';
 					if($this->conn->query($sql)){
 						echo '<li style="margin-left:10px;">Image mapped successfully</li>'."\n";
-						ob_flush();
 						flush();
 						$status = true;
 					}

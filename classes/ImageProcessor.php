@@ -117,7 +117,7 @@ class ImageProcessor {
 			while(strtotime($lastRunDate) < time()){
 				$url = $iPlantDataUrl.'image?value=*'.$iPlantSourcePath.'*&tag_query=upload_datetime:'.$lastRunDate.'*';
 				$contents = @file_get_contents($url);
-				if(!empty($http_response_header)) {
+				if($http_response_header) {
 					$result = $http_response_header;
 					if(strpos($result[0],'200') !== false) {
 						try {
@@ -488,7 +488,7 @@ class ImageProcessor {
 								break;
 							}
 
-							if($fileExt === 'jpg' && in_array($fnExt,$highResList)) {
+							if($fileExt === 'jpg' && in_array($fnExt, $highResList, true)) {
 								$this->conn->query('DELETE FROM images WHERE imgid = '.$imgId);
 							}
 						}
@@ -631,7 +631,6 @@ class ImageProcessor {
 		}
 		if($this->logMode === 1 || $this->logMode === 3){
 			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
-			ob_flush();
 			flush();
 		}
 	}

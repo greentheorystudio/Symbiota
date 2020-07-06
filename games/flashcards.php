@@ -22,7 +22,7 @@ $sciArr = array();
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Flash Cards</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	</script>
@@ -97,7 +97,7 @@ $sciArr = array();
             const idIndexSelected = idSelect.value;
             if(idIndexSelected > 0){
 				totalTried++;
-				if(idIndexSelected === activeIndex){
+				if(idIndexSelected == activeIndex){
 					alert("Correct! Try another");
 					document.getElementById("numcomplete").innerHTML = (sciNameArr.length - toBeIdentified.length).toString();
 					if(firstTry){

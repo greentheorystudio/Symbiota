@@ -530,7 +530,7 @@ class SpecLoans{
 		$applyTask = $reqArr['applytask'];
 		$loanId = $reqArr['loanid'];
 		if($occidArr){
-			if($applyTask == 'delete'){
+			if($applyTask === 'delete'){
 				$sql = 'DELETE FROM omoccurloanslink WHERE loanid = '.$loanId.' AND (occid IN('.implode(',',$occidArr).')) ';
 				$this->conn->query($sql);
 			}

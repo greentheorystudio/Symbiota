@@ -28,8 +28,8 @@ else if($collId){
         $isEditor = true;
     }
 }
-else{
-    if(array_key_exists('Taxonomy',$USER_RIGHTS)) $isEditor = true;
+else if(array_key_exists('Taxonomy',$USER_RIGHTS)) {
+	$isEditor = true;
 }
 
 $status = '';
@@ -38,7 +38,7 @@ $status = '';
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Taxonomic Name Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<?php

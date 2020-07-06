@@ -73,7 +73,7 @@ class ExsiccatiManager {
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				if($sortBy === 1) {
+				if($sortBy == 1) {
 					if($r->abbreviation) {
                         $titleStr = (strlen($r->abbreviation) > 100 ? substr($r->abbreviation, 0, 100) . '...' : $r->abbreviation);
                     }
@@ -581,7 +581,7 @@ class ExsiccatiManager {
 						}
 					}
 					else{
-						$statusStr .= '<b/>ERROR transferring record #'.$occid.': '.$this->conn->error;
+						$statusStr .= 'ERROR transferring record #'.$occid.': '.$this->conn->error;
 					}
 				}
 			}
@@ -699,7 +699,7 @@ class ExsiccatiManager {
 	public function getExsTableRow($occid,$oArr,$omenid,$targetCollid): string
     {
 		$isTarget = false;
-		if($targetCollid === $oArr['collid']) {
+		if($targetCollid == $oArr['collid']) {
             $isTarget = true;
         }
 		$retStr = '<tr>';

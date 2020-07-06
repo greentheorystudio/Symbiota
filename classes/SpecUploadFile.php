@@ -51,7 +51,7 @@ class SpecUploadFile extends SpecUploadBase{
 						if(strpos($fileName, '._') !== 0){
 							$ext = strtolower(substr(strrchr($fileName, '.'), 1));
 							if($ext === 'csv' || $ext === 'txt'){
-								if($this->uploadType !== $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
+								if($this->uploadType != $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
 									$this->ulFileName = $fileName;
 									$zip->extractTo($this->uploadTargetPath,$fileName);
 									$zip->close();
@@ -116,11 +116,11 @@ class SpecUploadFile extends SpecUploadBase{
 						$recMap[$symbField] = $valueStr;
 					}
 				}
-				if($this->uploadType === $this->SKELETAL && !$recMap['catalognumber']){
+				if($this->uploadType == $this->SKELETAL && !$recMap['catalognumber']){
 					unset($recMap);
 					continue;
 				}
-				if($this->uploadType === $this->SKELETAL && (!array_key_exists('recordenteredby', $recMap) || !$recMap['recordenteredby'])){
+				if($this->uploadType == $this->SKELETAL && (!array_key_exists('recordenteredby', $recMap) || !$recMap['recordenteredby'])){
 					$recMap['recordenteredby'] = 'preprocessed';
 				}
 				$this->loadRecord($recMap);
@@ -134,7 +134,7 @@ class SpecUploadFile extends SpecUploadBase{
 
 			$this->cleanUpload();
 
-			if($this->uploadType === $this->NFNUPLOAD){
+			if($this->uploadType == $this->NFNUPLOAD){
 				$this->nfnIdentifier = 'url';
 				$testSql = 'SELECT tempfield01, tempfield02 FROM uploadspectemp WHERE tempfield02 IS NOT NULL AND collid IN('.$this->collId.') LIMIT 1';
 				$testRS = $this->conn->query($testSql);

@@ -22,7 +22,7 @@ if(!$clName){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -117,7 +117,6 @@ if(!$clName){
         let sFont = 0;
         let lFont = 0;
         let wildCardArr = [];
-        const ns = document.getElementById&&!document.all;
 
         const step = 5;
         let repeat = "";
@@ -190,7 +189,7 @@ if(!$clName){
 					};
 				}
 			
-				if(i === tds.length-1){
+				if(i == tds.length-1){
 					tds[i].getElementsByTagName("span")[0].onclick = function(){
 					    wildCard();
 					};
@@ -201,23 +200,23 @@ if(!$clName){
 		}
 
 		function mOver(setId,imgId,imgOn){
-			if(setId === imgSetId && running === 0){
+			if(setId == imgSetId && running == 0){
 				(lastImgId !== imgId?document.getElementById(imgId).src = imgOn:"");
 			}
 		}
 
 		function mOut(setId,imgId,imgOff){
-			if(setId === imgSetId && running === 0){
+			if(setId == imgSetId && running == 0){
 				(lastImgId !== imgId?document.getElementById(imgId).src = imgOff:"");
 			}
 		}
 
 		function mClick(setId,imgId,imgVal,imgOn,imgOff){
-			if(running === 1) {
+			if(running == 1) {
 			    return;
 			}
 
-            if (setId === imgSetId) {
+            if (setId == imgSetId) {
                 document.getElementById(imgId).src = imgOn;
 
                 if (lastImgId !== "") {
@@ -229,7 +228,7 @@ if(!$clName){
                 avatar = imgVal;
             }
 		
-			if(setId === levelSet){
+			if(setId == levelSet){
 				document.getElementById(imgId).src = imgOn;
 
 				if (lastLevelId !== ""){
@@ -255,7 +254,7 @@ if(!$clName){
 
                 if (!firstRun) {
                     for (let j = 0; j < selectedNums.length; j++) {
-                        if (rndnum === selectedNums[j]) {
+                        if (rndnum == selectedNums[j]) {
                             wordChosen = true;
                             i--;
                         }
@@ -272,7 +271,7 @@ if(!$clName){
 		}
 
 		function newWord(){
-			if(wordCount === selectedNums.length){
+			if(wordCount == selectedNums.length){
 				getWordList();
 				return;
 			}
@@ -343,7 +342,7 @@ if(!$clName){
 				}
 			}
 			document.getElementById("attempt").innerHTML=temp;
-			if (firstload === "1"){
+			if (firstload == "1"){
 				firstload = "0";
 			}
             last = temp;
@@ -364,7 +363,7 @@ if(!$clName){
 		}
 
 		function newGame (){
-			if (gameover === 0) {
+			if (gameover == 0) {
 			    played++;
 			}
 			document.getElementById("plays").innerHTML = played.toString();
@@ -374,44 +373,44 @@ if(!$clName){
 		}
 
 		function level(){
-			if(running === 1){
+			if(running == 1){
 			    return;
 			}
             guessCount = levelSetVal;
 
-            if(avatar === 5){
-				if(guessCount === 12)
+            if(avatar == 5){
+				if(guessCount == 12)
 					document.getElementById("hpic").src = "../images/games/namegame/flower12.gif";
-				else if(guessCount === 6)
+				else if(guessCount == 6)
 					document.getElementById("hpic").src = "../images/games/namegame/flower6.gif";
-				else if(guessCount === 3)
+				else if(guessCount == 3)
 					document.getElementById("hpic").src = "../images/games/namegame/flower3.gif";
 			}
-			else if(avatar === 6){
-				if(guessCount === 12)
+			else if(avatar == 6){
+				if(guessCount == 12)
 					document.getElementById("hpic").src = "../images/games/namegame/plant12.gif";
-				else if(guessCount === 6)
+				else if(guessCount == 6)
 					document.getElementById("hpic").src = "../images/games/namegame/plant7.gif";
-				else if(guessCount === 3)
+				else if(guessCount == 3)
 					document.getElementById("hpic").src = "../images/games/namegame/plant4.gif";
 			}
-			else if(avatar === 7){
-				if(guessCount === 12)
+			else if(avatar == 7){
+				if(guessCount == 12)
 					document.getElementById("hpic").src = "../images/games/namegame/plant12.gif";
-				else if(guessCount === 6)
+				else if(guessCount == 6)
 					document.getElementById("hpic").src = "../images/games/namegame/tempcover6.jpg";
-				else if(guessCount === 3)
+				else if(guessCount == 3)
 					document.getElementById("hpic").src = "../images/games/namegame/tempcover3.jpg";
 			}
-			else if(avatar === 8){
-				if(guessCount === 12)
+			else if(avatar == 8){
+				if(guessCount == 12)
 					document.getElementById("hpic").src = "../images/games/namegame/apple_12.gif";
-				else if(guessCount === 6)
+				else if(guessCount == 6)
 					document.getElementById("hpic").src = "../images/games/namegame/apple_6.gif";
-				else if(guessCount === 3)
+				else if(guessCount == 3)
 					document.getElementById("hpic").src = "../images/games/namegame/apple_6.gif";
 			}
-			else if(guessCount === 12){
+			else if(guessCount == 12){
 				document.getElementById("hpic").src = "../images/games/namegame/spacer.gif";
 			}
 			else if((avatar >= 0)&&(avatar <= 4)){
@@ -425,7 +424,7 @@ if(!$clName){
 		function getKey(e){
 			let myNewString;
             running = 1;
-            let keyCode = (!ns) ? event.keyCode : e.which;
+            let keyCode = e.keyCode;
             const chkChar = e;
             let temp = "";
 
@@ -439,22 +438,22 @@ if(!$clName){
                 currentChar = chkChar.charCodeAt(0);
             }
 
-			if(currentChar === 13){
+			if(currentChar == 13){
 				newWord();
 				return;
 			}
 
-			if(wordChosen === 0){
+			if(wordChosen == 0){
 			    return;
 			}
 
 			for(let k=0; k<wildCardArr.length; k++){
-				if(wildCardArr[k] === String.fromCharCode(currentChar)){
+				if(wildCardArr[k] == String.fromCharCode(currentChar)){
 					wildCardArr.splice(k, 1);
 				}
 			}
 
-			if(lastChar === currentChar||currentChar<44||currentChar>46&&currentChar<97||currentChar>122){
+			if(lastChar == currentChar || currentChar < 44|| currentChar > 46 && currentChar < 97 || currentChar > 122){
 				return;
 			}
 
@@ -466,7 +465,7 @@ if(!$clName){
             document.getElementById(String.fromCharCode(currentChar)).style.visibility = "hidden";
 
 			for(let n=0; n<last.length; n++){
-				if(String.fromCharCode(currentChar) === chosenWord.charAt(n)){
+				if(String.fromCharCode(currentChar) == chosenWord.charAt(n)){
 					temp += chosenWord.charAt(n);
 					correct = true;
 				}
@@ -475,7 +474,7 @@ if(!$clName){
 				}
 			}
 
-			if(correct === false && guessCount > 0){
+			if(correct == false && guessCount > 0){
 				guessCount--;
 				document.getElementById("hpic").src = hangpics[avatar][guessCount];
 			}
@@ -486,7 +485,7 @@ if(!$clName){
 			last = temp;
 			lastChar = currentChar;
 			
-			if(guessCount === 0){
+			if(guessCount == 0){
 				wordChosen = 0;
 				gameover = 1;
 				document.getElementById("counter").innerHTML = "<div id='rw' style='width:190px;text-align:center;' onmouseover=\"this.className='buttonover'\" onmouseout=\"this.className='buttonout'\" onmousedown=\"this.className='buttondown'\" onmouseup=\"this.className='buttonup'\" class='buttonout' onclick='showWord()'><b>Reveal the Species</b></div>";
@@ -499,7 +498,7 @@ if(!$clName){
 				gameEnd();
 			}
 
-			if(temp === chosenWord){
+			if(temp == chosenWord){
 				wordChosen = 0;
 				gameover = 1;
 				played++;
@@ -519,7 +518,7 @@ if(!$clName){
 				gameEnd();
 			}
 			
-			if(guessCount === 1){
+			if(guessCount == 1){
 				document.getElementById("showhint").disabled=true;
 				document.getElementById("?").style.visibility="hidden";
 			}
@@ -530,7 +529,7 @@ if(!$clName){
 			if(guessCount <= 1){
 			    return;
 			}
-			if(hintShown === 0){
+			if(hintShown == 0){
 				guessCount--;
 				hintShown = 1;
 				document.getElementById("hintdisplay").innerHTML = mainList[currentNum][1];
@@ -541,7 +540,7 @@ if(!$clName){
 		}
 
 		function showWord(){
-			if(wordChosen === 0 && guessCount !== 0){
+			if(wordChosen == 0 && guessCount != 0){
 			    return;
 			}
 			if (secondWord !== '') {
@@ -580,24 +579,24 @@ if(!$clName){
             for (let i = 0; i < str.length; i++) {
                 isIn = 0;
                 for (let j = 0; j < wildCardArr.length; j++) {
-                    if (str.charAt(i) === wildCardArr[j]) {
+                    if (str.charAt(i) == wildCardArr[j]) {
                         isIn = 1;
                     }
                 }
-                if (isIn === 0 && str.charAt(i) !== " ") {
+                if (isIn == 0 && str.charAt(i) !== " ") {
                     wildCardArr[wildCardArr.length] = str.charAt(i);
                 }
             }
 		}
 
 		function wildCard(){
-			if(wildCardArr.length === 0||guessCount <= 1){
+			if(wildCardArr.length == 0||guessCount <= 1){
 			    return;
 			}
 			wildCount++;
             const rdm = Math.floor(Math.random() * wildCardArr.length);
             const wildCardChar = wildCardArr[rdm]; //.splice(rdm, 1).toString()
-			if(wildCount === maxWildCards){
+			if(wildCount == maxWildCards){
 				document.getElementById("?").style.visibility="hidden";
 			}
 			guessCount--;

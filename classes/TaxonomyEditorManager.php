@@ -479,7 +479,8 @@ class TaxonomyEditorManager{
 			$parCnt++;
 		}while($targetTid && $parCnt < 16);
 
-		$trueHierarchyStr = implode(",",array_reverse($parentArr));
+        /** @noinspection UnNecessaryDoubleQuotesInspection */
+        $trueHierarchyStr = implode(',',array_reverse($parentArr));
 		if($parentArr !== $this->hierarchyArr){
 			$branchTidArr = array($tid);
 			$sql2 = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$tid;
@@ -537,7 +538,7 @@ class TaxonomyEditorManager{
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.$this->cleanInStr($dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.$this->cleanInStr($dataArr['author']).'"':'NULL').','.
-			($dataArr['rankid']?$dataArr['rankid']:'NULL').','.
+			($dataArr['rankid']?:'NULL').','.
 			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
 			$this->cleanInStr($dataArr['unitname1']).'",'.
 			($dataArr['unitind2']?'"'.$this->cleanInStr($dataArr['unitind2']).'"':'NULL').','.
@@ -600,14 +601,14 @@ class TaxonomyEditorManager{
 				}
 			}
 			else{
-				return "ERROR loading taxon due to missing parentTid";
+				return 'ERROR loading taxon due to missing parentTid';
 			}
 		 	
 			$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
 			if($dataArr['securitystatus'] === 1) {
 				$sql1 .= ',o.localitysecurity = 1 ';
 			}
-			$sql1 .= 'WHERE (o.sciname = "'.$this->cleanInStr($dataArr["sciname"]).'") ';
+			$sql1 .= 'WHERE (o.sciname = "'.$this->cleanInStr($dataArr['sciname']).'") ';
 			if(!$this->conn->query($sql1)){
 				echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name: '.$this->conn->error;
 			}

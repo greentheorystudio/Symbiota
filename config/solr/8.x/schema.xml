@@ -143,6 +143,7 @@
     <field name="locality" type="text_general" indexed="true" stored="true"/>
     <field name="localitySecurity" type="pint" default="0" indexed="true" stored="true"/>
     <field name="localitySecurityReason" type="string" indexed="true" stored="true"/>
+    <field name="occurrenceRemarks" type="text_general" indexed="true" stored="true"/>
     <field name="decimalLatitude" type="pdouble" indexed="true" stored="true"/>
     <field name="decimalLongitude" type="pdouble" indexed="true" stored="true"/>
     <field name="geo" type="location_rpt" indexed="true" stored="true" required="false" multiValued="false" />

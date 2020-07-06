@@ -44,7 +44,8 @@
 .o2k7Skin .mceButtonDisabled .mceIcon {opacity:0.3; -ms-filter:'alpha(opacity=30)'; filter:alpha(opacity=30)}
 .o2k7Skin .mceButtonLabeled {width:auto}
 .o2k7Skin .mceButtonLabeled span.mceIcon {float:left}
-.o2k7Skin span.mceButtonLabel {display:block; font-size:10px; padding:4px 6px 0 22px; font-family:Tahoma,Verdana,Arial,Helvetica}
+.o2k7Skin span.mceButtonLabel {display:block; font-size:10px; padding:4px 6px 0 22px;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif}
 .o2k7Skin .mceButtonDisabled .mceButtonLabel {color:#888}
 
 /* Separator */
@@ -60,7 +61,8 @@
 .o2k7Skin .mceListBoxDisabled .mceText {color:gray}
 .o2k7Skin .mceListBoxMenu {overflow:auto; overflow-x:hidden; margin-left:3px}
 .o2k7Skin .mceOldBoxModel .mceListBox .mceText {height:22px}
-.o2k7Skin select.mceListBox {font-family:Tahoma,Verdana,Arial,Helvetica; font-size:12px; border:1px solid #b3c7e1; background:#FFF;}
+.o2k7Skin select.mceListBox {
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; font-size:12px; border:1px solid #b3c7e1; background:#FFF;}
 
 /* SplitButton */
 .o2k7Skin .mceSplitButton, .o2k7Skin .mceSplitButton a, .o2k7Skin .mceSplitButton span {display:block; height:22px; direction:ltr}
@@ -79,10 +81,12 @@
 .o2k7Skin .mceColorSplitMenu td {padding:2px}
 .o2k7Skin .mceColorSplitMenu a {display:block; width:9px; height:9px; overflow:hidden; border:1px solid #808080}
 .o2k7Skin .mceColorSplitMenu td.mceMoreColors {padding:1px 3px 1px 1px}
-.o2k7Skin .mceColorSplitMenu a.mceMoreColors {width:100%; height:auto; text-align:center; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; line-height:20px; border:1px solid #FFF}
+.o2k7Skin .mceColorSplitMenu a.mceMoreColors {width:100%; height:auto; text-align:center;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; font-size:11px; line-height:20px; border:1px solid #FFF}
 .o2k7Skin .mceColorSplitMenu a.mceMoreColors:hover {border:1px solid #0A246A; background-color:#B6BDD2}
 .o2k7Skin a.mceMoreColors:hover {border:1px solid #0A246A}
-.o2k7Skin .mceColorPreview {margin-left:2px; width:16px; height:4px; overflow:hidden; background:#9a9b9a;overflow:hidden}
+.o2k7Skin .mceColorPreview {margin-left:2px; width:16px; height:4px; overflow:hidden; background:#9a9b9a;
+}
 .o2k7Skin .mce_forecolor span.mceAction, .o2k7Skin .mce_backcolor span.mceAction {height:15px;overflow:hidden}
 
 /* Menu */
@@ -93,9 +97,12 @@
 .o2k7Skin .mceMenu a, .o2k7Skin .mceMenu span, .o2k7Skin .mceMenu {display:block}
 .o2k7Skin .mceMenu td {height:20px}
 .o2k7Skin .mceMenu a {position:relative;padding:3px 0 4px 0}
-.o2k7Skin .mceMenu .mceText {position:relative; display:block; font-family:Tahoma,Verdana,Arial,Helvetica; color:#000; cursor:default; margin:0; padding:0 25px 0 25px; display:block}
+.o2k7Skin .mceMenu .mceText {position:relative; display:block;
+    font-family: Tahoma, Verdana, Arial, Helvetica, serif; color:#000; cursor:default; margin:0; padding:0 25px 0 25px;
+}
 .o2k7Skin .mceMenu span.mceText, .o2k7Skin .mceMenu .mcePreview {font-size:11px}
-.o2k7Skin .mceMenu pre.mceText {font-family:Monospace}
+.o2k7Skin .mceMenu pre.mceText {
+    font-family: Monospace, serif}
 .o2k7Skin .mceMenu .mceIcon {position:absolute; top:0; left:0; width:22px;}
 .o2k7Skin .mceMenu .mceMenuItemEnabled a:hover, .o2k7Skin .mceMenu .mceMenuItemActive {background-color:#dbecf3}
 .o2k7Skin td.mceMenuItemSeparator {background:#DDD; height:1px}

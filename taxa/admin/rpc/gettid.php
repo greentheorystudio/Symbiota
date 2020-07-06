@@ -43,5 +43,5 @@ if($retArr) {
     echo implode(',', $retArr);
 }
 else {
-    echo false;
+    echo 0;
 }

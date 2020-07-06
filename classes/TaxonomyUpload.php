@@ -182,7 +182,6 @@ class TaxonomyUpload{
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 === 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
-									ob_flush();
 									flush();
 								}
 							}
@@ -652,7 +651,9 @@ class TaxonomyUpload{
 	private function transferVernaculars($secondRound = 0): void
 	{
 		$sql = 'SELECT tid, vernacular, vernlang, source FROM uploadtaxa WHERE tid IS NOT NULL AND Vernacular IS NOT NULL ';
-		if($secondRound) $sql .= 'AND tidaccepted IS NOT NULL';
+		if($secondRound) {
+            $sql .= 'AND tidaccepted IS NOT NULL';
+        }
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()){
 			$vernArr = array();
@@ -895,7 +896,6 @@ class TaxonomyUpload{
 	{
 		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
 			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
-			ob_flush();
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {

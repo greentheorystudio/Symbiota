@@ -1031,7 +1031,7 @@ class ImageLocalProcessor {
 								}
 							}
 							if(array_key_exists('ometid',$recMap) && $recMap['ometid']){
-								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber'])," #num");
+								$numStr = trim($this->conn->real_escape_string($recMap['exsiccatinumber']), ' #num');
 								$sql = 'SELECT omenid FROM omexsiccatinumbers '.
 									'WHERE ometid = ('.$recMap['ometid'].') AND (exsnumber = "'.$numStr.'")';
 								$rs = $this->conn->query($sql);
@@ -1224,7 +1224,7 @@ class ImageLocalProcessor {
 			if(true){
 				$fileName = substr($filePath,strrpos($filePath,'/')).'.orig_'.time();
 				if(!file_exists($this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !mkdir($concurrentDirectory = $this->targetPathBase . $this->targetPathFrag . 'orig_skeletal') && !is_dir($concurrentDirectory)) {
-					throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+					throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 				}
 				if(!rename($filePath,$this->targetPathBase.$this->targetPathFrag.'orig_skeletal'.$fileName)){
 					$this->logOrEcho('ERROR: unable to move (' .$filePath. ') ',1);
@@ -1753,7 +1753,6 @@ class ImageLocalProcessor {
 		}
 		if($this->logMode === 1 || $this->logMode === 3){
 			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
-			@ob_flush();
 			@flush();
 		}
 	}

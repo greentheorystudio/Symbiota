@@ -33,7 +33,7 @@ function toggle(target){
 		const divs = document.getElementsByTagName("div");
 		for (let h = 0; h < divs.length; h++) {
 			const divObj = divs[h];
-			if(divObj.className === target){
+			if(divObj.className == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
@@ -108,7 +108,7 @@ function generateNewId(collId,targetObj,idType){
 	}
 	const url = "rpc/generatenextid.php?idtype=" + idType + "&collid=" + collId;
 	xmlHttp.onreadystatechange=function(){
-		if(xmlHttp.readyState === 4 && xmlHttp.status === 200){
+		if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
 			targetObj.value = xmlHttp.responseText;
 		}
 	};
@@ -117,7 +117,7 @@ function generateNewId(collId,targetObj,idType){
 }
 
 function verfifyLoanOutAddForm(f){
-	if(f.reqinstitution.options[f.reqinstitution.selectedIndex].value === 0){
+	if(f.reqinstitution.options[f.reqinstitution.selectedIndex].value == 0){
 		alert("Select an institution");
 		return false;
 	}
@@ -129,7 +129,7 @@ function verfifyLoanOutAddForm(f){
 }
 
 function verifyLoanInAddForm(f){
-	if(f.iidowner.options[f.iidowner.selectedIndex].value === 0){
+	if(f.iidowner.options[f.iidowner.selectedIndex].value == 0){
 		alert("Select an institution");
 		return false;
 	}
@@ -141,7 +141,7 @@ function verifyLoanInAddForm(f){
 }
 
 function verfifyExchangeAddForm(f){
-	if(f.iid.options[f.iid.selectedIndex].value === 0){
+	if(f.iid.options[f.iid.selectedIndex].value == 0){
 		alert("Select an institution");
 		return false;
 	}
@@ -202,9 +202,9 @@ function addSpecimen(f,splist){
 		url = url + "&collid=" + collid;
 		xmlHttp.onreadystatechange = function () {
 			let responseCode;
-			if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+			if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 				responseCode = xmlHttp.responseText;
-				if (responseCode === "0") {
+				if (responseCode == "0") {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "block";
 					document.getElementById("addspecerr2").style.display = "none";
@@ -212,7 +212,7 @@ function addSpecimen(f,splist){
 					setTimeout(function () {
 						document.getElementById("addspecerr1").style.display = "none";
 					}, 750);
-				} else if (responseCode === "1") {
+				} else if (responseCode == "1") {
 					document.getElementById("addspecsuccess").style.display = "block";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "none";
@@ -220,11 +220,11 @@ function addSpecimen(f,splist){
 					setTimeout(function () {
 						document.getElementById("addspecsuccess").style.display = "none";
 					}, 750);
-					if (splist === 0) {
+					if (splist == 0) {
 						document.getElementById("speclistdiv").style.display = "block";
 						document.getElementById("nospecdiv").style.display = "none";
 					}
-				} else if (responseCode === "2") {
+				} else if (responseCode == "2") {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "block";
@@ -232,7 +232,7 @@ function addSpecimen(f,splist){
 					setTimeout(function () {
 						document.getElementById("addspecerr2").style.display = "none";
 					}, 750);
-				} else if (responseCode === "3") {
+				} else if (responseCode == "3") {
 					document.getElementById("addspecsuccess").style.display = "none";
 					document.getElementById("addspecerr1").style.display = "none";
 					document.getElementById("addspecerr2").style.display = "none";
@@ -297,7 +297,7 @@ function verifyDate(eventDateInput){
 	if(dateStr === "") return true;
 
 	const dateArr = parseDate(dateStr);
-	if(dateArr['y'] === 0){
+	if(dateArr['y'] == 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 		return false;
 	}
@@ -315,8 +315,8 @@ function verifyDate(eventDateInput){
 
 		if(dateArr['d'] > 28){
 			if(dateArr['d'] > 31 
-				|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-				|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+				|| (dateArr['d'] == 30 && dateArr['m'] == 2)
+				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 				return false;
 			}
@@ -342,7 +342,7 @@ function verifyDueDate(eventDateInput){
 	}
 
 	const dateArr = parseDate(dateStr);
-	if(dateArr['y'] === 0){
+	if(dateArr['y'] == 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
 		return false;
 	}
@@ -360,8 +360,8 @@ function verifyDueDate(eventDateInput){
 
 		if(dateArr['d'] > 28){
 			if(dateArr['d'] > 31 
-				|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-				|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
+				|| (dateArr['d'] == 30 && dateArr['m'] == 2)
+				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
 				return false;
 			}

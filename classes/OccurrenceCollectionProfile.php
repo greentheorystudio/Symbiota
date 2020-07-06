@@ -245,7 +245,8 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function submitCollEdits($postArr){
+	public function submitCollEdits($postArr): string
+    {
         $status = 'Edits saved';
 		if($this->collid){
 			$instCode = $this->cleanInStr($postArr['institutioncode']);
@@ -429,10 +430,8 @@ class OccurrenceCollectionProfile {
 		$fileName .= $imgExt;
 
 		$fullUrl = '';
-		if(is_writable($targetPath)){
-            if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
-                $fullUrl = $urlBase . $fileName;
-            }
+		if(is_writable($targetPath) && move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath . $fileName)) {
+            $fullUrl = $urlBase . $fileName;
         }
 
 		return $fullUrl;
@@ -750,19 +749,16 @@ class OccurrenceCollectionProfile {
 			$occurMaintenance->setVerbose(true);
 			echo '<li>General cleaning in preparation for collecting stats...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->generalOccurrenceCleaning($this->collid);
 		if($verbose){
 			echo '<li>Updating statistics...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->updateCollectionStats($this->collid, true);
 		if($verbose){
 			echo '<li>Finished updating collection statistics</li>';
 			flush();
-			ob_flush();
 		}
 	}
 
@@ -830,7 +826,6 @@ class OccurrenceCollectionProfile {
 		echo 'Updating collection statistics...';
 		echo '<ul>';
 		flush();
-		ob_flush();
 		$occurMaintenance = new OccurrenceMaintenance();
 		$sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN('.$collId.') ';
 		//echo $sql;
@@ -838,14 +833,12 @@ class OccurrenceCollectionProfile {
 		while($r = $rs->fetch_object()){
 			echo '<li style="margin-left:15px;">Cleaning statistics for: '.$r->collectionname.'</li>';
 			flush();
-			ob_flush();
 			$occurMaintenance->updateCollectionStats($r->collid, true);
 		}
 		$rs->free();
 		echo '<li>Statistics update complete!</li>';
 		echo '</ul>';
 		flush();
-		ob_flush();
 	}
 
 	public function runStatistics($collId): array

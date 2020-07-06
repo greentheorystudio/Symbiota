@@ -109,7 +109,7 @@ class SiteMapManager{
 		$sql = 'SELECT p.pid, p.projname, p.managers FROM fmprojects p '.
 			'WHERE p.ispublic = 1 ';
 		if($projArr){
-			$sql .= 'AND (p.pid IN('.implode(',',$projArr).')) ';
+			$sql .= 'AND (p.pid IN('.implode((array)',',$projArr).')) ';
 		}
 		$sql .= 'ORDER BY p.projname';
 		//echo '<div>'.$sql.'</div>';

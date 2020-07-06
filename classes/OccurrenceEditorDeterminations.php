@@ -23,7 +23,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retArr[$detId]['sciname'] = $this->cleanOutStr($row->sciname);
 			$retArr[$detId]['scientificnameauthorship'] = $this->cleanOutStr($row->scientificNameAuthorship);
 			$retArr[$detId]['identificationqualifier'] = $this->cleanOutStr($row->identificationQualifier);
-			if($row->iscurrent === 1) {
+			if($row->iscurrent == 1) {
 				$hasCurrent = 1;
 			}
 			$retArr[$detId]['iscurrent'] = $row->iscurrent;
@@ -35,7 +35,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$result->free();
 		if(!$hasCurrent){
 			foreach($retArr as $detId => $detArr){
-				if($detArr['identifiedby'] === $identBy && $detArr['dateidentified'] === $dateIdent && $detArr['sciname'] === $sciName){
+				if($detArr['identifiedby'] == $identBy && $detArr['dateidentified'] == $dateIdent && $detArr['sciname'] == $sciName){
 					$retArr[$detId]['iscurrent'] = '1';
 					break;
 				}
@@ -58,10 +58,10 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if(!array_key_exists('printqueue',$detArr)) {
 			$detArr['printqueue'] = 0;
 		}
-		if($detArr['makecurrent'] === 1 && $isEditor < 3){
+		if($detArr['makecurrent'] == 1 && $isEditor < 3){
 			$isCurrent = 1;
 		}
-		if($isEditor === 3){
+		if($isEditor == 3){
 			$status = 'Determination has been added successfully, but is pending approval before being activated';
 		}
 		$sortSeq = 1;
@@ -76,7 +76,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		}
 		$sciname = $this->cleanInStr($detArr['sciname']);
 		$notes = $this->cleanInStr($detArr['identificationremarks']);
-		if($isEditor === 3 && is_numeric($detArr['confidenceranking'])) {
+		if($isEditor == 3 && is_numeric($detArr['confidenceranking'])) {
 			$notes .= ($notes?'; ':'').'ConfidenceRanking: '.$detArr['confidenceranking'];
 		}
 		$sql = 'INSERT INTO omoccurdeterminations(occid, identifiedBy, dateIdentified, sciname, scientificNameAuthorship, '.
@@ -84,7 +84,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			'VALUES ('.$this->occid.',"'.$this->cleanInStr($detArr['identifiedby']).'","'.$this->cleanInStr($detArr['dateidentified']).'","'.
 			$sciname.'",'.($detArr['scientificnameauthorship']?'"'.$this->cleanInStr($detArr['scientificnameauthorship']).'"':'NULL').','.
 			($detArr['identificationqualifier']?'"'.$this->cleanInStr($detArr['identificationqualifier']).'"':'NULL').','.
-			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor === 3?0:1).','.
+			$detArr['makecurrent'].','.$detArr['printqueue'].','.($isEditor == 3?0:1).','.
 			($detArr['identificationreferences']?'"'.$this->cleanInStr($detArr['identificationreferences']).'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').','.
 			$sortSeq.')';
@@ -119,7 +119,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				if($tidToAdd){
 					$sqlSs = 'SELECT securitystatus FROM taxa WHERE (tid = '.$tidToAdd.')';
 					$rsSs = $this->conn->query($sqlSs);
-					if(($rSs = $rsSs->fetch_object()) && $rSs->securitystatus === 1) {
+					if(($rSs = $rsSs->fetch_object()) && $rSs->securitystatus == 1) {
 						$sStatus = 1;
 					}
 					$rsSs->free();
@@ -158,7 +158,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 						$status .= '; ' . $idStatus;
 					}
 				}
-				$sql = 'UPDATE images SET tid = '.($tidToAdd?$tidToAdd:'NULL').' WHERE (occid = '.$this->occid.')';
+				$sql = 'UPDATE images SET tid = '.($tidToAdd?:'NULL').' WHERE (occid = '.$this->occid.')';
 				//echo $sql;
 				if(!$this->conn->query($sql)){
 					$status = 'ERROR: Annotation added but failed to remap images to new name';
@@ -292,7 +292,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if($r = $rs->fetch_object()){
 			$tid = $r->tid;
 			$family = $r->family;
-			if($r->securitystatus === 1) {
+			if($r->securitystatus == 1) {
 				$sStatus = 1;
 			}
 		}
@@ -375,7 +375,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retHtml .= '<tr>';
 			$retHtml .= '<td><input type="checkbox" name="occid[]" value="'.$r->occid.'" checked /></td>';
 			$retHtml .= '<td>';
-			$retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?$r->catalogNumber:'[no catalog number]').'</a>';
+			$retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?:'[no catalog number]').'</a>';
 			$retHtml .= '<a href="#" onclick="openEditorPopup('.$r->occid.'); return false;"><img src="../../images/edit.png" /></a>';
 			$retHtml .= '</td>';
 			$retHtml .= '<td>'.$r->sciname.'</td>';

@@ -36,7 +36,7 @@ function toggle(target){
 		const divObjs = document.getElementsByTagName("div");
 		for (let i = 0; i < divObjs.length; i++) {
 			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="";
 				}
@@ -48,7 +48,7 @@ function toggle(target){
 		const spanObjs = document.getElementsByTagName("span");
 		for (let i = 0; i < spanObjs.length; i++) {
 			const spanObj = spanObjs[i];
-			if(spanObj.getAttribute("class") === target || spanObj.getAttribute("className") === target){
+			if(spanObj.getAttribute("class") == target || spanObj.getAttribute("className") == target){
 				if(spanObj.style.display === "none"){
 					spanObj.style.display = "";
 				}
@@ -105,7 +105,7 @@ function validateAddSpecies(f){
 		url=url+"?sciname="+sciName;
 		url=url+"&sid="+Math.random();
 		cseXmlHttp.onreadystatechange=function(){
-			if(cseXmlHttp.readyState === 4 && cseXmlHttp.status === 200){
+			if(cseXmlHttp.readyState == 4 && cseXmlHttp.status == 200){
 				const testTid = cseXmlHttp.responseText;
 				if(testTid === ""){
 					alert("ERROR: Scientific name does not exist in database. Did you spell it correctly? If so, contact your data administrator to add this species to the Taxonomic Thesaurus.");

@@ -473,7 +473,6 @@ class OccurrenceMaintenance {
 		if($this->verbose){
 			echo '<li style="margin-left:'.($indent*10).'px;">'.$str.'</li>';
 		}
-		ob_flush();
 		flush();
 	}
 

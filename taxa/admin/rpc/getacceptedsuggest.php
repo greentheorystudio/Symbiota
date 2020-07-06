@@ -21,7 +21,7 @@ while($row = $result->fetch_object()){
 	}
 }
 $result->free();
-if(!($con === false)) {
+if(!($con == false)) {
 	$con->close();
 }
 

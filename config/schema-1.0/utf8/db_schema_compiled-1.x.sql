@@ -3094,7 +3094,8 @@ CREATE TABLE `useraccesstokens` (
 INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
 
 ALTER TABLE `images`
-  ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC);
+  ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),
+  MODIFY COLUMN `caption` varchar(750) NULL DEFAULT NULL AFTER `format`;
 
 ALTER TABLE `kmcharacters`
   ADD COLUMN `display` varchar(45) AFTER `notes`;
@@ -3114,6 +3115,7 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count(DISTINCT o
     SET edittype = 1;
 
 ALTER TABLE `omoccurrences`
+  ADD INDEX `Index_occurrenceRemarks`(`occurrenceRemarks`(100)),
   CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
   DROP INDEX `idx_occrecordedby`;
 

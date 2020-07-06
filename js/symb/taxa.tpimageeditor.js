@@ -12,7 +12,7 @@ function toggle(target){
 		const spanObjs = document.getElementsByTagName("span");
 		for (let i = 0; i < spanObjs.length; i++) {
 			const spanObj = spanObjs[i];
-			if(spanObj.getAttribute("class") === target || spanObj.getAttribute("className") === target){
+			if(spanObj.getAttribute("class") == target || spanObj.getAttribute("className") == target){
 				if(spanObj.style.display === "none"){
 					spanObj.style.display="inline";
 				}
@@ -25,7 +25,7 @@ function toggle(target){
 		const divObjs = document.getElementsByTagName("div");
 		for (let i = 0; i < divObjs.length; i++) {
 			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
@@ -71,7 +71,7 @@ function submitAddForm(f){
 			return false;
         }
     }
-    if(isNumeric(f.sortsequence.value) === false){
+    if(isNumeric(f.sortsequence.value) == false){
 		alert("Sort value must be a number");
 		return false;
     }
@@ -83,7 +83,7 @@ function isNumeric(sText){
 	let IsNumber = true;
 	let Char;
 
-	for (let i = 0; i < sText.length && IsNumber === true; i++){
+	for (let i = 0; i < sText.length && IsNumber == true; i++){
 	   Char = sText.charAt(i); 
 		if (ValidChars.indexOf(Char) === -1){
 			IsNumber = false;

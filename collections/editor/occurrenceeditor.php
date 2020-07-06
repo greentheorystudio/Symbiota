@@ -88,7 +88,7 @@ if($SYMB_UID){
         elseif($action){
              $isEditor = 2;
         }
-        elseif($occManager->getObserverUid() === $SYMB_UID){
+        elseif($occManager->getObserverUid() == $SYMB_UID){
             $isEditor = 2;
         }
     }
@@ -104,7 +104,7 @@ if($SYMB_UID){
             $solrManager->updateSOLR();
         }
 	}
-	if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
+	if($isEditor == 1 || $isEditor == 2 || $crowdSourceMode){
 		if($action === 'Save OCR'){
 			$statusStr = $occManager->insertTextFragment($_POST['imgid'],$_POST['rawtext'],$_POST['rawnotes'],$_POST['rawsource']);
 			if(is_numeric($statusStr)){
@@ -141,7 +141,7 @@ if($SYMB_UID){
             }
 			$tabTarget = 1;
 		}
-		if($isEditor === 1 || $isEditor === 2){
+		if($isEditor == 1 || $isEditor == 2){
 			if($action === 'Add Record'){
 				if($occManager->addOccurrence($_POST)){
 					$occManager->setQueryVariables();
@@ -359,12 +359,12 @@ if($SYMB_UID){
             }
 		}
 	}
-	elseif($goToMode === 2){
+	elseif($goToMode == 2){
 		$occArr = $occManager->carryOverValues($_REQUEST);
 	}
 
 	if($qryCnt !== false){
-		if($qryCnt === 0){
+		if($qryCnt == 0){
 			if(!$goToMode){
 				$navStr .= '<div style="margin:20px;font-size:150%;font-weight:bold;">';
 				$navStr .= 'Search returned 0 records</div>'."\n";
@@ -452,7 +452,7 @@ else{
 	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <?php
-    if($crowdSourceMode === 1){
+    if($crowdSourceMode == 1){
 		?>
 		<link href="includes/config/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
 		<?php
@@ -511,7 +511,7 @@ else{
 			<div id="titleDiv">
 				<?php
 				echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
-				if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
+				if($isEditor == 1 || $isEditor == 2 || $crowdSourceMode){
 					?>
 					<div id="querySymbolDiv">
 						<a href="#" title="Search / Filter" onclick="toggleQueryForm();"><img src="../../images/find.png" style="width:16px;" /></a>
@@ -551,7 +551,7 @@ else{
                         <a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()">Personal Management</a> &gt;&gt;
                         <?php
                     }
-                    else if($isEditor === 1 || $isEditor === 2){
+                    else if($isEditor == 1 || $isEditor == 2){
                         ?>
                         <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
                         <?php
@@ -562,7 +562,7 @@ else{
                     ?>
                     <b>
                         <?php
-                        if($isEditor === 3) {
+                        if($isEditor == 3) {
                             echo 'Taxonomic ';
                         }
                         ?>
@@ -588,7 +588,7 @@ else{
 				</div>
 				<?php
 			}
-			if($occArr || $goToMode === 1 || $goToMode === 2){
+			if($occArr || $goToMode == 1 || $goToMode == 2){
 				if($occId && $isLocked){
 					?>
 					<div style="margin:25px;border:2px double;padding:20px;width:90%;">
@@ -745,7 +745,7 @@ else{
 														<?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?>
 														<a href="#" onclick="return dwcDoc('verbatimEventDate')"><img class="docimg" src="../../images/qmark.png" /></a>
 													</div>
-													<input type="text" name="verbatimeventdate" tabindex="19" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
+													<input type="text" name="verbatimeventdate" tabindex="19" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" />
 												</div>
 												<div id="dateToggleDiv">
 													<a href="#" onclick="toggle('dateextradiv');return false;"><img src="../../images/editplus.png" style="width:15px;" /></a>
@@ -1164,7 +1164,7 @@ else{
 												?>
 											</div>
 											<div id="verbatimAttributesDiv">
-												<?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Description'); ?>
+												<?php echo (defined('VERBATIMATTRIBUTESLABEL')?VERBATIMATTRIBUTESLABEL:'Verbatim Attributes'); ?>
 												<a href="#" onclick="return dwcDoc('verbatimAttributes')"><img class="docimg" src="../../images/qmark.png" /></a>
 												<br/>
 												<input type="text" name="verbatimattributes" tabindex="86" value="<?php echo array_key_exists('verbatimattributes',$occArr)?$occArr['verbatimattributes']:''; ?>" onchange="fieldChanged('verbatimattributes');" />

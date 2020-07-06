@@ -24,7 +24,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Species Checklist Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function validateUploadForm(){
             let testStr = document.getElementById("uploadfile").value;
@@ -33,7 +33,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 				return false;
 			}
 			testStr = testStr.toLowerCase();
-			if(testStr.indexOf(".csv") === -1 && testStr.indexOf(".CSV") === -1){
+			if(testStr.indexOf(".csv") == -1 && testStr.indexOf(".CSV") == -1){
 				alert("Document "+document.getElementById("uploadfile").value+" must be a CSV file (with a .csv extension)");
 				return false;
 			}

@@ -102,7 +102,7 @@
                     o.imageWidth = i.width;
                     o.imageHeight = i.height;
                     self._configure();
-                }
+                };
                 i.src = o.src;
 
                 if(o.src != image.attr("src")) {

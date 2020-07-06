@@ -3,11 +3,11 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/MappingShared.php');
 include_once($SERVER_ROOT.'/classes/SOLRManager.php');
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' .$CHARSET);
 
 $kmlFields = array_key_exists('kmlFields',$_POST)?$_POST['kmlFields']:'';
-$stArrCollJson = array_key_exists("jsoncollstarr",$_REQUEST)?$_REQUEST["jsoncollstarr"]:'';
-$stArrSearchJson = array_key_exists("starr",$_REQUEST)?$_REQUEST["starr"]:'';
+$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
+$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $occurManager = new OccurrenceManager();
 $sharedMapManager = new MappingShared();
@@ -44,5 +44,5 @@ if($kmlFields){
 }
 $coordArr = $sharedMapManager->getGeoCoords($mapWhere);
 
-$kmlFilePath = $sharedMapManager->writeKMLFile($coordArr);
-?>
+$sharedMapManager->writeKMLFile($coordArr);
+

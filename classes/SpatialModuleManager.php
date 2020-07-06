@@ -515,6 +515,15 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
         }
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
+            $remarksArr = explode(';',$this->searchTermsArr['occurrenceRemarks']);
+            $tempArr = array();
+            foreach($remarksArr as $value){
+                $tempArr[] = "(o.occurrenceRemarks LIKE '%".trim($value)."%')";
+            }
+            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
+        }
         if(array_key_exists('collnum',$this->searchTermsArr)&&$this->searchTermsArr['collnum']){
             $collNumArr = explode(';',$this->searchTermsArr['collnum']);
             $rnWhere = '';
