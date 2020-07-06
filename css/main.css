@@ -180,11 +180,12 @@ hr {
 	background-color: #c2c2c2;
 }
 
-#right_navbarlinks {
-	clear: both;
-	float: right;
-	color: #000000;
-	margin-top: 9px;
+#right_navbarlinks{
+	clear:both;
+	font-size:12px;
+	float:right;
+	color:#000000;
+	margin-top:9px;
 }
 
 #hor_dropdown {
