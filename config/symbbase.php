@@ -7,10 +7,10 @@ session_start();
 set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT. '/config/' . PATH_SEPARATOR . $SERVER_ROOT. '/classes/');
 
 if(substr($CLIENT_ROOT,-1) === '/'){
-	$CLIENT_ROOT = substr($CLIENT_ROOT,0, -1);
+    $CLIENT_ROOT = substr($CLIENT_ROOT,0, -1);
 }
 if(substr($SERVER_ROOT,-1) === '/'){
-	$SERVER_ROOT = substr($SERVER_ROOT,0, -1);
+    $SERVER_ROOT = substr($SERVER_ROOT,0, -1);
 }
 
 $PARAMS_ARR = array();
@@ -51,7 +51,7 @@ if(isset($_SESSION['userrights'])){
     $USER_RIGHTS = $_SESSION['userrights'];
 }
 
-$CSS_VERSION = '20200516';
+$CSS_VERSION = '20200625';
 if(isset($CSS_VERSION_LOCAL) && ($CSS_VERSION_LOCAL > $CSS_VERSION)) {
     $CSS_VERSION = $CSS_VERSION_LOCAL;
 }
@@ -71,16 +71,16 @@ $BROADGEOREFERENCE = (isset($GEOREFERENCE_POLITICAL_DIVISIONS) && $GEOREFERENCE_
 
 $LANG_TAG = 'en';
 if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
-	$LANG_TAG = $_REQUEST['lang'];
+    $LANG_TAG = $_REQUEST['lang'];
 
-	$_SESSION['lang'] = $LANG_TAG;
-	setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30));
+    $_SESSION['lang'] = $LANG_TAG;
+    setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30));
 }
 else if(isset($_SESSION['lang']) && $_SESSION['lang']){
-	$LANG_TAG = $_SESSION['lang'];
+    $LANG_TAG = $_SESSION['lang'];
 }
 else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
-	$LANG_TAG = $_COOKIE['lang'];
+    $LANG_TAG = $_COOKIE['lang'];
 }
 else if(strlen($DEFAULT_LANG) === 2) {
     $LANG_TAG = $DEFAULT_LANG;
@@ -100,17 +100,17 @@ $RIGHTS_TERMS_DEFS = array(
         'url' => 'http://creativecommons.org/licenses/by/3.0/legalcode',
         'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
     ),
-	'http://creativecommons.org/licenses/by-nc/3.0/' => array(
+    'http://creativecommons.org/licenses/by-nc/3.0/' => array(
         'title' => 'CC BY-NC (Attribution-Non-Commercial)',
         'url' => 'http://creativecommons.org/licenses/by-nc/3.0/legalcode',
         'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
     ),
-	'http://creativecommons.org/licenses/by/4.0/' => array(
+    'http://creativecommons.org/licenses/by/4.0/' => array(
         'title' => 'CC BY (Attribution)',
         'url' => 'http://creativecommons.org/licenses/by/4.0/legalcode',
         'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
     ),
-	'http://creativecommons.org/licenses/by-nc/4.0/' => array(
+    'http://creativecommons.org/licenses/by-nc/4.0/' => array(
         'title' => 'CC BY-NC (Attribution-Non-Commercial)',
         'url' => 'http://creativecommons.org/licenses/by-nc/4.0/legalcode',
         'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'

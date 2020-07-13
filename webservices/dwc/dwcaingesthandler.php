@@ -22,10 +22,10 @@ if(!$uploadType){
 
 $FILEUPLOAD = 3;
 $DWCAUPLOAD = 6;
-if($uploadType === $FILEUPLOAD){
+if($uploadType == $FILEUPLOAD){
 	$duManager = new SpecUploadFile();
 }
-elseif($uploadType === $DWCAUPLOAD){
+elseif($uploadType == $DWCAUPLOAD){
 	$duManager = new SpecUploadDwca();
 	$duManager->setIncludeIdentificationHistory($importIdent);
 	$duManager->setIncludeImages($importImage);
