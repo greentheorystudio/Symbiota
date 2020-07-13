@@ -64,6 +64,14 @@ class ScrapeManager{
         $this->tid = 0;
         $this->sciname = '';
 
+        $descId = 0;
+        $habitatId = 0;
+        $lifeId = 0;
+        $physId = 0;
+        $commId = 0;
+        $addinfoId = 0;
+        $refId = 0;
+
         if($this->urlExists($url)){
             $fh = fopen($url, 'rb');
             $contents = stream_get_contents($fh);
@@ -81,7 +89,7 @@ class ScrapeManager{
             }
 
             if($this->sciname && $this->tid){
-                echo $this->file . '<br />';
+                //echo $this->file . '<br />';
 
                 /*if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$contents,$m)){
                     foreach($m[0] as $text){
@@ -93,8 +101,100 @@ class ScrapeManager{
 
                 if(preg_match('"<p class=\"heading\">TAXONOMY</p>(.*?)<p class=\"heading\">HABITAT AND DISTRIBUTION</p>"si',$contents,$m)){
                     if(preg_match_all('"<p class=\"title\">(.*?)\s*</p>"si',$m[1],$t)){
-                        foreach($t[1] as $text){
-                            echo 'TAXONOMY: ' . $text . '<br />';
+                        if(in_array('Species Description',$t[1]) || in_array('Etymology',$t[1]) || in_array('Potentially Misidentified Species',$t[1]) || in_array('Flight Patterns &amp; Locomotion',$t[1])){
+                            $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                                'VALUES('.$this->tid.',"Species Description","en",1,2) ';
+                            if($this->conn->query($sql)){
+                                $descId = $this->conn->insert_id;
+                            }
+
+                            if($descId){
+                                $index = 1;
+                                if(preg_match('"<p class=\"title\">Species Description</p>(.*?)\s*<p class=\"title\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"","'.trim($insertText).'",0,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Species Description</p>(.*?)\s*</li>\s*<li>"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"","'.trim($insertText).'",0,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Species Description</p>(.*?)\s*<p class=\"heading\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"","'.trim($insertText).'",0,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+
+                                if(preg_match('"<p class=\"title\">Etymology</p>(.*?)\s*<p class=\"title\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Etymology","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Etymology</p>(.*?)\s*</li>\s*<li>"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Etymology","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Etymology</p>(.*?)\s*<p class=\"heading\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Etymology","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+
+                                if(preg_match('"<p class=\"title\">Potentially Misidentified Species</p>(.*?)\s*<p class=\"title\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Potentially Misidentified Species","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Potentially Misidentified Species</p>(.*?)\s*</li>\s*<li>"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Potentially Misidentified Species","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">Potentially Misidentified Species</p>(.*?)\s*<p class=\"heading\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Potentially Misidentified Species","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+
+                                if(preg_match('"<p class=\"title\">Flight Patterns &amp; Locomotion</p>(.*?)\s*<p class=\"title\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Flight Patterns &amp; Locomotion","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                }
+                                elseif(preg_match('"<p class=\"title\">Flight Patterns &amp; Locomotion</p>(.*?)\s*</li>\s*<li>"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Flight Patterns &amp; Locomotion","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                }
+                                elseif(preg_match('"<p class=\"title\">Flight Patterns &amp; Locomotion</p>(.*?)\s*<p class=\"heading\">"si',$m[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$descId.',"Flight Patterns &amp; Locomotion","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                }
+                            }
                         }
                     }
                 }
@@ -107,15 +207,37 @@ class ScrapeManager{
                         }
                     }
 
-                    foreach($habTitleArr as $title){
-                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                    if($habTitleArr){
+                        $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                            'VALUES('.$this->tid.',"HABITAT AND DISTRIBUTION","en",2,2) ';
+                        if($this->conn->query($sql)){
+                            $habitatId = $this->conn->insert_id;
                         }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
-                        }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                        if($habitatId){
+                            $index = 1;
+                            foreach($habTitleArr as $title){
+                                if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$habitatId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$habitatId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$habitatId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                            }
                         }
                     }
                 }
@@ -128,15 +250,37 @@ class ScrapeManager{
                         }
                     }
 
-                    foreach($habTitleArr as $title){
-                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                    if($habTitleArr){
+                        $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                            'VALUES('.$this->tid.',"LIFE HISTORY AND POPULATION BIOLOGY","en",3,2) ';
+                        if($this->conn->query($sql)){
+                            $lifeId = $this->conn->insert_id;
                         }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
-                        }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                        if($lifeId){
+                            $index = 1;
+                            foreach($habTitleArr as $title){
+                                if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$lifeId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$lifeId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$lifeId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                            }
                         }
                     }
                 }
@@ -149,15 +293,37 @@ class ScrapeManager{
                         }
                     }
 
-                    foreach($habTitleArr as $title){
-                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                    if($habTitleArr){
+                        $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                            'VALUES('.$this->tid.',"PHYSICAL TOLERANCES","en",4,2) ';
+                        if($this->conn->query($sql)){
+                            $physId = $this->conn->insert_id;
                         }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
-                        }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                        if($physId){
+                            $index = 1;
+                            foreach($habTitleArr as $title){
+                                if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$physId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$physId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$physId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                            }
                         }
                     }
                 }
@@ -170,15 +336,37 @@ class ScrapeManager{
                         }
                     }
 
-                    foreach($habTitleArr as $title){
-                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                    if($habTitleArr){
+                        $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                            'VALUES('.$this->tid.',"COMMUNITY ECOLOGY","en",5,2) ';
+                        if($this->conn->query($sql)){
+                            $commId = $this->conn->insert_id;
                         }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
-                        }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                        if($commId){
+                            $index = 1;
+                            foreach($habTitleArr as $title){
+                                if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$commId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$commId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$commId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                            }
                         }
                     }
                 }
@@ -191,21 +379,53 @@ class ScrapeManager{
                         }
                     }
 
-                    foreach($habTitleArr as $title){
-                        if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                    if($habTitleArr){
+                        $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                            'VALUES('.$this->tid.',"ADDITIONAL INFORMATION","en",6,2) ';
+                        if($this->conn->query($sql)){
+                            $addinfoId = $this->conn->insert_id;
                         }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
-                        }
-                        elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$m)){
-                            echo $title . ': ' . $m[1];
+                        if($addinfoId){
+                            $index = 1;
+                            foreach($habTitleArr as $title){
+                                if(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"title\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$addinfoId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*</li>\s*<li>"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$addinfoId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                                elseif(preg_match('"<p class=\"title\">'.$title.'</p>(.*?)\s*<p class=\"heading\">"si',$section[1],$s)){
+                                    $insertText = str_replace('<p class="body">', '<p>', $s[1]);
+                                    $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                                        'VALUES('.$addinfoId.',"'.$title.'","'.trim($insertText).'",1,'.$index.') ';
+                                    $this->conn->query($sql);
+                                    $index++;
+                                }
+                            }
                         }
                     }
                 }
 
                 if(preg_match('"<p class=\"heading\">REFERENCES</p>(.*?)</li>\s*</ol>"si',$contents,$section)){
-                    echo 'REFERENCES: ' . $section[1] . '<br />';
+                    $sql = 'INSERT INTO taxadescrblock (tid,caption,`language`,displaylevel,uid) '.
+                        'VALUES('.$this->tid.',"REFERENCES","en",7,2) ';
+                    if($this->conn->query($sql)){
+                        $refId = $this->conn->insert_id;
+                    }
+                    if($refId){
+                        $insertText = str_replace('<p class="body">', '<p>', $section[1]);
+                        $sql = 'INSERT INTO taxadescrstmts (tdbid,heading,statement,displayheader,sortsequence) '.
+                            'VALUES('.$refId.',"","'.trim($insertText).'",0,1) ';
+                        $this->conn->query($sql);
+                    }
                 }
 
                 /*if(preg_match_all('"<p class=\"heading\">(.*?)\s*</p>"si',$contents,$m)){
@@ -529,7 +749,7 @@ class ScrapeManager{
         $status = true;
         if($commonStr && $this->tid){
             $sql = 'INSERT INTO taxavernaculars (tid,varnacularname,source) '.
-                'VALULES('.$this->tid.',"'.$this->cleanInStr($commonStr).'","STRI") ';
+                'VALUES('.$this->tid.',"'.$this->cleanInStr($commonStr).'","STRI") ';
             if(!$this->conn->query($sql)){
                 $status = false;
             }
