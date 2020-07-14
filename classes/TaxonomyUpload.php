@@ -176,7 +176,7 @@ class TaxonomyUpload{
 							foreach($inputArr as $k => $v){
 								$sql1 .= ','.$k;
 								$inValue = $this->cleanInStr($v);
-								$sql2 .= ','.($inValue?'"'.trim($inValue).'"':'NULL');
+								$sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
 							}
 							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo "<div>".$sql."</div>";
@@ -905,8 +905,8 @@ class TaxonomyUpload{
 	}
 
     private function cleanInStr($str){
-		$newStr = TRIM($str);
-		$newStr = preg_REPLACE('/\s\s+/', ' ',$newStr);
+		$newStr = trim($str);
+		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
@@ -926,7 +926,7 @@ class TaxonomyUpload{
 							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
 			$lowCharSet = strtolower($CHARSET);
