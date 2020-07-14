@@ -170,12 +170,13 @@ class TaxonomyUpload{
 									$inputArr[$sciKey] = $sciValue;
 								}
 							}
-							$sql1 = ''; $sql2 = '';
+							$sql1 = '';
+							$sql2 = '';
 							unset($inputArr['identificationqualifier']);
 							foreach($inputArr as $k => $v){
 								$sql1 .= ','.$k;
 								$inValue = $this->cleanInStr($v);
-								$sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
+								$sql2 .= ','.($inValue?'"'.trim($inValue).'"':'NULL');
 							}
 							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
 							//echo "<div>".$sql."</div>";
@@ -196,7 +197,7 @@ class TaxonomyUpload{
 
 				foreach($childParentArr as $taxon => $tArr){
 					$sql = 'INSERT IGNORE INTO uploadtaxa(scinameinput,sciname,rankid,parentstr,family,acceptance) '.
-						'VALUES ("'.$taxon.'","'.$taxon.'",'.$tArr['r'].',"'.$tArr['p'].'",'.(array_key_exists('f',$tArr)?'"'.$tArr['f'].'"':'NULL').',1)';
+						'VALUES ("'.trim($taxon).'","'.trim($taxon).'",'.$tArr['r'].',"'.trim($tArr['p']).'",'.(array_key_exists('f',$tArr)?'"'.trim($tArr['f']).'"':'NULL').',1)';
 					if(!$this->conn->query($sql)){
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
