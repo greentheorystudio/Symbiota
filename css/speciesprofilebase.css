@@ -233,6 +233,7 @@
 }
 
 #img-div{
+	margin-top: 15px;
 	height:			300px;
 	overflow:		hidden;
 }
