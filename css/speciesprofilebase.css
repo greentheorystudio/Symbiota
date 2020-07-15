@@ -1,7 +1,9 @@
 #innertable{
-	width:			100%;
-	display:		table;
-	margin:			0 auto;
+	width: 90%;
+	display: table;
+	margin-top: 15px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #toprow{
