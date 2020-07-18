@@ -11,15 +11,15 @@ if(!$SYMB_UID) {
 }
 
 $collid = $_REQUEST['collid'];
-$uploadType = $_REQUEST['uploadtype'];
+$uploadType = (int)$_REQUEST['uploadtype'];
 $uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$autoMap = array_key_exists('automap',$_POST)?true:false;
+$autoMap = array_key_exists('automap',$_POST);
 $ulPath = array_key_exists('ulpath',$_REQUEST)?$_REQUEST['ulpath']: '';
-$importIdent = array_key_exists('importident',$_REQUEST)?true:false;
-$importImage = array_key_exists('importimage',$_REQUEST)?true:false;
-$matchCatNum = array_key_exists('matchcatnum',$_REQUEST)?true:false;
-$matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST)?true:false;
+$importIdent = array_key_exists('importident',$_REQUEST);
+$importImage = array_key_exists('importimage',$_REQUEST);
+$matchCatNum = array_key_exists('matchcatnum',$_REQUEST);
+$matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST);
 $verifyImages = (array_key_exists('verifyimages', $_REQUEST) && $_REQUEST['verifyimages']);
 $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
 $finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?$_REQUEST['finaltransfer']:0;
@@ -83,28 +83,28 @@ $NFNUPLOAD = 9;
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
 	$uspid = $tok[0];
-	$uploadType = $tok[1];
+	$uploadType = (int)$tok[1];
 }
 
 $duManager = new SpecUploadBase();
-if($uploadType == $DIRECTUPLOAD){
+if($uploadType === $DIRECTUPLOAD){
 	$duManager = new SpecUploadDirect();
 }
-elseif($uploadType == $DIGIRUPLOAD){
+elseif($uploadType === $DIGIRUPLOAD){
 	$duManager = new SpecUploadDigir();
 	$duManager->setSearchStart($recStart);
 	$duManager->setSearchLimit($recLimit);
 }
-elseif($uploadType == $FILEUPLOAD || $uploadType == $NFNUPLOAD){
+elseif($uploadType === $FILEUPLOAD || $uploadType === $NFNUPLOAD){
 	$duManager = new SpecUploadFile();
 	$duManager->setUploadFileName($ulPath);
 }
-elseif($uploadType == $SKELETAL){
+elseif($uploadType === $SKELETAL){
 	$duManager = new SpecUploadFile();
 	$duManager->setUploadFileName($ulPath);
 	$matchCatNum = true;
 }
-elseif($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD){
+elseif($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD){
 	$duManager = new SpecUploadDwca();
 	$duManager->setBaseFolderName($ulPath);
 	$duManager->setIncludeIdentificationHistory($importIdent);
@@ -303,7 +303,7 @@ $duManager->loadFieldMap();
 					}
 				}
 				else if(obj.name === "ID-sf[]"){
-					if(f.importident.value == "1"){
+					if(Number(f.importident.value) === 1){
 						if(idSfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Source field names must be unique (Identification: "+obj.value+")");
 							return false;
@@ -312,7 +312,7 @@ $duManager->loadFieldMap();
 					}
 				}
 				else if(obj.name === "IM-sf[]"){
-					if(f.importimage.value == "1"){
+					if(Number(f.importimage.value) === 1){
 						if(imSfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Source field names must be unique (Image: "+obj.value+")");
 							return false;
@@ -329,7 +329,7 @@ $duManager->loadFieldMap();
 						tfArr[tfArr.length] = obj.value;
 					}
 					else if(obj.name === "ID-tf[]"){
-						if(f.importident.value == "1"){
+						if(Number(f.importident.value) === 1){
 							if(idTfArr.indexOf(obj.value) > -1){
 								alert("ERROR: Can't map to the same target field more than once (Identification: "+obj.value+")");
 								return false;
@@ -338,7 +338,7 @@ $duManager->loadFieldMap();
 						}
 					}
 					else if(obj.name === "IM-tf[]"){
-						if(f.importimage.value == "1"){
+						if(Number(f.importimage.value) === 1){
 							if(imTfArr.indexOf(obj.value) > -1){
 								alert("ERROR: Can't map to the same target field more than once (Images: "+obj.value+")");
 								return false;
@@ -353,7 +353,7 @@ $duManager->loadFieldMap();
 					}
 				}
 			}
-			if(lacksCatalogNumber && f.uploadtype.value == 7){
+			if(lacksCatalogNumber && Number(f.uploadtype.value) === 7){
 				alert("ERROR: Catalog Number is required for Skeletal File Uploads");
 				return false;
 			}
@@ -397,14 +397,14 @@ $duManager->loadFieldMap();
 	<?php
 	if($statusStr){
 		echo '<hr />';
-		echo "<div>$statusStr</div>";
+		echo '<div>'.$statusStr.'</div>';
 		echo '<hr />';
 	}
 	$recReplaceMsg = '<span style="color:orange"><b>Caution:</b></span> Matching records will be replaced with incoming records';
 	if($isEditor && $collid){
 		echo '<div style="font-weight:bold;font-size:130%;">'.$duManager->getCollInfo('name').'</div>';
 		echo '<div style="margin:0 0 15px 15px;"><b>Last Upload Date:</b> '.($duManager->getCollInfo('uploaddate')?:'not recorded').'</div>';
-		if(($action === 'Start Upload') || (!$action && ($uploadType == $STOREDPROCEDURE || $uploadType == $SCRIPTUPLOAD))){
+		if(($action === 'Start Upload') || (!$action && ($uploadType === $STOREDPROCEDURE || $uploadType === $SCRIPTUPLOAD))){
 			echo "<div style='font-weight:bold;font-size:120%'>Upload Status:</div>";
 	 		echo "<ul style='margin:10px;font-weight:bold;'>";
 	 		$duManager->uploadData($finalTransfer);
@@ -412,7 +412,7 @@ $duManager->loadFieldMap();
 			if(!$finalTransfer && $duManager->getTransferCount()){
 				?>
  				<fieldset style="margin:15px;">
- 					<legend style="<?php echo (($uploadType == $SKELETAL)?'background-color:lightgreen':''); ?>"><b>Final transfer</b></legend>
+ 					<legend style="<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><b>Final transfer</b></legend>
  					<div style="margin:5px;">
  						<?php
  						$reportArr = $duManager->getTransferReport();
@@ -428,13 +428,13 @@ $duManager->loadFieldMap();
 						if($reportArr['update']){
 							echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.png" style="width:12px;" /></a>';
 							echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="Download Records"><img src="../../images/dl.png" style="width:12px;" /></a>';
-							if($uploadType != $SKELETAL && $uploadType != $NFNUPLOAD) {
+							if($uploadType !== $SKELETAL && $uploadType !== $NFNUPLOAD) {
                                 echo '&nbsp;&nbsp;&nbsp;<span style="color:orange"><b>Caution:</b></span> incoming records will replace existing records';
                             }
 						}
 						echo '</div>';
-						if($uploadType != $NFNUPLOAD || $reportArr['new']){
-							if($uploadType == $NFNUPLOAD) {
+						if($uploadType !== $NFNUPLOAD || $reportArr['new']){
+							if($uploadType === $NFNUPLOAD) {
                                 echo '<div>Mismatched records: ';
                             }
 							else {
@@ -444,7 +444,7 @@ $duManager->loadFieldMap();
 							if($reportArr['new']){
 								echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.png" style="width:12px;" /></a>';
 								echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_self" title="Download Records"><img src="../../images/dl.png" style="width:12px;" /></a>';
-								if($uploadType == $NFNUPLOAD) {
+								if($uploadType === $NFNUPLOAD) {
                                     echo '<span style="margin-left:15px;color:orange">&gt;&gt; Records failed to link to records within this collection and will not be imported</span>';
                                 }
 							}
@@ -460,7 +460,7 @@ $duManager->loadFieldMap();
 							echo '</div>';
 							echo '<div style="margin-left:15px;"><span style="color:orange;">WARNING:</span> This will result in records with duplicate catalog numbers</div>';
 						}
-						if($uploadType != $NFNUPLOAD && $uploadType != $SKELETAL){
+						if($uploadType !== $NFNUPLOAD && $uploadType !== $SKELETAL){
 							if(isset($reportArr['sync']) && $reportArr['sync']){
 								echo '<div>Records that will be syncronized with central database: ';
 								echo $reportArr['sync'];
@@ -533,7 +533,7 @@ $duManager->loadFieldMap();
 			$duManager->finalTransfer();
 			echo '</ul>';
 		}
-		else if($uploadType == $DIGIRUPLOAD){
+		else if($uploadType === $DIGIRUPLOAD){
             ?>
             <form name="initform" action="specupload.php" method="post" onsubmit="">
                 <fieldset style="width:95%;">
@@ -577,34 +577,34 @@ $duManager->loadFieldMap();
         else{
             $uploadTitle = $duManager->getTitle();
             if(!$uploadTitle){
-                if($uploadType == $DWCAUPLOAD) {
+                if($uploadType === $DWCAUPLOAD) {
                     $uploadTitle = 'Manual DwC-Archive Import';
                 }
-                elseif($uploadType == $IPTUPLOAD) {
+                elseif($uploadType === $IPTUPLOAD) {
                     $uploadTitle = 'IPT/DwC-A Provider Import';
                 }
-                elseif($uploadType == $SKELETAL) {
+                elseif($uploadType === $SKELETAL) {
                     $uploadTitle = 'Skeletal File Import';
                 }
-                elseif($uploadType == $FILEUPLOAD) {
+                elseif($uploadType === $FILEUPLOAD) {
                     $uploadTitle = 'Delimited Text File Import';
                 }
-                elseif($uploadType == $NFNUPLOAD) {
+                elseif($uploadType === $NFNUPLOAD) {
                     $uploadTitle = 'Notes from Natural Import';
                 }
             }
-            if(!$ulPath && ($uploadType == $FILEUPLOAD || $uploadType == $SKELETAL || $uploadType == $NFNUPLOAD || $uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD)){
+            if(!$ulPath && ($uploadType === $FILEUPLOAD || $uploadType === $SKELETAL || $uploadType === $NFNUPLOAD || $uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD)){
                 $ulPath = $duManager->uploadFile();
                 if(!$ulPath){
                     ?>
                     <form name="fileuploadform" action="specupload.php" method="post" enctype="multipart/form-data" onsubmit="return verifyFileUploadForm(this)">
                         <fieldset style="width:95%;">
-                            <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType == $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
+                            <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle;?>: Identify Data Source</legend>
                             <div>
                                 <div style="margin:10px">
                                     <?php
                                     $pathLabel = 'IPT Resource URL';
-                                    if($uploadType != $IPTUPLOAD){
+                                    if($uploadType !== $IPTUPLOAD){
                                         $pathLabel = 'Resource Path or URL';
                                         ?>
                                         <div>
@@ -613,11 +613,11 @@ $duManager->loadFieldMap();
                                         <?php
                                     }
                                     ?>
-                                    <div class="ulfnoptions" style="display:<?php echo ($uploadType != $IPTUPLOAD?'none':''); ?>;margin:15px 0;">
+                                    <div class="ulfnoptions" style="display:<?php echo ($uploadType !== $IPTUPLOAD?'none':''); ?>;margin:15px 0;">
                                         <b><?php echo $pathLabel; ?>:</b>
                                         <input name="ulfnoverride" type="text" size="70" /><br/>
                                         <?php
-                                        if($uploadType != $IPTUPLOAD){
+                                        if($uploadType !== $IPTUPLOAD){
                                             echo '* This option is for pointing to a data file that was manually uploaded to a server. '.
                                                 'This option offers a workaround for importing files that are larger than what is allowed by '.
                                                 'server upload limitations (e.g. PHP configuration limits).';
@@ -625,7 +625,7 @@ $duManager->loadFieldMap();
                                         ?>
                                     </div>
                                     <?php
-                                    if($uploadType != $IPTUPLOAD){
+                                    if($uploadType !== $IPTUPLOAD){
                                         ?>
                                         <div class="ulfnoptions">
                                             <a href="#" onclick="toggle('ulfnoptions');return false;">Display Additional Options</a>
@@ -636,7 +636,7 @@ $duManager->loadFieldMap();
                                 </div>
                                 <div style="margin:10px;">
                                     <?php
-                                    if(!$uspid && $uploadType != $NFNUPLOAD) {
+                                    if(!$uspid && $uploadType !== $NFNUPLOAD) {
                                         echo '<input name="automap" type="checkbox" value="1" CHECKED /> <b>Automap fields</b><br/>';
                                     }
                                     ?>
@@ -657,7 +657,7 @@ $duManager->loadFieldMap();
             $processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'Stage 3',
                 'pending review' => 'Pending Review', 'expert required' => 'Expert Required', 'pending review-nfn' => 'Pending Review-NfN',
                 'reviewed' => 'Reviewed', 'closed' => 'Closed');
-            if($ulPath && ($uploadType == $DWCAUPLOAD || $uploadType == $IPTUPLOAD)){
+            if($ulPath && ($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD)){
                 if($duManager->analyzeUpload()){
                     $metaArr = $duManager->getMetaArr();
                     if(isset($metaArr['occur'])){
@@ -799,7 +799,7 @@ $duManager->loadFieldMap();
                     echo '<div style="font-weight:bold;">Unknown error analyzing upload</div>';
                 }
             }
-            elseif($uploadType == $NFNUPLOAD && $ulPath){
+            elseif($uploadType === $NFNUPLOAD && $ulPath){
                 $duManager->analyzeUpload();
                 ?>
                 <form name="filemappingform" action="specupload.php" method="post" onsubmit="return verifyMappingForm(this)">
@@ -833,14 +833,14 @@ $duManager->loadFieldMap();
                 </form>
                 <?php
             }
-            elseif($uploadType == $DIRECTUPLOAD || (($uploadType == $FILEUPLOAD || $uploadType == $SKELETAL) && $ulPath)){
+            elseif($uploadType === $DIRECTUPLOAD || (($uploadType === $FILEUPLOAD || $uploadType === $SKELETAL) && $ulPath)){
                 $duManager->analyzeUpload();
                 ?>
                 <form name="filemappingform" action="specupload.php" method="post" onsubmit="return verifyMappingForm(this)">
                     <fieldset style="width:95%;">
-                        <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType == $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle; ?></legend>
+                        <legend style="font-weight:bold;font-size:120%;<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><?php echo $uploadTitle; ?></legend>
                         <?php
-                        if(!$isLiveData && $uploadType != $SKELETAL){
+                        if(!$isLiveData && $uploadType !== $SKELETAL){
                             ?>
                             <div style="margin:20px;">
                                 <b>Source Unique Identifier / Primary Key (<span style="color:red">required</span>): </b>
@@ -853,7 +853,7 @@ $duManager->loadFieldMap();
                                     <option value="">----------------------------------</option>
                                     <?php
                                     foreach($dbpkOptions as $f){
-                                        echo '<option '.($dbpk == $f?'SELECTED':'').'>'.$f.'</option>';
+                                        echo '<option '.($dbpk === $f?'SELECTED':'').'>'.$f.'</option>';
                                     }
                                     ?>
                                 </select>
@@ -864,7 +864,7 @@ $duManager->loadFieldMap();
                         if(!$isLiveData) {
                             $displayStr = 'none';
                         }
-                        if($uploadType == $SKELETAL) {
+                        if($uploadType === $SKELETAL) {
                             $displayStr = 'block';
                         }
                         if($dbpk) {
@@ -899,10 +899,10 @@ $duManager->loadFieldMap();
                             <hr />
                             <div id="uldiv" style="margin-top:30px;">
                                 <?php
-                                if($isLiveData || $uploadType == $SKELETAL){
+                                if($isLiveData || $uploadType === $SKELETAL){
                                     ?>
                                     <div>
-                                        <input name="matchcatnum" type="checkbox" value="1" checked <?php echo ($uploadType == $SKELETAL?'DISABLED':''); ?> />
+                                        <input name="matchcatnum" type="checkbox" value="1" checked <?php echo ($uploadType === $SKELETAL?'DISABLED':''); ?> />
                                         Match on Catalog Number
                                     </div>
                                     <div>
@@ -911,7 +911,7 @@ $duManager->loadFieldMap();
                                     </div>
                                     <ul style="margin-top:2px">
                                         <?php
-                                        if($uploadType == $SKELETAL){
+                                        if($uploadType === $SKELETAL){
                                             echo '<li>Incoming skeletal data will be appended only if targeted field is empty</li>';
                                         }
                                         else{
@@ -944,7 +944,7 @@ $duManager->loadFieldMap();
                                 </div>
                             </div>
                             <?php
-                            if($uploadType == $SKELETAL){
+                            if($uploadType === $SKELETAL){
                                 ?>
                                 <div style="margin:15px;background-color:lightgreen;">
                                     Skeletal Files consist of stub data that is easy to capture in bulk during the imaging process.

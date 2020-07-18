@@ -306,7 +306,7 @@ class SpecUpload{
 	    		$this->queryStr = $row->querystr;
 	    		$this->storedProcedure = $row->cleanupsp;
 	    		$this->lastUploadDate = $row->uploaddate;
-	    		$this->uploadType = $row->uploadtype;
+	    		$this->uploadType = (int)$row->uploadtype;
 	    		if(!$this->lastUploadDate) {
 					$this->lastUploadDate = date('Y-m-d H:i:s');
 				}
