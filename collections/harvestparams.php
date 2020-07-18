@@ -63,31 +63,6 @@ if(isset($_REQUEST['db'])){
         });
 
         function checkHarvestparamsForm(frm){
-            <?php
-            if(!$SOLR_MODE){
-                ?>
-                if ((frm.taxa.value === '') && (frm.country.value === '') && (frm.state.value === '') && (frm.county.value === '') &&
-                    (frm.locality.value === '') && (frm.upperlat.value === '') && (frm.pointlat.value === '') && (frm.occurrenceRemarks.value === '') && (frm.catnum.value === '') &&
-                    (frm.elevhigh.value === '') && (frm.eventdate2.value === '') && (frm.typestatus.checked === false) && (frm.hasimages.checked === false) && (frm.hasgenetic.checked === false) &&
-                    (frm.collector.value === '') && (frm.collnum.value === '') && (frm.eventdate1.value === '') && (frm.elevlow.value === '')) {
-                    if(sessionStorage.jsoncollstarr){
-                        const jsonArr = JSON.parse(sessionStorage.jsoncollstarr);
-                        for(let i in jsonArr){
-                            if(jsonArr.hasOwnProperty(i) && jsonArr[i] === 'all'){
-                                alert("Please fill in at least one search parameter!");
-                                return false;
-                            }
-                        }
-                    }
-                    else{
-                        alert("Please fill in at least one search parameter!");
-                        return false;
-                    }
-                }
-                <?php
-            }
-            ?>
-
             if(frm.upperlat.value !== '' || frm.bottomlat.value !== '' || frm.leftlong.value !== '' || frm.rightlong.value !== ''){
                 if(frm.upperlat.value === '' || frm.bottomlat.value === '' || frm.leftlong.value === '' || frm.rightlong.value === ''){
                     alert("Error: Please make all Lat/Long bounding box values contain a value or all are empty");
