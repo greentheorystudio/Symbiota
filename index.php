@@ -65,36 +65,7 @@ include(__DIR__ . '/header.php');
             </div>
         </div>
     </div>
-    <div style="float:left;width:200px;">
-        <div style="width:100%;display:flex;justify-content:center;">
-            <img src="images/layout/IRL_GRAPHIC.jpg" style="width:175px;height:399px;" />
-        </div>
-    </div>
-    <h1 style="margin-bottom:0;">Welcome to the Indian River Lagoon Species Inventory</h1>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="padding: 0 15px;">
-        The Indian River Lagoon (IRL) Species Inventory is an online database that provides comprehensive information on all
-        aspects of IRL biodiversity. It is utilized by a wide variety of audiences including scientists, resource managers,
-        educational groups, and IRL citizenry. The website is continually updated as new discoveries and information become
-        available. We invite you to increase your knowledge and appreciation of this invaluable natural resource.
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;" id="cycler">
-        <img src="images/layout/homepage_slides/New_Pic1.gif" style="width:700px;height:178px;" class="active" />
-        <img src="images/layout/homepage_slides/New_Pic2.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic3.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic4.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic5.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic6.gif" style="width:700px;height:178px;" />
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="margin-top:15px;padding: 0 10px;">
+    <div style="padding: 0 10px;">
         Sweeping along 156 miles of Florida’s eastern coast, the Indian River Lagoon (IRL) is home to a wealth of habitats
         and spectacular biodiversity. Its seagrass beds, mangroves, oyster reefs, salt marshes, tidal flats, scrubland,
         beaches and dunes nurture more than 3,500 species of plants, animals and other organisms.
@@ -114,37 +85,6 @@ include(__DIR__ . '/header.php');
     </div>
     <div style="margin-top:15px;padding: 0 10px;">
         As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;" id="cycler2">
-        <img src="images/layout/homepage_slides/New_Pic7.gif" style="width:700px;height:178px;" class="active" />
-        <img src="images/layout/homepage_slides/New_Pic8.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic9.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic10.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic11.gif" style="width:700px;height:178px;" />
-        <img src="images/layout/homepage_slides/New_Pic12.gif" style="width:700px;height:178px;" />
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="margin-top:15px;padding: 0 10px;">
-        <div style="display:flex;justify-content:space-evenly;flex-wrap:wrap;align-items:center;margin-top:8px;margin-bottom:8px;">
-            <img src="images/layout/eol_logo.jpg" style="width:150px;height:95px;" alt="EOL Logo" />
-            <p style="width:300px;">Did you know that the IRL Species Inventory contributes species information to the Encyclopedia of Life? Visit <a href="http://eol.org">EOL</a> to find out more.</p>
-            <img src="images/layout/IRLPlate3.gif" style="width:190px;height:156px;" alt="Plate" />
-        </div>
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:15px;padding: 0 10px;">
-        Submit additional information, photos or comments to: <br />
-        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a>
-    </div>
-    <div style="display:flex;justify-content:center;flex-wrap:wrap;margin-top:8px;margin-bottom:8px;">
-        <img src="images/layout/oliveline2.jpg" style="width:90%;height:15px;" />
     </div>
 </div>
 
