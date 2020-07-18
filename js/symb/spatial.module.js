@@ -2521,7 +2521,7 @@ function lazyLoadPoints(index,callback){
     let url;
     let startindex = 0;
     loadingComplete = true;
-    if(index > 1) startindex = (index - 1)*lazyLoadCnt;
+    if(index > 0) startindex = index*lazyLoadCnt;
     const http = new XMLHttpRequest();
     if(SOLRMODE){
         url = "rpc/SOLRConnector.php";
@@ -2566,49 +2566,44 @@ function loadPoints(){
     dsNewestDate = '';
     removeDateSlider();
     solrqString = newsolrqString;
-    if(collectionParams || geogParams || textParams || taxaParams){
-        showWorking();
-        pointvectorsource = new ol.source.Vector({
-            wrapX: false
-        });
-        layersArr['pointv'].setSource(pointvectorsource);
-        getQueryRecCnt(false,function(res) {
-            if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                setLoadingTimer();
-                loadPointWFSLayer(0);
-                //cleanSelectionsLayer();
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 1});
-                $("#accordion").accordion("option","active",1);
-                //selectInteraction.getFeatures().clear();
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['Name'] = 'pointv';
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = 'Points';
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    buildLayerTableRow(infoArr,true);
-                    pointActive = true;
-                }
+    showWorking();
+    pointvectorsource = new ol.source.Vector({
+        wrapX: false
+    });
+    layersArr['pointv'].setSource(pointvectorsource);
+    getQueryRecCnt(false,function(res) {
+        if(queryRecCnt > 0){
+            loadPointsEvent = true;
+            setLoadingTimer();
+            loadPointWFSLayer(0);
+            //cleanSelectionsLayer();
+            setRecordsTab();
+            changeRecordPage(1);
+            $('#recordstab').tabs({active: 1});
+            $("#accordion").accordion("option","active",1);
+            //selectInteraction.getFeatures().clear();
+            if(!pointActive){
+                const infoArr = [];
+                infoArr['Name'] = 'pointv';
+                infoArr['layerType'] = 'vector';
+                infoArr['Title'] = 'Points';
+                infoArr['Abstract'] = '';
+                infoArr['DefaultCRS'] = '';
+                buildLayerTableRow(infoArr,true);
+                pointActive = true;
             }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerToSelList('pointv');
-                    pointActive = false;
-                }
-                loadPointsEvent = false;
-                hideWorking();
-                alert('There were no records matching your query.');
+        }
+        else{
+            setRecordsTab();
+            if(pointActive){
+                removeLayerToSelList('pointv');
+                pointActive = false;
             }
-        });
-    }
-    else{
-        alert('Please add criteria for points.');
-    }
+            loadPointsEvent = false;
+            hideWorking();
+            alert('There were no records matching your query.');
+        }
+    });
 }
 
 function openIndPopup(occid){

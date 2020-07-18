@@ -139,15 +139,13 @@ class OccurrenceListManager extends OccurrenceManager{
 	private function setRecordCnt($sqlWhere): void
     {
 		global $CLIENT_ROOT;
-	    if($sqlWhere){
-			$sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o '.$this->setTableJoins($sqlWhere).$sqlWhere;
-			//echo "<div>Count sql: ".$sql."</div>";
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-				$this->recordCount = $row->cnt;
-			}
-			$result->free();
-		}
+        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o '.$this->setTableJoins($sqlWhere).$sqlWhere;
+        //echo "<div>Count sql: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        if($row = $result->fetch_object()){
+            $this->recordCount = $row->cnt;
+        }
+        $result->free();
 		setCookie('collvars', 'reccnt:' .$this->recordCount,time()+64800,($CLIENT_ROOT?:'/'));
 	}
 
