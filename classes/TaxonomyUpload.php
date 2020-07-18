@@ -170,7 +170,8 @@ class TaxonomyUpload{
 									$inputArr[$sciKey] = $sciValue;
 								}
 							}
-							$sql1 = ''; $sql2 = '';
+							$sql1 = '';
+							$sql2 = '';
 							unset($inputArr['identificationqualifier']);
 							foreach($inputArr as $k => $v){
 								$sql1 .= ','.$k;
@@ -196,7 +197,7 @@ class TaxonomyUpload{
 
 				foreach($childParentArr as $taxon => $tArr){
 					$sql = 'INSERT IGNORE INTO uploadtaxa(scinameinput,sciname,rankid,parentstr,family,acceptance) '.
-						'VALUES ("'.$taxon.'","'.$taxon.'",'.$tArr['r'].',"'.$tArr['p'].'",'.(array_key_exists('f',$tArr)?'"'.$tArr['f'].'"':'NULL').',1)';
+						'VALUES ("'.trim($taxon).'","'.trim($taxon).'",'.$tArr['r'].',"'.trim($tArr['p']).'",'.(array_key_exists('f',$tArr)?'"'.trim($tArr['f']).'"':'NULL').',1)';
 					if(!$this->conn->query($sql)){
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
@@ -904,8 +905,8 @@ class TaxonomyUpload{
 	}
 
     private function cleanInStr($str){
-		$newStr = TRIM($str);
-		$newStr = preg_REPLACE('/\s\s+/', ' ',$newStr);
+		$newStr = trim($str);
+		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
@@ -925,7 +926,7 @@ class TaxonomyUpload{
 							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
 			$lowCharSet = strtolower($CHARSET);

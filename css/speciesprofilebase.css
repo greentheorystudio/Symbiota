@@ -1,7 +1,9 @@
 #innertable{
-	width:			100%;
-	display:		table;
-	margin:			0 auto;
+	width: 90%;
+	display: table;
+	margin-top: 15px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #toprow{
@@ -231,6 +233,7 @@
 }
 
 #img-div{
+	margin-top: 15px;
 	height:			300px;
 	overflow:		hidden;
 }
@@ -303,10 +306,7 @@
 }
 
 #centralimage img{
-	max-width:	450px;
-	max-height:	320px;
 	width: 		320px;
-	height:		320px;
 	border:		1px dotted black;
 }
 
@@ -358,11 +358,8 @@ div.imgthumb{
 }
 
 div.imgthumb img{
-  	display: 	inline;
-	max-height:	200px;
-	width: 		200px;
-	height:		200px;
-  	margin: 	0;
+  	width: 		200px;
+	margin: 	0;
 	border:		1px dotted grey;
 }
 
