@@ -656,13 +656,11 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
             $this->localSearchArr[] = 'has genetic data';
         }
+        $retStr = 'WHERE ';
         if($sqlWhere){
-            $retStr = 'WHERE '.substr($sqlWhere,4);
-            $retStr .= ' AND (o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
+            $retStr .= substr($sqlWhere,4).' AND';
         }
-        else{
-            $retStr = 'WHERE o.collid = -1 ';
-        }
+        $retStr .= ' (o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
         return $retStr;
     }
 
@@ -828,27 +826,25 @@ class SpatialModuleManager{
     public function setRecordCnt($sqlWhere): void
     {
         global $USER_RIGHTS;
-        if($sqlWhere){
-            $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
-            if(array_key_exists('polyArr',$this->searchTermsArr)) {
-                $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-            }
-            $sql .= $sqlWhere;
-            if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-                if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                    $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
-                }
-                else{
-                    $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
-                }
-            }
-            //echo "<div>Count sql: ".$sql."</div>";
-            $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                $this->recordCount = $row->cnt;
-            }
-            $result->close();
+        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
+        $sql .= $sqlWhere;
+        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+            }
+            else{
+                $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+            }
+        }
+        //echo "<div>Count sql: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        if($row = $result->fetch_object()){
+            $this->recordCount = $row->cnt;
+        }
+        $result->close();
     }
 
     public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
