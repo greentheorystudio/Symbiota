@@ -81,7 +81,7 @@ class KeyMassUpdate extends KeyManager{
 		//echo $sql2; exit;
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
-			if($r2->rankid === 140){
+			if($r2->rankid == 140){
 				$famArr[$r2->tid] = $r2->sciname;
 			}
 			elseif(!$generaOnly || $r2->rankid < 220){
@@ -102,7 +102,7 @@ class KeyMassUpdate extends KeyManager{
 		}
 		
 		$this->setStates();
-		$this->headerStr = '<tr><th/>';
+		$this->headerStr = '<tr>';
  		foreach($this->stateArr as $cs => $csName){
  			$this->headerStr .= '<th>'.str_replace(' ', '<br/>',$csName).'</th>';
  		}
@@ -157,7 +157,7 @@ class KeyMassUpdate extends KeyManager{
 		}
 		echo '</tr>';
 		$this->cnt++;
-		if($this->cnt%40 === 0) {
+		if($this->cnt%40 == 0) {
 			echo $this->headerStr;
 		}
 	}

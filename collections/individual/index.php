@@ -143,7 +143,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 	<meta name="description" content="<?php echo 'Occurrence author: '.$occArr['recordedby'].','.$occArr['recordnumber']; ?>" />
 	<meta name="keywords" content="<?php echo $occArr['guid']; ?>">
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet">
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -225,7 +225,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 		if($displayMap){
 			?>
 			function initializeMap(){
-				const mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude'].",".$occArr['decimallongitude']; ?>);
+				const mLatLng = new google.maps.LatLng(<?php echo $occArr['decimallatitude']. ',' .$occArr['decimallongitude']; ?>);
 				const dmOptions = {
 					zoom: 8,
 					center: mLatLng,
@@ -659,7 +659,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 						if($occArr['verbatimattributes']){
 							?>
 							<div style="clear:both;">
-								<b>Description:</b>
+								<b>Verbatim Attributes:</b>
 								<?php echo $occArr['verbatimattributes']; ?>
 							</div>
 							<?php
@@ -1228,7 +1228,6 @@ $commentArr = $indManager->getCommentArr($isEditor);
 				<div>Checking archive...</div>
 				<div style="margin:10px">
 					<?php
-					ob_flush();
 					flush();
 					$rawArchArr = $indManager->checkArchive();
 					if($rawArchArr && $rawArchArr['obj']){

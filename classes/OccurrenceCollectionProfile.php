@@ -191,12 +191,16 @@ class OccurrenceCollectionProfile {
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
-			if(strpos($rights, 'http') === 0){
-				$rightsUrl = $rights;
-				if($RIGHTS_TERMS && $rightsArr = array_keys($RIGHTS_TERMS, $rights)) {
-					$rights = current($rightsArr);
-				}
-			}
+            if(strpos($rights, 'http') === 0){
+                $rightsUrl = $rights;
+                if($RIGHTS_TERMS) {
+                    foreach($RIGHTS_TERMS as $name => $url){
+                        if($url === $rights){
+                            $rights = $name;
+                        }
+                    }
+                }
+            }
 			if($rightsUrl) {
 				$outStr .= '<a href="' . $rightsUrl . '" target="_blank">';
 			}
@@ -241,8 +245,9 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function submitCollEdits($postArr){
-        $status = true;
+	public function submitCollEdits($postArr): string
+    {
+        $status = 'Edits saved';
 		if($this->collid){
 			$instCode = $this->cleanInStr($postArr['institutioncode']);
 			$collCode = $this->cleanInStr($postArr['collectioncode']);
@@ -309,17 +314,14 @@ class OccurrenceCollectionProfile {
 						return $status;
 					}
 				}
-				else{
-					if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-						$status = 'ERROR inserting collection category link(1): '.$this->conn->error;
-						return $status;
-					}
-				}
+				else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
+                    $status = 'ERROR inserting collection category link(1): '.$this->conn->error;
+                    return $status;
+                }
 			}
 			else{
 				$this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
 			}
-			$this->conn->close();
 		}
 		return $status;
 	}
@@ -367,8 +369,8 @@ class OccurrenceCollectionProfile {
 			($homepage?'"'.$homepage.'"':'NULL').','.
 			($contact?'"'.$contact.'"':'NULL').','.
 			($email?'"'.$email.'"':'NULL').','.
-			($postArr['latitudedecimal']?$postArr['latitudedecimal']:'NULL').','.
-			($postArr['longitudedecimal']?$postArr['longitudedecimal']:'NULL').','.$publicEdits.','.$gbifPublish.','.
+			($postArr['latitudedecimal']?:'NULL').','.
+			($postArr['longitudedecimal']?:'NULL').','.$publicEdits.','.$gbifPublish.','.
             (array_key_exists('publishToIdigbio',$postArr)?$idigPublish.',':'').
 			($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 			($rights?'"'.$rights.'"':'NULL').','.
@@ -378,7 +380,7 @@ class OccurrenceCollectionProfile {
 			($managementType?'"'.$managementType.'"':'Snapshot').','.
 			($collType?'"'.$collType.'"':'Preserved Specimens').',"'.
 			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
-			($sortSeq?$sortSeq:'NULL').') ';
+			($sortSeq?:'NULL').') ';
 		//echo "<div>$sql</div>";
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
@@ -428,9 +430,9 @@ class OccurrenceCollectionProfile {
 		$fileName .= $imgExt;
 
 		$fullUrl = '';
-		if(move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath.$fileName)) {
-			$fullUrl = $urlBase . $fileName;
-		}
+		if(is_writable($targetPath) && move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath . $fileName)) {
+            $fullUrl = $urlBase . $fileName;
+        }
 
 		return $fullUrl;
 	}
@@ -641,7 +643,7 @@ class OccurrenceCollectionProfile {
     public function findIdigbioKey($guid){
         global $CLIENT_ROOT;
         $url = 'http://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:%22';
-        $url .= ($_SERVER['HTTPS']?'https://':'http://');
+        $url .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://');
         $url .= $_SERVER['HTTP_HOST'].$CLIENT_ROOT;
         $url .= '/webservices/dwc/'.$guid.'%22}';
         $ch = curl_init($url);
@@ -718,7 +720,7 @@ class OccurrenceCollectionProfile {
 			$sql = 'SELECT uploaddate, recordcnt, georefcnt, familycnt, genuscnt, speciescnt, dynamicProperties FROM omcollectionstats WHERE collid = '.$this->collid;
 			$rs = $this->conn->query($sql);
 			if($row = $rs->fetch_object()){
-				$uDate = "";
+				$uDate = '';
 				if($row->uploaddate){
 					$uDate = $row->uploaddate;
 					$month = substr($uDate,5,2);
@@ -747,19 +749,16 @@ class OccurrenceCollectionProfile {
 			$occurMaintenance->setVerbose(true);
 			echo '<li>General cleaning in preparation for collecting stats...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->generalOccurrenceCleaning($this->collid);
 		if($verbose){
 			echo '<li>Updating statistics...</li>';
 			flush();
-			ob_flush();
 		}
 		$occurMaintenance->updateCollectionStats($this->collid, true);
 		if($verbose){
 			echo '<li>Finished updating collection statistics</li>';
 			flush();
-			ob_flush();
 		}
 	}
 
@@ -827,7 +826,6 @@ class OccurrenceCollectionProfile {
 		echo 'Updating collection statistics...';
 		echo '<ul>';
 		flush();
-		ob_flush();
 		$occurMaintenance = new OccurrenceMaintenance();
 		$sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN('.$collId.') ';
 		//echo $sql;
@@ -835,14 +833,12 @@ class OccurrenceCollectionProfile {
 		while($r = $rs->fetch_object()){
 			echo '<li style="margin-left:15px;">Cleaning statistics for: '.$r->collectionname.'</li>';
 			flush();
-			ob_flush();
 			$occurMaintenance->updateCollectionStats($r->collid, true);
 		}
 		$rs->free();
 		echo '<li>Statistics update complete!</li>';
 		echo '</ul>';
 		flush();
-		ob_flush();
 	}
 
 	public function runStatistics($collId): array
@@ -1144,12 +1140,14 @@ class OccurrenceCollectionProfile {
 		return $this->errorStr;
 	}
 
-	public function cleanOutArr(&$arr): void
-	{
-		foreach($arr as $k => $v){
-			$arr[$k] = $this->cleanOutStr($v);
-		}
-	}
+    public function cleanOutArr($arr): void
+    {
+        if(is_array($arr)){
+            foreach($arr as $k => $v){
+                $arr[$k] = $this->cleanOutStr($v);
+            }
+        }
+    }
 
 	private function cleanOutStr($str){
 		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);

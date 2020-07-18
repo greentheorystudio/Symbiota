@@ -28,7 +28,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			url: "rpc/gettid.php",
 			data: { sciname: f.remapvalue.value }
 		}).done(function( msg ) {
-			if(msg === 0){
+			if(msg == 0){
 				alert("ERROR: Remapping taxon not found in thesaurus. Is the name spelled correctly?");
 				f.remaptid.value = "";
 			}
@@ -39,7 +39,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 		});
 	}
 </script>
-<div style="min-height:400px;height:400px;">
+<div style="min-height:400px;">
 	<div style="margin:15px 0;">
 		Taxon record first needs to be evaluated before it can be deleted from the system. 
 		The evaluation ensures that the deletion of this record will not interfer with 

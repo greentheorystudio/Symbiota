@@ -30,7 +30,7 @@ if($editable && $action){
 	if($action === 'Edit Synonym Sort Order'){
 		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && (strpos($sortKey, 'syn-') === 0)){
+			if($sortValue && (strpos($sortKey, 'syn-') == 0)){
 				$synSortArr[substr($sortKey,4)] = $sortValue;
 			}
 		}
@@ -99,7 +99,7 @@ if($editable && $action){
 	elseif($action === 'Submit Image Sort Edits'){
 		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && strpos($sortKey, 'imgid-') === 0){
+			if($sortValue && strpos($sortKey, 'imgid-') == 0){
 				$imgSortArr[substr($sortKey,6)]  = $sortValue;
 			}
 		}
@@ -119,7 +119,7 @@ if($editable && $action){
 <head>
 	<title><?php echo $DEFAULT_TITLE. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
@@ -137,7 +137,7 @@ if($editable && $action){
 		$(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "taid": "1" }, response );
+					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "taid": "1", "hideauth": 1 }, response );
 				}
 			},{ minLength: 3, autoFocus: true }
 			);
@@ -361,7 +361,7 @@ if($editable && $action){
 							}
 							?>
 							<div style="margin:10px;">
-								*Most of the synonym management must be done in the Taxonomic Thesaurus editing module (see <a href="../../sitemap.php">sitemap</a>). 
+								Synonym management is done in the <a href="taxonomyeditor.php?tid=<?php echo $tid; ?>">Taxonomy Editor</a>.
 							</div>
 						</fieldset>
 					</div>
@@ -390,7 +390,7 @@ if($editable && $action){
 					echo '<i>' .ucfirst($taxon). '</i> not found in system. Check to see if spelled correctly and if so, add to system.';
 				}
 				else{
-					echo 'Enter scientific name you wish to edit:';
+					echo 'Enter the scientific name you wish to edit:';
 				}
 				?>
 				</div>

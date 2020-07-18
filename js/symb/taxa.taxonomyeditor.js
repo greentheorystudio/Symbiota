@@ -47,7 +47,7 @@ function toggle(target){
 		const divs = document.getElementsByTagName("div");
 		for(let i = 0; i < divs.length; i++) {
 			const divObj = divs[i];
-			if(divObj.className === target){
+			if(divObj.className == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="block";
 				}
@@ -60,7 +60,7 @@ function toggle(target){
 		const spans = document.getElementsByTagName("span");
 		for(let j = 0; j < spans.length; j++) {
 			const spanObj = spans[j];
-			if(spanObj.className === target){
+			if(spanObj.className == target){
 				if(spanObj.style.display === "none"){
 					spanObj.style.display="inline";
 				}
@@ -104,7 +104,7 @@ function submitLinkToAccepted(f){
 		url: "rpc/gettid.php",
 		data: { sciname: f.acceptedstr.value }
 	}).done(function( msg ) {
-		if(msg === 0){
+		if(msg == 0){
 			alert("ERROR: Accepted taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{
@@ -120,7 +120,7 @@ function submitTaxStatusForm(f){
 		url: "rpc/gettid.php",
 		data: { sciname: f.parentstr.value }
 	}).done(function( msg ) {
-		if(msg === 0){
+		if(msg == 0){
 			alert("ERROR: Parent taxon not found in thesaurus. It is either misspelled or needs to be added to the thesaurus.");
 		}
 		else{

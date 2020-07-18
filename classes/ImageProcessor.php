@@ -117,7 +117,7 @@ class ImageProcessor {
 			while(strtotime($lastRunDate) < time()){
 				$url = $iPlantDataUrl.'image?value=*'.$iPlantSourcePath.'*&tag_query=upload_datetime:'.$lastRunDate.'*';
 				$contents = @file_get_contents($url);
-				if(!empty($http_response_header)) {
+				if($http_response_header) {
 					$result = $http_response_header;
 					if(strpos($result[0],'200') !== false) {
 						try {
@@ -186,75 +186,80 @@ class ImageProcessor {
 		$this->logOrEcho('Starting image processing for '.$collStr.' ('.date('Y-m-d h:i:s A').')');
 		if($pmTerm){
 			$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
-			if(move_uploaded_file($_FILES['idigbiofile']['tmp_name'],$fullPath)){
-				if($fh = fopen($fullPath,'rb')){
-					$headerArr = fgetcsv($fh,0,',');
-					if(in_array('OriginalFileName', $headerArr, true)){
-						$origFileNameIndex = array_search('OriginalFileName', $headerArr, true);
-					}
-					elseif(in_array('idigbio:OriginalFileName', $headerArr, true)){
-						$origFileNameIndex = array_search('idigbio:OriginalFileName', $headerArr, true);
-					}
-					else{
-						$origFileNameIndex = '';
-					}
-					if(in_array('MediaMD5', $headerArr, true)){
-						$mediaMd5Index = array_search('MediaMD5', $headerArr, true);
-					}
-					elseif(in_array('ac:hashValue', $headerArr, true)){
-						$mediaMd5Index = array_search('ac:hashValue', $headerArr, true);
-					}
-					else{
-						$mediaMd5Index = '';
-					}
-					if(is_numeric($origFileNameIndex) && is_numeric($mediaMd5Index)){
-						while(($data = fgetcsv($fh,1000, ',')) !== FALSE){
-							if($data[$mediaMd5Index]){
-								$origFileName = basename($data[$origFileNameIndex]);
-								if(strpos($origFileName,'/') !== false){
-									$origFileName = substr($origFileName,(strrpos($origFileName,'/')+1));
-								}
-								elseif(strpos($origFileName,'\\') !== false){
-									$origFileName = substr($origFileName,(strrpos($origFileName,'\\')+1));
-								}
-								if(preg_match($pmTerm,$origFileName,$matchArr)){
-									if(array_key_exists(1,$matchArr) && $matchArr[1]){
-										$specPk = $matchArr[1];
-										if($postArr['patternreplace']) {
-											$specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
-										}
-										$occid = $this->getOccid($specPk,$origFileName);
-										if($occid){
-											$baseUrl = $idigbioImageUrl.$data[$mediaMd5Index];
-											$webUrl = $baseUrl.'?size=webview';
-											$tnUrl = $baseUrl.'?size=thumbnail';
-											$lgUrl = $baseUrl;
-											$this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$origFileName);
-										}
-									}
-								}
-								else{
-									$this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
-								}
-							}
-							else{
-								$errMsg = $data[array_search('idigbio:mediaStatusDetail', $headerArr, true)];
-								$this->logOrEcho('NOTICE: File skipped due to apparent iDigBio upload failure (iDigBio Error:'.$errMsg.') ',2);
-							}
-						}
-						$this->cleanHouse(array($this->collid));
-						$this->logOrEcho('Image upload process finished! (' .date('Y-m-d h:i:s A'). ')');
-					}
-					else{
-						$this->logOrEcho('Bad input fields: '.$origFileNameIndex.', '.$mediaMd5Index,2);
-					}
-					fclose($fh);
-				}
-				else{
-					$this->logOrEcho('Cannot open input file',2);
-				}
-				unlink($fullPath);
-			}
+			if(is_writable($SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/')){
+                if(move_uploaded_file($_FILES['idigbiofile']['tmp_name'],$fullPath)){
+                    if($fh = fopen($fullPath,'rb')){
+                        $headerArr = fgetcsv($fh,0,',');
+                        if(in_array('OriginalFileName', $headerArr, true)){
+                            $origFileNameIndex = array_search('OriginalFileName', $headerArr, true);
+                        }
+                        elseif(in_array('idigbio:OriginalFileName', $headerArr, true)){
+                            $origFileNameIndex = array_search('idigbio:OriginalFileName', $headerArr, true);
+                        }
+                        else{
+                            $origFileNameIndex = '';
+                        }
+                        if(in_array('MediaMD5', $headerArr, true)){
+                            $mediaMd5Index = array_search('MediaMD5', $headerArr, true);
+                        }
+                        elseif(in_array('ac:hashValue', $headerArr, true)){
+                            $mediaMd5Index = array_search('ac:hashValue', $headerArr, true);
+                        }
+                        else{
+                            $mediaMd5Index = '';
+                        }
+                        if(is_numeric($origFileNameIndex) && is_numeric($mediaMd5Index)){
+                            while(($data = fgetcsv($fh,1000, ',')) !== FALSE){
+                                if($data[$mediaMd5Index]){
+                                    $origFileName = basename($data[$origFileNameIndex]);
+                                    if(strpos($origFileName,'/') !== false){
+                                        $origFileName = substr($origFileName,(strrpos($origFileName,'/')+1));
+                                    }
+                                    elseif(strpos($origFileName,'\\') !== false){
+                                        $origFileName = substr($origFileName,(strrpos($origFileName,'\\')+1));
+                                    }
+                                    if(preg_match($pmTerm,$origFileName,$matchArr)){
+                                        if(array_key_exists(1,$matchArr) && $matchArr[1]){
+                                            $specPk = $matchArr[1];
+                                            if($postArr['patternreplace']) {
+                                                $specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
+                                            }
+                                            $occid = $this->getOccid($specPk,$origFileName);
+                                            if($occid){
+                                                $baseUrl = $idigbioImageUrl.$data[$mediaMd5Index];
+                                                $webUrl = $baseUrl.'?size=webview';
+                                                $tnUrl = $baseUrl.'?size=thumbnail';
+                                                $lgUrl = $baseUrl;
+                                                $this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$origFileName);
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
+                                    }
+                                }
+                                else{
+                                    $errMsg = $data[array_search('idigbio:mediaStatusDetail', $headerArr, true)];
+                                    $this->logOrEcho('NOTICE: File skipped due to apparent iDigBio upload failure (iDigBio Error:'.$errMsg.') ',2);
+                                }
+                            }
+                            $this->cleanHouse(array($this->collid));
+                            $this->logOrEcho('Image upload process finished! (' .date('Y-m-d h:i:s A'). ')');
+                        }
+                        else{
+                            $this->logOrEcho('Bad input fields: '.$origFileNameIndex.', '.$mediaMd5Index,2);
+                        }
+                        fclose($fh);
+                    }
+                    else{
+                        $this->logOrEcho('Cannot open input file',2);
+                    }
+                    unlink($fullPath);
+                }
+            }
+			else{
+                $this->logOrEcho('ERROR: Destination path is not writable to the server ',2);
+            }
 		}
 		else{
 			$this->logOrEcho('ERROR: Pattern matching term has not been defined ',2);
@@ -268,32 +273,32 @@ class ImageProcessor {
 		$ext = substr(strrchr($inFileName, '.'), 1);
 		$fileName = 'imageMappingFile_'.time();
 		$fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/';
-		if(move_uploaded_file($_FILES['uploadfile']['tmp_name'],$fullPath.$fileName.'.'.$ext)){
-			if($ext === 'zip'){
-				$zipFilePath = $fullPath.$fileName.'.zip';
-				$ext = '';
-				$zip = new ZipArchive;
-				$res = $zip->open($zipFilePath);
-				if($res === TRUE) {
-					for($i = 0; $i < $zip->numFiles; $i++){
-						$fileExt = substr(strrchr($zip->getNameIndex($i), '.'), 1);
-						if($fileExt === 'csv' || $fileExt === 'txt'){
-							$ext = $fileExt;
-							$zip->renameIndex($i, $fileName.'.'.$ext);
-							$zip->extractTo($fullPath,$fileName.'.'.$ext);
-							$zip->close();
-							unlink($zipFilePath);
-							break;
-						}
-					}
-				}
-				else{
-					echo 'failed, code:' . $res;
-					return false;
-				}
-			}
-			return $fileName.'.'.$ext;
-		}
+		if(is_writable($fullPath) && move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath . $fileName . '.' . $ext)) {
+            if($ext === 'zip'){
+                $zipFilePath = $fullPath.$fileName.'.zip';
+                $ext = '';
+                $zip = new ZipArchive;
+                $res = $zip->open($zipFilePath);
+                if($res === TRUE) {
+                    for($i = 0; $i < $zip->numFiles; $i++){
+                        $fileExt = substr(strrchr($zip->getNameIndex($i), '.'), 1);
+                        if($fileExt === 'csv' || $fileExt === 'txt'){
+                            $ext = $fileExt;
+                            $zip->renameIndex($i, $fileName.'.'.$ext);
+                            $zip->extractTo($fullPath,$fileName.'.'.$ext);
+                            $zip->close();
+                            unlink($zipFilePath);
+                            break;
+                        }
+                    }
+                }
+                else{
+                    echo 'failed, code:' . $res;
+                    return false;
+                }
+            }
+            return $fileName.'.'.$ext;
+        }
 		return '';
 	}
 
@@ -483,7 +488,7 @@ class ImageProcessor {
 								break;
 							}
 
-							if($fileExt === 'jpg' && in_array($fnExt,$highResList)) {
+							if($fileExt === 'jpg' && in_array($fnExt, $highResList, true)) {
 								$this->conn->query('DELETE FROM images WHERE imgid = '.$imgId);
 							}
 						}
@@ -626,7 +631,6 @@ class ImageProcessor {
 		}
 		if($this->logMode === 1 || $this->logMode === 3){
 			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
-			ob_flush();
 			flush();
 		}
 	}

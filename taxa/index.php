@@ -11,7 +11,7 @@ $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$DEFAULT_LANG;
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 
 $taxonManager = new TaxonProfileManager();
-if($taxAuthId || $taxAuthId === '0') {
+if($taxAuthId || $taxAuthId == '0') {
     $taxonManager->setTaxAuthId($taxAuthId);
 }
 if($clValue) {
@@ -49,7 +49,7 @@ $styleClass = '';
 if($taxonRank > 180) {
     $styleClass = 'species';
 }
-elseif($taxonRank === 180) {
+elseif($taxonRank == 180) {
     $styleClass = 'genus';
 }
 else {
@@ -66,7 +66,7 @@ if($SYMB_UID){
 		$displayLocality = 1;
 	}
 }
-if($taxonManager->getSecurityStatus() === 0){
+if($taxonManager->getSecurityStatus() == 0){
 	$displayLocality = 1;
 }
 $taxonManager->setDisplayLocality($displayLocality);
@@ -84,9 +84,8 @@ else{
 <head>
 	<title><?php echo $DEFAULT_TITLE. ' - ' .$spDisplay; ?></title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/speciesprofilebase.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/speciesprofile.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>

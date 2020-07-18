@@ -30,7 +30,7 @@ if(isset($_REQUEST['db'])){
 <head>
     <title><?php echo $DEFAULT_TITLE.' '.$SEARCHTEXT['PAGE_TITLE']; ?></title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
@@ -63,31 +63,6 @@ if(isset($_REQUEST['db'])){
         });
 
         function checkHarvestparamsForm(frm){
-            <?php
-            if(!$SOLR_MODE){
-                ?>
-                if ((frm.taxa.value === '') && (frm.country.value === '') && (frm.state.value === '') && (frm.county.value === '') &&
-                    (frm.locality.value === '') && (frm.upperlat.value === '') && (frm.pointlat.value === '') && (frm.catnum.value === '') &&
-                    (frm.elevhigh.value === '') && (frm.eventdate2.value === '') && (frm.typestatus.checked === false) && (frm.hasimages.checked === false) && (frm.hasgenetic.checked === false) &&
-                    (frm.collector.value === '') && (frm.collnum.value === '') && (frm.eventdate1.value === '') && (frm.elevlow.value === '')) {
-                    if(sessionStorage.jsoncollstarr){
-                        const jsonArr = JSON.parse(sessionStorage.jsoncollstarr);
-                        for(let i in jsonArr){
-                            if(jsonArr.hasOwnProperty(i) && jsonArr[i] === 'all'){
-                                alert("Please fill in at least one search parameter!");
-                                return false;
-                            }
-                        }
-                    }
-                    else{
-                        alert("Please fill in at least one search parameter!");
-                        return false;
-                    }
-                }
-                <?php
-            }
-            ?>
-
             if(frm.upperlat.value !== '' || frm.bottomlat.value !== '' || frm.leftlong.value !== '' || frm.rightlong.value !== ''){
                 if(frm.upperlat.value === '' || frm.bottomlat.value === '' || frm.leftlong.value === '' || frm.rightlong.value === ''){
                     alert("Error: Please make all Lat/Long bounding box values contain a value or all are empty");
@@ -291,6 +266,9 @@ if(isset($_REQUEST['db'])){
 			<div>
 				<h1><?php echo $SEARCHTEXT['SPECIMEN_HEADER']; ?></h1>
 			</div>
+            <div>
+                <?php echo $SEARCHTEXT['OCCURRENCE_REMARKS']; ?> <input type="text" id="occurrenceRemarks" size="50" name="occurrenceRemarks" value="" />
+            </div>
 			<div>
 				<?php echo $SEARCHTEXT['CATALOG_NUMBER']; ?>
                 <input type="text" id="catnum" size="32" name="catnum" value="" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />

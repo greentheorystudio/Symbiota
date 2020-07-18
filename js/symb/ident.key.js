@@ -7,7 +7,7 @@ function toggleChars(name){
 	const chars = document.getElementsByTagName("div");
 	for (let i = 0; i < chars.length; i++) {
 		const obj = chars[i];
-		if(obj.className === name){
+		if(obj.className == name){
 			if(obj.style.display === "none"){
 				obj.style.display="block";
 				setCookie("all");
@@ -67,7 +67,7 @@ function setLang(list){
 	const objs = document.getElementsByTagName("span");
 	for (let i = 0; i < objs.length; i++) {
 		const obj = objs[i];
-		if(obj.lang === langName){
+		if(obj.lang == langName){
 			obj.style.display="";
 		}
 		else if(obj.lang !== ""){

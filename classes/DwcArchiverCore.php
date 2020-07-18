@@ -16,14 +16,13 @@ class DwcArchiverCore extends Manager{
 	private $customWhereSql;
 	private $conditionSql;
  	private $conditionArr = array();
-	private $condAllowArr;
 	private $upperTaxonomy = array();
 
 	private $targetPath;
 	protected $serverDomain;
 
-	private $schemaType = 'dwc';			//dwc, symbiota, backup, coge, pensoft
-	private $limitToGuids = false;			//Limit output to only records with GUIDs
+	private $schemaType = 'dwc';
+	private $limitToGuids = false;
 	private $extended = 0;
 	private $delimiter = ',';
 	private $fileExt = '.csv';
@@ -44,8 +43,8 @@ class DwcArchiverCore extends Manager{
 
 	private $geolocateVariables = array();
 
-	public function __construct($conType='readonly'){
-		global $SERVER_ROOT, $LOG_PATH, $CHARSET;
+	public function __construct(){
+		global $LOG_PATH, $CHARSET;
 		parent::__construct(null);
 		if(!class_exists('DOMDocument')){
 			exit('FATAL ERROR: PHP DOMDocument class is not installed, please contact your server admin');
@@ -97,17 +96,18 @@ class DwcArchiverCore extends Manager{
 		}
 		else{
 			$tPath = $TEMP_DIR_ROOT;
+			$tPathSub = substr($tPath,-1);
 			if(!$tPath){
 				$tPath = ini_get('upload_tmp_dir');
 			}
 			if(!$tPath){
 				$tPath = $SERVER_ROOT;
-				if(substr($tPath,-1) !== '/' && substr($tPath,-1) !== '\\'){
+				if($tPathSub !== '/' && $tPathSub !== '\\'){
 					$tPath .= '/';
 				}
 				$tPath .= 'temp/';
 			}
-			if(substr($tPath,-1) !== '/' && substr($tPath,-1) !== '\\'){
+			if($tPathSub !== '/' && $tPathSub !== '\\'){
 				$tPath .= '/';
 			}
 			if(file_exists($tPath. 'downloads')){
@@ -478,9 +478,10 @@ class DwcArchiverCore extends Manager{
 
 	public function createDwcArchive($fileNameSeed = ''): string
 	{
-		if(!$fileNameSeed){
+        $collid = key($this->collArr);
+	    if(!$fileNameSeed){
 			if(count($this->collArr) === 1){
-				$firstColl = current($this->collArr);
+				$firstColl = $this->collArr[$collid];
 				if($firstColl){
 					$fileNameSeed = $firstColl['instcode'];
 					if($firstColl['collcode']) {
@@ -567,7 +568,6 @@ class DwcArchiverCore extends Manager{
 				'Note that OccurrenceID GUID assignments are required for Darwin Core Archive publishing. ' .
 				'Symbiota GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
 			$this->logOrEcho($errStr);
-			$collid = key($this->collArr);
 			if($collid) {
 				$this->deleteArchive($collid);
 			}
@@ -833,7 +833,7 @@ class DwcArchiverCore extends Manager{
     	$this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
 	}
 
-	public function getEmlDom($emlArr = null): \DOMDocument
+	public function getEmlDom($emlArr = null): DOMDocument
 	{
 		global $DEFAULT_TITLE, $CLIENT_ROOT, $RIGHTS_TERMS_DEFS, $EML_PROJECT_ADDITIONS;
 		$usageTermArr = array();

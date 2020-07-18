@@ -577,8 +577,12 @@ class SOLRManager extends OccurrenceManager{
             $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
             $lastDate = ($infoArr['lastFullImport'] ?? '');
             if($lastDate){
-                $lastDate = new DateTime($lastDate);
-                $now = new DateTime($now);
+                try {
+                    $lastDate = new DateTime($lastDate);
+                } catch (Exception $e) {}
+                try {
+                    $now = new DateTime($now);
+                } catch (Exception $e) {}
                 $interval = $now->diff($lastDate);
                 $hours = $interval->h;
                 $hours += ($interval->days * 24);
@@ -908,6 +912,30 @@ class SOLRManager extends OccurrenceManager{
                 }
                 $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
             }
+        }
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr)){
+            $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
+            $remarksArr = explode(';',$searchStr);
+            $tempArr = array();
+            foreach($remarksArr as $k => $value){
+                if(strpos($value,' ')){
+                    $wordArr = explode(' ',$value);
+                    $tempStrArr = array();
+                    foreach($wordArr as $w => $word){
+                        $tempStrArr[] = '((occurrenceRemarks:*'.trim($word).'*))';
+                    }
+                    $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
+                }
+                else if($value === 'NULL'){
+                    $tempArr[] = '-occurrenceRemarks:["" TO *]';
+                    $remarksArr[$k] = 'Occurrence Remarks IS NULL';
+                }
+                else{
+                    $tempArr[] = '((occurrenceRemarks:*'.trim($value).'*))';
+                }
+            }
+            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
         }
         if(array_key_exists('catnum',$this->searchTermsArr)){
             $catStr = $this->searchTermsArr['catnum'];

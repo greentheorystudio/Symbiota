@@ -60,7 +60,7 @@ $indTermUrl = 'individual.php';
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Glossary</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
@@ -305,7 +305,7 @@ $indTermUrl = 'individual.php';
 							<?php 
 							echo '<div style="float:left;font-weight:bold;font-size:120%;">'.$title.'</div>'; 
 							$sourceArrFull = $glosManager->getTaxonSources($tid);
-							$sourceArr = current($sourceArrFull);
+                            $sourceArr = current($sourceArrFull);
 							if($sourceArr){
 								?>
 								<div style="float:left;margin-left:5px;">

@@ -55,7 +55,7 @@ if($isEditor){
 <head>
     <title><?php echo $collMetadata['collectionname']; ?> Fieldguide Results Viewer</title>
     <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -210,10 +210,10 @@ if($isEditor){
                                         $note = '';
                                         $tId = 0;
                                         if(array_key_exists($name,$tidArr) && $tidArr[$name]){
-                                            if($currID === $name){
+                                            if($currID == $name){
                                                 $note = 'Current determination';
                                             }
-                                            else if(count($tidArr[$name]) === 1){
+                                            else if(count($tidArr[$name]) == 1){
                                                 $valid = true;
                                                 $tId = $tidArr[$name][0];
                                             }
@@ -227,7 +227,7 @@ if($isEditor){
                                         if($note) {
                                             $displayName = $name . ' <span style="color:red;">' . $note . '</span>';
                                         }
-                                        echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
+                                        echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
                                         echo '<td>'."\n";
                                         if($firstOcc) {
                                             echo '<a href="../editor/occurrenceeditor.php?occid=' . $occId . '" target="_blank">' . $occId . '</a>' . "\n";
@@ -279,7 +279,7 @@ if($isEditor){
                                     if($fgStatus === 'OK' && !$fgidarr){
                                         $note = '<span style="color:red;">No results provided.</span>';
                                     }
-                                    echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
+                                    echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
                                     echo '<td>'."\n";
                                     if($firstOcc) {
                                         echo '<a href="../editor/occurrenceeditor.php?occid=' . $occId . '" target="_blank">' . $occId . '</a>' . "\n";

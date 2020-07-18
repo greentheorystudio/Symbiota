@@ -105,7 +105,7 @@ class ProfileManager extends Manager{
         }
     }
 
-	public function getPerson(): \Person
+	public function getPerson(): Person
 	{
 	    $sqlStr = 'SELECT u.uid, u.firstname, ' .($this->checkFieldExists('users','middleinitial')?'u.middleinitial, ':''). 'u.lastname, u.title, u.institution, u.department, ' .
 			'u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, ' .
@@ -186,7 +186,7 @@ class ProfileManager extends Manager{
 			$values .= ', email="'.$this->cleanInStr($person->getEmail()).'"';
 			$values .= ', url="'.$this->cleanInStr($person->getUrl()).'"';
 			$values .= ', biography="'.$this->cleanInStr($person->getBiography()).'"';
-			$values .= ', ispublic='.$this->cleanInStr($person->getIsPublic()).' ';
+			$values .= ', ispublic='.($this->cleanInStr($person->getIsPublic())?1:0).' ';
 			$sql = $fields. ' ' .$values. ' ' .$where;
 			//echo $sql;
 			$success = $editCon->query($sql);
@@ -719,7 +719,6 @@ class ProfileManager extends Manager{
     	$cSet = str_replace('-','',strtolower($CHARSET));
 		echo '<li style="font-weight:bold;">Zip Archive created</li>';
 		echo '<li style="font-weight:bold;">Adding occurrence records to archive...';
-		ob_flush();
 		flush();
 
 		$fileName = $tempPath.$buFileName;
@@ -755,7 +754,6 @@ class ProfileManager extends Manager{
 			$zipArchive->renameName($fileName.'_spec.csv','occurrences.csv');
 
 			echo 'Done!</li> ';
-			ob_flush();
 			flush();
 			$fileUrl = str_replace($SERVER_ROOT,$CLIENT_ROOT,$tempPath.$buFileName.'.zip');
 			$zipArchive->close();
@@ -855,7 +853,8 @@ class ProfileManager extends Manager{
         return $un;
     }
 
-	private function getTempPath(){
+	private function getTempPath(): string
+    {
 		global $SERVER_ROOT;
 	    $tPath = $SERVER_ROOT;
 		if(substr($tPath,-1) !== '/' && substr($tPath,-1) !== '\\') {

@@ -129,7 +129,7 @@ class OccurrenceDuplicate {
 		$targetId = 0;
 		if(count($dupArr)>1){
 			$targetId = min($dupArr);
-			unset($dupArr[array_search($targetId, $dupArr)]);
+			unset($dupArr[array_search($targetId, $dupArr, true)]);
 			$sql = 'UPDATE omoccurduplicatelink SET duplicateid = '.$targetId.' WHERE duplicateid IN('.$dupArr.')';
 			if($this->conn->query($sql)){
 				if(!$this->conn->query('DELETE FROM omoccurduplicates WHERE duplicateid IN('.$dupArr.')')){
@@ -622,7 +622,6 @@ class OccurrenceDuplicate {
 		if($verbose) {
 			echo '<li>Starting to search for duplicates ' . date('Y-m-d H:i:s') . '</li>';
 		}
-		ob_flush();
 		flush();
 		do{
 			$sql = 'SELECT DISTINCT o.eventdate '.
@@ -640,7 +639,6 @@ class OccurrenceDuplicate {
 			if($verbose) {
 				echo '<li>Start date ' . $startDate . ' with ' . $recCnt . ' dates to be evaluated</li>';
 			}
-			ob_flush();
 			flush();
 			while($r = $rs->fetch_object()){
 				$startDate = $r->eventdate;
@@ -685,7 +683,6 @@ class OccurrenceDuplicate {
 							if($verbose) {
 								echo '<li>Duplicates located: ' . $dupIdStr . '</li>';
 							}
-							ob_flush();
 							flush();
 							$dupId = 0;
 							if($mArr) {
@@ -707,7 +704,6 @@ class OccurrenceDuplicate {
 										echo '<li style="margin-left:10px;">sql: ' . $sqlI1 . '</li>';
 									}
 								}
-								ob_flush();
 								flush();
 							}
 							if($dupId){
@@ -725,7 +721,6 @@ class OccurrenceDuplicate {
 								else if($verbose) {
 									echo '<li style="margin-left:10px;">ERROR linking dupes: ' . $this->conn->error . '</li>';
 								}
-								ob_flush();
 								flush();
 							}
 						}
@@ -733,7 +728,6 @@ class OccurrenceDuplicate {
 							if($verbose) {
 								echo '<li style="margin-left:10px;">Two matching duplicate projects located</li>';
 							}
-							ob_flush();
 							flush();
 
 						}

@@ -43,7 +43,7 @@ elseif($activeCollArr){
 	<head>
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Taxon Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="Stylesheet" />
 		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
@@ -93,7 +93,7 @@ elseif($activeCollArr){
 					dataType: "json",
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
-					if(res === "1"){
+					if(res == "1"){
 						$("#remapSpan-"+msgCode).text(" >>> Taxon remapped successfully!");
 						$("#remapSpan-"+msgCode).css('color', 'green');
 					}

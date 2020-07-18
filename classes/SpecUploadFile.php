@@ -24,21 +24,21 @@ class SpecUploadFile extends SpecUploadBase{
 			}
 			elseif(array_key_exists('uploadfile',$_FILES)){
 				$this->ulFileName = $_FILES['uploadfile']['name'];
-				if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->ulFileName)){
-					$finalPath = $this->uploadTargetPath.$this->ulFileName;
-				}
+				if(is_writable($this->uploadTargetPath)){
+                    if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->ulFileName)){
+                        $finalPath = $this->uploadTargetPath.$this->ulFileName;
+                    }
+                    else{
+                        echo '<div style="margin:15px;font-weight:bold;font-size:120%;">';
+                        echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
+                        echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
+                        echo '</div>';
+                        return false;
+                    }
+                }
 				else{
-					echo '<div style="margin:15px;font-weight:bold;font-size:120%;">';
-					echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
-					if(!is_writable($this->uploadTargetPath)){
-						echo 'Target path ('.$this->uploadTargetPath.') is not writable ';
-					}
-					else{
-						echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
-					}
-					echo '</div>';
-					return false;
-				}
+                    echo 'Target path ('.$this->uploadTargetPath.') is not writable ';
+                }
 			}
 			if($finalPath && substr($this->ulFileName,-4) === '.zip'){
 				$this->ulFileName = '';
@@ -51,7 +51,7 @@ class SpecUploadFile extends SpecUploadBase{
 						if(strpos($fileName, '._') !== 0){
 							$ext = strtolower(substr(strrchr($fileName, '.'), 1));
 							if($ext === 'csv' || $ext === 'txt'){
-								if($this->uploadType !== $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
+								if($this->uploadType != $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
 									$this->ulFileName = $fileName;
 									$zip->extractTo($this->uploadTargetPath,$fileName);
 									$zip->close();
@@ -116,11 +116,11 @@ class SpecUploadFile extends SpecUploadBase{
 						$recMap[$symbField] = $valueStr;
 					}
 				}
-				if($this->uploadType === $this->SKELETAL && !$recMap['catalognumber']){
+				if($this->uploadType == $this->SKELETAL && !$recMap['catalognumber']){
 					unset($recMap);
 					continue;
 				}
-				if($this->uploadType === $this->SKELETAL && (!array_key_exists('recordenteredby', $recMap) || !$recMap['recordenteredby'])){
+				if($this->uploadType == $this->SKELETAL && (!array_key_exists('recordenteredby', $recMap) || !$recMap['recordenteredby'])){
 					$recMap['recordenteredby'] = 'preprocessed';
 				}
 				$this->loadRecord($recMap);
@@ -134,7 +134,7 @@ class SpecUploadFile extends SpecUploadBase{
 
 			$this->cleanUpload();
 
-			if($this->uploadType === $this->NFNUPLOAD){
+			if($this->uploadType == $this->NFNUPLOAD){
 				$this->nfnIdentifier = 'url';
 				$testSql = 'SELECT tempfield01, tempfield02 FROM uploadspectemp WHERE tempfield02 IS NOT NULL AND collid IN('.$this->collId.') LIMIT 1';
 				$testRS = $this->conn->query($testSql);

@@ -42,7 +42,7 @@ $dbArr = array();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=16" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=17" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
@@ -51,11 +51,11 @@ $dbArr = array();
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jscolor/jscolor.js?ver=2" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/jscolor/jscolor.js?ver=13" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=273" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=276" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             let winHeight = $(window).height();
@@ -94,10 +94,6 @@ $dbArr = array();
                 scrolllock: true
             });
             $('#mapsettings').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-            $('#maptools').popup({
                 transition: 'all 0.3s',
                 scrolllock: true
             });
@@ -240,6 +236,9 @@ $dbArr = array();
                                 </div>
                                 <div style="margin:10px 0 10px 0;"><hr></div>
                                 <div>
+                                    <?php echo $SEARCHTEXT['OCCURRENCE_REMARKS']; ?> <input data-role="none" type="text" id="occurrenceRemarks" style="width:225px;" name="occurrenceRemarks" onchange="buildQueryStrings();" />
+                                </div>
+                                <div style="margin-top:5px;">
                                     <?php echo $SEARCHTEXT['CATALOG_NUMBER']; ?>
                                     <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" onchange="buildQueryStrings();" />
                                 </div>
@@ -500,109 +499,110 @@ $dbArr = array();
     </div>
 </div>
 
-<div id="map" class="map"></div>
+<div id="map" class="map">
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
 
-<div id="popup" class="ol-popup">
-    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-    <div id="popup-content"></div>
-</div>
+    <div id="finderpopup" class="ol-popup ol-popup-finder" style="padding:5px;">
+        <a href="#" id="finderpopup-closer" style="display:none;"></a>
+        <div id="finderpopup-content"></div>
+    </div>
 
-<div id="finderpopup" class="ol-popup ol-popup-finder" style="padding:5px;">
-    <a href="#" id="finderpopup-closer" style="display:none;"></a>
-    <div id="finderpopup-content"></div>
-</div>
+    <div id="mapinfo">
+        <div id="mapcoords"></div>
+        <div id="mapscale_us"></div>
+        <div id="mapscale_metric"></div>
+    </div>
 
-<div id="mapinfo">
-    <div id="mapcoords"></div>
-    <div id="mapscale_us"></div>
-    <div id="mapscale_metric"></div>
-</div>
-
-<div id="maptoolcontainer">
-    <div id="maptoolbox">
-        <div id="drawcontrol">
-            <span class="maptext">Draw</span>
-            <select id="drawselect">
-                <option value="None">None</option>
-                <option value="Polygon">Polygon</option>
-                <option value="Circle">Circle</option>
-                <option value="LineString">Line</option>
-                <option value="Point">Point</option>
-            </select>
-        </div>
-        <div id="basecontrol">
-            <span class="maptext">Base Layer</span>
-            <select data-role="none" id="base-map" onchange="changeBaseMap();">
-                <option value="worldtopo">ESRI World Topo</option>
-                <option value="openstreet">OpenStreetMap</option>
-                <option value="blackwhite">Stamen Design Black &amp; White</option>
-                <option value="worldimagery">ESRI World Imagery</option>
-                <option value="ocean">ESRI Ocean</option>
-                <option value="ngstopo">National Geographic Topo</option>
-                <option value="natgeoworld">National Geographic World</option>
-                <option value="esristreet">ESRI StreetMap</option>
-            </select>
-        </div>
-        <div style="clear:both;"></div>
-        <div id="selectcontrol">
-            <span class="maptext">Active Layer</span>
-            <select id="selectlayerselect" onchange="setActiveLayer();">
-                <option id="lsel-none" value="none">None</option>
-            </select>
-        </div>
-        <div style="clear:both;"></div>
-        <div id="settingsLink" style="margin-left:22px;float:left;">
-            <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
-        </div>
-        <div id="toolsLink" style="margin-left:22px;float:left;">
-            <span class="maptext"><a class="maptools_open" href="#maptools"><b>Tools</b></a></span>
-        </div>
-        <div id="layerControllerLink" style="margin-left:22px;float:left;">
-            <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
-        </div>
-        <div id="deleteSelections" style="margin-left:60px;float:left;">
-            <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
-        </div>
-        <div style="clear:both;"></div>
-        <div id="dateslidercontrol" style="margin-top:5px;display:none;">
-            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-            <div id="setdatediv" style="">
-                <span class="maptext">Earliest</span>
-                <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
-                <span class="maptext">Latest</span>
-                <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
-                <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
-            </div>
-            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-            <div id="animatediv">
-                <div>
-                    <span class="maptext">Interval Duration (years)</span>
-                    <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
-                    <span class="maptext">Interval Time (seconds)</span>
-                    <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
+    <div id="maptoolcontainer">
+        <div id="maptoolbox">
+            <div class="topToolboxRow">
+                <div id="drawcontrol">
+                    <span class="maptext">Draw</span>
+                    <select id="drawselect">
+                        <option value="None">None</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="Circle">Circle</option>
+                        <option value="LineString">Line</option>
+                        <option value="Point">Point</option>
+                    </select>
                 </div>
-                <div style="clear:both;"></div>
-                <div style="margin-top:3px;">
-                    <div style="float:left;">
+                <div id="basecontrol">
+                    <span class="maptext">Base Layer</span>
+                    <select data-role="none" id="base-map" onchange="changeBaseMap();">
+                        <option value="worldtopo">ESRI World Topo</option>
+                        <option value="openstreet">OpenStreetMap</option>
+                        <option value="blackwhite">Stamen Design Black &amp; White</option>
+                        <option value="worldimagery">ESRI World Imagery</option>
+                        <option value="ocean">ESRI Ocean</option>
+                        <option value="ngstopo">National Geographic Topo</option>
+                        <option value="natgeoworld">National Geographic World</option>
+                        <option value="esristreet">ESRI StreetMap</option>
+                    </select>
+                </div>
+            </div>
+            <div class="middleToolboxRow">
+                <div id="selectcontrol">
+                    <span class="maptext">Active Layer</span>
+                    <select id="selectlayerselect" onchange="setActiveLayer();">
+                        <option id="lsel-none" value="none">None</option>
+                    </select>
+                </div>
+            </div>
+            <div class="bottomToolboxRow">
+                <div id="settingsLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
+                </div>
+                <div id="layerControllerLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
+                </div>
+                <div id="deleteSelections" style="margin-left:60px;float:left;">
+                    <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+            <div id="dateslidercontrol" style="margin-top:5px;display:none;">
+                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
+                <div id="setdatediv" style="">
+                    <span class="maptext">Earliest</span>
+                    <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
+                    <span class="maptext">Latest</span>
+                    <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
+                    <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
+                </div>
+                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
+                <div id="animatediv">
+                    <div>
+                        <span class="maptext">Interval Duration (years)</span>
+                        <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
+                        <span class="maptext">Interval Time (seconds)</span>
+                        <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div style="margin-top:3px;">
+                        <div style="float:left;">
                         <span style="margin-right:5px;">
                             <span class="maptext">Save Images</span>
                             <input data-role="none" type='checkbox' id='dateslideranimimagesave' onchange="checkDSSaveImage();" value='1'>
                         </span>
-                        <span style="margin-right:5px;">
+                            <span style="margin-right:5px;">
                             <span class="maptext">Reverse</span>
                             <input data-role="none" type='checkbox' id='dateslideranimreverse' value='1'>
                         </span>
-                        <span>
+                            <span>
                             <span class="maptext">Dual</span>
                             <input data-role="none" type='checkbox' id='dateslideranimdual' value='1'>
                         </span>
+                        </div>
+                        <div style="float:right;">
+                            <button data-role="none" type="button" onclick="setDSAnimation();" >Start</button>
+                            <button data-role="none" type="button" onclick="stopDSAnimation();" >Stop</button>
+                        </div>
                     </div>
-                    <div style="float:right;">
-                        <button data-role="none" type="button" onclick="setDSAnimation();" >Start</button>
-                        <button data-role="none" type="button" onclick="stopDSAnimation();" >Stop</button>
-                    </div>
+                    <div style="clear:both;"></div>
                 </div>
-                <div style="clear:both;"></div>
             </div>
         </div>
     </div>
@@ -1750,8 +1750,6 @@ $dbArr = array();
 </script>
 
 <?php include_once('includes/mapsettings.php'); ?>
-
-<?php include_once('includes/maptools.php'); ?>
 
 <?php include_once('includes/layercontroller.php'); ?>
 

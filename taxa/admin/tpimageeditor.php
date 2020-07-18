@@ -36,10 +36,10 @@ if($tid){
 									$webUrl = $imgArr['url'];
 									$tnUrl = $imgArr['thumbnailurl'];
 									if($IMAGE_DOMAIN){
-										if(strpos($imgArr['url'], '/') === 0) {
+										if(strpos($imgArr['url'], '/') == 0) {
                                             $webUrl = $IMAGE_DOMAIN . $imgArr['url'];
                                         }
-										if(strpos($imgArr['thumbnailurl'], '/') === 0) {
+										if(strpos($imgArr['thumbnailurl'], '/') == 0) {
                                             $tnUrl = $IMAGE_DOMAIN . $imgArr['thumbnailurl'];
                                         }
 									}

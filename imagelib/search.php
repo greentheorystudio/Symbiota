@@ -70,7 +70,7 @@ if($action && $action === 'Load Images') {
 <head>
 <title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -469,7 +469,7 @@ if($action && $action === 'Load Images') {
 							foreach($taxaList as $value){
 								$onChange = '"'.$value.'","genlist",starr,1';
 								$famChange = '"'.$value.'"';
-								echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
+								echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange. ');changeImagePage(' .$onChange."); return false;'>".strtoupper($value). '</a></div>';
 							}
 						}
 						?>

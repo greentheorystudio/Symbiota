@@ -10,7 +10,7 @@ $PORTAL_GUID = '8453b446-8f84-4949-a587-3e8b9678dc0b';				//Typically a UUID
 $SECURITY_KEY = '424a9fc6-9454-4bce-acba-e32656da8a63';				//Typically a UUID used to verify access to certain web service
 
 $CLIENT_ROOT = '';				//URL path to project root folder (relative path w/o domain, e.g. '/seinet')
-$SERVER_ROOT = '/symbiota';				//Full path to Symbiota project root folder
+$SERVER_ROOT = '/var/www/default/htdocs';				//Full path to Symbiota project root folder
 $TEMP_DIR_ROOT = $SERVER_ROOT.'/temp';				//Must be writable by Apache; will use system default if not specified
 $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
@@ -47,6 +47,7 @@ $GBIF_PASSWORD = '';                //GBIF password which portal will use to pub
 $GBIF_ORG_KEY = '';                 //GBIF organization key for organization which is hosting this portal
 
 //Misc variables
+$MAPPING_BOUNDARIES = '';
 $SPATIAL_INITIAL_CENTER = '';	    //Initial map center for Spatial Module. Default: '[-110.90713, 32.21976]'
 $SPATIAL_INITIAL_ZOOM = '';			//Initial zoom for Spatial Module. Default: 7
 $TAXON_PROFILE_MAP_CENTER = '';			//Center for taxon profile maps

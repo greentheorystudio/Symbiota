@@ -84,7 +84,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 <head>
 	<title>Darwin Core Archiver Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet">
+    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	<style type="text/css">
 		.nowrap { white-space: nowrap; }
@@ -249,7 +249,7 @@ include(__DIR__ . '/../../header.php');
 			}
 		}
 		if($dwcaArr = $dwcaManager->getDwcaItems($collId)){
-			$dArr = current($dwcaArr);
+            $dArr = current($dwcaArr);
 			$dwcUri = ($dArr['collid'] === $collId?$dArr['link']:'');
 			?>
 			<div style="margin:10px;">

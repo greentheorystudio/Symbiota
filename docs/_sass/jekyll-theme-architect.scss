@@ -301,14 +301,12 @@ blockquote {
 }
 
 ul {
-  list-style-position: inside;
-  list-style: disc;
+  list-style: disc inside;
   padding-left: 20px;
 }
 
 ol {
-  list-style-position: inside;
-  list-style: decimal;
+  list-style: decimal inside;
   padding-left: 20px;
 }
 

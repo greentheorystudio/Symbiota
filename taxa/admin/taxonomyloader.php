@@ -28,11 +28,11 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Taxon Loader: </title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script src="../../js/symb/taxa.taxonomyloader.js?ver=180713"></script>
+	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20200516"></script>
 </head>
 <body>
 <?php
@@ -50,12 +50,12 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 		}
 		if($isEditor){
 			?>
-			<form id="loaderform" name="loaderform" action="taxonomyloader.php" method="post" onsubmit="return verifyLoadForm(this)">
+			<form id="loaderform" name="loaderform" action="taxonomyloader.php" method="post">
 				<fieldset>
 					<legend><b>Add New Taxon</b></legend>
 					<div>
 						<div style="float:left;width:170px;">Taxon Name:</div>
-						<input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" value="" onchange="parseName(this.form)"/>
+						<input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" value="" onchange="parseName(this.form);clearValidations();"/>
 					</div>
 					<div>
 						<div style="float:left;width:170px;">Author:</div>
@@ -63,14 +63,14 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Taxon Rank:</div>
-						<select id="rankid" name="rankid" title="Rank ID" style="border:inset;">
+						<select id="rankid" name="rankid" title="Rank ID" style="border:inset;" onchange="clearValidations();">
 							<option>Select Taxon Rank</option>
 							<option value="0">Non-Ranked Node</option>
 							<option>--------------------------------</option>
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId === 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".($rankId == 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
 							}
 							?>
 						</select>
@@ -78,7 +78,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Unit Name 1:</div>
 						<input type='text' id='unitind1' name='unitind1' style='width:20px;border:inset;' title='Genus hybrid indicator'/>
-						<input type='text' id='unitname1' name='unitname1' style='width:200px;border:inset;' title='Genus or Base Name'/>
+						<input type='text' id='unitname1' name='unitname1' style='width:200px;border:inset;' title='Genus or Base Name' onchange="clearValidations();"/>
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Unit Name 2:</div>
@@ -92,7 +92,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;width:170px;">Parent Taxon:</div>
-						<input type="text" id="parentname" name="parentname" style="width:300px;border:inset;" />
+						<input type="text" id="parentname" name="parentname" style="width:300px;border:inset;" onchange="clearValidations();" />
 						<span id="addparentspan" style="display:none;">
 							<a id="addparentanchor" href="taxonomyloader.php?target=" target="_blank">Add Parent</a>
 						</span>
@@ -117,12 +117,12 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 						<fieldset>
 							<legend><b>Acceptance Status</b></legend>
 							<div>
-								<input type="radio" id="isaccepted" name="acceptstatus" value="1" onchange="acceptanceChanged(this.form)" checked> Accepted
-								<input type="radio" id="isnotaccepted" name="acceptstatus" value="0" onchange="acceptanceChanged(this.form)"> Not Accepted
+								<input type="radio" id="isaccepted" name="acceptstatus" value="1" onchange="acceptanceChanged(this.form);clearValidations();" checked> Accepted
+								<input type="radio" id="isnotaccepted" name="acceptstatus" value="0" onchange="acceptanceChanged(this.form);clearValidations();"> Not Accepted
 							</div>
 							<div id="accdiv" style="display:none;margin-top:3px;">
 								Accepted Taxon:
-								<input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="checkAcceptedExistance(this.form)" />
+								<input id="acceptedstr" name="acceptedstr" type="text" style="width:400px;border:inset;" onchange="checkAcceptedExistance(this.form);clearValidations();" />
 								<input type="hidden" name="tidaccepted" /> 
 								<div style="margin-top:3px;">
 									Unacceptability Reason: 
@@ -131,8 +131,13 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 							</div>
 						</fieldset>
 					</div>
-					<div style="clear:both;">
-						<input type="submit" name="submitaction" value="Submit New Name" />
+					<div style="clear:both;margin:10px;width:100%;">
+                        <div style="float:left;">
+                            <input type="button" value="Validate New Taxon" onclick="validateLoadForm(this.form);" />
+                        </div>
+                        <div style="margin-left:10px;float:left;">
+                            <input type="submit" id="submitButton" name="submitaction" value="Submit New Name" disabled />
+                        </div>
 					</div>
 				</fieldset>
 			</form>

@@ -49,7 +49,8 @@ if($isEditor){
 		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
 	}
 }
-$collMetadata = current($permManager->getCollectionMetadata($collId));
+$collMetadataFull = $permManager->getCollectionMetadata($collId);
+$collMetadata = $collMetadataFull[$collId];
 $isGenObs = 0;
 if($collMetadata['colltype'] === 'General Observations') {
     $isGenObs = 1;
@@ -59,7 +60,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 <head>
 	<title><?php echo $collMetadata['collectionname']; ?> Collection Permissions</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script>
 		function verifyAddRights(f){
 			if(f.uid.value === ""){

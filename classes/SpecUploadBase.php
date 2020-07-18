@@ -1,8 +1,8 @@
 <?php
-include_once('SpecUpload.php');
-include_once('OccurrenceMaintenance.php');
-include_once('OccurrenceUtilities.php');
-include_once('UuidFactory.php');
+include_once($SERVER_ROOT.'/classes/SpecUpload.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
+include_once($SERVER_ROOT.'/classes/UuidFactory.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -64,33 +64,28 @@ class SpecUploadBase extends SpecUpload{
 			$autoBuildFieldMap = true;
 		}
 		if($this->uspid && !$this->fieldMap){
-			switch ($this->uploadType) {
-				case $this->FILEUPLOAD:
-				case $this->SKELETAL:
-				case $this->DWCAUPLOAD:
-				case $this->IPTUPLOAD:
-				case $this->DIRECTUPLOAD:
-				case $this->SCRIPTUPLOAD:
-					$sql = 'SELECT usm.sourcefield, usm.symbspecfield FROM uploadspecmap usm WHERE (usm.uspid = '.$this->uspid.')';
-					$rs = $this->conn->query($sql);
-					while($row = $rs->fetch_object()){
-						$sourceField = $row->sourcefield;
-						$symbField = $row->symbspecfield;
-						if(strpos($symbField, 'ID-') === 0){
-							$this->identFieldMap[substr($symbField,3)]['field'] = $sourceField;
-						}
-						elseif(strpos($symbField, 'IM-') === 0){
-							$this->imageFieldMap[substr($symbField,3)]['field'] = $sourceField;
-						}
-						else{
-							$this->fieldMap[$symbField]['field'] = $sourceField;
-						}
-					}
-					$rs->free();
-			}
+			if($this->uploadType === $this->FILEUPLOAD || $this->uploadType === $this->SKELETAL || $this->uploadType === $this->DWCAUPLOAD ||
+                $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD || $this->uploadType === $this->SCRIPTUPLOAD){
+                $sql = 'SELECT usm.sourcefield, usm.symbspecfield FROM uploadspecmap usm WHERE (usm.uspid = '.$this->uspid.')';
+                $rs = $this->conn->query($sql);
+                while($row = $rs->fetch_object()){
+                    $sourceField = $row->sourcefield;
+                    $symbField = $row->symbspecfield;
+                    if(strpos($symbField, 'ID-') === 0){
+                        $this->identFieldMap[substr($symbField,3)]['field'] = $sourceField;
+                    }
+                    elseif(strpos($symbField, 'IM-') === 0){
+                        $this->imageFieldMap[substr($symbField,3)]['field'] = $sourceField;
+                    }
+                    else{
+                        $this->fieldMap[$symbField]['field'] = $sourceField;
+                    }
+                }
+                $rs->free();
+            }
 		}
 
-		$skipOccurFields = array('dbpk','initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
+		$skipOccurFields = array('initialtimestamp','occid','collid','tidinterpreted','fieldnotes','coordinateprecision',
 			'verbatimcoordinatesystem','institutionid','collectionid','associatedoccurrences','datasetid','associatedreferences',
 			'previousidentifications','associatedsequences');
 		if($this->collMetadataArr['managementtype'] === 'Live Data' && $this->collMetadataArr['guidtarget'] !== 'occurrenceId'){
@@ -130,81 +125,76 @@ class SpecUploadBase extends SpecUpload{
 		}
 		$rs->free();
 
-		switch ($this->uploadType) {
-			case $this->FILEUPLOAD:
-			case $this->SKELETAL:
-			case $this->DWCAUPLOAD:
-			case $this->IPTUPLOAD:
-			case $this->DIRECTUPLOAD:
-				$skipDetFields = array('detid','occid','tidinterpreted','idbyid','appliedstatus','sortsequence','sourceidentifier','initialtimestamp');
+		if($this->uploadType === $this->FILEUPLOAD || $this->uploadType === $this->SKELETAL || $this->uploadType === $this->DWCAUPLOAD ||
+            $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD){
+            $skipDetFields = array('detid','occid','tidinterpreted','idbyid','appliedstatus','sortsequence','sourceidentifier','initialtimestamp');
 
-				$rs = $this->conn->query('SHOW COLUMNS FROM uploaddetermtemp');
-				while($r = $rs->fetch_object()){
-					$field = strtolower($r->Field);
-					if(!in_array($field, $skipDetFields, true)){
-						if($autoBuildFieldMap){
-							$this->identFieldMap[$field]['field'] = $field;
-						}
-						$type = $r->Type;
-						$this->identSymbFields[] = $field;
-						if(array_key_exists($field,$this->identFieldMap)){
-							if(strpos($type, 'double') !== false || strpos($type, 'int') !== false || strpos($type, 'decimal') !== false){
-								$this->identFieldMap[$field]['type'] = 'numeric';
-							}
-							elseif(strpos($type, 'date') !== false){
-								$this->identFieldMap[$field]['type'] = 'date';
-							}
-							else{
-								$this->identFieldMap[$field]['type'] = 'string';
-								if(preg_match('/\(\d+\)$/', $type, $matches)){
-									$this->identFieldMap[$field]['size'] = substr($matches[0],1, -1);
-								}
-							}
-						}
-					}
-				}
-				$rs->free();
+            $rs = $this->conn->query('SHOW COLUMNS FROM uploaddetermtemp');
+            while($r = $rs->fetch_object()){
+                $field = strtolower($r->Field);
+                if(!in_array($field, $skipDetFields, true)){
+                    if($autoBuildFieldMap){
+                        $this->identFieldMap[$field]['field'] = $field;
+                    }
+                    $type = $r->Type;
+                    $this->identSymbFields[] = $field;
+                    if(array_key_exists($field,$this->identFieldMap)){
+                        if(strpos($type, 'double') !== false || strpos($type, 'int') !== false || strpos($type, 'decimal') !== false){
+                            $this->identFieldMap[$field]['type'] = 'numeric';
+                        }
+                        elseif(strpos($type, 'date') !== false){
+                            $this->identFieldMap[$field]['type'] = 'date';
+                        }
+                        else{
+                            $this->identFieldMap[$field]['type'] = 'string';
+                            if(preg_match('/\(\d+\)$/', $type, $matches)){
+                                $this->identFieldMap[$field]['size'] = substr($matches[0],1, -1);
+                            }
+                        }
+                    }
+                }
+            }
+            $rs->free();
 
-				$this->identSymbFields[] = 'genus';
-				$this->identSymbFields[] = 'specificepithet';
-				$this->identSymbFields[] = 'taxonrank';
-				$this->identSymbFields[] = 'infraspecificepithet';
-				$this->identSymbFields[] = 'coreid';
+            $this->identSymbFields[] = 'genus';
+            $this->identSymbFields[] = 'specificepithet';
+            $this->identSymbFields[] = 'taxonrank';
+            $this->identSymbFields[] = 'infraspecificepithet';
+            $this->identSymbFields[] = 'coreid';
 
-				$skipImageFields = array('tid','photographeruid','imagetype','occid','dbpk','specimenguid','collid','username','sortsequence','initialtimestamp');
-				$rs = $this->conn->query('SHOW COLUMNS FROM uploadimagetemp');
-				while($r = $rs->fetch_object()){
-					$field = strtolower($r->Field);
-					if(!in_array($field, $skipImageFields, true)){
-						if($autoBuildFieldMap){
-							$this->imageFieldMap[$field]['field'] = $field;
-						}
-						$type = $r->Type;
-						$this->imageSymbFields[] = $field;
-						if(array_key_exists($field,$this->imageFieldMap)){
-							if(strpos($type, 'double') !== false || strpos($type, 'int') !== false || strpos($type, 'decimal') !== false){
-								$this->imageFieldMap[$field]['type'] = 'numeric';
-							}
-							elseif(strpos($type, 'date') !== false){
-								$this->imageFieldMap[$field]['type'] = 'date';
-							}
-							else{
-								$this->imageFieldMap[$field]['type'] = 'string';
-								if(preg_match('/\(\d+\)$/', $type, $matches)){
-									$this->imageFieldMap[$field]['size'] = substr($matches[0],1, -1);
-								}
-							}
-						}
-					}
-				}
-				$rs->free();
-		}
+            $skipImageFields = array('tid','photographeruid','imagetype','occid','dbpk','specimenguid','collid','username','sortsequence','initialtimestamp');
+            $rs = $this->conn->query('SHOW COLUMNS FROM uploadimagetemp');
+            while($r = $rs->fetch_object()){
+                $field = strtolower($r->Field);
+                if(!in_array($field, $skipImageFields, true)){
+                    if($autoBuildFieldMap){
+                        $this->imageFieldMap[$field]['field'] = $field;
+                    }
+                    $type = $r->Type;
+                    $this->imageSymbFields[] = $field;
+                    if(array_key_exists($field,$this->imageFieldMap)){
+                        if(strpos($type, 'double') !== false || strpos($type, 'int') !== false || strpos($type, 'decimal') !== false){
+                            $this->imageFieldMap[$field]['type'] = 'numeric';
+                        }
+                        elseif(strpos($type, 'date') !== false){
+                            $this->imageFieldMap[$field]['type'] = 'date';
+                        }
+                        else{
+                            $this->imageFieldMap[$field]['type'] = 'string';
+                            if(preg_match('/\(\d+\)$/', $type, $matches)){
+                                $this->imageFieldMap[$field]['size'] = substr($matches[0],1, -1);
+                            }
+                        }
+                    }
+                }
+            }
+            $rs->free();
+        }
 	}
 
 	public function echoFieldMapTable($autoMap, $mode): void
 	{
-
-		$prefix = '';
+        $prefix = '';
 		$fieldMap = $this->fieldMap;
 		$symbFields = $this->symbFields;
 		$sourceArr = $this->sourceArr;
@@ -218,7 +208,7 @@ class SpecUploadBase extends SpecUpload{
 				'location'=>'locality','field:localitydescription'=>'locality','latitude'=>'verbatimlatitude','longitude'=>'verbatimlongitude',
 				'elevationmeters'=>'minimumelevationinmeters','field:associatedspecies'=>'associatedtaxa',
 				'specimennotes'=>'occurrenceremarks','notes'=>'occurrenceremarks','generalnotes'=>'occurrenceremarks',
-				'plantdescription'=>'verbatimattributes','description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
+				'description'=>'verbatimattributes','field:habitat'=>'habitat','habitatdescription'=>'habitat',
 				'subject_references'=>'tempfield01','subject_recordid'=>'tempfield02');
 		if($mode === 'ident'){
 			$prefix = 'ID-';
@@ -238,9 +228,7 @@ class SpecUploadBase extends SpecUpload{
 
 		$sourceSymbArr = array();
 		foreach($fieldMap as $symbField => $fArr){
-			if($symbField !== 'dbpk') {
-				$sourceSymbArr[$fArr['field']] = $symbField;
-			}
+            $sourceSymbArr[$fArr['field']] = $symbField;
 		}
 
 		if($this->uploadType === $this->NFNUPLOAD && !in_array('subject_references', $this->sourceArr, true) && !in_array('recordid', $this->sourceArr, true)){
@@ -252,7 +240,9 @@ class SpecUploadBase extends SpecUpload{
 		sort($symbFields);
 		$autoMapArr = array();
 		foreach($sourceArr as $fieldName){
-			if($fieldName === 'coreid') continue;
+			if($fieldName === 'coreid') {
+                continue;
+            }
 			$diplayFieldName = $fieldName;
 			$fieldName = strtolower(trim($fieldName));
 			if($this->uploadType === $this->NFNUPLOAD && ($fieldName === 'subject_recordid' || $fieldName === 'subject_references')){
@@ -1509,7 +1499,7 @@ class SpecUploadBase extends SpecUpload{
 		    }
 		    curl_setopt($handle, CURLOPT_HEADER, false);
 		    curl_setopt($handle, CURLOPT_FAILONERROR, true);
-		    curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15") ); // request as if Firefox
+		    curl_setopt($handle, CURLOPT_HTTPHEADER, Array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15') ); // request as if Firefox
 		    curl_setopt($handle, CURLOPT_NOBODY, true);
 		    curl_setopt($handle, CURLOPT_RETURNTRANSFER, false);
 		    $exists = curl_exec($handle);

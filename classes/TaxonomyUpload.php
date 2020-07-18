@@ -46,7 +46,9 @@ class TaxonomyUpload{
 		}
 		elseif(array_key_exists('uploadfile',$_FILES)){
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
-			move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+			if(is_writable($this->uploadTargetPath)){
+                move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
+            }
 		}
 		if(file_exists($this->uploadTargetPath.$this->uploadFileName) && substr($this->uploadFileName,-4) === '.zip'){
 			$zip = new ZipArchive;
@@ -168,7 +170,8 @@ class TaxonomyUpload{
 									$inputArr[$sciKey] = $sciValue;
 								}
 							}
-							$sql1 = ''; $sql2 = '';
+							$sql1 = '';
+							$sql2 = '';
 							unset($inputArr['identificationqualifier']);
 							foreach($inputArr as $k => $v){
 								$sql1 .= ','.$k;
@@ -180,7 +183,6 @@ class TaxonomyUpload{
 							if($this->conn->query($sql)){
 								if($recordCnt%1000 === 0){
 									$this->outputMsg('Upload count: '.$recordCnt,1);
-									ob_flush();
 									flush();
 								}
 							}
@@ -195,7 +197,7 @@ class TaxonomyUpload{
 
 				foreach($childParentArr as $taxon => $tArr){
 					$sql = 'INSERT IGNORE INTO uploadtaxa(scinameinput,sciname,rankid,parentstr,family,acceptance) '.
-						'VALUES ("'.$taxon.'","'.$taxon.'",'.$tArr['r'].',"'.$tArr['p'].'",'.(array_key_exists('f',$tArr)?'"'.$tArr['f'].'"':'NULL').',1)';
+						'VALUES ("'.trim($taxon).'","'.trim($taxon).'",'.$tArr['r'].',"'.trim($tArr['p']).'",'.(array_key_exists('f',$tArr)?'"'.trim($tArr['f']).'"':'NULL').',1)';
 					if(!$this->conn->query($sql)){
 						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
 					}
@@ -650,7 +652,9 @@ class TaxonomyUpload{
 	private function transferVernaculars($secondRound = 0): void
 	{
 		$sql = 'SELECT tid, vernacular, vernlang, source FROM uploadtaxa WHERE tid IS NOT NULL AND Vernacular IS NOT NULL ';
-		if($secondRound) $sql .= 'AND tidaccepted IS NOT NULL';
+		if($secondRound) {
+            $sql .= 'AND tidaccepted IS NOT NULL';
+        }
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()){
 			$vernArr = array();
@@ -893,7 +897,6 @@ class TaxonomyUpload{
 	{
 		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
 			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
-			ob_flush();
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
@@ -902,8 +905,8 @@ class TaxonomyUpload{
 	}
 
     private function cleanInStr($str){
-		$newStr = TRIM($str);
-		$newStr = preg_REPLACE('/\s\s+/', ' ',$newStr);
+		$newStr = trim($str);
+		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = $this->conn->real_escape_string($newStr);
 		return $newStr;
 	}
@@ -923,7 +926,7 @@ class TaxonomyUpload{
 							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_REPLACE($badwordchars, $fixedwordchars, $inStr);
+		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
 			$lowCharSet = strtolower($CHARSET);

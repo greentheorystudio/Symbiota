@@ -52,7 +52,7 @@ if($isEditor){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Taxa Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function toggle(target){
 			const tDiv = document.getElementById(target);
@@ -68,7 +68,7 @@ if($isEditor){
 			  	const divs = document.getElementsByTagName("div");
 			  	for (let i = 0; i < divs.length; i++) {
 			  	const divObj = divs[i];
-                if(divObj.className === target){
+                if(divObj.className == target){
                     if(divObj.style.display === "none"){
                         divObj.style.display = "block";
                     }
@@ -166,8 +166,8 @@ if($isEditor){
 											}
 											foreach($tArr as $k => $tField){
 												if($selStr !== 0 && (
-												        ($mappedTarget && $mappedTarget === $tField) ||
-                                                        ($tField === $sField && $tField !== 'sciname') ||
+												        ($mappedTarget && $mappedTarget == $tField) ||
+                                                        ($tField == $sField && $tField !== 'sciname') ||
                                                         ($tField === 'scinameinput' && (strtolower($sField) === 'sciname' || strtolower($sField) === 'scientific name'))
                                                     )){
 													$selStr = 'SELECTED';
@@ -306,7 +306,7 @@ if($isEditor){
 										<?php
 										$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 										foreach($taxonAuthArr as $k => $v){
-											echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+											echo '<option value="'.$k.'" '.($k == $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 										}
 										?>
 									</select>
@@ -335,7 +335,7 @@ if($isEditor){
 									<?php
 									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 									foreach($taxonAuthArr as $k => $v){
-										echo '<option value="'.$k.'" '.($k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+										echo '<option value="'.$k.'" '.($k == $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 									}
 									?>
 								</select>

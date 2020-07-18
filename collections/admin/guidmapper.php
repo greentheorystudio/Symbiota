@@ -22,7 +22,7 @@ $uuidManager = new UuidFactory();
 <head>
 	<title>UUID GUID Mapper</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-    <link rel="stylesheet" href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" />
+    <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
 	<script type="text/javascript">
 		function toggle(target){
             const objDiv = document.getElementById(target);

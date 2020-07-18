@@ -128,7 +128,8 @@ class OccurrenceAccessStats {
 		return $cnt;
 	}
 
-    public function batchRecordEventsBySql($sqlFrag,$accessType){
+    public function batchRecordEventsBySql($sqlFrag,$accessType): bool
+    {
         $status = true;
         $sql = 'INSERT INTO omoccuraccessstats(occid,accessdate,ipaddress,cnt,accesstype) '.
             'SELECT o.occid, "'.date('Y-m-d').'", "'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", 1, "'.$this->cleanInStr($accessType).'" ';

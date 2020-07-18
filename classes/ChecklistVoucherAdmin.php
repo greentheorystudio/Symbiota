@@ -276,7 +276,7 @@ class ChecklistVoucherAdmin {
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
-			if($includeAll === 1 || $includeAll === 2){
+			if($includeAll == 1 || $includeAll == 2){
 				$sql = 'SELECT DISTINCT cl.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -289,10 +289,10 @@ class ChecklistVoucherAdmin {
 					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
-				if($includeAll === 1){
+				if($includeAll == 1){
 					$sql .= 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
-				elseif($includeAll === 2){
+				elseif($includeAll == 2){
 					$sql .= 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
 				$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -312,7 +312,7 @@ class ChecklistVoucherAdmin {
 					$retArr[$r->cltid][$r->occid]['locality'] = $r->locality;
 				}
 			}
-			elseif($includeAll === 3){
+			elseif($includeAll == 3){
 				$sql = 'SELECT DISTINCT t.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -639,7 +639,7 @@ class ChecklistVoucherAdmin {
 				$headerArr[] = $val->name;
 			}
 			$rareSpeciesReader = $this->isRareSpeciesReader();
-			$out = fopen('php://output', 'w');
+			$out = fopen('php://output', 'wb');
 			fputcsv($out, $headerArr);
 			while($row = $rs->fetch_assoc()){
 				if($localitySecurityFields){
@@ -747,7 +747,7 @@ class ChecklistVoucherAdmin {
 			return 1;
 		}
 
-		if($this->conn->errno === 1062){
+		if($this->conn->errno == 1062){
 			return 'Specimen already a voucher for checklist';
 		}
 
@@ -805,7 +805,7 @@ class ChecklistVoucherAdmin {
 		$retStr = '';
 		if(isset($this->queryVariablesArr['collid'])){
 			$collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
-			$retStr .= current($collArr).'; ';
+			$retStr .= $collArr[$this->queryVariablesArr['collid']].'; ';
 		}
 		if(isset($this->queryVariablesArr['country'])) {
 			$retStr .= $this->queryVariablesArr['country'] . '; ';
@@ -864,7 +864,9 @@ class ChecklistVoucherAdmin {
 	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname FROM omcollections ';
-		if($collId) $sql .= 'WHERE collid = '.$collId;
+		if($collId) {
+            $sql .= 'WHERE collid = ' . $collId;
+        }
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->collid] = $r->collectionname;

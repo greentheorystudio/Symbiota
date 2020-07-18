@@ -82,7 +82,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		$expirationTime = date('Y-m-d H:i:s',time()+259200);
 		$tidStr = '';
 		if($tidArr){
-            $tidStr = implode(',',$tidArr);
+            $tidStr = implode((array)',',$tidArr);
         }
 		$dynClid = 0;
 		$sqlCreateCl = 'INSERT INTO fmdynamicchecklists ( name, details, uid, type, notes, expiration ) '.

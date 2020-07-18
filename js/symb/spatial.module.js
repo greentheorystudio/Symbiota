@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     $( "#taxa" )
         .bind( "keydown", function( event ) {
-            if ( event.keyCode === $.ui.keyCode.TAB &&
+            if ( event.keyCode == $.ui.keyCode.TAB &&
                 $( this ).data( "autocomplete" ).menu.active ) {
                 event.preventDefault();
             }
@@ -26,20 +26,20 @@ $(document).ready(function() {
                 let rankHigh = '';
                 let rankLimit = '';
                 let source = '';
-                if(t === 5){
+                if(t == 5){
                     source = '../webservices/autofillvernacular.php';
                 }
                 else{
                     source = '../webservices/autofillsciname.php';
                 }
-                if(t === 4){
+                if(t == 4){
                     rankLow = 21;
                     rankHigh = 139;
                 }
-                else if(t === 2){
+                else if(t == 2){
                     rankLimit = 140;
                 }
-                else if(t === 3){
+                else if(t == 3){
                     rankLow = 141;
                 }
                 else{
@@ -98,7 +98,7 @@ function adjustSelectionsTab(){
     else{
         document.getElementById("selectionstab").style.display = "none";
         const activeTab = $('#recordstab').tabs("option", "active");
-        if(activeTab === 3){
+        if(activeTab == 3){
             buildCollKey();
             $('#recordstab').tabs({active:0});
         }
@@ -254,7 +254,7 @@ function buildCollKeyPiece(key){
     keyLabel = "'"+key+"'";
     const color = collSymbology[key]['color'];
     keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
+    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="keyColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeCollColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
     keyHTML += '<div style="display:table-cell;width:250px;vertical-align:middle;padding-left:8px;">'+key+'</div>';
     keyHTML += '</div>';
@@ -441,7 +441,7 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
     const color = taxaSymbology[key]['color'];
     keyHTML += '<div id="'+key+'keyrow">';
     keyHTML += '<div style="display:table-row;">';
-    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
+    keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-bottom:5px;" ><input data-role="none" id="taxaColor'+key+'" class="color" style="cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0;" value="'+color+'" onchange="changeTaxaColor(this.value,'+keyLabel+');" /></div>';
     keyHTML += '<div style="display:table-cell;vertical-align:middle;padding-left:8px;"> = </div>';
     if(!tidinterpreted){
         keyHTML += "<div style='display:table-cell;vertical-align:middle;padding-left:8px;'><i>"+sciname+"</i></div>";
@@ -1428,10 +1428,25 @@ function downloadShapesLayer(){
 }
 
 function exportMapPNG(filename,zip){
-    map.once('postcompose', function(event) {
-        const canvas = document.getElementsByTagName('canvas').item(0);
+    map.once('rendercomplete', function() {
+        const currentCanvas = document.getElementsByTagName('canvas').item(0);
+        let mapCanvas = document.createElement('canvas');
+        mapCanvas.width = currentCanvas.width;
+        mapCanvas.height = currentCanvas.height;
+        const mapContext = mapCanvas.getContext('2d');
+        Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), function(canvas) {
+            if (canvas.width > 0) {
+                const opacity = canvas.parentNode.style.opacity;
+                mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                const transform = canvas.style.transform;
+                const matrix = transform.match(/^matrix\(([^(]*)\)$/)[1].split(',').map(Number);
+                CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                mapContext.drawImage(canvas, 0, 0);
+            }
+        });
         if(zip){
-            const image = canvas.toDataURL('image/png', 1.0);
+            const image = mapCanvas.toDataURL('image/png', 1.0);
+            mapCanvas = '';
             zipFolder.file(filename, image.substr(image.indexOf(',')+1), {base64: true});
             if(dsAnimImageSave && dsAnimStop){
                 zipFile.generateAsync({type:"blob"}).then(function(content) {
@@ -1441,11 +1456,13 @@ function exportMapPNG(filename,zip){
             }
         }
         else if(navigator.msSaveBlob) {
-            navigator.msSaveBlob(canvas.msToBlob(),filename);
+            navigator.msSaveBlob(mapCanvas.msToBlob(),filename);
+            mapCanvas = '';
         }
         else{
-            canvas.toBlob(function(blob) {
+            mapCanvas.toBlob(function(blob) {
                 saveAs(blob,filename);
+                mapCanvas = '';
             });
         }
     });
@@ -2029,6 +2046,7 @@ function getTextParams(){
     let collnumval = document.getElementById("collnum").value.trim();
     let colldate1 = document.getElementById("eventdate1").value.trim();
     let colldate2 = document.getElementById("eventdate2").value.trim();
+    let occurrenceremarksval = document.getElementById("occurrenceRemarks").value.trim();
     let catnumval = document.getElementById("catnum").value.trim();
     let othercatnumval = document.getElementById("othercatnum").value.trim();
     const typestatus = document.getElementById("typestatus").checked;
@@ -2042,6 +2060,7 @@ function getTextParams(){
     searchTermsArr['collnum'] = '';
     searchTermsArr['eventdate1'] = '';
     searchTermsArr['eventdate2'] = '';
+    searchTermsArr['occurrenceRemarks'] = '';
     searchTermsArr['catnum'] = '';
     searchTermsArr['othercatnum'] = '';
     searchTermsArr['typestatus'] = '';
@@ -2244,6 +2263,36 @@ function getTextParams(){
             if(colldate1 && colldate2){
                 searchTermsArr['eventdate2'] = colldate2;
             }
+        }
+        textParams = true;
+    }
+    if(occurrenceremarksval){
+        if(SOLRMODE) {
+            const occurrenceremarksvals = occurrenceremarksval.split(',');
+            let occurrenceremarksSolrqString = '';
+            for(let i = 0; i < occurrenceremarksvals.length; i++){
+                if(occurrenceremarksSolrqString) occurrenceremarksSolrqString += " OR ";
+                occurrenceremarksSolrqString += "(";
+                if(occurrenceremarksvals[i].indexOf(" ") !== -1){
+                    let tempremarksSolrqString = '';
+                    const vals = occurrenceremarksvals[i].split(" ");
+                    for(i = 0; i < vals.length; i++){
+                        if(tempremarksSolrqString) tempremarksSolrqString += " AND ";
+                        tempremarksSolrqString += '((occurrenceRemarks:*'+vals[i]+'*))';
+                    }
+                    occurrenceremarksSolrqString += tempremarksSolrqString;
+                }
+                else{
+                    occurrenceremarksSolrqString += '(occurrenceRemarks:*'+occurrenceremarksvals[i]+'*)';
+                }
+                occurrenceremarksSolrqString += ")";
+            }
+            solrqfrag = '('+occurrenceremarksSolrqString+')';
+            solrqArr.push(solrqfrag);
+        }
+        else{
+            occurrenceremarksval = occurrenceremarksval.replace(",", ";");
+            searchTermsArr['occurrenceRemarks'] = occurrenceremarksval;
         }
         textParams = true;
     }
@@ -2472,7 +2521,7 @@ function lazyLoadPoints(index,callback){
     let url;
     let startindex = 0;
     loadingComplete = true;
-    if(index > 1) startindex = (index - 1)*lazyLoadCnt;
+    if(index > 0) startindex = index*lazyLoadCnt;
     const http = new XMLHttpRequest();
     if(SOLRMODE){
         url = "rpc/SOLRConnector.php";
@@ -2517,49 +2566,44 @@ function loadPoints(){
     dsNewestDate = '';
     removeDateSlider();
     solrqString = newsolrqString;
-    if(collectionParams || geogParams || textParams || taxaParams){
-        showWorking();
-        pointvectorsource = new ol.source.Vector({
-            wrapX: false
-        });
-        layersArr['pointv'].setSource(pointvectorsource);
-        getQueryRecCnt(false,function(res) {
-            if(queryRecCnt > 0){
-                loadPointsEvent = true;
-                setLoadingTimer();
-                loadPointWFSLayer(0);
-                //cleanSelectionsLayer();
-                setRecordsTab();
-                changeRecordPage(1);
-                $('#recordstab').tabs({active: 1});
-                $("#accordion").accordion("option","active",1);
-                //selectInteraction.getFeatures().clear();
-                if(!pointActive){
-                    const infoArr = [];
-                    infoArr['Name'] = 'pointv';
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = 'Points';
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    buildLayerTableRow(infoArr,true);
-                    pointActive = true;
-                }
+    showWorking();
+    pointvectorsource = new ol.source.Vector({
+        wrapX: false
+    });
+    layersArr['pointv'].setSource(pointvectorsource);
+    getQueryRecCnt(false,function(res) {
+        if(queryRecCnt > 0){
+            loadPointsEvent = true;
+            setLoadingTimer();
+            loadPointWFSLayer(0);
+            //cleanSelectionsLayer();
+            setRecordsTab();
+            changeRecordPage(1);
+            $('#recordstab').tabs({active: 1});
+            $("#accordion").accordion("option","active",1);
+            //selectInteraction.getFeatures().clear();
+            if(!pointActive){
+                const infoArr = [];
+                infoArr['Name'] = 'pointv';
+                infoArr['layerType'] = 'vector';
+                infoArr['Title'] = 'Points';
+                infoArr['Abstract'] = '';
+                infoArr['DefaultCRS'] = '';
+                buildLayerTableRow(infoArr,true);
+                pointActive = true;
             }
-            else{
-                setRecordsTab();
-                if(pointActive){
-                    removeLayerToSelList('pointv');
-                    pointActive = false;
-                }
-                loadPointsEvent = false;
-                hideWorking();
-                alert('There were no records matching your query.');
+        }
+        else{
+            setRecordsTab();
+            if(pointActive){
+                removeLayerToSelList('pointv');
+                pointActive = false;
             }
-        });
-    }
-    else{
-        alert('Please add criteria for points.');
-    }
+            loadPointsEvent = false;
+            hideWorking();
+            alert('There were no records matching your query.');
+        }
+    });
 }
 
 function openIndPopup(occid){
@@ -2627,7 +2671,7 @@ function parseDate(dateStr){
             const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
             m = mNames.indexOf(mText)+1;
         }
-        else if(dateObj instanceof Date && dateObj !== "Invalid Date"){
+        else if(dateObj instanceof Date){
             y = dateObj.getFullYear();
             m = dateObj.getMonth() + 1;
             d = dateObj.getDate();

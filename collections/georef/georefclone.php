@@ -36,7 +36,7 @@ if($coorArr && count($coorArr) === 4){
 		<title>Georeference Clone Tool</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<script src="//www.google.com/jsapi"></script>
 		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
 		<script type="text/javascript">
@@ -82,7 +82,7 @@ if($coorArr && count($coorArr) === 4){
                     }
 					$outStr .= '<br/>'.$occArr['cnt'].' matching records<br/>';
 					$outStr .= $occArr['locality'].'<br/>';
-					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?$occArr['err']:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
+					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
 					$outStr .= '</div>';
 					?>
 					const m<?php echo $id; ?> = new google.maps.Marker({
@@ -117,9 +117,9 @@ if($coorArr && count($coorArr) === 4){
 					opener.document.getElementById("decimallatitude").value = lat;
 					opener.document.getElementById("decimallongitude").value = lng;
 					opener.document.getElementById("coordinateuncertaintyinmeters").value = err;
-					opener.document.getElementById("decimallatitude").onchange();
-					opener.document.getElementById("decimallongitude").onchange();
-					opener.document.getElementById("coordinateuncertaintyinmeters").onchange();
+					opener.document.getElementById("decimallatitude").onchange(undefined);
+					opener.document.getElementById("decimallongitude").onchange(undefined);
+					opener.document.getElementById("coordinateuncertaintyinmeters").onchange(undefined);
 				}
 				catch(myErr){
 				}

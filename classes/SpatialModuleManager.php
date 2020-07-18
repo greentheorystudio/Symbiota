@@ -117,7 +117,7 @@ class SpatialModuleManager{
         $searchStr = '';
         if(is_array($searchTarget)){
             if(is_numeric(current($searchTarget))){
-                $targetTidArr = $searchTarget;
+                $targetTidArr[] = $searchTarget;
             }
             else{
                 $searchStr = implode('","',$searchTarget);
@@ -193,7 +193,7 @@ class SpatialModuleManager{
                     <tr>
                         <td>
                             <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID==$catid?'':'display:none;') ?>" />
+                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
                             </a>
                         </td>
                         <td>
@@ -515,6 +515,15 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
         }
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
+            $remarksArr = explode(';',$this->searchTermsArr['occurrenceRemarks']);
+            $tempArr = array();
+            foreach($remarksArr as $value){
+                $tempArr[] = "(o.occurrenceRemarks LIKE '%".trim($value)."%')";
+            }
+            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
+            $this->localSearchArr[] = implode(' OR ',$remarksArr);
+        }
         if(array_key_exists('collnum',$this->searchTermsArr)&&$this->searchTermsArr['collnum']){
             $collNumArr = explode(';',$this->searchTermsArr['collnum']);
             $rnWhere = '';
@@ -647,13 +656,11 @@ class SpatialModuleManager{
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
             $this->localSearchArr[] = 'has genetic data';
         }
+        $retStr = 'WHERE ';
         if($sqlWhere){
-            $retStr = 'WHERE '.substr($sqlWhere,4);
-            $retStr .= ' AND (o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
+            $retStr .= substr($sqlWhere,4).' AND';
         }
-        else{
-            $retStr = 'WHERE o.collid = -1 ';
-        }
+        $retStr .= ' (o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
         return $retStr;
     }
 
@@ -661,7 +668,7 @@ class SpatialModuleManager{
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
-        $sql = 'SELECT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
@@ -682,9 +689,7 @@ class SpatialModuleManager{
             }
         }
         $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
-        if($pageRequest && $cntPerPage){
-            $sql .= 'LIMIT ' .$pageRequest. ',' .$cntPerPage;
-        }
+        $sql .= 'LIMIT ' .($pageRequest?$pageRequest:0). ',' .$cntPerPage;
         //echo '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -724,7 +729,7 @@ class SpatialModuleManager{
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
-        $sql = 'SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
             'o.scientificNameAuthorship, o.identifiedBy, o.dateIdentified, o.typeStatus, o.recordedBy, o.recordNumber, '.
             'o.eventdate, o.`year`, o.`month`, o.`day`, o.habitat, o.associatedTaxa, o.basisOfRecord, o.occurrenceID, '.
             'o.`country`, o.stateProvince, o.`county`, o.municipality, o.locality, o.substrate, o.minimumDepthInMeters, '.
@@ -819,34 +824,32 @@ class SpatialModuleManager{
     public function setRecordCnt($sqlWhere): void
     {
         global $USER_RIGHTS;
-        if($sqlWhere){
-            $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
-            if(array_key_exists('polyArr',$this->searchTermsArr)) {
-                $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-            }
-            $sql .= $sqlWhere;
-            if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-                if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                    $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
-                }
-                else{
-                    $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
-                }
-            }
-            //echo "<div>Count sql: ".$sql."</div>";
-            $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                $this->recordCount = $row->cnt;
-            }
-            $result->close();
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
+        $sql .= $sqlWhere;
+        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+            }
+            else{
+                $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
+            }
+        }
+        //echo "<div>Count sql: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        if($row = $result->fetch_object()){
+            $this->recordCount = $row->cnt;
+        }
+        $result->close();
     }
 
     public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
     {
         global $USER_RIGHTS;
         $retArr = array();
-        $sql = 'SELECT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';

@@ -3,7 +3,7 @@ function isNumeric(inStr){
 	let isNumber = true;
 	let charVar;
 
-	for(let i = 0; i < inStr.length && isNumber === true; i++){
+	for(let i = 0; i < inStr.length && isNumber == true; i++){
    		charVar = inStr.charAt(i); 
 		if(validChars.indexOf(charVar) === -1){
 			isNumber = false;
@@ -27,7 +27,7 @@ function toggle(target){
 		const divObjs = document.getElementsByTagName("div");
 		for (let i = 0; i < divObjs.length; i++) {
 			const divObj = divObjs[i];
-			if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
+			if(divObj.getAttribute("class") == target || divObj.getAttribute("className") == target){
 				if(divObj.style.display === "none"){
 					divObj.style.display="";
 				}

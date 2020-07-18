@@ -75,7 +75,7 @@ if($action && $isEditor){
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Political Units Standardization</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function verifyCountryCleanForm(f){
 			if(f.newcountry.value === ""){
@@ -468,7 +468,6 @@ if($action && $isEditor){
 							echo '<div style="margin-bottom:15px;">';
 							echo '<div style="font-weight:bold;">General cleaning... </div>';
 							flush();
-							ob_flush();
 							$cleanManager->countryCleanFirstStep();
 							echo '</div>';
 						}

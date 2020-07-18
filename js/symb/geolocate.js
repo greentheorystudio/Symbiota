@@ -158,7 +158,7 @@ function cogeSubmitData(dwcaPath){
 		if(dataSourceGuid){
 			$("#coge-push2coge").hide();
 			$("#coge-guid").html("<u>Dataset identifier</u>: " + dataSourceGuid);
-			window.setTimeout(cogeCheckStatus(dataSourceGuid),2000);
+			setTimeout(function () { cogeCheckStatus(dataSourceGuid); }, 2000);
 		}
 	});
 }		
@@ -177,7 +177,7 @@ function cogeCheckStatus(id){
 			$("#coge-status").html("Unauthorized");
 			$("#coge-status").css("color", "red");
 			alert("Authentication Required! Login may have timed out, please login back into GeoLocate website");
-			t2 = setInterval(cogeCheckStatus(id),3000);
+			t2 = setInterval(function () {cogeCheckStatus(id);},3000);
 		}
 		else {
 			clearInterval(t2);
@@ -196,7 +196,7 @@ function cogeCheckStatus(id){
 				$("#coge-importstatus").show();
 			}
 			else if(iStatus === "retrieval" || iStatus === "extraction" || iStatus === "discovery" || iStatus === "datasource_creation"){
-				window.setTimeout(cogeCheckStatus(id),2000);
+				setTimeout(function () {cogeCheckStatus(id);},2000);
 			}
 			else{
 				alert(iStatus);

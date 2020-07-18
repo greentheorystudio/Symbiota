@@ -20,7 +20,7 @@ class SpecUploadDwca extends SpecUploadBase{
 	{
 		$localFolder = $this->collMetadataArr['institutioncode'].($this->collMetadataArr['collectioncode']?$this->collMetadataArr['collectioncode'].'_':'').time();
 		if (!mkdir($concurrentDirectory = $this->uploadTargetPath . $localFolder) && !is_dir($concurrentDirectory)) {
-			throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+			throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
 		}
 		$fullPath = $this->uploadTargetPath.$localFolder.'/dwca.zip';
 		
@@ -29,7 +29,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		}
 		
 		if($this->path){
-			if($this->uploadType === $this->IPTUPLOAD){
+			if($this->uploadType == $this->IPTUPLOAD){
 				if(strpos($this->path,'/resource.do')){
 					$this->path = str_replace('/resource.do','/archive.do',$this->path);
 				}
@@ -46,39 +46,44 @@ class SpecUploadDwca extends SpecUploadBase{
 			}
 		}
 		elseif(array_key_exists('uploadfile',$_FILES)){
-			if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath)){
-				$this->baseFolderName = $localFolder;
-			}
+			if(is_writable($this->uploadTargetPath.$localFolder)){
+                if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath)){
+                    $this->baseFolderName = $localFolder;
+                }
+                else{
+                    $msg = 'unknown';
+                    $err = $_FILES['uploadfile']['error'];
+                    if($err == 1) {
+                        $msg = 'uploaded file exceeds the upload_max_filesize directive in php.ini';
+                    }
+                    elseif($err == 2) {
+                        $msg = 'uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+                    }
+                    elseif($err == 3) {
+                        $msg = 'uploaded file was only partially uploaded';
+                    }
+                    elseif($err == 4) {
+                        $msg = 'no file was uploaded';
+                    }
+                    elseif($err == 5) {
+                        $msg = 'unknown error 5';
+                    }
+                    elseif($err == 6) {
+                        $msg = 'missing a temporary folder';
+                    }
+                    elseif($err == 7) {
+                        $msg = 'failed to write file to disk';
+                    }
+                    elseif($err == 8) {
+                        $msg = 'a PHP extension stopped the file upload';
+                    }
+                    $this->outputMsg('<li>ERROR uploading file (target: '.$fullPath.'): '.$msg.' </li>');
+                    $this->errorStr = 'ERROR uploading file: '.$msg;
+                }
+            }
 			else{
-				$msg = 'unknown';
-				$err = $_FILES['uploadfile']['error'];
-				if($err === 1) {
-					$msg = 'uploaded file exceeds the upload_max_filesize directive in php.ini';
-				}
-				elseif($err === 2) {
-					$msg = 'uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-				}
-				elseif($err === 3) {
-					$msg = 'uploaded file was only partially uploaded';
-				}
-				elseif($err === 4) {
-					$msg = 'no file was uploaded';
-				}
-				elseif($err === 5) {
-					$msg = 'unknown error 5';
-				}
-				elseif($err === 6) {
-					$msg = 'missing a temporary folder';
-				}
-				elseif($err === 7) {
-					$msg = 'failed to write file to disk';
-				}
-				elseif($err === 8) {
-					$msg = 'a PHP extension stopped the file upload';
-				}
-				$this->outputMsg('<li>ERROR uploading file (target: '.$fullPath.'): '.$msg.' </li>');
-				$this->errorStr = 'ERROR uploading file: '.$msg;
-			}
+                $this->errorStr = 'ERROR uploading file: Target path is not writable to server';
+            }
 		}
 		
 		if($this->baseFolderName && substr($this->baseFolderName,-1) !== '/') {
@@ -118,7 +123,7 @@ class SpecUploadDwca extends SpecUploadBase{
 		else{
 			$err = $zip->getStatusString();
 			if(!$err){
-				if($this->uploadType === $this->IPTUPLOAD){
+				if($this->uploadType == $this->IPTUPLOAD){
 					$err = 'target path does not appear to be a valid IPT instance';
 				}
 				else{
@@ -274,7 +279,7 @@ class SpecUploadDwca extends SpecUploadBase{
 								}
 								$this->metaArr[$tagName]['fields'][$extCoreId] = 'coreid';
 
-								if(($this->metaArr[$tagName]['ignoreHeaderLines'] === 1) && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
+								if(($this->metaArr[$tagName]['ignoreHeaderLines'] == 1) && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
 									if($this->metaArr[$tagName]['fieldsTerminatedBy'] === '\t'){
 										$this->delimiter = "\t";
 									}
@@ -322,7 +327,8 @@ class SpecUploadDwca extends SpecUploadBase{
 		$fullPath = $this->uploadTargetPath.$this->baseFolderName;
 		if(file_exists($fullPath)){
 			$this->prepUploadData();
-			if(isset($this->metaArr['occur']['fields']) && $this->readMetaFile()){
+            $this->readMetaFile();
+			if(isset($this->metaArr['occur']['fields'])){
 				$fullPath .= $this->extensionFolderName;
 				if(isset($this->metaArr['occur']['fieldsTerminatedBy']) && $this->metaArr['occur']['fieldsTerminatedBy']){
 					if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
@@ -347,7 +353,7 @@ class SpecUploadDwca extends SpecUploadBase{
 				if(file_exists($fullPath)){
 			 		$fh = fopen($fullPath, 'rb') or die("Can't open occurrence file");
 					
-			 		if($this->metaArr['occur']['ignoreHeaderLines'] === '1'){
+			 		if($this->metaArr['occur']['ignoreHeaderLines'] == '1'){
 			 			$this->getRecordArr($fh);
 			 		}
 					
@@ -378,7 +384,7 @@ class SpecUploadDwca extends SpecUploadBase{
 								if(array_key_exists($index,$recordArr)){
 									$valueStr = trim($recordArr[$index]);
 									if($valueStr){
-										if($cset !== $this->encoding) {
+										if($cset != $this->encoding) {
 											$valueStr = $this->encodeString($valueStr);
 										}
 										$recMap[$symbField] = $valueStr;
@@ -395,9 +401,8 @@ class SpecUploadDwca extends SpecUploadBase{
 					$this->conn->query('SET unique_checks=1');
 					$this->conn->query('SET foreign_key_checks=1');
 					$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->getTransferCount().' records loaded</li>');
-					ob_flush();
 					flush();
-					
+
 					if($this->includeIdentificationHistory){
 						$this->outputMsg('<li>Loading identification history extension... </li>');
 						foreach($this->metaArr['ident']['fields'] as $k => $v){
@@ -406,20 +411,20 @@ class SpecUploadDwca extends SpecUploadBase{
 						$this->uploadExtension('ident',$this->identFieldMap,$this->identSourceArr);
 						$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->identTransferCount.' records loaded</li>');
 					}
-					
+
 					if($this->includeImages){
 						$this->outputMsg('<li>Loading image extension... </li>');
 						$this->setImageSourceArr();
 						$this->uploadExtension('image',$this->imageFieldMap,$this->imageSourceArr);
 						$this->outputMsg('<li style="margin-left:10px;">Complete: '.$this->imageTransferCount.' records loaded</li>');
 					}
-					
+
 					$this->cleanUpload();
 
 					if($finalTransfer){
 						$this->finalTransfer();
 					}
-					
+
 					$this->removeFiles($this->uploadTargetPath.$this->baseFolderName);
 				}
 				else{
@@ -519,7 +524,7 @@ class SpecUploadDwca extends SpecUploadBase{
 							if(array_key_exists($index,$recordArr)){
 								$valueStr = trim($recordArr[$index]);
 								if($valueStr){
-									if($cset !== $this->encoding) {
+									if($cset != $this->encoding) {
 										$valueStr = $this->encodeString($valueStr);
 									}
 									$recMap[$symbField] = $valueStr;

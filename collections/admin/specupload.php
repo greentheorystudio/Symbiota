@@ -11,15 +11,15 @@ if(!$SYMB_UID) {
 }
 
 $collid = $_REQUEST['collid'];
-$uploadType = $_REQUEST['uploadtype'];
+$uploadType = (int)$_REQUEST['uploadtype'];
 $uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$autoMap = array_key_exists('automap',$_POST)?true:false;
+$autoMap = array_key_exists('automap',$_POST);
 $ulPath = array_key_exists('ulpath',$_REQUEST)?$_REQUEST['ulpath']: '';
-$importIdent = array_key_exists('importident',$_REQUEST)?true:false;
-$importImage = array_key_exists('importimage',$_REQUEST)?true:false;
-$matchCatNum = array_key_exists('matchcatnum',$_REQUEST)?true:false;
-$matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST)?true:false;
+$importIdent = array_key_exists('importident',$_REQUEST);
+$importImage = array_key_exists('importimage',$_REQUEST);
+$matchCatNum = array_key_exists('matchcatnum',$_REQUEST);
+$matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST);
 $verifyImages = (array_key_exists('verifyimages', $_REQUEST) && $_REQUEST['verifyimages']);
 $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
 $finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?$_REQUEST['finaltransfer']:0;
@@ -83,7 +83,7 @@ $NFNUPLOAD = 9;
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
 	$uspid = $tok[0];
-	$uploadType = $tok[1];
+	$uploadType = (int)$tok[1];
 }
 
 $duManager = new SpecUploadBase();
@@ -201,7 +201,7 @@ $duManager->loadFieldMap();
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Specimen Uploader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -303,7 +303,7 @@ $duManager->loadFieldMap();
 					}
 				}
 				else if(obj.name === "ID-sf[]"){
-					if(f.importident.value === "1"){
+					if(Number(f.importident.value) === 1){
 						if(idSfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Source field names must be unique (Identification: "+obj.value+")");
 							return false;
@@ -312,7 +312,7 @@ $duManager->loadFieldMap();
 					}
 				}
 				else if(obj.name === "IM-sf[]"){
-					if(f.importimage.value === "1"){
+					if(Number(f.importimage.value) === 1){
 						if(imSfArr.indexOf(obj.value) > -1){
 							alert("ERROR: Source field names must be unique (Image: "+obj.value+")");
 							return false;
@@ -329,7 +329,7 @@ $duManager->loadFieldMap();
 						tfArr[tfArr.length] = obj.value;
 					}
 					else if(obj.name === "ID-tf[]"){
-						if(f.importident.value === "1"){
+						if(Number(f.importident.value) === 1){
 							if(idTfArr.indexOf(obj.value) > -1){
 								alert("ERROR: Can't map to the same target field more than once (Identification: "+obj.value+")");
 								return false;
@@ -338,7 +338,7 @@ $duManager->loadFieldMap();
 						}
 					}
 					else if(obj.name === "IM-tf[]"){
-						if(f.importimage.value === "1"){
+						if(Number(f.importimage.value) === 1){
 							if(imTfArr.indexOf(obj.value) > -1){
 								alert("ERROR: Can't map to the same target field more than once (Images: "+obj.value+")");
 								return false;
@@ -353,7 +353,7 @@ $duManager->loadFieldMap();
 					}
 				}
 			}
-			if(lacksCatalogNumber && f.uploadtype.value === 7){
+			if(lacksCatalogNumber && Number(f.uploadtype.value) === 7){
 				alert("ERROR: Catalog Number is required for Skeletal File Uploads");
 				return false;
 			}
@@ -397,7 +397,7 @@ $duManager->loadFieldMap();
 	<?php
 	if($statusStr){
 		echo '<hr />';
-		echo "<div>$statusStr</div>";
+		echo '<div>'.$statusStr.'</div>';
 		echo '<hr />';
 	}
 	$recReplaceMsg = '<span style="color:orange"><b>Caution:</b></span> Matching records will be replaced with incoming records';
