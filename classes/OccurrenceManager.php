@@ -64,6 +64,7 @@ class OccurrenceManager{
 	public function getSqlWhere(): string
     {
 		$sqlWhere = '';
+        $retStr = '';
 		if(array_key_exists('clid',$this->searchTermsArr) && is_numeric($this->searchTermsArr['clid'])){
 			$sqlWhere .= 'AND (v.clid IN(' .$this->searchTermsArr['clid']. ')) ';
 		}
@@ -89,7 +90,7 @@ class OccurrenceManager{
 		if(array_key_exists('taxa',$this->searchTermsArr)){
 			$sqlWhereTaxa = '';
 			$useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
-			$this->taxaSearchType = $this->searchTermsArr['taxontype'];
+			$this->taxaSearchType = (int)$this->searchTermsArr['taxontype'];
 			$taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
 			$this->taxaArr = array();
 			foreach($taxaArr as $sName){
@@ -472,9 +473,6 @@ class OccurrenceManager{
 		}
 		if($sqlWhere){
 			$retStr = 'WHERE '.substr($sqlWhere,4);
-		}
-		else{
-			$retStr = 'WHERE o.occid IS NULL ';
 		}
 		//echo $retStr; exit;
 		return $retStr;

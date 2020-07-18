@@ -15,14 +15,12 @@ $retArr = array();
 
 $stArr = json_decode($stArrJson, true);
 
-if($stArr){
-    $spatialManager->setSearchTermsArr($stArr);
-    $mapWhere = $spatialManager->getSqlWhere();
-    if($type === 'reccnt'){
-        $spatialManager->setRecordCnt($mapWhere);
-        echo $spatialManager->getRecordCnt();
-    }
-    if($type === 'geoquery'){
-        echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,1000);
-    }
+$spatialManager->setSearchTermsArr($stArr);
+$mapWhere = $spatialManager->getSqlWhere();
+if($type === 'reccnt'){
+    $spatialManager->setRecordCnt($mapWhere);
+    echo $spatialManager->getRecordCnt();
+}
+if($type === 'geoquery'){
+    echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,$recordCnt);
 }

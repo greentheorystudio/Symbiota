@@ -643,7 +643,7 @@ class OccurrenceCollectionProfile {
     public function findIdigbioKey($guid){
         global $CLIENT_ROOT;
         $url = 'http://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:%22';
-        $url .= ($_SERVER['HTTPS']?'https://':'http://');
+        $url .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://');
         $url .= $_SERVER['HTTP_HOST'].$CLIENT_ROOT;
         $url .= '/webservices/dwc/'.$guid.'%22}';
         $ch = curl_init($url);
