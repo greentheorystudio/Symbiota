@@ -22,5 +22,5 @@ if($type === 'reccnt'){
     echo $spatialManager->getRecordCnt();
 }
 if($type === 'geoquery'){
-    echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,1000);
+    echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,$recordCnt);
 }

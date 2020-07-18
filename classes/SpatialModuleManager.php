@@ -668,7 +668,7 @@ class SpatialModuleManager{
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
-        $sql = 'SELECT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
@@ -689,9 +689,7 @@ class SpatialModuleManager{
             }
         }
         $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
-        if($pageRequest && $cntPerPage){
-            $sql .= 'LIMIT ' .$pageRequest. ',' .$cntPerPage;
-        }
+        $sql .= 'LIMIT ' .($pageRequest?$pageRequest:0). ',' .$cntPerPage;
         //echo '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -731,7 +729,7 @@ class SpatialModuleManager{
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
-        $sql = 'SELECT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
             'o.scientificNameAuthorship, o.identifiedBy, o.dateIdentified, o.typeStatus, o.recordedBy, o.recordNumber, '.
             'o.eventdate, o.`year`, o.`month`, o.`day`, o.habitat, o.associatedTaxa, o.basisOfRecord, o.occurrenceID, '.
             'o.`country`, o.stateProvince, o.`county`, o.municipality, o.locality, o.substrate, o.minimumDepthInMeters, '.
@@ -826,7 +824,7 @@ class SpatialModuleManager{
     public function setRecordCnt($sqlWhere): void
     {
         global $USER_RIGHTS;
-        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
@@ -851,7 +849,7 @@ class SpatialModuleManager{
     {
         global $USER_RIGHTS;
         $retArr = array();
-        $sql = 'SELECT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
+        $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
