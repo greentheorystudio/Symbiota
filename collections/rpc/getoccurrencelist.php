@@ -53,7 +53,7 @@ if($localSearchStr = $collManager->getLocalSearchStr()){
 	$htmlStr .= '<div><b>Search Criteria:</b> '.$localSearchStr.'</div>';
 }
 $htmlStr .= '<textarea id="urlPrefixBox" style="position:absolute;left:-9999px;top:-9999px">';
-$htmlStr .= (isset($_SERVER['HTTPS'])?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
+$htmlStr .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
 $htmlStr .= $collManager->getSearchResultUrl().'</textarea>';
 $htmlStr .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px"></textarea>';
 $htmlStr .= '</div>';
