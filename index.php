@@ -65,7 +65,7 @@ include(__DIR__ . '/header.php');
             </div>
         </div>
     </div>
-    <div style="padding: 0 10px;">
+    <div style="margin-top:15px;padding: 0 10px;">
         Sweeping along 156 miles of Florida’s eastern coast, the Indian River Lagoon (IRL) is home to a wealth of habitats
         and spectacular biodiversity. Its seagrass beds, mangroves, oyster reefs, salt marshes, tidal flats, scrubland,
         beaches and dunes nurture more than 3,500 species of plants, animals and other organisms.
