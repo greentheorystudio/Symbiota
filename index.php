@@ -79,9 +79,8 @@ include(__DIR__ . '/header.php');
     <div style="margin-top:15px;padding: 0 10px;">
         With a dynamic and growing taxonomic species database, ecological and life history information, and extensive documentation
         of the IRL’s many habitats, the Indian River Lagoon Species Inventory portal is intended to be a multi-purpose tool
-        to <span class="bolditalic">enhance scientific knowledge</span> of the IRL ecosystem; <span class="bolditalic">support
-        sound policy-making</span> by decisionmakers and natural resources managers; and <span class="bolditalic">advance public
-        awareness</span> of the need for steadfast stewardship of the lagoon’s health.
+        to enhance scientific knowledge of the IRL ecosystem; support sound policy-making by decisionmakers and natural resources
+        managers; and advance public awareness of the need for steadfast stewardship of the lagoon’s health.
     </div>
     <div style="margin-top:15px;padding: 0 10px;">
         As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
