@@ -280,21 +280,6 @@ include(__DIR__ . '/../header.php');
         <?php
         if($tableArr){
             $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/';
-
-            $navStr = '<div style="display:flex;justify-content:center;">';
-            if(($index * 100) > 100){
-                $navStr .= "<a href='' title='Previous 100 records'>&lt;&lt;</a>";
-            }
-            $navStr .= ' | ';
-            $navStr .= ($index <= 1?1:(($index-1)*100)+1).'-'.($qryCnt<100+$index?$qryCnt:(($index)*100)+100).' of '.$qryCnt.' records';
-            $navStr .= ' | ';
-            if($qryCnt > (100+$index)){
-                $navStr .= "<a href='' title='Next 100 records'>&gt;&gt;</a>";
-            }
-            $navStr .= '</div>';
-
-
-
             $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
             $navStr = '<div style="clear:both;display:flex;justify-content:center;">';
             $lastPage = ($qryCnt / 100);
