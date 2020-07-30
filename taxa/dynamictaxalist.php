@@ -21,6 +21,8 @@ $phylumArr = array();
 $classArr = array();
 $tableArr = array();
 $vernacularArr = array();
+$qryCnt = 0;
+$urlVars = '';
 
 if(!$targetTid && $targetTaxon){
     $targetTid = $listManager->setTidFromSciname($targetTaxon);
@@ -46,6 +48,8 @@ if($targetTid){
     $listManager->setTaxaCnt();
     $tableArr = $listManager->getTableArr();
     $vernacularArr = $listManager->getVernacularArr();
+    $qryCnt = (int)$listManager->getTaxaCnt();
+    $urlVars = ($descLimit?'desclimit=1':'').'&orderinput='.$orderInput.'&familyinput='.$familyInput.'&scinameinput='.$scinameInput.'&commoninput='.$commonInput.'&sortSelect='.$sortSelect.'&targettid='.$targetTid;
 }
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -277,7 +281,6 @@ include(__DIR__ . '/../header.php');
         if($tableArr){
             $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/';
 
-            $qryCnt = $listManager->getTaxaCnt();
             $navStr = '<div style="display:flex;justify-content:center;">';
             if(($index * 100) > 100){
                 $navStr .= "<a href='' title='Previous 100 records'>&lt;&lt;</a>";
@@ -288,6 +291,39 @@ include(__DIR__ . '/../header.php');
             if($qryCnt > (100+$index)){
                 $navStr .= "<a href='' title='Next 100 records'>&gt;&gt;</a>";
             }
+            $navStr .= '</div>';
+
+
+
+            $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
+            $navStr = '<div style="clear:both;display:flex;justify-content:center;">';
+            $lastPage = ($qryCnt / 100);
+            $startPage = ($index > 4?$index - 4:1);
+            $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+            if($startPage > 1){
+                $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.'0">First</a></span>';
+                $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.(($index - 10) < 1?0:$index - 10).'">&lt;&lt;</a></span>';
+            }
+            for($x = $startPage; $x <= $endPage; $x++){
+                if($index !== $x){
+                    $navStr .= '<span class="pagination" style="margin-right:3px;"><a href="'.$navUrl.$x.'">'.$x. '</a></span>';
+                }
+                else{
+                    $navStr .= '<span class="pagination" style="margin-right:3px;font-weight:bold;">' .$x. '</span>';
+                }
+            }
+            if(($lastPage - $startPage) >= 10){
+                $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.(($index + 10) > $lastPage?$lastPage:($index + 10)).'">&gt;&gt;</a></span>';
+                $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.$lastPage.'">Last</a></span>';
+            }
+            $beginNum = ($index)*100 + 1;
+            $endNum = $beginNum + 100 - 1;
+            if($endNum > $qryCnt) {
+                $endNum = $qryCnt;
+            }
+            $navStr .= '</div>';
+            $navStr .= '<div style="clear:both;display:flex;justify-content:center;">';
+            $navStr .= 'Page '.($index + 1).', records '.$beginNum.'-'.$endNum.' of '.$qryCnt;
             $navStr .= '</div>';
 
             echo '<div style="width:100%;clear:both;margin:5px;">';

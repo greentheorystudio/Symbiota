@@ -64,7 +64,8 @@ class TaxonomyDynamicListManager{
 
     public function setTaxaCnt(): void
     {
-        $sql = 'SELECT COUNT(t1.TID) AS cnt '.
+        $taxCnt = 0;
+        $sql = 'SELECT COUNT(CONCAT(t1.TID,t2.TID,t3.TID,t4.TID,t5.TID,t6.TID)) AS cnt '.
             'FROM taxaenumtree AS te1 LEFT JOIN taxa AS t1 ON te1.tid = t1.TID '.
             'LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
             'LEFT JOIN taxaenumtree AS te2 ON t1.TID = te2.tid '.
@@ -77,7 +78,7 @@ class TaxonomyDynamicListManager{
             'LEFT JOIN taxa AS t5 ON te5.parenttid = t5.TID '.
             'LEFT JOIN taxaenumtree AS te6 ON t1.TID = te6.tid '.
             'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
-            'WHERE ((te1.parenttid = '.$this->tid.' OR t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
+            'WHERE ((te1.parenttid = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
             'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
             'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
             'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
@@ -86,12 +87,24 @@ class TaxonomyDynamicListManager{
         if($this->descLimit){
             $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
         }
-        echo "<div>Count sql: ".$sql."</div>";
+        //echo "<div>Count sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
-            $this->taxaCnt = $row->cnt;
+            $taxCnt += $row->cnt;
+        }
+        $sql = 'SELECT COUNT(t1.TID) AS cnt '.
+            'FROM taxa AS t1 LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
+            'WHERE ((t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) ';
+        if($this->descLimit){
+            $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
+        }
+        //echo "<div>Count sql: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        if($row = $result->fetch_object()){
+            $taxCnt += $row->cnt;
         }
         $result->free();
+        $this->taxaCnt = $taxCnt;
     }
 
     public function getTableArr(): array
