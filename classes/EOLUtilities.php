@@ -102,7 +102,7 @@ class EOLUtilities {
 				foreach($eolObj->synonyms as $synObj){
 					if(!in_array($synObj->synonym, $uniqueList, true)){
 						$uniqueList[] = $synObj->synonym;
-						$taxonArr['syns'][$cnt]['scientificName'] = $synObj->synonym;
+                        $taxonArr['syns'][$cnt]['scientificName'] = $synObj->synonym;
 						if(isset($synObj->relationship)) {
 							$taxonArr['syns'][$cnt]['synreason'] = $synObj->relationship;
 						}

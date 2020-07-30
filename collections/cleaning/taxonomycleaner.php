@@ -8,8 +8,8 @@ if(!$SYMB_UID) {
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$autoClean = array_key_exists('autoclean',$_POST)?$_POST['autoclean']:0;
-$targetKingdom = array_key_exists('targetkingdom',$_POST)?$_POST['targetkingdom']:0;
+$autoClean = array_key_exists('autoclean',$_POST)?(int)$_POST['autoclean']:0;
+$targetKingdom = array_key_exists('targetkingdom',$_POST)?(int)$_POST['targetkingdom']:0;
 $taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:array();
 $startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
 $limit = array_key_exists('limit',$_POST)?$_POST['limit']:20;
@@ -93,7 +93,7 @@ elseif($activeCollArr){
 					dataType: "json",
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
-					if(res == "1"){
+					if(Number(res) === 1){
 						$("#remapSpan-"+msgCode).text(" >>> Taxon remapped successfully!");
 						$("#remapSpan-"+msgCode).css('color', 'green');
 					}
@@ -275,7 +275,7 @@ elseif($activeCollArr){
 												<?php
 												$kingdomArr = $cleanManager->getKingdomArr();
 												foreach($kingdomArr as $kTid => $kSciname){
-													echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === $kTid?'SELECTED':'').'>'.$kSciname.'</option>';
+													echo '<option value="'.$kTid.':'.$kSciname.'" '.($targetKingdom === (int)$kTid?'SELECTED':'').'>'.$kSciname.'</option>';
 												}
 												?>
 											</select>

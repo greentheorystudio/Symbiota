@@ -67,15 +67,17 @@ class TaxonomyAPIManager{
     public function generateVernacularList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT v.VernacularName '.
-            'FROM taxavernaculars AS v ';
+        $sql = 'SELECT DISTINCT t.TID, v.VernacularName, t.SciName '.
+            'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID ';
         $sql .= 'WHERE v.VernacularName LIKE "'.$this->cleanInStr($queryString).'%" ';
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
         }
         $rs = $this->conn->query($sql);
         while ($r = $rs->fetch_object()){
-            $retArr[] = $r->VernacularName;
+            $label = $r->VernacularName . ' - ' . $r->SciName;
+            $retArr[$label]['id'] = $r->TID;
+            $retArr[$label]['value'] = $label;
         }
 
         return $retArr;
