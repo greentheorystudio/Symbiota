@@ -129,7 +129,7 @@ if($editable){
             </ul>
 
             <!-- EDITOR div -->
-            <div id="editdiv" style="height:400px;">
+            <div id="editdiv" style="min-height:400px;">
                 <div style="float:right;cursor:pointer;" onclick="toggleEditFields()" title="Toggle Taxon Editing Functions">
                     <img style='border:0;' src='../../images/edit.png'/>
                 </div>
@@ -547,7 +547,7 @@ if($editable){
                     </div>
                 </fieldset>
             </div>
-            <div id="hierarchydiv" style="height:400px;">
+            <div id="hierarchydiv" style="min-height:400px;">
                 <fieldset style="width:420px;padding:25px;">
                     <legend><b>Quick Query Taxonomic Hierarchy</b></legend>
                     <div style="float:right;" title="Rebuild Hierarchy">
