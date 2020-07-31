@@ -266,7 +266,7 @@ include(__DIR__ . '/../header.php');
                         </select>
                     </div>
                     <div style="float:left;margin-left:10px;">
-                        <input type="checkbox" name="desclimit" value="1" <?php echo ((!$_REQUEST || $descLimit)?'CHECKED':''); ?> /> Limit to taxa with information
+                        <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to taxa with information
                     </div>
                 </div>
                 <div style="float:right;margin:10px;">
