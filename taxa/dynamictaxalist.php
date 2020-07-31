@@ -352,7 +352,7 @@ include(__DIR__ . '/../header.php');
             }
         }
         elseif($targetTid || $targetTaxon){
-            echo '<div style="font-weight:bold;font-size:120%;">The taxon you searched for does not exist in the database.</div>';
+            echo '<div style="font-weight:bold;font-size:120%;">There are no taxa matching your criteria.</div>';
         }
         ?>
     </div>
