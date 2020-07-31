@@ -179,16 +179,18 @@ class TaxonomyDynamicListManager{
     public function getVernacularArr(): array
     {
         $returnArr = array();
-        $sql = 'SELECT TID, VernacularName '.
-            'FROM taxavernaculars '.
-            'WHERE TID IN('.implode(',', $this->tidArr).') '.
-            'ORDER BY TID, VernacularName ';
-        //echo "<div>Vernacular sql: ".$sql."</div>";
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $returnArr[$r->TID][] = $r->VernacularName;
+        if($this->tidArr){
+            $sql = 'SELECT TID, VernacularName '.
+                'FROM taxavernaculars '.
+                'WHERE TID IN('.implode(',', $this->tidArr).') '.
+                'ORDER BY TID, VernacularName ';
+            //echo "<div>Vernacular sql: ".$sql."</div>";
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $returnArr[$r->TID][] = $r->VernacularName;
+            }
+            $rs->free();
         }
-        $rs->free();
         return $returnArr;
     }
 
