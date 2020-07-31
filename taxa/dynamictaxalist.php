@@ -282,7 +282,7 @@ include(__DIR__ . '/../header.php');
             $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/';
             $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
             $navStr = '<div style="clear:both;display:flex;justify-content:center;">';
-            $lastPage = ($qryCnt / 100);
+            $lastPage = ($qryCnt / 100) + 1;
             $startPage = ($index > 4?$index - 4:1);
             $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
             if($startPage > 1){
@@ -290,8 +290,8 @@ include(__DIR__ . '/../header.php');
                 $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.(($index - 10) < 1?0:$index - 10).'">&lt;&lt;</a></span>';
             }
             for($x = $startPage; $x <= $endPage; $x++){
-                if($index !== $x){
-                    $navStr .= '<span class="pagination" style="margin-right:3px;"><a href="'.$navUrl.$x.'">'.$x. '</a></span>';
+                if(($index + 1) !== $x){
+                    $navStr .= '<span class="pagination" style="margin-right:3px;"><a href="'.$navUrl.($x-1).'">'.$x. '</a></span>';
                 }
                 else{
                     $navStr .= '<span class="pagination" style="margin-right:3px;font-weight:bold;">' .$x. '</span>';
