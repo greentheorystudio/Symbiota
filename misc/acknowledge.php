@@ -25,7 +25,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 
             <table style="width:700px;margin-left:auto;margin-right:auto;">
                 <tr>
-                    <td align="center"><img src="../irlspec/images/irl_sunrise.jpg" width="400" /></td>
+                    <td align="center"><img src="../content/imglib/irl_sunrise.jpg" width="400" /></td>
                 </tr>
             </table>
             <br />
