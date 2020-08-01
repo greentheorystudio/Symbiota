@@ -1702,6 +1702,22 @@ CREATE TABLE `taxaprofilepubs` (
   CONSTRAINT `FK_taxaprofilepubs_uid` FOREIGN KEY (`uidowner`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `taxaresourcelinks` (
+  `taxaresourceid` int(11) NOT NULL AUTO_INCREMENT,
+  `tid` int(10) unsigned NOT NULL,
+  `sourcename` varchar(150) NOT NULL,
+  `sourceidentifier` varchar(45) DEFAULT NULL,
+  `sourceguid` varchar(150) DEFAULT NULL,
+  `url` varchar(250) DEFAULT NULL,
+  `notes` varchar(250) DEFAULT NULL,
+  `ranking` int(11) DEFAULT NULL,
+  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`taxaresourceid`),
+  KEY `taxaresource_name` (`sourcename`),
+  KEY `FK_taxaresource_tid_idx` (`tid`),
+  CONSTRAINT `FK_taxaresource_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `taxauthority` (
   `taxauthid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `isprimary` int(1) unsigned NOT NULL DEFAULT '0',
