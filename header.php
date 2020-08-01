@@ -55,16 +55,7 @@
                         <a href="#" >Search</a>
                         <ul>
 							<li>
-								<a href="#" >Search by Word or Phrase</a>
-							</li>
-							<li>
-								<a href="#" >Go to Species Reports</a>
-							</li>
-							<li>
-								<a href="#" >Alphabetized Species Lists</a>
-							</li>
-							<li>
-								<a href="#" >Expanded Species Reports</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php" >Dynamic Species List</a>
 							</li>
                             <li>
                                 <a href="#" >Special Status Species</a>
