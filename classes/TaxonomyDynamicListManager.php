@@ -194,6 +194,21 @@ class TaxonomyDynamicListManager{
         return $returnArr;
     }
 
+    public function getSpAmtByParent($tid): int
+    {
+        $cnt = 0;
+        $sql = 'SELECT COUNT(DISTINCT t.TID) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'WHERE t.RankId >= 220 AND te.parenttid = '.$tid.' ';
+        //echo "<div>Sql: ".$sql."</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $cnt = $r->cnt;
+        }
+        $rs->free();
+        return $cnt;
+    }
+
     public function setSciName(): void
     {
         $sql = 'SELECT SciName FROM taxa WHERE TID = '.$this->tid.' ';

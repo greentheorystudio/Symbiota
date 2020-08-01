@@ -90,7 +90,7 @@
                                 <a href="#" >Documented IRL Biodiversity</a>
                             </li>
                             <li>
-                                <a href="#" >IRL Animal Biodiversity</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Animal_Biodiv.php" >IRL Animal Biodiversity</a>
                             </li>
                             <li>
                                 <a href="#" >IRL Plant Biodiversity</a>
@@ -133,7 +133,7 @@
                                 <a href="#" >Project Background</a>
                             </li>
                             <li>
-                                <a href="#" >Acknowledgements</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/acknowledge.php" >Acknowledgements</a>
                             </li>
                             <li>
                                 <a href="#" >Contact</a>
