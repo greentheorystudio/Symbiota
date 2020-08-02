@@ -29,18 +29,18 @@ header("Content-Type: text/html; charset=".$CHARSET);
                 </tr>
             </table>
             <br />
-            <p class="title">Funding:</p>
-            <p class="body">
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="title">Funding:</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">
                 The Indian River Lagoon National Estuary Program (St. Johns River Water Management District) has provided generous financial support for the IRL Species Inventory project over the years and is gratefully acknowledged. Other funding sources include The Smithsonian Insitution's Seidell Fund and the St. Lucie County Board of Commissioners.
             </p>
-            <p class="title">Technical Contributions:</p>
-            <p class="body">The following individuals have contributed tirelessly to the technical expansion of the IRL Species Inventory since it was deposited with the Smithsonian Marine Station at Fort Pierce in 1997: Kathleen Hill, Joseph Dineen, L. Holly Sweat, and Julie Piraino.</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="title">Technical Contributions:</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">The following individuals have contributed tirelessly to the technical expansion of the IRL Species Inventory since it was deposited with the Smithsonian Marine Station at Fort Pierce in 1997: Kathleen Hill, Joseph Dineen, L. Holly Sweat, and Julie Piraino.</p>
             <p>
-            <p class="body">Other contributors include: Paul E. Hargraves (Phytoplankton), James Masterson, Melany Puglisi Weening, Brian Steves and Marianne Tempken.</p>
-            <p class="body">Current Web Design: James Kochert, Joseph Dineen, and Julie Piraino</p>
-            <p class="body">Initial Web Designs: Karen Davis, Kathleen Hill and L. Holly Sweat</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">Other contributors include: Paul E. Hargraves (Phytoplankton), James Masterson, Melany Puglisi Weening, Brian Steves and Marianne Tempken.</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">Current Web Design: James Kochert, Joseph Dineen, and Julie Piraino</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">Initial Web Designs: Karen Davis, Kathleen Hill and L. Holly Sweat</p>
 
-            <p class="body">Initial Inventory Compilation: Hilary Swain, Susan Hopkins and Clarissa Thornton</p>
+            <p style="width:700px;margin-left:auto;margin-right:auto;" class="body">Initial Inventory Compilation: Hilary Swain, Susan Hopkins and Clarissa Thornton</p>
             <table style="width:325px;margin-left:auto;margin-right:auto;">
                 <tr>
                     <td><table width="325" class="table-border">

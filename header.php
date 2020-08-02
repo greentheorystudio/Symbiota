@@ -58,27 +58,24 @@
 								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php" >Dynamic Species List</a>
 							</li>
                             <li>
-                                <a href="#" >Special Status Species</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/ListedSpec.php" >Special Status Species</a>
                             </li>
                             <li>
-                                <a href="#" >Non-Native Species</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Nonnatives.php" >Non-Native Species</a>
                             </li>
                             <li>
-                                <a href="#" >Species Names and Taxonomy</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/NamSpecies.php" >Species Names and Taxonomy</a>
                             </li>
                             <li>
-                                <a href="#" >Marine Invertebrates</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/INVERTS.php" >Marine Invertebrates</a>
                             </li>
-                            <li>
-                                <a href="#" >What's New</a>
-                            </li>
-						</ul>
+                        </ul>
                     </li>
                     <li>
-                        <a href="#" >The IRL</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/Maps.php" >The IRL</a>
                         <ul>
                             <li>
-                                <a href="#" >The IRL</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Maps.php" >The IRL</a>
                             </li>
                             <li>
                                 <a href="#" >What is a Lagoon</a>
@@ -102,10 +99,10 @@
                                 <a href="#" >IRL Habitats</a>
                             </li>
                             <li>
-                                <a href="#" >Threats to IRL Habitats</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Habitat_Threats.php" >Threats to IRL Habitats</a>
                             </li>
                             <li>
-                                <a href="#" >Climate Change and the IRL</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Climate_Change.php" >Climate Change and the IRL</a>
                             </li>
                         </ul>
                     </li>
@@ -124,7 +121,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#">Links and Events</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/IRL_Links.php">Links and Events</a>
                     </li>
                     <li>
                         <a href="#" >About Us</a>
@@ -136,7 +133,7 @@
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/acknowledge.php" >Acknowledgements</a>
                             </li>
                             <li>
-                                <a href="#" >Contact</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/contact.php" >Contact</a>
                             </li>
                         </ul>
                     </li>

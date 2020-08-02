@@ -228,3 +228,195 @@ div.sptab{
 div.spptab{
 	height:		78%;
 }
+
+
+h1.heading{
+	text-align:center;
+	color: #408080;
+}
+#innertext h2{
+	font-weight: bold;
+	color: #036;
+	text-align:center;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+table.table-border td p.label, table.table-border td span, table.table-border td p.heading, ol.report-caterories table.table-border td{
+	color: #393939 !important;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+
+p.title{
+	color: #408080;
+	font-weight:bold;
+	font-size:16px;
+	margin:0 0 5px 0 !important;
+}
+p.body, p.body-align-left{
+	color: #393939 !important;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:justify !important;
+	line-height: 20px;
+}
+p.body-align-left{
+	text-align:left !important;
+}
+table.table-border td p.heading{
+	font-weight: bold;
+	font-size:14px;
+	padding:0 !important;
+	margin:0 !important;
+}
+table.table-border td p.label{
+	font-weight:bold;
+	padding:0 !important;
+	margin:0 !important;
+	text-align:left !important;
+}
+table.table-border td span{
+	padding:0 !important;
+	margin:0 !important;
+}
+div.image{
+	float:left;
+	width:200px;
+}
+
+span.text{
+	float:right;
+}
+
+p.footer_note{
+	border-top:1px solid #dadada;
+	padding-top:10px;
+	width: 100%;
+}
+span.caption{
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	color: #393939;
+	line-height: 15px;
+}
+div.centered, p.centered{
+	text-align:center !important;
+}
+ul.no-bold li{
+	font-weight:normal !important;
+}
+table.image_left{
+	float:left;
+	margin-right:15px;
+}
+table.table-border {
+	border:none;
+	border:1px solid #dadada;
+	border-collapse: collapse;
+	margin-bottom:20px;
+}
+
+table.table-border td {
+	padding:5px;
+	border:1px solid #dadada;
+}
+
+table.table-border td:first-child {
+	border:1px solid #dadada;
+}
+
+table.table-border td:last-child {
+	border:1px solid #dadada;
+}
+table.no-border, table.no-border td{
+	border:0 !important;
+}
+table.alternate{
+	border:1px solid #dadada !important;
+}
+table.alternate th{
+	background-color:#f0f0f0;
+	color:#393939;
+	font-size:14px;
+	font-weight:bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	padding:5px;
+}
+table.alternate tr.heading{
+	background-color:#ffffff !important;
+}
+table.alternate tr:nth-child(even) {
+	background: #FFF;
+}
+table.alternate tr:nth-child(odd) {
+	background: #f8f8f8; border-top:1px solid #dadada; border-bottom: 1px solid #dadada;
+}
+
+table.table-border td span.red{
+	color: #FF0000 !important;
+}
+table.table-border td span.green{
+	color: #0C0 !important;
+}
+.highlight{
+	border:1px solid #408080;
+	background-color:#DFF3F3;
+	border-radius:3px;
+	padding:5px;
+}
+
+img.red-border{
+	padding:2px;
+	border: 2px solid red;
+}
+
+table.species-table{
+	padding:0;
+	margin:0;
+}
+table.species-table tr td{
+	padding:8px;
+}
+table.species-table tr:last-child td {
+	border:0px;
+}
+table.species-table tr td{
+	font-size:15px;
+	font-weight:bold;
+}
+table.species-table tr td.label{
+	color: #036;
+	/*background:#f8f8f8;*/
+}
+
+table.species-table tr td span.specie-name{
+	font-style:italic;
+}
+
+ol.report-caterories {
+	margin-top:20px;
+	margin-left:5px;
+	list-style-type: upper-roman;
+	color: #408080;
+	font-weight:bolder;
+	font-size:18px;
+}
+
+ol.report-caterories li p.heading {
+	font-weight:bold;
+	font-size:18px;
+	text-transform: uppercase;
+	margin-bottom:5px;
+}
+
+.sideGutter span.caption {
+	color:#f8f8f8;
+}
+
+.species-table tr td {
+	vertical-align:top;
+}
+.genus_italics {
+	font-style:italic;
+}
