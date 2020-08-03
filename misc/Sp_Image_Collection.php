@@ -577,8 +577,8 @@ Photo: Beverly Gardner</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Argopecten gibbus Bay Scallop Joel Wooster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Argopecten gibbus Bay Scallop Joel Wooster Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Atrina seminuda Half-naked Penshell Joel Wooster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Atrina seminuda Half-naked Penshell Joel Wooster Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Anadara brasiliana_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Argopecten irradians concentricus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Anadara brasiliana_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Argopecten irradians concentricus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Argope_gibbus.htm">Argopecten gibbus</a></i><br><br>
@@ -599,10 +599,10 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
 Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Barbatia candida_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Barbatia candida_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Barnea truncata Atlantic Mud Piddock Brian Marshall Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Barnea truncata Atlantic Mud Piddock Brian Marshall Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Brachidontes exustus Scorched Mussel Joel Wooster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Brachidontes exustus Scorched Mussel Joel Wooster Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Caryocorbula contracta_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Caryocorbula contracta_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Barbatia candida</i><br>
@@ -627,7 +627,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Chama congregata Corrugate Jewelbox Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Chama congregata Corrugate Jewelbox Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Chama macerophylla Leafy Jewelbox Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Chama macerophylla Leafy Jewelbox Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Chione cancellata Cross-barred Venus Jax shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Chione cancellata Cross-barred Venus Jax shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chioneryx grus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chioneryx grus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Chama congregata</i><br>
@@ -649,7 +649,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Isognomon bicolor Bicolor Purse-oyster Jax Shells.jpg"></a><a href="../content/imglib/Bivalves/Cropped Images/Crassostrea virginica Eastern Oyster Joel Wooster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Crassostrea virginica Eastern Oyster Joel Wooster Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Ctena orbiculata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Ctena orbiculata_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Cyrtopleura costata Angelwing Joseph Dineen.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Cyrtopleura costata Angelwing Joseph Dineen.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Dinocardium robustum Atlantic Giant Cockle Joseph Dineen.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Dinocardium robustum Atlantic Giant Cockle Joseph Dineen.jpg" width="140" height="105"></a></td>
                 </tr>
@@ -674,7 +674,7 @@ Photo: Joseph Dineen</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Donax variabilis Variable Coquina Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Donax variabilis Variable Coquina Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Geukensia demissa_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Geukensia demissa_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Ostreola equestris Crested Oyster Jax Shells.jpg"></a><a href="../content/imglib/Bivalves/Cropped Images/Isognomon alatus Flat Tree-oyster 2004 SI.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Isognomon alatus Flat Tree-oyster 2004 SI.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Isognomon bicolor Bicolor Purse-oyster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Isognomon bicolor Bicolor Purse-oyster Jax Shells.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
@@ -697,10 +697,10 @@ Bicolor Purse-oyster<br>
 Photo: jaxshells.com</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lasaea adansoni_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lasaea adansoni_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Lima scabra Flame Scallop L Holly Sweat.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Lima scabra Flame Scallop L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Limaria pellucida_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lucina pectinata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Limaria pellucida_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lucina pectinata_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Lasaea adansoni</i><br>
@@ -723,10 +723,10 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Macoploma tenta_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Macoploma tenta_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Macrocallista nimbosa Sunray Venus Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Macrocallista nimbosa Sunray Venus Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Mactrotoma fragilis_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Martesia striata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Mactrotoma fragilis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Martesia striata_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Macoploma tenta</i><br>
@@ -751,8 +751,8 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Mercenaria campechiensis Southern Quahog Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Mercenaria campechiensis Southern Quahog Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Mercenaria mercenaria Northern Quahog Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Mercenaria mercenaria Northern Quahog Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Modiolus squamosus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Musculus lateralis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Modiolus squamosus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Musculus lateralis_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mercen_campec.htm">Mercenaria campechiensis</a></i><br>
@@ -776,9 +776,9 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 <tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Mytella charruana Charrua Mussel Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Mytella charruana Charrua Mussel Jax Shells.jpg" width="140" height="105" class="red-border"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Nucula proxima_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Nucula proxima_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Ostreola equestris Crested Oyster Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Ostreola equestris Crested Oyster Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Parastarte triquetra_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Parastarte triquetra_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="http://www.sms.si.edu/irlspec/Mytella_charruana.htm">Mytella charruana</a></i><br>
@@ -800,8 +800,8 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Parvilucina multilineata_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Periploma margaritaceum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Parvilucina multilineata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Periploma margaritaceum_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Perna viridis Asian Green Mussel Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Perna viridis Asian Green Mussel Jax Shells.jpg" width="140" height="105" class="red-border"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Pinna carnea Amber Penshell 2004 SI.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Pinna carnea Amber Penshell 2004 SI.jpg" width="140" height="105"></a></td>
                 </tr>
@@ -823,10 +823,10 @@ Photo: &copy; 2004 Smithsonian Institution</span></td>
                 </tr>
                 <tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pitar fulminatus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Psammotreta brevifrons_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pseudochama cristella_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pteria colymbus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pitar fulminatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Psammotreta brevifrons_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pseudochama cristella_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pteria colymbus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Pitar fulminatus</i><br><br>
@@ -845,10 +845,10 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Semele proficua_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Semele purpurascens_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Sphenia fragilis_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Tagelus divisus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Semele proficua_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Semele purpurascens_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Sphenia fragilis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Tagelus divisus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Semele proficua</i><br>
@@ -869,7 +869,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 <tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Tagelus plebeius Stout Tagelus Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Tagelus plebeius Stout Tagelus Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Tellidora cristata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Tellidora cristata_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Bivalves/Cropped Images/Trachycardium egmontianum Florida Pricklycockle Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Bivalves/Thumbnails/Trachycardium egmontianum Florida Pricklycockle Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top">&nbsp;</td>
                 </tr>
@@ -925,9 +925,9 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Cnidarians/Cropped Images/Cassiopea xamachana Upside-down Jellyfish L Holly Sweat.jpg"><img src="../content/imglib/Cnidarians/Thumbnails/Cassiopea xamachana Upside-down Jellyfish L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chrysaora quinquecirrha_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Diadumene lineata_small.jpg" width="141" height="106" class="red-border"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Leptogorgia virgulata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chrysaora quinquecirrha_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Diadumene lineata_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Leptogorgia virgulata_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Cassiopea xamachana</i><br><br>
@@ -950,9 +950,9 @@ Photo: MJ Adams <a href="https://creativecommons.org/licenses/by-nc/2.0/legalcod
 Photo: Crabby Taxonomist <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Macrorhynchia philippina.jpeg_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Macrorhynchia philippina.jpeg_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Cnidarians/Cropped Images/Oculina diffusa Diffuse Ivory Bush Coral L Holly Sweat.jpg"><img src="../content/imglib/Cnidarians/Thumbnails/Oculina diffusa Diffuse Ivory Bush Coral L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pennaria disticha_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pennaria disticha_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Cnidarians/Cropped Images/Phyllangia americana Hidden Cup Coral SERTC.jpg"><img src="../content/imglib/Cnidarians/Thumbnails/Phyllangia americana Hidden Cup Coral SERTC.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -1130,7 +1130,7 @@ By-the-Wind Sailor<br>
     Photo: &copy; 2004 Smithsonian Institution</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Heterocrypta granulata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Heterocrypta granulata_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Lepas anatifera Gooseneck Barnacle L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Lepas anatifera Gooseneck Barnacle L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Libinia dubia Longnose Spider Crab L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Libinia dubia Longnose Spider Crab L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Limulus polyphemus Horseshoe Crab L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Limulus polyphemus Horseshoe Crab L Holly Sweat.jpg" width="140" height="105"></a></td>
@@ -1180,7 +1180,7 @@ Photo: Maureen McNally</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Pagurus longicarpus Long-clawed Hermit Crab L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Pagurus longicarpus Long-clawed Hermit Crab L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Panulirus argus Caribbean Spiny Lobster L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Panulirus argus Caribbean Spiny Lobster L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Penaeus monodon_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Penaeus monodon_small.jpg" width="141" height="106" class="red-border"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Persephona mediterranea Mottled Purse Crab Jax Shells.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Persephona mediterranea Mottled Purse Crab Jax Shells.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -1203,9 +1203,9 @@ Photo: jaxshells.com</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Petrochirus diogenes Giant Hermit Crab L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Petrochirus diogenes Giant Hermit Crab L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Petrolisthes galathinus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Petrolisthes galathinus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Crustaceans/Cropped Images/Pilumnus sayi Spineback Hairy Crab L Holly Sweat.jpg"><img src="../content/imglib/Crustaceans/Thumbnails/Pilumnus sayi Spineback Hairy Crab L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pinnixa chaetopterana_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pinnixa chaetopterana_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Petroc_diogen.htm">Petrochirus diogenes</a></i><br>
@@ -1482,7 +1482,7 @@ Photo: Bjorn Tunberg</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Acanthurus bahianus Ocean Surgeon L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Acanthurus bahianus Ocean Surgeon L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Acanthurus coeruleus Blue Tang L Holly Sweat.jpg"></a><a href="../content/imglib/Fishes/Cropped Images/Parablennius marmoreus Seaweed Blenny L Holly Sweat.jpg"><img src="images/2017_Gallery_Thumbnails/Acanthurus chirurgus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Acanthurus coeruleus Blue Tang L Holly Sweat.jpg"></a><a href="../content/imglib/Fishes/Cropped Images/Parablennius marmoreus Seaweed Blenny L Holly Sweat.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Acanthurus chirurgus_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Achirus lineatus Lined Sole L Holly Sweat.jpg"></a><a href="../content/imglib/Fishes/Cropped Images/Acanthurus coeruleus Blue Tang L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Acanthurus coeruleus Blue Tang L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Aetobatus narinari Spotted Eagle Ray 2004 SI.jpg"></a><a href="../content/imglib/Fishes/Cropped Images/Achirus lineatus Lined Sole L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Achirus lineatus Lined Sole L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
@@ -1505,9 +1505,9 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Aetobatus narinari Spotted Eagle Ray 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Aetobatus narinari Spotted Eagle Ray 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Raja eglanteria Clearnose Skate Juvenile L Holly Sweat.jpg"><img src="images/2017_Gallery_Thumbnails/Ahlia egmontis_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Albula vulpes_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Alectis ciliaris_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Raja eglanteria Clearnose Skate Juvenile L Holly Sweat.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Ahlia egmontis_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Albula vulpes_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Alectis ciliaris_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Ogcocephalus nasutus Shortnose Batfish 2004 SI.jpg"><span class="caption"><i>Aetobatus narinari</i><br>
@@ -1528,10 +1528,10 @@ African Pompano <br>
 Photo:JT Williams <a href="https://creativecommons.org/licenses/by/2.5/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Alosa sapidissima_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scarus iseri Striped Parrotfish Male L Holly Sweat.jpg"><img src="images/2017_Gallery_Thumbnails/Aluterus scriptus_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Anchoa hepsetus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Anchoa lyolepis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Alosa sapidissima_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scarus iseri Striped Parrotfish Male L Holly Sweat.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Aluterus scriptus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Anchoa hepsetus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Anchoa lyolepis_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Poecilia latipinna Sailfin Molly L Holly Sweat.jpg"><span class="caption"><i>Alosa sapidissima</i><br>
@@ -1552,10 +1552,10 @@ Dusky Anchovy<br>
 Photo: Brandi Noble, NMFS<a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Anguilla rostrata_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Selene vomer Lookdown Intermediate L Holly Sweat.jpg"><img src="images/2017_Gallery_Thumbnails/Anisotremus virginicus_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Antennarius pauciradiatus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Apogon maculatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Anguilla rostrata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Selene vomer Lookdown Intermediate L Holly Sweat.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Anisotremus virginicus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Antennarius pauciradiatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Apogon maculatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Rhinoptera bonasus Cownose Ray Ed Perry.jpg"><span class="caption"></a><span class="caption"><i>Anisotremus virginicus</i><br>
@@ -1576,10 +1576,10 @@ Flamefish <br>
 Photo: Smithsonian Belize Larval Fish Group</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Archosargus probatocephalus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Archosargus probatocephalus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Archosargus probatocephalus Sheepshead Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Archosargus probatocephalus Sheepshead Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><span class="caption"><a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode"></a></span><a href="../content/imglib/Fishes/Cropped Images/Ariopsis felis Hardhead Catfish Sheri Knott.jpg"><img src="../content/imglib/Fishes/Thumbnails/Ariopsis felis Hardhead Catfish Sheri Knott.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Astronotus ocellatus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Astronotus ocellatus_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Archos_probat.htm">Archosargus probatocephalus</a></i><br>
@@ -1602,8 +1602,8 @@ Photo:George Chernilevsky</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Bathygobius soporator Frillfin Goby L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Bathygobius soporator Frillfin Goby L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Bodianus pulchellus Spotfin Hogfish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Bodianus pulchellus Spotfin Hogfish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Bodianus rufus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Bothus ocellatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Bodianus rufus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Bothus ocellatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sparisoma aurofrenatum Redband Parrotfish Juvenile L Holly Sweat.jpg"></a><span class="caption"><i>Bathygobius soporator</i><br>
@@ -1625,10 +1625,10 @@ Eyed Flounder<br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Brevoortia tyrannus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Tylosurus crocodilus Houndfish 2004 SI.jpg"><img src="images/2017_Gallery_Thumbnails/Bryx dunckeri_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Carangoides bartholomaei_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Caranx crysos_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Brevoortia tyrannus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Tylosurus crocodilus Houndfish 2004 SI.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Bryx dunckeri_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Carangoides bartholomaei_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Caranx crysos_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Brevoortia tyrannus</i><br>
@@ -1649,10 +1649,10 @@ Blue Runner <br>
 Photo: Brandi Noble, NMFS<a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Caranx hippos_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Caranx latus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Caranx hippos_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Caranx latus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Carangoides ruber Bar Jack 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Carangoides ruber Bar Jack 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Caranx ruber_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Caranx ruber_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Caranx hippos</i><br>
@@ -1674,9 +1674,9 @@ Photo:JT Williams <a href="https://creativecommons.org/licenses/by/2.5/legalcode
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Carcharhinus limbatus Blacktip Shark 2004 Laurie Penland.jpg"><img src="../content/imglib/Fishes/Thumbnails/Carcharhinus limbatus Blacktip Shark 2004 Laurie Penland.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Centropomus parallelus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Centropomus parallelus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Centropomus undecimalis Common Snook Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Centropomus undecimalis Common Snook Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Centropristis striata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Centropristis striata_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Carcharhinus limbatus</i><br>
@@ -1697,10 +1697,10 @@ Black Sea Bass <br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chaetodipterus faber_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chaetodipterus faber_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Chaetodipterus faber Atlantic Spadefish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Chaetodipterus faber Atlantic Spadefish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chaetodon capistratus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chaetodon ocellatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chaetodon capistratus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chaetodon ocellatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Chaetodipterus faber</i><br>
@@ -1722,9 +1722,9 @@ Photo: Brain Gratwicke <a href="https://creativecommons.org/licenses/by/2.0/lega
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Chasmodes saburrae Florida Blenny L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Chasmodes saburrae Florida Blenny L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Chloroscombrus chrysurus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Chloroscombrus chrysurus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Citharichthys spilopterus Bay Whiff L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Citharichthys spilopterus Bay Whiff L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Coryphaena hippurus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Coryphaena hippurus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="http://www.sms.si.edu/irlspec/Chasmo_saburr.htm">Chasmodes saburrae</a></i><br>
@@ -1746,8 +1746,8 @@ Photo: Pablo Cavallari <a href="https://creativecommons.org/licenses/by/3.0/lega
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Coryphopterus glaucofraenum Bridled Goby L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Coryphopterus glaucofraenum Bridled Goby L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Cryptotomus roseus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Ctenopharyngodon idella_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Cryptotomus roseus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Ctenopharyngodon idella_small.jpg" width="141" height="106" class="red-border"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Cynoscion nebulosus Spotted Seatrout Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Cynoscion nebulosus Spotted Seatrout Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -1769,10 +1769,10 @@ Spotted Seatrout Juvenile<br>
 Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Dactyloscopus tridigitatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Dactyloscopus tridigitatus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Dasyatis americana Southern Stingray Marc Virgilio.jpg"><img src="../content/imglib/Fishes/Thumbnails/Dasyatis americana Southern Stingray Marc Virgilio.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Doratonotus megalepis Dwarf Wrasse L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Doratonotus megalepis Dwarf Wrasse L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><span class="caption"><a href="https://creativecommons.org/licenses/by/3.0/legalcode"></a></span><img src="images/2017_Gallery_Thumbnails/Dorosoma cepedianum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><span class="caption"><a href="https://creativecommons.org/licenses/by/3.0/legalcode"></a></span><img src="../content/imglib/2017_Gallery_Thumbnails/Dorosoma cepedianum_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Dactyloscopus tridigitatus</i><br>
@@ -1793,10 +1793,10 @@ Gizzard Shad <br>
 Photo: Brain Gratwicke <a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Dorosoma petenense_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Echeneis naucrates_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Elops saurus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Enneacanthus gloriosus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Dorosoma petenense_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Echeneis naucrates_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Elops saurus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Enneacanthus gloriosus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Dorosoma pertenese</i><br>
@@ -1818,7 +1818,7 @@ Photo: Brain Gratwicke <a href="https://creativecommons.org/licenses/by/2.0/lega
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Epinephelus itajara Goliath Grouper Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Epinephelus itajara Goliath Grouper Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Erimyzon sucetta_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Erimyzon sucetta_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Evorthodus lyricus Lyre Goby L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Evorthodus lyricus Lyre Goby L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Fistularia tabacaria Bluespotted Cornetfish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Fistularia tabacaria Bluespotted Cornetfish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
@@ -1842,8 +1842,8 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Floridichthys carpio Goldspotted Killifish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Floridichthys carpio Goldspotted Killifish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Fundulus chrysotus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Fundulus heteroclitus heteroclitus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Fundulus chrysotus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Fundulus heteroclitus heteroclitus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Fundulus similis Longnose Killifish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Fundulus similis Longnose Killifish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -1866,7 +1866,7 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Gambusia affinis Mosquitofish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Gambusia affinis Mosquitofish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gerres cinereus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gerres cinereus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Ginglymostoma cirratum Nurse Shark Marc Virgilio.jpg"><img src="../content/imglib/Fishes/Thumbnails/Ginglymostoma cirratum Nurse Shark Marc Virgilio.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Gnatholepis thompsoni Goldspot Goby L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Gnatholepis thompsoni Goldspot Goby L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
@@ -1889,10 +1889,10 @@ Goldspot Goby<br>
 Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gnatholepis thompsoni_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gobiosoma bosc_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gobiesox strumosus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gobioides broussonnetii_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gnatholepis thompsoni_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gobiosoma bosc_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gobiesox strumosus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gobioides broussonnetii_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Gnatholepis thompsoni</i><br>
@@ -1913,10 +1913,10 @@ Violet Goby<br>
 Photo: Kitty Kat Katarina, Wikimedia <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gobionellus oceanicus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gymnothorax funebris_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gobionellus oceanicus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gymnothorax funebris_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Gymnothorax moringa Spotted Moray 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Gymnothorax moringa Spotted Moray 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Gymnothorax vicinus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Gymnothorax vicinus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Gobionellus oceanicus</i><br>
@@ -1937,10 +1937,10 @@ Purplemouth Moray <br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Haemulon aurolineatum_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Haemulon chrysargyreum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Haemulon aurolineatum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Haemulon chrysargyreum_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Haemulon flavolineatum French Grunt 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Haemulon flavolineatum French Grunt 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Haemulon melanurum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Haemulon melanurum_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Haemulon aurolineatum</i><br>
@@ -1969,9 +1969,9 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Haemulon plumierii White Grunt Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Haemulon plumierii White Grunt Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Haemulon sciurus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Haemulon sciurus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Halichoeres bivittatus Slippery Dick Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Halichoeres bivittatus Slippery Dick Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Halichoeres maculipinna_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Halichoeres maculipinna_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Haemulon plumierii</i><br>
@@ -1992,10 +1992,10 @@ Clown Wrasse<br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Halichoeres poeyi_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Halichoeres radiatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Halichoeres poeyi_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Halichoeres radiatus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Harengula jaguana Scaled Sardine L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Harengula jaguana Scaled Sardine L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hemichromis bimaculatus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hemichromis bimaculatus_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Halichoeres poeyi</i><br>
@@ -2016,9 +2016,9 @@ Jewel Cichlid <br>
 Photo: Zhyla <a href="https://creativecommons.org/licenses/by-sa/3.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hemichromis letourneuxi_small.jpg" width="141" height="106" class="red-border"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Herichthys cyanoguttatum_small.jpg" width="141" height="106" class="red-border"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Heterandria formosa_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hemichromis letourneuxi_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Herichthys cyanoguttatum_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Heterandria formosa_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Hippocampus erectus Lined Seahorse L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Hippocampus erectus Lined Seahorse L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -2041,9 +2041,9 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Hippocampus reidi Longsnout Seahorse 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Hippocampus reidi Longsnout Seahorse 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hippocampus zosterae_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Histrio histrio_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Holacanthus bermudensis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hippocampus zosterae_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Histrio histrio_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Holacanthus bermudensis_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Hippocampus reidi</i><br>
@@ -2067,7 +2067,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Holacanthus bermudensis Blue Angelfish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Holacanthus bermudensis Blue Angelfish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Holacanthus ciliaris Queen Angelfish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Holacanthus ciliaris Queen Angelfish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Holacanthus tricolor Rock Beauty L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Holacanthus tricolor Rock Beauty L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hypleurochilus bermudensis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hypleurochilus bermudensis_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Holacanthus bermudensis</i><br>
@@ -2088,10 +2088,10 @@ Barred Blenny<br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hyporhamphus meeki_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Hyporhamphus unifasciatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hyporhamphus meeki_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Hyporhamphus unifasciatus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Hypostomus plecostomus Suckermouth Catfish Marc Virgilio.jpg"><img src="../content/imglib/Fishes/Thumbnails/Hypostomus plecostomus Suckermouth Catfish Marc Virgilio.jpg" alt="" width="140" height="105" class="red-border"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Labrisomus nuchipinnis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Labrisomus nuchipinnis_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Hyporhamphus meeki</i><br>
@@ -2115,7 +2115,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lachnolaimus maximus Hogfish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lachnolaimus maximus Hogfish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lactophrys trigonus Trunkfish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lactophrys trigonus Trunkfish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lagodon rhomboides Pinfish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lagodon rhomboides Pinfish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepisosteus osseus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepisosteus osseus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Lachnolaimus maximus</i><br>
@@ -2136,10 +2136,10 @@ Longnose Gar <br>
 Photo: Mat1583 <a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepisosteus platyrhincus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepomis gulosus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepomis macrochirus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepomis marginatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepisosteus platyrhincus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepomis gulosus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepomis macrochirus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepomis marginatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Lepisosteus platyrhincus</i><br>
@@ -2160,9 +2160,9 @@ Dollar Sunfish<br>
 Photo: Howard Jelks <a href="https://creativecommons.org/licenses/by-sa/2.5/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepomis microlophus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lepomis punctatus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lucania goodei_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepomis microlophus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lepomis punctatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lucania goodei_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lutjanus apodus Schoolmaster 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lutjanus apodus Schoolmaster 2004 SI.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -2185,9 +2185,9 @@ Photo: &copy; 2004 Smithsonian Institution</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lutjanus cyanopterus Cubera Snapper 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lutjanus cyanopterus Cubera Snapper 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lutjanus griseus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lutjanus griseus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lutjanus griseus Gray Snapper Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lutjanus griseus Gray Snapper Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Lutjanus mahogoni_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Lutjanus mahogoni_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Lutjanus cyanopterus</i><br>
@@ -2209,7 +2209,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Lutjanus synagris Lane Snapper J Metz.jpg"><img src="../content/imglib/Fishes/Thumbnails/Lutjanus synagris Lane Snapper J Metz.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Malacoctenus macropus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Malacoctenus macropus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Malacoctenus triangulatus Saddle Blenny L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Malacoctenus triangulatus Saddle Blenny L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Megalops atlanticus Tarpon 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Megalops atlanticus Tarpon 2004 SI.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
@@ -2234,8 +2234,8 @@ Photo: &copy; 2004 Smithsonian Institution</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Megalops atlanticus Tarpon Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Megalops atlanticus Tarpon Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Microgobius gulosus Clown Goby L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Microgobius gulosus Clown Goby L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Microgobius microlepis_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Micropterus salmoides_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Microgobius microlepis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Micropterus salmoides_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Megalo_atlant.htm">Megalops atlanticus</a></i><br>
@@ -2259,7 +2259,7 @@ Photo: Robert Pos <a href="https://creativecommons.org/licenses/by/2.0/legalcode
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Mugil cephalus Striped Mullet H Chramostova.jpg"><img src="../content/imglib/Fishes/Thumbnails/Mugil cephalus Striped Mullet H Chramostova.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Mugil cephalus Striped Mullet Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Mugil cephalus Striped Mullet Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Mycteroperca bonaci Black Grouper Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Mycteroperca bonaci Black Grouper Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Myrichthys breviceps_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Myrichthys breviceps_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mugil_cephal.htm">Mugil cephalus</a></i><br>
@@ -2280,10 +2280,10 @@ Sharptail Eel<br>
 Photo: Cam5455, Wikimedia</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Myrichthys ocellatus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Nes longus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Notemigonus crysoleucas_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Notropis maculatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Myrichthys ocellatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Nes longus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Notemigonus crysoleucas_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Notropis maculatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Myrichthys ocellatus</i><br>
@@ -2305,7 +2305,7 @@ Taillight Shiner<br>
 Photo:Noel Burkhead &amp; HowardJelks <a href="https://creativecommons.org/licenses/by-sa/2.5/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Notropis petersoni_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Notropis petersoni_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Ogcocephalus cf cubifrons Polka-dot Batfish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Ogcocephalus cf cubifrons Polka-dot Batfish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Ogcocephalus nasutus Shortnose Batfish 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Ogcocephalus nasutus Shortnose Batfish 2004 SI.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Oligoplites saurus Leatherjacket Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Oligoplites saurus Leatherjacket Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
@@ -2330,9 +2330,9 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Ophioblennius atlanticus Redlip Blenny L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Ophioblennius atlanticus Redlip Blenny L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Opisthonema oglinum_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Opsanus tau_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Oreochromis aureus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Opisthonema oglinum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Opsanus tau_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Oreochromis aureus_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Ophioblennius atlanticus</i><br>
@@ -2354,10 +2354,10 @@ Blue Tilapia <br>
 Photo:Michael R. Hayes <a href="https://creativecommons.org/licenses/by-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Oreochromis mossambicus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Oreochromis mossambicus_small.jpg" width="141" height="106" class="red-border"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Parablennius marmoreus Seaweed Blenny L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Parablennius marmoreus Seaweed Blenny L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pareques acuminatus_juvenile_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Phaeoptyx conklini_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pareques acuminatus_juvenile_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Phaeoptyx conklini_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Oreochromis mossambicus</i><br>
@@ -2380,10 +2380,10 @@ Photo:Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/le
 Photo:JT Williams <a href="https://creativecommons.org/licenses/by/2.5/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Platygillellus rubrocinctus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Platygillellus rubrocinctus_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Poecilia latipinna Sailfin Molly L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Poecilia latipinna Sailfin Molly L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Poecilia reticulata_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pomacanthus arcuatus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Poecilia reticulata_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pomacanthus arcuatus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Platygillellus rubrocinctus</i><br>
@@ -2405,10 +2405,10 @@ Gray Angelfish<br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pomacanthus paru_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pomacanthus paru_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Prionotus carolinus Northern Searobin L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Prionotus carolinus Northern Searobin L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Prionotus scitulus_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Pterois volitans_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Prionotus scitulus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Pterois volitans_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Pomacanthus paru</i><br>
@@ -2434,7 +2434,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Raja eglanteria Clearnose Skate Hatching L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Raja eglanteria Clearnose Skate Hatching L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Raja eglanteria Clearnose Skate Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Raja eglanteria Clearnose Skate Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Rhinoptera bonasus Cownose Ray Ed Perry.jpg"><img src="../content/imglib/Fishes/Thumbnails/Rhinoptera bonasus Cownose Ray Ed Perry.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Sardinella aurita_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Sardinella aurita_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Raja eglanteria</i><br>
@@ -2456,7 +2456,7 @@ Photo: Ed Perry</span></td>
 Photo: Brandi Noble, NMFS <a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Sarotherodon melanotheron_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Sarotherodon melanotheron_small.jpg" width="141" height="106" class="red-border"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scartella cristata Molly Miller L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scartella cristata Molly Miller L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scarus iseri Striped Parrotfish Female L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scarus iseri Striped Parrotfish Female L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scarus iseri Striped Parrotfish Male L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scarus iseri Striped Parrotfish Male L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
@@ -2484,7 +2484,7 @@ Photo: L Holly Sweat</span></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scarus taeniopterus Princess Parrotfish Male L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scarus taeniopterus Princess Parrotfish Male L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scorpaena grandicornis Plumed Scorpionfish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scorpaena grandicornis Plumed Scorpionfish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Scorpaena plumieri Spotted Scorpionfish 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Scorpaena plumieri Spotted Scorpionfish 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Selar crumenophthalmus_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Selar crumenophthalmus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Scarus taeniopterus</i><br>
@@ -2505,10 +2505,10 @@ Bigeye Scad<br>
 Photo: Brandi Noble, NMFS <a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Selene setapinnis_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Selene setapinnis_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Selene vomer Lookdown Intermediate L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Selene vomer Lookdown Intermediate L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Selene vomer Lookdown Juvenile B Witherington.jpg"><img src="../content/imglib/Fishes/Thumbnails/Selene vomer Lookdown Juvenile B Witherington.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Serranus baldwini_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Serranus baldwini_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Selene setapinnis<br>
@@ -2532,7 +2532,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sparisoma aurofrenatum Redband Parrotfish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Sparisoma aurofrenatum Redband Parrotfish Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sphoeroides maculatus Northern Puffer Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Sphoeroides maculatus Northern Puffer Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Sphoeroides spengleri_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Sphoeroides spengleri_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sphoeroides testudineus Checkered Puffer L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Sphoeroides testudineus Checkered Puffer L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -2556,8 +2556,8 @@ Photo: L Holly Sweat</span></td>
                 <tr>
                     <td align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sphyraena barracuda Great Barracuda L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Sphyraena barracuda Great Barracuda L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Sphyraena barracuda Great Barracuda Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Sphyraena barracuda Great Barracuda Juvenile L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Stegastes variabilis_small.jpg" width="141" height="106"></td>
-                    <td align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Stephanolepis hispidus_small.jpg" width="141" height="106"></td>
+                    <td align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Stegastes variabilis_small.jpg" width="141" height="106"></td>
+                    <td align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Stephanolepis hispidus_small.jpg" width="141" height="106"></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><span class="caption"><i><a href="http://www.sms.si.edu/irlspec/Sphyrae_barrac.htm">Sphyraena barracuda</a></i><br>
@@ -2578,7 +2578,7 @@ Planehead Filefish<br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Strongylura marina_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Strongylura marina_small.jpg" width="141" height="106"></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Strongylura notata Redfin Needlefish Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Strongylura notata Redfin Needlefish Juvenile L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Symphurus plagiusa Blackcheek Tonguefish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Symphurus plagiusa Blackcheek Tonguefish L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Syngnathus louisianae Chain Pipefish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Syngnathus louisianae Chain Pipefish L Holly Sweat.jpg" width="140" height="105"></a></td>
@@ -2603,9 +2603,9 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Syngnathus scovelli Gulf Pipefish L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Syngnathus scovelli Gulf Pipefish L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Synodus foetens_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Thalassoma bifasciatum_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Tilapia mariae_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Synodus foetens_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Thalassoma bifasciatum_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Tilapia mariae_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="problematic/Syngna_scovel.htm">Syngnathus scovelli</a></i><br>
@@ -2630,8 +2630,8 @@ Photo: Andrew Miller <a href="https://creativecommons.org/licenses/by-sa/2.5/leg
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Trachinotus falcatus Permit Juvenile L Holly Sweat.jpg"><img src="../content/imglib/Fishes/Thumbnails/Trachinotus falcatus Permit Juvenile L Holly Sweat.jpg" alt="" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Fishes/Cropped Images/Tylosurus crocodilus Houndfish 2004 SI.jpg"><img src="../content/imglib/Fishes/Thumbnails/Tylosurus crocodilus Houndfish 2004 SI.jpg" alt="" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Ulaema lefroyi_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Xiphophorus hellerii_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Ulaema lefroyi_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Xiphophorus hellerii_small.jpg" width="141" height="106" class="red-border"></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="problematic/Trachi_falcat.htm">Trachinotus falcatus</a></i><br>
@@ -2654,8 +2654,8 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
 Photo: Andre Karwath <a href="https://creativecommons.org/licenses/by-sa/2.5/legalcode">&copy;</a></span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Xiphophorus maculatus_small.jpg" width="141" height="106" class="red-border"></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Xiphophorus variatus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Xiphophorus maculatus_small.jpg" width="141" height="106" class="red-border"></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Xiphophorus variatus_small.jpg" width="141" height="106" class="red-border"></td>
                     <td width="175" align="center" valign="top">&nbsp;</td>
                     <td width="175" align="center" valign="top">&nbsp;</td>
                 </tr>
@@ -2690,9 +2690,9 @@ Photo: Dorenwolf, Flickr <a href="https://creativecommons.org/licenses/by-nc-sa/
             <table style="border:0;width:700px;margin-left:auto;margin-right:auto;" cellspacing="10" cellpadding="10">
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Acteocina canaliculata Channeled Barrel-bubble Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Acteocina canaliculata Channeled Barrel-bubble Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Acteocina atrata.jpg"><img src="images/2017_Gallery_Thumbnails/Acteocina atrata_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Acteocina atrata.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Acteocina atrata_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Acteon candens Rehder's Baby-bubble Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Acteon candens Rehder's Baby-bubble Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Alaba incerta.jpg"><img src="images/2017_Gallery_Thumbnails/Alaba incerta_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Alaba incerta.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Alaba incerta_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Acteocina canaliculata</i><br><br>
@@ -2713,7 +2713,7 @@ Varicose Cerith<br>
 Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
-                    <td align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Aphelodoris antillensis_small.jpg" width="141" height="106"></td>
+                    <td align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Aphelodoris antillensis_small.jpg" width="141" height="106"></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Aplysia brasiliana Sooty Seahare L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Aplysia brasiliana Sooty Seahare L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Assiminea succinea Atlantic Assiminea Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Assiminea succinea Atlantic Assiminea Jax Shells.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Astyris lunata Lunar Dovesnail SERTC.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Astyris lunata Lunar Dovesnail SERTC.jpg" width="140" height="105"></a></td>
@@ -2764,8 +2764,8 @@ Photo: Jenny Raven jaxshells.com</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Bostrycapulus aculeatus Common Spiny Slipper Snail Rachel Collin.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Bostrycapulus aculeatus Common Spiny Slipper Snail Rachel Collin.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Bursatella leachii plei Ragged Seahare L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Bursatella leachii plei Ragged Seahare L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Busycotypus spiratus.jpg"><img src="images/2017_Gallery_Thumbnails/Busycotypus spiratus_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Caecum cooperi.jpg"><img src="images/2017_Gallery_Thumbnails/Caecum cooperi_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Busycotypus spiratus.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Busycotypus spiratus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Caecum cooperi.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Caecum cooperi_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Bostrycapulus aculeatus</i><br>
@@ -2788,10 +2788,10 @@ Photo: Paula Mikkelson, HBOI</span></td>
 Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Caecum pulchellum.jpg"><img src="images/2017_Gallery_Thumbnails/Caecum pulchellum_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Caecum pulchellum.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Caecum pulchellum_small.jpg" width="141" height="106"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Calyptraea centralis Circular Chinese Hat Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Calyptraea centralis Circular Chinese Hat Jax Shells.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Cancellaria reticulata Common Nutmeg Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Cancellaria reticulata Common Nutmeg Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Cariopsilla pharpa.jpg"><img src="images/2017_Gallery_Thumbnails/Cariopsilla pharpa_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Cariopsilla pharpa.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Cariopsilla pharpa_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><span class="caption"><i>Caecum pulchellum</i><br>
@@ -2814,7 +2814,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Ceratozona squalida Eastern Surf Chiton Marlo Krisberg Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Ceratozona squalida Eastern Surf Chiton Marlo Krisberg Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Cerithidea scalariformis Ladder Hornsnail Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Cerithidea scalariformis Ladder Hornsnail Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Cerithiopsis greenii.jpg"><img src="images/2017_Gallery_Thumbnails/Cerithiopsis greenii_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Cerithiopsis greenii.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Cerithiopsis greenii_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Cerithium atratum Dark Cerith Joel Wooster Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Cerithium atratum Dark Cerith Joel Wooster Jax Shells.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -2860,7 +2860,7 @@ Color 2<br>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Cerithium muscarum Flyspeck Cerith Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Cerithium muscarum Flyspeck Cerith Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Chicoreus brevifrons West Indian Murex L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Chicoreus brevifrons West Indian Murex L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Circulus suppressus.jpg"><img src="images/2017_Gallery_Thumbnails/Circulus suppressus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Circulus suppressus.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Circulus suppressus_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Costoanachis avara Greedy Dovesnail Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Costoanachis avara Greedy Dovesnail Jax Shells.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -2883,7 +2883,7 @@ Photo: jaxshells.com</span></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Costoanachis sparsa Sparse Dovesnail Juveniles Marlo Krisberg Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Costoanachis sparsa Sparse Dovesnail Juveniles Marlo Krisberg Jax Shells.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Crepidula atrasolea Black-footed Slipper Snail Rachel Collin.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Crepidula atrasolea Black-footed Slipper Snail Rachel Collin.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Crepidula ustulatulina Little Speckled Slipper Snail Rachel Collin.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Crepidula ustulatulina Little Speckled Slipper Snail Rachel Collin.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Cymatium pileare_body.jpg"><img src="images/2017_Gallery_Thumbnails/Cymatium pileare_body_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Cymatium pileare_body.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Cymatium pileare_body_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><span class="caption"><i>Costoanachis sparsa</i><br>
@@ -2904,10 +2904,10 @@ Hairy Triton Body<br>
 Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Cymatium pileare_ventral.jpg"><img src="images/2017_Gallery_Thumbnails/Cymatium pileare_ventral_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Cymatium pileare_dorsal.jpg"><img src="images/2017_Gallery_Thumbnails/Cymatium pileare_dorsal_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Cymatium pileare_ventral.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Cymatium pileare_ventral_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Cymatium pileare_dorsal.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Cymatium pileare_dorsal_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Diodora cayenensis Cayenne Keyhole Limpet Marlo Krisberg Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Diodora cayenensis Cayenne Keyhole Limpet Marlo Krisberg Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Dendrodoris krebsii.jpg"><img src="images/2017_Gallery_Thumbnails/Dendrodoris krebsii_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Dendrodoris krebsii.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Dendrodoris krebsii_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Cymbatium pileare</i><br>
@@ -2954,8 +2954,8 @@ Photo: Phil Poland jaxshells.com</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Echinolittorina ziczac Zebra Periwinkle Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Echinolittorina ziczac Zebra Periwinkle Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Elysia crispata Lettuce Slug L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Elysia crispata Lettuce Slug L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><img src="images/2017_Gallery_Thumbnails/Elysia chlorotica_small.jpg" width="141" height="106"></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Eupleura caudata_eggs.jpg"><img src="images/2017_Gallery_Thumbnails/Eupleura caudata_eggs_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><img src="../content/imglib/2017_Gallery_Thumbnails/Elysia chlorotica_small.jpg" width="141" height="106"></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Eupleura caudata_eggs.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Eupleura caudata_eggs_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Echino_ziczac.htm">Echinolittorina ziczac</a></i><br>
@@ -2978,7 +2978,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
 Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Eupleura caudata_shell.jpg"><img src="images/2017_Gallery_Thumbnails/Eupleura caudata_shell_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Eupleura caudata_shell.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Eupleura caudata_shell_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Eupleura sulcidentata Sharp-rib Drill Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Eupleura sulcidentata Sharp-rib Drill Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Fasciolaria tulipa True Tulip L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Fasciolaria tulipa True Tulip L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Granulina ovuliformis Teardrop Marginella David Kirsh.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Granulina ovuliformis Teardrop Marginella David Kirsh.jpg" width="140" height="105"></a></td>
@@ -3001,7 +3001,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Haminoea antillarum Antilles Glassy-bubble with Eggs Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Haminoea antillarum Antilles Glassy-bubble with Eggs Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Haminoea succinea Amber Glassy-bubble Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Haminoea succinea Amber Glassy-bubble Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Hydatina vesicaria.jpg"><img src="images/2017_Gallery_Thumbnails/Hydatina vesicaria_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Hydatina vesicaria.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Hydatina vesicaria_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Janthina sp Sabrina Bethurum.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Janthina sp Sabrina Bethurum.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -3022,8 +3022,8 @@ Janthina Snail<br>
 Photo: Sabrina Bethurum</span></td>
                 </tr>
                 <tr>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Japonactaeon punctostriatus_live_with_eggs.jpg"><img src="images/2017_Gallery_Thumbnails/Japonactaeon punctostriatus_live_with_eggs_small.jpg" width="141" height="106"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Japonactaeon punctostriatus_shell.jpg"><img src="images/2017_Gallery_Thumbnails/Japonactaeon punctostriatus_shell_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Japonactaeon punctostriatus_live_with_eggs.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Japonactaeon punctostriatus_live_with_eggs_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Japonactaeon punctostriatus_shell.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Japonactaeon punctostriatus_shell_small.jpg" width="141" height="106"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Leucozonia nassa Chestnut Latirus Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Leucozonia nassa Chestnut Latirus Jax Shells.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Lithopoma tectum West Indian Starsnail L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Lithopoma tectum West Indian Starsnail L Holly Sweat.jpg" width="140" height="105"></a></td>
                 </tr>
@@ -3047,8 +3047,8 @@ Photo: L Holly Sweat</span></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Littorina angulifera Mangrove Periwinkle L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Littorina angulifera Mangrove Periwinkle L Holly Sweat.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Lobatus costatus.jpg"><img src="images/2017_Gallery_Thumbnails/Lobatus costatus_small.jpg" width="141" height="106"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Meioceras cornucopiae.jpg"><img src="images/2017_Gallery_Thumbnails/Meioceras cornucopiae_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Lobatus costatus.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Lobatus costatus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Meioceras cornucopiae.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Meioceras cornucopiae_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Meioceras nitidum David Kirsh Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Meioceras nitidum David Kirsh Jax Shells.jpg" width="140" height="105"></a></td>
                 </tr>
                 <tr>
@@ -3073,7 +3073,7 @@ Photo: David Kirsh jaxshells.com</span></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Melampus bidentatus Eastern Melampus Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Melampus bidentatus Eastern Melampus Jax Shells.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Melampus coffeus Coffee Bean Snail L Holly Sweat.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Melampus coffeus Coffee Bean Snail L Holly Sweat.jpg" width="140" height="105"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Mitrella ocellata White-spot Dovesnail Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Mitrella ocellata White-spot Dovesnail Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Modulus modulus.jpg"><img src="images/2017_Gallery_Thumbnails/Modulus modulus_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Modulus modulus.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Modulus modulus_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><span class="caption"><i>Melampus bidentatus</i><br>
@@ -3098,7 +3098,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Nassarius obsoletus Eastern Mudsnail Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Nassarius obsoletus Eastern Mudsnail Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Nassarius vibex Bruised Nassa Amy Tripp Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Nassarius vibex Bruised Nassa Amy Tripp Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Natica livida Livid Moonsnail Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Natica livida Livid Moonsnail Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Natica pusilla.jpg"><img src="images/2017_Gallery_Thumbnails/Natica pusilla_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Natica pusilla.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Natica pusilla_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Nassarius obsoletus</i><br>
@@ -3143,7 +3143,7 @@ Glossy Dovesnail<br>
 Photo: jaxshells.com</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Oliva sayana.jpg"><img src="images/2017_Gallery_Thumbnails/Oliva sayana_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Oliva sayana.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Oliva sayana_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Olivella mutica Variable Dwarf Olive Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Olivella mutica Variable Dwarf Olive Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Oxynoe antillarum Antilles Oxynoe 2004 SI.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Oxynoe antillarum Antilles Oxynoe 2004 SI.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Parvanachis obesa Fat Dovesnail David Kirsh Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Parvanachis obesa Fat Dovesnail David Kirsh Jax Shells.jpg" width="140" height="105"></a></td>
@@ -3166,9 +3166,9 @@ Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Parviturboides interruptus Interrupted Vitrinella David Kirsh Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Parviturboides interruptus Interrupted Vitrinella David Kirsh Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Petitilla crosseana.jpg"><img src="images/2017_Gallery_Thumbnails/Petitilla crosseana_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Petitilla crosseana.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Petitilla crosseana_small.jpg" width="141" height="106"></a></td>
                     <td align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Prunum apicinum Common Atlantic Marginella Marlo Krisberg.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Prunum apicinum Common Atlantic Marginella Marlo Krisberg.jpg" width="140" height="105"></a></td>
-                    <td align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Pyrgocythara plicosa.jpg"><img src="images/2017_Gallery_Thumbnails/Pyrgocythara plicosa_small.jpg" width="141" height="106"></a></td>
+                    <td align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Pyrgocythara plicosa.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Pyrgocythara plicosa_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td align="center" valign="top"><span class="caption"><i>Parviturboides interruptus</i><br>
@@ -3190,7 +3190,7 @@ Photo: Marlo Krisberg jaxshells.com</span></td>
 Photo: Paula Mikkelson, HBOI</span></td>
                 </tr>
                 <tr>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Rissoella caribaea.jpg"><img src="images/2017_Gallery_Thumbnails/Rissoella caribaea_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Rissoella caribaea.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Rissoella caribaea_small.jpg" width="141" height="106"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Seila adamsii Adam's Miniature Cerith Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Seila adamsii Adam's Miniature Cerith Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Sinum perspectivum White Baby Ear Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Sinum perspectivum White Baby Ear Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Sinum perspectivum White Baby Ear Living Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Sinum perspectivum White Baby Ear Living Jax Shells.jpg" width="140" height="105"></a></td>
@@ -3242,7 +3242,7 @@ Photo: John Whiticar</span></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Teinostoma biscaynense Biscayne Vitrinella David Kirsh Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Teinostoma biscaynense Biscayne Vitrinella David Kirsh Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Terebra dislocata Eastern Auger Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Terebra dislocata Eastern Auger Jax Shells.jpg" width="140" height="105"></a></td>
                     <td width="175" align="center" valign="top"><a href="../content/imglib/Gastropods/Cropped Images/Terebra taurina Flame Auger Jax Shells.jpg"><img src="../content/imglib/Gastropods/Thumbnails/Terebra taurina Flame Auger Jax Shells.jpg" width="140" height="105"></a></td>
-                    <td width="175" align="center" valign="top"><a href="images/2017_Gallery_Lg_Images/Triplofusus giganteus.jpg"><img src="images/2017_Gallery_Thumbnails/Triplofusus giganteus_small.jpg" width="141" height="106"></a></td>
+                    <td width="175" align="center" valign="top"><a href="../content/imglib/2017_Gallery_Lg_Images/Triplofusus giganteus.jpg"><img src="../content/imglib/2017_Gallery_Thumbnails/Triplofusus giganteus_small.jpg" width="141" height="106"></a></td>
                 </tr>
                 <tr>
                     <td width="175" align="center" valign="top"><span class="caption"><i>Teinostoma biscaynense</i><br>
