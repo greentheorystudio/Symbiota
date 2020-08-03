@@ -78,13 +78,13 @@
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/Maps.php" >The IRL</a>
                             </li>
                             <li>
-                                <a href="#" >What is a Lagoon</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Whatsa_lagoon.php" >What is a Lagoon</a>
                             </li>
                             <li>
-                                <a href="#" >What is Biodiversity</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Whats_biodiv.php" >What is Biodiversity</a>
                             </li>
                             <li>
-                                <a href="#" >Documented IRL Biodiversity</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Total_Biodiv.php" >Documented IRL Biodiversity</a>
                             </li>
                             <li>
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/Animal_Biodiv.php" >IRL Animal Biodiversity</a>
@@ -96,7 +96,7 @@
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/Protis_Biodiv.php" >IRL Protist Biodiversity</a>
                             </li>
                             <li>
-                                <a href="#" >IRL Habitats</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Whatsa_Habitat.php" >IRL Habitats</a>
                             </li>
                             <li>
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/Habitat_Threats.php" >Threats to IRL Habitats</a>
@@ -116,7 +116,7 @@
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/PhotoGallery_Intro.php" >Photo Gallery</a>
                             </li>
                             <li>
-                                <a href="#" >Species Image Collection</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Sp_Image_Collection.php" >Species Image Collection</a>
                             </li>
                         </ul>
                     </li>

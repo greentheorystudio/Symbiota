@@ -36,17 +36,17 @@ $listManager = new TaxonomyDynamicListManager();
                 </tr>
             </table>
 
-            <table style="border:0;width:350px;margin-left:auto;margin-right:auto;" class="table-border">
+            <table style="border:0;width:400px;margin-left:auto;margin-right:auto;" class="table-border">
                 <tr>
                     <td><p class="heading">Group</p></td>
                     <td><p class="heading"># Species</p></td>
                 </tr>
                 <tr>
-                    <td><span>Class Chrysophyceae</span></td>
-                    <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(11158); ?></b></span></td>
+                    <td>Class Bacillariophyceae (Chrysophyta)</td>
+                    <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(262); ?></b></span></td>
                 </tr>
                 <tr>
-                    <td><span>Phylum Rhizopoda</span></td>
+                    <td>Phylum Rhizopoda</td>
                     <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(36); ?></b></span></td>
                 </tr>
                 <tr>
@@ -54,8 +54,8 @@ $listManager = new TaxonomyDynamicListManager();
                     <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(15); ?></b></span></td>
                 </tr>
                 <tr>
-                    <td>Superclass Dinoflagellata</span></td>
-                    <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(11160); ?></b></span></td>
+                    <td>Phylum Pyrrophycophyta (Dinoflagellata)</span></td>
+                    <td align="center"><span><b><?php echo $listManager->getSpAmtByParent(17); ?></b></span></td>
                 </tr>
             </table>
         </div>
