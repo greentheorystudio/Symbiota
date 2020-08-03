@@ -22,7 +22,7 @@ $listManager = new TaxonomyDynamicListManager();
             <h2>Protist Biodiversity in the Indian River Lagoon</h2>
             <table style="border:0;width:700px;margin-left:auto;margin-right:auto;">
                 <tr>
-                    <td align="center"><img src="../irlspec/images/ProtistBiodiv.gif" width="284" height="231" hspace="2" vspace="2" border="0" class="centered"></td>
+                    <td align="center"><img src="../content/imglib/ProtistBiodiv.gif" width="284" height="231" hspace="2" vspace="2" border="0" class="centered"></td>
                 </tr>
                 <tr>
                     <td>
