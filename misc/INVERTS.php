@@ -34,7 +34,12 @@ header("Content-Type: text/html; charset=".$CHARSET);
             <br />
             <table style="border:1px;width:500px;margin-left:auto;margin-right:auto;">
                 <tr>
-                    <td><img src="../content/imglib/sponge500.jpg" width="500" height="125"><br /><span class="caption">Sponges probably provided the first non-edible product derived from the ocean, and are a fascinating group of primitive animals. They have played a role in shaping the economic and cultural history of several Florida coastal communities, their natural products are investigated for pharmacological potential, and they perform essential functions in Florida ecosystems.</span></td>
+                    <td>
+                        <img src="../content/imglib/sponge500.jpg" width="500" height="125"><br />
+                        <span class="caption">
+                            Sponges probably provided the first non-edible product derived from the ocean, and are a fascinating group of primitive animals. They have played a role in shaping the economic and cultural history of several Florida coastal communities, their natural products are investigated for pharmacological potential, and they perform essential functions in Florida ecosystems.
+                        </span>
+                    </td>
                 </tr>
             </table>
             <br />

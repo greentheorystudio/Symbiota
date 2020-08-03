@@ -52,7 +52,7 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
                     </li>
                     <li>
-                        <a href="#" >Search</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php">Search</a>
                         <ul>
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php" >Dynamic Species List</a>
@@ -90,10 +90,10 @@
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/Animal_Biodiv.php" >IRL Animal Biodiversity</a>
                             </li>
                             <li>
-                                <a href="#" >IRL Plant Biodiversity</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Plant_Biodiv.php" >IRL Plant Biodiversity</a>
                             </li>
                             <li>
-                                <a href="#" >IRL Protist Biodiversity</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Protis_Biodiv.php" >IRL Protist Biodiversity</a>
                             </li>
                             <li>
                                 <a href="#" >IRL Habitats</a>
@@ -107,13 +107,13 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#">Stewardship</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/Protect-IRL.php">Stewardship</a>
                     </li>
                     <li>
-                        <a href="#" >Photo Gallery</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/PhotoGallery_Intro.php" >Photo Gallery</a>
                         <ul>
                             <li>
-                                <a href="#" >Photo Gallery</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/PhotoGallery_Intro.php" >Photo Gallery</a>
                             </li>
                             <li>
                                 <a href="#" >Species Image Collection</a>
@@ -124,10 +124,10 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/misc/IRL_Links.php">Links and Events</a>
                     </li>
                     <li>
-                        <a href="#" >About Us</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/Proj_Bkgnd.php" >About Us</a>
                         <ul>
                             <li>
-                                <a href="#" >Project Background</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/Proj_Bkgnd.php" >Project Background</a>
                             </li>
                             <li>
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/acknowledge.php" >Acknowledgements</a>
