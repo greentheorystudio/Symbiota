@@ -137,7 +137,7 @@ include(__DIR__ . '/../header.php');
                     sustained. Rainfall is generally the only source of fresh water on
                     barrier islands, and the maritime forest community acts as the primary
                     watershed. Precipitation entering the watershed is rapidly drawn deep
-                    into a <a href="Hammock_FWLens.htm"> freshwater lens</a>, which floats above
+                    into a <a href="Hammock_FWLens.php"> freshwater lens</a>, which floats above
                     the denser salt water in the permeable sediments beneath barrier
                     islands. <br/>
                     A counter-flow is established at the area of contact between

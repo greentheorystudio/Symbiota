@@ -196,7 +196,7 @@ include(__DIR__ . '/../header.php');
                     development and steep terrain may inhibit plant migration, changing
                     zonation in these habitats or flooding them completely. In addition,
                     compression of the intertidal zone can lead to increased interspecific
-                    competition and loss of biodiversity. See <a href="Climate_Change.htm">Climate Change and the
+                    competition and loss of biodiversity. See <a href="Climate_Change.php">Climate Change and the
                         IRL</a>.</p>
 
                 <p class="title">References &amp; Further Reading</p>

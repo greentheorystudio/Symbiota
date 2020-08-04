@@ -93,7 +93,7 @@ include(__DIR__ . '/../header.php');
                     some areas (Haddad 1985). The declines correlate with increased turbidity
                     and general water quality decline (Morris and Tomasko, 1993). For a more
                     detailed look at seagrass coverages trends over time in the lagoon, <a
-                            href="IRL_Seagrasstrends.htm">click
+                            href="IRL_Seagrasstrends.php">click
                         here</a>.</p>
 
                 <p class="body">The health of animals comprising the seagrass ecosystem is also

@@ -175,11 +175,11 @@ Photo: Marc Virgilio</span></td>
             <br>
             Ruby-throated Hummingbird<br>
 Photo: L Savary</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ardea_alba.htm">Ardea alba</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ardea alba">Ardea alba</a></i><br/>
             <br>
             Great Egret<br>
 Photo: Z Kappel</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ardea_herodi.htm">Ardea herodias</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ardea herodias">Ardea herodias</a></i><br/>
             <br>
             Great Blue Heron<br>
 Photo: Bo Rainbolt</span></td>
@@ -243,7 +243,7 @@ Photo: Ellie Van Os</span></td>
             <br>
 Great Horned Owl Juvenile<br>
 Photo: Pat Poston</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Bubulcus_ibis.htm">Bubulcus ibis</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Bubulcus ibis">Bubulcus ibis</a></i><br/>
             <br>
 Cattle Egret<br>
 Photo: K Burke</span></td>
@@ -283,11 +283,11 @@ Photo: Joel Wooster jaxshells.com</span></td>
             <br>
             Dunlin<br>
 Photo: Joel Wooster jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Calidr_canutu_rufa.htm">Calidris canutus</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Calidris canutus">Calidris canutus</a></i><br/>
             <br>
             Red Knot<br>
 Photo: A Banker</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Calidr_mauri.htm">Calidris mauri</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Calidris mauri">Calidris mauri</a></i><br/>
             <br>
 Western Sandpiper<br>
 Photo: Marc Virgilio</span></td>
@@ -383,19 +383,19 @@ Photo: Edward McEwens</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Egretta_caerul.htm">Egretta caerulea</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Egretta caerulea">Egretta caerulea</a></i><br/>
             <br>
 Little Blue Heron<br>
 Photo: Joel Wooster jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Egrett_rufesc.htm">Egretta rufescens</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Egretta rufescens">Egretta rufescens</a></i><br/>
             <br>
 Reddish Egret<br>
 Photo: Amy Tripp jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Egretta_thula.htm">Egretta thula</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Egretta thula">Egretta thula</a></i><br/>
             <br>
 Snowy Egret<br>
 Photo: Jack Rogers</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Egretta_Tricol.htm">Egretta tricolor</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Egretta tricolor">Egretta tricolor</a></i><br/>
             <br>
 Tricolored Heron<br>
 Photo: jaxshells.com</span></td>
@@ -419,7 +419,7 @@ Photo: jaxshells.com</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Eudoc_albus.htm">Eudocimus albus</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Eudocimus albus">Eudocimus albus</a></i><br/>
             <br>
 White Ibis<br>
 Photo: John Whiticar</span></td>
@@ -603,7 +603,7 @@ Photo: Kathleen McMullen</span></td>
             <br>
 American White Pelican<br>
 Photo: Joy Carey</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Peleca_occide.htm">Pelecanus occidentalis</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Pelecanus occidentalis">Pelecanus occidentalis</a></i><br/>
             <br>
 Brown Pelican<br>
 Photo: Joy Carey</span></td>
@@ -611,7 +611,7 @@ Photo: Joy Carey</span></td>
             <br>
 Double-crested Cormorant<br>
 Photo: J Andreozzi</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ajaia_ajaia.htm">Platalea ajaja</a></i><br/>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ajaia ajaia">Platalea ajaja</a></i><br/>
             <br>
 Roseate Spoonbill<br>
 Photo: Mary White</span></td>
@@ -796,7 +796,7 @@ Photo: Beverly Gardner</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Anadara transversa</i><br><br>
       Transverse Ark<br>
     Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Anodon_alba.htm">Anodontia alba</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Anodontia alba">Anodontia alba</a></i><br><br>
       Buttercup Lucine<br>
     Photo: Amy Tripp jaxshells.com</span></td>
         </tr>
@@ -849,7 +849,7 @@ Photo: Beverly Gardner</span></td>
                         width="141" height="106"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Argope_gibbus.htm">Argopecten gibbus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Argopecten gibbus">Argopecten gibbus</a></i><br><br>
       Bay Scallop<br>
       Photo: Joel Wooster jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Atrina seminuda</i><br><br>
@@ -894,7 +894,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
 Atlantic Mud Piddock<br>
 Photo: Brian Marshall jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="taxa/Brachidontes_exustus.htm">Brachidontes exustus</a></i><br>
+                                href="../taxa/index.php?taxon=Brachidontes exustus">Brachidontes exustus</a></i><br>
         <br>
 Scorched Mussel<br>
 Photo: Joel Wooster jaxshells.com</span></td>
@@ -930,7 +930,7 @@ Photo: jaxshells.com</span></td>
 Leafy Jewelbox<br>
 Photo: Amy Tripp jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Chione_cancellata.htm">Chione cancellata</a></i><br>
+                                href="../taxa/index.php?taxon=Chione cancellata">Chione cancellata</a></i><br>
         <br>
 Cross-barred Venus<br>
 Photo: jaxshells.com</span></td>
@@ -959,7 +959,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Crassostrea_virginica.htm">Crassostrea virginica</a></i><br>
+                                href="../taxa/index.php?taxon=Crassostrea virginica">Crassostrea virginica</a></i><br>
         <br>
 Eastern Oyster<br>
 Photo: Joel Wooster jaxshells.com</span></td>
@@ -968,7 +968,7 @@ Photo: Joel Wooster jaxshells.com</span></td>
         Dwarf Tiger Lucine
 <br>
 Photo: Paula Mikkelson Harbor Branch</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Cyrtop_costat.htm">Cyrtopleura costata</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Cyrtopleura costata">Cyrtopleura costata</a></i><br>
         <br>
 Angelwing<br>
 Photo: Joseph Dineen</span></td>
@@ -1005,7 +1005,7 @@ Photo: jaxshells.com</span></td>
 Ribbed Mussel<br>
 Photo: Paula Mikkelson Harbor Branch</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Isognomon_alatus.htm">Isognomon alatus</a></i><br>
+                                href="../taxa/index.php?taxon=Isognomon alatus">Isognomon alatus</a></i><br>
         <br>
 Flat Tree-oyster<br>
 Photo: &copy; 2004 Smithsonian Institution</span></td>
@@ -1101,11 +1101,11 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                         height="106"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mercen_campec.htm">Mercenaria campechiensis</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Mercenaria campechiensis">Mercenaria campechiensis</a></i><br>
         <br>
 Southern Quahog<br>
 Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mercen_mercen.htm">Mercenaria mercenaria</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Mercenaria mercenaria">Mercenaria mercenaria</a></i><br>
         <br>
 Northern Quahog<br>
 Photo: jaxshells.com</span></td>
@@ -1138,7 +1138,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Mytella_charruana.htm">Mytella charruana</a></i><br>
+                                href="../taxa/index.php?taxon=Mytella charruana">Mytella charruana</a></i><br>
         <br>
 Charrua Mussel<br>
 Photo: jaxshells.com</span></td>
@@ -1146,7 +1146,7 @@ Photo: jaxshells.com</span></td>
         Atlantic Nutclam<br>
         Photo: Paula Mikkelson Harbor Branch</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Ostreola_equestris.htm">Ostreola equestris</a></i><br>
+                                href="../taxa/index.php?taxon=Ostreola equestris">Ostreola equestris</a></i><br>
         <br>
 Crested Oyster<br>
 Photo: jaxshells.com</span></td>
@@ -1181,7 +1181,7 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
         Unequal Spoonclam<br>
         Photo: Paula Mikkelson Harbor Branch</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Perna_viridis.htm">Perna viridis</a></i><br>
+                                href="../taxa/index.php?taxon=Perna viridis">Perna viridis</a></i><br>
         <br>
 Asian Green Mussel<br>
 Photo: jaxshells.com</span></td>
@@ -1312,13 +1312,13 @@ Photo: Paula Mikkelson Harbor Branch</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Actini_bermud.htm">Actinia bermudensis</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Actinia bermudensis">Actinia bermudensis</a></i><br><br>
       Maroon Anemone<br>
       Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Astran_pocula.htm">Astrangia poculata</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Astrangia poculata">Astrangia poculata</a></i><br><br>
       Northern Star Coral<br>
     Photo: Wes Pratt</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Callia_tricol.htm">Calliactis tricolor</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Calliactis tricolor">Calliactis tricolor</a></i><br><br>
       Hermit Anemone<br>
     Photo: jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Carijoa riisei</i><br><br>
@@ -1381,7 +1381,7 @@ Photo: Crabby Taxonomist <a href="https://creativecommons.org/licenses/by-nc-sa/
         <br>
 Stinging Hydroid<br>
 Photo: Anne Hoggett <a href="https://creativecommons.org/licenses/by/3.0/legalcode">&copy;</a></span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Oculin_diffus.htm">Oculina diffusa</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Oculina diffusa">Oculina diffusa</a></i><br>
         <br>
 Diffuse Ivory Bush Coral
     Photo: L Holly Sweat</span></td>
@@ -1389,7 +1389,7 @@ Diffuse Ivory Bush Coral
         <br>
         Feathered Hydroid<br>
 Photo: Alberto Garcia <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Phylla_americ.htm">Phyllangia americana</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Phyllangia americana">Phyllangia americana</a></i><br>
         <br>
 Hidden Cup Coral<br>
     Photo: SERTC</span></td>
@@ -1425,7 +1425,7 @@ Blue Button<br>
         <br>
 Sea Pansy<br>
     Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Sidera_radian.htm">Siderastrea radians</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Siderastrea radians">Siderastrea radians</a></i><br>
         <br>
 Lesser Starlet Coral<br>
     Photo: Guillermo Diaz Pulido</span></td>
@@ -1491,13 +1491,13 @@ By-the-Wind Sailor<br>
       Striped Snapping Shrimp<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="taxa/Alpheus_heterochaelis.htm">Alpheus heterochaelis</a></i><br><br>
+                                href="../taxa/index.php?taxon=Alpheus heterochaelis">Alpheus heterochaelis</a></i><br><br>
       Bigclaw Snapping Shrimp<br>
     Photo: SERTC</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Balanus_amphitrite.htm">Amphibalanus amphitrite</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Amphibalanus amphitrite">Amphibalanus amphitrite</a></i><br><br>
       Striped Acorn Barnacle<br>
     Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Balanu_eburne.htm">Amphibalanus eburneus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Amphibalanus eburneus">Amphibalanus eburneus</a></i><br><br>
       Ivory Barnacle<br>
     Photo: L Holly Sweat</span></td>
         </tr>
@@ -1520,7 +1520,7 @@ By-the-Wind Sailor<br>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Aratus_pisoni.htm">Aratus pisonii</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Aratus pisonii">Aratus pisonii</a></i><br><br>
       Mangrove Tree Crab<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Arenaeus cribrarius</i><br><br>
@@ -1555,13 +1555,13 @@ By-the-Wind Sailor<br>
             <td width="175" align="center" valign="top"><span class="caption"><i>Callianassa </i>sp.<br>
       Mud Shrimp<br>
       Photo: Sabine Alshuth</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Callinectes_ornatus.htm">Callinectes ornatus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Callinectes ornatus">Callinectes ornatus</a></i><br><br>
         Shelligs<br>
     Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Callin_sapidu.htm">Callinectes sapidus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Callinectes sapidus">Callinectes sapidus</a></i><br><br>
         Atlantic Blue Crab<br>
     Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Charyb_heller.htm">Charybdis hellerii</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Charybdis hellerii">Charybdis hellerii</a></i><br><br>
         Indo-Pacific Swimming Crab<br>
     Photo: Joel Wooster jaxshells.com</span></td>
         </tr>
@@ -1584,7 +1584,7 @@ By-the-Wind Sailor<br>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Cliban_vittat.htm">Clibanarius vittatus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Clibanarius vittatus">Clibanarius vittatus</a></i><br><br>
       Thinstripe Hermit<br>
       Photo: T Garcia</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Coenobita clypeatus</i><br><br>
@@ -1656,11 +1656,11 @@ Photo: Jonathan Vera Caripe<a href="https://creativecommons.org/licenses/by/2.0/
 Gooseneck Barnacle<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Libini_dubia.htm">Libinia dubia</a></i><br>
+                                href="../taxa/index.php?taxon=Libinia dubia">Libinia dubia</a></i><br>
         <br>
 Longnose Spider Crab<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Limulu_polyph.htm">Limulus polyphemus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Limulus polyphemus">Limulus polyphemus</a></i><br>
         <br>
 Horseshoe Crab<br>
 Photo: L Holly Sweat</span></td>
@@ -1685,12 +1685,12 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Megabalanus_coccopoma.htm">Megabalanus coccopoma</a></i><br>
+                                href="../taxa/index.php?taxon=Megabalanus coccopoma">Megabalanus coccopoma</a></i><br>
         <br>
 Titan Acorn Barnacle<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Menippe_mercenaria.htm">Menippe mercenaria</a></i><br>
+                                href="../taxa/index.php?taxon=Menippe mercenaria">Menippe mercenaria</a></i><br>
         <br>
 Florida Stone Crab <br> Adult with Molt<br>
 Photo: L Holly Sweat</span></td>
@@ -1722,12 +1722,12 @@ Photo: Maureen McNally</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Pagurus_longicarpus.htm">Pagurus longicarpus</a></i><br>
+                                href="../taxa/index.php?taxon=Pagurus longicarpus">Pagurus longicarpus</a></i><br>
         <br>
 Long-clawed Hermit Crab<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Panuli_argus.htm">Panulirus argus</a></i><br>
+                                href="../taxa/index.php?taxon=Panulirus argus">Panulirus argus</a></i><br>
         <br>
 Caribbean Spiny Lobster<br>
 Photo: L Holly Sweat</span></td>
@@ -1757,7 +1757,7 @@ Photo: jaxshells.com</span></td>
                         height="106"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Petroc_diogen.htm">Petrochirus diogenes</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Petrochirus diogenes">Petrochirus diogenes</a></i><br>
         <br>
 Giant Hermit Crab<br>
 Photo: L Holly Sweat</span></td>
@@ -1794,7 +1794,7 @@ Photo: Crabby Taxonomist<a href="https://creativecommons.org/licenses/by-nc-sa/2
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Pinnotheres_maculatus.htm">Pinnotheres maculatus</a></i><br>
+                                href="../taxa/index.php?taxon=Pinnotheres maculatus">Pinnotheres maculatus</a></i><br>
         <br>
 Squatter Pea Crab<br>
 Photo: jaxshells.com</span></td>
@@ -1843,7 +1843,7 @@ Photo: jaxshells.com</span></td>
 Ribbed Barnacle<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Uca_pugila.htm">Uca pugilator</a></i><br>
+                                href="../taxa/index.php?taxon=Uca pugilator">Uca pugilator</a></i><br>
         <br>
 Sand Fiddler Crab<br>
 Photo: R Gomme</span></td>
@@ -1862,12 +1862,12 @@ Photo: R Gomme</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Uca_rapax.htm">Uca rapax</a></i><br>
+                                href="../taxa/index.php?taxon=Uca rapax">Uca rapax</a></i><br>
         <br>
 Mudflat Fiddler Crab<br>
 Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Uca_thayer.htm">Uca thayeri</a></i><br>
+                                href="../taxa/index.php?taxon=Uca thayeri">Uca thayeri</a></i><br>
         <br>
 Atlantic Mangrove Fiddler<br>
 Photo: Bjorn Tunberg</span></td>
@@ -1908,13 +1908,13 @@ Photo: Bjorn Tunberg</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Amphiod_pulchel.htm">Amphiodia pulchella</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Amphiodia pulchella">Amphiodia pulchella</a></i><br><br>
       Brittle Star<br>
       Photo: John E Miller</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Amphiop_thromb.htm">Amphioplus thrombodes</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Amphioplus thrombodes">Amphioplus thrombodes</a></i><br><br>
       Brittle Star<br>
       Photo: John E Miller</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Arbaci_punctu.htm">Arbacia punctulata</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Arbacia punctulata">Arbacia punctulata</a></i><br><br>
       Purple-spined Sea Urchin<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Diadema antillarum</i><br><br>
@@ -1946,7 +1946,7 @@ Photo: Bjorn Tunberg</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Echinaster spinulosus</i><br><br>
         Small-spine Sea Star<br>
         Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Echino_lucunt.htm">Echinometra lucunter</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Echinometra lucunter">Echinometra lucunter</a></i><br><br>
         Rock Boring Urchin<br>
         Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Eucidaris tribuloides</i><br><br>
@@ -1978,7 +1978,7 @@ Photo: Bjorn Tunberg</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Holothuria cubana</i><br><br>
         Grub Sea Cucumber<br>
         Photo: John E Miller</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Holoth_grisea.htm">Holothuria grisea</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Holothuria grisea">Holothuria grisea</a></i><br><br>
         Gray Sea Cucumber<br>
         Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Isostichopus badionotus</i><br><br>
@@ -2011,11 +2011,11 @@ Photo: Bjorn Tunberg</span></td>
         Sea Cucumber<br>
         Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Luidia_clathrata.htm">Luidia clathrata</a></i><br><br>
+                                href="../taxa/index.php?taxon=Luidia clathrata">Luidia clathrata</a></i><br><br>
         Gray Sea Star<br>
         Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Luidia_senegalensis.htm">Luidia senegalensis</a></i><br><br>
+                                href="../taxa/index.php?taxon=Luidia senegalensis">Luidia senegalensis</a></i><br><br>
         Nine-armed Sea Star<br>
         Photo: Joseph Dineen</span></td>
         </tr>
@@ -2038,7 +2038,7 @@ Photo: Bjorn Tunberg</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lytech_varieg.htm">Lytechinus variegatus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lytechinus variegatus">Lytechinus variegatus</a></i><br><br>
       Green Sea Urchin<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Moira atropos</i><br><br>
@@ -2074,15 +2074,15 @@ Photo: Bjorn Tunberg</span></td>
       Reticulated Brittle Star<br>
       Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Ophiophragmus_filograneus.htm">Ophiophragmus filograneus</a></i><br><br>
+                                href="../taxa/index.php?taxon=Ophiophragmus filograneus">Ophiophragmus filograneus</a></i><br><br>
         Brittle Star<br>
         Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Ophiothrix_angulata.htm">Ophiothrix angulata</a></i><br><br>
+                                href="../taxa/index.php?taxon=Ophiothrix angulata">Ophiothrix angulata</a></i><br><br>
         Angular Brittlestar<br>
         Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Oreaster_reticulatus.htm">Oreaster reticulatus</a></i><br><br>
+                                href="../taxa/index.php?taxon=Oreaster reticulatus">Oreaster reticulatus</a></i><br><br>
         Cushioned Sea Star<br>
         Photo: John E Miller</span></td>
         </tr>
@@ -2110,11 +2110,11 @@ Photo: Bjorn Tunberg</span></td>
       Sea Cucumber<br>
       Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Synaptula_hydriformis.htm">Synaptula hydriformis</a></i><br><br>
+                                href="../taxa/index.php?taxon=Synaptula hydriformis">Synaptula hydriformis</a></i><br><br>
         Sea Cucumber<br>
         Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Thyonel_gemmat.htm">Thyonella gemmata</a></i><br><br>
+                                href="../taxa/index.php?taxon=Thyonella gemmata">Thyonella gemmata</a></i><br><br>
         Striped Sea Cucumber<br>
         Photo: John E Miller</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Tripneustes ventricosus</i><br><br>
@@ -2154,7 +2154,7 @@ Photo: Bjorn Tunberg</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Abudefduf_saxatilis.htm">Abudefduf saxatilis</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Abudefduf saxatilis">Abudefduf saxatilis</a></i><br><br>
       Sergeant Major Juvenile<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Acanthostracion polygonius</i><br><br>
@@ -2201,7 +2201,7 @@ Photo: Brain Gratwicke <a href="https://creativecommons.org/licenses/by/2.0/lega
         <br>
 Blue Tang<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Achirus_lineatus.htm">Achirus lineatus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Achirus lineatus">Achirus lineatus</a></i><br>
         <br>
 Lined Sole<br>
 Photo: L Holly Sweat</span></td>
@@ -2342,19 +2342,19 @@ Photo: Smithsonian Belize Larval Fish Group</span></td>
                         height="106" class="red-border"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Archos_probat.htm">Archosargus probatocephalus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Archosargus probatocephalus">Archosargus probatocephalus</a></i><br>
         <br>
 Sheepshead <br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><a
                         href="../content/imglib/Fishes/Cropped Images/Scorpaena grandicornis Plumed Scorpionfish L Holly Sweat.jpg"></a><span
-                        class="caption"><i><a href="taxa/Archos_probat.htm">Archosargus probatocephalus</a></i><br>
+                        class="caption"><i><a href="../taxa/index.php?taxon=Archosargus probatocephalus">Archosargus probatocephalus</a></i><br>
         <br>
 Sheepshead Juvenile<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><a
                         href="../content/imglib/Fishes/Cropped Images/Scorpaena plumieri Spotted Scorpionfish 2004 SI.jpg"></a><span
-                        class="caption"><i><a href="taxa/Ariops_felis.htm">Ariopsis felis</a></i><br>
+                        class="caption"><i><a href="../taxa/index.php?taxon=Ariopsis felis">Ariopsis felis</a></i><br>
         <br>
 Hardhead Catfish<br>
 Photo: Sheri Knott</span></td>
@@ -2501,7 +2501,7 @@ Photo: &copy; 2004 Laurie Penland</span></td>
         <br>
 Fat Snook<br>
 Photo: Carla Isobel Elliff <a href="https://creativecommons.org/licenses/by/3.0/legalcode">&copy;</a></span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Centro_undeci.htm">Centropomus undecimalis</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Centropomus undecimalis">Centropomus undecimalis</a></i><br>
         <br>
 Common Snook Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -2561,7 +2561,7 @@ Photo: Brain Gratwicke <a href="https://creativecommons.org/licenses/by/2.0/lega
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Chasmo_saburr.htm">Chasmodes saburrae</a></i><br>
+                                href="../taxa/index.php?taxon=Chasmodes saburrae">Chasmodes saburrae</a></i><br>
         <br>
 Florida Blenny<br>
 Photo: L Holly Sweat</span></td>
@@ -2570,7 +2570,7 @@ Photo: L Holly Sweat</span></td>
 Atlantic Bumper<br>
 Photo: Brandi Noble, NMFS</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Cithar_spilop.htm">Citharichthys spilopterus</a></i><br>
+                                href="../taxa/index.php?taxon=Citharichthys spilopterus">Citharichthys spilopterus</a></i><br>
         <br>
 Bay Whiff<br>
 Photo: L Holly Sweat</span></td>
@@ -2733,7 +2733,7 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Florid_carpio.htm">Floridichthys carpio</a></i><br>
+                                href="../taxa/index.php?taxon=Floridichthys carpio">Floridichthys carpio</a></i><br>
         <br>
 Goldspotted Killifish<br>
 Photo: L Holly Sweat</span></td>
@@ -2770,7 +2770,7 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Gambusia_affinis.htm">Gambusia affinis</a></i><br>
+                                href="../taxa/index.php?taxon=Gambusia affinis">Gambusia affinis</a></i><br>
         <br>
 Mosquitofish<br>
 Photo: L Holly Sweat</span></td>
@@ -2989,7 +2989,7 @@ Photo: Brian Gratwicke<a href="https://creativecommons.org/licenses/by/2.0/legal
 Least Killifish<br>
 Photo: Brian Gratwicke<a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Hippoc_erectu.htm">Hippocampus erectus</a></i><br>
+                                href="../taxa/index.php?taxon=Hippocampus erectus">Hippocampus erectus</a></i><br>
         <br>
 Lined Seahorse<br>
 Photo: L Holly Sweat</span></td>
@@ -3121,7 +3121,7 @@ Photo: L Holly Sweat</span></td>
         <br>
 Trunkfish Juvenile<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lagodo_rhombo.htm">Lagodon rhomboides</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lagodon rhomboides">Lagodon rhomboides</a></i><br>
         <br>
 Pinfish Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3217,11 +3217,11 @@ Photo: &copy; 2004 Smithsonian Institution</span></td>
         <br>
 Cubera Snapper<br>
 Photo: &copy; 2004 Smithsonian Institution</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lutjan_griseu.htm">Lutjanus griseus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lutjanus griseus">Lutjanus griseus</a></i><br>
         <br>
 Mangrove Snapper <br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lutjan_griseu.htm">Lutjanus griseus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lutjanus griseus">Lutjanus griseus</a></i><br>
         <br>
 Mangrove Snapper Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3248,7 +3248,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lutjan_synagr.htm">Lutjanus synagris</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lutjanus synagris">Lutjanus synagris</a></i><br>
         <br>
 Lane Snapper<br>
 Photo: J Metz</span></td>
@@ -3260,7 +3260,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
         <br>
 Saddle Blenny<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Megalo_atlant.htm">Megalops atlanticus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Megalops atlanticus">Megalops atlanticus</a></i><br>
         <br>
 Tarpon<br>
 Photo: &copy; 2004 Smithsonian Institution</span></td>
@@ -3282,7 +3282,7 @@ Photo: &copy; 2004 Smithsonian Institution</span></td>
                         height="106"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Megalo_atlant.htm">Megalops atlanticus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Megalops atlanticus">Megalops atlanticus</a></i><br>
         <br>
 Tarpon Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3317,15 +3317,15 @@ Photo: Robert Pos <a href="https://creativecommons.org/licenses/by/2.0/legalcode
                         height="106"></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mugil_cephal.htm">Mugil cephalus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Mugil cephalus">Mugil cephalus</a></i><br>
         <br>
 Striped Mullet<br>
 Photo: Pat Poston</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mugil_cephal.htm">Mugil cephalus</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Mugil cephalus">Mugil cephalus</a></i><br>
         <br>
 Striped Mullet Juvenile<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Mycter_bonaci.htm">Mycteroperca bonaci</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Mycteroperca bonaci">Mycteroperca bonaci</a></i><br>
         <br>
 Black Grouper Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3460,7 +3460,7 @@ Photo:Michael R. Hayes <a href="https://creativecommons.org/licenses/by-sa/2.0/l
 <br>
 Photo:Greg Hume <a href="https://creativecommons.org/licenses/by-sa/3.0/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Parabl_marmor.htm">Parablennius marmoreus</a></i><br>
+                                href="../taxa/index.php?taxon=Parablennius marmoreus">Parablennius marmoreus</a></i><br>
         <br>
 Seaweed Blenny<br>
 Photo: L Holly Sweat</span></td>
@@ -3495,7 +3495,7 @@ Photo:JT Williams <a href="https://creativecommons.org/licenses/by/2.5/legalcode
 Saddle Stargazer<br>
 Photo:Williams et al. 2010<a href="https://creativecommons.org/licenses/by/2.5/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Poecil_latipi.htm">Poecilia latipinna</a></i><br>
+                                href="../taxa/index.php?taxon=Poecilia latipinna">Poecilia latipinna</a></i><br>
         <br>
 Sailfin Molly<br>
 Photo: L Holly Sweat</span></td>
@@ -3571,7 +3571,7 @@ Photo: L Holly Sweat</span></td>
 Clearnose Skate Juvenile<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Rhinoptera_bonasus.htm">Rhinoptera bonasus</a></i><br>
+                                href="../taxa/index.php?taxon=Rhinoptera bonasus">Rhinoptera bonasus</a></i><br>
         <br>
 Cownose Ray<br>
 Photo: Ed Perry</span></td>
@@ -3718,7 +3718,7 @@ Photo: L Holly Sweat</span></td>
 Bandtail Puffer <br>
 Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Sphoer_testud.htm">Sphoeroides testudineus</a></i><br>
+                                href="../taxa/index.php?taxon=Sphoeroides testudineus">Sphoeroides testudineus</a></i><br>
         <br>
 Checkered Puffer<br>
 Photo: L Holly Sweat</span></td>
@@ -3741,12 +3741,12 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Sphyrae_barrac.htm">Sphyraena barracuda</a></i><br>
+                                href="../taxa/index.php?taxon=Sphyraena barracuda">Sphyraena barracuda</a></i><br>
         <br>
 Great Barracuda<br>
 Photo: L Holly Sweat</span></td>
             <td align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Sphyrae_barrac.htm">Sphyraena barracuda</a></i><br>
+                                href="../taxa/index.php?taxon=Sphyraena barracuda">Sphyraena barracuda</a></i><br>
         <br>
 Great Barracuda Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3782,7 +3782,7 @@ Photo: Kevin Bryant <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/l
 Atlantic Needlefish<br>
 Photo: Brandi Noble, NMFS <a href="https://creativecommons.org/licenses/by/2.0/legalcode">&copy;</a></span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Strong_notata.htm">Strongylura notata</a></i><br>
+                                href="../taxa/index.php?taxon=Strongylura notata">Strongylura notata</a></i><br>
         <br>
 Redfin Needlefish Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3791,7 +3791,7 @@ Photo: L Holly Sweat</span></td>
 Blackcheek Tonguefish<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Syngna_louisi.htm">Syngnathus louisianae</a></i><br>
+                                href="../taxa/index.php?taxon=Syngnathus louisianae">Syngnathus louisianae</a></i><br>
         <br>
 Chain Pipefish<br>
 Photo: L Holly Sweat</span></td>
@@ -3813,7 +3813,7 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Syngna_scovel.htm">Syngnathus scovelli</a></i><br>
+                                href="../taxa/index.php?taxon=Syngnathus scovelli">Syngnathus scovelli</a></i><br>
         <br>
 Gulf Pipefish<br>
 Photo: L Holly Sweat</span></td>
@@ -3850,7 +3850,7 @@ Photo: Andrew Miller <a href="https://creativecommons.org/licenses/by-sa/2.5/leg
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Trachi_falcat.htm">Trachinotus falcatus</a></i><br>
+                                href="../taxa/index.php?taxon=Trachinotus falcatus">Trachinotus falcatus</a></i><br>
         <br>
 Permit Juvenile<br>
 Photo: L Holly Sweat</span></td>
@@ -3974,7 +3974,7 @@ Photo: L Holly Sweat</span></td>
 Atlantic Assiminea<br>
 Photo: jaxshells.com</span></td>
             <td align="center" valign="top"><span class="caption"><i><a
-                                href="taxa/Astyris_lunata.htm">Astyris lunata</a></i><br>
+                                href="../taxa/index.php?taxon=Astyris lunata">Astyris lunata</a></i><br>
         <br>
 Lunar Dovesnail<br>
 Photo: SERTC</span></td>
@@ -3998,7 +3998,7 @@ Photo: SERTC</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Battil_minima.htm">Batillaria minima</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Batillaria minima">Batillaria minima</a></i><br>
         <br>
 West Indian False Cerith<br>
 Photo: jaxshells.com</span></td>
@@ -4006,7 +4006,7 @@ Photo: jaxshells.com</span></td>
         <br>
 Berghia Nudibranch<br>
 Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Bittiolum_varium.htm">Bittiolum varium</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Bittiolum varium">Bittiolum varium</a></i><br>
         <br>
 Grass Cerith<br>
 Photo: jaxshells.com</span></td>
@@ -4038,7 +4038,7 @@ Photo: Jenny Raven jaxshells.com</span></td>
         <br>
 Common Spiny Slipper Snail<br>
 Photo: Rachel Collin</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Bursatella_leachii.htm">Bursatella leachii plei</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Bursatella leachii plei">Bursatella leachii plei</a></i><br>
         <br>
 Ragged Seahare<br>
 Photo: L Holly Sweat</span></td>
@@ -4112,7 +4112,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         <br>
 Eastern Surf Chiton<br>
 Photo: Marlo Krisberg jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Cerith_scalar.htm">Cerithidea scalariformis</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Cerithidea scalariformis">Cerithidea scalariformis</a></i><br>
         <br>
 Ladder Hornsnail<br>
 Photo: jaxshells.com</span></td>
@@ -4155,7 +4155,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
 Color 2<br>
         Photo: jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Cerithium_muscarum.htm">Cerithium muscarum</a></i><br><br>
+                                href="../taxa/index.php?taxon=Cerithium muscarum">Cerithium muscarum</a></i><br><br>
         Flyspeck Cerith <br>
         with Eggs<br>
         Photo: Amy Tripp jaxshells.com</span></td>
@@ -4180,7 +4180,7 @@ Color 2<br>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Cerithium_muscarum.htm">Cerithium muscarum</a></i><br><br>
+                                href="../taxa/index.php?taxon=Cerithium muscarum">Cerithium muscarum</a></i><br><br>
       Flyspeck Cerith<br>
       Photo: jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Chicoreus brevifrons</i><br><br>
@@ -4218,11 +4218,11 @@ Photo: jaxshells.com</span></td>
         <br>
 Sparse Dovesnail Juveniles<br>
 Photo: Marlo Krisberg jaxshells.com</span></td>
-            <td align="center" valign="top"><span class="caption"><i><a href="taxa/Crepid_atrasol.htm">Crepidula atrasolea</a></i><br>
+            <td align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Crepidula atrasolea">Crepidula atrasolea</a></i><br>
         <br>
 Black-footed Slipper Snail<br>
 Photo: Rachel Collin</span></td>
-            <td align="center" valign="top"><span class="caption"><i><a href="taxa/Crepid_ustula.htm">Crepidula ustulatulina</a></i><br>
+            <td align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Crepidula ustulatulina">Crepidula ustulatulina</a></i><br>
         <br>
 Little Speckled Slipper Snail<br>
 Photo: Rachel Collin</span></td>
@@ -4259,7 +4259,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
 Hairy Triton, Dorsal Shell<br>
 Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Diodora_cayenensis.htm">Diodora cayenensis</a></i><br><br>
+                                href="../taxa/index.php?taxon=Diodora cayenensis">Diodora cayenensis</a></i><br><br>
         Cayenne Keyhole Limpet<br>
         Photo: Marlo Krisberg jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Dendrodoris krebsii</i><br>
@@ -4322,7 +4322,7 @@ Photo: Phil Poland jaxshells.com</span></td>
                             height="106"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Echino_ziczac.htm">Echinolittorina ziczac</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Echinolittorina ziczac">Echinolittorina ziczac</a></i><br>
         <br>
 Zebra Periwinkle<br>
 Photo: jaxshells.com</span></td>
@@ -4367,7 +4367,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Eupleura sulcidentata</i><br><br>
         Sharp-rib Drill<br>
         Photo: Amy Tripp jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Fascio_tulipa.htm">Fasciolaria tulipa</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Fasciolaria tulipa">Fasciolaria tulipa</a></i><br><br>
         True Tulip<br>
         Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Granulina ovuliformis</i><br><br>
@@ -4465,7 +4465,7 @@ Photo: L Holly Sweat</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Littor_anguli.htm">Littorina angulifera</a></i><br>
+                                href="../taxa/index.php?taxon=Littorina angulifera">Littorina angulifera</a></i><br>
         <br>
 Mangrove Periwinkle<br>
 Photo: L Holly Sweat</span></td>
@@ -4505,7 +4505,7 @@ Photo: David Kirsh jaxshells.com</span></td>
 Eastern Melampus<br>
 Photo: jaxshells.com</span></td>
             <td align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Melamp_coffeu.htm">Melampus coffeus</a></i><br>
+                                href="../taxa/index.php?taxon=Melampus coffeus">Melampus coffeus</a></i><br>
         <br>
 Coffee Bean Snail<br>
 Photo: L Holly Sweat</span></td>
@@ -4574,16 +4574,16 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Nerita_fulgur.htm">Nerita fulgurans</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Nerita fulgurans">Nerita fulgurans</a></i><br>
         <br>
 Antillean Nerite<br>
 Photo: Joel Wooster jaxshells.com</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Nerita_tessel.htm">Nerita tessellata</a></i><br>
+                                href="../taxa/index.php?taxon=Nerita tessellata">Nerita tessellata</a></i><br>
         <br>
 Checkered Nerite<br>
 Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Nerita_versic.htm">Nerita versicolor</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Nerita versicolor">Nerita versicolor</a></i><br>
         <br>
 Four-tooth Nerite<br>
 Photo: Marlo Krisberg jaxshells.com</span></td>
@@ -4652,7 +4652,7 @@ Photo: David Kirsh jaxshells.com</span></td>
         <br>
         <br>
 Photo: Paula Mikkelson, HBOI</span></td>
-            <td align="center" valign="top"><span class="caption"><i><a href="problematic/Prunum_apicin.htm">Prunum apicinum</a></i><br>
+            <td align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Prunum apicinum">Prunum apicinum</a></i><br>
         <br>
 Common Atlantic Marginella<br>
 Photo: Marlo Krisberg jaxshells.com</span></td>
@@ -4720,11 +4720,11 @@ Photo: jaxshells.com</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Siphonaria_pectinata.htm">Siphonaria pectinata</a></i><br>
+                                href="../taxa/index.php?taxon=Siphonaria pectinata">Siphonaria pectinata</a></i><br>
         <br>
 Striped False Limpet<br>
 Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Smarag_viridi.htm">Smaragdia viridis</a></i><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Smaragdia viridis">Smaragdia viridis</a></i><br>
         <br>
 Emerald Nerite<br>
 Photo: L Holly Sweat</span></td>
@@ -4732,7 +4732,7 @@ Photo: L Holly Sweat</span></td>
 Nudibranch<br>
 Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Strombus_gigas.htm">Strombus gigas</a></i><br>
+                                href="../taxa/index.php?taxon=Strombus gigas">Strombus gigas</a></i><br>
         <br>
 Queen Conch<br>
 Photo: John Whiticar</span></td>
@@ -4863,7 +4863,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
       Saddleback Caterpillar<br>
       Photo: Marc Virgilio</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="taxa/Agasicles_hygrophila.htm">Agasicles hygrophila</a></i><br><br>
+                                href="../taxa/index.php?taxon=Agasicles hygrophila">Agasicles hygrophila</a></i><br><br>
       Alligatorweed Flea Beetle<br>
       Photo: Pat Poston</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Agraulis vanillae</i><br><br>
@@ -4893,7 +4893,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
       White Peacock<br>
       Photo: R Murray</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/A_m_scutellata.htm">Apis mellifera scutellata</a></i><br><br>
+                                href="../taxa/index.php?taxon=Apis mellifera scutellata">Apis mellifera scutellata</a></i><br><br>
         Africanized Honeybee<br>
         Photo: Scott Bauer USDA</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Argiope aurantia</i><br><br>
@@ -5092,10 +5092,10 @@ Photo: Paula Mikkelson, HBOI</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Dasypus_novemcinctus.htm">Dasypus novemcinctus</a></i><br><br>
+                                href="../taxa/index.php?taxon=Dasypus novemcinctus">Dasypus novemcinctus</a></i><br><br>
       Nine-banded Armadillo<br>
       Photo: J Corhern</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lontra_canade.htm">Lontra canadensis</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Lontra canadensis">Lontra canadensis</a></i><br><br>
       North American <br>
       River Otter<br>
       Photo: Cheryl Miller <br>
@@ -5133,11 +5133,11 @@ Photo: Paula Mikkelson, HBOI</span></td>
         Eastern Gray Squirrel<br>
         Photo: T Saltmarsh</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Sus_scrofa.htm">Sus scrofa</a></i><br><br>
+                                href="../taxa/index.php?taxon=Sus scrofa">Sus scrofa</a></i><br><br>
         Wild Boar Juveniles<br>
         Photo: J Brady</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Sus_scrofa.htm">Sus scrofa</a></i><br><br>
+                                href="../taxa/index.php?taxon=Sus scrofa">Sus scrofa</a></i><br><br>
         Wild Boar<br>
         Photo: R Gomme</span></td>
         </tr>
@@ -5161,11 +5161,11 @@ Photo: Paula Mikkelson, HBOI</span></td>
       Florida Marsh Rabbit<br>
       Photo: Ray Walton</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Trichec_manatu.htm">Trichechus manatus latirostris</a></i><br><br>
+                                href="../taxa/index.php?taxon=Trichechus manatus latirostris">Trichechus manatus latirostris</a></i><br><br>
         Florida Manatee<br>
         Photo: Katie Tripp</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Tursio_trunca.htm">Tursiops truncatus</a></i><br><br>
+                                href="../taxa/index.php?taxon=Tursiops truncatus">Tursiops truncatus</a></i><br><br>
         Common <br>
         Bottlenose Dolphin<br>
         Photo: G Laswell</span></td>
@@ -5204,7 +5204,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Acetab_calycu.htm">Acetabularia calyculus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Acetabularia calyculus">Acetabularia calyculus</a></i><br><br>
       Umbrella Alga<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Batophora oerstedii</i><br><br>
@@ -5243,7 +5243,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         Green Grape Alga<br>
     Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Cauler_sertul.htm">Caulerpa sertularioides</a></i><br><br>
+                                href="../taxa/index.php?taxon=Caulerpa sertularioides">Caulerpa sertularioides</a></i><br><br>
         Green Feather Alga<br>
     Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Halimeda discoidea</i><br><br>
@@ -5270,7 +5270,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Padina_pavoni.htm">Padina pavonica</a></i><br><br>
+                                href="../taxa/index.php?taxon=Padina pavonica">Padina pavonica</a></i><br><br>
       Peacock's Tail<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Sargassum fluitans</i><br><br>
@@ -5316,11 +5316,11 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ascidi_nigra.htm">Ascidia nigra</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ascidia nigra">Ascidia nigra</a></i><br><br>
       Black Solitary Tunicate<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Chaeto_variop.htm">Chaetopterus variopedatus</a></i><br><br>
+                                href="../taxa/index.php?taxon=Chaetopterus variopedatus">Chaetopterus variopedatus</a></i><br><br>
       Parchment Tube Worm<br>
       Photo: Joseph Dineen</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Clavelina picta</i><br><br>
@@ -5352,7 +5352,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Herpothallon rubrocinctum</i><br><br>
       Red Blanket Lichen<br>
       Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Martig_crozie.htm">Maritigrella crozieri</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Maritigrella crozieri">Maritigrella crozieri</a></i><br><br>
       Tiger Flatworm<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Perophora viridis</i><br><br>
@@ -5372,7 +5372,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top">&nbsp;</td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Zootham_niveum.htm">Zoothamnium niveum</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Zoothamnium niveum">Zoothamnium niveum</a></i><br><br>
       Colonial Ciliate<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top">&nbsp;</td>
@@ -5418,7 +5418,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Acer rubrum</i><br><br>
       Red Maple<br>
       Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Acrost_aureu.htm">Acrostichum aureum</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Acrostichum aureum">Acrostichum aureum</a></i><br><br>
       Golden Leather Fern<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Agave sisalana</i><br><br>
@@ -5447,10 +5447,10 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Ardisia escallonioides</i><br><br>
       Island Marlberry<br>
       Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Avicen_germin.htm">Avicennia germinans</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Avicennia germinans">Avicennia germinans</a></i><br><br>
       Black Mangrove Flower<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Avicen_germin.htm">Avicennia germinans</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Avicennia germinans">Avicennia germinans</a></i><br><br>
       Black Mangrove<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Batis maritima</i><br><br>
@@ -5509,7 +5509,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         </tr>
         <tr>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Casuarina_equisetifolia.htm">Casuarina equisetifolia</a></i><br><br>
+                                href="../taxa/index.php?taxon=Casuarina equisetifolia">Casuarina equisetifolia</a></i><br><br>
       Australian Pine<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Cephalanthus occidentalis</i><br><br>
@@ -5669,13 +5669,13 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105" class="red-border"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ipomoea_pesCap.htm">Ipomoea pes-caprae</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ipomoea pes-caprae">Ipomoea pes-caprae</a></i><br><br>
       Beach Morning Glory<br>
       Photo: Rebecca Sovine</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Iris virginica</i><br><br>
       Virginia Iris<br>
       Photo: jaxshells.com</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Lagunc_racemo.htm">Laguncularia racemosa</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Laguncularia racemosa">Laguncularia racemosa</a></i><br><br>
       White Mangrove Flowers<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Lantana camara</i><br><br>
@@ -5774,11 +5774,11 @@ Photo: Paula Mikkelson, HBOI</span></td>
       Wild Coffee<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Rhizop_mangle.htm">Rhizophora mangle</a></i><br><br>
+                                href="../taxa/index.php?taxon=Rhizophora mangle">Rhizophora mangle</a></i><br><br>
       Red Mangrove Flower<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Rhizop_mangle.htm">Rhizophora mangle</a></i><br><br>
+                                href="../taxa/index.php?taxon=Rhizophora mangle">Rhizophora mangle</a></i><br><br>
       Red Mangrove<br>
       Photo: L Holly Sweat</span></td>
         </tr>
@@ -5807,7 +5807,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Rivina humilis</i><br><br>
       Rouge Plant<br>
       Photo: L Holly Sweat</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="problematic/Sabal_palmet.htm">Sabal palmetto</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Sabal palmetto">Sabal palmetto</a></i><br><br>
       Cabbage Palm<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Salvia coccinea</i><br><br>
@@ -5837,7 +5837,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
       Coffee Senna<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Sereno_repens.htm">Serenoa repens</a></i><br><br>
+                                href="../taxa/index.php?taxon=Serenoa repens">Serenoa repens</a></i><br><br>
       Saw Palmetto<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Sesuvium portulacastrum</i><br><br>
@@ -5873,11 +5873,11 @@ Photo: Paula Mikkelson, HBOI</span></td>
         Bay Cedar Flower<br>
       Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Thalas_testud.htm">Thalassia testudinum</a></i><br><br>
+                                href="../taxa/index.php?taxon=Thalassia testudinum">Thalassia testudinum</a></i><br><br>
       Turtlegrass Flower<br>
       Photo: L Holly Sweat</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="problematic/Thalas_testud.htm">Thalassia testudinum</a></i><br><br>
+                                href="../taxa/index.php?taxon=Thalassia testudinum">Thalassia testudinum</a></i><br><br>
         Turtlegrass<br>
       Photo: L Holly Sweat</span></td>
         </tr>
@@ -6019,7 +6019,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Apalone ferox</i><br><br>
       Florida Softshell Turtle<br>
       Photo: Kimberly Jarvis</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Carett_carett.htm">Caretta caretta</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Caretta caretta">Caretta caretta</a></i><br><br>
       Loggerhead Sea Turtle<br>
       Photo: Sabrina Bethurum</span></td>
         </tr>
@@ -6042,7 +6042,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Chelon_mydas.htm">Chelonia mydas</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Chelonia mydas">Chelonia mydas</a></i><br><br>
       Green Sea Turtle<br>
       Photo: R Gomme</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Coluber constrictor priapus</i><br><br>
@@ -6052,7 +6052,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         American Crocodile<br>
         Photo: &copy; 2004 Smithsonian Institution</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Drymar_couper.htm">Drymarchon couperi</a></i><br><br>
+                                href="../taxa/index.php?taxon=Drymarchon couperi<">Drymarchon couperi</a></i><br><br>
         Eastern Indigo Snake<br>
         Photo: C Newby</span></td>
         </tr>
@@ -6081,10 +6081,10 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Eretmochelys imbricata</i><br><br>
         Hawksbill Sea Turtle<br>
         Photo: &copy; 2004 Smithsonian Institution</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Gopher_polyph.htm">Gopherus polyphemus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Gopherus polyphemus">Gopherus polyphemus</a></i><br><br>
         Gopher Tortoise Juvenile<br>
         Photo: Marc Virgilio</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Gopher_polyph.htm">Gopherus polyphemus</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Gopherus polyphemus">Gopherus polyphemus</a></i><br><br>
         Gopher Tortoise<br>
         Photo: L Holly Sweat</span></td>
         </tr>
@@ -6117,7 +6117,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Micrurus fulvius</i><br><br>
         Eastern Coral Snake<br>
         Photo: HG Kolb</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Anolis_sagrei.htm">Norops sagrei</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Norops sagrei">Norops sagrei</a></i><br><br>
         Brown Anole Dewlap
         <br>
         Photo: A Kopf</span></td>
@@ -6141,7 +6141,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Anolis_sagrei.htm">Norops sagrei</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Norops sagrei">Norops sagrei</a></i><br><br>
       Brown Anole<br>
       Photo: M Hamblin</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Opheodrys aestivus</i><br><br>
@@ -6186,16 +6186,16 @@ Photo: Paula Mikkelson, HBOI</span></td>
                             width="140" height="105"></a></td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Dyside_etheri.htm">Dysidea etheria</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Dysidea etheria">Dysidea etheria</a></i><br><br>
       Ethereal Sponge<br>
       Photo: Sven Zea spongeguide.org</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Halich_melano.htm">Halichondria melanodocia</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Halichondria melanodocia">Halichondria melanodocia</a></i><br><br>
       Sponge<br>
       Photo: John Reed</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Halicl_caerul.htm">Haliclona caerulea</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Haliclona caerulea">Haliclona caerulea</a></i><br><br>
       Blue Caribbean Sponge<br>
       Photo: Renata Goodridge</span></td>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Hymeni_heliop.htm">Hymeniacidon heliophila</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Hymeniacidon heliophila">Hymeniacidon heliophila</a></i><br><br>
       Sun Sponge<br>
       Photo: Klaus R&uuml;tzler</span></td>
         </tr>
@@ -6215,14 +6215,14 @@ Photo: Paula Mikkelson, HBOI</span></td>
             <td width="175" align="center" valign="top">&nbsp;</td>
         </tr>
         <tr>
-            <td width="175" align="center" valign="top"><span class="caption"><i><a href="taxa/Ircini_strobi.htm">Ircinia strobilina</a></i><br><br>
+            <td width="175" align="center" valign="top"><span class="caption"><i><a href="../taxa/index.php?taxon=Ircinia strobilina">Ircinia strobilina</a></i><br><br>
       Bumpy Ball Sponge<br>
       Photo: Sven Zea spongeguide.org</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i>Lissodendoryx sigmata</i><br><br>
         Sponge<br>
       Photo: Micha Ilan spongeguide.org</span></td>
             <td width="175" align="center" valign="top"><span class="caption"><i><a
-                                href="http://www.sms.si.edu/irlspec/Tedani_ignis.htm">Tedania ignis</a></i><br><br>
+                                href="../taxa/index.php?taxon=Tedania ignis">Tedania ignis</a></i><br><br>
         Fire Sponge<br>
       Photo: Candy Feller</span></td>
             <td width="175" align="center" valign="top">&nbsp;</td>

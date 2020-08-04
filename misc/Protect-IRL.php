@@ -27,7 +27,7 @@ include(__DIR__ . '/../header.php');
     <table style="border:0;width:700px;margin-left:auto;margin-right:auto;">
         <tr>
             <td><p class="body">The Indian River Lagoon (IRL) (Fig. 1 &amp; 8) is one of the most <a
-                            href="Whats_biodiv.htm">biodiverse</a> estuaries in the United States and directly impacts
+                            href="Whats_biodiv.php">biodiverse</a> estuaries in the United States and directly impacts
                     all of us who live within its watershed on a daily basis. Critical to IRL&rsquo;s remarkable
                     biodiversity is its water quality. Why is water quality so important? Maintaining high standards of
                     water quality, among other things, supports healthy seagrass beds. Seagrasses serve a vital role in
@@ -71,7 +71,7 @@ include(__DIR__ . '/../header.php');
                     recreational and commercial fisheries was valued at $ 329 million dollars per year (or $4,600 per
                     year per acre of seagrass).</p>
                 <p class="body">Below are five pro-active ways in which we all can help to effectively improve water
-                    quality in the IRL thereby enhancing its <a href="http://www.sms.si.edu/irlspec/Whats_biodiv.htm">biodiversity</a>,
+                    quality in the IRL thereby enhancing its <a href="Whats_biodiv.php">biodiversity</a>,
                     economic value and aesthetic appeal:</p></td>
         </tr>
     </table>
@@ -269,7 +269,7 @@ include(__DIR__ . '/../header.php');
                     <li class="body">Dispose of garbage in proper receptacles.</li>
                     <li class="body">Use native Florida plants in landscaping (see below) to minimize irrigation, reduce
                         use of fertilizers and pesticides, and to avoid proliferation of <a
-                                href="http://www.sms.si.edu/irlspec/Nonnatives.htm">non-native, invasive species</a>.
+                                href="Nonnatives.php">non-native, invasive species</a>.
                     </li>
                     <li class="body">Recycle or properly dispose of yard wastes (leaves, pine needles, grass cuttings,
                         etc.)
@@ -422,7 +422,7 @@ include(__DIR__ . '/../header.php');
                     <li class="body">Choose flowering and fruiting plants that attract wildlife (Fig. 6 A).</li>
                     <li class="body">Plant for visual impact by grouping plants together.</li>
                     <li class="body">Do not choose and/or eliminate <a
-                                href="http://www.sms.si.edu/irlspec/Nonnatives.htm">non-native, invasive</a> plants in
+                                href="Nonnatives.php">non-native, invasive</a> plants in
                         your yard.
                     </li>
                     <li class="body">Choose healthy looking plants.</li>
