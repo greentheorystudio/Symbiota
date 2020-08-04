@@ -60,7 +60,7 @@ if($descArr = $taxonManager->getDescriptions()){
                     <div style="clear:both;">
                         <?php
                         foreach($sdescArr as $tdsId => $stmt){
-                            echo (strpos($stmt, '<p>') === 0 ?'':'<p>').$stmt.(substr($stmt, -4) === '</p>' ?'':'</p>');
+                            echo $stmt;
                         }
                         ?>
                     </div>
