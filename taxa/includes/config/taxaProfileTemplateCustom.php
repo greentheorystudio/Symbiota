@@ -63,7 +63,7 @@ $footerRowElements = array(); //Bottom horizontal bar in taxon profile page
 if($taxonRank){
     if($taxonRank > 180){
         $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
-        $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
+        $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$IRLVernacularsDiv,$synonymsDiv,$centralImageDiv);
         $rightColumnElements = Array($IRLDescTabsDiv);
         $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);

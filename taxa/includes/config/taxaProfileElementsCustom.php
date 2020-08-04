@@ -89,3 +89,11 @@ else{
     echo '<div id="nodesc">Description Not Yet Available</div>';
 }
 $IRLDescTabsDiv = ob_get_clean();
+
+ob_start();
+if($vernStr){
+    ?>
+    <div style="display:block;margin-left:10px;margin-top:0.5em;"><b>Common name:</b> <?php echo $vernStr; ?></div>
+    <?php
+}
+$IRLVernacularsDiv = ob_get_clean();
