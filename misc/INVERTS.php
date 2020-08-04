@@ -132,7 +132,7 @@ include(__DIR__ . '/../header.php');
     <br/>
     <table style="border:0;width:500px;margin-left:auto;margin-right:auto;">
         <tr>
-            <td><img src="../content/imglib/SPONGE5_500X612.jpg" width="500" height="582"><br/><span class="caption">Five sponges beloning to the class Dermospongia: A. Halichodria melanodocia; B. a member of the family Niphatidae; C. Chondrilla nucula; D. Hymeniacidon sp; E. Tedania ignis. <br/>Photos courtesy of John Reed.</span>
+            <td><img src="../content/imglib/SPONGE5_500X612.jpg" width="500" height="582"><br/><span class="caption">Five sponges beloning to the class Dermospongia: A. Halichodria melanodocia; B. a member of the family Niphatidae; C. Chondrilla nucula; D. Hymeniacidon sp; E. Tedania ignis. Photos courtesy of John Reed.</span>
             </td>
         </tr>
     </table>
@@ -458,7 +458,7 @@ include(__DIR__ . '/../header.php');
     <br/>
     <table style="border:0;width:350px;margin-left:auto;margin-right:auto;">
         <tr>
-            <td><img src="../content/imglib/Gorgonia ventalina350.jpg" width="350" height="263"><span class="caption">The purple sea fan, <em>Gorgonia ventalina </em>(Order: Gorgonacea). <br/>Photo courtesy of L. Holly Sweat.</span>
+            <td><img src="../content/imglib/Gorgonia ventalina350.jpg" width="350" height="263"><span class="caption">The purple sea fan, <em>Gorgonia ventalina </em>(Order: Gorgonacea). Photo courtesy of L. Holly Sweat.</span>
             </td>
         </tr>
     </table>
@@ -466,7 +466,7 @@ include(__DIR__ . '/../header.php');
     <table style="border:0;width:350px;margin-left:auto;margin-right:auto;">
         <tr>
             <td><img src="../content/imglib/Diploria labyrinthiformis350.jpg" width="350" height="221"><span
-                        class="caption">Brain coral, Diploria labyrinthiformis (Order: Scleractinia). <br/>Photo courtesy of L. Holly Sweat.</span>
+                        class="caption">Brain coral, Diploria labyrinthiformis (Order: Scleractinia). Photo courtesy of L. Holly Sweat.</span>
             </td>
         </tr>
     </table>
@@ -585,7 +585,7 @@ include(__DIR__ . '/../header.php');
     </table>
     <table style="border:0;width:500px;margin-left:auto;margin-right:auto;">
         <tr>
-            <td><img src="../content/imglib/SeaStars500.jpg" width="500" height="209"><br/><span class="caption">Two sea stars that occur in the Indian River Lagoon: <em>Luidia clathrata</em> (left) and <em>Oreaster reticulatus</em> (right). From Hendler, G <em>et al.</em> 1995. Sea stars, sea urchins, and allies. <br/>Smithsonian Institution Press. With permission.</span>
+            <td><img src="../content/imglib/SeaStars500.jpg" width="500" height="209"><br/><span class="caption">Two sea stars that occur in the Indian River Lagoon: <em>Luidia clathrata</em> (left) and <em>Oreaster reticulatus</em> (right). From Hendler, G <em>et al.</em> 1995. Sea stars, sea urchins, and allies. Smithsonian Institution Press. With permission.</span>
             </td>
         </tr>
     </table>
@@ -628,7 +628,7 @@ include(__DIR__ . '/../header.php');
     <br/>
     <table style="border:0;width:500px;margin-left:auto;margin-right:auto;">
         <tr>
-            <td><img src="../content/imglib/brittlestars500.jpg" width="500" height="241"><br/><span class="caption">Brittle stars: <em>Amphipholis suamata</em> (left) and <em>Ophionereis reticulata</em> (right). Note delineation of the radiating arms from the central disk. From Hendler, G <em>et al.</em> 1995. Sea stars, sea urchins, and allies. <br>Smithsonian Institution Press.&nbsp;With permission.</span>
+            <td><img src="../content/imglib/brittlestars500.jpg" width="500" height="241"><br/><span class="caption">Brittle stars: <em>Amphipholis suamata</em> (left) and <em>Ophionereis reticulata</em> (right). Note delineation of the radiating arms from the central disk. From Hendler, G <em>et al.</em> 1995. Sea stars, sea urchins, and allies. Smithsonian Institution Press.&nbsp;With permission.</span>
             </td>
         </tr>
     </table>

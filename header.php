@@ -66,9 +66,6 @@
                             <li>
                                 <a href="<?php echo $CLIENT_ROOT; ?>/misc/NamSpecies.php" >Species Names and Taxonomy</a>
                             </li>
-                            <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/INVERTS.php" >Marine Invertebrates</a>
-                            </li>
                         </ul>
                     </li>
                     <li>
