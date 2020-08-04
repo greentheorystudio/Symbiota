@@ -735,7 +735,16 @@ class TaxonProfileManager {
 			$retArr[$indexKey][$rowArr['tdbid']]['source'] = $rowArr['source'];
 			$retArr[$indexKey][$rowArr['tdbid']]['url'] = $rowArr['sourceurl'];
 		}
-		$retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = ($rowArr['displayheader'] && $rowArr['heading']? '<b>' .$rowArr['heading']. '</b>: ' : '').$rowArr['statement'];
+		if(strpos($rowArr['statement'], '<p>') === 0){
+            $rowArr['statement'] = substr($rowArr['statement'], 3);
+        }
+		if($rowArr['displayheader'] && $rowArr['heading']){
+            $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+        }
+		else{
+            $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+        }
+		$retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = $statementStr;
 		return $retArr;
 	}
 
