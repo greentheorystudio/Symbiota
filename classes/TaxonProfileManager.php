@@ -450,7 +450,7 @@ class TaxonProfileManager {
 			if(!$this->displayLocality) {
 				$sql .= 'AND ti.occid IS NULL ';
 			}
-			$sql .= 'ORDER BY ti.sortsequence LIMIT 100 ';
+			$sql .= 'ORDER BY ti.sortsequence ';
 			//echo $sql;
 			$result = $this->con->query($sql);
 			while($row = $result->fetch_object()){
@@ -741,6 +741,40 @@ class TaxonProfileManager {
 		$retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = ($rowArr['displayheader'] && $rowArr['heading']? '<b>' .$rowArr['heading']. '</b>: ' : '').$rowArr['statement'];
 		return $retArr;
 	}
+
+    public function getGlossary(): array
+    {
+        $retArr = array();
+        if($this->tid){
+            $tidArr = $this->getParentTids();
+            $tidArr[] = $this->tid;
+            $sql = 'SELECT g.glossid, g.term, g.definition '.
+                'FROM glossary AS g LEFT JOIN glossarytaxalink AS gt ON g.glossid = gt.glossid '.
+                'WHERE gt.tid IN('.implode(',', $tidArr).') '.
+                'ORDER BY g.term ';
+            //echo $sql; exit;
+            $rs = $this->con->query($sql);
+            while($r = $rs->fetch_object()){
+                $retArr[$r->glossid]['term'] = $r->term;
+                $retArr[$r->glossid]['definition'] = $r->definition;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function getParentTids(): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT parenttid FROM taxaenumtree ' .
+            'WHERE taxauthid = ' .($this->taxAuthId?: '1'). ' AND tid = ' .$this->tid. ' ';
+        $result = $this->con->query($sql);
+        while($row = $result->fetch_object()){
+            $returnArr[] = $row->parenttid;
+        }
+        $result->close();
+        return $returnArr;
+    }
 
 	public function getFamily(){
  		return $this->family;
