@@ -89,11 +89,14 @@ $webLinksDiv = ob_get_clean();
 
 ob_start();
 if($taxonRank > 140){
-    ?>
-    <div id="family" class="<?php echo $styleClass; ?>">
-        <?php echo '<b>Family:</b> '.$taxonManager->getFamily(); ?>
-    </div>
-    <?php
+    $family = $taxonManager->getFamily();
+    if($family){
+        ?>
+        <div id="family" class="<?php echo $styleClass; ?>">
+            <?php echo '<b>Family:</b> '.$taxonManager->getFamily(); ?>
+        </div>
+        <?php
+    }
 }
 $familyDiv = ob_get_clean();
 
@@ -208,11 +211,11 @@ if($descArr = $taxonManager->getDescriptions()){
                         }
                         echo '</div>';
                     }
-                    $descArr = $vArr['desc'];
+                    $sdescArr = $vArr['desc'];
                     ?>
                     <div style="clear:both;">
                         <?php
-                        foreach($descArr as $tdsId => $stmt){
+                        foreach($sdescArr as $tdsId => $stmt){
                             echo $stmt. ' ';
                         }
                         ?>

@@ -11,8 +11,7 @@ class TaxonProfileManager {
 	private $taxAuthId;
 	private $author;
 	private $parentTid;
-	private $family;
-    private $taxonNotes;
+	private $taxonNotes;
     private $taxonSources;
     private $ambSyn = false;
     private $acceptedName = false;
@@ -77,7 +76,6 @@ class TaxonProfileManager {
                 $this->submittedTid = $row->TID;
                 $this->submittedSciName = $row->SciName;
                 $this->submittedAuthor = $row->Author;
-                $this->family = $row->family;
                 $this->author = $row->Author;
                 $this->rankId = $row->RankId;
                 $this->taxonNotes = $row->Notes;
@@ -99,7 +97,6 @@ class TaxonProfileManager {
 			$this->submittedTid = $row->TID;
 			$this->submittedSciName = $row->SciName;
 			$this->submittedAuthor = $row->Author;
-			$this->family = $row->family;
 			$this->author = $row->Author;
 			$this->rankId = $row->RankId;
 			$this->taxonNotes = $row->Notes;
@@ -108,7 +105,8 @@ class TaxonProfileManager {
 			$this->securityStatus = $row->SecurityStatus;
 
 			if ($this->submittedTid === $row->TidAccepted) {
-				$this->tid = $this->submittedTid;
+                $this->acceptedName = true;
+			    $this->tid = $this->submittedTid;
 				$this->sciName = $this->submittedSciName;
 			} else {
 				$this->tid = $row->TidAccepted;
@@ -135,7 +133,7 @@ class TaxonProfileManager {
 
  	public function setAttributes(): void
 	{
-        if($this->acceptedTaxa && (count($this->acceptedTaxa) < 2)){
+        if($this->acceptedName || ($this->acceptedTaxa && (count($this->acceptedTaxa) < 2))){
 			if($this->clid) {
 				$this->setChecklistInfo();
 			}
@@ -157,7 +155,6 @@ class TaxonProfileManager {
 			$a = $row->Author;
 			$this->acceptedTaxa[$row->Tid] = "<i>$this->sciName</i> $a";
 			if($this->taxAuthId){
-				$this->family = $row->family;
 				$this->rankId = $row->RankId;
 				$this->author = $a;
 				$this->parentTid = $row->ParentTID;
@@ -777,7 +774,17 @@ class TaxonProfileManager {
     }
 
 	public function getFamily(){
- 		return $this->family;
+ 		$family = '';
+        $sql = 'SELECT t.SciName ' .
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+            'WHERE te.taxauthid = ' .($this->taxAuthId?: '1'). ' AND te.tid = ' .$this->tid. ' AND t.RankId = 140 ';
+        //echo $sql;
+        $result = $this->con->query($sql);
+        while($row = $result->fetch_object()){
+            $family = $row->SciName;
+        }
+        $result->close();
+        return $family;
  	}
 
  	public function getRankId(){
