@@ -93,7 +93,15 @@ $IRLDescTabsDiv = ob_get_clean();
 ob_start();
 if($vernStr){
     ?>
-    <div style="display:block;margin-left:10px;margin-top:0.5em;"><b>Common name:</b> <?php echo $vernStr; ?></div>
+    <div style="display:block;width:325px;margin-left:10px;margin-top:0.5em;"><b>Common names:</b> <?php echo $vernStr; ?></div>
     <?php
 }
 $IRLVernacularsDiv = ob_get_clean();
+
+ob_start();
+if($synStr){
+    ?>
+    <div style="display:block;width:325px;margin-left:10px;margin-top:0.5em;" title="Synonyms"><b>Synonyms:</b> <?php echo $synStr; ?></div>
+    <?php
+}
+$IRLSynonymsDiv = ob_get_clean();
