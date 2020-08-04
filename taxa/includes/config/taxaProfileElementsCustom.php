@@ -1,6 +1,7 @@
 <?php
 ob_start();
 if($descArr = $taxonManager->getDescriptions()){
+    $glossaryArr = $taxonManager->getGlossary();
     if(isset($PORTAL_TAXA_DESC)){
         $tempArr = array();
         $descIndex = 0;
@@ -32,6 +33,9 @@ if($descArr = $taxonManager->getDescriptions()){
                     echo '<li><a href="#tab'.$id.'" class="taxon-desc-tab-text">'.$cap.'</a></li>';
                 }
             }
+            if($glossaryArr){
+                echo '<li><a href="#tabglossary" class="taxon-desc-tab-text">Glossary</a></li>';
+            }
             ?>
         </ul>
         <?php
@@ -51,12 +55,25 @@ if($descArr = $taxonManager->getDescriptions()){
                         }
                         echo '</div>';
                     }
-                    $descArr = $vArr['desc'];
+                    $sdescArr = $vArr['desc'];
                     ?>
                     <div style="clear:both;">
                         <?php
-                        foreach($descArr as $tdsId => $stmt){
+                        foreach($sdescArr as $tdsId => $stmt){
                             echo $stmt. '<br /><br />';
+                        }
+                        ?>
+                    </div>
+                </div>
+                <?php
+            }
+            if($glossaryArr){
+                ?>
+                <div id="tabglossary" class="<?php echo ($styleClass === 'species'?'sptab':'spptab'); ?>">
+                    <div style="clear:both;">
+                        <?php
+                        foreach($glossaryArr as $termId => $termArr){
+                            echo '<b>'.$termArr['term'].'</b>: ' .$termArr['definition']. '<br /><br />';
                         }
                         ?>
                     </div>
