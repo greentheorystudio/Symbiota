@@ -716,7 +716,7 @@ include(__DIR__ . '/../header.php');
                 </table>
 
                 <p class="body"><sup>1</sup> Found throughout the IRL<br/>
-                    <sup>2 </sup> Most common in Northern IR L in Cape Canaveral area</td>
+                    <sup>2 </sup> Most common in Northern IRL in Cape Canaveral area</td>
         </tr>
     </table>
     <table style="width:700px;margin-left:auto;margin-right:auto;">
