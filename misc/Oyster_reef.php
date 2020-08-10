@@ -1,6 +1,13 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
+
+$IRLManager = new IRLManager();
+
+$invertebrateArr = $IRLManager->getChecklistTaxa(18);
+$vertebrateArr = $IRLManager->getChecklistTaxa(19);
+$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -132,528 +139,48 @@ include(__DIR__ . '/../header.php');
             <th>Common name</th>
             <th>Comments</th>
         </tr>
-        <tr class="heading">
-            <td colspan="3"><p class="label">Invertebrates:</p></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Amygdalum papyrium">Amygdalum papyrium</a></i></span></td>
-            <td><span>Atlantic papermussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Anadara transversa</i></span></td>
-            <td><span>transverse ark</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Anomia simplex</i></span></td>
-            <td><span>jingle shell</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Argopecten irradians concentricus">Argopecten irradians concentricus</a></i></span>
-            </td>
-            <td><span>bay scallop</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Astyris lunata">Astyris lunata</a></i></span></td>
-            <td><span>lunar dovesnail</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Balanus spp.</i></span></td>
-            <td><span>barnacles</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Bittiolum varium</i></span></td>
-            <td><span>grass cerith</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Boonea impressa</i></span></td>
-            <td><span>impressed odostome</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Boonea seminuda</i></span></td>
-            <td><span>half-smooth odostome</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Brachidontes exustus">Brachidontes exustus</a></i></span></td>
-            <td><span>scorched mussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Busycon carica">Busycon carica</a></i></span></td>
-            <td><span>knobbed whelk</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Busycon contrarium">Busycon contrarium</a></i></span></td>
-            <td><span>lightning whelk</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Busycon spiratum pyruloides</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Busycon spp.</i></span></td>
-            <td><span>whelks</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Caecum pulchellum</i></span></td>
-            <td><span>beautiful caecum</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Callinectes ornatus">Callinectes ornatus</a></i></span></td>
-            <td><span>ornate blue crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Callinectes sapidus">Callinectes sapidus</a></i></span></td>
-            <td><span>blue crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Callinectes similis">Callinectes similis</a></i></span></td>
-            <td><span>lesser blue crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Cerithiopsis greenii</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cliona">Cliona</a></i> spp.</span></td>
-            <td><span>boring sponges</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Costoanachis avara</i></span></td>
-            <td><span>greedy dovesnail</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Crassostrea virginica">Crassostrea virginica</a></i></span>
-            </td>
-            <td><span>eastern oyster</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Crepidula aculeata</i></span></td>
-            <td><span>spiny slippersnail</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Crepidula convexa</i></span></td>
-            <td><span>convex slippersnail</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Crepidula plana">Crepidula plana</a></i></span></td>
-            <td><span>eastern white slippersnail</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Diodora cayenensis">Diodora cayenensis</a></i></span></td>
-            <td><span>cayenne keyhole limpet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Dyspanopeus sayii">Dyspanopeus sayii</a></i></span></td>
-            <td><span>Say's mud crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Dyspanopeus spp.</i></span></td>
-            <td><span>mud crabs</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Epitomapta roseola</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eupleura caudata</i></span></td>
-            <td><span>thick lipped oyster drill</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eupleura sulcidentata</i></span></td>
-            <td><span>sharp-rib drill</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Eurypanopeus depressus">Eurypanopeus depressus</a></i></span>
-            </td>
-            <td><span>depressed mud crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eurypanopeus spp.</i></span></td>
-            <td><span>mud crabs</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Geukensia demissa">Geukensia demissa</a></i></span></td>
-            <td><span>ribbed mussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Hemipholis elongata</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Hexapanopeus angustifrons</i></span></td>
-            <td><span>narrow mud crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Hexapanopeus spp.</i></span></td>
-            <td><span>mud crabs</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Ischadium recurvum</i></span></td>
-            <td><span>hooked mussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Isognomon alatus">Isognomon alatus</a></i></span></td>
-            <td><span>flat tree oyster</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lithophaga bisulcata">Lithophaga bisulcata</a></i></span></td>
-            <td><span>mahogany datemussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Luidia clathrata">Luidia clathrata</a></i></span></td>
-            <td><span>gray sea star</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Luidia senegalenis">Luidia senegalenis</a></i></span></td>
-            <td><span>nine-armed sea star</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Melongena corona</i></span></td>
-            <td><span>crown conch</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Melongena sprucecreekensis</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Menippe mercenaria">Menippe mercenaria</a></i></span></td>
-            <td><span>stone crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mercenaria mercenaria">Mercenaria mercenaria</a></i></span>
-            </td>
-            <td><span>hard clam</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mulinia lateralis">Mulinia lateralis</a></i></span></td>
-            <td><span>dwarf surfclam</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Musculus lateralis</i></span></td>
-            <td><span>lateral mussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Mytilopsis leucophaeata</i></span></td>
-            <td><span>dark falsemussel</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Nereis spp.</i></span></td>
-            <td><span>clamworms</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Ophiactis savignyi</i></span></td>
-            <td><span>savigny's brittlestar</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ophiothrix angulata">Ophiothrix angulata</a></i></span></td>
-            <td><span>angular brittlestar</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Oreaster reticulatus">Oreaster reticulatus</a></i></span></td>
-            <td><span>cushion star</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ostreola equestris">Ostreola equestris</a></i></span></td>
-            <td><span>crested oyster</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Panopeus herbstii</i></span></td>
-            <td><span>common mud crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Panopeus lacustris">Panopeus lacustris</a></i></span></td>
-            <td><span>knotfingered mud crab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Panopeus spp.</i></span></td>
-            <td><span>mud crabs</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Parastarte triquetra</i></span></td>
-            <td><span>brown gemclam</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Pinnotheres maculatus">Pinnotheres maculatus</a></i></span>
-            </td>
-            <td><span>mussel peacrab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Pinnotheres ostreum</i></span></td>
-            <td><span>oyster peacrab</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Polydora ligni">Polydora ligni</a></i></span></td>
-            <td><span>Polydora mudworm</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Polydora spp.</i></span></td>
-            <td><span>blisterworms</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Pyrgocythara plicosa</i></span></td>
-            <td><span>plicate mangelia</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Rupellaria typica</i></span></td>
-            <td><span>Atlantic rupellar</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Seila adamsi</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Siphonaria pectinata</i></span></td>
-            <td><span>striped false limpet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sphenia antillensis</i></span></td>
-            <td><span>Antillean sphenia</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Spurilla neapolitana">Spurilla neapolitana</a></i></span></td>
-            <td><span>neopolitan spurilla</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Strombas gigas">Strombas gigas</a></i></span></td>
-            <td><span>queen conch</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Stylochus spp.</i></span></td>
-            <td><span>oyster leech</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Thais spp.</i></span></td>
-            <td><span>rocksnails</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Triphora nigrocincta</i></span></td>
-            <td><span>black-line triphora</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Truncatella pulchella</i></span></td>
-            <td><span>beautiful trucatella</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Urosalpinx cinerea">Urosalpinx cinerea</a></i></span></td>
-            <td><span>Atlantic oyster drill</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Urosalpinx tampaensis</i></span></td>
-            <td><span>Tampa drill</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Vitrinella floridana</i></span></td>
-            <td><span>Florida vitrinella</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr class="heading">
-            <td colspan="3"><p class="label">Vertebrates:</p></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Abudefduf saxatilis">Abudefduf saxatilis</a></i></span></td>
-            <td><span>sergeant major</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Chaetodipterus faber">Chaetodipterus faber</a></i></span></td>
-            <td><span>spadefish</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cynoscion nebulosus">Cynoscion nebulosus</a></i></span></td>
-            <td><span>spotted seatrout</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cynoscion nothus">Cynoscion nothus</a></i></span></td>
-            <td><span>silver seatrout</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Eucinostomus argentus">Eucinostomus argentus</a></i></span>
-            </td>
-            <td><span>spotfin mojarra</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Eucinostomus gula">Eucinostomus gula</a></i></span></td>
-            <td><span>silver jenny</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eucinostomus havana</i></span></td>
-            <td><span>bigeye mojarra</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eucinostomus jonesii</i></span></td>
-            <td><span>slender mojarra</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Eucinostomus lefroyi">Eucinostomus lefroyi</a></i></span></td>
-            <td><span>mottled mojarra</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eucinostomus melanopterus</i></span></td>
-            <td><span>flagfin mojarra</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus analis">Lutjanus analis</a></i></span></td>
-            <td><span>mutton snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus apodus">Lutjanus apodus</a></i></span></td>
-            <td><span>schoolmaster</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus cyanopterus">Lutjanus cyanopterus</a></i></span></td>
-            <td><span>cubera snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus griseus">Lutjanus griseus</a></i></span></td>
-            <td><span>gray (mangrove) snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus jocu">Lutjanus jocu</a></i></span></td>
-            <td><span>dog snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus mahogani">Lutjanus mahogani</a></i></span></td>
-            <td><span>mahogany snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus synagris">Lutjanus synagris</a></i></span></td>
-            <td><span>lane snapper</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mugil cephalus">Mugil cephalus</a></i></span></td>
-            <td><span>striped mullet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mugil curema">Mugil curema</a></i></span></td>
-            <td><span>white mullet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Mugil curvidens</i></span></td>
-            <td><span>none</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Mugil gaimardianus</i></span></td>
-            <td><span>redeye mullet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Mugil gyrans</i></span></td>
-            <td><span>fantail mullet</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Mugil liza</i></span></td>
-            <td><span>liza</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Opsanus tao</i></span></td>
-            <td><span>oyster toadfish</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Pogonias cromis">Pogonias cromis</a></i></span></td>
-            <td><span>black drum</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Rhinoptera bonasus">Rhinoptera bonasus</a></i></span></td>
-            <td><span>cownosed ray</span></td>
-            <td>&nbsp;</td>
-        </tr>
+        <?php
+        if($invertebrateArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Invertebrates:</p></td>
+            </tr>
+            <?php
+            foreach($invertebrateArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($vertebrateArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Vertebrates:</p></td>
+            </tr>
+            <?php
+            foreach($vertebrateArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        ?>
     </table>
 
     <table style="width:700px;margin-left:auto;margin-right:auto;">

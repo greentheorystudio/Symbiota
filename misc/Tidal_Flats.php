@@ -1,6 +1,20 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
+
+$IRLManager = new IRLManager();
+
+$plantsArr = $IRLManager->getChecklistTaxa(33);
+$algaeArr = $IRLManager->getChecklistTaxa(34);
+$insectsArr = $IRLManager->getChecklistTaxa(35);
+$aquaticInvertsArr = $IRLManager->getChecklistTaxa(36);
+$hemichordatesArr = $IRLManager->getChecklistTaxa(37);
+$reptilesArr = $IRLManager->getChecklistTaxa(38);
+$fishesArr = $IRLManager->getChecklistTaxa(39);
+$birdsArr = $IRLManager->getChecklistTaxa(40);
+$mammalsArr = $IRLManager->getChecklistTaxa(41);
+$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -562,906 +576,179 @@ include(__DIR__ . '/../header.php');
             </th>
             <th>Common Name</th>
         </tr>
-        <tr>
-            <td colspan="2"><p class="label">PLANTS</p></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Avicennia germinans">Avicennia germinans</a></i></span></td>
-            <td><span>Black
-                        mangrove</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Cladium mariscus </i>ssp. <i>jamaicense</i></span></td>
-            <td><span> Jamaica swamp grass</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Conocarpus erecta</i></span></td>
-            <td><span> Buttonwood</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Distichlis spicata</i></span></td>
-            <td><span> Desert saltgrass</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Juncus roemerianus</i></span></td>
-            <td><span>Needlegrass
-                        rush</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Laguncularia racemosa">Laguncularia racemosa</a></i></span>
-            </td>
-            <td><span>White
-                        mangrove</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Rhizophora mangle">Rhizophora mangle</a></i></span></td>
-            <td><span>Red
-                        mangrove</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Spartina
-                          alterniflora</i></span></td>
-            <td><span>Smooth
-                          cordgrass </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Spartina
-                          bakeri </i></span></td>
-            <td><span>Sand
-                          corgrass </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Spartina
-                          patens </i></span></td>
-            <td><span>Saltmeadow
-                          cordgrass </span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">ALGAE
-                    &amp; OTHER PROTISTS</p></td>
-        </tr>
-        <tr>
-            <td><span><a href="../taxa/index.php?taxon=Acetabularia calyculus"><i>Acetabularia calyculus</i></a></span>
-            </td>
-            <td><span>Umbrella alga</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Achnanthes brevipes</i></span>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Achnanthes spp.</i></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Amphora exigua</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Anorthoneis excentrica</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Cocconeis scutellum</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Cylindrotheca closterium</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Cylindrotheca </i>spp.</span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Enteromorpha </i>spp.</span></td>
-            <td><span>Green
-                        alga </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Gyrosigma </i>spp.</span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Lichmophora abbreviata</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Licjmophora paradoxa</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Lyngbya </i>spp.</span></td>
-            <td><span>Cyanobacteria</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Melosira moniliformis</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Melosira nummuloides</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Navicula directa</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Navicula </i>spp.</span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Nitzschia frustulim v. subsalsa</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Nitzschia longissima</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Nitzschia</i> spp.</span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Padina pavonica">Padina pavonica</a></i></span></td>
-            <td><span>Peacock's tail alga</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Pleurosigma angulatum</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Psammodictyon panduriformis</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Skeletonema costatum</em></span></td>
-            <td><span>Diatom</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Ulva lactuca</i></span></td>
-            <td><span>Green
-                        alga </span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">INSECTS</p></td>
-        </tr>
-        <tr>
-            <td><span><i>Aedes sollicitans</i></span></td>
-            <td><span>Salt
-                        marsh mosquito</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Aedes taeniorhynchus</i></span></td>
-            <td><span>Mosquito</span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">AQUATIC INVERTEBRATES</p></td>
-        </tr>
-        <tr>
-            <td><span><em>Acanthohaustorius shoemakeri</em></span></td>
-            <td><span>Amphipod</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Anodontia alba">Anodontia alba</a></i></span></td>
-            <td><span>Buttercup lucine</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Aplysia brasiliana</em></span></td>
-            <td><span>Sooty sea hare</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Arenicola cristata">Arenicola cristata</a></i></span></td>
-            <td><span>Lugworm</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Batillaria minima">Batillaria minima</a></i></span></td>
-            <td><span>West Indian false cerith</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Bursatella leachii">Bursatella leachii</a></i></span></td>
-            <td><span>Ragged sea hare</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Callianassa guassutinga</em></span></td>
-            <td><span>Ghost shrimp</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Callianassa rathbunae</em></span></td>
-            <td><span>Ghost shrimp</span></td>
-        </tr>
-        <tr>
-            <td><span><a href="../taxa/index.php?taxon=Callinectes ornatus"><i>Callinectes ornatus</i></a></span></td>
-            <td><span>Ornate blue crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Callinectes sapidus">Callinectes sapidus</a></i></span></td>
-            <td><span>Blue
-                        crab </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Callinectes similis">Callinectes similis</a></i></span></td>
-            <td><span>Lesser blue crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Cerithidea</i> spp.</span></td>
-            <td><span>Hornsnails</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Chaetopterus variopedatus">Chaetopterus variopedatus</a></i></span>
-            </td>
-            <td><span>Parchment tube worm</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Chicoreus brevifrons</i></span></td>
-            <td><span>West Indian murex</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cirratulus grandis">Cirratulus grandis</a></i></span></td>
-            <td><span>Orange fringed worm</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Clibanarius vittatus">Clibanarius vittatus</a></i></span></td>
-            <td><span>Thinstripe hermit crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Coronis excavatrix</i></span></td>
-            <td><span>Stomatopod</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cyrtopleura costata">Cyrtopleura costata</a></i></span></td>
-            <td><span>Angelwing clam</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Diopatra cuprea</em></span></td>
-            <td><span>Polychaete </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Dinocardium robustum</em></span></td>
-            <td><span>Atlantic giant cockle</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Fasciolaria lilium</em></span></td>
-            <td><span>Banded tulip</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Fasciolaria tulipa">Fasciolaria tulipa</a></i></span></td>
-            <td><span>True tulip</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Geukensia demissa">Geukensia demissa</a></i></span></td>
-            <td><span>Ribbed
-                        mussel </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Glycera americana</em></span></td>
-            <td><span>Blood worm</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Ilyanassa obsoleta</em></span></td>
-            <td><span>Eastern mudsnail</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Lehardyia spp.</em></span></td>
-            <td><span>Turbellarian</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Limulus polyphemus">Limulus polyphemus</a></i></span></td>
-            <td><span>Horseshoe crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Littorina
-                            irrorata </i></span></td>
-            <td><span>Marsh
-                        periwinkle </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Luidia clathrata</em></span></td>
-            <td><span>Lined sea star</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Luidia senegalensis">Luidia senegalensis</a></i></span></td>
-            <td><span>Nine-armed starfish</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Lysiosquilla scabricauda">Lysiosquilla scabricauda</a></i></span>
-            </td>
-            <td><span>Scaly-tailed mantis shrimp</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Lysiosquilla spp.</em></span></td>
-            <td><span>Mantis shrimps</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Macoma brevifrons</em></span></td>
-            <td><span>Short macoma</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Macoma tenta</em></span></td>
-            <td><span>Elongate macoma</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Marphysa sanugiea">Marphysa sanugiea</a></i></span></td>
-            <td><span>Rockworm</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mercnaria mercenaria">Mercnaria mercenaria</a></i></span></td>
-            <td><span>Hard clam</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Mercnaria campechiensis">Mercnaria campechiensis</a></i></span>
-            </td>
-            <td><span>Southern hard clam</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Neanthes succinea">Neanthes
-                            succinea</a></i></span></td>
-            <td><span> Polychaete worm</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Nereis succinea</em></span></td>
-            <td><span>Clam worm</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Palaemonetes spp. </em></span></td>
-            <td><span> Grass shrimps</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Panaeus spp. </em></span></td>
-            <td><span>Shrimps</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Panopea bitruncata</em></span></td>
-            <td><span>Atlantic geoduck</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Pectinaria gouldii</em></span></td>
-            <td><span>Ice cream cone worm</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Petrochirus diogenes">Petrochirus diogenes</a></i></span></td>
-            <td><span>Giant hermit crab</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Phacoides pectinata</em></span></td>
-            <td><span>Lucinid bivalve</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Pinnixa chaetopterana</em></span></td>
-            <td><span>Pea crab</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Polinices duplicatus</em></span></td>
-            <td><span>Moon snail</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Polymesoda
-                            caroliniana</i></span></td>
-            <td><span>Carolina
-                        marsh clam</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Prunum apicinum">Prunum apicinum</a></i></span></td>
-            <td><span>Common Atlantic marginella</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Pseudohaustorius caroliniensis</em></span></td>
-            <td><span>Amphipod</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Scoloplos fragilis</i></span></td>
-            <td><span>Polychaete
-                        worm </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Sesarma spp.</em></span></td>
-            <td><span>Marsh
-                        crabs </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Strombis gigas</em></span></td>
-            <td><span>Queen conch</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Tagelus plebeius</em></span></td>
-            <td><span>Stout tagelus</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Tetranchyroderma bunti</em></span></td>
-            <td><span>Gastrotrich</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Uca minax</em></span></td>
-            <td><span>Red-jointed fiddler crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Uca pugilator">Uca pugilator</a></i></span></td>
-            <td><span>Atlantic sand fiddler crab</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Uca pugnax</em></span></td>
-            <td><span>Fiddler crab</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Uca rapax</em></span></td>
-            <td><span>Mudflat fiddler crab</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Uca thayeri</em></span></td>
-            <td><span>Atlantic mangrove fiddler crab</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Upogebia affinis">Upogebia affinis</a></i></span></td>
-            <td><span>Coastal mud shrimp</span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">HEMICHORDATES</p></td>
-        </tr>
-        <tr>
-            <td><span><i>Balanoglossus auriantiacus</i></span>
-            <td><span>Golden acorn worm</span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">REPTILES &amp; AMPHIBIANS</p></td>
-        </tr>
-        <tr>
-            <td><span><i>Alligator mississippiensis</i></span></td>
-            <td><span>American
-                        alligator </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Caretta caretta">Caretta caretta</a></i></span></td>
-            <td><span>Loggerhead sea turtle</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Crocodylus acutus</em></span></td>
-            <td><span>American crocodile</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Lepidochelys kempii</em></span></td>
-            <td><span>Kemp's Ridley sea turtle</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Malaclemys terrapin</i></span></td>
-            <td><span>Diamondback
-                        terrapin </span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Nerodia clarkii clarkii">Nerodia clarkii clarkii</a></i></span>
-            </td>
-            <td><span>Gulf salt marsh snake</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Nerodia clarkii compressicauda">Nerodia clarkii compressicauda</a></i></span>
-            </td>
-            <td><span>Mangrove salt marsh snake</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Nerodia clarkii taeniata">Nerodia
-                            clarkii taeniata</a></i></span></td>
-            <td><span>Atlantic
-                        saltmarsh snake</span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">FISHES</p></td>
-        </tr>
-        <tr>
-            <td><span><em>Acanthurus bahianus</em></span></td>
-            <td><span>Ocean surgeon</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Achirus lineatus">Achirus
-                          lineatus</a> </i></span></td>
-            <td><span>Lined
-                          sole </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="http://www.sms.si.edu/irlspec/Acipes_brevir">Acipenser brevirostrum</a></i></span>
-            </td>
-            <td><span>Short nose sturgeon</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Albula vulpes">Albula vulpes</a></i></span></td>
-            <td><span>Bonefish</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Anchoa mitchilli">Anchoa
-                          mitchilli</a></i></span></td>
-            <td><span>Bay
-                          anchovy </span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Archosargus probatocephalus">Archosargus probatocephalus</a></i></span>
-            </td>
-            <td><span> Sheepshead</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Brevoortia </i>spp.</span></td>
-            <td><span>Menhadens</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Carcharhinus leucas</em></span></td>
-            <td><span>Bull shark</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Carcharhinus limbatus">Carcharhinus limbatus</a></i></span>
-            </td>
-            <td><span>Blacktip shark</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Centropomus parallelus">Centropomus parallelus</a></i></span>
-            </td>
-            <td><span>Smallscale fat snook</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Centropomus pectinatus">Centropomus pectinatus</a></i></span>
-            </td>
-            <td><span>Tarpon snook</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Centropomus undecimalis">Centropomus undecimalis</a></i></span>
-            </td>
-            <td><span>Common snook</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Cynoscion nebulosus</em></span></td>
-            <td><span>Spotted seatrout</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Cynoscion regalis">Cynoscion regalis</a></i></span></td>
-            <td><span>Weakfish</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Cyprinodon variegatus</i></span></td>
-            <td><span>Sheepshead
-                        minnow </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Dasyatis sabina">Dasyatis sabina</a></i></span></td>
-            <td><span>Atlantic stingray</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Etropus crossotus</em></span></td>
-            <td><span>Fringed flounder</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Eucinostomus gula</em></span></td>
-            <td><span>Silver jenny</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Eucinostomus harengulus</i></span></td>
-            <td><span>Tidewater
-                        mojarra </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Eucinostomus </i>spp.</span></td>
-            <td><span>Mojarras</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Fundulus confluentus</i></span></td>
-            <td><span> Marsh killifish</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Fundulus grandis</i></span></td>
-            <td><span>Gulf
-                        killifish </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Gambusia affinis">Gambusia affinis</a></i></span></td>
-            <td><span> Mosquitofish</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Gerres cinereus</i></span></td>
-            <td><span>Yellowfin
-                        mojarra </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Ginglymostoma cirratum</em></span></td>
-            <td><span>Nurse shark</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Gobionellus oceanicus</i></span></td>
-            <td><span>Highfin
-                        goby </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Gobiosoma bosc</i></span></td>
-            <td><span> Naked goby</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Halichoeres poeyi</em></span></td>
-            <td><span>Blackear wrasse</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Harengula clupeola">Harengula clupeola</a></i></span></td>
-            <td><span>False Pilchard</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Harengula humeralis">Harengula humeralis</a></i></span></td>
-            <td><span>Redaer sardine</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lachnolaimus maximus">Lachnolaimus maximus</a></i></span></td>
-            <td><span>Hogfish</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lagodon rhomboides">Lagodon rhomboides</a></i></span></td>
-            <td><span>Pinfish</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Leiostomus xanthurus">Leiostomus xanthurus</a></i></span></td>
-            <td><span>Spot</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lobotes surinamensis">Lobotes surinamensis</a></i></span></td>
-            <td><span>Atlantic tripletail</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Lucania parva</i></span></td>
-            <td><span>Rainwater
-                        killifish </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus analis">Lutjanus analis</a></i></span></td>
-            <td><span>Mutton snapper</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Lutjanus apodus</em></span></td>
-            <td><span>Schoolmaster snapper</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lutjanus griseus">Lutjanus griseus</a></i></span></td>
-            <td><span>Gray snapper</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Megalops atlanticus">Megalops atlanticus</a></i></span></td>
-            <td><span>Tarpon</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Menidia beryllina</i></span></td>
-            <td><span> Tidewater silverside</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Menticirrhus </i>spp. </span></td>
-            <td><span>Kingfishes</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Microgobius gulosus</i></span></td>
-            <td><span>Clown
-                        goby </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mugil cephalus">Mugil cephalus</a></i></span></td>
-            <td><span>Striped
-                        mullet </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Mugil curema">Mugil curema</a></i></span></td>
-            <td><span>White
-                        mullet </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Negaprion brevirostris</em></span></td>
-            <td><span>Lemon shark</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Ocyuruus chrysurus</em></span></td>
-            <td><span>Yellowtail snapper</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Opsanus tau</em></span></td>
-            <td><span>Oyster toadfish</span></td>
-        </tr>
-        <tr>
-            <td>
-                <span><i><a href="../taxa/index.php?taxon=Paralichthys lethostigma">Paralichthys lethostigma</a></i></span>
-            </td>
-            <td><span>Southern flounder </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Poecilia latipinna</i></span></td>
-            <td><span>Sailfin
-                        molly </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Pogonias cromis">Pogonias cromis</a></i></span></td>
-            <td><span>Black drum</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Rhinoptera bonasus</em></span></td>
-            <td><span>Cownose ray</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Rivulus marmoratus</em></span></td>
-            <td><span>Mangrove rivulus</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Sciaenops ocellatus">Sciaenops ocellatus</a></i></span></td>
-            <td><span>Red drum</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Sphyrna lewini">Sphyrna lewini</a></i></span></td>
-            <td><span>Scalloped hammerhead </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Sphyrna tiburo">Sphyrna tiburo</a></i></span></td>
-            <td><span>Bonnethead </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Strongylura notata</i></span></td>
-            <td><span> Redfin needlefish</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Trachinotus carolinus">Trachinotus carolinus</a></i></span>
-            </td>
-            <td><span>Florida pompano</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Trachinotus falcatus">Trachinotus falcatus</a></i></span></td>
-            <td><span>Permit</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Trinectes maculatus</em></span></td>
-            <td><span>Hogchoker</span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">BIRDS</p></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ajaia ajaia">Ajaia ajaia</a></i></span>
-            <td><span>Roseate
-                        spoonbill </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Anas fulvigula fulvigula</em></span></td>
-            <td><span>Florida mottled duck</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ardea herodias">Ardea herodias</a></i></span></td>
-            <td><span> Great blue heron</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Bubulcus ibis">Bubulcus ibis</a></i></span></td>
-            <td><span>Cattle
-                        egret <font color="#FF0000"><b>*Non-native*</b></font></span></td>
-        </tr>
-        <tr>
-            <td><span><i>Butorides striatus</i></span></td>
-            <td><span>Green-backed
-                        heron </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Calidris canutus rufa">Calidris canutus rufa</a></i></span>
-            </td>
-            <td><span>Red Knot</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Calidris fuscicollis</em></span></td>
-            <td><span>White-rumped sandpiper</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Calidris mauri">Calidris mauri</a></i></span></td>
-            <td><span>Western sandpiper</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Calidris pusilla">Calidris pusilla</a></i></span></td>
-            <td><span>Semi-palmated sandpiper</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Casmerodius albus</i></span></td>
-            <td><span>Great
-                        egret </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Catoptrophorus semipalmatus</i></span></td>
-            <td><span> Willet</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Charadrius melodus">Charadrius melodus</a></i></span></td>
-            <td><span>Piping plover</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Cistothorus palustris</i></span></td>
-            <td><span> Marsh wren</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Egretta rufescens">Egretta rufescens</a></i></span></td>
-            <td><span>Reddish egret</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Egretta thula">Egretta thula</a></i></span></td>
-            <td><span>Snowy
-                        egret </span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Egretta tricolor">Egretta tricolor</a></i></span></td>
-            <td><span>Tricolor
-                        heron</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Falco columbarius</em></span></td>
-            <td><span>Merlin</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Falco peregrinus</em></span></td>
-            <td><span>Peregrine falcon</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Haematopus palliatus</i></span></td>
-            <td><span>American
-                        oystercatcher</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Haliaeetus leucocephalus</em></span></td>
-            <td><span>Bald eagle</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Limosa fedora</em></span></td>
-            <td><span>Marbled godwit</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Numenius phaeopus</em></span></td>
-            <td><span>Whimbrel</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Nycticorax nycticorax</em></span></td>
-            <td><span>Black-crowned night heron</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Nyctanassa violacea</em></span></td>
-            <td><span>Yellow-crowned night heron</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Pandion haliaetus</i></span></td>
-            <td><span>Osprey</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Pelecanus occidentalis">Pelecanus occidentalis</a></i></span>
-            </td>
-            <td><span>Brown pelican</span></td>
-        </tr>
-        <tr>
-            <td><span><i>Rynchops niger</i></span></td>
-            <td><span>Black
-                        skimmer </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna antillarum</i></span></td>
-            <td><span>Least
-                        tern </span></td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna dougalli</i></span></td>
-            <td><span>Roseate
-                        tern </span></td>
-        </tr>
-        <tr class="heading">
-            <td colspan="2"><p class="label">MAMMALS</p></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Lontra canadensis">Lontra canadensis</a></i></span></td>
-            <td><span>River Otter</span></td>
-        </tr>
-        <tr>
-            <td><span><em>Procyon lotor elucus</em></span></td>
-            <td><span>Common
-                        raccoon </span></td>
-        </tr>
-        <tr>
-            <td><span><em>Trichechus manatus latirostris</em></span></td>
-            <td><span>Florida manatee</span></td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Tursiops truncatus">Tursiops truncatus</a></i></span></td>
-            <td><span> Bottlenose dolphin</span></td>
-        </tr>
+        <?php
+        if($plantsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">PLANTS</p></td>
+            </tr>
+            <?php
+            foreach($plantsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($algaeArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">ALGAE & OTHER PROTISTS</p></td>
+            </tr>
+            <?php
+            foreach($algaeArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($insectsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">INSECTS</p></td>
+            </tr>
+            <?php
+            foreach($insectsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($aquaticInvertsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">AQUATIC INVERTEBRATES</p></td>
+            </tr>
+            <?php
+            foreach($aquaticInvertsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($hemichordatesArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">HEMICHORDATES</p></td>
+            </tr>
+            <?php
+            foreach($hemichordatesArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($reptilesArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">REPTILES & AMPHIBIANS</p></td>
+            </tr>
+            <?php
+            foreach($reptilesArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($fishesArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">FISHES</p></td>
+            </tr>
+            <?php
+            foreach($fishesArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($birdsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">BIRDS</p></td>
+            </tr>
+            <?php
+            foreach($birdsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        if($mammalsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="2"><p class="label">MAMMALS</p></td>
+            </tr>
+            <?php
+            foreach($mammalsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '</tr>';
+            }
+        }
+        ?>
     </table>
 
 

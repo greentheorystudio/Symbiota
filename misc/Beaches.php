@@ -1,6 +1,13 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
+
+$IRLManager = new IRLManager();
+
+$beachPlantArr = $IRLManager->getChecklistTaxa(1);
+$beachAnimalArr = $IRLManager->getChecklistTaxa(2);
+$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -182,340 +189,53 @@ include(__DIR__ . '/../header.php');
             <th>
                 Habitat Notes
             </th>
-            <th>Special Status</th>
         </tr>
-        <tr class="heading">
-            <td><p class="label">Beach
-                    Plants:</p></td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ipomoea pes-caprae">Ipomoea pes-caprae</a></i></span></td>
-            <td><span>Railroad vine, bayhops</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Okenia hypogaea</i></span></td>
-            <td><span>Mexican beach peanut<br/>
-      burrowing four-o-clock</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Paspalum distichum</i></span></td>
-            <td><span>Seashore paspalum<br/>
-      knotgrass</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Remirea maritima</i></span></td>
-            <td><span>West Indian sedge,
-      beachstar</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sesuvium portulacastrum</i></span></td>
-            <td><span>Shoreline sea purslane</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sporobolus virginicus</i></span></td>
-            <td><span>Beach dropseed, seashore
-      dropseed</span></td>
-            <td><span>Colonizes upper beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr class="heading">
-            <td><p class="label">Beach Animals:</p></td>
-            <td>&nbsp;&nbsp;</td>
-            <td>&nbsp;&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Donax variabilis</i></span></td>
-            <td><span>Surf clam, variable coquina</span></td>
-            <td><span>Inhabits surf zone</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Emerita talpoida</i></span></td>
-            <td><span>Mole crab, Atlantic sand
-      crab</span></td>
-            <td><span>Inhabits surf zone</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Ocypode quadrata</i></span></td>
-            <td><span>Ghost crab</span></td>
-            <td><span>Inhabits beach</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Caretta caretta">Caretta caretta</a></i></span></td>
-            <td><span>Loggerhead sea turtle</span></td>
-            <td><span>Nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Chelonia mydas">Chelonia mydas</a></i></span></td>
-            <td><span>Green sea turtle</span></td>
-            <td><span>Nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Dermochelys coriacea</i></span></td>
-            <td><span>Leatherback sea turtle</span></td>
-            <td><span>Nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Eretmochelys imbricata</i></span></td>
-            <td><span>Hawksbill sea turtle</span></td>
-            <td><span>Nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Lepidochelys kempi</i></span></td>
-            <td><span>Kemp's ridley sea turtle</span></td>
-            <td><span>Nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ardea herodias">Ardea herodias</a></i></span></td>
-            <td><span>Great blue heron</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Arenaria interpres</i></span></td>
-            <td><span>Ruddy turnstone</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris alba</i></span></td>
-            <td><span>Sanderling</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris fuscicollis</i></span></td>
-            <td><span>White-rumped sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris maritima</i></span></td>
-            <td><span>Purple sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris mauri</i></span></td>
-            <td><span>Western sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris melanotos</i></span></td>
-            <td><span>Pectoral sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris minutilla</i></span></td>
-            <td><span>Least sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Calidris pusilla</i></span></td>
-            <td><span>Semipalmated sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Ardea alba">Ardea
-      alba</a></i></span></td>
-            <td><span>Great egret</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Charadrius alexandrinus</i></span></td>
-            <td><span>Snowy plover</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Charadrius melodus">Charadrius melodus</a></i></span></td>
-            <td><span>Piping plover</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Chlidonias niger</i></span></td>
-            <td><span>Black tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Felis catus</i></span></td>
-            <td><span>Feral cat, domestic cat</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Haematopus palliatus</i></span></td>
-            <td><span>American oystercatcher</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Larus atricilla</i></span></td>
-            <td><span>Laughing gull</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Larus philadelphia</i></span></td>
-            <td><span>Bonaparte's gull</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Micropalama himantopus</i></span></td>
-            <td><span>Stilt sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Procyon lotor&nbsp;</i></span></td>
-            <td><span>Raccoon</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Rynchops niger</i></span></td>
-            <td><span>Black skimmer</span></td>
-            <td><span>Feeding, nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Larus argentatus</i></span></td>
-            <td><span>Herring gull</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Larus delawarensis</i></span></td>
-            <td><span>Ring-billed gull</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Larus marinus</i></span></td>
-            <td><span>Great black-backed gull</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna anaethetus</i></span></td>
-            <td><span>Bridled tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna antillarum</i></span></td>
-            <td><span>Least tern</span></td>
-            <td><span>Feeding, nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna caspia</i></span></td>
-            <td><span>Caspian tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna dougallii</i></span></td>
-            <td><span>Roseate tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna forsteri</i></span></td>
-            <td><span>Forster's tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna hirundo</i></span></td>
-            <td><span>Common tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna maxima</i></span></td>
-            <td><span>Royal tern</span></td>
-            <td><span>Feeding, nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna nilotica</i></span></td>
-            <td><span>Gull-billed tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna sandvicensis</i></span></td>
-            <td><span>Sandwich tern</span></td>
-            <td><span>Feeding, nesting</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Sterna fuscata</i></span></td>
-            <td><span>Sooty tern</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Trachinotus carolinus">Trachinotus carolinus</a></i></span>
-            </td>
-            <td><span>Florida pompano</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Tringa flavipes</i></span></td>
-            <td><span>Lesser yellowlegs</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Tringa melanoleuca</i></span></td>
-            <td><span>Greater yellowlegs</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Tringa solitaria</i></span></td>
-            <td><span>Solitary sandpiper</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><span><i>Urocyon cinereoargenteus&nbsp;</i></span></td>
-            <td><span>Gray fox</span></td>
-            <td><span>Feeding</span></td>
-            <td>&nbsp;</td>
-        </tr>
+        <?php
+        if($beachPlantArr){
+            ?>
+            <tr class="heading">
+                <td><p class="label">Beach Plants:</p></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+            foreach($beachPlantArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['habitat'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($beachAnimalArr){
+            ?>
+            <tr class="heading">
+                <td><p class="label">Beach Animals:</p></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+            foreach($beachAnimalArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['habitat'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        ?>
     </table>
 
     <table style="border:0;width:700px;margin-left:auto;margin-right:auto;" cellpadding="5" cellspacing="3">

@@ -1,6 +1,16 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
+
+$IRLManager = new IRLManager();
+
+$plantsArr = $IRLManager->getChecklistTaxa(8);
+$fishesArr = $IRLManager->getChecklistTaxa(9);
+$reptilesArr = $IRLManager->getChecklistTaxa(10);
+$birdsArr = $IRLManager->getChecklistTaxa(11);
+$mammalsArr = $IRLManager->getChecklistTaxa(12);
+$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -75,381 +85,110 @@ include(__DIR__ . '/../header.php');
         <tr>
             <th>Species Name</th>
             <th>Common Name</th>
-            <th>FL State Status</th>
-            <th>US Federal Status</th>
-        </tr>
-        <tr class="heading">
-            <td colspan="4"><p class="label">Plants</p></td>
-        </tr>
-        <tr>
-            <td><span><em><a href="../taxa/index.php?taxon=Acrostichum aureum">Acrostichum aureum</a></em></span></td>
-            <td><span>Golden Leather Fern</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><span><em>Argusia gnaphalodes</em></span></td>
-            <td><span>Sea Rosemary</span></td>
-            <td>E</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><span><em><a href="../taxa/index.php?taxon=Asimina tertramera">Asimina tertramera</a></em></span></td>
-            <td><span>Four-petal Pawpaw</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><span><i>Cladonia perforata</i></span></td>
-            <td><span>Cup Lichen</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><span><em><a href="../taxa/index.php?taxon=Conradina grandiflora">Conradina grandiflora</a></em></span>
-            </td>
-            <td><span>Largeflower False Rosemary</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><span><i><a href="../taxa/index.php?taxon=Dicerandra immaculata">Dicerandra immaculata</a></i></span>
-            </td>
-            <td><span>Lakela's Mint</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><span><a href="../taxa/index.php?taxon=Halophila johnsonii"><em>Halophila johnsonii</em></a></span></td>
-            <td><span>Johnson's Seagrass</span></td>
-            <td>---</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><span><i>Harrisia fragrans</i></span></td>
-            <td><span>Caribbean Apple Cactus</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Opuntia stricta">Opuntia stricta</a></span></em></td>
-            <td><span>Erect Prickly Pear</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><span><i>Osmunda regalis</i></span></td>
-            <td><span>Royal Fern</span></td>
-            <td>CE</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Polygala smallii">Polygala smallii</a></span></em></td>
-            <td><span>Tiny Polygala</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><span><i>Tillandsia balbisiana</i></span></td>
-            <td><span>Northern Needleleaf</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Tillandsia fasciculata</i></td>
-            <td><span>Giant Airplant</span></td>
-            <td>E</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><span><i>Tillandsia utriculata</i></span></td>
-            <td><span>Spreading Airplant</span></td>
-            <td>E</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Warea carteri">Warea carteri</a></span></em></td>
-            <td><span>Carter's Mustard</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr class="heading">
-            <td colspan="4"><p class="label">Fishes</p></td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Acipenser brevirostrum"><em>Acipenser brevirostrum</em></a></td>
-            <td><span>Shortnose Sturgeon</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Pristis pectinata"><em>Pristis pectinata</em></a></td>
-            <td><span>Smalltooth Sawfish</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><em><a href="../taxa/index.php?taxon=Rivulus marmoratus">Rivulus marmoratus</a></em></td>
-            <td><span>Mangrove Rivulus</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr class="heading">
-            <td colspan="4"><p class="label">Reptiles &amp; Amphibians</p></td>
-        </tr>
-        <tr>
-            <td><i>Alligator mississippiensis</i></td>
-            <td><span>American Alligator</span></td>
-            <td>SSC 1, 3</td>
-            <td>T1</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Caretta caretta"><em>Caretta caretta</em></a></td>
-            <td><span>Loggerhead Sea Turtle</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Chelonia mydas"><em>Chelonia mydas</em></a></td>
-            <td><span>Green Sea Turtle</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><i>Crocodylus acutus</i></td>
-            <td><span>American Crocodile</span></td>
-            <td>E</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><i>Dermochelys coriacea</i></td>
-            <td><span>Leatherback Sea Turtle</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Drymarchon couperi">Drymarchon couperi</a></span></em></td>
-            <td><span>Eastern Indigo Snake</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><i>Eretmochelys imbricata imbricata</i></td>
-            <td><span>Atlantic Hawksbill Sea Turtle</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Gopherus polyphemus"><em>Gopherus polyphemus</em></a></td>
-            <td><span>Gopher Tortoise</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Lepidochelys kempii</i></td>
-            <td><span>Kemp's Ridley Sea Turtle</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><i>Lithobates capito</i></td>
-            <td><span>Gopher Frog</span></td>
-            <td>SSC 1, 2</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Macrochelys temminckii</i></td>
-            <td><span>Alligator Snapping Turtle</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Nerodia clarkii taeniata</i></td>
-            <td><span>Atlantic Salt Marsh Snake</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><i>Pituophis melanoleucus mugitus</i></td>
-            <td><span>Florida Pine Snake</span></td>
-            <td>SSC 2</td>
-            <td>---</td>
-        </tr>
-        <tr class="heading">
-            <td colspan="4"><p class="label">Birds</p></td>
-        </tr>
-        <tr>
-            <td><i>Aphelocoma coerulescens</i></td>
-            <td><span>Florida Scrub Jay</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Aramus guarauna"><em>Aramus guarauna</em></a></td>
-            <td><span>Limpkin</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Athene cunicularia</i></td>
-            <td><span>Burrowing Owl</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Campephilus principalis</i></td>
-            <td><span>Ivory-billed Woodpecker</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><i>Caracara cheriway</i></td>
-            <td><span>Crested Caracara</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Charadrius melodus"><em>Charadrius melodus</em></a></td>
-            <td><span>Piping Plover</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><i>Dendroica kirtlandii</i></td>
-            <td><span>Kirtland's Warbler</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Egretta caerulea"><em>Egretta caerulea</em></a></td>
-            <td><span>Little Blue Heron</span></td>
-            <td>SSC 1, 4</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Egretta rufescens"><em>Egretta rufescens</em></a></td>
-            <td><span>Reddish Egret</span></td>
-            <td>SSC 1, 4</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Egretta thula"><em>Egretta thula</em></a></td>
-            <td><span>Snowy Egret</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Egretta tricolor"><em>Egretta tricolor</em></a></td>
-            <td><span>Tricolored Heron</span></td>
-            <td>SSC 1, 4</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Eudocimus albus"><em>Eudocimus albus</em></a></td>
-            <td><span>White Ibis</span></td>
-            <td>SSC 2</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Falco sparverius paulus</i></td>
-            <td><span>Southeastern American Kestrel</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Grus canadensis pratensis</i></td>
-            <td><span>Florida Sandhill Crane</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><em>Haematopus palliatus</em></td>
-            <td><span>American Oystercatcher</span></td>
-            <td>SSC 1, 2</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Mycteria americana</i></td>
-            <td><span>Wood Stork</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><a href="../taxa/index.php?taxon=Pelecanus occidentalis"><em>Pelecanus occidentalis</em></a></td>
-            <td><span>Brown Pelican</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Picoides borealis</i></td>
-            <td><span>Red-cockaded Woodpecker</span></td>
-            <td>SSC</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Ajaia ajaja">Ajaia ajaja</a></span></em></td>
-            <td><span>Roseate Spoonbill</span></td>
-            <td>SSC 1, 4</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Rostramus sociabilis plumbeus</i></td>
-            <td><span>Everglade Snail Kite</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><i>Rynchops niger</i></td>
-            <td><span>Black Skimmer</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Sterna antillarum</i></td>
-            <td><span>Least Tern</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Sterna dougallii</i></td>
-            <td><span>Roseate Tern</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr class="heading">
-            <td colspan="4"><p class="label">Mammals</p></td>
-        </tr>
-        <tr>
-            <td><i>Oryzomys palustris natator</i></td>
-            <td><span>Silver Rice Rat</span></td>
-            <td>E</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><i>Peromyscus polinotus niveiventris</i></td>
-            <td><span>Southeastern Beach Mouse</span></td>
-            <td>T</td>
-            <td>T</td>
-        </tr>
-        <tr>
-            <td><i>Podomys floridanus</i></td>
-            <td><span>Florida Mouse</span></td>
-            <td>SSC 1</td>
-            <td>---</td>
-        </tr>
-        <tr>
-            <td><em><span><a href="../taxa/index.php?taxon=Trichechus manatus latirostris">Trichechus manatus latirostris</a></span></em>
-            </td>
-            <td><span>Florida Manatee</span></td>
-            <td>E</td>
-            <td>E</td>
-        </tr>
-        <tr>
-            <td><i>Ursus americanus floridanus</i></td>
-            <td><span>Florida Black Bear</span></td>
-            <td>T</td>
-            <td>---</td>
-        </tr>
+            <th>FL State & US Federal Status</th>
+        </tr>
+        <?php
+        if($plantsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Plants</p></td>
+            </tr>
+            <?php
+            foreach($plantsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,20,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($fishesArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Fishes</p></td>
+            </tr>
+            <?php
+            foreach($fishesArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,20,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($reptilesArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Reptiles & Amphibians</p></td>
+            </tr>
+            <?php
+            foreach($reptilesArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,20,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($birdsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Birds</p></td>
+            </tr>
+            <?php
+            foreach($birdsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,20,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        if($mammalsArr){
+            ?>
+            <tr class="heading">
+                <td colspan="3"><p class="label">Mammals</p></td>
+            </tr>
+            <?php
+            foreach($mammalsArr as $id => $taxArr){
+                echo '<tr>';
+                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                if(array_key_exists($id,$vernacularArr)){
+                    $vernacularStr = implode(', ', $vernacularArr[$id]);
+                    echo '<td><span>'.wordwrap($vernacularStr,20,"<br />\n",true).'</span></td>'."\n";
+                }
+                else{
+                    echo '<td><span></span></td>'."\n";
+                }
+                echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                echo '</tr>';
+            }
+        }
+        ?>
     </table>
 
     <table style="width:700px;margin-left:auto;margin-right:auto;">

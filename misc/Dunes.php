@@ -1,6 +1,14 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $CHARSET);
+
+$IRLManager = new IRLManager();
+
+$foredunePlantsArr = $IRLManager->getChecklistTaxa(3);
+$backdunePlantsArr = $IRLManager->getChecklistTaxa(4);
+$duneAnimalsArr = $IRLManager->getChecklistTaxa(5);
+$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -193,526 +201,80 @@ include(__DIR__ . '/../header.php');
                         <th>Habitat Usage</th>
                         <th>Special Status</th>
                     </tr>
-                    <tr>
-                        <td><p class="label">Foredune Plants:</p></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Argusia gnaphalodes</i></span></td>
-                        <td><span>Sea lavender, sea rosemary</span></td>
-                        <td><span>Foredune shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Atriplex pentandra</i></span></td>
-                        <td><span>Crested saltbush</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Canavalia rosea">Canavalia rosea</a></i></span>
-                        </td>
-                        <td><span>Baybean</span></td>
-                        <td><span>Foredune vine <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Chamaesyce mesembrianthemifolia</i></span></td>
-                        <td><span>Coastal beach sandmat</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Cnidoscolus stimulosus</i></span></td>
-                        <td><span>Finger rot</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Helianthus debilis">Helianthus debilis</a></i></span>
-                        </td>
-                        <td><span>Beach sunflower</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Ipomoea pes-caprae">Ipomoea pes-caprae</a></i></span>
-                        </td>
-                        <td><span>Railroad vine</span></td>
-                        <td><span>Foredune vine , stabilizer <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Ipomoea sagittata</i></span></td>
-                        <td><span>Beach morning glory</span></td>
-                        <td><span>Foredune vine, stabilizer <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Iva imbricata</i></span></td>
-                        <td><span>Seacoast marsh elder</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Panicum amarum</i></span></td>
-                        <td><span>Bitter panicum, beach grass</span></td>
-                        <td><span>Foredune grass, stabilizer <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Scaevola plumieri</i></span></td>
-                        <td><span>Beach berry</span></td>
-                        <td><span>Foredune shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sesuvium portulacastrum</i></span></td>
-                        <td><span>Sea purslane</span></td>
-                        <td><span>Foredune <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Spartina patens</i></span></td>
-                        <td><span>Beach cordgrass</span></td>
-                        <td><span>Foredune grass, stabilizer <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Suriana maritima</i></span></td>
-                        <td><span>Bay cedar</span></td>
-                        <td><span>Foredune shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Uniola paniculata">Uniola paniculata</a></i></span>
-                        </td>
-                        <td><span>Sea oats</span></td>
-                        <td><span>Foredune grass, stabilizer <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><p class="label">Backdune Plants:</p></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Baccharis halimifolia</i></span></td>
-                        <td><span>Groundsel tree</span></td>
-                        <td><span>Woody shrub</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Batis maritima">Batis maritima</a></i></span></td>
-                        <td><span>Saltwart</span></td>
-                        <td><span>Herbacious halophyte <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Bidens pilosa</i></span></td>
-                        <td><span>Beggar ticks</span></td>
-                        <td><span>Herbaceous plant</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Borrichia frutescens</i></span></td>
-                        <td><span>sea ox-eye daisy</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Casuarina equisetifolia</i></span></td>
-                        <td><span>Australian pine</span></td>
-                        <td><span>Backdune</span></td>
-                        <td><span>&nbsp;invasive</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Cenchrus tribuloides</i></span></td>
-                        <td><span>Sanddune sandbur</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Chiococca alba">Chiococca alba</a></i></span></td>
-                        <td><span>snowberry</span></td>
-                        <td><span>Vine</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Cnidoscolus stimulosus</i></span></td>
-                        <td><span>Finger rot</span></td>
-                        <td><span>Herbaceous plant</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Coccoloba uvifera">Coccoloba uvifera</a></i></span>
-                        </td>
-                        <td><span>Sea grapes</span></td>
-                        <td><span>Shrubby form in backdunes</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Distichlis spicata</i></span></td>
-                        <td><span>Seashore saltgrass</span></td>
-                        <td><span>Halophyte <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Erythrina herbacea">Erythrina herbacea</a></i></span>
-                        </td>
-                        <td><span>Coral bean</span></td>
-                        <td><span>Woody shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Gaillardia pulchella">Gaillardia
-                        pulchella</a></i></span></td>
-                        <td><span>Firewheel</span></td>
-                        <td><span>Herbaceous plant <sup>1</sup></span></td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Gilia rubra</i></span></td>
-                        <td><span>Standing cypress</span></td>
-                        <td><span>Herbaceous plant <sup>2</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Borrichia frutesens</i></span></td>
-                        <td><span>Sea oxeye</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Helianthus debilis">Helianthus debilis</a></i></span>
-                        </td>
-                        <td><span>beach sunflower</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Heterotheca subaxillaris</i></span></td>
-                        <td><span>Golden aster</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Hymenocallis latifolia">Hymenocallis
-                      latifolia</a></i></span></td>
-                        <td><span>Spiderlily</span></td>
-                        <td><span>Herbaceous plant <sup>1</sup></span></td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Indiogofera miniata</i></span></td>
-                        <td><span>Western coastal indigo</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Ipomoea pes-caprae">Ipomoea pes-caprae</a></i></span>
-                        </td>
-                        <td><span>Railroad vine</span></td>
-                        <td><span>Vine <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Ipomoea imperati</i></span></td>
-                        <td><span>Beach morning glory</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Lantana camara">Lantana camara</a></i></span></td>
-                        <td><span>Shrub verbena</span></td>
-                        <td><span>Woody shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Lantana
-                      involucrata</i></span></td>
-                        <td><span>Wild lantana</span></td>
-                        <td><span>Woody shrub <sup>1</sup></span></td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Licania michauxii</i></span></td>
-                        <td><span>Gopher apple</span></td>
-                        <td><span>Herbaceous plant <sup>2</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Myrica cerifera">Myrica cerifera</a></i></span>
-                        </td>
-                        <td><span>Wax myrtle</span></td>
-                        <td><span>Woody shrub <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Myrsine guianensis</i></span></td>
-                        <td><span>Myrsine</span></td>
-                        <td><span>Woody shrub <sup>2</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Opuntia stricta">Opuntia stricta</a></i></span>
-                        </td>
-                        <td><span>Prickly pear&nbsp;</span></td>
-                        <td><span>&nbsp;Succulent <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Paspalum vaginatum</i></span></td>
-                        <td><span>Salt joint grass</span></td>
-                        <td><span>Grass</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Psysalis viscosa</i></span></td>
-                        <td><span>Ground cherry</span></td>
-                        <td><span>Herbaceous plant</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Oenothera humifusa</i></span></td>
-                        <td><span>Seabeach evening primrose</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Panicum amarum</i></span></td>
-                        <td><span>Bitter panicum, beach grass</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Passiflora subrosa</i></span></td>
-                        <td><span>Corkystem passionflower</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Sabal palmetto">Sabal palmetto</a></i></span></td>
-                        <td><span>Cabbage palm</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Schinus terebinthifolius">Schinus terebinthifolius</a></i></span>
-                        </td>
-                        <td><span>Brazilian pepper</span></td>
-                        <td><span>Woody shrub</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Serenoa repens">Serenoa repens</a></i></span></td>
-                        <td><span>Saw palmetto</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Sophora tomentosa">Sophora
-                      tomentosa</a></i></span></td>
-                        <td><span>Necklace pod</span></td>
-                        <td><span>Woody shrub <sup>1</sup></span></td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Spartina patens</i></span></td>
-                        <td><span>Beach cordgrass</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Verbena maritima</i></span></td>
-                        <td><span>Seaside verbena</span></td>
-                        <td><span>Herbaceous plant</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Vigna luteola</i></span></td>
-                        <td><span>Cow peas</span></td>
-                        <td><span>Vine</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i><a href="../taxa/index.php?taxon=Yucca aloifolia">Yucca aloifolia</a></i></span>
-                        </td>
-                        <td><span>Spanish bayonet</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Zanthoxylum clava-herculis</i></span></td>
-                        <td><span>Hercules club</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><p class="label">Dune Animals:</p></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Anolis carolinensis</i></span></td>
-                        <td><span>Green anole</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Anolis sagrei</i></span></td>
-                        <td><span>Brown anole</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Catoptrophorus semipalmatus</i></span></td>
-                        <td><span>Willet</span></td>
-                        <td><span>nests in sparse grass</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Charadrius wilsonia</i></span></td>
-                        <td><span>Wilson's plover</span></td>
-                        <td><span>nests in sparse grass</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Crotalus adamanteus</i></span></td>
-                        <td><span>Eastern diamondback rattlesnake</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Elaphe obsoleta quadrivittata</i></span></td>
-                        <td><span>Yellow rat snake</span></td>
-                        <td><span>Backdunes, scrub, mangrove fringe</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Felis catus</i></span></td>
-                        <td><span>Feral cat</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span><i><a href="../taxa/index.php?taxon=Gopherus polyphemus">Gopherus polyphemus</a></i></span>
-                        </td>
-                        <td><span>Gopher tortoise</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Haematopus palliatus</i></span></td>
-                        <td><span>American oystercatcher</span></td>
-                        <td><span>nests in sparse grass</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Larus atricilla</i></span></td>
-                        <td><span>Laughing gull</span></td>
-                        <td><span>nests in dense grass or bushes</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Masticophis flagellum</i></span></td>
-                        <td><span>Eastern coachwhip snake</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Opheodrys Aestivus carinatus</i></span></td>
-                        <td><span>Florida rough green snake</span></td>
-                        <td><span>Barrier island dunes and hammocks</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Oryzomys palustris</i></span></td>
-                        <td><span>Rice rat</span></td>
-                        <td><span>wetter areas of barrier islands</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Peromyscus gossypinus palmarius</i></span></td>
-                        <td><span>Cotton mouse</span></td>
-                        <td><span>Dune and scrub inhabitant <sup>1</sup></span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Peromyscus polionotus niveiventris</i></span></td>
-                        <td><span>Southeastern beach mouse</span></td>
-                        <td><span>Dune and scrub inhabitant (Canaveral to
-                        Sebastian Inlet)</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Procyon lotor elucus</i></span></td>
-                        <td><span>Raccoon</span></td>
-                        <td><span>Feeding</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sigmodon hispidus littoralis</i></span></td>
-                        <td><span>Cotton rat</span></td>
-                        <td><span>Dune and scrub inhabitant (Canaveral to
-                        Sebastian Inlet)</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sterna caspia</i></span></td>
-                        <td><span>Caspian tern</span></td>
-                        <td><span>nests in dense grass or bushes</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sterna nilotica</i></span></td>
-                        <td><span>gull-billed tern</span></td>
-                        <td><span>nests in dense grass or bushes</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sus scrofa</i></span></td>
-                        <td><span>Feral pig</span></td>
-                        <td><span>Feeding</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sylvilagus floridanus&nbsp;</i></span></td>
-                        <td><span>Eastern cottontail rabbit</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Sylvilagus palustris paludicola</i></span></td>
-                        <td><span>Marsh rabbit</span></td>
-                        <td><span>&nbsp;</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Tantilla relicta pamlica</i></span></td>
-                        <td><span>Coastal dunes crowned snake</span></td>
-                        <td><span>Grassy dunes Brevard to Palm Beach</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
-                    <tr>
-                        <td><span><i>Urocyon cinereoargenteus floridana</i></span></td>
-                        <td><span>Gray fox</span></td>
-                        <td><span>Feeding</span></td>
-                        <td><span>&nbsp;</span></td>
-                    </tr>
+                    <?php
+                    if($foredunePlantsArr){
+                        ?>
+                        <tr class="heading">
+                            <td><p class="label">Foredune Plants:</p></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <?php
+                        foreach($foredunePlantsArr as $id => $taxArr){
+                            echo '<tr>';
+                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                            if(array_key_exists($id,$vernacularArr)){
+                                $vernacularStr = implode(', ', $vernacularArr[$id]);
+                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                            }
+                            else{
+                                echo '<td><span></span></td>'."\n";
+                            }
+                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
+                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                            echo '</tr>';
+                        }
+                    }
+                    if($backdunePlantsArr){
+                        ?>
+                        <tr class="heading">
+                            <td><p class="label">Backdune Plants:</p></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <?php
+                        foreach($backdunePlantsArr as $id => $taxArr){
+                            echo '<tr>';
+                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                            if(array_key_exists($id,$vernacularArr)){
+                                $vernacularStr = implode(', ', $vernacularArr[$id]);
+                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                            }
+                            else{
+                                echo '<td><span></span></td>'."\n";
+                            }
+                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
+                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                            echo '</tr>';
+                        }
+                    }
+                    if($duneAnimalsArr){
+                        ?>
+                        <tr class="heading">
+                            <td><p class="label">Dune Animals:</p></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <?php
+                        foreach($duneAnimalsArr as $id => $taxArr){
+                            echo '<tr>';
+                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
+                            if(array_key_exists($id,$vernacularArr)){
+                                $vernacularStr = implode(', ', $vernacularArr[$id]);
+                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
+                            }
+                            else{
+                                echo '<td><span></span></td>'."\n";
+                            }
+                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
+                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
+                            echo '</tr>';
+                        }
+                    }
+                    ?>
                 </table>
 
                 <p class="body"><sup>1</sup> Found throughout the IRL<br/>
