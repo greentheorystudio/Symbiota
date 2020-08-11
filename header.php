@@ -1,14 +1,12 @@
 <table id="maintable" style="border-spacing: 0;">
     <tr>
         <td class="header">
-            <div style="width:100%;position:relative;height:200px;border-bottom:1px solid #333333;">
-                <div style="background-color:#000000;width:100%;height:200px;">
-                    <div style="float:left;">
-                        <img style="border:0;height:200px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Welcome_Image.jpg" />
-                    </div>
-                    <div style="float:right;height:200px;display:flex;align-items:center;">
-                        <img style="height:68px;margin-right:30px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/headerMastHead_sms.jpg" />
-                    </div>
+            <div style="background-image:url(images/layout/banner-background-tile.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;">
+                <div style="float:left;">
+                    <img style="border:0px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-left.png" />
+                </div>
+                <div style="float:right;">
+                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-right-side-egret.jpg" />
                 </div>
             </div>
             <div id="top_navbar">
