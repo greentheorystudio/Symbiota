@@ -1,7 +1,7 @@
 <table id="maintable" style="border-spacing: 0;">
     <tr>
         <td class="header">
-            <div style="background-image:url(images/layout/banner-background-tile.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;">
+            <div style="background-image:url(<?php echo $CLIENT_ROOT; ?>/images/layout/banner-background-tile.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;">
                 <div style="float:left;">
                     <img style="border:0px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-left.png" />
                 </div>
