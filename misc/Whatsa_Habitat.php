@@ -51,7 +51,7 @@ include(__DIR__ . '/../header.php');
                 <p class="body"><a href="Scrub.php">Scrub</a></p>
                 <p class="body"><a href="Hammock_Habitat.php">Maritime Hammocks</a></p>
                 <p class="body"><a href="Mangroves.php">Mangroves</a></p>
-                <p class="body"><a href="Impoundments.php">Mosquito Impoundments</a></p>
+                <p class="body"><a href="impoundments.php">Mosquito Impoundments</a></p>
                 <p class="body"><a href="Saltmarsh.php">Salt Marshes</a></p>
                 <p class="body"><a href="Tidal_Flats.php">Tidal Flats</a></p>
                 <br>
