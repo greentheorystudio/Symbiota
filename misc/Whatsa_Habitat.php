@@ -45,7 +45,7 @@ include(__DIR__ . '/../header.php');
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td width="50%"><p class="title"><a href="BarrierIslnd.php">Barrier Island/Intertidal Habitats</a>: </p>
+            <td width="50%"><p class="title"><a href="Barrierislnd.php">Barrier Island/Intertidal Habitats</a>: </p>
                 <p class="body"><a href="Beaches.php">Beaches</a></p>
                 <p class="body"><a href="Dunes.php">Dunes</a></p>
                 <p class="body"><a href="Scrub.php">Scrub</a></p>
