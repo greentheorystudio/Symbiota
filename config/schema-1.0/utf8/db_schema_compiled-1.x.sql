@@ -2278,9 +2278,10 @@ CREATE TABLE `tmtraits` (
   INDEX `FK_traits_uidcreated_idx` (`createduid` ASC),
   INDEX `FK_traits_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_traits_uidcreated`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_traits_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE);
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmstates` (
   `stateid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2300,11 +2301,12 @@ CREATE TABLE `tmstates` (
   INDEX `FK_tmstate_uidcreated_idx` (`createduid` ASC),
   INDEX `FK_tmstate_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_tmstates_uidcreated`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmstates_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmstates_traits`
-    FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE);
+  FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmattributes` (
   `stateid` INT UNSIGNED NOT NULL,
@@ -2327,16 +2329,16 @@ CREATE TABLE `tmattributes` (
   INDEX `FK_attr_uidcreate_idx` (`createduid` ASC),
   INDEX `FK_tmattr_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_tmattr_stateid`
-    FOREIGN KEY (`stateid`)   REFERENCES `tmstates` (`stateid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
+  FOREIGN KEY (`stateid`)   REFERENCES `tmstates` (`stateid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_occid`
-    FOREIGN KEY (`occid`)   REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
+  FOREIGN KEY (`occid`)   REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_imgid`
-    FOREIGN KEY (`imgid`)  REFERENCES `images` (`imgid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
+  FOREIGN KEY (`imgid`)  REFERENCES `images` (`imgid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidcreate`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmtraittaxalink` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -2347,10 +2349,10 @@ CREATE TABLE `tmtraittaxalink` (
   INDEX `FK_traittaxalink_traitid_idx` (`traitid` ASC),
   INDEX `FK_traittaxalink_tid_idx` (`tid` ASC),
   CONSTRAINT `FK_traittaxalink_traitid`
-    FOREIGN KEY (`traitid`)  REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  FOREIGN KEY (`traitid`)  REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_traittaxalink_tid`
-    FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmtraitdependencies` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -2360,10 +2362,10 @@ CREATE TABLE `tmtraitdependencies` (
   INDEX `FK_tmdepend_traitid_idx` (`traitid` ASC),
   INDEX `FK_tmdepend_stateid_idx` (`parentstateid` ASC),
   CONSTRAINT `FK_tmdepend_traitid`
-    FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmdepend_stateid`
-    FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+  FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurassococcurrences`
   DROP FOREIGN KEY `omossococcur_occid`,
@@ -2412,7 +2414,7 @@ CREATE TABLE `lkupmunicipality` (
   KEY `fk_stateprovince` (`stateId`),
   KEY `index_municipalityname` (`municipalityName`),
   CONSTRAINT `lkupmunicipality_ibfk_1` FOREIGN KEY (`stateId`) REFERENCES `lkupstateprovince` (`stateId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `fmvouchers`
   DROP COLUMN `Collector`,
@@ -2423,7 +2425,8 @@ ALTER TABLE `fmvouchers`
 
 CREATE TABLE `temp_voucher_delete` (
   `clid` INT NOT NULL,
-  `occid` INT NOT NULL);
+  `occid` INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `temp_voucher_delete`(clid,occid)
   SELECT CLID,occid FROM fmvouchers GROUP BY CLID, occid HAVING Count(*)>1;
@@ -2523,7 +2526,7 @@ CREATE TABLE `omoccurrevisions` (
   INDEX `Index_omrevisions_editor` (`externalEditor` ASC),
   CONSTRAINT `fk_omrevisions_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `fk_omrevisions_uid`    FOREIGN KEY (`uid`)    REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurrevisions`
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `externalEditor`,
@@ -2547,7 +2550,8 @@ CREATE TABLE `omcollpuboccurlink` (
   PRIMARY KEY (`pubid`, `occid`),
   INDEX `FK_ompuboccid_idx` (`occid` ASC),
   CONSTRAINT `FK_ompuboccid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE `omsurveyprojlink`;
 DROP TABLE `omsurveyoccurlink`;
@@ -2713,7 +2717,8 @@ CREATE TABLE `omoccuraccessstats` (
   `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`oasid`),
   UNIQUE INDEX `UNIQUE_occuraccess` (`occid` ASC, `accessdate` ASC, `ipaddress` ASC, `accesstype` ASC),
-  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `omcollectioncontacts` (
   `collid` INT UNSIGNED NOT NULL,
@@ -2725,7 +2730,8 @@ CREATE TABLE `omcollectioncontacts` (
   PRIMARY KEY (`collid`, `uid`),
   INDEX `FK_contact_uid_idx` (`uid` ASC),
   CONSTRAINT `FK_contact_collid`   FOREIGN KEY (`collid`)   REFERENCES `omcollections` (`CollID`)   ON DELETE CASCADE   ON UPDATE CASCADE,
-  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE);
+  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `omoccurrencetypes` (
   `occurtypeid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2748,7 +2754,8 @@ CREATE TABLE `omoccurrencetypes` (
   INDEX `FK_occurtype_tid_idx` (`tidinterpreted` ASC),
   CONSTRAINT `FK_occurtype_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurtype_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
-  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurrences`
   ADD INDEX `Index_locality` (`locality`(100) ASC),
@@ -2852,7 +2859,7 @@ CREATE TABLE `glossarysources` (
   `additionalSources` varchar(1000) DEFAULT NULL,
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tid`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `uploadglossary` (
   `term` varchar(150) DEFAULT NULL,
@@ -2870,7 +2877,7 @@ CREATE TABLE `uploadglossary` (
   `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY `term_index` (`term`),
   KEY `relatedterm_index` (`newGroupId`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `glossarytaxalink`
   CHANGE COLUMN `glossgrpid` `glossid` INT(10) UNSIGNED NOT NULL ;
@@ -2920,7 +2927,7 @@ CREATE TABLE `paleochronostratigraphy` (
   INDEX `Period` (`Period`),
   INDEX `Epoch` (`Epoch`),
   INDEX `Stage` (`Stage`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `paleochronostratigraphy` VALUES ('1', 'Hadean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('2', 'Archean', null, null, null, null);
@@ -3094,7 +3101,7 @@ CREATE TABLE `omoccurlithostratigraphy` (
   INDEX `Member` (`Member`),
   CONSTRAINT `FK_occurlitho_chronoid` FOREIGN KEY (`chronoId`) REFERENCES `paleochronostratigraphy` (`chronoId`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurlitho_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `useraccesstokens` (
   `tokid` int(11) NOT NULL AUTO_INCREMENT,
@@ -3105,16 +3112,83 @@ CREATE TABLE `useraccesstokens` (
   PRIMARY KEY (`tokid`),
   KEY `FK_useraccesstokens_uid_idx` (`uid`),
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
 
+ALTER TABLE `adminlanguages`
+  ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
+
+ALTER TABLE `fmchklstcoordinates`
+  DROP FOREIGN KEY `FKchklsttaxalink`,
+  DROP INDEX `IndexUnique`;
+
+ALTER TABLE `fmchklstprojlink`
+  ADD COLUMN `sortSequence` int(11) NULL AFTER `mapChecklist`;
+
+ALTER TABLE `fmchklsttaxalink`
+  DROP FOREIGN KEY `FK_chklsttaxalink_cid`,
+  DROP FOREIGN KEY `FK_chklsttaxalink_tid`,
+  ADD INDEX `FK_chklsttaxalink_tid`(`TID`);
+
+ALTER TABLE `fmchklsttaxastatus`
+  DROP FOREIGN KEY `FK_fmchklsttaxastatus_clidtid`,
+  DROP INDEX `FK_fmchklsttaxastatus_clid_idx`;
+
+ALTER TABLE `fmcltaxacomments`
+  DROP FOREIGN KEY `FK_clcomment_cltaxa`,
+  DROP INDEX `FK_clcomment_cltaxa`;
+
+ALTER TABLE `fmprojects`
+  MODIFY COLUMN `fulldescription` varchar(5000) NULL DEFAULT NULL AFTER `briefdescription`;
+
+ALTER TABLE `fmvouchers`
+  DROP FOREIGN KEY `FK_fmvouchers_occ`,
+  DROP FOREIGN KEY `FK_vouchers_cl`,
+  ADD COLUMN `vid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT AFTER `TID`,
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`vid`),
+  DROP INDEX `chklst_taxavouchers`,
+  ADD UNIQUE INDEX `UNIQUE_voucher`(`CLID`, `occid`);
+
+CREATE TABLE `igsnverification` (
+  `igsn` varchar(15) NOT NULL,
+  `occid` int(10) unsigned DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `FK_igsn_occid_idx` (`occid`),
+  KEY `INDEX_igsn` (`igsn`),
+  CONSTRAINT `FK_igsn_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ALTER TABLE `images`
   ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),
-  MODIFY COLUMN `caption` varchar(750) NULL DEFAULT NULL AFTER `format`;
+  MODIFY COLUMN `caption` varchar(750) NULL DEFAULT NULL AFTER `format`,
+  MODIFY COLUMN `url` varchar(255) NULL DEFAULT NULL AFTER `tid`;
+
+ALTER TABLE `institutions`
+  CHANGE COLUMN `IntialTimeStamp` `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `modifiedTimeStamp`;
 
 ALTER TABLE `kmcharacters`
   ADD COLUMN `display` varchar(45) AFTER `notes`;
+
+RENAME TABLE `kmchardependance` TO `kmchardependence`;
+
+ALTER TABLE `kmcslang`
+  CHANGE COLUMN `intialtimestamp` `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `notes`;
+
+ALTER TABLE `lkupstateprovince`
+  MODIFY COLUMN `abbrev` varchar(3) NULL DEFAULT NULL AFTER `stateName`;
+
+ALTER TABLE `omcollcategories`
+  ADD COLUMN `sortsequence` int(11) NULL AFTER `notes`;
+
+DROP TABLE IF EXISTS `omcollectioncontacts`;
+
+ALTER TABLE `omcollections`
+  ADD COLUMN `datasetID` varchar(250) NULL DEFAULT NULL AFTER `collectionId`,
+  ADD COLUMN `contactJson` json NULL AFTER `email`,
+  ADD COLUMN `dynamicProperties` text NULL AFTER `accessrights`;
 
 UPDATE omcrowdsourcecentral c INNER JOIN omcrowdsourcequeue q ON c.omcsid = q.omcsid
   INNER JOIN userroles r ON c.collid = r.tablepk AND q.uidprocessor = r.uid
@@ -3130,14 +3204,78 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count(DISTINCT o
     HAVING cnt > 2) as inntab ON e.initialtimestamp = inntab.initialtimestamp AND e.uid = inntab.uid
     SET edittype = 1;
 
+ALTER TABLE `omoccurgenetic`
+  MODIFY COLUMN `notes` varchar(250) NULL DEFAULT NULL AFTER `resourceurl`,
+  MODIFY COLUMN `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `notes`,
+  ADD UNIQUE INDEX `UNIQUE_omoccurgenetic`(`occid`, `resourceurl`);
+
+CREATE TABLE `omoccurpaleo` (
+  `paleoID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `occid` int(10) unsigned NOT NULL,
+  `eon` varchar(65) DEFAULT NULL,
+  `era` varchar(65) DEFAULT NULL,
+  `period` varchar(65) DEFAULT NULL,
+  `epoch` varchar(65) DEFAULT NULL,
+  `earlyInterval` varchar(65) DEFAULT NULL,
+  `lateInterval` varchar(65) DEFAULT NULL,
+  `absoluteAge` varchar(65) DEFAULT NULL,
+  `storageAge` varchar(65) DEFAULT NULL,
+  `stage` varchar(65) DEFAULT NULL,
+  `localStage` varchar(65) DEFAULT NULL,
+  `biota` varchar(65) DEFAULT NULL COMMENT 'Flora or Fanua',
+  `biostratigraphy` varchar(65) DEFAULT NULL COMMENT 'Biozone',
+  `taxonEnvironment` varchar(65) DEFAULT NULL COMMENT 'Marine or not',
+  `lithogroup` varchar(65) DEFAULT NULL,
+  `formation` varchar(65) DEFAULT NULL,
+  `member` varchar(65) DEFAULT NULL,
+  `bed` varchar(65) DEFAULT NULL,
+  `lithology` varchar(250) DEFAULT NULL,
+  `stratRemarks` varchar(250) DEFAULT NULL,
+  `element` varchar(250) DEFAULT NULL,
+  `slideProperties` varchar(1000) DEFAULT NULL,
+  `geologicalContextID` varchar(45) DEFAULT NULL,
+  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`paleoID`),
+  UNIQUE KEY `UNIQUE_occid` (`occid`),
+  KEY `FK_paleo_occid_idx` (`occid`),
+  CONSTRAINT `FK_paleo_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Occurrence Paleo tables';
+
+CREATE TABLE `omoccurpaleogts` (
+  `gtsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `gtsterm` varchar(45) NOT NULL,
+  `rankid` int(11) NOT NULL,
+  `rankname` varchar(45) DEFAULT NULL,
+  `parentgtsid` int(10) unsigned DEFAULT NULL,
+  `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`gtsid`),
+  UNIQUE KEY `UNIQUE_gtsterm` (`gtsid`),
+  KEY `FK_gtsparent_idx` (`parentgtsid`),
+  CONSTRAINT `FK_gtsparent` FOREIGN KEY (`parentgtsid`) REFERENCES `omoccurpaleogts` (`gtsid`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=245 DEFAULT CHARSET=utf8;
+
+ALTER TABLE `omoccurpoints`
+  DROP COLUMN `errradiuspoly`,
+  DROP COLUMN `footprintpoly`;
+
 ALTER TABLE `omoccurrences`
   ADD INDEX `Index_occurrenceRemarks`(`occurrenceRemarks`(100)),
   CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
-  DROP INDEX `idx_occrecordedby`;
+  DROP INDEX `idx_occrecordedby`,
+  MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
+  DROP INDEX `Index_gui`,
+  ADD UNIQUE INDEX `Index_gui`(`occurrenceID`),
+  ADD INDEX `Index_locationID`(`locationID`),
+  ADD INDEX `Index_eventID`(`eventID`),
+  ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
+  ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`);
 
 REPLACE omoccurrencesfulltext(occid,locality,recordedby)
   SELECT occid, CONCAT_WS("; ", municipality, locality), recordedby
   FROM omoccurrences;
+
+ALTER TABLE `referenceobject`
+  CHANGE COLUMN `numbervolumnes` `numbervolumes` varchar(45) NULL DEFAULT NULL AFTER `volume`;
 
 CREATE TABLE `taxonkingdoms` (
     `kingdom_id` int(11) NOT NULL,
@@ -3145,7 +3283,7 @@ CREATE TABLE `taxonkingdoms` (
     PRIMARY KEY (`kingdom_id`),
     INDEX `INDEX_kingdom_name` (`kingdom_name` ASC),
     KEY `INDEX_kingdoms` (`kingdom_id`,`kingdom_name`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `taxonkingdoms` VALUES (1, 'Bacteria');
 INSERT INTO `taxonkingdoms` VALUES (2, 'Protozoa');
@@ -3158,8 +3296,29 @@ INSERT INTO `taxonkingdoms` VALUES (100, 'Unknown');
 
 ALTER TABLE `taxa`
     ADD COLUMN `kingdomId` int(11) NULL DEFAULT 100 AFTER `kingdomName`,
-    ADD INDEX `kingdomid_index`(`kingdomId`) USING BTREE,
+    ADD INDEX `kingdomid_index`(`kingdomId`),
+    MODIFY COLUMN `UnitInd3` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `UnitName2`,
+    ADD COLUMN `locked` int(11) NULL AFTER `Hybrid`,
     ADD CONSTRAINT `FK_kingdom_id` FOREIGN KEY (`kingdomId`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+ALTER TABLE `taxadescrblock`
+  DROP FOREIGN KEY `FK_taxadescrblock_tid`;
+
+ALTER TABLE `taxadescrblock`
+  DROP INDEX `Index_unique`,
+  ADD INDEX `FK_taxadescrblock_tid_idx`(`tid`),
+  ADD CONSTRAINT `FK_taxadescrblock_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON UPDATE CASCADE;
+
+ALTER TABLE `taxadescrstmts`
+  MODIFY COLUMN `heading` varchar(75) NULL DEFAULT NULL AFTER `tdbid`;
+
+ALTER TABLE `taxaresourcelinks`
+  ADD UNIQUE INDEX `UNIQUE_taxaresource`(`tid`, `sourcename`);
+
+ALTER TABLE `taxavernaculars`
+  MODIFY COLUMN `Language` varchar(15) NULL DEFAULT NULL AFTER `VernacularName`,
+  DROP INDEX `unique-key`,
+  ADD UNIQUE INDEX `unique-key`(`VernacularName`, `TID`, `langid`);
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -3167,7 +3326,7 @@ TRUNCATE TABLE `taxonunits`;
 
 ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
-    ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`) USING BTREE,
+    ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`),
     ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`) VALUES
@@ -3376,16 +3535,42 @@ INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+ALTER TABLE `taxstatus`
+  ADD COLUMN `modifiedBy` varchar(45) NULL AFTER `SortSequence`,
+  DROP INDEX `Index_hierarchy`,
+  ADD INDEX `Index_tid`(`tid`);
+
+ALTER TABLE `uploadimagetemp`
+  CHANGE COLUMN `specimengui` `sourceIdentifier` varchar(150) NULL DEFAULT NULL AFTER `dbpk`,
+  MODIFY COLUMN `url` varchar(255) NULL DEFAULT NULL AFTER `tid`,
+  ADD COLUMN `sourceUrl` varchar(255) NULL AFTER `owner`,
+  ADD COLUMN `referenceurl` varchar(255) NULL AFTER `sourceUrl`,
+  ADD COLUMN `copyright` varchar(255) NULL AFTER `referenceurl`,
+  ADD COLUMN `accessrights` varchar(255) NULL AFTER `copyright`,
+  ADD COLUMN `rights` varchar(255) NULL AFTER `accessrights`,
+  ADD COLUMN `locality` varchar(250) NULL AFTER `rights`;
+
+ALTER TABLE `uploadspectemp`
+  CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR(32) NULL DEFAULT NULL COMMENT 'PreservedSpecimen, LivingSpecimen, HumanObservation' ;
+
+ALTER TABLE `uploadspecparameters`
+  MODIFY COLUMN `Path` varchar(500) NULL DEFAULT NULL AFTER `Code`;
+
+ALTER TABLE `uploadspectemp`
+  ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
+  ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`);
+
 ALTER TABLE `uploadtaxa`
     DROP INDEX `UNIQUE_sciname` ,
     ADD COLUMN `kingdomId` int(11) NULL AFTER `Family`,
     ADD COLUMN `kingdomName` varchar(250) NULL AFTER `kingdomId`,
     ADD UNIQUE INDEX `UNIQUE_sciname` (`SciName` ASC, `RankId` ASC, `Author` ASC, `AcceptedStr` ASC),
-    ADD INDEX `kingdomId_index`(`kingdomId`) USING BTREE,
-    ADD INDEX `kingdomName_index`(`kingdomName`) USING BTREE;
+    ADD INDEX `kingdomId_index`(`kingdomId`),
+    ADD INDEX `kingdomName_index`(`kingdomName`),
+    MODIFY COLUMN `UnitInd3` varchar(45) NULL DEFAULT NULL AFTER `UnitName2`;
 
-ALTER TABLE `uploadspectemp`
-  CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR(32) NULL DEFAULT NULL COMMENT 'PreservedSpecimen, LivingSpecimen, HumanObservation' ;
+ALTER TABLE `userroles`
+  ADD UNIQUE INDEX `Unique_userroles`(`uid`, `role`, `tablename`, `tablepk`);
 
 ALTER TABLE `users` ADD COLUMN `middleinitial` varchar(2) AFTER `firstname`;
 

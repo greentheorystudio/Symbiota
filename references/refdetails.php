@@ -299,7 +299,7 @@ else{
 										<b><?php echo $fieldArr['NumberVolumes']; ?>: </b>
 									</div>
 									<div>
-										<input type="text" name="numbervolumnes" id="numbervolumnes" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['numbervolumnes']; ?>" />
+										<input type="text" name="numbervolumes" id="numbervolumes" tabindex="100" maxlength="45" style="width:100px;" value="<?php echo $refArr['numbervolumes']; ?>" />
 									</div>
 								</div>
 								<?php

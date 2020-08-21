@@ -10,7 +10,7 @@ $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $refType = array_key_exists('reftype',$_REQUEST)?$_REQUEST['reftype']:0;
 
 if($refId) {
-	$sql = 'SELECT o.refid, o.parentRefId, o.title, o.shorttitle, o.alternativetitle, o.numbervolumnes, o.ReferenceTypeId, '. 
+	$sql = 'SELECT o.refid, o.parentRefId, o.title, o.shorttitle, o.alternativetitle, o.numbervolumes, o.ReferenceTypeId, '.
 		'o.pubdate, o.edition, o.volume, o.number, o.placeofpublication, o.publisher, o.isbn_issn '.
 		'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 		'WHERE o.refid = '.$refId;
@@ -36,12 +36,12 @@ if($refId) {
 			$retArr['placeofpublication'] = $r->placeofpublication;
 			$retArr['publisher'] = $r->publisher;
 			$retArr['isbn_issn'] = $r->isbn_issn;
-			$retArr['numbervolumnes'] = $r->numbervolumnes;
+			$retArr['numbervolumes'] = $r->numbervolumes;
 		}
 		$rs->close();
 	}
 	if($retArr['parentRefId2']){
-		$sql = 'SELECT o.title, o.edition, o.numbervolumnes, o.placeofpublication, o.publisher, o.ReferenceTypeId '. 
+		$sql = 'SELECT o.title, o.edition, o.numbervolumes, o.placeofpublication, o.publisher, o.ReferenceTypeId '.
 			'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 			'WHERE o.refid = '.$retArr['parentRefId2'];
 		//echo $sql;
@@ -53,7 +53,7 @@ if($refId) {
 				else{
 					$retArr['secondarytitle'] = $r->title;
 				}
-				$retArr['numbervolumnes'] = $r->numbervolumnes;
+				$retArr['numbervolumes'] = $r->numbervolumes;
 				$retArr['edition'] = $r->edition;
 				$retArr['placeofpublication'] = $r->placeofpublication;
 				$retArr['publisher'] = $r->publisher;
