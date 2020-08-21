@@ -289,7 +289,7 @@ class OccurrenceIndividualManager extends Manager{
 	{
 		$retArr = array();
 		$sql = 'SELECT c.comid, c.comment, u.username, c.reviewstatus, c.initialtimestamp '.
-			'FROM omoccurcomments c INNER JOIN userlogin u ON c.uid = u.uid '.
+			'FROM omoccurcomments c INNER JOIN users u ON c.uid = u.uid '.
 			'WHERE (c.occid = '.$this->occid.') ';
 		if(!$isEditor) {
             $sql .= 'AND c.reviewstatus IN(1,3) ';

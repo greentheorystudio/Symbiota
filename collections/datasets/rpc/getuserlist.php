@@ -7,8 +7,8 @@ $con = $connection->getConnection();
 $retArr = array();
 $term = $con->real_escape_string($_REQUEST['term']);
 
-$sql = 'SELECT CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",l.username," [#",u.uid,"]") AS username '. 
-	'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
+$sql = 'SELECT CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",u.username," [#",u.uid,"]") AS username '.
+	'FROM users u '.
 	'WHERE u.lastname = "'.$term.'" OR l.username = "'.$term.'"';
 //echo $sql;
 $rs = $con->query($sql);

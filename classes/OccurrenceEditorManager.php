@@ -762,7 +762,7 @@ class OccurrenceEditorManager {
 			$sql .= 'LEFT JOIN images i ON o2.occid = i.occid ';
 		}
 		if(strpos($this->sqlWhere,'ul.username')){
-			$sql .= 'LEFT JOIN omoccuredits ome ON o2.occid = ome.occid LEFT JOIN userlogin ul ON ome.uid = ul.uid ';
+			$sql .= 'LEFT JOIN omoccuredits ome ON o2.occid = ome.occid LEFT JOIN users ul ON ome.uid = ul.uid ';
 		}
         if(strpos($this->sqlWhere,'oas.verbatimsciname')){
             $sql .= 'LEFT JOIN omoccurassociations oas ON o2.occid = oas.occid ';
@@ -1531,7 +1531,7 @@ class OccurrenceEditorManager {
 	{
 		$retArr = array();
 		$sql = 'SELECT v.ovsid, v.ranking, v.notes, l.username '.
-			'FROM omoccurverification v LEFT JOIN userlogin l ON v.uid = l.uid '.
+			'FROM omoccurverification v LEFT JOIN users l ON v.uid = l.uid '.
 			'WHERE v.category = "identification" AND v.occid = '.$this->occid;
 		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);

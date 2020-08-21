@@ -471,3 +471,15 @@ UPDATE taxa AS t LEFT JOIN taxaenumtree AS e ON t.TID = e.tid
     LEFT JOIN taxonkingdoms AS k ON t2.SciName = k.kingdom_name
     SET t.kingdomid = k.kingdom_id
     WHERE t2.RankId = 10 AND e.taxauthid = 1 AND (t.kingdomid = 100);
+
+ALTER TABLE `users`
+  ADD COLUMN `username` varchar(45) NOT NULL AFTER `lastname`,
+  ADD COLUMN `password` varchar(255) NOT NULL AFTER `username`,
+  ADD COLUMN `lastlogindate` datetime AFTER `usergroups`;
+
+UPDATE users AS u LEFT JOIN userlogin AS ul ON u.uid = ul.uid
+  SET u.username = ul.username,
+  u.`password` = ul.`password`,
+  u.lastlogindate = ul.lastlogindate;
+
+DROP TABLE IF EXISTS `userlogin`;

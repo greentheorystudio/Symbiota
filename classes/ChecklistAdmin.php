@@ -381,9 +381,8 @@ class ChecklistAdmin{
     public function getEditors(): array
     {
 		$editorArr = array();
-		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",l.username,")") as uname '.
+		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") as uname '.
 			'FROM userroles ur INNER JOIN users u ON ur.uid = u.uid '.
-			'INNER JOIN userlogin l ON u.uid = l.uid '.
 			'WHERE (ur.role = "ClAdmin") AND (ur.tablename = "fmchecklists") AND (ur.tablepk = '.$this->clid.') '.
 			'ORDER BY u.lastname,u.firstname';
 		if($rs = $this->conn->query($sql)){
@@ -479,8 +478,8 @@ class ChecklistAdmin{
 	public function getUserList(): array
     {
 		$returnArr = array();
-		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",l.username,")") AS uname '.
-			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
+		$sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname,u.firstname)," (",u.username,")") AS uname '.
+			'FROM users u '.
 			'ORDER BY u.lastname,u.firstname';
 		//echo $sql;
 		$rs = $this->conn->query($sql);
