@@ -352,10 +352,10 @@ class ProfileManager extends Manager{
         $values .= ', "'.$this->cleanInStr($person->getUserName()).'"';
         $fields .= ', password';
         if($this->encryption === 'password'){
-            $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'"))';
+            $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'")';
         }
         if($this->encryption === 'sha2'){
-            $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224))';
+            $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224)';
         }
 		if($person->getTitle()){
 			$fields .= ', title';
