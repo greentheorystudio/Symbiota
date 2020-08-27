@@ -150,7 +150,7 @@ include(__DIR__ . '/../header.php');
                             <p class="body footer_note">Report by: K. Hill,
                                 Smithsonian Marine Station<br/>
                                 Submit additional information, photos or comments to:<br>
-                                <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></p></td>
+                                <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></p></td>
                     </tr>
                 </table>
 </div>

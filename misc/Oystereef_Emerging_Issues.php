@@ -219,7 +219,7 @@ include(__DIR__ . '/../header.php');
                     Photo courtesy of PBS, available online at: <br/>
                     <a href="http://www-tc.pbs.org/newshour/indepth_coverage/science/dna/images/timeline_oysters.jpg">http://www-tc.pbs.org/newshour/indepth_coverage/science/dna/images/timeline_oysters.jpg</a><br/>
                     Submit additional information, photos or comments to:<br/>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
                 </p>
             </td>
         </tr>

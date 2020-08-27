@@ -600,7 +600,7 @@ Photo courtesy USGS.</span></td>
                     J. Masterson, Smithsonian Marine Station<br>
                     Submit additional information, photos or comments
                     to:<br>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a></p></td>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu </a></p></td>
         </tr>
     </table>
 </div>

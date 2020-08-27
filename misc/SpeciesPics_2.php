@@ -820,7 +820,7 @@ include(__DIR__ . '/../header.php');
                         <br>
                         Want to contribute a photograph to the Gallery?&nbsp; Contact</font><font size="2"
                                                                                                   color="#000080">:<br>
-                        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></font></p>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></font></p>
         </tr>
     </table>
 </div>

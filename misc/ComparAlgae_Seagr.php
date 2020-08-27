@@ -65,7 +65,7 @@ ovaries.&nbsp;&nbsp;<br>
                 <p align="center"><font size="2" color="#000080">Report by: K. Hill,
                         Smithsonian Marine Station<br>
                         Submit additional information, photos or comments to:<br>
-                        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
             </td>
         </tr>
     </table>

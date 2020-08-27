@@ -864,7 +864,7 @@ include(__DIR__ . '/../header.php');
             <td width="539"><p align="center">&nbsp;
                 <p align="center"><font color="#000080">Want to contribute a photograph
                         to the Gallery?&nbsp; Contact</font><font size="2" color="#000080">:<br>
-                        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></font>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></font>
         </tr>
     </table>
 </div>

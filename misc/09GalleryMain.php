@@ -51,7 +51,7 @@ include(__DIR__ . '/../header.php');
                 <p align="center">&nbsp;
                 <p align="center"><font color="#000080">Want to contribute a photograph to
                         the Gallery?&nbsp; Contact</font><font size="2" color="#000080">:<br>
-                        <a href="mailto:smsweb@serc.si.edu">irl_webmaster@si.edu</a>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
                 <p align="center">&nbsp;</td>
         </tr>
     </table>

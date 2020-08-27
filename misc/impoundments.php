@@ -348,7 +348,7 @@ include(__DIR__ . '/../header.php');
                 <p align="center" class="drkbluenorm"><font size="2" color="#036">Report by: K. Hill,
                         Smithsonian Marine Station<br>
                         Submit additional information, photos or comments to:<br>
-                        <span lang="en-us"><a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></span></font>
+                        <span lang="en-us"><a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></span></font>
                 </p></td>
         </tr>
     </table>

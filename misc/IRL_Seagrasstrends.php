@@ -83,7 +83,7 @@ include(__DIR__ . '/../header.php');
 
                 <p class="footer_note">Report by: J. Masterson, Smithsonian Marine Station<br>
                     Submit additional information, photos or comments to:<br>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
                 </p>
             </td>
         </tr>

@@ -567,7 +567,7 @@ include(__DIR__ . '/../header.php');
             <td>
                 <p class="footer_note">Report by: Joseph Dineen, Smithsonian Marine Station at Fort Pierce<br>
                     Submit additional information, photos or comments to:<br>
-                    irl_webmaster@si.edu
+                    IRLWebmaster@si.edu
                 </p>
             </td>
         </tr>

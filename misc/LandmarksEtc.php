@@ -523,7 +523,7 @@ include(__DIR__ . '/../header.php');
             <td height="19" colspan="4" align="center"><p>&nbsp;</p>
                 <p><font color="#000080">Want to contribute a photograph to the Gallery?&nbsp;
                         Contact</font><font size="2" color="#000080">:<br>
-                        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
             </td>
         </tr>
     </table>

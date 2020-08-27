@@ -180,27 +180,111 @@ h1{
 	background:#999999;
 }
 
-/* Quick Search Plugin */
-#quicksearchtext{
-	margin-top:0;
-	padding-bottom:0;
+.as {
+	clear: both;
+	padding-top: 20px;
+	font-size: 15px;
+	margin-right: 60px;
+	text-align: right;
+}
+#quicksearchbutton {
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	text-align: center;
+	color: #0C5;
+	font-size: 24px;
+	font-weight: 300;
+	margin: 5em auto;
+	padding: 20px 0;
+	width: 220px;
+	height: 30px;
+	background: #186aa8;
+	border: 1px solid #50aade;
+	color: #FFF;
+	overflow: hidden;
+	height: auto;
+	transition: all 0.5s;
+}
+#quicksearchbutton:hover,
+#quicksearchbutton:active {
+	text-decoration: none;
+	color: #FFFFFF;
+	background: #679146;
+	cursor: pointer;
+}
+#quicksearchbutton span {
+	display: inline-block;
+	position: relative;
+	padding-right: 0;
+	transition: padding-right 0.5s;
+}
+#quicksearchbutton span:after {
+	content: ' ';
+	position: absolute;
+	top: 0;
+	right: -18px;
+	opacity: 0;
+	width: 10px;
+	height: 10px;
+	margin-top: -10px;
+	background: rgba(0, 0, 0, 0);
+	border: 3px solid #FFF;
+	border-top: none;
+	border-right: none;
+	transition: opacity 0.5s, top 0.5s, right 0.5s;
+	transform: rotate(-45deg);
+}
+#quicksearchbutton:hover span,
+#quicksearchbutton:active span {
+	padding-right: 30px;
+}
+#quicksearchbutton:hover span:after,
+#quicksearchbutton:active span:after {
+	transition: opacity 0.5s, top 0.5s, right 0.5s;
+	opacity: 1;
+	border-color: #50aade;
+	right: 0;
+	top: 50%;
+}
+.searchtop {
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.searcharea {
+	width: 100%;
+	max-width: none;
+	margin-top: -164px;
+	padding-top: 231px;
+	margin-bottom: 83px;
+	background: url(/images/monarch-v5.png) no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+input#quicksearchtaxon {
+	border: solid 5px #679146;
+}
+#quicksearchtext {
+	margin-top: 0px;
+	padding-bottom: 0px;
 	float: left;
 }
-
-#quicksearchbutton{
-	margin-left:10px;
-	margin-top:0;
-	margin-bottom:0;
-	padding-bottom:0;
+#quicksearchbutton {
+	margin-left: 10px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 	float: left;
 }
-
-#quicksearchtaxon{
-	width: 250px;
+#quicksearchtaxon {
+	width: 70%;
+	height: 70px;
 	float: left;
-	margin-bottom:0;
-	padding-bottom:0;
-	font-family: Arial, Helvetica, sans-serif;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	font-size: 24px;
+	padding-left: 15px;
 }
 
 /* Slideshow Plugin */

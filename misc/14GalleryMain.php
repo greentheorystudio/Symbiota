@@ -42,7 +42,7 @@ include(__DIR__ . '/../header.php');
             <td>
                 <p class="footer_note">Want to contribute a photograph to
                     the Gallery? Contact:<br/>
-                    <a href="mailto:smsweb@serc.si.edu">irl_webmaster@si.edu</a>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
             </td>
         </tr>
     </table>

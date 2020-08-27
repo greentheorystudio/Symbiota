@@ -1074,7 +1074,7 @@ include(__DIR__ . '/../header.php');
             <td width="539"><p align="center">
                 <p align="center"><font color="#000080">Want to contribute a photograph
                         to the Gallery? Contact</font><font size="2" color="#000080">:<br>
-                        <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a><br>
+                        <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a><br>
                         Page last updated: April 30, 2007</font>
         </tr>
     </table>

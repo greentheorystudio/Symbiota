@@ -62,7 +62,7 @@ include(__DIR__ . '/../header.php');
             <td><p class="body"><strong>Image Use:</strong> With the exception of images clearly attributed to other
                     institutions, most photographs in this gallery are subject to the Smithsonian Institution's <a
                             href="http://www.si.edu/termsofuse">Terms of Use</a> policy. Contact the <a
-                            href="mailto:irl_webmaster@si.edu">Webmaster</a><a href="irl_webmaster@si.edu"></a> to
+                            href="mailto:IRLWebmaster@si.edu">Webmaster</a><a href="IRLWebmaster@si.edu"></a> to
                     request use for commercial purposes.</p></td>
         </tr>
     </table>
@@ -6239,7 +6239,7 @@ Photo: Paula Mikkelson, HBOI</span></td>
         <tr>
             <td>
                 <p class="footer_note">Submit additional information, photos or comments to: <br/>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a></p>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu </a></p>
             </td>
         </tr>
     </table>

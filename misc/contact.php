@@ -29,7 +29,7 @@ include(__DIR__ . '/../header.php');
                     <br/>
                     Phone: 772.462.6220&nbsp;FAX: 772.461.8154<br/>
                     <br/>
-                    Send Comments to: <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></font></p>
+                    Send Comments to: <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></font></p>
             </td>
         </tr>
     </table>

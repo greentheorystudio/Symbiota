@@ -293,7 +293,7 @@ include(__DIR__ . '/../header.php');
 
                     <br/>
                     Submit additional information, photos or comments to:<br/>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
         </tr>
     </table>
 </div>

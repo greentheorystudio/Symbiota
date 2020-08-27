@@ -590,7 +590,7 @@ include(__DIR__ . '/../header.php');
                     Photos by: (clockwise from top left) LH Sweat, J Murray, J Angy, &amp; H Kington<br>
                     Submit additional information, photos or comments
                     to:<br>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
                 </p>
             </td>
         </tr>

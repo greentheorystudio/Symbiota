@@ -51,20 +51,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 include(__DIR__ . '/header.php');
 ?>
 <div  id="innertext">
-    <div style="float:right;width:380px;">
-        <div style="clear:both;float:right;width:320px;margin-top:8px;margin-right:8px;padding:5px;-moz-border-radius:5px;-webkit-border-radius:5px;border:1px solid black;" >
-            <div style="float:left;width:350px;">
-                <?php
-                $searchText = 'Taxon Search';
-                $buttonText = 'Search';
-                include_once(__DIR__ . '/classes/PluginsManager.php');
-                $pluginManager = new PluginsManager();
-                $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
-                echo $quicksearch;
-                ?>
-            </div>
-        </div>
-    </div>
     <div style="margin-top:15px;padding: 0 10px;">
         Sweeping along 156 miles of Florida’s eastern coast, the Indian River Lagoon (IRL) is home to a wealth of habitats
         and spectacular biodiversity. Its seagrass beds, mangroves, oyster reefs, salt marshes, tidal flats, scrubland,
@@ -84,6 +70,19 @@ include(__DIR__ . '/header.php');
     </div>
     <div style="margin-top:15px;padding: 0 10px;">
         As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
+    </div>
+    <div class="searcharea">
+        <div class="searchtop">
+            <?php
+            $searchText = '';
+            $buttonText = 'Search';
+            include_once(__DIR__ . '/classes/PluginsManager.php');
+            $pluginManager = new PluginsManager();
+            $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
+            echo $quicksearch;
+            ?>
+            <div class="as"> <a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
+        </div>
     </div>
 </div>
 

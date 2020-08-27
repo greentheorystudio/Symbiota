@@ -420,7 +420,7 @@ include(__DIR__ . '/../header.php');
     <table style="border:0;width:700px;margin-left:auto;margin-right:auto;">
         <tr>
             <td><p class="footer_note">Report by: J. Masterson, Smithsonian Marine Station <br/>
-                    Submit additional information, photos or comments to: <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu </a>
+                    Submit additional information, photos or comments to: <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu </a>
                 </p></td>
         </tr>
     </table>

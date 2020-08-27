@@ -218,7 +218,7 @@ include(__DIR__ . '/../header.php');
             <td><p class="footer_note">Compiled and edited by LH Sweat <br/>
                     For questions, comments or contributions, <br/>
                     please contact us at:<br>
-                    <a href="mailto:irl_webmaster@si.edu">irl_webmaster@si.edu</a></p></td>
+                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a></p></td>
         </tr>
     </table>
 </div>
