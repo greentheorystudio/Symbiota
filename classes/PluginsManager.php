@@ -315,7 +315,7 @@ class PluginsManager {
 		return $html;
 	}
 
-	public function createQuickSearch($buttonText,$searchText='',$placeholderText=''): string
+	public function createQuickSearch($buttonText,$searchText = '',$placeholderText = ''): string
 	{
 		global $CLIENT_ROOT;
 		$html = '';
