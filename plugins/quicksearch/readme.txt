@@ -11,10 +11,13 @@ Modify main.css file to customize quick search plugin to your preferences.
 		//Text that will appear on search button. 
 		$buttonText = 'Search';
 
-		//---------------------------DO NOT CHANGE BELOW HERE-----------------------------
+		//Text that will appear as the placeholder.
+        $placeholderText = 'Enter scientific name';
+
+        //---------------------------DO NOT CHANGE BELOW HERE-----------------------------
 		include_once($SERVER_ROOT.'/classes/PluginsManager.php');
 		$pluginManager = new PluginsManager();
-		$quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
+		$quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText,$placeholderText);
 		echo $quicksearch;
 		?>
 	</div>

@@ -196,83 +196,85 @@ include(__DIR__ . '/../header.php');
         <form id="tdform" name="tdform" action="dynamictaxalist.php" method='POST' onsubmit="return verifySubmit();">
             <fieldset style="width:90%;padding:8px;margin: 0 auto;">
                 <legend><b>Set Criteria</b></legend>
-                <div style="width:100%;display:flex;justify-content:space-between;">
-                    <div>
-                        Kingdom:
-                        <select id="kingdomSelect" style="width:200px;" onchange="processSelection('kingdomSelect',this.value);">
-                            <option value="">Select Kingdom</option>
-                            <option value="">-----------------------</option>
-                            <?php
-                            foreach ($kingdomArr as $tid => $kArr) {
-                                echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $kArr['display'] . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        Phylum:
-                        <select id="phylumSelect" style="width:200px;" onchange="processSelection('phylumSelect',this.value);">
-                            <option value="">Select Phylum</option>
-                            <option value="">-----------------------</option>
-                            <?php
-                            foreach ($phylumArr as $tid => $pArr) {
-                                echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $pArr['display'] . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        Class:
-                        <select id="classSelect" style="width:200px;" onchange="processSelection('classSelect',this.value);">
-                            <option value="">Select Class</option>
-                            <option value="">-----------------------</option>
-                            <?php
-                            foreach ($classArr as $tid => $cArr) {
-                                echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $cArr['display'] . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div style="width:100%;margin-top:5px;display:flex;justify-content:space-between;">
-                    <div>
-                        Order:
-                        <input name="orderinput" id="orderinput" type="text" style="width:200px;" value="<?php echo $orderInput; ?>" />
-                    </div>
-                    <div>
-                        Family:
-                        <input name="familyinput" id="familyinput" type="text" style="width:200px;" value="<?php echo $familyInput; ?>" />
-                    </div>
-                </div>
-                <div style="width:100%;margin-top:5px;display:flex;justify-content:space-between;">
-                    <div>
-                        Scientific Name:
-                        <input name="scinameinput" id="scinameinput" type="text" style="width:250px;" value="<?php echo $scinameInput; ?>" />
-                    </div>
-                    <div>
-                        Common Name:
-                        <input name="commoninput" id="commoninput" type="text" style="width:350px;" value="<?php echo $commonInput; ?>" />
+                <div style="float:left;">
+                    <div style="display:flex;flex-direction:column;">
+                        <div>
+                            <span style="display:inline-block;width:120px;">Kingdom:</span>
+                            <select id="kingdomSelect" style="width:200px;" onchange="processSelection('kingdomSelect',this.value);">
+                                <option value="">Select Kingdom</option>
+                                <option value="">-----------------------</option>
+                                <?php
+                                foreach ($kingdomArr as $tid => $kArr) {
+                                    echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $kArr['display'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Phylum:</span>
+                            <select id="phylumSelect" style="width:200px;" onchange="processSelection('phylumSelect',this.value);">
+                                <option value="">Select Phylum</option>
+                                <option value="">-----------------------</option>
+                                <?php
+                                foreach ($phylumArr as $tid => $pArr) {
+                                    echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $pArr['display'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Class:</span>
+                            <select id="classSelect" style="width:200px;" onchange="processSelection('classSelect',this.value);">
+                                <option value="">Select Class</option>
+                                <option value="">-----------------------</option>
+                                <?php
+                                foreach ($classArr as $tid => $cArr) {
+                                    echo '<option value="' . $tid . '" ' . ((int)$tid === $targetTid ? 'SELECTED' : '') . '>' . $cArr['display'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Order:</span>
+                            <input name="orderinput" id="orderinput" type="text" style="width:200px;" value="<?php echo $orderInput; ?>" />
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Family:</span>
+                            <input name="familyinput" id="familyinput" type="text" style="width:200px;" value="<?php echo $familyInput; ?>" />
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Scientific Name:</span>
+                            <input name="scinameinput" id="scinameinput" type="text" style="width:250px;" value="<?php echo $scinameInput; ?>" />
+                        </div>
                     </div>
                 </div>
-                <div style="float:left;margin:10px;">
-                    <div style="float:left;">
-                        Sort By:
-                        <select name="sortSelect">
-                            <option value="kingdom" <?php echo ($sortSelect === 'kingdom'?'SELECTED':''); ?>>Kingdom</option>
-                            <option value="phylum" <?php echo ($sortSelect === 'phylum'?'SELECTED':''); ?>>Phylum</option>
-                            <option value="class" <?php echo ($sortSelect === 'class'?'SELECTED':''); ?>>Class</option>
-                            <option value="order" <?php echo ($sortSelect === 'order'?'SELECTED':''); ?>>Order</option>
-                            <option value="family" <?php echo ($sortSelect === 'family'?'SELECTED':''); ?>>Family</option>
-                            <option value="sciname" <?php echo ($sortSelect === 'sciname'?'SELECTED':''); ?>>Scientific Name</option>
-                        </select>
+                <div style="float:right;">
+                    <div style="display:flex;flex-direction:column;">
+                        <div style="">
+                            <span style="display:inline-block;width:120px;">Common Name:</span>
+                            <input name="commoninput" id="commoninput" type="text" style="width:350px;" value="<?php echo $commonInput; ?>" />
+                        </div>
+                        <div style="margin-top:8px;">
+                            <span style="display:inline-block;width:120px;">Sort By:</span>
+                            <select name="sortSelect">
+                                <option value="kingdom" <?php echo ($sortSelect === 'kingdom'?'SELECTED':''); ?>>Kingdom</option>
+                                <option value="phylum" <?php echo ($sortSelect === 'phylum'?'SELECTED':''); ?>>Phylum</option>
+                                <option value="class" <?php echo ($sortSelect === 'class'?'SELECTED':''); ?>>Class</option>
+                                <option value="order" <?php echo ($sortSelect === 'order'?'SELECTED':''); ?>>Order</option>
+                                <option value="family" <?php echo ($sortSelect === 'family'?'SELECTED':''); ?>>Family</option>
+                                <option value="sciname" <?php echo ($sortSelect === 'sciname'?'SELECTED':''); ?>>Scientific Name</option>
+                            </select>
+                        </div>
+                        <div style="margin-top:90px;">
+                            <div style="float:left;">
+                                <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to species with information
+                            </div>
+                            <div style="float:right;">
+                                <input name="targettid" id="targettid" type="hidden" value="<?php echo $targetTid; ?>" />
+                                <input name="action" type="submit" value="Build Species List"/>
+                            </div>
+                        </div>
                     </div>
-                    <div style="float:left;margin-left:10px;">
-                        <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to taxa with information
-                    </div>
-                </div>
-                <div style="float:right;margin:10px;">
-                    <input name="targettid" id="targettid" type="hidden" value="<?php echo $targetTid; ?>" />
-                    <input name="action" type="submit" value="Build Species List"/>
                 </div>
             </fieldset>
         </form>
