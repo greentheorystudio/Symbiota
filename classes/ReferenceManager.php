@@ -145,7 +145,7 @@ class ReferenceManager{
 	{
 		$retArr = array();
 		$sql = 'SELECT o.refid, o.parentRefId, o.title, o.secondarytitle, o.shorttitle, o.tertiarytitle, o.alternativetitle, o.typework, o.figures, '. 
-			'o.pubdate, o.edition, o.volume, o.numbervolumnes, o.number, o.pages, o.section, o.placeofpublication, o.publisher, o.isbn_issn, o.url, '.
+			'o.pubdate, o.edition, o.volume, o.numbervolumes, o.number, o.pages, o.section, o.placeofpublication, o.publisher, o.isbn_issn, o.url, '.
 			'o.guid, o.ispublished, o.notes, t.ReferenceType, t.ReferenceTypeId '.
 			'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 			'WHERE o.refid = '.$refId;
@@ -171,7 +171,7 @@ class ReferenceManager{
 				$retArr['pubdate'] = $r->pubdate;
 				$retArr['edition'] = $r->edition;
 				$retArr['volume'] = $r->volume;
-				$retArr['numbervolumnes'] = $r->numbervolumnes;
+				$retArr['numbervolumes'] = $r->numbervolumes;
 				$retArr['number'] = $r->number;
 				$retArr['pages'] = $r->pages;
 				$retArr['section'] = $r->section;
@@ -211,14 +211,14 @@ class ReferenceManager{
 			}
 		}
 		if($retArr['parentRefId2']){
-			$sql = 'SELECT o.title, o.edition, o.numbervolumnes, o.placeofpublication, o.publisher '. 
+			$sql = 'SELECT o.title, o.edition, o.numbervolumes, o.placeofpublication, o.publisher '.
 				'FROM referenceobject AS o LEFT JOIN referencetype AS t ON o.ReferenceTypeId = t.ReferenceTypeId '.
 				'WHERE o.refid = '.$retArr['parentRefId2'];
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr['tertiarytitle'] = $r->title;
-					$retArr['numbervolumnes'] = $r->numbervolumnes;
+					$retArr['numbervolumes'] = $r->numbervolumes;
 					$retArr['edition'] = $r->edition;
 					$retArr['placeofpublication'] = $r->placeofpublication;
 					$retArr['publisher'] = $r->publisher;
@@ -512,8 +512,8 @@ class ReferenceManager{
 		if(!array_key_exists('volume',$pArr)){
 			$pArr['volume'] = '';
 		}
-		if(!array_key_exists('numbervolumnes',$pArr)){
-			$pArr['numbervolumnes'] = '';
+		if(!array_key_exists('numbervolumes',$pArr)){
+			$pArr['numbervolumes'] = '';
 		}
 		if(!array_key_exists('number',$pArr)){
 			$pArr['number'] = '';

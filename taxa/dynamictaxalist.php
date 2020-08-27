@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
+header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $index = array_key_exists('index',$_REQUEST)?(int)$_REQUEST['index']:0;

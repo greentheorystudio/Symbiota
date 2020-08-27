@@ -70,7 +70,7 @@ class KeyEditorManager extends KeyManager{
 		$parentStr = implode(',',$this->getParentArr($this->tid));
 		$sql = 'SELECT c.CharName, c.CID, ch.headingname, dep.CIDDependance, dep.CSDependance '.
 			'FROM ((kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID) '.
-			'INNER JOIN kmcharheading ch ON c.hid = ch.hid) LEFT JOIN kmchardependance dep ON c.CID = dep.CID '.
+			'INNER JOIN kmcharheading ch ON c.hid = ch.hid) LEFT JOIN kmchardependence dep ON c.CID = dep.CID '.
 			'WHERE ((ch.language = "'.$this->language.'") AND (c.CID Not In (SELECT DISTINCT chartl.CID FROM kmchartaxalink chartl '.
 			'WHERE (chartl.TID In ('.$parentStr.')) AND (chartl.Relation="exclude"))) '.
 			'AND (c.chartype = "UM" Or c.chartype="OM") AND (ctl.TID In ('.$parentStr.')) AND '.

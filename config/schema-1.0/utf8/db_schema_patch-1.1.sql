@@ -21,9 +21,10 @@ CREATE TABLE `tmtraits` (
   INDEX `FK_traits_uidcreated_idx` (`createduid` ASC),
   INDEX `FK_traits_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_traits_uidcreated`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_traits_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE);
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmstates` (
   `stateid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -43,11 +44,12 @@ CREATE TABLE `tmstates` (
   INDEX `FK_tmstate_uidcreated_idx` (`createduid` ASC),
   INDEX `FK_tmstate_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_tmstates_uidcreated`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmstates_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmstates_traits`
-    FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE);
+  FOREIGN KEY (`traitid`)   REFERENCES `tmtraits` (`traitid`)   ON DELETE RESTRICT   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmattributes` (
   `stateid` INT UNSIGNED NOT NULL,
@@ -70,16 +72,16 @@ CREATE TABLE `tmattributes` (
   INDEX `FK_attr_uidcreate_idx` (`createduid` ASC),
   INDEX `FK_tmattr_uidmodified_idx` (`modifieduid` ASC),
   CONSTRAINT `FK_tmattr_stateid`
-    FOREIGN KEY (`stateid`)   REFERENCES `tmstates` (`stateid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
+  FOREIGN KEY (`stateid`)   REFERENCES `tmstates` (`stateid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_occid`
-    FOREIGN KEY (`occid`)   REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
+  FOREIGN KEY (`occid`)   REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_imgid`
-    FOREIGN KEY (`imgid`)  REFERENCES `images` (`imgid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
+  FOREIGN KEY (`imgid`)  REFERENCES `images` (`imgid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidcreate`
-    FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
+  FOREIGN KEY (`createduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE,
   CONSTRAINT `FK_tmattr_uidmodified`
-    FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+  FOREIGN KEY (`modifieduid`)   REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmtraittaxalink` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -90,10 +92,10 @@ CREATE TABLE `tmtraittaxalink` (
   INDEX `FK_traittaxalink_traitid_idx` (`traitid` ASC),
   INDEX `FK_traittaxalink_tid_idx` (`tid` ASC),
   CONSTRAINT `FK_traittaxalink_traitid`
-    FOREIGN KEY (`traitid`)  REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  FOREIGN KEY (`traitid`)  REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_traittaxalink_tid`
-    FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE
-);
+  FOREIGN KEY (`tid`)  REFERENCES `taxa` (`TID`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tmtraitdependencies` (
   `traitid` INT UNSIGNED NOT NULL,
@@ -103,10 +105,10 @@ CREATE TABLE `tmtraitdependencies` (
   INDEX `FK_tmdepend_traitid_idx` (`traitid` ASC),
   INDEX `FK_tmdepend_stateid_idx` (`parentstateid` ASC),
   CONSTRAINT `FK_tmdepend_traitid` 
-    FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
+  FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_tmdepend_stateid`
-    FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE  
-);
+  FOREIGN KEY (`parentstateid`)  REFERENCES `tmstates` (`stateid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurassococcurrences`
   DROP FOREIGN KEY `omossococcur_occid`,
@@ -155,7 +157,7 @@ CREATE TABLE `lkupmunicipality` (
   KEY `fk_stateprovince` (`stateId`),
   KEY `index_municipalityname` (`municipalityName`),
   CONSTRAINT `lkupmunicipality_ibfk_1` FOREIGN KEY (`stateId`) REFERENCES `lkupstateprovince` (`stateId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `fmvouchers`
   DROP COLUMN `Collector`,
@@ -166,7 +168,8 @@ ALTER TABLE `fmvouchers`
 
 CREATE TABLE `temp_voucher_delete` (
   `clid` INT NOT NULL,
-  `occid` INT NOT NULL);
+  `occid` INT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `temp_voucher_delete`(clid,occid)
   SELECT CLID,occid FROM fmvouchers GROUP BY CLID, occid HAVING Count(*)>1;
@@ -266,7 +269,7 @@ CREATE TABLE `omoccurrevisions` (
   INDEX `Index_omrevisions_editor` (`externalEditor` ASC),
   CONSTRAINT `fk_omrevisions_occid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)   ON DELETE CASCADE   ON UPDATE CASCADE,
   CONSTRAINT `fk_omrevisions_uid`    FOREIGN KEY (`uid`)    REFERENCES `users` (`uid`)   ON DELETE SET NULL   ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurrevisions` 
   ADD COLUMN `guid` VARCHAR(45) NULL AFTER `externalEditor`,
@@ -290,7 +293,8 @@ CREATE TABLE `omcollpuboccurlink` (
   PRIMARY KEY (`pubid`, `occid`),
   INDEX `FK_ompuboccid_idx` (`occid` ASC),
   CONSTRAINT `FK_ompuboccid`  FOREIGN KEY (`occid`)  REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
-  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_ompubpubid`  FOREIGN KEY (`pubid`)  REFERENCES `omcollpublications` (`pubid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE `omsurveyprojlink`;
 DROP TABLE `omsurveyoccurlink`;
@@ -456,7 +460,8 @@ CREATE TABLE `omoccuraccessstats` (
   `initialtimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
   PRIMARY KEY (`oasid`),
   UNIQUE INDEX `UNIQUE_occuraccess` (`occid` ASC, `accessdate` ASC, `ipaddress` ASC, `accesstype` ASC),
-  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `omcollectioncontacts` (
   `collid` INT UNSIGNED NOT NULL,
@@ -468,7 +473,8 @@ CREATE TABLE `omcollectioncontacts` (
   PRIMARY KEY (`collid`, `uid`),
   INDEX `FK_contact_uid_idx` (`uid` ASC),
   CONSTRAINT `FK_contact_collid`   FOREIGN KEY (`collid`)   REFERENCES `omcollections` (`CollID`)   ON DELETE CASCADE   ON UPDATE CASCADE,
-  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE);
+  CONSTRAINT `FK_contact_uid`   FOREIGN KEY (`uid`)   REFERENCES `users` (`uid`)   ON DELETE CASCADE   ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `omoccurrencetypes` (
   `occurtypeid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -491,7 +497,8 @@ CREATE TABLE `omoccurrencetypes` (
   INDEX `FK_occurtype_tid_idx` (`tidinterpreted` ASC),
   CONSTRAINT `FK_occurtype_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurtype_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`)  ON DELETE SET NULL  ON UPDATE CASCADE,
-  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE);
+  CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tidinterpreted`) REFERENCES `taxa` (`TID`)  ON DELETE SET NULL  ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `omoccurrences` 
   ADD INDEX `Index_locality` (`locality`(100) ASC),
@@ -595,7 +602,7 @@ CREATE TABLE `glossarysources` (
   `additionalSources` varchar(1000) DEFAULT NULL,
   `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`tid`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `uploadglossary` (
   `term` varchar(150) DEFAULT NULL,
@@ -613,7 +620,7 @@ CREATE TABLE `uploadglossary` (
   `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY `term_index` (`term`),
   KEY `relatedterm_index` (`newGroupId`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `glossarytaxalink` 
   CHANGE COLUMN `glossgrpid` `glossid` INT(10) UNSIGNED NOT NULL ;
@@ -663,7 +670,7 @@ CREATE TABLE `paleochronostratigraphy` (
   INDEX `Period` (`Period`),
   INDEX `Epoch` (`Epoch`),
   INDEX `Stage` (`Stage`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `paleochronostratigraphy` VALUES ('1', 'Hadean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('2', 'Archean', null, null, null, null);
@@ -837,7 +844,7 @@ CREATE TABLE `omoccurlithostratigraphy` (
   INDEX `Member` (`Member`),
   CONSTRAINT `FK_occurlitho_chronoid` FOREIGN KEY (`chronoId`) REFERENCES `paleochronostratigraphy` (`chronoId`)  ON DELETE CASCADE  ON UPDATE CASCADE,
   CONSTRAINT `FK_occurlitho_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `useraccesstokens` (
   `tokid` int(11) NOT NULL AUTO_INCREMENT,
@@ -848,4 +855,4 @@ CREATE TABLE `useraccesstokens` (
   PRIMARY KEY (`tokid`),
   KEY `FK_useraccesstokens_uid_idx` (`uid`),
   CONSTRAINT `FK_useraccess_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE  ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
