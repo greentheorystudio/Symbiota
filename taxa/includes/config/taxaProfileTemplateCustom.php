@@ -65,7 +65,7 @@ if($taxonRank){
         $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
         $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$IRLNativeStatus,$IRLVernacularsDiv,$IRLSynonymsDiv,$centralImageDiv);
         $rightColumnElements = Array($IRLDescTabsDiv);
-        $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
+        $bottomRowElements = Array($mapThumbDiv,$IRLImgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
     elseif($taxonRank == 180){
@@ -86,7 +86,7 @@ if($taxonRank){
         $topRowElements = array();
         $leftColumnElements = Array($scinameHeaderDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$IRLDescTabsDiv);
-        $bottomRowElements = Array($imgDiv,$imgTabDiv);
+        $bottomRowElements = Array($IRLImgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
 }
