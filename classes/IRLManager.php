@@ -20,20 +20,22 @@ class IRLManager {
     public function getNativeStatus($tid): array
     {
         $returnArr = array();
-        $sql = 'SELECT TID, CLID ' .
-            'FROM fmchklsttaxalink  ' .
-            'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
-        //echo $sql;
-        $result = $this->conn->query($sql);
-        if($row = $result->fetch_object()){
-            if((int)$row->CLID === 13) {
-                $returnArr[] = 'NON-NATIVE';
+        if($tid){
+            $sql = 'SELECT TID, CLID ' .
+                'FROM fmchklsttaxalink  ' .
+                'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_object()){
+                if((int)$row->CLID === 13) {
+                    $returnArr[] = 'NON-NATIVE';
+                }
+                if((int)$row->CLID === 14) {
+                    $returnArr[] = 'CRYPTOGENIC';
+                }
             }
-            if((int)$row->CLID === 14) {
-                $returnArr[] = 'CRYPTOGENIC';
-            }
+            $result->free();
         }
-        $result->free();
         return $returnArr;
     }
 
