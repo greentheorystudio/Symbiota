@@ -121,6 +121,19 @@ if($nativeStatusArr){
 $IRLNativeStatus = ob_get_clean();
 
 ob_start();
+if(!$taxonManager->echoImages(0,1,0, 'sciname')){
+    echo '<div id="nocentralimage">';
+    if($isEditor){
+        echo '<a href="admin/tpeditor.php?category=imageadd&tid='.$taxonManager->getTid().'"><b>Add an Image</b></a>';
+    }
+    else{
+        echo 'Images<br/>not available';
+    }
+    echo '</div>';
+}
+$IRLCentralImageDiv = ob_get_clean();
+
+ob_start();
 ?>
     <div id="img-div">
         <?php

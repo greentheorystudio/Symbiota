@@ -63,28 +63,28 @@ $footerRowElements = array(); //Bottom horizontal bar in taxon profile page
 if($taxonRank){
     if($taxonRank > 180){
         $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
-        $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$IRLNativeStatus,$IRLVernacularsDiv,$IRLSynonymsDiv,$centralImageDiv);
+        $leftColumnElements = Array($taxonNotesDiv,$taxonSourcesDiv,$familyDiv,$IRLNativeStatus,$IRLVernacularsDiv,$IRLSynonymsDiv,$IRLCentralImageDiv);
         $rightColumnElements = Array($IRLDescTabsDiv);
         $bottomRowElements = Array($mapThumbDiv,$IRLImgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
     elseif($taxonRank == 180){
         $topRowElements = array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
+        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$IRLCentralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$IRLDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
     elseif($taxonRank >= 140){
         $topRowElements = array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
+        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$IRLCentralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$IRLDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array($footerLinksDiv);
     }
     else{
         $topRowElements = array();
-        $leftColumnElements = Array($scinameHeaderDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$centralImageDiv);
+        $leftColumnElements = Array($scinameHeaderDiv,$taxonNotesDiv,$taxonSourcesDiv,$projectDiv,$IRLCentralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$IRLDescTabsDiv);
         $bottomRowElements = Array($IRLImgDiv,$imgTabDiv);
         $footerRowElements = Array($footerLinksDiv);
