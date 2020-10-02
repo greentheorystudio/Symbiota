@@ -361,3 +361,77 @@ ol.mp_list li.mp_highlighted {
 	color:#212121;
 	border-radius:4px;
 }
+
+.quicksearchselectorcontainer {
+	position: relative;
+	height: 20px;
+	font-size: 0;
+}
+.quicksearchselectorcontainer input {
+	position: absolute;
+	top: 0;
+	z-index: 2;
+	opacity: 0;
+	cursor: pointer;
+	height: 18px;
+	width: 200px;
+	left: 30px;
+	margin: 0;
+}
+.quicksearchselectorcontainer input:checked {
+	z-index: 1;
+}
+.quicksearchselectorcontainer input:checked + label {
+	opacity: 1;
+	cursor: default;
+}
+.quicksearchselectorcontainer input:not(:checked) + label:hover {
+	opacity: 0.5;
+}
+.quicksearchselectorcontainer label {
+	color: black;
+	opacity: 0.33;
+	transition: opacity 0.25s ease;
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 24px;
+	display: inline-block;
+	width: 118px;
+	height: 100%;
+	margin: 0;
+	text-align: center;
+}
+.quicksearchselectorcontainer .toggle-inside {
+	border-radius: 18px;
+	background: #4a4a4a;
+	position: absolute;
+	transition: 0.25s ease all;
+	height: 18px;
+	width: 20px;
+	margin-top: 2px;
+}
+.quicksearchselectorcontainer label:last-of-type {
+	margin-left: 44px;
+}
+.quicksearchselectorcontainer .toggle-outside {
+	background: #fff;
+	position: absolute;
+	width: 52px;
+	left: 116px;
+}
+.quicksearchselectorcontainer input:checked ~ .toggle-outside .toggle-inside {
+	left: 2px;
+}
+.quicksearchselectorcontainer input ~ input:checked ~ .toggle-outside .toggle-inside {
+	left: 26px;
+}
+.quicksearchselectorcontainer input:checked + label:hover ~ .toggle-outside .toggle-inside {
+	height: 18px;
+	width: 18px;
+}
+.quicksearchselectorcontainer input:hover ~ .toggle-outside .toggle-inside {
+	width: 26px;
+}
+.quicksearchselectorcontainer input:hover ~ input:checked ~ .toggle-outside .toggle-inside {
+	left: 18px;
+}

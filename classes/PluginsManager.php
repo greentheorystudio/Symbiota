@@ -315,13 +315,15 @@ class PluginsManager {
 		return $html;
 	}
 
-	public function createQuickSearch($buttonText,$searchText = '',$placeholderText = '',$showSelector = false): string
+	public function createQuickSearch($buttonText,$searchText = '',$placeholderText = '',$showSelector = false,$defaultSetting = 'sciname'): string
 	{
 		global $CLIENT_ROOT;
 		$searchTextCssDisplay = ($searchText?'block':'none');
         $selectorTextCssDisplay = ($showSelector?'block':'none');
+        $scinameSelectorChecked = ($defaultSetting === 'sciname'?'checked':'');
+        $commonSelectorChecked = ($defaultSetting === 'common'?'checked':'');
         return <<<EOD
-            <link href="$CLIENT_ROOT/css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+            <link href="$CLIENT_ROOT/css/jquery-ui.css" type="text/css" rel="stylesheet" />
             <script type='text/javascript'>
                 if(!window.jQuery){
                     const jqresource = document.createElement("script");
@@ -415,15 +417,11 @@ class PluginsManager {
             </script>
             <form name="quicksearch" id="quicksearch" action="$CLIENT_ROOT/taxa/index.php" method="get" onsubmit="return verifyQuickSearch();">
                 <div id="quicksearchtext" style="display:$searchTextCssDisplay;"><b>$searchText</b></div>
-                <div id="quicksearchselectorcontainer" style="display:$selectorTextCssDisplay;">
-                    <div id="quicksearchscinameselectorcontainer">
-                        <label for="quicksearchscinameselector">Scientific Name</label>
-                        <input type="radio" name="quicksearchselector" id="quicksearchscinameselector" value="sciname" onchange="quicksearchselectorchange();" checked>
-                    </div>
-                    <div id="quicksearchcommonselectorcontainer">
-                        <label for="quicksearchcommonselector">Common Name</label>
-                        <input type="radio" name="quicksearchselector" id="quicksearchcommonselector" value="common" onchange="quicksearchselectorchange();">
-                    </div>
+                <div class="quicksearchselectorcontainer" style="display:$selectorTextCssDisplay;">
+                    <input type="radio" name="quicksearchselector" id="quicksearchscinameselector" value="sciname" onchange="quicksearchselectorchange();" $scinameSelectorChecked>
+                    <label for="quicksearchscinameselector">Scientific Name</label>
+                    <input type="radio" name="quicksearchselector" id="quicksearchcommonselector" value="common" onchange="quicksearchselectorchange();" $commonSelectorChecked>
+                    <label for="quicksearchcommonselector">Common Name</label><span class="toggle-outside"><span class="toggle-inside"></span></span>
                 </div>
                 <input type="text" name="quicksearchtaxon" placeholder="$placeholderText" id="quicksearchtaxon" title="Enter taxon name here." />
                 <input type="hidden" name="taxon" id="quicksearchtaxonvalue" />

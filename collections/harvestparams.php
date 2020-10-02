@@ -31,7 +31,7 @@ if(isset($_REQUEST['db'])){
     <title><?php echo $DEFAULT_TITLE.' '.$SEARCHTEXT['PAGE_TITLE']; ?></title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=9"></script>
