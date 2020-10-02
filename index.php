@@ -79,7 +79,9 @@ include(__DIR__ . '/header.php');
             $placeholderText = 'Scientific Name';
             include_once(__DIR__ . '/classes/PluginsManager.php');
             $pluginManager = new PluginsManager();
-            $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText,$placeholderText);
+            $pluginManager->setQuickSearchShowSelector(true);
+            $pluginManager->setQuickSearchDefaultSetting('common');
+            $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
             echo $quicksearch;
             ?>
             <div class="as"> <a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
