@@ -4,16 +4,17 @@ include_once('DbConnection.php');
 class PluginsManager {
 
 	private $conn;
+    private $quickSearchScinamePlaceholder = 'Scientific Name';
+    private $quickSearchCommonPlaceholder = 'Common Name';
+    private $quickSearchShowSelector = false;
+    private $quickSearchDefaultSetting = 'sciname';
 
 	public function __construct(){
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
  	}
 
- 	public function __destruct(){
-	}
-
-	public function createSlidewhow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval=7000): string
+ 	public function createSlidewhow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval=7000): string
 	{
 		if($width > 800){
 			$width = 800;
@@ -315,13 +316,14 @@ class PluginsManager {
 		return $html;
 	}
 
-	public function createQuickSearch($buttonText,$searchText = '',$placeholderText = '',$showSelector = false,$defaultSetting = 'sciname'): string
+	public function createQuickSearch($buttonText,$searchText = ''): string
 	{
 		global $CLIENT_ROOT;
 		$searchTextCssDisplay = ($searchText?'block':'none');
-        $selectorTextCssDisplay = ($showSelector?'block':'none');
-        $scinameSelectorChecked = ($defaultSetting === 'sciname'?'checked':'');
-        $commonSelectorChecked = ($defaultSetting === 'common'?'checked':'');
+        $selectorTextCssDisplay = ($this->quickSearchShowSelector?'block':'none');
+        $scinameSelectorChecked = ($this->quickSearchDefaultSetting === 'sciname'?'checked':'');
+        $commonSelectorChecked = ($this->quickSearchDefaultSetting === 'common'?'checked':'');
+        $initialPlaceholder = ($this->quickSearchDefaultSetting === 'sciname'?$this->quickSearchScinamePlaceholder:$this->quickSearchCommonPlaceholder);
         return <<<EOD
             <link href="$CLIENT_ROOT/css/jquery-ui.css" type="text/css" rel="stylesheet" />
             <script type='text/javascript'>
@@ -407,10 +409,10 @@ class PluginsManager {
                     var quicksearchselectorvalue = document.quicksearch.quicksearchselector.value;
                     var placeholdertext = '';
                     if(quicksearchselectorvalue === 'sciname'){
-                        placeholdertext = '$placeholderText';
+                        placeholdertext = '$this->quickSearchScinamePlaceholder';
                     }
                     if(quicksearchselectorvalue === 'common'){
-                        placeholdertext = 'Common Name';
+                        placeholdertext = '$this->quickSearchCommonPlaceholder';
                     }
                     document.getElementById("quicksearchtaxon").placeholder = placeholdertext;
                 }
@@ -423,10 +425,30 @@ class PluginsManager {
                     <input type="radio" name="quicksearchselector" id="quicksearchcommonselector" value="common" onchange="quicksearchselectorchange();" $commonSelectorChecked>
                     <label for="quicksearchcommonselector">Common Name</label><span class="toggle-outside"><span class="toggle-inside"></span></span>
                 </div>
-                <input type="text" name="quicksearchtaxon" placeholder="$placeholderText" id="quicksearchtaxon" title="Enter taxon name here." />
+                <input type="text" name="quicksearchtaxon" placeholder="$initialPlaceholder" id="quicksearchtaxon" title="Enter taxon name here." />
                 <input type="hidden" name="taxon" id="quicksearchtaxonvalue" />
                 <button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms">$buttonText</button>
             </form>
         EOD;
+    }
+
+    public function setQuickSearchScinamePlaceholder($val): void
+    {
+        $this->quickSearchScinamePlaceholder = $val;
+    }
+
+    public function setQuickSearchCommonPlaceholder($val): void
+    {
+        $this->quickSearchCommonPlaceholder = $val;
+    }
+
+    public function setQuickSearchShowSelector($val): void
+    {
+        $this->quickSearchShowSelector = $val;
+    }
+
+    public function setQuickSearchDefaultSetting($val): void
+    {
+        $this->quickSearchDefaultSetting = $val;
     }
 }
