@@ -330,7 +330,6 @@ class PluginsManager {
                 if(!window.jQuery){
                     const jqresource = document.createElement("script");
                     jqresource.src = "$CLIENT_ROOT/js/jquery.js";
-
                     document.getElementsByTagName("head")[0].appendChild(jqresource);
                     jqresource.onload = function(){
                         const jquiresource = document.createElement("script");
@@ -369,7 +368,6 @@ class PluginsManager {
                         },{ minLength: 3 });
                     });
                 }
-                
                 function initializeQuickSearch(){
                     $("#quicksearchtaxon").autocomplete({
                         source: function( request, response ) {
@@ -396,7 +394,6 @@ class PluginsManager {
                         }
                     },{ minLength: 3 });
                 }
-                
                 function verifyQuickSearch(){
                     if(document.getElementById("quicksearchtaxon").value === ""){
                         alert("Please enter a scientific name to search for.");
@@ -404,7 +401,6 @@ class PluginsManager {
                     }
                     return true;
                 }
-                
                 function quicksearchselectorchange(){
                     var quicksearchselectorvalue = document.quicksearch.quicksearchselector.value;
                     var placeholdertext = '';
