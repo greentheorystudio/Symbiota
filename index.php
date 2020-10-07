@@ -39,6 +39,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                         $buttonText = 'Search';
                         include_once(__DIR__ . '/classes/PluginsManager.php');
                         $pluginManager = new PluginsManager();
+                        $pluginManager->setQuickSearchShowSelector(true);
                         $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
                         echo $quicksearch;
                         ?>
