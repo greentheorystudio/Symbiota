@@ -259,77 +259,58 @@ h3{
 }
 
 .quicksearchselectorcontainer {
-	position: relative;
 	height: 20px;
-	font-size: 0;
-}
-.quicksearchselectorcontainer input {
-	position: absolute;
-	top: 0;
-	z-index: 2;
-	opacity: 0;
-	cursor: pointer;
-	height: 18px;
-	width: 200px;
-	left: 30px;
-	margin: 0;
-}
-.quicksearchselectorcontainer input:checked {
-	z-index: 1;
-}
-.quicksearchselectorcontainer input:checked + label {
-	opacity: 1;
-	cursor: default;
-}
-.quicksearchselectorcontainer input:not(:checked) + label:hover {
-	opacity: 0.5;
-}
-.quicksearchselectorcontainer label {
-	color: black;
-	opacity: 0.33;
-	transition: opacity 0.25s ease;
-	cursor: pointer;
+	width: 300px;
 	font-size: 16px;
-	line-height: 24px;
-	display: inline-block;
-	width: 118px;
-	height: 100%;
-	margin: 0;
-	text-align: center;
+	display: flex;
+	justify-content: space-evenly;
 }
-.quicksearchselectorcontainer .toggle-inside {
-	border-radius: 18px;
-	background: #4a4a4a;
+
+.quicksearchselectorcontainer input[type="checkbox"]:not(:checked),
+.quicksearchselectorcontainer input[type="checkbox"]:checked {
 	position: absolute;
-	transition: 0.25s ease all;
-	height: 18px;
-	width: 20px;
-	margin-top: 2px;
+	opacity: 0;
 }
-.quicksearchselectorcontainer label:last-of-type {
-	margin-left: 44px;
+
+.quicksearchselectorcontainer input[type="checkbox"].switch + div {
+	width: 1.8em;	height: 1em;
+	border: 1px solid rgba(0,0,0,.3);
+	border-radius: 999px;
+	margin: 0 auto .8em;
+	background: #888 linear-gradient(rgba(0, 0, 0, .4), transparent);
+	background-origin: border-box;
+	background-clip: border-box;
+	box-shadow: 0 1px 1px hsla(0,0%,100%,.8);
+	overflow: hidden;
+	transition-duration: .4s;
+	transition-property: padding, width;
 }
-.quicksearchselectorcontainer .toggle-outside {
-	background: #fff;
-	position: absolute;
-	width: 52px;
-	left: 116px;
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:checked + div {
+	padding-left: .8em;
+	width: 1em;
 }
-.quicksearchselectorcontainer input:checked ~ .toggle-outside .toggle-inside {
-	left: 2px;
+
+.quicksearchselectorcontainer input[type="checkbox"].switch + div:before {
+	content: '';
+	display: block;
+	width: 1em; height: 1em;
+	margin: -1px;
+	border: 1px solid rgba(0,0,0,.7);
+	border-radius: inherit;
+	background: #c4c4c4 linear-gradient(hsla(0, 0%, 100%, .3), hsla(0, 0%, 100%, 0));
+	box-shadow: 0 0 .5em rgba(0,0,0,.5),
+	0 .2em hsla(0,0%,100%,.3) inset,
+	0 -.1em .3em hsla(0,0%,0%,.2) inset;
 }
-.quicksearchselectorcontainer input ~ input:checked ~ .toggle-outside .toggle-inside {
-	left: 26px;
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:active + div:before {
+	background-color: #aaa;
 }
-.quicksearchselectorcontainer input:checked + label:hover ~ .toggle-outside .toggle-inside {
-	height: 18px;
-	width: 18px;
-}
-.quicksearchselectorcontainer input:hover ~ .toggle-outside .toggle-inside {
-	width: 26px;
-}
-.quicksearchselectorcontainer input:hover ~ input:checked ~ .toggle-outside .toggle-inside {
-	left: 18px;
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
+	box-shadow: 0 0 .3em 1px red,
+	0 1px 1px hsla(0,0%,100%,.8);
 }
 
 /* Slideshow Plugin */
