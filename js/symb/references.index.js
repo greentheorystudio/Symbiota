@@ -188,8 +188,8 @@ function getParentInfo(refid){
 			if(document.getElementById("isbn_issn")){
 				document.getElementById("isbn_issn").value = parentArr['isbn_issn'];
 			}
-			if(document.getElementById("numbervolumnes")){
-				document.getElementById("numbervolumnes").value = parentArr['numbervolumnes'];
+			if(document.getElementById("numbervolumes")){
+				document.getElementById("numbervolumes").value = parentArr['numbervolumes'];
 			}
 		}
 	};

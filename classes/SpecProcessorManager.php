@@ -442,10 +442,9 @@ class SpecProcessorManager {
 	public function getUserList(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT DISTINCT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," (",l.username,")") AS username '.
+		$sql = 'SELECT DISTINCT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," (",u.username,")") AS username '.
 			'FROM omoccurrences o INNER JOIN omoccuredits e ON o.occid = e.occid '.
 			'INNER JOIN users u ON e.uid = u.uid '.
-			'INNER JOIN userlogin l ON u.uid = l.uid '.
 			'WHERE (o.collid = '.$this->collid.') '.
 			'ORDER BY u.lastname, u.firstname';
 		$rs = $this->conn->query($sql);
@@ -493,7 +492,7 @@ class SpecProcessorManager {
 			$sql .= ', COUNT(DISTINCT CASE WHEN e.editType = 0 THEN o.occid ELSE NULL END) as cntexcbatch ';
 		}
 		$sql .= 'FROM omoccurrences o INNER JOIN omoccuredits e ON o.occid = e.occid '.
-			'INNER JOIN userlogin u ON e.uid = u.uid '.
+			'INNER JOIN users u ON e.uid = u.uid '.
 			'WHERE (o.collid = '.$this->collid.') ';
 		if($startDate && $endDate){
 			$sql .= 'AND (e.initialtimestamp BETWEEN "'.$startDate.'" AND "'.$endDate.'") ';

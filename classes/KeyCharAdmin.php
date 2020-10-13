@@ -131,7 +131,7 @@ class KeyCharAdmin{
 			$status = 'ERROR deleting character taxa links: '.$this->conn->error.', '.$sql;
 		}
 
-		$sql = 'DELETE FROM kmchardependance WHERE (cid = '.$this->cid.') OR (ciddependance = '.$this->cid.')';
+		$sql = 'DELETE FROM kmchardependence WHERE (cid = '.$this->cid.') OR (ciddependance = '.$this->cid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$status = 'ERROR deleting character dependance links: '.$this->conn->error.', '.$sql;
@@ -258,7 +258,7 @@ class KeyCharAdmin{
 				$status = 'ERROR deleting character state languages: '.$this->conn->error.', '.$sql;
 			}
 	
-			$sql = 'DELETE FROM kmchardependance WHERE (ciddependance = '.$this->cid.') AND (csdependance = '.$cs.')';
+			$sql = 'DELETE FROM kmchardependence WHERE (ciddependance = '.$this->cid.') AND (csdependance = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$status = 'ERROR deleting character dependance linked to character state: '.$this->conn->error.', '.$sql;

@@ -181,7 +181,7 @@ class TaxonomyCleaner extends Manager{
 			$kingdomName = array_pop($targetKingdomStr);
 		}
 
-		$this->logOrEcho('Cleaning leading and trialing spaces...');
+		$this->logOrEcho('Cleaning leading and trailing spaces...');
 		$sql = 'UPDATE omoccurrences '.
 			'SET sciname = trim(sciname) '.
 			'WHERE (collid IN('.$this->collid.')) AND (tidinterpreted is NULL) AND (sciname LIKE " %" OR sciname LIKE "% ")';
@@ -190,7 +190,7 @@ class TaxonomyCleaner extends Manager{
 		}
 		flush();
 
-		$this->logOrEcho('Cleaning double spaces inbedded within name...');
+		$this->logOrEcho('Cleaning double spaces embedded within name...');
 		$sql = 'UPDATE omoccurrences '.
 			'SET sciname = replace(sciname, "  ", " ") '.
 			'WHERE (collid IN('.$this->collid.')) AND (tidinterpreted is NULL) AND (sciname LIKE "%  %") ';
@@ -201,7 +201,7 @@ class TaxonomyCleaner extends Manager{
 
 		$this->indexOccurrenceTaxa();
 
-		$this->logOrEcho('Indexing names based on mathcing trinomials without taxonRank designation...');
+		$this->logOrEcho('Indexing names based on matching trinomials without taxonRank designation...');
 		$triCnt = 0;
 		$sql = 'SELECT DISTINCT o.sciname, t.tid '.
 			'FROM omoccurrences o INNER JOIN taxa t ON o.sciname = CONCAT_WS(" ",t.unitname1,t.unitname2,t.unitname3) '.

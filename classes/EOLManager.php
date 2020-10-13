@@ -393,7 +393,8 @@ class EOLManager {
 		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 	
-	private function cleanInStr($str){
+	private function cleanInStr($str): string
+    {
 		$newStr = trim($str);
 		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
 		$newStr = str_replace(array(chr(9), chr(10), chr(13)), ' ', $newStr);

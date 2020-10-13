@@ -196,18 +196,12 @@ if($clArray['locality']){
         }
         ?>
 
-        <?php
-        if($clManager->getClName()) {
-            echo 'const checklistName = "' . $clManager->getClName() . '";';
-        }
-        ?>
-
         const checklistName = "<?php echo $clManager->getClName(); ?>";
-        const checklistAuthors = "<?php echo $clArray['authors']; ?>";
-        const checklistCitation = "<?php echo $clArray['publication']; ?>";
+        const checklistAuthors = "<?php echo ($clArray?$clArray['authors']:''); ?>";
+        const checklistCitation = "<?php echo ($clArray?$clArray['publication']:''); ?>";
         const checklistLocality = "<?php echo $locStr; ?>";
-        const checklistAbstract = "<?php echo $clArray['abstract']; ?>";
-        const checklistNotes = "<?php echo $clArray['notes']; ?>";
+        const checklistAbstract = "<?php echo ($clArray?$clArray['abstract']:''); ?>";
+        const checklistNotes = "<?php echo ($clArray?$clArray['notes']:''); ?>";
         const fieldguideDisclaimer = "This field guide was produced through the <?php echo $DEFAULT_TITLE; ?> portal. This field guide is intended for educational use only, no commercial uses are allowed. It is created under Fair Use copyright provisions supporting educational uses of information. All rights are reserved to authors and photographers unless otherwise specified.";
 
         function lazyLoadData(index,callback){
@@ -227,7 +221,7 @@ if($clArray['locality']){
             http.send(params);
         }
 	</script>
-	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=201805"></script>
+	<script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=20200806"></script>
     <?php
     if($CHECKLIST_FG_EXPORT){
         ?>

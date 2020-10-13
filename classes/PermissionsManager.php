@@ -39,8 +39,8 @@ class PermissionsManager{
 		$returnArr = array();
 		if(is_numeric($uid)){
 			$sql = 'SELECT u.uid, u.firstname, u.lastname, u.title, u.institution, u.city, u.state, ' .
-				'u.zip, u.country, u.email, u.url, u.notes, ul.username, IFNULL(ul.lastlogindate,ul.initialTimestamp) AS lastlogindate ' .
-				'FROM users u LEFT JOIN userlogin ul ON u.uid = ul.uid ' .
+				'u.zip, u.country, u.email, u.url, u.notes, u.username, IFNULL(u.lastlogindate,u.initialTimestamp) AS lastlogindate ' .
+				'FROM users u ' .
 				'WHERE (u.uid = ' .$uid.')';
 			//echo "<div>$sql</div>";
 			$result = $this->conn->query($sql);
@@ -204,10 +204,9 @@ class PermissionsManager{
 		}
 		$rs2->free();
 		$retArr = array();
-		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", lastname, firstname) as fullname, t.sciname, l.username '.
+		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", lastname, firstname) as fullname, t.sciname, u.username '.
 			'FROM usertaxonomy ut INNER JOIN users u ON ut.uid = u.uid '.
 			'INNER JOIN taxa t ON ut.tid = t.tid '.
-			'INNER JOIN userlogin l ON u.uid = l.uid '.
 			'WHERE ut.editorstatus = "OccurrenceEditor" ';
 		if($limitByColl && $pArr){
 			$sql .= 'AND ut.uid IN('.implode(',',array_keys($pArr)).') ';
@@ -301,8 +300,8 @@ class PermissionsManager{
 	public function getUsers($searchTermIn = ''): array
 	{
 		$retArr = array();
-		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS uname, l.username '.
-			'FROM users u LEFT JOIN userlogin l ON u.uid = l.uid ';
+		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS uname, u.username '.
+			'FROM users u ';
 		if($searchTermIn){
 			$searchTerm = $this->cleanInStr($searchTermIn);
 			$sql .= 'WHERE (u.lastname LIKE "'.$searchTerm.'%") ';

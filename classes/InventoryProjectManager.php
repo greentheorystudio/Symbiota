@@ -161,9 +161,8 @@ class InventoryProjectManager {
 	{
 		$retArr = array();
 		if($this->pid){
-			$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
+			$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, u.username '.
 				'FROM userroles r INNER JOIN users u ON r.uid = u.uid '.
-				'INNER JOIN userlogin l ON u.uid = l.uid '.
 				'WHERE r.role = "ProjAdmin" AND r.tablepk = '.$this->pid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -204,8 +203,8 @@ class InventoryProjectManager {
 	public function getPotentialManagerArr(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, l.username '.
-			'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
+		$sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, u.username '.
+			'FROM users u '.
 			'ORDER BY u.lastname, u.firstname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){

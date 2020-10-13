@@ -22,8 +22,8 @@ $pManager = new ImageLibraryManager();
 		<b>Image contributors</b> 
 	</div>
 
-	<div id="innertext" style="height:100%">
-		<?php 
+	<div id="innertext">
+		<?php
 		$pList = $pManager->getPhotographerList();
 		if($pList){
 			echo '<div style="float:left;;margin-right:40px;">';
@@ -41,31 +41,32 @@ $pManager = new ImageLibraryManager();
 
 		<div style="float:left">
 			<?php
-			flush();
 			$collList = $pManager->getCollectionImageList();
-			$specList = $collList['coll'];
-			if($specList){
-				echo '<h2>Specimens</h2>';
-				echo '<div style="margin-left:15px;margin-bottom:20px">';
-				foreach($specList as $k => $cArr){
-					echo '<div>';
-					$phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
-					echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
-				}
-				echo '</div>';
-			}
+			if($collList){
+                $specList = $collList['coll'];
+                if($specList){
+                    echo '<h2>Specimens</h2>';
+                    echo '<div style="margin-left:15px;margin-bottom:20px">';
+                    foreach($specList as $k => $cArr){
+                        echo '<div>';
+                        $phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
+                        echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+                    }
+                    echo '</div>';
+                }
 
-			$obsList = $collList['obs'];
-			if($obsList){
-				echo '<h2>Observations</h2>';
-				echo '<div style="margin-left:15px">';
-				foreach($obsList as $k => $cArr){
-					echo '<div>';
-					$phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
-					echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
-				}
-				echo '</div>';
-			}
+                $obsList = $collList['obs'];
+                if($obsList){
+                    echo '<h2>Observations</h2>';
+                    echo '<div style="margin-left:15px">';
+                    foreach($obsList as $k => $cArr){
+                        echo '<div>';
+                        $phLink = 'search.php?nametype=2&taxtp=2&imagecount=all&imagedisplay=thumbnail&imagetype=all&submitaction=Load%20Images&db[]='.$k;
+                        echo '<a href="'.$phLink.'">'.$cArr['name'].'</a> ('.$cArr['imgcnt'].')</div>';
+                    }
+                    echo '</div>';
+                }
+            }
 			?>
 		</div>
 	</div>

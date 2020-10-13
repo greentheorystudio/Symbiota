@@ -185,8 +185,7 @@ class ChecklistFGExportManager {
             $sql = 'SELECT ti.tid, ti.imgid, ti.thumbnailurl, ti.url, ti.`owner`, '.
                 'IFNULL(ti.photographer,IFNULL(CONCAT_WS(" ",u.firstname,u.lastname),CONCAT_WS(" ",u2.firstname,u2.lastname))) AS photographer '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
-                'LEFT JOIN userlogin AS ul ON ti.username = ul.username '.
-                'LEFT JOIN users AS u2 ON ul.uid = u2.uid '.
+                'LEFT JOIN users AS u2 ON ti.username = u2.username '.
                 'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
                 'WHERE ts.taxauthid = '.$this->thesFilter.' AND ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
             if($photogNameStr || $photogIdStr){

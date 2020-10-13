@@ -229,7 +229,7 @@ class OccurrenceDataset {
 			$uid = $m[1];
 		}
 		if(!$uid || !is_numeric($uid)){
-			$sql = 'SELECT uid FROM userlogin WHERE username = "'.$userStr.'"';
+			$sql = 'SELECT uid FROM users WHERE username = "'.$userStr.'"';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$uid = $r->uid;

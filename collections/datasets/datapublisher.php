@@ -85,7 +85,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<title>Darwin Core Archiver Publisher</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<style type="text/css">
 		.nowrap { white-space: nowrap; }
 	</style>
