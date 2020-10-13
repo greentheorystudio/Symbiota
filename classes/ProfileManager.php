@@ -46,14 +46,14 @@ class ProfileManager extends Manager{
 		if($this->userName){
 			if(!$this->authSql){
                 $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
-               		'FROM users AS u INNER JOIN userlogin AS ul ON u.uid = ul.uid '.
-               		'WHERE (ul.username = "'.$this->userName.'") ';
+               		'FROM users AS u '.
+               		'WHERE (u.username = "'.$this->userName.'") ';
                 if($pwdStr) {
                     if($this->encryption === 'password'){
-                        $this->authSql .= 'AND (ul.password = PASSWORD("' . $this->cleanInStr($pwdStr) . '")) ';
+                        $this->authSql .= 'AND (u.password = PASSWORD("' . $this->cleanInStr($pwdStr) . '")) ';
                     }
                     if($this->encryption === 'sha2'){
-                        $this->authSql .= 'AND (ul.password = SHA2("' . $this->cleanInStr($pwdStr) . '", 224)) ';
+                        $this->authSql .= 'AND (u.password = SHA2("' . $this->cleanInStr($pwdStr) . '", 224)) ';
                     }
                 }
             }
@@ -78,7 +78,7 @@ class ProfileManager extends Manager{
 
 				$connection = new DbConnection();
                 $conn = $connection->getConnection();
-				$sql = 'UPDATE userlogin SET lastlogindate = NOW() WHERE (username = "'.$this->userName.'")';
+				$sql = 'UPDATE users SET lastlogindate = NOW() WHERE (username = "'.$this->userName.'")';
 				$conn->query($sql);
 				$conn->close();
 			}
@@ -109,12 +109,11 @@ class ProfileManager extends Manager{
 	{
 	    $sqlStr = 'SELECT u.uid, u.firstname, ' .($this->checkFieldExists('users','middleinitial')?'u.middleinitial, ':''). 'u.lastname, u.title, u.institution, u.department, ' .
 			'u.address, u.city, u.state, u.zip, u.country, u.phone, u.email, ' .
-			'u.url, u.biography, u.ispublic, u.notes, ul.username, ul.lastlogindate ' .
-			'FROM users u LEFT JOIN userlogin ul ON u.uid = ul.uid ' .
+			'u.url, u.biography, u.ispublic, u.notes, u.username, u.lastlogindate ' .
+			'FROM users u ' .
 			'WHERE (u.uid = ' .$this->uid. ')';
 		$person = new Person();
 		//echo $sqlStr;
-		$badUserNameArr = array();
 		$result = $this->conn->query($sqlStr);
 		if($row = $result->fetch_object()){
 			$person->setUid($row->uid);
@@ -141,19 +140,9 @@ class ProfileManager extends Manager{
 			$this->setUserTaxonomy($person);
 			while($row = $result->fetch_object()){
 				if($row->lastlogindate && (!$person->getLastLoginDate() || $row->lastlogindate > $person->getLastLoginDate())){
-					$badUserNameArr[] = $person->getUserName();
 					$person->setUserName($row->username);
 					$person->setLastLoginDate($row->lastlogindate);
 				}
-				else{
-					$badUserNameArr[] = $row->userName;
-				}
-			}
-		}
-		if($badUserNameArr){
-			$sql = 'DELETE FROM userlogin WHERE username IN("'.implode('","',$badUserNameArr).'")';
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR removing extra logins: '.$this->conn->error;
 			}
 		}
 		$result->free();
@@ -220,12 +209,12 @@ class ProfileManager extends Manager{
 			if($isSelf){
                 $sqlTest = '';
 			    if($this->encryption === 'password'){
-                    $sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
-                        'AND (ul.password = PASSWORD("'.$this->cleanInStr($oldPwd).'"))';
+                    $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
+                        'AND (u.password = PASSWORD("'.$this->cleanInStr($oldPwd).'"))';
                 }
                 if($this->encryption === 'sha2'){
-                    $sqlTest = 'SELECT ul.uid FROM userlogin ul WHERE (ul.uid = '.$this->uid.') '.
-                        'AND (ul.password = SHA2("'.$this->cleanInStr($oldPwd).'", 224))';
+                    $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
+                        'AND (u.password = SHA2("'.$this->cleanInStr($oldPwd).'", 224))';
                 }
 				$rsTest = $editCon->query($sqlTest);
 				if(!$rsTest->num_rows) {
@@ -234,11 +223,11 @@ class ProfileManager extends Manager{
 			}
             $sql = '';
 			if($this->encryption === 'password'){
-                $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPwd).'") '.
+                $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPwd).'") '.
                     'WHERE (uid = '.$this->uid.')';
             }
             if($this->encryption === 'sha2'){
-                $sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPwd).'", 224) '.
+                $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPwd).'", 224) '.
                     'WHERE (uid = '.$this->uid.')';
             }
 			$successCnt = $editCon->query($sql);
@@ -260,20 +249,20 @@ class ProfileManager extends Manager{
 			$editCon = $connection->getConnection();
             $sql = '';
 			if($this->encryption === 'password'){
-                $sql = 'UPDATE userlogin ul SET ul.password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
-                    'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+                $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
+                    'WHERE (username = "'.$this->cleanInStr($un).'")';
             }
             if($this->encryption === 'sha2'){
-                $sql = 'UPDATE userlogin ul SET ul.password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
-                    'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+                $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
+                    'WHERE (username = "'.$this->cleanInStr($un).'")';
             }
 			$status = $editCon->query($sql);
 			$editCon->close();
 		}
 		if($status){
 			$emailAddr = '';
-			$sql = 'SELECT u.email FROM users u INNER JOIN userlogin ul ON u.uid = ul.uid '.
-				'WHERE (ul.username = "'.$this->cleanInStr($un).'")';
+			$sql = 'SELECT u.email FROM users u '.
+				'WHERE (u.username = "'.$this->cleanInStr($un).'")';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
                 $emailAddr = $row->email;
@@ -359,6 +348,15 @@ class ProfileManager extends Manager{
         }
 		$fields .= ', lastname';
 		$values .= ', "'.$this->cleanInStr($person->getLastName()).'"';
+        $fields .= ', username';
+        $values .= ', "'.$this->cleanInStr($person->getUserName()).'"';
+        $fields .= ', password';
+        if($this->encryption === 'password'){
+            $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'")';
+        }
+        if($this->encryption === 'sha2'){
+            $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224)';
+        }
 		if($person->getTitle()){
 			$fields .= ', title';
 			$values .= ', "'.$this->cleanInStr($person->getTitle()).'"';
@@ -415,29 +413,15 @@ class ProfileManager extends Manager{
 		if($editCon->query($sql)){
 			$person->setUid($editCon->insert_id);
 			$this->uid = $person->getUid();
-			if($this->encryption === 'password'){
-                $sql = 'INSERT INTO userlogin (uid, username, password) '.
-                    'VALUES ('.$person->getUid().', "'.
-                    $this->cleanInStr($person->getUserName()).
-                    '", PASSWORD("'.$this->cleanInStr($person->getPassword()).'"))';
-            }
-            if($this->encryption === 'sha2'){
-                $sql = 'INSERT INTO userlogin (uid, username, password) '.
-                    'VALUES ('.$person->getUid().', "'.
-                    $this->cleanInStr($person->getUserName()).
-                    '", SHA2("'.$this->cleanInStr($person->getPassword()).'", 224))';
-            }
-			if($editCon->query($sql)){
-				$status = true;
-				$this->userName = $person->getUserName();
-				$this->displayName = $person->getFirstName();
-				$this->reset();
-				$this->authenticate();
-			}
-			else{
-				$this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
-			}
+            $status = true;
+            $this->userName = $person->getUserName();
+            $this->displayName = $person->getFirstName();
+            $this->reset();
+            $this->authenticate();
 		}
+        else{
+            $this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
+        }
 		$editCon->close();
 
 		return $status;
@@ -451,8 +435,8 @@ class ProfileManager extends Manager{
             return false;
         }
 		$loginStr = '';
-		$sql = 'SELECT u.uid, ul.username, concat_ws("; ",u.lastname,u.firstname) '.
-			'FROM users u INNER JOIN userlogin ul ON u.uid = ul.uid '.
+		$sql = 'SELECT u.uid, u.username, concat_ws("; ",u.lastname,u.firstname) '.
+			'FROM users u '.
 			'WHERE (u.email = "'.$emailAddr.'")';
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
@@ -503,7 +487,7 @@ class ProfileManager extends Manager{
                 return false;
             }
 
-			$sqlTestLogin = 'SELECT ul.uid FROM userlogin ul WHERE (ul.username = "'.$newLogin.'") ';
+			$sqlTestLogin = 'SELECT uid FROM users WHERE (username = "'.$newLogin.'") ';
 			$rs = $this->conn->query($sqlTestLogin);
 			if($rs->num_rows){
 				$this->errorStr = 'Login '.$newLogin.' is already being used by another user. Please try a new login.';
@@ -518,7 +502,7 @@ class ProfileManager extends Manager{
                     $status = false;
                 }
 				if($status){
-					$sql = 'UPDATE userlogin '.
+					$sql = 'UPDATE users '.
 						'SET username = "'.$newLogin.'" '.
 						'WHERE (uid = '.$this->uid.') AND (username = "'.$this->userName.'")';
 					//echo $sql;
@@ -547,9 +531,9 @@ class ProfileManager extends Manager{
             return false;
         }
 		$status = true;
-	   	$sql = 'SELECT u.email, ul.username '.
-			'FROM users u INNER JOIN userlogin ul ON u.uid = ul.uid '.
-			'WHERE (ul.username = "'.$this->userName.'" OR u.email = "'.$email.'" )';
+	   	$sql = 'SELECT u.email, u.username '.
+			'FROM users u '.
+			'WHERE (u.username = "'.$this->userName.'" OR u.email = "'.$email.'" )';
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$status = false;
@@ -802,9 +786,9 @@ class ProfileManager extends Manager{
     public function setTokenAuthSql(): void
     {
         $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
-            'FROM users AS u INNER JOIN userlogin AS ul ON u.uid = ul.uid '.
+            'FROM users AS u '.
             'INNER JOIN useraccesstokens AS ut ON u.uid = ut.uid '.
-            'WHERE (ul.username = "'.$this->userName.'") AND (ut.token = "'.$this->token.'") ';
+            'WHERE (u.username = "'.$this->userName.'") AND (ut.token = "'.$this->token.'") ';
     }
 
     public function setToken($token): void
@@ -830,7 +814,7 @@ class ProfileManager extends Manager{
             $this->userName = $USERNAME;
         }
         elseif($this->uid){
-            $sql = 'SELECT username FROM userlogin WHERE (uid = '.$this->uid.') ';
+            $sql = 'SELECT username FROM users WHERE (uid = '.$this->uid.') ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             if($r = $rs->fetch_object()){
@@ -843,7 +827,7 @@ class ProfileManager extends Manager{
 
     public function getUserName($uId){
         $un = '';
-        $sql = 'SELECT username FROM userlogin WHERE uid = '.$uId.' ';
+        $sql = 'SELECT username FROM users WHERE uid = '.$uId.' ';
         //echo $sql;
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
@@ -1057,7 +1041,7 @@ class ProfileManager extends Manager{
 
     public function getUid($un){
         $uid = '';
-        $sql = 'SELECT uid FROM userlogin WHERE username = "'.$un.'"  ';
+        $sql = 'SELECT uid FROM users WHERE username = "'.$un.'"  ';
         //echo $sql;
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){

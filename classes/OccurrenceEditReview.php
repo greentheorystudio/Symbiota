@@ -551,7 +551,7 @@ class OccurrenceEditReview extends Manager{
 		else{
 			$sql = 'SELECT DISTINCT IFNULL(l.uid,r.externaleditor) as id, IFNULL(l.username,r.externaleditor) AS name '.
 				'FROM omoccurrevisions r INNER JOIN omoccurrences o ON r.occid = o.occid '.
-				'LEFT JOIN userlogin l ON r.uid = l.uid ';
+				'LEFT JOIN users l ON r.uid = l.uid ';
 		}
 		$sql .= 'WHERE (o.collid = '.$this->collid.') ';
 		if($this->obsUid){

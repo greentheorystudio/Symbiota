@@ -37,7 +37,7 @@ class ReportsManager{
     {
 		$retArr = array();
 		$sql = 'SELECT CONCAT_WS(" ", firstname, lastname) as fullname, t.sciname AS family, c.numberOfDet FROM usertaxonomy ut ' .
-            'INNER JOIN users u ON ut.uid = u.uid INNER JOIN userlogin l ON u.uid = l.uid INNER JOIN taxa t ' .
+            'INNER JOIN users u ON ut.uid = u.uid INNER JOIN taxa t ' .
             'ON ut.tid = t.tid INNER JOIN taxstatus ts ON t.tid = ts.tid INNER JOIN (SELECT ts.family, count(*) '.
             'as numberOfDet FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname INNER JOIN '.
             'taxstatus ts ON t.tid = ts.tid WHERE (t.rankid IN(220,230,240,260)) AND ((dateIdentified LIKE "%2013%") OR (dateIdentified '.

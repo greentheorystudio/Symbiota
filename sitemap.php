@@ -26,9 +26,9 @@ $smManager = new SiteMapManager();
 	include(__DIR__ . '/header.php');
 	?>
 	<div id="innertext">
-		<h1>Site Map</h1>
+		<h2>Site Map</h2>
 		<div style="margin:10px;">
-			<h2>Collections</h2>
+			<h3>Collections</h3>
 			<ul>
 				<li><a href="collections/index.php">Search Engine</a> - search collections</li>
 				<li><a href="collections/misc/collprofiles.php">Collections</a> - list of collection participating in project</li>
@@ -46,7 +46,7 @@ $smManager = new SiteMapManager();
 
 			</ul>
 
-			<div style="margin-top:10px;"><h2>Image Library</h2></div>
+			<div style="margin-top:10px;"><h3>Image Library</h3></div>
 			<ul>
 				<li><a href="imagelib/index.php">Image Library</a></li>
 				<li><a href="imagelib/search.php">Interactive Search Tool</a></li>
@@ -54,7 +54,7 @@ $smManager = new SiteMapManager();
 				<li><a href="misc/usagepolicy.php">Usage Policy and Copyright Information</a></li>
 			</ul>
 
-            <div style="margin-top:10px;"><h2>Taxonomy</h2></div>
+            <div style="margin-top:10px;"><h3>Taxonomy</h3></div>
 			<ul>
 				<li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
 				<li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
@@ -77,7 +77,7 @@ $smManager = new SiteMapManager();
 			}
 			?>
 
-			<div style="margin-top:10px;"><h2>Dynamic Species Lists</h2></div>
+			<div style="margin-top:10px;"><h3>Dynamic Species Lists</h3></div>
 			<ul>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=checklist">

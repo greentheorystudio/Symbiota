@@ -29,7 +29,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 	<title><?php echo $DEFAULT_TITLE; ?> Taxon Loader: </title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
+	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20200516"></script>
