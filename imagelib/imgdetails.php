@@ -75,7 +75,7 @@ if($imgArr){
 	<title><?php echo $DEFAULT_TITLE. ' Image Details: #' .$imgId; ?></title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />
+	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/symb/imagelib.imgdetails.js?ver=150910" type="text/javascript"></script>
@@ -311,11 +311,18 @@ if($imgArr){
                             <?php
                         }
 						?>
-						<div style="clear:both;margin-top:80px;">
-							<b>Scientific Name:</b> <?php echo '<i>'.$imgArr['sciname'].'</i> '.$imgArr['author']; ?>
+                        <div style="clear:both;margin-top:80px;">
+							<?php
+                            if($imgArr['tid']){
+                                echo '<b>Scientific Name:</b> <a href="../taxa/index.php?taxon='.$imgArr['tid'].'"><i>'.$imgArr['sciname'].'</i> '.$imgArr['author'].'</a>';
+                            }
+                            else{
+                                echo '<b>Scientific Name:</b> <i>'.$imgArr['sciname'].'</i> '.$imgArr['author'];
+                            }
+                            ?>
 						</div>
 						<?php
-							if($imgArr['caption']) {
+						if($imgArr['caption']) {
                                 echo '<div><b>Caption:</b> ' . $imgArr['caption'] . '</div>';
                             }
 							if($imgArr['photographerdisplay']){

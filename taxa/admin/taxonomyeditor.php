@@ -72,7 +72,7 @@ if($editable){
 	<title><?php echo $DEFAULT_TITLE. ' Taxon Editor: ' .$tid; ?></title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../../css/jquery-ui.css" rel="Stylesheet" />	
+	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script>
@@ -129,7 +129,7 @@ if($editable){
             </ul>
 
             <!-- EDITOR div -->
-            <div id="editdiv" style="height:400px;">
+            <div id="editdiv" style="min-height:400px;">
                 <div style="float:right;cursor:pointer;" onclick="toggleEditFields()" title="Toggle Taxon Editing Functions">
                     <img style='border:0;' src='../../images/edit.png'/>
                 </div>
@@ -547,7 +547,7 @@ if($editable){
                     </div>
                 </fieldset>
             </div>
-            <div id="hierarchydiv" style="height:400px;">
+            <div id="hierarchydiv" style="min-height:400px;">
                 <fieldset style="width:420px;padding:25px;">
                     <legend><b>Quick Query Taxonomic Hierarchy</b></legend>
                     <div style="float:right;" title="Rebuild Hierarchy">

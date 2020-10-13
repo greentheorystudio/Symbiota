@@ -17,7 +17,7 @@ class KeyMassUpdate extends KeyManager{
 		$sql = 'SELECT DISTINCT ch.headingname, c.CID, c.CharName ' .
 			'FROM kmcharacters c INNER JOIN kmchartaxalink ctl ON c.CID = ctl.CID ' .
 			'INNER JOIN kmcharheading ch ON c.hid = ch.hid ' .
-			'LEFT JOIN kmchardependance cd ON c.CID = cd.CID ' .
+			'LEFT JOIN kmchardependence cd ON c.CID = cd.CID ' .
 			"WHERE ch.language = '".$this->language."' AND (ctl.Relation = 'include') ".
 			"AND (c.chartype='UM' OR c.chartype='OM') AND (c.defaultlang='".$this->language."') ";
 		if($tidFilter){

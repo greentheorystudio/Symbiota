@@ -27,7 +27,7 @@ if($collId){
 		<title><?php echo $DEFAULT_TITLE; ?> Year Statistics</title>
 		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
 		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 		<script type="text/javascript" src="../../js/symb/collections.index.js"></script>

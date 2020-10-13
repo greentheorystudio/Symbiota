@@ -50,7 +50,7 @@ if(isset($_REQUEST['db'])){
 	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
 	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/jquery-ui.css" rel="Stylesheet" />
+	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 	<style type="text/css">
 		.ui-tabs .ui-tabs-nav li { width:32%; }
 		.ui-tabs .ui-tabs-nav li a { margin-left:10px;}

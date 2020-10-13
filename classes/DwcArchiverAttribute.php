@@ -39,7 +39,7 @@ class DwcArchiverAttribute{
 			$sql = 'SELECT '.trim($sqlFrag,', ').
 				' FROM tmtraits m INNER JOIN tmstates s ON m.traitid = s.traitid '.
 				'INNER JOIN tmattributes a ON s.stateid = a.stateid '.
-				'INNER JOIN userlogin u ON a.createduid = u.uid '.
+				'INNER JOIN users u ON a.createduid = u.uid '.
 				'INNER JOIN omoccurrences o ON a.occid = o.occid ';
 			if(strpos($conditionSql,'v.clid')){
 				$sql .= 'LEFT JOIN fmvouchers v ON o.occid = v.occid ';

@@ -8,11 +8,14 @@ $(document).ready(function() {
 
 	$("#speciestoadd").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/speciessuggest.php", { term: request.term, cl: clid }, response );
+			$.getJSON( "../webservices/autofillsciname.php", {
+				term: request.term,
+				limit: 10,
+				hideauth: true,
+				taid: 1
+			}, response );
 		}
-	},{ minLength: 4, }
-	);
-
+	},{ minLength: 3 });
 });
 
 function toggleVoucherDiv(tid){
