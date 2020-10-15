@@ -557,12 +557,22 @@ function changeCollColor(color,key){
 function changeDraw() {
     const value = typeSelect.value;
     if (value !== 'None') {
-        draw = new ol.interaction.Draw({
-            source: selectsource,
-            type: (value)
-        });
+        if (value === 'Box') {
+            draw = new ol.interaction.Draw({
+                source: selectsource,
+                type: 'Circle',
+                geometryFunction: ol.interaction.Draw.createBox()
+            });
+        }
+        else {
+            draw = new ol.interaction.Draw({
+                source: selectsource,
+                type: value
+            });
+        }
 
         draw.on('drawend', function(evt){
+            evt.feature.set('geoType',typeSelect.value);
             typeSelect.value = 'None';
             map.removeInteraction(draw);
             if(!shapeActive){
@@ -1581,6 +1591,9 @@ function finishGetGeographyParams(){
             if(geoCircleArr.length > 0){
                 searchTermsArr['circleArr'] = geoCircleArr;
             }
+            if(geoBoundingBoxArr.length > 0){
+                searchTermsArr['boundingBoxArr'] = geoBoundingBoxArr;
+            }
             document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
         }
     }
@@ -1807,6 +1820,7 @@ function getGeographyParams(){
     searchTermsArr['circleArr'] = [];
     geoPolyArr = [];
     geoCircleArr = [];
+    geoBoundingBoxArr = [];
     let totalArea = 0;
     selectInteraction.getFeatures().forEach(function(feature){
         let turfSimple;
@@ -1821,95 +1835,109 @@ function getGeographyParams(){
             const geoType = selectedClone.getGeometry().getType();
             const wktFormat = new ol.format.WKT();
             const geoJSONFormat = new ol.format.GeoJSON();
-            if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
+            if(feature.get('geoType') === 'Box'){
                 const selectiongeometry = selectedClone.getGeometry();
                 const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                let polyCoords = JSON.parse(geojsonStr).coordinates;
-                if (geoType === 'MultiPolygon') {
-                    areaFeat = turf.multiPolygon(polyCoords);
-                    area = turf.area(areaFeat);
-                    area_km = area/1000/1000;
-                    totalArea = totalArea + area_km;
-                    for (let e in polyCoords) {
-                        if(polyCoords.hasOwnProperty(e)){
-                            let singlePoly = turf.polygon(polyCoords[e]);
-                            //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
-                            if(singlePoly.geometry.coordinates.length > 10){
-                                options = {tolerance: 0.001, highQuality: true};
-                                singlePoly = turf.simplify(singlePoly,options);
-                            }
-                            //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
-                            polyCoords[e] = singlePoly.geometry.coordinates;
-                        }
-                    }
-                    turfSimple = turf.multiPolygon(polyCoords);
-                }
-                if (geoType === 'Polygon') {
-                    areaFeat = turf.polygon(polyCoords);
-                    area = turf.area(areaFeat);
-                    area_km = area / 1000 / 1000;
-                    totalArea = totalArea + area_km;
-                    //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
-                    if(areaFeat.geometry.coordinates.length > 10){
-                        options = {tolerance: 0.001, highQuality: true};
-                        areaFeat = turf.simplify(areaFeat,options);
-                    }
-                    //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
-                    polyCoords = areaFeat.geometry.coordinates;
-                    turfSimple = turf.polygon(polyCoords);
-                }
-                const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
-                const simplegeometry = polySimple.getGeometry();
-                const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                const wmswktString = wktFormat.writeGeometry(fixedgeometry);
-                const geocoords = fixedgeometry.getCoordinates();
-                const mysqlWktString = writeMySQLWktString(geoType, geocoords);
-                if(SOLRMODE) {
-                    geoSolrqString = '"Intersects('+wmswktString+')"';
-                    solrqfrag = geoSolrqString;
-                    solrgeoqArr.push(solrqfrag);
-                }
-                else{
-                    geoPolyArr.push(mysqlWktString);
-                }
+                const boundingBoxObj = {
+                    upperlat: fixedselectgeometry.flatCoordinates[5],
+                    bottomlat: fixedselectgeometry.flatCoordinates[1],
+                    leftlong: fixedselectgeometry.flatCoordinates[0],
+                    rightlong: fixedselectgeometry.flatCoordinates[2]
+                };
+                geoBoundingBoxArr.push(boundingBoxObj);
                 geogParams = true;
             }
-            if(geoType === 'Circle'){
-                const center = selectedClone.getGeometry().getCenter();
-                const radius = selectedClone.getGeometry().getRadius();
-                const edgeCoordinate = [center[0] + radius, center[1]];
-                let groundRadius = ol.sphere.getDistance(
-                    ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-                    ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-                );
-                groundRadius = groundRadius/1000;
-                const circleArea = Math.PI * groundRadius * groundRadius;
-                totalArea = totalArea + circleArea;
-                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
-                if(SOLRMODE) {
-                    geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
-                    solrqfrag = geoSolrqString;
-                    solrgeoqArr.push(solrqfrag);
-                    buildSOLRQString();
-                    geoCallOut = true;
-                    solroccqString = 'q=*:*&fq='+geoSolrqString;
-                    getSOLROccArr(function(res){
-                        geoCallOut = false;
-                        if(res){
-                            finishGetGeographyParams();
+            else{
+                if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
+                    const selectiongeometry = selectedClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                    let polyCoords = JSON.parse(geojsonStr).coordinates;
+                    if (geoType === 'MultiPolygon') {
+                        areaFeat = turf.multiPolygon(polyCoords);
+                        area = turf.area(areaFeat);
+                        area_km = area/1000/1000;
+                        totalArea = totalArea + area_km;
+                        for (let e in polyCoords) {
+                            if(polyCoords.hasOwnProperty(e)){
+                                let singlePoly = turf.polygon(polyCoords[e]);
+                                //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
+                                if(singlePoly.geometry.coordinates.length > 10){
+                                    options = {tolerance: 0.001, highQuality: true};
+                                    singlePoly = turf.simplify(singlePoly,options);
+                                }
+                                //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
+                                polyCoords[e] = singlePoly.geometry.coordinates;
+                            }
                         }
-                    });
+                        turfSimple = turf.multiPolygon(polyCoords);
+                    }
+                    if (geoType === 'Polygon') {
+                        areaFeat = turf.polygon(polyCoords);
+                        area = turf.area(areaFeat);
+                        area_km = area / 1000 / 1000;
+                        totalArea = totalArea + area_km;
+                        //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
+                        if(areaFeat.geometry.coordinates.length > 10){
+                            options = {tolerance: 0.001, highQuality: true};
+                            areaFeat = turf.simplify(areaFeat,options);
+                        }
+                        //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
+                        polyCoords = areaFeat.geometry.coordinates;
+                        turfSimple = turf.polygon(polyCoords);
+                    }
+                    const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
+                    const simplegeometry = polySimple.getGeometry();
+                    const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
+                    const wmswktString = wktFormat.writeGeometry(fixedgeometry);
+                    const geocoords = fixedgeometry.getCoordinates();
+                    const mysqlWktString = writeMySQLWktString(geoType, geocoords);
+                    if(SOLRMODE) {
+                        geoSolrqString = '"Intersects('+wmswktString+')"';
+                        solrqfrag = geoSolrqString;
+                        solrgeoqArr.push(solrqfrag);
+                    }
+                    else{
+                        geoPolyArr.push(mysqlWktString);
+                    }
+                    geogParams = true;
                 }
-                else{
-                    const circleObj = {
-                        pointlat: fixedcenter[0],
-                        pointlong: fixedcenter[1],
-                        radius: groundRadius
-                    };
-                    geoCircleArr.push(circleObj);
+                if(geoType === 'Circle'){
+                    const center = selectedClone.getGeometry().getCenter();
+                    const radius = selectedClone.getGeometry().getRadius();
+                    const edgeCoordinate = [center[0] + radius, center[1]];
+                    let groundRadius = ol.sphere.getDistance(
+                        ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
+                        ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
+                    );
+                    groundRadius = groundRadius/1000;
+                    const circleArea = Math.PI * groundRadius * groundRadius;
+                    totalArea = totalArea + circleArea;
+                    const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                    if(SOLRMODE) {
+                        geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
+                        solrqfrag = geoSolrqString;
+                        solrgeoqArr.push(solrqfrag);
+                        buildSOLRQString();
+                        geoCallOut = true;
+                        solroccqString = 'q=*:*&fq='+geoSolrqString;
+                        getSOLROccArr(function(res){
+                            geoCallOut = false;
+                            if(res){
+                                finishGetGeographyParams();
+                            }
+                        });
+                    }
+                    else{
+                        const circleObj = {
+                            pointlat: fixedcenter[0],
+                            pointlong: fixedcenter[1],
+                            radius: groundRadius
+                        };
+                        geoCircleArr.push(circleObj);
+                    }
+                    geogParams = true;
                 }
-                geogParams = true;
             }
         }
     });

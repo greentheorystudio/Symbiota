@@ -6,6 +6,7 @@
                 <select id="drawselect">
                     <option value="None">None</option>
                     <option value="Polygon">Polygon</option>
+                    <option value="Box">Box</option>
                     <option value="Circle">Circle</option>
                     <option value="LineString">Line</option>
                     <option value="Point">Point</option>

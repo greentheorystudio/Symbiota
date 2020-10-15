@@ -165,15 +165,15 @@ function setHarvestParamsForm(){
     if(stArr['assochost']){
         document.harvestparams.assochost.value = stArr['assochost'];
     }
-    if(stArr['llbound']){
-        coordArr = stArr['llbound'].split(';');
+    if(stArr['boundingBoxArr']){
+        coordArr = stArr['boundingBoxArr'].split(';');
         document.harvestparams.upperlat.value = coordArr[0];
         document.harvestparams.bottomlat.value = coordArr[1];
         document.harvestparams.leftlong.value = coordArr[2];
         document.harvestparams.rightlong.value = coordArr[3];
     }
-    if(stArr['llpoint']){
-        coordArr = stArr['llpoint'].split(';');
+    if(stArr['circleArr']){
+        coordArr = stArr['circleArr'].split(';');
         document.harvestparams.pointlat.value = coordArr[0];
         document.harvestparams.pointlong.value = coordArr[1];
         document.harvestparams.radiustemp.value = coordArr[2];
@@ -248,20 +248,4 @@ function resetHarvestParamsForm(f){
     sessionStorage.removeItem('jsonstarr');
     document.getElementById('showtable').checked = false;
     changeTableDisplay();
-}
-
-function openPointRadiusMap() {
-    let mapWindow = open("mappointradius.php", "pointradius", "resizable=0,width=700,height=630,left=20,top=20");
-    if (mapWindow.opener == null) {
-        mapWindow.opener = self;
-    }
-    mapWindow.focus();
-}
-
-function openBoundingBoxMap() {
-    let mapWindow = open("mapboundingbox.php", "boundingbox", "resizable=0,width=700,height=630,left=20,top=20");
-    if (mapWindow.opener == null) {
-        mapWindow.opener = self;
-    }
-    mapWindow.focus();
 }

@@ -68,7 +68,7 @@ class OccurrenceManager{
 		if(array_key_exists('clid',$this->searchTermsArr) && is_numeric($this->searchTermsArr['clid'])){
 			$sqlWhere .= 'AND (v.clid IN(' .$this->searchTermsArr['clid']. ')) ';
 		}
-		elseif(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
+		if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
 			if($this->searchTermsArr['db'] !== 'all'){
 				if($this->searchTermsArr['db'] === 'allspec'){
 					$sqlWhere .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype = "Preserved Specimens")) ';
@@ -86,8 +86,7 @@ class OccurrenceManager{
 				}
 			}
 		}
-
-		if(array_key_exists('taxa',$this->searchTermsArr)){
+        if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
 			$sqlWhereTaxa = '';
 			$useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
 			$this->taxaSearchType = (int)$this->searchTermsArr['taxontype'];
@@ -161,7 +160,7 @@ class OccurrenceManager{
 			}
 			$sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
 		}
-        if(array_key_exists('country',$this->searchTermsArr)){
+        if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);
 			$countryArr = explode(';',$searchStr);
 			$tempArr = array();
@@ -177,7 +176,7 @@ class OccurrenceManager{
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
 			$this->localSearchArr[] = implode(' OR ',$countryArr);
 		}
-		if(array_key_exists('state',$this->searchTermsArr)){
+		if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['state']);
 			$stateAr = explode(';',$searchStr);
 			$tempArr = array();
@@ -193,7 +192,7 @@ class OccurrenceManager{
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
 			$this->localSearchArr[] = implode(' OR ',$stateAr);
 		}
-		if(array_key_exists('county',$this->searchTermsArr)){
+		if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['county']);
 			$countyArr = explode(';',$searchStr);
 			$tempArr = array();
@@ -210,7 +209,7 @@ class OccurrenceManager{
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
 			$this->localSearchArr[] = implode(' OR ',$countyArr);
 		}
-		if(array_key_exists('local',$this->searchTermsArr)){
+		if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['local']);
 			$localArr = explode(';',$searchStr);
 			$tempArr = array();
@@ -237,7 +236,7 @@ class OccurrenceManager{
                 '	  ( maximumElevationInMeters is null AND minimumElevationInMeters >= ' .$elevlow. ' AND minimumElevationInMeters <= ' .$elevhigh. ' ) ' .
                 '	) ';
 		}
-        if(array_key_exists('assochost',$this->searchTermsArr)){
+        if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
             $hostAr = explode(';',$searchStr);
             $tempArr = array();
@@ -253,29 +252,48 @@ class OccurrenceManager{
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(' OR ',$hostAr);
         }
-		if(array_key_exists('llbound',$this->searchTermsArr)){
-			$llboundArr = explode(';',$this->searchTermsArr['llbound']);
-			if(count($llboundArr) === 4){
-				$sqlWhere .= 'AND (o.DecimalLatitude BETWEEN ' .$this->cleanInStr($llboundArr[1]). ' AND ' .$this->cleanInStr($llboundArr[0]). ' AND ' .
-                    'o.DecimalLongitude BETWEEN ' .$this->cleanInStr($llboundArr[2]). ' AND ' .$this->cleanInStr($llboundArr[3]). ') ';
-				$this->localSearchArr[] = 'Lat: >' .$llboundArr[1]. ', <' .$llboundArr[0]. '; Long: >' .$llboundArr[2]. ', <' .$llboundArr[3];
-			}
-		}
-		if(array_key_exists('llpoint',$this->searchTermsArr)){
-			$pointArr = explode(';',$this->searchTermsArr['llpoint']);
-			if(count($pointArr) === 3){
-				$latRadius = $pointArr[2] / 69.1;
-				$longRadius = cos($pointArr[0]/57.3)*($pointArr[2]/69.1);
-				$lat1 = $pointArr[0] - $latRadius;
-				$lat2 = $pointArr[0] + $latRadius;
-				$long1 = $pointArr[1] - $longRadius;
-				$long2 = $pointArr[1] + $longRadius;
-				$sqlWhere .= 'AND ((o.DecimalLatitude BETWEEN ' .$this->cleanInStr($lat1). ' AND ' .$this->cleanInStr($lat2). ') AND ' .
-                    '(o.DecimalLongitude BETWEEN ' .$this->cleanInStr($long1). ' AND ' .$this->cleanInStr($long2). ')) ';
-			}
-			$this->localSearchArr[] = 'Point radius: ' .$pointArr[0]. ', ' .$pointArr[1]. ', within ' .$pointArr[2]. ' miles';
-		}
-		if(array_key_exists('collector',$this->searchTermsArr)){
+		if((array_key_exists('boundingBoxArr',$this->searchTermsArr) && $this->searchTermsArr['boundingBoxArr']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
+            $geoSqlStrArr = array();
+            if(array_key_exists('boundingBoxArr',$this->searchTermsArr) && $this->searchTermsArr['boundingBoxArr']){
+                $sqlFragArr = array();
+                $llboundArr = $this->searchTermsArr['boundingBoxArr'];
+                if($llboundArr){
+                    foreach($llboundArr as $obj => $oArr){
+                        $sqlFragArr[] = '(o.DecimalLatitude BETWEEN ' .$this->cleanInStr($oArr['bottomlat']). ' AND ' .$this->cleanInStr($oArr['upperlat']). ' AND ' .
+                            'o.DecimalLongitude BETWEEN ' .$this->cleanInStr($oArr['leftlong']). ' AND ' .$this->cleanInStr($oArr['rightlong']). ') ';
+                        $this->localSearchArr[] = 'Lat: >' .$oArr['bottomlat']. ', <' .$oArr['upperlat']. '; Long: >' .$oArr['leftlong']. ', <' .$oArr['rightlong'];
+                    }
+                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
+                }
+            }
+            if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
+                $sqlFragArr = array();
+                $objArr = $this->searchTermsArr['circleArr'];
+                if($objArr){
+                    foreach($objArr as $obj => $oArr){
+                        $radius = $oArr['radius'] * 0.621371;
+                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlong']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlat']. ') ) + sin( radians(' .$oArr['pointlong']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
+                        $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
+                    }
+                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
+                }
+            }
+            if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
+                //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
+                $sqlFragArr = array();
+                $geomArr = $this->searchTermsArr['polyArr'];
+                if($geomArr){
+                    foreach($geomArr as $geom){
+                        $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
+                    }
+                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
+                }
+            }
+            if($geoSqlStrArr){
+                $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
+            }
+        }
+		if(array_key_exists('collector',$this->searchTermsArr) && $this->searchTermsArr['collector']){
 			$searchStr = str_replace('%apos;',"'",$this->searchTermsArr['collector']);
 			$collectorArr = explode(';',$searchStr);
 			$tempArr = array();
@@ -310,7 +328,7 @@ class OccurrenceManager{
 			$sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
 			$this->localSearchArr[] = implode(', ',$collectorArr);
 		}
-		if(array_key_exists('collnum',$this->searchTermsArr)){
+		if(array_key_exists('collnum',$this->searchTermsArr) && $this->searchTermsArr['collnum']){
 			$collNumArr = explode(';',$this->searchTermsArr['collnum']);
 			$rnWhere = '';
 			foreach($collNumArr as $v){
@@ -339,7 +357,7 @@ class OccurrenceManager{
 				$this->localSearchArr[] = implode(', ',$collNumArr);
 			}
 		}
-		if(array_key_exists('eventdate1',$this->searchTermsArr)){
+		if(array_key_exists('eventdate1',$this->searchTermsArr) && $this->searchTermsArr['eventdate1']){
 			$dateArr = array();
 			if(strpos($this->searchTermsArr['eventdate1'],' to ')){
 				$dateArr = explode(' to ',$this->searchTermsArr['eventdate1']);
@@ -374,7 +392,7 @@ class OccurrenceManager{
 				$this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
 			}
 		}
-        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr)){
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
             $remarksArr = explode(';',$searchStr);
             $tempArr = array();
@@ -391,7 +409,7 @@ class OccurrenceManager{
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(' OR ',$remarksArr);
         }
-		if(array_key_exists('catnum',$this->searchTermsArr)){
+		if(array_key_exists('catnum',$this->searchTermsArr) && $this->searchTermsArr['catnum']){
 			$catStr = $this->searchTermsArr['catnum'];
 			$includeOtherCatNum = array_key_exists('othercatnum',$this->searchTermsArr)?true:false;
 
@@ -447,19 +465,19 @@ class OccurrenceManager{
 			$sqlWhere .= 'AND ('.substr($catWhere,3).') ';
 			$this->localSearchArr[] = $this->searchTermsArr['catnum'];
 		}
-		if(array_key_exists('typestatus',$this->searchTermsArr)){
+		if(array_key_exists('typestatus',$this->searchTermsArr) && $this->searchTermsArr['typestatus']){
 			$sqlWhere .= 'AND (o.typestatus IS NOT NULL) ';
 			$this->localSearchArr[] = 'is type';
 		}
-		if(array_key_exists('hasimages',$this->searchTermsArr)){
+		if(array_key_exists('hasimages',$this->searchTermsArr) && $this->searchTermsArr['hasimages']){
 			$sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images)) ';
 			$this->localSearchArr[] = 'has images';
 		}
-        if(array_key_exists('hasgenetic',$this->searchTermsArr)){
+        if(array_key_exists('hasgenetic',$this->searchTermsArr) && $this->searchTermsArr['hasgenetic']){
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
             $this->localSearchArr[] = 'has genetic data';
         }
-		if(array_key_exists('targetclid',$this->searchTermsArr)){
+		if(array_key_exists('targetclid',$this->searchTermsArr) && $this->searchTermsArr['targetclid']){
 			$clid = $this->searchTermsArr['targetclid'];
 			if(is_numeric($clid)){
 				$voucherManager = new ChecklistVoucherAdmin($this->conn);
@@ -1197,55 +1215,59 @@ class OccurrenceManager{
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
 			$this->searchTermsArr['targetclid'] = $_REQUEST['targetclid'];
 		}
+        $boundingBoxArr = array();
 		$latLongArr = array();
 		if(array_key_exists('upperlat', $_REQUEST) && is_numeric($_REQUEST['upperlat']) && is_numeric($_REQUEST['bottomlat']) && is_numeric($_REQUEST['leftlong']) && is_numeric($_REQUEST['rightlong'])) {
             $upperLat = $_REQUEST['upperlat'];
             if($upperLat || $upperLat === '0') {
-                $latLongArr[] = $upperLat;
+                $latLongArr['upperlat'] = $upperLat;
             }
 
             $bottomlat = $_REQUEST['bottomlat'];
             if($bottomlat || $bottomlat === '0') {
-                $latLongArr[] = $bottomlat;
+                $latLongArr['bottomlat'] = $bottomlat;
             }
 
             $leftLong = $_REQUEST['leftlong'];
             if($leftLong || $leftLong === '0') {
-                $latLongArr[] = $leftLong;
+                $latLongArr['leftlong'] = $leftLong;
             }
 
             $rightlong = $_REQUEST['rightlong'];
             if($rightlong || $rightlong === '0') {
-                $latLongArr[] = $rightlong;
+                $latLongArr['rightlong'] = $rightlong;
             }
 
-            if(count($latLongArr) === 4){
-                $this->searchTermsArr['llbound'] = implode(';',$latLongArr);
+            if($latLongArr['upperlat'] && $latLongArr['bottomlat'] && $latLongArr['leftlong'] && $latLongArr['rightlong']){
+                $boundingBoxArr[] = $latLongArr;
+                $this->searchTermsArr['boundingBoxArr'] = $boundingBoxArr;
             }
             else{
-                unset($this->searchTermsArr['llbound']);
+                unset($this->searchTermsArr['boundingBoxArr']);
             }
         }
 		if(array_key_exists('pointlat', $_REQUEST) && is_numeric($_REQUEST['pointlat']) && is_numeric($_REQUEST['pointlong']) && is_numeric($_REQUEST['radius'])) {
-            $pointLat = $_REQUEST['pointlat'];
+            $circleArr = array();
+		    $pointLat = $_REQUEST['pointlat'];
             if($pointLat || $pointLat === '0') {
-                $latLongArr[] = $pointLat;
+                $latLongArr['pointlat'] = $pointLat;
             }
 
             $pointLong = $_REQUEST['pointlong'];
             if($pointLong || $pointLong === '0') {
-                $latLongArr[] = $pointLong;
+                $latLongArr['pointlong'] = $pointLong;
             }
 
             $radius = $_REQUEST['radius'];
             if($radius) {
-                $latLongArr[] = $radius;
+                $latLongArr['radius'] = $radius;
             }
-            if(count($latLongArr) === 3){
-                $this->searchTermsArr['llpoint'] = implode(';',$latLongArr);
+            if($latLongArr['pointlat'] && $latLongArr['pointlong'] && $latLongArr['radius']){
+                $circleArr[] = $latLongArr;
+                $this->searchTermsArr['circleArr'] = $circleArr;
             }
             else{
-                unset($this->searchTermsArr['llpoint']);
+                unset($this->searchTermsArr['circleArr']);
             }
         }
 	}

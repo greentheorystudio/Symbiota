@@ -1,11 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 
 $spatialManager = new SpatialModuleManager();
 $dwcaHandler = new DwcArchiverCore();
+$occManager = new OccurrenceManager();
 
 $fileType = array_key_exists('dh-type',$_REQUEST)?$_REQUEST['dh-type']:'';
 $fileName = array_key_exists('dh-filename',$_REQUEST)?$_REQUEST['dh-filename']:'';
@@ -72,15 +74,17 @@ if($SOLR_MODE){
 }
 else if($stArrJson){
     $stArr = json_decode($stArrJson, true);
+    $occManager->setSearchTermsArr($stArr);
     $spatialManager->setSearchTermsArr($stArr);
     if($selections){
         $mapWhere = 'o.occid IN('.$selections.') ';
     }
     else{
-        $mapWhere = $spatialManager->getSqlWhere();
+        $mapWhere = $occManager->getSqlWhere();
     }
+    $spatialManager->setSqlWhere($mapWhere);
     if($fileType !== 'zip' && $fileType !== 'csv'){
-        $jsonContent = $spatialManager->getOccPointDownloadGeoJson($mapWhere,0,$rows);
+        $jsonContent = $spatialManager->getOccPointDownloadGeoJson(0,$rows);
     }
 }
 

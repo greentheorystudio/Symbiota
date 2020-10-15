@@ -9,6 +9,7 @@ class SpatialModuleManager{
     protected $localSearchArr = array();
     protected $recordCount = 0;
     private $searchTerms = 0;
+    private $sqlWhere = '';
     private $taxaSearchType;
     private $taxaArr = array();
 
@@ -664,7 +665,7 @@ class SpatialModuleManager{
         return $retStr;
     }
 
-    public function getOccPointMapGeoJson($mapWhere,$pageRequest,$cntPerPage){
+    public function getOccPointMapGeoJson($pageRequest,$cntPerPage){
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
@@ -676,10 +677,10 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity))) ';
@@ -725,7 +726,7 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function getOccPointDownloadGeoJson($mapWhere,$pageRequest,$cntPerPage){
+    public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
@@ -742,10 +743,10 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -821,14 +822,14 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function setRecordCnt($sqlWhere): void
+    public function setRecordCnt(): void
     {
         global $USER_RIGHTS;
         $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
-        $sql .= $sqlWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -845,7 +846,7 @@ class SpatialModuleManager{
         $result->close();
     }
 
-    public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
+    public function getMapRecordPageArr($pageRequest,$cntPerPage): array
     {
         global $USER_RIGHTS;
         $retArr = array();
@@ -856,7 +857,7 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
-        $sql .= $mapWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -1028,6 +1029,17 @@ class SpatialModuleManager{
     {
         $this->searchTermsArr = $stArr;
         $this->searchTerms = 1;
+    }
+
+    public function setSqlWhere($whereStr): void
+    {
+        if(!$whereStr){
+            $whereStr = 'WHERE ';
+        }
+        else{
+            $whereStr .= 'AND ';
+        }
+        $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
 
     public function getRecordCnt(): int

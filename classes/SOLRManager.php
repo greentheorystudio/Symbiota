@@ -819,8 +819,8 @@ class SOLRManager extends OccurrenceManager{
             $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(' OR ',$hostAr);
         }
-        if(array_key_exists('llbound',$this->searchTermsArr)){
-            $llboundArr = explode(';',$this->searchTermsArr['llbound']);
+        if(array_key_exists('boundingBoxArr',$this->searchTermsArr)){
+            $llboundArr = explode(';',$this->searchTermsArr['boundingBoxArr']);
             if(count($llboundArr) === 4){
                 $solrWhere .= 'AND ((decimalLatitude:['.$llboundArr[1].' TO '.$llboundArr[0].']) AND '.
                     '(decimalLongitude:['.$llboundArr[2].' TO '.$llboundArr[3].'])) ';
@@ -992,8 +992,8 @@ class SOLRManager extends OccurrenceManager{
             $solrWhere .= 'AND (resourcename:[* TO *]) ';
             $this->localSearchArr[] = 'has genetic data';
         }
-        if(array_key_exists('llpoint',$this->searchTermsArr)){
-            $pointArr = explode(';',$this->searchTermsArr['llpoint']);
+        if(array_key_exists('circleArr',$this->searchTermsArr)){
+            $pointArr = explode(';',$this->searchTermsArr['circleArr']);
             $radius = $pointArr[2]*1.6214;
             $solrGeoWhere = '{!geofilt sfield=geo}';
             $solrGeoWhere .= '&pt='.$pointArr[0].','.$pointArr[1].'&d='.$radius;

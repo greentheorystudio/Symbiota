@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 header('Content-Type: application/json; charset=' .$CHARSET);
 ini_set('max_execution_time', 300);
 
@@ -10,17 +11,20 @@ $recordCnt = $_REQUEST['rows'];
 $type = $_REQUEST['type'];
 
 $spatialManager = new SpatialModuleManager();
+$occManager = new OccurrenceManager();
 
 $retArr = array();
 
 $stArr = json_decode($stArrJson, true);
 
+$occManager->setSearchTermsArr($stArr);
 $spatialManager->setSearchTermsArr($stArr);
-$mapWhere = $spatialManager->getSqlWhere();
+$mapWhere = $occManager->getSqlWhere();
+$spatialManager->setSqlWhere($mapWhere);
 if($type === 'reccnt'){
-    $spatialManager->setRecordCnt($mapWhere);
+    $spatialManager->setRecordCnt();
     echo $spatialManager->getRecordCnt();
 }
 if($type === 'geoquery'){
-    echo $spatialManager->getOccPointMapGeoJson($mapWhere,$occIndex,$recordCnt);
+    echo $spatialManager->getOccPointMapGeoJson($occIndex,$recordCnt);
 }

@@ -34,7 +34,7 @@ if(isset($_REQUEST['db'])){
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=9"></script>
+    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=10"></script>
     <script type="text/javascript">
         let starrJson = '';
 
@@ -102,6 +102,13 @@ if(isset($_REQUEST['db'])){
             }
 
             return true;
+        }
+
+        function openSpatialInputWindow() {
+            mapWindow=open("../spatial/index.php?windowtype=input","input","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
         }
     </script>
 </head>
@@ -178,72 +185,76 @@ if(isset($_REQUEST['db'])){
 				<h1><?php echo $SEARCHTEXT['LAT_LNG_HEADER']; ?></h1>
 			</div>
 			<div style="width:300px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
-				<div style="font-weight:bold;">
-					<?php echo $SEARCHTEXT['LL_BOUND_TEXT']; ?>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_NLAT']; ?> <input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="checkUpperLat();" style="margin-left:9px;">
-					<select id="upperlat_NS" name="upperlat_NS" onchange="checkUpperLat();">
-						<option id="nlN" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
-						<option id="nlS" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
-					</select>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_SLAT']; ?> <input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="checkBottomLat();" style="margin-left:7px;">
-					<select id="bottomlat_NS" name="bottomlat_NS" onchange="checkBottomLat();">
-						<option id="blN" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
-						<option id="blS" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
-					</select>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_WLNG']; ?> <input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="checkLeftLong();">
-					<select id="leftlong_EW" name="leftlong_EW" onchange="checkLeftLong();">
-						<option id="llW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
-						<option id="llE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
-					</select>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_BOUND_ELNG']; ?> <input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="checkRightLong();" style="margin-left:3px;">
-					<select id="rightlong_EW" name="rightlong_EW" onchange="checkRightLong();">
-						<option id="rlW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
-						<option id="rlE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
-					</select>
-				</div>
-				<div style="clear:both;float:right;margin-top:8px;cursor:pointer;" onclick="openBoundingBoxMap();">
-					<img src="../images/world.png" style="width:15px;" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
-				</div>
-			</div>
-			<div style="width:260px; float:left;border:2px solid brown;padding:10px;margin-left:10px;">
-				<div style="font-weight:bold;">
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_TEXT']; ?>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?> <input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="checkPointLat();" style="margin-left:11px;">
-					<select id="pointlat_NS" name="pointlat_NS" onchange="checkPointLat();">
-						<option id="N" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
-						<option id="S" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
-					</select>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?> <input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="checkPointLong();">
-					<select id="pointlong_EW" name="pointlong_EW" onchange="checkPointLong();">
-						<option id="W" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
-						<option id="E" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
-					</select>
-				</div>
-				<div>
-					<?php echo $SEARCHTEXT['LL_P-RADIUS_RADIUS']; ?> <input type="text" id="radiustemp" name="radiustemp" size="5" value="" style="margin-left:15px;" onchange="updateRadius();">
-					<select id="radiusunits" name="radiusunits" onchange="updateRadius();">
-						<option value="km"><?php echo $SEARCHTEXT['LL_P-RADIUS_KM']; ?></option>
-						<option value="mi"><?php echo $SEARCHTEXT['LL_P-RADIUS_MI']; ?></option>
-					</select>
-					<input type="hidden" id="radius" name="radius" value="" />
-				</div>
-				<div style="clear:both;float:right;margin-top:8px;cursor:pointer;" onclick="openPointRadiusMap();">
-					<img src="../images/world.png" style="width:15px;" title="<?php echo $SEARCHTEXT['LL_P-RADIUS_TITLE_1']; ?>" />
-				</div>
-			</div>
-			<div style=";clear:both;"><hr/></div>
+                <div style="font-weight:bold;">
+                    <?php echo $SEARCHTEXT['LL_BOUND_TEXT']; ?>
+                </div>
+                <div>
+                    <?php echo $SEARCHTEXT['LL_BOUND_NLAT']; ?> <input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="checkUpperLat();" style="margin-left:9px;">
+                    <select id="upperlat_NS" name="upperlat_NS" onchange="checkUpperLat();">
+                        <option id="nlN" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
+                        <option id="nlS" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
+                    </select>
+                </div>
+                <div>
+                    <?php echo $SEARCHTEXT['LL_BOUND_SLAT']; ?> <input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="checkBottomLat();" style="margin-left:7px;">
+                    <select id="bottomlat_NS" name="bottomlat_NS" onchange="checkBottomLat();">
+                        <option id="blN" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
+                        <option id="blS" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
+                    </select>
+                </div>
+                <div>
+                    <?php echo $SEARCHTEXT['LL_BOUND_WLNG']; ?> <input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="checkLeftLong();">
+                    <select id="leftlong_EW" name="leftlong_EW" onchange="checkLeftLong();">
+                        <option id="llW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
+                        <option id="llE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
+                    </select>
+                </div>
+                <div>
+                    <?php echo $SEARCHTEXT['LL_BOUND_ELNG']; ?> <input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="checkRightLong();" style="margin-left:3px;">
+                    <select id="rightlong_EW" name="rightlong_EW" onchange="checkRightLong();">
+                        <option id="rlW" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
+                        <option id="rlE" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
+                    </select>
+                </div>
+            </div>
+            <div style="width:280px;float:left;margin-left:10px;">
+                <div style="width:260px; float:left;border:2px solid brown;padding:10px;">
+                    <div style="font-weight:bold;">
+                        <?php echo $SEARCHTEXT['LL_P-RADIUS_TEXT']; ?>
+                    </div>
+                    <div>
+                        <?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?> <input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="checkPointLat();" style="margin-left:11px;">
+                        <select id="pointlat_NS" name="pointlat_NS" onchange="checkPointLat();">
+                            <option id="N" value="N"><?php echo $SEARCHTEXT['LL_N_SYMB']; ?></option>
+                            <option id="S" value="S"><?php echo $SEARCHTEXT['LL_S_SYMB']; ?></option>
+                        </select>
+                    </div>
+                    <div>
+                        <?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?> <input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="checkPointLong();">
+                        <select id="pointlong_EW" name="pointlong_EW" onchange="checkPointLong();">
+                            <option id="W" value="W"><?php echo $SEARCHTEXT['LL_W_SYMB']; ?></option>
+                            <option id="E" value="E"><?php echo $SEARCHTEXT['LL_E_SYMB']; ?></option>
+                        </select>
+                    </div>
+                    <div>
+                        <?php echo $SEARCHTEXT['LL_P-RADIUS_RADIUS']; ?> <input type="text" id="radiustemp" name="radiustemp" size="5" value="" style="margin-left:15px;" onchange="updateRadius();">
+                        <select id="radiusunits" name="radiusunits" onchange="updateRadius();">
+                            <option value="km"><?php echo $SEARCHTEXT['LL_P-RADIUS_KM']; ?></option>
+                            <option value="mi"><?php echo $SEARCHTEXT['LL_P-RADIUS_MI']; ?></option>
+                        </select>
+                        <input type="hidden" id="radius" name="radius" value="" />
+                    </div>
+                </div>
+                <div id="openspatialwindowdiv" style="width:240px;float:left;margin-top:10px;">
+                    <button type="button" style="width:200px;" onclick="openSpatialInputWindow();">
+                        Open Spatial Window
+                        <span style="float:right;cursor:pointer;">
+                            <img src="../images/world40.gif" style="width:15px;" title="Select coordinates" />
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div style=";clear:both;"><hr/></div>
 			<div>
 				<h1><?php echo $SEARCHTEXT['COLLECTOR_HEADER']; ?></h1>
 			</div>

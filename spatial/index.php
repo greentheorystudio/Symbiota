@@ -57,7 +57,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=276" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=277" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             let winHeight = $(window).height();
@@ -166,6 +166,7 @@ $dbArr = array();
     let tempOccArr = [];
     let geoPolyArr = [];
     let geoCircleArr = [];
+    let geoBoundingBoxArr = [];
     let searchTermsArr = {};
     let layersArr = [];
     let mouseCoords = [];

@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
@@ -18,6 +19,7 @@ $occArr = array();
 
 $solrManager = new SOLRManager();
 $spatialManager = new SpatialModuleManager();
+$occManager = new OccurrenceManager();
 
 if($selArrJson){
     $selections = json_decode($selArrJson, true);
@@ -36,8 +38,10 @@ if($SOLR_MODE){
 if(!$SOLR_MODE && $stArrJson) {
     $stArr = json_decode($stArrJson, true);
     $spatialManager->setSearchTermsArr($stArr);
-    $mapWhere = $spatialManager->getSqlWhere();
-    $occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
+    $occManager->setSearchTermsArr($stArr);
+    $mapWhere = $occManager->getSqlWhere();
+    $spatialManager->setSqlWhere($mapWhere);
+    $occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage);
 }
 
 $pageOccids = array_keys($occArr);

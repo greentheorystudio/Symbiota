@@ -390,6 +390,12 @@ return <<<EOD
                 select: function( event, ui ) {
                     this.value = ui.item.value;
                     document.getElementById('quicksearchtaxonvalue').value = ui.item.id;
+                },
+                change: function (event, ui) {
+                    if (!ui.item) {
+                        document.getElementById('quicksearchtaxon').value = '';
+                        document.getElementById('quicksearchtaxonvalue').value = '';
+                    }
                 }
             },{ minLength: 3 });
         }
@@ -403,6 +409,8 @@ return <<<EOD
         function quicksearchselectorchange(){
             var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
             var placeholdertext = '';
+            document.getElementById('quicksearchtaxon').value = '';
+            document.getElementById('quicksearchtaxonvalue').value = '';
             if(quicksearchcommonselectorchecked){
                 placeholdertext = '$this->quickSearchCommonPlaceholder';
             }
