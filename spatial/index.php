@@ -7,6 +7,21 @@ ini_set('max_execution_time', 180);
 
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 
+$inputWindowMode = false;
+$inputWindowModeTools = array();
+$displayWindowMode = false;
+
+if(strpos($windowType,'input') === 0){
+    $inputWindowMode = true;
+    if(strpos($windowType, '-') !== false){
+        $windowTypeArr = explode('-',$windowType);
+        $windowToolsArr = explode(',',$windowTypeArr[1]);
+        foreach($windowToolsArr as $tool){
+            $inputWindowModeTools[] = $tool;
+        }
+    }
+}
+
 if(file_exists(__DIR__ . '/../config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
@@ -542,7 +557,7 @@ $dbArr = array();
     const transformInteraction = new ol.interaction.Transform ({
         enableRotatedTransform: false,
         condition: function(evt) {
-            return evt.originalEvent.shiftKey;
+            return (activeLayer === 'select' && evt.originalEvent.shiftKey);
         },
         addCondition: ol.events.condition.shiftKeyOnly,
         layers: [selectlayer],

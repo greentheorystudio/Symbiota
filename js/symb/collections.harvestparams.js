@@ -41,7 +41,7 @@ $(document).ready(function() {
 	
 
 function changeTableDisplay(){
-    if(document.getElementById("showtable").checked == true){
+    if(document.getElementById("showtable").checked === true){
         document.harvestparams.action = "listtabledisplay.php";
         sessionStorage.collsearchtableview = true;
     }
@@ -51,77 +51,11 @@ function changeTableDisplay(){
     }
 }
 
-function checkUpperLat(){
-    if(document.harvestparams.upperlat.value !== ""){
-        if(document.harvestparams.upperlat_NS.value === 'N'){
-            document.harvestparams.upperlat.value = Math.abs(parseFloat(document.harvestparams.upperlat.value));
-        }
-        else{
-            document.harvestparams.upperlat.value = -1*Math.abs(parseFloat(document.harvestparams.upperlat.value));
-        }
-    }
-}
-
-function checkBottomLat(){
-    if(document.harvestparams.bottomlat.value !== ""){
-        if(document.harvestparams.bottomlat_NS.value === 'N'){
-            document.harvestparams.bottomlat.value = Math.abs(parseFloat(document.harvestparams.bottomlat.value));
-        }
-        else{
-            document.harvestparams.bottomlat.value = -1*Math.abs(parseFloat(document.harvestparams.bottomlat.value));
-        }
-    }
-}
-
-function checkRightLong(){
-    if(document.harvestparams.rightlong.value !== ""){
-        if(document.harvestparams.rightlong_EW.value === 'E'){
-            document.harvestparams.rightlong.value = Math.abs(parseFloat(document.harvestparams.rightlong.value));
-        }
-        else{
-            document.harvestparams.rightlong.value = -1*Math.abs(parseFloat(document.harvestparams.rightlong.value));
-        }
-    }
-}
-
-function checkLeftLong(){
-    if(document.harvestparams.leftlong.value !== ""){
-        if(document.harvestparams.leftlong_EW.value === 'E'){
-            document.harvestparams.leftlong.value = Math.abs(parseFloat(document.harvestparams.leftlong.value));
-        }
-        else{
-            document.harvestparams.leftlong.value = -1*Math.abs(parseFloat(document.harvestparams.leftlong.value));
-        }
-    }
-}
-
-function checkPointLat(){
-    if(document.harvestparams.pointlat.value !== ""){
-        if(document.harvestparams.pointlat_NS.value === 'N'){
-            document.harvestparams.pointlat.value = Math.abs(parseFloat(document.harvestparams.pointlat.value));
-        }
-        else{
-            document.harvestparams.pointlat.value = -1*Math.abs(parseFloat(document.harvestparams.pointlat.value));
-        }
-    }
-}
-
-function checkPointLong(){
-    if(document.harvestparams.pointlong.value !== ""){
-        if(document.harvestparams.pointlong_EW.value === 'E'){
-            document.harvestparams.pointlong.value = Math.abs(parseFloat(document.harvestparams.pointlong.value));
-        }
-        else{
-            document.harvestparams.pointlong.value = -1*Math.abs(parseFloat(document.harvestparams.pointlong.value));
-        }
-    }
-}
-
 function updateRadius(){
     const radiusUnits = document.getElementById("radiusunits").value;
     let radiusInMiles = document.getElementById("radiustemp").value;
     if(radiusUnits === "km"){
-        radiusInMiles = radiusInMiles*0.6214;
+        radiusInMiles = radiusInMiles * 0.6214;
     }
     document.getElementById("radius").value = radiusInMiles;
 }
@@ -226,15 +160,9 @@ function resetHarvestParamsForm(f){
 	f.bottomlat.value = '';
 	f.leftlong.value = '';
 	f.rightlong.value = '';
-	f.upperlat_NS.value = 'N';
-	f.bottomlat_NS.value = 'N';
-	f.leftlong_EW.value = 'W';
-	f.rightlong_EW.value = 'W';
 	f.pointlat.value = '';
 	f.pointlong.value = '';
 	f.radiustemp.value = '';
-	f.pointlat_NS.value = 'N';
-	f.pointlong_EW.value = 'W';
 	f.radiusunits.value = 'km';
 	f.radius.value = '';
 	f.collector.value = '';
