@@ -272,7 +272,7 @@ function buildLayerTableRow(lArr,removable){
         infoArr['title'] = lArr['Title'];
         rasterLayers.push(infoArr);
     }
-    const addLayerFunction = (layerType === 'vector' ? 'editVectorLayers' : 'editRasterLayers');
+    const addLayerFunction = 'editVectorLayers';
     const divid = "lay-" + layerID;
     if(!document.getElementById(divid)){
         trfragment += '<td style="width:30px;">';
@@ -846,61 +846,6 @@ function checkPointToolSource(selector){
     }
 }
 
-function checkReclassifyForm(){
-    const rasterLayer = document.getElementById("reclassifysourcelayer").value;
-    const outputName = document.getElementById("reclassifyOutputName").value;
-    const rasterMinVal = document.getElementById("reclassifyRasterMin").value;
-    const rasterMaxVal = document.getElementById("reclassifyRasterMax").value;
-    const colorVal = document.getElementById("reclassifyColorVal").value;
-    if(rasterLayer === "") alert("Please select a raster layer to reclassify.");
-    else if(outputName === "") alert("Please enter a name for the output overlay.");
-    else if(layersArr[outputName]) alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
-    else if(colorVal === "FFFFFF") alert("Please select a color other than white for this overlay.");
-    else if(rasterMinVal === "" || rasterMaxVal === "") alert("Please enter a min and max value for the raster to reclassify.");
-    else if(isNaN(rasterMinVal) || isNaN(rasterMaxVal)) alert("Please enter only numbers for the min and max values.");
-    else{
-        $("#reclassifytool").popup("hide");
-        reclassifyRaster();
-    }
-}
-
-function checkReclassifyToolOpen(){
-    if(rasterLayers.length > 0){
-        document.getElementById("reclassifyOutputName").value = "";
-        buildReclassifyDropDown();
-        document.getElementById("reclassifysourcelayer").selectedIndex = 0;
-        setReclassifyTable();
-        $("#maptools").popup("hide");
-        $("#reclassifytool").popup("show");
-    }
-    else{
-        alert('There are no raster layers available.')
-    }
-}
-
-function checkVectorizeForm(){
-    const rasterLayer = document.getElementById("vectorizesourcelayer").value;
-    if(rasterLayer === "") {
-        alert("Please select an overlay layer to vectorize.");
-    }
-    else{
-        $("#vectorizeoverlaytool").popup("hide");
-        vectorizeRaster();
-    }
-}
-
-function checkVectorizeOverlayToolOpen(){
-    if(checkObjectNotEmpty(vectorizeLayers) && selectInteraction.getFeatures().getArray().length === 1){
-        buildVectorizeDropDown();
-        document.getElementById("vectorizesourcelayer").selectedIndex = 0;
-        $("#maptools").popup("hide");
-        $("#vectorizeoverlaytool").popup("show");
-    }
-    else{
-        alert('To use this tool, you must first use the Reclassify Tool to create at least one reclassified raster layer and have one, and only one, polygon selected from your Shapes layer to define the vectorize boundaries.')
-    }
-}
-
 function cleanSelectionsLayer(){
     const selLayerFeatures = layersArr['select'].getSource().getFeatures();
     const currentlySelected = selectInteraction.getFeatures().getArray();
@@ -909,14 +854,6 @@ function cleanSelectionsLayer(){
             layersArr['select'].getSource().removeFeature(selLayerFeatures[i]);
         }
     }
-}
-
-function clearReclassifyForm() {
-    document.getElementById("reclassifysourcelayer").selectedIndex = 0;
-    document.getElementById("reclassifyOutputName").value = "";
-    const tableDiv = document.getElementById("reclassifyTableDiv");
-    tableDiv.removeChild(tableDiv.childNodes[0]);
-    setReclassifyTable();
 }
 
 function clearSelections(){
@@ -1835,109 +1772,95 @@ function getGeographyParams(){
             const geoType = selectedClone.getGeometry().getType();
             const wktFormat = new ol.format.WKT();
             const geoJSONFormat = new ol.format.GeoJSON();
-            if(feature.get('geoType') === 'Box'){
+            if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
                 const selectiongeometry = selectedClone.getGeometry();
                 const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                const boundingBoxObj = {
-                    upperlat: fixedselectgeometry.flatCoordinates[5],
-                    bottomlat: fixedselectgeometry.flatCoordinates[1],
-                    leftlong: fixedselectgeometry.flatCoordinates[0],
-                    rightlong: fixedselectgeometry.flatCoordinates[2]
-                };
-                geoBoundingBoxArr.push(boundingBoxObj);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                let polyCoords = JSON.parse(geojsonStr).coordinates;
+                if (geoType === 'MultiPolygon') {
+                    areaFeat = turf.multiPolygon(polyCoords);
+                    area = turf.area(areaFeat);
+                    area_km = area/1000/1000;
+                    totalArea = totalArea + area_km;
+                    for (let e in polyCoords) {
+                        if(polyCoords.hasOwnProperty(e)){
+                            let singlePoly = turf.polygon(polyCoords[e]);
+                            //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
+                            if(singlePoly.geometry.coordinates.length > 10){
+                                options = {tolerance: 0.001, highQuality: true};
+                                singlePoly = turf.simplify(singlePoly,options);
+                            }
+                            //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
+                            polyCoords[e] = singlePoly.geometry.coordinates;
+                        }
+                    }
+                    turfSimple = turf.multiPolygon(polyCoords);
+                }
+                if (geoType === 'Polygon') {
+                    areaFeat = turf.polygon(polyCoords);
+                    area = turf.area(areaFeat);
+                    area_km = area / 1000 / 1000;
+                    totalArea = totalArea + area_km;
+                    //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
+                    if(areaFeat.geometry.coordinates.length > 10){
+                        options = {tolerance: 0.001, highQuality: true};
+                        areaFeat = turf.simplify(areaFeat,options);
+                    }
+                    //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
+                    polyCoords = areaFeat.geometry.coordinates;
+                    turfSimple = turf.polygon(polyCoords);
+                }
+                const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
+                const simplegeometry = polySimple.getGeometry();
+                const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
+                const wmswktString = wktFormat.writeGeometry(fixedgeometry);
+                const geocoords = fixedgeometry.getCoordinates();
+                const mysqlWktString = writeMySQLWktString(geoType, geocoords);
+                if(SOLRMODE) {
+                    geoSolrqString = '"Intersects('+wmswktString+')"';
+                    solrqfrag = geoSolrqString;
+                    solrgeoqArr.push(solrqfrag);
+                }
+                else{
+                    geoPolyArr.push(mysqlWktString);
+                }
                 geogParams = true;
             }
-            else{
-                if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
-                    const selectiongeometry = selectedClone.getGeometry();
-                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                    let polyCoords = JSON.parse(geojsonStr).coordinates;
-                    if (geoType === 'MultiPolygon') {
-                        areaFeat = turf.multiPolygon(polyCoords);
-                        area = turf.area(areaFeat);
-                        area_km = area/1000/1000;
-                        totalArea = totalArea + area_km;
-                        for (let e in polyCoords) {
-                            if(polyCoords.hasOwnProperty(e)){
-                                let singlePoly = turf.polygon(polyCoords[e]);
-                                //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
-                                if(singlePoly.geometry.coordinates.length > 10){
-                                    options = {tolerance: 0.001, highQuality: true};
-                                    singlePoly = turf.simplify(singlePoly,options);
-                                }
-                                //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
-                                polyCoords[e] = singlePoly.geometry.coordinates;
-                            }
+            if(geoType === 'Circle'){
+                const center = selectedClone.getGeometry().getCenter();
+                const radius = selectedClone.getGeometry().getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                let groundRadius = ol.sphere.getDistance(
+                    ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
+                    ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
+                );
+                groundRadius = groundRadius/1000;
+                const circleArea = Math.PI * groundRadius * groundRadius;
+                totalArea = totalArea + circleArea;
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                if(SOLRMODE) {
+                    geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
+                    solrqfrag = geoSolrqString;
+                    solrgeoqArr.push(solrqfrag);
+                    buildSOLRQString();
+                    geoCallOut = true;
+                    solroccqString = 'q=*:*&fq='+geoSolrqString;
+                    getSOLROccArr(function(res){
+                        geoCallOut = false;
+                        if(res){
+                            finishGetGeographyParams();
                         }
-                        turfSimple = turf.multiPolygon(polyCoords);
-                    }
-                    if (geoType === 'Polygon') {
-                        areaFeat = turf.polygon(polyCoords);
-                        area = turf.area(areaFeat);
-                        area_km = area / 1000 / 1000;
-                        totalArea = totalArea + area_km;
-                        //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
-                        if(areaFeat.geometry.coordinates.length > 10){
-                            options = {tolerance: 0.001, highQuality: true};
-                            areaFeat = turf.simplify(areaFeat,options);
-                        }
-                        //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
-                        polyCoords = areaFeat.geometry.coordinates;
-                        turfSimple = turf.polygon(polyCoords);
-                    }
-                    const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
-                    const simplegeometry = polySimple.getGeometry();
-                    const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                    const wmswktString = wktFormat.writeGeometry(fixedgeometry);
-                    const geocoords = fixedgeometry.getCoordinates();
-                    const mysqlWktString = writeMySQLWktString(geoType, geocoords);
-                    if(SOLRMODE) {
-                        geoSolrqString = '"Intersects('+wmswktString+')"';
-                        solrqfrag = geoSolrqString;
-                        solrgeoqArr.push(solrqfrag);
-                    }
-                    else{
-                        geoPolyArr.push(mysqlWktString);
-                    }
-                    geogParams = true;
+                    });
                 }
-                if(geoType === 'Circle'){
-                    const center = selectedClone.getGeometry().getCenter();
-                    const radius = selectedClone.getGeometry().getRadius();
-                    const edgeCoordinate = [center[0] + radius, center[1]];
-                    let groundRadius = ol.sphere.getDistance(
-                        ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-                        ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-                    );
-                    groundRadius = groundRadius/1000;
-                    const circleArea = Math.PI * groundRadius * groundRadius;
-                    totalArea = totalArea + circleArea;
-                    const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
-                    if(SOLRMODE) {
-                        geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
-                        solrqfrag = geoSolrqString;
-                        solrgeoqArr.push(solrqfrag);
-                        buildSOLRQString();
-                        geoCallOut = true;
-                        solroccqString = 'q=*:*&fq='+geoSolrqString;
-                        getSOLROccArr(function(res){
-                            geoCallOut = false;
-                            if(res){
-                                finishGetGeographyParams();
-                            }
-                        });
-                    }
-                    else{
-                        const circleObj = {
-                            pointlat: fixedcenter[0],
-                            pointlong: fixedcenter[1],
-                            radius: groundRadius
-                        };
-                        geoCircleArr.push(circleObj);
-                    }
-                    geogParams = true;
+                else{
+                    const circleObj = {
+                        pointlat: fixedcenter[0],
+                        pointlong: fixedcenter[1],
+                        radius: groundRadius
+                    };
+                    geoCircleArr.push(circleObj);
                 }
+                geogParams = true;
             }
         }
     });
@@ -3497,70 +3420,6 @@ function setLoadingTimer(){
     if(queryRecCnt < 5000) loadingTimer = 1000;
 }
 
-function setReclassifyTable(){
-    if(document.getElementById("reclassifytable")){
-        const currentTable = document.getElementById("reclassifytable");
-        currentTable.parentNode.removeChild(currentTable);
-    }
-    const newTable = document.createElement('table');
-    newTable.setAttribute("id","reclassifytable");
-    newTable.setAttribute("class","styledtable");
-    newTable.setAttribute("style","font-family:Arial;font-size:12px;margin-top:15px;margin-left:auto;margin-right:auto;width:330px;");
-    const newTHead = document.createElement('thead');
-    const newTHeadRow = document.createElement('tr');
-    let newTHeadHead1 = document.createElement('th');
-    newTHeadHead1.setAttribute("style","text-align:center;");
-    newTHeadHead1.innerHTML = "Raster Min Value";
-    newTHeadRow.appendChild(newTHeadHead1);
-    newTHeadHead1 = document.createElement('th');
-    newTHeadHead1.setAttribute("style","text-align:center;");
-    newTHeadHead1.innerHTML = "Raster Max Value";
-    newTHeadRow.appendChild(newTHeadHead1);
-    const newTHeadHead2 = document.createElement('th');
-    newTHeadHead2.setAttribute("style","text-align:center;");
-    newTHeadHead2.innerHTML = "Color";
-    newTHeadRow.appendChild(newTHeadHead2);
-    newTHead.appendChild(newTHeadRow);
-    newTable.appendChild(newTHead);
-    const newTBody = document.createElement('tbody');
-    newTBody.setAttribute("id","reclassifyTBody");
-    const newRow = document.createElement('tr');
-    let newRastValCell = document.createElement('td');
-    newRastValCell.setAttribute("style","width:150px;");
-    let newRastValInput = document.createElement('input');
-    newRastValInput.setAttribute("data-role","none");
-    newRastValInput.setAttribute("type","text");
-    newRastValInput.setAttribute("id","reclassifyRasterMin");
-    newRastValInput.setAttribute("style","width:150px;margin-left:10px;");
-    newRastValInput.setAttribute("value","");
-    newRastValCell.appendChild(newRastValInput);
-    newRow.appendChild(newRastValCell);
-    newRastValCell = document.createElement('td');
-    newRastValCell.setAttribute("style","width:150px;");
-    newRastValInput = document.createElement('input');
-    newRastValInput.setAttribute("data-role","none");
-    newRastValInput.setAttribute("type","text");
-    newRastValInput.setAttribute("id","reclassifyRasterMax");
-    newRastValInput.setAttribute("style","width:150px;margin-left:10px;");
-    newRastValInput.setAttribute("value","");
-    newRastValCell.appendChild(newRastValInput);
-    newRow.appendChild(newRastValCell);
-    const newColorValCell = document.createElement('td');
-    newColorValCell.setAttribute("style","width:30px;");
-    const newColorValInput = document.createElement('input');
-    newColorValInput.setAttribute("data-role","none");
-    newColorValInput.setAttribute("id","reclassifyColorVal");
-    newColorValInput.setAttribute("class","color");
-    newColorValInput.setAttribute("style","cursor:pointer;border:1px black solid;height:20px;width:20px;margin-left:5px;margin-bottom:-2px;font-size:0px;");
-    newColorValInput.setAttribute("value","FFFFFF");
-    newColorValCell.appendChild(newColorValInput);
-    newRow.appendChild(newColorValCell);
-    newTBody.appendChild(newRow);
-    newTable.appendChild(newTBody);
-    document.getElementById("reclassifyTableDiv").appendChild(newTable);
-    jscolor.init();
-}
-
 function setRecordsTab(){
     if(queryRecCnt > 0){
         document.getElementById("recordsHeader").style.display = "block";
@@ -3649,6 +3508,62 @@ function setSymbol(feature){
     }
 
     return style;
+}
+
+function setTransformHandleStyle(){
+    if(!transformInteraction instanceof ol.interaction.Transform){
+        return;
+    }
+    const circle = new ol.style.RegularShape({
+        fill: new ol.style.Fill({color:[255,255,255,0.01]}),
+        stroke: new ol.style.Stroke({width:1, color:[0,0,0,0.01]}),
+        radius: 8,
+        points: 10
+    });
+    transformInteraction.setStyle ('rotate', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf0e2',
+            font:"16px Fontawesome",
+            textAlign: "left",
+            fill:new ol.style.Fill({color:'red'})
+        }),
+        image: circle
+    }));
+    transformInteraction.setStyle ('rotate0', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf0e2',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        }),
+    }));
+    transformInteraction.setStyle('translate', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf047',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.setStyle ('scaleh1', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf07d',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.style.scaleh3 = transformInteraction.style.scaleh1;
+    transformInteraction.setStyle('scalev', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf07e',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.style.scalev2 = transformInteraction.style.scalev;
+    transformInteraction.set('translate', transformInteraction.get('translate'));
 }
 
 function showFeature(feature){

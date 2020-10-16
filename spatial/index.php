@@ -44,12 +44,15 @@ $dbArr = array();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/ol-ext.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialbase.css?ver=17" type="text/css" rel="stylesheet" />
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
@@ -57,7 +60,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=277" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=279" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
             let winHeight = $(window).height();
@@ -233,6 +236,9 @@ $dbArr = array();
     let dsAnimation = '';
     let zipFile = '';
     let zipFolder = '';
+    let transformStartAngle = 0;
+    let transformD = [0,0];
+    let transformFirstPoint = false;
     const SOLRFields = 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tidinterpreted,scientificNameAuthorship,identifiedBy,' +
         'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
         'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
@@ -455,7 +461,7 @@ $dbArr = array();
     const selectInteraction = new ol.interaction.Select({
         layers: [layersArr['select']],
         condition: function (evt) {
-            return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey);
+            return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey && !evt.originalEvent.shiftKey);
         },
         style: new ol.style.Style({
             fill: new ol.style.Fill({
@@ -533,6 +539,22 @@ $dbArr = array();
         style: getPointStyle
     });
 
+    const transformInteraction = new ol.interaction.Transform ({
+        enableRotatedTransform: false,
+        condition: function(evt) {
+            return evt.originalEvent.shiftKey;
+        },
+        addCondition: ol.events.condition.shiftKeyOnly,
+        layers: [selectlayer],
+        hitTolerance: 2,
+        translateFeature: false,
+        scale: true,
+        rotate: true,
+        keepAspectRatio: false,
+        translate: true,
+        stretch: true
+    });
+
     function editVectorLayers(c,title){
         const layer = c.value;
         if(c.checked === true){
@@ -551,240 +573,6 @@ $dbArr = array();
                 source: layersArr[layerSourceName]
             });
             layersArr[layer].setOpacity(0.3);
-            map.addLayer(layersArr[layer]);
-            refreshLayerOrder();
-            addLayerToSelList(layer,title);
-        }
-        else{
-            map.removeLayer(layersArr[layer]);
-            removeLayerToSelList(layer);
-        }
-    }
-
-    function vectorizeRaster(){
-        showWorking();
-        const overlay = document.getElementById("vectorizesourcelayer").value;
-        const overlaySource = overlayLayers[overlay]['source'];
-        const features = selectInteraction.getFeatures().getArray();
-        const boundsFeature = features[0].clone();
-        const geoJSONFormat = new ol.format.GeoJSON();
-        const geometry = boundsFeature.getGeometry();
-        const fixedgeometry = geometry.transform(mapProjection, wgs84Projection);
-        const geojsonStr = geoJSONFormat.writeGeometry(fixedgeometry);
-        const xmlContent = generateWPSPolyExtractXML(overlayLayers[overlay]['values'], overlaySource, geojsonStr);
-        const http = new XMLHttpRequest();
-        const url = "rpc/GeoServerConnector.php";
-        const params = 'REQUEST=wps&xmlrequest=' + xmlContent;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                //console.log(http.responseText);
-                const features = geoJSONFormat.readFeatures(http.responseText, {
-                    featureProjection: 'EPSG:3857'
-                });
-                selectsource.addFeatures(features);
-                document.getElementById("selectlayerselect").value = 'select';
-                setActiveLayer();
-            }
-            hideWorking();
-        };
-        http.send(params);
-    }
-
-    function checkRasterCalcForm(){
-        const outputName = document.getElementById("rastercalcOutputName").value;
-        const layer1 = document.getElementById("rastcalcoverlay1").value;
-        const operator = document.getElementById("rastcalcoperator").value;
-        const layer2 = document.getElementById("rastcalcoverlay2").value;
-        const colorVal = document.getElementById("rastcalccolor").value;
-        if(layer1 === "" || layer2 === "") {
-            alert("Please select overlay layers to calculate.");
-        }
-        else if(outputName === "") {
-            alert("Please enter a name for the output overlay.");
-        }
-        else if(layersArr[outputName]) {
-            alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
-        }
-        else if(operator === "") {
-            alert("Please select operator for calculation.");
-        }
-        else if(colorVal === "FFFFFF") {
-            alert("Please select a color other than white for this overlay.");
-        }
-        else{
-            $("#rastercalctool").popup("hide");
-            calculateRasters();
-        }
-    }
-
-    function calculateRasters(){
-        const layer1 = document.getElementById("rastcalcoverlay1").value;
-        const layer2 = document.getElementById("rastcalcoverlay2").value;
-        const operator = document.getElementById("rastcalcoperator").value;
-        const hexColor = document.getElementById("rastcalccolor").value;
-        const rgbColorArr = hexToRgb('#' + hexColor);
-        let outputName = document.getElementById("rastercalcOutputName").value;
-        outputName = outputName.replace(" ","_");
-        overlayLayers[outputName] = [];
-        overlayLayers[outputName]['id'] = outputName;
-        overlayLayers[outputName]['title'] = outputName;
-        overlayLayers[outputName]['source'] = '';
-
-        const layerRasterSourceName = outputName + 'RasterSource';
-        layersArr[layerRasterSourceName] = new ol.source.Raster({
-            sources: [layersArr[layer1].getSource(), layersArr[layer2].getSource()],
-            operationType: 'pixel',
-            operation: function (pixels, data) {
-                let result;
-                const operator = data.operator;
-                const value1 = pixels[0][4];
-                const value2 = pixels[1][4];
-                if(operator === '+') {
-                    result = value1 + value2;
-                }
-                else if(operator === '-') {
-                    result = value1 - value2;
-                }
-                else if(operator === '*') {
-                    result = value1 * value2;
-                }
-                else if(operator === '/') {
-                    result = value1 / value2;
-                }
-                if(result > 0){
-                    let inputPixel = [];
-                    inputPixel[0] = 123; //rgbarr['r'];
-                    inputPixel[1] = 203; //rgbarr['g'];
-                    inputPixel[2] = 122; //rgbarr['b'];
-                    inputPixel[3] = 255;
-                    inputPixel[4] = result;
-                    return inputPixel;
-                }
-                return [0, 0, 0, 0, 0];
-            },
-            beforeoperations: function(event) {
-                event.data['operator'] = operator;
-                event.data['rgbarr'] = rgbColorArr;
-            }
-        });
-        layersArr[outputName] = new ol.layer.Image({
-            source: layersArr[layerRasterSourceName]
-        });
-
-        layersArr[outputName].setOpacity(0.4);
-        map.addLayer(layersArr[outputName]);
-        refreshLayerOrder();
-        const infoArr = [];
-        infoArr['Name'] = outputName;
-        infoArr['layerType'] = 'raster';
-        infoArr['Title'] = outputName;
-        infoArr['Abstract'] = '';
-        infoArr['DefaultCRS'] = '';
-        buildLayerTableRow(infoArr,true);
-    }
-
-    function clearRasterCalcForm() {
-        document.getElementById("rastcalcoverlay1").selectedIndex = 0;
-        document.getElementById("rastcalcoperator").selectedIndex = 0;
-        document.getElementById("rastcalcoverlay2").selectedIndex = 0;
-        document.getElementById("rastcalccolor").value = "FFFFFF";
-    }
-
-    function reclassifyRaster(){
-        const rasterLayer = document.getElementById("reclassifysourcelayer").value;
-        let outputName = document.getElementById("reclassifyOutputName").value;
-        outputName = outputName.replace(" ","_");
-        overlayLayers[outputName] = [];
-        overlayLayers[outputName]['id'] = outputName;
-        overlayLayers[outputName]['title'] = outputName;
-        overlayLayers[outputName]['source'] = rasterLayer;
-        overlayLayers[outputName]['values'] = [];
-        overlayLayers[outputName]['values']['rasmin'] = document.getElementById('reclassifyRasterMin').value;
-        overlayLayers[outputName]['values']['rasmax'] = document.getElementById('reclassifyRasterMax').value;
-        overlayLayers[outputName]['values']['color'] = document.getElementById('reclassifyColorVal').value;
-
-        const layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+rasterLayer;
-        const layerTileSourceName = outputName + 'Source';
-        const layerRasterSourceName = outputName + 'RasterSource';
-        const sldContent = generateReclassifySLD(overlayLayers[outputName]['values'], layerName);
-        layersArr[layerTileSourceName] = new ol.source.TileWMS({
-            url: 'rpc/GeoServerConnector.php',
-            params: {'LAYERS':layerName, 'STYLES':'reclassify_style', 'SLD_BODY':sldContent, 'datatype':'raster'},
-            serverType: 'geoserver',
-            crossOrigin: 'anonymous',
-            imageLoadFunction: function(image, src) {
-                imagePostFunction(image, src);
-            }
-        });
-        layersArr[layerRasterSourceName] = new ol.source.Raster({
-            sources: [layersArr[layerTileSourceName]],
-            operationType: 'pixel',
-            operation: function (pixels) {
-                const inputPixel = pixels[0];
-                if((inputPixel[0] && inputPixel[1] && inputPixel[2])){
-                    const pixr = inputPixel[0];
-                    const pixg = inputPixel[1];
-                    const pixb = inputPixel[2];
-                    if(pixr === 255 && pixg === 255 && pixb === 255){
-                        return [0, 0, 0, 0];
-                    }
-                    else if(pixr === 0 && pixg === 0 && pixb === 0){
-                        return [0, 0, 0, 0];
-                    }
-                    else{
-                        return inputPixel;
-                    }
-                }
-                return [0, 0, 0, 0];
-            }
-        });
-        layersArr[outputName] = new ol.layer.Image({
-            source: layersArr[layerRasterSourceName]
-        });
-
-        layersArr[outputName].setOpacity(0.4);
-        map.addLayer(layersArr[outputName]);
-        refreshLayerOrder();
-        const infoArr = [];
-        infoArr['Name'] = outputName;
-        infoArr['raster'] = 'vector';
-        infoArr['Title'] = outputName;
-        infoArr['Abstract'] = '';
-        infoArr['DefaultCRS'] = '';
-        buildLayerTableRow(infoArr,true);
-        vectorizeLayers[outputName] = outputName;
-    }
-
-    function editRasterLayers(c,title){
-        const layer = c.value;
-        if(c.checked === true){
-            const layerName = '<?php echo ($GEOSERVER_LAYER_WORKSPACE ?? ''); ?>:'+layer;
-            const layerTileSourceName = layer + 'Source';
-            const layerRasterSourceName = layer + 'RasterSource';
-            layersArr[layerTileSourceName] = new ol.source.TileWMS({
-                url: 'rpc/GeoServerConnector.php',
-                params: {'LAYERS':layerName, 'datatype':'raster'},
-                serverType: 'geoserver',
-                crossOrigin: 'anonymous',
-                imageLoadFunction: function(image, src) {
-                    imagePostFunction(image, src);
-                }
-            });
-            layersArr[layerRasterSourceName] = new ol.source.Raster({
-                sources: [layersArr[layerTileSourceName]],
-                operationType: 'pixel',
-                operation: function (pixels) {
-                    return pixels[0];
-                }
-            });
-            layersArr[layer] = new ol.layer.Image({
-                source: layersArr[layerRasterSourceName]
-            });
-
-            layersArr[layer].setOpacity(0.4);
             map.addLayer(layersArr[layer]);
             refreshLayerOrder();
             addLayerToSelList(layer,title);
@@ -838,6 +626,7 @@ $dbArr = array();
     map.addInteraction(selectInteraction);
     map.addInteraction(pointInteraction);
     map.addInteraction(dragAndDropInteraction);
+    map.addInteraction(transformInteraction);
 
     const selectedFeatures = selectInteraction.getFeatures();
     const selectedPointFeatures = pointInteraction.getFeatures();
@@ -1269,6 +1058,35 @@ $dbArr = array();
         }
     });
 
+    transformInteraction.on (['select'], function(evt) {
+        if(transformFirstPoint && evt.features && evt.features.getLength()){
+            transformInteraction.setCenter(evt.features.getArray()[0].getGeometry().getFirstCoordinate());
+        }
+    });
+
+    transformInteraction.on (['rotatestart','translatestart'], function(evt){
+        transformStartAngle = evt.feature.get('angle') || 0;
+        transformD = [0,0];
+    });
+
+    transformInteraction.on('rotating', function (evt){
+        evt.feature.set('angle', transformStartAngle - evt.angle);
+    });
+
+    transformInteraction.on('translating', function (evt){
+        transformD[0] += evt.delta[0];
+        transformD[1] += evt.delta[1];
+        if(transformFirstPoint){
+            transformInteraction.setCenter(evt.features.getArray()[0].getGeometry().getFirstCoordinate());
+        }
+    });
+
+    transformInteraction.on('scaling', function (evt){
+        if(transformFirstPoint){
+            transformInteraction.setCenter(evt.features.getArray()[0].getGeometry().getFirstCoordinate());
+        }
+    });
+
     function selectObjectFromID(url,selectLayer){
         $.ajax({
             type: "GET",
@@ -1297,6 +1115,7 @@ $dbArr = array();
     };
 
     changeDraw();
+    setTransformHandleStyle();
 </script>
 
 <?php include_once('includes/mapsettings.php'); ?>
@@ -1304,12 +1123,6 @@ $dbArr = array();
 <?php include_once('includes/layercontroller.php'); ?>
 
 <?php include_once('includes/csvoptions.php'); ?>
-
-<?php include_once('includes/reclassifytool.php'); ?>
-
-<?php include_once('includes/rastercalculator.php'); ?>
-
-<?php include_once('includes/vectorizeoverlay.php'); ?>
 
 <!-- Data Download Form -->
 <div style="display:none;">
