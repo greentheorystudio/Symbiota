@@ -5,11 +5,23 @@
                 <span class="maptext">Draw</span>
                 <select id="drawselect">
                     <option value="None">None</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="Box">Box</option>
-                    <option value="Circle">Circle</option>
-                    <option value="LineString">Line</option>
-                    <option value="Point">Point</option>
+                    <?php
+                    if(!$inputWindowModeTools || in_array('polygon', $inputWindowModeTools, true)){
+                        echo '<option value="Polygon">Polygon</option>';
+                    }
+                    if(!$inputWindowModeTools || in_array('polygon', $inputWindowModeTools, true) || in_array('box', $inputWindowModeTools, true)){
+                        echo '<option value="Box">Box</option>';
+                    }
+                    if(!$inputWindowModeTools || in_array('circle', $inputWindowModeTools, true)){
+                        echo '<option value="Circle">Circle</option>';
+                    }
+                    if(!$inputWindowModeTools || in_array('linestring', $inputWindowModeTools, true)){
+                        echo '<option value="LineString">Line</option>';
+                    }
+                    if(!$inputWindowModeTools || in_array('point', $inputWindowModeTools, true)){
+                        echo '<option value="Point">Point</option>';
+                    }
+                    ?>
                 </select>
             </div>
             <div id="basecontrol">
@@ -35,57 +47,78 @@
             </div>
         </div>
         <div class="bottomToolboxRow">
-            <div id="settingsLink" style="margin-left:22px;float:left;">
-                <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
-            </div>
+            <?php
+            if(!$inputWindowMode){
+                ?>
+                <div id="settingsLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="mapsettings_open" href="#mapsettings"><b>Settings</b></a></span>
+                </div>
+                <?php
+            }
+            ?>
             <div id="layerControllerLink" style="margin-left:22px;float:left;">
                 <span class="maptext"><a class="addLayers_open" href="#addLayers"><b>Layers</b></a></span>
             </div>
-            <div id="deleteSelections" style="margin-left:60px;float:left;">
+            <?php
+            if($inputWindowMode){
+                ?>
+                <div style="margin-left:22px;float:left;">
+                    <button data-role="none" type="button" onclick='' >Submit <?php echo $inputWindowSubmitText; ?></button>
+                </div>
+                <?php
+            }
+            ?>
+            <div id="deleteSelections" style="margin-left:22px;float:left;">
                 <button data-role="none" type="button" onclick='deleteSelections();' >Delete Shapes</button>
             </div>
         </div>
         <div style="clear:both;"></div>
-        <div id="dateslidercontrol" style="margin-top:5px;display:none;">
-            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-            <div id="setdatediv" style="">
-                <span class="maptext">Earliest</span>
-                <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
-                <span class="maptext">Latest</span>
-                <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
-                <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
-            </div>
-            <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
-            <div id="animatediv">
-                <div>
-                    <span class="maptext">Interval Duration (years)</span>
-                    <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
-                    <span class="maptext">Interval Time (seconds)</span>
-                    <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
+        <?php
+        if(!$inputWindowMode){
+            ?>
+            <div id="dateslidercontrol" style="margin-top:5px;display:none;">
+                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
+                <div id="setdatediv" style="">
+                    <span class="maptext">Earliest</span>
+                    <input data-role="none" type="text" id="datesliderearlydate" style="width:100px;margin-right:5px;" onchange="checkDSLowDate();" />
+                    <span class="maptext">Latest</span>
+                    <input data-role="none" type="text" id="datesliderlatedate" style="width:100px;margin-right:25px;" onchange="checkDSHighDate();" />
+                    <button data-role="none" type="button" onclick="setDSValues();" >Set</button>
                 </div>
-                <div style="clear:both;"></div>
-                <div style="margin-top:3px;">
-                    <div style="float:left;">
+                <div style="margin:5px 0 5px 0;color:white;"><hr /></div>
+                <div id="animatediv">
+                    <div>
+                        <span class="maptext">Interval Duration (years)</span>
+                        <input data-role="none" type="text" id="datesliderinterduration" style="width:40px;margin-right:5px;" onchange="checkDSAnimDuration();" />
+                        <span class="maptext">Interval Time (seconds)</span>
+                        <input data-role="none" type="text" id="datesliderintertime" style="width:40px;margin-right:10px;" onchange="checkDSAnimTime();" />
+                    </div>
+                    <div style="clear:both;"></div>
+                    <div style="margin-top:3px;">
+                        <div style="float:left;">
                         <span style="margin-right:5px;">
                             <span class="maptext">Save Images</span>
                             <input data-role="none" type='checkbox' id='dateslideranimimagesave' onchange="checkDSSaveImage();" value='1'>
                         </span>
-                        <span style="margin-right:5px;">
+                            <span style="margin-right:5px;">
                             <span class="maptext">Reverse</span>
                             <input data-role="none" type='checkbox' id='dateslideranimreverse' value='1'>
                         </span>
-                        <span>
+                            <span>
                             <span class="maptext">Dual</span>
                             <input data-role="none" type='checkbox' id='dateslideranimdual' value='1'>
                         </span>
+                        </div>
+                        <div style="float:right;">
+                            <button data-role="none" type="button" onclick="setDSAnimation();" >Start</button>
+                            <button data-role="none" type="button" onclick="stopDSAnimation();" >Stop</button>
+                        </div>
                     </div>
-                    <div style="float:right;">
-                        <button data-role="none" type="button" onclick="setDSAnimation();" >Start</button>
-                        <button data-role="none" type="button" onclick="stopDSAnimation();" >Stop</button>
-                    </div>
+                    <div style="clear:both;"></div>
                 </div>
-                <div style="clear:both;"></div>
             </div>
-        </div>
+            <?php
+        }
+        ?>
     </div>
 </div>

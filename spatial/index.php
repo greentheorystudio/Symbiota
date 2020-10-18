@@ -9,6 +9,7 @@ $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'
 
 $inputWindowMode = false;
 $inputWindowModeTools = array();
+$inputWindowSubmitText = '';
 $displayWindowMode = false;
 
 if(strpos($windowType,'input') === 0){
@@ -19,6 +20,10 @@ if(strpos($windowType,'input') === 0){
         foreach($windowToolsArr as $tool){
             $inputWindowModeTools[] = $tool;
         }
+        $inputWindowSubmitText = 'Coordinates';
+    }
+    else{
+        $inputWindowSubmitText = 'Criteria';
     }
 }
 
@@ -564,7 +569,7 @@ $dbArr = array();
         hitTolerance: 2,
         translateFeature: false,
         scale: true,
-        rotate: true,
+        rotate: <?php echo (($inputWindowMode && in_array('box', $inputWindowModeTools, true))?'false':'true'); ?>,
         keepAspectRatio: false,
         translate: true,
         stretch: true
