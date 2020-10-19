@@ -652,13 +652,11 @@ $dbArr = array();
     const selectedPointFeatures = pointInteraction.getFeatures();
 
     selectedPointFeatures.on('add', function() {
-        setSpatialParamBox();
-        buildQueryStrings();
+        processVectorChange();
     });
 
     selectedPointFeatures.on('remove', function() {
-        setSpatialParamBox();
-        buildQueryStrings();
+        processVectorChange();
     });
 
     map.getView().on('change:resolution', function() {
@@ -841,13 +839,11 @@ $dbArr = array();
     });
 
     selectedFeatures.on('add', function() {
-        setSpatialParamBox();
-        buildQueryStrings();
+        processVectorChange();
     });
 
     selectedFeatures.on('remove', function() {
-        setSpatialParamBox();
-        buildQueryStrings();
+        processVectorChange();
     });
 
     selectsource.on('change', function() {
@@ -1127,6 +1123,17 @@ $dbArr = array();
                 });
             }
         });
+    }
+
+    function processVectorChange(){
+        <?php
+        if(!$inputWindowMode){
+            ?>
+            setSpatialParamBox();
+            buildQueryStrings();
+            <?php
+        }
+        ?>
     }
 
     typeSelect.onchange = function() {
