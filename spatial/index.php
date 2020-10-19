@@ -182,6 +182,9 @@ $dbArr = array();
 
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+    const WINDOWMODE = '<?php echo $windowType; ?>';
+    const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?'true':'false'); ?>';
+    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
     let collectionParams = false;
     let geogParams = false;
     let textParams = false;
@@ -652,11 +655,11 @@ $dbArr = array();
     const selectedPointFeatures = pointInteraction.getFeatures();
 
     selectedPointFeatures.on('add', function() {
-        processVectorChange();
+        processVectorInteraction();
     });
 
     selectedPointFeatures.on('remove', function() {
-        processVectorChange();
+        processVectorInteraction();
     });
 
     map.getView().on('change:resolution', function() {
@@ -839,11 +842,11 @@ $dbArr = array();
     });
 
     selectedFeatures.on('add', function() {
-        processVectorChange();
+        processVectorInteraction();
     });
 
     selectedFeatures.on('remove', function() {
-        processVectorChange();
+        processVectorInteraction();
     });
 
     selectsource.on('change', function() {
@@ -1125,7 +1128,7 @@ $dbArr = array();
         });
     }
 
-    function processVectorChange(){
+    function processVectorInteraction(){
         <?php
         if(!$inputWindowMode){
             ?>
