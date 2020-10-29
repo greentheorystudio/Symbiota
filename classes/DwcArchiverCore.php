@@ -478,7 +478,7 @@ class DwcArchiverCore extends Manager{
 
 	public function createDwcArchive($fileNameSeed = ''): string
 	{
-        $collid = key($this->collArr);
+        $collid = ($this->collArr?key($this->collArr):0);
 	    if(!$fileNameSeed){
 			if(count($this->collArr) === 1){
 				$firstColl = $this->collArr[$collid];

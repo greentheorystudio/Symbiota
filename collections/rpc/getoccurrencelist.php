@@ -3,25 +3,24 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$stArrCollJson = $_REQUEST['jsoncollstarr'] ?? '';
-$stArrSearchJson = $_REQUEST['starr'] ?? '';
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$stArrJson = $_REQUEST['starr'] ?? '';
 $targetTid = $_REQUEST['targettid'];
 $pageNumber = $_REQUEST['page'];
 $cntPerPage = 100;
 
-
-$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
-$collStArr = json_decode($stArrCollJson, true);
-$stArr= json_decode($stArrSearchJson, true);
-if($collStArr && $stArr) {
-	$stArr = array_merge($stArr, $collStArr);
-}
-if($collStArr && !$stArr) {
-	$stArr = $collStArr;
-}
+$stArr= json_decode($stArrJson, true);
+$copyURL = '';
 
 $collManager = null;
 $occurArr = array();
+
+if(strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
+    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $copyURL = $urlPrefix.$urlArgs;
+}
+
 if(isset($SOLR_MODE) && $SOLR_MODE){
 	$collManager = new SOLRManager();
 	$collManager->setSearchTermsArr($stArr);
@@ -35,10 +34,6 @@ else{
 }
 
 $htmlStr = '<div style="float:right;">';
-$htmlStr .= '<div class="button" style="margin:15px 15px 0 0;width:13px;height:13px;" title="Download Specimen Data">';
-$dlLink = 'download/index.php?dltype=specimen&starr='.$stArrSearchJson.'&jsoncollstarr='.$stArrCollJson;
-$htmlStr .= "<a href='".$dlLink."'>";
-$htmlStr .= '<img src="../images/dl.png"></a></div>';
 $targetClid = $collManager->getSearchTerm('targetclid');
 if($targetTid && $collManager->getClName()){
 	$htmlStr .= '<div style="cursor:pointer;margin:8px 8px 0px 0px;" onclick="addAllVouchersToCl('.$targetTid.')" title="Link All Vouchers on Page">';
@@ -52,17 +47,33 @@ if($taxaSearchStr = $collManager->getTaxaSearchStr()){
 if($localSearchStr = $collManager->getLocalSearchStr()){
 	$htmlStr .= '<div><b>Search Criteria:</b> '.$localSearchStr.'</div>';
 }
-$htmlStr .= '<textarea id="urlPrefixBox" style="position:absolute;left:-9999px;top:-9999px">';
-$htmlStr .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
-$htmlStr .= $collManager->getSearchResultUrl().'</textarea>';
-$htmlStr .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px"></textarea>';
+$htmlStr .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
 $htmlStr .= '</div>';
-$htmlStr .= '<div style="clear:both;">';
-$htmlStr .= '<div style="margin:5px;float:right;"><button type="button" id="copyurl" onclick="copySearchUrl();">Copy URL to These Results</button></div>';
-$htmlStr .= '<div style="margin:5px;float:left;">';
-$tableLink = 'listtabledisplay.php?starr='.$stArrSearchJson.'&jsoncollstarr='.$stArrCollJson.($targetTid?'&targettid='.$targetTid:'');
-$htmlStr .= "<a href='".$tableLink."'>See Results in Table View</a>";
-$htmlStr .= '</div></div>';
+$htmlStr .= '<div style="clear:both;"></div>';
+$htmlStr .= '<div style="height:20px;width:100%;display:flex;justify-content:space-between;align-items:center;">';
+$htmlStr .= '<div style="height:20px;width:275px;display:flex;justify-content:space-between;align-items:center;">';
+$htmlStr .= '<div>';
+$htmlStr .= '<select data-role="none" id="querydownloadselect">';
+$htmlStr .= '<option>Download Type</option>';
+$htmlStr .= '<option value="csv">CSV</option>';
+$htmlStr .= '<option value="kml">KML</option>';
+$htmlStr .= '<option value="geojson">GeoJSON</option>';
+$htmlStr .= '<option value="gpx">GPX</option>';
+$htmlStr .= '</select>';
+$htmlStr .= '</div>';
+$htmlStr .= '<div>';
+$htmlStr .= '<button data-role="none" type="button" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');" >Download</button>';
+$htmlStr .= '</div>';
+$htmlStr .= '</div>';
+$htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:space-between;align-items:center;">';
+$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Table View</a></div>';
+$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Spatial Module</a></div>';
+if(strlen($stArrJson) <= 1800){
+    $htmlStr .= '<div><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>';
+}
+$htmlStr .= '</div>';
+$htmlStr .= '</div>';
+
 $htmlStr .= '<div style="clear:both;"></div>';
 
 $paginationStr = '<div><div style="clear:both;"><hr/></div><div style="float:left;margin:5px;">';

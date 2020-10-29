@@ -25,13 +25,13 @@
                                     </div>
                                     <?php
                                     if($specArr){
-                                        $spatialManager->outputFullMapCollArr($specArr);
+                                        $occManager->outputFullCollArr($specArr,false);
                                     }
                                     if($specArr && $obsArr) {
                                         echo '<hr style="clear:both;height:2px;background-color:black;"/>';
                                     }
                                     if($obsArr){
-                                        $spatialManager->outputFullMapCollArr($obsArr);
+                                        $occManager->outputFullCollArr($obsArr,false);
                                     }
                                     ?>
                                     <div style="clear:both;"></div>
@@ -52,12 +52,12 @@
                         </div>
                         <div style="margin:5px 0 5px 0;"><hr /></div>
                         <div>
-                            <span style=""><input data-role="none" type='checkbox' name='thes' id='thes' onchange="buildQueryStrings();" value='1' CHECKED><?php echo $SEARCHTEXT['GENERAL_TEXT_2_MAP']; ?></span>
+                            <span style=""><input data-role="none" type='checkbox' name='thes' id='thes' onchange="processTaxaParamChange();" value='1' CHECKED><?php echo $SEARCHTEXT['GENERAL_TEXT_2_MAP']; ?></span>
                         </div>
                         <div id="taxonSearch0">
                             <div id="taxa_autocomplete" >
                                 <div style="margin-top:5px;">
-                                    <select data-role="none" id="taxontype" name="type" onchange="buildQueryStrings();">
+                                    <select data-role="none" id="taxontype" name="type" onchange="processTaxaParamChange();">
                                         <option id='familysciname' value='1'><?php echo $SEARCHTEXT['SELECT_1-1']; ?></option>
                                         <option id='family' value='2'><?php echo $SEARCHTEXT['SELECT_1-2']; ?></option>
                                         <option id='sciname' value='3'><?php echo $SEARCHTEXT['SELECT_1-3']; ?></option>
@@ -66,22 +66,26 @@
                                     </select>
                                 </div>
                                 <div style="margin-top:5px;">
-                                    <?php echo $SEARCHTEXT['TAXON_INPUT']; ?> <input data-role="none" id="taxa" type="text" style="width:275px;" name="taxa" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                                    <?php echo $SEARCHTEXT['TAXON_INPUT']; ?> <input data-role="none" id="taxa" type="text" style="width:275px;" name="taxa" onchange="processTaxaParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                                 </div>
                             </div>
                         </div>
                         <div style="margin:5px 0 5px 0;"><hr /></div>
                         <div>
-                            <?php echo $SEARCHTEXT['COUNTRY_INPUT']; ?> <input data-role="none" type="text" id="country" style="width:225px;" name="country" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                            <?php echo $SEARCHTEXT['COUNTRY_INPUT']; ?> <input data-role="none" type="text" id="country" style="width:225px;" name="country" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                         </div>
                         <div style="margin-top:5px;">
-                            <?php echo $SEARCHTEXT['STATE_INPUT']; ?> <input data-role="none" type="text" id="state" style="width:150px;" name="state" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                            <?php echo $SEARCHTEXT['STATE_INPUT']; ?> <input data-role="none" type="text" id="state" style="width:150px;" name="state" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                         </div>
                         <div style="margin-top:5px;">
-                            <?php echo $SEARCHTEXT['COUNTY_INPUT']; ?> <input data-role="none" type="text" id="county" style="width:225px;"  name="county" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
+                            <?php echo $SEARCHTEXT['COUNTY_INPUT']; ?> <input data-role="none" type="text" id="county" style="width:225px;"  name="county" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
                         </div>
                         <div style="margin-top:5px;">
-                            <?php echo $SEARCHTEXT['LOCALITY_INPUT']; ?> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" onchange="buildQueryStrings();" />
+                            <?php echo $SEARCHTEXT['LOCALITY_INPUT']; ?> <input data-role="none" type="text" id="locality" style="width:225px;" name="local" onchange="processTextParamChange();" />
+                        </div>
+                        <div style="margin-top:5px;">
+                            <?php echo $SEARCHTEXT['ELEV_INPUT_1']; ?> <input data-role="none" type="text" id="elevlow" size="10" name="elevlow" onchange="processTextParamChange();" /> <?php echo $SEARCHTEXT['ELEV_INPUT_2']; ?>
+                            <input data-role="none" type="text" id="elevhigh" size="10" name="elevhigh" onchange="processTextParamChange();" />
                         </div>
                         <div style="margin:5px 0 5px 0;"><hr /></div>
                         <div id="shapecriteriabox">
@@ -95,37 +99,36 @@
                         <div style="margin:5px 0 5px 0;"><hr /></div>
                         <div>
                             <?php echo $SEARCHTEXT['COLLECTOR_LASTNAME']; ?>
-                            <input data-role="none" type="text" id="collector" style="width:125px;" name="collector" onchange="buildQueryStrings();" />
+                            <input data-role="none" type="text" id="collector" style="width:125px;" name="collector" onchange="processTextParamChange();" />
                         </div>
                         <div style="margin-top:5px;">
                             <?php echo $SEARCHTEXT['COLLECTOR_NUMBER']; ?>
-                            <input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_2']; ?>" />
+                            <input data-role="none" type="text" id="collnum" style="width:125px;" name="collnum" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_2']; ?>" />
                         </div>
                         <div style="margin-top:5px;">
                             <?php echo $SEARCHTEXT['COLLECTOR_DATE']; ?>
-                            <input data-role="none" type="text" id="eventdate1" style="width:100px;" name="eventdate1" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_3']; ?>" /> -
-                            <input data-role="none" type="text" id="eventdate2" style="width:100px;" name="eventdate2" onchange="buildQueryStrings();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
+                            <input data-role="none" type="text" id="eventdate1" style="width:100px;" name="eventdate1" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_3']; ?>" /> -
+                            <input data-role="none" type="text" id="eventdate2" style="width:100px;" name="eventdate2" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_4']; ?>" />
                         </div>
                         <div style="margin:10px 0 10px 0;"><hr></div>
                         <div>
-                            <?php echo $SEARCHTEXT['OCCURRENCE_REMARKS']; ?> <input data-role="none" type="text" id="occurrenceRemarks" style="width:225px;" name="occurrenceRemarks" onchange="buildQueryStrings();" />
+                            <?php echo $SEARCHTEXT['OCCURRENCE_REMARKS']; ?> <input data-role="none" type="text" id="occurrenceRemarks" style="width:225px;" name="occurrenceRemarks" onchange="processTextParamChange();" />
                         </div>
                         <div style="margin-top:5px;">
                             <?php echo $SEARCHTEXT['CATALOG_NUMBER']; ?>
-                            <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" onchange="buildQueryStrings();" />
+                            <input data-role="none" type="text" id="catnum" style="width:150px;" name="catnum" onchange="processTextParamChange();" />
                         </div>
                         <div style="margin-top:5px;">
-                            <?php echo $SEARCHTEXT['OTHER_CATNUM']; ?>
-                            <input data-role="none" type="text" id="othercatnum" style="width:150px;" name="othercatnum" onchange="buildQueryStrings();" />
+                            <input data-role="none" type='checkbox' name='othercatnum' id='othercatnum' value='1' onchange="processTextParamChange();"> <?php echo $SEARCHTEXT['INCLUDE_OTHER_CATNUM']; ?>
                         </div>
                         <div style="margin-top:5px;">
-                            <input data-role="none" type='checkbox' name='typestatus' id='typestatus' value='1' onchange="buildQueryStrings();"> <?php echo $SEARCHTEXT['TYPE']; ?>
+                            <input data-role="none" type='checkbox' name='typestatus' id='typestatus' value='1' onchange="processTextParamChange();"> <?php echo $SEARCHTEXT['TYPE']; ?>
                         </div>
                         <div style="margin-top:5px;">
-                            <input data-role="none" type='checkbox' name='hasimages' id='hasimages' value='1' onchange="buildQueryStrings();"> <?php echo $SEARCHTEXT['HAS_IMAGE']; ?>
+                            <input data-role="none" type='checkbox' name='hasimages' id='hasimages' value='1' onchange="processTextParamChange();"> <?php echo $SEARCHTEXT['HAS_IMAGE']; ?>
                         </div>
                         <div id="searchGeneticCheckbox" style="margin-top:5px;">
-                            <input data-role="none" type='checkbox' name='hasgenetic' id='hasgenetic' value='1' onchange="buildQueryStrings();"> <?php echo $SEARCHTEXT['HAS_GENETIC']; ?>
+                            <input data-role="none" type='checkbox' name='hasgenetic' id='hasgenetic' value='1' onchange="processTextParamChange();"> <?php echo $SEARCHTEXT['HAS_GENETIC']; ?>
                         </div>
                         <div><hr></div>
                     </div>
@@ -180,7 +183,12 @@
                     </div>
                 </div>
                 <div id="queryrecordsdiv">
-                    <div style="margin-top:-10px;margin-right:10px;">
+                    <div style="height:20px;width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
+                        <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');">List View</a></div>
+                        <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');">Table View</a></div>
+                        <div id="copySearchUrlDiv" style="display:block;"><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>
+                    </div>
+                    <div style="margin-right:10px;">
                         <fieldset style="border:1px solid black;height:50px;width:360px;margin-left:-10px;padding-top:3px;">
                             <legend><b>Download</b></legend>
                             <div style="height:25px;width:330px;margin-left:auto;margin-right:auto;">
@@ -195,7 +203,7 @@
                                     </select>
                                 </div>
                                 <div style="float:right;">
-                                    <button data-role="none" type="button" onclick='processDownloadRequest(false);' >Download</button>
+                                    <button data-role="none" type="button" onclick='processDownloadRequest(false,queryRecCnt);' >Download</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -259,7 +267,7 @@
                                         </select>
                                     </div>
                                     <div style="float:right;">
-                                        <button data-role="none" name="submitaction" type="button" onclick='processDownloadRequest(true);' >Download</button>
+                                        <button data-role="none" name="submitaction" type="button" onclick='processDownloadRequest(true,queryRecCnt);' >Download</button>
                                     </div>
                                 </div>
                             </fieldset>

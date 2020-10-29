@@ -1,10 +1,13 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
+include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 ini_set('max_execution_time', 180);
 
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 
 $inputWindowMode = false;
@@ -45,9 +48,10 @@ if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
     $catId = $DEFAULTCATID;
 }
 
+$occManager = new OccurrenceManager();
 $spatialManager = new SpatialModuleManager();
 
-$collList = $spatialManager->getFullCollectionList($catId);
+$collList = $occManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 
@@ -80,8 +84,12 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=279" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=291" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
     <script type="text/javascript">
+        let searchTermsArr = {};
+
         $(function() {
             let winHeight = $(window).height();
             winHeight = winHeight + "px";
@@ -95,6 +103,8 @@ $dbArr = array();
         });
 
         $(document).ready(function() {
+            initializeSearchStorage(<?php echo $queryId; ?>);
+
             $('#criteriatab').tabs({
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
@@ -122,21 +132,6 @@ $dbArr = array();
                 transition: 'all 0.3s',
                 scrolllock: true
             });
-            $('#reclassifytool').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                blur: false
-            });
-            $('#rastercalctool').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                blur: false
-            });
-            $('#vectorizeoverlaytool').popup({
-                transition: 'all 0.3s',
-                scrolllock: true,
-                blur: false
-            });
             $('#loadingOverlay').popup({
                 transition: 'all 0.3s',
                 scrolllock: true,
@@ -144,6 +139,27 @@ $dbArr = array();
                 color:'white',
                 blur: false
             });
+
+            <?php
+            if($inputWindowMode){
+                echo 'loadInputParentParams();';
+            }
+            if($queryId || $stArrJson){
+                if($stArrJson){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                searchTermsArr = getSearchTermsArr();
+                setInputFormBySearchTermsArr();
+                createShapesFromSearchTermsArr();
+                setCollectionForms();
+                loadPoints();
+                <?php
+            }
+            ?>
         });
     </script>
 </head>
@@ -183,36 +199,23 @@ $dbArr = array();
 <script type="text/javascript">
     const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
-    const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?'true':'false'); ?>';
+    const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-    let collectionParams = false;
-    let geogParams = false;
-    let textParams = false;
-    let taxaParams = false;
-    let tempOccArr = [];
+    let inputResponseData = {};
     let geoPolyArr = [];
     let geoCircleArr = [];
-    let geoBoundingBoxArr = [];
-    let searchTermsArr = {};
+    let geoBoundingBoxArr = {};
+    let geoPointArr = [];
     let layersArr = [];
     let mouseCoords = [];
-    let solrqArr = [];
-    let solrgeoqArr = [];
     let selections = [];
     let collSymbology = [];
     let taxaSymbology = [];
     let collKeyArr = [];
     let taxaKeyArr = [];
-    let solrqString = '';
-    let newsolrqString = '';
-    let solroccqString = '';
-    let geoCallOut = false;
     let queryRecCnt = 0;
     let draw;
     let clustersource;
-    let taxaArr = [];
-    let taxontype = '';
-    let thes = false;
     let loadPointsEvent = false;
     let taxaCnt = 0;
     let lazyLoadCnt = 20000;
@@ -242,9 +245,6 @@ $dbArr = array();
     let tsNewestDate = '';
     let dateSliderActive = false;
     let sliderdiv = '';
-    let rasterLayers = [];
-    let overlayLayers = [];
-    let vectorizeLayers = [];
     let loadingTimer = 0;
     let loadingComplete = true;
     let returnClusters = false;
@@ -262,10 +262,6 @@ $dbArr = array();
     let transformStartAngle = 0;
     let transformD = [0,0];
     let transformFirstPoint = false;
-    const SOLRFields = 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tidinterpreted,scientificNameAuthorship,identifiedBy,' +
-        'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
-        'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
-        'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily';
     const dragDropStyle = {
         'Point': new ol.style.Style({
             image: new ol.style.Circle({
@@ -950,32 +946,16 @@ $dbArr = array();
                             let infoHTML = '';
                             const infoArr = JSON.parse(msg);
                             const propArr = infoArr['features'][0]['properties'];
-                            if(overlayLayers[activeLayer]){
-                                const sourceVal = propArr['GRAY_INDEX'];
-                                const lowCalVal = overlayLayers[activeLayer]['values']['rasmin'];
-                                const highCalVal = overlayLayers[activeLayer]['values']['rasmax'];
-                                const calcVal = overlayLayers[activeLayer]['values']['newval'];
-                                if(sourceVal >= lowCalVal && sourceVal <= highCalVal){
-                                    infoHTML += '<b>Value:</b> '+calcVal+'<br />';
-                                }
-                                else{
-                                    infoHTML += '<b>Value:</b> 0<br />';
-                                }
-                            }
-                            else{
-                                //infoHTML += '<b>id:</b> '+infoArr['id']+'<br />';
-                                //infoHTML += '<b>geometry:</b> '+infoArr['geometry']+'<br />';
-                                for(const key in propArr){
-                                    if(propArr.hasOwnProperty(key)){
-                                        let valTag = '';
-                                        if(key === 'GRAY_INDEX') {
-                                            valTag = 'Value';
-                                        }
-                                        else {
-                                            valTag = key;
-                                        }
-                                        infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
+                            for(const key in propArr){
+                                if(propArr.hasOwnProperty(key)){
+                                    let valTag = '';
+                                    if(key === 'GRAY_INDEX') {
+                                        valTag = 'Value';
                                     }
+                                    else {
+                                        valTag = key;
+                                    }
+                                    infoHTML += '<b>'+valTag+':</b> '+propArr[key]+'<br />';
                                 }
                             }
                             popupcontent.innerHTML = infoHTML;
@@ -1128,17 +1108,6 @@ $dbArr = array();
         });
     }
 
-    function processVectorInteraction(){
-        <?php
-        if(!$inputWindowMode){
-            ?>
-            setSpatialParamBox();
-            buildQueryStrings();
-            <?php
-        }
-        ?>
-    }
-
     typeSelect.onchange = function() {
         map.removeInteraction(draw);
         changeDraw();
@@ -1152,13 +1121,13 @@ $dbArr = array();
 
 <?php include_once('includes/layercontroller.php'); ?>
 
-<?php include_once('includes/csvoptions.php'); ?>
+<?php include_once('../collections/csvoptions.php'); ?>
 
 <!-- Data Download Form -->
 <div style="display:none;">
-    <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
-        <input id="starrjson" name="starrjson"  type="hidden" />
-        <input id="dh-q" name="dh-q"  type="hidden" />
+    <form name="datadownloadform" id="datadownloadform" action="../collections/rpc/datadownloader.php" method="post">
+        <input id="starrjson" name="starrjson" type="hidden" />
+        <input id="dh-q" name="dh-q" type="hidden" />
         <input id="dh-fq" name="dh-fq" type="hidden" />
         <input id="dh-fl" name="dh-fl" type="hidden" />
         <input id="dh-rows" name="dh-rows" type="hidden" />
@@ -1178,5 +1147,6 @@ $dbArr = array();
 <div id="loadingOverlay" data-role="popup" style="width:100%;position:relative;">
     <div id="loader"></div>
 </div>
+<input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 </body>
 </html>

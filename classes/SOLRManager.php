@@ -25,7 +25,8 @@ class SOLRManager extends OccurrenceManager{
             $this->setSpatial();
         }
         $solrWhere = $this->getSOLRWhere();
-        $solrURL = $SOLR_URL.'/select?'.$solrWhere;
+        $solrGeoWhere = $this->getSOLRGeoWhere();
+        $solrURL = $SOLR_URL.'/select?'.($solrWhere?'q='.$solrWhere:'').($solrGeoWhere?'&fq="'.$solrGeoWhere.'"':'');
         $solrURL .= '&rows=1&start=1&wt=json';
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
@@ -38,9 +39,10 @@ class SOLRManager extends OccurrenceManager{
         global $SOLR_URL;
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere();
+        $solrGeoWhere = $this->getSOLRGeoWhere();
         $solrURLpre = $SOLR_URL.'/select?';
         $solrURLsuf = '&rows='.$cnt.'&start=1&fl=family,tidinterpreted,sciname,accFamily&group=true&group.field=familyscinamecode&wt=json';
-        $solrURL = $solrURLpre.$solrWhere.$solrURLsuf;
+        $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').($solrGeoWhere?'&fq="'.$solrGeoWhere.'"':'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
@@ -50,14 +52,12 @@ class SOLRManager extends OccurrenceManager{
     public function getOccArr($geo = false): array{
         global $SOLR_URL;
         $returnArr = array();
-        if($geo) {
-            $this->setSpatial();
-        }
         $cnt = $this->getMaxCnt();
-        $solrWhere = $this->getSOLRWhere();
+        $solrWhere = $this->getSOLRWhere($geo);
+        $solrGeoWhere = $this->getSOLRGeoWhere();
         $solrURLpre = $SOLR_URL.'/select?';
         $solrURLsuf = '&rows='.$cnt.'&start=0&fl=occid&wt=json';
-        $solrURL = $solrURLpre.$solrWhere.$solrURLsuf;
+        $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').($solrGeoWhere?'&fq="'.$solrGeoWhere.'"':'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
@@ -74,6 +74,7 @@ class SOLRManager extends OccurrenceManager{
 	    $canReadRareSpp = false;
         $bottomLimit = ($pageRequest - 1)*$cntPerPage;
 		$solrWhere = $this->getSOLRWhere();
+        $solrGeoWhere = $this->getSOLRGeoWhere();
         $solrURLpre = $SOLR_URL.'/select?';
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
             $sortArr = array();
@@ -105,7 +106,7 @@ class SOLRManager extends OccurrenceManager{
             $solrURLsuf .= 'recordedBy asc,recordNumber asc';
         }
         $solrURLsuf .= '&rows='.$cntPerPage.'&start='.$bottomLimit.'&wt=json';
-		$solrURL = $solrURLpre.$solrWhere.$solrURLsuf;
+		$solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').($solrGeoWhere?'&fq="'.$solrGeoWhere.'"':'').$solrURLsuf;
 		//echo str_replace(' ','%20',$solrURL);
 		$solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
@@ -116,17 +117,16 @@ class SOLRManager extends OccurrenceManager{
     public function getGeoArr($pageRequest,$cntPerPage){
         global $SOLR_URL;
         $bottomLimit = 0;
-        $this->setSpatial();
-        $solrWhere = ($this->qStr?:$this->getSOLRWhere());
+        $solrWhere = $this->getSOLRWhere(true);
+        $solrGeoWhere = $this->getSOLRGeoWhere();
         if($pageRequest > 0) {
             $bottomLimit = ($pageRequest - 1) * $cntPerPage;
         }
-        //$solrURLpre = $SOLR_URL.'/select?q=*:*&fq={!geofilt sfield=geo}&pt=35.389049966911664,-109.27001953125&d=5';
         $solrURLpre = $SOLR_URL.'/select?';
         $solrURLsuf = '&rows='.$cntPerPage.'&start='.($bottomLimit?:'0');
         $solrURLsuf .= '&fl=occid,recordedBy,recordNumber,displayDate,sciname,family,accFamily,tidinterpreted,decimalLatitude,decimalLongitude,'.
             'localitySecurity,locality,collid,catalogNumber,otherCatalogNumbers,InstitutionCode,CollectionCode,CollectionName&wt=json';
-        $solrURL = $solrURLpre.$solrWhere.$solrURLsuf;
+        $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').($solrGeoWhere?'&fq="'.$solrGeoWhere.'"':'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
@@ -412,7 +412,13 @@ class SOLRManager extends OccurrenceManager{
         $returnArr = array();
         $this->checklistTaxaCnt = 0;
         foreach($sArr as $k){
-            $family = (isset($k['doclist']['docs'][0]['accFamily'])?strtoupper($k['doclist']['docs'][0]['accFamily']):strtoupper($k['doclist']['docs'][0]['family']));
+            $family = '';
+            if(isset($k['doclist']['docs'][0]['accFamily'])){
+                $family = strtoupper($k['doclist']['docs'][0]['accFamily']);
+            }
+            elseif(isset($k['doclist']['docs'][0]['family'])){
+                $family = strtoupper($k['doclist']['docs'][0]['family']);
+            }
             if(!$family) {
                 $family = 'undefined';
             }
@@ -430,7 +436,6 @@ class SOLRManager extends OccurrenceManager{
                 $returnArr[] = $k['doclist']['docs'][0]['tidinterpreted'];
             }
         }
-
         return $returnArr;
     }
 
@@ -463,7 +468,7 @@ class SOLRManager extends OccurrenceManager{
 	public function updateSOLR(): void{
         global $SOLR_URL;
 	    $needsFullUpdate = $this->checkLastSOLRUpdate();
-        $command = ($needsFullUpdate?'full-import':'delta-import');
+        $command = ($needsFullUpdate?'dock':'delta-import');
         file_get_contents($SOLR_URL.'/dataimport?command='.$command.'&clean=false');
         if($needsFullUpdate){
             $this->resetSOLRInfoFile();
@@ -618,35 +623,29 @@ class SOLRManager extends OccurrenceManager{
         fclose($fp);
     }
 	
-	public function getSOLRWhere(): string{
-        $solrWhere = '';
-        $solrGeoWhere = '';
-        if(array_key_exists('clid',$this->searchTermsArr)){
-            $solrWhere .= 'AND (CLID:(' .str_replace(',',' ',$this->searchTermsArr['clid']). ')) ';
+	public function getSOLRWhere($spatial = false): string
+    {
+        $qArr = array();
+        if(array_key_exists('clid',$this->searchTermsArr) && $this->searchTermsArr['clid']){
+            $value = $this->searchTermsArr['clid'];
+            if(substr($value,-1) === ','){
+                $value = substr($value,0,-1);
+            }
+            $qArr[] = '(CLID:(' .str_replace(',',' ',$value). '))';
         }
-        elseif(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
+        if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
             if($this->searchTermsArr['db'] !== 'all'){
-                if($this->searchTermsArr['db'] === 'allspec'){
-                    $solrWhere .= 'AND (CollType:"Preserved Specimens") ';
+                $value = $this->searchTermsArr['db'];
+                if(substr($value,-1) === ','){
+                    $value = substr($value,0,-1);
                 }
-                elseif($this->searchTermsArr['db'] === 'allobs'){
-                    $solrWhere .= 'AND (CollType:("General Observations" "Observations")) ';
-                }
-                else{
-                    $dbArr = explode(';',$this->searchTermsArr['db']);
-                    $dbStr = '';
-                    if(isset($dbArr[0]) && $dbArr[0]){
-                        $dbStr = 'collid:(' .str_replace(',',' ',trim($dbArr[0])). ')';
-                    }
-                    $solrWhere .= 'AND ('.$dbStr.') ';
-                }
+                $qArr[] = '(collid:(' .str_replace(',',' ',$value). '))';
             }
         }
-
         if(array_key_exists('taxa',$this->searchTermsArr)){
             $sqlWhereTaxa = '';
             $useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
-            $this->taxaSearchType = $this->searchTermsArr['taxontype'];
+            $this->taxaSearchType = (int)$this->searchTermsArr['taxontype'];
             $taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
             $this->taxaArr = array();
             foreach($taxaArr as $sName){
@@ -715,10 +714,9 @@ class SOLRManager extends OccurrenceManager{
                     }
                 }
             }
-            $solrWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
+            $qArr[] = '(' .substr($sqlWhereTaxa,3). ')';
         }
-
-        if(array_key_exists('country',$this->searchTermsArr)){
+        if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);
             $countryArr = explode(';',$searchStr);
             $tempArr = array();
@@ -731,10 +729,10 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '(country:"'.trim($value).'")';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$countryArr);
         }
-        if(array_key_exists('state',$this->searchTermsArr)){
+        if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['state']);
             $stateAr = explode(';',$searchStr);
             $tempArr = array();
@@ -747,10 +745,10 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '(StateProvince:"'.trim($value).'")';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$stateAr);
         }
-        if(array_key_exists('county',$this->searchTermsArr)){
+        if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['county']);
             $countyArr = explode(';',$searchStr);
             $tempArr = array();
@@ -764,10 +762,10 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '(county:'.str_replace(' ','\ ',trim($value)).'*)';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$countyArr);
         }
-        if(array_key_exists('local',$this->searchTermsArr)){
+        if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['local']);
             $localArr = explode(';',$searchStr);
             $tempArr = array();
@@ -788,10 +786,10 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '((municipality:'.trim($value).'*) OR (locality:*'.trim($value).'*))';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$localArr);
         }
-        if(array_key_exists('elevlow',$this->searchTermsArr) || array_key_exists('elevhigh',$this->searchTermsArr)){
+        if((array_key_exists('elevlow',$this->searchTermsArr) && is_numeric($this->searchTermsArr['elevlow'])) || (array_key_exists('elevhigh',$this->searchTermsArr) && is_numeric($this->searchTermsArr['elevhigh']))){
             $elevlow = 0;
             $elevhigh = 30000;
             if(array_key_exists('elevlow',$this->searchTermsArr)){
@@ -800,10 +798,11 @@ class SOLRManager extends OccurrenceManager{
             if(array_key_exists('elevhigh',$this->searchTermsArr)){
                 $elevhigh = $this->searchTermsArr['elevhigh'];
             }
-            $solrWhere .= 'AND ((minimumElevationInMeters:['.$elevlow.' TO *] AND maximumElevationInMeters:[* TO '.$elevhigh.']) OR '.
+            $whereStr = 'AND ((minimumElevationInMeters:['.$elevlow.' TO *] AND maximumElevationInMeters:[* TO '.$elevhigh.']) OR '.
                 '(-maximumElevationInMeters:[* TO *] AND minimumElevationInMeters:['.$elevlow.' TO *] AND minimumElevationInMeters:[* TO '.$elevhigh.']))';
+            $qArr[] = '('.$whereStr.')';
         }
-        if(array_key_exists('assochost',$this->searchTermsArr)){
+        if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
             $hostAr = explode(';',$searchStr);
             $tempArr = array();
@@ -816,18 +815,10 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '((assocrelationship:"host") AND (assocverbatimsciname:*'.str_replace(' ','\ ',trim($value)).'*))';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$hostAr);
         }
-        if(array_key_exists('boundingBoxArr',$this->searchTermsArr)){
-            $llboundArr = explode(';',$this->searchTermsArr['boundingBoxArr']);
-            if(count($llboundArr) === 4){
-                $solrWhere .= 'AND ((decimalLatitude:['.$llboundArr[1].' TO '.$llboundArr[0].']) AND '.
-                    '(decimalLongitude:['.$llboundArr[2].' TO '.$llboundArr[3].'])) ';
-                $this->localSearchArr[] = 'Lat: >' .$llboundArr[1]. ', <' .$llboundArr[0]. '; Long: >' .$llboundArr[2]. ', <' .$llboundArr[3];
-            }
-        }
-        if(array_key_exists('collector',$this->searchTermsArr)){
+        if(array_key_exists('collector',$this->searchTermsArr) && $this->searchTermsArr['collector']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['collector']);
             $collectorArr = explode(';',$searchStr);
             $tempArr = array();
@@ -848,10 +839,10 @@ class SOLRManager extends OccurrenceManager{
             elseif(count($collectorArr) > 1){
                 $tempArr[] = '(recordedBy:('.implode(' ',$collectorArr).')) ';
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(', ',$collectorArr);
         }
-        if(array_key_exists('collnum',$this->searchTermsArr)){
+        if(array_key_exists('collnum',$this->searchTermsArr) && $this->searchTermsArr['collnum']){
             $collNumArr = explode(';',$this->searchTermsArr['collnum']);
             $rnWhere = '';
             foreach($collNumArr as $v){
@@ -874,11 +865,11 @@ class SOLRManager extends OccurrenceManager{
                 }
             }
             if($rnWhere){
-                $solrWhere .= 'AND (' .substr($rnWhere,3). ') ';
+                $qArr[] = '(' .substr($rnWhere,3). ')';
                 $this->localSearchArr[] = implode(', ',$collNumArr);
             }
         }
-        if(array_key_exists('eventdate1',$this->searchTermsArr)){
+        if(array_key_exists('eventdate1',$this->searchTermsArr) && $this->searchTermsArr['eventdate1']){
             $dateArr = array();
             if(strpos($this->searchTermsArr['eventdate1'],' to ')){
                 $dateArr = explode(' to ',$this->searchTermsArr['eventdate1']);
@@ -893,27 +884,27 @@ class SOLRManager extends OccurrenceManager{
                 }
             }
             if($dateArr[0] === 'NULL'){
-                $solrWhere .= 'AND (-eventDate:["" TO *]) ';
+                $qArr[] = '(-eventDate:["" TO *])';
                 $this->localSearchArr[] = 'Date IS NULL';
             }
             elseif($eDate1 = $this->formatDate($dateArr[0])){
                 $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
                 if($eDate2){
-                    $solrWhere .= 'AND (eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z]) ';
+                    $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z])';
                 }
                 else if(substr($eDate1,-5) === '00-00'){
-                    $solrWhere .= 'AND (coll_year:'.substr($eDate1,0,4).') ';
+                    $qArr[] = '(coll_year:'.substr($eDate1,0,4).')';
                 }
                 elseif(substr($eDate1,-2) === '00'){
-                    $solrWhere .= 'AND ((coll_year:'.substr($eDate1,0,4).') AND (coll_month:'.substr($eDate1,5,7).')) ';
+                    $qArr[] = '((coll_year:'.substr($eDate1,0,4).') AND (coll_month:'.substr($eDate1,5,7).'))';
                 }
                 else{
-                    $solrWhere .= 'AND (eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate1.'T23:59:59.999Z]) ';
+                    $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate1.'T23:59:59.999Z])';
                 }
                 $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
             }
         }
-        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr)){
+        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
             $remarksArr = explode(';',$searchStr);
             $tempArr = array();
@@ -934,13 +925,12 @@ class SOLRManager extends OccurrenceManager{
                     $tempArr[] = '((occurrenceRemarks:*'.trim($value).'*))';
                 }
             }
-            $solrWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
+            $qArr[] = '('.implode(' OR ',$tempArr).')';
             $this->localSearchArr[] = implode(' OR ',$remarksArr);
         }
-        if(array_key_exists('catnum',$this->searchTermsArr)){
+        if(array_key_exists('catnum',$this->searchTermsArr) && $this->searchTermsArr['catnum']){
             $catStr = $this->searchTermsArr['catnum'];
             $includeOtherCatNum = array_key_exists('othercatnum',$this->searchTermsArr)?true:false;
-
             $catArr = explode(',',str_replace(';',',',$catStr));
             $betweenFrag = array();
             $inFrag = array();
@@ -977,58 +967,73 @@ class SOLRManager extends OccurrenceManager{
                     $catWhere .= 'OR (otherCatalogNumbers:("'.implode('" "',$inFrag).'")) ';
                 }
             }
-            $solrWhere .= 'AND ('.substr($catWhere,3).') ';
+            $qArr[] = '('.substr($catWhere,3).')';
             $this->localSearchArr[] = $this->searchTermsArr['catnum'];
         }
         if(array_key_exists('typestatus',$this->searchTermsArr)){
-            $solrWhere .= 'AND (typeStatus:[* TO *]) ';
+            $qArr[] = '(typeStatus:[* TO *])';
             $this->localSearchArr[] = 'is type';
         }
         if(array_key_exists('hasimages',$this->searchTermsArr)){
-            $solrWhere .= 'AND (imgid:[* TO *]) ';
+            $qArr[] = '(imgid:[* TO *])';
             $this->localSearchArr[] = 'has images';
         }
         if(array_key_exists('hasgenetic',$this->searchTermsArr)){
-            $solrWhere .= 'AND (resourcename:[* TO *]) ';
+            $qArr[] = '(resourcename:[* TO *])';
             $this->localSearchArr[] = 'has genetic data';
         }
-        if(array_key_exists('circleArr',$this->searchTermsArr)){
-            $pointArr = explode(';',$this->searchTermsArr['circleArr']);
-            $radius = $pointArr[2]*1.6214;
-            $solrGeoWhere = '{!geofilt sfield=geo}';
-            $solrGeoWhere .= '&pt='.$pointArr[0].','.$pointArr[1].'&d='.$radius;
-            $this->localSearchArr[] = 'Point radius: ' .$pointArr[0]. ', ' .$pointArr[1]. ', within ' .$pointArr[2]. ' miles';
+        if(array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']){
+            $whereStr = '((decimalLatitude:['.$this->searchTermsArr['bottomlat'].' TO *] AND decimalLatitude:[* TO '.$this->searchTermsArr['upperlat'].']) AND '.
+                '(decimalLongitude:['.$this->searchTermsArr['leftlong'].' TO *] AND decimalLongitude:[* TO '.$this->searchTermsArr['rightlong'].']))';
+            $qArr[] = '('.$whereStr.')';
         }
-        if(array_key_exists('polycoords',$this->searchTermsArr)){
-            $coordArr = json_decode($this->searchTermsArr['polycoords'], true);
-            if($coordArr){
-                $coordStr = 'Polygon((';
-                $keys = array();
-                foreach($coordArr as $k => $v){
-                    $keys = array_keys($v);
-                    $coordStr .= $v[$keys[1]]. ' ' .$v[$keys[0]]. ',';
-                }
-                $coordStr .= $coordArr[0][$keys[1]]. ' ';
-                $coordStr .= $coordArr[0][$keys[0]]. '))';
-                $solrGeoWhere = '{!field f=geo}Intersects('.$coordStr.')';
-                $this->localSearchArr[] = 'Within polygon';
-            }
+        if($spatial){
+            $qArr[] = '(decimalLatitude:[* TO *] AND decimalLongitude:[* TO *])';
         }
-        if($solrWhere){
-            $retStr = 'q=';
-            $retStr .= substr($solrWhere,4);
-            if($this->spatial){
-                $retStr .= 'AND (decimalLatitude:[* TO *] AND decimalLongitude:[* TO *]) ';
-            }
+        if($qArr){
+            $retStr = implode(' AND ',$qArr);
         }
         else{
-            $retStr = 'q=*:*';
+            $retStr = '*:*';
         }
-        if($solrGeoWhere){
-            $retStr .= '&fq='.$solrGeoWhere;
+        return $this->checkQuerySecurity($retStr);
+    }
+
+    public function getSOLRGeoWhere(): string
+    {
+        $fqArr = array();
+        if((array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']) || (array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
+            if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
+                $whereStr = '{!geofilt sfield=geo pt='.$this->searchTermsArr['pointlong'].','.$this->searchTermsArr['pointlat'].' d='.$this->searchTermsArr['radius'].'}';
+                $fqArr[] = $whereStr;
+                $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$this->searchTermsArr)?$this->searchTermsArr['radiustemp']:$this->searchTermsArr['radius']). ' '.(array_key_exists('radiusunits',$this->searchTermsArr)?$this->searchTermsArr['radiusunits']:'km');
+            }
+            if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
+                $objArr = $this->searchTermsArr['circleArr'];
+                if(!is_array($objArr)){
+                    $objArr = json_decode($objArr, true);
+                }
+                if($objArr){
+                    foreach($objArr as $obj => $oArr){
+                        $whereStr = '{!geofilt sfield=geo pt='.$oArr['pointlong'].','.$oArr['pointlat'].' d='.$oArr['radius'].'}';
+                        $fqArr[] = $whereStr;
+                        $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$oArr)?$oArr['radiustemp']:$oArr['radius']). ' '.(array_key_exists('radiusunits',$oArr)?$oArr['radiusunits']:'km');
+                    }
+                }
+            }
+            if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
+                $geomArr = $this->searchTermsArr['polyArr'];
+                if(!is_array($geomArr)){
+                    $geomArr = json_decode($geomArr, true);
+                }
+                if($geomArr){
+                    foreach($geomArr as $geom){
+                        $fqArr[] = '{!field f=geo}Intersects('.$geom.')';
+                    }
+                }
+            }
         }
-        //echo $retStr; exit;
-        return $retStr;
+        return ($fqArr?implode(' OR ',$fqArr):'');
     }
 
     public function getCloseTaxaMatch($name): array{

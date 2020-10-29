@@ -1,11 +1,4 @@
 $(document).ready(function() {
-    function split( val ) {
-        return val.split( /,\s*/ );
-    }
-    function extractLast( term ) {
-        return split( term ).pop();
-    }
-
     $( "#taxa" )
     	.bind( "keydown", function( event ) {
             if ( event.keyCode == $.ui.keyCode.TAB &&
@@ -38,8 +31,6 @@ $(document).ready(function() {
         },{});
 });
 
-	
-
 function changeTableDisplay(){
     if(document.getElementById("showtable").checked === true){
         document.harvestparams.action = "listtabledisplay.php";
@@ -53,18 +44,14 @@ function changeTableDisplay(){
 
 function updateRadius(){
     const radiusUnits = document.getElementById("radiusunits").value;
-    let radiusInMiles = document.getElementById("radiustemp").value;
-    if(radiusUnits === "km"){
-        radiusInMiles = radiusInMiles * 0.6214;
-    }
-    document.getElementById("radius").value = radiusInMiles;
+    let enteredRadius = document.getElementById("radiustemp").value;
+    document.getElementById("radius").value = (radiusUnits === "km" ? enteredRadius : (enteredRadius * 0.621371));
 }
 
 function setHarvestParamsForm(){
-    let coordArr;
-    const stArr = JSON.parse(starrJson);
-    if(!stArr['usethes']){
-        document.harvestparams.thes.checked = false;
+    const stArr = getSearchTermsArr();
+    if(stArr['usethes']){
+        document.harvestparams.thes.checked = true;
     }
     if(stArr['taxontype']){
         document.harvestparams.type.value = stArr['taxontype'];
@@ -72,7 +59,7 @@ function setHarvestParamsForm(){
     if(stArr['taxa']){
         document.harvestparams.taxa.value = stArr['taxa'];
     }
-    let countryStr;
+    let countryStr = '';
     if (stArr['country']) {
         countryStr = stArr['country'];
         countryArr = countryStr.split(";");
@@ -99,19 +86,28 @@ function setHarvestParamsForm(){
     if(stArr['assochost']){
         document.harvestparams.assochost.value = stArr['assochost'];
     }
-    if(stArr['boundingBoxArr']){
-        coordArr = stArr['boundingBoxArr'].split(';');
-        document.harvestparams.upperlat.value = coordArr[0];
-        document.harvestparams.bottomlat.value = coordArr[1];
-        document.harvestparams.leftlong.value = coordArr[2];
-        document.harvestparams.rightlong.value = coordArr[3];
+    if(stArr['upperlat']){
+        document.harvestparams.upperlat.value = stArr['upperlat'];
+        document.harvestparams.bottomlat.value = stArr['bottomlat'];
+        document.harvestparams.leftlong.value = stArr['leftlong'];
+        document.harvestparams.rightlong.value = stArr['rightlong'];
+    }
+    if(stArr['pointlat']){
+        document.harvestparams.pointlat.value = stArr['pointlat'];
+        document.harvestparams.pointlong.value = stArr['pointlong'];
+        document.harvestparams.radius.value = stArr['radius'];
+        document.harvestparams.radiustemp.value = stArr['radiustemp'];
+        document.harvestparams.radiusunits.value = stArr['radiusunits'];
+    }
+    if(stArr['polyArr']){
+        document.harvestparams.polyArr.value = stArr['polyArr'];
+        document.getElementById("spatialParamasNoCriteria").style.display = "none";
+        document.getElementById("spatialParamasCriteria").style.display = "block";
     }
     if(stArr['circleArr']){
-        coordArr = stArr['circleArr'].split(';');
-        document.harvestparams.pointlat.value = coordArr[0];
-        document.harvestparams.pointlong.value = coordArr[1];
-        document.harvestparams.radiustemp.value = coordArr[2];
-        document.harvestparams.radius.value = coordArr[2]*0.6214;
+        document.harvestparams.circleArr.value = stArr['circleArr'];
+        document.getElementById("spatialParamasNoCriteria").style.display = "none";
+        document.getElementById("spatialParamasCriteria").style.display = "block";
     }
     if(stArr['collector']){
         document.harvestparams.collector.value = stArr['collector'];
@@ -125,9 +121,13 @@ function setHarvestParamsForm(){
     if(stArr['eventdate2']){
         document.harvestparams.eventdate2.value = stArr['eventdate2'];
     }
+    if(stArr['occurrenceRemarks']){
+        document.harvestparams.occurrenceRemarks.value = stArr['occurrenceRemarks'];
+    }
     if(stArr['catnum']){
         document.harvestparams.catnum.value = stArr['catnum'];
     }
+    document.harvestparams.othercatnum.checked = !!stArr['othercatnum'];
     if(stArr['typestatus']){
         document.harvestparams.typestatus.checked = true;
     }
@@ -165,15 +165,23 @@ function resetHarvestParamsForm(f){
 	f.radiustemp.value = '';
 	f.radiusunits.value = 'km';
 	f.radius.value = '';
+    f.polyArr.value = '';
+    f.circleArr.value = '';
 	f.collector.value = '';
 	f.collnum.value = '';
 	f.eventdate1.value = '';
 	f.eventdate2.value = '';
+    f.occurrenceRemarks.value = '';
 	f.catnum.value = '';
-	f.includeothercatnum.checked = true;
+    f.othercatnum.checked = true;
 	f.typestatus.checked = false;
 	f.hasimages.checked = false;
-    sessionStorage.removeItem('jsonstarr');
+    f.hasgenetic.checked = false;
     document.getElementById('showtable').checked = false;
+    document.getElementById("spatialParamasNoCriteria").style.display = "block";
+    document.getElementById("spatialParamasCriteria").style.display = "none";
     changeTableDisplay();
+    processTaxaParamChange();
+    processTextParamChange();
+    setSpatialSearchTerms();
 }

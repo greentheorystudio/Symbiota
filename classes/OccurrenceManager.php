@@ -65,25 +65,12 @@ class OccurrenceManager{
     {
 		$sqlWhere = '';
         $retStr = '';
-		if(array_key_exists('clid',$this->searchTermsArr) && is_numeric($this->searchTermsArr['clid'])){
+		if(array_key_exists('clid',$this->searchTermsArr) && $this->searchTermsArr['clid']){
 			$sqlWhere .= 'AND (v.clid IN(' .$this->searchTermsArr['clid']. ')) ';
 		}
 		if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
 			if($this->searchTermsArr['db'] !== 'all'){
-				if($this->searchTermsArr['db'] === 'allspec'){
-					$sqlWhere .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype = "Preserved Specimens")) ';
-				}
-				elseif($this->searchTermsArr['db'] === 'allobs'){
-					$sqlWhere .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("General Observations","Observations"))) ';
-				}
-				else{
-					$dbArr = explode(';',$this->searchTermsArr['db']);
-					$dbStr = '';
-					if(isset($dbArr[0]) && $dbArr[0]){
-						$dbStr = '(o.collid IN(' .$this->cleanInStr($dbArr[0]). ')) ';
-					}
-					$sqlWhere .= 'AND ('.$dbStr.') ';
-				}
+                $sqlWhere .= 'AND (o.collid IN(' .$this->cleanInStr($this->searchTermsArr['db']). ')) ';
 			}
 		}
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
@@ -252,27 +239,27 @@ class OccurrenceManager{
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(' OR ',$hostAr);
         }
-		if((array_key_exists('boundingBoxArr',$this->searchTermsArr) && $this->searchTermsArr['boundingBoxArr']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
+		if((array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']) || (array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']) || (array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']) || (array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr'])){
             $geoSqlStrArr = array();
-            if(array_key_exists('boundingBoxArr',$this->searchTermsArr) && $this->searchTermsArr['boundingBoxArr']){
-                $sqlFragArr = array();
-                $llboundArr = $this->searchTermsArr['boundingBoxArr'];
-                if($llboundArr){
-                    foreach($llboundArr as $obj => $oArr){
-                        $sqlFragArr[] = '(o.DecimalLatitude BETWEEN ' .$this->cleanInStr($oArr['bottomlat']). ' AND ' .$this->cleanInStr($oArr['upperlat']). ' AND ' .
-                            'o.DecimalLongitude BETWEEN ' .$this->cleanInStr($oArr['leftlong']). ' AND ' .$this->cleanInStr($oArr['rightlong']). ') ';
-                        $this->localSearchArr[] = 'Lat: >' .$oArr['bottomlat']. ', <' .$oArr['upperlat']. '; Long: >' .$oArr['leftlong']. ', <' .$oArr['rightlong'];
-                    }
-                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
-                }
+            if(array_key_exists('upperlat',$this->searchTermsArr) && $this->searchTermsArr['upperlat']){
+                $geoSqlStrArr[] = '(o.DecimalLatitude BETWEEN ' .$this->cleanInStr($this->searchTermsArr['bottomlat']). ' AND ' .$this->cleanInStr($this->searchTermsArr['upperlat']). ' AND ' .
+                    'o.DecimalLongitude BETWEEN ' .$this->cleanInStr($this->searchTermsArr['leftlong']). ' AND ' .$this->cleanInStr($this->searchTermsArr['rightlong']). ') ';
+                $this->localSearchArr[] = 'Lat: >' .$this->searchTermsArr['bottomlat']. ', <' .$this->searchTermsArr['upperlat']. '; Long: >' .$this->searchTermsArr['leftlong']. ', <' .$this->searchTermsArr['rightlong'];
+            }
+            if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
+                $geoSqlStrArr[] = '(( 3959 * acos( cos( radians(' .$this->searchTermsArr['pointlat']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$this->searchTermsArr['pointlong']. ') ) + sin( radians(' .$this->searchTermsArr['pointlat']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$this->searchTermsArr['radius']. ') ';
+                $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .$this->searchTermsArr['radiustemp']. ' '.$this->searchTermsArr['radiusunits'];
             }
             if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
                 $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
+                if(!is_array($objArr)){
+                    $objArr = json_decode($objArr, true);
+                }
                 if($objArr){
                     foreach($objArr as $obj => $oArr){
                         $radius = $oArr['radius'] * 0.621371;
-                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlong']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlat']. ') ) + sin( radians(' .$oArr['pointlong']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
+                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlat']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlong']. ') ) + sin( radians(' .$oArr['pointlat']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
                         $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
                     }
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
@@ -282,6 +269,9 @@ class OccurrenceManager{
                 //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
                 $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
+                if(!is_array($geomArr)){
+                    $geomArr = json_decode($geomArr, true);
+                }
                 if($geomArr){
                     foreach($geomArr as $geom){
                         $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
@@ -523,6 +513,9 @@ class OccurrenceManager{
         if(array_key_exists('assochost',$this->searchTermsArr)) {
             $sqlJoin .= 'INNER JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
+        if(array_key_exists('polyArr',$this->searchTermsArr) || array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('pointlat',$this->searchTermsArr) || array_key_exists('upperlat',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
 		if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
 			$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		}
@@ -583,234 +576,315 @@ class OccurrenceManager{
 
 	public function getFullCollectionList($catId = ''): array
     {
-		if($catId && !is_numeric($catId)) {
+        if($catId && !is_numeric($catId)) {
             $catId = '';
         }
-		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
-			'cat.category, cat.icon AS caticon, cat.acronym '.
-			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
-			'LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-			'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-			'WHERE (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) '.
-			'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
-		//echo "<div>SQL: ".$sql."</div>";
-		$result = $this->conn->query($sql);
-		$collArr = array();
-		while($r = $result->fetch_object()){
-			$collType = '';
-			if(stripos($r->colltype, 'observation') !== false) {
+        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
+            'cat.category, cat.icon AS caticon, cat.acronym '.
+            'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
+            'LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
+            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
+            'WHERE (cat.inclusive IS NULL OR cat.inclusive = 1 OR cat.ccpk = 1) '.
+            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
+        //echo "<div>SQL: ".$sql."</div>";
+        $result = $this->conn->query($sql);
+        $collArr = array();
+        while($r = $result->fetch_object()){
+            $collType = '';
+            if(stripos($r->colltype, 'observation') !== false) {
                 $collType = 'obs';
             }
-			if(stripos($r->colltype, 'specimen')) {
+            if(stripos($r->colltype, 'specimen')) {
                 $collType = 'spec';
             }
-			if($collType){
-				if($r->ccpk){
-					if(!isset($collArr[$collType]['cat'][$r->ccpk]['name'])){
-						$collArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
-						$collArr[$collType]['cat'][$r->ccpk]['icon'] = $r->caticon;
-						$collArr[$collType]['cat'][$r->ccpk]['acronym'] = $r->acronym;
-					}
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
-				}
-				else{
-					$collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
-					$collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
-					$collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
-				}
-			}
-		}
-		$result->free();
+            if($collType){
+                if($r->ccpk){
+                    if(!isset($collArr[$collType]['cat'][$r->ccpk]['name'])){
+                        $collArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
+                        $collArr[$collType]['cat'][$r->ccpk]['icon'] = $r->caticon;
+                        $collArr[$collType]['cat'][$r->ccpk]['acronym'] = $r->acronym;
+                    }
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
+                    $collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+                }
+                else{
+                    $collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
+                    $collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
+                    $collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
+                    $collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+                }
+            }
+        }
+        $result->free();
 
-		$retArr = array();
-		if(isset($collArr['spec']['cat'][$catId])){
-			$retArr['spec']['cat'][$catId] = $collArr['spec']['cat'][$catId];
-			unset($collArr['spec']['cat'][$catId]);
-		}
-		elseif(isset($collArr['obs']['cat'][$catId])){
-			$retArr['obs']['cat'][$catId] = $collArr['obs']['cat'][$catId];
-			unset($collArr['obs']['cat'][$catId]);
-		}
-		foreach($collArr as $t => $tArr){
-			foreach($tArr as $g => $gArr){
-				foreach($gArr as $id => $idArr){
-					$retArr[$t][$g][$id] = $idArr;
-				}
-			}
-		}
-		return $retArr;
+        $retArr = array();
+        if(isset($collArr['spec']['cat'][$catId])){
+            $retArr['spec']['cat'][$catId] = $collArr['spec']['cat'][$catId];
+            unset($collArr['spec']['cat'][$catId]);
+        }
+        elseif(isset($collArr['obs']['cat'][$catId])){
+            $retArr['obs']['cat'][$catId] = $collArr['obs']['cat'][$catId];
+            unset($collArr['obs']['cat'][$catId]);
+        }
+        foreach($collArr as $t => $tArr){
+            foreach($tArr as $g => $gArr){
+                foreach($gArr as $id => $idArr){
+                    $retArr[$t][$g][$id] = $idArr;
+                }
+            }
+        }
+        return $retArr;
 	}
 
-	public function outputFullCollArr($occArr, $targetCatID = 0): void
-    {
-		global $DEFAULTCATID;
-        if(!$targetCatID && $DEFAULTCATID) {
-            $targetCatID = $DEFAULTCATID;
-        }
-        echo '<div style="position:relative">';
+    public function outputFullCollArr($occArr,$expanded = true): void{
+        global $DEFAULTCATID, $CLIENT_ROOT;
         if(isset($occArr['cat'])){
-			$categoryArr = $occArr['cat'];
-			?>
-			<div style="float:right;margin-top:20px;">
-				<input type="submit" class="nextbtn searchcollnextbtn" value="Next >"  />
-			</div>
-			<table style="float:left;width:80%;">
-				<?php
-				foreach($categoryArr as $catid => $catArr){
-					$name = $catArr['name'];
-					if($catArr['acronym']) {
+            $categoryArr = $occArr['cat'];
+            if($expanded){
+                ?>
+                <div style="float:right;margin-top:20px;">
+                    <input type="submit" class="nextbtn searchcollnextbtn" value="Next >"  />
+                </div>
+                <?php
+            }
+            ?>
+            <table<?php echo ($expanded?' style="float:left;width:80%;"':''); ?>>
+                <?php
+                foreach($categoryArr as $catid => $catArr){
+                    $name = $catArr['name'];
+                    if($catArr['acronym'] && $expanded) {
                         $name .= ' (' . $catArr['acronym'] . ')';
                     }
-					$catIcon = $catArr['icon'];
+                    $catIcon = $catArr['icon'];
                     unset($catArr['name'], $catArr['acronym'], $catArr['icon']);
                     $idStr = $this->collArrIndex.'-'.$catid;
-					?>
-					<tr>
-						<td style="<?php echo ($catIcon?'width:40px':''); ?>">
-							<?php
-							if($catIcon){
-								$catIcon = (strpos($catIcon, 'images') === 0 ?'../':'').$catIcon;
-								echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
-							}
-							?>
-						</td>
-						<td style="padding:6px;width:25px;">
-							<input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
-						</td>
-						<td style="padding:9px 5px;width:10px;">
-							<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-								<img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($targetCatID !== $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($targetCatID !== $catid?'display:none;':'') ?>" />
-							</a>
-						</td>
-						<td style="padding-top:8px;">
-							<div class="categorytitle">
-								<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-									<?php echo $name; ?>
-								</a>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<div id="cat-<?php echo $idStr; ?>" style="<?php echo ($targetCatID && $targetCatID !== $catid?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
-								<table>
-									<?php
-									foreach($catArr as $collid => $collName2){
-										?>
-										<tr>
-											<td style="width:40px;">
-												<?php
-												if($collName2['icon']){
-													$cIcon = (strpos($collName2['icon'], 'images') === 0 ?'../':'').$collName2['icon'];
-													?>
-													<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
-													<?php
-												}
-												?>
-											</td>
-											<td style="padding:6px;width:25px;">
-												<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onclick="unselectCat('cat-<?php echo $idStr; ?>-Input')" checked />
-											</td>
-											<td style="padding:6px">
-												<div class="collectiontitle">
-													<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>'>
-														<?php
-														$codeStr = ' ('.$collName2['instcode'];
-														if($collName2['collcode']) {
-                                                            $codeStr .= '-' . $collName2['collcode'];
-                                                        }
-														$codeStr .= ')';
-														echo $collName2['collname'].$codeStr;
-														?>
-													</a>
-													<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
-														more info
-													</a>
-												</div>
-											</td>
-										</tr>
-										<?php
-									}
-									?>
-								</table>
-							</div>
-						</td>
-					</tr>
-					<?php
-				}
-				?>
-			</table>
-			<?php
-		}
-		if(isset($occArr['coll'])){
-			$collArr = $occArr['coll'];
-			?>
-			<table style="float:left;width:80%;">
-				<?php
-				foreach($collArr as $collid => $cArr){
-					?>
-					<tr>
-						<td style="<?php ($cArr['icon']?'width:35px':''); ?>">
-							<?php
-							if($cArr['icon']){
-								$cIcon = (strpos($cArr['icon'], 'images') === 0 ?'../':'').$cArr['icon'];
-								?>
-								<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
-								<?php
-							}
-							?>
-							&nbsp;
-						</td>
-						<td style="padding:6px;width:25px;">
-							<input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onclick="uncheckAll()" checked />
-						</td>
-						<td style="padding:6px">
-							<div class="collectiontitle">
-								<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>'>
-									<?php
-									$codeStr = ' ('.$cArr['instcode'];
-									if($cArr['collcode']) {
-                                        $codeStr .= '-' . $cArr['collcode'];
-                                    }
-									$codeStr .= ')';
-									echo $cArr['collname'].$codeStr;
-									?>
-								</a>
-								<a href = 'misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
-									more info
-								</a>
-							</div>
-						</td>
-					</tr>
-					<?php
-				}
-				?>
-			</table>
-			<?php
-			if(!isset($occArr['cat'])){
-				?>
-				<div style="float:right;position:absolute;top:<?php echo count($collArr)*5; ?>px;right:0;">
-					<input type="submit" class="nextbtn searchcollnextbtn" value="Next >" />
-				</div>
-				<?php
-			}
-			if(count($collArr) > 40){
-				?>
-				<div style="float:right;position:absolute;top:<?php echo count($collArr)*15; ?>px;right:0;">
-					<input type="submit" class="nextbtn searchcollnextbtn" value="Next >" />
-				</div>
-				<?php
-			}
-		}
-		echo '</div>';
-		$this->collArrIndex++;
-	}
+                    if($expanded){
+                        ?>
+                        <tr>
+                            <td style="<?php echo ($catIcon?'width:40px':''); ?>">
+                                <?php
+                                if($catIcon){
+                                    $catIcon = (strpos($catIcon, 'images') === 0 ?'../':'').$catIcon;
+                                    echo '<img src="'.$catIcon.'" style="border:0px;width:30px;height:30px;" />';
+                                }
+                                ?>
+                            </td>
+                            <td style="padding:6px;width:25px;">
+                                <input id="cat-<?php echo $idStr; ?>-Input" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
+                            </td>
+                            <td style="padding:9px 5px;width:10px;">
+                                <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+                                    <img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($DEFAULTCATID !== $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($DEFAULTCATID !== $catid?'display:none;':'') ?>" />
+                                </a>
+                            </td>
+                            <td style="padding-top:8px;">
+                                <div class="categorytitle">
+                                    <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+                                        <?php echo $name; ?>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID && $DEFAULTCATID !== $catid?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+                                    <table>
+                                        <?php
+                                        foreach($catArr as $collid => $collName2){
+                                            ?>
+                                            <tr>
+                                                <td style="width:40px;">
+                                                    <?php
+                                                    if($collName2['icon']){
+                                                        $cIcon = (strpos($collName2['icon'], 'images') === 0 ?'../':'').$collName2['icon'];
+                                                        ?>
+                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td style="padding:6px;width:25px;">
+                                                    <input name="db[]" value="<?php echo $collid; ?>" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="processCollectionParamChange(this.form);" onclick="processCatCheckboxes('<?php echo $idStr; ?>')" checked />
+                                                </td>
+                                                <td style="padding:6px">
+                                                    <div class="collectiontitle">
+                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
+                                                            <?php
+                                                            $codeStr = ' ('.$collName2['instcode'];
+                                                            if($collName2['collcode']) {
+                                                                $codeStr .= '-' . $collName2['collcode'];
+                                                            }
+                                                            $codeStr .= ')';
+                                                            echo $collName2['collname'].$codeStr;
+                                                            ?>
+                                                        </a>
+                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+                                                            more info
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <tr>
+                            <td>
+                                <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
+                                    <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
+                                </a>
+                            </td>
+                            <td>
+                                <input id="cat-<?php echo $idStr; ?>-Input" data-role="none" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
+                            </td>
+                            <td>
+			    		<span style='text-decoration:none;color:black;font-size:14px;font-weight:bold;'>
+				    		<a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
+				    	</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID===$catid?'':'display:none;') ?>margin:10px 0;">
+                                    <table style="margin-left:15px;">
+                                        <?php
+                                        foreach($catArr as $collid => $collName2){
+                                            ?>
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                    if($collName2['icon']){
+                                                        $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$collName2['icon'];
+                                                        ?>
+                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
+                                                            <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
+                                                        </a>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td style="padding:6px">
+                                                    <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="processCollectionParamChange(this.form);" onclick="processCatCheckboxes('<?php echo $idStr; ?>')" checked />
+                                                </td>
+                                                <td style="padding:6px">
+                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                                        <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
+                                                    </a>
+                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
+                                                        more info
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </table>
+            <?php
+        }
+        if(isset($occArr['coll'])){
+            $collArr = $occArr['coll'];
+            ?>
+            <table<?php echo ($expanded?' style="float:left;width:80%;"':''); ?>>
+                <?php
+                foreach($collArr as $collid => $cArr){
+                    if($expanded){
+                        ?>
+                        <tr>
+                            <td style="<?php ($cArr['icon']?'width:35px':''); ?>">
+                                <?php
+                                if($cArr['icon']){
+                                    $cIcon = (strpos($cArr['icon'], 'images') === 0 ?'../':'').$cArr['icon'];
+                                    ?>
+                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
+                                    <?php
+                                }
+                                ?>
+                            </td>
+                            <td style="padding:6px;width:25px;">
+                                <input name="db[]" value="<?php echo $collid; ?>" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="processCheckAllCheckboxes();" checked />
+                            </td>
+                            <td style="padding:6px">
+                                <div class="collectiontitle">
+                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
+                                        <?php
+                                        $codeStr = ' ('.$cArr['instcode'];
+                                        if($cArr['collcode']) {
+                                            $codeStr .= '-' . $cArr['collcode'];
+                                        }
+                                        $codeStr .= ')';
+                                        echo $cArr['collname'].$codeStr;
+                                        ?>
+                                    </a>
+                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
+                                        more info
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <tr>
+                            <td>
+                                <?php
+                                if($cArr['icon']){
+                                    $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$cArr['icon'];
+                                    ?>
+                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
+                                        <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
+                                    </a>
+                                    <?php
+                                }
+                                ?>
+                            </td>
+                            <td style="padding:6px;">
+                                <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="processCheckAllCheckboxes()" checked />
+                            </td>
+                            <td style="padding:6px">
+                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                    <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
+                                </a>
+                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
+                                    more info
+                                </a>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </table>
+            <?php
+            if($expanded){
+                ?>
+                <div style="float:right;margin-top:20px;">
+                    <input type="submit" class="nextbtn searchcollnextbtn" value="Next >" />
+                </div>
+                <?php
+            }
+        }
+        $this->collArrIndex++;
+    }
 
-	public function getCollectionList($collIdArr): array
+    public function getCollectionList($collIdArr): array
     {
 		$retArr = array();
 		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, cat.category '.
@@ -905,20 +979,7 @@ class OccurrenceManager{
 		return implode('; ', $this->localSearchArr);
 	}
 
-    public function getSearchResultUrl(){
-        $url = '?';
-        $stPieces = array();
-        foreach($this->searchTermsArr as $i => $v){
-            if($v){
-                $stPieces[] = $i.'='.$v;
-            }
-        }
-        $url .= implode('&',$stPieces);
-        $url = str_replace(array('&taxontype=', '&usethes=', ' '), array('&type=', '&thes=', '%20'), $url);
-        return $url;
-    }
-
-	public function getTaxonAuthorityList(): array
+    public function getTaxonAuthorityList(): array
     {
 		$taxonAuthorityList = array();
 		$sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)';
@@ -933,54 +994,28 @@ class OccurrenceManager{
     {
 		if(array_key_exists('clid',$_REQUEST)){
 			$clidIn = $_REQUEST['clid'];
-			$clidStr = '';
-			if(is_string($clidIn)){
-				if(is_numeric($clidIn)){
-					$clidStr = $this->cleanInputStr($clidIn);
-				}
-			}
+			if(is_numeric($clidIn)){
+                $clidStr = $this->cleanInputStr($clidIn);
+            }
 			else{
 				$clidStr = $this->cleanInputStr(implode(',',array_unique($clidIn)));
 			}
 			$this->searchTermsArr['clid'] = $clidStr;
 		}
-		elseif(array_key_exists('db',$_REQUEST)){
-			$dbStr = '';
+		if(array_key_exists('db',$_REQUEST)){
 			$dbs = $_REQUEST['db'];
-			if(is_string($dbs)){
-				if(is_numeric($dbs) || $dbs === 'allspec' || $dbs === 'allobs' || $dbs === 'all'){
-					$dbStr = $this->cleanInputStr($dbs).';';
-				}
+            if(is_numeric($dbs) || $dbs === 'all'){
+                $dbStr = $this->cleanInputStr($dbs);
+            }
+			elseif(is_array($dbs)){
+				$dbStr = $this->cleanInputStr(implode(',',array_unique($dbs)));
 			}
-			else{
-				$dbStr = $this->cleanInputStr(implode(',',array_unique($dbs))).';';
-			}
-			if(!preg_match('/^[0-9,;]+$/', $dbStr)) {
+            else{
+                $dbStr = $this->cleanInputStr($dbs);
+            }
+            if(!(preg_match('/^[0-9,;]+$/', $dbStr)) || (strpos($dbStr,'all') !== false)) {
                 $dbStr = 'all';
             }
-			if(strpos($dbStr,'allspec') !== false){
-				$dbStr = 'allspec';
-			}
-			elseif(strpos($dbStr,'allobs') !== false){
-				$dbStr = 'allobs';
-			}
-			elseif(strpos($dbStr,'all') !== false){
-				$dbStr = 'all';
-			}
-			if(array_key_exists('cat',$_REQUEST) && strpos($dbStr, 'all') !== 0){
-				$catid = $_REQUEST['cat'];
-				if(is_string($catid)){
-					$catArr = Array($catid);
-				}
-				else{
-					$catArr = $catid;
-				}
-				if(!$dbStr) {
-                    $dbStr = ';';
-                }
-				$dbStr .= $this->cleanInputStr(implode(',',$catArr));
-			}
-
 			if($dbStr){
 				$this->searchTermsArr['db'] = $dbStr;
 			}
@@ -1215,60 +1250,54 @@ class OccurrenceManager{
 		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
 			$this->searchTermsArr['targetclid'] = $_REQUEST['targetclid'];
 		}
-        $boundingBoxArr = array();
-		$latLongArr = array();
-		if(array_key_exists('upperlat', $_REQUEST) && is_numeric($_REQUEST['upperlat']) && is_numeric($_REQUEST['bottomlat']) && is_numeric($_REQUEST['leftlong']) && is_numeric($_REQUEST['rightlong'])) {
-            $upperLat = $_REQUEST['upperlat'];
-            if($upperLat || $upperLat === '0') {
-                $latLongArr['upperlat'] = $upperLat;
+        if(array_key_exists('upperlat', $_REQUEST) && is_numeric($_REQUEST['upperlat']) && is_numeric($_REQUEST['bottomlat']) && is_numeric($_REQUEST['leftlong']) && is_numeric($_REQUEST['rightlong'])) {
+            if($_REQUEST['upperlat'] || $_REQUEST['upperlat'] === '0') {
+                $this->searchTermsArr['upperlat'] = $_REQUEST['upperlat'];
             }
-
-            $bottomlat = $_REQUEST['bottomlat'];
-            if($bottomlat || $bottomlat === '0') {
-                $latLongArr['bottomlat'] = $bottomlat;
+            if($_REQUEST['bottomlat'] || $_REQUEST['bottomlat'] === '0') {
+                $this->searchTermsArr['bottomlat'] = $_REQUEST['bottomlat'];
             }
-
-            $leftLong = $_REQUEST['leftlong'];
-            if($leftLong || $leftLong === '0') {
-                $latLongArr['leftlong'] = $leftLong;
+            if($_REQUEST['leftlong'] || $_REQUEST['leftlong'] === '0') {
+                $this->searchTermsArr['leftlong'] = $_REQUEST['leftlong'];
             }
-
-            $rightlong = $_REQUEST['rightlong'];
-            if($rightlong || $rightlong === '0') {
-                $latLongArr['rightlong'] = $rightlong;
+            if($_REQUEST['rightlong'] || $_REQUEST['rightlong'] === '0') {
+                $this->searchTermsArr['rightlong'] = $_REQUEST['rightlong'];
             }
-
-            if($latLongArr['upperlat'] && $latLongArr['bottomlat'] && $latLongArr['leftlong'] && $latLongArr['rightlong']){
-                $boundingBoxArr[] = $latLongArr;
-                $this->searchTermsArr['boundingBoxArr'] = $boundingBoxArr;
-            }
-            else{
-                unset($this->searchTermsArr['boundingBoxArr']);
+            if(!$this->searchTermsArr['upperlat'] || !$this->searchTermsArr['bottomlat'] || !$this->searchTermsArr['leftlong'] || !$this->searchTermsArr['rightlong']){
+                unset($this->searchTermsArr['upperlat'], $this->searchTermsArr['bottomlat'], $this->searchTermsArr['leftlong'], $this->searchTermsArr['rightlong']);
             }
         }
 		if(array_key_exists('pointlat', $_REQUEST) && is_numeric($_REQUEST['pointlat']) && is_numeric($_REQUEST['pointlong']) && is_numeric($_REQUEST['radius'])) {
-            $circleArr = array();
-		    $pointLat = $_REQUEST['pointlat'];
-            if($pointLat || $pointLat === '0') {
-                $latLongArr['pointlat'] = $pointLat;
+            if($_REQUEST['pointlat'] || $_REQUEST['pointlat'] === '0') {
+                $this->searchTermsArr['pointlat'] = $_REQUEST['pointlat'];
             }
-
-            $pointLong = $_REQUEST['pointlong'];
-            if($pointLong || $pointLong === '0') {
-                $latLongArr['pointlong'] = $pointLong;
+            if($_REQUEST['pointlong'] || $_REQUEST['pointlong'] === '0') {
+                $this->searchTermsArr['pointlong'] = $_REQUEST['pointlong'];
             }
-
-            $radius = $_REQUEST['radius'];
-            if($radius) {
-                $latLongArr['radius'] = $radius;
+            if($_REQUEST['radius']) {
+                $this->searchTermsArr['radius'] = $_REQUEST['radius'];
             }
-            if($latLongArr['pointlat'] && $latLongArr['pointlong'] && $latLongArr['radius']){
-                $circleArr[] = $latLongArr;
-                $this->searchTermsArr['circleArr'] = $circleArr;
+            if($_REQUEST['radiustemp'] && is_numeric($_REQUEST['radiustemp'])) {
+                $this->searchTermsArr['radiustemp'] = $_REQUEST['radiustemp'];
             }
-            else{
-                unset($this->searchTermsArr['circleArr']);
+            if($_REQUEST['radiusunits'] && $this->cleanInStr($_REQUEST['radiusunits'])) {
+                $this->searchTermsArr['radiusunits'] = $this->cleanInStr($_REQUEST['radiusunits']);
             }
+            if(!$this->searchTermsArr['pointlat'] || !$this->searchTermsArr['pointlong'] || !$this->searchTermsArr['radius']){
+                unset($this->searchTermsArr['pointlat'], $this->searchTermsArr['pointlong'], $this->searchTermsArr['radius'], $this->searchTermsArr['radiustemp'], $this->searchTermsArr['radiusunits']);
+            }
+        }
+		if(array_key_exists('polyArr',$_REQUEST)){
+            $this->searchTermsArr['polyArr'] = $this->cleanInStr($_REQUEST['polyArr']);
+        }
+		else{
+            unset($this->searchTermsArr['polyArr']);
+        }
+        if(array_key_exists('circleArr',$_REQUEST)){
+            $this->searchTermsArr['circleArr'] = $this->cleanInStr($_REQUEST['circleArr']);
+        }
+        else{
+            unset($this->searchTermsArr['circleArr']);
         }
 	}
 
@@ -1351,7 +1380,7 @@ class OccurrenceManager{
 		return $this->searchTermsArr;
 	}
 
-	public function getTaxaArr(): array
+    public function getTaxaArr(): array
     {
 		return $this->taxaArr;
 	}

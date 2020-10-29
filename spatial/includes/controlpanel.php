@@ -63,7 +63,7 @@
             if($inputWindowMode){
                 ?>
                 <div style="margin-left:22px;float:left;">
-                    <button data-role="none" type="button" onclick='' >Submit <?php echo $inputWindowSubmitText; ?></button>
+                    <button data-role="none" id="inputSubmitButton" type="button" onclick='processInputSubmit();' disabled>Submit <?php echo $inputWindowSubmitText; ?></button>
                 </div>
                 <?php
             }
