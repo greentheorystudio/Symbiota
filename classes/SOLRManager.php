@@ -988,8 +988,7 @@ class SOLRManager extends OccurrenceManager{
             $qArr[] = '('.$whereStr.')';
         }
         if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
-            $radius = $this->searchTermsArr['radius'] * 0.62137119223733;
-            $whereStr = 'geo:{!geofilt sfield=geo pt='.$this->searchTermsArr['pointlat'].','.$this->searchTermsArr['pointlong'].' d='.$radius.'}';
+            $whereStr = 'geo:{!geofilt sfield=geo pt='.$this->searchTermsArr['pointlat'].','.$this->searchTermsArr['pointlong'].' d='.$this->searchTermsArr['radius'].'}';
             $qArr[] = $whereStr;
             $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$this->searchTermsArr)?$this->searchTermsArr['radiustemp']:$this->searchTermsArr['radius']). ' '.(array_key_exists('radiusunits',$this->searchTermsArr)?$this->searchTermsArr['radiusunits']:'km');
         }
@@ -1001,8 +1000,7 @@ class SOLRManager extends OccurrenceManager{
             if($objArr){
                 $tempArr = array();
                 foreach($objArr as $obj => $oArr){
-                    $radius = $this->searchTermsArr['radius'] * 0.62137119223733;
-                    $whereStr = 'geo:{!geofilt sfield=geo pt='.$oArr['pointlat'].','.$oArr['pointlong'].' d='.$radius.'}';
+                    $whereStr = 'geo:{!geofilt sfield=geo pt='.$oArr['pointlat'].','.$oArr['pointlong'].' d='.$this->searchTermsArr['radius'].'}';
                     $tempArr[] = $whereStr;
                     $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$oArr)?$oArr['radiustemp']:$oArr['radius']). ' '.(array_key_exists('radiusunits',$oArr)?$oArr['radiusunits']:'km');
                 }
