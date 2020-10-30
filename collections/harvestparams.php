@@ -270,7 +270,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                         <button type="button" style="width:200px;" onclick="openSpatialInputWindow('input');">
                             Open Spatial Window
                             <span style="float:right;cursor:pointer;">
-                                <img src="../images/world40.gif" style="width:15px;" title="Open Spatial Window" />
+                                <img src="../images/world.png" style="width:15px;" title="Open Spatial Window" />
                             </span>
                         </button>
                     </div>

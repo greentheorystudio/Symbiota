@@ -1690,8 +1690,6 @@ function getGeographyParams(){
         let area_km;
         let area;
         let areaFeat;
-        let solrqfrag = '';
-        let geoSolrqString = '';
         if(feature){
             const selectedClone = feature.clone();
             const geoType = selectedClone.getGeometry().getType();
