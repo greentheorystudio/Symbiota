@@ -2295,7 +2295,7 @@ function processInputSelections(){
                 const circleObj = {
                     pointlat: fixedcenter[1],
                     pointlong: fixedcenter[0],
-                    radius: radius/1000
+                    radius: groundRadius
                 };
                 geoCircleArr.push(circleObj);
             }
