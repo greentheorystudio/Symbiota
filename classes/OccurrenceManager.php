@@ -10,42 +10,19 @@ class OccurrenceManager{
 	private $taxaSearchType;
 	protected $searchTermsArr = array();
 	protected $localSearchArr = array();
-	protected $reset = 0;
 	private $clName;
 	private $collArrIndex = 0;
 
- 	public function __construct($readVariables = true){
+ 	public function __construct(){
         $connection = new DbConnection();
  	    $this->conn = $connection->getConnection();
-		if(array_key_exists('reset',$_REQUEST) && $_REQUEST['reset']) {
-            $this->reset();
-        }
-		if($readVariables) {
-            $this->readRequestVariables();
-        }
- 	}
+	}
 
 	public function __destruct(){
  		if(!($this->conn === false)){
  			$this->conn->close();
  			$this->conn = null;
  		}
-	}
-
-	public function reset(): void
-    {
-		$this->reset = 1;
-		if(isset($this->searchTermsArr['db']) || isset($this->searchTermsArr['oic'])){
-            $dbsTemp = $this->searchTermsArr['db'] ?? '';
-            $clidTemp = $this->searchTermsArr['clid'] ?? '';
-            unset($this->searchTermsArr);
-			if($dbsTemp) {
-                $this->searchTermsArr['db'] = $dbsTemp;
-            }
-			if($clidTemp) {
-                $this->searchTermsArr['clid'] = $clidTemp;
-            }
-		}
 	}
 
 	public function getSearchTerms(): array
@@ -247,7 +224,8 @@ class OccurrenceManager{
                 $this->localSearchArr[] = 'Lat: >' .$this->searchTermsArr['bottomlat']. ', <' .$this->searchTermsArr['upperlat']. '; Long: >' .$this->searchTermsArr['leftlong']. ', <' .$this->searchTermsArr['rightlong'];
             }
             if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
-                $geoSqlStrArr[] = '(( 3959 * acos( cos( radians(' .$this->searchTermsArr['pointlat']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$this->searchTermsArr['pointlong']. ') ) + sin( radians(' .$this->searchTermsArr['pointlat']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$this->searchTermsArr['radius']. ') ';
+                $radius = $this->searchTermsArr['groundradius'] * 0.621371192;
+                $geoSqlStrArr[] = '((3959 * ACOS(COS(RADIANS(o.DecimalLatitude)) * COS(RADIANS('.$this->searchTermsArr['pointlat'].')) * COS(RADIANS('.$this->searchTermsArr['pointlong'].') - RADIANS(o.DecimalLongitude)) + SIN(RADIANS(o.DecimalLatitude)) * SIN(RADIANS('.$this->searchTermsArr['pointlat'].')))) <= '.$radius.') ';
                 $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .$this->searchTermsArr['radiustemp']. ' '.$this->searchTermsArr['radiusunits'];
             }
             if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
@@ -258,8 +236,8 @@ class OccurrenceManager{
                 }
                 if($objArr){
                     foreach($objArr as $obj => $oArr){
-                        $radius = $oArr['radius'] * 0.621371;
-                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlat']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlong']. ') ) + sin( radians(' .$oArr['pointlat']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
+                        $radius = $oArr['groundradius'] * 0.621371192;
+                        $sqlFragArr[] = '((3959 * ACOS(COS(RADIANS(o.DecimalLatitude)) * COS(RADIANS('.$oArr['pointlat'].')) * COS(RADIANS('.$oArr['pointlong'].') - RADIANS(o.DecimalLongitude)) + SIN(RADIANS(o.DecimalLatitude)) * SIN(RADIANS('.$oArr['pointlat'].')))) <= '.$radius.') ';
                         $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
                     }
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
@@ -988,317 +966,6 @@ class OccurrenceManager{
 			$taxonAuthorityList[$row->taxauthid] = $row->name;
 		}
 		return $taxonAuthorityList;
-	}
-
-	private function readRequestVariables(): void
-    {
-		if(array_key_exists('clid',$_REQUEST)){
-			$clidIn = $_REQUEST['clid'];
-			if(is_numeric($clidIn)){
-                $clidStr = $this->cleanInputStr($clidIn);
-            }
-			else{
-				$clidStr = $this->cleanInputStr(implode(',',array_unique($clidIn)));
-			}
-			$this->searchTermsArr['clid'] = $clidStr;
-		}
-		if(array_key_exists('db',$_REQUEST)){
-			$dbs = $_REQUEST['db'];
-            if(is_numeric($dbs) || $dbs === 'all'){
-                $dbStr = $this->cleanInputStr($dbs);
-            }
-			elseif(is_array($dbs)){
-				$dbStr = $this->cleanInputStr(implode(',',array_unique($dbs)));
-			}
-            else{
-                $dbStr = $this->cleanInputStr($dbs);
-            }
-            if(!(preg_match('/^[0-9,;]+$/', $dbStr)) || (strpos($dbStr,'all') !== false)) {
-                $dbStr = 'all';
-            }
-			if($dbStr){
-				$this->searchTermsArr['db'] = $dbStr;
-			}
-		}
-		if(array_key_exists('taxa',$_REQUEST)){
-			$taxa = $this->cleanInputStr($_REQUEST['taxa']);
-			$searchType = ((array_key_exists('type',$_REQUEST) && is_numeric($_REQUEST['type']))?$_REQUEST['type']:1);
-			if($taxa){
-				$taxaStr = '';
-				if(is_numeric($taxa)){
-					$sql = 'SELECT t.sciname ' .
-                        'FROM taxa t ' .
-                        'WHERE (t.tid = ' .$taxa.')';
-					$rs = $this->conn->query($sql);
-					while($row = $rs->fetch_object()){
-						$taxaStr = $row->sciname;
-					}
-					$rs->free();
-				}
-				else{
-					$taxaStr = str_replace(',', ';',$taxa);
-					$taxaArr = explode(';',$taxaStr);
-					foreach($taxaArr as $key => $sciName){
-						$snStr = trim($sciName);
-						if($searchType !== 5) {
-                            $snStr = ucfirst($snStr);
-                        }
-						$taxaArr[$key] = $snStr;
-					}
-					$taxaStr = implode(';',$taxaArr);
-				}
-				$this->searchTermsArr['taxa'] = $taxaStr;
-				$useThes = ((array_key_exists('thes',$_REQUEST) && is_numeric($_REQUEST['thes']))?$_REQUEST['thes']:0);
-				if($useThes){
-					$this->searchTermsArr['usethes'] = true;
-				}
-				else{
-					$this->searchTermsArr['usethes'] = false;
-				}
-				if($searchType){
-					$this->searchTermsArr['taxontype'] = $searchType;
-				}
-			}
-			else{
-				unset($this->searchTermsArr['taxa']);
-			}
-		}
-		if(array_key_exists('country',$_REQUEST)){
-			$country = $this->cleanInputStr($_REQUEST['country']);
-			if($country){
-				$str = str_replace(',', ';',$country);
-				if(stripos($str, 'USA') !== false || stripos($str, 'United States') !== false || stripos($str, 'U.S.A.') !== false || stripos($str, 'United States of America') !== false){
-					if(stripos($str, 'USA') === false){
-						$str .= ';USA';
-					}
-					if(stripos($str, 'United States') === false){
-						$str .= ';United States';
-					}
-					if(stripos($str, 'U.S.A.') === false){
-						$str .= ';U.S.A.';
-					}
-					if(stripos($str, 'United States of America') === false){
-						$str .= ';United States of America';
-					}
-				}
-				$this->searchTermsArr['country'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['country']);
-			}
-		}
-		if(array_key_exists('state',$_REQUEST)){
-			$state = $this->cleanInputStr($_REQUEST['state']);
-			if($state){
-				if(strlen($state) === 2 && (!isset($this->searchTermsArr['country']) || stripos($this->searchTermsArr['country'],'USA') !== false)){
-					$sql = 'SELECT s.statename, c.countryname '.
-						'FROM lkupstateprovince s INNER JOIN lkupcountry c ON s.countryid = c.countryid '.
-						'WHERE c.countryname IN("USA","United States") AND (s.abbrev = "'.$state.'")';
-					$rs = $this->conn->query($sql);
-					if($r = $rs->fetch_object()){
-						$state = $r->statename;
-					}
-					$rs->free();
-				}
-				$str = str_replace(',', ';',$state);
-				$this->searchTermsArr['state'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['state']);
-			}
-		}
-		if(array_key_exists('county',$_REQUEST)){
-			$county = $this->cleanInputStr($_REQUEST['county']);
-			$county = str_ireplace(' Co.', '',$county);
-			$county = str_ireplace(' County', '',$county);
-			if($county){
-				$str = str_replace(',', ';',$county);
-				$this->searchTermsArr['county'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['county']);
-			}
-		}
-		if(array_key_exists('local',$_REQUEST)){
-			$local = $this->cleanInputStr($_REQUEST['local']);
-			if($local){
-				$str = str_replace(',', ';',$local);
-				$this->searchTermsArr['local'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['local']);
-			}
-		}
-		if(array_key_exists('elevlow', $_REQUEST) && is_numeric($_REQUEST['elevlow'])) {
-            $elevlow = $_REQUEST['elevlow'];
-            if($elevlow){
-                $str = str_replace(',', ';',$elevlow);
-                $this->searchTermsArr['elevlow'] = $str;
-            }
-            else{
-                unset($this->searchTermsArr['elevlow']);
-            }
-        }
-		if(array_key_exists('elevhigh', $_REQUEST) && is_numeric($_REQUEST['elevhigh'])) {
-            $elevhigh = $_REQUEST['elevhigh'];
-            if($elevhigh){
-                $str = str_replace(',', ';',$elevhigh);
-                $this->searchTermsArr['elevhigh'] = $str;
-            }
-            else{
-                unset($this->searchTermsArr['elevhigh']);
-            }
-        }
-        if(array_key_exists('assochost',$_REQUEST)){
-            $assocHost = $this->cleanInputStr($_REQUEST['assochost']);
-            if($assocHost){
-                $str = str_replace(',', ';',$assocHost);
-                $this->searchTermsArr['assochost'] = $str;
-            }
-            else{
-                unset($this->searchTermsArr['assochost']);
-            }
-        }
-		if(array_key_exists('collector',$_REQUEST)){
-			$collector = $this->cleanInputStr($_REQUEST['collector']);
-			if($collector){
-				$str = str_replace(',', ';',$collector);
-				$this->searchTermsArr['collector'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['collector']);
-			}
-		}
-		if(array_key_exists('collnum',$_REQUEST)){
-			$collNum = $this->cleanInputStr($_REQUEST['collnum']);
-			if($collNum){
-				$str = str_replace(',', ';',$collNum);
-				$this->searchTermsArr['collnum'] = $str;
-			}
-			else{
-				unset($this->searchTermsArr['collnum']);
-			}
-		}
-		if(array_key_exists('eventdate1',$_REQUEST)){
-			if($eventDate = $this->cleanInputStr($_REQUEST['eventdate1'])){
-				$this->searchTermsArr['eventdate1'] = $eventDate;
-				if(array_key_exists('eventdate2',$_REQUEST)){
-					if($eventDate2 = $this->cleanInputStr($_REQUEST['eventdate2'])){
-						if($eventDate2 !== $eventDate){
-							$this->searchTermsArr['eventdate2'] = $eventDate2;
-						}
-					}
-					else{
-						unset($this->searchTermsArr['eventdate2']);
-					}
-				}
-			}
-			else{
-				unset($this->searchTermsArr['eventdate1']);
-			}
-		}
-        if(array_key_exists('occurrenceRemarks',$_REQUEST)){
-            $remarks = $this->cleanInputStr($_REQUEST['occurrenceRemarks']);
-            if($remarks){
-                $str = str_replace(',', ';',$remarks);
-                $this->searchTermsArr['occurrenceRemarks'] = $str;
-            }
-            else{
-                unset($this->searchTermsArr['occurrenceRemarks']);
-            }
-        }
-		if(array_key_exists('catnum',$_REQUEST)){
-			$catNum = $this->cleanInputStr($_REQUEST['catnum']);
-			if($catNum){
-				$str = str_replace(',', ';',$catNum);
-				$this->searchTermsArr['catnum'] = $str;
-				if(array_key_exists('includeothercatnum',$_REQUEST)){
-					$this->searchTermsArr['othercatnum'] = '1';
-				}
-			}
-			else{
-				unset($this->searchTermsArr['catnum']);
-			}
-		}
-		if(array_key_exists('typestatus',$_REQUEST)){
-			$typestatus = $_REQUEST['typestatus'];
-			if($typestatus){
-				$this->searchTermsArr['typestatus'] = true;
-			}
-			else{
-				unset($this->searchTermsArr['typestatus']);
-			}
-		}
-		if(array_key_exists('hasimages',$_REQUEST)){
-			$hasimages = $_REQUEST['hasimages'];
-			if($hasimages){
-				$this->searchTermsArr['hasimages'] = true;
-			}
-			else{
-				unset($this->searchTermsArr['hasimages']);
-			}
-		}
-        if(array_key_exists('hasgenetic',$_REQUEST)){
-            $hasgenetic = $_REQUEST['hasgenetic'];
-            if($hasgenetic){
-                $this->searchTermsArr['hasgenetic'] = true;
-            }
-            else{
-                unset($this->searchTermsArr['hasgenetic']);
-            }
-        }
-		if(array_key_exists('targetclid',$_REQUEST) && is_numeric($_REQUEST['targetclid'])){
-			$this->searchTermsArr['targetclid'] = $_REQUEST['targetclid'];
-		}
-        if(array_key_exists('upperlat', $_REQUEST) && is_numeric($_REQUEST['upperlat']) && is_numeric($_REQUEST['bottomlat']) && is_numeric($_REQUEST['leftlong']) && is_numeric($_REQUEST['rightlong'])) {
-            if($_REQUEST['upperlat'] || $_REQUEST['upperlat'] === '0') {
-                $this->searchTermsArr['upperlat'] = $_REQUEST['upperlat'];
-            }
-            if($_REQUEST['bottomlat'] || $_REQUEST['bottomlat'] === '0') {
-                $this->searchTermsArr['bottomlat'] = $_REQUEST['bottomlat'];
-            }
-            if($_REQUEST['leftlong'] || $_REQUEST['leftlong'] === '0') {
-                $this->searchTermsArr['leftlong'] = $_REQUEST['leftlong'];
-            }
-            if($_REQUEST['rightlong'] || $_REQUEST['rightlong'] === '0') {
-                $this->searchTermsArr['rightlong'] = $_REQUEST['rightlong'];
-            }
-            if(!$this->searchTermsArr['upperlat'] || !$this->searchTermsArr['bottomlat'] || !$this->searchTermsArr['leftlong'] || !$this->searchTermsArr['rightlong']){
-                unset($this->searchTermsArr['upperlat'], $this->searchTermsArr['bottomlat'], $this->searchTermsArr['leftlong'], $this->searchTermsArr['rightlong']);
-            }
-        }
-		if(array_key_exists('pointlat', $_REQUEST) && is_numeric($_REQUEST['pointlat']) && is_numeric($_REQUEST['pointlong']) && is_numeric($_REQUEST['radius'])) {
-            if($_REQUEST['pointlat'] || $_REQUEST['pointlat'] === '0') {
-                $this->searchTermsArr['pointlat'] = $_REQUEST['pointlat'];
-            }
-            if($_REQUEST['pointlong'] || $_REQUEST['pointlong'] === '0') {
-                $this->searchTermsArr['pointlong'] = $_REQUEST['pointlong'];
-            }
-            if($_REQUEST['radius']) {
-                $this->searchTermsArr['radius'] = $_REQUEST['radius'];
-            }
-            if($_REQUEST['radiustemp'] && is_numeric($_REQUEST['radiustemp'])) {
-                $this->searchTermsArr['radiustemp'] = $_REQUEST['radiustemp'];
-            }
-            if($_REQUEST['radiusunits'] && $this->cleanInStr($_REQUEST['radiusunits'])) {
-                $this->searchTermsArr['radiusunits'] = $this->cleanInStr($_REQUEST['radiusunits']);
-            }
-            if(!$this->searchTermsArr['pointlat'] || !$this->searchTermsArr['pointlong'] || !$this->searchTermsArr['radius']){
-                unset($this->searchTermsArr['pointlat'], $this->searchTermsArr['pointlong'], $this->searchTermsArr['radius'], $this->searchTermsArr['radiustemp'], $this->searchTermsArr['radiusunits']);
-            }
-        }
-		if(array_key_exists('polyArr',$_REQUEST)){
-            $this->searchTermsArr['polyArr'] = $this->cleanInStr($_REQUEST['polyArr']);
-        }
-		else{
-            unset($this->searchTermsArr['polyArr']);
-        }
-        if(array_key_exists('circleArr',$_REQUEST)){
-            $this->searchTermsArr['circleArr'] = $this->cleanInStr($_REQUEST['circleArr']);
-        }
-        else{
-            unset($this->searchTermsArr['circleArr']);
-        }
 	}
 
 	private function getSynonyms($searchTarget,$taxAuthId = 1): array

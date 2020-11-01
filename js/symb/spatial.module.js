@@ -917,10 +917,13 @@ function createBuffers(){
 function createCirclesFromCircleArr(circleArr, selected){
     for(let i in circleArr){
         if(circleArr.hasOwnProperty(i)){
-            const pointCoords = ol.proj.fromLonLat([circleArr[i].pointlong, circleArr[i].pointlat]);
-            const circle = new ol.geom.Circle(pointCoords, (circleArr[i].radius * 1000));
+            const centerCoords = ol.proj.fromLonLat([circleArr[i].pointlong, circleArr[i].pointlat]);
+            const circle = new ol.geom.Circle(centerCoords);
+            circle.setRadius(Number(circleArr[i].radius));
             const circleFeature = new ol.Feature(circle);
             selectsource.addFeature(circleFeature);
+            document.getElementById("selectlayerselect").value = 'select';
+            setActiveLayer();
             if(selected){
                 selectedFeatures.push(circleFeature);
             }
@@ -931,8 +934,9 @@ function createCirclesFromCircleArr(circleArr, selected){
 }
 
 function createCircleFromPointRadius(prad, selected){
-    const pointCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
-    const circle = new ol.geom.Circle(pointCoords, (prad.radius * 1000));
+    const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
+    const circle = new ol.geom.Circle(centerCoords);
+    circle.setRadius(Number(prad.radius));
     const circleFeature = new ol.Feature(circle);
     selectsource.addFeature(circleFeature);
     document.getElementById("selectlayerselect").value = 'select';
@@ -1376,13 +1380,25 @@ function createShapesFromSearchTermsArr(){
         }
     }
     if(searchTermsArr.hasOwnProperty('circleArr')){
-        const circleArr = JSON.parse(searchTermsArr['circleArr']);
+        let circleArr;
+        if(JSON.parse(searchTermsArr['circleArr'])){
+            circleArr = JSON.parse(searchTermsArr['circleArr']);
+        }
+        else{
+            circleArr = searchTermsArr['circleArr'];
+        }
         if(Array.isArray(circleArr)){
             createCirclesFromCircleArr(circleArr, true);
         }
     }
     if(searchTermsArr.hasOwnProperty('polyArr')){
-        const polyArr = JSON.parse(searchTermsArr['polyArr']);
+        let polyArr;
+        if(JSON.parse(searchTermsArr['polyArr'])){
+            polyArr = JSON.parse(searchTermsArr['polyArr']);
+        }
+        else{
+            polyArr = searchTermsArr['polyArr'];
+        }
         if(Array.isArray(polyArr)){
             createPolysFromPolyArr(polyArr, true);
         }
@@ -1750,18 +1766,16 @@ function getGeographyParams(){
                 const center = selectedClone.getGeometry().getCenter();
                 const radius = selectedClone.getGeometry().getRadius();
                 const edgeCoordinate = [center[0] + radius, center[1]];
-                let groundRadius = ol.sphere.getDistance(
-                    ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-                    ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-                );
-                groundRadius = groundRadius/1000;
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+                const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
                 const circleArea = Math.PI * groundRadius * groundRadius;
                 totalArea = totalArea + circleArea;
-                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
                 const circleObj = {
-                    pointlat: fixedcenter[0],
-                    pointlong: fixedcenter[1],
-                    radius: groundRadius
+                    pointlat: fixedcenter[1],
+                    pointlong: fixedcenter[0],
+                    radius: radius,
+                    groundradius: groundRadius
                 };
                 geoCircleArr.push(circleObj);
             }
@@ -1774,13 +1788,13 @@ function getGeographyParams(){
         document.getElementById("polyarea").value = totalArea.toFixed(2);
     }
     if(geoPolyArr.length > 0){
-        setSearchTermsArrKeyValue('polyArr',geoPolyArr);
+        setSearchTermsArrKeyValue('polyArr',JSON.stringify(geoPolyArr));
     }
     else{
         clearSearchTermsArrKey('polyArr');
     }
     if(geoCircleArr.length > 0){
-        setSearchTermsArrKeyValue('circleArr',geoCircleArr);
+        setSearchTermsArrKeyValue('circleArr',JSON.stringify(geoCircleArr));
     }
     else{
         clearSearchTermsArrKey('circleArr');
@@ -2284,18 +2298,16 @@ function processInputSelections(){
                 const center = selectedClone.getGeometry().getCenter();
                 const radius = selectedClone.getGeometry().getRadius();
                 const edgeCoordinate = [center[0] + radius, center[1]];
-                let groundRadius = ol.sphere.getDistance(
-                    ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-                    ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-                );
-                groundRadius = groundRadius/1000;
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+                const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
                 const circleArea = Math.PI * groundRadius * groundRadius;
                 totalArea = totalArea + circleArea;
-                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
                 const circleObj = {
                     pointlat: fixedcenter[1],
                     pointlong: fixedcenter[0],
-                    radius: groundRadius
+                    radius: radius,
+                    groundradius: groundRadius
                 };
                 geoCircleArr.push(circleObj);
             }
@@ -2361,8 +2373,9 @@ function processInputSubmit(){
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('circle') && inputResponseData.hasOwnProperty('circleArr')){
         opener.document.getElementById('pointlat').value = inputResponseData['circleArr'][0]['pointlat'];
         opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
-        opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['radius'];
+        opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['groundradius'];
         opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
+        opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
         opener.document.getElementById('radiusunits').value = 'km';
     }
     self.close();
@@ -2387,12 +2400,14 @@ function processPointSelection(sFeature){
 }
 
 function processVectorInteraction(){
-    if(!INPUTWINDOWMODE){
-        setSpatialParamBox();
-        getGeographyParams();
-    }
-    else{
-        processInputSelections();
+    if(!spatialModuleInitialising){
+        if(!INPUTWINDOWMODE){
+            setSpatialParamBox();
+            getGeographyParams();
+        }
+        else{
+            processInputSelections();
+        }
     }
 }
 
