@@ -988,9 +988,9 @@ class SOLRManager extends OccurrenceManager{
             $qArr[] = '('.$whereStr.')';
         }
         if(array_key_exists('pointlat',$this->searchTermsArr) && $this->searchTermsArr['pointlat']){
-            $whereStr = 'geo:{!geofilt sfield=geo pt='.$this->searchTermsArr['pointlat'].','.$this->searchTermsArr['pointlong'].' d='.$this->searchTermsArr['radius'].'}';
+            $whereStr = 'geo:{!geofilt sfield=geo pt='.$this->searchTermsArr['pointlat'].','.$this->searchTermsArr['pointlong'].' d='.$this->searchTermsArr['groundradius'].'}';
             $qArr[] = $whereStr;
-            $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$this->searchTermsArr)?$this->searchTermsArr['radiustemp']:$this->searchTermsArr['radius']). ' '.(array_key_exists('radiusunits',$this->searchTermsArr)?$this->searchTermsArr['radiusunits']:'km');
+            $this->localSearchArr[] = 'Point radius: ' .$this->searchTermsArr['pointlat']. ', ' .$this->searchTermsArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$this->searchTermsArr)?$this->searchTermsArr['radiustemp']:$this->searchTermsArr['groundradius']). ' '.(array_key_exists('radiusunits',$this->searchTermsArr)?$this->searchTermsArr['radiusunits']:'km');
         }
         if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
             $objArr = $this->searchTermsArr['circleArr'];
@@ -1000,9 +1000,9 @@ class SOLRManager extends OccurrenceManager{
             if($objArr){
                 $tempArr = array();
                 foreach($objArr as $obj => $oArr){
-                    $whereStr = 'geo:{!geofilt sfield=geo pt='.$oArr['pointlat'].','.$oArr['pointlong'].' d='.$this->searchTermsArr['radius'].'}';
+                    $whereStr = 'geo:{!geofilt sfield=geo pt='.$oArr['pointlat'].','.$oArr['pointlong'].' d='.$oArr['groundradius'].'}';
                     $tempArr[] = $whereStr;
-                    $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$oArr)?$oArr['radiustemp']:$oArr['radius']). ' '.(array_key_exists('radiusunits',$oArr)?$oArr['radiusunits']:'km');
+                    $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .(array_key_exists('radiustemp',$oArr)?$oArr['radiustemp']:$oArr['groundradius']). ' '.(array_key_exists('radiusunits',$oArr)?$oArr['radiusunits']:'km');
                 }
                 $qArr[] = '('.implode(' OR ',$tempArr).')';
             }
