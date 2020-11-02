@@ -17,7 +17,6 @@ if($stArrJson){
 
 $pArr = array();
 $pArr['q'] = $solrManager->getSOLRWhere(true);
-$pArr['fq'] = $solrManager->getSOLRGeoWhere();
 if(isset($_REQUEST['pt'])) {
     $pArr['pt'] = $_REQUEST['pt'];
 }
