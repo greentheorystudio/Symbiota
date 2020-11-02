@@ -18,7 +18,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/shared.js?ver=1"></script>
-    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=16"></script>
+    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=19"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=12"></script>
     <script type="text/javascript">
         const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
@@ -83,6 +83,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
             let pointlongVal = document.getElementById('pointlong').value;
             let radiustempVal = document.getElementById('radiustemp').value;
             let radiusVal = document.getElementById('radius').value;
+            let groundRadiusVal = document.getElementById('groundradius').value;
             let radiusunitsVal = document.getElementById('radiusunits').value;
             if(polyArrVal){
                 setSearchTermsArrKeyValue('polyArr',polyArrVal);
@@ -113,6 +114,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                 setSearchTermsArrKeyValue('pointlong',pointlongVal);
                 setSearchTermsArrKeyValue('radiustemp',radiustempVal);
                 setSearchTermsArrKeyValue('radius',radiusVal);
+                setSearchTermsArrKeyValue('groundradius',groundRadiusVal);
                 setSearchTermsArrKeyValue('radiusunits',radiusunitsVal);
             }
             else{
@@ -120,6 +122,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                 clearSearchTermsArrKey('pointlong');
                 clearSearchTermsArrKey('radiustemp');
                 clearSearchTermsArrKey('radius');
+                clearSearchTermsArrKey('groundradius');
                 clearSearchTermsArrKey('radiusunits');
             }
         }
@@ -252,6 +255,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                             <option value="mi"><?php echo $SEARCHTEXT['LL_P-RADIUS_MI']; ?></option>
                         </select>
                         <input type="hidden" id="radius" name="radius" value="" />
+                        <input type="hidden" id="groundradius" name="groundradius" value="" />
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-circle');">
@@ -270,7 +274,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                         <button type="button" style="width:200px;" onclick="openSpatialInputWindow('input');">
                             Open Spatial Window
                             <span style="float:right;cursor:pointer;">
-                                <img src="../images/world40.gif" style="width:15px;" title="Open Spatial Window" />
+                                <img src="../images/world.png" style="width:15px;" title="Open Spatial Window" />
                             </span>
                         </button>
                     </div>
@@ -318,8 +322,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
             <div id="searchGeneticCheckbox">
                 <input type='checkbox' name='hasgenetic' id='hasgenetic' onchange="processTextParamChange();" value='1' /> <?php echo $SEARCHTEXT['HAS_GENETIC']; ?>
             </div>
-			<input type="hidden" name="reset" value="1" />
-            <input type="hidden" id="polyArr" name="polyArr" value="" />
+			<input type="hidden" id="polyArr" name="polyArr" value="" />
             <input type="hidden" id="circleArr" name="circleArr" value="" />
             <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 		</form>

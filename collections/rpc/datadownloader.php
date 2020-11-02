@@ -42,8 +42,6 @@ if($stArrJson){
 if($SOLR_MODE && $stArr){
     $solrManager->setSearchTermsArr($stArr);
     $pArr['q'] = $solrManager->getSOLRWhere($spatial);
-    $pArr['fq'] = $solrManager->getSOLRGeoWhere();
-
     if(isset($_REQUEST['dh-fl'])) {
         $pArr['fl'] = $_REQUEST['dh-fl'];
     }

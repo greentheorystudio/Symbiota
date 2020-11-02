@@ -155,14 +155,10 @@ function copySearchUrl(){
 function processCollectionParamChange(f){
     if(pageLoaded){
         const dbElements = f.getElementsByTagName("input");
-        let col = false;
         let cl = false;
         let all = true;
-        let collid = '';
-        let clid = '';
         const collidArr = [];
         const clidArr = [];
-        let solrqfrag = '';
         for(let i = 0; i < dbElements.length; i++){
             const dbElement = dbElements[i];
             if(dbElement.name === 'db[]' && !isNaN(dbElement.value)){
@@ -211,7 +207,6 @@ function processTaxaParamChange(){
 }
 
 function processTextParamChange(){
-    let solrqfrag = '';
     let countryval = document.getElementById("country").value.trim();
     let stateval = document.getElementById("state").value.trim();
     let countyval = document.getElementById("county").value.trim();

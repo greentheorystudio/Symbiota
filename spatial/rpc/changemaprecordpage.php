@@ -36,9 +36,7 @@ if($stArrJson){
 
     if($SOLR_MODE){
         $solrManager->setSearchTermsArr($stArr);
-        $q = $solrManager->getSOLRWhere(true);
-        $fq = $solrManager->getSOLRGeoWhere();
-        $qStr = 'q='.$q.($fq?'&fq='.$fq:'');
+        $qStr = 'q='.$solrManager->getSOLRWhere(true);
         $solrManager->setQStr($qStr);
         $solrArr = $solrManager->getGeoArr($pageNumber,$cntPerPage);
         $occArr = $solrManager->translateSOLRMapRecList($solrArr);

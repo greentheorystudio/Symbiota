@@ -85,7 +85,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=291" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=305" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -103,6 +103,7 @@ $dbArr = array();
         });
 
         $(document).ready(function() {
+            spatialModuleInitialising = true;
             initializeSearchStorage(<?php echo $queryId; ?>);
 
             $('#criteriatab').tabs({
@@ -160,6 +161,7 @@ $dbArr = array();
                 <?php
             }
             ?>
+            spatialModuleInitialising = false;
         });
     </script>
 </head>
@@ -201,6 +203,7 @@ $dbArr = array();
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    let spatialModuleInitialising = false;
     let inputResponseData = {};
     let geoPolyArr = [];
     let geoCircleArr = [];

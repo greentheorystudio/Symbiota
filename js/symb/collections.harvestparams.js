@@ -45,7 +45,7 @@ function changeTableDisplay(){
 function updateRadius(){
     const radiusUnits = document.getElementById("radiusunits").value;
     let enteredRadius = document.getElementById("radiustemp").value;
-    document.getElementById("radius").value = (radiusUnits === "km" ? enteredRadius : (enteredRadius * 0.621371));
+    document.getElementById("radius").value = (radiusUnits === "km" ? enteredRadius : (enteredRadius * 0.621371192));
 }
 
 function setHarvestParamsForm(){
@@ -96,6 +96,7 @@ function setHarvestParamsForm(){
         document.harvestparams.pointlat.value = stArr['pointlat'];
         document.harvestparams.pointlong.value = stArr['pointlong'];
         document.harvestparams.radius.value = stArr['radius'];
+        document.harvestparams.groundradius.value = stArr['groundradius'];
         document.harvestparams.radiustemp.value = stArr['radiustemp'];
         document.harvestparams.radiusunits.value = stArr['radiusunits'];
     }
