@@ -56,8 +56,3 @@ function toggleFieldBox(target){
         }
     }
 }
-
-function openMapPU(){
-    const url = '../map/googlemap.php?starr=' + starrJson + '&jsoncollstarr=' + collJson + '&maptype=occquery';
-    window.open(url,'gmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
-}

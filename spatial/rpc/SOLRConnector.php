@@ -2,11 +2,21 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$pArr = array();
-$pArr['q'] = ($_REQUEST['q'] ?? '*:*');
-if(isset($_REQUEST['fq'])) {
-    $pArr['fq'] = $_REQUEST['fq'];
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
+
+$solrManager = new SOLRManager();
+
+$stArr = json_decode($stArrJson, true);
+$qStr = '';
+$fqStr = '';
+
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true);
+    $solrManager->setSearchTermsArr($stArr);
 }
+
+$pArr = array();
+$pArr['q'] = $solrManager->getSOLRWhere(true);
 if(isset($_REQUEST['pt'])) {
     $pArr['pt'] = $_REQUEST['pt'];
 }
@@ -26,19 +36,10 @@ if(isset($_REQUEST['wt'])) {
     $pArr['wt'] = $_REQUEST['wt'];
 }
 
-$solrManager = new SOLRManager();
-$pArr['q'] = $solrManager->checkQuerySecurity($pArr['q']);
-
 if($pArr['wt'] === 'geojson'){
     $pArr['geojson.field'] = 'geo';
     $pArr['omitHeader'] = 'true';
 }
-
-/*$testURL = $SOLR_URL.'/select?';
-foreach($pArr as $key => $value){
-    $testURL .= $key.'='.$value.'&';
-}
-echo substr($testURL, 0, -1);*/
 
 $headers = array(
     'Content-Type: application/x-www-form-urlencoded',

@@ -3,26 +3,16 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$stArrCollJson = $_REQUEST['jsoncollstarr'];
-$stArrSearchJson = $_REQUEST['starr'];
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$stArrJson = $_REQUEST['starr'];
 $targetTid = $_REQUEST['targettid'];
 $occIndex = $_REQUEST['occindex'];
 $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
-$collStArr = json_decode($stArrCollJson, true);
-$searchStArr = json_decode($stArrSearchJson, true);
-if($collStArr && $searchStArr) {
-    $stArr = array_merge($searchStArr, $collStArr);
-}
-if(!$collStArr && $searchStArr) {
-    $stArr = $searchStArr;
-}
-if($collStArr && !$searchStArr) {
-    $stArr = $collStArr;
-}
+$stArr = json_decode($stArrJson, true);
+$copyURL = '';
 
 if($SOLR_MODE){
     $collManager = new SOLRManager();
@@ -40,7 +30,11 @@ else{
 
 $targetClid = $collManager->getSearchTerm('targetclid');
 
-$urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/listtabledisplay.php';
+if(strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/listtabledisplay.php';
+    $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
+    $copyURL = $urlPrefix.$urlArgs;
+}
 
 $recordListHtml = '';
 
@@ -58,13 +52,37 @@ if($qryCnt > (1000+$occIndex)){
 $navStr .= '</div>';
 
 if($recArr){
-    $recordListHtml .= '<div style="width:790px;clear:both;margin:5px;">';
-    $recordListHtml .= '<div style="float:left;"><button type="button" id="copyurl" onclick="copySearchUrl();">Copy URL to These Results</button></div>';
+    $recordListHtml .= '<div style="width:790px;clear:both;">';
+    $recordListHtml .= '<div style="height:25px;width:100%;display:flex;justify-content:space-between;align-items:center;">';
+    $recordListHtml .= '<div style="width:200px;display:flex;justify-content:space-between;align-items:center;">';
+    $recordListHtml .= '<div>';
+    $recordListHtml .= '<select data-role="none" id="querydownloadselect">';
+    $recordListHtml .= '<option>Download Type</option>';
+    $recordListHtml .= '<option value="csv">CSV</option>';
+    $recordListHtml .= '<option value="kml">KML</option>';
+    $recordListHtml .= '<option value="geojson">GeoJSON</option>';
+    $recordListHtml .= '<option value="gpx">GPX</option>';
+    $recordListHtml .= '</select>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div>';
+    $recordListHtml .= '<button data-role="none" type="button" onclick="processDownloadRequest(false,'.$qryCnt.');" >Download</button>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div style="width:400px;display:flex;justify-content:space-between;align-items:center;">';
+    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">List View</a></div>';
+    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Spatial Module</a></div>';
+    if(strlen($stArrJson) <= 1800){
+        $recordListHtml .= '<div><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>';
+    }
     if($qryCnt > 1){
+        $recordListHtml .= '<div>';
         $recordListHtml .= $navStr;
+        $recordListHtml .= '</div>';
     }
     $recordListHtml .= '</div>';
-    $recordListHtml .= '<div style="clear:both;height:5px;"></div>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div style="clear:both;"></div>';
     $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
     $recordListHtml .= '<th>Symbiota ID</th>';
     $recordListHtml .= '<th>Collection</th>';
@@ -143,8 +161,7 @@ if($recArr){
     }
     $recordListHtml .= '</table>';
     $recordListHtml .= '<div style="clear:both;height:5px;"></div>';
-    $recordListHtml .= '<textarea id="urlPrefixBox" style="position:absolute;left:-9999px;top:-9999px">'.$urlPrefix.$collManager->getSearchResultUrl().'</textarea>';
-    $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px"></textarea>';
+    $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
     if($qryCnt > 1){
         $recordListHtml .= '<div style="width:790px;">'.$navStr.'</div>';
     }

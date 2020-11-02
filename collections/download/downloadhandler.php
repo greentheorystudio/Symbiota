@@ -9,8 +9,7 @@ ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 $schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']: 'symbiota';
 $cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
 $taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?$_POST['taxonFilterCode']:0;
-$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
-$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
@@ -19,17 +18,12 @@ $solrManager = new SOLRManager();
 
 $occWhereStr = '';
 
-if($stArrSearchJson){
-	$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
-	$collStArr = json_decode($stArrCollJson, true);
-	$searchArr = json_decode($stArrSearchJson, true);
-	if($collStArr) {
-		$searchArr = array_merge($searchArr, $collStArr);
-	}
-	$occurManager->setSearchTermsArr($searchArr);
+if($stArrJson){
+	$stArr = json_decode($stArrJson, true);
+	$occurManager->setSearchTermsArr($stArr);
 
     if($SOLR_MODE){
-    	$solrManager->setSearchTermsArr($searchArr);
+    	$solrManager->setSearchTermsArr($stArr);
         if($schema === 'checklist'){
             if($taxonFilterCode){
                 $solrArr = $solrManager->getTaxaArr();
