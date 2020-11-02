@@ -202,8 +202,8 @@ class KeyDataManager extends Manager{
 		$countMin = $this->taxaCount * $this->relevanceValue;
 		$loopCnt = 0;
 		while(!$charList && $loopCnt < 10){
-			$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c FROM '.
-				'(SELECT DISTINCT tList.TID, d.CID FROM ('.$this->sql.') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> '-')) AS tc '.
+			$sqlRev = 'SELECT tc.CID, COUNT(tc.TID) AS c FROM '.
+				'(SELECT DISTINCT tList.TID, d.CID FROM ('.$this->sql.') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> "-")) AS tc '.
 				'GROUP BY tc.CID HAVING ((Count(tc.TID)) > ' .$countMin. ')';
 			$rs = $this->conn->query($sqlRev);
 			//echo $sqlRev.'<br/>';
@@ -412,22 +412,19 @@ class KeyDataManager extends Manager{
 
     public function getTaxaList(): array
 	{
-        $taxaList[] = null;
-        unset($taxaList);
         //echo $this->sql; exit;
         $result = $this->conn->query($this->sql);
         $returnArray = array();
-        $sppArr = array();
         $count = 0;
         while ($row = $result->fetch_object()){
+            $sppArr = array();
             $family = $row->Family;
             $tid = $row->tid;
             $displayName = $row->DisplayName;
-            unset($sppArr);
             if(array_key_exists($family, $returnArray)) {
 				$sppArr = $returnArray[$family];
 			}
-            if(!$returnArray[$family][$tid]){
+            if(!array_key_exists($tid, $sppArr)) {
                 $count++;
                 $sppArr[$tid] = $displayName;
                 $returnArray[$family] = $sppArr;

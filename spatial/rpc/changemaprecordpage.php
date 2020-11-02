@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
@@ -15,29 +16,38 @@ $recordCnt = array_key_exists('rows',$_REQUEST)?$_REQUEST['rows']:0;
 $selections = array();
 $allSelected = false;
 $occArr = array();
+$copyURL = '';
 
 $solrManager = new SOLRManager();
 $spatialManager = new SpatialModuleManager();
+$occManager = new OccurrenceManager();
 
 if($selArrJson){
     $selections = json_decode($selArrJson, true);
 }
 
-if($SOLR_MODE){
-	if($q || $fq){
-		$q = $solrManager->checkQuerySecurity($q);
-		$qStr = 'q='.$q.'&fq='.$fq;
-		$solrManager->setQStr($qStr);
-		$solrArr = $solrManager->getGeoArr($pageNumber,$cntPerPage);
-		$occArr = $solrManager->translateSOLRMapRecList($solrArr);
-	}
-}
-
-if(!$SOLR_MODE && $stArrJson) {
+if($stArrJson){
     $stArr = json_decode($stArrJson, true);
-    $spatialManager->setSearchTermsArr($stArr);
-    $mapWhere = $spatialManager->getSqlWhere();
-    $occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage,$mapWhere);
+    if(strlen($stArrJson) <= 1800){
+        $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/spatial/index.php';
+        $urlArgs = '?starr='.$stArrJson;
+        $copyURL = $urlPrefix.$urlArgs;
+    }
+
+    if($SOLR_MODE){
+        $solrManager->setSearchTermsArr($stArr);
+        $qStr = 'q='.$solrManager->getSOLRWhere(true);
+        $solrManager->setQStr($qStr);
+        $solrArr = $solrManager->getGeoArr($pageNumber,$cntPerPage);
+        $occArr = $solrManager->translateSOLRMapRecList($solrArr);
+    }
+    else{
+        $spatialManager->setSearchTermsArr($stArr);
+        $occManager->setSearchTermsArr($stArr);
+        $mapWhere = $occManager->getSqlWhere();
+        $spatialManager->setSqlWhere($mapWhere);
+        $occArr = $spatialManager->getMapRecordPageArr($pageNumber,$cntPerPage);
+    }
 }
 
 $pageOccids = array_keys($occArr);
@@ -118,6 +128,7 @@ if($occArr){
 	if($lastPage > $startPage){
 		$recordListHtml .= '<div style="">'.$paginationStr.'</div>';
 	}
+    $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
 }
 else{
 	$recordListHtml .= '<div style="font-weight:bold;font-size:120%;">';

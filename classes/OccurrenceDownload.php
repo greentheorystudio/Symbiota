@@ -115,7 +115,6 @@ class OccurrenceDownload{
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
 		header('Content-Length: '.filesize($filePath.$fileName));
-		ob_clean();
 		flush();
 		readfile($filePath.$fileName);
 		if(file_exists($filePath.$fileName)) {

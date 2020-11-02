@@ -53,18 +53,3 @@
 //$SEARCHTEXT['TYPE'] = '';
 //$SEARCHTEXT['HAS_IMAGE'] = '';
 //$SEARCHTEXT['HAS_GENETIC'] = '';
-
-//Following used in mapboundingbox.php
-//$SEARCHTEXT['MBB_TITLE'] = '';
-//$SEARCHTEXT['MBB_INSTRUCTIONS'] = '';
-//$SEARCHTEXT['MBB_NORTHERN'] = '';
-//$SEARCHTEXT['MBB_EASTERN'] = '';
-//$SEARCHTEXT['MBB_SOUTHERN'] = '';
-//$SEARCHTEXT['MBB_WESTERN'] = '';
-
-//Following used in mappointradius.php
-//$SEARCHTEXT['MPR_TITLE'] = '';
-//$SEARCHTEXT['MPR_INSTRUCTIONS'] = '';
-//$SEARCHTEXT['MPR_LAT'] = '';
-//$SEARCHTEXT['MPR_LNG'] = '';
-//$SEARCHTEXT['SUBMIT'] = '';

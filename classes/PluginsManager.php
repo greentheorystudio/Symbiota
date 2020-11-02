@@ -320,9 +320,8 @@ class PluginsManager {
 	{
 		global $CLIENT_ROOT;
 		$searchTextCssDisplay = ($searchText?'block':'none');
-        $selectorTextCssDisplay = ($this->quickSearchShowSelector?'block':'none');
-        $scinameSelectorChecked = ($this->quickSearchDefaultSetting === 'sciname'?'checked':'');
-        $commonSelectorChecked = ($this->quickSearchDefaultSetting === 'common'?'checked':'');
+        $selectorTextCssDisplay = ($this->quickSearchShowSelector?'flex':'none');
+        $commonChecked = ($this->quickSearchDefaultSetting === 'common'?'checked':'');
         $initialPlaceholder = ($this->quickSearchDefaultSetting === 'sciname'?$this->quickSearchScinamePlaceholder:$this->quickSearchCommonPlaceholder);
 return <<<EOD
     <link href="$CLIENT_ROOT/css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -344,19 +343,19 @@ return <<<EOD
             $(document).ready(function() {
                 $("#quicksearchtaxon").autocomplete({
                     source: function( request, response ) {
-                        var quicksearchselectorvalue = document.quicksearch.quicksearchselector.value;
-                        if(quicksearchselectorvalue === 'sciname'){
+                        var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
+                        if(quicksearchcommonselectorchecked){
+                            $.getJSON( "$CLIENT_ROOT/webservices/autofillvernacular.php", {
+                                term: request.term,
+                                limit: 10
+                            }, response );
+                        }
+                        else{
                             $.getJSON( "$CLIENT_ROOT/webservices/autofillsciname.php", {
                                 term: request.term,
                                 limit: 10,
                                 hideauth: true,
                                 taid: 1
-                            }, response );
-                        }
-                        if(quicksearchselectorvalue === 'common'){
-                            $.getJSON( "$CLIENT_ROOT/webservices/autofillvernacular.php", {
-                                term: request.term,
-                                limit: 10
                             }, response );
                         }
                     },
@@ -371,8 +370,14 @@ return <<<EOD
         function initializeQuickSearch(){
             $("#quicksearchtaxon").autocomplete({
                 source: function( request, response ) {
-                    var quicksearchselectorvalue = document.quicksearch.quicksearchselector.value;
-                    if(quicksearchselectorvalue === 'sciname'){
+                    var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
+                    if(quicksearchcommonselectorchecked){
+                        $.getJSON( "$CLIENT_ROOT/webservices/autofillvernacular.php", {
+                            term: request.term,
+                            limit: 10
+                        }, response );
+                    }
+                    else{
                         $.getJSON( "$CLIENT_ROOT/webservices/autofillsciname.php", {
                             term: request.term,
                             limit: 10,
@@ -380,17 +385,17 @@ return <<<EOD
                             taid: 1
                         }, response );
                     }
-                    if(quicksearchselectorvalue === 'common'){
-                        $.getJSON( "$CLIENT_ROOT/webservices/autofillvernacular.php", {
-                            term: request.term,
-                            limit: 10
-                        }, response );
-                    }
                 },
                 appendTo: "#quicksearchdiv",
                 select: function( event, ui ) {
                     this.value = ui.item.value;
                     document.getElementById('quicksearchtaxonvalue').value = ui.item.id;
+                },
+                change: function (event, ui) {
+                    if (!ui.item) {
+                        document.getElementById('quicksearchtaxon').value = '';
+                        document.getElementById('quicksearchtaxonvalue').value = '';
+                    }
                 }
             },{ minLength: 3 });
         }
@@ -402,13 +407,15 @@ return <<<EOD
             return true;
         }
         function quicksearchselectorchange(){
-            var quicksearchselectorvalue = document.quicksearch.quicksearchselector.value;
+            var quicksearchcommonselectorchecked = document.quicksearch.quicksearchselector.checked;
             var placeholdertext = '';
-            if(quicksearchselectorvalue === 'sciname'){
-                placeholdertext = '$this->quickSearchScinamePlaceholder';
-            }
-            if(quicksearchselectorvalue === 'common'){
+            document.getElementById('quicksearchtaxon').value = '';
+            document.getElementById('quicksearchtaxonvalue').value = '';
+            if(quicksearchcommonselectorchecked){
                 placeholdertext = '$this->quickSearchCommonPlaceholder';
+            }
+            else{
+                placeholdertext = '$this->quickSearchScinamePlaceholder';
             }
             document.getElementById("quicksearchtaxon").placeholder = placeholdertext;
         }
@@ -416,10 +423,14 @@ return <<<EOD
     <form name="quicksearch" id="quicksearch" action="$CLIENT_ROOT/taxa/index.php" method="get" onsubmit="return verifyQuickSearch();">
         <div id="quicksearchtext" style="display:$searchTextCssDisplay;"><b>$searchText</b></div>
         <div class="quicksearchselectorcontainer" style="display:$selectorTextCssDisplay;">
-            <input type="radio" name="quicksearchselector" id="quicksearchscinameselector" value="sciname" onchange="quicksearchselectorchange();" $scinameSelectorChecked>
-            <label for="quicksearchscinameselector">Scientific Name</label>
-            <input type="radio" name="quicksearchselector" id="quicksearchcommonselector" value="common" onchange="quicksearchselectorchange();" $commonSelectorChecked>
-            <label for="quicksearchcommonselector">Common Name</label><span class="toggle-outside"><span class="toggle-inside"></span></span>
+            <div class="quicksearchscinameselectorlabel">Scientific Name</div>
+            <div>
+                <label>
+                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" $commonChecked>
+                    <div class="switch"></div>
+                </label>
+            </div>
+            <div class="quicksearchcommonselectorlabel">Common Name</div>
         </div>
         <input type="text" name="quicksearchtaxon" placeholder="$initialPlaceholder" id="quicksearchtaxon" title="Enter taxon name here." />
         <input type="hidden" name="taxon" id="quicksearchtaxonvalue" />
