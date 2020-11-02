@@ -3,7 +3,9 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+
 if(!is_numeric($catId)) {
     $catId = 0;
 }
@@ -27,10 +29,77 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../js/jquery.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
-		<script src="../js/symb/collections.index.js?ver=1" type="text/javascript"></script> 
+		<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
+        <script src="../js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
 		<script type="text/javascript">
-			<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-		</script>
+            const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+
+            <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+
+            $('html').hide();
+            $(document).ready(function() {
+                initializeSearchStorage(<?php echo $queryId; ?>);
+                setCollectionForms();
+                $("#tabs").tabs();
+                $('html').show();
+            });
+
+            function verifyCollForm(f){
+                let formVerified = false;
+                f.queryId.value = document.getElementById('queryId').value;
+                for(let h=0; h<f.length; h++){
+                    if(f.elements[h].name === "db[]" && f.elements[h].checked){
+                        formVerified = true;
+                        break;
+                    }
+                    if(f.elements[h].name === "cat[]" && f.elements[h].checked){
+                        formVerified = true;
+                        break;
+                    }
+                }
+                if(!formVerified){
+                    alert("Please choose at least one collection!");
+                    return false;
+                }
+                else{
+                    for(let i=0; i<f.length; i++){
+                        if(f.elements[i].name === "cat[]" && f.elements[i].checked && document.getElementById('cat-' + f.elements[i].value)){
+                            const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
+                            for(let j=0; j<childrenEle.length; j++){
+                                if(childrenEle[j].tagName === "DIV"){
+                                    const divChildren = childrenEle[j].children;
+                                    for(let k=0; k<divChildren.length; k++){
+                                        const divChildren2 = divChildren[k].children;
+                                        for(let l=0; l<divChildren2.length; l++){
+                                            if(divChildren2[l].tagName === "INPUT"){
+                                                divChildren2[l].checked = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return formVerified;
+            }
+
+            function verifyOtherCatForm(f){
+                const pidElems = document.getElementsByName("pid[]");
+                f.queryId.value = document.getElementById('queryId').value;
+                for(let i = 0; i < pidElems.length; i++){
+                    const pidElem = pidElems[i];
+                    if(pidElem.checked) return true;
+                }
+                const clidElems = document.getElementsByName("clid[]");
+                for(let i = 0; i < clidElems.length; i++){
+                    const clidElem = clidElems[i];
+                    if(clidElem.checked) return true;
+                }
+                alert("Please choose at least one search region!");
+                return false;
+            }
+        </script>
 	</head>
 	<body>
 	
@@ -63,19 +132,18 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($specArr && $obsArr){
 				?>
 				<div id="specobsdiv">
-					<form name="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform1" id="collform1" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this);">
 						<div style="margin:0 0 10px 20px;">
 							<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
                             Select/Deselect All
 						</div>
 						<?php 
-						$collManager->outputFullCollArr($specArr, $catId); 
-						if($specArr && $obsArr) {
-                            echo '<hr style="clear:both;margin:20px 0;"/>';
-                        }
-						$collManager->outputFullCollArr($obsArr, $catId);
+						$collManager->outputFullCollArr($specArr);
+                        echo '<hr style="clear:both;margin:20px 0;"/>';
+						$collManager->outputFullCollArr($obsArr);
 						?>
 						<div style="clear:both;">&nbsp;</div>
+                        <input type="hidden" name="queryId" value='' />
 					</form>
 				</div>
 			<?php 
@@ -83,15 +151,16 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($specArr){
 				?>
 				<div id="specimendiv">
-					<form name="collform2" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform2" id="collform2" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this);">
 						<div style="margin:0 0 10px 20px;">
 							<input id="dballspeccb" name="db[]" class="spec" value='allspec' type="checkbox" onclick="selectAll(this);" checked />
                             Select/Deselect All
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr, $catId);
+						$collManager->outputFullCollArr($specArr);
 						?>
 						<div style="clear:both;">&nbsp;</div>
+                        <input type="hidden" name="queryId" value='' />
 					</form>
 				</div>
 				<?php 
@@ -99,15 +168,16 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 			if($obsArr){
 				?>
 				<div id="observationdiv">
-					<form name="collform3" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this)">
+					<form name="collform3" id="collform3" action="harvestparams.php" method="post" onsubmit="return verifyCollForm(this);">
 						<div style="margin:0 0 10px 20px;">
 							<input id="dballobscb" name="db[]" class="obs" value='allobs' type="checkbox" onclick="selectAll(this);" checked />
                             Select/Deselect All
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr, $catId);
+						$collManager->outputFullCollArr($obsArr);
 						?>
 						<div style="clear:both;">&nbsp;</div>
+                        <input type="hidden" name="queryId" value='' />
 					</form>
 				</div>
 				<?php 
@@ -117,7 +187,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 				asort($catTitleArr);
 				?>
 				<div id="otherdiv">
-					<form id="othercatform" action="harvestparams.php" method="post" onsubmit="return verifyOtherCatForm()">
+					<form id="othercatform" action="harvestparams.php" method="post" onsubmit="return verifyOtherCatForm(this);">
 						<?php
 						foreach($catTitleArr as $catPid => $catTitle){
 							?>
@@ -133,7 +203,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 									?>
 									<div>
 										<a href="#" onclick="togglePid('<?php echo $pid; ?>');return false;"><img id="plus-pid-<?php echo $pid; ?>" src="../images/plus_sm.png" /><img id="minus-pid-<?php echo $pid; ?>" src="../images/minus_sm.png" style="display:none;" /></a>
-										<input name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
+										<input id="pid-<?php echo $pid; ?>-Input" name="pid[]" type="checkbox" value="<?php echo $pid; ?>" onchange="selectAllPid(this);" />
 										<b><?php echo $projTitle; ?></b>
 									</div>
 									<div id="pid-<?php echo $pid; ?>" style="margin:10px 15px;display:none;">
@@ -143,7 +213,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 										foreach($clArr as $clid => $clidName){
 											?>
 											<div>
-												<input name="clid[]" class="pid-<?php echo $pid; ?>" type="checkbox" value="<?php echo $clid; ?>" />
+												<input name="clid[]" class="pid-<?php echo $pid; ?>" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="processProjCheckboxes('<?php echo $pid; ?>')" value="<?php echo $clid; ?>" />
 												<?php echo $clidName; ?>
 											</div>
 											<?php
@@ -157,12 +227,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 							<?php 
 						}
 						?>
+                        <input type="hidden" name="queryId" value='' />
 					</form>
 				</div>
 				<?php 
 			}
 			?>
 		</div>
+        <input type="hidden" id="queryId" value='<?php echo $queryId; ?>' />
 	</div>
 	<?php
 	include(__DIR__ . '/../footer.php');

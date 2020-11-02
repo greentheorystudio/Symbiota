@@ -53,33 +53,8 @@ if($isEditor){
 	<title><?php echo $DEFAULT_TITLE; ?> Taxa Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
-		function toggle(target){
-			const tDiv = document.getElementById(target);
-			if(tDiv != null){
-				if(tDiv.style.display === "none"){
-					tDiv.style.display = "block";
-				}
-			 	else {
-			 		tDiv.style.display = "none";
-			 	}
-			}
-			else{
-			  	const divs = document.getElementsByTagName("div");
-			  	for (let i = 0; i < divs.length; i++) {
-			  	const divObj = divs[i];
-                if(divObj.className == target){
-                    if(divObj.style.display === "none"){
-                        divObj.style.display = "block";
-                    }
-                    else {
-                        divObj.style.display = "none";
-                    }
-                }
-				}
-			}
-		}
-
 		function verifyUploadForm(f){
 			let inputValue = f.uploadfile.value;
 			if(inputValue === "") inputValue = f.uloverride.value;
@@ -95,11 +70,7 @@ if($isEditor){
 			}
 			return true;
 		}
-
-		function checkTransferForm(){
-			return true;
-		}
-	</script>
+    </script>
 </head>
 <body>
 <?php
@@ -210,7 +181,7 @@ if($isEditor){
 				$reportArr = $loaderManager->analysisUpload();
 				echo '</ul>';
 				?>
-				<form name="transferform" action="batchloader.php" method="post" onsubmit="return checkTransferForm();">
+				<form name="transferform" action="batchloader.php" method="post">
 					<fieldset style="width:450px;">
 						<legend style="font-weight:bold;font-size:120%;">Transfer Taxa To Central Table</legend>
 						<div style="margin:10px;">
