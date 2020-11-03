@@ -1125,11 +1125,11 @@ class SpecUploadBase extends SpecUpload{
 
 				$sqlFragments = $this->getSqlFragments($recMap,$this->identFieldMap);
 				if($sqlFragments){
-					if($recMap['identifiedby'] || $recMap['dateidentified']){
-						if(!$recMap['identifiedby']) {
+					if(array_key_exists('identifiedby',$recMap) || array_key_exists('dateidentified',$recMap)){
+						if(!array_key_exists('identifiedby',$recMap)) {
 							$recMap['identifiedby'] = 'not specified';
 						}
-						if(!$recMap['dateidentified']) {
+						if(!array_key_exists('dateidentified',$recMap)) {
 							$recMap['dateidentified'] = 'not specified';
 						}
 						$sql = 'INSERT INTO uploaddetermtemp(collid'.$sqlFragments['fieldstr'].') '.
