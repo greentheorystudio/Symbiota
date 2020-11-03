@@ -1,12 +1,12 @@
 <table id="maintable" style="border-spacing: 0;">
     <tr>
         <td class="header">
-            <div style="background-image:url(<?php echo $CLIENT_ROOT; ?>/images/layout/banner-background-tile.jpg);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;">
+            <div style="background-image:url(<?php echo $CLIENT_ROOT; ?>/images/layout/banner-tile-new.png);background-repeat:repeat-x;background-position:top;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;">
                 <div style="float:left;">
-                    <img style="border:0px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-left.png" alt="Banner image with logo" />
+                    <img style="border:0px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-left-new.png" alt="Banner image with logo" />
                 </div>
                 <div style="float:right;">
-                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-right-side-egret.jpg" alt="Banner Egret image" />
+                    <img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/banner-right-new.png" alt="Banner Egret image" />
                 </div>
             </div>
             <div id="top_navbar">
