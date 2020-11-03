@@ -65,10 +65,10 @@
                         <a href="" >Species</a>
                     </li>
                     <li>
-                        <a href="" >Specimens</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Specimens</a>
                     </li>
                     <li>
-                        <a href="" >Images</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Images</a>
                     </li>
                     <li>
                         <a href="" >Resources</a>
