@@ -1,5 +1,5 @@
 <?php
-include_once('TPEditorManager.php');
+include_once(__DIR__ . '/TPEditorManager.php');
 
 class TPDescEditorManager extends TPEditorManager{
 

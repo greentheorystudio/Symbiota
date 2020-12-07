@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceUtilities.php');
-include_once('ChecklistVoucherAdmin.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/ChecklistVoucherAdmin.php');
 
 class OccurrenceManager{
 

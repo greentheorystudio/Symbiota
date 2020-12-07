@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class TaxonomyEditorManager{
 

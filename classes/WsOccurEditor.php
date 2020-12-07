@@ -1,6 +1,6 @@
 <?php
-require_once('WebServiceBase.php');
-require_once('OccurrenceUtilities.php');
+include_once(__DIR__ . '/WebServiceBase.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
 
 class WsOccurEditor extends WebServiceBase{
 

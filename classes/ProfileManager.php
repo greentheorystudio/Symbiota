@@ -1,8 +1,8 @@
 <?php
-include_once('DbConnection.php');
-include_once('Manager.php');
-include_once('Person.php');
-include_once('Encryption.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/Person.php');
+include_once(__DIR__ . '/Encryption.php');
 
 class ProfileManager extends Manager{
 

@@ -1,6 +1,6 @@
 <?php
-include_once('GPoint.php');
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/GPoint.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class OccurrenceUtilities {
 
