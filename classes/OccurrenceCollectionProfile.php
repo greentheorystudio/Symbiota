@@ -180,7 +180,7 @@ class OccurrenceCollectionProfile {
 				$delimiter = '';
 				foreach($pathArr as $pArr){
 					$outStr .= $delimiter.'<a href="'.$pArr['path'].'" target="_blank">'.$pArr['title'].'</a>';
-					$delimiter = '<br/>';
+					$delimiter = ', ';
 				}
 				$outStr .= '</div>';
 			}
