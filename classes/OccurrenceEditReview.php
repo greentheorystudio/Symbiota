@@ -1,5 +1,5 @@
 <?php
-include_once('Manager.php');
+include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceEditReview extends Manager{
 

@@ -1,8 +1,8 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceUtilities.php');
-include_once('OccurrenceEditorManager.php');
-include_once('SOLRManager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/SOLRManager.php');
 
 class OccurrenceAPIManager{
 

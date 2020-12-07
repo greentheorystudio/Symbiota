@@ -1,6 +1,6 @@
 <?php
-include_once('TPEditorManager.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/TPEditorManager.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class TPImageEditorManager extends TPEditorManager{
 

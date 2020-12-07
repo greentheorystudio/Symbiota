@@ -1,8 +1,8 @@
 <?php
-include_once($SERVER_ROOT.'/classes/SpecUpload.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceMaintenance.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceUtilities.php');
-include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+include_once(__DIR__ . '/SpecUpload.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class SpecUploadBase extends SpecUpload{
 

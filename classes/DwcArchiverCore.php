@@ -1,11 +1,11 @@
 <?php
-include_once('Manager.php');
-include_once('DwcArchiverOccurrence.php');
-include_once('DwcArchiverDetermination.php');
-include_once('DwcArchiverImage.php');
-include_once('DwcArchiverAttribute.php');
-include_once('UuidFactory.php');
-include_once('OccurrenceAccessStats.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/DwcArchiverOccurrence.php');
+include_once(__DIR__ . '/DwcArchiverDetermination.php');
+include_once(__DIR__ . '/DwcArchiverImage.php');
+include_once(__DIR__ . '/DwcArchiverAttribute.php');
+include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/OccurrenceAccessStats.php');
 
 class DwcArchiverCore extends Manager{
 
