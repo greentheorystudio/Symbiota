@@ -191,7 +191,6 @@ if($spprid) {
                 if(obj.value !== ""){
                     if(obj.name.indexOf("tf[") === 0){
                         if(tfArr.indexOf(obj.value) > -1){
-                            alert()
                             alert("ERROR: Target field names must be unique (duplicate field: "+obj.value+")");
                             return false;
                         }
