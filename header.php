@@ -70,7 +70,7 @@
                     </li>
                     <?php
                     if($SYMB_UID){
-                        if((array_key_exists('CollAdmin',$USER_RIGHTS) && in_array(8, $USER_RIGHTS['CollAdmin'])) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array(8, $USER_RIGHTS['CollEditor']))){
+                        if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array(8, $USER_RIGHTS['CollAdmin'])) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array(8, $USER_RIGHTS['CollEditor']))){
                             ?>
                             <li>
                                 <a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=8&emode=1" >Collection Management</a>
