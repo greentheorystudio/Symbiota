@@ -367,7 +367,7 @@ class DwcArchiverCore extends Manager{
             $cnt = 0;
             while($r = $rs->fetch_assoc()){
                 if($this->redactLocalities
-                    && $r['localitySecurity'] === 1
+                    && (int)$r['localitySecurity'] === 1
                     && !in_array($r['collid'], $this->rareReaderArr, true)
                 ){
                     $protectedFields = array();
@@ -1295,7 +1295,7 @@ class DwcArchiverCore extends Manager{
                     continue;
                 }
                 $hasRecords = true;
-                if($this->redactLocalities && $r['localitySecurity'] === 1 && !in_array($r['collid'], $this->rareReaderArr, true)){
+                if($this->redactLocalities && (int)$r['localitySecurity'] === 1 && !in_array($r['collid'], $this->rareReaderArr, true)){
                     $protectedFields = array();
                     foreach($this->securityArr as $v){
                         if(array_key_exists($v,$r) && $r[$v]){
