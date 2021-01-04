@@ -1,6 +1,6 @@
 <?php
-include_once('OccurrenceManager.php');
-include_once('OccurrenceAccessStats.php');
+include_once(__DIR__ . '/OccurrenceManager.php');
+include_once(__DIR__ . '/OccurrenceAccessStats.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 

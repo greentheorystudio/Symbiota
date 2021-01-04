@@ -1,5 +1,5 @@
 <?php
-include_once('ChecklistVoucherPensoft.php');
+include_once(__DIR__ . '/ChecklistVoucherPensoft.php');
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

@@ -1,5 +1,5 @@
 <?php
-require_once('Manager.php');
+include_once(__DIR__ . '/Manager.php');
 
 class WebServiceBase extends Manager{
 

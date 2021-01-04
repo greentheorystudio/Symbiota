@@ -1,10 +1,10 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceEditorDeterminations.php');
-include_once('OccurrenceEditorImages.php');
-include_once('OccurrenceDuplicate.php');
-include_once('SOLRManager.php');
-include_once('UuidFactory.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
+include_once(__DIR__ . '/OccurrenceEditorImages.php');
+include_once(__DIR__ . '/OccurrenceDuplicate.php');
+include_once(__DIR__ . '/SOLRManager.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class OccurrenceEditorManager {
 
