@@ -3263,8 +3263,6 @@ ALTER TABLE `omoccurrences`
   CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
   DROP INDEX `idx_occrecordedby`,
   MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
-  DROP INDEX `Index_gui`,
-  ADD UNIQUE INDEX `Index_gui`(`occurrenceID`),
   ADD INDEX `Index_locationID`(`locationID`),
   ADD INDEX `Index_eventID`(`eventID`),
   ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),

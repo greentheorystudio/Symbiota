@@ -1,6 +1,6 @@
 <?php
-include_once('Manager.php');
-include_once('OccurrenceEditorManager.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
 
 class OccurrenceCleaner extends Manager{
 

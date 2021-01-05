@@ -44,7 +44,7 @@ elseif($activeCollArr){
 		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Taxon Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="Stylesheet" />
+		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
 		<script>

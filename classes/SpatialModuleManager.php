@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class SpatialModuleManager{
 	
@@ -9,6 +9,7 @@ class SpatialModuleManager{
     protected $localSearchArr = array();
     protected $recordCount = 0;
     private $searchTerms = 0;
+    private $sqlWhere = '';
     private $taxaSearchType;
     private $taxaArr = array();
 
@@ -22,46 +23,6 @@ class SpatialModuleManager{
             $this->conn->close();
         }
 	}
-
-    public function getFullCollectionList($catId = ''): array{
-        $retArr = array();
-        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, cat.category '.
-            'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
-        //echo "<div>SQL: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        while($r = $result->fetch_object()){
-            $collType = (stripos($r->colltype, 'observation') !== false?'obs':'spec');
-            if($r->ccpk){
-                if(!isset($retArr[$collType]['cat'][$r->ccpk]['name'])){
-                    $retArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
-                }
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
-            }
-            else{
-                $retArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
-                $retArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
-                $retArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-                $retArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
-            }
-        }
-        $result->close();
-        if(isset($retArr['spec']['cat'][$catId])){
-            $targetArr = $retArr['spec']['cat'][$catId];
-            unset($retArr['spec']['cat'][$catId]);
-            array_unshift($retArr['spec']['cat'],$targetArr);
-        }
-        elseif(isset($retArr['obs']['cat'][$catId])){
-            $targetArr = $retArr['obs']['cat'][$catId];
-            unset($retArr['obs']['cat'][$catId]);
-            array_unshift($retArr['obs']['cat'],$targetArr);
-        }
-        return $retArr;
-    }
 
     public function getLayersArr(): array{
         global $GEOSERVER_URL, $GEOSERVER_LAYER_WORKSPACE;
@@ -176,120 +137,6 @@ class SpatialModuleManager{
             }
         }
         return $synArr;
-    }
-
-    public function outputFullMapCollArr($occArr): void{
-        global $DEFAULTCATID, $CLIENT_ROOT;
-        if(isset($occArr['cat'])){
-            $categoryArr = $occArr['cat'];
-            ?>
-            <table>
-                <?php
-                foreach($categoryArr as $catid => $catArr){
-                    $name = $catArr['name'];
-                    unset($catArr['name']);
-                    $idStr = $this->collArrIndex.'-'.$catid;
-                    ?>
-                    <tr>
-                        <td>
-                            <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
-                            </a>
-                        </td>
-                        <td>
-                            <input id="cat<?php echo $idStr; ?>Input" data-role="none" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onchange="buildQueryStrings();" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
-                        </td>
-                        <td>
-			    		<span style='text-decoration:none;color:black;font-size:14px;font-weight:bold;'>
-				    		<a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
-				    	</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID===$catid?'':'display:none;') ?>margin:10px 0;">
-                                <table style="margin-left:15px;">
-                                    <?php
-                                    foreach($catArr as $collid => $collName2){
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <?php
-                                                if($collName2['icon']){
-                                                    $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$collName2['icon'];
-                                                    ?>
-                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                                        <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
-                                                    </a>
-                                                    <?php
-                                                }
-                                                ?>
-                                            </td>
-                                            <td style="padding:6px">
-                                                <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="buildQueryStrings();" onclick="unselectCat('cat<?php echo $idStr; ?>Input')" checked />
-                                            </td>
-                                            <td style="padding:6px">
-                                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                                    <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
-                                                </a>
-                                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                                    more info
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php
-                }
-                ?>
-            </table>
-            <?php
-        }
-        if(isset($occArr['coll'])){
-            $collArr = $occArr['coll'];
-            ?>
-            <table>
-                <?php
-                foreach($collArr as $collid => $cArr){
-                    ?>
-                    <tr>
-                        <td>
-                            <?php
-                            if($cArr['icon']){
-                                $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$cArr['icon'];
-                                ?>
-                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                    <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
-                                </a>
-                                <?php
-                            }
-                            ?>
-                            &nbsp;
-                        </td>
-                        <td style="padding:6px;">
-                            <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" onchange="buildQueryStrings();" onclick="uncheckAll(this.form)" checked />
-                        </td>
-                        <td style="padding:6px">
-                            <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
-                            </a>
-                            <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                more info
-                            </a>
-                        </td>
-                    </tr>
-                    <?php
-                }
-                ?>
-            </table>
-            <?php
-        }
-        $this->collArrIndex++;
     }
 
     public function writeGPXFromGeoJSON($json): string{
@@ -664,7 +511,7 @@ class SpatialModuleManager{
         return $retStr;
     }
 
-    public function getOccPointMapGeoJson($mapWhere,$pageRequest,$cntPerPage){
+    public function getOccPointMapGeoJson($pageRequest,$cntPerPage){
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
@@ -676,10 +523,13 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity))) ';
@@ -690,7 +540,7 @@ class SpatialModuleManager{
         }
         $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
         $sql .= 'LIMIT ' .($pageRequest?$pageRequest:0). ',' .$cntPerPage;
-        //echo '<div>SQL: ' .$sql. '</div>';
+        //return '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $geoArr = array();
@@ -725,7 +575,7 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function getOccPointDownloadGeoJson($mapWhere,$pageRequest,$cntPerPage){
+    public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
         global $USER_RIGHTS;
         $geomArr = array();
         $featuresArr = array();
@@ -742,10 +592,13 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -821,14 +674,17 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function setRecordCnt($sqlWhere): void
+    public function setRecordCnt(): void
     {
         global $USER_RIGHTS;
         $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
-        $sql .= $sqlWhere;
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -845,7 +701,7 @@ class SpatialModuleManager{
         $result->close();
     }
 
-    public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
+    public function getMapRecordPageArr($pageRequest,$cntPerPage): array
     {
         global $USER_RIGHTS;
         $retArr = array();
@@ -854,9 +710,12 @@ class SpatialModuleManager{
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
+            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        $sql .= $mapWhere;
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
                 $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
@@ -1028,6 +887,17 @@ class SpatialModuleManager{
     {
         $this->searchTermsArr = $stArr;
         $this->searchTerms = 1;
+    }
+
+    public function setSqlWhere($whereStr): void
+    {
+        if(!$whereStr){
+            $whereStr = 'WHERE ';
+        }
+        else{
+            $whereStr .= 'AND ';
+        }
+        $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
 
     public function getRecordCnt(): int

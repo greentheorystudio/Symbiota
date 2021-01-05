@@ -1,5 +1,5 @@
 <?php
-include_once('KeyManager.php');
+include_once(__DIR__ . '/KeyManager.php');
 
 class KeyEditorManager extends KeyManager{
 

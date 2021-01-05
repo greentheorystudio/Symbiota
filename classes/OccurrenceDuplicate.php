@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceEditorManager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
 
 class OccurrenceDuplicate {
 

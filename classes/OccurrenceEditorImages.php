@@ -1,7 +1,7 @@
 <?php
-include_once('OccurrenceEditorManager.php');
-include_once('SpecProcessorOcr.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/SpecProcessorOcr.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 

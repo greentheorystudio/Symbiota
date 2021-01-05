@@ -26,10 +26,10 @@ $_SESSION['statsOrderArr'] = $orderArr;
 		<title><?php echo $DEFAULT_TITLE; ?> Order Distribution</title>
 		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
 		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-		<link href="../../css/jquery-ui.css" type="text/css" rel="Stylesheet" />
+		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/collections.index.js"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=12"></script>
 	</head>
 	<body>
 		<?php
