@@ -2,12 +2,14 @@ body{
 	width: 80%;
 	min-width:950px;
 	margin-top:0;
+	font-family: Verdana, Geneva, sans-serif;
+	background-color:#9EBC7B;
 }
 
 #maintable{
 	width: 100%;
 	background-color:#FFFFFF;
-	border:1px solid #333333;
+	border:1px solid #000000;
 }
 
 #maintable td{
@@ -16,9 +18,10 @@ body{
 
 td.header{
 	color:#FFFFFF;
-	background-color:#026B6E;
+	background-color:#EEE4CE;
 	text-align:left;
-	padding: 0;
+	padding:0;
+	border-bottom:1px solid #333333;
 }
 
 td.header a{
@@ -34,6 +37,9 @@ td.middlecenter{
 }
 
 td.footer{
+	background-color:#7d9462;
+	padding-top:5px;
+	padding-bottom:5px;
 }
 
 /*Left menu components*/
@@ -87,6 +93,11 @@ div.menuitem a:hover {
 }
 #innertext a:hover{
 
+}
+
+a{
+	color: 		#610F86;
+	text-decoration: none;
 }
 
 div.navpath {
@@ -267,4 +278,37 @@ h3{
 
 .taxon-desc-tab-text {
 	font-size: 14px;
+}
+
+#innertable{
+	width:90%;
+	margin-top: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.spptab{
+	height:		200px;
+	width:		500px;
+	overflow: 	auto;
+}
+
+#descsource{
+	text-align:	right;
+	width:		400px;
+	padding:	10px 20px 10px 10px;
+}
+
+#key-couplet {
+	margin:10px 20px 10px 20px;
+}
+#key-taxon {
+	width:90%;
+	margin:10px 20px 10px 20px;
+	margin-left:2em;
+	text-align:right;
+	font-style:italic;
+}
+#key-taxon a{
+	text-decoration:underline;
 }
