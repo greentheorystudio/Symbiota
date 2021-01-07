@@ -3,7 +3,7 @@
 	<tr>
 		<td class="footer" colspan="3">
             <div>
-                <p style="color: white; text-align: center; font-size: 1.25em">
+                <p style="color: white; text-align: center;">
                     © <a href="http://herbarium.wisc.edu/" title="Wisconsin State Herbarium home">Wisconsin State Herbarium, UW-Madison</a><br>
                 Department of Botany <span><span>•<span style="display:inline-block"></span></span></span> 430 Lincoln Drive
                 <span><span>•<span style="display:inline-block"></span></span></span>
