@@ -6,7 +6,7 @@ class ImageLibraryManager{
 
     private $searchTermsArr = array();
     private $recordCount = 0;
-    private $conn;
+    protected $conn;
     private $taxaArr = array();
     private $tidFocus;
     private $collArrIndex = 0;
