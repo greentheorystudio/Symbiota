@@ -32,7 +32,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 been compiled, and therefore represent unique distributional and elevational range information, data that
                 provide a baseline for future studies of climate and land use changes. This database was designed by Jeri D.
                 Ledbetter and Benjamin Brandt, exceptionally talented information management experts for maximum accuracy,
-                ease of use, and reporting. The data herein has formed the basis of a large number of peer-reviewed scientific
+                ease of use, and reporting. The data herein have formed the basis of a large number of peer-reviewed scientific
                 and popular works, and serve not only as a legacy, but the foundation of invertebrate biodiversity for this
                 vast, diverse, and rapidly changing river basin.
             </div>
