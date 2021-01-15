@@ -301,13 +301,8 @@ class OccurrenceDuplicate {
         $lastName = $this->parseLastName($collName);
         if($lastName){
             $sql = 'SELECT o.occid FROM omoccurrences o ';
-            if(strlen($lastName) < 4 || strtolower($lastName) === 'best'){
-                $sql .= 'WHERE (o.recordedby LIKE "%'.$lastName.'%") ';
-            }
-            else{
-                $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid '.
-                    'WHERE (MATCH(f.recordedby) AGAINST("'.$lastName.'")) ';
-            }
+            $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid '.
+                'WHERE f.recordedby LIKE "%'.$lastName.'%" ';
             $sql .= 'AND (o.processingstatus IS NULL OR o.processingstatus != "unprocessed" OR o.locality IS NOT NULL) AND (o.occid != '.$skipOccid.') ';
 
             $runQry = true;
@@ -389,8 +384,8 @@ class OccurrenceDuplicate {
                 'o.recordedBy', 'o.recordNumber', 'o.associatedCollectors', 'o.eventDate', 'o.verbatimEventDate',
                 'o.country', 'o.stateProvince', 'o.county', 'o.locality', 'o.decimalLatitude', 'o.decimalLongitude', 'o.geodeticDatum',
                 'o.coordinateUncertaintyInMeters', 'o.verbatimCoordinates', 'o.georeferencedBy', 'o.georeferenceProtocol',
-                'o.georeferenceSources', 'o.georeferenceVerificationStatus', 'o.georeferenceRemarks',
-                'o.minimumElevationInMeters', 'o.maximumElevationInMeters', 'o.verbatimElevation',
+                'o.georeferenceSources', 'o.georeferenceVerificationStatus', 'o.georeferenceRemarks', 'o.locationRemarks',
+                'o.minimumElevationInMeters', 'o.maximumElevationInMeters', 'o.verbatimElevation', 'o.fieldnumber', 'o.locationID',
                 'o.habitat', 'o.substrate', 'o.occurrenceRemarks', 'o.associatedTaxa', 'o.dynamicProperties',
                 'o.verbatimAttributes','o.reproductiveCondition', 'o.cultivationStatus', 'o.establishmentMeans', 'o.typeStatus');
             $relArr = array();
