@@ -958,7 +958,7 @@ else{
                                             ?>
                                             <div id="localSecurityDiv">
                                                 <div style="float:left;">
-                                                    <input type="checkbox" name="localitysecurity" tabindex="0" value="1" <?php echo $lsHasValue? 'CHECKED' : ''; ?>onchange="localitySecurityChanged();" title="Hide Locality Data from General Public" />
+                                                    <input type="checkbox" name="localitysecurity" tabindex="0" value="1" onchange="localitySecurityChanged();" title="Hide Locality Data from General Public" <?php echo $lsHasValue? 'CHECKED' : ''; ?> />
                                                     <?php echo (defined('LOCALITYSECURITYLABEL')?LOCALITYSECURITYLABEL:'Locality Security'); ?>
                                                     <a href="#" onclick="return dwcDoc('localitySecurity')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
                                                 </div>

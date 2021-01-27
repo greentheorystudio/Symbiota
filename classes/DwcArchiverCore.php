@@ -57,8 +57,7 @@ class DwcArchiverCore extends Manager{
         $this->charSetSource = strtoupper($CHARSET);
         $this->charSetOut = $this->charSetSource;
 
-        $this->securityArr = array('eventDate','month','day','startDayOfYear','endDayOfYear','verbatimEventDate',
-            'recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
+        $this->securityArr = array('recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
             'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT',
             'verbatimCoordinates','georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources',
             'georeferenceVerificationStatus','habitat','informationWithheld');
