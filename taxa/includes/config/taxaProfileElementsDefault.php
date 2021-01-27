@@ -360,7 +360,7 @@ $imgBoxDiv = ob_get_clean();
 
 ob_start();
 echo '<div id="footerlinkstoggle">';
-if(($taxonRank > 180) && $taxonRank > 180 && $links) {
+if($taxonRank > 180 && $links) {
     echo '<a href="#" onclick="toggleLinks(\'links\');return false;">Web Links</a>';
 }
 
