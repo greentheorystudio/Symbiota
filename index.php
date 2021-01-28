@@ -72,7 +72,7 @@ $imgLibManager = new TaxonQuickSearchManager();
 					if($taxaList){
 						foreach($taxaList as $key => $value){
 							echo "<div style='margin-left:30px;font-style:italic;'>";
-							echo "<a href='../taxa/index.php?taxon=".$key."' target='_blank'>".$value."</a>";
+							echo "<a href='taxa/index.php?taxon=".$key."' target='_blank'>".$value."</a>";
 							echo "</div>";
 						}
 						echo "<div style='margin-left:20px;margin-top:20px;margin-bottom:20px;font-weight:bold;'></div>";
