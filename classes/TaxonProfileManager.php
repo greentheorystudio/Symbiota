@@ -21,6 +21,7 @@ class TaxonProfileManager {
     private $synTidArr = array();
     private $securityStatus;
     private $displayLocality = 1;
+    private $numChildren;
 
     private $clName;
     private $clid;
@@ -263,6 +264,7 @@ class TaxonProfileManager {
             $tids[] = $row->tid;
         }
         $result->close();
+        $this->numChildren = count($tids);
 
         if(!$tids){
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
@@ -828,6 +830,10 @@ class TaxonProfileManager {
     public function getSynonymArr(): array
     {
         return $this->synTidArr;
+    }
+
+    public function getNumChildren(){
+        return $this->numChildren;
     }
 
     public function getSecurityStatus(){
