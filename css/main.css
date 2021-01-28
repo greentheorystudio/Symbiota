@@ -299,24 +299,25 @@ div.spptab{
 
 #scinameheader.species{
 	float: 			left;
-	margin-left:	10px;
+	margin-left:	0;
 	margin-bottom:	0;
 	font-size:		26px;
 }
 
 #scinameheader.genus{
-	margin-left:	10px;
+	margin-left:	0;
 	font-size:		26px;
 }
 
 #scinameheader.higher{
-	margin-left:	10px;
+	margin-left:	0;
 	font-size:		26px;
 }
 
 #sciname.species{
 	font-size:		26px;
 	font-weight:	bold;
+	margin-left:	10px;
 	color:			#990000;
 }
 
@@ -397,8 +398,9 @@ div.spptab{
 #vernaculars{
 	display:		block;
 	margin-left:	10px;
-	margin-top:		0.5em;
-	font-size:		130%;
+	margin-top: 0;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	font-size:		22px;
 }
 
 #synonyms{

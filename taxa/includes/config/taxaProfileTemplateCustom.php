@@ -14,22 +14,22 @@ $footerRowElements = Array();
 
 if($taxonRank){
     if($taxonRank > 180 && !$displayingChildren){
-        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
-        $leftColumnElements = Array($familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
+        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv,$ambiguousDiv);
+        $leftColumnElements = Array($vernacularsDiv,$centralImageDiv);
         $rightColumnElements = Array($descTabsDiv);
         $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
         $footerRowElements = Array($wisFloraFooterLinksDiv);
     }
     elseif($taxonRank === 180 || $displayingChildren){
-        $topRowElements = Array();
-        $leftColumnElements = Array($penaScinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
+        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv,$ambiguousDiv);
+        $leftColumnElements = Array($vernacularsDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array($wisFloraFooterLinksDiv);
     }
     else{
-        $topRowElements = Array();
-        $leftColumnElements = Array($penaScinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
+        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv,$ambiguousDiv);
+        $leftColumnElements = Array($vernacularsDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array($wisFloraFooterLinksDiv);
