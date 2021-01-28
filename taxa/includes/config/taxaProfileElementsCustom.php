@@ -24,6 +24,9 @@ if($taxonRank > 140){
     echo "&nbsp;&nbsp;&nbsp;<a href='".$parentLink."'>View ".($taxonRank > 220?"Parent":$taxonTerm)."</a>&nbsp;&nbsp;&nbsp;&nbsp;";
     echo '&nbsp;&nbsp;&nbsp;<a href="#" onclick="document.getElementById(\'occurrences\').submit();">View Specimen Records</a>&nbsp;&nbsp;&nbsp;&nbsp;';
 }
+if($taxonRank > 180 && $taxonManager->getNumChildren() > 0 && !$displayingChildren) {
+    echo '&nbsp;&nbsp;&nbsp;<a href="index.php?taxon='.$taxonManager->getTid().'&displaychildren=1">View Subspecies/Varieties</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+}
 echo '</div>';
 
 if($taxonRank > 180 && $links){

@@ -1,16 +1,9 @@
 <?php
+$displayingChildren = array_key_exists('displaychildren',$_REQUEST)?$_REQUEST['displaychildren']: 0;
+
 include('includes/config/taxaProfileElementsDefault.php');
 if(file_exists('includes/config/taxaProfileElementsCustom.php')){
     include('includes/config/taxaProfileElementsCustom.php');
-}
-
-$parentTaxon = array_key_exists('parenttaxon',$_REQUEST)?$_REQUEST['parenttaxon']: '';
-$displayingChildren = 0;
-
-if($parentTaxon) {
-    $taxonManager->setTaxon($parentTaxon);
-    $taxonManager->setAttributes();
-    $displayingChildren = 1;
 }
 
 $topRowElements = Array();
@@ -27,7 +20,7 @@ if($taxonRank){
         $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
         $footerRowElements = Array($wisFloraFooterLinksDiv);
     }
-    elseif($taxonRank == 180){
+    elseif($taxonRank === 180 || $displayingChildren){
         $topRowElements = Array();
         $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
