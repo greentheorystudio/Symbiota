@@ -1,4 +1,4 @@
-<?php 
+<?php
 //Enter one to many custom cascading style sheet files 
 //const $CSSARR = array('example1.css','example2.css');
 
@@ -67,6 +67,7 @@
 //define('ASSOCIATEDTAXALABEL','');
 //define('VERBATIMATTRIBUTESLABEL','');
 //define('OCCURRENCEREMARKSLABEL','');
+//define('LOCATIONIDLABEL','');
 //define('FIELDNOTESLABEL','');
 //define('DYNAMICPROPERTIESLABEL','');
 //define('LIFESTAGELABEL','');
