@@ -41,3 +41,35 @@ if($taxonRank > 180 && $links){
     echo "</ul>\n</div>";
 }
 $wisFloraFooterLinksDiv = ob_get_clean();
+
+ob_start();
+if($taxonRank > 180){
+    ?>
+    <div id="scinameheader" class="<?php echo $styleClass; ?>">
+        <span id="sciname" class="<?php echo $styleClass; ?>">
+            <i><?php echo $spDisplay; ?></i>
+        </span>
+        <?php echo $taxonManager->getAuthor(); ?>
+        <?php
+        if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
+            echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
+        }
+        ?>
+    </div>
+    <?php
+}
+else{
+    ?>
+    <div id="scinameheader" class="<?php echo $styleClass; ?>">
+        <?php
+        $displayName = $spDisplay;
+        if($taxonRank == 180) {
+            $displayName = '<i>' . $displayName . '</i> ';
+        }
+        echo "<span id='sciname' class='".$styleClass."' >".$displayName."</span>";
+        echo $taxonManager->getAuthor();
+        ?>
+    </div>
+    <?php
+}
+$penaScinameHeaderDiv = ob_get_clean();
