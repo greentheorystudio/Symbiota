@@ -53,25 +53,30 @@
                         <a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
                     </li>
                     <li>
-                        <a href="" >The Project</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/project.php" >The Project</a>
                     </li>
                     <li>
                         <a href="" >Trees</a>
                     </li>
                     <li>
-                        <a href="" >Genera</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Specimen Search</a>
                     </li>
                     <li>
-                        <a href="" >Species</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Specimens</a>
+                        <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank" >Map Search</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Images</a>
-                    </li>
-                    <li>
-                        <a href="" >Resources</a>
+                        <a href="#" >Interactive Tools</a>
+                        <ul>
+                            <li>
+                                <a href="/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
+                            </li>
+                            <li>
+                                <a href="/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>

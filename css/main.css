@@ -136,11 +136,11 @@ div.navpath {
 	text-indent:8px;
 	padding: 5px 8px 5px 5px;
 	background-image: none;
-	background-color:#dcdcdc;
+	background-color:#D9E636;
 	z-index:1000;
 }
 #hor_dropdown li:hover ul li a:hover {
-	background:#999999;
+	background:#9DA626;
 }
 /* Submenu to right */
 #hor_dropdown li ul li ul {
@@ -158,11 +158,11 @@ div.navpath {
 	text-indent:8px;
 	padding: 5px 8px 5px 5px;
 	background-image: none;
-	background-color:#dcdcdc;
+	background-color:#D9E636;
 	z-index:1000;
 }
 #hor_dropdown li ul li:hover ul li a:hover {
-	background:#999999;
+	background:#9DA626;
 }
 
 /* Quick Search Plugin */

@@ -42,7 +42,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 </div>
             </div>
             <div style="padding: 0 15px;margin-top:15px;">
-                The genus <i>Lomatium</i> is the largest of 19 genera of Apiaceae from primarily Western North America that
+                The genus <i>Lomatium</i> is the largest of 18 genera of Apiaceae from primarily Western North America that
                 form a large clade of over 200 species.  This website is the result of an NSF funded project to create a
                 phylogenetic hypothesis and a new classification for this previously poorly understood group.  This electronic
                 monograph contains descriptions, synonymy, protologues, distribution maps, specimen records, and photographs
@@ -63,7 +63,6 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Podistera" ><i>Podistera</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Polytaenia" ><i>Polytaenia</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Pseudocymopterus" ><i>Pseudocymopterus</i></a>,
-                <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Pteryxia" ><i>Pteryxia</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Shoshonea" ><i>Shoshonea</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Taenidia" ><i>Taenidia</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Tauschia" ><i>Tauschia</i></a>,
