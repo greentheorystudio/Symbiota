@@ -4,6 +4,15 @@ if(file_exists('includes/config/taxaProfileElementsCustom.php')){
     include('includes/config/taxaProfileElementsCustom.php');
 }
 
+$parentTaxon = array_key_exists('parenttaxon',$_REQUEST)?$_REQUEST['parenttaxon']: '';
+$displayingChildren = 0;
+
+if($parentTaxon) {
+    $taxonManager->setTaxon($parentTaxon);
+    $taxonManager->setAttributes();
+    $displayingChildren = 1;
+}
+
 $topRowElements = Array();
 $leftColumnElements = Array();
 $rightColumnElements = Array();
@@ -11,7 +20,7 @@ $bottomRowElements = Array();
 $footerRowElements = Array();
 
 if($taxonRank){
-    if($taxonRank > 180){
+    if($taxonRank > 180 && !$displayingChildren){
         $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
         $leftColumnElements = Array($familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
         $rightColumnElements = Array($descTabsDiv);
