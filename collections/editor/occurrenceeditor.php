@@ -9,7 +9,7 @@ header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservi
 $occId = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$goToMode = array_key_exists('gotomode',$_REQUEST)?$_REQUEST['gotomode']:0;
+$goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
 $occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?$_REQUEST['occindex']:false;
 $ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
@@ -359,7 +359,7 @@ if($SYMB_UID){
             }
         }
     }
-    elseif($goToMode == 2){
+    elseif($goToMode === 2){
         $occArr = $occManager->carryOverValues($_REQUEST);
     }
 
@@ -588,7 +588,7 @@ else{
             </div>
             <?php
         }
-        if($occArr || $goToMode == 1 || $goToMode == 2){
+        if($occArr || $goToMode === 1 || $goToMode === 2){
             if($occId && $isLocked){
                 ?>
                 <div style="margin:25px;border:2px double;padding:20px;width:90%;">
