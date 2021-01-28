@@ -384,6 +384,10 @@ class TaxonProfileManager {
         return $str;
     }
 
+    public function getVernacularArr(){
+        return $this->vernaculars;
+    }
+
     public function setSynonyms(): void
     {
         if($this->tid){
