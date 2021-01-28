@@ -491,7 +491,7 @@ class TaxonProfileManager {
         $trueLength = ($length&&count($this->imageArr)>$length+$start?$length:count($this->imageArr)-$start);
         $spDisplay = $this->getDisplayName();
         $iArr = array_slice($this->imageArr,$start,$trueLength,true);
-        echo "<div class='flexwrapbox'>";
+        echo '<div>';
         foreach($iArr as $imgId => $imgObj){
             if($start === 0 && $trueLength === 1){
                 echo "<div id='centralimage'>";

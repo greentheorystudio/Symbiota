@@ -1520,7 +1520,7 @@ class OccurrenceEditorManager {
         $locArr = Array('recordedby','associatedcollectors','eventdate','verbatimeventdate','month','day','year',
             'startdayofyear','enddayofyear','country','stateprovince','county','municipality','locality','decimallatitude','decimallongitude',
             'verbatimcoordinates','coordinateuncertaintyinmeters','footprintwkt','geodeticdatum','georeferencedby','georeferenceprotocol',
-            'georeferencesources','georeferenceverificationstatus','georeferenceremarks',
+            'georeferencesources','georeferenceverificationstatus','georeferenceremarks', 'locationid', 'fieldnumber',
             'minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters','verbatimdepth',
             'habitat','substrate','lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
             'associatedtaxa','basisofrecord','language','labelproject');
