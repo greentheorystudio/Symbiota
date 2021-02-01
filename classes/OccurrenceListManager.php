@@ -24,16 +24,16 @@ class OccurrenceListManager extends OccurrenceManager{
         if(!$this->recordCount || $this->reset){
             $this->setRecordCnt($sqlWhere);
         }
-        $sql = 'SELECT DISTINCT o.occid, c.CollID, c.institutioncode, c.collectioncode, c.collectionname, c.icon, '.
+        $sql = 'SELECT DISTINCT o.occid, c.CollID, IFNULL(o.institutioncode,c.institutioncode) AS institutioncode, IFNULL(o.collectioncode,c.collectioncode) AS collectioncode, c.collectionname, c.icon, '.
             'CONCAT_WS(":",c.institutioncode, c.collectioncode) AS collection, '.
             'IFNULL(o.CatalogNumber,"") AS catalognumber, o.family, o.sciname, o.tidinterpreted, '.
             'CONCAT_WS(" to ",IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),""),DATE_FORMAT(MAKEDATE(o.year,o.endDayOfYear),"%d %M %Y")) AS date, '.
             'IFNULL(o.scientificNameAuthorship,"") AS author, IFNULL(o.recordedBy,"") AS recordedby, IFNULL(o.recordNumber,"") AS recordnumber, '.
             'o.eventDate, IFNULL(o.country,"") AS country, IFNULL(o.StateProvince,"") AS state, IFNULL(o.county,"") AS county, '.
-            'CONCAT_WS(", ",o.locality,CONCAT(ROUND(o.decimallatitude,5)," ",ROUND(o.decimallongitude,5))) AS locality, '.
+            'o.locality, o.decimallatitude, o.decimallongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason, IFNULL(o.habitat,"") AS habitat, '.
             'CONCAT_WS("-",o.minimumElevationInMeters, o.maximumElevationInMeters) AS elev, o.observeruid, '.
-            'o.individualCount, o.lifeStage, o.sex, c.sortseq ';
+            'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
         $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
         $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($sqlWhere).$sqlWhere;
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
@@ -94,8 +94,12 @@ class OccurrenceListManager extends OccurrenceManager{
                 $returnArr[$occId]['collnumber'] = $this->cleanOutStr($row->recordnumber);
                 $returnArr[$occId]['habitat'] = $this->cleanOutStr($row->habitat);
                 $returnArr[$occId]['date'] = $row->date;
+                $returnArr[$occId]['decimallatitude'] = $row->decimallatitude;
+                $returnArr[$occId]['decimallongitude'] = $row->decimallongitude;
                 $returnArr[$occId]['eventDate'] = $row->eventDate;
                 $returnArr[$occId]['elev'] = $row->elev;
+                $returnArr[$occId]['substrate'] = $row->substrate;
+                $returnArr[$occId]['associatedtaxa'] = $row->associatedtaxa;
                 $imageSearchArr[] = $occId;
             }
             else{
