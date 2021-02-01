@@ -46,11 +46,11 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 form a large clade of over 200 species.  This website is the result of an NSF funded project to create a
                 phylogenetic hypothesis and a new classification for this previously poorly understood group.  This electronic
                 monograph contains descriptions, synonymy, protologues, distribution maps, specimen records, and photographs
-                for all taxa in this group.  Phylogenetic trees showing the evolutionary relationships within the group are
+                for all taxa in this group.  Phylogenetic trees and GenBank records of DNA accessions used in our study are
                 also included.
             </div>
             <div style="margin-top:15px;padding: 0 10px;">
-                The 19 genera covered in this treatment are:
+                The 18 genera covered in this treatment are:
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Aletes" ><i>Aletes</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Cymopterus" ><i>Cymopterus</i></a>,
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Eurytaenia" ><i>Eurytaenia</i></a>,

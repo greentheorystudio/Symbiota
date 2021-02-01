@@ -337,6 +337,46 @@ div.spptab{
 	color:			#990000;
 }
 
+#penaButtonDiv{
+	width: 420px;
+	margin-top:5px;
+	margin-left: 10px;
+	clear:both;
+	display: flex;
+	justify-content: space-between;
+}
+
+#penaLeftButtonDiv{
+	width: 200px;
+	display: inline-block;
+}
+
+#taxscpecrecordbutton{
+	font-size:16px;
+	padding:3px;
+	border-radius: 6px;
+	border:1px solid black;
+	background-color:#D9E636;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	cursor: pointer;
+}
+
+#penaRightButtonDiv{
+	width: 200px;
+	display: inline-block;
+}
+
+#taxinfrabutton{
+	font-size:16px;
+	margin: 0;
+	padding:3px;
+	border-radius: 6px;
+	border:1px solid black;
+	background-color:#D9E636;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
+	cursor: pointer;
+}
+
 #parenttaxonicon{
 	border:			0;
 	margin:			0;
@@ -344,13 +384,14 @@ div.spptab{
 }
 
 #redirectedfrom{
-	font-size:		90%;
+	font-size:		18px;
 	margin-left: 	25px;
 }
 
 #ambiguous{
 	display:		block;
 	float:			left;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	font-weight:	bold;
 	clear:			both;
 }
@@ -399,6 +440,7 @@ div.spptab{
 	display:		block;
 	margin-left:	10px;
 	margin-top: 0;
+	margin-bottom:0;
 	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	font-size:		22px;
 }
@@ -406,7 +448,6 @@ div.spptab{
 #synonyms{
 	display:		block;
 	margin-left:	20px;
-	margin-top:		0.5em;
 }
 
 #nocentralimage{
@@ -421,6 +462,7 @@ div.spptab{
 
 #desctabs{
 	height:			400px;
+	width: 480px;
 }
 
 #desctabs.species{
@@ -442,10 +484,11 @@ div.spptab{
 #nodesc{
 	display:		block;
 	margin:			70px 0 20px 50px;
+	width: 400px;
 }
 
 #img-div{
-	height:			300px;
+	height:			0;
 	overflow:		hidden;
 }
 
@@ -455,11 +498,13 @@ div.spptab{
 }
 
 #img-tab-expand{
-	background:		#eee;
 	padding:		10px;
-	border:			1px solid #ccc;
+	border-radius: 6px;
+	border:1px solid black;
+	background-color:#D9E636;
+	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	width:			100px;
-	margin:			auto;
+	margin: 15px auto auto;
 	text-align:		center;
 }
 
@@ -533,6 +578,15 @@ div.spptab{
 	text-align:			right;
 	margin: 2px 20px 2px 2px;
 	font-size:		75%;
+}
+
+#penacentralimage {
+	width: 420px;
+	margin-top:5px;
+	margin-left: 10px;
+	clear:both;
+	display: flex;
+	justify-content: space-between;
 }
 
 /*Text Description*/
