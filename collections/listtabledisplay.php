@@ -120,7 +120,7 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
         }
     </script>
 </head>
-<body style="margin-left: 0;margin-right: 0;background-color:white;">
+<body style="margin-left: 0;margin-right: 0;background-color:white;border:0;">
 	<div id="">
 		<div style="width:725px;clear:both;margin-bottom:5px;">
 			<fieldset style="padding:5px;width:650px;">
