@@ -444,7 +444,7 @@ class TaxonProfileManager {
         if($this->tid){
             $tidArr = Array($this->tid);
             $sql1 = 'SELECT DISTINCT ts.tid '.
-                'FROM taxstatus ts INNER JOIN taxaenumtree tn ON ts.tid = tn.tid '.
+                'FROM taxstatus AS ts LEFT JOIN taxaenumtree AS tn ON ts.tid = tn.tid '.
                 'WHERE tn.taxauthid = 1 AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
                 'AND tn.parenttid = '.$this->tid;
             $rs1 = $this->con->query($sql1);
@@ -456,12 +456,12 @@ class TaxonProfileManager {
             $tidStr = implode(',',$tidArr);
             $sql = 'SELECT t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
                 'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-                'FROM images ti LEFT JOIN users u ON ti.photographeruid = u.uid '.
-                'INNER JOIN taxstatus ts ON ti.tid = ts.tid '.
-                'INNER JOIN taxa t ON ti.tid = t.tid '.
+                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
+                'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
+                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
                 'WHERE ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.') AND ti.SortSequence < 500 AND ti.thumbnailurl IS NOT NULL ';
             if(!$this->displayLocality) {
-                $sql .= 'AND ti.occid IS NULL ';
+                $sql .= 'AND ISNULL(ti.occid) ';
             }
             $sql .= 'ORDER BY ti.sortsequence ';
             //echo $sql;
@@ -548,6 +548,29 @@ class TaxonProfileManager {
             return 0;
         }
         return count($this->imageArr);
+    }
+
+    public function getFilteredImageArr($type, $limit = 0): array
+    {
+        $returnArr = array();
+        if(!$limit){
+            $limit = $this->getImageCount();
+        }
+        $count = 0;
+        foreach($this->imageArr as $imgId => $imgObj){
+            if($count >= $limit){
+                break;
+            }
+            if($type === 'field' && !$imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+            if($type === 'specimen' && $imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+        }
+        return $returnArr;
     }
 
     public function getTaxaLinks(): array
