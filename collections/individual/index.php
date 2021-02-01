@@ -241,7 +241,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 	</script>
 </head>
 
-<body>
+<body style="border:0;">
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
