@@ -4,14 +4,15 @@ include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
 $projValue = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$DEFAULT_LANG;
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
+$showAllImages = array_key_exists('allimages',$_REQUEST);
 
 $taxonManager = new TaxonProfileManager();
-if($taxAuthId || $taxAuthId == '0') {
+if($taxAuthId || $taxAuthId === 0) {
     $taxonManager->setTaxAuthId($taxAuthId);
 }
 if($clValue) {
@@ -50,7 +51,7 @@ $styleClass = '';
 if($taxonRank > 180) {
     $styleClass = 'species';
 }
-elseif($taxonRank == 180) {
+elseif($taxonRank === 180) {
     $styleClass = 'genus';
 }
 else {
@@ -67,7 +68,7 @@ if($SYMB_UID){
         $displayLocality = 1;
     }
 }
-if($taxonManager->getSecurityStatus() == 0){
+if((int)$taxonManager->getSecurityStatus() === 0){
     $displayLocality = 1;
 }
 $taxonManager->setDisplayLocality($displayLocality);
@@ -96,9 +97,10 @@ else{
     <script type="text/javascript">
         let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
         const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
+        const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
-    <script src="../js/symb/taxa.index.js?ver=20170310" type="text/javascript"></script>
+    <script src="../js/symb/taxa.index.js?ver=20210201" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){
