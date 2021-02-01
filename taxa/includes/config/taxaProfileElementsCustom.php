@@ -115,6 +115,7 @@ echo '</div>';
 echo '<div id="penacentralimagerightcolumn">';
 echo "<div class='penaspecimenimage'>";
 $imgObj = current($specimenImageArr);
+$imgId = key($specimenImageArr);
 $imgUrl = $imgObj['url'];
 $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
 $imgThumbnail = $imgObj['thumbnailurl'];

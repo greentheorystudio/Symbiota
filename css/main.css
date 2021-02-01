@@ -589,6 +589,22 @@ div.spptab{
 	justify-content: space-between;
 }
 
+div.penafieldimage {
+	margin-bottom: 8px;
+}
+
+div.penafieldimage img {
+	width: 200px;
+}
+
+div.penaspecimenimage {
+	margin-bottom: 8px;
+}
+
+div.penaspecimenimage img {
+	width: 200px;
+}
+
 /*Text Description*/
 div.sptab{
 	height:		330px;
