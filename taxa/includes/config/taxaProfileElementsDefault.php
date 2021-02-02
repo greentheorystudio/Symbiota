@@ -38,19 +38,20 @@ if($taxonRank > 180){
 else{
     ?>
     <div id="scinameheader" class="<?php echo $styleClass; ?>">
-    <?php
-    $displayName = $spDisplay;
-    if($taxonRank == 180) {
-        $displayName = '<i>' . $displayName . '</i> spp. ';
-    }
-    if($taxonRank > 140){
-        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
-        $displayName .= ' <a href="'.$parentLink.'">';
-        $displayName .= '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
-        $displayName .= '</a>';
-    }
-    echo "<div id='sciname' class='<?php echo $styleClass; ?>' >$displayName</div>";
-    ?>
+        <?php
+        $displayName = $spDisplay;
+        if($taxonRank === 180) {
+            $displayName = '<i>' . $displayName . '</i> ';
+        }
+        $displayName .= $taxonManager->getAuthor().' ';
+        if($taxonRank > 140){
+            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+            $displayName .= ' <a href="'.$parentLink.'">';
+            $displayName .= '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
+            $displayName .= '</a>';
+        }
+        echo "<div id='sciname' class='".$styleClass."' >".$displayName."</div> ";
+        ?>
     </div>
     <?php
 }
@@ -268,7 +269,12 @@ ob_start();
 ?>
 <div id="img-div">
     <?php
-    $taxonManager->echoImages(1);
+    if(($taxonManager->getImageCount() > 100) && !$showAllImages){
+        $taxonManager->echoImages(1, 100);
+    }
+    else{
+        $taxonManager->echoImages(1);
+    }
     ?>
 </div>
 <?php
@@ -276,12 +282,31 @@ $imgDiv = ob_get_clean();
 
 ob_start();
 ?>
-<div id="img-tab-div" style="display:<?php echo $taxonManager->getImageCount()> 6?'block':'none';?>;">
-    <a href="#" onclick="expandExtraImages();return false;">
+<div id="img-tab-div" style="display:<?php echo ((($taxonManager->getImageCount() > 6) && !$showAllImages)?'block':'none');?>;">
+    <?php
+    if($taxonManager->getImageCount() > 100){
+        ?>
         <div id="img-tab-expand">
-            <?php echo 'Click to Display<br/>'.$taxonManager->getImageCount().' Total Images'; ?>
+            <a href="#" onclick="expandExtraImages();return false;">
+                <?php echo 'Click to Display<br/>100 Initial Images'; ?>
+            </a><br/>
+            - - - - -<br/>
+            <a href="index.php?taxon=<?php echo $taxonManager->getTid(); ?>&allimages=1">
+                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+            </a>
         </div>
-    </a>
+        <?php
+    }
+    else{
+        ?>
+        <div id="img-tab-expand">
+            <a href="#" onclick="expandExtraImages();return false;">
+                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+            </a>
+        </div>
+        <?php
+    }
+    ?>
 </div>
 <?php
 $imgTabDiv = ob_get_clean();
@@ -302,6 +327,7 @@ ob_start();
     <div>
         <?php
         if($sppArr = $taxonManager->getSppArray()){
+            echo "<div class='flexwrapbox'>";
             $cnt = 0;
             ksort($sppArr);
             foreach($sppArr as $sciNameKey => $subArr){
@@ -350,6 +376,7 @@ ob_start();
                 echo '</div>';
                 $cnt++;
             }
+            echo '</div>';
         }
         ?>
         <div class="clear"><hr></div>
@@ -360,7 +387,7 @@ $imgBoxDiv = ob_get_clean();
 
 ob_start();
 echo '<div id="footerlinkstoggle">';
-if(($taxonRank > 180) && $taxonRank > 180 && $links) {
+if($taxonRank > 180 && $links) {
     echo '<a href="#" onclick="toggleLinks(\'links\');return false;">Web Links</a>';
 }
 

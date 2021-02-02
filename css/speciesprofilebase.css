@@ -247,7 +247,7 @@
 	background:		#eee;
 	padding:		10px;
 	border:			1px solid #ccc;
-	width:			100px;
+	width:			250px;
 	margin:			auto;
 	text-align:		center;
 }
@@ -349,16 +349,15 @@ div.spptab{
 }
 
 div.imgthumb{
-  margin: 		5px;
-  height:		220px;
-  float:	 	left;
-  text-align: 	center;
-  position:		relative;
-  overflow:		hidden;
+	margin: 		5px;
+	float:	 	left;
+	text-align: 	center;
+	position:		relative;
+	overflow:		hidden;
 }
 
 div.imgthumb img{
-  	width: 		200px;
+	width: 		400px;
 	margin: 	0;
 	border:		1px dotted grey;
 }
@@ -369,24 +368,24 @@ div.imgthumb a:hover img {
 
 div.imgthumb div.photographer{
 	font-size:		75%;
-  	text-align: 	right;
-  	width: 			auto;
+	text-align: 	right;
+	width: 			auto;
 	margin: 2px 15px 2px 2px;
 }
 
 div.mapthumb{
-  margin: 5px;
-  border: 0;
-  width: 175px;
-  height: 220px;
-  float: right;
-  text-align: center;
+	margin: 5px;
+	border: 0;
+	width: 175px;
+	height: 220px;
+	float: right;
+	text-align: center;
 }
 
 div.mapthumb img{
-  width: 165px;
-  margin: 0;
-  border: 1px dotted black;
+	width: 165px;
+	margin: 0;
+	border: 1px dotted black;
 }
 
 div.mapthumb a:hover img {
@@ -396,26 +395,21 @@ div.mapthumb a:hover img {
 div.spptaxon{
 	text-align: 	center;
 	width:			170px;
-	height:			300px;
 	float:	 		left;
-  	border: 		1px dotted gray;
-  	margin:			3px;
+	border: 		1px dotted gray;
+	margin:			3px;
 }
 
 div.sppimg{
 	margin-left: 	auto;
 	margin-right: 	auto;
-	width:			160px;
-  	height:			150px;
+	height:			150px;
 	overflow:		hidden;
 }
 
 div.sppimg img{
 	margin: 5px auto;
 	border:			1px dotted gray;
-	max-width:		135px;
-	max-height:		135px;
-	width: 			135px;
 	height:			135px;
 }
 
@@ -446,7 +440,7 @@ div.spptext{
 	padding-top:		25px;
 	padding-bottom:		50px;
 	border:				1px dotted grey;
-  	width:				125px;
+	width:				125px;
 }
 
 .clear{

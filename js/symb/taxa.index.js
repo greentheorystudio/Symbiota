@@ -9,7 +9,9 @@ $(document).ready(function() {
 	if(imgDiv.scrollHeight > imgDiv.clientHeight) {
 		document.getElementById("img-tab-div").style.display = 'block';
 	}
-
+	if(allImages){
+		expandExtraImages();
+	}
 });
 
 function toggle(target){

@@ -21,6 +21,7 @@ class TaxonProfileManager {
     private $synTidArr = array();
     private $securityStatus;
     private $displayLocality = 1;
+    private $numChildren;
 
     private $clName;
     private $clid;
@@ -77,7 +78,7 @@ class TaxonProfileManager {
                 $this->submittedSciName = $row->SciName;
                 $this->submittedAuthor = $row->Author;
                 $this->author = $row->Author;
-                $this->rankId = $row->RankId;
+                $this->rankId = (int)$row->RankId;
                 $this->taxonNotes = $row->Notes;
                 $this->taxonSources = $row->Source;
                 $this->parentTid = $row->ParentTID;
@@ -89,7 +90,7 @@ class TaxonProfileManager {
             $this->tid = $this->submittedTid;
             $this->sciName = $this->submittedSciName;
 
-            if($this->rankId >= 140 && $this->rankId < 220){
+            if($this->rankId >= 140 && $this->rankId <= 220){
                 $this->setSppData();
             }
         }
@@ -98,7 +99,7 @@ class TaxonProfileManager {
             $this->submittedSciName = $row->SciName;
             $this->submittedAuthor = $row->Author;
             $this->author = $row->Author;
-            $this->rankId = $row->RankId;
+            $this->rankId = (int)$row->RankId;
             $this->taxonNotes = $row->Notes;
             $this->taxonSources = $row->Source;
             $this->parentTid = $row->ParentTID;
@@ -113,7 +114,7 @@ class TaxonProfileManager {
                 $this->setAccepted();
             }
 
-            if ($this->rankId >= 140 && $this->rankId < 220) {
+            if ($this->rankId >= 140 && $this->rankId <= 220) {
                 $this->setSppData();
             }
         }
@@ -230,12 +231,22 @@ class TaxonProfileManager {
 
     public function setSppData(): void
     {
+        $sqlWhereRank = '';
+        if($this->rankId === 140){
+            $sqlWhereRank = ' AND t.rankid = 180';
+        }
+        elseif($this->rankId <= 180){
+            $sqlWhereRank = ' AND t.rankid = 220';
+        }
+        elseif($this->rankId <= 220){
+            $sqlWhereRank = ' AND t.rankid > 220';
+        }
         $this->sppArray = array();
         if($this->clid){
             $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN fmchklsttaxalink ctl ON ctl.TID = t.tid '.
-                'WHERE (ctl.clid = '.$this->clid.') AND t.rankid = 220 AND (te.taxauthid = 1) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (ctl.clid = '.$this->clid.')'.$sqlWhereRank.' AND (te.taxauthid = 1) AND (te.parenttid = '.$this->tid.')';
         }
         elseif($this->pid){
             $sql = 'SELECT DISTINCT t.tid, t.sciname, t.securitystatus '.
@@ -244,13 +255,13 @@ class TaxonProfileManager {
                 'INNER JOIN fmchklsttaxalink ctl ON ts.Tid = ctl.TID '.
                 'INNER JOIN fmchklstprojlink cpl ON ctl.clid = cpl.clid '.
                 'WHERE (ts.taxauthid = 1) AND (te.taxauthid = 1) AND (cpl.pid = '.$this->pid.') '.
-                'AND (te.parenttid = '.$this->tid.') AND (t.rankid = 220)';
+                'AND (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1) AND (t.rankid = 220) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
         }
         //echo $sql; exit;
 
@@ -263,12 +274,13 @@ class TaxonProfileManager {
             $tids[] = $row->tid;
         }
         $result->close();
+        $this->numChildren = count($tids);
 
         if(!$tids){
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
                 'INNER JOIN taxaenumtree te ON ts.tid = te.tid '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1) AND (t.rankid = 220) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
             //echo $sql;
 
             $result = $this->con->query($sql);
@@ -372,6 +384,10 @@ class TaxonProfileManager {
         return $str;
     }
 
+    public function getVernacularArr(){
+        return $this->vernaculars;
+    }
+
     public function setSynonyms(): void
     {
         if($this->tid){
@@ -428,7 +444,7 @@ class TaxonProfileManager {
         if($this->tid){
             $tidArr = Array($this->tid);
             $sql1 = 'SELECT DISTINCT ts.tid '.
-                'FROM taxstatus ts INNER JOIN taxaenumtree tn ON ts.tid = tn.tid '.
+                'FROM taxstatus AS ts LEFT JOIN taxaenumtree AS tn ON ts.tid = tn.tid '.
                 'WHERE tn.taxauthid = 1 AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
                 'AND tn.parenttid = '.$this->tid;
             $rs1 = $this->con->query($sql1);
@@ -440,12 +456,12 @@ class TaxonProfileManager {
             $tidStr = implode(',',$tidArr);
             $sql = 'SELECT t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
                 'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-                'FROM images ti LEFT JOIN users u ON ti.photographeruid = u.uid '.
-                'INNER JOIN taxstatus ts ON ti.tid = ts.tid '.
-                'INNER JOIN taxa t ON ti.tid = t.tid '.
+                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
+                'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
+                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
                 'WHERE ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.') AND ti.SortSequence < 500 AND ti.thumbnailurl IS NOT NULL ';
             if(!$this->displayLocality) {
-                $sql .= 'AND ti.occid IS NULL ';
+                $sql .= 'AND ISNULL(ti.occid) ';
             }
             $sql .= 'ORDER BY ti.sortsequence ';
             //echo $sql;
@@ -479,6 +495,7 @@ class TaxonProfileManager {
         $trueLength = ($length&&count($this->imageArr)>$length+$start?$length:count($this->imageArr)-$start);
         $spDisplay = $this->getDisplayName();
         $iArr = array_slice($this->imageArr,$start,$trueLength,true);
+        echo '<div>';
         foreach($iArr as $imgId => $imgObj){
             if($start === 0 && $trueLength === 1){
                 echo "<div id='centralimage'>";
@@ -521,6 +538,7 @@ class TaxonProfileManager {
             echo '</div>';
             $status = true;
         }
+        echo '</div>';
         return $status;
     }
 
@@ -530,6 +548,29 @@ class TaxonProfileManager {
             return 0;
         }
         return count($this->imageArr);
+    }
+
+    public function getFilteredImageArr($type, $limit = 0): array
+    {
+        $returnArr = array();
+        if(!$limit){
+            $limit = $this->getImageCount();
+        }
+        $count = 0;
+        foreach($this->imageArr as $imgId => $imgObj){
+            if($count >= $limit){
+                break;
+            }
+            if($type === 'field' && !$imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+            if($type === 'specimen' && $imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+        }
+        return $returnArr;
     }
 
     public function getTaxaLinks(): array
@@ -828,6 +869,10 @@ class TaxonProfileManager {
     public function getSynonymArr(): array
     {
         return $this->synTidArr;
+    }
+
+    public function getNumChildren(){
+        return $this->numChildren;
     }
 
     public function getSecurityStatus(){
