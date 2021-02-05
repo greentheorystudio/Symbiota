@@ -19,6 +19,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
 <?php

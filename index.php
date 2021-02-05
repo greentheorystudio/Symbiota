@@ -19,9 +19,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
     </style>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        <?php include_once('config/googleanalytics.php'); ?>
-    </script>
+    <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
     <script>
         function cycleImages(){
             var $active = $('#cycler .active');
