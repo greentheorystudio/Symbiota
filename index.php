@@ -8,9 +8,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
         <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
         <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
         <meta name='keywords' content='' />
-        <script type="text/javascript">
-            <?php include_once('config/googleanalytics.php'); ?>
-        </script>
+        <?php include_once('config/googleanalytics.php'); ?>
     </head>
     <body>
         <?php
@@ -70,19 +68,17 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Vesper" ><i>Vesper</i></a>, and
                 <a href="<?php echo $CLIENT_ROOT; ?>/taxa/index.php?taxon=Zizia" ><i>Zizia</i></a>.
             </div>
-            <div style="margin: 25px auto 0;width:475px;">
-                <div style="clear:both;padding:5px;" >
-                    <div>
-                        <?php
-                        $searchText = '';
-                        $buttonText = 'Search';
-                        include_once(__DIR__ . '/classes/PluginsManager.php');
-                        $pluginManager = new PluginsManager();
-                        $pluginManager->setQuickSearchShowSelector(true);
-                        $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
-                        echo $quicksearch;
-                        ?>
-                    </div>
+            <div style="margin-top:25px;display:flex;justify-content:center;">
+                <div style="width:450px;">
+                    <?php
+                    $searchText = '';
+                    $buttonText = 'Search';
+                    include_once(__DIR__ . '/classes/PluginsManager.php');
+                    $pluginManager = new PluginsManager();
+                    $pluginManager->setQuickSearchShowSelector(true);
+                    $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
+                    echo $quicksearch;
+                    ?>
                 </div>
             </div>
         </div>

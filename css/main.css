@@ -1,14 +1,15 @@
 body{
 	width: 80%;
 	min-width:980px;
+	min-height:300px;
 	margin-top:0;
 	background-color:#385723;
-	border: 1px solid black;
 }
 
 #maintable{
 	width: 100%;
 	background-color:#FFFFFF;
+	border: 1px solid black;
 }
 
 td.header{
