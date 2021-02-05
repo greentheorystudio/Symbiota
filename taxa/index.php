@@ -91,9 +91,7 @@ else{
     <link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript">
-        <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-    </script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
         const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
