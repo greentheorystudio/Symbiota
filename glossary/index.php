@@ -140,11 +140,9 @@ $indTermUrl = 'individual.php';
 	<script src="../js/symb/glossary.index.js?ver=20160720" type="text/javascript"></script>
 </head>
 <body>
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
 	<?php
-	include(__DIR__ . '/../header.php');
+    include_once(__DIR__ . '/../config/googleanalytics.php');
+    include(__DIR__ . '/../header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;&gt;
