@@ -1,6 +1,6 @@
 <?php
-include_once('GPoint.php');
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/GPoint.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class OccurrenceUtilities {
 
@@ -671,7 +671,7 @@ class OccurrenceUtilities {
 		}
 		if(array_key_exists('taxonrank',$recMap)){
 			$tr = strtolower($recMap['taxonrank']);
-			if($tr === 'species' || !$recMap['specificepithet']) {
+            if($tr === 'species' || !array_key_exists('specificepithet',$recMap)) {
 				$recMap['taxonrank'] = '';
 			}
 			if($tr === 'subspecies') {

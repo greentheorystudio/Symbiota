@@ -1,6 +1,6 @@
 <?php
-include_once('Manager.php');
-include_once('GPoint.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/GPoint.php');
 
 class OccurrenceAssociations extends Manager {
 

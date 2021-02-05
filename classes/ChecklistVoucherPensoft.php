@@ -1,6 +1,6 @@
 <?php
-include_once('ChecklistVoucherAdmin.php');
-include_once('DwcArchiverCore.php');
+include_once(__DIR__ . '/ChecklistVoucherAdmin.php');
+include_once(__DIR__ . '/DwcArchiverCore.php');
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

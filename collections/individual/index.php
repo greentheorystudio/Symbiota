@@ -241,7 +241,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
 	</script>
 </head>
 
-<body>
+<body style="border:0;">
 	<div id="fb-root"></div>
 	<script>
 		(function(d, s, id) {
@@ -313,8 +313,12 @@ $commentArr = $indManager->getCommentArr($isEditor);
 						</div>
 					</div>
 					<div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
-						<img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strpos($collMetadata['icon'], 'images') === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
 						<?php
+                        if($collMetadata['icon']){
+                            ?>
+                            <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strpos($collMetadata['icon'], 'images') === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
+                            <?php
+                        }
 						echo $collMetadata['institutioncode'];
 						if(isset($collMetadata['collectioncode'])){
 							echo (strlen($collMetadata['institutioncode'])<7?' : ':'<br/>').$collMetadata['collectioncode'];
