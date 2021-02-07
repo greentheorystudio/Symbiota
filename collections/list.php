@@ -46,9 +46,7 @@ $resetPageNum = false;
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=2"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=12"></script>
-    <script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
