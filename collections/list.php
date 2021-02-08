@@ -23,14 +23,14 @@ $resetPageNum = false;
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
+    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
-	<style type="text/css">
-		.ui-tabs .ui-tabs-nav li { width:32%; }
-		.ui-tabs .ui-tabs-nav li a { margin-left:10px;}
+    <style type="text/css">
+        .ui-tabs .ui-tabs-nav li { width:32%; }
+        .ui-tabs .ui-tabs-nav li a { margin-left:10px;}
         a.boxclose{
             float:right;
             width:36px;
@@ -40,14 +40,14 @@ $resetPageNum = false;
             margin-right:-35px;
             cursor:pointer;
         }
-	</style>
-	<script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
+    </style>
+    <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=2"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=12"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	<script type="text/javascript">
+    <script type="text/javascript">
         let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
 
@@ -64,10 +64,10 @@ $resetPageNum = false;
             });
             <?php
             if($stArrJson){
-                ?>
-                initializeSearchStorage(<?php echo $queryId; ?>);
-                loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                <?php
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
             }
             ?>
 
@@ -79,7 +79,8 @@ $resetPageNum = false;
             document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             const http = new XMLHttpRequest();
             const url = "rpc/getoccurrencelist.php";
-            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId=<?php echo $queryId; ?>&page='+listPage;
+            const queryid = document.getElementById('queryId').value;
+            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -94,7 +95,7 @@ $resetPageNum = false;
             http.send(params);
         }
 
-		function addAllVouchersToCl(clidIn){
+        function addAllVouchersToCl(clidIn){
             const occJson = document.getElementById("specoccjson").value;
             const http = new XMLHttpRequest();
             const url = "rpc/addallvouchers.php";
@@ -113,7 +114,7 @@ $resetPageNum = false;
                 }
             };
             http.send(params);
-		}
+        }
 
         function getTaxaList(val){
             document.getElementById("dh-taxonFilterCode").value = val;
@@ -155,18 +156,18 @@ echo '<b>Specimen Records</b>';
 echo '</div>';
 ?>
 <div id="innertext">
-	<div id="tabs" style="width:95%;">
-		<ul>
-			<li><a href='#taxalistdiv' onclick='getTaxaList();'>Species List</a></li>
+    <div id="tabs" style="width:95%;">
+        <ul>
+            <li><a href='#taxalistdiv' onclick='getTaxaList();'>Species List</a></li>
             <li><a href="#speclist">Occurrence Records</a></li>
-		</ul>
-		<div id="speclist">
+        </ul>
+        <div id="speclist">
             <div id="queryrecords"></div>
-		</div>
+        </div>
         <div id="taxalistdiv">
             <div id="taxalist"></div>
         </div>
-	</div>
+    </div>
     <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 </div>
 <!-- Data Download Form -->
