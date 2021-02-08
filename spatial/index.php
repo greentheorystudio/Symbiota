@@ -1041,7 +1041,8 @@ $dbArr = array();
                     map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
                         if(layer === layersArr[activeLayer]){
                             try{
-                                selectsource.addFeature(feature);
+                                const featureClone = feature.clone();
+                                selectsource.addFeature(featureClone);
                                 document.getElementById("selectlayerselect").value = 'select';
                                 setActiveLayer();
                             }
