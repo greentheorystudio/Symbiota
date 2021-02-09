@@ -63,16 +63,6 @@ $penaImgTabDiv = ob_get_clean();
 ob_start();
 echo '<div id="penaButtonDiv">';
 echo '<div id="penaLeftButtonDiv">';
-$starrValue = '{"usethes":true,"taxontype":"1","taxa":"' . $taxonManager->getSciName() . '"}';
-echo '<div>';
-echo '<form style="display:none;" name="occurrences" id="occurrences" action="../collections/list.php" method="post">';
-echo "<input type='hidden' name='starr' value='" . $starrValue . "' />";
-echo '<input type="hidden" name="page" value="1" />';
-echo '</form>';
-echo '<button id="taxscpecrecordbutton" type="button" onclick="document.getElementById(\'occurrences\').submit();">Specimen Records</button>';
-echo '</div>';
-echo '</div>';
-echo '<div id="penaRightButtonDiv">';
 if($taxonRank > 180 && $taxonManager->getNumChildren() > 0 && !$displayingChildren) {
     echo '<a href="index.php?taxon=' . $taxonManager->getTid() . '&displaychildren=1"><button id="taxinfrabutton" type="button">Infraspecific Taxa</button></a>';
 }
@@ -192,3 +182,46 @@ if($url){
 echo '</div>';
 echo '</div>';
 $penaCentralImageDiv = ob_get_clean();
+
+ob_start();
+?>
+    <div id="img-tab-div" style="display:<?php echo (!$showAllImages?'block':'none');?>;">
+        <div style="display:flex;justify-content:space-around;align-items: center;">
+            <?php
+            echo '<div style="penaLeftButtonDiv">';
+            $starrValue = '{"usethes":true,"taxontype":"1","taxa":"' . $taxonManager->getSciName() . '"}';
+            echo '<div>';
+            echo '<form style="display:none;" name="occurrences" id="occurrences" action="../collections/list.php" method="post">';
+            echo "<input type='hidden' name='starr' value='" . $starrValue . "' />";
+            echo '<input type="hidden" name="page" value="1" />';
+            echo '</form>';
+            echo '<button id="taxscpecrecordbutton" type="button" onclick="document.getElementById(\'occurrences\').submit();">Specimen Records</button>';
+            echo '</div>';
+            echo '</div>';
+            if($taxonManager->getImageCount() > 100){
+                ?>
+                <div id="img-tab-expand">
+                    <a href="#" onclick="expandExtraImages();return false;">
+                        <?php echo 'Click to Display<br/>100 Initial Images'; ?>
+                    </a><br/>
+                    - - - - -<br/>
+                    <a href="index.php?taxon=<?php echo $taxonManager->getTid(); ?>&allimages=1">
+                        <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+                    </a>
+                </div>
+                <?php
+            }
+            else{
+                ?>
+                <div id="img-tab-expand">
+                    <a href="#" onclick="expandExtraImages();return false;">
+                        <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+                    </a>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+    </div>
+<?php
+$penaImgTabDiv = ob_get_clean();
