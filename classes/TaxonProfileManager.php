@@ -455,7 +455,7 @@ class TaxonProfileManager {
 
             $tidStr = implode(',',$tidArr);
             $sql = 'SELECT t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
-                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
@@ -476,6 +476,7 @@ class TaxonProfileManager {
                 $this->imageArr[$row->imgid]['photographer'] = $row->photographer;
                 $this->imageArr[$row->imgid]['caption'] = $row->caption;
                 $this->imageArr[$row->imgid]['occid'] = $row->occid;
+                $this->imageArr[$row->imgid]['owner'] = $row->owner;
                 $this->imageArr[$row->imgid]['sciname'] = $row->sciname;
             }
             $result->free();
