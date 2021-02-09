@@ -115,8 +115,8 @@ foreach($fieldImageArr as $imgId => $imgObj){
     if($imgObj['photographer']){
         echo $imgObj['photographer'].'&nbsp;&nbsp;';
     }
-    elseif($imgObj['sciname']){
-        echo '<i>'.$imgObj['sciname'].'</i>&nbsp;&nbsp;';
+    elseif($imgObj['owner']){
+        echo $imgObj['owner'].'&nbsp;&nbsp;';
     }
     echo '</div>';
     echo '</div>';
@@ -154,8 +154,8 @@ echo '<div class="photographer">';
 if($imgObj['photographer']){
     echo $imgObj['photographer'].'&nbsp;&nbsp;';
 }
-elseif($imgObj['sciname']){
-    echo '<i>'.$imgObj['sciname'].'</i>&nbsp;&nbsp;';
+elseif($imgObj['owner']){
+    echo $imgObj['owner'].'&nbsp;&nbsp;';
 }
 echo '</div>';
 echo '</div>';

@@ -524,6 +524,13 @@ div.spptab{
 	left:			5px;
 }
 
+div.photographer{
+	text-align:			right;
+	margin: 		2px;
+	margin-right:	20px;
+	font-size:		75%;
+}
+
 .parentlink{
 	margin-left:		30px;
 }
