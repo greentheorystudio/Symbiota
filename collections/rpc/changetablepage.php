@@ -22,7 +22,7 @@ if($SOLR_MODE){
     $recArr = $collManager->translateSOLRRecList($solrArr);
 }
 else{
-    $collManager = new OccurrenceListManager(false);
+    $collManager = new OccurrenceListManager();
     $collManager->setSearchTermsArr($stArr);
     $collManager->setSorting($sortField1,$sortField2,$sortOrder);
     $recArr = $collManager->getRecordArr($occIndex,1000);
