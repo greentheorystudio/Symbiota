@@ -351,7 +351,7 @@ class OccurrenceIndividualManager extends Manager{
 	public function reportComment($repComId): bool
 	{
 		global $ADMIN_EMAIL, $CLIENT_ROOT, $DEFAULT_TITLE, $SMTP_HOST, $SMTP_PORT;
-		if(isset($SMTP_HOST, $SMTP_PORT)){
+		if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
             $status = true;
             if(!is_numeric($repComId)) {
                 return false;

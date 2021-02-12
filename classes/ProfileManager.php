@@ -243,7 +243,7 @@ class ProfileManager extends Manager{
 	public function resetPassword($un): string
 	{
 		global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
-	    if(isset($SMTP_HOST, $SMTP_PORT)){
+	    if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
             $newPassword = $this->generateNewPassword();
             $status = false;
             if($un){
@@ -432,7 +432,7 @@ class ProfileManager extends Manager{
     {
         global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
         $status = false;
-        if(isset($SMTP_HOST, $SMTP_PORT)){
+        if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
             if(!$this->validateEmailAddress($emailAddr)) {
                 return false;
             }
