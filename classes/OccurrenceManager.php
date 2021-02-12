@@ -698,9 +698,6 @@ class OccurrenceManager{
                                                             echo $collName2['collname'].$codeStr;
                                                             ?>
                                                         </a>
-                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
-                                                            more info
-                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -757,9 +754,6 @@ class OccurrenceManager{
                                                     <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
                                                         <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
                                                     </a>
-                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                                        more info
-                                                    </a>
                                                 </td>
                                             </tr>
                                             <?php
@@ -810,9 +804,6 @@ class OccurrenceManager{
                                         echo $cArr['collname'].$codeStr;
                                         ?>
                                     </a>
-                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;'>
-                                        more info
-                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -839,9 +830,6 @@ class OccurrenceManager{
                             <td style="padding:6px">
                                 <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
                                     <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
-                                </a>
-                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                    more info
                                 </a>
                             </td>
                         </tr>

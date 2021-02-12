@@ -66,9 +66,7 @@ if($chars){
     <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/ident.key.js" type="text/javascript"></script>

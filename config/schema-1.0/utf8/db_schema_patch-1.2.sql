@@ -207,6 +207,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE `taxonunits`;
 
 ALTER TABLE `taxonunits`
+    DROP INDEX `UNIQUE_taxonunits`;
+
+ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
     ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`),
     ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE;
@@ -432,15 +435,70 @@ ALTER TABLE `uploadimagetemp`
   ADD COLUMN `rights` varchar(255) NULL AFTER `accessrights`,
   ADD COLUMN `locality` varchar(250) NULL AFTER `rights`;
 
-ALTER TABLE `uploadspectemp`
-  CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR(32) NULL DEFAULT NULL COMMENT 'PreservedSpecimen, LivingSpecimen, HumanObservation' ;
-
 ALTER TABLE `uploadspecparameters`
   MODIFY COLUMN `Path` varchar(500) NULL DEFAULT NULL AFTER `Code`;
 
 ALTER TABLE `uploadspectemp`
-  ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
-  ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`);
+    ADD COLUMN `upspid` int(50) NOT NULL AUTO_INCREMENT FIRST,
+    ADD PRIMARY KEY (`upspid`);
+
+ALTER TABLE `uploadspectemp`
+    CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR (32) NULL DEFAULT NULL COMMENT '' PreservedSpecimen, LivingSpecimen, HumanObservation '',
+    ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
+    ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`),
+    ADD INDEX `Index_decimalLatitude`(`decimalLatitude`),
+    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`);
+
+CREATE TABLE `uploadspectemppoints` (
+    `geoID`  int(11) NOT NULL AUTO_INCREMENT,
+    `upspid` int(50) NOT NULL,
+    `point`  point NOT NULL,
+    PRIMARY KEY (`geoID`),
+    UNIQUE KEY `upspid` (`upspid`),
+    SPATIAL KEY `point` (`point`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DELIMITER
+//
+CREATE TRIGGER `uploadspectemp_insert`
+    AFTER INSERT
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		INSERT INTO uploadspectemppoints (`upspid`,`point`)
+		VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+END IF;
+END
+//
+
+CREATE TRIGGER `uploadspectemp_update`
+    AFTER UPDATE
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		IF EXISTS (SELECT `upspid` FROM uploadspectemppoints WHERE `upspid`=NEW.`upspid`) THEN
+    UPDATE uploadspectemppoints
+    SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
+    WHERE `upspid` = NEW.`upspid`;
+    ELSE
+			INSERT INTO uploadspectemppoints (`upspid`,`point`)
+			VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+END IF;
+END IF;
+END
+//
+
+CREATE TRIGGER `uploadspectemp_delete`
+    BEFORE DELETE
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
+END //
+
+DELIMITER;
 
 ALTER TABLE `uploadtaxa`
     DROP INDEX `UNIQUE_sciname` ,
