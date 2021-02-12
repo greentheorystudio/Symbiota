@@ -14,6 +14,12 @@ $SERVER_ROOT = '/var/www/default/htdocs';				//Full path to Symbiota project roo
 $TEMP_DIR_ROOT = $SERVER_ROOT.'/temp';				//Must be writable by Apache; will use system default if not specified
 $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
+$SMTP_HOST = '172.28.1.3';                //SMTP Host
+$SMTP_PORT = 1025;                //SMTP Port
+$SMTP_ENCRYPTION = false;        //Connect to SMTP using encrypted (TLS) connection
+$SMTP_USERNAME = '';            //SMTP Username
+$SMTP_PASSWORD = '';            //SMTP Password
+
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
 $IMAGE_ROOT_URL = '';				//URL path to images
 $IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
