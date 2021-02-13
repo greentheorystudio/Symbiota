@@ -3,6 +3,7 @@ include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/Person.php');
 include_once(__DIR__ . '/Encryption.php');
+include_once(__DIR__ . '/Mailer.php');
 
 class ProfileManager extends Manager{
 
@@ -241,52 +242,52 @@ class ProfileManager extends Manager{
 
 	public function resetPassword($un): string
 	{
-		global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL;
-	    $newPassword = $this->generateNewPassword();
-		$status = false;
-		if($un){
-			$connection = new DbConnection();
-			$editCon = $connection->getConnection();
-            $sql = '';
-			if($this->encryption === 'password'){
-                $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
-                    'WHERE (username = "'.$this->cleanInStr($un).'")';
+		global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
+	    if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
+            $newPassword = $this->generateNewPassword();
+            $status = false;
+            if($un){
+                $connection = new DbConnection();
+                $editCon = $connection->getConnection();
+                $sql = '';
+                if($this->encryption === 'password'){
+                    $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
+                        'WHERE (username = "'.$this->cleanInStr($un).'")';
+                }
+                if($this->encryption === 'sha2'){
+                    $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
+                        'WHERE (username = "'.$this->cleanInStr($un).'")';
+                }
+                $status = $editCon->query($sql);
+                $editCon->close();
             }
-            if($this->encryption === 'sha2'){
-                $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
-                    'WHERE (username = "'.$this->cleanInStr($un).'")';
-            }
-			$status = $editCon->query($sql);
-			$editCon->close();
-		}
-		if($status){
-			$emailAddr = '';
-			$sql = 'SELECT u.email FROM users u '.
-				'WHERE (u.username = "'.$this->cleanInStr($un).'")';
-			$result = $this->conn->query($sql);
-			if($row = $result->fetch_object()){
-                $emailAddr = $row->email;
-			}
-			$result->free();
+            if($status){
+                $emailAddr = '';
+                $sql = 'SELECT u.email FROM users u '.
+                    'WHERE (u.username = "'.$this->cleanInStr($un).'")';
+                $result = $this->conn->query($sql);
+                if($row = $result->fetch_object()){
+                    $emailAddr = $row->email;
+                }
+                $result->free();
 
-			$subject = 'Your password';
-			$bodyStr = 'Your ' .$DEFAULT_TITLE." (<a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."'>http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '</a>) password has been reset to: ' .$newPassword. ' ';
-			$bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
-			$bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator ';
-			if($ADMIN_EMAIL){
-				$bodyStr .= '<' .$ADMIN_EMAIL. '>';
-			}
-			$fromAddr = $ADMIN_EMAIL;
-            $headerStr = 'MIME-Version: 1.0' .
-				'Content-type: text/html' .
-				'To: ' .$emailAddr;
-            $headerStr .= 'From: Admin <' .$fromAddr. '>';
-            mail($emailAddr,$subject,$bodyStr,$headerStr);
-			$returnStr = 'Your new password was just emailed to: ' .$emailAddr;
-		}
-		else{
-			$returnStr = 'Reset Failed! Contact Administrator';
-		}
+                $subject = 'Your password';
+                $bodyStr = 'Your ' .$DEFAULT_TITLE." (<a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."'>http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '</a>) password has been reset to: ' .$newPassword. ' ';
+                $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
+                $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator ';
+                if($ADMIN_EMAIL){
+                    $bodyStr .= '<' .$ADMIN_EMAIL. '>';
+                }
+                (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                $returnStr = 'Your new password was just emailed to: ' .$emailAddr;
+            }
+            else{
+                $returnStr = 'Reset Failed! Contact Administrator';
+            }
+        }
+	    else{
+            $returnStr = 'Reset Failed! Email has not been configured on this portal. Please contact portal admin.';
+        }
 		return $returnStr;
 	}
 
@@ -429,46 +430,47 @@ class ProfileManager extends Manager{
 
 	public function lookupUserName($emailAddr): bool
     {
-        global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL;
+        global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
         $status = false;
-		if(!$this->validateEmailAddress($emailAddr)) {
-            return false;
-        }
-		$loginStr = '';
-		$sql = 'SELECT u.uid, u.username, concat_ws("; ",u.lastname,u.firstname) '.
-			'FROM users u '.
-			'WHERE (u.email = "'.$emailAddr.'")';
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			if($loginStr) {
-                $loginStr .= '; ';
+        if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
+            if(!$this->validateEmailAddress($emailAddr)) {
+                return false;
             }
-			$loginStr .= $row->username;
-		}
-		$result->free();
-		if($loginStr){
-			$subject = $DEFAULT_TITLE.' Login Name';
-			$bodyStr = 'Your '.$DEFAULT_TITLE.' (<a href="http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'">http://'.
-                $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'</a>) login name is: '.$loginStr.' ';
-			$bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator ';
-			if($ADMIN_EMAIL){
-				$bodyStr .= '<' .$ADMIN_EMAIL. '>';
-			}
-            $fromAddr = $ADMIN_EMAIL;
-            $headerStr = 'MIME-Version: 1.0' .
-                'Content-type: text/html' .
-                'To: ' .$emailAddr;
-            $headerStr .= 'From: Admin <' .$fromAddr. '>';
-			if(mail($emailAddr,$subject,$bodyStr,$headerStr)){
-				$status = true;
-			}
-			else{
-				$this->errorStr = 'ERROR sending email, mailserver might not be properly setup';
-			}
-		}
-		else{
-			$this->errorStr = 'There are no users registered to email address: '.$emailAddr;
-		}
+            $loginStr = '';
+            $sql = 'SELECT u.uid, u.username, concat_ws("; ",u.lastname,u.firstname) '.
+                'FROM users u '.
+                'WHERE (u.email = "'.$emailAddr.'")';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                if($loginStr) {
+                    $loginStr .= '; ';
+                }
+                $loginStr .= $row->username;
+            }
+            $result->free();
+            if($loginStr){
+                $subject = $DEFAULT_TITLE.' Login Name';
+                $bodyStr = 'Your '.$DEFAULT_TITLE.' (<a href="http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'">http://'.
+                    $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'</a>) login name is: '.$loginStr.' ';
+                $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator ';
+                if($ADMIN_EMAIL){
+                    $bodyStr .= '<' .$ADMIN_EMAIL. '>';
+                }
+                $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
+                if($mailerResult === 'Sent'){
+                    $status = true;
+                }
+                else{
+                    $this->errorStr = $mailerResult;
+                }
+            }
+            else{
+                $this->errorStr = 'There are no users registered to email address: '.$emailAddr;
+            }
+        }
+        else{
+            $this->errorStr = 'ERROR: email has not been configured on this portal. Please contact portal admin.';
+        }
 
 		return $status;
 	}

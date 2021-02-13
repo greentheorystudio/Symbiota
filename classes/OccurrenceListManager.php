@@ -4,15 +4,15 @@ include_once(__DIR__ . '/OccurrenceAccessStats.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
-	protected $recordCount = 0;
-	protected $sortField1 = '';
-	protected $sortField2 = '';
-	protected $sortOrder = '';
+    protected $recordCount = 0;
+    protected $sortField1 = '';
+    protected $sortField2 = '';
+    protected $sortOrder = '';
 
     public function getRecordArr($pageRequest,$cntPerPage): array
     {
         global $USER_RIGHTS, $IS_ADMIN, $IMAGE_DOMAIN;
-	    $canReadRareSpp = false;
+        $canReadRareSpp = false;
         if($USER_RIGHTS){
             if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
                 $canReadRareSpp = true;
@@ -21,7 +21,7 @@ class OccurrenceListManager extends OccurrenceManager{
         $returnArr = array();
         $imageSearchArr = array();
         $sqlWhere = $this->getSqlWhere();
-        if(!$this->recordCount || $this->reset){
+        if(!$this->recordCount){
             $this->setRecordCnt($sqlWhere);
         }
         $sql = 'SELECT DISTINCT o.occid, c.CollID, IFNULL(o.institutioncode,c.institutioncode) AS institutioncode, IFNULL(o.collectioncode,c.collectioncode) AS collectioncode, c.collectionname, c.icon, '.
@@ -88,8 +88,8 @@ class OccurrenceListManager extends OccurrenceManager{
             $returnArr[$occId]['sex'] = $this->cleanOutStr($row->sex);
             $localitySecurity = $row->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
-           		|| (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($row->CollID, $USER_RIGHTS['CollEditor'], true))
-           		|| (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($row->CollID, $USER_RIGHTS['RareSppReader'], true))){
+                || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($row->CollID, $USER_RIGHTS['CollEditor'], true))
+                || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($row->CollID, $USER_RIGHTS['RareSppReader'], true))){
                 $returnArr[$occId]['locality'] = $this->cleanOutStr(str_replace('.,',',',$row->locality));
                 $returnArr[$occId]['collnumber'] = $this->cleanOutStr($row->recordnumber);
                 $returnArr[$occId]['habitat'] = $this->cleanOutStr($row->habitat);
@@ -134,15 +134,15 @@ class OccurrenceListManager extends OccurrenceManager{
             $rs->free();
         }
         if($returnArr){
-        	$statsManager = new OccurrenceAccessStats();
-        	$statsManager->recordAccessEventByArr(array_keys($returnArr),'list');
+            $statsManager = new OccurrenceAccessStats();
+            $statsManager->recordAccessEventByArr(array_keys($returnArr),'list');
         }
         return $returnArr;
     }
 
-	private function setRecordCnt($sqlWhere): void
+    private function setRecordCnt($sqlWhere): void
     {
-		global $CLIENT_ROOT;
+        global $CLIENT_ROOT;
         $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o '.$this->setTableJoins($sqlWhere).$sqlWhere;
         //echo "<div>Count sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
@@ -150,36 +150,36 @@ class OccurrenceListManager extends OccurrenceManager{
             $this->recordCount = $row->cnt;
         }
         $result->free();
-		setCookie('collvars', 'reccnt:' .$this->recordCount,time()+64800,($CLIENT_ROOT?:'/'));
-	}
+        setCookie('collvars', 'reccnt:' .$this->recordCount,time()+64800,($CLIENT_ROOT?:'/'));
+    }
 
     public function getRecordCnt(): int
     {
-		return $this->recordCount;
-	}
+        return $this->recordCount;
+    }
 
-	public function setSorting($sf1,$sf2,$so): void
+    public function setSorting($sf1,$sf2,$so): void
     {
-		$this->sortField1 = $sf1;
-		$this->sortField2 = $sf2;
-		$this->sortOrder = $so;
-	}
+        $this->sortField1 = $sf1;
+        $this->sortField2 = $sf2;
+        $this->sortOrder = $so;
+    }
 
-	public function getCloseTaxaMatch($name): array
+    public function getCloseTaxaMatch($name): array
     {
-		$retArr = array();
-		$searchName = $this->cleanInStr($name);
-		$sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param('s', $searchName);
-		$stmt->execute();
-		$stmt->bind_result($tid, $sciname);
-		while($stmt->fetch()){
-			if($searchName !== $sciname) {
+        $retArr = array();
+        $searchName = $this->cleanInStr($name);
+        $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('s', $searchName);
+        $stmt->execute();
+        $stmt->bind_result($tid, $sciname);
+        while($stmt->fetch()){
+            if($searchName !== $sciname) {
                 $retArr[$tid] = $sciname;
             }
-		}
-		$stmt->close();
-		return $retArr;
-	}
+        }
+        $stmt->close();
+        return $retArr;
+    }
 }
