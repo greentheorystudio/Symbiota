@@ -1270,79 +1270,85 @@ class SpecUploadBase extends SpecUpload{
                 if($valueStr) {
                     $hasValue = true;
                 }
-                if(array_key_exists($symbField,$fieldMap) || $symbField === 'sciname'){
-                    $type = (array_key_exists('type',$fieldMap[$symbField])?$fieldMap[$symbField]['type']:'');
-                    $size = (array_key_exists('size',$fieldMap[$symbField])?$fieldMap[$symbField]['size']:0);
-                    if($type === 'numeric'){
-                        if(is_numeric($valueStr)){
-                            $sqlValues .= ',' .$valueStr;
-                        }
-                        elseif(is_numeric(str_replace(',', '',$valueStr))){
-                            $sqlValues .= ',' .str_replace(',', '',$valueStr);
-                        }
-                        else{
-                            $sqlValues .= ',NULL';
-                        }
+                $type = '';
+                $size = 0;
+                if(array_key_exists($symbField,$fieldMap)){
+                    if(array_key_exists('type',$fieldMap[$symbField])){
+                        $type = $fieldMap[$symbField]['type'];
                     }
-                    elseif($type === 'decimal'){
-                        if(strpos($valueStr,',')){
-                            $sqlValues = str_replace(',','',$valueStr);
-                        }
-                        if($valueStr && $size && strpos($size,',') !== false){
-                            $tok = explode(',',$size);
-                            $m = $tok[0];
-                            $d = $tok[1];
-                            if($m && $d){
-                                $dec = substr($valueStr,strpos($valueStr,'.'));
-                                if(strlen($dec) > $d){
-                                    $valueStr = round($valueStr,$d);
-                                }
-                                $rawLen = strlen(str_replace(array('-','.'),'',$valueStr));
-                                if($rawLen > $m){
-                                    if(strpos($valueStr,'.') !== false){
-                                        $decLen = strlen(substr($valueStr,strpos($valueStr,'.')));
-                                        if($decLen < ($rawLen - $m)){
-                                            $valueStr = '';
-                                        }
-                                        else{
-                                            $valueStr = round($valueStr,$decLen - ($rawLen - $m));
-                                        }
-                                    }
-                                    else{
+                    if(array_key_exists('size',$fieldMap[$symbField])){
+                        $size = $fieldMap[$symbField]['size'];
+                    }
+                }
+                if($type === 'numeric'){
+                    if(is_numeric($valueStr)){
+                        $sqlValues .= ',' .$valueStr;
+                    }
+                    elseif(is_numeric(str_replace(',', '',$valueStr))){
+                        $sqlValues .= ',' .str_replace(',', '',$valueStr);
+                    }
+                    else{
+                        $sqlValues .= ',NULL';
+                    }
+                }
+                elseif($type === 'decimal'){
+                    if(strpos($valueStr,',')){
+                        $sqlValues = str_replace(',','',$valueStr);
+                    }
+                    if($valueStr && $size && strpos($size,',') !== false){
+                        $tok = explode(',',$size);
+                        $m = $tok[0];
+                        $d = $tok[1];
+                        if($m && $d){
+                            $dec = substr($valueStr,strpos($valueStr,'.'));
+                            if(strlen($dec) > $d){
+                                $valueStr = round($valueStr,$d);
+                            }
+                            $rawLen = strlen(str_replace(array('-','.'),'',$valueStr));
+                            if($rawLen > $m){
+                                if(strpos($valueStr,'.') !== false){
+                                    $decLen = strlen(substr($valueStr,strpos($valueStr,'.')));
+                                    if($decLen < ($rawLen - $m)){
                                         $valueStr = '';
                                     }
+                                    else{
+                                        $valueStr = round($valueStr,$decLen - ($rawLen - $m));
+                                    }
+                                }
+                                else{
+                                    $valueStr = '';
                                 }
                             }
                         }
-                        if(is_numeric($valueStr)){
-                            $sqlValues .= ',' .$valueStr;
-                        }
-                        else{
-                            $sqlValues .= ',NULL';
-                        }
                     }
-                    elseif($type === 'date'){
-                        $dateStr = OccurrenceUtilities::formatDate($valueStr);
-                        if($dateStr){
-                            $sqlValues .= ',"'.$dateStr.'"';
-                        }
-                        else{
-                            $sqlValues .= ',NULL';
-                        }
+                    if(is_numeric($valueStr)){
+                        $sqlValues .= ',' .$valueStr;
                     }
                     else{
-                        if($size && strlen($valueStr) > $size){
-                            $valueStr = substr($valueStr,0,$size);
-                        }
-                        if(substr($valueStr,-1) === "\\"){
-                            $valueStr = rtrim($valueStr,"\\");
-                        }
-                        if($valueStr){
-                            $sqlValues .= ',"'.$valueStr.'"';
-                        }
-                        else{
-                            $sqlValues .= ',NULL';
-                        }
+                        $sqlValues .= ',NULL';
+                    }
+                }
+                elseif($type === 'date'){
+                    $dateStr = OccurrenceUtilities::formatDate($valueStr);
+                    if($dateStr){
+                        $sqlValues .= ',"'.$dateStr.'"';
+                    }
+                    else{
+                        $sqlValues .= ',NULL';
+                    }
+                }
+                else{
+                    if($size && strlen($valueStr) > $size){
+                        $valueStr = substr($valueStr,0,$size);
+                    }
+                    if(substr($valueStr,-1) === "\\"){
+                        $valueStr = rtrim($valueStr,"\\");
+                    }
+                    if($valueStr){
+                        $sqlValues .= ',"'.$valueStr.'"';
+                    }
+                    else{
+                        $sqlValues .= ',NULL';
                     }
                 }
             }
