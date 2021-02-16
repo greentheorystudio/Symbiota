@@ -28,9 +28,9 @@
                 <span class="maptext">Base Layer</span>
                 <select data-role="none" id="base-map" onchange="changeBaseMap();">
                     <option value="googleterrain">Google Terrain</option>
-                    <option value="googleroadmap">Google Roadmap</option>
-                    <option value="googlealteredroadmap">Google Altered Roadmap</option>
-                    <option value="googlehybrid">Google Hybrid</option>
+                    <option value="googleroadmap">Google Terrain-Roadmap</option>
+                    <option value="googlealteredroadmap">Google Roadmap</option>
+                    <option value="googlehybrid">Google Satellite-Roadmap</option>
                     <option value="googlesatellite">Google Satellite</option>
                     <option value="worldtopo">ESRI World Topo</option>
                     <option value="worldimagery">ESRI World Imagery</option>
