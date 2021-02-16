@@ -71,10 +71,10 @@
                         <a href="#" >Interactive Tools</a>
                         <ul>
                             <li>
-                                <a href="/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
                             </li>
                             <li>
-                                <a href="/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
+                                <a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
                             </li>
                         </ul>
                     </li>
