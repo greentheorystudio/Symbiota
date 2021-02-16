@@ -17,6 +17,7 @@ $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will
 $SMTP_HOST = '172.28.1.3';                //SMTP Host
 $SMTP_PORT = 1025;                //SMTP Port
 $SMTP_ENCRYPTION = false;        //Connect to SMTP using encrypted (TLS) connection
+$SMTP_ENCRYPTION_MECHANISM = 'STARTTLS';        //SMTP encryption mechanism - STARTTLS or SMTPS
 $SMTP_USERNAME = '';            //SMTP Username
 $SMTP_PASSWORD = '';            //SMTP Password
 
