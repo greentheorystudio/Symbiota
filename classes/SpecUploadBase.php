@@ -32,7 +32,8 @@ class SpecUploadBase extends SpecUpload{
     public function __construct() {
         parent::__construct();
         set_time_limit(7200);
-        ini_set('max_input_time',240);
+        ini_set('max_input_time',600);
+        ini_set('default_socket_timeout', 6000);
     }
 
     public function setFieldMap($fm): void
