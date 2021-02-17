@@ -526,6 +526,9 @@ class SpatialModuleManager{
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
         if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
@@ -594,6 +597,9 @@ class SpatialModuleManager{
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
@@ -684,6 +690,9 @@ class SpatialModuleManager{
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
             if(array_key_exists('RareSppReader',$USER_RIGHTS)){
@@ -714,6 +723,9 @@ class SpatialModuleManager{
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){

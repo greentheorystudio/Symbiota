@@ -85,7 +85,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=308" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=309" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -127,60 +127,60 @@ $dbArr = array();
                         }
                     })
                     .autocomplete({
-                            source: function( request, response ) {
-                                const t = document.getElementById("taxontype").value;
-                                let rankLow = '';
-                                let rankHigh = '';
-                                let rankLimit = '';
-                                let source = '';
-                                if(t == 5){
-                                    source = '../webservices/autofillvernacular.php';
-                                }
-                                else{
-                                    source = '../webservices/autofillsciname.php';
-                                }
-                                if(t == 4){
-                                    rankLow = 21;
-                                    rankHigh = 139;
-                                }
-                                else if(t == 2){
-                                    rankLimit = 140;
-                                }
-                                else if(t == 3){
-                                    rankLow = 141;
-                                }
-                                else{
-                                    rankLow = 140;
-                                }
-                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                                $.getJSON( source, {
-                                    term: extractLast( request.term ),
-                                    rlow: rankLow,
-                                    rhigh: rankHigh,
-                                    rlimit: rankLimit,
-                                    hideauth: true,
-                                    limit: 20
-                                }, response );
-                            },
-                            appendTo: "#taxa_autocomplete",
-                            search: function() {
-                                const term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                const terms = split( this.value );
-                                terms.pop();
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
+                        source: function( request, response ) {
+                            const t = document.getElementById("taxontype").value;
+                            let rankLow = '';
+                            let rankHigh = '';
+                            let rankLimit = '';
+                            let source = '';
+                            if(t == 5){
+                                source = '../webservices/autofillvernacular.php';
+                            }
+                            else{
+                                source = '../webservices/autofillsciname.php';
+                            }
+                            if(t == 4){
+                                rankLow = 21;
+                                rankHigh = 139;
+                            }
+                            else if(t == 2){
+                                rankLimit = 140;
+                            }
+                            else if(t == 3){
+                                rankLow = 141;
+                            }
+                            else{
+                                rankLow = 140;
+                            }
+                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                            $.getJSON( source, {
+                                term: extractLast( request.term ),
+                                rlow: rankLow,
+                                rhigh: rankHigh,
+                                rlimit: rankLimit,
+                                hideauth: true,
+                                limit: 20
+                            }, response );
+                        },
+                        appendTo: "#taxa_autocomplete",
+                        search: function() {
+                            const term = extractLast( this.value );
+                            if ( term.length < 4 ) {
                                 return false;
                             }
-                        },{}
-                    );
+                        },
+                        focus: function() {
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            const terms = split( this.value );
+                            terms.pop();
+                            terms.push( ui.item.value );
+                            this.value = terms.join( ", " );
+                            return false;
+                        }
+                    },{}
+                );
             }
 
             spatialModuleInitialising = true;
@@ -226,19 +226,19 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-            if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
-            }
-            ?>
-            searchTermsArr = getSearchTermsArr();
-            setInputFormBySearchTermsArr();
-            createShapesFromSearchTermsArr();
-            setCollectionForms();
-            loadPoints();
-            <?php
+                if($stArrJson){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                searchTermsArr = getSearchTermsArr();
+                setInputFormBySearchTermsArr();
+                createShapesFromSearchTermsArr();
+                setCollectionForms();
+                loadPoints();
+                <?php
             }
             ?>
             spatialModuleInitialising = false;
