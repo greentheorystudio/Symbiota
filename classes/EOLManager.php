@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('ImageShared.php');
-include_once('EOLUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/EOLUtilities.php');
 
 class EOLManager {
 

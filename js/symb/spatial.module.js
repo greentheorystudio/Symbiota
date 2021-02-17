@@ -363,6 +363,36 @@ function changeBaseMap(){
     let blsource;
     const selection = document.getElementById('base-map').value;
     const baseLayer = map.getLayers().getArray()[0];
+    if(selection === 'googleroadmap'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlealteredroadmap'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googleterrain'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlehybrid'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlesatellite'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
     if(selection === 'worldtopo'){
         blsource = new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',

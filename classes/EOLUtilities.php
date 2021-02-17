@@ -1,5 +1,5 @@
 <?php
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class EOLUtilities {
 

@@ -18,7 +18,8 @@
     "ext-openssl": "*",
     "ext-simplexml": "*",
     "ext-xml": "*",
-    "ext-zip": "*"
+    "ext-zip": "*",
+    "phpmailer/phpmailer": "^6.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master"

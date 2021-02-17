@@ -4,14 +4,15 @@ include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$CHARSET);
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
 $projValue = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$DEFAULT_LANG;
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
+$showAllImages = array_key_exists('allimages',$_REQUEST);
 
 $taxonManager = new TaxonProfileManager();
-if($taxAuthId || $taxAuthId == '0') {
+if($taxAuthId || $taxAuthId === 0) {
     $taxonManager->setTaxAuthId($taxAuthId);
 }
 if($clValue) {
@@ -24,32 +25,33 @@ if($lang) {
     $taxonManager->setLanguage($lang);
 }
 if($taxonValue) {
-	$taxonManager->setTaxon($taxonValue);
-	$taxonManager->setAttributes();
+    $taxonManager->setTaxon($taxonValue);
+    $taxonManager->setAttributes();
 }
 $ambiguous = $taxonManager->getAmbSyn();
 $acceptedName = $taxonManager->getAcceptance();
 $synonymArr = $taxonManager->getSynonymArr();
 $spDisplay = $taxonManager->getDisplayName();
-$taxonRank = $taxonManager->getRankId();
+$taxonRank = (int)$taxonManager->getRankId();
 $links = $taxonManager->getTaxaLinks();
 $vernStr = $taxonManager->getVernacularStr();
+$vernArr = $taxonManager->getVernacularArr();
 $synStr = $taxonManager->getSynonymStr();
 if($links){
-	foreach($links as $linkKey => $linkUrl){
-		if($linkUrl['title'] === 'REDIRECT'){
-			$locUrl = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$linkUrl['url']);
-			header('Location: '.$locUrl);
-			exit;
-		}
-	}
+    foreach($links as $linkKey => $linkUrl){
+        if($linkUrl['title'] === 'REDIRECT'){
+            $locUrl = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$linkUrl['url']);
+            header('Location: '.$locUrl);
+            exit;
+        }
+    }
 }
 
 $styleClass = '';
 if($taxonRank > 180) {
     $styleClass = 'species';
 }
-elseif($taxonRank == 180) {
+elseif($taxonRank === 180) {
     $styleClass = 'genus';
 }
 else {
@@ -59,15 +61,15 @@ else {
 $displayLocality = 0;
 $isEditor = false;
 if($SYMB_UID){
-	if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
-		$isEditor = true;
-	}
-	if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-		$displayLocality = 1;
-	}
+    if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+        $isEditor = true;
+    }
+    if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+        $displayLocality = 1;
+    }
 }
-if($taxonManager->getSecurityStatus() == 0){
-	$displayLocality = 1;
+if((int)$taxonManager->getSecurityStatus() === 0){
+    $displayLocality = 1;
 }
 $taxonManager->setDisplayLocality($displayLocality);
 $descr = array();
@@ -82,23 +84,22 @@ else{
 
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' - ' .$spDisplay; ?></title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/speciesprofilebase.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $DEFAULT_TITLE. ' - ' .$spDisplay; ?></title>
+    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/speciesprofilebase.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
-	<script type="text/javascript">
-		let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
-		const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
-		let tid = <?php echo $taxonManager->getTid(); ?>;
-	</script>
-	<script src="../js/symb/taxa.index.js?ver=20170310" type="text/javascript"></script>
-	<?php
+    <link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js"></script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script type="text/javascript">
+        let currentLevel = <?php echo ($descrDisplayLevel?: '1'); ?>;
+        const levelArr = [<?php echo ($descr?"'".implode("','",array_keys($descr))."'":''); ?>];
+        const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
+        let tid = <?php echo $taxonManager->getTid(); ?>;
+    </script>
+    <script src="../js/symb/taxa.index.js?ver=20210201" type="text/javascript"></script>
+    <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){
             echo '<link href="includes/config/'.$cssVal.'?ver=150106" type="text/css" rel="stylesheet" id="editorCssLink" />';

@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceMaintenance.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
 
 class RareSpeciesManager {
     

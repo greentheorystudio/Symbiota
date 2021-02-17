@@ -78,9 +78,7 @@ if($action && $action === 'Load Images') {
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/symb/images.index.js?ver=20170711" type="text/javascript"></script>
 	<meta name='keywords' content='' />
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
 		let phArr = <?php echo (isset($previousCriteria['phjson'])&&$previousCriteria['phjson']?"JSON.parse('".$previousCriteria['phjson']."')": 'new Array()'); ?>;
 

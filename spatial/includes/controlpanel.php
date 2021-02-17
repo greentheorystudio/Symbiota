@@ -27,14 +27,19 @@
             <div id="basecontrol">
                 <span class="maptext">Base Layer</span>
                 <select data-role="none" id="base-map" onchange="changeBaseMap();">
+                    <option value="googleterrain">Google Terrain</option>
+                    <option value="googleroadmap">Google Terrain-Roadmap</option>
+                    <option value="googlealteredroadmap">Google Roadmap</option>
+                    <option value="googlehybrid">Google Satellite-Roadmap</option>
+                    <option value="googlesatellite">Google Satellite</option>
                     <option value="worldtopo">ESRI World Topo</option>
-                    <option value="openstreet">OpenStreetMap</option>
-                    <option value="blackwhite">Stamen Design Black &amp; White</option>
                     <option value="worldimagery">ESRI World Imagery</option>
+                    <option value="esristreet">ESRI StreetMap</option>
                     <option value="ocean">ESRI Ocean</option>
                     <option value="ngstopo">National Geographic Topo</option>
                     <option value="natgeoworld">National Geographic World</option>
-                    <option value="esristreet">ESRI StreetMap</option>
+                    <option value="openstreet">OpenStreetMap</option>
+                    <option value="blackwhite">Stamen Design Black &amp; White</option>
                 </select>
             </div>
         </div>

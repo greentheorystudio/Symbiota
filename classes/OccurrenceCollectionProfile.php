@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceMaintenance.php');
-include_once('UuidFactory.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class OccurrenceCollectionProfile {
 
@@ -180,7 +180,7 @@ class OccurrenceCollectionProfile {
 				$delimiter = '';
 				foreach($pathArr as $pArr){
 					$outStr .= $delimiter.'<a href="'.$pArr['path'].'" target="_blank">'.$pArr['title'].'</a>';
-					$delimiter = '<br/>';
+					$delimiter = ', ';
 				}
 				$outStr .= '</div>';
 			}
