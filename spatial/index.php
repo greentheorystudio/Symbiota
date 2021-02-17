@@ -85,7 +85,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=306" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=308" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -102,7 +102,87 @@ $dbArr = array();
             });
         });
 
+        $(window).resize(function(){
+            let winHeight = $(window).height();
+            winHeight = winHeight + "px";
+            document.getElementById('spatialpanel').style.height = winHeight;
+            $("#accordion").accordion("refresh");
+        });
+
+        $(document).on("pageloadfailed", function(event){
+            event.preventDefault();
+        });
+
         $(document).ready(function() {
+            if(document.getElementById("layercontroltable")){
+                setLayersTable();
+            }
+
+            if(document.getElementById("taxa")){
+                $( "#taxa" )
+                    .bind( "keydown", function( event ) {
+                        if ( event.keyCode == $.ui.keyCode.TAB &&
+                            $( this ).data( "autocomplete" ).menu.active ) {
+                            event.preventDefault();
+                        }
+                    })
+                    .autocomplete({
+                            source: function( request, response ) {
+                                const t = document.getElementById("taxontype").value;
+                                let rankLow = '';
+                                let rankHigh = '';
+                                let rankLimit = '';
+                                let source = '';
+                                if(t == 5){
+                                    source = '../webservices/autofillvernacular.php';
+                                }
+                                else{
+                                    source = '../webservices/autofillsciname.php';
+                                }
+                                if(t == 4){
+                                    rankLow = 21;
+                                    rankHigh = 139;
+                                }
+                                else if(t == 2){
+                                    rankLimit = 140;
+                                }
+                                else if(t == 3){
+                                    rankLow = 141;
+                                }
+                                else{
+                                    rankLow = 140;
+                                }
+                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                                $.getJSON( source, {
+                                    term: extractLast( request.term ),
+                                    rlow: rankLow,
+                                    rhigh: rankHigh,
+                                    rlimit: rankLimit,
+                                    hideauth: true,
+                                    limit: 20
+                                }, response );
+                            },
+                            appendTo: "#taxa_autocomplete",
+                            search: function() {
+                                const term = extractLast( this.value );
+                                if ( term.length < 4 ) {
+                                    return false;
+                                }
+                            },
+                            focus: function() {
+                                return false;
+                            },
+                            select: function( event, ui ) {
+                                const terms = split( this.value );
+                                terms.pop();
+                                terms.push( ui.item.value );
+                                this.value = terms.join( ", " );
+                                return false;
+                            }
+                        },{}
+                    );
+            }
+
             spatialModuleInitialising = true;
             initializeSearchStorage(<?php echo $queryId; ?>);
 
@@ -146,19 +226,19 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-                if($stArrJson){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
-                <?php
+            if($stArrJson){
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
+            }
+            ?>
+            searchTermsArr = getSearchTermsArr();
+            setInputFormBySearchTermsArr();
+            createShapesFromSearchTermsArr();
+            setCollectionForms();
+            loadPoints();
+            <?php
             }
             ?>
             spatialModuleInitialising = false;
@@ -203,124 +283,6 @@ $dbArr = array();
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
     const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
-    let spatialModuleInitialising = false;
-    let inputResponseData = {};
-    let geoPolyArr = [];
-    let geoCircleArr = [];
-    let geoBoundingBoxArr = {};
-    let geoPointArr = [];
-    let layersArr = [];
-    let mouseCoords = [];
-    let selections = [];
-    let collSymbology = [];
-    let taxaSymbology = [];
-    let collKeyArr = [];
-    let taxaKeyArr = [];
-    let queryRecCnt = 0;
-    let draw;
-    let clustersource;
-    let loadPointsEvent = false;
-    let taxaCnt = 0;
-    let lazyLoadCnt = 20000;
-    let clusterDistance = 50;
-    let clusterPoints = true;
-    let showHeatMap = false;
-    let heatMapRadius = 5;
-    let heatMapBlur = 15;
-    let mapSymbology = 'coll';
-    let clusterKey = 'CollectionName';
-    let maxFeatureCount;
-    let currentResolution;
-    let activeLayer = 'none';
-    let shapeActive = false;
-    let pointActive = false;
-    let spiderCluster;
-    let spiderFeature;
-    let hiddenClusters = [];
-    let clickedFeatures = [];
-    let dragDrop1 = false;
-    let dragDrop2 = false;
-    let dragDrop3 = false;
-    let dragDropTarget = '';
-    let dsOldestDate = '';
-    let dsNewestDate = '';
-    let tsOldestDate = '';
-    let tsNewestDate = '';
-    let dateSliderActive = false;
-    let sliderdiv = '';
-    let loadingTimer = 0;
-    let loadingComplete = true;
-    let returnClusters = false;
-    let dsAnimDuration = '';
-    let dsAnimTime = '';
-    let dsAnimImageSave = false;
-    let dsAnimReverse = false;
-    let dsAnimDual = false;
-    let dsAnimLow = '';
-    let dsAnimHigh = '';
-    let dsAnimStop = true;
-    let dsAnimation = '';
-    let zipFile = '';
-    let zipFolder = '';
-    let transformStartAngle = 0;
-    let transformD = [0,0];
-    let transformFirstPoint = false;
-    const dragDropStyle = {
-        'Point': new ol.style.Style({
-            image: new ol.style.Circle({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,255,0,0.5)'
-                }),
-                radius: 5,
-                stroke: new ol.style.Stroke({
-                    color: '#ff0',
-                    width: 1
-                })
-            })
-        }),
-        'LineString': new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: '#f00',
-                width: 3
-            })
-        }),
-        'Polygon': new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(170,170,170,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            })
-        }),
-        'MultiPoint': new ol.style.Style({
-            image: new ol.style.Circle({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255,0,255,0.5)'
-                }),
-                radius: 5,
-                stroke: new ol.style.Stroke({
-                    color: '#f0f',
-                    width: 1
-                })
-            })
-        }),
-        'MultiLineString': new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: '#0f0',
-                width: 3
-            })
-        }),
-        'MultiPolygon': new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(170,170,170,0.3)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#000000',
-                width: 1
-            })
-        })
-    };
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');
@@ -357,31 +319,6 @@ $dbArr = array();
         finderpopupcloser.blur();
         return false;
     };
-
-    const mapProjection = new ol.proj.Projection({
-        code: 'EPSG:3857'
-    });
-
-    const wgs84Projection = new ol.proj.Projection({
-        code: 'EPSG:4326',
-        units: 'degrees'
-    });
-
-    const projection = ol.proj.get('EPSG:4326');
-    const projectionExtent = projection.getExtent();
-    const tileSize = 512;
-    const maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
-    const resolutions = new Array(16);
-    for (let z = 0; z < 16; ++z) {
-        resolutions[z] = maxResolution / Math.pow(2, z);
-    }
-
-    const baselayer = new ol.layer.Tile({
-        source: new ol.source.XYZ({
-            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
-            crossOrigin: 'anonymous'
-        })
-    });
 
     const selectsource = new ol.source.Vector({
         wrapX: true
@@ -463,22 +400,6 @@ $dbArr = array();
     layersArr['pointv'] = pointvectorlayer;
     layersArr['heat'] = heatmaplayer;
     layersArr['spider'] = spiderLayer;
-
-    const zoomslider = new ol.control.ZoomSlider();
-    const scaleLineControl_us = new ol.control.ScaleLine({target: document.getElementById('mapscale_us'), units: 'us'});
-    const scaleLineControl_metric = new ol.control.ScaleLine({
-        target: document.getElementById('mapscale_metric'),
-        units: 'metric'
-    });
-    const dragAndDropInteraction = new ol.interaction.DragAndDrop({
-        formatConstructors: [
-            ol.format.GPX,
-            ol.format.GeoJSON,
-            ol.format.IGC,
-            ol.format.KML,
-            ol.format.TopoJSON
-        ]
-    });
 
     const selectInteraction = new ol.interaction.Select({
         layers: [layersArr['select']],
@@ -577,6 +498,78 @@ $dbArr = array();
         stretch: true
     });
 
+    const dragAndDropInteraction = new ol.interaction.DragAndDrop({
+        formatConstructors: [
+            ol.format.GPX,
+            ol.format.GeoJSON,
+            ol.format.IGC,
+            ol.format.KML,
+            ol.format.TopoJSON
+        ]
+    });
+
+    dragAndDropInteraction.on('addfeatures', function(event) {
+        let filename = event.file.name.split('.');
+        const fileType = filename.pop();
+        filename = filename.join("");
+        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
+            if(fileType === 'geojson' || fileType === 'kml'){
+                if(setDragDropTarget()){
+                    const infoArr = [];
+                    infoArr['Name'] = dragDropTarget;
+                    infoArr['layerType'] = 'vector';
+                    infoArr['Title'] = filename;
+                    infoArr['Abstract'] = '';
+                    infoArr['DefaultCRS'] = '';
+                    const sourceIndex = dragDropTarget + 'Source';
+                    let features = event.features;
+                    if(fileType === 'kml'){
+                        const geoJSONFormat = new ol.format.GeoJSON();
+                        features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
+                    }
+                    layersArr[sourceIndex] = new ol.source.Vector({
+                        features: features
+                    });
+                    layersArr[dragDropTarget].setStyle(getDragDropStyle);
+                    layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                    //buildLayerTableRow(infoArr,true);
+                    map.getView().fit(layersArr[sourceIndex].getExtent());
+                    //toggleLayerTable();
+                }
+            }
+            else if(fileType === 'zip'){
+                if(setDragDropTarget()){
+                    getArrayBuffer(event.file).then((data) => {
+                        shp(data).then((geojson) => {
+                            const infoArr = [];
+                            infoArr['Name'] = dragDropTarget;
+                            infoArr['layerType'] = 'vector';
+                            infoArr['Title'] = filename;
+                            infoArr['Abstract'] = '';
+                            infoArr['DefaultCRS'] = '';
+                            const sourceIndex = dragDropTarget + 'Source';
+                            const format = new ol.format.GeoJSON();
+                            const features = format.readFeatures(geojson, {
+                                featureProjection: 'EPSG:3857'
+                            });
+                            layersArr[sourceIndex] = new ol.source.Vector({
+                                features: features
+                            });
+                            layersArr[dragDropTarget].setStyle(getDragDropStyle);
+                            layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                            buildLayerTableRow(infoArr,true);
+                            map.getView().fit(layersArr[sourceIndex].getExtent());
+                            toggleLayerTable();
+                        });
+                    });
+                }
+            }
+        }
+        else{
+            alert('The drag and drop file loading only supports GeoJSON, kml, and shapefile zip archives.');
+        }
+    });
+
     function editVectorLayers(c,title){
         const layer = c.value;
         if(c.checked === true){
@@ -633,6 +626,16 @@ $dbArr = array();
         renderer: 'canvas'
     });
 
+    const scaleLineControl_us = new ol.control.ScaleLine({
+        target: document.getElementById('mapscale_us'),
+        units: 'us'
+    });
+
+    const scaleLineControl_metric = new ol.control.ScaleLine({
+        target: document.getElementById('mapscale_metric'),
+        units: 'metric'
+    });
+
     const mousePositionControl = new ol.control.MousePosition({
         coordinateFormat: coordFormat(),
         projection: 'EPSG:4326',
@@ -640,6 +643,8 @@ $dbArr = array();
         target: document.getElementById('mapcoords'),
         undefinedHTML: '&nbsp;'
     });
+
+    const zoomslider = new ol.control.ZoomSlider();
 
     map.addControl(zoomslider);
     map.addControl(scaleLineControl_us);
@@ -678,80 +683,6 @@ $dbArr = array();
             hiddenClusters = [];
             spiderCluster = '';
             layersArr['pointv'].getSource().changed();
-        }
-    });
-
-    function getArrayBuffer(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = () => {
-                const arrayBuffer = reader.result;
-                const bytes = new Uint8Array(arrayBuffer);
-                resolve(bytes);
-            };
-        });
-    }
-
-    dragAndDropInteraction.on('addfeatures', function(event) {
-        let filename = event.file.name.split('.');
-        const fileType = filename.pop();
-        filename = filename.join("");
-        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
-            if(fileType === 'geojson' || fileType === 'kml'){
-                if(setDragDropTarget()){
-                    const infoArr = [];
-                    infoArr['Name'] = dragDropTarget;
-                    infoArr['layerType'] = 'vector';
-                    infoArr['Title'] = filename;
-                    infoArr['Abstract'] = '';
-                    infoArr['DefaultCRS'] = '';
-                    const sourceIndex = dragDropTarget + 'Source';
-                    let features = event.features;
-                    if(fileType === 'kml'){
-                        const geoJSONFormat = new ol.format.GeoJSON();
-                        features = geoJSONFormat.readFeatures(geoJSONFormat.writeFeatures(features));
-                    }
-                    layersArr[sourceIndex] = new ol.source.Vector({
-                        features: features
-                    });
-                    layersArr[dragDropTarget].setStyle(getDragDropStyle);
-                    layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                    buildLayerTableRow(infoArr,true);
-                    map.getView().fit(layersArr[sourceIndex].getExtent());
-                    toggleLayerTable();
-                }
-            }
-            else if(fileType === 'zip'){
-                if(setDragDropTarget()){
-                    getArrayBuffer(event.file).then((data) => {
-                        shp(data).then((geojson) => {
-                            const infoArr = [];
-                            infoArr['Name'] = dragDropTarget;
-                            infoArr['layerType'] = 'vector';
-                            infoArr['Title'] = filename;
-                            infoArr['Abstract'] = '';
-                            infoArr['DefaultCRS'] = '';
-                            const sourceIndex = dragDropTarget + 'Source';
-                            const format = new ol.format.GeoJSON();
-                            const features = format.readFeatures(geojson, {
-                                featureProjection: 'EPSG:3857'
-                            });
-                            layersArr[sourceIndex] = new ol.source.Vector({
-                                features: features
-                            });
-                            layersArr[dragDropTarget].setStyle(getDragDropStyle);
-                            layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                            buildLayerTableRow(infoArr,true);
-                            map.getView().fit(layersArr[sourceIndex].getExtent());
-                            toggleLayerTable();
-                        });
-                    });
-                }
-            }
-        }
-        else{
-            alert('The drag and drop file loading only supports GeoJSON, kml, and shapefile zip archives.');
         }
     });
 

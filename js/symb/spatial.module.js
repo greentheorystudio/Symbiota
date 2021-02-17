@@ -1,78 +1,145 @@
-$(window).resize(function(){
-    let winHeight = $(window).height();
-    winHeight = winHeight + "px";
-    document.getElementById('spatialpanel').style.height = winHeight;
-    $("#accordion").accordion("refresh");
-});
-
-$(document).on("pageloadfailed", function(event){
-    event.preventDefault();
-});
-
-$(document).ready(function() {
-    setLayersTable();
-
-    $( "#taxa" )
-        .bind( "keydown", function( event ) {
-            if ( event.keyCode == $.ui.keyCode.TAB &&
-                $( this ).data( "autocomplete" ).menu.active ) {
-                event.preventDefault();
-            }
+let spatialModuleInitialising = false;
+let inputResponseData = {};
+let geoPolyArr = [];
+let geoCircleArr = [];
+let geoBoundingBoxArr = {};
+let geoPointArr = [];
+let layersArr = [];
+let mouseCoords = [];
+let selections = [];
+let collSymbology = [];
+let taxaSymbology = [];
+let collKeyArr = [];
+let taxaKeyArr = [];
+let queryRecCnt = 0;
+let draw;
+let clustersource;
+let loadPointsEvent = false;
+let taxaCnt = 0;
+let lazyLoadCnt = 20000;
+let clusterDistance = 50;
+let clusterPoints = true;
+let showHeatMap = false;
+let heatMapRadius = 5;
+let heatMapBlur = 15;
+let mapSymbology = 'coll';
+let clusterKey = 'CollectionName';
+let maxFeatureCount;
+let currentResolution;
+let activeLayer = 'none';
+let shapeActive = false;
+let pointActive = false;
+let spiderCluster;
+let spiderFeature;
+let hiddenClusters = [];
+let clickedFeatures = [];
+let dragDrop1 = false;
+let dragDrop2 = false;
+let dragDrop3 = false;
+let dragDropTarget = '';
+let dsOldestDate = '';
+let dsNewestDate = '';
+let tsOldestDate = '';
+let tsNewestDate = '';
+let dateSliderActive = false;
+let sliderdiv = '';
+let loadingTimer = 0;
+let loadingComplete = true;
+let returnClusters = false;
+let dsAnimDuration = '';
+let dsAnimTime = '';
+let dsAnimImageSave = false;
+let dsAnimReverse = false;
+let dsAnimDual = false;
+let dsAnimLow = '';
+let dsAnimHigh = '';
+let dsAnimStop = true;
+let dsAnimation = '';
+let zipFile = '';
+let zipFolder = '';
+let transformStartAngle = 0;
+let transformD = [0,0];
+let transformFirstPoint = false;
+const dragDropStyle = {
+    'Point': new ol.style.Style({
+        image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,255,0,0.5)'
+            }),
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: '#ff0',
+                width: 1
+            })
         })
-        .autocomplete({
-            source: function( request, response ) {
-                const t = document.getElementById("taxontype").value;
-                let rankLow = '';
-                let rankHigh = '';
-                let rankLimit = '';
-                let source = '';
-                if(t == 5){
-                    source = '../webservices/autofillvernacular.php';
-                }
-                else{
-                    source = '../webservices/autofillsciname.php';
-                }
-                if(t == 4){
-                    rankLow = 21;
-                    rankHigh = 139;
-                }
-                else if(t == 2){
-                    rankLimit = 140;
-                }
-                else if(t == 3){
-                    rankLow = 141;
-                }
-                else{
-                    rankLow = 140;
-                }
-                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                $.getJSON( source, {
-                    term: extractLast( request.term ),
-                    rlow: rankLow,
-                    rhigh: rankHigh,
-                    rlimit: rankLimit,
-                    hideauth: true,
-                    limit: 20
-                }, response );
-            },
-            appendTo: "#taxa_autocomplete",
-            search: function() {
-                const term = extractLast( this.value );
-                if ( term.length < 4 ) {
-                    return false;
-                }
-            },
-            focus: function() {
-                return false;
-            },
-            select: function( event, ui ) {
-                const terms = split( this.value );
-                terms.pop();
-                terms.push( ui.item.value );
-                this.value = terms.join( ", " );
-                return false;
-            }
-        },{});
+    }),
+    'LineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#f00',
+            width: 3
+        })
+    }),
+    'Polygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(170,170,170,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        })
+    }),
+    'MultiPoint': new ol.style.Style({
+        image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,255,0.5)'
+            }),
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: '#f0f',
+                width: 1
+            })
+        })
+    }),
+    'MultiLineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#0f0',
+            width: 3
+        })
+    }),
+    'MultiPolygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(170,170,170,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        })
+    })
+};
+
+const mapProjection = new ol.proj.Projection({
+    code: 'EPSG:3857'
+});
+
+const wgs84Projection = new ol.proj.Projection({
+    code: 'EPSG:4326',
+    units: 'degrees'
+});
+
+const projection = ol.proj.get('EPSG:4326');
+const projectionExtent = projection.getExtent();
+const tileSize = 512;
+const maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
+const resolutions = new Array(16);
+for (let z = 0; z < 16; ++z) {
+    resolutions[z] = maxResolution / Math.pow(2, z);
+}
+
+const baselayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+        crossOrigin: 'anonymous'
+    })
 });
 
 function addLayerToSelList(layer,title){
@@ -1714,6 +1781,18 @@ function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
     xmlContent += '</wps:ResponseForm>';
     xmlContent += '</wps:Execute>';
     return xmlContent;
+}
+
+function getArrayBuffer(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = () => {
+            const arrayBuffer = reader.result;
+            const bytes = new Uint8Array(arrayBuffer);
+            resolve(bytes);
+        };
+    });
 }
 
 function getDragDropStyle(feature, resolution) {
