@@ -69,7 +69,7 @@ if($collMap){
 	</script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.coordinateValidation.js" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
 	<script src="../../js/symb/collections.observationsubmit.js?ver=170222" type="text/javascript"></script>
 </head>
 <body>
