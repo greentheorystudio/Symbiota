@@ -56,39 +56,6 @@ function toggleCsMode(modeId){
 	}
 }
 
-function openMappingAid() {
-	const f = document.fullform;
-	const latDef = f.decimallatitude.value;
-	const lngDef = f.decimallongitude.value;
-	const errRadius = f.coordinateuncertaintyinmeters.value;
-	let zoom = 5;
-	if(latDef && lngDef) {
-		zoom = 11;
-	}
-	const mapWindow = open("mappointaid.php?latdef=" + latDef + "&lngdef=" + lngDef + "&errrad=" + errRadius + "&zoom=" + zoom, "mappointaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if(mapWindow != null){
-		if (mapWindow.opener == null) {
-			mapWindow.opener = self;
-		}
-		mapWindow.focus();
-	}
-	else{
-		alert("Unable to open map, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
-function openMappingPolyAid() {
-	const zoom = 5;
-	const mapWindow = open("../../tools/mappolyaid.php?zoom=" + zoom, "mappolyaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if(mapWindow != null){
-		if (mapWindow.opener == null) mapWindow.opener = self;
-		mapWindow.focus();
-	}
-	else{
-		alert("Unable to open map, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
 function geoLocateLocality(){
 	const f = document.fullform;
 	const country = encodeURIComponent(f.country.value);
