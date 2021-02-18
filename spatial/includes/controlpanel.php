@@ -67,6 +67,9 @@
             <?php
             if($inputWindowMode){
                 ?>
+                <div id="infopopupLink" style="margin-left:22px;float:left;">
+                    <span class="maptext"><a class="infopopup_open" href="#infopopup"><b>Info</b></a></span>
+                </div>
                 <div style="margin-left:22px;float:left;">
                     <button data-role="none" id="inputSubmitButton" type="button" onclick='processInputSubmit();' disabled>Submit <?php echo $inputWindowSubmitText; ?></button>
                 </div>
@@ -79,6 +82,21 @@
         </div>
         <div style="clear:both;"></div>
         <?php
+        if(in_array('uncertainty', $inputWindowModeTools, true) || in_array('radius', $inputWindowModeTools, true)){
+            $labelText = '';
+            if(in_array('uncertainty', $inputWindowModeTools, true)){
+                $labelText = 'Coordinate uncertainty';
+            }
+            elseif(in_array('radius', $inputWindowModeTools, true)){
+                $labelText = 'Radius';
+            }
+            ?>
+            <div style="margin-top:8px;clear:both;color:white;">
+                <span class="maptext"><?php echo $labelText; ?> in meters: </span>
+                <input data-role="none" id="inputpointuncertainty" type="text" style="width:100px;" name="inputpointuncertainty" onchange="processInputPointUncertaintyChange();" title="Coordinate uncertainty in meters" />
+            </div>
+            <?php
+        }
         if(!$inputWindowMode){
             ?>
             <div id="dateslidercontrol" style="margin-top:5px;display:none;">

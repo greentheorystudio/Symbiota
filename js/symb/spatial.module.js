@@ -560,7 +560,39 @@ function changeDraw() {
         }
 
         draw.on('drawend', function(evt){
-            evt.feature.set('geoType',typeSelect.value);
+            if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('point')){
+                const featureClone = evt.feature.clone();
+                const geoType = featureClone.getGeometry().getType();
+                const geoJSONFormat = new ol.format.GeoJSON();
+                if(geoType === 'Point'){
+                    selectsource.clear();
+                    selectedFeatures.clear();
+                    uncertaintycirclesource.clear();
+                    const selectiongeometry = featureClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                    let pointCoords = JSON.parse(geojsonStr).coordinates;
+                    const pointObj = {
+                        decimalLatitude: pointCoords[1],
+                        decimalLongitude: pointCoords[0]
+                    };
+                    geoPointArr.push(pointObj);
+                    selectedFeatures.push(evt.feature);
+                    processInputSelections();
+                    if((INPUTTOOLSARR.includes('uncertainty') || INPUTTOOLSARR.includes('radius')) && document.getElementById("inputpointuncertainty")){
+                        if(document.getElementById("inputpointuncertainty").value && !isNaN(document.getElementById("inputpointuncertainty").value && document.getElementById("inputpointuncertainty").value > 0)){
+                            const pointRadius = {};
+                            pointRadius.pointlat = pointCoords[1];
+                            pointRadius.pointlong = pointCoords[0];
+                            pointRadius.radius = document.getElementById("inputpointuncertainty").value;
+                            createUncertaintyCircleFromPointRadius(pointRadius);
+                        }
+                    }
+                }
+            }
+            else{
+                evt.feature.set('geoType',typeSelect.value);
+            }
             typeSelect.value = 'None';
             map.removeInteraction(draw);
             if(!shapeActive){
@@ -581,7 +613,6 @@ function changeDraw() {
             }
             draw = '';
         });
-
         map.addInteraction(draw);
     }
     else{
@@ -1502,6 +1533,14 @@ function createShapesFromSearchTermsArr(){
     }
 }
 
+function createUncertaintyCircleFromPointRadius(prad){
+    const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
+    const circle = new ol.geom.Circle(centerCoords);
+    circle.setRadius(Number(prad.radius));
+    const circleFeature = new ol.Feature(circle);
+    uncertaintycirclesource.addFeature(circleFeature);
+}
+
 function deleteSelections(){
     selectInteraction.getFeatures().forEach(function(feature){
         layersArr['select'].getSource().removeFeature(feature);
@@ -2134,6 +2173,12 @@ function loadInputParentParams(){
     if(opener.document.getElementById('circleArr') && opener.document.getElementById('circleArr').value && INPUTTOOLSARR.length === 0){
         processInputParentCircleArrParams();
     }
+    if(opener.document.getElementById('decimallatitude') && opener.document.getElementById('decimallatitude').value && opener.document.getElementById('decimallongitude') && opener.document.getElementById('decimallongitude').value && INPUTTOOLSARR.includes('point')){
+        processInputParentPointParams();
+    }
+    if(opener.document.getElementById('footprintWKT') && opener.document.getElementById('footprintWKT').value && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt')){
+        processInputParentPolyWKTParams();
+    }
 }
 
 function loadPoints(){
@@ -2305,6 +2350,50 @@ function processInputParentCircleArrParams(){
     }
 }
 
+function processInputParentPointParams(){
+    let decLat = null;
+    let decLong = null;
+    if(opener.document.getElementById('decimallatitude')){
+        decLat = opener.document.getElementById('decimallatitude').value;
+    }
+    if(opener.document.getElementById('decimallongitude')){
+        decLong = opener.document.getElementById('decimallongitude').value;
+    }
+    if(decLat && decLong){
+        let openerRadius = 0;
+        if(opener.document.getElementById('coordinateuncertaintyinmeters') && opener.document.getElementById('coordinateuncertaintyinmeters').value && INPUTTOOLSARR.includes('uncertainty')){
+            if(!isNaN(opener.document.getElementById('coordinateuncertaintyinmeters').value)){
+                openerRadius = opener.document.getElementById('coordinateuncertaintyinmeters').value;
+            }
+        }
+        if(opener.document.getElementById('pointradiusmeters') && opener.document.getElementById('pointradiusmeters').value && INPUTTOOLSARR.includes('radius')){
+            if(!isNaN(opener.document.getElementById('pointradiusmeters').value)){
+                openerRadius = opener.document.getElementById('pointradiusmeters').value;
+            }
+        }
+        if(openerRadius > 0){
+            const centerCoords = ol.proj.fromLonLat([decLat, decLong]);
+            const circle = new ol.geom.Circle(centerCoords);
+            circle.setRadius(Number(openerRadius));
+            const circleFeature = new ol.Feature(circle);
+            uncertaintycirclesource.addFeature(circleFeature);
+        }
+        const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
+            decLong, decLat
+        ]));
+        const pointFeature = new ol.Feature(pointGeom);
+        selectsource.addFeature(pointFeature);
+        selectedFeatures.push(pointFeature);
+        processInputSelections();
+        const selectextent = selectsource.getExtent();
+        map.getView().fit(selectextent,map.getSize());
+        let fittedZoom = map.getView().getZoom();
+        if(fittedZoom > 10){
+            map.getView().setZoom(fittedZoom - 8);
+        }
+    }
+}
+
 function processInputParentPointRadiusParams(){
     const pointRadius = {};
     pointRadius.pointlat = opener.document.getElementById('pointlat').value;
@@ -2319,6 +2408,54 @@ function processInputParentPolyArrParams(){
     const polyArr = JSON.parse(opener.document.getElementById('polyArr').value);
     if(Array.isArray(polyArr)){
         createPolysFromPolyArr(polyArr, true);
+    }
+}
+
+function processInputParentPolyWKTParams(){
+    let wktStr = '';
+    if(opener.document.getElementById('footprintWKT')){
+        wktStr = opener.document.getElementById('footprintWKT').value;
+    }
+    if(wktStr !== '' && (wktStr.startsWith("POLYGON") || wktStr.startsWith("MULTIPOLYGON"))){
+        let wktFormat = new ol.format.WKT();
+        const footprintpoly = wktFormat.readFeature(wktStr, mapProjection);
+        if(footprintpoly){
+            footprintpoly.getGeometry().transform(wgs84Projection,mapProjection);
+            selectsource.addFeature(footprintpoly);
+            selectedFeatures.push(footprintpoly);
+            processInputSelections();
+        }
+    }
+    const selectextent = selectsource.getExtent();
+    map.getView().fit(selectextent,map.getSize());
+    let fittedZoom = map.getView().getZoom();
+    if(fittedZoom > 10){
+        map.getView().setZoom(fittedZoom - 8);
+    }
+}
+
+function processInputPointUncertaintyChange(){
+    uncertaintycirclesource.clear();
+    const uncertaintyValue = document.getElementById("inputpointuncertainty").value;
+    if(uncertaintyValue && !isNaN(uncertaintyValue) && uncertaintyValue > 0){
+        selectInteraction.getFeatures().forEach(function(feature){
+            if(feature){
+                const featureClone = feature.clone();
+                const geoType = featureClone.getGeometry().getType();
+                const geoJSONFormat = new ol.format.GeoJSON();
+                if(geoType === 'Point'){
+                    const selectiongeometry = featureClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                    let pointCoords = JSON.parse(geojsonStr).coordinates;
+                    const pointRadius = {};
+                    pointRadius.pointlat = pointCoords[1];
+                    pointRadius.pointlong = pointCoords[0];
+                    pointRadius.radius = document.getElementById("inputpointuncertainty").value;
+                    createUncertaintyCircleFromPointRadius(pointRadius);
+                }
+            }
+        });
     }
 }
 
@@ -2392,7 +2529,7 @@ function processInputSelections(){
                     const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                     const simplegeometry = polySimple.getGeometry();
                     const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                    if(SOLRMODE) {
+                    if(SOLRMODE || INPUTTOOLSARR.includes('wkt')) {
                         const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                         geoPolyArr.push(wmswktString);
                     }
@@ -2461,31 +2598,100 @@ function processInputSelections(){
 }
 
 function processInputSubmit(){
+    const changeEvent = new Event("change");
     if(INPUTWINDOWMODE && INPUTTOOLSARR.length === 0){
         if(opener.document.getElementById('polyArr') && inputResponseData.hasOwnProperty('polyArr')){
             opener.document.getElementById('polyArr').value = JSON.stringify(inputResponseData['polyArr']);
-            opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
-            opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            opener.document.getElementById('polyArr').dispatchEvent(changeEvent);
+            if(opener.document.getElementById("spatialParamasNoCriteria")){
+                opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            }
+            if(opener.document.getElementById("spatialParamasCriteria")){
+                opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            }
         }
         if(opener.document.getElementById('circleArr') && inputResponseData.hasOwnProperty('circleArr')){
             opener.document.getElementById('circleArr').value = JSON.stringify(inputResponseData['circleArr']);
-            opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
-            opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            opener.document.getElementById('circleArr').dispatchEvent(changeEvent);
+            if(opener.document.getElementById("spatialParamasNoCriteria")){
+                opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            }
+            if(opener.document.getElementById("spatialParamasCriteria")){
+                opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            }
         }
     }
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('box') && inputResponseData.hasOwnProperty('boundingBoxArr')){
-        opener.document.getElementById('upperlat').value = inputResponseData['boundingBoxArr']['upperlat'];
-        opener.document.getElementById('bottomlat').value = inputResponseData['boundingBoxArr']['bottomlat'];
-        opener.document.getElementById('leftlong').value = inputResponseData['boundingBoxArr']['leftlong'];
-        opener.document.getElementById('rightlong').value = inputResponseData['boundingBoxArr']['rightlong'];
+        if(opener.document.getElementById('upperlat')){
+            opener.document.getElementById('upperlat').value = inputResponseData['boundingBoxArr']['upperlat'];
+            opener.document.getElementById('upperlat').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('bottomlat')){
+            opener.document.getElementById('bottomlat').value = inputResponseData['boundingBoxArr']['bottomlat'];
+            opener.document.getElementById('bottomlat').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('leftlong')){
+            opener.document.getElementById('leftlong').value = inputResponseData['boundingBoxArr']['leftlong'];
+            opener.document.getElementById('leftlong').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('rightlong')){
+            opener.document.getElementById('rightlong').value = inputResponseData['boundingBoxArr']['rightlong'];
+            opener.document.getElementById('rightlong').dispatchEvent(changeEvent);
+        }
     }
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('circle') && inputResponseData.hasOwnProperty('circleArr')){
-        opener.document.getElementById('pointlat').value = inputResponseData['circleArr'][0]['pointlat'];
-        opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
-        opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['groundradius'];
-        opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
-        opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
-        opener.document.getElementById('radiusunits').value = 'km';
+        if(opener.document.getElementById('pointlat')){
+            opener.document.getElementById('pointlat').value = inputResponseData['circleArr'][0]['pointlat'];
+            opener.document.getElementById('pointlat').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('pointlong')){
+            opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
+            opener.document.getElementById('pointlong').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('radiustemp')){
+            opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['groundradius'];
+            opener.document.getElementById('radiustemp').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('radius')){
+            opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
+            opener.document.getElementById('radius').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('groundradius')){
+            opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
+            opener.document.getElementById('groundradius').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('radiusunits')){
+            opener.document.getElementById('radiusunits').value = 'km';
+            opener.document.getElementById('radiusunits').dispatchEvent(changeEvent);
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt') && inputResponseData.hasOwnProperty('polyArr')){
+        if(opener.document.getElementById('footprintWKT')){
+            opener.document.getElementById('footprintWKT').value = inputResponseData['polyArr'][0];
+            opener.document.getElementById('footprintWKT').dispatchEvent(changeEvent);
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('point') && inputResponseData.hasOwnProperty('pointArr')){
+        if(opener.document.getElementById('decimallatitude')){
+            opener.document.getElementById('decimallatitude').value = inputResponseData['pointArr'][0]['decimalLatitude'];
+            opener.document.getElementById('decimallatitude').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('decimallongitude')){
+            opener.document.getElementById('decimallongitude').value = inputResponseData['pointArr'][0]['decimalLongitude'];
+            opener.document.getElementById('decimallongitude').dispatchEvent(changeEvent);
+        }
+        if(INPUTTOOLSARR.includes('uncertainty')){
+            if(opener.document.getElementById('coordinateuncertaintyinmeters')){
+                opener.document.getElementById('coordinateuncertaintyinmeters').value = document.getElementById('inputpointuncertainty').value;
+                opener.document.getElementById('coordinateuncertaintyinmeters').dispatchEvent(changeEvent);
+            }
+        }
+        if(INPUTTOOLSARR.includes('radius')){
+            if(opener.document.getElementById('pointradiusmeters')){
+                opener.document.getElementById('pointradiusmeters').value = document.getElementById('inputpointuncertainty').value;
+                opener.document.getElementById('pointradiusmeters').dispatchEvent(changeEvent);
+            }
+        }
     }
     self.close();
 }

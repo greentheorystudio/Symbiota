@@ -46,6 +46,7 @@ class ChecklistAdmin{
 				$retArr['defaultsettings'] = $row->defaultsettings;
 				$retArr['dynamicsql'] = $row->dynamicsql;
 				$retArr['datelastmodified'] = $row->datelastmodified;
+                $retArr['footprintwkt'] = $row->footprintwkt;
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');
 			}
 			$result->free();

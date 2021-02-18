@@ -119,9 +119,7 @@ dragAndDropInteraction.on('addfeatures', function(event) {
                 });
                 layersArr[dragDropTarget].setStyle(getDragDropStyle);
                 layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                //buildLayerTableRow(infoArr,true);
                 map.getView().fit(layersArr[sourceIndex].getExtent());
-                //toggleLayerTable();
             }
         }
         else if(fileType === 'zip'){

@@ -85,7 +85,7 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=308" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=312" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -127,60 +127,60 @@ $dbArr = array();
                         }
                     })
                     .autocomplete({
-                            source: function( request, response ) {
-                                const t = document.getElementById("taxontype").value;
-                                let rankLow = '';
-                                let rankHigh = '';
-                                let rankLimit = '';
-                                let source = '';
-                                if(t == 5){
-                                    source = '../webservices/autofillvernacular.php';
-                                }
-                                else{
-                                    source = '../webservices/autofillsciname.php';
-                                }
-                                if(t == 4){
-                                    rankLow = 21;
-                                    rankHigh = 139;
-                                }
-                                else if(t == 2){
-                                    rankLimit = 140;
-                                }
-                                else if(t == 3){
-                                    rankLow = 141;
-                                }
-                                else{
-                                    rankLow = 140;
-                                }
-                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                                $.getJSON( source, {
-                                    term: extractLast( request.term ),
-                                    rlow: rankLow,
-                                    rhigh: rankHigh,
-                                    rlimit: rankLimit,
-                                    hideauth: true,
-                                    limit: 20
-                                }, response );
-                            },
-                            appendTo: "#taxa_autocomplete",
-                            search: function() {
-                                const term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                const terms = split( this.value );
-                                terms.pop();
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
+                        source: function( request, response ) {
+                            const t = Number(document.getElementById("taxontype").value);
+                            let rankLow = '';
+                            let rankHigh = '';
+                            let rankLimit = '';
+                            let source = '';
+                            if(t === 5){
+                                source = '../webservices/autofillvernacular.php';
+                            }
+                            else{
+                                source = '../webservices/autofillsciname.php';
+                            }
+                            if(t === 4){
+                                rankLow = 21;
+                                rankHigh = 139;
+                            }
+                            else if(t === 2){
+                                rankLimit = 140;
+                            }
+                            else if(t === 3){
+                                rankLow = 141;
+                            }
+                            else{
+                                rankLow = 140;
+                            }
+                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                            $.getJSON( source, {
+                                term: extractLast( request.term ),
+                                rlow: rankLow,
+                                rhigh: rankHigh,
+                                rlimit: rankLimit,
+                                hideauth: true,
+                                limit: 20
+                            }, response );
+                        },
+                        appendTo: "#taxa_autocomplete",
+                        search: function() {
+                            const term = extractLast( this.value );
+                            if ( term.length < 4 ) {
                                 return false;
                             }
-                        },{}
-                    );
+                        },
+                        focus: function() {
+                            return false;
+                        },
+                        select: function( event, ui ) {
+                            const terms = split( this.value );
+                            terms.pop();
+                            terms.push( ui.item.value );
+                            this.value = terms.join( ", " );
+                            return false;
+                        }
+                    },{}
+                );
             }
 
             spatialModuleInitialising = true;
@@ -205,6 +205,9 @@ $dbArr = array();
                 transition: 'all 0.3s',
                 scrolllock: true
             });
+            $('#infopopup').popup({
+                transition: 'all 0.3s'
+            });
             $('#csvoptions').popup({
                 transition: 'all 0.3s',
                 scrolllock: true
@@ -226,19 +229,19 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-            if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
-            }
-            ?>
-            searchTermsArr = getSearchTermsArr();
-            setInputFormBySearchTermsArr();
-            createShapesFromSearchTermsArr();
-            setCollectionForms();
-            loadPoints();
-            <?php
+                if($stArrJson){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                searchTermsArr = getSearchTermsArr();
+                setInputFormBySearchTermsArr();
+                createShapesFromSearchTermsArr();
+                setCollectionForms();
+                loadPoints();
+                <?php
             }
             ?>
             spatialModuleInitialising = false;
@@ -346,6 +349,32 @@ $dbArr = array();
         })
     });
 
+    let uncertaintycirclesource = new ol.source.Vector({
+        wrapX: true
+    });
+    const uncertaintycirclelayer = new ol.layer.Vector({
+        source: uncertaintycirclesource,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0,0.3)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 1
+            }),
+            image: new ol.style.Circle({
+                radius: 7,
+                stroke: new ol.style.Stroke({
+                    color: '#000000',
+                    width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,0,0)'
+                })
+            })
+        })
+    });
+
     let pointvectorsource = new ol.source.Vector({
         wrapX: true
     });
@@ -396,6 +425,7 @@ $dbArr = array();
     layersArr['dragdrop1'] = dragdroplayer1;
     layersArr['dragdrop2'] = dragdroplayer2;
     layersArr['dragdrop3'] = dragdroplayer3;
+    layersArr['uncertainty'] = uncertaintycirclelayer;
     layersArr['select'] = selectlayer;
     layersArr['pointv'] = pointvectorlayer;
     layersArr['heat'] = heatmaplayer;
@@ -532,9 +562,9 @@ $dbArr = array();
                     });
                     layersArr[dragDropTarget].setStyle(getDragDropStyle);
                     layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
-                    //buildLayerTableRow(infoArr,true);
+                    buildLayerTableRow(infoArr,true);
                     map.getView().fit(layersArr[sourceIndex].getExtent());
-                    //toggleLayerTable();
+                    toggleLayerTable();
                 }
             }
             else if(fileType === 'zip'){
@@ -617,6 +647,7 @@ $dbArr = array();
             layersArr['dragdrop1'],
             layersArr['dragdrop2'],
             layersArr['dragdrop3'],
+            layersArr['uncertainty'],
             layersArr['select'],
             layersArr['pointv'],
             layersArr['heat'],
@@ -1053,6 +1084,8 @@ $dbArr = array();
 </script>
 
 <?php include_once('includes/mapsettings.php'); ?>
+
+<?php include_once('includes/infowindow.php'); ?>
 
 <?php include_once('includes/layercontroller.php'); ?>
 
