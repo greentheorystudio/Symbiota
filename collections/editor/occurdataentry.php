@@ -58,6 +58,18 @@ if($SYMB_UID){
 	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=201711"></script>
+    <script type="text/javascript">
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
+    </script>
 </head>
 <body>
 	<div id="innertext">
@@ -214,7 +226,7 @@ if($SYMB_UID){
 									<br/>
 									<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="54" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="Uncertainty in Meters" />
 								</div>
-								<div id="googleDiv" onclick="openMappingAid();" title="Google Maps">
+								<div id="googleDiv" onclick="openSpatialInputWindow('input-point,uncertainty');" title="Open Mapping Aid">
 									<img src="../../images/world.png" />
 								</div>
 								<div id="geoLocateDiv" title="GeoLocate locality">

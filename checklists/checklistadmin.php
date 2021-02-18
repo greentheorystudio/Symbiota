@@ -29,6 +29,9 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 
 	if($action === 'SubmitEdit'){
 		$clManager->editMetaData($_POST);
+		if(array_key_exists('footprintwkt',$_POST) && $_POST['footprintwkt'] !== ''){
+            $clManager->savePolygon($_POST['footprintwkt']);
+        }
 		header('Location: checklist.php?cl='.$clid.'&pid='.$pid);
 	}
 	elseif($action === 'DeleteCheck'){
@@ -75,7 +78,7 @@ $voucherProjects = $clManager->getVoucherProjects();
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
-	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=20170530"></script>
+	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=20210218"></script>
 </head>
 
 <body>

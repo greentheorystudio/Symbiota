@@ -100,13 +100,17 @@ $collManager->cleanOutArr($collData);
 			}
 
 		});
-	
-		function openMappingAid() {
-            const mapWindow = open("../../tools/mappointaid.php?formname=colleditform&latname=latitudedecimal&longname=longitudedecimal", "mappointaid", "resizable=0,width=800,height=700,left=20,top=20");
+
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
-		}
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
 
 		function verifyCollEditForm(f){
 			if(f.institutioncode.value === ''){
@@ -121,7 +125,7 @@ $collManager->cleanOutArr($collData);
 				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
-			else if(!isNumeric(f.latdec.value) || !isNumeric(f.lngdec.value)){
+			else if(!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)){
 				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
 				return false;
 			}
@@ -358,8 +362,8 @@ $collManager->cleanOutArr($collData);
 									Latitude:
 								</td>
 								<td>
-									<input id="latdec" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
-									<span style="cursor:pointer;" onclick="openMappingAid();">
+									<input id="decimallatitude" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
+									<span style="cursor:pointer;" onclick="openSpatialInputWindow('input-point');">
 										<img src="../../images/world.png" style="width:12px;" />
 									</span>
 								</td>
@@ -369,7 +373,7 @@ $collManager->cleanOutArr($collData);
 									Longitude:
 								</td>
 								<td>
-									<input id="lngdec" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
+									<input id="decimallongitude" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
 								</td>
 							</tr>
 							<?php 
