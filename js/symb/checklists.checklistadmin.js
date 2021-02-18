@@ -12,14 +12,6 @@ $(document).ready(function() {
 	});
 });
 
-function openPointAid(latDef,lngDef) {
-	const tid = document.pointaddform.pointtid.value;
-	let pointWindow = open("tools/mappointaid.php?latcenter=" + latDef + "&lngcenter=" + lngDef + "&tid=" + tid, "pointaid", "resizable=0,width=800,height=700,left=20,top=20");
-    if(pointWindow.opener == null) {
-    	pointWindow.opener = self;
-    }
-}
-
 function togglePoint(f){
 	const objDiv = document.getElementById('pointlldiv');
 	if(objDiv){

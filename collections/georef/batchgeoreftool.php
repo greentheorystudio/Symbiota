@@ -110,7 +110,19 @@ if($editor && $submitAction){
 		<link type="text/css" href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" rel="stylesheet" />
 		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=161212"></script>
+		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=161213"></script>
+        <script type="text/javascript">
+            function openSpatialInputWindow(type) {
+                let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+                if (mapWindow.opener == null) {
+                    mapWindow.opener = self;
+                }
+                mapWindow.addEventListener('blur', function(){
+                    mapWindow.close();
+                    mapWindow = null;
+                });
+            }
+        </script>
 	</head>
 	<body>
 		<div  id='innertext'>
@@ -348,8 +360,8 @@ if($editor && $submitAction){
 										</td>
 										<td> = </td>
 										<td>
-											<input id="decimallatitude" name="decimallatitude" type="text" value="" style="width:80px;" />
-											<span style="cursor:pointer;padding:3px;" onclick="openMappingAid();">
+											<input id="decimallatitude" name="decimallatitude" type="text" style="width:80px;" />
+											<span style="cursor:pointer;padding:3px;" onclick="openSpatialInputWindow('input-point');">
 												<img src="../../images/world.png" style="border:0;width:13px;" />
 											</span>
 										</td>

@@ -69,8 +69,20 @@ if($collMap){
 	</script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.coordinateValidation.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=170222" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
+	<script src="../../js/symb/collections.observationsubmit.js?ver=170223" type="text/javascript"></script>
+    <script type="text/javascript">
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -210,13 +222,13 @@ if($collMap){
 						<div style="float:left;">
 							Latitude
 							<br/>
-							<input type="text" id="pointlat" name="decimallatitude" tabindex="44" maxlength="10" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLatValue(this.form)" title="Decimal Format (eg 34.5436)" />
+							<input type="text" id="decimallatitude" name="decimallatitude" tabindex="44" maxlength="10" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLatValue(this.form)" title="Decimal Format (eg 34.5436)" />
 						</div>
 						<div style="float:left;">
 							Longitude
 							<br/>
-							<input type="text" id="pointlong" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
-							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');">
+							<input type="text" id="decimallongitude" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
+							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openSpatialInputWindow('input-point,uncertainty');">
 								<img src="../../images/world.png" style="width:12px;" title="Coordinate Map Aid" />
 							</span>
 							<span style="margin:15px 2px 0 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
@@ -226,7 +238,7 @@ if($collMap){
 						<div style="float:left;">
 							Uncertainty(m)
 							<br/>
-							<input type="text" name="coordinateuncertaintyinmeters" tabindex="48" maxlength="10" style="width:80px;background-color:lightyellow;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" />
+							<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="48" maxlength="10" style="width:80px;background-color:lightyellow;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" />
 						</div>
 						<div style="float:left;">
 							Datum

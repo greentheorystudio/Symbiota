@@ -419,20 +419,6 @@ function updateMaxElev(maxFeetValue){
 	f.maximumelevationinmeters.value = Math.round(maxFeetValue*.0305)*10;
 }
 
-function openMappingAid() {
-	const f = document.georefform;
-	const latDef = f.decimallatitude.value;
-	const lngDef = f.decimallongitude.value;
-	let zoom = 5;
-	if(latDef && lngDef) {
-		zoom = 11;
-	}
-	let mapWindow = open("../editor/mappointaid.php?latdef=" + latDef + "&lngdef=" + lngDef + "&zoom=" + zoom, "geomapaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if (mapWindow.opener == null) {
-		mapWindow.opener = self;
-	}
-}
-
 function toggle(target){
 	const objDiv = document.getElementById(target);
 	if(objDiv){
