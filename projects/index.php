@@ -352,9 +352,6 @@ if(!$researchList && !$editMode){
 							<span onclick="toggleResearchInfoBox(this);" title="What is a Research Species List?" style="cursor:pointer;">
 								<img src="../images/qmark_big.png" style="height:15px;"/>
 							</span> 
-							<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
-								<img src='../images/world.png' style='width:14px;border:0' />
-							</a>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
 							<img src="../images/uptriangle.png" style="position: relative; top: -22px; left: 30px;" />
@@ -373,18 +370,6 @@ if(!$researchList && !$editMode){
 							</div>
 							<?php
 						}
-						$gMapUrl = $projManager->getGoogleStaticMap();
-						if($gMapUrl){
-							?>
-							<div style="float:right;text-align:center;">
-								<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
-									<img src="<?php echo $gMapUrl; ?>" title="Map representation of checklists" alt="Map representation of checklists" />
-									<br/>
-                                    Click to Open Map
-								</a>
-							</div>
-							<?php
-						} 
 						?>
 						<div>
 							<ul>

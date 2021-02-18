@@ -34,9 +34,7 @@ $pid = $clManager->getPid();
 				$projName = $clList['name'];
 				$clArr = $clList['clid'];
 				echo '<div style="margin:3px 0 0 15px;">';
-				echo '<h3>'.$projName;
-				echo ' <a href="../checklists/clgmap.php?proj='.$pid.'&target=keys"><img src="../images/world.png" style="width:10px;border:0" /></a>';
-				echo '</h3>';
+				echo '<h3>'.$projName.'</h3>';
 				echo '<div><ul>';
 				foreach($clArr as $clid => $clName){
 					echo "<li><a href='key.php?cl=$clid&proj=$pid&taxon=All+Species'>".$clName. '</a></li>';

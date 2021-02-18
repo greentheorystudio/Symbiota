@@ -11,13 +11,8 @@ class InventoryProjectManager {
 	private $errorStr;
 
 	public function __construct(){
-        global $GOOGLE_MAP_KEY;
-		$connection = new DbConnection();
+        $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->googleUrl = 'http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain';
-		if($GOOGLE_MAP_KEY) {
-			$this->googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
-		}
 	}
 
 	public function __destruct(){
@@ -144,17 +139,6 @@ class InventoryProjectManager {
 			$rs->free();
 		}
 		return $retArr;
-	}
-	
-	public function getGoogleStaticMap(): string
-	{
-		$googleUrlLocal = $this->googleUrl;
-		$coordStr = implode('%7C',$this->researchCoord);
-		if(!$coordStr) {
-			return '';
-		}
-		$googleUrlLocal .= '&markers=size:tiny%7C' .$coordStr;
-		return $googleUrlLocal;
 	}
 	
 	public function getManagers(): array

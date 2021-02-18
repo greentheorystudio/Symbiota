@@ -568,35 +568,6 @@ class ChecklistManager {
 		return $retArr;
 	}
 
-	public function echoResearchPoints($target): void
-	{
-		global $USER_RIGHTS;
-		$clCluster = $USER_RIGHTS['ClAdmin'] ?? '';
-		$sql = 'SELECT c.clid, c.name, c.longcentroid, c.latcentroid '.
-			'FROM fmchecklists c INNER JOIN fmchklstprojlink cpl ON c.CLID = cpl.clid '.
-			'INNER JOIN fmprojects p ON cpl.pid = p.pid '.
-			'WHERE (c.access = "public"'.($clCluster?' OR c.clid IN('.implode(',',$clCluster).')':'').') AND (c.LongCentroid IS NOT NULL) AND (p.pid = '.$this->pid.')';
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			$idStr = $row->clid;
-			$nameStr = $this->cleanOutStr($row->name);
-			echo 'const point' .$idStr. ' = new google.maps.LatLng(' .$row->latcentroid. ', ' .$row->longcentroid.");\n";
-			echo 'points.push( point' .$idStr." );\n";
-			echo 'const marker'.$idStr.' = new google.maps.Marker({ position: point'.$idStr.', map: map, title: "'.$nameStr.'" });'."\n";
-			echo 'const infoWin'.$idStr.' = new google.maps.InfoWindow({ content: "<div style=\'width:300px;\'><b>'.$nameStr.'</b><br/>Double Click to open</div>" });'."\n";
-			echo 'infoWins.push( infoWin' .$idStr." );\n";
-			echo 'google.maps.event.addListener(marker' .$idStr.", 'click', function(){ closeAllInfoWins(); infoWin".$idStr. '.open(map,marker' .$idStr."); });\n";
-			if($target === 'keys'){
-				echo 'let lStr' .$idStr." = '../ident/key.php?cl=".$idStr. '&proj=' .$this->pid."&taxon=All+Species';\n";
-			}
-			else{
-				echo 'let lStr' .$idStr." = 'checklist.php?cl=".$idStr. '&proj=' .$this->pid."';\n";
-			}
-			echo 'google.maps.event.addListener(marker' .$idStr.", 'dblclick', function(){ closeAllInfoWins(); marker".$idStr. '.setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr' .$idStr."; });\n";
-		}
-		$result->free();
-	}
-
 	public function setThesFilter($filt): void
 	{
 		$this->thesFilter = $filt;

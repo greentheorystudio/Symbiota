@@ -33,11 +33,7 @@ $clManager->setProj($pid);
 				foreach($researchArr as $pid => $projArr){
 					?>
 					<div style='margin:3px 0 0 15px;'>
-						<h3><?php echo $projArr['name']; ?> 
-							<a href="<?php echo 'clgmap.php?proj=' .$pid; ?>" title='Show checklists on map'>
-								<img src='../images/world.png' style='width:10px;border:0' />
-							</a>
-						</h3>
+						<h3><?php echo $projArr['name']; ?></h3>
 						<div>
 							<ul>
 								<?php 
