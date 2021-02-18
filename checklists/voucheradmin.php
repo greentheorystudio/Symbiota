@@ -50,6 +50,17 @@ $clManager->setCollectionVariables();
 	<script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
+
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
     </script>
 	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=130330"></script>
 	<style type="text/css">
@@ -151,7 +162,7 @@ if($clid && $isEditor){
 								<div>
 									<b>Lat North:</b>
 									<input id="upperlat" type="text" name="latnorth" style="width:70px;" value="<?php echo $termArr['latnorth'] ?? ''; ?>" title="Latitude North" />
-									<a href="#" onclick="openPopup('../collections/mapboundingbox.php','boundingbox')"><img src="../images/world.png" style="width:15px;" title="Find Coordinate" /></a>
+									<a href="#" onclick="openSpatialInputWindow('input-box');"><img src="../images/world.png" style="width:15px;" title="Find Coordinate" /></a>
 								</div>
 								<div>
 									<b>Lat South:</b>

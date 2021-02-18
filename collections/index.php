@@ -31,10 +31,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
         <script src="../js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
-		<script type="text/javascript">
+        <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+        <script type="text/javascript">
             const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
-
-            <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 
             $('html').hide();
             $(document).ready(function() {
