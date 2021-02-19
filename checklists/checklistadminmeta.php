@@ -225,7 +225,7 @@ if(!$clid){
                         Dislay Taxon Authors
 					</div>
 					<div>
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr['dalpha']? 'checked' : ''); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr && array_key_exists('dalpha', $defaultArr)? 'checked' : ''); ?> />
                         Display Taxa Alphabetically
 					</div>
 					<div>
