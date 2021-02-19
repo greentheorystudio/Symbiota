@@ -39,4 +39,4 @@ if(isset($SPATIAL_INITIAL_ZOOM) && $SPATIAL_INITIAL_ZOOM) {
         <div id="mapcoords"></div>
     </div>
 </div>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.viewer.js?ver=2" type="text/javascript"></script>
+<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.viewer.js?ver=3" type="text/javascript"></script>
