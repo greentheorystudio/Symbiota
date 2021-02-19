@@ -24,6 +24,32 @@ const vectorlayer = new ol.layer.Vector({
     })
 });
 
+let radiuscirclesource = new ol.source.Vector({
+    wrapX: true
+});
+const radiuscirclelayer = new ol.layer.Vector({
+    source: radiuscirclesource,
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(255,0,0,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        }),
+        image: new ol.style.Circle({
+            radius: 7,
+            stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 1
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,0)'
+            })
+        })
+    })
+});
+
 const blankdragdropsource = new ol.source.Vector({
     wrapX: true
 });
@@ -41,6 +67,7 @@ layersArr['base'] = baselayer;
 layersArr['dragdrop1'] = dragdroplayer1;
 layersArr['dragdrop2'] = dragdroplayer2;
 layersArr['dragdrop3'] = dragdroplayer3;
+layersArr['radius'] = radiuscirclelayer;
 layersArr['vector'] = vectorlayer;
 
 const mapView = new ol.View({
@@ -62,6 +89,7 @@ const map = new ol.Map({
         layersArr['dragdrop1'],
         layersArr['dragdrop2'],
         layersArr['dragdrop3'],
+        layersArr['radius'],
         layersArr['vector']
     ],
     renderer: 'canvas'
@@ -102,12 +130,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
     if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
         if(fileType === 'geojson' || fileType === 'kml'){
             if(setDragDropTarget()){
-                const infoArr = [];
-                infoArr['Name'] = dragDropTarget;
-                infoArr['layerType'] = 'vector';
-                infoArr['Title'] = filename;
-                infoArr['Abstract'] = '';
-                infoArr['DefaultCRS'] = '';
                 const sourceIndex = dragDropTarget + 'Source';
                 let features = event.features;
                 if(fileType === 'kml'){
@@ -126,12 +148,6 @@ dragAndDropInteraction.on('addfeatures', function(event) {
             if(setDragDropTarget()){
                 getArrayBuffer(event.file).then((data) => {
                     shp(data).then((geojson) => {
-                        const infoArr = [];
-                        infoArr['Name'] = dragDropTarget;
-                        infoArr['layerType'] = 'vector';
-                        infoArr['Title'] = filename;
-                        infoArr['Abstract'] = '';
-                        infoArr['DefaultCRS'] = '';
                         const sourceIndex = dragDropTarget + 'Source';
                         const format = new ol.format.GeoJSON();
                         const features = format.readFeatures(geojson, {

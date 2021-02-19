@@ -582,21 +582,12 @@ if($clArray['locality']){
 							<?php 
 						}
 						if(!$showImages && $coordArr = $clManager->getCoordinates(0, true)) {
-                            ?>
+                            $url = '../spatial/index.php?starr={"clid":"'.$clid.'","taxonfilter":"'.$taxonFilter.'"}';
+						    ?>
                             <div style="text-align:center;padding:10px">
                                 <div>
-                                    <a href="checklistmap.php?clid=<?php echo $clid.'&thesfilter='.$thesFilter.'&taxonfilter='.$taxonFilter; ?>" target="_blank">
-                                        <?php
-                                        $googleUrl = '//maps.googleapis.com/maps/api/staticmap?size=170x170&maptype=terrain';
-                                        $googleUrl .= '&markers=size:tiny|'.implode('|',$coordArr);
-                                        ?>
-                                        <img src="<?php echo $googleUrl; ?>" style="border:0;" /><br/>
-                                        Simple Map
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="../spatial/index.php?clid=<?php echo $clid.'&taxonfilter='.$taxonFilter; ?>&db=all&maptype=occquery&type=1&reset=1" target="_blank">
-                                        Advanced Map
+                                    <a href='<?php echo $url; ?>' target="_blank">
+                                        Open in Spatial Window
                                     </a>
                                 </div>
                             </div>
