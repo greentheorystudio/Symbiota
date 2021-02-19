@@ -529,9 +529,9 @@ class ChecklistManager {
 	{
 		global $USER_RIGHTS;
 		$retArr = array();
-		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access '.
-			'FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid '.
-			'LEFT JOIN fmprojects p ON cpl.pid = p.pid '.
+		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.LatCentroid, c.LongCentroid '.
+			'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
+			'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid '.
 			'WHERE ((c.access LIKE "public%") ';
 		if(isset($USER_RIGHTS['ClAdmin']) && $USER_RIGHTS['ClAdmin']) {
 			$sql .= 'OR (c.clid IN(' . implode(',', $USER_RIGHTS['ClAdmin']) . '))';
@@ -545,10 +545,12 @@ class ChecklistManager {
 			$sql .= 'AND (p.pid = ' . $this->pid . ') ';
 		}
 		$sql .= 'ORDER BY p.projname, c.Name';
-		//echo $sql;
+		echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			if($row->pid){
+            $coordArr = array();
+            $projCoordArr = array();
+		    if($row->pid){
 				$pid = $row->pid;
 				$projName = $row->projname.(!$row->ispublic?' (Private)':'');
 			}
@@ -556,6 +558,15 @@ class ChecklistManager {
 				$pid = 0;
 				$projName = 'Undefinded Inventory Project';
 			}
+            if(array_key_exists($pid,$retArr) && array_key_exists('coords',$retArr[$pid])){
+                $projCoordArr = json_decode($retArr[$pid]['coords'], true);
+            }
+            if($row->LatCentroid && $row->LongCentroid){
+                $coordArr[] = (float)$row->LatCentroid;
+                $coordArr[] = (float)$row->LongCentroid;
+                $projCoordArr[] = $coordArr;
+                $retArr[$pid]['coords'] = json_encode($projCoordArr);
+            }
 			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}

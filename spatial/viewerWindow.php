@@ -5,6 +5,7 @@ ini_set('max_execution_time', 180);
 
 $decimalLatitude = array_key_exists('decimallatitude',$_REQUEST)?(float)$_REQUEST['decimallatitude']:null;
 $decimalLongitude = array_key_exists('decimallongitude',$_REQUEST)?(float)$_REQUEST['decimallongitude']:null;
+$coordArrJson = array_key_exists('coordJson',$_REQUEST)?$_REQUEST['coordJson']:'';
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
@@ -36,19 +37,39 @@ $decimalLongitude = array_key_exists('decimallongitude',$_REQUEST)?(float)$_REQU
     <script type="text/javascript">
         const decimalLatitude = <?php echo ($decimalLatitude ?: 'null'); ?>;
         const decimalLongitude = <?php echo ($decimalLongitude ?: 'null'); ?>;
-        let pointFeature = null;
+        const coordArrJson = '<?php echo $coordArrJson; ?>';
         if(decimalLatitude && decimalLongitude){
+            let pointFeature = null;
             const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
                 decimalLongitude, decimalLatitude
             ]));
             pointFeature = new ol.Feature(pointGeom);
-            vectorsource.addFeature(pointFeature);
+            if(pointFeature){
+                vectorsource.addFeature(pointFeature);
+                map.getView().setCenter(ol.proj.fromLonLat([
+                    decimalLongitude, decimalLatitude
+                ]));
+                map.getView().setZoom(10);
+            }
         }
-        if(pointFeature){
-            map.getView().setCenter(ol.proj.fromLonLat([
-                decimalLongitude, decimalLatitude
-            ]));
-            map.getView().setZoom(10);
+        if(coordArrJson){
+            const coordArr = JSON.parse(coordArrJson);
+            for(let coords of coordArr){
+                let pointFeature = null;
+                const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
+                    coords[1], coords[0]
+                ]));
+                pointFeature = new ol.Feature(pointGeom);
+                if(pointFeature){
+                    vectorsource.addFeature(pointFeature);
+                }
+            }
+            const vectorextent = vectorsource.getExtent();
+            map.getView().fit(vectorextent,map.getSize());
+            let fittedZoom = map.getView().getZoom();
+            if(fittedZoom > 10){
+                map.getView().setZoom(fittedZoom - 8);
+            }
         }
     </script>
 </body>
