@@ -5,19 +5,13 @@ class InventoryProjectManager {
 
 	private $conn;
 	private $pid;
-	private $googleUrl;
-	private $researchCoord = array();
+	private $researchCoord = '';
 	private $isPublic = 1;
 	private $errorStr;
 
 	public function __construct(){
-        global $GOOGLE_MAP_KEY;
-		$connection = new DbConnection();
+        $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->googleUrl = 'http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain';
-		if($GOOGLE_MAP_KEY) {
-			$this->googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
-		}
 	}
 
 	public function __destruct(){
@@ -133,28 +127,23 @@ class InventoryProjectManager {
 			$sql .= 'ORDER BY c.SortSequence, c.name';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
-			$cnt = 0;
 			while($row = $rs->fetch_object()){
-				$retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
-				if($cnt < 50 && $row->latcentroid){
-					$this->researchCoord[] = $row->latcentroid.','.$row->longcentroid;
-				}
-				$cnt++;
+                $coordArr = array();
+                $projCoordArr = array();
+                $retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
+                if($this->researchCoord){
+                    $projCoordArr = json_decode($this->researchCoord, true);
+                }
+                if($row->latcentroid && $row->longcentroid){
+                    $coordArr[] = (float)$row->latcentroid;
+                    $coordArr[] = (float)$row->longcentroid;
+                    $projCoordArr[] = $coordArr;
+                    $this->researchCoord = json_encode($projCoordArr);
+                }
 			}
 			$rs->free();
 		}
 		return $retArr;
-	}
-	
-	public function getGoogleStaticMap(): string
-	{
-		$googleUrlLocal = $this->googleUrl;
-		$coordStr = implode('%7C',$this->researchCoord);
-		if(!$coordStr) {
-			return '';
-		}
-		$googleUrlLocal .= '&markers=size:tiny%7C' .$coordStr;
-		return $googleUrlLocal;
 	}
 	
 	public function getManagers(): array
@@ -284,6 +273,10 @@ class InventoryProjectManager {
 	public function getErrorStr(){
 		return $this->errorStr;
 	}
+
+    public function getResearchCoords(){
+        return $this->researchCoord;
+    }
 
 	private function cleanInStr($str){
 		$newStr = trim($str);

@@ -529,9 +529,9 @@ class ChecklistManager {
 	{
 		global $USER_RIGHTS;
 		$retArr = array();
-		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access '.
-			'FROM fmchecklists c LEFT JOIN fmchklstprojlink cpl ON c.clid = cpl.clid '.
-			'LEFT JOIN fmprojects p ON cpl.pid = p.pid '.
+		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.LatCentroid, c.LongCentroid '.
+			'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
+			'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid '.
 			'WHERE ((c.access LIKE "public%") ';
 		if(isset($USER_RIGHTS['ClAdmin']) && $USER_RIGHTS['ClAdmin']) {
 			$sql .= 'OR (c.clid IN(' . implode(',', $USER_RIGHTS['ClAdmin']) . '))';
@@ -545,10 +545,12 @@ class ChecklistManager {
 			$sql .= 'AND (p.pid = ' . $this->pid . ') ';
 		}
 		$sql .= 'ORDER BY p.projname, c.Name';
-		//echo $sql;
+		echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			if($row->pid){
+            $coordArr = array();
+            $projCoordArr = array();
+		    if($row->pid){
 				$pid = $row->pid;
 				$projName = $row->projname.(!$row->ispublic?' (Private)':'');
 			}
@@ -556,6 +558,15 @@ class ChecklistManager {
 				$pid = 0;
 				$projName = 'Undefinded Inventory Project';
 			}
+            if(array_key_exists($pid,$retArr) && array_key_exists('coords',$retArr[$pid])){
+                $projCoordArr = json_decode($retArr[$pid]['coords'], true);
+            }
+            if($row->LatCentroid && $row->LongCentroid){
+                $coordArr[] = (float)$row->LatCentroid;
+                $coordArr[] = (float)$row->LongCentroid;
+                $projCoordArr[] = $coordArr;
+                $retArr[$pid]['coords'] = json_encode($projCoordArr);
+            }
 			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}
@@ -566,35 +577,6 @@ class ChecklistManager {
 			$retArr[0] = $tempArr;
 		}
 		return $retArr;
-	}
-
-	public function echoResearchPoints($target): void
-	{
-		global $USER_RIGHTS;
-		$clCluster = $USER_RIGHTS['ClAdmin'] ?? '';
-		$sql = 'SELECT c.clid, c.name, c.longcentroid, c.latcentroid '.
-			'FROM fmchecklists c INNER JOIN fmchklstprojlink cpl ON c.CLID = cpl.clid '.
-			'INNER JOIN fmprojects p ON cpl.pid = p.pid '.
-			'WHERE (c.access = "public"'.($clCluster?' OR c.clid IN('.implode(',',$clCluster).')':'').') AND (c.LongCentroid IS NOT NULL) AND (p.pid = '.$this->pid.')';
-		$result = $this->conn->query($sql);
-		while($row = $result->fetch_object()){
-			$idStr = $row->clid;
-			$nameStr = $this->cleanOutStr($row->name);
-			echo 'const point' .$idStr. ' = new google.maps.LatLng(' .$row->latcentroid. ', ' .$row->longcentroid.");\n";
-			echo 'points.push( point' .$idStr." );\n";
-			echo 'const marker'.$idStr.' = new google.maps.Marker({ position: point'.$idStr.', map: map, title: "'.$nameStr.'" });'."\n";
-			echo 'const infoWin'.$idStr.' = new google.maps.InfoWindow({ content: "<div style=\'width:300px;\'><b>'.$nameStr.'</b><br/>Double Click to open</div>" });'."\n";
-			echo 'infoWins.push( infoWin' .$idStr." );\n";
-			echo 'google.maps.event.addListener(marker' .$idStr.", 'click', function(){ closeAllInfoWins(); infoWin".$idStr. '.open(map,marker' .$idStr."); });\n";
-			if($target === 'keys'){
-				echo 'let lStr' .$idStr." = '../ident/key.php?cl=".$idStr. '&proj=' .$this->pid."&taxon=All+Species';\n";
-			}
-			else{
-				echo 'let lStr' .$idStr." = 'checklist.php?cl=".$idStr. '&proj=' .$this->pid."';\n";
-			}
-			echo 'google.maps.event.addListener(marker' .$idStr.", 'dblclick', function(){ closeAllInfoWins(); marker".$idStr. '.setAnimation(google.maps.Animation.BOUNCE); window.location.href = lStr' .$idStr."; });\n";
-		}
-		$result->free();
 	}
 
 	public function setThesFilter($filt): void
