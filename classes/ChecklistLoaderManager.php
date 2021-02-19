@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('TaxonomyUtilities.php');
-include_once('OccurrenceMaintenance.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
 
 class ChecklistLoaderManager {
 

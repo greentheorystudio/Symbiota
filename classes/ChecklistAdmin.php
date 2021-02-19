@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('ProfileManager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/ProfileManager.php');
 
 class ChecklistAdmin{
 
@@ -46,6 +46,7 @@ class ChecklistAdmin{
 				$retArr['defaultsettings'] = $row->defaultsettings;
 				$retArr['dynamicsql'] = $row->dynamicsql;
 				$retArr['datelastmodified'] = $row->datelastmodified;
+                $retArr['footprintwkt'] = $row->footprintwkt;
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');
 			}
 			$result->free();

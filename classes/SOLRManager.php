@@ -1,5 +1,5 @@
 <?php
-include_once('OccurrenceManager.php');
+include_once(__DIR__ . '/OccurrenceManager.php');
 
 class SOLRManager extends OccurrenceManager{
 

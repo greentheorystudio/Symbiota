@@ -1,7 +1,7 @@
 <?php
-include_once('Manager.php');
-include_once('TaxonomyUtilities.php');
-include_once('TaxonomyHarvester.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/TaxonomyHarvester.php');
 
 class TaxonomyCleaner extends Manager{
 

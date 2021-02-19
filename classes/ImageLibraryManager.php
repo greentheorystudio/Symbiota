@@ -1,12 +1,12 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
 
 class ImageLibraryManager{
 
     private $searchTermsArr = array();
     private $recordCount = 0;
-    private $conn;
+    protected $conn;
     private $taxaArr = array();
     private $tidFocus;
     private $collArrIndex = 0;

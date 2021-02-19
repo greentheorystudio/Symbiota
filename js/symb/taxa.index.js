@@ -9,7 +9,9 @@ $(document).ready(function() {
 	if(imgDiv.scrollHeight > imgDiv.clientHeight) {
 		document.getElementById("img-tab-div").style.display = 'block';
 	}
-
+	if(allImages){
+		expandExtraImages();
+	}
 });
 
 function toggle(target){
@@ -97,10 +99,7 @@ function expandExtraImages(){
 }
 
 function openMapPopup(taxonVar,clid){
-	const popupMap = window.open('../map/googlemap.php?maptype=taxa&taxon=' + taxonVar + '&clid=' + clid, 'gmap', 'toolbar=0,scrollbars=1,width=950,height=700,left=20,top=20');
-	if (popupMap.opener == null) {
-		popupMap.opener = self;
-	}
-    popupMap.focus();
+	const url = '../spatial/index.php?starr={"usethes":true,"taxontype":"1","taxa":"' + taxonVar + '"}';
+	window.open(url, '_blank');
 }
 

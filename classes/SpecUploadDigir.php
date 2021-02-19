@@ -1,5 +1,5 @@
 <?php
-include_once('SpecUploadBase.php');
+include_once(__DIR__ . '/SpecUploadBase.php');
 
 class SpecUploadDigir extends SpecUploadBase {
 

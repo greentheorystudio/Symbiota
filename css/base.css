@@ -194,7 +194,6 @@ div.button:hover {
 }
 
 .collectiontitle a{
-	font-size: 80%;
 	margin-left: 3px;
 }
 
@@ -415,4 +414,9 @@ ol.mp_list li.mp_highlighted {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
+}
+
+.flexwrapbox{
+	display: flex;
+	flex-wrap: wrap;
 }

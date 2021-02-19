@@ -1,6 +1,6 @@
 <?php
-include_once('Manager.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class ImageCleaner extends Manager{
 

@@ -1,5 +1,5 @@
-<?php 
-include_once('Manager.php');
+<?php
+include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceAttributes extends Manager {
 
