@@ -255,10 +255,10 @@ class OccurrenceGeorefTools {
 		if($collid){
 			$sqlWhere .= 'AND (o.collid = '.$collid.') ';
 		}
-		if($searchType === 2){
+		if((int)$searchType === 2){
 			$sqlWhere .= 'AND (o.locality LIKE "%'.$locality.'%") ';
 		}
-		elseif($searchType === 3){
+		elseif((int)$searchType === 3){
 			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			$localArr = explode(' ', $locality);
 			foreach($localArr as $str){
