@@ -173,6 +173,17 @@ if(!$researchList && !$editMode){
 		   	}
 			return true;
 		}
+
+        function openSpatialViewerWindow(coordArrJson) {
+            let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
 	</script>
 	<style>
 		fieldset.form-color{
@@ -346,15 +357,22 @@ if(!$researchList && !$editMode){
 				<div style="margin:20px;">
 					<?php
 					if($researchList){
-						?>
+						$coordJson = $projManager->getResearchCoords();
+					    ?>
 						<div style="font-weight:bold;font-size:130%;">
                             Research Checklists
 							<span onclick="toggleResearchInfoBox(this);" title="What is a Research Species List?" style="cursor:pointer;">
 								<img src="../images/qmark_big.png" style="height:15px;"/>
 							</span> 
-							<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
-								<img src='../images/world.png' style='width:14px;border:0' />
-							</a>
+							<?php
+                            if($coordJson){
+                                ?>
+                                <a href="#" onclick="openSpatialViewerWindow('<?php echo $coordJson; ?>');" title="Map Checklists">
+                                    <img src='../images/world.png' style='width:14px;border:0' />
+                                </a>
+                                <?php
+                            }
+                            ?>
 						</div>
 						<div id="researchlistpopup" class="genericpopup" style="display:none;">
 							<img src="../images/uptriangle.png" style="position: relative; top: -22px; left: 30px;" />
@@ -364,7 +382,7 @@ if(!$researchList && !$editMode){
                             Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
                             can inspect these specimens for verification or annotate the identification when necessary.
 						</div>
-						<?php 
+						<?php
 						if($KEY_MOD_IS_ACTIVE){
 							?>
 							<div style="margin-left:15px;font-size:90%">
@@ -373,18 +391,6 @@ if(!$researchList && !$editMode){
 							</div>
 							<?php
 						}
-						$gMapUrl = $projManager->getGoogleStaticMap();
-						if($gMapUrl){
-							?>
-							<div style="float:right;text-align:center;">
-								<a href="../checklists/clgmap.php?proj=<?php echo $pid;?>" title="Map Checklists">
-									<img src="<?php echo $gMapUrl; ?>" title="Map representation of checklists" alt="Map representation of checklists" />
-									<br/>
-                                    Click to Open Map
-								</a>
-							</div>
-							<?php
-						} 
 						?>
 						<div>
 							<ul>

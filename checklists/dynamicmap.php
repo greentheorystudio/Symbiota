@@ -8,45 +8,33 @@ $taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
 $interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?htmlspecialchars($_REQUEST['interface']):'checklist';
 
 $dynClManager = new DynamicChecklistManager();
-
-$latCen = 41.0;
-$longCen = -95.0;
-$coorArr = explode(';',$MAPPING_BOUNDARIES);
-if($coorArr && count($coorArr) == 4){
-	$latCen = ($coorArr[0] + $coorArr[2])/2;
-	$longCen = ($coorArr[1] + $coorArr[3])/2;
-}
-$coordRange = 50;
-if($coorArr && count($coorArr) == 4) {
-	$coordRange = ($coorArr[0] - $coorArr[2]);
-}
-$zoomInt = 5;
-if($coordRange < 20){
-	$zoomInt = 7;
-}
-elseif($coordRange > 35 && $coordRange < 40){
-	$zoomInt = 5;
-}
-elseif($coordRange > 40){
-	$zoomInt = 4;
-}
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> - Dynamic Checklist Generator</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<script src="../js/jquery.js" type="text/javascript"></script>
-	<script src="../js/jquery-ui.js" type="text/javascript"></script>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
+    <style type="text/css">
+        .map {
+            width:95%;
+            height:650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
+        #mapinfo, #mapscale_us, #mapscale_metric {
+            display: none;
+        }
+    </style>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=309" type="text/javascript"></script>
 	<script type="text/javascript">
-	    var map;
-	    var currentMarker;
-	  	var zoomLevel = 5;
-	  	var submitCoord = false;
+	    var submitCoord = false;
 
         $(document).ready(function() {
         	$( "#taxa" ).autocomplete({
@@ -64,51 +52,16 @@ elseif($coordRange > 40){
 			
         });
 
-	    function initialize(){
-	    	var dmLatLng = new google.maps.LatLng(<?php echo $latCen. ',' .$longCen; ?>);
-	    	var dmOptions = {
-				zoom: <?php echo $zoomInt; ?>,
-				center: dmLatLng,
-				mapTypeId: google.maps.MapTypeId.TERRAIN
-			};
-
-	    	map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-	    	
-			google.maps.event.addListener(map, 'click', function(event) {
-	            mapZoom = map.getZoom();
-	            startLocation = event.latLng;
-	            setTimeout("placeMarker()", 500);
-	        });
-	    }
-	
-	    function placeMarker() {
-			if(currentMarker) currentMarker.setMap();
-	        if(mapZoom === map.getZoom()){
-                currentMarker = new google.maps.Marker({
-	                position: startLocation,
-	                map: map
-	            });
-
-		        var latValue = startLocation.lat();
-		        var lonValue = startLocation.lng();
-		        latValue = latValue.toFixed(5);;
-		        lonValue = lonValue.toFixed(5);
-				document.getElementById("latbox").value = latValue;
-                document.getElementById("lngbox").value = lonValue;
-                document.getElementById("latlngspan").innerHTML = latValue + ", " + lonValue;
-                document.mapForm.buildchecklistbutton.disabled = false;
-                submitCoord = true;
-			}
-	    }
-
-		function checkForm(){
-			if(submitCoord) return true;
+	    function checkForm(){
+			if(document.getElementById("latbox").value && document.getElementById("lngbox").value){
+                return true;
+            }
 			alert("You must first click on map to capture coordinate points");
 			return false;
 		}
 	</script>
 </head> 
-<body onload="initialize()">
+<body>
 	<?php 
 		include($SERVER_ROOT.'/header.php');
     ?>
@@ -117,55 +70,131 @@ elseif($coordRange > 40){
         <b>Dynamic Map</b>
     </div>
 		<div id='innertext'>
-			<div>
-				Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list. 
-				<span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
-					More Details
-				</span>
-				<span id="moreinfo" style="display:none;">
-					If a radius is defined, species lists are generated using occurrence data collected within the defined area.
-					If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to 
-					best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled. 
-					Setting the taxon filter will limit the return to species found within that taxonomic group.
-				</span>
-				<span id="lessdetails" style="cursor:pointer;color:blue;font-size:80%;display:none;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='none';document.getElementById('moredetails').style.display='inline';">
-					Less Details
-				</span>
-			</div>
-			<div style="margin-top:5px;">
-				<form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
-					<div style="float:left;width:300px;">
-						<div>
-							<input type="submit" name="buildchecklistbutton" value="Build Checklist" disabled />
-							<input type="hidden" name="interface" value="<?php echo $interface; ?>" />
-							<input type="hidden" id="latbox" name="lat" value="" />
-							<input type="hidden" id="lngbox" name="lng" value="" />
-						</div>
-						<div>
-							<b>Point (Lat, Long):</b> 
-							<span id="latlngspan"> &lt; Click on map &gt; </span>
-						</div>
-					</div>
-					<div style="float:left;">
-						<div style="margin-right:35px;">
-							<b>Taxon Filter:</b> <input id="taxa" name="taxa" type="text" value="<?php echo $taxa; ?>" />
-							<input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
-						</div>
-						<div> 
-							<b>Radius:</b> 
-							<input name="radius" value="(optional)" type="text" style="width:140px;" onfocus="this.value = ''" /> 
-							<select name="radiusunits">
-								<option value="km">Kilometers</option>
-								<option value="mi">Miles</option>
-							</select>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div id='map_canvas' style='width:95%; height:650px; clear:both;'></div>
+			<form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
+                <div style="width:95%;margin-left:auto;margin-right:auto;">
+                    Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.
+                    <span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
+                        More Details
+                    </span>
+                    <span id="moreinfo" style="display:none;">
+                        If a radius is defined, species lists are generated using occurrence data collected within the defined area.
+                        If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to
+                        best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled.
+                        Setting the taxon filter will limit the return to species found within that taxonomic group.
+                    </span>
+                    <span id="lessdetails" style="cursor:pointer;color:blue;font-size:80%;display:none;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='none';document.getElementById('moredetails').style.display='inline';">
+                        Less Details
+                    </span>
+                </div>
+                <div style="width:95%;margin-left:auto;margin-right:auto;margin-top:5px;">
+                    <div style="float:left;width:300px;">
+                        <div>
+                            <input type="submit" name="buildchecklistbutton" value="Build Checklist" disabled />
+                            <input type="hidden" name="interface" value="<?php echo $interface; ?>" />
+                            <input type="hidden" id="latbox" name="lat" value="" />
+                            <input type="hidden" id="lngbox" name="lng" value="" />
+                        </div>
+                        <div style="margin-top:5px;">
+                            <b>Point (Lat, Long):</b>
+                            <span id="latlngspan"> &lt; Click on map &gt; </span>
+                        </div>
+                    </div>
+                    <div style="float:left;">
+                        <div style="margin-right:35px;">
+                            <b>Taxon Filter:</b> <input id="taxa" name="taxa" type="text" value="<?php echo $taxa; ?>" />
+                            <input id="tid" name="tid" type="hidden" value="<?php echo $tid; ?>" />
+                        </div>
+                        <div style="margin-top:5px;">
+                            <b>Radius (optional):</b>
+                            <input id="radius" name="radius" value="" type="text" style="width:140px;" onchange="setRadiusCircle();" />
+                            <select id="radiusunits" name="radiusunits" onchange="setRadiusCircle();">
+                                <option value="km">Kilometers</option>
+                                <option value="mi">Miles</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+            </form>
+            <?php include_once(__DIR__ . '/../spatial/viewerElement.php'); ?>
+            <div style="clear:both;width:100%;height:40px;"></div>
 		</div>
 	<?php
  	include_once($SERVER_ROOT.'/footer.php');
 	?>
+    <script type="text/javascript">
+        const selectInteraction = new ol.interaction.Select({
+            layers: [vectorlayer],
+            condition: function (evt) {
+                return (evt.type === 'click' && activeLayer === 'select' && !evt.originalEvent.altKey && !evt.originalEvent.shiftKey);
+            },
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,255,255,0.5)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(0,153,255,1)',
+                    width: 5
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(0,153,255,1)',
+                        width: 2
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(0,153,255,1)'
+                    })
+                })
+            }),
+            toggleCondition: ol.events.condition.click
+        });
+        map.addInteraction(selectInteraction);
+        const selectedFeatures = selectInteraction.getFeatures();
+
+        draw = new ol.interaction.Draw({
+            source: vectorsource,
+            type: 'Point'
+        });
+        draw.on('drawend', function(evt){
+            const featureClone = evt.feature.clone();
+            const geoJSONFormat = new ol.format.GeoJSON();
+            vectorsource.clear();
+            selectedFeatures.clear();
+            const selectiongeometry = featureClone.getGeometry();
+            const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+            const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+            let pointCoords = JSON.parse(geojsonStr).coordinates;
+            document.getElementById("latbox").value = pointCoords[1];
+            document.getElementById("lngbox").value = pointCoords[0];
+            selectedFeatures.push(evt.feature);
+            document.mapForm.buildchecklistbutton.disabled = false;
+            if(document.getElementById("radius").value && !isNaN(document.getElementById("radius").value)){
+                setRadiusCircle();
+            }
+        });
+        map.addInteraction(draw);
+
+        function setRadiusCircle(){
+            radiuscirclesource.clear();
+            const latVal = document.getElementById("latbox").value;
+            const longVal = document.getElementById("lngbox").value;
+            const radiusunits = document.getElementById("radiusunits").value;
+            let radius = document.getElementById("radius").value;
+            if(latVal && longVal && radius){
+                if(radiusunits === 'mi'){
+                    radius = radius * 1609.34;
+                }
+                else{
+                    radius = radius * 1000;
+                }
+                const centerCoords = ol.proj.fromLonLat([longVal, latVal]);
+                const circle = new ol.geom.Circle(centerCoords);
+                circle.setRadius(Number(radius));
+                const circleFeature = new ol.Feature(circle);
+                radiuscirclesource.addFeature(circleFeature);
+            }
+        }
+    </script>
 </body>
 </html>

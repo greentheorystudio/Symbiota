@@ -71,17 +71,28 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 		return true;
 	}
 
-	function openMappingAid() {
-        const mapWindow = open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappointaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid", "mapaid", "resizable=0,width=800,height=700,left=20,top=20");
-        if(mapWindow.opener == null) mapWindow.opener = self;
-	}
+	function openSpatialInputWindow(type) {
+        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+        if (mapWindow.opener == null) {
+            mapWindow.opener = self;
+        }
+        mapWindow.addEventListener('blur', function(){
+            mapWindow.close();
+            mapWindow = null;
+        });
+    }
 
-	function openMappingPolyAid() {
-        const latDec = document.getElementById("latdec").value;
-        const lngDec = document.getElementById("lngdec").value;
-        const mapWindow = open("<?php echo $CLIENT_ROOT; ?>/checklists/tools/mappolyaid.php?clid=<?php echo $clid; ?>&formname=editclmatadata&latname=latcentroid&longname=longcentroid&latdef=" + latDec + "&lngdef=" + lngDec, "mapaid", "resizable=0,width=850,height=700,left=20,top=20");
-        if(mapWindow.opener == null) mapWindow.opener = self;
-	}
+    function processFootprintWktChange() {
+        const wktValue = document.getElementById('footprintWKT').value;
+        if(!wktValue && wktValue ===''){
+            document.getElementById("polyDefDiv").style.display = "none";
+            document.getElementById("polyNotDefDiv").style.display = "block";
+        }
+        else{
+            document.getElementById("polyDefDiv").style.display = "block";
+            document.getElementById("polyNotDefDiv").style.display = "none";
+        }
+    }
 </script>
 <?php
 if(!$clid){
@@ -149,24 +160,24 @@ if(!$clid){
 			<div style="width:100%;">
 				<div style="float:left;">
 					<b>Latitude</b><br/>
-					<input id="latdec" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['latcentroid']:''); ?>" />
+					<input id="decimallatitude" type="text" name="latcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['latcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Longitude</b><br/>
-					<input id="lngdec" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['longcentroid']:''); ?>" />
+					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['longcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
-					<a href="#" onclick="openMappingAid();return false;"><img src="../images/world.png" style="width:12px;" /></a>
+					<a href="#" onclick="openSpatialInputWindow('input-point,radius');"><img src="../images/world.png" style="width:12px;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Point Radius (meters)</b><br/>
-					<input type="text" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray['pointradiusmeters']:''); ?>" />
+					<input type="text" id="pointradiusmeters" name="pointradiusmeters" style="width:110px;" value="<?php echo ($clArray?$clArray['pointradiusmeters']:''); ?>" />
 				</div>
 				<div style="float:left;margin:8px 0 0 25px;">
 					<fieldset style="width:275px;padding:10px">
 						<legend><b>Polygon Footprint</b></legend>
 						<div style="float:right;margin:10px;">
-							<a href="#" onclick="openMappingPolyAid();return false;" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a>
+							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
                             'Polygon footprint defined<br/>Click globe to view/edit'
@@ -174,7 +185,7 @@ if(!$clid){
 						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'none':'block'); ?>;">
                             'Polygon footprint not defined<br/>Click globe to create polygon'
 						</div>
-						<input type="hidden" id="footprintwkt" name="footprintwkt" value="" />
+						<input type="hidden" id="footprintWKT" name="footprintwkt" onchange="processFootprintWktChange();" value="<?php echo ($clArray?$clArray['footprintwkt']:''); ?>" />
 					</fieldset>
 				</div>
 			</div>
@@ -214,7 +225,7 @@ if(!$clid){
                         Dislay Taxon Authors
 					</div>
 					<div>
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr&&$defaultArr['dalpha']? 'checked' : ''); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr && array_key_exists('dalpha', $defaultArr)? 'checked' : ''); ?> />
                         Display Taxa Alphabetically
 					</div>
 					<div>
