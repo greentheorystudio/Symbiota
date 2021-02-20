@@ -2642,25 +2642,21 @@ function processInputSubmit(){
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('circle') && inputResponseData.hasOwnProperty('circleArr')){
         if(opener.document.getElementById('pointlat')){
             opener.document.getElementById('pointlat').value = inputResponseData['circleArr'][0]['pointlat'];
-            opener.document.getElementById('pointlat').dispatchEvent(changeEvent);
         }
         if(opener.document.getElementById('pointlong')){
             opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
-            opener.document.getElementById('pointlong').dispatchEvent(changeEvent);
         }
         if(opener.document.getElementById('radiusunits')){
             opener.document.getElementById('radiusunits').value = 'km';
         }
         if(opener.document.getElementById('radiustemp')){
-            opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['groundradius'];
+            opener.document.getElementById('radiustemp').value = (inputResponseData['circleArr'][0]['radius'] / 1000);
         }
         if(opener.document.getElementById('radius')){
             opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
-            opener.document.getElementById('radius').dispatchEvent(changeEvent);
         }
         if(opener.document.getElementById('groundradius')){
             opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
-            opener.document.getElementById('groundradius').dispatchEvent(changeEvent);
         }
     }
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt') && inputResponseData.hasOwnProperty('polyArr')){
