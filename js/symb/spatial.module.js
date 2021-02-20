@@ -2648,9 +2648,11 @@ function processInputSubmit(){
             opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
             opener.document.getElementById('pointlong').dispatchEvent(changeEvent);
         }
+        if(opener.document.getElementById('radiusunits')){
+            opener.document.getElementById('radiusunits').value = 'km';
+        }
         if(opener.document.getElementById('radiustemp')){
             opener.document.getElementById('radiustemp').value = inputResponseData['circleArr'][0]['groundradius'];
-            opener.document.getElementById('radiustemp').dispatchEvent(changeEvent);
         }
         if(opener.document.getElementById('radius')){
             opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
@@ -2659,10 +2661,6 @@ function processInputSubmit(){
         if(opener.document.getElementById('groundradius')){
             opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
             opener.document.getElementById('groundradius').dispatchEvent(changeEvent);
-        }
-        if(opener.document.getElementById('radiusunits')){
-            opener.document.getElementById('radiusunits').value = 'km';
-            opener.document.getElementById('radiusunits').dispatchEvent(changeEvent);
         }
     }
     if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt') && inputResponseData.hasOwnProperty('polyArr')){
