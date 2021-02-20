@@ -18,8 +18,10 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/shared.js?ver=1"></script>
-    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=19"></script>
+    <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=20"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=12"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
 
@@ -70,6 +72,23 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                 return false;
             }
             return true;
+        }
+
+        function updateRadius(){
+            const pointRadiusLat = Number(document.getElementById("pointlat").value);
+            const pointRadiusLong = Number(document.getElementById("pointlong").value);
+            let enteredRadius = Number(document.getElementById("radiustemp").value);
+            if(pointRadiusLat && pointRadiusLong && enteredRadius){
+                const radiusUnits = document.getElementById("radiusunits").value;
+                const radius = (radiusUnits === "km" ? (enteredRadius * 1000) : ((enteredRadius * 0.621371192) * 1000));
+                const centerCoords = ol.proj.fromLonLat([pointRadiusLong, pointRadiusLat]);
+                const edgeCoordinate = [centerCoords[0] + radius, centerCoords[1]];
+                const fixedcenter = ol.proj.transform(centerCoords, 'EPSG:3857', 'EPSG:4326');
+                const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+                const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
+                document.getElementById("radius").value = radius;
+                document.getElementById("groundradius").value = groundRadius;
+            }
         }
 
         function setSpatialSearchTerms() {
@@ -241,10 +260,10 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                 </div>
                 <div style="margin-bottom:8px;">
                     <div style="float:left;">
-                        <div style="width:80px;display:inline-block;"><?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?></div> <input type="text" id="pointlat" name="pointlat" size="7" style="width:100px;">
+                        <div style="width:80px;display:inline-block;"><?php echo $SEARCHTEXT['LL_P-RADIUS_LAT']; ?></div> <input type="text" id="pointlat" name="pointlat" size="7" style="width:100px;" onchange="updateRadius();">
                     </div>
                     <div style="float:left;margin-left:10px;">
-                        <div style="width:80px;display:inline-block;"><?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?></div> <input type="text" id="pointlong" name="pointlong" size="7" style="width:100px;">
+                        <div style="width:80px;display:inline-block;"><?php echo $SEARCHTEXT['LL_P-RADIUS_LNG']; ?></div> <input type="text" id="pointlong" name="pointlong" size="7" style="width:100px;" onchange="updateRadius();">
                     </div>
                 </div>
                 <div style="clear:both;margin-bottom:8px;">

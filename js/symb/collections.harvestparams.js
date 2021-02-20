@@ -42,12 +42,6 @@ function changeTableDisplay(){
     }
 }
 
-function updateRadius(){
-    const radiusUnits = document.getElementById("radiusunits").value;
-    let enteredRadius = document.getElementById("radiustemp").value;
-    document.getElementById("radius").value = (radiusUnits === "km" ? enteredRadius : (enteredRadius * 0.621371192));
-}
-
 function setHarvestParamsForm(){
     const stArr = getSearchTermsArr();
     if(stArr['usethes']){
