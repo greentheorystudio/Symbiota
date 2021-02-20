@@ -329,7 +329,6 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
         $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
             $returnArr[$row->tagkey] = $row->description_en;
         }
         $result->close();
