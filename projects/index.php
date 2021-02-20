@@ -175,7 +175,7 @@ if(!$researchList && !$editMode){
 		}
 
         function openSpatialViewerWindow(coordArrJson) {
-            let mapWindow = open("../../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
