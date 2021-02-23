@@ -16,21 +16,21 @@ if($taxonRank){
     if($taxonRank > 180 && !$displayingChildren){
         $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$penaCentralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
+        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
         $bottomRowElements = Array($mapThumbDiv,$imgDiv,$penaImgTabDiv);
         $footerRowElements = Array();
     }
     elseif($taxonRank === 180 || $displayingChildren){
         $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
+        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array();
     }
     else{
         $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
+        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array();
     }
@@ -41,4 +41,3 @@ elseif($taxonValue){
 else{
     $topRowElements = Array('ERROR!');
 }
-?>
