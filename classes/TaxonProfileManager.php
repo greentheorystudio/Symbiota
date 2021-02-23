@@ -734,7 +734,7 @@ class TaxonProfileManager {
         return $googleUrl;
     }
 
-    public function getDescriptions(){
+    public function getDescriptions($inlineStatements = false){
         $retArr = array();
         if($this->tid){
             $rsArr = array();
@@ -754,14 +754,14 @@ class TaxonProfileManager {
             $usedCaptionArr = array();
             foreach($rsArr as $n => $rowArr){
                 if($rowArr['tid'] === $this->tid){
-                    $retArr = $this->loadDescriptionArr($rowArr, $retArr);
+                    $retArr = $this->loadDescriptionArr($rowArr, $retArr,$inlineStatements);
                     $usedCaptionArr[] = $rowArr['caption'];
                 }
             }
             reset($rsArr);
             foreach($rsArr as $n => $rowArr){
                 if($rowArr['tid'] !== $this->tid && !in_array($rowArr['caption'], $usedCaptionArr, true)){
-                    $retArr = $this->loadDescriptionArr($rowArr, $retArr);
+                    $retArr = $this->loadDescriptionArr($rowArr, $retArr,$inlineStatements);
                 }
             }
 
@@ -770,7 +770,7 @@ class TaxonProfileManager {
         return $retArr;
     }
 
-    private function loadDescriptionArr($rowArr,$retArr){
+    private function loadDescriptionArr($rowArr,$retArr,$inlineStatements){
         $indexKey = 0;
         if(!in_array(strtolower($rowArr['language']), $this->langArr, true)){
             $indexKey = 1;
@@ -783,11 +783,24 @@ class TaxonProfileManager {
         if(strpos($rowArr['statement'], '<p>') === 0){
             $rowArr['statement'] = substr($rowArr['statement'], 3);
         }
-        if($rowArr['displayheader'] && $rowArr['heading']){
-            $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+        if(!$inlineStatements){
+            if($rowArr['displayheader'] && $rowArr['heading']){
+                $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            }
+            else{
+                $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            }
         }
         else{
-            $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            if(substr($rowArr['statement'], -4) === '</p>'){
+                $rowArr['statement'] = substr($rowArr['statement'], 0, -4);
+            }
+            if($rowArr['displayheader'] && $rowArr['heading']){
+                $statementStr = '<span><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -7) === '</span>' ?'':'</span>');
+            }
+            else{
+                $statementStr = '<span>'.$rowArr['statement'].(substr($rowArr['statement'], -7) === '</span>' ?'':'</span>');
+            }
         }
         $retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = $statementStr;
         return $retArr;
