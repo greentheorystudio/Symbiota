@@ -327,9 +327,6 @@ class TaxonProfileManager {
                 if($mapArr = $this->getMapArr($tid)){
                     $this->sppArray[$sn]['map'] = array_shift($mapArr);
                 }
-                else{
-                    $this->sppArray[$sn]['map'] = $this->getGoogleStaticMap($tid);
-                }
             }
         }
     }
@@ -632,106 +629,6 @@ class TaxonProfileManager {
             $result->close();
         }
         return $maps;
-    }
-
-    public function getGoogleStaticMap($tidStr = ''){
-        global $MAPPING_BOUNDARIES, $GOOGLE_MAP_KEY, $TAXON_PROFILE_MAP_CENTER, $TAXON_PROFILE_MAP_ZOOM;
-        $googleUrl = '';
-        if(!$tidStr){
-            $tidArr = Array($this->tid,$this->submittedTid);
-            if($this->synonyms) {
-                $tidArr = array_merge($tidArr, array_keys($this->synonyms));
-            }
-            $tidStr = trim(implode(',',$tidArr),' ,');
-        }
-
-        $mapArr = array();
-        if($tidStr){
-            $minLat = 90;
-            $maxLat = -90;
-            $minLong = 180;
-            $maxLong = -180;
-            $latlonArr = array();
-            if($MAPPING_BOUNDARIES){
-                $latlonArr = explode(';',$MAPPING_BOUNDARIES);
-            }
-
-            $sqlBase = 'SELECT t.sciname, gi.DecimalLatitude, gi.DecimalLongitude ' .
-                'FROM omoccurgeoindex gi INNER JOIN taxa t ON gi.tid = t.tid ' .
-                'WHERE (gi.tid IN ('.$tidStr.')) ';
-            $sql = $sqlBase;
-            if(count($latlonArr) === 4){
-                $sql .= 'AND (gi.DecimalLatitude BETWEEN ' .$latlonArr[2]. ' AND ' .$latlonArr[0]. ') ' .
-                    'AND (gi.DecimalLongitude BETWEEN ' .$latlonArr[3]. ' AND ' .$latlonArr[1]. ') ';
-            }
-            $sql .= 'ORDER BY RAND() LIMIT 50';
-            //echo "<div>".$sql."</div>"; exit;
-            $result = $this->con->query($sql);
-            while($row = $result->fetch_object()){
-                $lat = round($row->DecimalLatitude,2);
-                if($lat < $minLat) {
-                    $minLat = $lat;
-                }
-                if($lat > $maxLat) {
-                    $maxLat = $lat;
-                }
-                $long = round($row->DecimalLongitude,2);
-                if($long < $minLong) {
-                    $minLong = $long;
-                }
-                if($long > $maxLong) {
-                    $maxLong = $long;
-                }
-                $mapArr[] = $lat. ',' .$long;
-            }
-            $result->free();
-            if(!$mapArr && $latlonArr){
-                $result = $this->con->query($sqlBase. 'LIMIT 50');
-                while($row = $result->fetch_object()){
-                    $lat = round($row->DecimalLatitude,2);
-                    if($lat < $minLat) {
-                        $minLat = $lat;
-                    }
-                    if($lat > $maxLat) {
-                        $maxLat = $lat;
-                    }
-                    $long = round($row->DecimalLongitude,2);
-                    if($long < $minLong) {
-                        $minLong = $long;
-                    }
-                    if($long > $maxLong) {
-                        $maxLong = $long;
-                    }
-                    $mapArr[] = $lat. ',' .$long;
-                }
-                $result->free();
-            }
-            if(!$mapArr) {
-                return 0;
-            }
-            $latDist = $maxLat - $minLat;
-            $longDist = $maxLong - $minLong;
-
-            $googleUrl = '//maps.googleapis.com/maps/api/staticmap?size=256x256&maptype=terrain';
-            if($GOOGLE_MAP_KEY) {
-                $googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
-            }
-            if($TAXON_PROFILE_MAP_CENTER) {
-                $googleUrl .= '&center=' . $TAXON_PROFILE_MAP_CENTER;
-            }
-            if($TAXON_PROFILE_MAP_ZOOM) {
-                $googleUrl .= '&zoom='.$TAXON_PROFILE_MAP_ZOOM;
-            }
-            elseif($latDist < 3 || $longDist < 3) {
-                $googleUrl .= '&zoom=6';
-            }
-        }
-        $coordStr = implode('|',$mapArr);
-        if(!$coordStr) {
-            return '';
-        }
-        $googleUrl .= '&markers=' .$coordStr;
-        return $googleUrl;
     }
 
     public function getDescriptions($inlineStatements = false){
