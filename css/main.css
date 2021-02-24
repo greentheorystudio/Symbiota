@@ -600,7 +600,7 @@ div.photographer{
 }
 
 div.penafieldimage {
-	margin-bottom: 8px;
+	margin: 10px 10px 8px;
 }
 
 div.penafieldimage img {
@@ -608,7 +608,7 @@ div.penafieldimage img {
 }
 
 div.penaspecimenimage {
-	margin-bottom: 8px;
+	margin: 10px 10px 8px;
 }
 
 div.penaspecimenimage img {
@@ -620,12 +620,14 @@ div.sptab{
 	height:		330px;
 	width:		94%;
 	overflow: 	auto;
+	font-size: 14px;
 }
 
 div.spptab{
 	height:		330px;
 	width:		94%;
 	overflow: 	auto;
+	font-size: 14px;
 }
 
 #descsource{

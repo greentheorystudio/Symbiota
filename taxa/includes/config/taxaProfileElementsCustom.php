@@ -153,7 +153,7 @@ $url = '';
 $aUrl = '';
 $gAnchor = '';
 if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
-    $gAnchor = "openMapPopup('".$taxonManager->getTid()."',".($taxonManager->getClid()?:0). ')';
+    $gAnchor = "openMapPopup('".$taxonManager->getTid()."',".($taxonManager->getClid()?:'0'). ')';
 }
 if($mapSrc = $taxonManager->getMapArr()){
     $url = array_shift($mapSrc);
