@@ -150,33 +150,20 @@ elseif($imgObj['owner']){
 echo '</div>';
 echo '</div>';
 $url = '';
-$aUrl = '';
-$gAnchor = '';
+$mAnchor = '';
 if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
-    $gAnchor = "openMapPopup('".$taxonManager->getTid()."',".($taxonManager->getClid()?:'0'). ')';
-}
-if($mapSrc = $taxonManager->getMapArr()){
-    $url = array_shift($mapSrc);
-    $aUrl = $url;
-}
-elseif($gAnchor){
-    $url = $taxonManager->getGoogleStaticMap();
-}
-if($url){
+    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
+    if($mapSrc = $taxonManager->getMapArr()){
+        $url = array_shift($mapSrc);
+    }
     echo '<div class="mapthumb">';
-    if($gAnchor){
-        echo '<a href="#" onclick="'.$gAnchor.';return false">';
-    }
-    elseif($aUrl){
-        echo '<a href="'.$aUrl.'">';
-    }
-    echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
-    if($aUrl || $gAnchor) {
+    if($url){
+        echo '<a href="#" onclick="'.$mAnchor.';return false">';
+        echo '<a href="'.$url.'">';
+        echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
         echo '</a>';
     }
-    if($gAnchor) {
-        echo '<br /><a href="#" onclick="' . $gAnchor . ';return false">Open Interactive Map</a>';
-    }
+    echo '<br /><a href="#" onclick="' . $mAnchor . ';return false">Open Interactive Map</a>';
     echo '</div>';
 }
 echo '</div>';
