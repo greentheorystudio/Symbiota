@@ -1100,6 +1100,7 @@ class SpecUploadBase extends SpecUpload{
     protected function loadIdentificationRecord($recMap): void
     {
         if($recMap){
+            $recMap = OccurrenceUtilities::occurrenceArrayCleaning($recMap);
             if(isset($recMap['coreid']) && !isset($recMap['dbpk'])){
                 $recMap['dbpk'] = $recMap['coreid'];
                 unset($recMap['coreid']);
@@ -1112,10 +1113,10 @@ class SpecUploadBase extends SpecUpload{
                         if(array_key_exists('specificepithet',$recMap) && $recMap['specificepithet']) {
                             $sciName .= ' ' . $recMap['specificepithet'];
                         }
-                        if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']) {
-                            $sciName .= ' ' . $recMap['taxonrank'];
-                        }
                         if(array_key_exists('infraspecificepithet',$recMap) && $recMap['infraspecificepithet']) {
+                            if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']) {
+                                $sciName .= ' ' . $recMap['taxonrank'];
+                            }
                             $sciName .= ' ' . $recMap['infraspecificepithet'];
                         }
                         $recMap['sciname'] = trim($sciName);
