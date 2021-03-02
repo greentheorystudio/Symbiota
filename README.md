@@ -31,7 +31,7 @@ be installed to enable barcode generation on specimen labels.
 ## Recommended server configurations
 These configurations are recommended for the php and MySQL/MariaDB installations on the server in addition to the defaults.
 
-### php configurations (made in php.ini file)
+### php configurations (made in the php.ini file)
 
 - `expose_php = Off`
 - `max_execution_time = 600`
@@ -41,7 +41,7 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 - `post_max_size = 150M`
 - `upload_max_filesize = 150M`
 
-### MySQL/MariaDB configurations (usually made in mysqld.cnf file)
+### MySQL/MariaDB configurations (usually made in the mysqld.cnf file)
 
 - `character-set-server=utf8` - replace utf8 with your desired character set
 - `collation-server=utf8_general_ci` - replace utf8_general_ci with your desired collation
