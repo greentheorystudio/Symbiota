@@ -722,8 +722,7 @@ div.sppmap{
 }
 
 div.sppmap img{
-	width: 130px;
-	height:	120px;
+	max-width: 130px;
 	margin: 0 auto;
 	border: 1px dotted black;
 }
