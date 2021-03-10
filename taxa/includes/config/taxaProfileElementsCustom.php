@@ -166,6 +166,14 @@ if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
     }
     echo '<div class="mapthumb">';
     if($url){
+        if(strpos($url, '/') === 0) {
+            if($IMAGE_DOMAIN){
+                $url = $IMAGE_DOMAIN . $url;
+            }
+            else{
+                $url = $CLIENT_ROOT . $url;
+            }
+        }
         echo '<a href="#" onclick="'.$mAnchor.';return false">';
         echo '<a href="'.$url.'">';
         echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
