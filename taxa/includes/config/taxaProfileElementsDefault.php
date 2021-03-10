@@ -235,7 +235,7 @@ else{
 $descTabsDiv = ob_get_clean();
 
 ob_start();
-$url = ''; 
+$url = '';
 $mAnchor = '';
 if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
@@ -329,15 +329,16 @@ ob_start();
 
                 if(array_key_exists('url',$subArr)){
                     $imgUrl = $subArr['url'];
-                    if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-                        $imgUrl = $IMAGE_DOMAIN.$imgUrl;
-                    }
                     echo "<a href='index.php?taxon=".$subArr['tid']. '&taxauthid=' .$taxAuthId.($clValue? '&cl=' .$clValue: '')."'>";
-
                     if($subArr['thumbnailurl']){
                         $imgUrl = $subArr['thumbnailurl'];
-                        if($IMAGE_DOMAIN && strpos($subArr['thumbnailurl'], '/') === 0){
-                            $imgUrl = $IMAGE_DOMAIN.$subArr['thumbnailurl'];
+                    }
+                    if(strpos($imgUrl, '/') === 0) {
+                        if($IMAGE_DOMAIN){
+                            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                        }
+                        else{
+                            $imgUrl = $CLIENT_ROOT . $imgUrl;
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
@@ -355,7 +356,16 @@ ob_start();
 
                 echo '<div class="sppmap">';
                 if(array_key_exists('map',$subArr) && $subArr['map']){
-                    echo '<img src="'.$subArr['map'].'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
+                    $mapUrl = $subArr['map'];
+                    if(strpos($mapUrl, '/') === 0) {
+                        if($IMAGE_DOMAIN){
+                            $mapUrl = $IMAGE_DOMAIN . $mapUrl;
+                        }
+                        else{
+                            $mapUrl = $CLIENT_ROOT . $mapUrl;
+                        }
+                    }
+                    echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
                 }
                 elseif($taxonManager->getRankId()>140){
                     echo '<div class="spptext">Map not<br />Available</div>';
