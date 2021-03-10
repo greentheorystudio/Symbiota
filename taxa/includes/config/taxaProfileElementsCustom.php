@@ -119,12 +119,20 @@ $imgId = key($specimenImageArr);
 $imgUrl = $imgObj['url'];
 $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
 $imgThumbnail = $imgObj['thumbnailurl'];
-if($IMAGE_DOMAIN){
-    if(strpos($imgUrl, '/') === 0) {
+if(strpos($imgUrl, '/') === 0) {
+    if($IMAGE_DOMAIN){
         $imgUrl = $IMAGE_DOMAIN . $imgUrl;
     }
-    if(strpos($imgThumbnail, '/') === 0) {
+    else{
+        $imgUrl = $CLIENT_ROOT . $imgUrl;
+    }
+}
+if(strpos($imgThumbnail, '/') === 0) {
+    if($IMAGE_DOMAIN){
         $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+    }
+    else{
+        $imgThumbnail = $CLIENT_ROOT . $imgThumbnail;
     }
 }
 if($imgObj['occid']){
