@@ -115,45 +115,47 @@ echo '</div>';
 echo '<div id="penacentralimagerightcolumn">';
 echo "<div class='penaspecimenimage'>";
 $imgObj = current($specimenImageArr);
-$imgId = key($specimenImageArr);
-$imgUrl = $imgObj['url'];
-$imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
-$imgThumbnail = $imgObj['thumbnailurl'];
-if(strpos($imgUrl, '/') === 0) {
-    if($IMAGE_DOMAIN){
-        $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+if(is_array($imgObj)){
+    $imgId = key($specimenImageArr);
+    $imgUrl = $imgObj['url'];
+    $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
+    $imgThumbnail = $imgObj['thumbnailurl'];
+    if(strpos($imgUrl, '/') === 0) {
+        if($IMAGE_DOMAIN){
+            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+        }
+        else{
+            $imgUrl = $CLIENT_ROOT . $imgUrl;
+        }
     }
-    else{
-        $imgUrl = $CLIENT_ROOT . $imgUrl;
+    if(strpos($imgThumbnail, '/') === 0) {
+        if($IMAGE_DOMAIN){
+            $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+        }
+        else{
+            $imgThumbnail = $CLIENT_ROOT . $imgThumbnail;
+        }
     }
-}
-if(strpos($imgThumbnail, '/') === 0) {
-    if($IMAGE_DOMAIN){
-        $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+    if($imgObj['occid']){
+        $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
     }
-    else{
-        $imgThumbnail = $CLIENT_ROOT . $imgThumbnail;
+    if($imgObj['thumbnailurl']) {
+        $imgUrl = $imgThumbnail;
     }
-}
-if($imgObj['occid']){
-    $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
-}
-if($imgObj['thumbnailurl']) {
-    $imgUrl = $imgThumbnail;
-}
-echo '<div class="tptnimg"><a href="'.$imgAnchor.'">';
-$titleStr = $imgObj['caption'];
-if($imgObj['sciname'] !== $taxonManager->getSciName()) {
-    $titleStr .= ' (linked from ' . $imgObj['sciname'] . ')';
-}
-echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$spDisplay.' image" />';
-echo '</a></div>';
-echo '<div class="photographer">';
-if($imgObj['photographer']){
-    echo $imgObj['photographer'].'&nbsp;&nbsp;';
-}
-elseif($imgObj['owner']){
-    echo $imgObj['owner'].'&nbsp;&nbsp;';
+    echo '<div class="tptnimg"><a href="'.$imgAnchor.'">';
+    $titleStr = $imgObj['caption'];
+    if($imgObj['sciname'] !== $taxonManager->getSciName()) {
+        $titleStr .= ' (linked from ' . $imgObj['sciname'] . ')';
+    }
+    echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$spDisplay.' image" />';
+    echo '</a></div>';
+    echo '<div class="photographer">';
+    if($imgObj['photographer']){
+        echo $imgObj['photographer'].'&nbsp;&nbsp;';
+    }
+    elseif($imgObj['owner']){
+        echo $imgObj['owner'].'&nbsp;&nbsp;';
+    }
 }
 echo '</div>';
 echo '</div>';
