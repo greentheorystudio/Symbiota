@@ -1100,6 +1100,7 @@ class SpecUploadBase extends SpecUpload{
     protected function loadIdentificationRecord($recMap): void
     {
         if($recMap){
+            $recMap = OccurrenceUtilities::occurrenceArrayCleaning($recMap);
             if(isset($recMap['coreid']) && !isset($recMap['dbpk'])){
                 $recMap['dbpk'] = $recMap['coreid'];
                 unset($recMap['coreid']);
@@ -1112,10 +1113,10 @@ class SpecUploadBase extends SpecUpload{
                         if(array_key_exists('specificepithet',$recMap) && $recMap['specificepithet']) {
                             $sciName .= ' ' . $recMap['specificepithet'];
                         }
-                        if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']) {
-                            $sciName .= ' ' . $recMap['taxonrank'];
-                        }
                         if(array_key_exists('infraspecificepithet',$recMap) && $recMap['infraspecificepithet']) {
+                            if(array_key_exists('taxonrank',$recMap) && $recMap['taxonrank']) {
+                                $sciName .= ' ' . $recMap['taxonrank'];
+                            }
                             $sciName .= ' ' . $recMap['infraspecificepithet'];
                         }
                         $recMap['sciname'] = trim($sciName);
@@ -1132,29 +1133,27 @@ class SpecUploadBase extends SpecUpload{
 
                 $sqlFragments = $this->getSqlFragments($recMap,$this->identFieldMap);
                 if($sqlFragments){
-                    if(array_key_exists('identifiedby',$recMap) || array_key_exists('dateidentified',$recMap)){
-                        if(!array_key_exists('identifiedby',$recMap)) {
-                            $recMap['identifiedby'] = 'not specified';
-                        }
-                        if(!array_key_exists('dateidentified',$recMap)) {
-                            $recMap['dateidentified'] = 'not specified';
-                        }
-                        $sql = 'INSERT INTO uploaddetermtemp(collid'.$sqlFragments['fieldstr'].') '.
-                            'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
-                        //echo "<div>SQL: ".$sql."</div>"; exit;
+                    if(!array_key_exists('identifiedby',$recMap)) {
+                        $recMap['identifiedby'] = 'not specified';
+                    }
+                    if(!array_key_exists('dateidentified',$recMap)) {
+                        $recMap['dateidentified'] = 'not specified';
+                    }
+                    $sql = 'INSERT INTO uploaddetermtemp(collid'.$sqlFragments['fieldstr'].') '.
+                        'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+                    //echo "<div>SQL: ".$sql."</div>"; exit;
 
-                        if($this->conn->query($sql)){
-                            $this->identTransferCount++;
-                            if($this->identTransferCount%1000 === 0) {
-                                $this->outputMsg('<li style="margin-left:10px;">Count: ' . $this->identTransferCount . '</li>');
-                            }
+                    if($this->conn->query($sql)){
+                        $this->identTransferCount++;
+                        if($this->identTransferCount%1000 === 0) {
+                            $this->outputMsg('<li style="margin-left:10px;">Count: ' . $this->identTransferCount . '</li>');
                         }
-                        else{
-                            $outStr = '<li>FAILED adding identification history record #'.$this->identTransferCount.'</li>';
-                            $outStr .= '<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>';
-                            $outStr .= '<li style="margin:0 0 10px 10px;">SQL: '.$sql.'</li>';
-                            $this->outputMsg($outStr);
-                        }
+                    }
+                    else{
+                        $outStr = '<li>FAILED adding identification history record #'.$this->identTransferCount.'</li>';
+                        $outStr .= '<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>';
+                        $outStr .= '<li style="margin:0 0 10px 10px;">SQL: '.$sql.'</li>';
+                        $this->outputMsg($outStr);
                     }
                 }
             }
