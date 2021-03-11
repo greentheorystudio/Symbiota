@@ -594,13 +594,23 @@ div.photographer{
 	width: 420px;
 	margin-top:5px;
 	margin-left: 10px;
-	clear:both;
+	clear: both;
 	display: flex;
 	justify-content: space-between;
+	min-height: 440px;
+}
+
+#penacentralimageleftcolumn {
+	width: 210px;
+}
+
+#penacentralimagerightcolumn {
+	width: 210px;
 }
 
 div.penafieldimage {
 	margin: 10px 10px 8px;
+	width: 200px;
 }
 
 div.penafieldimage img {
@@ -609,6 +619,7 @@ div.penafieldimage img {
 
 div.penaspecimenimage {
 	margin: 10px 10px 8px;
+    width: 200px;
 }
 
 div.penaspecimenimage img {

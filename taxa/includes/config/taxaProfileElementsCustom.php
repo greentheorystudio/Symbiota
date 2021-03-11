@@ -74,9 +74,11 @@ ob_start();
 $fieldImageArr = $taxonManager->getFilteredImageArr('field',2);
 $specimenImageArr = $taxonManager->getFilteredImageArr('specimen',1);
 echo '<div id="penacentralimage">';
+
 echo '<div id="penacentralimageleftcolumn">';
 foreach($fieldImageArr as $imgId => $imgObj){
     echo "<div class='penafieldimage'>";
+
     $imgUrl = $imgObj['url'];
     $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
     $imgThumbnail = $imgObj['thumbnailurl'];
@@ -109,13 +111,16 @@ foreach($fieldImageArr as $imgId => $imgObj){
         echo $imgObj['owner'].'&nbsp;&nbsp;';
     }
     echo '</div>';
+
     echo '</div>';
 }
 echo '</div>';
+
 echo '<div id="penacentralimagerightcolumn">';
-echo "<div class='penaspecimenimage'>";
 $imgObj = current($specimenImageArr);
 if(is_array($imgObj)){
+    echo "<div class='penaspecimenimage'>";
+
     $imgId = key($specimenImageArr);
     $imgUrl = $imgObj['url'];
     $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
@@ -156,9 +161,10 @@ if(is_array($imgObj)){
     elseif($imgObj['owner']){
         echo $imgObj['owner'].'&nbsp;&nbsp;';
     }
+    echo '</div>';
+
+    echo '</div>';
 }
-echo '</div>';
-echo '</div>';
 $url = '';
 $mAnchor = '';
 if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
