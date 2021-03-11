@@ -22,8 +22,8 @@ $SMTP_USERNAME = '';            //SMTP Username
 $SMTP_PASSWORD = '';            //SMTP Password
 
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
-$IMAGE_ROOT_URL = '';				//URL path to images
-$IMAGE_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
+$IMAGE_ROOT_URL = '/content/imglib';				//URL path to images
+$IMAGE_ROOT_PATH = $SERVER_ROOT.'/content/imglib';			//Writable path to images, especially needed for downloading images
 
 $IMG_WEB_WIDTH = 1400;
 $IMG_TN_WIDTH = 200;

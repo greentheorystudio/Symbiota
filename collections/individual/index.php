@@ -165,8 +165,8 @@ $commentArr = $indManager->getCommentArr($isEditor);
     ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
-        const decimalLatitude = <?php echo $occArr['decimallatitude'] ?: null; ?>;
-        const decimalLongitude = <?php echo $occArr['decimallongitude'] ?: null; ?>;
+        const decimalLatitude = <?php echo $occArr['decimallatitude'] ?: 'null'; ?>;
+        const decimalLongitude = <?php echo $occArr['decimallongitude'] ?: 'null'; ?>;
         const coordUncertainty = <?php echo $occArr['coordinateuncertaintyinmeters'] ?: 0; ?>;
         const footprintWKT = '<?php echo $occArr['footprintwkt']; ?>';
 
