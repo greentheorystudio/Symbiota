@@ -61,7 +61,7 @@ if($stArrJson){
 	?>
 		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Checklist Explorer Interface'>
 			<form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-                <a style="cursor:pointer;" onclick="submitChecklistExplorerFormTaxaList();"><img style='width:15px;' src='../../images/list.png'/></a>
+                <a style="cursor:pointer;" onclick="submitChecklistExplorerFormTaxaList();"><img style='width:15px;' src='../../images/list.svg'/></a>
                 <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
                 <input type="hidden" id="checklistExplorerFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
                 <input type="hidden" name="interface" value='checklist' />

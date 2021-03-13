@@ -256,7 +256,7 @@ if($editor && $submitAction){
 						<form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
 							<div style="float:right;">
 								<span>
-									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.png" title="Search for clones previously georeferenced" style="width:15px;" /></a>
+									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.svg" title="Search for clones previously georeferenced" style="width:15px;" /></a>
 								</span>
 								<span style="margin-left:10px;">
 									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="GeoLocate locality" style="width:15px;" /></a>
