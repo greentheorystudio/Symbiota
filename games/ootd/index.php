@@ -145,7 +145,7 @@ if($submitAction){
 					<div style="font-size:18px;text-align:center;margin: 20px auto;" >
 						<b>Name that <?php echo ($ootdGameType ?? 'organism'); ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
-							<img src="../../images/games/ootd/qmark.png" style="height:20px;"/>
+							<img src="../../images/help-circle.svg" style="height:20px;"/>
 						</a>
 						<div id="gameinfodialog" title="How to Play">
 							Look at the picture, and see if you can figure out what the <?php echo ($ootdGameType ?? 'organism'); ?> is. If you get completely stumped, you can

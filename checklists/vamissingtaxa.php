@@ -47,7 +47,7 @@ else{
 	</div>
 	<div style="float:left;margin-left:5px;">
 		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode == 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
-			<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="border:0;" />
+			<img src="<?php echo $CLIENT_ROOT; ?>/images/download.svg" style="border:0;width:15px;" />
 		</a>
 	</div>
 	<div style="float:right;">
@@ -186,7 +186,7 @@ else{
                     <div>
                         <a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
                         <a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-                            <img src="../images/link.png" style="width:13px;" title="Link Voucher Specimens" />
+                            <img src="../images/link.svg" style="width:13px;" title="Link Voucher Specimens" />
                         </a>
                     </div>
                     <?php

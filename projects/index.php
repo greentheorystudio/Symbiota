@@ -76,9 +76,22 @@ if(!$researchList && !$editMode){
     <title><?php echo $DEFAULT_TITLE; ?> Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <style type="text/css">
+        a.boxclose{
+            float:right;
+            width:36px;
+            height:36px;
+            background:transparent url('../../images/spatial_close_icon.png') repeat top left;
+            margin-top:-35px;
+            margin-right:-35px;
+            cursor:pointer;
+        }
+    </style>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
@@ -87,6 +100,10 @@ if(!$researchList && !$editMode){
             $('#tabs').tabs(
                 { active: tabIndex }
             );
+            $('#infobox').popup({
+                transition: 'all 0.3s',
+                scrolllock: true
+            });
         });
 
         function toggleById(target){
@@ -99,21 +116,8 @@ if(!$researchList && !$editMode){
             }
         }
 
-        function toggleResearchInfoBox(anchorObj){
-            const obj = document.getElementById("researchlistpopup");
-            const pos = findPos(anchorObj);
-            let posLeft = pos[0];
-            if(posLeft > 550){
-                posLeft = 550;
-            }
-            obj.style.left = String(posLeft - 40);
-            obj.style.top = String(pos[1] + 25);
-            if(obj.style.display === "block"){
-                obj.style.display="none";
-            }
-            else {
-                obj.style.display="block";
-            }
+        function toggleResearchInfoBox(){
+            $('#infobox').popup('show');
         }
 
         function findPos(obj){
@@ -361,8 +365,8 @@ echo '</div>';
                     ?>
                     <div style="font-weight:bold;font-size:130%;">
                         Research Checklists
-                        <span onclick="toggleResearchInfoBox(this);" title="What is a Research Species List?" style="cursor:pointer;">
-								<img src="../images/qmark_big.png" style="height:15px;"/>
+                        <span onclick="toggleResearchInfoBox();" title="What is a Research Species List?" style="cursor:pointer;">
+								<img src="../images/help-circle.svg" style="height:15px;"/>
 							</span>
                         <?php
                         if($coordJson){
@@ -373,14 +377,6 @@ echo '</div>';
                             <?php
                         }
                         ?>
-                    </div>
-                    <div id="researchlistpopup" class="genericpopup" style="display:none;">
-                        <img src="../images/uptriangle.png" style="position: relative; top: -22px; left: 30px;" />
-                        Research checklists are pre-compiled by biologists.
-                        This is a very controlled method for building a species list, which allows for
-                        specific specimens to be linked to the species names within the checklist and thus serve as vouchers.
-                        Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
-                        can inspect these specimens for verification or annotate the identification when necessary.
                     </div>
                     <?php
                     if($KEY_MOD_IS_ACTIVE){
@@ -441,5 +437,17 @@ echo '</div>';
 <?php
 include(__DIR__ . '/../footer.php');
 ?>
+
+<div id="infobox" data-role="popup" class="well" style="width:400px;height:300px;">
+    <a class="boxclose infobox_close" id="boxclose"></a>
+    <h2>What is a research checklist?</h2>
+    <div style="margin:15px;">
+        Research checklists are pre-compiled by biologists.
+        This is a very controlled method for building a species list, which allows for
+        specific specimens to be linked to the species names within the checklist and thus serve as vouchers.
+        Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
+        can inspect these specimens for verification or annotate the identification when necessary.
+    </div>
+</div>
 </body>
 </html>
