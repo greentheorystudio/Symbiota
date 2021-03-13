@@ -55,6 +55,8 @@ $collList = $occManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
 
+$datasetArr = $occManager->getDatasetArr();
+
 $dbArr = array();
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
@@ -127,60 +129,60 @@ $dbArr = array();
                         }
                     })
                     .autocomplete({
-                        source: function( request, response ) {
-                            const t = Number(document.getElementById("taxontype").value);
-                            let rankLow = '';
-                            let rankHigh = '';
-                            let rankLimit = '';
-                            let source = '';
-                            if(t === 5){
-                                source = '../webservices/autofillvernacular.php';
-                            }
-                            else{
-                                source = '../webservices/autofillsciname.php';
-                            }
-                            if(t === 4){
-                                rankLow = 21;
-                                rankHigh = 139;
-                            }
-                            else if(t === 2){
-                                rankLimit = 140;
-                            }
-                            else if(t === 3){
-                                rankLow = 141;
-                            }
-                            else{
-                                rankLow = 140;
-                            }
-                            //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                            $.getJSON( source, {
-                                term: extractLast( request.term ),
-                                rlow: rankLow,
-                                rhigh: rankHigh,
-                                rlimit: rankLimit,
-                                hideauth: true,
-                                limit: 20
-                            }, response );
-                        },
-                        appendTo: "#taxa_autocomplete",
-                        search: function() {
-                            const term = extractLast( this.value );
-                            if ( term.length < 4 ) {
+                            source: function( request, response ) {
+                                const t = Number(document.getElementById("taxontype").value);
+                                let rankLow = '';
+                                let rankHigh = '';
+                                let rankLimit = '';
+                                let source = '';
+                                if(t === 5){
+                                    source = '../webservices/autofillvernacular.php';
+                                }
+                                else{
+                                    source = '../webservices/autofillsciname.php';
+                                }
+                                if(t === 4){
+                                    rankLow = 21;
+                                    rankHigh = 139;
+                                }
+                                else if(t === 2){
+                                    rankLimit = 140;
+                                }
+                                else if(t === 3){
+                                    rankLow = 141;
+                                }
+                                else{
+                                    rankLow = 140;
+                                }
+                                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
+                                $.getJSON( source, {
+                                    term: extractLast( request.term ),
+                                    rlow: rankLow,
+                                    rhigh: rankHigh,
+                                    rlimit: rankLimit,
+                                    hideauth: true,
+                                    limit: 20
+                                }, response );
+                            },
+                            appendTo: "#taxa_autocomplete",
+                            search: function() {
+                                const term = extractLast( this.value );
+                                if ( term.length < 4 ) {
+                                    return false;
+                                }
+                            },
+                            focus: function() {
+                                return false;
+                            },
+                            select: function( event, ui ) {
+                                const terms = split( this.value );
+                                terms.pop();
+                                terms.push( ui.item.value );
+                                this.value = terms.join( ", " );
                                 return false;
                             }
-                        },
-                        focus: function() {
-                            return false;
-                        },
-                        select: function( event, ui ) {
-                            const terms = split( this.value );
-                            terms.pop();
-                            terms.push( ui.item.value );
-                            this.value = terms.join( ", " );
-                            return false;
-                        }
-                    },{}
-                );
+                        },{}
+                    );
             }
 
             spatialModuleInitialising = true;
@@ -207,6 +209,10 @@ $dbArr = array();
             });
             $('#infopopup').popup({
                 transition: 'all 0.3s'
+            });
+            $('#datasetmanagement').popup({
+                transition: 'all 0.3s',
+                scrolllock: true
             });
             $('#csvoptions').popup({
                 transition: 'all 0.3s',
@@ -1079,9 +1085,35 @@ $dbArr = array();
         changeDraw();
     };
 
+    function showDatasetManagementPopup(){
+        if(selections.length > 0){
+            document.getElementById("datasetselecteddiv").style.display = "block";
+        }
+        else{
+            document.getElementById("datasetselecteddiv").style.display = "none";
+        }
+        $("#datasetmanagement").popup("show");
+    }
+
+    function addSelectionsToDataset(){
+        document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+        document.getElementById("occarrjson").value = JSON.stringify(selections);
+        document.getElementById("datasetformaction").value = 'addSelectedToDataset';
+        document.getElementById("datasetform").submit();
+    }
+
+    function addQueryToDataset(){
+        document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+        document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
+        document.getElementById("datasetformaction").value = 'addAllToDataset';
+        document.getElementById("datasetform").submit();
+    }
+
     changeDraw();
     setTransformHandleStyle();
 </script>
+
+<?php include_once('includes/datasetmanagement.php'); ?>
 
 <?php include_once('includes/mapsettings.php'); ?>
 
@@ -1109,6 +1141,16 @@ $dbArr = array();
         <input id="formatcsv" name="formatcsv" type="hidden" />
         <input id="zipcsv" name="zipcsv" type="hidden" />
         <input id="csetcsv" name="csetcsv" type="hidden" />
+    </form>
+</div>
+
+<!-- Dataset Form -->
+<div style="display:none;">
+    <form name="datasetform" id="datasetform" action="../collections/datasets/datasetHandler.php" method="post" target="_blank">
+        <input id="dsstarrjson" name="dsstarrjson" type="hidden" />
+        <input id="selectedtargetdatasetid" name="targetdatasetid" type="hidden" />
+        <input id="occarrjson" name="occarrjson" type="hidden" />
+        <input id="datasetformaction" name="action" type="hidden" />
     </form>
 </div>
 

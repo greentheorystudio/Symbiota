@@ -121,7 +121,7 @@ $statusStr = '';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
 					if($IS_ADMIN || in_array($collId, $pArr, true)) {
-                        echo ' <a href="../index.php?tabindex=2&collid=' . $collId . '"><img src="../../../images/edit.png" style="width:14px;" /></a>';
+                        echo ' <a href="../index.php?tabindex=2&collid=' . $collId . '"><img src="../../../images/edit.svg" style="width:14px;" /></a>';
                     }
 					echo '</td>';
 					echo '<td>'.number_format((array_key_exists(5,$cntArr)?$cntArr[5]:0)+(array_key_exists(10,$cntArr)?$cntArr[10]:0)).'</td>';
