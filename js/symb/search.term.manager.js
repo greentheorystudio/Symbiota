@@ -193,7 +193,7 @@ function processTaxaParamChange(){
     let taxaval = document.getElementById("taxa").value.trim();
     const taxontype = document.getElementById("taxontype").value;
     const thes = !!document.getElementById("thes").checked;
-    taxaval = taxaval.replace(",", ";");
+    taxaval = taxaval.replaceAll(",", ";");
     if(taxaval){
         setSearchTermsArrKeyValue('usethes',thes);
         setSearchTermsArrKeyValue('taxontype',taxontype);
@@ -225,7 +225,7 @@ function processTextParamChange(){
     const hasgenetic = document.getElementById("hasgenetic").checked;
 
     if(countryval){
-        countryval = countryval.replace(",", ";");
+        countryval = countryval.replaceAll(",", ";");
         if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
             if(countryval.indexOf('USA') === -1){
                 countryval += ';USA';
@@ -246,51 +246,51 @@ function processTextParamChange(){
         clearSearchTermsArrKey('country');
     }
     if(stateval){
-        stateval = stateval.replace(",", ";");
+        stateval = stateval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('state',stateval);
     }
     else{
         clearSearchTermsArrKey('state');
     }
     if(countyval){
-        countyval = countyval.replace(" Co.", "");
-        countyval = countyval.replace(" County", "");
-        countyval = countyval.replace(",", ";");
+        countyval = countyval.replaceAll(" Co.", "");
+        countyval = countyval.replaceAll(" County", "");
+        countyval = countyval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('county',countyval);
     }
     else{
         clearSearchTermsArrKey('county');
     }
     if(localityval){
-        localityval = localityval.replace(",", ";");
+        localityval = localityval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('local',localityval);
     }
     else{
         clearSearchTermsArrKey('local');
     }
     if(elevlowval){
-        elevlowval = elevlowval.replace(",", ";");
+        elevlowval = elevlowval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('elevlow',elevlowval);
     }
     else{
         clearSearchTermsArrKey('elevlow');
     }
     if(elevhighval){
-        elevhighval = elevhighval.replace(",", ";");
+        elevhighval = elevhighval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('elevhigh',elevhighval);
     }
     else{
         clearSearchTermsArrKey('elevhigh');
     }
     if(collectorval){
-        collectorval = collectorval.replace(",", ";");
+        collectorval = collectorval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('collector',collectorval);
     }
     else{
         clearSearchTermsArrKey('collector');
     }
     if(collnumval){
-        collnumval = collnumval.replace(",", ";");
+        collnumval = collnumval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('collnum',collnumval);
     }
     else{
@@ -310,14 +310,14 @@ function processTextParamChange(){
         clearSearchTermsArrKey('eventdate2');
     }
     if(occurrenceremarksval){
-        occurrenceremarksval = occurrenceremarksval.replace(",", ";");
+        occurrenceremarksval = occurrenceremarksval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('occurrenceRemarks',occurrenceremarksval);
     }
     else{
         clearSearchTermsArrKey('occurrenceRemarks');
     }
     if(catnumval){
-        catnumval = catnumval.replace(",", ";");
+        catnumval = catnumval.replaceAll(",", ";");
         setSearchTermsArrKeyValue('catnum',catnumval);
     }
     else{

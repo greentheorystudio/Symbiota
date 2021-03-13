@@ -29,15 +29,15 @@ function verifyAddTaxonomyForm(f){
 }
 
 function verifyEditProfileForm(f){
-    if(f.firstname.value.replace(/\s/g, "") === "" ){
+    if(f.firstname.value.replaceAll(/\s/g, "") === "" ){
         window.alert("First Name field must have a value ");
         return false;
     }
-    if(f.lastname.value.replace(/\s/g, "") === "" ){
+    if(f.lastname.value.replaceAll(/\s/g, "") === "" ){
         window.alert("Last Name field must have a value ");
         return false;
     }
-    if(f.email.value.replace(/\s/g, "") === "" ){
+    if(f.email.value.replaceAll(/\s/g, "") === "" ){
         window.alert("Email field must have a value ");
         return false;
     }

@@ -159,7 +159,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
         <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=309" type="text/javascript"></script>
+        <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -255,7 +255,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         }
 
         function verifyCommentForm(f){
-            if(f.commentstr.value.replace(/^\s+|\s+$/g,"")){
+            if(f.commentstr.value.replaceAll(/^\s+|\s+$/g,"")){
                 return true;
             }
             alert("Please enter a comment");

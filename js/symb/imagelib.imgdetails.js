@@ -22,7 +22,7 @@ function verifyEditForm(f){
 }
 
 function verifyChangeTaxonForm(f){
-	const sciName = f.targettaxon.value.replace(/^\s+|\s+$/g, "");
+	const sciName = f.targettaxon.value.replaceAll(/^\s+|\s+$/g, "");
 	if(sciName === ""){
         window.alert("Enter a taxon name to which the image will be transferred");
     }
