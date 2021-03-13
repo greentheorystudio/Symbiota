@@ -237,7 +237,7 @@ $projArr = $csManager->getProjectDetails();
 											<?php
 											if($isEditor || $rArr['reviewstatus'] === 5){
 												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid='.$occid.'" target="_blank">';
-												echo '<img src="../../../images/edit.png" style="border:solid 1px gray;height:13px;" />';
+												echo '<img src="../../../images/edit.svg" style="border:solid 1px gray;height:13px;" />';
 												echo '</a>';
 											}
 											else{

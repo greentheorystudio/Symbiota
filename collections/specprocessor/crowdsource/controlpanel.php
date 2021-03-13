@@ -38,7 +38,7 @@ $projArr = $csManager->getProjectDetails();
 	}
 	if($isEditor && $collid && $omcsid){
 		?>
-		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.png" /></a></div>
+		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a></div>
 		<div style="font-weight:bold;font-size:130%;"><?php echo (($omcsid && $projArr)?$projArr['name']:''); ?></div>
 		<div>
 			This module can be used to submit and manage records for data entry by the

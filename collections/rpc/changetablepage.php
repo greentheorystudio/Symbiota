@@ -165,7 +165,7 @@ if($recArr){
         $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
         if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
-            $recordListHtml .= '<img src="../images/edit.png" style="height:13px;" title="Edit Record" />';
+            $recordListHtml .= '<img src="../images/edit.svg" style="height:13px;" title="Edit Record" />';
             $recordListHtml .= '</a>';
         }
         if(isset($occArr['img'])){

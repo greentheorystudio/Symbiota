@@ -152,7 +152,7 @@ include(__DIR__ . '/../../header.php');
                                         <?php echo $recArr['collector']; ?>
                                     </a>
                                     <a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-                                        <img src="../../images/edit.png" />
+                                        <img src="../../images/edit.svg" style="width:20px;height:20px;" />
                                     </a>
                                 </td>
                                 <td>

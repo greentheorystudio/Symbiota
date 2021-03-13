@@ -259,7 +259,7 @@ if($tid){
                                 ?>
                                 <div style="float:right;margin-right:10px;" title="Must have editing privileges for this collection managing image">
                                     <a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2" target="_blank">
-                                        <img src="../../images/edit.png" style="border:0;"/>
+                                        <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;"/>
                                     </a>
                                 </div>
                                 <?php
@@ -268,7 +268,7 @@ if($tid){
                                 ?>
                                 <div style='float:right;margin-right:10px;'>
                                     <a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr['imgid'];?>&emode=1" target="_blank">
-                                        <img src="../../images/edit.png" style="border:0;" />
+                                        <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;" />
                                     </a>
                                 </div>
                                 <?php

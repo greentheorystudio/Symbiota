@@ -131,7 +131,7 @@ if($editable){
             <!-- EDITOR div -->
             <div id="editdiv" style="min-height:400px;">
                 <div style="float:right;cursor:pointer;" onclick="toggleEditFields()" title="Toggle Taxon Editing Functions">
-                    <img style='border:0;' src='../../images/edit.png'/>
+                    <img style='border:0;width:20px;height:20px;' src='../../images/edit.svg'/>
                 </div>
                 <form id="taxoneditform" name="taxoneditform" action="taxonomyeditor.php" method="post" onsubmit="return validateTaxonEditForm(this)">
                     <div style="clear:both;">
@@ -308,7 +308,7 @@ if($editable){
                         <form name="taxstatusform" action="taxonomyeditor.php" method="post">
                             <div style="float:right;">
                                 <a href="" onclick="toggle('tsedit');return false;">
-                                    <img style='border:0;' src='../../images/edit.png'/>
+                                    <img style='border:0;width:20px;height:20px;' src='../../images/edit.svg'/>
                                 </a>
                             </div>
                             <?php
@@ -357,7 +357,7 @@ if($editable){
                             ?>
                             <h3>Accepted Taxon:</h3>
                             <div style="float:right;cursor:pointer;" onclick="toggle('acceptedits')">
-                                <img style="border:0;width:15px;" src="../../images/edit.png" />
+                                <img style="border:0;width:15px;" src="../../images/edit.svg" />
                             </div>
                             <?php
                             if($acceptedArr){
@@ -440,7 +440,7 @@ if($editable){
                             ?>
                             <div style="font-size:110%;"><u><b>Synonyms</b></u></div>
                             <div style="float:right;cursor:pointer;" onclick="toggle('tonotaccepted');">
-                                <img style='border:0;width:15px;' src='../../images/edit.png'/>
+                                <img style='border:0;width:15px;' src='../../images/edit.svg'/>
                             </div>
                             <ul>
                             <?php
@@ -450,7 +450,7 @@ if($editable){
                                     echo '<li> ';
                                     echo '<a href="taxonomyeditor.php?tid='.$tidSyn.'&taxauthid='.$taxAuthId.'"><i>'.$synArr['sciname'].'</i></a> '.$synArr['author'].' ';
                                     echo '<a href="#" onclick="toggle(\'syn-'.$tidSyn.'\');">';
-                                    echo '<img style="border:0;width:10px;" src="../../images/edit.png" />';
+                                    echo '<img style="border:0;width:10px;" src="../../images/edit.svg" />';
                                     echo '</a>';
                                     if($synArr['notes'] || $synArr['unacceptabilityreason']){
                                         if($synArr['unacceptabilityreason']){

@@ -209,7 +209,7 @@ $duManager->readUploadParameters();
 						 		<div style="margin:10px;">
 									<input type="radio" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
 									<?php echo $v['title']; ?>
-									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo $collid.'&uspid='.$id; ?>" title="View/Edit Parameters"><img src="../../images/edit.png" /></a>
+									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo $collid.'&uspid='.$id; ?>" title="View/Edit Parameters"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>
 									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype'];?>" />
 								</div>
 								<?php 
