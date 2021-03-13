@@ -62,17 +62,17 @@ $htmlStr .= '<option value="gpx">GPX</option>';
 $htmlStr .= '</select>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div>';
-$htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><img src="../images/download.svg" style="width:15px; height:15px" /></button>';
+$htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><img src="'.$CLIENT_ROOT.'/images/download.svg" style="width:15px; height:15px" /></button>';
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
 if($SYMB_UID){
-    $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="'.$CLIENT_ROOT.'/images/dataset.png" style="width:15px;" /></button></div>';
 }
-$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>';
-$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
+$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><img src="'.$CLIENT_ROOT.'/images/table.png" style="width:15px; height:15px" /></button></a></div>';
+$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="'.$CLIENT_ROOT.'/images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
 if(strlen($stArrJson) <= 1800){
-    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="'.$CLIENT_ROOT.'/images/link.svg" style="width:15px; height:15px" /></button></div>';
 }
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
