@@ -70,7 +70,7 @@ if($collMap){
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=170223" type="text/javascript"></script>
+	<script src="../../js/symb/collections.observationsubmit.js?ver=20210313" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

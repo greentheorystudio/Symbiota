@@ -32,7 +32,7 @@ $dynClManager = new DynamicChecklistManager();
         }
     </style>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=309" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
 	<script type="text/javascript">
 	    var submitCoord = false;
 

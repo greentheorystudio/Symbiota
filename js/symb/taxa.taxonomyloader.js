@@ -122,7 +122,7 @@ function validateLoadForm(f){
 
 function parseName(f){
 	let sciName = f.sciname.value;
-	sciName = sciName.replace(/^\s+|\s+$/g,"");
+	sciName = sciName.replaceAll(/^\s+|\s+$/g,"");
 	f.reset();
 	f.sciname.value = sciName;
 	let sciNameArr;
