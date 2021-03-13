@@ -64,10 +64,10 @@ $resetPageNum = false;
             });
             <?php
             if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
+                ?>
+                initializeSearchStorage(<?php echo $queryId; ?>);
+                loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                <?php
             }
             ?>
 
