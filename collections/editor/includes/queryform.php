@@ -447,7 +447,7 @@ else{
 					?>
 					<div style="float:right;margin-top:10px;" title="Go to Label Printing Module">
 						<a href="../reports/labelmanager.php?collid=<?php echo $collId.$qryStr; ?>">
-							<img src="../../images/list.png" style="width:15px;" />
+							<img src="../../images/list.svg" style="width:15px;" />
 						</a>
 					</div>
 					<?php 

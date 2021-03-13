@@ -201,7 +201,7 @@
                                 echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
                             }
                             ?>
-                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><img src="../images/list.png" style="width:15px; height:15px" /></button></a></div>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><img src="../images/list.svg" style="width:15px; height:15px" /></button></a></div>
                             <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>
                             <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>
                         </div>
