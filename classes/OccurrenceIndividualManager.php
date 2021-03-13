@@ -573,51 +573,62 @@ class OccurrenceIndividualManager extends Manager{
         return $status;
     }
 
-    public function getDatasetArr($uid): array
+    public function getDatasetArr(): array
     {
+        global $SYMB_UID;
         $retArr = array();
-        if(is_numeric($uid)){
-            $datasetIdStr = '';
-            $sql1 = 'SELECT tablepk '.
-                'FROM userroles '.
-                'WHERE (tablename = "omoccurdatasets") AND (uid = '.$uid.') ';
+        $roleArr = array();
+        if($SYMB_UID){
+            $sql1 = 'SELECT tablepk, role FROM userroles WHERE (tablename = "omoccurdatasets") AND (uid = '.$SYMB_UID.') ';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
-                $datasetIdStr .= ','.$r1->tablepk;
+                $roleArr[$r1->tablepk] = $r1->role;
             }
             $rs1->free();
+        }
 
-            $sql2 = 'SELECT datasetid, name FROM omoccurdatasets WHERE uid = '.$uid;
-            if($datasetIdStr){
-                $sql2 .= ' OR datasetid IN('.trim($datasetIdStr,',').')';
-            }
-            $sql2 .= ' ORDER BY name';
-            //echo $sql2;
-            $rs2 = $this->conn->query($sql2);
-            if($rs2){
-                while($r2 = $rs2->fetch_object()){
-                    $retArr[$r2->datasetid]['name'] = $r2->name;
+        $sql2 = 'SELECT datasetid, name, uid FROM omoccurdatasets ';
+        $sql2 .= 'WHERE (uid = '.$SYMB_UID.') ';
+        if($roleArr) {
+            $sql2 .= 'OR (datasetid IN(' . implode(',', array_keys($roleArr)) . ')) ';
+        }
+        $sql2 .= 'ORDER BY name';
+        $rs2 = $this->conn->query($sql2);
+        if($rs2){
+            while($r2 = $rs2->fetch_object()){
+                $retArr[$r2->datasetid]['name'] = $r2->name;
+                $roleStr = '';
+                if(isset($SYMB_UID) && $SYMB_UID == $r2->uid) {
+                    $roleStr = 'owner';
                 }
-                $rs2->free();
+                elseif(isset($roleArr[$r2->datasetid]) && $roleArr[$r2->datasetid]) {
+                    $roleStr = $roleArr[$r2->datasetid];
+                }
+                if($roleStr) {
+                    $retArr[$r2->datasetid]['role'] = $roleStr;
+                }
             }
-            else{
-                trigger_error('Unable to get datasets for user; '.$this->conn->error,E_USER_WARNING);
-            }
+            $rs2->free();
+        }
+        else {
+            $this->errorMessage = 'ERROR: Unable to set datasets for user: ' . $this->conn->error;
+        }
 
-            $sql3 = 'SELECT datasetid, notes '.
-                'FROM omoccurdatasetlink '.
-                'WHERE occid = '.$this->occid;
-            //echo $sql2;
-            $rs3 = $this->conn->query($sql3);
-            if($rs3){
-                while($r3 = $rs3->fetch_object()){
-                    $retArr[$r3->datasetid]['linked'] = ($r3->notes?' ('.$r3->notes.')':'');
+        $sql3 = 'SELECT datasetid, notes FROM omoccurdatasetlink WHERE occid = '.$this->occid;
+        $rs3 = $this->conn->query($sql3);
+        if($rs3){
+            while($r3 = $rs3->fetch_object()){
+                if(isset($retArr[$r3->datasetid])){
+                    $retArr[$r3->datasetid]['linked'] = 1;
+                    if($r3->notes) {
+                        $retArr[$r3->datasetid]['notes'] = $r3->notes;
+                    }
                 }
-                $rs3->free();
             }
-            else{
-                trigger_error('Unable to get related datasets; '.$this->conn->error,E_USER_WARNING);
-            }
+            $rs3->free();
+        }
+        else {
+            $this->errorMessage = 'Unable to get related datasets: ' . $this->conn->error;
         }
         return $retArr;
     }
