@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 $mapCenter = '[-110.90713, 32.21976]';
-if(isset($SPATIAL_INITIAL_CENTER) && $SPATIAL_INITIAL_CENTER) {
-    $mapCenter = $SPATIAL_INITIAL_CENTER;
+if(isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER']) {
+    $mapCenter = $GLOBALS['SPATIAL_INITIAL_CENTER'];
 }
 $mapZoom = 7;
-if(isset($SPATIAL_INITIAL_ZOOM) && $SPATIAL_INITIAL_ZOOM) {
-    $mapZoom = $SPATIAL_INITIAL_ZOOM;
+if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) {
+    $mapZoom = $GLOBALS['SPATIAL_INITIAL_ZOOM'];
 }
 ?>
 <script type="text/javascript">
@@ -39,4 +39,4 @@ if(isset($SPATIAL_INITIAL_ZOOM) && $SPATIAL_INITIAL_ZOOM) {
         <div id="mapcoords"></div>
     </div>
 </div>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.viewer.js?ver=3" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.viewer.js?ver=3" type="text/javascript"></script>

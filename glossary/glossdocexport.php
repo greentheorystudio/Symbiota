@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 3600);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -18,8 +18,8 @@ $images = array_key_exists('images',$_POST)?$_POST['images']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $fileName = '';
-$citationFormat = $DEFAULT_TITLE.'. '.date('Y').'. '; 
-$citationFormat .= 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php. ';
+$citationFormat = $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. '; 
+$citationFormat .= 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php. ';
 $citationFormat .= 'Accessed on '.date('F d').'. ';
 
 $phpWord = new PhpWord();
@@ -71,7 +71,7 @@ if($exportType === 'translation'){
 			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
 				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
 			}
-			$textrun->addImage($serverDomain.$CLIENT_ROOT.'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$textrun->addText(htmlspecialchars('Translation Table for '.$metaArr['sciname']),'titleFont');
@@ -205,7 +205,7 @@ elseif($exportType === 'singlelanguage'){
 			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
 				$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
 			}
-			$textrun->addImage($serverDomain.$CLIENT_ROOT.'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak(1);
 		}
 		$textrun->addText(htmlspecialchars('Single Language Glossary for '.$metaArr['sciname']),'titleFont');
@@ -226,8 +226,8 @@ elseif($exportType === 'singlelanguage'){
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr['url'];
 					if(strpos($imgSrc, '/') === 0){
-						if($IMAGE_DOMAIN){
-							$imgSrc = $IMAGE_DOMAIN.$imgSrc;
+						if($GLOBALS['IMAGE_DOMAIN']){
+							$imgSrc = $GLOBALS['IMAGE_DOMAIN'].$imgSrc;
 						}
 						else{
 							$imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;
@@ -316,7 +316,7 @@ elseif($exportType === 'singlelanguage'){
 }
 
 $fileName = str_replace(' ', '_',$fileName);
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'.docx';
+$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$fileName.'.docx';
 $phpWord->save($targetFile, 'Word2007');
 
 header('Content-Description: File Transfer');

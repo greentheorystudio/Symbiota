@@ -88,7 +88,7 @@ if($export){
 		$table->addCell(6000,$cellStyle)->addText(htmlspecialchars($specArr['sciname']),'colFont','colSpace');
 	}
 	
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$loanId.'_specimen_list.'.$exportExtension;
+	$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$loanId.'_specimen_list.'.$exportExtension;
 	$phpWord->save($targetFile, $exportEngine);
 
 	header('Content-Description: File Transfer');
@@ -101,7 +101,7 @@ if($export){
 }
 else{
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title><?php echo $identifier; ?> Specimen List</title>
 			<style type="text/css">

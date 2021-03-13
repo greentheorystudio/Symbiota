@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ReferenceManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $uid = array_key_exists('uid',$_REQUEST)?$_REQUEST['uid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';

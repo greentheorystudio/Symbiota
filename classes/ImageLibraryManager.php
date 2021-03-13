@@ -13,11 +13,10 @@ class ImageLibraryManager{
     private $sqlWhere = '';
 
     public function __construct() {
-        global $TID_FOCUS;
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
-        if($TID_FOCUS && preg_match('/^[\d,]+$/', $TID_FOCUS)){
-            $this->tidFocus = $TID_FOCUS;
+        if($GLOBALS['TID_FOCUS'] && preg_match('/^[\d,]+$/', $GLOBALS['TID_FOCUS'])){
+            $this->tidFocus = $GLOBALS['TID_FOCUS'];
         }
     }
 
@@ -210,7 +209,6 @@ class ImageLibraryManager{
 
     public function outputFullMapCollArr($dbArr,$occArr): void
     {
-        global $DEFAULTCATID;
         if(isset($occArr['cat'])){
             $inCatArr = $occArr['cat'];
             ?>
@@ -227,7 +225,7 @@ class ImageLibraryManager{
                         </td>
                         <td style="padding:9px 5px;width:10px;">
                             <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>" />
+                                <img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
                             </a>
                         </td>
                         <td style="padding-top:8px;">
@@ -238,7 +236,7 @@ class ImageLibraryManager{
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset;">
+                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset;">
                                 <table>
                                     <?php
                                     foreach($catArr as $collid => $collName2){

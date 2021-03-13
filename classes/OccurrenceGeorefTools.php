@@ -23,10 +23,9 @@ class OccurrenceGeorefTools {
 
 	public function getLocalityArr(): array
 	{
-        global $BROADGEOREFERENCE;
-	    $retArr = array();
+        $retArr = array();
 		if($this->collStr){
-		    if($BROADGEOREFERENCE){
+		    if($GLOBALS['BROADGEOREFERENCE']){
                 $sql = 'SELECT occid, country, stateprovince, county, municipality, IFNULL(locality,CONCAT_WS(", ",country,stateProvince,county,municipality,verbatimcoordinates)) AS locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
                     'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) ';
             }
@@ -198,7 +197,6 @@ class OccurrenceGeorefTools {
 
 	private function addOccurEdits($fieldName, $fieldValue, $occidStr): void
 	{
-		global $SYMB_UID;
 		$hasEditType = false;
 		$rsTest = $this->conn->query('SHOW COLUMNS FROM omoccuredits WHERE field = "editType"');
 		if($rsTest->num_rows) {
@@ -207,7 +205,7 @@ class OccurrenceGeorefTools {
 		$rsTest->free();
 
 		$sql = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, appliedstatus, uid'.($hasEditType?',editType ':'').') '.
-			'SELECT occid, "'.$fieldName.'", "'.$fieldValue.'", IFNULL('.$fieldName.',""), 1 as ap, '.$SYMB_UID.($hasEditType?',1 ':'').' FROM omoccurrences '.
+			'SELECT occid, "'.$fieldName.'", "'.$fieldValue.'", IFNULL('.$fieldName.',""), 1 as ap, '.$GLOBALS['SYMB_UID'].($hasEditType?',1 ':'').' FROM omoccurrences '.
 			'WHERE (collid IN('.$this->collStr.')) AND (occid IN('.$occidStr.')) ';
 		if(strpos($fieldName,'elevationinmeters')) {
 			$sql .= 'AND (minimumelevationinmeters IS NULL)';

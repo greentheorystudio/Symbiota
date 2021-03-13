@@ -13,7 +13,7 @@ $vManager->setClid($clid);
 $vManager->setCollectionVariables();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -47,7 +47,7 @@ else{
 	</div>
 	<div style="float:left;margin-left:5px;">
 		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode == 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
-			<img src="<?php echo $CLIENT_ROOT; ?>/images/download.svg" style="border:0;width:15px;" />
+			<img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/download.svg" style="border:0;width:15px;" />
 		</a>
 	</div>
 	<div style="float:right;">

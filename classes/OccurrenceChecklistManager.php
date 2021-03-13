@@ -74,7 +74,6 @@ class OccurrenceChecklistManager extends OccurrenceManager{
     }
 
 	public function buildSymbiotaChecklist($taxonAuthorityId,$tidArr = ''){
-		global $SYMB_UID;
 		$expirationTime = date('Y-m-d H:i:s',time()+259200);
 		$tidStr = '';
 		if($tidArr){
@@ -82,7 +81,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         }
 		$dynClid = 0;
 		$sqlCreateCl = 'INSERT INTO fmdynamicchecklists ( name, details, uid, type, notes, expiration ) '.
-			"VALUES ('Specimen Checklist #".time()."', 'Generated ".date('d-m-Y H:i:s')."', '".$SYMB_UID."', 'Specimen Checklist', '', '".$expirationTime."') ";
+			"VALUES ('Specimen Checklist #".time()."', 'Generated ".date('d-m-Y H:i:s')."', '".$GLOBALS['SYMB_UID']."', 'Specimen Checklist', '', '".$expirationTime."') ";
 		if($this->conn->query($sqlCreateCl)){
 			$dynClid = $this->conn->insert_id;
 			$sqlTaxaInsert = 'INSERT IGNORE INTO fmdyncltaxalink ( tid, dynclid ) ';

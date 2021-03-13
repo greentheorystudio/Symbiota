@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
-    $catId = $DEFAULTCATID;
+if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
+    $catId = $GLOBALS['DEFAULTCATID'];
 }
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
@@ -213,12 +213,12 @@ if($collId){
 }
 if($action !== 'Update Statistics'){
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<meta name="keywords" content="Natural history collections statistics" />
-			<title><?php echo $DEFAULT_TITLE; ?> Collection Statistics</title>
-			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
+			<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Statistics</title>
+			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
+			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
             <script type="text/javascript" src="../../js/jquery.js"></script>
 			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -374,7 +374,7 @@ if($action !== 'Update Statistics'){
 							?>
 							<form name="collections" id="collform" action="collstats.php" method="post" onsubmit="return changeCollForm(this);">
                                 <?php
-                                if($SYMB_UID && ($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS))){
+                                if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']))){
                                     ?>
                                     <fieldset style="padding: 10px 10px 10px 25px;">
                                         <legend><b>Record Criteria</b></legend>
@@ -404,7 +404,7 @@ if($action !== 'Update Statistics'){
 												<input type="submit" name="submitaction" value="Run Statistics" />
 											</div>
 											<?php
-											if($SYMB_UID && $IS_ADMIN){
+											if($GLOBALS['SYMB_UID'] && $GLOBALS['IS_ADMIN']){
 												?>
 												<div style="clear:both;margin-top:8px;">
 													<input type="submit" name="submitaction" value="Update Statistics" />
@@ -431,7 +431,7 @@ if($action !== 'Update Statistics'){
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>" />
+															<img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -444,7 +444,7 @@ if($action !== 'Update Statistics'){
 												</tr>
 												<tr>
 													<td colspan="3">
-														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+														<div id="cat-<?php echo $idStr; ?>" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){
@@ -525,7 +525,7 @@ if($action !== 'Update Statistics'){
 												<input type="submit" name="submitaction" value="Run Statistics" />
 											</div>
 											<?php
-											if($SYMB_UID && $IS_ADMIN){
+											if($GLOBALS['SYMB_UID'] && $GLOBALS['IS_ADMIN']){
 												?>
 												<div style="clear:both;margin-top:8px;">
 													<input type="submit" name="submitaction" value="Update Statistics" />
@@ -551,7 +551,7 @@ if($action !== 'Update Statistics'){
 												<input type="submit" name="submitaction" value="Run Statistics" />
 											</div>
 											<?php
-											if($SYMB_UID && $IS_ADMIN){
+											if($GLOBALS['SYMB_UID'] && $GLOBALS['IS_ADMIN']){
 												?>
 												<div style="clear:both;margin-top:8px;">
 													<input type="submit" name="submitaction" value="Update Statistics" />
@@ -578,7 +578,7 @@ if($action !== 'Update Statistics'){
 													</td>
 													<td style="padding:9px 5px;width:10px;">
 														<a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>" />
+                                                            <img id="plus-<?php echo $idStr; ?>" src="../../images/plus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../../images/minus_sm.png" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>" />
 														</a>
 													</td>
 													<td style="padding-top:8px;">
@@ -591,7 +591,7 @@ if($action !== 'Update Statistics'){
 												</tr>
 												<tr>
 													<td colspan="3">
-                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($DEFAULTCATID && $DEFAULTCATID !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+                                                        <div id="cat-<?php echo $idStr; ?>" style="<?php echo (($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid)?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
 															<table>
 																<?php
 																foreach($catArr as $collid => $collName2){
@@ -672,7 +672,7 @@ if($action !== 'Update Statistics'){
 												<input type="submit" name="submitaction" value="Run Statistics" />
 											</div>
 											<?php
-											if($SYMB_UID && $IS_ADMIN){
+											if($GLOBALS['SYMB_UID'] && $GLOBALS['IS_ADMIN']){
 												?>
 												<div style="clear:both;margin-top:8px;">
 													<input type="submit" name="submitaction" value="Update Statistics" />
@@ -819,7 +819,7 @@ if($action !== 'Update Statistics'){
                                             ?>
 										</fieldset>
 										<?php
-										if(!$cPartentTaxon && !$cCountry && $SYMB_UID && ($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS))) {
+										if(!$cPartentTaxon && !$cCountry && $GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']))) {
                                             ?>
                                             <fieldset id="yearstatsbox" style="width:275px;">
                                                 <legend><b>Year Stats</b></legend>

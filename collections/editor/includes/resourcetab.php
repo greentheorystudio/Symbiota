@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -205,12 +205,12 @@ if($userChecklists || $checklistArr){
 									if(!$tnUrl) {
                                         $tnUrl = $url;
                                     }
-									if($IMAGE_DOMAIN){
+									if($GLOBALS['IMAGE_DOMAIN']){
 										if(strpos($url, '/') === 0) {
-                                            $url = $IMAGE_DOMAIN . $url;
+                                            $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                         }
 										if(strpos($tnUrl, '/') === 0) {
-                                            $tnUrl = $IMAGE_DOMAIN . $tnUrl;
+                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                                         }
 									}
 									echo '<div style="float:left;margin:10px;">';
@@ -278,10 +278,10 @@ if($userChecklists || $checklistArr){
                         </div>
                         <div style="margin:2px;float:right;">
                             <?php
-                            /*if(isset($GENBANK_SUB_TOOL_PATH)){
-                                include_once $GENBANK_SUB_TOOL_PATH."/genbankgen/plugin.php";
+                            /*if(isset($GLOBALS['GENBANK_SUB_TOOL_PATH'])){
+                                include_once $GLOBALS['GENBANK_SUB_TOOL_PATH']."/genbankgen/plugin.php";
                                 if(class_exists('\GenBankGen\Plugin')) {
-                                    $defaults->SYMB_UID = $SYMB_UID;
+                                    $defaults->SYMB_UID = $GLOBALS['SYMB_UID'];
                                     $p = new \GenBankGen\Plugin($defaults);
                                     echo $p->embed();
                                 }
@@ -363,15 +363,15 @@ if($userChecklists || $checklistArr){
 	</fieldset>
 </div>
 <?php
-if(isset($GENBANK_SUB_TOOL_PATH) && file_exists($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php')){
+if(isset($GLOBALS['GENBANK_SUB_TOOL_PATH']) && file_exists($GLOBALS['GENBANK_SUB_TOOL_PATH']. '/genbankgen/plugin.php')){
     ?>
     <div id="geneticdiv"  style="width:795px;">
         <fieldset>
             <legend><b>GenBank Submission</b></legend>
             <?php
-            include_once($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php');
+            include_once($GLOBALS['GENBANK_SUB_TOOL_PATH']. '/genbankgen/plugin.php');
             if(class_exists('\GenBankGen\Plugin')) {
-                $defaults['SYMB_UID'] = $SYMB_UID;
+                $defaults['SYMB_UID'] = $GLOBALS['SYMB_UID'];
                 $p = new \GenBankGen\Plugin($defaults);
                 echo $p->embed();
             }

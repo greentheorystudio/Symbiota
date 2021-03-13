@@ -15,11 +15,10 @@ class TaxonomyDisplayManager{
 	private $isEditor = false;
 	
 	public function __construct(){
-        global $USER_RIGHTS, $IS_ADMIN;
-		$connection = new DbConnection();
+        $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		if($USER_RIGHTS){
-			if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+		if($GLOBALS['USER_RIGHTS']){
+			if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 				$this->isEditor = true;
 			}
 		}

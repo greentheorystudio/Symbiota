@@ -86,13 +86,12 @@ class ImageImport{
 
 	private function setUploadTargetPath(): void
 	{
-		global $SERVER_ROOT, $TEMP_DIR_ROOT;
-		$tPath = $TEMP_DIR_ROOT;
+		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 		if(!$tPath){
 			$tPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tPath){
-			$tPath = $SERVER_ROOT. '/temp/downloads';
+			$tPath = $GLOBALS['SERVER_ROOT']. '/temp/downloads';
 		}
 		if(substr($tPath,-1) !== '/') {
 			$tPath .= '/';

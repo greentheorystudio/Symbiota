@@ -782,9 +782,8 @@ class OccurrenceEditorManager {
 
     public function editOccurrence($occArr,$autoCommit): string
     {
-        global $USER_RIGHTS, $SYMB_UID, $USERNAME;
         $quickHostEntered = false;
-        if(!$autoCommit && $this->getObserverUid() === $SYMB_UID){
+        if(!$autoCommit && $this->getObserverUid() === $GLOBALS['SYMB_UID']){
             $autoCommit = 1;
         }
         if($autoCommit === 3){
@@ -844,12 +843,12 @@ class OccurrenceEditorManager {
                 $rs->free();
 
                 if($oldValues['recordenteredby'] === 'preprocessed' || (!$oldValues['recordenteredby'] && ($oldValues['processingstatus'] === 'unprocessed' || $oldValues['processingstatus'] === 'stage 1'))){
-                    $occArr['recordenteredby'] = $USERNAME;
+                    $occArr['recordenteredby'] = $GLOBALS['USERNAME'];
                     $editArr[] = 'recordenteredby';
                 }
 
                 $sqlEditsBase = 'INSERT INTO omoccuredits(occid,reviewstatus,appliedstatus,uid,fieldname,fieldvaluenew,fieldvalueold) '.
-                    'VALUES ('.$occArr['occid'].',1,'.($autoCommit?'1':'0').','.$SYMB_UID.',';
+                    'VALUES ('.$occArr['occid'].',1,'.($autoCommit?'1':'0').','.$GLOBALS['SYMB_UID'].',';
                 foreach($editArr as $fieldName){
                     if(!array_key_exists($fieldName,$occArr)){
                         $occArr[$fieldName] = 0;
@@ -928,14 +927,14 @@ class OccurrenceEditorManager {
                 if($this->conn->query($sql)){
                     if(strtolower($occArr['processingstatus']) !== 'unprocessed'){
                         $isVolunteer = true;
-                        if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($this->collId, $USER_RIGHTS['CollAdmin'], true)){
+                        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($this->collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
                             $isVolunteer = false;
                         }
-                        elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($this->collId, $USER_RIGHTS['CollEditor'], true)){
+                        elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($this->collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
                             $isVolunteer = false;
                         }
 
-                        $sql = 'UPDATE omcrowdsourcequeue SET uidprocessor = '.$SYMB_UID.', reviewstatus = 5 ';
+                        $sql = 'UPDATE omcrowdsourcequeue SET uidprocessor = '.$GLOBALS['SYMB_UID'].', reviewstatus = 5 ';
                         if(!$isVolunteer) {
                             $sql .= ', isvolunteer = 0 ';
                         }
@@ -1124,7 +1123,6 @@ class OccurrenceEditorManager {
 
     public function deleteOccurrence($delOccid): bool
     {
-        global $CHARSET, $USER_DISPLAY_NAME;
         $status = true;
         if(is_numeric($delOccid)){
             $archiveArr = array();
@@ -1134,7 +1132,7 @@ class OccurrenceEditorManager {
             if($r = $rs->fetch_assoc()){
                 foreach($r as $k => $v){
                     if($v) {
-                        $archiveArr[$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                        $archiveArr[$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                     }
                 }
             }
@@ -1147,12 +1145,12 @@ class OccurrenceEditorManager {
                     $detId = $r['detid'];
                     foreach($r as $k => $v){
                         if($v) {
-                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                            $detArr[$detId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                         }
                     }
                     $detObj = json_encode($detArr[$detId]);
                     $sqlArchive = 'UPDATE guidoccurdeterminations '.
-                        'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($detObj,'utf8',$CHARSET)).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($detObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                         'WHERE (detid = '.$detId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1166,12 +1164,12 @@ class OccurrenceEditorManager {
                     $imgId = $r['imgid'];
                     foreach($r as $k => $v){
                         if($v) {
-                            $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                            $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                         }
                     }
                     $imgObj = json_encode($imgArr[$imgId]);
                     $sqlArchive = 'UPDATE guidimages '.
-                        'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($imgObj,'utf8',$CHARSET)).'" '.
+                        'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($imgObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                         'WHERE (imgid = '.$imgId.')';
                     $this->conn->query($sqlArchive);
                 }
@@ -1200,17 +1198,17 @@ class OccurrenceEditorManager {
                 if($r = $rs->fetch_assoc()){
                     foreach($r as $k => $v){
                         if($v) {
-                            $exsArr[$k] = $this->encodeStrTargeted($v, $CHARSET, 'utf8');
+                            $exsArr[$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                         }
                     }
                 }
                 $rs->free();
                 $archiveArr['exsiccati'] = $exsArr;
 
-                $archiveArr['dateDeleted'] = date('r').' by '.$USER_DISPLAY_NAME;
+                $archiveArr['dateDeleted'] = date('r').' by '.$GLOBALS['USER_DISPLAY_NAME'];
                 $archiveObj = json_encode($archiveArr);
                 $sqlArchive = 'UPDATE guidoccurrences '.
-                    'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($archiveObj,'utf8',$CHARSET)).'" '.
+                    'SET archivestatus = 1, archiveobj = "'.$this->cleanInStr($this->encodeStrTargeted($archiveObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                     'WHERE (occid = '.$delOccid.')';
                 //echo $sqlArchive;
                 $this->conn->query($sqlArchive);
@@ -1230,7 +1228,6 @@ class OccurrenceEditorManager {
 
     public function mergeRecords($targetOccid,$sourceOccid): bool
     {
-        global $QUICK_HOST_ENTRY_IS_ACTIVE, $SOLR_MODE;
         $status = true;
         if(!$targetOccid || !$sourceOccid){
             $this->errorArr[] = 'ERROR: target or source is null';
@@ -1287,7 +1284,7 @@ class OccurrenceEditorManager {
             $status = false;
         }
 
-        if($QUICK_HOST_ENTRY_IS_ACTIVE){
+        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
             $sql = 'UPDATE omoccurassociations SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 $this->errorArr[] .= '; ERROR remapping associations: '.$this->conn->error;
@@ -1360,7 +1357,7 @@ class OccurrenceEditorManager {
         if(!$this->deleteOccurrence($sourceOccid)){
             $status = false;
         }
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager = new SOLRManager();
             $solrManager->deleteSOLRDocument($sourceOccid);
         }
@@ -1426,7 +1423,6 @@ class OccurrenceEditorManager {
 
     public function batchUpdateField($fieldName,$oldValue,$newValue,$buMatch): string
     {
-        global $SYMB_UID;
         $statusStr = '';
         $fn = $this->cleanInStr($fieldName);
         $ov = $this->cleanInStr($oldValue);
@@ -1461,7 +1457,7 @@ class OccurrenceEditorManager {
 
                 $sql2 = 'INSERT INTO omoccuredits(occid,fieldName,fieldValueOld,fieldValueNew,appliedStatus,uid'.($hasEditType?',editType ':'').') '.
                     'SELECT o.occid, "'.$fn.'" AS fieldName, IFNULL(o.'.$fn.',"") AS oldValue, IFNULL('.$nvSqlFrag.',"") AS newValue, '.
-                    '1 AS appliedStatus, '.$SYMB_UID.' AS uid'.($hasEditType?',1':'').' FROM omoccurrences o ';
+                    '1 AS appliedStatus, '.$GLOBALS['SYMB_UID'].' AS uid'.($hasEditType?',1':'').' FROM omoccurrences o ';
                 $sql2 .= $sqlWhere;
                 //echo $sql2.'<br/>';
                 if(!$this->conn->query($sql2)){
@@ -1547,11 +1543,10 @@ class OccurrenceEditorManager {
 
     public function editIdentificationRanking($ranking,$notes=''): string
     {
-        global $SYMB_UID;
         $statusStr = '';
         if(is_numeric($ranking)){
             $sql = 'REPLACE INTO omoccurverification(occid,category,ranking,notes,uid) '.
-                'VALUES('.$this->occid.',"identification",'.$ranking.','.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.$SYMB_UID.')';
+                'VALUES('.$this->occid.',"identification",'.$ranking.','.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
             if(!$this->conn->query($sql)){
                 $statusStr .= 'WARNING editing/add confidence ranking failed ('.$this->conn->error.') ';
                 //echo $sql;
@@ -1624,12 +1619,11 @@ class OccurrenceEditorManager {
 
     public function getUserChecklists(): array
     {
-        global $USER_RIGHTS;
         $retArr = array();
-        if(isset($USER_RIGHTS['ClAdmin'])){
+        if(isset($GLOBALS['USER_RIGHTS']['ClAdmin'])){
             $sql = 'SELECT clid, name, access '.
                 'FROM fmchecklists '.
-                'WHERE (clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).')) ';
+                'WHERE (clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).')) ';
             //echo $sql; exit;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -1879,14 +1873,13 @@ class OccurrenceEditorManager {
 
     public function getLock(): bool
     {
-        global $SYMB_UID;
         $isLocked = false;
-        $delSql = 'DELETE FROM omoccureditlocks WHERE (ts < '.(time()-900).') OR (uid = '.$SYMB_UID.')';
+        $delSql = 'DELETE FROM omoccureditlocks WHERE (ts < '.(time()-900).') OR (uid = '.$GLOBALS['SYMB_UID'].')';
         if(!$this->conn->query($delSql)) {
             return false;
         }
         $sql = 'INSERT INTO omoccureditlocks(occid,uid,ts) '.
-            'VALUES ('.$this->occid.','.$SYMB_UID.','.time().')';
+            'VALUES ('.$this->occid.','.$GLOBALS['SYMB_UID'].','.time().')';
         if(!$this->conn->query($sql)){
             $isLocked = true;
         }
@@ -1895,12 +1888,11 @@ class OccurrenceEditorManager {
 
     public function isTaxonomicEditor(): int
     {
-        global $USER_RIGHTS, $SYMB_UID;
         $isEditor = 0;
 
         $udIdArr = array();
-        if(array_key_exists('CollTaxon',$USER_RIGHTS)){
-            foreach($USER_RIGHTS['CollTaxon'] as $vStr){
+        if(array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS'])){
+            foreach($GLOBALS['USER_RIGHTS']['CollTaxon'] as $vStr){
                 $tok = explode(':',$vStr);
                 if($tok[0] === $this->collId){
                     $udIdArr[] = $tok[1];
@@ -1910,7 +1902,7 @@ class OccurrenceEditorManager {
         $editTidArr = array();
         $sqlut = 'SELECT idusertaxonomy, tid, geographicscope '.
             'FROM usertaxonomy '.
-            'WHERE editorstatus = "OccurrenceEditor" AND uid = '.$SYMB_UID;
+            'WHERE editorstatus = "OccurrenceEditor" AND uid = '.$GLOBALS['SYMB_UID'];
         //echo $sqlut;
         $rsut = $this->conn->query($sqlut);
         while($rut = $rsut->fetch_object()){
@@ -2000,17 +1992,16 @@ class OccurrenceEditorManager {
 
     public function getCollectionList(): array
     {
-        global $USER_RIGHTS;
         $retArr = array();
         $collArr = array('0');
         $collEditorArr = array();
-        if(isset($USER_RIGHTS['CollAdmin'])) {
-            $collArr = $USER_RIGHTS['CollAdmin'];
+        if(isset($GLOBALS['USER_RIGHTS']['CollAdmin'])) {
+            $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
         }
         $sql = 'SELECT collid, collectionname FROM omcollections '.
             'WHERE (collid IN('.implode(',',$collArr).')) ';
-        if(array_key_exists('CollEditor',$USER_RIGHTS)) {
-            $collEditorArr = $USER_RIGHTS['CollEditor'];
+        if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
+            $collEditorArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
         }
         if($collEditorArr){
             $sql .= 'OR (collid IN('.implode(',',$collEditorArr).') AND colltype = "General Observations")';
@@ -2080,14 +2071,13 @@ class OccurrenceEditorManager {
 
     protected function encodeStr($inStr): string
     {
-        global $CHARSET;
         $retStr = $inStr;
         $search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
         $replace = array("'","'",'"','"','*','-','-');
         $inStr= str_replace($search, $replace, $inStr);
 
         if($inStr){
-            $lowerStr = strtolower($CHARSET);
+            $lowerStr = strtolower($GLOBALS['CHARSET']);
             if($lowerStr === 'utf-8' || $lowerStr === 'utf8'){
                 if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
                     $retStr = utf8_encode($inStr);

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = $_REQUEST['collid'];
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
@@ -9,21 +9,21 @@ $cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'utf8';
 $zipFile = array_key_exists('zipfile',$_REQUEST)?$_REQUEST['zipfile']:0;
 
 $dlManager = new ProfileManager();
-$dlManager->setUid($SYMB_UID);
+$dlManager->setUid($GLOBALS['SYMB_UID']);
 
 $editable = 0;
-if($IS_ADMIN 
-	|| (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
-	|| (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['IS_ADMIN']
+	|| (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+	|| (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 		$editable = 1;
 }
 ?>
 
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>Personal Specimen Backup</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <div id="innertext">
@@ -49,7 +49,7 @@ if($IS_ADMIN
 					</div>
 					<div style="float:left;">
 						<?php 
-						$cSet = str_replace('-','',strtolower($CHARSET));
+						$cSet = str_replace('-','',strtolower($GLOBALS['CHARSET']));
 						?>
 						<input type="radio" name="cset" value="latin1" <?php echo ($cSet === 'iso88591'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
 						<input type="radio" name="cset" value="utf8" <?php echo ($cSet === 'utf8'?'checked':''); ?> /> UTF-8 (unicode)

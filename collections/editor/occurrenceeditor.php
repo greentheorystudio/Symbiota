@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
 $occId = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;
@@ -32,7 +32,7 @@ if($crowdSourceMode){
     $occManager->setCrowdSourceMode(1);
 }
 
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 
@@ -48,7 +48,7 @@ $qryCnt = false;
 $statusStr = '';
 $navStr = '';
 
-if($SYMB_UID){
+if($GLOBALS['SYMB_UID']){
     $occManager->setOccId($occId);
     $occManager->setCollId($collId);
     $collMap = $occManager->getCollMap();
@@ -61,8 +61,8 @@ if($SYMB_UID){
     }
 
     if($isGenObs){
-        if(file_exists('includes/config/occurVarGenObs'.$SYMB_UID.'.php')){
-            include('includes/config/occurVarGenObs'.$SYMB_UID.'.php');
+        if(file_exists('includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php')){
+            include('includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php');
         }
         elseif(file_exists('includes/config/occurVarGenObsDefault.php')){
             include('includes/config/occurVarGenObsDefault.php');
@@ -74,33 +74,33 @@ if($SYMB_UID){
     elseif(file_exists('includes/config/occurVarDefault.php')){
         include('includes/config/occurVarDefault.php');
     }
-    if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI) {
+    if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']) {
         $occManager->setExsiccatiMode(true);
     }
 
-    if($IS_ADMIN || ($collId && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+    if($GLOBALS['IS_ADMIN'] || ($collId && array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
         $isEditor = 1;
     }
     else if($isGenObs){
-        if(!$occId && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
+        if(!$occId && array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
             $isEditor = 2;
         }
         elseif($action){
             $isEditor = 2;
         }
-        elseif($occManager->getObserverUid() == $SYMB_UID){
+        elseif($occManager->getObserverUid() == $GLOBALS['SYMB_UID']){
             $isEditor = 2;
         }
     }
-    elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
         $isEditor = 2;
     }
-    elseif(array_key_exists('CollTaxon',$USER_RIGHTS) && $occId){
+    elseif(array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS']) && $occId){
         $isEditor = $occManager->isTaxonomicEditor();
     }
     if($action === 'Save Edits'){
         $statusStr = $occManager->editOccurrence($_POST,($crowdSourceMode?1:$isEditor));
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
     }
@@ -122,21 +122,21 @@ if($SYMB_UID){
     if($isEditor){
         if($action === 'Submit Determination'){
             $statusStr = $occManager->addDetermination($_POST,$isEditor);
-            if($SOLR_MODE) {
+            if($GLOBALS['SOLR_MODE']) {
                 $solrManager->updateSOLR();
             }
             $tabTarget = 1;
         }
         elseif($action === 'Submit Determination Edits'){
             $statusStr = $occManager->editDetermination($_POST);
-            if($SOLR_MODE) {
+            if($GLOBALS['SOLR_MODE']) {
                 $solrManager->updateSOLR();
             }
             $tabTarget = 1;
         }
         elseif($action === 'Delete Determination'){
             $statusStr = $occManager->deleteDetermination($_POST['detid']);
-            if($SOLR_MODE) {
+            if($GLOBALS['SOLR_MODE']) {
                 $solrManager->updateSOLR();
             }
             $tabTarget = 1;
@@ -153,7 +153,7 @@ if($SYMB_UID){
                     else{
                         $occId = $occManager->getOccId();
                     }
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->updateSOLR();
                     }
                 }
@@ -163,7 +163,7 @@ if($SYMB_UID){
             }
             elseif($action === 'Delete Occurrence'){
                 if($occManager->deleteOccurrence($occId)){
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->deleteSOLRDocument($occId);
                     }
                     $occId = 0;
@@ -182,7 +182,7 @@ if($SYMB_UID){
                             $collId = $transferCollid;
                             $collMap = $occManager->getCollMap();
                         }
-                        if($SOLR_MODE) {
+                        if($GLOBALS['SOLR_MODE']) {
                             $solrManager->updateSOLR();
                         }
                     }
@@ -193,7 +193,7 @@ if($SYMB_UID){
             }
             elseif($action === 'Submit Image Edits'){
                 $statusStr = $occManager->editImage();
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
                 $tabTarget = 2;
@@ -201,7 +201,7 @@ if($SYMB_UID){
             elseif($action === 'Submit New Image'){
                 if($occManager->addImage($_POST)){
                     $statusStr = 'Image added successfully';
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->updateSOLR();
                     }
                     $tabTarget = 2;
@@ -214,7 +214,7 @@ if($SYMB_UID){
                 $removeImg = (array_key_exists('removeimg',$_POST)?$_POST['removeimg']:0);
                 if($occManager->deleteImage($_POST['imgid'], $removeImg)){
                     $statusStr = 'Image deleted successfully';
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->updateSOLR();
                     }
                     $tabTarget = 2;
@@ -226,7 +226,7 @@ if($SYMB_UID){
             elseif($action === 'Remap Image'){
                 if($occManager->remapImage($_POST['imgid'], $_POST['targetoccid'])){
                     $statusStr = 'SUCCESS: Image remapped to record <a href="occurrenceeditor.php?occid='.$_POST['targetoccid'].'" target="_blank">'.$_POST['targetoccid'].'</a>';
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->updateSOLR();
                     }
                 }
@@ -237,7 +237,7 @@ if($SYMB_UID){
             elseif($action === 'Disassociate Image'){
                 if($occManager->remapImage($_POST['imgid'])){
                     $statusStr = 'SUCCESS disassociating image <a href="../../imagelib/imgdetails.php?imgid='.$_POST['imgid'].'" target="_blank">#'.$_POST['imgid'].'</a>';
-                    if($SOLR_MODE) {
+                    if($GLOBALS['SOLR_MODE']) {
                         $solrManager->updateSOLR();
                     }
                 }
@@ -252,52 +252,52 @@ if($SYMB_UID){
                     $makeCurrent = 1;
                 }
                 $statusStr = $occManager->applyDetermination($_POST['detid'],$makeCurrent);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
                 $tabTarget = 1;
             }
             elseif($action === 'Make Determination Current'){
                 $statusStr = $occManager->makeDeterminationCurrent($_POST['detid']);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
                 $tabTarget = 1;
             }
             elseif($action === 'Submit Verification Edits'){
                 $statusStr = $occManager->editIdentificationRanking($_POST['confidenceranking'],$_POST['notes']);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
                 $tabTarget = 1;
             }
             elseif($action === 'Link to Checklist as Voucher'){
                 $statusStr = $occManager->linkChecklistVoucher($_POST['clidvoucher'],$_POST['tidvoucher']);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
             }
             elseif($action === 'deletevoucher'){
                 $statusStr = $occManager->deleteChecklistVoucher($_REQUEST['delclid']);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
             }
             elseif($action === 'editgeneticsubmit'){
                 $statusStr = $occManager->editGeneticResource($_POST);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
             }
             elseif($action === 'deletegeneticsubmit'){
                 $statusStr = $occManager->deleteGeneticResource($_POST['genid']);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
             }
             elseif($action === 'addgeneticsubmit'){
                 $statusStr = $occManager->addGeneticResource($_POST);
-                if($SOLR_MODE) {
+                if($GLOBALS['SOLR_MODE']) {
                     $solrManager->updateSOLR();
                 }
             }
@@ -307,7 +307,7 @@ if($SYMB_UID){
     if($goToMode){
         $occId = 0;
         $today = date('Y-m-d');
-        $occManager->setQueryVariables(array('eb'=>$PARAMS_ARR['un'],'dm'=>$today));
+        $occManager->setQueryVariables(array('eb'=>$GLOBALS['PARAMS_ARR']['un'],'dm'=>$today));
         if(!$qryCnt){
             $occManager->setSqlWhere(0);
             $qryCnt = $occManager->getQueryRecordCount();
@@ -414,7 +414,7 @@ if($SYMB_UID){
 
     $specImgArr = $occManager->getImageMap();
     if($specImgArr){
-        $imgUrlPrefix = ($IMAGE_DOMAIN ?? '');
+        $imgUrlPrefix = ($GLOBALS['IMAGE_DOMAIN'] ?? '');
         $imgCnt = 1;
         foreach($specImgArr as $imgId => $i2){
             $iUrl = $i2['url'];
@@ -447,9 +447,9 @@ else{
     header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.$_SERVER['QUERY_STRING']);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <?php
     if($crowdSourceMode == 1){
@@ -636,14 +636,14 @@ else{
                                     <?php
                                     if($occId && $isEditor){
                                         $pHandler = new ProfileManager();
-                                        $pHandler->setUid($SYMB_UID);
+                                        $pHandler->setUid($GLOBALS['SYMB_UID']);
                                         $person = $pHandler->getPerson();
                                         $userEmail = ($person?$person->getEmail():'');
 
                                         $anchorVars = 'occid='.$occId.'&occindex='.$occIndex.'&csmode='.$crowdSourceMode.'&collid='.$collId;
                                         $detVars = 'identby='.urlencode($occArr['identifiedby']).'&dateident='.urlencode($occArr['dateidentified']).
                                             '&sciname='.urlencode($occArr['sciname']).'&em='.$isEditor.
-                                            '&annotatorname='.urlencode($USER_DISPLAY_NAME).'&annotatoremail='.urlencode($userEmail).
+                                            '&annotatorname='.urlencode($GLOBALS['USER_DISPLAY_NAME']).'&annotatoremail='.urlencode($userEmail).
                                             (isset($collMap['collectioncode'])?'&collectioncode='.urlencode($collMap['collectioncode']):'').
                                             (isset($collMap['institutioncode'])?'&institutioncode='.urlencode($collMap['institutioncode']):'').
                                             '&catalognumber='.urlencode($occArr['catalognumber']);
@@ -799,7 +799,7 @@ else{
                                                 </div>
                                             </div>
                                             <?php
-                                            if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
+                                            if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
                                                 ?>
                                                 <div id="exsDiv">
                                                     <div id="ometidDiv">
@@ -1158,7 +1158,7 @@ else{
                                                 <input type="text" name="substrate" tabindex="82" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
                                             </div>
                                             <?php
-                                            if(isset($QUICK_HOST_ENTRY_IS_ACTIVE) && $QUICK_HOST_ENTRY_IS_ACTIVE) {
+                                            if(isset($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) && $GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
                                                 $quickHostArr = $occManager->getQuickHost($occId);
                                                 ?>
                                                 <div id="hostDiv">
@@ -1423,7 +1423,7 @@ else{
                                         <div style="padding:10px;">
                                             <input type="hidden" name="occid" value="<?php echo $occId; ?>" />
                                             <input type="hidden" name="collid" value="<?php echo $collId; ?>" />
-                                            <input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
+                                            <input type="hidden" name="observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" />
                                             <input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
                                             <input type="hidden" name="linkdupe" value="" />
                                             <?php
@@ -1489,7 +1489,7 @@ else{
                                                 }
                                                 ?>
                                                 <div id="addButtonDiv">
-                                                    <input type="hidden" name="recordenteredby" value="<?php echo $PARAMS_ARR['un']; ?>" />
+                                                    <input type="hidden" name="recordenteredby" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" />
                                                     <input type="button" name="submitaddbutton" value="Add Record" onclick="this.disabled=true;this.form.submit();" style="width:150px;font-weight:bold;margin:10px;" />
                                                     <input type="hidden" name="submitaction" value="Add Record" />
                                                     <input type="hidden" name="qrycnt" value="<?php echo $qryCnt?:''; ?>" />

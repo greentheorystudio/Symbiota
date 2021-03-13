@@ -50,7 +50,7 @@ else{
 					Entered By:
 				</span><br />
 				<span>
-					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
+					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" onchange=" " />
 				</span>
 			</div><br />
 			<div style="padding-top:6px;float:left;">

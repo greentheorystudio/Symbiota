@@ -14,7 +14,7 @@ $sortOrder = $_REQUEST['sortorder'];
 $stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
-if($SOLR_MODE){
+if($GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
     $collManager->setSearchTermsArr($stArr);
     $collManager->setSorting($sortField1,$sortField2,$sortOrder);
@@ -31,7 +31,7 @@ else{
 $targetClid = $collManager->getSearchTerm('targetclid');
 
 if(strlen($stArrJson) <= 1800){
-    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/listtabledisplay.php';
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/listtabledisplay.php';
     $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
     $copyURL = $urlPrefix.$urlArgs;
 }
@@ -69,7 +69,7 @@ if($recArr){
     $recordListHtml .= '</div>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div style="width:400px;display:flex;justify-content:flex-end;align-items:center;">';
-    if($SYMB_UID){
+    if($GLOBALS['SYMB_UID']){
         $recordListHtml .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
     }
     $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><img src="../images/list.svg" style="width:15px; height:15px" /></button></a></div>';
@@ -134,7 +134,7 @@ if($recArr){
     $recordListHtml .= '<th>Decimal Latitude</th>';
     $recordListHtml .= '<th>Decimal Longitude</th>';
     $recordListHtml .= '<th>Habitat</th>';
-    if($QUICK_HOST_ENTRY_IS_ACTIVE) {
+    if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
         $recordListHtml .= '<th>Host</th>';
     }
     $recordListHtml .= '<th>Substrate</th>';
@@ -147,9 +147,9 @@ if($recArr){
     $recCnt = 0;
     foreach($recArr as $id => $occArr){
         $isEditor = false;
-        if($SYMB_UID && ($IS_ADMIN
-                || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($occArr['collid'], $USER_RIGHTS['CollAdmin'], true))
-                || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($occArr['collid'], $USER_RIGHTS['CollEditor'], true)))){
+        if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN']
+                || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+                || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
             $isEditor = true;
         }
         $collection = $occArr['institutioncode'];
@@ -163,7 +163,7 @@ if($recArr){
         $recordListHtml .= '<td class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$id.'" /></td>'."\n";
         $recordListHtml .= '<td>';
         $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
-        if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
+        if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
             $recordListHtml .= '<img src="../images/edit.svg" style="height:13px;" title="Edit Record" />';
             $recordListHtml .= '</a>';
@@ -191,7 +191,7 @@ if($recArr){
         else{
             $recordListHtml .= '<td></td>'."\n";
         }
-        if($QUICK_HOST_ENTRY_IS_ACTIVE){
+        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
             if(array_key_exists('assochost',$occArr)){
                 $recordListHtml .= '<td>'.((strlen($occArr['assochost'])>80)?substr($occArr['assochost'],0,80).'...':$occArr['assochost']).'</td>'."\n";
             }

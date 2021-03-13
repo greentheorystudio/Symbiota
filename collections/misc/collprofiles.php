@@ -2,19 +2,19 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 $collid = ((array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']))?$_REQUEST['collid']:0);
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $eMode = array_key_exists('emode',$_REQUEST)?htmlspecialchars($_REQUEST['emode']):0;
 
-if($eMode && !$SYMB_UID){
+if($eMode && !$GLOBALS['SYMB_UID']){
 	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.$_SERVER['QUERY_STRING']);
 }
 
 $collManager = new OccurrenceCollectionProfile();
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 if(!$collManager->setCollid($collid)) {
@@ -26,7 +26,7 @@ $collData = $collManager->getCollectionMetadata();
 $collPubArr = array();
 $publishGBIF = false;
 $publishIDIGBIO = false;
-if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $collid){
+if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $collid){
     $collPubArr = $collManager->getCollPubArr($collid);
     if($collPubArr[$collid]['publishToGbif']){
         $publishGBIF = true;
@@ -47,26 +47,26 @@ if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $collid){
 }
 
 $editCode = 0;
-if($SYMB_UID){
-	if($IS_ADMIN){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN']){
 		$editCode = 3;
 	}
 	else if($collid){
-		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 			$editCode = 2;
 		}
-		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 			$editCode = 1;
 		}
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' ' .($collid?$collData[$collid]['collectionname']: '') ; ?> Collection Profiles</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData[$collid]['collectionname']: '') ; ?> Collection Profiles</title>
 	<meta name="keywords" content="Natural history collections,<?php echo ($collid?$collData[$collid]['collectionname']: ''); ?>" />
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<script src="../../js/jquery.js?ver=20130917" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js?ver=20130917" type="text/javascript"></script>
@@ -227,7 +227,7 @@ if($SYMB_UID){
 									</a>
 								</li>
 								<?php
-                                if($FIELDGUIDE_ACTIVE){
+                                if($GLOBALS['FIELDGUIDE_ACTIVE']){
                                     ?>
                                     <li>
                                         <a href="fgbatch.php?collid=<?php echo $collid; ?>" >
@@ -342,7 +342,7 @@ if($SYMB_UID){
 									</a>
 								</li>
                                 <?php
-                                if($SOLR_MODE){
+                                if($GLOBALS['SOLR_MODE']){
                                     ?>
                                     <li style="margin-left:10px;">
                                         <a href="collprofiles.php?collid=<?php echo $collid; ?>&action=cleanSOLR">
@@ -489,7 +489,7 @@ if($SYMB_UID){
 		}
 		else{
 			?>
-			<h2><?php echo $DEFAULT_TITLE; ?> Natural History Collections and Observation Projects</h2>
+			<h2><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Natural History Collections and Observation Projects</h2>
 			<div style='margin:10px;clear:both;'>
 				<?php
 				$serverDomain = 'http://';
@@ -500,7 +500,7 @@ if($SYMB_UID){
 				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
                     $serverDomain .= ':' . $_SERVER['SERVER_PORT'];
                 }
-				echo 'RSS feed: <a href="../datasets/rsshandler.php" target="_blank">'.$serverDomain.$CLIENT_ROOT.'collections/datasets/rsshandler.php</a>';
+				echo 'RSS feed: <a href="../datasets/rsshandler.php" target="_blank">'.$serverDomain.$GLOBALS['CLIENT_ROOT'].'collections/datasets/rsshandler.php</a>';
 				?>
 				<hr/>
 			</div>

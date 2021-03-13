@@ -15,7 +15,7 @@ elseif(!$occArr){
 elseif(!$tid || !is_numeric($tid)){
 	echo 'ERROR: Problem with taxon name (null tid), contact administrator';
 }
-elseif(!($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true)))){
+elseif(!($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true)))){
 	echo 'ERROR: Permissions Error';
 }
 else{

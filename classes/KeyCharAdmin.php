@@ -281,34 +281,33 @@ class KeyCharAdmin{
 	
 	public function uploadCsImage($formArr): string
 	{
-		global $PARAMS_ARR, $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL;
 		$statusStr = '';
 		if(is_numeric($formArr['cid']) && is_numeric($formArr['cs'])){
-	 		if(substr($IMAGE_ROOT_PATH,-1) !== '/') {
-				$IMAGE_ROOT_PATH .= '/';
+	 		if(substr($GLOBALS['IMAGE_ROOT_PATH'],-1) !== '/') {
+				$GLOBALS['IMAGE_ROOT_PATH'] .= '/';
 			}
-			if(file_exists($IMAGE_ROOT_PATH)){
-				$IMAGE_ROOT_PATH .= 'csimgs/';
-				if(!file_exists($IMAGE_ROOT_PATH) && !mkdir($IMAGE_ROOT_PATH) && !is_dir($IMAGE_ROOT_PATH)) {
-					return 'ERROR, unable to create upload directory: '.$IMAGE_ROOT_PATH;
+			if(file_exists($GLOBALS['IMAGE_ROOT_PATH'])){
+				$GLOBALS['IMAGE_ROOT_PATH'] .= 'csimgs/';
+				if(!file_exists($GLOBALS['IMAGE_ROOT_PATH']) && !mkdir($GLOBALS['IMAGE_ROOT_PATH']) && !is_dir($GLOBALS['IMAGE_ROOT_PATH'])) {
+					return 'ERROR, unable to create upload directory: '.$GLOBALS['IMAGE_ROOT_PATH'];
 				}
-				if(substr($IMAGE_ROOT_URL,-1) !== '/') {
-					$IMAGE_ROOT_URL .= '/';
+				if(substr($GLOBALS['IMAGE_ROOT_URL'],-1) !== '/') {
+					$GLOBALS['IMAGE_ROOT_URL'] .= '/';
 				}
-				$IMAGE_ROOT_URL .= 'ident/csimgs/';
+				$GLOBALS['IMAGE_ROOT_URL'] .= 'ident/csimgs/';
 				
-				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$IMAGE_ROOT_URL);
-				$imagePath = $IMAGE_ROOT_PATH.str_replace('.','_temp.',$fileName);
-				if(is_writable($IMAGE_ROOT_PATH)){
+				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$GLOBALS['IMAGE_ROOT_URL']);
+				$imagePath = $GLOBALS['IMAGE_ROOT_PATH'].str_replace('.','_temp.',$fileName);
+				if(is_writable($GLOBALS['IMAGE_ROOT_PATH'])){
                     move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
                 }
 				if(file_exists($imagePath)){
 					if($this->createNewCsImage($imagePath)){
 						$notes = $this->cleanInStr($formArr['notes']);
 						$sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
-							'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$IMAGE_ROOT_URL.$fileName.'",'.
+							'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$GLOBALS['IMAGE_ROOT_URL'].$fileName.'",'.
 							($notes?'"'.$notes.'"':'NULL').','.
-							(is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$PARAMS_ARR['un'].'")';
+							(is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$GLOBALS['PARAMS_ARR']['un'].'")';
 						if(!$this->conn->query($sql)){
 							$statusStr = 'ERROR loading char state image: '.$this->conn->error;
 						}
@@ -321,7 +320,7 @@ class KeyCharAdmin{
 			}
 		}
 		else{
-			$statusStr = 'ERROR: Upload path does not exist (path: '.$IMAGE_ROOT_PATH.')';
+			$statusStr = 'ERROR: Upload path does not exist (path: '.$GLOBALS['IMAGE_ROOT_PATH'].')';
 		}
 		return $statusStr;
 	}
@@ -372,18 +371,17 @@ class KeyCharAdmin{
 
 	public function deleteCsImage($csImgId): string
 	{
-		global $IMAGE_ROOT_PATH;
 		$statusStr = 'SUCCESS: image uploaded successful';
-		if(substr($IMAGE_ROOT_PATH,-1) !== '/') {
-			$IMAGE_ROOT_PATH .= '/';
+		if(substr($GLOBALS['IMAGE_ROOT_PATH'],-1) !== '/') {
+			$GLOBALS['IMAGE_ROOT_PATH'] .= '/';
 		}
-		$IMAGE_ROOT_PATH .= 'ident/csimgs/';
+		$GLOBALS['IMAGE_ROOT_PATH'] .= 'ident/csimgs/';
 		$sql = 'SELECT url FROM kmcsimages WHERE csimgid = '.$csImgId;
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$url = $r->url;
 			$url = substr($url,strrpos($url,'/')+1);
-			unlink($IMAGE_ROOT_PATH.$url);
+			unlink($GLOBALS['IMAGE_ROOT_PATH'].$url);
 		}
 		$rs->free();
 		$sqlDel = 'DELETE FROM kmcsimages WHERE csimgid = '.$csImgId;
@@ -519,10 +517,9 @@ class KeyCharAdmin{
 
 	public function setLangId($lang=''): void
 	{
-		global $DEFAULT_LANG;
 		if(!$lang){
-			if($DEFAULT_LANG){
-				$lang = $DEFAULT_LANG;
+			if($GLOBALS['DEFAULT_LANG']){
+				$lang = $GLOBALS['DEFAULT_LANG'];
 			}
 			else{
 				$lang = 'English';

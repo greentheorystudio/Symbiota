@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
@@ -104,7 +104,7 @@ if(!$clid){
 }
 ?>
 <div id="checklistDiv" style="display:<?php echo ($clid?'block':'none'); ?>;">
-	<form id="checklisteditform" action="<?php echo $CLIENT_ROOT; ?>/checklists/checklistadmin.php" method="post" name="editclmatadata" onsubmit="return validateChecklistForm(this)">
+	<form id="checklisteditform" action="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/checklistadmin.php" method="post" name="editclmatadata" onsubmit="return validateChecklistForm(this)">
 		<fieldset style="margin:15px;padding:10px;">
 			<legend><b><?php echo ($clid?'Edit Checklist Details':'Create New Checklist'); ?></b></legend>
 			<div>
@@ -116,7 +116,7 @@ if(!$clid){
 				<input type="text" name="authors" style="width:95%" value="<?php echo ($clArray?$clArray['authors']:''); ?>" />
 			</div>
 			<?php
-			if(isset($USER_RIGHTS['RareSppAdmin']) || $IS_ADMIN){
+			if(isset($GLOBALS['USER_RIGHTS']['RareSppAdmin']) || $GLOBALS['IS_ADMIN']){
 				?>
 				<div>
 					<b>Checklist Type</b><br/>
@@ -198,7 +198,7 @@ if(!$clid){
 					</div>
 					<div>
 						<?php
-						if($DISPLAY_COMMON_NAMES) {
+						if($GLOBALS['DISPLAY_COMMON_NAMES']) {
                             echo "<input id='dcommon' name='dcommon' type='checkbox' value='1' " . (($defaultArr && $defaultArr['dcommon']) ? 'checked' : '') . ' /> Display Common Names';
                         }
 						?>
@@ -230,7 +230,7 @@ if(!$clid){
 					</div>
 					<div>
 						<?php
-						$activateKey = $KEY_MOD_IS_ACTIVE;
+						$activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 						if(array_key_exists('activatekey', $defaultArr)){
 							$activateKey = $defaultArr['activatekey'];
 						}
