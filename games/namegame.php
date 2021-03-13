@@ -489,7 +489,7 @@ if(!$clName){
 				document.getElementById("counter").innerHTML = "<div id='rw' style='width:190px;text-align:center;' onmouseover=\"this.className='buttonover'\" onmouseout=\"this.className='buttonout'\" onmousedown=\"this.className='buttondown'\" onmouseup=\"this.className='buttonup'\" class='buttonout' onclick='showWord()'><b>Reveal the Species</b></div>";
 				played++;
 				document.getElementById("plays").innerHTML = played.toString();
-                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
                 document.getElementById("splash").innerHTML = "<div style='font-size:20px;color:red;text-align:center;'>Too Bad</div><div style='font-size:16px;color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>";
 				document.getElementById("splash").style.display = "";
 				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
@@ -503,7 +503,7 @@ if(!$clName){
 				document.getElementById("plays").innerHTML = played.toString();
 				won++;
 				document.getElementById("wins").innerHTML = won.toString();
-                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
                 if (secondWord !== '')
 					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>";
 				else
