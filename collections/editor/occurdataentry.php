@@ -113,27 +113,27 @@ if($SYMB_UID){
 							<legend><b>Collection Event</b></legend>
 							<div id="recordedByDiv">
 								<?php echo (defined('RECORDEDBYLABEL')?RECORDEDBYLABEL:'Collector'); ?>
-								<a href="#" onclick="return dwcDoc('recordedBy')"><img class="docimg" src="../../images/qmark.png" /></a>
+								<a href="#" onclick="return dwcDoc('recordedBy')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 								<br/>
 								<input type="text" name="recordedby" tabindex="6" maxlength="255" value="<?php echo array_key_exists('recordedby',$occArr)?$occArr['recordedby']:''; ?>" onchange="fieldChanged('recordedby');" />
 							</div>
 							<div id="associatedCollectorsDiv">
 								<div class="flabel">
 									<?php echo (defined('ASSOCIATEDCOLLECTORSLABEL')?ASSOCIATEDCOLLECTORSLABEL:'Associated Collectors'); ?>
-									<a href="#" onclick="return dwcDoc('associatedCollectors')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('associatedCollectors')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 								</div>
 								<input type="text" name="associatedcollectors" tabindex="14" maxlength="255" value="<?php echo array_key_exists('associatedcollectors',$occArr)?$occArr['associatedcollectors']:''; ?>" onchange="fieldChanged('associatedcollectors');" />
 							</div>
 							<div id="eventDateDiv" title="Earliest Date Collected">
 								<?php echo (defined('EVENTDATELABEL')?EVENTDATELABEL:'Date'); ?>
-								<a href="#" onclick="return dwcDoc('eventDate')"><img class="docimg" src="../../images/qmark.png" /></a>
+								<a href="#" onclick="return dwcDoc('eventDate')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 								<br/>
 								<input type="text" name="eventdate" tabindex="10" value="<?php echo array_key_exists('eventdate',$occArr)?$occArr['eventdate']:''; ?>" onchange="eventDateChanged(this);" />
 							</div>
 							<div id="verbatimEventDateDiv">
 								<div class="flabel">
 									<?php echo (defined('VERBATIMEVENTDATELABEL')?VERBATIMEVENTDATELABEL:'Verbatim Date'); ?>
-									<a href="#" onclick="return dwcDoc('verbatimEventDate')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('verbatimEventDate')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 								</div>
 								<input type="text" name="verbatimeventdate" tabindex="19" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" />
 							</div>
@@ -143,14 +143,14 @@ if($SYMB_UID){
 							<div id="dateextradiv">
 								<div id="ymdDiv">
 									<?php echo (defined('YYYYMMDDLABEL')?YYYYMMDDLABEL:'YYYY-MM-DD'); ?>:
-									<a href="#" onclick="return dwcDoc('year')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('year')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="year" tabindex="20" value="<?php echo array_key_exists('year',$occArr)?$occArr['year']:''; ?>" onchange="inputIsNumeric(this, 'Year');fieldChanged('year');" title="Numeric Year" />-
 									<input type="text" name="month" tabindex="21" value="<?php echo array_key_exists('month',$occArr)?$occArr['month']:''; ?>" onchange="inputIsNumeric(this, 'Month');fieldChanged('month');" title="Numeric Month" />-
 									<input type="text" name="day" tabindex="22" value="<?php echo array_key_exists('day',$occArr)?$occArr['day']:''; ?>" onchange="inputIsNumeric(this, 'Day');fieldChanged('day');" title="Numeric Day" />
 								</div>
 								<div id="dayOfYearDiv">
 									<?php echo (defined('DAYOFYEARLABEL')?DAYOFYEARLABEL:'Day of Year'); ?>:
-									<a href="#" onclick="return dwcDoc('startDayOfYear')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('startDayOfYear')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="startdayofyear" tabindex="24" value="<?php echo array_key_exists('startdayofyear',$occArr)?$occArr['startdayofyear']:''; ?>" onchange="inputIsNumeric(this, 'Start Day of Year');fieldChanged('startdayofyear');" title="Start Day of Year" /> -
 									<input type="text" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
 								</div>
@@ -222,7 +222,7 @@ if($SYMB_UID){
 								</div>
 								<div id="coordinateUncertaintyInMetersDiv">
 									<?php echo (defined('COORDINATEUNCERTAINITYINMETERSLABEL')?COORDINATEUNCERTAINITYINMETERSLABEL:'Uncertainty'); ?>
-									<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('coordinateUncertaintyInMeters')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="54" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="Uncertainty in Meters" />
 								</div>
@@ -237,7 +237,7 @@ if($SYMB_UID){
 								</div>
 								<div id="geodeticDatumDiv">
 									<?php echo (defined('GEODETICDATIMLABEL')?GEODETICDATIMLABEL:'Datum'); ?>
-									<a href="#" onclick="return dwcDoc('geodeticDatum')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('geodeticDatum')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" id="geodeticdatum" name="geodeticdatum" tabindex="56" maxlength="255" value="<?php echo array_key_exists('geodeticdatum',$occArr)?$occArr['geodeticdatum']:''; ?>" />
 								</div>
@@ -304,7 +304,7 @@ if($SYMB_UID){
 									</div>
 									<div id="georeferenceSourcesDiv">
 										<?php echo (defined('GEOREFERENCESOURCESLABEL')?GEOREFERENCESOURCESLABEL:'Georeference Sources'); ?>
-										<a href="#" onclick="return dwcDoc('georeferenceSources')"><img class="docimg" src="../../images/qmark.png" /></a>
+										<a href="#" onclick="return dwcDoc('georeferenceSources')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 										<br/>
 										<input type="text" name="georeferencesources" tabindex="70" maxlength="255" value="<?php echo array_key_exists('georeferencesources',$occArr)?$occArr['georeferencesources']:''; ?>" />
 									</div>
@@ -317,13 +317,13 @@ if($SYMB_UID){
 								<div style="clear:both;">
 									<div id="georeferenceProtocolDiv">
 										<?php echo (defined('GEOREFERENCEPROTOCOLLABEL')?GEOREFERENCEPROTOCOLLABEL:'Georeference Protocol'); ?>
-										<a href="#" onclick="return dwcDoc('georeferenceProtocol')"><img class="docimg" src="../../images/qmark.png" /></a>
+										<a href="#" onclick="return dwcDoc('georeferenceProtocol')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 										<br/>
 										<input type="text" name="georeferenceprotocol" tabindex="76" maxlength="255" value="<?php echo array_key_exists('georeferenceprotocol',$occArr)?$occArr['georeferenceprotocol']:''; ?>" />
 									</div>
 									<div id="georeferenceVerificationStatusDiv">
 										<?php echo (defined('GEOREFERENCEVERIFICATIONSTATUSLABEL')?GEOREFERENCEVERIFICATIONSTATUSLABEL:'Georef Verification Status'); ?>
-										<a href="#" onclick="return dwcDoc('georeferenceVerificationStatus')"><img class="docimg" src="../../images/qmark.png" /></a>
+										<a href="#" onclick="return dwcDoc('georeferenceVerificationStatus')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 										<br/>
 										<input type="text" name="georeferenceverificationstatus" tabindex="78" maxlength="32" value="<?php echo array_key_exists('georeferenceverificationstatus',$occArr)?$occArr['georeferenceverificationstatus']:''; ?>" />
 									</div>
@@ -360,19 +360,19 @@ if($SYMB_UID){
 							<div style="clear:both;">
 								<div id="catalogNumberDiv">
 									<?php echo (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number'); ?>
-									<a href="#" onclick="return dwcDoc('catalogNumber')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('catalogNumber')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" id="catalognumber" name="catalognumber" tabindex="2" maxlength="32" value="<?php echo array_key_exists('catalognumber',$occArr)?$occArr['catalognumber']:''; ?>" onchange="fieldChanged('catalognumber');<?php echo ((!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK)?'searchDupesCatalogNumber(this.form,true);':''); ?>" <?php echo ((!$isEditor || $isEditor === 3)?'disabled':''); ?> />
 								</div>
 								<div id="otherCatalogNumbersDiv">
 									<?php echo (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Other Numbers'); ?>
-									<a href="#" onclick="return dwcDoc('otherCatalogNumbers')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('otherCatalogNumbers')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" name="othercatalognumbers" tabindex="4" maxlength="255" value="<?php echo array_key_exists('othercatalognumbers',$occArr)?$occArr['othercatalognumbers']:''; ?>" onchange="fieldChanged('othercatalognumbers');<?php echo ((defined('OTHERCATNUMDUPECHECK') && OTHERCATNUMDUPECHECK)?'searchDupesOtherCatalogNumbers(this.form);':''); ?>" />
 								</div>
 								<div id="recordNumberDiv">
 									<?php echo (defined('RECORDNUMBERLABEL')?RECORDNUMBERLABEL:'Number'); ?>
-									<a href="#" onclick="return dwcDoc('recordNumber')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('recordNumber')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" name="recordnumber" tabindex="8" maxlength="45" value="<?php echo array_key_exists('recordnumber',$occArr)?$occArr['recordnumber']:''; ?>" onchange="recordNumberChanged(this);" />
 								</div>
@@ -380,7 +380,7 @@ if($SYMB_UID){
 							<div style="clear:both;">
 								<div id="scinameDiv">
 									<?php echo (defined('SCIENTIFICNAMELABEL')?SCIENTIFICNAMELABEL:'Scientific Name'); ?>
-									<a href="#" onclick="return dwcDoc('scientificName')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('scientificName')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" id="ffsciname" name="sciname" maxlength="250" tabindex="28" value="<?php echo array_key_exists('sciname',$occArr)?$occArr['sciname']:''; ?>" onchange="fieldChanged('sciname');" <?php echo (((!$isEditor || $isEditor === 3) && $occArr['sciname'])?'disabled ':''); ?> />
 									<input type="hidden" id="tidinterpreted" name="tidinterpreted" value="" />
@@ -395,7 +395,7 @@ if($SYMB_UID){
 								</div>
 								<div id="scientificNameAuthorshipDiv">
 									<?php echo (defined('SCIENTIFICNAMEAUTHORSHIPLABEL')?SCIENTIFICNAMEAUTHORSHIPLABEL:'Author'); ?>
-									<a href="#" onclick="return dwcDoc('scientificNameAuthorship')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('scientificNameAuthorship')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<br/>
 									<input type="text" name="scientificnameauthorship" maxlength="100" tabindex="0" value="<?php echo array_key_exists('scientificnameauthorship',$occArr)?$occArr['scientificnameauthorship']:''; ?>" onchange="fieldChanged('scientificnameauthorship');" <?php echo ((!$isEditor || $isEditor === 3)?'disabled':''); ?> />
 								</div>
@@ -403,24 +403,24 @@ if($SYMB_UID){
 							<div style="clear:both;padding:3px 0 0 10px;">
 								<div id="identificationQualifierDiv">
 									<?php echo (defined('IDENTIFICATIONQUALIFIERLABEL')?IDENTIFICATIONQUALIFIERLABEL:'ID Qualifier'); ?>
-									<a href="#" onclick="return dwcDoc('identificationQualifier')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('identificationQualifier')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="identificationqualifier" tabindex="30" size="25" value="<?php echo array_key_exists('identificationqualifier',$occArr)?$occArr['identificationqualifier']:''; ?>" onchange="fieldChanged('identificationqualifier');" <?php echo ((!$isEditor || $isEditor === 3)?'disabled':''); ?> />
 								</div>
 								<div  id="familyDiv">
 									<?php echo (defined('FAMILYLABEL')?FAMILYLABEL:'Family'); ?>
-									<a href="#" onclick="return dwcDoc('family')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('family')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="family" maxlength="50" tabindex="0" value="<?php echo array_key_exists('family',$occArr)?$occArr['family']:''; ?>" onchange="fieldChanged('family');" />
 								</div>
 							</div>
 							<div style="clear:both;padding:3px 0 0 10px;">
 								<div id="identifiedByDiv">
 									<?php echo (defined('IDENTIFIEDBYLABEL')?IDENTIFIEDBYLABEL:'Identified By'); ?>
-									<a href="#" onclick="return dwcDoc('identifiedBy')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('identifiedBy')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="identifiedby" maxlength="255" tabindex="32" value="<?php echo array_key_exists('identifiedby',$occArr)?$occArr['identifiedby']:''; ?>" onchange="fieldChanged('identifiedby');" />
 								</div>
 								<div id="dateIdentifiedDiv">
 									<?php echo (defined('DATEIDENTIFIEDLABEL')?DATEIDENTIFIEDLABEL:'Date Identified'); ?>
-									<a href="#" onclick="return dwcDoc('dateIdentified')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('dateIdentified')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="dateidentified" maxlength="45" tabindex="34" value="<?php echo array_key_exists('dateidentified',$occArr)?$occArr['dateidentified']:''; ?>" onchange="fieldChanged('dateidentified');" />
 								</div>
 								<div id="idrefToggleDiv" onclick="toggle('idrefdiv');">
@@ -430,17 +430,17 @@ if($SYMB_UID){
 							<div  id="idrefdiv">
 								<div id="identificationReferencesDiv">
 									<?php echo (defined('IDENTIFICATIONREFERENCELABEL')?IDENTIFICATIONREFERENCELABEL:'ID References'); ?>:
-									<a href="#" onclick="return dwcDoc('identificationReferences')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('identificationReferences')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="identificationreferences" tabindex="36" value="<?php echo array_key_exists('identificationreferences',$occArr)?$occArr['identificationreferences']:''; ?>" onchange="fieldChanged('identificationreferences');" />
 								</div>
 								<div id="identificationRemarksDiv">
 									<?php echo (defined('IDENTIFICATIONREMARKSLABEL')?IDENTIFICATIONREMARKSLABEL:'ID Remarks'); ?>:
-									<a href="#" onclick="return dwcDoc('identificationRemarks')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('identificationRemarks')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="identificationremarks" tabindex="38" value="<?php echo array_key_exists('identificationremarks',$occArr)?$occArr['identificationremarks']:''; ?>" onchange="fieldChanged('identificationremarks');" />
 								</div>
 								<div id="taxonRemarksDiv">
 									<?php echo (defined('TAXONREMARKSLABEL')?TAXONREMARKSLABEL:'Taxon Remarks'); ?>:
-									<a href="#" onclick="return dwcDoc('taxonRemarks')"><img class="docimg" src="../../images/qmark.png" /></a>
+									<a href="#" onclick="return dwcDoc('taxonRemarks')"><img src="../../images/help-circle.svg" style="width:15px;" /></a>
 									<input type="text" name="taxonremarks" tabindex="39" value="<?php echo array_key_exists('taxonremarks',$occArr)?$occArr['taxonremarks']:''; ?>" onchange="fieldChanged('taxonremarks');" />
 								</div>
 							</div>
@@ -462,39 +462,39 @@ if($SYMB_UID){
 								</div>
 								<div id="dynamicPropertiesDiv">
 									<?php echo (defined('DYNAMICPROPERTIESLABEL')?DYNAMICPROPERTIESLABEL:'Dynamic Properties'); ?>
-									<a href="#" onclick="return dwcDoc('dynamicProperties')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('dynamicProperties')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="dynamicproperties" tabindex="89" value="<?php echo array_key_exists('dynamicproperties',$occArr)?$occArr['dynamicproperties']:''; ?>" />
 								</div>
 							</div>
 							<div style="padding:2px;">
 								<div id="lifeStageDiv">
 									<?php echo (defined('LIFESTAGELABEL')?LIFESTAGELABEL:'Life Stage'); ?>
-									<a href="#" onclick="return dwcDoc('lifeStage')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('lifeStage')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="lifestage" tabindex="90" maxlength="45" value="<?php echo array_key_exists('lifestage',$occArr)?$occArr['lifestage']:''; ?>" />
 								</div>
 								<div id="sexDiv">
 									<?php echo (defined('SEXLABEL')?SEXLABEL:'Sex'); ?>
-									<a href="#" onclick="return dwcDoc('sex')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('sex')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="sex" tabindex="92" maxlength="45" value="<?php echo array_key_exists('sex',$occArr)?$occArr['sex']:''; ?>" />
 								</div>
 								<div id="individualCountDiv">
 									<?php echo (defined('INDIVIDUALCOUNTLABEL')?INDIVIDUALCOUNTLABEL:'Individual Count'); ?>
-									<a href="#" onclick="return dwcDoc('individualCount')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('individualCount')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="individualcount" tabindex="94" maxlength="45" value="<?php echo array_key_exists('individualcount',$occArr)?$occArr['individualcount']:''; ?>" />
 								</div>
 								<div id="samplingProtocolDiv">
 									<?php echo (defined('SAMPLINGPROTOCOLLABEL')?SAMPLINGPROTOCOLLABEL:'Sampling Protocol'); ?>
-									<a href="#" onclick="return dwcDoc('samplingProtocol')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('samplingProtocol')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="samplingprotocol" tabindex="95" maxlength="100" value="<?php echo array_key_exists('samplingprotocol',$occArr)?$occArr['samplingprotocol']:''; ?>" />
 								</div>
 								<div id="preparationsDiv">
 									<?php echo (defined('PREPARATIONSLABEL')?PREPARATIONSLABEL:'Preparations'); ?>
-									<a href="#" onclick="return dwcDoc('preparations')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('preparations')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="preparations" tabindex="97" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" />
 								</div>
 								<div id="reproductiveConditionDiv">
 									<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
-									<a href="#" onclick="return dwcDoc('reproductiveCondition')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('reproductiveCondition')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<?php
 									if(isset($REPRODUCTIVE_CONDITION_TERMS)){
 										if($REPRODUCTIVE_CONDITION_TERMS){
@@ -520,7 +520,7 @@ if($SYMB_UID){
 								</div>
 								<div id="establishmentMeansDiv">
 									<?php echo (defined('ESTABLISHMENTMEANSLABEL')?ESTABLISHMENTMEANSLABEL:'Establishment Means'); ?>
-									<a href="#" onclick="return dwcDoc('establishmentMeans')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('establishmentMeans')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="establishmentmeans" tabindex="100" maxlength="32" value="<?php echo array_key_exists('establishmentmeans',$occArr)?$occArr['establishmentmeans']:''; ?>" />
 								</div>
 								<div id="cultivationStatusDiv">
@@ -532,22 +532,22 @@ if($SYMB_UID){
 							<div style="padding:3px;">
 								<div id="dispositionDiv">
 									<?php echo (defined('DISPOSITIONLABEL')?DISPOSITIONLABEL:'Disposition'); ?>
-									<a href="#" onclick="return dwcDoc('disposition')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('disposition')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="disposition" tabindex="104" maxlength="32" value="<?php echo array_key_exists('disposition',$occArr)?$occArr['disposition']:''; ?>" />
 								</div>
 								<div id="occurrenceIdDiv" title="If different than institution code">
 									<?php echo (defined('OCCURRENCEIDLABEL')?OCCURRENCEIDLABEL:'Occurrence ID'); ?>
-									<a href="#" onclick="return dwcDoc('occurrenceid')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('occurrenceid')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="occurrenceid" tabindex="105" maxlength="255" value="<?php echo array_key_exists('occurrenceid',$occArr)?$occArr['occurrenceid']:''; ?>" />
 								</div>
 								<div id="fieldNumberDiv" title="If different than institution code">
 									<?php echo (defined('FIELDNUMBERLABEL')?FIELDNUMBERLABEL:'Field Number'); ?>
-									<a href="#" onclick="return dwcDoc('fieldnumber')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('fieldnumber')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<input type="text" name="fieldnumber" tabindex="107" maxlength="45" value="<?php echo array_key_exists('fieldnumber',$occArr)?$occArr['fieldnumber']:''; ?>" />
 								</div>
 								<div id="basisOfRecordDiv">
 									<?php echo (defined('BASISOFRECORDLABEL')?BASISOFRECORDLABEL:'Basis of Record'); ?>
-									<a href="#" onclick="return dwcDoc('basisOfRecord')"><img class="docimg" src="../../images/qmark.png" /></a><br/>
+									<a href="#" onclick="return dwcDoc('basisOfRecord')"><img src="../../images/help-circle.svg" style="width:15px;" /></a><br/>
 									<?php
                                     if(array_key_exists('basisofrecord',$occArr)){
                                         ?>
