@@ -71,7 +71,7 @@ $specList = $loanManager->getSpecList($loanId);
 						?>
 						<span>
 							<a href="../admin/institutioneditor.php?iid=<?php echo $loanArr['iidborrower']; ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
-								<img src="../../images/edit.png" style="width:15px;" />
+								<img src="../../images/edit.svg" style="width:15px;" />
 							</a>
 						</span>
 						<?php 
@@ -277,7 +277,7 @@ $specList = $loanManager->getSpecList($loanId);
 									<?php echo $specArr['catalognumber']; ?>
 								</a>
 								<a href="#" onclick="openEditorPopup(<?php echo $specArr['occid']; ?>); return false;">
-									<img src="../../images/edit.png" />
+									<img src="../../images/edit.svg" style="width:20px;height:20px;" />
 								</a>
 							</td>
 							<td>

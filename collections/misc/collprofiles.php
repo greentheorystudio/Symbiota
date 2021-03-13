@@ -112,7 +112,7 @@ if($SYMB_UID){
 		if($editCode > 0 && $collid){
 			?>
 			<div style="float:right;margin:3px;cursor:pointer;" onclick="toggleById('controlpanel');" title="Toggle Manager's Control Panel">
-				<img style='border:0;' src='../../images/edit.png' />
+				<img style='border:0;width:20px;height:20px;' src='../../images/edit.svg' />
 			</div>
 			<?php
 		}
@@ -388,7 +388,7 @@ if($SYMB_UID){
 							<?php
 							echo '<div>' .$addrArr['institutionname'];
 							if($editCode > 1) {
-                                echo ' <a href="../admin/institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><img src="../../images/edit.png" style="width:13px;" /></a>';
+                                echo ' <a href="../admin/institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><img src="../../images/edit.svg" style="width:13px;" /></a>';
                             }
 							echo '</div>';
 							if($addrArr['institutionname2']) {

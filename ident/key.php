@@ -181,7 +181,7 @@ if($chars){
                                     echo "<tr><td><div style='margin:0 5px 0 10px;'><a href='".$newSpLink."' target='_blank'><i>$disName</i></a></div></td>\n";
                                     echo "<td style='text-align: right;'>\n";
                                     if($isEditor){
-                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.png' style='width:15px;border:0;' title='Edit morphology' /></a>\n";
+                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.svg' style='width:15px;border:0;' title='Edit morphology' /></a>\n";
                                     }
                                     echo "</td></tr>\n";
                                 }

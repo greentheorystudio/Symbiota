@@ -1,29 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once(__DIR__ . '/../../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../../classes/OccurrenceDataset.php');
 
-$connection = new DbConnection();
-$con = $connection->getConnection();
-$retArr = array();
-$term = $con->real_escape_string($_REQUEST['term']);
+$term = ($_REQUEST['term']);
 
-$sql = 'SELECT CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",u.username," [#",u.uid,"]") AS username '.
-	'FROM users u '.
-	'WHERE u.lastname = "'.$term.'" OR l.username = "'.$term.'"';
-//echo $sql;
-$rs = $con->query($sql);
-while($r = $rs->fetch_object()) {
-	$username = $r->username;
-	if(($CHARSET === 'ISO-8859-1') && mb_detect_encoding($username, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
-		$username = utf8_encode($username);
-	}
-	$retArr[] = $username;
-}
-$rs->free();
-$con->close();
-if($retArr){
-	echo json_encode($retArr);
-}
-else{
-	echo '[]';
-}
+$datasetManager = new OccurrenceDataset();
+$retArr = $datasetManager->getUserList($term);
+
+echo json_encode($retArr);

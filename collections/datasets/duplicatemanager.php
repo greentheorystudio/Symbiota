@@ -199,7 +199,7 @@ if($isEditor && $formSubmit){
 								<div style="clear:both;margin:10px 0;">
 									<div style="font-weight:bold;font-size:120%;">
 										<?php echo $dupArr['title']; ?> 
-										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><img src="../../images/edit.png" style="width:13px;" /></span> 
+										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><img src="../../images/edit.svg" style="width:13px;" /></span>
 									</div>
 									<?php 
 									if(isset($dupArr['desc'])) {

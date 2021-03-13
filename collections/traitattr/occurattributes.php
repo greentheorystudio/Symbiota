@@ -258,10 +258,10 @@ if($traitID){
 		if($isEditor === 2){
 			echo '<div style="float:right;margin:0 3px;font-size:90%">';
 			if($mode === 1){
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.png" style="" />review</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />review</a>';
 			}
 			else{
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><img src="../../images/edit.png" style="" />edit</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />edit</a>';
 			}
 			echo '</div>';
 		}

@@ -386,7 +386,7 @@ if($glossId){
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
 										<a href="termdetails.php?glossid=<?php echo $synGlossId; ?>">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.svg" />
 										</a>
 									</div>
 									<div style='' >
@@ -446,7 +446,7 @@ if($glossId){
 										</div>
 										<div style="float:right;margin:5px;" title="Edit Term">
 											<a href="termdetails.php?glossid=<?php echo $relGlossId; ?>">
-												<img style="border:0;width:12px;" src="../images/edit.png" />
+												<img style="border:0;width:12px;" src="../images/edit.svg" />
 											</a>
 										</div>
 										<div>
@@ -528,7 +528,7 @@ if($glossId){
 									?>
 									<div style="float:right;margin:5px;" title="Edit Term Data">
 										<a href="termdetails.php?glossid=<?php echo $transGlossId; ?>">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.svg" />
 										</a>
 									</div>
 									<div>
@@ -634,7 +634,7 @@ if($glossId){
 									?>
 									<fieldset style="margin-top:10px;">
 										<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+											<img style="border:0;width:12px;" src="../images/edit.svg" />
 										</div>
 										<div style="float:left;">
 											<?php

@@ -61,7 +61,7 @@ if($glossId){
 					?>
 					<div style="float:right;margin-right:15px;" title="Edit Term Data">
 						<a href="termdetails.php?glossid=<?php echo $glossId;?>" onclick="self.resizeTo(1250, 900);">
-							<img style="border:0;width:12px;" src="../images/edit.png" />
+							<img style="border:0;width:12px;" src="../images/edit.svg" />
 						</a>
 					</div>
 					<?php
