@@ -50,7 +50,7 @@ $clManager->setProj($pid);
                             if(array_key_exists('coords',$projArr)){
                                 ?>
                                 <a href="#" onclick="openSpatialViewerWindow('<?php echo $projArr['coords']; ?>');" title='Show checklists on map'>
-                                    <img src='../images/world.png' style='width:10px;border:0' />
+                                    <img src='../images/globe.svg' style='width:10px;border:0' />
                                 </a>
                                 <?php
                             }

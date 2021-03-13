@@ -383,7 +383,7 @@ if($formSubmit === 'dlexsiccati'){
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="Edit Exsiccati">
-							<img style="border:0;" src="../../images/edit.png" />
+							<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
 						</span>
 						<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="Add Exsiccati Number">
 							<img style="border:0;" src="../../images/add.png" />
@@ -518,7 +518,7 @@ if($formSubmit === 'dlexsiccati'){
 				?>
 				<div style="float:right;">
 					<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="Edit Exsiccati Number">
-						<img style="border:0;" src="../../images/edit.png"/>
+						<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg"/>
 					</span>
 					<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="Add Occurrence to Exsiccati Number">
 						<img style="border:0;" src="../../images/add.png" />
@@ -710,7 +710,7 @@ if($formSubmit === 'dlexsiccati'){
 									if($isEditor){
 										?>
 										<div style="cursor:pointer;float:right;" onclick="toggle('occeditdiv-<?php echo $k; ?>');" title="Edit Occurrence Link">
-											<img style="border:0;" src="../../images/edit.png"/>
+											<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg"/>
 										</div>
 										<?php
 									}

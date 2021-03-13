@@ -265,7 +265,7 @@ if($editor && $submitAction){
 									<a href="#" onclick="analyseLocalityStr();"><img src="../../images/find.png" title="Analyse Locality string for embedded Lat/Long or UTM" style="width:15px;" /></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.png" title="Edit first set of records" style="width:15px;" /></a>
+									<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.svg" title="Edit first set of records" style="width:15px;" /></a>
 								</span>
 							</div>
 							<div style="font-weight:bold;">
@@ -362,7 +362,7 @@ if($editor && $submitAction){
 										<td>
 											<input id="decimallatitude" name="decimallatitude" type="text" style="width:80px;" />
 											<span style="cursor:pointer;padding:3px;" onclick="openSpatialInputWindow('input-point');">
-												<img src="../../images/world.png" style="border:0;width:13px;" />
+												<img src="../../images/globe.svg" style="border:0;width:13px;" />
 											</span>
 										</td>
 									</tr>
