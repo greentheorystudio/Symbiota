@@ -158,6 +158,20 @@ function addLayerToSelList(layer,title){
     }
 }
 
+function addQueryToDataset(){
+    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+    document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
+    document.getElementById("datasetformaction").value = 'addAllToDataset';
+    document.getElementById("datasetform").submit();
+}
+
+function addSelectionsToDataset(){
+    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+    document.getElementById("occarrjson").value = JSON.stringify(selections);
+    document.getElementById("datasetformaction").value = 'addSelectedToDataset';
+    document.getElementById("datasetform").submit();
+}
+
 function adjustSelectionsTab(){
     if(selections.length > 0){
         document.getElementById("selectionstab").style.display = "block";
@@ -1574,10 +1588,10 @@ function downloadShapesLayer(){
         'featureProjection': mapProjection
     });
     if(dlType === 'kml'){
-        exportStr = exportStr.replace(/<kml xmlns="http:\/\/www.opengis.net\/kml\/2.2" xmlns:gx="http:\/\/www.google.com\/kml\/ext\/2.2" xmlns:xsi="http:\/\/www.w3.org\/2001\/XMLSchema-instance" xsi:schemaLocation="http:\/\/www.opengis.net\/kml\/2.2 https:\/\/developers.google.com\/kml\/schema\/kml22gx.xsd">/g,'<kml xmlns="http://www.opengis.net/kml/2.2"><Document id="root_doc"><Folder><name>shapes_export</name>');
-        exportStr = exportStr.replace(/<Placemark>/g,'<Placemark><Style><LineStyle><color>ff000000</color><width>1</width></LineStyle><PolyStyle><color>4DAAAAAA</color><fill>1</fill></PolyStyle></Style>');
-        exportStr = exportStr.replace(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
-        exportStr = exportStr.replace(/<\/kml>/g,'</Folder></Document></kml>');
+        exportStr = exportStr.replaceAll(/<kml xmlns="http:\/\/www.opengis.net\/kml\/2.2" xmlns:gx="http:\/\/www.google.com\/kml\/ext\/2.2" xmlns:xsi="http:\/\/www.w3.org\/2001\/XMLSchema-instance" xsi:schemaLocation="http:\/\/www.opengis.net\/kml\/2.2 https:\/\/developers.google.com\/kml\/schema\/kml22gx.xsd">/g,'<kml xmlns="http://www.opengis.net/kml/2.2"><Document id="root_doc"><Folder><name>shapes_export</name>');
+        exportStr = exportStr.replaceAll(/<Placemark>/g,'<Placemark><Style><LineStyle><color>ff000000</color><width>1</width></LineStyle><PolyStyle><color>4DAAAAAA</color><fill>1</fill></PolyStyle></Style>');
+        exportStr = exportStr.replaceAll(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
+        exportStr = exportStr.replaceAll(/<\/kml>/g,'</Folder></Document></kml>');
     }
     const filename = 'shapes_' + getDateTimeString() + '.' + dlType;
     const blob = new Blob([exportStr], {type: filetype});
@@ -2281,9 +2295,9 @@ function primeSymbologyData(features){
             }
             //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
             let namestring = (sciname ? sciname : '');
-            namestring = namestring.replace(" ","");
+            namestring = namestring.replaceAll(" ","");
             namestring = namestring.toLowerCase();
-            namestring = namestring.replace(/[^A-Za-z0-9 ]/g,'');
+            namestring = namestring.replaceAll(/[^A-Za-z0-9 ]/g,'');
             if(!collSymbology[collName]){
                 collSymbology[collName] = [];
                 collSymbology[collName]['collid'] = collid;
@@ -3367,6 +3381,16 @@ function setTransformHandleStyle(){
     }));
     transformInteraction.style.scalev2 = transformInteraction.style.scalev;
     transformInteraction.set('translate', transformInteraction.get('translate'));
+}
+
+function showDatasetManagementPopup(){
+    if(selections.length > 0){
+        document.getElementById("datasetselecteddiv").style.display = "block";
+    }
+    else{
+        document.getElementById("datasetselecteddiv").style.display = "none";
+    }
+    $("#datasetmanagement").popup("show");
 }
 
 function showFeature(feature){

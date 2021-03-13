@@ -218,7 +218,7 @@ $(document).ready(function() {
 	if(document.getElementById('hostDiv')){
 		$("#quickhost").autocomplete({
 			source: function( request, response ) {
-				const name = request.term.replace(" ", "+");
+				const name = request.term.replaceAll(" ", "+");
 				$.getJSON( "rpc/getcolspeciessuggest.php", { term: name }, response );
 			},
 			minLength: 4,
@@ -385,7 +385,7 @@ function parseVerbatimElevation(f){
 		let min = "";
 		let max = "";
 		let verbElevStr = f.verbatimelevation.value;
-		verbElevStr = verbElevStr.replace(/,/g ,"");
+		verbElevStr = verbElevStr.replaceAll(/,/g ,"");
 
 		const regEx1 = /(\d+)\s*-\s*(\d+)\s*[fte|']/i;
 		const regEx2 = /(\d+)\s*[fte|']/i;
@@ -460,7 +460,7 @@ function parseVerbatimCoordinates(f,verbose){
 		let latDec = null;
 		let lngDec = null;
 		let verbCoordStr = f.verbatimcoordinates.value;
-		verbCoordStr = verbCoordStr.replace(/’/g,"'");
+		verbCoordStr = verbCoordStr.replaceAll(/’/g,"'");
 
 		const tokenArr = verbCoordStr.split(" ");
 
@@ -1120,7 +1120,7 @@ function verifyDetForm(f){
 
 function verifyImgAddForm(f){
     if(f.elements["imgfile"].value.replace(/\s/g, "") === ""){
-		const imgUrl = f.elements["imgurl"].value.replace(/\s/g, "");
+		const imgUrl = f.elements["imgurl"].value.replaceAll(/\s/g, "");
 		if(imgUrl === ""){
         	alert("Select an image file or enter a URL to an existing image");
 			return false;
@@ -1241,7 +1241,7 @@ function getCookie(cName){
 	for(let i = 0;i<cookieArr.length;i++){
 		x = cookieArr[i].substr(0,cookieArr[i].indexOf("="));
 		y = cookieArr[i].substr(cookieArr[i].indexOf("=")+1);
-		x = x.replace(/^\s+|\s+$/g,"");
+		x = x.replaceAll(/^\s+|\s+$/g,"");
 		if (x === cName){
 			return unescape(y);
 		}

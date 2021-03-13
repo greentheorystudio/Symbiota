@@ -78,7 +78,7 @@ if($imgArr){
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.imgdetails.js?ver=150910" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.imgdetails.js?ver=20210313" type="text/javascript"></script>
 	<script src="../js/symb/shared.js" type="text/javascript"></script>
 </head>
 <body>
