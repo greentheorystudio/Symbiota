@@ -11,7 +11,7 @@ $sourcePage = array_key_exists('sourcepage',$_POST)?$_POST['sourcepage']:'datase
 $occid = array_key_exists('occid',$_POST)?$_POST['occid']:0;
 $occArrJson = array_key_exists('occarrjson',$_POST)?$_POST['occarrjson']:'';
 
-if(!is_numeric($datasetID)) {
+if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {
     $datasetID = 0;
 }
 
