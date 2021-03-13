@@ -345,7 +345,7 @@ if($clid && $isEditor){
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
 												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-													<img src="../images/link.png" style="width:13px;" title="Link Voucher Specimens" />
+													<img src="../images/link.svg" style="width:13px;" title="Link Voucher Specimens" />
 												</a>
 											</div>
 										<?php
