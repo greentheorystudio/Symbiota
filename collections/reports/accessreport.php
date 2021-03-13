@@ -198,7 +198,7 @@ else{
 				</div>
 				<div style="font-weight:bold;font-size:130%;">
 					<?php echo $collName; ?>
-					<a href="<?php echo $navPageBase.'&action=export'; ?>" title="Download Results"><img src="../../images/dl.png" style="margin-left:10px;width:14px;" /></a>
+					<a href="<?php echo $navPageBase.'&action=export'; ?>" title="Download Results"><img src="../../images/download.svg" style="margin-left:10px;width:14px;" /></a>
 				</div>
 				<div style="width:400px">
 					<div style="clear:both"><?php echo $navStr; ?></div>

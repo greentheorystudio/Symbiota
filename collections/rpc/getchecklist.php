@@ -42,7 +42,7 @@ if($stArrJson){
 ?>
 <div>
     <div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Download Checklist Data'>
-        <a style="cursor:pointer;" onclick="processDownloadChecklist();"><img style="width:15px;" src="../../images/dl.png" /></a>
+        <a style="cursor:pointer;" onclick="processDownloadChecklist();"><img style="width:15px;" src="../../images/download.svg" /></a>
 	</div>
 	<?php
 	if($KEY_MOD_IS_ACTIVE){

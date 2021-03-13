@@ -501,15 +501,26 @@ if(!$printMode){
                                     echo "<input type='hidden' name='pagenumber' value='" . $pageNumber . "' />";
                                 }
                                 ?>
-                                <input data-role='none' type="submit" name="submitaction" value="Rebuild List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');" />
-                                <div class="button" style='float:right;margin-right:10px;width:16px;height:16px;padding:2px;' title="Download Checklist">
-                                    <input data-role='none' type="image" name="dllist" value="Download List" src="../images/dl.png" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');" />
-                                </div>
-                                <div class="button" style='float:right;margin-right:10px;width:16px;height:16px;padding:2px;' title="Print in Browser">
-                                    <input data-role='none' type="image" name="printlist" value="Print List" src="../images/print.png" onclick="changeOptionFormAction('checklist.php','_blank');" />
-                                </div>
-                                <div class="button" id="wordicondiv" style='float:right;margin-right:10px;width:16px;height:16px;padding:2px;<?php echo ($showImages?'display:none;':''); ?>' title="Export to DOCX">
-                                    <input data-role='none' type="image" name="exportdoc" value="Export to DOCX" src="../images/wordicon.png" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');" />
+
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <input type="submit" name="submitaction" value="Rebuild List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');" />
+                                    <div style="width:100px;display:flex;justify-content:flex-end;align-items:center;">
+                                        <div id="wordicondiv" style="margin-right:5px;">
+                                            <button class="icon-button" style="margin:0;padding:2px;" title="Export to DOCX" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');">
+                                                <img src="../images/wordicon.png" style="width:15px;"/>
+                                            </button>
+                                        </div>
+                                        <div style="margin-right:5px;">
+                                            <button class="icon-button" style="margin:0;padding:2px;" title="Print in Browser" onclick="changeOptionFormAction('checklist.php','_blank');">
+                                                <img src="../images/printer.svg" style="width:15px;"/>
+                                            </button>
+                                        </div>
+                                        <div style="margin-right:5px;">
+                                            <button class="icon-button" style="margin:0;padding:2px;" title="Download List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');">
+                                                <img src="../images/download.svg" style="width:15px;"/>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <?php
@@ -753,7 +764,7 @@ if(!$printMode){
                                 ?>
                                 <span class="editspp" style="display:none;">
 										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<img src='../images/link.png' style='width:13px;' title='Link Voucher Specimens' />
+											<img src='../images/link.svg' style='width:13px;' title='Link Voucher Specimens' />
 										</a>
 									</span>
                                 <?php

@@ -766,7 +766,7 @@ if($action !== 'Update Statistics'){
                                                     <input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
                                                     <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 													<input type="hidden" name="action" id="action" value='Download Stats per Coll' />
-													<input type="image" name="action" src="../../images/dl.png" onclick="" />
+													<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
 												</div>
 											</div>
 										</form>
@@ -784,7 +784,7 @@ if($action !== 'Update Statistics'){
 													</div>
 													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="Save CSV">
 														<input type="hidden" name="action" value='Download Family Dist' />
-														<input type="image" name="action" src="../../images/dl.png" onclick="" />
+														<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
 													</div>
 												</div>
 											</form>
@@ -798,7 +798,7 @@ if($action !== 'Update Statistics'){
 													</div>
 													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="Save CSV">
 														<input type="hidden" name="action" value='Download Geo Dist' />
-														<input type="image" name="action" src="../../images/dl.png" onclick="" />
+														<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
 													</div>
 												</div>
 											</form>
