@@ -162,7 +162,7 @@ if($userChecklists || $checklistArr){
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
 					if($note) {
-                        echo ' - ' . $notes;
+                        echo ' - ' . $note;
                     }
 					echo '</div>';
 					echo '<div style="20px 0px"><hr/><hr/></div>';
