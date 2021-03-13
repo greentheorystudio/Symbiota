@@ -85,7 +85,7 @@ if($action === 'Create Login'){
 				f.pwd2.focus();
 				return false;
 			}
-			if(f.login.value.replace(/\s/g, "") === ""){
+			if(f.login.value.replaceAll(/\s/g, "") === ""){
 				window.alert("User Name must contain a value");
 				return false;
 			}
@@ -93,15 +93,15 @@ if($action === 'Create Login'){
 		        alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
 		        return false;
 		    }
-			if(f.emailaddr.value.replace(/\s/g, "") === "" ){
+			if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
 				window.alert("Email address is required");
 				return false;
 			}
-			if(f.firstname.value.replace(/\s/g, "") === ""){
+			if(f.firstname.value.replaceAll(/\s/g, "") === ""){
 				window.alert("First Name must contain a value");
 				return false;
 			}
-			if(f.lastname.value.replace(/\s/g, "") === ""){
+			if(f.lastname.value.replaceAll(/\s/g, "") === ""){
 				window.alert("Last Name must contain a value");
 				return false;
 			}
