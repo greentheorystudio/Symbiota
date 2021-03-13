@@ -62,7 +62,7 @@ if($collid){
 			<fieldset style="padding:0 15px 15px 15px;position:relative;">
 				<legend>
 					<b>Skeletal Data</b> 
-					<a id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="Display Options" /></a>
+					<a id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.svg" style="width:12px;" title="Display Options" /></a>
 					<a id="hidespan" href="#" style="display:none;" onclick="hideOptions()">Hide</a>
 					<a href="#" onclick="toggle('descriptiondiv')"><img src="../../images/info.png" style="width:12px;" title="Description of Tool" /></a>
 				</legend>
