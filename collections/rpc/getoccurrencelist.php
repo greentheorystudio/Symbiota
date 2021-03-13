@@ -51,7 +51,7 @@ $htmlStr .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top
 $htmlStr .= '</div>';
 $htmlStr .= '<div style="clear:both;"></div>';
 $htmlStr .= '<div style="height:20px;width:100%;display:flex;justify-content:space-between;align-items:center;">';
-$htmlStr .= '<div style="height:20px;width:275px;display:flex;justify-content:space-between;align-items:center;">';
+$htmlStr .= '<div style="height:20px;width:275px;display:flex;justify-content:flex-start;align-items:center;">';
 $htmlStr .= '<div>';
 $htmlStr .= '<select data-role="none" id="querydownloadselect">';
 $htmlStr .= '<option>Download Type</option>';
@@ -62,14 +62,17 @@ $htmlStr .= '<option value="gpx">GPX</option>';
 $htmlStr .= '</select>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div>';
-$htmlStr .= '<button data-role="none" type="button" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');" >Download</button>';
+$htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><img src="../images/download.svg" style="width:15px; height:15px" /></button>';
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
-$htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:space-between;align-items:center;">';
-$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Table View</a></div>';
-$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Spatial Module</a></div>';
+$htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
+if($SYMB_UID){
+    $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+}
+$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>';
+$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
 if(strlen($stArrJson) <= 1800){
-    $htmlStr .= '<div><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
 }
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
@@ -109,6 +112,38 @@ $paginationStr .= '</div><div style="clear:both;"><hr/></div></div>';
 $htmlStr .= $paginationStr;
 
 if($occurArr){
+    $htmlStr .= '<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">';
+    $htmlStr .= '<div id="dataset-tools" class="dataset-div" style="clear:both;display:none">';
+    $htmlStr .= '<fieldset>';
+    $htmlStr .= '<legend>Dataset Management</legend>';
+    $datasetArr = $collManager->getDatasetArr();
+    $htmlStr .= '<div style="padding:5px;float:left;">Dataset target: </div>';
+    $htmlStr .= '<div style="padding:5px;float:left;">';
+    $htmlStr .= '<select name="targetdatasetid">';
+    $htmlStr .= '<option value="">------------------------</option>';
+    if($datasetArr){
+        foreach($datasetArr as $datasetID => $datasetName){
+            $htmlStr .= '<option value="'.$datasetID.'">'.$datasetName.'</option>';
+        }
+    }
+    else {
+        $htmlStr .= '<option value="">No existing datasets available</option>';
+    }
+    $htmlStr .= '<option value="">----------------------------------</option>';
+    $htmlStr .= '<option value="--newDataset">Create New Dataset</option>';
+    $htmlStr .= '</select>';
+    $htmlStr .= '</div>';
+    $htmlStr .= '<div style="clear:both;margin:5px 0;">';
+    $htmlStr .= '<span class="checkbox-elem"><input name="selectall" type="checkbox" onclick="selectAllDataset(this)" /></span>';
+    $htmlStr .= '<span style="padding:10px;">Select all records on page</span>';
+    $htmlStr .= '</div>';
+    $htmlStr .= '<div style="clear:both;">';
+    $htmlStr .= '<input name="dsstarrjson" id="dsstarrjson" type="hidden" value="" />';
+    $htmlStr .= '<div style="padding:5px 0;float:left;"><button name="action" type="submit" value="addSelectedToDataset" onclick="return hasSelectedOccid(this.form)">Add Selected Records to Dataset</button></div>';
+    $htmlStr .= '<div style="padding:5px;float:left;"><button name="action" type="submit" value="addAllToDataset">Add Complete Query to Dataset</button></div>';
+    $htmlStr .= '</div>';
+    $htmlStr .= '</fieldset>';
+    $htmlStr .= '</div>';
     $htmlStr .= '<table id="omlisttable">';
     $prevCollid = 0;
     $specOccArr = array();
@@ -138,11 +173,13 @@ if($occurArr){
         $htmlStr .= '</a>';
         $htmlStr .= '<div style="font-weight:bold;font-size:75%;">';
         $htmlStr .= $instCode;
-        $htmlStr .= '</div></td><td>';
+        $htmlStr .= '</div>';
+        $htmlStr .= '<div style="margin-top:10px"><span class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$occid.'" /></span></div>';
+        $htmlStr .= '</td><td>';
         if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
             $htmlStr .= '<div style="float:right;" title="Edit Occurrence Record">';
             $htmlStr .= '<a href="editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">';
-            $htmlStr .= '<img src="../images/edit.png" style="border:solid 1px gray;height:13px;" /></a></div>';
+            $htmlStr .= '<img src="../images/edit.svg" style="width:15px;height:15px;border:0;" /></a></div>';
         }
         if($targetTid && $collManager->getClName()){
             $htmlStr .= '<div style="float:right;" >';
@@ -193,7 +230,9 @@ if($occurArr){
     }
     $specOccJson = json_encode($specOccArr);
     $htmlStr .= "<input id='specoccjson' type='hidden' value='".$specOccJson."' />";
-    $htmlStr .= '</table>'.$paginationStr.'<hr/>';
+    $htmlStr .= '</table>';
+    $htmlStr .= '</form>';
+    $htmlStr .= $paginationStr.'<hr/>';
 }
 else{
     $htmlStr .= '<div><h3>Your query did not return any results. Please modify your query parameters</h3>';

@@ -72,7 +72,7 @@ if($editable){
     		<fieldset style='width:90%;margin:10px 5px 5px 5px;padding:10px;'>
 				<legend><b><?php echo ($dArr['caption']?: 'Description ' .$dArr['displaylevel']); ?></b></legend>
 				<div style="float:right;" onclick="toggle('dblock-<?php echo $tdbid;?>');" title="Edit Description Block">
-					<img style='border:0;width:12px;' src='../../images/edit.png'/>
+					<img style='border:0;width:12px;' src='../../images/edit.svg'/>
 				</div>
 				<?php 
 				if($descEditor->getTid() !== $dArr['tid']){
@@ -174,7 +174,7 @@ if($editable){
 								<div style="margin-top:3px;clear:both;">
 									<b><?php echo $stmtArr['heading'];?></b>:
 									<?php echo $stmtArr['statement'];?>
-									<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><img style='border:0;width:12px;' src='../../images/edit.png'/></span>
+									<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><img style='border:0;width:12px;' src='../../images/edit.svg'/></span>
 								</div>
 								<div class="edstmt-<?php echo $tdsid;?>" style="clear:both;display:none;">
 									<div style='margin:5px 0 5px 20px;border:2px solid cyan;padding:5px;'>

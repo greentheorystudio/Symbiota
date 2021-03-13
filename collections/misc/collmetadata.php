@@ -364,7 +364,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input id="decimallatitude" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
 									<span style="cursor:pointer;" onclick="openSpatialInputWindow('input-point');">
-										<img src="../../images/world.png" style="width:12px;" />
+										<img src="../../images/globe.svg" style="width:12px;" />
 									</span>
 								</td>
 							</tr>
@@ -743,7 +743,7 @@ $collManager->cleanOutArr($collData);
 							echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
 							?>
 							<a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
-								<img src="../../images/edit.png" style="width:14px;" />
+								<img src="../../images/edit.svg" style="width:14px;" />
 							</a>
 							<a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
 								<img src="../../images/drop.png" style="width:14px;" />

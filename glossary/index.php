@@ -332,7 +332,7 @@ $indTermUrl = 'individual.php';
 									if($isEditor){
 										?>
 										<div style="float:right;">
-											<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.png" style="width:13px" /></a>
+											<a href="sources.php?emode=1&tid=<?php echo $tid.'&searchterm='.$searchTerm.'&language='.$language.'&taxa='.$tid; ?>"><img src="../images/edit.svg" style="width:20px;height:20px" /></a>
 										</div>
 										<?php
 									}

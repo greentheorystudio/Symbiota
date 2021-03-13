@@ -10,7 +10,7 @@ if($isTaxonEditor){
     ?>
     <div id="editbutton">
         <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
-            <img id='editicon' src='../images/edit.png'/>
+            <img id='editicon' src='../images/edit.svg' style="width:20px;height:20px;"/>
         </a>
     </div>
     <?php
