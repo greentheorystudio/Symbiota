@@ -361,7 +361,7 @@ if($isEditor){
 														if(!$isGeneralObservation || $recArr['uid'] === $SYMB_UID){
 															?>
 															<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
-																<img src="../../images/edit.png" />
+																<img src="../../images/edit.svg" style="width:20px;height:20px;" />
 															</a>
 															<?php
 														}
@@ -495,7 +495,7 @@ if($isEditor){
 													<?php echo $recArr['collector']; ?>
 												</a>
 												<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-													<img src="../../images/edit.png" />
+													<img src="../../images/edit.svg" style="width:20px;height:20px;" />
 												</a>
 											</td>
 											<td>

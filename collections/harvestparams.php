@@ -251,7 +251,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-box');">
-                    <img src="../images/world.png" style="width:15px;" title="Open Spatial Window" />
+                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -278,7 +278,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-circle');">
-                    <img src="../images/world.png" style="width:15px;" title="Open Spatial Window" />
+                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -293,7 +293,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                         <button type="button" style="width:200px;" onclick="openSpatialInputWindow('input');">
                             Open Spatial Window
                             <span style="float:right;cursor:pointer;">
-                                <img src="../images/world.png" style="width:15px;" title="Open Spatial Window" />
+                                <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
                             </span>
                         </button>
                     </div>

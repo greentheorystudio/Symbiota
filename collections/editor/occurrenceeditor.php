@@ -1011,7 +1011,7 @@ else{
                                                     <input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="54" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="Uncertainty in Meters" />
                                                 </div>
                                                 <div id="googleDiv" onclick="openSpatialInputWindow('input-point,uncertainty');" title="Open Mapping Aid">
-                                                    <img src="../../images/world.png" />
+                                                    <img src="../../images/globe.svg" style="width:15px;height:15px;" />
                                                 </div>
                                                 <div id="geoLocateDiv" title="GeoLocate locality">
                                                     <a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png"/></a>
@@ -1136,7 +1136,7 @@ else{
                                                         <?php echo (defined('FOOTPRINTWKTLABEL')?FOOTPRINTWKTLABEL:'Footprint Polygon'); ?>
                                                         <br/>
                                                         <div style="float:right;margin-top:-2px;margin-left:2px;" id="googleDiv" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Open Mapping Aid">
-                                                            <img src="../../images/world.png" />
+                                                            <img src="../../images/globe.svg" style="width:15px;height:15px;" />
                                                         </div>
                                                         <textarea name="footprintwkt" id="footprintWKT" onchange="footPrintWktChanged(this)" style="height:40px;resize:vertical;" ><?php echo array_key_exists('footprintwkt',$occArr)?$occArr['footprintwkt']:''; ?></textarea>
                                                     </div>

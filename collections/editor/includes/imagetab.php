@@ -171,7 +171,7 @@ $specImgArr = $occManager->getImageMap();
 						</td>
 						<td style="text-align:left;padding:10px;">
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-								<img style="border:0;width:12px;" src="../../images/edit.png" />
+								<img style="border:0;width:12px;" src="../../images/edit.svg" />
 							</div>
 							<div style="margin-top:30px">
 								<div>

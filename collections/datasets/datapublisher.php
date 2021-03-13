@@ -177,7 +177,7 @@ include(__DIR__ . '/../../header.php');
 		?>
 		<div style="float:right;">
 			<a href="#" title="Display Publishing Control Panel" onclick="toggle('dwcaadmindiv')">
-				<img style="border:0;width:12px;" src="../../images/edit.png" />
+				<img style="border:0;width:12px;" src="../../images/edit.svg" />
 			</a>
 		</div>
 		<?php

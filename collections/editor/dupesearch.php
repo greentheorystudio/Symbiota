@@ -183,7 +183,7 @@ if(!$IS_ADMIN){
                         <td>
                             <?php
                             if($collId === $oArr['collid']){
-                                echo '<a href="occurrenceeditor.php?occid='.$occId.'"><img src="../../images/edit.png" /></a>';
+                                echo '<a href="occurrenceeditor.php?occid='.$occId.'"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>';
                             }
                             ?>
                         </td>
@@ -205,7 +205,7 @@ if(!$IS_ADMIN){
                     ?>
                     <div style="float:right;margin:10px;">
                         <a href="occurrenceeditor.php?occid=<?php echo $occId; ?>">
-                            <img src="../../images/edit.png" />
+                            <img src="../../images/edit.svg" style="width:20px;height:20px;" />
                         </a>
                     </div>
                     <?php

@@ -183,30 +183,28 @@
                     </div>
                 </div>
                 <div id="queryrecordsdiv">
-                    <div style="height:20px;width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
-                        <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');">List View</a></div>
-                        <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');">Table View</a></div>
-                        <div id="copySearchUrlDiv" style="display:block;"><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>
-                    </div>
-                    <div style="margin-right:10px;">
-                        <fieldset style="border:1px solid black;height:50px;width:360px;margin-left:-10px;padding-top:3px;">
-                            <legend><b>Download</b></legend>
-                            <div style="height:25px;width:330px;margin-left:auto;margin-right:auto;">
-                                <div style="float:left;">
-                                    <select data-role="none" id="querydownloadselect">
-                                        <option>Download Type</option>
-                                        <option value="csv">CSV</option>
-                                        <option value="kml">KML</option>
-                                        <option value="geojson">GeoJSON</option>
-                                        <option value="gpx">GPX</option>
-                                        <option value="png">Map PNG Image</option>
-                                    </select>
-                                </div>
-                                <div style="float:right;">
-                                    <button data-role="none" type="button" onclick='processDownloadRequest(false,queryRecCnt);' >Download</button>
-                                </div>
-                            </div>
-                        </fieldset>
+                    <div style="width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
+                        <div style="width:120px;display:flex;justify-content:flex-start;align-items:center;">
+                            <select data-role="none" id="querydownloadselect">
+                                <option>Download Type</option>
+                                <option value="csv">CSV</option>
+                                <option value="kml">KML</option>
+                                <option value="geojson">GeoJSON</option>
+                                <option value="gpx">GPX</option>
+                                <option value="png">Map PNG Image</option>
+                            </select>
+                            <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(false,queryRecCnt);"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
+                        </div>
+                        <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
+                            <?php
+                            if($SYMB_UID){
+                                echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+                            }
+                            ?>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><img src="../images/list.png" style="width:15px; height:15px" /></button></a></div>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>
+                            <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>
+                        </div>
                     </div>
                     <div id="queryrecords"></div>
                 </div>
@@ -244,7 +242,7 @@
                     <div style="margin-bottom:30px;">
                         <div style='font-weight:bold;float:left;margin-bottom:5px;'>Taxa Count: <span id="taxaCountNum">0</span></div>
                         <div style="float:right;margin-bottom:5px;">
-                            <button data-role="none" id="taxacsvdownload" onclick="exportTaxaCSV();" >Download CSV</button>
+                            <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download CSV" onclick="exportTaxaCSV();"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
                         </div>
                     </div>
                     <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
@@ -253,27 +251,27 @@
 
                 <div id="selectionslist" style="">
                     <div>
-                        <div style="margin-top:-10px;margin-right:10px;">
-                            <fieldset style="border:1px solid black;height:50px;width:360px;margin-left:-10px;padding-top:3px;">
-                                <legend><b>Download</b></legend>
-                                <div style="height:25px;width:330px;margin-left:auto;margin-right:auto;">
-                                    <div style="float:left;">
-                                        <select data-role="none" id="selectdownloadselect">
-                                            <option value="">Download Type</option>
-                                            <option value="csv">CSV</option>
-                                            <option value="kml">KML</option>
-                                            <option value="geojson">GeoJSON</option>
-                                            <option value="gpx">GPX</option>
-                                        </select>
-                                    </div>
-                                    <div style="float:right;">
-                                        <button data-role="none" name="submitaction" type="button" onclick='processDownloadRequest(true,queryRecCnt);' >Download</button>
-                                    </div>
-                                </div>
-                            </fieldset>
+                        <div style="width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
+                            <div style="width:120px;display:flex;justify-content:flex-start;align-items:center;">
+                                <select data-role="none" id="selectdownloadselect">
+                                    <option value="">Download Type</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="kml">KML</option>
+                                    <option value="geojson">GeoJSON</option>
+                                    <option value="gpx">GPX</option>
+                                </select>
+                                <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(true,queryRecCnt);"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
+                            </div>
+                            <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
+                                <?php
+                                if($SYMB_UID){
+                                    echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+                                }
+                                ?>
+                            </div>
                         </div>
 
-                        <div style="margin-top:10px;">
+                        <div>
                             <div style="float:left;">
                                 <div>
                                     <button data-role="none" id="clearselectionsbut" onclick='clearSelections();' >Clear Selections</button>

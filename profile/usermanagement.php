@@ -74,7 +74,7 @@ if($IS_ADMIN){
 				<h1>
 					<?php 
 						echo $user['firstname']. ' ' .$user['lastname']. ' (#' .$user['uid']. ') ';
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=".$user['uid']. "'><img src='../images/edit.png' style='border:0;width:15px;' /></a>";
+						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=".$user['uid']. "'><img src='../images/edit.svg' style='border:0;width:15px;' /></a>";
 					?>
 				</h1>
 				<div style="margin-left:10px;">

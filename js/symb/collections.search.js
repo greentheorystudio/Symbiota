@@ -56,3 +56,45 @@ function toggleFieldBox(target){
         }
     }
 }
+
+function selectAllDataset(cbElem){
+    let boxesChecked = true;
+    if(!cbElem.checked) {
+        boxesChecked = false;
+    }
+    const f = cbElem.form;
+    for(let i = 0;i<f.length;i++){
+        if(f.elements[i].name === "occid[]") {
+            f.elements[i].checked = boxesChecked;
+        }
+    }
+}
+
+function hasSelectedOccid(f){
+    let isSelected = false;
+    for(let h = 0;h<f.length;h++){
+        if(f.elements[h].name === "occid[]" && f.elements[h].checked){
+            isSelected = true;
+            break;
+        }
+    }
+    if(!isSelected){
+        alert('Please select at least one occurrence to be added to the dataset');
+        return false;
+    }
+    return true;
+}
+
+function displayDatasetTools(){
+    $('.dataset-div').toggle();
+    document.getElementById("dataset-tools").scrollIntoView({behavior: 'smooth'});
+}
+
+function validateOccurListForm(f){
+    if(f.targetdatasetid.value === ""){
+        alert('Please select a dataset to append occurrences, or select Create New Dataset');
+        return false;
+    }
+    document.getElementById("dsstarrjson").value = JSON.stringify(stArr);
+    return true;
+}
