@@ -320,9 +320,9 @@ class OccurrenceDataset {
     public function getUserList($term): array
     {
         $retArr = array();
-        $sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",l.username," [#",u.uid,"]") AS username '.
-            'FROM users u INNER JOIN userlogin l ON u.uid = l.uid '.
-            'WHERE u.lastname LIKE "%'.$this->cleanInStr($term).'%" OR l.username LIKE "%'.$this->cleanInStr($term).'%" '.
+        $sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",u.username," [#",u.uid,"]") AS username '.
+            'FROM users u '.
+            'WHERE u.lastname LIKE "%'.$this->cleanInStr($term).'%" OR u.username LIKE "%'.$this->cleanInStr($term).'%" '.
             'ORDER BY u.lastname,u.firstname';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()) {
