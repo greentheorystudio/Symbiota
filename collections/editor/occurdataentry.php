@@ -227,7 +227,7 @@ if($SYMB_UID){
 									<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="54" maxlength="10" value="<?php echo array_key_exists('coordinateuncertaintyinmeters',$occArr)?$occArr['coordinateuncertaintyinmeters']:''; ?>" onchange="coordinateUncertaintyInMetersChanged(this.form);" title="Uncertainty in Meters" />
 								</div>
 								<div id="googleDiv" onclick="openSpatialInputWindow('input-point,uncertainty');" title="Open Mapping Aid">
-									<img src="../../images/world.png" />
+									<img src="../../images/globe.svg" style="width:15px;height:15px;" />
 								</div>
 								<div id="geoLocateDiv" title="GeoLocate locality">
 									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png"/></a>

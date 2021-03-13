@@ -285,7 +285,7 @@ if($spprid) {
                             if($spprid){
                                 ?>
                                 <div style="position:absolute;top:10px;right:10px;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
-                                    <img src="../../images/edit.png" style="border:0;" />
+                                    <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;" />
                                 </div>
                                 <input name="projecttype" type="hidden" value="<?php echo $projectType; ?>" />
                                 <?php
@@ -559,7 +559,7 @@ if($spprid) {
                                     <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><img src="../../images/add.png" style="border:0;" /></a>
                                 </div>
                                 <div style="position:absolute;top:10px;right:10px;" title="Open Editor">
-                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.png" style="border:0;width:15px;" /></a>
+                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.svg" style="border:0;width:15px;" /></a>
                                 </div>
                                 <?php
                                 if($projectType === 'idigbio'){

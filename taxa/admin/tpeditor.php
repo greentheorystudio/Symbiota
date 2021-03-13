@@ -260,7 +260,7 @@ if($editable && $action){
 											<div style="margin-left:10px;">
 												<b><?php echo $vernArr['vernacularname']; ?></b>
 												<span onclick="toggle('vid-<?php echo $vernArr['vid']; ?>');" title="Edit Common Name">
-													<img style="border:0;width:12px;" src="../../images/edit.png" />
+													<img style="border:0;width:12px;" src="../../images/edit.svg" />
 												</span>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin-left:20px;">
@@ -318,7 +318,7 @@ if($editable && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="Edit Synonym Sort Order">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0;width:12px;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0;width:12px;" src="../../images/edit.svg"/></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>

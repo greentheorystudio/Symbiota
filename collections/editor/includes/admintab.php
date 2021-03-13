@@ -23,7 +23,7 @@ $occManager->setOccId($occid);
 				if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
 					?>
 					<div style="float:right;" title="Manage Edit History">
-						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.png" style="border:0;width:14px;" /></a>
+						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.svg" style="border:0;width:14px;" /></a>
 					</div>
 					<?php
 				}

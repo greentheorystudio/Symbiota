@@ -165,8 +165,8 @@ $commentArr = $indManager->getCommentArr($isEditor);
     ?>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
-        const decimalLatitude = <?php echo $occArr['decimallatitude'] ?: null; ?>;
-        const decimalLongitude = <?php echo $occArr['decimallongitude'] ?: null; ?>;
+        const decimalLatitude = <?php echo $occArr['decimallatitude'] ?: 'null'; ?>;
+        const decimalLongitude = <?php echo $occArr['decimallongitude'] ?: 'null'; ?>;
         const coordUncertainty = <?php echo $occArr['coordinateuncertaintyinmeters'] ?: 0; ?>;
         const footprintWKT = '<?php echo $occArr['footprintwkt']; ?>';
 
@@ -1136,7 +1136,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                         if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
                             ?>
                             <div style="float:right;" title="Manage Edits">
-                                <a href="../editor/editreviewer.php?collid=<?php echo $collid.'&occid='.$occid; ?>"><img src="../../images/edit.png" style="border:0;width:14px;" /></a>
+                                <a href="../editor/editreviewer.php?collid=<?php echo $collid.'&occid='.$occid; ?>"><img src="../../images/edit.svg" style="border:0;width:14px;" /></a>
                             </div>
                             <?php
                         }

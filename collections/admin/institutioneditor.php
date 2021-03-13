@@ -170,7 +170,7 @@ include(__DIR__ . '/../../header.php');
 				if($editorCode > 1){
 					?>
 					<a href="#" onclick="toggle('editdiv');">
-						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.png" style="width:15px;border:0;" title="Edit Institution" />
+						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.svg" style="width:15px;border:0;" title="Edit Institution" />
 					</a>
 					<?php 
 				}
@@ -579,7 +579,7 @@ include(__DIR__ . '/../../header.php');
                             echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
                             echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
                             if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS['CollAdmin'])){
-                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$CLIENT_ROOT.'/images/edit.png" style="width:13px;" /></a>';
+                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$CLIENT_ROOT.'/images/edit.svg" style="width:13px;" /></a>';
                             }
                             echo '</a></li>';
                         }

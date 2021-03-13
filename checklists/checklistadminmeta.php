@@ -167,7 +167,7 @@ if(!$clid){
 					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['longcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
-					<a href="#" onclick="openSpatialInputWindow('input-point,radius');"><img src="../images/world.png" style="width:12px;" /></a>
+					<a href="#" onclick="openSpatialInputWindow('input-point,radius');"><img src="../images/globe.svg" style="width:12px;" /></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Point Radius (meters)</b><br/>
@@ -177,7 +177,7 @@ if(!$clid){
 					<fieldset style="width:275px;padding:10px">
 						<legend><b>Polygon Footprint</b></legend>
 						<div style="float:right;margin:10px;">
-							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><img src="../images/world.png" style="width:14px;" /></a>
+							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><img src="../images/globe.svg" style="width:14px;" /></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
                             'Polygon footprint defined<br/>Click globe to view/edit'
@@ -288,7 +288,7 @@ if(!$clid){
 						<?php echo $vName; ?>
 					</a>
 					<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0;" title="Edit Checklist" />
+						<img src="../images/edit.svg" style="width:15px;border:0;" title="Edit Checklist" />
 					</a>
 				</li>
 				<?php
@@ -321,7 +321,7 @@ if(!$clid){
 						<?php echo $projName; ?>
 					</a>
 					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-						<img src="../images/edit.png" style="width:15px;border:0;" title="Edit Project" />
+						<img src="../images/edit.svg" style="width:15px;border:0;" title="Edit Project" />
 					</a>
 				</li>
 				<?php

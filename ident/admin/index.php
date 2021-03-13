@@ -109,7 +109,7 @@ $headingAdminUrl = 'headingadmin.php';
 										}
 										?>
 									</select> 
-									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.png" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>
 								</div>
 							</div>
 							<div style="padding-top:6px;clear:both;">

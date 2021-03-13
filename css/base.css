@@ -124,6 +124,21 @@ div.navpath a:hover {
 	font-size: 11px;
 }
 
+button:hover{
+	background: #e4f2fb;
+}
+
+button.icon-button {
+	margin: 5px;
+	padding: 5px;
+}
+
+.checkbox-elem {
+	margin:5px;
+	padding:5px;
+	border:1px dashed orange;
+}
+
 div.button {
 	background-color:	#FFFFD7;
 	padding:			3px;

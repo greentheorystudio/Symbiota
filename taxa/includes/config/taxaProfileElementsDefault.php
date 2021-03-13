@@ -10,7 +10,7 @@ if($isTaxonEditor){
     ?>
     <div id="editbutton">
         <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
-            <img id='editicon' src='../images/edit.png'/>
+            <img id='editicon' src='../images/edit.svg' style="width:20px;height:20px;"/>
         </a>
     </div>
     <?php
@@ -235,32 +235,21 @@ else{
 $descTabsDiv = ob_get_clean();
 
 ob_start();
-$url = ''; $aUrl = ''; $gAnchor = '';
+$url = '';
+$mAnchor = '';
 if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
-    $gAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:0). ')';
-}
-if($mapSrc = $taxonManager->getMapArr()){
-    $url = array_shift($mapSrc);
-    $aUrl = $url;
-}
-elseif($gAnchor){
-    $url = $taxonManager->getGoogleStaticMap();
-}
-if($url){
+    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
+    if($mapSrc = $taxonManager->getMapArr()){
+        $url = array_shift($mapSrc);
+    }
     echo '<div class="mapthumb">';
-    if($gAnchor){
-        echo '<a href="#" onclick="'.$gAnchor.';return false">';
-    }
-    elseif($aUrl){
-        echo '<a href="'.$aUrl.'">';
-    }
-    echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
-    if($aUrl || $gAnchor) {
+    if($url){
+        echo '<a href="#" onclick="'.$mAnchor.';return false">';
+        echo '<a href="'.$url.'">';
+        echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
         echo '</a>';
     }
-    if($gAnchor) {
-        echo '<br /><a href="#" onclick="' . $gAnchor . ';return false">Open Interactive Map</a>';
-    }
+    echo '<br /><a href="#" onclick="' . $mAnchor . ';return false">Open Interactive Map</a>';
     echo '</div>';
 }
 $mapThumbDiv = ob_get_clean();
@@ -340,15 +329,16 @@ ob_start();
 
                 if(array_key_exists('url',$subArr)){
                     $imgUrl = $subArr['url'];
-                    if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-                        $imgUrl = $IMAGE_DOMAIN.$imgUrl;
-                    }
                     echo "<a href='index.php?taxon=".$subArr['tid']. '&taxauthid=' .$taxAuthId.($clValue? '&cl=' .$clValue: '')."'>";
-
                     if($subArr['thumbnailurl']){
                         $imgUrl = $subArr['thumbnailurl'];
-                        if($IMAGE_DOMAIN && strpos($subArr['thumbnailurl'], '/') === 0){
-                            $imgUrl = $IMAGE_DOMAIN.$subArr['thumbnailurl'];
+                    }
+                    if(strpos($imgUrl, '/') === 0) {
+                        if($IMAGE_DOMAIN){
+                            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                        }
+                        else{
+                            $imgUrl = $CLIENT_ROOT . $imgUrl;
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
@@ -366,7 +356,16 @@ ob_start();
 
                 echo '<div class="sppmap">';
                 if(array_key_exists('map',$subArr) && $subArr['map']){
-                    echo '<img src="'.$subArr['map'].'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
+                    $mapUrl = $subArr['map'];
+                    if(strpos($mapUrl, '/') === 0) {
+                        if($IMAGE_DOMAIN){
+                            $mapUrl = $IMAGE_DOMAIN . $mapUrl;
+                        }
+                        else{
+                            $mapUrl = $CLIENT_ROOT . $mapUrl;
+                        }
+                    }
+                    echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
                 }
                 elseif($taxonManager->getRankId()>140){
                     echo '<div class="spptext">Map not<br />Available</div>';
