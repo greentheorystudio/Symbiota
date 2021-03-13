@@ -72,7 +72,7 @@ if($recArr){
     if($SYMB_UID){
         $recordListHtml .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
     }
-    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><img src="../images/list.png" style="width:15px; height:15px" /></button></a></div>';
+    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><img src="../images/list.svg" style="width:15px; height:15px" /></button></a></div>';
     $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
     if(strlen($stArrJson) <= 1800){
         $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
