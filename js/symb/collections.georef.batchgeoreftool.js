@@ -229,8 +229,8 @@ function analyseLocalityStr(){
 		if(extractStr1){
 			document.getElementById("utmdiv").style.display = "block";
 			f.utmzone.value = extractArr[1];
-			f.utmeast.value = extractArr[2].replace(/\s/g,'');
-			f.utmnorth.value = extractArr[3].replace(/\s/g,'');
+			f.utmeast.value = extractArr[2].replaceAll(/\s/g,'');
+			f.utmnorth.value = extractArr[3].replaceAll(/\s/g,'');
 			insertUtm(f);
 			sourceStr = 'UTM from label';
 		}
@@ -342,10 +342,10 @@ function openFirstRecSet(){
 }
 
 function insertUtm(f) {
-	const zValue = f.utmzone.value.replace(/^\s+|\s+$/g, "");
+	const zValue = f.utmzone.value.replaceAll(/^\s+|\s+$/g, "");
 	const hValue = f.hemisphere.value;
-	const eValue = f.utmeast.value.replace(/^\s+|\s+$/g, "");
-	const nValue = f.utmnorth.value.replace(/^\s+|\s+$/g, "");
+	const eValue = f.utmeast.value.replaceAll(/^\s+|\s+$/g, "");
+	const nValue = f.utmnorth.value.replaceAll(/^\s+|\s+$/g, "");
 	if(zValue && eValue && nValue){
 		if(isNumeric(eValue) && isNumeric(nValue)){
 			const zNum = parseInt(zValue);

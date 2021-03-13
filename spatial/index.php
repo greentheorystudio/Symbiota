@@ -87,8 +87,8 @@ $dbArr = array();
     <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=315" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=12" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
+    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/search.term.manager.js?ver=20210313" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
 
@@ -1084,30 +1084,6 @@ $dbArr = array();
         map.removeInteraction(draw);
         changeDraw();
     };
-
-    function showDatasetManagementPopup(){
-        if(selections.length > 0){
-            document.getElementById("datasetselecteddiv").style.display = "block";
-        }
-        else{
-            document.getElementById("datasetselecteddiv").style.display = "none";
-        }
-        $("#datasetmanagement").popup("show");
-    }
-
-    function addSelectionsToDataset(){
-        document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
-        document.getElementById("occarrjson").value = JSON.stringify(selections);
-        document.getElementById("datasetformaction").value = 'addSelectedToDataset';
-        document.getElementById("datasetform").submit();
-    }
-
-    function addQueryToDataset(){
-        document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
-        document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
-        document.getElementById("datasetformaction").value = 'addAllToDataset';
-        document.getElementById("datasetform").submit();
-    }
 
     changeDraw();
     setTransformHandleStyle();

@@ -61,13 +61,13 @@ function toggle(target){
 }
 
 function insertLatLng(f) {
-	const latDeg = document.getElementById("latdeg").value.replace(/^\s+|\s+$/g, "");
-	let latMin = document.getElementById("latmin").value.replace(/^\s+|\s+$/g, "");
-	let latSec = document.getElementById("latsec").value.replace(/^\s+|\s+$/g, "");
+	const latDeg = document.getElementById("latdeg").value.replaceAll(/^\s+|\s+$/g, "");
+	let latMin = document.getElementById("latmin").value.replaceAll(/^\s+|\s+$/g, "");
+	let latSec = document.getElementById("latsec").value.replaceAll(/^\s+|\s+$/g, "");
 	const latNS = document.getElementById("latns").value;
-	const lngDeg = document.getElementById("lngdeg").value.replace(/^\s+|\s+$/g, "");
-	let lngMin = document.getElementById("lngmin").value.replace(/^\s+|\s+$/g, "");
-	let lngSec = document.getElementById("lngsec").value.replace(/^\s+|\s+$/g, "");
+	const lngDeg = document.getElementById("lngdeg").value.replaceAll(/^\s+|\s+$/g, "");
+	let lngMin = document.getElementById("lngmin").value.replaceAll(/^\s+|\s+$/g, "");
+	let lngSec = document.getElementById("lngsec").value.replaceAll(/^\s+|\s+$/g, "");
 	const lngEW = document.getElementById("lngew").value;
 	if(latDeg && latMin && lngDeg && lngMin){
 		if(latMin === "") {
