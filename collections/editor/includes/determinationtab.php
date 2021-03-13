@@ -33,7 +33,7 @@ $specImgArr = $occManager->getImageMap();
 			if($editMode < 3){ 
 				?>
 				<a href="#" title="Modify current identification ranking" onclick="toggle('idrankeditdiv');toggle('idrankdiv');return false;">
-					<img src="../../images/edit.png" style="border:0;width:12px;" />
+					<img src="../../images/edit.svg" style="border:0;width:12px;" />
 				</a>
 				<?php
 			} 
@@ -240,7 +240,7 @@ $specImgArr = $occManager->getImageMap();
                         }
 						if($canEdit){
 							?>
-							<a href="#" onclick="toggle('editdetdiv-<?php echo $detId;?>');return false;" title="Edit Determination"><img style="border:0;width:12px;" src="../../images/edit.png" /></a>
+							<a href="#" onclick="toggle('editdetdiv-<?php echo $detId;?>');return false;" title="Edit Determination"><img style="border:0;width:12px;" src="../../images/edit.svg" /></a>
 							<?php
 						}
 						if(!$detRec['appliedstatus']){

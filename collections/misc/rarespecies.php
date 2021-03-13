@@ -102,7 +102,7 @@ include(__DIR__ . '/../../header.php');
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<img style="border:0;" src="../../images/edit.png" />
+			<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
 		</div>
 		<?php 
 	}

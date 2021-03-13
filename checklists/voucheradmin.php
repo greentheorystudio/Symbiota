@@ -104,7 +104,7 @@ if($clid && $isEditor){
 			<?php
 			echo $clManager->getQueryVariableStr();
 			?>
-			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.png" style="width:15px;border:0;"/></a></span>
+			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.svg" style="width:15px;border:0;"/></a></span>
 		</div>
 	<?php
 	}
@@ -162,7 +162,7 @@ if($clid && $isEditor){
 								<div>
 									<b>Lat North:</b>
 									<input id="upperlat" type="text" name="latnorth" style="width:70px;" value="<?php echo $termArr['latnorth'] ?? ''; ?>" title="Latitude North" />
-									<a href="#" onclick="openSpatialInputWindow('input-box');"><img src="../images/world.png" style="width:15px;" title="Find Coordinate" /></a>
+									<a href="#" onclick="openSpatialInputWindow('input-box');"><img src="../images/globe.svg" style="width:15px;" title="Find Coordinate" /></a>
 								</div>
 								<div>
 									<b>Lat South:</b>

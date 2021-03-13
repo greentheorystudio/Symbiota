@@ -297,7 +297,7 @@ if($userChecklists || $checklistArr){
 			foreach($genticArr as $genId => $gArr){
 				?>
 				<div style="float:right;">
-					<a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><img src="../../images/edit.png" /></a>
+					<a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>
 				</div>
 				<div style="margin:15px;">
 					<div style="font-weight:bold;margin-bottom:5px;"><?php echo $gArr['name']; ?></div>

@@ -52,9 +52,9 @@ if($qryCnt > (1000+$occIndex)){
 $navStr .= '</div>';
 
 if($recArr){
-    $recordListHtml .= '<div style="width:790px;clear:both;">';
+    $recordListHtml .= '<div style="width:790px;clear:both;margin-top:5px;margin-bottom:5px;">';
     $recordListHtml .= '<div style="height:25px;width:100%;display:flex;justify-content:space-between;align-items:center;">';
-    $recordListHtml .= '<div style="width:200px;display:flex;justify-content:space-between;align-items:center;">';
+    $recordListHtml .= '<div style="width:200px;display:flex;justify-content:flex-start;align-items:center;">';
     $recordListHtml .= '<div>';
     $recordListHtml .= '<select data-role="none" id="querydownloadselect">';
     $recordListHtml .= '<option>Download Type</option>';
@@ -65,14 +65,17 @@ if($recArr){
     $recordListHtml .= '</select>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div>';
-    $recordListHtml .= '<button data-role="none" type="button" onclick="processDownloadRequest(false,'.$qryCnt.');" >Download</button>';
+    $recordListHtml .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$qryCnt.');"><img src="../images/download.svg" style="width:15px; height:15px" /></button>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '</div>';
-    $recordListHtml .= '<div style="width:400px;display:flex;justify-content:space-between;align-items:center;">';
-    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">List View</a></div>';
-    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'" style="cursor:pointer;font-weight:bold;">Spatial Module</a></div>';
+    $recordListHtml .= '<div style="width:400px;display:flex;justify-content:flex-end;align-items:center;">';
+    if($SYMB_UID){
+        $recordListHtml .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+    }
+    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><img src="../images/list.png" style="width:15px; height:15px" /></button></a></div>';
+    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
     if(strlen($stArrJson) <= 1800){
-        $recordListHtml .= '<div><a href="#" style="cursor:pointer;font-weight:bold;" onclick="copySearchUrl();">Copy URL</a></div>';
+        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
     }
     if($qryCnt > 1){
         $recordListHtml .= '<div>';
@@ -82,8 +85,40 @@ if($recArr){
     $recordListHtml .= '</div>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '</div>';
-    $recordListHtml .= '<div style="clear:both;"></div>';
+    $recordListHtml .= '<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">';
+    $recordListHtml .= '<div id="dataset-tools" class="dataset-div" style="clear:both;display:none">';
+    $recordListHtml .= '<fieldset>';
+    $recordListHtml .= '<legend>Dataset Management</legend>';
+    $datasetArr = $collManager->getDatasetArr();
+    $recordListHtml .= '<div style="padding:5px;float:left;">Dataset target: </div>';
+    $recordListHtml .= '<div style="padding:5px;float:left;">';
+    $recordListHtml .= '<select name="targetdatasetid">';
+    $recordListHtml .= '<option value="">------------------------</option>';
+    if($datasetArr){
+        foreach($datasetArr as $datasetID => $datasetName){
+            $recordListHtml .= '<option value="'.$datasetID.'">'.$datasetName.'</option>';
+        }
+    }
+    else {
+        $recordListHtml .= '<option value="">No existing datasets available</option>';
+    }
+    $recordListHtml .= '<option value="">----------------------------------</option>';
+    $recordListHtml .= '<option value="--newDataset">Create New Dataset</option>';
+    $recordListHtml .= '</select>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div style="clear:both;margin:5px 0;">';
+    $recordListHtml .= '<span class="checkbox-elem"><input name="selectall" type="checkbox" onclick="selectAllDataset(this)" /></span>';
+    $recordListHtml .= '<span style="padding:10px;">Select all records on page</span>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div style="clear:both;">';
+    $recordListHtml .= '<input name="dsstarrjson" id="dsstarrjson" type="hidden" value="" />';
+    $recordListHtml .= '<div style="padding:5px 0;float:left;"><button name="action" type="submit" value="addSelectedToDataset" onclick="return hasSelectedOccid(this.form)">Add Selected Records to Dataset</button></div>';
+    $recordListHtml .= '<div style="padding:5px;float:left;"><button name="action" type="submit" value="addAllToDataset">Add Complete Query to Dataset</button></div>';
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '</fieldset>';
+    $recordListHtml .= '</div>';
     $recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;"><tr>';
+    $recordListHtml .= '<th class="dataset-div checkbox-elem" style="display:none;"></th>';
     $recordListHtml .= '<th>Symbiota ID</th>';
     $recordListHtml .= '<th>Collection</th>';
     $recordListHtml .= '<th>Catalog Number</th>';
@@ -125,11 +160,12 @@ if($recArr){
             $occArr['sciname'] = '<i>' . $occArr['sciname'] . '</i> ';
         }
         $recordListHtml .= '<tr ' .(($recCnt%2)?'class="alt"':'').">\n";
+        $recordListHtml .= '<td class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$id.'" /></td>'."\n";
         $recordListHtml .= '<td>';
         $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
         if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
-            $recordListHtml .= '<img src="../images/edit.png" style="height:13px;" title="Edit Record" />';
+            $recordListHtml .= '<img src="../images/edit.svg" style="height:13px;" title="Edit Record" />';
             $recordListHtml .= '</a>';
         }
         if(isset($occArr['img'])){

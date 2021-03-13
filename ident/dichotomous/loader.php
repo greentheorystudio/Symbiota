@@ -138,7 +138,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 	<div id="innertext">
 	<?php if($editable){ ?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editcontrols');" title="Toggle Editing on and off">
-			<img style="border:0;" src="../../images/edit.png"/>
+			<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
 		</div>
 	<?php } ?>
 		<h1>Dichotomous Key Loader</h1>
@@ -165,7 +165,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 						if($editable){
 						?>
 							<span class="editcontrols" style="cursor:pointer;display:none;" onclick="toggle('editdiv<?php echo $rowCnt; ?>');" title="Edit Statements">
-								<img style="border:0;width:12px;margin-left:5px;" src="../../images/edit.png"/>
+								<img style="border:0;width:12px;margin-left:5px;" src="../../images/edit.svg"/>
 							</span>
 							<span class="editcontrols" style="cursor:pointer;display:none;" onclick="toggle('adddiv<?php echo $rowCnt; ?>');" title="Add a New Cuplet">
 								<img style="border:0;width:12px;margin-left:5px;" src="../../images/add.png"/>
