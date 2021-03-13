@@ -344,7 +344,7 @@ if($SYMB_UID){
 									<textarea name="associatedtaxa" tabindex="84"><?php echo array_key_exists('associatedtaxa',$occArr)?$occArr['associatedtaxa']:''; ?></textarea>
 									<?php
 									if(!isset($ACTIVATEASSOCTAXAAID) || $ACTIVATEASSOCTAXAAID){
-										echo '<a href="#" onclick="openAssocSppAid();return false;"><img src="../../images/list.png" /></a>';
+										echo '<a href="#" onclick="openAssocSppAid();return false;"><img src="../../images/list.svg" style="width:15px;" /></a>';
 									}
 									?>
 								</div>
