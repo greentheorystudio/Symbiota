@@ -75,7 +75,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 				<div style='float:left;margin-left:25px;margin-top:10px;width:16px;height:16px;padding:2px;' title="Save CSV">
 					<form name="orderstatscsv" id="orderstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 						<input type="hidden" name="action" value='Download Order Dist' />
-						<input type="image" name="action" src="../../images/dl.png" onclick="" />
+						<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
 					</form>
 				</div>
 			</fieldset>

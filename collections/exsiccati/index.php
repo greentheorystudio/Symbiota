@@ -302,7 +302,7 @@ if($formSubmit === 'dlexsiccati'){
 							<?php
 							$dlUrl = 'index.php?formsubmit=dlexsiccati&searchterm='.$searchTerm.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId;
 							?>
-							<a href="<?php echo $dlUrl; ?>" target="_blank"><img src="../../images/dl.png" style="width:15px" /></a>
+							<a href="<?php echo $dlUrl; ?>" target="_blank"><img src="../../images/download.svg" style="width:15px" /></a>
 						</div>
 						<div style="margin:5px 0 0 5px;">
 							<input name="formsubmit" type="submit" value="Rebuild List" />
