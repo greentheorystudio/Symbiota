@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/datasets/index.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -17,23 +17,23 @@ $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
 if($action == 'createNewDataset'){
-    if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$SYMB_UID)){
+    if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$GLOBALS['SYMB_UID'])){
         $statusStr = implode(',',$datasetManager->getErrorArr());
     }
 }
 elseif($action == 'addSelectedToDataset'){
     $datasetID = $_POST['datasetid'];
-    if(!$datasetID && $_POST['name']) $datasetManager->createDataset($_POST['name'],'',$SYMB_UID);
+    if(!$datasetID && $_POST['name']) $datasetManager->createDataset($_POST['name'],'',$GLOBALS['SYMB_UID']);
 }
 elseif($action == 'addAllToDataset'){
 
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style>
         fieldset{ padding:15px;margin:15px; }

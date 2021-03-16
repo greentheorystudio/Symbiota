@@ -3119,6 +3119,15 @@ INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
 ALTER TABLE `adminlanguages`
   ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
 
+CREATE TABLE `configurations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `configurationName` varchar(100) NOT NULL,
+  `configurationDataType` varchar(15) NOT NULL DEFAULT 'string',
+  `configurationValue` text NOT NULL,
+  `dateApplied` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
+
 ALTER TABLE `fmchklstcoordinates`
   DROP FOREIGN KEY `FKchklsttaxalink`,
   DROP INDEX `IndexUnique`;
@@ -3159,7 +3168,7 @@ CREATE TABLE `igsnverification` (
   KEY `FK_igsn_occid_idx` (`occid`),
   KEY `INDEX_igsn` (`igsn`),
   CONSTRAINT `FK_igsn_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 
 ALTER TABLE `images`
   ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),
@@ -3239,7 +3248,7 @@ CREATE TABLE `omoccurpaleo` (
   UNIQUE KEY `UNIQUE_occid` (`occid`),
   KEY `FK_paleo_occid_idx` (`occid`),
   CONSTRAINT `FK_paleo_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Occurrence Paleo tables';
+) COMMENT='Occurrence Paleo tables';
 
 CREATE TABLE `omoccurpaleogts` (
   `gtsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -3252,7 +3261,7 @@ CREATE TABLE `omoccurpaleogts` (
   UNIQUE KEY `UNIQUE_gtsterm` (`gtsid`),
   KEY `FK_gtsparent_idx` (`parentgtsid`),
   CONSTRAINT `FK_gtsparent` FOREIGN KEY (`parentgtsid`) REFERENCES `omoccurpaleogts` (`gtsid`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=245 DEFAULT CHARSET=utf8;
+);
 
 ALTER TABLE `omoccurpoints`
   DROP COLUMN `errradiuspoly`,
@@ -3281,7 +3290,7 @@ CREATE TABLE `taxonkingdoms` (
     PRIMARY KEY (`kingdom_id`),
     INDEX `INDEX_kingdom_name` (`kingdom_name` ASC),
     KEY `INDEX_kingdoms` (`kingdom_id`,`kingdom_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 
 INSERT INTO `taxonkingdoms` VALUES (1, 'Bacteria');
 INSERT INTO `taxonkingdoms` VALUES (2, 'Protozoa');
@@ -3321,6 +3330,9 @@ ALTER TABLE `taxavernaculars`
 SET FOREIGN_KEY_CHECKS = 0;
 
 TRUNCATE TABLE `taxonunits`;
+
+ALTER TABLE `taxonunits`
+    DROP INDEX `UNIQUE_taxonunits`;
 
 ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
@@ -3548,15 +3560,70 @@ ALTER TABLE `uploadimagetemp`
   ADD COLUMN `rights` varchar(255) NULL AFTER `accessrights`,
   ADD COLUMN `locality` varchar(250) NULL AFTER `rights`;
 
-ALTER TABLE `uploadspectemp`
-  CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR(32) NULL DEFAULT NULL COMMENT 'PreservedSpecimen, LivingSpecimen, HumanObservation' ;
-
 ALTER TABLE `uploadspecparameters`
   MODIFY COLUMN `Path` varchar(500) NULL DEFAULT NULL AFTER `Code`;
 
 ALTER TABLE `uploadspectemp`
-  ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
-  ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`);
+    ADD COLUMN `upspid` int(50) NOT NULL AUTO_INCREMENT FIRST,
+    ADD PRIMARY KEY (`upspid`);
+
+ALTER TABLE `uploadspectemp`
+    CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR (32) NULL DEFAULT NULL COMMENT '' PreservedSpecimen, LivingSpecimen, HumanObservation '',
+    ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
+    ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`),
+    ADD INDEX `Index_decimalLatitude`(`decimalLatitude`),
+    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`);
+
+CREATE TABLE `uploadspectemppoints` (
+    `geoID`  int(11) NOT NULL AUTO_INCREMENT,
+    `upspid` int(50) NOT NULL,
+    `point`  point NOT NULL,
+    PRIMARY KEY (`geoID`),
+    UNIQUE KEY `upspid` (`upspid`),
+    SPATIAL KEY `point` (`point`)
+) ENGINE=MyISAM;
+
+DELIMITER
+//
+CREATE TRIGGER `uploadspectemp_insert`
+    AFTER INSERT
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		INSERT INTO uploadspectemppoints (`upspid`,`point`)
+		VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+END IF;
+END
+//
+
+CREATE TRIGGER `uploadspectemp_update`
+    AFTER UPDATE
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
+		IF EXISTS (SELECT `upspid` FROM uploadspectemppoints WHERE `upspid`=NEW.`upspid`) THEN
+    UPDATE uploadspectemppoints
+    SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
+    WHERE `upspid` = NEW.`upspid`;
+    ELSE
+			INSERT INTO uploadspectemppoints (`upspid`,`point`)
+			VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+END IF;
+END IF;
+END
+//
+
+CREATE TRIGGER `uploadspectemp_delete`
+    BEFORE DELETE
+    ON `uploadspectemp`
+    FOR EACH ROW
+BEGIN
+    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
+END //
+
+DELIMITER;
 
 ALTER TABLE `uploadtaxa`
     DROP INDEX `UNIQUE_sciname` ,

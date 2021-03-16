@@ -4,17 +4,17 @@ include_once(__DIR__ . '/../classes/ProfileManager.php');
 ini_set('session.gc_maxlifetime',3600);
 session_start();
 
-set_include_path(get_include_path() . PATH_SEPARATOR . $SERVER_ROOT . PATH_SEPARATOR . $SERVER_ROOT. '/config/' . PATH_SEPARATOR . $SERVER_ROOT. '/classes/');
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT'] . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT']. '/config/' . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT']. '/classes/');
 
-if(substr($CLIENT_ROOT,-1) === '/'){
-    $CLIENT_ROOT = substr($CLIENT_ROOT,0, -1);
+if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
+    $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
 }
-if(substr($SERVER_ROOT,-1) === '/'){
-    $SERVER_ROOT = substr($SERVER_ROOT,0, -1);
+if(substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
+    $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
 }
 
-$PARAMS_ARR = array();
-$USER_RIGHTS = array();
+$GLOBALS['PARAMS_ARR'] = array();
+$GLOBALS['USER_RIGHTS'] = array();
 if(!isset($_SESSION['userparams'])){
     if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
         $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
@@ -44,30 +44,28 @@ if(!isset($_SESSION['userparams'])){
 }
 
 if(isset($_SESSION['userparams'])){
-    $PARAMS_ARR = $_SESSION['userparams'];
+    $GLOBALS['PARAMS_ARR'] = $_SESSION['userparams'];
 }
 
 if(isset($_SESSION['userrights'])){
-    $USER_RIGHTS = $_SESSION['userrights'];
+    $GLOBALS['USER_RIGHTS'] = $_SESSION['userrights'];
 }
 
-$CSS_VERSION = '20210313';
-if(isset($CSS_VERSION_LOCAL) && ($CSS_VERSION_LOCAL > $CSS_VERSION)) {
-    $CSS_VERSION = $CSS_VERSION_LOCAL;
+$GLOBALS['CSS_VERSION'] = '20210316';
+if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLOBALS['CSS_VERSION'])) {
+    $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
 }
-if(!isset($EML_PROJECT_ADDITIONS)) {
-    $EML_PROJECT_ADDITIONS = array();
+if(!isset($GLOBALS['EML_PROJECT_ADDITIONS'])) {
+    $GLOBALS['EML_PROJECT_ADDITIONS'] = array();
 }
-$USER_DISPLAY_NAME = (array_key_exists('dn',$PARAMS_ARR)?$PARAMS_ARR['dn']: '');
-$USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
-$SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
-$IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
-$SOLR_MODE = (isset($SOLR_URL) && $SOLR_URL);
-$CHECKLIST_FG_EXPORT = (isset($ACTIVATE_CHECKLIST_FG_EXPORT) && $ACTIVATE_CHECKLIST_FG_EXPORT);
-$FIELDGUIDE_ACTIVE = (isset($ACTIVATE_FIELDGUIDE) && $ACTIVATE_FIELDGUIDE);
-$ETHNO_ACTIVE = (isset($ETHNOBIOLOGY_MOD_IS_ACTIVE) && $ETHNOBIOLOGY_MOD_IS_ACTIVE);
-$GEOLOCATION = (isset($ACTIVATE_GEOLOCATION) && $ACTIVATE_GEOLOCATION);
-$BROADGEOREFERENCE = (isset($GEOREFERENCE_POLITICAL_DIVISIONS) && $GEOREFERENCE_POLITICAL_DIVISIONS);
+$GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
+$GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
+$GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);
+$GLOBALS['IS_ADMIN'] = (array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])?1:0);
+$GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
+$GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
+$GLOBALS['FIELDGUIDE_ACTIVE'] = (isset($GLOBALS['ACTIVATE_FIELDGUIDE']) && $GLOBALS['ACTIVATE_FIELDGUIDE']);
+$GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
 
 $LANG_TAG = 'en';
 if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
@@ -82,14 +80,14 @@ else if(isset($_SESSION['lang']) && $_SESSION['lang']){
 else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
     $LANG_TAG = $_COOKIE['lang'];
 }
-else if(strlen($DEFAULT_LANG) === 2) {
-    $LANG_TAG = $DEFAULT_LANG;
+else if(strlen($GLOBALS['DEFAULT_LANG']) === 2) {
+    $LANG_TAG = $GLOBALS['DEFAULT_LANG'];
 }
 if(!$LANG_TAG || strlen($LANG_TAG) !== 2) {
     $LANG_TAG = 'en';
 }
 
-$RIGHTS_TERMS_DEFS = array(
+$GLOBALS['RIGHTS_TERMS_DEFS'] = array(
     'http://creativecommons.org/publicdomain/zero/1.0/' => array(
         'title' => 'CC0 1.0 (Public-domain)',
         'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',

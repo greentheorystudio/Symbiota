@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Person.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $userId = array_key_exists('userid',$_REQUEST)?$_REQUEST['userid']:0;
@@ -20,14 +20,14 @@ if(!is_numeric($tabIndex)) {
 
 $isSelf = 0;
 $isEditor = 0;
-if(isset($SYMB_UID) && $SYMB_UID){
+if(isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID']){
     if(!$userId){
-        $userId = $SYMB_UID;
+        $userId = $GLOBALS['SYMB_UID'];
     }
-    if($userId === $SYMB_UID){
+    if($userId === $GLOBALS['SYMB_UID']){
         $isSelf = 1;
     }
-    if($isSelf || $IS_ADMIN){
+    if($isSelf || $GLOBALS['IS_ADMIN']){
         $isEditor = 1;
     }
 }
@@ -144,11 +144,11 @@ if($isEditor){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> - View User Profile</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - View User Profile</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
@@ -173,7 +173,7 @@ include(__DIR__ . '/../header.php');
         <div id="tabs" style="margin:10px;">
             <ul>
                 <?php
-                if($FLORA_MOD_IS_ACTIVE){
+                if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
                     ?>
                     <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
                     <?php

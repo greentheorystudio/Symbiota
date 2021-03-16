@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
 }
 
@@ -20,14 +20,14 @@ $keyManager->setCid($cid);
 $statusStr = '';
 if($formSubmit){
 	if($formSubmit === 'Create'){
-		$statusStr = $keyManager->createCharacter($_POST,$PARAMS_ARR['un']);
+		$statusStr = $keyManager->createCharacter($_POST,$GLOBALS['PARAMS_ARR']['un']);
 		$cid = $keyManager->getCid();
 	}
 	elseif($formSubmit === 'Save Char'){
 		$statusStr = $keyManager->editCharacter($_POST);
 	}
 	elseif($formSubmit === 'Add State'){
-		$keyManager->createCharState($_POST['charstatename'],$_POST['illustrationurl'],$_POST['description'],$_POST['notes'],$_POST['sortsequence'],$PARAMS_ARR['un']);
+		$keyManager->createCharState($_POST['charstatename'],$_POST['illustrationurl'],$_POST['description'],$_POST['notes'],$_POST['sortsequence'],$GLOBALS['PARAMS_ARR']['un']);
 		$tabIndex = 1;
 	}
 	elseif($formSubmit === 'Save State'){
@@ -70,11 +70,11 @@ if(!$cid) {
 
 $headingAdminUrl = 'headingadmin.php';
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>Character Admin</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -240,7 +240,7 @@ $headingAdminUrl = 'headingadmin.php';
 	</div>
 	<div id="innertext">
 		<?php 
-		if($SYMB_UID){
+		if($GLOBALS['SYMB_UID']){
 			if($statusStr){
 				?>
 				<hr/>

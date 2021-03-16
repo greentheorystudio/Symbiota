@@ -39,7 +39,7 @@ if($stArrJson){
     $stArr = json_decode($stArrJson, true);
 }
 
-if($SOLR_MODE && $stArr){
+if($GLOBALS['SOLR_MODE'] && $stArr){
     $solrManager->setSearchTermsArr($stArr);
     $pArr['q'] = $solrManager->getSOLRWhere($spatial);
     if(isset($_REQUEST['dh-fl'])) {
@@ -69,7 +69,7 @@ if($SOLR_MODE && $stArr){
 
         $ch = curl_init();
         $options = array(
-            CURLOPT_URL => $SOLR_URL.'/select',
+            CURLOPT_URL => $GLOBALS['SOLR_URL'].'/select',
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_TIMEOUT => 90,
@@ -131,7 +131,7 @@ else{
     }
     else{
         $occStr = '';
-        if($SOLR_MODE){
+        if($GLOBALS['SOLR_MODE']){
             if($selections){
                 $occStr = $selections;
             }

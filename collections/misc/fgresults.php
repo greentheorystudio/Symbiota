@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
@@ -25,8 +25,8 @@ if($collId) {
 $collMap = $cleanManager->getCollMap();
 
 $isEditor = 0;
-if($SYMB_UID){
-    if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
         $isEditor = 1;
     }
 }
@@ -51,11 +51,11 @@ if($isEditor){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $collMetadata['collectionname']; ?> Fieldguide Results Viewer</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -242,7 +242,7 @@ if($isEditor){
                                         echo '</td>'."\n";
                                         echo '<td>'."\n";
                                         if($firstOcc) {
-                                            echo '<a href="' . $CLIENT_ROOT . '/taxa/index.php?taxon=' . $currID . '" target="_blank">' . $currID . '</a>' . "\n";
+                                            echo '<a href="' . $GLOBALS['CLIENT_ROOT'] . '/taxa/index.php?taxon=' . $currID . '" target="_blank">' . $currID . '</a>' . "\n";
                                         }
                                         echo '</td>'."\n";
                                         echo '<td>'."\n";
@@ -261,7 +261,7 @@ if($isEditor){
                                         }
                                         echo '</td>'."\n";
                                         if($note === 'Current determination' || $valid){
-                                            echo '<td><a href="'.$CLIENT_ROOT.'/taxa/index.php?taxon='.$name.'" target="_blank">'.$displayName.'</a></td>'."\n";
+                                            echo '<td><a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$name.'" target="_blank">'.$displayName.'</a></td>'."\n";
                                         }
                                         else{
                                             echo '<td>'.$displayName.'</td>'."\n";
@@ -294,7 +294,7 @@ if($isEditor){
                                     echo '</td>'."\n";
                                     echo '<td>'."\n";
                                     if($firstOcc) {
-                                        echo '<a href="' . $CLIENT_ROOT . '/taxa/index.php?taxon=' . $currID . '" target="_blank">' . $currID . '</a>' . "\n";
+                                        echo '<a href="' . $GLOBALS['CLIENT_ROOT'] . '/taxa/index.php?taxon=' . $currID . '" target="_blank">' . $currID . '</a>' . "\n";
                                     }
                                     echo '</td>'."\n";
                                     echo '<td>'."\n";

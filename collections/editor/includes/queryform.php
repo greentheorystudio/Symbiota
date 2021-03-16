@@ -123,17 +123,17 @@ else{
 				?>
 				<div style="margin:2px;">
 					<?php
-					if($isGenObs && $IS_ADMIN){
+					if($isGenObs && $GLOBALS['IS_ADMIN']){
 						?>
 						<span style="margin-right:25px;">
-							<input type="checkbox" name="q_observeruid" value="<?php echo $SYMB_UID; ?>" <?php echo ($qObserverUid?'CHECKED':''); ?> />
+							<input type="checkbox" name="q_observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" <?php echo ($qObserverUid?'CHECKED':''); ?> />
 							<b>Only My Records</b>
 						</span>
 						<?php 
 					}
 					else{
 						?>
-						<input type="hidden" name="q_observeruid" value="<?php echo $isGenObs?$SYMB_UID:''; ?>" />
+						<input type="hidden" name="q_observeruid" value="<?php echo $isGenObs?$GLOBALS['SYMB_UID']:''; ?>" />
 						<?php 
 					}
 					?>
@@ -176,7 +176,7 @@ else{
 					</span>
 				</div>
 				<?php
-				if($ACTIVATE_EXSICCATI && $exsList = $occManager->getExsiccatiList()) {
+				if($GLOBALS['ACTIVATE_EXSICCATI'] && $exsList = $occManager->getExsiccatiList()) {
                     ?>
                     <div style="margin:2px;" title="Enter Exsiccati Title">
                         <b>Exsiccati Title:</b>
@@ -224,7 +224,7 @@ else{
 					'sciname'=>'Scientific Name','sex'=>'Sex','specificEpithet'=>'Specific Epithet','stateProvince'=>'State/Province',
 					'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
 					'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation','`year`'=>'Year');
-				if($QUICK_HOST_ENTRY_IS_ACTIVE){
+				if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
                     $insertIndex = array_search('habitat', array_keys($advFieldArr), true);
                     $advFieldArr = array_merge(array_slice($advFieldArr,0,$insertIndex+1),array('verbatimsciname'=>'Host'),array_slice($advFieldArr,$insertIndex+1,null));
                 }

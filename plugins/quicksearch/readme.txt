@@ -12,7 +12,7 @@ Modify main.css file to customize quick search plugin to your preferences.
 		$buttonText = 'Search';
 
 		//---------------------------DO NOT CHANGE BELOW HERE-----------------------------
-		include_once($SERVER_ROOT.'/classes/PluginsManager.php');
+		include_once($GLOBALS['SERVER_ROOT'].'/classes/PluginsManager.php');
 		$pluginManager = new PluginsManager();
 		$quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
 		echo $quicksearch;

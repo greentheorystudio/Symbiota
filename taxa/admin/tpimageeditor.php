@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $tid = $_REQUEST['tid'];
 $category = array_key_exists('cat',$_REQUEST)?$_REQUEST['cat']: '';
@@ -14,7 +14,7 @@ if($tid){
 	$imageEditor->setTid($tid);
 	$imageEditor->setLanguage($lang);
 
-	if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+	if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 		$editable = true;
 	}
 	 
@@ -35,12 +35,12 @@ if($tid){
 								foreach($images as $imgArr){
 									$webUrl = $imgArr['url'];
 									$tnUrl = $imgArr['thumbnailurl'];
-									if($IMAGE_DOMAIN){
+									if($GLOBALS['IMAGE_DOMAIN']){
 										if(strpos($imgArr['url'], '/') == 0) {
-                                            $webUrl = $IMAGE_DOMAIN . $imgArr['url'];
+                                            $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
                                         }
 										if(strpos($imgArr['thumbnailurl'], '/') == 0) {
-                                            $tnUrl = $IMAGE_DOMAIN . $imgArr['thumbnailurl'];
+                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
                                         }
 									}
 									if(!$tnUrl) {
@@ -166,7 +166,7 @@ if($tid){
 							<select name='photographeruid' name='photographeruid'>
 								<option value="">Select Photographer</option>
 								<option value="">---------------------------------------</option>
-								<?php $imageEditor->echoPhotographerSelect($PARAMS_ARR['uid']); ?>
+								<?php $imageEditor->echoPhotographerSelect($GLOBALS['PARAMS_ARR']['uid']); ?>
 							</select>
 							<a href="#" onclick="toggle('photooveridediv');return false;" title="Display photographer override field">
 								<img src="../../images/editplus.png" style="border:0;width:12px;" />
@@ -228,12 +228,12 @@ if($tid){
                                 <?php
                                 $webUrl = $imgArr['url'];
                                 $tnUrl = $imgArr['thumbnailurl'];
-                                if($IMAGE_DOMAIN){
+                                if($GLOBALS['IMAGE_DOMAIN']){
                                     if(strpos($imgArr['url'], '/') === 0) {
-                                        $webUrl = $IMAGE_DOMAIN . $imgArr['url'];
+                                        $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
                                     }
                                     if(strpos($imgArr['thumbnailurl'], '/') === 0) {
-                                        $tnUrl = $IMAGE_DOMAIN . $imgArr['thumbnailurl'];
+                                        $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
                                     }
                                 }
                                 if(!$tnUrl) {
@@ -245,7 +245,7 @@ if($tid){
                                 </a>
                                 <?php
                                 if($imgArr['originalurl']){
-                                    $origUrl = ($IMAGE_DOMAIN && strpos($imgArr['originalurl'], '/') === 0 ?$IMAGE_DOMAIN: '').$imgArr['originalurl'];
+                                    $origUrl = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgArr['originalurl'], '/') === 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgArr['originalurl'];
                                     ?>
                                     <br /><a href="<?php echo $origUrl;?>">Open Large Image</a>
                                     <?php
@@ -333,7 +333,7 @@ if($tid){
                                     ?>
                                     <div>
                                         <b>Occurrence Record #:</b>
-                                        <a href="<?php echo $CLIENT_ROOT;?>/collections/individual/index.php?occid=<?php echo $imgArr['occid']; ?>">
+                                        <a href="<?php echo $GLOBALS['CLIENT_ROOT'];?>/collections/individual/index.php?occid=<?php echo $imgArr['occid']; ?>">
                                             <?php echo $imgArr['occid'];?>
                                         </a>
                                     </div>

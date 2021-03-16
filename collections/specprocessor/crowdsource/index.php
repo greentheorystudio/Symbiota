@@ -1,29 +1,29 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $catid = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:'';
 
-if(isset($DEFAULTCATID) && $DEFAULTCATID && $catid === '') {
-    $catid = $DEFAULTCATID;
+if(isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] && $catid === '') {
+    $catid = $GLOBALS['DEFAULTCATID'];
 }
 
 $csManager = new OccurrenceCrowdSource();
 
 $pArr = array();
-if($SYMB_UID && array_key_exists('CollAdmin', $USER_RIGHTS)) {
-    $pArr = $USER_RIGHTS['CollAdmin'];
+if($GLOBALS['SYMB_UID'] && array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS'])) {
+    $pArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
 }
 
 $statusStr = '';
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Crowdsourcing Score Board</title>
-    <link href="../../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Crowdsourcing Score Board</title>
+    <link href="../../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript">
 
 	</script>
@@ -64,7 +64,7 @@ $statusStr = '';
 			<fieldset style="background-color:white;margin-bottom:15px;width:250px;padding:15px;">
 				<legend><b>Current Standing</b></legend>
 				<?php
-				if($SYMB_UID){
+				if($GLOBALS['SYMB_UID']){
 					?>
 					<b>Specimens processed as volunteer:</b> <?php echo number_format($userStats['totalcnt']); ?><br/>
 					<?php
@@ -75,14 +75,14 @@ $statusStr = '';
 					<b>Pending points:</b> <?php echo number_format($userStats['ppoints']); ?>
 					<?php
                     if($userStats['ppoints']) {
-                        echo '(<a href="review.php?rstatus=5&uid=' . $SYMB_UID . '">view records</a>)';
+                        echo '(<a href="review.php?rstatus=5&uid=' . $GLOBALS['SYMB_UID'] . '">view records</a>)';
                     }
                     ?>
                     <br/>
 					<b>Approved points:</b> <?php echo number_format($userStats['apoints']); ?>
 					<?php
                     if($userStats['apoints']) {
-                        echo '(<a href="review.php?rstatus=10&uid=' . $SYMB_UID . '">view records</a>)';
+                        echo '(<a href="review.php?rstatus=10&uid=' . $GLOBALS['SYMB_UID'] . '">view records</a>)';
                     }
                     ?>
                     <br/>
@@ -120,7 +120,7 @@ $statusStr = '';
 					echo '<tr>';
 					echo '<td>';
 					echo '<b>'.$sArr['name'].'</b>';
-					if($IS_ADMIN || in_array($collId, $pArr, true)) {
+					if($GLOBALS['IS_ADMIN'] || in_array($collId, $pArr, true)) {
                         echo ' <a href="../index.php?tabindex=2&collid=' . $collId . '"><img src="../../../images/edit.svg" style="width:14px;" /></a>';
                     }
 					echo '</td>';
@@ -134,7 +134,7 @@ $statusStr = '';
 			</table>
 		</div>
 		<?php
-		if(isset($USER_RIGHTS['CollAdmin']) || isset($USER_RIGHTS['CollEditor'])){
+		if(isset($GLOBALS['USER_RIGHTS']['CollAdmin']) || isset($GLOBALS['USER_RIGHTS']['CollEditor'])){
 			?>
 			<div style="clear:both;margin:30px;">
 				<b>Note:</b> You have been identified as an official editor for one or more collections.

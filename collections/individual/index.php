@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occid = array_key_exists('occid',$_REQUEST)?trim($_REQUEST['occid']):0;
 $collid = array_key_exists('collid',$_REQUEST)?trim($_REQUEST['collid']):0;
@@ -63,27 +63,27 @@ $statusStr = '';
 $displayLocality = false;
 $isEditor = false;
 
-if($SYMB_UID){
-    if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
         $isEditor = true;
     }
-    elseif((array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true))){
+    elseif((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
         $isEditor = true;
     }
-    elseif($occArr['observeruid'] === $SYMB_UID){
+    elseif($occArr['observeruid'] === $GLOBALS['SYMB_UID']){
         $isEditor = true;
     }
     elseif($indManager->isTaxonomicEditor()){
         $isEditor = true;
     }
 
-    if($isEditor || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+    if($isEditor || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
         $displayLocality = true;
     }
-    elseif(array_key_exists('RareSppReader',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['RareSppReader'], true)){
+    elseif(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true)){
         $displayLocality = true;
     }
-    elseif(array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('CollEditor',$USER_RIGHTS)){
+    elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
         $displayLocality = true;
     }
 
@@ -120,7 +120,7 @@ if($SYMB_UID){
     }
     elseif($submit === 'Link to Dataset'){
         $dsid = ($_POST['dsid'] ?? 0);
-        if(!$indManager->linkToDataset($dsid,$_POST['dsname'],$_POST['notes'],$SYMB_UID)){
+        if(!$indManager->linkToDataset($dsid,$_POST['dsname'],$_POST['notes'])){
             $statusStr = $indManager->getErrorMessage();
         }
     }
@@ -136,14 +136,14 @@ if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($o
 $dupClusterArr = $indManager->getDuplicateArr();
 $commentArr = $indManager->getCommentArr($isEditor);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Detailed Collection Record Information</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta name="description" content="<?php echo 'Occurrence author: '.$occArr['recordedby'].','.$occArr['recordnumber']; ?>" />
     <meta name="keywords" content="<?php echo $occArr['guid']; ?>">
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         .map {
@@ -156,10 +156,10 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <?php
     if($displayMap){
         ?>
-        <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -326,7 +326,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
             <div id="occurtab">
                 <div style="float:right;">
                     <div style="float:right;">
-                        <a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
+                        <a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
                         <script>
                             window.twttr=(function(d,s,id){
                                 let js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
@@ -682,7 +682,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                             <?php
                         }
                     }
-                    if($QUICK_HOST_ENTRY_IS_ACTIVE && $occArr['verbatimsciname']) {
+                    if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE'] && $occArr['verbatimsciname']) {
                         ?>
                         <div style="clear:both;">
                             <b>Host:</b>
@@ -851,8 +851,8 @@ $commentArr = $indManager->getCommentArr($isEditor);
                     $rightsStr = $collMetadata['rights'];
                     if($collMetadata['rights']){
                         $rightsHeading = '';
-                        if(isset($RIGHTS_TERMS)) {
-                            $rightsHeading = array_search($rightsStr, $RIGHTS_TERMS, true);
+                        if(isset($GLOBALS['RIGHTS_TERMS'])) {
+                            $rightsHeading = array_search($rightsStr, $GLOBALS['RIGHTS_TERMS'], true);
                         }
                         if(strpos($collMetadata['rights'], 'http') === 0){
                             $rightsStr = '<a href="'.$rightsStr.'" target="_blank">'.($rightsHeading?:$rightsStr).'</a>';
@@ -902,9 +902,9 @@ $commentArr = $indManager->getCommentArr($isEditor);
                     <div style="margin-top:10px;clear:both;">
                         For additional information on this occurrence, please contact:
                         <?php
-                        $emailSubject = $DEFAULT_TITLE.' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
-                        $emailBody = 'Specimen being referenced: http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occArr['occid'];
-                        $emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
+                        $emailSubject = $GLOBALS['DEFAULT_TITLE'].' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
+                        $emailBody = 'Specimen being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occArr['occid'];
+                        $emailRef = 'subject='.$emailSubject.'&cc='.$GLOBALS['ADMIN_EMAIL'].'&body='.$emailBody;
                         ?>
                         <a href="mailto:<?php echo $collMetadata['email'].'?'.$emailRef; ?>">
                             <?php echo $collMetadata['contact'].' ('.$collMetadata['email'].')'; ?>
@@ -915,7 +915,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                         ?>
                         <div style="margin-bottom:10px;">
                             <?php
-                            if($SYMB_UID){
+                            if($GLOBALS['SYMB_UID']){
                                 ?>
                                 Do you see an error? If so, errors can be fixed using the
                                 <a href="../editor/occurrenceeditor.php?occid=<?php echo $occArr['occid'];?>">
@@ -1023,12 +1023,12 @@ $commentArr = $indManager->getCommentArr($isEditor);
                                         if(!$tnUrl) {
                                             $tnUrl = $url;
                                         }
-                                        if($IMAGE_DOMAIN){
+                                        if($GLOBALS['IMAGE_DOMAIN']){
                                             if(strpos($url, '/') === 0) {
-                                                $url = $IMAGE_DOMAIN . $url;
+                                                $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                             }
                                             if(strpos($tnUrl, '/') === 0) {
-                                                $tnUrl = $IMAGE_DOMAIN . $tnUrl;
+                                                $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                                             }
                                         }
                                         echo '<div style="float:left;margin:10px;">';
@@ -1065,7 +1065,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                             }
                             echo '<div style="margin:10px;">'.$comArr['comment'].'</div>';
                             if($comArr['reviewstatus']){
-                                if($SYMB_UID){
+                                if($GLOBALS['SYMB_UID']){
                                     ?>
                                     <div><a href="index.php?repcomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Report as inappropriate or abusive</a></div>
                                     <?php
@@ -1076,7 +1076,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                                 <div><a href="index.php?publiccomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Make comment public</a></div>
                                 <?php
                             }
-                            if($isEditor || ($SYMB_UID && $comArr['username'] === $PARAMS_ARR['un'])){
+                            if($isEditor || ($GLOBALS['SYMB_UID'] && $comArr['username'] === $GLOBALS['PARAMS_ARR']['un'])){
                                 ?>
                                 <div style="margin:20px;">
                                     <form name="delcommentform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete comment?')">
@@ -1101,7 +1101,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                 <fieldset style="padding:20px;">
                     <legend><b>New Comment</b></legend>
                     <?php
-                    if($SYMB_UID){
+                    if($GLOBALS['SYMB_UID']){
                         ?>
                         <form name="commentform" action="index.php" method="post" onsubmit="return verifyCommentForm(this);">
                             <textarea name="commentstr" rows="8" style="width:98%;"></textarea>
@@ -1133,7 +1133,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                 <div id="edittab">
                     <div style="padding:15px;">
                         <?php
-                        if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+                        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
                             ?>
                             <div style="float:right;" title="Manage Edits">
                                 <a href="../editor/editreviewer.php?collid=<?php echo $collid.'&occid='.$occid; ?>"><img src="../../images/edit.svg" style="border:0;width:14px;" /></a>

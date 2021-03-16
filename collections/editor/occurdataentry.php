@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/occurdataentry.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -13,7 +13,7 @@ $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $occManager = new OccurrenceEditorManager();
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 
@@ -23,7 +23,7 @@ $collMap = array();
 $statusStr = '';
 $isGenObs = 0;
 
-if($SYMB_UID){
+if($GLOBALS['SYMB_UID']){
 	$occManager->setCollId($collid);
 	$collMap = $occManager->getCollMap();
 
@@ -31,25 +31,25 @@ if($SYMB_UID){
         $isGenObs = 1;
     }
 	
-	if($IS_ADMIN || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+	if($GLOBALS['IS_ADMIN'] || ($collid && array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 		$isEditor = 1;
 	}
-	else if(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+	else if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
         $isEditor = 2;
     }
 	if($isEditor && $action === 'Add Record') {
         $statusStr = $occManager->addOccurrence($_POST);
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Editor</title>
-	<link href="../../css/jquery-ui.css?<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/occureditor.css?<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
+	<link href="../../css/jquery-ui.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/occureditor.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" id="editorCssLink" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -351,8 +351,8 @@ if($SYMB_UID){
 							</div>
 							<div style="padding:10px;">
 								<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-								<input type="hidden" name="userid" value="<?php echo $PARAMS_ARR['un']; ?>" />
-								<input type="hidden" name="observeruid" value="<?php echo $SYMB_UID; ?>" />
+								<input type="hidden" name="userid" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" />
+								<input type="hidden" name="observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" />
 							</div>
 						</fieldset>
 						<fieldset>

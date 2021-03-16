@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occidQuery = array_key_exists('occidquery',$_REQUEST)?$_REQUEST['occidquery']:'';
 $curOccid = (array_key_exists('curoccid',$_GET)?$_REQUEST['curoccid']:0);
@@ -24,9 +24,9 @@ $onLoadStr = '';
 $statusStr = '';
 if($submitAction){
     $isEditor = 0;
-    if($IS_ADMIN
-        || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
-        || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
+    if($GLOBALS['IS_ADMIN']
+        || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+        || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
         $isEditor = 1;
     }
     if($isEditor && $submitAction === 'mergerecs') {
@@ -37,20 +37,20 @@ if($submitAction){
     }
 }
 $collRightsArr = array();
-if(!$IS_ADMIN){
-    if(array_key_exists('CollAdmin',$USER_RIGHTS)){
-        $collRightsArr = $USER_RIGHTS['CollAdmin'];
+if(!$GLOBALS['IS_ADMIN']){
+    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
+        $collRightsArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
     }
-    if(array_key_exists('CollEditor',$USER_RIGHTS)){
-        $collRightsArr = array_merge($collRightsArr,$USER_RIGHTS['CollEditor']);
+    if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+        $collRightsArr = array_merge($collRightsArr,$GLOBALS['USER_RIGHTS']['CollEditor']);
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> - Duplicate Record Search</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Duplicate Record Search</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">
         table.styledtable td { white-space: nowrap; }
     </style>
@@ -201,7 +201,7 @@ if(!$IS_ADMIN){
         <div id="paragraphview" style="display:block;">
             <?php
             foreach($occArr as $occId => $occObj){
-                if($IS_ADMIN || in_array($occObj['collid'], $collRightsArr, true)){
+                if($GLOBALS['IS_ADMIN'] || in_array($occObj['collid'], $collRightsArr, true)){
                     ?>
                     <div style="float:right;margin:10px;">
                         <a href="occurrenceeditor.php?occid=<?php echo $occId; ?>">

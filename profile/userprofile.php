@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $userId = $_REQUEST['userid'];
 
@@ -17,7 +17,7 @@ $pHandler->setUid($userId);
 $person = $pHandler->getPerson();
 $tokenCount = $pHandler->getTokenCnt();
 $isSelf = true;
-if($userId !== $SYMB_UID) {
+if($userId !== $GLOBALS['SYMB_UID']) {
     $isSelf = false;
 }
 $listArr = $clManager->getManagementLists($userId);

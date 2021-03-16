@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = $_POST['collid'];
 $hPrefix = $_POST['lhprefix'];
@@ -21,8 +21,8 @@ $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
 
 $isEditor = 0;
-if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
@@ -31,9 +31,9 @@ if($action === 'Export to CSV'){
 }
 else{
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
-			<title><?php echo $DEFAULT_TITLE; ?> Default Labels</title>
+			<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Default Labels</title>
 			<style type="text/css">
 				body {font-family:arial,sans-serif;}
 				table.labels {table-layout:fixed;width:100%;page-break-before:auto;page-break-inside:avoid;}

@@ -49,10 +49,9 @@ class TaxonomyCleaner extends Manager{
 	}
 
 	public function analyzeTaxa($taxResource, $startIndex, $limit = 50){
-		global $USER_RIGHTS, $CLIENT_ROOT;
 		set_time_limit(1800);
 		$isTaxonomyEditor = false;
-		if($USER_RIGHTS && array_key_exists('Taxonomy', $USER_RIGHTS)) {
+		if($GLOBALS['USER_RIGHTS'] && array_key_exists('Taxonomy', $GLOBALS['USER_RIGHTS'])) {
 			$isTaxonomyEditor = true;
 		}
 		$endIndex = 0;
@@ -77,7 +76,7 @@ class TaxonomyCleaner extends Manager{
 			$taxaCnt = 1;
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\''.$CLIENT_ROOT.
+				$editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
 					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
 					$this->collid.'\'); return false;">'.$r->cnt.' specimens <img src="../../images/edit.svg" style="width:12px;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
@@ -337,7 +336,6 @@ class TaxonomyCleaner extends Manager{
 
 	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifierIn = ''): int
 	{
-		global $SYMB_UID;
 		$affectedRows = 0;
 		$idQualifier = '';
 		if(is_numeric($collid) && $oldSciname && is_numeric($tid)){
@@ -364,11 +362,11 @@ class TaxonomyCleaner extends Manager{
 			}
 			$sqlWhere = 'WHERE (collid IN('.$collid.')) AND (sciname = "'.$oldSciname.'") AND (tidinterpreted IS NULL) ';
 			$sql1 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-				'SELECT occid, "sciname", "'.$newSciname.'", sciname, '.$SYMB_UID.', 1, 1'.($hasEditType?',1':'').' FROM omoccurrences '.$sqlWhere;
+				'SELECT occid, "sciname", "'.$newSciname.'", sciname, '.$GLOBALS['SYMB_UID'].', 1, 1'.($hasEditType?',1':'').' FROM omoccurrences '.$sqlWhere;
 			if($this->conn->query($sql1)){
 				if($newAuthor){
 					$sql2 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
-						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$SYMB_UID.', 1, 1 '.($hasEditType?',1 ':'').
+						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere.'AND (scientificNameAuthorship != "'.$newAuthor.'")';
 					if(!$this->conn->query($sql2)){
 						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (author): '.$this->conn->error,1);
@@ -377,7 +375,7 @@ class TaxonomyCleaner extends Manager{
 				if($idQualifier){
 					$sql3 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
 						'SELECT occid, "identificationQualifier" AS fieldname, CONCAT_WS("; ",identificationQualifier,"'.$idQualifier.'") AS idqual, '.
-						'IFNULL(identificationQualifier,""), '.$SYMB_UID.', 1, 1 '.($hasEditType?',1 ':'').
+						'IFNULL(identificationQualifier,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere;
 					if(!$this->conn->query($sql3)){
 						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (idQual): '.$this->conn->error,1);
@@ -653,10 +651,9 @@ class TaxonomyCleaner extends Manager{
 
 	public function getCollMap(): array
 	{
-		global $USER_RIGHTS, $IS_ADMIN;
 		$retArr = array();
-		$collArr = $USER_RIGHTS['CollAdmin'] ?? array();
-		if($IS_ADMIN) {
+		$collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'] ?? array();
+		if($GLOBALS['IS_ADMIN']) {
 			$collArr = array_merge($collArr, explode(',', $this->collid));
 		}
 		$sql = 'SELECT collid, CONCAT_WS("-",institutioncode, collectioncode) AS code, collectionname, icon, colltype, managementtype FROM omcollections '.
@@ -677,12 +674,11 @@ class TaxonomyCleaner extends Manager{
 
 	public function getTaxonomicResourceList(): array
 	{
-		global $TAXONOMIC_AUTHORITIES;
 		$taArr = array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species','tropicos'=>'TROPICOS','eol'=>'Encyclopedia of Life');
-		if(!isset($TAXONOMIC_AUTHORITIES)) {
+		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES'])) {
 			return array('col' => 'Catalog of Life', 'worms' => 'World Register of Marine Species');
 		}
-		return array_intersect_key($taArr,array_change_key_case($TAXONOMIC_AUTHORITIES));
+		return array_intersect_key($taArr,array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']));
 	}
 
 	public function getTaxaSuggest($queryString): array

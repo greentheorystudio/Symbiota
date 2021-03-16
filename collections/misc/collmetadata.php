@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -22,11 +22,11 @@ $collPubArr = array();
 $publishGBIF = false;
 $publishIDIGBIO = false;
 
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
 }
 elseif($collid){
-	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
 }
@@ -39,7 +39,7 @@ if($isEditor){
 		}
 	}
 	elseif($action === 'Create New Collection'){
-		if($IS_ADMIN){
+		if($GLOBALS['IS_ADMIN']){
 			$newCollid = $collManager->submitCollAdd($_POST);
 			if(is_numeric($newCollid)){
 				$statusStr = 'New collection added successfully! <br/>Click <a href="../admin/specuploadmanagement.php?collid='.$newCollid.'&action=addprofile">here</a> to upload occurrence records for this new collection.';
@@ -61,7 +61,7 @@ if($isEditor){
 		}
 	}
 }
-if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY && $collid){
+if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY'] && $collid){
 	$collPubArr = $collManager->getCollPubArr($collid);
 	if($collPubArr[$collid]['publishToGbif']){
 		$publishGBIF = true;
@@ -74,11 +74,11 @@ $collDataFull = $collManager->getCollectionMetadata();
 $collData = $collDataFull[$collid];
 $collManager->cleanOutArr($collData);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -423,12 +423,12 @@ $collManager->cleanOutArr($collData);
 								</td>
 								<td>
 									<?php 
-									if(isset($RIGHTS_TERMS)){
+									if(isset($GLOBALS['RIGHTS_TERMS'])){
 										?>
 										<select name="rights">
 											<?php
 											$hasOrphanTerm = true; 
-											foreach($RIGHTS_TERMS as $k => $v){
+											foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
 												$selectedTerm = '';
 												if($collid && strtolower($collData['rights']) === strtolower($v)){
 													$selectedTerm = 'SELECTED';
@@ -517,7 +517,7 @@ $collManager->cleanOutArr($collData);
 								</td>
 							</tr>
                             <?php
-                            if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY) {
+                            if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY']) {
                                 ?>
 	                            <tr>
 	                                <td>
@@ -591,7 +591,7 @@ $collManager->cleanOutArr($collData);
 								</td>
 							</tr>
 							<?php 
-							if($IS_ADMIN){ 
+							if($GLOBALS['IS_ADMIN']){ 
 								?>
 								<tr>
 									<td>

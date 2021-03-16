@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DwcArchiverCore.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = $_REQUEST['collid'];
 $archiveFile = '';
 $retArr = array();
 if($collid && is_numeric($collid)){
 	$isEditor = false;
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	 	$isEditor = true;
 	}
 	
@@ -45,7 +45,7 @@ if($collid && is_numeric($collid)){
 
 		$dwcaHandler->setGeolocateVariables(array('cogecomm'=>$_POST['cogecomm'],'cogename'=>$_POST['cogename'],'cogedescr'=>$_POST['cogedescr'],));
 
-		$tPath = $SERVER_ROOT;
+		$tPath = $GLOBALS['SERVER_ROOT'];
 		$tPathSub = substr($tPath,-1);
 		if($tPathSub !== '/' && $tPathSub !== '\\'){
 			$tPath .= '/';
@@ -65,7 +65,7 @@ if($collid && is_numeric($collid)){
 		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
 			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
 		}
-		$urlPath = $urlPrefix.$CLIENT_ROOT;
+		$urlPath = $urlPrefix.$GLOBALS['CLIENT_ROOT'];
 		$urlPathSub = substr($urlPath,-1);
 		if($urlPathSub !== '/' && $urlPathSub !== '\\'){
 			$urlPath .= '/';

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/RareSpeciesManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $searchTaxon = array_key_exists('searchtaxon',$_POST)?$_POST['searchtaxon']:'';
 
 $isEditor = 0;
-if($IS_ADMIN || array_key_exists('RareSppAdmin',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = 1;
 }
 
@@ -25,11 +25,11 @@ if($searchTaxon) {
     $rsManager->setSearchTaxon($searchTaxon);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>Rare, Threatened, Sensitive Species</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
