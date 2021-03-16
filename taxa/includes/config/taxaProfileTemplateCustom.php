@@ -17,7 +17,7 @@ if($taxonRank){
         $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$penaCentralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
-        $bottomRowElements = Array($imgDiv,$penaImgTabDiv);
+        $bottomRowElements = Array($penaImgDiv,$penaImgTabDiv);
         $footerRowElements = Array();
     }
     elseif($taxonRank === 180 || $displayingChildren){

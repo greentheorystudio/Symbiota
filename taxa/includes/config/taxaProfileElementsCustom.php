@@ -310,3 +310,18 @@ else{
     echo '<div id="nodesc">Description Not Yet Available</div>';
 }
 $penaDescTabsDiv = ob_get_clean();
+
+ob_start();
+?>
+    <div id="img-div">
+        <?php
+        if(($taxonManager->getImageCount() > 100) && !$showAllImages){
+            $taxonManager->echoImages(1, 100,0);
+        }
+        else{
+            $taxonManager->echoImages(1, $taxonManager->getImageCount(), 0);
+        }
+        ?>
+    </div>
+<?php
+$penaImgDiv = ob_get_clean();
