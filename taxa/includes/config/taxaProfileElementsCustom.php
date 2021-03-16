@@ -82,12 +82,12 @@ foreach($fieldImageArr as $imgId => $imgObj){
     $imgUrl = $imgObj['url'];
     $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
     $imgThumbnail = $imgObj['thumbnailurl'];
-    if($IMAGE_DOMAIN){
+    if($GLOBALS['IMAGE_DOMAIN']){
         if(strpos($imgUrl, '/') === 0) {
-            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
         }
         if(strpos($imgThumbnail, '/') === 0) {
-            $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+            $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
         }
     }
     if($imgObj['occid']){
@@ -126,26 +126,26 @@ if(is_array($imgObj)){
     $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
     $imgThumbnail = $imgObj['thumbnailurl'];
     if(strpos($imgUrl, '/') === 0) {
-        if($IMAGE_DOMAIN){
-            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+        if($GLOBALS['IMAGE_DOMAIN']){
+            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
         }
         else{
-            $imgUrl = $CLIENT_ROOT . $imgUrl;
+            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
         }
     }
     if(strpos($imgThumbnail, '/') === 0) {
-        if($IMAGE_DOMAIN){
-            $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+        if($GLOBALS['IMAGE_DOMAIN']){
+            $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
         }
         else{
-            $imgThumbnail = $CLIENT_ROOT . $imgThumbnail;
+            $imgThumbnail = $GLOBALS['CLIENT_ROOT'] . $imgThumbnail;
         }
     }
     if($imgObj['occid']){
         $imgAnchor = '../collections/individual/index.php?occid='.$imgObj['occid'];
     }
     if($imgObj['thumbnailurl']) {
-        $imgUrl = $imgThumbnail;
+        //$imgUrl = $imgThumbnail;
     }
     echo '<div class="tptnimg"><a href="'.$imgAnchor.'">';
     $titleStr = $imgObj['caption'];
@@ -167,7 +167,7 @@ if(is_array($imgObj)){
 }
 $url = '';
 $mAnchor = '';
-if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
+if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
@@ -175,11 +175,11 @@ if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
     echo '<div class="mapthumb">';
     if($url){
         if(strpos($url, '/') === 0) {
-            if($IMAGE_DOMAIN){
-                $url = $IMAGE_DOMAIN . $url;
+            if($GLOBALS['IMAGE_DOMAIN']){
+                $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
             }
             else{
-                $url = $CLIENT_ROOT . $url;
+                $url = $GLOBALS['CLIENT_ROOT'] . $url;
             }
         }
         echo '<a href="#" onclick="'.$mAnchor.';return false">';
