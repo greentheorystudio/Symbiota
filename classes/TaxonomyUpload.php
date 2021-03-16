@@ -822,10 +822,9 @@ class TaxonomyUpload{
 
 	private function setUploadTargetPath(): void
 	{
-		global $TEMP_DIR_ROOT, $SERVER_ROOT;
 		$tPath = '';
-		if(!$tPath && isset($TEMP_DIR_ROOT)){
-			$tPath = $TEMP_DIR_ROOT;
+		if(!$tPath && isset($GLOBALS['TEMP_DIR_ROOT'])){
+			$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 			if(substr($tPath,-1) !== '/') {
 				$tPath .= '/';
 			}
@@ -837,7 +836,7 @@ class TaxonomyUpload{
 			$tPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tPath){
-			$tPath = $SERVER_ROOT;
+			$tPath = $GLOBALS['SERVER_ROOT'];
 			if(substr($tPath,-1) !== '/') {
 				$tPath .= '/';
 			}
@@ -877,17 +876,16 @@ class TaxonomyUpload{
 
 	public function setVerboseMode($vMode): void
 	{
-		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
 			if($this->verboseMode === 2){
-				$LOG_PATH = $SERVER_ROOT;
-				$server_root_sub = substr($SERVER_ROOT,-1);
+				$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'];
+				$server_root_sub = substr($GLOBALS['SERVER_ROOT'],-1);
 				if($server_root_sub !== '/' && $server_root_sub !== '\\') {
-					$LOG_PATH .= '/';
+					$GLOBALS['LOG_PATH'] .= '/';
 				}
-				$LOG_PATH .= 'content/logs/taxaloader_' .date('Ymd'). '.log';
-				$this->logFH = fopen($LOG_PATH, 'ab');
+				$GLOBALS['LOG_PATH'] .= 'content/logs/taxaloader_' .date('Ymd'). '.log';
+				$this->logFH = fopen($GLOBALS['LOG_PATH'], 'ab');
 				fwrite($this->logFH, 'Start time: ' .date('Y-m-d h:i:s A')."\n");
 			}
 		}
@@ -913,7 +911,6 @@ class TaxonomyUpload{
 
     private function encodeString($inStr): string
 	{
-		global $CHARSET;
 		$retStr = $inStr;
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
@@ -929,7 +926,7 @@ class TaxonomyUpload{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
 		if($inStr){
-			$lowCharSet = strtolower($CHARSET);
+			$lowCharSet = strtolower($GLOBALS['CHARSET']);
 			if($lowCharSet === 'utf-8' || $lowCharSet === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);

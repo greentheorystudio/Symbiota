@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $datasetId = array_key_exists('datasetid',$_REQUEST)?$_REQUEST['datasetid']:0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -27,7 +27,7 @@ $mdArr = $datasetManager->getDatasetMetadata($datasetId);
 $role = '';
 $roleLabel = '';
 $isEditor = 0;
-if($SYMB_UID === $mdArr['uid']){
+if($GLOBALS['SYMB_UID'] === $mdArr['uid']){
     $isEditor = 1;
     $role = 'owner';
 }
@@ -110,11 +110,11 @@ if($isEditor){
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">

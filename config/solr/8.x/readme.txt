@@ -139,20 +139,20 @@ Steps for installing and configuring Apache SOLR:
 13) Once the full import is complete, edit the [SYMBIOTA BASE DIRECTORY]/config/symbini.php file of your Symbiota installation:
 
     -Either locate or add the line:
-        $SOLR_URL = '';
+        $GLOBALS['SOLR_URL'] = '';
 
     -Set the value of this line to the url of your Symbiota SOLR core.
-        e.g.: $SOLR_URL = 'http://localhost:8983/solr/symbseinet';
+        e.g.: $GLOBALS['SOLR_URL'] = 'http://localhost:8983/solr/symbseinet';
 
     -Either locate or add the line:
-        $SOLR_FULL_IMPORT_INTERVAL = 0;
+        $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
 
     -Change the value of this line to the hour interval you wish to have between whcih your Symbiota installation
         will initiate a full import refresh of your SOLR core. Records added or edited will automatically be updated
         in your SOLR core without the need for a full import. Deleted records or images will only be updated in the core
         through a full import however, so if your portal has frequent record or image deletions, set this to a lower setting,
         if not, set this value to a higher setting.
-        e.g.: $SOLR_FULL_IMPORT_INTERVAL = 24;
+        e.g.: $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 24;
 
     -Save your edits.
 

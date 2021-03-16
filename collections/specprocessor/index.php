@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -44,7 +44,7 @@ $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
  	$isEditor = true;
 }
 
@@ -90,11 +90,11 @@ if($isEditor){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Specimen Processor Control Panel</title>
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -148,7 +148,7 @@ if($isEditor){
 				        <li><a href="reports.php?<?php echo $_SERVER['QUERY_STRING']; ?>">Reports</a></li>
 				        <li><a href="exporter.php?collid=<?php echo $collid.'&displaymode='.$displayMode; ?>">Exporter</a></li>
 				        <?php 
-				        if($ACTIVATE_GEOLOCATE_TOOLKIT){
+				        if($GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']){
 					        ?>
 					        <li><a href="geolocate.php?collid=<?php echo $collid; ?>">GeoLocate CoGe</a></li>
 					        <?php 	

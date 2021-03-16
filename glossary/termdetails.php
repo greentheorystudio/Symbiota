@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
@@ -12,7 +12,7 @@ $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -95,11 +95,11 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Glossary Management</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Management</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<style type="text/css">
 		#tabs a{
@@ -639,8 +639,8 @@ if($glossId){
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0) {
-                                                $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+											if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0) {
+                                                $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                                             }
 											$displayUrl = $imgUrl;
 											?>

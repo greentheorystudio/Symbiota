@@ -630,14 +630,13 @@ class SpecUploadBase extends SpecUpload{
 
     public function finalTransfer(): void
     {
-        global $QUICK_HOST_ENTRY_IS_ACTIVE;
         $this->recordCleaningStage2();
         $this->transferOccurrences();
         $this->prepareAssociatedMedia();
         $this->prepareImages();
         $this->transferIdentificationHistory();
         $this->transferImages();
-        if($QUICK_HOST_ENTRY_IS_ACTIVE){
+        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
             $this->transferHostAssociations();
         }
         $this->finalCleanup();
@@ -1429,13 +1428,12 @@ class SpecUploadBase extends SpecUpload{
 
     protected function setUploadTargetPath(): void
     {
-        global $SERVER_ROOT, $TEMP_DIR_ROOT;
-        $tPath = $TEMP_DIR_ROOT;
+        $tPath = $GLOBALS['TEMP_DIR_ROOT'];
         if(!$tPath){
             $tPath = ini_get('upload_tmp_dir');
         }
         if(!$tPath){
-            $tPath = $SERVER_ROOT. '/temp';
+            $tPath = $GLOBALS['SERVER_ROOT']. '/temp';
         }
         if(substr($tPath,-1) !== '/' && substr($tPath,-1) !== '\\'){
             $tPath .= '/';
@@ -1525,7 +1523,6 @@ class SpecUploadBase extends SpecUpload{
     }
 
     protected function encodeString($inStr){
-        global $CHARSET;
         $retStr = $inStr;
 
         $badwordchars=array("\xe2\x80\x98",
@@ -1539,7 +1536,7 @@ class SpecUploadBase extends SpecUpload{
         $inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 
         if($inStr){
-            $lowerStr = strtolower($CHARSET);
+            $lowerStr = strtolower($GLOBALS['CHARSET']);
             if($lowerStr === 'utf-8' || $lowerStr === 'utf8'){
                 if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
                     $retStr = utf8_encode($inStr);

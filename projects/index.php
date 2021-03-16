@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
@@ -20,7 +20,7 @@ if($pid) {
 }
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('ProjAdmin',$USER_RIGHTS) && in_array($pid, $USER_RIGHTS['ProjAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']) && in_array($pid, $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
     $isEditor = 1;
 }
 
@@ -71,11 +71,11 @@ if(!$researchList && !$editMode){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Inventory Projects</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
@@ -379,7 +379,7 @@ echo '</div>';
                         ?>
                     </div>
                     <?php
-                    if($KEY_MOD_IS_ACTIVE){
+                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                         ?>
                         <div style="margin-left:15px;font-size:90%">
                             The <img src="../images/key.svg" style="width: 12px;" alt="Golden Key Symbol" />
@@ -398,7 +398,7 @@ echo '</div>';
                                         <?php echo $value; ?>
                                     </a>
                                     <?php
-                                    if($KEY_MOD_IS_ACTIVE){
+                                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                                         ?>
                                         <a href='../ident/key.php?cl=<?php echo $key; ?>&proj=<?php echo $pid; ?>&taxon=All+Species'>
                                             <img style='width:12px;border:0;' src='../images/key.svg'/>
@@ -420,7 +420,7 @@ echo '</div>';
         }
     }
     else{
-        echo '<h1>'.$DEFAULT_TITLE.' Projects</h1>';
+        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Projects</h1>';
         $projectArr = $projManager->getProjectList();
         foreach($projectArr as $pid => $projList){
             ?>

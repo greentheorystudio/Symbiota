@@ -84,7 +84,7 @@ if($export){
 		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	}
 	
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_addressed_envelope.'.$exportExtension;
+	$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_addressed_envelope.'.$exportExtension;
 	$phpWord->save($targetFile, $exportEngine);
 
 	header('Content-Description: File Transfer');
@@ -97,7 +97,7 @@ if($export){
 }
 else{
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title>Addressed Envelope</title>
 			<style type="text/css">

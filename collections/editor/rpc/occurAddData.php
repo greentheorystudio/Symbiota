@@ -6,13 +6,13 @@ $collid = array_key_exists('collid',$_REQUEST);
 $responseArr = array();
 $isEditor = 0;
 if($collid){
-	if($IS_ADMIN){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+	elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 		$isEditor = 1;
 	}
 	if($isEditor){

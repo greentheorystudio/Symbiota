@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
@@ -22,9 +22,9 @@ $navStr = '';
 $sortFields = array('Catalog Number','Collection','Collector','Country','County','Elevation','Event Date',
     'Family','Individual Count','Life Stage','Number','Scientific Name','Sex','State/Province');
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Collections Search Results Table</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results Table</title>
     <style type="text/css">
         table.styledtable td {
             white-space: nowrap;
@@ -39,8 +39,8 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
             cursor:pointer;
         }
     </style>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <script src="../js/jquery.js" type="text/javascript"></script>
     <script src="../js/jquery-ui.js" type="text/javascript"></script>

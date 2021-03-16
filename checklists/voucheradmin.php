@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -19,7 +19,7 @@ $clManager->setClid($clid);
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = 1;
 	if($action === 'SaveSearch'){
 		$clManager->saveQueryVariables($_POST);
@@ -39,11 +39,11 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 }
 $clManager->setCollectionVariables();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Checklist Administration</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>

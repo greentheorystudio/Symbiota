@@ -56,7 +56,6 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 
 	public function editImage(): string
     {
-		global $IMAGE_DOMAIN;
 		$this->setRootpaths();
 		$status = 'Image editted successfully!';
 		$imgId = $_REQUEST['imgid'];
@@ -118,7 +117,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
 		$sourceUrl = $this->cleanInStr($_REQUEST['sourceurl']);
 
-		if($IMAGE_DOMAIN){
+		if($GLOBALS['IMAGE_DOMAIN']){
     		if(strpos($url, '/') === 0){
 	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
     		}
@@ -298,12 +297,11 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	
 	private function setRootPaths(): void
     {
-		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
-		$this->imageRootPath = $IMAGE_ROOT_PATH;
+		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
             $this->imageRootPath .= '/';
         }
-		$this->imageRootUrl = $IMAGE_ROOT_URL;
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($this->imageRootUrl,-1) !== '/') {
             $this->imageRootUrl .= '/';
         }

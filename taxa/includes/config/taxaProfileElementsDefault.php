@@ -1,8 +1,8 @@
 <?php
 ob_start();
 $isTaxonEditor = false;
-if($SYMB_UID){
-    if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
         $isTaxonEditor = true;
     }
 }
@@ -162,12 +162,12 @@ $centralImageDiv = ob_get_clean();
 
 ob_start();
 if($descArr = $taxonManager->getDescriptions()){
-    if(isset($PORTAL_TAXA_DESC)){
+    if(isset($GLOBALS['PORTAL_TAXA_DESC'])){
         $tempArr = array();
         $descIndex = 0;
         foreach($descArr as $dArr){
             foreach($dArr as $id => $vArr){
-                if($vArr['caption'] === $PORTAL_TAXA_DESC){
+                if($vArr['caption'] === $GLOBALS['PORTAL_TAXA_DESC']){
                     if($descArr[$descIndex]){
                         $tempArr = $descArr[$descIndex][$id];
                         unset($descArr[$descIndex][$id]);
@@ -237,7 +237,7 @@ $descTabsDiv = ob_get_clean();
 ob_start();
 $url = '';
 $mAnchor = '';
-if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
+if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
@@ -280,7 +280,7 @@ ob_start();
                 <?php echo 'Click to Display<br/>100 Initial Images'; ?>
             </a><br/>
             - - - - -<br/>
-            <a href="index.php?taxon=<?php echo $taxonManager->getTid(); ?>&allimages=1">
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"2","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
                 <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
             </a>
         </div>
@@ -334,11 +334,11 @@ ob_start();
                         $imgUrl = $subArr['thumbnailurl'];
                     }
                     if(strpos($imgUrl, '/') === 0) {
-                        if($IMAGE_DOMAIN){
-                            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                         }
                         else{
-                            $imgUrl = $CLIENT_ROOT . $imgUrl;
+                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
@@ -358,11 +358,11 @@ ob_start();
                 if(array_key_exists('map',$subArr) && $subArr['map']){
                     $mapUrl = $subArr['map'];
                     if(strpos($mapUrl, '/') === 0) {
-                        if($IMAGE_DOMAIN){
-                            $mapUrl = $IMAGE_DOMAIN . $mapUrl;
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
                         }
                         else{
-                            $mapUrl = $CLIENT_ROOT . $mapUrl;
+                            $mapUrl = $GLOBALS['CLIENT_ROOT'] . $mapUrl;
                         }
                     }
                     echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';

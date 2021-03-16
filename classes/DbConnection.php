@@ -4,13 +4,11 @@ include_once(__DIR__ . '/../config/dbconnection.php');
 class DbConnection {
     public function getConnection(): mysqli
     {
-        global $DB_SERVER;
-        return new mysqli($DB_SERVER['host'], $DB_SERVER['username'], $DB_SERVER['password'], $DB_SERVER['database'], $DB_SERVER['port']);
+        return new mysqli($GLOBALS['DB_SERVER']['host'], $GLOBALS['DB_SERVER']['username'], $GLOBALS['DB_SERVER']['password'], $GLOBALS['DB_SERVER']['database'], $GLOBALS['DB_SERVER']['port']);
     }
 
-    public function getVersion() {
-        global $DB_SERVER;
-
-        return $DB_SERVER['version'];
+    public function getVersion()
+    {
+        return $GLOBALS['DB_SERVER']['version'];
     }
 }

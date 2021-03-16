@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
-    header('Location: ../../profile/index.php?refurl=' . $CLIENT_ROOT . '/taxa/admin/batchloader.php');
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/taxa/admin/batchloader.php');
 }
 ini_set('max_execution_time', 7200);
 
@@ -14,7 +14,7 @@ $ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']: 
 $taxAuthId = (array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1);
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -48,11 +48,11 @@ if($isEditor){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Taxa Loader</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Loader</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		function verifyUploadForm(f){

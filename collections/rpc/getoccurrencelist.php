@@ -16,12 +16,12 @@ $collManager = null;
 $occurArr = array();
 
 if(strlen($stArrJson) <= 1800){
-    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/list.php';
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
     $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
     $copyURL = $urlPrefix.$urlArgs;
 }
 
-if(isset($SOLR_MODE) && $SOLR_MODE){
+if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
     $collManager->setSearchTermsArr($stArr);
     $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
@@ -66,7 +66,7 @@ $htmlStr .= '<button class="icon-button" title="Download" onclick="processDownlo
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
-if($SYMB_UID){
+if($GLOBALS['SYMB_UID']){
     $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
 }
 $htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>';
@@ -153,7 +153,7 @@ if($occurArr){
         if($collId !== $prevCollid){
             $prevCollid = $collId;
             $isEditor = false;
-            if($SYMB_UID && ($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)))){
+            if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
                 $isEditor = true;
             }
             $instCode = $fieldArr['institutioncode'];
@@ -176,7 +176,7 @@ if($occurArr){
         $htmlStr .= '</div>';
         $htmlStr .= '<div style="margin-top:10px"><span class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$occid.'" /></span></div>';
         $htmlStr .= '</td><td>';
-        if($isEditor || ($SYMB_UID && $SYMB_UID === $fieldArr['observeruid'])){
+        if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
             $htmlStr .= '<div style="float:right;" title="Edit Occurrence Record">';
             $htmlStr .= '<a href="editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">';
             $htmlStr .= '<img src="../images/edit.svg" style="width:15px;height:15px;border:0;" /></a></div>';

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php'); 
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $dupeDepth = array_key_exists('dupedepth',$_REQUEST)?$_REQUEST['dupedepth']:0;
@@ -10,7 +10,7 @@ $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
-if(!$SYMB_UID){
+if(!$GLOBALS['SYMB_UID']){
 	header('Location: ../../profile/index.php?refurl=../collections/datasets/duplicatemanager.php?'.$_SERVER['QUERY_STRING']);
 }
 
@@ -19,8 +19,8 @@ $collMap = $dupManager->getCollMap($collId);
 
 $statusStr = '';
 $isEditor = 0; 
-if($IS_ADMIN || ($collMap['colltype'] === 'General Observations')
-	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations')
+	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
@@ -36,11 +36,11 @@ if($isEditor && $formSubmit){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Cleaner</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">
 		table.styledtable td { white-space: nowrap; }
     </style>

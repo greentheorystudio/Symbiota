@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/UuidFactory.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 3600);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -12,17 +12,17 @@ $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $action = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
 $uuidManager = new UuidFactory();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>UUID GUID Mapper</title>
-	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-    <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
+	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
+    <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 	<script type="text/javascript">
 		function toggle(target){
             const objDiv = document.getElementById(target);
@@ -103,7 +103,7 @@ include(__DIR__ . '/../../header.php');
 			</form>
 			<?php
 		}
-		elseif($IS_ADMIN){
+		elseif($GLOBALS['IS_ADMIN']){
 			?>
 			<div id="guidadmindiv">
 				<form name="dwcaguidform" action="guidmapper.php" method="post">

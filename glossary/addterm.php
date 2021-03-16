@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/addterm.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/addterm.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $relatedGlossId = array_key_exists('relglossid',$_REQUEST)?$_REQUEST['relglossid']:'';
@@ -15,7 +15,7 @@ $relatedLanguage = array_key_exists('rellanguage',$_REQUEST)?$_REQUEST['rellangu
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 if(!$relatedLanguage){
-	$relatedLanguage = $DEFAULT_LANG;
+	$relatedLanguage = $GLOBALS['DEFAULT_LANG'];
 }
 if($relatedLanguage === 'en') {
     $relatedLanguage = 'English';
@@ -25,7 +25,7 @@ if($relatedLanguage === 'es') {
 }
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -55,11 +55,11 @@ if($isEditor && $formSubmit === 'Create Term') {
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Glossary - Add New Term</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary - Add New Term</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>

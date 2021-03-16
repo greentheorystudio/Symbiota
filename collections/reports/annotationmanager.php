@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/reports/annotationmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 }
 
@@ -15,24 +15,24 @@ $datasetManager->setCollid($collid);
 
 $isEditor = 0;
 $annoArr = array();
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS["CollAdmin"], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']["CollAdmin"], true))){
     $isEditor = 1;
 }
-elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS["CollEditor"], true)){
+elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']["CollEditor"], true)){
     $isEditor = 1;
 }
 if($isEditor){
     $annoArr = $datasetManager->getAnnoQueue();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Annotation Label Manager</title>
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Annotation Label Manager</title>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script>
         function selectAll(cb){
             const boxesChecked = cb.checked;
@@ -110,7 +110,7 @@ include(__DIR__ . '/../../header.php');
     <?php
     if($isEditor){
         $reportsWritable = false;
-        if(is_writable($SERVER_ROOT.'/temp/report')) {
+        if(is_writable($GLOBALS['SERVER_ROOT'].'/temp/report')) {
             $reportsWritable = true;
         }
         if(!$reportsWritable){

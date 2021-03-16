@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/EOLManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -11,18 +11,18 @@ $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitacti
 $statusStr = array_key_exists('status',$_REQUEST)?$_REQUEST['status']:'';
 
 $isEditor = false;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = true;
 }
 
 $eolManager = new EOLManager();
  
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' EOL Manager: '; ?></title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' EOL Manager: '; ?></title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <?php

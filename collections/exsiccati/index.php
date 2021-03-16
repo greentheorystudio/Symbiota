@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $ometId = array_key_exists('ometid',$_REQUEST)?$_REQUEST['ometid']:0;
 $omenId = array_key_exists('omenid',$_REQUEST)?$_REQUEST['omenid']:0;
@@ -15,17 +15,17 @@ $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
 }
 
 $exsManager = new ExsiccatiManager();
 if($isEditor && $formSubmit){
 	if($formSubmit === 'Add Exsiccati Title'){
-		$exsManager->addTitle($_POST,$PARAMS_ARR['un']);
+		$exsManager->addTitle($_POST,$GLOBALS['PARAMS_ARR']['un']);
 	}
 	elseif($formSubmit === 'Save'){
-		$exsManager->editTitle($_POST,$PARAMS_ARR['un']);
+		$exsManager->editTitle($_POST,$GLOBALS['PARAMS_ARR']['un']);
 	}
 	elseif($formSubmit === 'Delete Exsiccati'){
 		$statusStr = $exsManager->deleteTitle($ometId);
@@ -70,11 +70,11 @@ if($formSubmit === 'dlexsiccati'){
 	exit;
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Exsiccati</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=130926"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){

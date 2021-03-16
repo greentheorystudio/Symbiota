@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $emode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
@@ -23,7 +23,7 @@ $installationKey = '';
 $datasetKey = '';
 $endpointKey = '';
 $idigbioKey = '';
-if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $collId && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY){
+if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $collId && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY']){
     $collPubArr = $collManager->getCollPubArr($collId);
     if($collPubArr[$collId]['publishToGbif']){
         $publishGBIF = true;
@@ -50,10 +50,10 @@ if($action){
 			$redactLocalities = 0;
 			$dwcaManager->setRedactLocalities(0);
 		}
-		$dwcaManager->setTargetPath($SERVER_ROOT . (substr($SERVER_ROOT, -1) === '/' ? '' : '/') . 'content/dwca/');
+		$dwcaManager->setTargetPath($GLOBALS['SERVER_ROOT'] . (substr($GLOBALS['SERVER_ROOT'], -1) === '/' ? '' : '/') . 'content/dwca/');
 	}
 }
-if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY)){
+if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY'])){
 	$installationKey = $collManager->getInstallationKey();
     $datasetKey = $collManager->getDatasetKey();
     $endpointKey = $collManager->getEndpointKey();
@@ -67,7 +67,7 @@ if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY)){
 }
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
@@ -80,11 +80,11 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
     $dwcaManager->deleteArchive($_POST['colliddel']);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>Darwin Core Archiver Publisher</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet">
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<style type="text/css">
 		.nowrap { white-space: nowrap; }
@@ -173,7 +173,7 @@ include(__DIR__ . '/../../header.php');
 </div>
 <div id="innertext">
 	<?php
-	if(!$collId && $IS_ADMIN){
+	if(!$collId && $GLOBALS['IS_ADMIN']){
 		?>
 		<div style="float:right;">
 			<a href="#" title="Display Publishing Control Panel" onclick="toggle('dwcaadmindiv')">
@@ -224,7 +224,7 @@ include(__DIR__ . '/../../header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/');
+		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
 		if(file_exists('../../webservices/dwc/rss.xml')){
 			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
@@ -316,7 +316,7 @@ include(__DIR__ . '/../../header.php');
 			if($recFlagArr['nullBasisRec']){
 				echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec'].' records missing basisOfRecord and will not be published. Please go to <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_eventdate=&q_catalognumber=&q_othercatalognumbers=&q_observeruid=&q_recordenteredby=&q_dateentered=&q_datelastmodified=&q_processingstatus=&q_customfield1=basisOfRecord&q_customtype1=NULL&q_customvalue1=Something&q_customfield2=&q_customtype2=EQUALS&q_customvalue2=&q_customfield3=&q_customtype3=EQUALS&q_customvalue3=&collid='.$collId.'&csmode=0&occid=&occindex=0&orderby=&orderbydir=ASC">Edit Existing Occurrence Records</a> to correct this.</div>';
 			}
-			if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && ($publishGBIF || $publishIDIGBIO) && $dwcUri){
+			if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO) && $dwcUri){
 				if($publishGBIF && !$datasetKey) {
 					?>
 					<div style="margin:10px;">
@@ -327,14 +327,14 @@ include(__DIR__ . '/../../header.php');
 						the url after the last backslash of your collection's GBIF Data Provider page. If your collection is found,
                         please ensure that your data is not already published in GBIF. DO NOT PUBLISH your data if there is any chance it is
                         already published. Before activating your GBIF Key in this portal, you will also need to contact GBIF (<a href="mailto:helpdesk@gbif.org">helpdesk@gbif.org</a>) and
-                        request that the user: <b><?php echo $GBIF_USERNAME; ?></b> has permissions to create and edit datatsets for your collection.
+                        request that the user: <b><?php echo $GLOBALS['GBIF_USERNAME']; ?></b> has permissions to create and edit datatsets for your collection.
 						<form style="margin-top:10px;" name="gbifpubform" action="datapublisher.php" method="post" onsubmit="return processGbifOrgKey(this.form);">
 							GBIF Key <input type="text" name="gbifOrgKey" id="gbifOrgKey" value="" style="width:250px;"/>
 							<input type="hidden" name="collid" value="<?php echo $collId; ?>"/>
-							<input type="hidden" name="portalname" id="portalname" value='<?php echo $DEFAULT_TITLE; ?>'/>
+							<input type="hidden" name="portalname" id="portalname" value='<?php echo $GLOBALS['DEFAULT_TITLE']; ?>'/>
 							<input type="hidden" name="collname" id="collname" value='<?php echo $collArr['collname']; ?>'/>
 							<input type="hidden" name="aggKeysStr" id="aggKeysStr" value=''/>
-							<input type="hidden" id="gbifInstOrgKey" value='<?php echo $GBIF_ORG_KEY; ?>'/>
+							<input type="hidden" id="gbifInstOrgKey" value='<?php echo $GLOBALS['GBIF_ORG_KEY']; ?>'/>
 							<input type="hidden" id="gbifInstKey" value='<?php echo $installationKey; ?>'/>
 							<input type="hidden" id="gbifDataKey" value=''/>
 							<input type="hidden" id="gbifEndKey" value=''/>
@@ -395,9 +395,9 @@ include(__DIR__ . '/../../header.php');
 		<?php
 	}
 	else{
-		$catID = ($DEFAULTCATID ?? 0);
+		$catID = ($GLOBALS['DEFAULTCATID'] ?? 0);
 		$catTitle = $dwcaManager->getCategoryName($catID);
-		if($IS_ADMIN){
+		if($GLOBALS['IS_ADMIN']){
 			if($action === 'Create/Refresh Darwin Core Archive(s)'){
 				echo '<ul>';
 				$dwcaManager->setVerboseMode(3);
@@ -466,7 +466,7 @@ include(__DIR__ . '/../../header.php');
 						<td class="nowrap">
 							<?php
 							echo '<a href="'.$v['link'].'">DwC-A ('.$dwcaManager->humanFileSize($v['link']).')</a>';
-							if($IS_ADMIN){
+							if($GLOBALS['IS_ADMIN']){
 								?>
 								<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this archive?');">
 									<input type="hidden" name="colliddel" value="<?php echo $v['collid']; ?>">
