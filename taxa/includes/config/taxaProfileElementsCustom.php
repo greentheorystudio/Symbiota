@@ -216,7 +216,7 @@ ob_start();
                         <?php echo 'Click to Display<br/>100 Initial Images'; ?>
                     </a><br/>
                     - - - - -<br/>
-                    <a href="index.php?taxon=<?php echo $taxonManager->getTid(); ?>&allimages=1">
+                    <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"2","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
                         <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
                     </a>
                 </div>
