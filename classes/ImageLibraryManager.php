@@ -669,7 +669,7 @@ class ImageLibraryManager{
             }
         }
         $bottomLimit = ($pageRequest - 1)*$cntPerPage;
-        if($this->searchTermsArr['uploaddate1']){
+        if(array_key_exists('uploaddate1',$this->searchTermsArr) && $this->searchTermsArr['uploaddate1']){
             $sql .= 'ORDER BY i.InitialTimeStamp DESC ';
         }
         else{
