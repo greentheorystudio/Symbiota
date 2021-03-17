@@ -21,7 +21,7 @@ if($taxonRank){
         $footerRowElements = Array();
     }
     elseif($taxonRank === 180 || $displayingChildren){
-        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv);
+        $topRowElements = Array($penaScinameHeaderDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
         $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
