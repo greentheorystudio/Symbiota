@@ -1,7 +1,7 @@
 <?php
 	include_once(__DIR__ . '/../../config/symbini.php');
 	include_once(__DIR__ . '/../../classes/InventoryDynSqlManager.php');
-	header('Content-Type: text/html; charset=' .$CHARSET);
+	header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 	$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 	$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
@@ -10,7 +10,7 @@
 	$dynSqlManager = new InventoryDynSqlManager($clid);
 	$isEditable = false;
 	$statusStr = '';
-	if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid(), $USER_RIGHTS['ClAdmin'], true))){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid(), $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 		$isEditable = true;
 		
 		if($action === 'Save SQL Fragment'){
@@ -30,9 +30,9 @@
 <html lang="en">
 
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Flora Linkage Builder </title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flora Linkage Builder </title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script>
 		function updateSql(){
             const country = document.getElementById("countryinput").value;

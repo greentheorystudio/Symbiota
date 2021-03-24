@@ -1,5 +1,5 @@
 <?php
-$DB_SERVER = array(
+$GLOBALS['DB_SERVER'] = array(
     'host' => 'localhost',
     'username' => '',
     'password' => '',

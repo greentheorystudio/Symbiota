@@ -30,13 +30,12 @@ class ProfileManager extends Manager{
 
     public function reset(): void
     {
-        global $CLIENT_ROOT;
         $domainName = $_SERVER['HTTP_HOST'];
         if($domainName === 'localhost') {
             $domainName = false;
         }
-        setcookie('SymbiotaCrumb', '', time() - 3600, ($CLIENT_ROOT?:'/'),$domainName,false,true);
-        setcookie('SymbiotaCrumb', '', time() - 3600, ($CLIENT_ROOT?:'/'));
+        setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'),$domainName,false,true);
+        setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'));
         unset($_SESSION['userrights'], $_SESSION['userparams']);
     }
 
@@ -89,7 +88,6 @@ class ProfileManager extends Manager{
 
     private function setTokenCookie(): void
     {
-        global $CLIENT_ROOT;
         $tokenArr = array();
         if(!$this->token){
             $this->createToken();
@@ -102,7 +100,7 @@ class ProfileManager extends Manager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($CLIENT_ROOT ?: '/'), $domainName, false, true);
+            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 
@@ -242,8 +240,7 @@ class ProfileManager extends Manager{
 
     public function resetPassword($un): string
     {
-        global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
-        if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
+        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
             $newPassword = $this->generateNewPassword();
             $status = false;
             if($un){
@@ -272,11 +269,11 @@ class ProfileManager extends Manager{
                 $result->free();
 
                 $subject = 'Your password';
-                $bodyStr = 'Your ' .$DEFAULT_TITLE." (<a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."'>http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT. '</a>) password has been reset to: ' .$newPassword. ' ';
-                $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$CLIENT_ROOT."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
+                $bodyStr = 'Your ' .$GLOBALS['DEFAULT_TITLE']." (<a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."'>http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']. '</a>) password has been reset to: ' .$newPassword. ' ';
+                $bodyStr .= "<br/><br/>After logging in, you can reset your password by clicking on <a href='http://".$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT']."/profile/viewprofile.php'>View Profile</a> link and then click the Edit Profile tab.";
                 $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator ';
-                if($ADMIN_EMAIL){
-                    $bodyStr .= '<' .$ADMIN_EMAIL. '>';
+                if($GLOBALS['ADMIN_EMAIL']){
+                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
                 }
                 (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
                 $returnStr = 'Your new password was just emailed to: ' .$emailAddr;
@@ -430,9 +427,8 @@ class ProfileManager extends Manager{
 
     public function lookupUserName($emailAddr): bool
     {
-        global $DEFAULT_TITLE, $CLIENT_ROOT, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT;
         $status = false;
-        if(isset($SMTP_HOST, $SMTP_PORT) && $SMTP_HOST){
+        if(isset($GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) && $GLOBALS['SMTP_HOST']){
             if(!$this->validateEmailAddress($emailAddr)) {
                 return false;
             }
@@ -449,12 +445,12 @@ class ProfileManager extends Manager{
             }
             $result->free();
             if($loginStr){
-                $subject = $DEFAULT_TITLE.' Login Name';
-                $bodyStr = 'Your '.$DEFAULT_TITLE.' (<a href="http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'">http://'.
-                    $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'</a>) login name is: '.$loginStr.' ';
+                $subject = $GLOBALS['DEFAULT_TITLE'].' Login Name';
+                $bodyStr = 'Your '.$GLOBALS['DEFAULT_TITLE'].' (<a href="http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'">http://'.
+                    $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'</a>) login name is: '.$loginStr.' ';
                 $bodyStr .= '<br/>If you continue to have login issues, contact the System Administrator ';
-                if($ADMIN_EMAIL){
-                    $bodyStr .= '<' .$ADMIN_EMAIL. '>';
+                if($GLOBALS['ADMIN_EMAIL']){
+                    $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
                 }
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
                 if($mailerResult === 'Sent'){
@@ -477,11 +473,10 @@ class ProfileManager extends Manager{
 
     public function changeLogin($newLogin, $pwd = ''): bool
     {
-        global $SYMB_UID;
         $status = true;
         if($this->uid){
             $isSelf = true;
-            if($this->uid !== $SYMB_UID) {
+            if($this->uid !== $GLOBALS['SYMB_UID']) {
                 $isSelf = false;
             }
             $newLogin = trim($newLogin);
@@ -552,16 +547,15 @@ class ProfileManager extends Manager{
 
     public function getPersonalCollectionArr(): array
     {
-        global $USER_RIGHTS;
         $retArr = array();
         if($this->uid){
             $cAdminArr = array();
-            if(array_key_exists('CollAdmin',$USER_RIGHTS)) {
-                $cAdminArr = $USER_RIGHTS['CollAdmin'];
+            if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
+                $cAdminArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
             }
             $cArr = $cAdminArr;
-            if(array_key_exists('CollEditor',$USER_RIGHTS)) {
-                $cArr = array_merge($cArr, $USER_RIGHTS['CollEditor']);
+            if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
+                $cArr = array_merge($cArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
             }
             if($cArr){
                 $sql = 'SELECT collid, collectionname, colltype, CONCAT_WS(" ",institutioncode,collectioncode) AS instcode '.
@@ -594,11 +588,10 @@ class ProfileManager extends Manager{
 
     public function unreviewedCommentsExist($collid): int
     {
-        global $SYMB_UID;
         $retCnt = 0;
         $sql = 'SELECT count(c.comid) AS reccnt '.
             'FROM omoccurrences o INNER JOIN omoccurcomments c ON o.occid = c.occid '.
-            'WHERE (o.observeruid = '.$SYMB_UID.') AND (o.collid = '.$collid.') AND (c.reviewstatus < 3)';
+            'WHERE (o.observeruid = '.$GLOBALS['SYMB_UID'].') AND (o.collid = '.$collid.') AND (c.reviewstatus < 3)';
         if($rs = $this->conn->query($sql)){
             while($r = $rs->fetch_object()){
                 $retCnt = $r->reccnt;
@@ -638,7 +631,6 @@ class ProfileManager extends Manager{
 
     public function deleteUserTaxonomy($utid,$editorStatus = ''): string
     {
-        global $SYMB_UID, $USERNAME;
         $statusStr = 'SUCCESS: Taxonomic relationship deleted';
         if(is_numeric($utid) || $utid === 'all'){
             $sql = 'DELETE FROM usertaxonomy ';
@@ -654,8 +646,8 @@ class ProfileManager extends Manager{
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
             if($editCon->query($sql)){
-                if($this->uid === $SYMB_UID){
-                    $this->userName = $USERNAME;
+                if($this->uid === $GLOBALS['SYMB_UID']){
+                    $this->userName = $GLOBALS['USERNAME'];
                     $this->authenticate();
                 }
             }
@@ -669,7 +661,6 @@ class ProfileManager extends Manager{
 
     public function addUserTaxonomy($taxon,$editorStatus,$geographicScope,$notes): string
     {
-        global $SYMB_UID, $USERNAME;
         $statusStr = 'SUCCESS adding taxonomic relationship';
 
         $tid = 0;
@@ -686,13 +677,13 @@ class ProfileManager extends Manager{
         $rs1->close();
         if($tid){
             $sql2 = 'INSERT INTO usertaxonomy(uid, tid, taxauthid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) '.
-                'VALUES('.$this->uid.','.$tid.',1,"'.$editorStatus.'","'.$geographicScope.'","'.$notes.'",'.$SYMB_UID.',"'.$modDate.'") ';
+                'VALUES('.$this->uid.','.$tid.',1,"'.$editorStatus.'","'.$geographicScope.'","'.$notes.'",'.$GLOBALS['SYMB_UID'].',"'.$modDate.'") ';
             //echo $sql;
             $connection = new DbConnection();
             $editCon = $connection->getConnection();
             if($editCon->query($sql2)){
-                if($this->uid === $SYMB_UID){
-                    $this->userName = $USERNAME;
+                if($this->uid === $GLOBALS['SYMB_UID']){
+                    $this->userName = $GLOBALS['USERNAME'];
                     $this->authenticate();
                 }
             }
@@ -708,9 +699,8 @@ class ProfileManager extends Manager{
     }
 
     public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
-        global $CHARSET, $PARAMS_ARR, $SERVER_ROOT, $CLIENT_ROOT;
         $tempPath = $this->getTempPath();
-        $buFileName = $PARAMS_ARR['un'].'_'.time();
+        $buFileName = $GLOBALS['PARAMS_ARR']['un'].'_'.time();
         $zipArchive = null;
 
         if($zipFile && class_exists('ZipArchive')){
@@ -718,7 +708,7 @@ class ProfileManager extends Manager{
             $zipArchive->open($tempPath.$buFileName.'.zip', ZipArchive::CREATE);
         }
 
-        $cSet = str_replace('-','',strtolower($CHARSET));
+        $cSet = str_replace('-','',strtolower($GLOBALS['CHARSET']));
         echo '<li style="font-weight:bold;">Zip Archive created</li>';
         echo '<li style="font-weight:bold;">Adding occurrence records to archive...';
         flush();
@@ -757,12 +747,12 @@ class ProfileManager extends Manager{
 
             echo 'Done!</li> ';
             flush();
-            $fileUrl = str_replace($SERVER_ROOT,$CLIENT_ROOT,$tempPath.$buFileName.'.zip');
+            $fileUrl = str_replace($GLOBALS['SERVER_ROOT'],$GLOBALS['CLIENT_ROOT'],$tempPath.$buFileName.'.zip');
             $zipArchive->close();
             unlink($fileName.'_spec.csv');
         }
         else{
-            $fileUrl = str_replace($SERVER_ROOT,$CLIENT_ROOT,$tempPath.$buFileName.'_spec.csv');
+            $fileUrl = str_replace($GLOBALS['SERVER_ROOT'],$GLOBALS['CLIENT_ROOT'],$tempPath.$buFileName.'_spec.csv');
         }
         return $fileUrl;
     }
@@ -776,7 +766,6 @@ class ProfileManager extends Manager{
 
     private function setUserRights(): void
     {
-        global $USER_RIGHTS;
         if($this->uid){
             $userrights = array();
             $sql = 'SELECT role, tablepk FROM userroles WHERE (uid = '.$this->uid.') ';
@@ -787,18 +776,17 @@ class ProfileManager extends Manager{
             }
             $rs->free();
             $_SESSION['userrights'] = $userrights;
-            $USER_RIGHTS = $userrights;
+            $GLOBALS['USER_RIGHTS'] = $userrights;
         }
     }
 
     private function setUserParams(): void
     {
-        global $PARAMS_ARR, $USERNAME;
         $_SESSION['userparams']['un'] = $this->userName;
         $_SESSION['userparams']['dn'] = $this->displayName;
         $_SESSION['userparams']['uid'] = $this->uid;
-        $PARAMS_ARR = $_SESSION['userparams'];
-        $USERNAME = $this->userName;
+        $GLOBALS['PARAMS_ARR'] = $_SESSION['userparams'];
+        $GLOBALS['USERNAME'] = $this->userName;
     }
 
     public function setTokenAuthSql(): void
@@ -821,15 +809,14 @@ class ProfileManager extends Manager{
 
     public function setUserName($un = ''): bool
     {
-        global $USERNAME, $SYMB_UID;
         if($un){
             if(!$this->validateUserName($un)) {
                 return false;
             }
             $this->userName = $un;
         }
-        else if($this->uid === $SYMB_UID){
-            $this->userName = $USERNAME;
+        else if($this->uid === $GLOBALS['SYMB_UID']){
+            $this->userName = $GLOBALS['USERNAME'];
         }
         elseif($this->uid){
             $sql = 'SELECT username FROM users WHERE (uid = '.$this->uid.') ';
@@ -857,8 +844,7 @@ class ProfileManager extends Manager{
 
     private function getTempPath(): string
     {
-        global $SERVER_ROOT;
-        $tPath = $SERVER_ROOT;
+        $tPath = $GLOBALS['SERVER_ROOT'];
         if(substr($tPath,-1) !== '/' && substr($tPath,-1) !== '\\') {
             $tPath .= '/';
         }
@@ -1000,14 +986,13 @@ class ProfileManager extends Manager{
 
     public function getCollectionArr(): array
     {
-        global $USER_RIGHTS;
         $retArr = array();
         $cArr = array();
-        if(array_key_exists('CollAdmin',$USER_RIGHTS)) {
-            $cArr = $USER_RIGHTS['CollAdmin'];
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
+            $cArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
         }
-        if(array_key_exists('CollEditor',$USER_RIGHTS)) {
-            $cArr = array_merge($cArr, $USER_RIGHTS['CollEditor']);
+        if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
+            $cArr = array_merge($cArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
         }
         if(!$cArr) {
             return $retArr;

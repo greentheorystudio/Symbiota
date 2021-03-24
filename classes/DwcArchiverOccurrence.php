@@ -3,7 +3,6 @@
 class DwcArchiverOccurrence{
 
 	public static function getOccurrenceArr($schemaType, $extended){
-        global $QUICK_HOST_ENTRY_IS_ACTIVE;
         if($schemaType === 'pensoft'){
         	$occurFieldArr['Taxon_Local_ID'] = 'v.tid AS Taxon_Local_ID';
         }
@@ -92,7 +91,7 @@ class DwcArchiverOccurrence{
 		$occurFieldArr['habitat'] = 'o.habitat';
 		$occurTermArr['substrate'] = 'http://symbiota.org/terms/substrate';
 		$occurFieldArr['substrate'] = 'o.substrate';
-		if($QUICK_HOST_ENTRY_IS_ACTIVE){
+		if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
             $occurTermArr['host'] = 'http://symbiota.org/terms/host';
             $occurFieldArr['host'] = 'oas.verbatimsciname';
         }

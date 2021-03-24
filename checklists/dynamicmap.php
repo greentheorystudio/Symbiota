@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/DynamicChecklistManager.php');
-header('Content-Type: text/html; charset='.$CHARSET);
+include_once($GLOBALS['SERVER_ROOT'].'/classes/DynamicChecklistManager.php');
+header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
 $taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
@@ -9,16 +9,16 @@ $interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?htm
 
 $dynClManager = new DynamicChecklistManager();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - Dynamic Checklist Generator</title>
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Dynamic Checklist Generator</title>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
     <style type="text/css">
         .map {
             width:95%;
@@ -31,8 +31,8 @@ $dynClManager = new DynamicChecklistManager();
             display: none;
         }
     </style>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
 	<script type="text/javascript">
 	    var submitCoord = false;
 
@@ -63,7 +63,7 @@ $dynClManager = new DynamicChecklistManager();
 </head> 
 <body>
 	<?php 
-		include($SERVER_ROOT.'/header.php');
+		include($GLOBALS['SERVER_ROOT'].'/header.php');
     ?>
     <div class='navpath'>
         <a href='../index.php'>Home</a> &gt;
@@ -120,7 +120,7 @@ $dynClManager = new DynamicChecklistManager();
             <div style="clear:both;width:100%;height:40px;"></div>
 		</div>
 	<?php
- 	include_once($SERVER_ROOT.'/footer.php');
+ 	include_once($GLOBALS['SERVER_ROOT'].'/footer.php');
 	?>
     <script type="text/javascript">
         const selectInteraction = new ol.interaction.Select({

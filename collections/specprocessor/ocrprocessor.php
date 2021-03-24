@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
@@ -108,7 +108,7 @@ $procManager->setProjVariables('OCR Harvest');
 	<fieldset style="padding:20px;margin-top:20px;">
 		<legend><b>Batch OCR Images using the Tesseract OCR Engine</b></legend>
 		<?php
-		if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
+		if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
 			?>
 			<form name="batchTessform" action="processor.php" method="post" onsubmit="return validateBatchTessForm(this)">
 				<div style="padding:3px;">

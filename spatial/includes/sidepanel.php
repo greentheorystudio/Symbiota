@@ -197,7 +197,7 @@
                         </div>
                         <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
                             <?php
-                            if($SYMB_UID){
+                            if($GLOBALS['SYMB_UID']){
                                 echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
                             }
                             ?>
@@ -264,7 +264,7 @@
                             </div>
                             <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
                                 <?php
-                                if($SYMB_UID){
+                                if($GLOBALS['SYMB_UID']){
                                     echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
                                 }
                                 ?>

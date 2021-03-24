@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
@@ -22,7 +22,7 @@ if($lang) {
 
 $statusStr = '';
 $editable = false;
-if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 	$editable = true;
 }
 
@@ -50,7 +50,7 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $editVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$editVernArr['username'] = $PARAMS_ARR['un'];
+		$editVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
 		$statusStr = $tEditor->editVernacular($editVernArr);
 	}
 	elseif($action === 'Add Common Name'){
@@ -68,7 +68,7 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $addVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$addVernArr['username'] = $PARAMS_ARR['un'];
+		$addVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
 		$statusStr = $tEditor->addVernacular($addVernArr);
 	}
 	elseif($action === 'Delete Common Name'){
@@ -115,11 +115,11 @@ if($editable && $action){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
@@ -374,7 +374,7 @@ if($editable && $action){
 					<h2>You must be logged in and authorized to taxon data.</h2>
 					<h3>
 						<?php 
-							echo "Click <a href='".$CLIENT_ROOT. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$CLIENT_ROOT."/taxa/admin/tpeditor.php'>here</a> to login";
+							echo "Click <a href='".$GLOBALS['CLIENT_ROOT']. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$GLOBALS['CLIENT_ROOT']."/taxa/admin/tpeditor.php'>here</a> to login";
 						?>
 					</h3>
 				</div>

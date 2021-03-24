@@ -20,7 +20,7 @@ $checklistManager = new OccurrenceChecklistManager();
 if($stArrJson){
     $stArr = json_decode($stArrJson, true);
 
-    if($SOLR_MODE){
+    if($GLOBALS['SOLR_MODE']){
         $solrManager->setSearchTermsArr($stArr);
         $solrArr = $solrManager->getTaxaArr();
         if($taxonFilter && is_numeric($taxonFilter)){
@@ -45,7 +45,7 @@ if($stArrJson){
         <a style="cursor:pointer;" onclick="processDownloadChecklist();"><img style="width:15px;" src="../../images/download.svg" /></a>
 	</div>
 	<?php
-	if($KEY_MOD_IS_ACTIVE){
+	if($GLOBALS['KEY_MOD_IS_ACTIVE']){
 	?>
 		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Interactive Key Interface'>
 			<form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
@@ -57,7 +57,7 @@ if($stArrJson){
 		</div>
 	<?php
 	}
-	if($FLORA_MOD_IS_ACTIVE){
+	if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
 	?>
 		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Checklist Explorer Interface'>
 			<form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">

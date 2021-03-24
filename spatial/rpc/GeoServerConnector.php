@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-if(!isset($GEOSERVER_LAYER_WORKSPACE)){
-    $GEOSERVER_LAYER_WORKSPACE = '';
+if(!isset($GLOBALS['GEOSERVER_LAYER_WORKSPACE'])){
+    $GLOBALS['GEOSERVER_LAYER_WORKSPACE'] = '';
 }
 
 $pArr = array();
@@ -75,13 +75,13 @@ if(isset($_REQUEST['BBOX'])) {
 }
 
 if($pArr['SERVICE'] === 'WMS'){
-    $geoserverURL = $GEOSERVER_URL.'/'.$GEOSERVER_LAYER_WORKSPACE.'/wms';
+    $geoserverURL = $GLOBALS['GEOSERVER_URL'].'/'.$GLOBALS['GEOSERVER_LAYER_WORKSPACE'].'/wms';
 }
 elseif($pArr['REQUEST'] === 'wps'){
-    $geoserverURL = $GEOSERVER_URL.'/wps';
+    $geoserverURL = $GLOBALS['GEOSERVER_URL'].'/wps';
 }
 else{
-    $geoserverURL = $GEOSERVER_URL.'/'.$GEOSERVER_LAYER_WORKSPACE.'/wfs';
+    $geoserverURL = $GLOBALS['GEOSERVER_URL'].'/'.$GLOBALS['GEOSERVER_LAYER_WORKSPACE'].'/wfs';
 }
 $acceptFormat = ($pArr['REQUEST'] === 'GetMap'?'image/png; text/xml':'application/json');
 

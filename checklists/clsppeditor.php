@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/VoucherManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
@@ -9,7 +9,7 @@ $tabIndex = array_key_exists('tabindex',$_POST)?$_POST['tabindex']:0;
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -58,11 +58,11 @@ elseif( $action === 'Add Voucher'){
 }
 $clArray = $vManager->getChecklistData();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Species Details: <?php echo $vManager->getTaxonName(). ' of ' .$vManager->getClName(); ?></title>
-		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
 		<script type="text/javascript" src="../js/jquery.js"></script>
 		<script type="text/javascript" src="../js/jquery-ui.js"></script>
@@ -249,7 +249,7 @@ $clArray = $vManager->getChecklistData();
 					</div>
 					<div id="voucherdiv">
 						<?php 
-						if($OCCURRENCE_MOD_IS_ACTIVE){
+						if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE']){
 							?>
 							<div style="float:right;margin-top:10px;">
 								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">

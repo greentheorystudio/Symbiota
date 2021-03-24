@@ -527,18 +527,17 @@ class ChecklistManager {
 
 	public function getChecklists(): array
 	{
-		global $USER_RIGHTS;
 		$retArr = array();
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.LatCentroid, c.LongCentroid '.
 			'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
 			'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid '.
 			'WHERE ((c.access LIKE "public%") ';
-		if(isset($USER_RIGHTS['ClAdmin']) && $USER_RIGHTS['ClAdmin']) {
-			$sql .= 'OR (c.clid IN(' . implode(',', $USER_RIGHTS['ClAdmin']) . '))';
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']) {
+			$sql .= 'OR (c.clid IN(' . implode(',', $GLOBALS['USER_RIGHTS']['ClAdmin']) . '))';
 		}
 		$sql .= ') AND ((p.pid IS NULL) OR (p.ispublic = 1) ';
-		if(isset($USER_RIGHTS['ProjAdmin']) && $USER_RIGHTS['ProjAdmin']) {
-			$sql .= 'OR (p.pid IN(' . implode(',', $USER_RIGHTS['ProjAdmin']) . '))';
+		if(isset($GLOBALS['USER_RIGHTS']['ProjAdmin']) && $GLOBALS['USER_RIGHTS']['ProjAdmin']) {
+			$sql .= 'OR (p.pid IN(' . implode(',', $GLOBALS['USER_RIGHTS']['ProjAdmin']) . '))';
 		}
 		$sql .= ') ';
 		if($this->pid) {

@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
 $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -39,12 +39,12 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Glossary Term Information</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Term Information</title>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
@@ -200,8 +200,8 @@ if($glossId){
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
 							if(strpos($imgUrl, '/') === 0){
-								if($IMAGE_DOMAIN){
-									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+								if($GLOBALS['IMAGE_DOMAIN']){
+									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}
 								else{
 									$urlPrefix = 'http://';

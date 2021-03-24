@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = $_REQUEST['collid'];
 $displayIndex = array_key_exists('displayindex',$_REQUEST)?$_REQUEST['displayindex']:0;
@@ -20,25 +20,25 @@ if($taxAuthId){
 }
 
 $isEditor = false;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = true;
 }
 else if($collId){
-    if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
+    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
         $isEditor = true;
     }
 }
-else if(array_key_exists('Taxonomy',$USER_RIGHTS)) {
+else if(array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])) {
 	$isEditor = true;
 }
 
 $status = '';
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE; ?> Taxonomic Name Cleaner</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Name Cleaner</title>
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<?php
@@ -46,7 +46,7 @@ $status = '';
 		?>
 		<div id="innertext">
 			<?php 
-			if($SYMB_UID){
+			if($GLOBALS['SYMB_UID']){
 				if($status){ 
 					?>
 					<div style='float:left;margin:20px 0 20px 0;'>
@@ -199,7 +199,7 @@ $status = '';
 			else{
 				?>
 				<div style="font-weight:bold;">
-					Please <a href='../../profile/index.php?refurl=<?php echo $CLIENT_ROOT; ?>/taxa/admin/taxonomycleaner.php?collid=<?php echo $collId; ?>'>login</a>!
+					Please <a href='../../profile/index.php?refurl=<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/admin/taxonomycleaner.php?collid=<?php echo $collId; ?>'>login</a>!
 				</div>
 				<?php 
 			}

@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
-		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Usage Guidelines</title>
+		<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<?php
@@ -17,14 +17,14 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 
 			<h2>Recommended Citation Formats</h2>
 			<div style="margin:10px">
-				Use one of the following formats to cite data retrieved from the <?php echo $DEFAULT_TITLE; ?> network:
+				Use one of the following formats to cite data retrieved from the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> network:
 				<div style="font-weight:bold;margin-top:10px;">
 					General Citation:
 				</div>
 				<div style="margin:10px;">
 					<?php 
-					echo $DEFAULT_TITLE.'. '.date('Y').'. ';
-					echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php. ';
+					echo $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. ';
+					echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php. ';
 					echo 'Accessed on '.date('F d').'. '; 
 					?>
 				</div>
@@ -34,13 +34,13 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 				</div>
 				<div style="margin:10px;">
 					Biodiversity occurrence data published by: &lt;List of Collections&gt; 
-					(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
+					(Accessed through <?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Portal,
+					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
 					<b>For example:</b><br/>
 					Biodiversity occurrence data published by: 
 					Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden 
-					(Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
+					(Accessed through <?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Portal,
+					<?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
 				</div>
 			</div>
 			<div>
@@ -50,12 +50,12 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 		    <div style="margin:10px;">
 				<ul>
 					<li>
-						While <?php echo $DEFAULT_TITLE; ?> will make every effort possible to control and document the quality
+						While <?php echo $GLOBALS['DEFAULT_TITLE']; ?> will make every effort possible to control and document the quality
 						of the data it publishes, the data are made available "as is". Any report of errors in the data should be 
 						directed to the appropriate curators and/or collections managers. 
 					</li>
 					<li>
-						<?php echo $DEFAULT_TITLE; ?> cannot assume responsibility for damages resulting from mis-use or
+						<?php echo $GLOBALS['DEFAULT_TITLE']; ?> cannot assume responsibility for damages resulting from mis-use or
 						mis-interpretation of datasets or from errors or omissions that may exist in the data. 
 					</li>
 					<li>
@@ -64,7 +64,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 						contact the original investigator responsible for the data that they are accessing. 
 					</li>
 					<li>
-						<?php echo $DEFAULT_TITLE; ?> asks that users not redistribute data obtained from this site without permission for data owners.
+						<?php echo $GLOBALS['DEFAULT_TITLE']; ?> asks that users not redistribute data obtained from this site without permission for data owners.
 						However, links or references to this site may be freely posted.
 					</li>
 				</ul>

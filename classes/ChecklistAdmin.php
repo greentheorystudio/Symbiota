@@ -55,8 +55,7 @@ class ChecklistAdmin{
 	}
 
 	public function createChecklist($postArr){
-		global $SYMB_UID, $USERNAME;
-	    $defaultViewArr = array();
+		$defaultViewArr = array();
 		$defaultViewArr['ddetails'] = array_key_exists('ddetails',$postArr)?1:0;
 		$defaultViewArr['dcommon'] = array_key_exists('dcommon',$postArr)?1:0;
 		$defaultViewArr['dimages'] = array_key_exists('dimages',$postArr)?1:0;
@@ -99,9 +98,9 @@ class ChecklistAdmin{
 		$newClId = 0;
 		if($this->conn->query($sql)){
 			$newClId = $this->conn->insert_id;
-			$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$SYMB_UID.',"ClAdmin","fmchecklists",'.$newClId.') ');
+			$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ClAdmin","fmchecklists",'.$newClId.') ');
 			$newPManager = new ProfileManager();
-			$newPManager->setUserName($USERNAME);
+			$newPManager->setUserName($GLOBALS['USERNAME']);
 			$newPManager->authenticate();
 		}
 		return $newClId;
@@ -168,10 +167,9 @@ class ChecklistAdmin{
 	}
 
 	public function deleteChecklist($delClid){
-		global $SYMB_UID;
-	    $statusStr = true;
+		$statusStr = true;
 		$sql1 = 'SELECT uid FROM userroles '.
-			'WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'") AND uid <> '.$SYMB_UID;
+			'WHERE (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = "'.$delClid.'") AND uid <> '.$GLOBALS['SYMB_UID'];
 		$rs1 = $this->conn->query($sql1);
 		if($rs1->num_rows === 0){
 			$sql2 = 'DELETE FROM fmvouchers WHERE (clid = ' .$delClid.')';
@@ -277,11 +275,10 @@ class ChecklistAdmin{
 
 	public function getChildSelectArr(): array
     {
-		global $USER_RIGHTS;
-        $retArr = array();
+		$retArr = array();
 		$clidStr = '';
-		if(isset($USER_RIGHTS) && $USER_RIGHTS['ClAdmin']){
-			$clidStr = implode(',',$USER_RIGHTS['ClAdmin']);
+		if(isset($GLOBALS['USER_RIGHTS']) && $GLOBALS['USER_RIGHTS']['ClAdmin']){
+			$clidStr = implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']);
 		}
 		if($clidStr){
 			$sql = 'SELECT clid, name '.
@@ -300,10 +297,9 @@ class ChecklistAdmin{
 
 	public function addChildChecklist($clidAdd): string
     {
-		global $SYMB_UID;
-        $statusStr = '';
+		$statusStr = '';
 		$sql = 'INSERT INTO fmchklstchildren(clid, clidchild, modifieduid) '.
-			'VALUES('.$this->clid.','.$clidAdd.','.$SYMB_UID.') ';
+			'VALUES('.$this->clid.','.$clidAdd.','.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$statusStr = 'ERROR adding child checklist link';
@@ -425,11 +421,10 @@ class ChecklistAdmin{
 
 	public function getReferenceChecklists(): array
     {
-		global $USER_RIGHTS;
-        $retArr = array();
+		$retArr = array();
 		$sql = 'SELECT clid, name FROM fmchecklists WHERE access = "public" ';
-		if(isset($USER_RIGHTS['ClAdmin'])){
-			$clidStr = implode(',',$USER_RIGHTS['ClAdmin']);
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin'])){
+			$clidStr = implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']);
 			if($clidStr) {
                 $sql .= 'OR clid IN(' . $clidStr . ') ';
             }
@@ -510,14 +505,13 @@ class ChecklistAdmin{
 
 	public function getVoucherProjects(): array
     {
-		global $USER_RIGHTS;
 		$retArr = array();
 		$runQuery = true;
 		$sql = 'SELECT collid, collectionname '.
 			'FROM omcollections WHERE (colltype = "Observations" OR colltype = "General Observations") ';
-		if(!array_key_exists('SuperAdmin',$USER_RIGHTS)){
+		if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])){
 			$collInStr = '';
-			foreach($USER_RIGHTS as $k => $v){
+			foreach($GLOBALS['USER_RIGHTS'] as $k => $v){
 				if($k === 'CollAdmin' || $k === 'CollEditor'){
 					$collInStr .= ','.implode(',',$v);
 				}

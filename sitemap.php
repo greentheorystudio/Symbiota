@@ -1,16 +1,16 @@
 <?php
 include_once('config/symbini.php');
 include_once(__DIR__ . '/classes/SiteMapManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $smManager = new SiteMapManager();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Site Map</title>
-	<link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function submitTaxaNoImgForm(f){
 			if(f.clid.value !== ""){
@@ -61,10 +61,10 @@ $smManager = new SiteMapManager();
 			</ul>
 
 			<?php
-			$clList = $smManager->getChecklistList((array_key_exists('ClAdmin',$USER_RIGHTS)?$USER_RIGHTS['ClAdmin']:0));
+			$clList = $smManager->getChecklistList((array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])?$GLOBALS['USER_RIGHTS']['ClAdmin']:0));
 			$clAdmin = array();
-			if($clList && isset($USER_RIGHTS['ClAdmin'])){
-				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
+			if($clList && isset($GLOBALS['USER_RIGHTS']['ClAdmin'])){
+				$clAdmin = array_intersect_key($clList,array_flip($GLOBALS['USER_RIGHTS']['ClAdmin']));
 			}
 			$projList = $smManager->getProjectList();
 			if($projList){
@@ -96,8 +96,8 @@ $smManager = new SiteMapManager();
 			<fieldset style="margin:30px 0 10px 10px;padding-left:25px;padding-right:15px;">
 				<legend><b>Data Management Tools</b></legend>
 				<?php
-				if($SYMB_UID){
-					if($IS_ADMIN){
+				if($GLOBALS['SYMB_UID']){
+					if($GLOBALS['IS_ADMIN']){
 						?>
 						<h3>Administrative Functions (Super Admins only)</h3>
 						<ul>
@@ -111,17 +111,17 @@ $smManager = new SiteMapManager();
 								<a href="collections/cleaning/taxonomycleaner.php">Global Taxonomic Name Cleaner</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collmetadata.php">
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collmetadata.php">
                                     Create a New Collection or Observation Profile
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/admin/thumbnailbuilder.php">
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/admin/thumbnailbuilder.php">
                                     Thumbnail Builder Tool
 								</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/admin/guidmapper.php">
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/guidmapper.php">
                                     Collection GUID Mapper
 								</a>
 							</li>
@@ -129,11 +129,11 @@ $smManager = new SiteMapManager();
 						<?php
 					}
 
-					if($KEY_MOD_IS_ACTIVE || array_key_exists('KeyAdmin',$USER_RIGHTS)){
+					if($GLOBALS['KEY_MOD_IS_ACTIVE'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 						?>
 						<h3>Identification Keys</h3>
 						<?php
-						if(!$KEY_MOD_IS_ACTIVE && array_key_exists('KeyAdmin',$USER_RIGHTS)){
+						if(!$GLOBALS['KEY_MOD_IS_ACTIVE'] && array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 							?>
 							<div style="color:red;margin-left:10px;">
                                 Note: The Identification Key module is deactivated within this portal. However, you can override by activating idividual keys within the checklist administration page.
@@ -143,14 +143,14 @@ $smManager = new SiteMapManager();
 						?>
 						<ul>
 							<?php
-							if($IS_ADMIN || array_key_exists('KeyAdmin',$USER_RIGHTS)){
+							if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 								?>
 								<li>
-                                    You are authorized to access the <a href="<?php echo $CLIENT_ROOT; ?>/ident/admin/index.php">Characters and Character States Editor</a>
+                                    You are authorized to access the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/ident/admin/index.php">Characters and Character States Editor</a>
 								</li>
 								<?php
 							}
-							if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS) || array_key_exists('KeyAdmin',$USER_RIGHTS)){
+							if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS']) || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 								?>
 								<li>
                                     You are authorized to edit Identification Keys.
@@ -161,7 +161,7 @@ $smManager = new SiteMapManager();
                                     echo 'For coding characters in a table format, open the Mass-Update Editor for the following checklists. <br/>';
                                     echo '<ul>';
                                     foreach($clAdmin as $vClid => $name){
-                                        echo "<li><a href='".$CLIENT_ROOT. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
+                                        echo "<li><a href='".$GLOBALS['CLIENT_ROOT']. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
                                     }
                                     echo '</ul>';
                                     echo '</li>';
@@ -190,7 +190,7 @@ $smManager = new SiteMapManager();
                     </div>
 					<ul>
 						<?php
-						if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+						if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 							?>
 							<li>
 								<a href="taxa/admin/tpeditor.php?tabindex=1" target="_blank">
@@ -199,7 +199,7 @@ $smManager = new SiteMapManager();
 							</li>
 							<?php
 						}
-						if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('CollEditor',$USER_RIGHTS)){
+						if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
 							?>
 							<li>
 								<a href="collections/editor/observationsubmit.php">
@@ -219,13 +219,13 @@ $smManager = new SiteMapManager();
 					<h3>Biotic Inventory Projects</h3>
 					<ul>
 						<?php
-						if($IS_ADMIN){
+						if($GLOBALS['IS_ADMIN']){
 							echo '<li><a href="projects/index.php?newproj=1">Add a New Project</a></li>';
 							if($projList){
 								echo '<li><b>List of Current Projects</b> (click to edit)</li>';
 								echo '<ul>';
 								foreach($projList as $pid => $pArr){
-									echo '<li><a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'&emode=1">'.$pArr['name'].'</a></li>';
+									echo '<li><a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'&emode=1">'.$pArr['name'].'</a></li>';
 								}
 								echo '</ul>';
 							}
@@ -241,7 +241,7 @@ $smManager = new SiteMapManager();
 
 					<h3>Taxon Profile Page</h3>
 					<?php
-					if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+					if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 						?>
 						<div style="margin:10px;">
                             The following Species Profile page editing features are also available to editors via an
@@ -267,13 +267,13 @@ $smManager = new SiteMapManager();
 					<h3>Taxonomy</h3>
 					<ul>
 						<?php
-						if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+						if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 							?>
 							<li>Edit Taxonomic Placement (use <a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer)</a></li>
 							<li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
 							<li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
 							<?php
-							if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+							if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 								?>
 								<li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
 								<?php
@@ -296,7 +296,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if($clAdmin){
 							foreach($clAdmin as $k => $v){
-								echo "<li><a href='".$CLIENT_ROOT. '/checklists/checklist.php?cl=' .$k."&emode=1'>$v</a></li>";
+								echo "<li><a href='".$GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?cl=' .$k."&emode=1'>$v</a></li>";
 							}
 						}
 						else{
@@ -306,7 +306,7 @@ $smManager = new SiteMapManager();
 					</ul>
 
 					<?php
-					if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
+					if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
 						?>
 						<h3>Exsiccati</h3>
 						<div style="margin:10px;">
@@ -340,7 +340,7 @@ $smManager = new SiteMapManager();
 						if($collList = $smManager->getCollArr()){
 							foreach($collList as $k => $cArr){
 								echo '<li>';
-								echo '<a href="'.$CLIENT_ROOT.'/collections/misc/collprofiles.php?collid='.$k.'&emode=1">';
+								echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/collections/misc/collprofiles.php?collid='.$k.'&emode=1">';
 								echo $cArr['name'];
 								echo '</a>';
 								echo '</li>';
@@ -441,7 +441,7 @@ $smManager = new SiteMapManager();
 					<?php
 				}
 				else{
-					echo 'Please <a href="'.$CLIENT_ROOT.'/profile/index.php?refurl=../sitemap.php">login</a> to access editing tools.<br/>Contact a portal administrator for obtaining editing permissions.';
+					echo 'Please <a href="'.$GLOBALS['CLIENT_ROOT'].'/profile/index.php?refurl=../sitemap.php">login</a> to access editing tools.<br/>Contact a portal administrator for obtaining editing permissions.';
 				}
 			?>
 			</fieldset>

@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DbConnection.php');
 
 $connection = new DbConnection();
-header('Content-Type: application/json; charset=' .$CHARSET);
+header('Content-Type: application/json; charset=' .$GLOBALS['CHARSET']);
 $con = $connection->getConnection();
 $retArr = array();
 $term = $con->real_escape_string($_REQUEST['term']);
@@ -20,7 +20,7 @@ $rs->free();
 $con->close();
 
 if($retArr){
-	if($CHARSET === 'UTF-8'){
+	if($GLOBALS['CHARSET'] === 'UTF-8'){
 		echo json_encode($retArr);
 	}
 	else{
