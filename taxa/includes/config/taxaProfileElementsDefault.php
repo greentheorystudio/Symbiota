@@ -41,9 +41,9 @@ else{
         <?php
         $displayName = $spDisplay;
         if($taxonRank === 180) {
-            $displayName = '<i>' . $displayName . '</i> ';
+            $displayName = '<i>' . $displayName . '</i>';
         }
-        $displayName .= $taxonManager->getAuthor().' ';
+        $displayName .= ' ' . $taxonManager->getAuthor().' ';
         if($taxonRank > 140){
             $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
             $displayName .= ' <a href="'.$parentLink.'">';

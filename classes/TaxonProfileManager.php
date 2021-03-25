@@ -154,7 +154,7 @@ class TaxonProfileManager {
         while($row = $result->fetch_object()){
             $this->sciName = $row->SciName;
             $a = $row->Author;
-            $this->acceptedTaxa[$row->Tid] = "<i>$this->sciName</i> $a";
+            $this->acceptedTaxa[$row->Tid] = '<i>$this->sciName</i> ' . $a;
             if($this->taxAuthId){
                 $this->rankId = $row->RankId;
                 $this->author = $a;
