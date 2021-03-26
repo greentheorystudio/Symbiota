@@ -52,6 +52,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
@@ -367,7 +368,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<div style="margin:10px 0;">
 												<input type="checkbox" name="newrecs" value="1" /> (e.g. records processed within portal)
 												<a id="newrecsinfo" href="#" onclick="return false" title="More Information">
-													<img src="../../images/info.png" style="width:13px;" />
+                                                    <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 												</a>
 												<div id="newrecsinfodialog">
 													Limit to new records entered and processed directly within the
@@ -468,7 +469,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="symbiota" CHECKED />
 											Symbiota Native
 											<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
-												<img src="../../images/info.png" style="width:13px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 											</a><br/>
 											<div id="schemanativeinfodialog">
 												Symbiota native is very similar to Darwin Core except with the addtion of a few fields
@@ -477,7 +478,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="dwc" />
 											Darwin Core
 											<a id="schemainfodwc" href="#" target="" title="More Information">
-												<img src="../../images/info.png" style="width:13px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 											</a><br/>
 											<div id="schemadwcinfodialog">
 												Darwin Core is a TDWG endorsed exchange standard specifically for biodiversity datasets.

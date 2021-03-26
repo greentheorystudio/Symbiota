@@ -45,6 +45,7 @@ elseif($activeCollArr){
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
 		<script>
@@ -188,7 +189,7 @@ elseif($activeCollArr){
 					<?php
 					if($activeCollArr && count($collMap) > 1){
 						?>
-						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" /></a></div>
+						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a></div>
 						<div style="clear:both">
 							<fieldset id="mult_coll_fs" style="display:none;padding: 15px;margin:20px;">
 								<legend><b>Multiple Collection Selector</b></legend>

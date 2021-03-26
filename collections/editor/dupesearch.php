@@ -54,6 +54,7 @@ if(!$GLOBALS['IS_ADMIN']){
     <style type="text/css">
         table.styledtable td { white-space: nowrap; }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         const occArr = [];
         <?php
@@ -183,7 +184,7 @@ if(!$GLOBALS['IS_ADMIN']){
                         <td>
                             <?php
                             if($collId === $oArr['collid']){
-                                echo '<a href="occurrenceeditor.php?occid='.$occId.'"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>';
+                                echo '<a href="occurrenceeditor.php?occid='.$occId.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
                             }
                             ?>
                         </td>
@@ -205,7 +206,7 @@ if(!$GLOBALS['IS_ADMIN']){
                     ?>
                     <div style="float:right;margin:10px;">
                         <a href="occurrenceeditor.php?occid=<?php echo $occId; ?>">
-                            <img src="../../images/edit.svg" style="width:20px;height:20px;" />
+                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
                         </a>
                     </div>
                     <?php

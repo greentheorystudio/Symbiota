@@ -135,6 +135,7 @@ else{
     </style>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=201711"></script>
@@ -150,11 +151,11 @@ else{
 		if(($isEditor || $crowdSourceMode)){
 			?>
 			<div style="text-align:right;width:790px;margin:-30px 15px 5px 0;">
-				<a href="#" title="Search / Filter" onclick="toggleSearch();return false;"><img src="../../images/find.png" style="width:14px;" /></a>
+				<a href="#" title="Search / Filter" onclick="toggleSearch();return false;"><i style="height:15px;width:15px;" class="fas fa-search"></i></a>
 				<?php
 				if($isEditor === 1 || $isGenObs){
 					?>
-					<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img src="../../images/editplus.png" style="width:14px;" /></a>
+					<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><i style="height:15px;width:15px;" class="far fa-plus-square"></i></a>
 					<?php
 				}
 				?>
@@ -310,7 +311,7 @@ else{
 						echo '<td>';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" title="open in same window">'.$id.'</a> ';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
-						echo '<img src="../../images/newwin.png" style="width:10px;" />';
+						echo '<i style="height:15px;width:15px;" class="fas fa-external-link-alt"></i>';
 						echo '</a>';
 						echo '</td>'."\n";
 						foreach($headerMap as $k => $v){

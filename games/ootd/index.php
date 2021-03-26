@@ -31,6 +31,7 @@ if($submitAction){
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/games.ootd.js"></script>
@@ -145,7 +146,7 @@ if($submitAction){
 					<div style="font-size:18px;text-align:center;margin: 20px auto;" >
 						<b>Name that <?php echo ($ootdGameType ?? 'organism'); ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
-							<img src="../../images/help-circle.svg" style="height:20px;"/>
+							<i style="width:15px;height:15px;" class="far fa-question-circle"></i>
 						</a>
 						<div id="gameinfodialog" title="How to Play">
 							Look at the picture, and see if you can figure out what the <?php echo ($ootdGameType ?? 'organism'); ?> is. If you get completely stumped, you can

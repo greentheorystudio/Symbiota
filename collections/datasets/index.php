@@ -40,6 +40,7 @@ elseif($action == 'addAllToDataset'){
         legend{ font-weight: bold; }
         .dataset-item{ margin-bottom: 10px }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -107,7 +108,7 @@ include(__DIR__ . '/../../header.php');
     ?>
     <div>
         <div style="float:right;margin:10px;" title="Create New Dataset" onclick="toggle('adddiv')">
-            <img src="../../images/add.png" style="width:14px;" />
+            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
         </div>
         <h2>Occurrence Dataset Management</h2>
         <div>These tools will allow you to define and manage datasets profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.</div>

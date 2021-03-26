@@ -67,6 +67,7 @@ if($collMap){
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
@@ -165,7 +166,7 @@ if($collMap){
 							<input type="text" id="eventdate" name="eventdate" tabindex="18" style="width:120px;background-color:lightyellow;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" />
 						</div>
 						<div style="float:left;margin:15px 0 0 5px;cursor:pointer;" onclick="toggle('obsextradiv')">
-							<img src="../../images/editplus.png" style="width:15px;" />
+							<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 						</div>
 					</div>
 					<div id="obsextradiv" style="clear:both;padding:3px 0 0 10px;margin-bottom:20px;display:none;">
@@ -229,7 +230,7 @@ if($collMap){
 							<br/>
 							<input type="text" id="decimallongitude" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
 							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openSpatialInputWindow('input-point,uncertainty');">
-								<img src="../../images/globe.svg" style="width:12px;" title="Coordinate Map Aid" />
+								<i style="height:15px;width:15px;" title="Coordinate Map Aid" class="fas fa-globe"></i>
 							</span>
 							<span style="margin:15px 2px 0 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
 								DMS
@@ -366,7 +367,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img2div')" title="Add a Second Image">
-							<img src="../../images/add.png" style="width:15px;" />
+							<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img2div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -383,7 +384,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img3div')" title="Add a third Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img3div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -400,7 +401,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img4div')" title="Add a forth Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img4div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -417,7 +418,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img5div')" title="Add a fifth Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img5div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>

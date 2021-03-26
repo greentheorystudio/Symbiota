@@ -183,6 +183,7 @@ if($clArray['locality']){
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
@@ -317,18 +318,18 @@ if(!$printMode){
             ?>
             <div style="float:right;width:auto;">
 					<span>
-						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="Checklist Administration">
-							<img style="height:15px" src="../images/editA.svg" />
+						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
+							<i style='width:20px;height:20px;' class="fas fa-cog"></i>
                         </a>
 					</span>
                 <span>
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="Manage Linked Voucher">
-							<img style="height:15px" src="../images/editV.svg" />
+						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
+							<i style='width:20px;height:20px;' class="fas fa-link"></i>
                         </a>
 					</span>
                 <span onclick="toggle('editspp');return false;">
-						<a href="#" title="Edit Species List">
-							<img style="height:15px" src="../images/editspp.svg" />
+						<a href="#" style="text-decoration: none;" title="Edit Species List">
+							<i style='width:20px;height:20px;' class="fas fa-clipboard-list"></i>
                         </a>
 					</span>
             </div>
@@ -345,7 +346,7 @@ if(!$printMode){
             ?>
             <div style="float:left;padding:5px;">
                 <a href="../ident/key.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid;?>&taxon=All+Species">
-                    <img src='../images/key.svg' style="width:15px; height:15px" title='Open Symbiota Key' />
+                    <i style='width:15px; height:15px;' class="fas fa-key"></i>
                 </a>
             </div>
             <?php
@@ -353,12 +354,12 @@ if(!$printMode){
         if(!$printMode && $taxaArray){
             ?>
             <div style="padding:5px;">
+                <span onmouseover="mopen('m1')" onmouseout="mclosetime()">
+                    <i class="fas fa-gamepad"></i>
+                </span>
                 <ul id="sddm">
                     <li>
-					    	<span onmouseover="mopen('m1')" onmouseout="mclosetime()">
-					    		<img src="../images/games/games.png" style="height:17px;" title="Access Species List Games" />
-					    	</span>
-                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
                             $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon.($clManager->getThesFilter()? '&thesfilter=' .$clManager->getThesFilter(): '');
                             ?>
@@ -507,17 +508,17 @@ if(!$printMode){
                                     <div style="width:100px;display:flex;justify-content:flex-end;align-items:center;">
                                         <div id="wordicondiv" style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Export to DOCX" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');">
-                                                <img src="../images/wordicon.png" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="far fa-file-word"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Print in Browser" onclick="changeOptionFormAction('checklist.php','_blank');">
-                                                <img src="../images/printer.svg" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="fas fa-print"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Download List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');">
-                                                <img src="../images/download.svg" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="fas fa-download"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -598,7 +599,7 @@ if(!$printMode){
                         <div style="text-align:center;padding:10px">
                             <div>
                                 <a href='<?php echo $url; ?>' target="_blank">
-                                    Open in Spatial Window
+                                    <i style='width:40px;height:40px;' title="Open in Spatial Window" class="fas fa-globe"></i>
                                 </a>
                             </div>
                         </div>
@@ -756,7 +757,7 @@ if(!$printMode){
                             ?>
                             <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
 									<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');">
-										<img src='../images/edit.svg' style='width:13px;' title='edit details' />
+										<i style='width:13px;height:13px;' title='edit details' class="fas fa-edit"></i>
 									</a>
 								</span>
                             <?php
@@ -764,7 +765,7 @@ if(!$printMode){
                                 ?>
                                 <span class="editspp" style="display:none;">
 										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<img src='../images/link.svg' style='width:13px;' title='Link Voucher Specimens' />
+											<i style='width:13px;height:13px;' title='Link Voucher Specimens' class="fas fa-link"></i>
 										</a>
 									</span>
                                 <?php

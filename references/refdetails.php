@@ -72,6 +72,7 @@ else{
 			font-weight: normal;
 		}
 	</style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=3"></script>
@@ -134,7 +135,7 @@ else{
 										foreach($authArr as $k => $v){
 											echo '<li>';
 											echo '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
-											echo ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
+											echo ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
 											echo '</li>';
 										}
 										echo '</ul>';

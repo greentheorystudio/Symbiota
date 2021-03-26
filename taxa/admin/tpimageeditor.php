@@ -169,7 +169,7 @@ if($tid){
 								<?php $imageEditor->echoPhotographerSelect($GLOBALS['PARAMS_ARR']['uid']); ?>
 							</select>
 							<a href="#" onclick="toggle('photooveridediv');return false;" title="Display photographer override field">
-								<img src="../../images/editplus.png" style="border:0;width:12px;" />
+								<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 							</a>
 						</div>
 						<div id="photooveridediv" style='margin:2px 0 5px 10px;display:none;'>
@@ -259,7 +259,7 @@ if($tid){
                                 ?>
                                 <div style="float:right;margin-right:10px;" title="Must have editing privileges for this collection managing image">
                                     <a href="../../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2" target="_blank">
-                                        <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;"/>
+                                        <i style="height:15px;width:15px;" class="far fa-edit"></i>
                                     </a>
                                 </div>
                                 <?php
@@ -268,7 +268,7 @@ if($tid){
                                 ?>
                                 <div style='float:right;margin-right:10px;'>
                                     <a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr['imgid'];?>&emode=1" target="_blank">
-                                        <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;" />
+                                        <i style="height:15px;width:15px;" class="far fa-edit"></i>
                                     </a>
                                 </div>
                                 <?php

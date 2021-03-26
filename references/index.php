@@ -39,6 +39,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=2"></script>
@@ -86,7 +87,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 			<div id="reflistdiv" style="min-height:200px;">
 				<div style="float:right;margin:10px;">
 					<a href="#" onclick="toggle('newreferencediv');">
-						<img src="../images/add.png" alt="Create New Reference" />
+						<i style="height:20px;width:20px;color:green;" title="Create New Reference" class="fas fa-plus"></i>
 					</a>
 				</div>
 				<div id="newreferencediv" style="display:none;">

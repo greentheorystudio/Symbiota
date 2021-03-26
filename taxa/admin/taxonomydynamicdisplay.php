@@ -42,6 +42,7 @@ if($target){
             height: 0;
         }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js" data-dojo-config="async: true"></script>
@@ -84,7 +85,7 @@ include(__DIR__ . '/../../header.php');
         ?>
         <div style="float:right;" title="Add a New Taxon">
             <a href="taxonomyloader.php">
-                <img style='border:0;width:15px;' src='../../images/add.png'/>
+                <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
             </a>
         </div>
         <?php

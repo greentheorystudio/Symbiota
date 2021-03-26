@@ -251,7 +251,7 @@ class TaxonomyDisplayManager{
 				}
 				if($this->taxonRank < 140 && !$this->displayFullTree && $taxonRankId === 140){
 					echo '<a href="taxonomydisplay.php?target='.$sciName.'">';
-					echo '<img src="../../images/tochild.png" style="width:9px;" />';
+					echo '<i style="height:15px;width:15px;" class="fas fa-level-down-alt"></i>';
 					echo '</a>';
 				}
 				echo '</div>';

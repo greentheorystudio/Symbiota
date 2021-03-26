@@ -37,7 +37,7 @@ $htmlStr = '<div style="float:right;">';
 $targetClid = $collManager->getSearchTerm('targetclid');
 if($targetTid && $collManager->getClName()){
     $htmlStr .= '<div style="cursor:pointer;margin:8px 8px 0px 0px;" onclick="addAllVouchersToCl('.$targetTid.')" title="Link All Vouchers on Page">';
-    $htmlStr .= '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></div>';
+    $htmlStr .= '<i style="width:15px;height:15px;margin-right:5px;" class="fas fa-folder-plus"></i></div>';
 }
 $htmlStr .= '</div><div style="margin:5px;">';
 $htmlStr .= '<div><b>Dataset:</b> '.$collManager->getDatasetSearchStr().'</div>';
@@ -62,17 +62,17 @@ $htmlStr .= '<option value="gpx">GPX</option>';
 $htmlStr .= '</select>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div>';
-$htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><img src="../images/download.svg" style="width:15px; height:15px" /></button>';
+$htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><i style="width:15px;height:15px;" class="fas fa-download"></i></button>';
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
 $htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
 if($GLOBALS['SYMB_UID']){
-    $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><i style="width:15px;height:15px;" class="fas fa-layer-group"></i></button></div>';
 }
-$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>';
-$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
+$htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
+$htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
 if(strlen($stArrJson) <= 1800){
-    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
+    $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
 }
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
@@ -179,12 +179,12 @@ if($occurArr){
         if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
             $htmlStr .= '<div style="float:right;" title="Edit Occurrence Record">';
             $htmlStr .= '<a href="editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">';
-            $htmlStr .= '<img src="../images/edit.svg" style="width:15px;height:15px;border:0;" /></a></div>';
+            $htmlStr .= '<i style="width:15px;height:15px;" class="far fa-edit"></i></a></div>';
         }
         if($targetTid && $collManager->getClName()){
             $htmlStr .= '<div style="float:right;" >';
             $htmlStr .= '<a href="#" onclick="addVoucherToCl('.$occid.','.$targetClid.','.$targetTid.')" title="Link occurrence voucher to '.$collManager->getClName().';return false;">';
-            $htmlStr .= '<img src="../images/voucheradd.png" style="border:solid 1px gray;height:13px;margin-right:5px;" /></a></div>';
+            $htmlStr .= '<i style="width:15px;height:15px;" class="fas fa-folder-plus"></i></a></div>';
         }
         if(isset($fieldArr['img'])){
             $htmlStr .= '<div style="float:right;margin:5px 25px;">';

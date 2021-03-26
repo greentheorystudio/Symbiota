@@ -261,7 +261,7 @@ else{
                     <option <?php echo ($qCustomCloseParen1 === ')'?'SELECTED':''); ?> value=")">)</option>
                 </select>
 				<a href="#" onclick="toggleCustomDiv2();return false;">
-					<img src="../../images/editplus.png" />
+					<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 				</a>
 			</div>
 			<div id="customdiv2" style="margin:2px 0;display:<?php echo ($qCustomValue2||$qCustomType2 === 'NULL'||$qCustomType2 === 'NOTNULL'?'block':'none');?>;">
@@ -299,7 +299,7 @@ else{
                     <option <?php echo ($qCustomCloseParen2 === ')'?'SELECTED':''); ?> value=")">)</option>
                 </select>
 				<a href="#" onclick="toggleCustomDiv3();return false;">
-					<img src="../../images/editplus.png" />
+                    <i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 				</a>
 			</div>
 			<div id="customdiv3" style="margin:2px 0;display:<?php echo ($qCustomValue3||$qCustomType3 === 'NULL'||$qCustomType3 === 'NOTNULL'?'block':'none');?>;">
@@ -337,7 +337,7 @@ else{
                     <option <?php echo ($qCustomCloseParen3 === ')'?'SELECTED':''); ?> value=")">)</option>
                 </select>
                 <a href="#" onclick="toggleCustomDiv4();return false;">
-                    <img src="../../images/editplus.png" />
+                    <i style="height:15px;width:15px;" class="far fa-plus-square"></i>
                 </a>
 			</div>
             <div id="customdiv4" style="margin:2px 0;display:<?php echo ($qCustomValue4||$qCustomType4 === 'NULL'||$qCustomType4 === 'NOTNULL'?'block':'none');?>;">
@@ -375,7 +375,7 @@ else{
                     <option <?php echo ($qCustomCloseParen4 === ')'?'SELECTED':''); ?> value=")">)</option>
                 </select>
                 <a href="#" onclick="toggleCustomDiv5();return false;">
-                    <img src="../../images/editplus.png" />
+                    <i style="height:15px;width:15px;" class="far fa-plus-square"></i>
                 </a>
             </div>
             <div id="customdiv5" style="margin:2px 0;display:<?php echo ($qCustomValue5||$qCustomType5 === 'NULL'||$qCustomType5 === 'NOTNULL'?'block':'none');?>;">
@@ -447,7 +447,7 @@ else{
 					?>
 					<div style="float:right;margin-top:10px;" title="Go to Label Printing Module">
 						<a href="../reports/labelmanager.php?collid=<?php echo $collId.$qryStr; ?>">
-							<img src="../../images/list.svg" style="width:15px;" />
+							<i style="height:15px;width:15px;" class="fas fa-list"></i>
 						</a>
 					</div>
 					<?php 
