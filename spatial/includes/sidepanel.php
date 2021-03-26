@@ -184,7 +184,7 @@
                 </div>
                 <div id="queryrecordsdiv">
                     <div style="width:100%;margin-top:-10px;display:flex;justify-content:space-around;align-items:center;">
-                        <div style="width:120px;display:flex;justify-content:flex-start;align-items:center;">
+                        <div style="display:flex;justify-content:flex-start;align-items:center;">
                             <select data-role="none" id="querydownloadselect">
                                 <option>Download Type</option>
                                 <option value="csv">CSV</option>
@@ -195,7 +195,7 @@
                             </select>
                             <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(false,queryRecCnt);"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
                         </div>
-                        <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
+                        <div style="display:flex;justify-content:flex-end;align-items:center;">
                             <?php
                             if($GLOBALS['SYMB_UID']){
                                 echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><i style="height:15px;width:15px;" class="fas fa-layer-group"></i></button></div>';
