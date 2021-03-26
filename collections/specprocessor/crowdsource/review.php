@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/index.php?tabindex=2&' . $_SERVER['QUERY_STRING']);
 }
 
@@ -18,7 +18,7 @@ $csManager = new OccurrenceCrowdSource();
 $csManager->setCollid($collid);
 
 $isEditor = 0;
-if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 	$isEditor = 1;
 }
 
@@ -29,11 +29,12 @@ if(array_key_exists('occid',$_POST)){
 
 $projArr = $csManager->getProjectDetails();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Crowdsourcing Reviewer</title>
-    <link href="../../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Crowdsourcing Reviewer</title>
+    <link href="../../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <script src="../../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function selectAll(cbObj){
             const cbStatus = cbObj.checked;
@@ -174,7 +175,7 @@ $projArr = $csManager->getProjectDetails();
 					</form>
 				</div>
 				<div style="font-weight:bold;font-size:130%;">
-					<?php echo ($collid?$projArr['name']:$USER_DISPLAY_NAME); ?>
+					<?php echo ($collid?$projArr['name']:$GLOBALS['USER_DISPLAY_NAME']); ?>
 				</div>
 				<div style="clear:both;">
 					<?php echo $navStr; ?>
@@ -237,11 +238,11 @@ $projArr = $csManager->getProjectDetails();
 											<?php
 											if($isEditor || $rArr['reviewstatus'] === 5){
 												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid='.$occid.'" target="_blank">';
-												echo '<img src="../../../images/edit.svg" style="border:solid 1px gray;height:13px;" />';
+												echo '<i style="height:15px;width:15px;" class="far fa-edit"></i>';
 												echo '</a>';
 											}
 											else{
-												echo '<img src="../../../images/cross-out.png" style="border:solid 1px gray;height:13px;" />';
+												echo '<i style="height:15px;width:15px;" class="far fa-times-circle"></i>';
 											}
 											?>
 										</td>

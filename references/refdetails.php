@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -59,11 +59,11 @@ else{
 	header('Location: index.php');
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Reference Management</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<style type="text/css">
 		#tabs a{
@@ -72,6 +72,7 @@ else{
 			font-weight: normal;
 		}
 	</style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=3"></script>
@@ -95,7 +96,7 @@ else{
     </div>
 	<div id="innertext">
 		<?php 
-		if($SYMB_UID){
+		if($GLOBALS['SYMB_UID']){
 			if($statusStr){
 				?>
 				<div style="margin:15px;color:red;">
@@ -134,7 +135,7 @@ else{
 										foreach($authArr as $k => $v){
 											echo '<li>';
 											echo '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
-											echo ' <input type="image" style="margin-left:5px;" src="../images/del.png" onclick="deleteRefAuthor('.$k.');" title="Delete author">';
+											echo ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
 											echo '</li>';
 										}
 										echo '</ul>';
@@ -512,7 +513,7 @@ else{
 			</div>
 			<?php 
 		}
-		else if(!$SYMB_UID){
+		else if(!$GLOBALS['SYMB_UID']){
             echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
         }
         else{

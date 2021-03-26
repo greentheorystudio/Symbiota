@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -44,8 +44,8 @@ if($rowsPerPage === 3){
 $labelManager->setCollid($collid);
 
 $isEditor = 0;
-if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
@@ -218,7 +218,7 @@ foreach($labelArr as $occid => $occArr){
 	}
 }
 
-$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_annotations_'.$ses_id.'.'.$exportExtension;
+$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_'.date('Ymd').'_annotations_'.$ses_id.'.'.$exportExtension;
 $phpWord->save($targetFile, $exportEngine);
 
 header('Content-Description: File Transfer');

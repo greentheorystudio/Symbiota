@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -12,7 +12,7 @@ $collid  = $_REQUEST['collid'];
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $occurManager = new OccurrenceEditorImages();
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 $occurManager->setCollid($collid);
@@ -21,20 +21,20 @@ $collMap = $occurManager->getCollMap();
 $statusStr = '';
 $isEditor = 0;
 if($collid){
-	if($IS_ADMIN){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+	elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 		$isEditor = 1;
 	}
 }
 if($isEditor && $action === 'Submit Occurrence') {
     if($occurManager->addImageOccurrence($_POST)){
         $occid = $occurManager->getOccid();
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
         if($occid) {
@@ -52,11 +52,11 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	include('includes/config/occurVarDefault.php');
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Image Submission</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Image Submission</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />	
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -189,7 +189,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 					</div>
 					<div style="clear:both;margin:3px;">
 						<?php
-						if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
+						if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
 							?>
 							<div style="float:left;">
 								<input name="tessocr" type="checkbox" value=1 <?php echo (isset($_POST['tessocr'])?'checked':''); ?> />

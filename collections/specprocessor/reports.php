@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -15,7 +15,7 @@ $procManager->setCollId($collid);
 $tabIndex = 4;
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
  	$isEditor = true;
 }
 ?>
@@ -52,9 +52,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 						<?php
 						echo $statsArr['total'];
 						if($statsArr['total']){
-							echo '<span style="margin-left:10px;"><a href="'.$eUrl.$urlBase.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="'.$beUrl.$urlBase.'" target="_blank" title="Editor in Table View"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="../misc/collbackup.php?collid='.$collid.'" target="_blank" title="Download Full Data"><img src="../../images/download.svg" style="width:13px;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="'.$eUrl.$urlBase.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+							echo '<span style="margin-left:10px;"><a href="'.$beUrl.$urlBase.'" target="_blank" title="Editor in Table View"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+							echo '<span style="margin-left:10px;"><a href="../misc/collbackup.php?collid='.$collid.'" target="_blank" title="Download Full Data"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 						}
 						?>
 					</div>
@@ -65,9 +65,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 						if($statsArr['noimg']){
 							$eUrl1 = $eUrl.$urlBase.'&q_withoutimg=1';
 							$beUrl1 = $beUrl.$urlBase.'&q_withoutimg=1';
-							echo '<span style="margin-left:10px;"><a href="'.$eUrl1.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="'.$beUrl1.'" target="_blank" title="Batch Edit Records"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
-							echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=dlnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><img src="../../images/download.svg" style="width:13px;" /></a></span>';
+							echo '<span style="margin-left:10px;"><a href="'.$eUrl1.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+							echo '<span style="margin-left:10px;"><a href="'.$beUrl1.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+							echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=dlnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 						}
 						?>
 					</div>
@@ -81,9 +81,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 							if($statsArr['noskel']){
 								$eUrl3 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
 								$beUrl3 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl3.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl3.'" target="_blank" title="Batch Edit Records"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=noskel&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><img src="../../images/download.svg" style="width:14px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$eUrl3.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$beUrl3.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=noskel&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
 						</div>
@@ -98,9 +98,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 							if($statsArr['unprocnoimg']){
 								$eUrl2 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
 								$beUrl2 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl2.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl2.'" target="_blank" title="Batch Edit Records"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><img src="../../images/download.svg" style="width:13px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$eUrl2.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$beUrl2.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
 						</div>
@@ -115,9 +115,9 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 							if($statsArr['unprocwithdata']){
 								$eUrl3b = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
 								$beUrl3b = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl3b.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl3b.'" target="_blank" title="Batch Edit Records"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
-								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocwithdata&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><img src="../../images/download.svg" style="width:14px;" /></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$eUrl3b.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="'.$beUrl3b.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocwithdata&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
 						</div>
@@ -139,8 +139,8 @@ if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid,
 								if($cnt){
 									$eUrl4 = $eUrl.$urlBase.'&q_processingstatus='.$processingStatus;
 									$beUrl4 = $beUrl.$urlBase.'&q_processingstatus='.$processingStatus;
-									echo '<span style="margin-left:10px;"><a href="'.$eUrl4.'" target="_blank" title="Edit Records"><img src="../../images/edit.svg" style="width:12px;" /></a></span>';
-									echo '<span style="margin-left:10px;"><a href="'.$beUrl4.'" target="_blank" title="Batch Edit Records"><img src="../../images/list.svg" style="width:12px;" /></a></span>';
+									echo '<span style="margin-left:10px;"><a href="'.$eUrl4.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
+									echo '<span style="margin-left:10px;"><a href="'.$beUrl4.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
 								}
 								echo '</td>';
 								echo '</tr>';

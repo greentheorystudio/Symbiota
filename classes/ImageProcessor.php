@@ -42,20 +42,19 @@ class ImageProcessor {
 
     public function initProcessor($processorType = ''): void
     {
-        global $SERVER_ROOT;
         if($this->logFH) {
             fclose($this->logFH);
         }
         if($this->logMode > 1){
-            $LOG_PATH = $SERVER_ROOT.(substr($SERVER_ROOT,-1) === '/'?'':'/').'content/logs/';
+            $GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'content/logs/';
             if($processorType) {
-                $LOG_PATH .= $processorType . '/';
+                $GLOBALS['LOG_PATH'] .= $processorType . '/';
             }
-            if(!file_exists($LOG_PATH) && !mkdir($LOG_PATH) && !is_dir($LOG_PATH)) {
-                throw new RuntimeException(sprintf('Directory "%s" was not created', $LOG_PATH));
+            if(!file_exists($GLOBALS['LOG_PATH']) && !mkdir($GLOBALS['LOG_PATH']) && !is_dir($GLOBALS['LOG_PATH'])) {
+                throw new RuntimeException(sprintf('Directory "%s" was not created', $GLOBALS['LOG_PATH']));
             }
-            if(file_exists($LOG_PATH)){
-                $logFile = $LOG_PATH.$this->collid.'_'.$this->collArr['instcode'];
+            if(file_exists($GLOBALS['LOG_PATH'])){
+                $logFile = $GLOBALS['LOG_PATH'].$this->collid.'_'.$this->collArr['instcode'];
                 if($this->collArr['collcode']) {
                     $logFile .= '-' . $this->collArr['collcode'];
                 }
@@ -63,14 +62,13 @@ class ImageProcessor {
                 $this->logFH = fopen($logFile, 'ab');
             }
             else{
-                echo 'ERROR creating Log file; path not found: '.$LOG_PATH."\n";
+                echo 'ERROR creating Log file; path not found: '.$GLOBALS['LOG_PATH']."\n";
             }
         }
     }
 
     public function processIPlantImages($pmTerm, $postArr): bool
     {
-        global $IPLANT_IMAGE_IMPORT_PATH;
         set_time_limit(1000);
         $lastRunDate = $postArr['startdate'];
         $iPlantSourcePath = (array_key_exists('sourcepath', $postArr)?$postArr['sourcepath']:'');
@@ -80,8 +78,8 @@ class ImageProcessor {
         if($this->collid){
             $iPlantDataUrl = 'https://bisque.cyverse.org/data_service/';
             $iPlantImageUrl = 'https://bisque.cyverse.org/image_service/image/';
-            if(!$iPlantSourcePath && $IPLANT_IMAGE_IMPORT_PATH) {
-                $iPlantSourcePath = $IPLANT_IMAGE_IMPORT_PATH;
+            if(!$iPlantSourcePath && $GLOBALS['IPLANT_IMAGE_IMPORT_PATH']) {
+                $iPlantSourcePath = $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'];
             }
             if($iPlantSourcePath){
                 if(strpos($iPlantSourcePath, '--INSTITUTION_CODE--')) {
@@ -176,7 +174,6 @@ class ImageProcessor {
 
     public function processiDigBioOutput($pmTerm,$postArr): string
     {
-        global $SERVER_ROOT;
         $status = '';
         $this->matchCatalogNumber = (array_key_exists('matchcatalognumber', $postArr)?1:0);
         $this->matchOtherCatalogNumbers = (array_key_exists('matchothercatalognumbers', $postArr)?1:0);
@@ -185,8 +182,8 @@ class ImageProcessor {
         $collStr = $this->collArr['instcode'].($this->collArr['collcode']?'-'.$this->collArr['collcode']:'');
         $this->logOrEcho('Starting image processing for '.$collStr.' ('.date('Y-m-d h:i:s A').')');
         if($pmTerm){
-            $fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
-            if(is_writable($SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/')){
+            $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/idigbio_'.time().'.csv';
+            if(is_writable($GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/')){
                 if(move_uploaded_file($_FILES['idigbiofile']['tmp_name'],$fullPath)){
                     if($fh = fopen($fullPath,'rb')){
                         $headerArr = fgetcsv($fh,0,',');
@@ -268,11 +265,10 @@ class ImageProcessor {
     }
 
     public function loadImageFile(){
-        global $SERVER_ROOT;
         $inFileName = basename($_FILES['uploadfile']['name']);
         $ext = substr(strrchr($inFileName, '.'), 1);
         $fileName = 'imageMappingFile_'.time();
-        $fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/';
+        $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/';
         if(is_writable($fullPath) && move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath . $fileName . '.' . $ext)) {
             if($ext === 'zip'){
                 $zipFilePath = $fullPath.$fileName.'.zip';
@@ -304,8 +300,7 @@ class ImageProcessor {
 
     public function echoFileMapping($fileName): void
     {
-        global $SERVER_ROOT;
-        $fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/'.$fileName;
+        $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/'.$fileName;
         if($fh = fopen($fullPath,'rb')){
             $translationMap = array('catalognumber' => 'catalognumber', 'url' => 'url', 'thumbnailurl' => 'thumbnailurl',
                 'originalurl' => 'originalurl', 'thumbnail' => 'thumbnailurl', 'large' => 'originalurl', 'web' => 'url');
@@ -333,10 +328,9 @@ class ImageProcessor {
 
     public function loadFileData($postArr): void
     {
-        global $SERVER_ROOT;
         if(isset($postArr['filename'], $postArr['tf'])){
             $fieldMap = array_flip($postArr['tf']);
-            $fullPath = $SERVER_ROOT.(substr($SERVER_ROOT,-1) !== '/'?'/':'').'temp/data/'.$postArr['filename'];
+            $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/'.$postArr['filename'];
             if($fh = fopen($fullPath,'rb')){
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
@@ -415,12 +409,11 @@ class ImageProcessor {
 
     private function deleteImage($imgUrl): void
     {
-        global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
         if(stripos($imgUrl, 'http') === 0 || stripos($imgUrl, 'https') === 0){
             $imgUrl = parse_url($imgUrl, PHP_URL_PATH);
         }
-        if($IMAGE_ROOT_URL && strpos($imgUrl,$IMAGE_ROOT_URL) === 0){
-            $imgPath = $IMAGE_ROOT_PATH.substr($imgUrl,strlen($IMAGE_ROOT_URL));
+        if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl,$GLOBALS['IMAGE_ROOT_URL']) === 0){
+            $imgPath = $GLOBALS['IMAGE_ROOT_PATH'].substr($imgUrl,strlen($GLOBALS['IMAGE_ROOT_URL']));
             unlink($imgPath);
         }
     }

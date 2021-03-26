@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 $datasetID = array_key_exists('targetdatasetid',$_POST)?$_POST['targetdatasetid']:0;
@@ -23,11 +23,11 @@ if($occArrJson){
     $occid= json_decode($occArrJson, true);
 }
 
-if($SYMB_UID && $action){
+if($GLOBALS['SYMB_UID'] && $action){
     $datasetManager = new OccurrenceDataset();
     if($datasetID === '--newDataset'){
         $name = 'newDataset ('.date('Y-m-d H:i:s').')';
-        $datasetManager->createDataset($name,'',$SYMB_UID);
+        $datasetManager->createDataset($name,'',$GLOBALS['SYMB_UID']);
         $datasetID = $datasetManager->getDatasetId();
     }
     $targetLink = 'datasetmanager.php?datasetid='.$datasetID;

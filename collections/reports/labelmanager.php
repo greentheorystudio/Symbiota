@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 @include('Image/Barcode.php');
 @include('Image/Barcode2.php');
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -17,17 +17,17 @@ $datasetManager = new OccurrenceLabel();
 $datasetManager->setCollid($collid);
 
 $reportsWritable = false;
-if(is_writable($SERVER_ROOT.'/temp/report')){
+if(is_writable($GLOBALS['SERVER_ROOT'].'/temp/report')){
 	$reportsWritable = true;
 }
 
 $isEditor = 0;
 $occArr = array();
 $annoArr = array();
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
-elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 	$isEditor = 1;
 }
 if($isEditor){
@@ -37,12 +37,13 @@ if($isEditor){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-	    <title><?php echo $DEFAULT_TITLE; ?> Specimen Label Manager</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Label Manager</title>
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -357,11 +358,11 @@ if($isEditor){
 														<?php echo $recArr['c']; ?>
 													</a>
 													<?php
-													if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($recArr['collid'], $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($recArr['collid'], $USER_RIGHTS['CollEditor'], true))){
-														if(!$isGeneralObservation || $recArr['uid'] === $SYMB_UID){
+													if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+														if(!$isGeneralObservation || $recArr['uid'] === $GLOBALS['SYMB_UID']){
 															?>
 															<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
-																<img src="../../images/edit.svg" style="width:20px;height:20px;" />
+																<i style="height:20px;width:20px;" class="far fa-edit"></i>
 															</a>
 															<?php
 														}
@@ -495,7 +496,7 @@ if($isEditor){
 													<?php echo $recArr['collector']; ?>
 												</a>
 												<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-													<img src="../../images/edit.svg" style="width:20px;height:20px;" />
+                                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
 												</a>
 											</td>
 											<td>

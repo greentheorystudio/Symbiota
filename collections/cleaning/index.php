@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/index.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -20,24 +20,25 @@ if($collid) {
 $collMap = $cleanManager->getCollMap();
 
 $isEditor = 0;
-if($IS_ADMIN || ($collMap['colltype'] === 'General Observations') || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations') || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
 if($collMap['colltype'] === 'General Observations'){
-	$cleanManager->setObsUid($SYMB_UID);
+	$cleanManager->setObsUid($GLOBALS['SYMB_UID']);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Cleaner</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<style type="text/css">
 		table.styledtable {  width: 300px }
 		table.styledtable td { white-space: nowrap; }
 		h3 { text-decoration:underline }
 	</style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -124,7 +125,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['coord']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+									<i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}
@@ -135,10 +136,10 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" /><span style="font-size:70%;margin-left:-3px;">b-geo</span>
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i><span style="font-size:70%;margin-left:-3px;">b-geo</span>
 								</a>
 								<?php
 							}
@@ -149,7 +150,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord_verbatim']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}
@@ -160,7 +161,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord_noVerbatim']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}

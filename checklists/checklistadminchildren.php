@@ -10,7 +10,7 @@ $clManager->setClid($clid);
 ?>
 <div id="innertext" style="background-color:white;">
 	<div style="float:right;">
-		<a href="#" onclick="toggle('addchilddiv')"><img src="../images/add.png" /></a>
+		<a href="#" onclick="toggle('addchilddiv')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
 	<div style="margin:15px;font-weight:bold;font-size:120%;">
 		<u>Children Checklists</u>
@@ -56,7 +56,7 @@ $clManager->setClid($clid);
 						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
 						<?php 
 						if($cArr['pclid'] == $clid){
-							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><img src="../images/del.png" style="width:14px;" /></a>';
+							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
 						}
 						?>
 					</li>

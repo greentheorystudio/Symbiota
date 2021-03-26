@@ -20,7 +20,7 @@ $rs = $con->query($sql);
 if($rs){
 	while($r = $rs->fetch_object()) {
 		$munStr = $r->municipalityname;
-		if(($CHARSET === 'ISO-8859-1') && mb_detect_encoding($munStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
+		if(($GLOBALS['CHARSET'] === 'ISO-8859-1') && mb_detect_encoding($munStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
             $munStr = utf8_encode($munStr);
         }
 		$retArr[] = $munStr;

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharDeficitManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
  
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
@@ -19,7 +19,7 @@ if($projValue) {
     $cdManager->setProject($projValue);
 }
 $editable = false;
-if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS) || array_key_exists('KeyAdmin',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS']) || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 	$editable = true;
 }
 
@@ -27,12 +27,13 @@ $brownStripStr = 'brown_hor_strip.gif';
 $editorStr = 'editor.php?tid=';
 $charStr = '';
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Character Deficit Finder</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Deficit Finder</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
 		function openPopup(urlStr,windowName){
             let wWidth = 900;
             try{

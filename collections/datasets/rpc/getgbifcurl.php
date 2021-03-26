@@ -6,7 +6,7 @@ $url = array_key_exists('url',$_REQUEST)?$_REQUEST['url']:'';
 $data = array_key_exists('data',$_REQUEST)?$_REQUEST['data']:'';
 
 $result = '';
-$loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
+$loginStr = $GLOBALS['GBIF_USERNAME'].':'.$GLOBALS['GBIF_PASSWORD'];
 
 if($type && $url) {
     $ch = curl_init($url);

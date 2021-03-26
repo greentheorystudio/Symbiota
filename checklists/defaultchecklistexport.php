@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 240);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -79,7 +79,7 @@ $clid = $clManager->getClid();
 $pid = $clManager->getPid();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 $taxaArray = array();
@@ -108,7 +108,7 @@ $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borde
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
 $title = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clManager->getClName());
 $textrun = $section->addTextRun('defaultPara');
-$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
+$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
 $textrun->addTextBreak(1);
 if($clValue){
 	if($clArray['type'] === 'rarespp'){
@@ -180,12 +180,12 @@ if($showImages){
 			$table->addRow();
 		}
 		if($imgSrc){
-			$imgSrc = ($IMAGE_DOMAIN && strpos($imgSrc, 'http') !== 0 ?$IMAGE_DOMAIN: '').$imgSrc;
+			$imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgSrc, 'http') !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
 			$cell = $table->addCell(null,$imageCellStyle);
 			$textrun = $cell->addTextRun('imagePara');
 			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
 			$textrun->addTextBreak(1);
-			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
+			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
 			$textrun->addTextBreak(1);
 			if(array_key_exists('vern',$sppArr)){
 				$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
@@ -193,7 +193,7 @@ if($showImages){
 				$textrun->addTextBreak(1);
 			}
 			if(!$showAlphaTaxa && $family !== $prevfam) {
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
+				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
 				$prevfam = $family;
 			}
 		}
@@ -215,12 +215,12 @@ else{
 			$family = $sppArr['family'];
 			if($family !== $prevfam){
 				$textrun = $section->addTextRun('familyPara');
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
+				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
 				$prevfam = $family;
 			}
 		}
 		$textrun = $section->addTextRun('scinamePara');
-		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
+		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
 		if(array_key_exists('author',$sppArr)){
 			$sciAuthor = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['author']);
 			$textrun->addText(htmlspecialchars(' '.$sciAuthor),'textFont');
@@ -244,7 +244,7 @@ else{
 						$textrun->addText(htmlspecialchars(', '), 'textFont');
 					}
 					$voucStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $collName);
-					$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/collections/individual/index.php?occid='.$occid,htmlspecialchars($voucStr),'textFont');
+					$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid,htmlspecialchars($voucStr),'textFont');
 					$i++;
 				}
 			}
@@ -253,7 +253,7 @@ else{
 }
 
 $fileName = str_replace(array(' ', '/'), '_', $clManager->getClName());
-$targetFile = $SERVER_ROOT.'/temp/report/'.$fileName.'.'.$exportExtension;
+$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$fileName.'.'.$exportExtension;
 $phpWord->save($targetFile, $exportEngine);
 
 header('Content-Description: File Transfer');

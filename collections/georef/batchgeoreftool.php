@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -52,15 +52,15 @@ if(!$georeferenceVerificationStatus) {
 }
 
 $geoManager = new OccurrenceGeorefTools();
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 $geoManager->setCollId($collId);
 
 $editor = false;
-if($IS_ADMIN
-	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
-	|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['IS_ADMIN']
+	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+	|| (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
  	$editor = true;
 }
 
@@ -95,22 +95,23 @@ if($editor && $submitAction){
     }
 	if($submitAction === 'Update Coordinates'){
 		$geoManager->updateCoordinates($_POST);
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
 	}
 	$localArr = $geoManager->getLocalityArr();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Georeferencing Tools</title>
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link type="text/css" href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" rel="stylesheet" />
-		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js"></script>
-		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210313"></script>
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210313"></script>
         <script type="text/javascript">
             function openSpatialInputWindow(type) {
                 let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -218,7 +219,7 @@ if($editor && $submitAction){
 											</select>
 										</div>
 										<div style="float:left;">
-											<img src="../../images/add.png" onclick="toggle('advfilterdiv')" title="Advanced Options" />
+											<i style="height:15px;width:15px;color:green;" onclick="toggle('advfilterdiv')" title="Advanced Options" class="fas fa-plus"></i>
 										</div>
 									</div>
 								</div>
@@ -256,16 +257,16 @@ if($editor && $submitAction){
 						<form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
 							<div style="float:right;">
 								<span>
-									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.svg" title="Search for clones previously georeferenced" style="width:15px;" /></a>
+									<a href="#" onclick="geoCloneTool();"><i style="height:15px;width:15px;" title="Search for clones previously georeferenced" class="fas fa-list"></i></a>
 								</span>
 								<span style="margin-left:10px;">
 									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="GeoLocate locality" style="width:15px;" /></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="analyseLocalityStr();"><img src="../../images/find.png" title="Analyse Locality string for embedded Lat/Long or UTM" style="width:15px;" /></a>
+									<a href="#" onclick="analyseLocalityStr();"><i style="height:15px;width:15px;" title="Analyse Locality string for embedded Lat/Long or UTM" class="fas fa-search"></i></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.svg" title="Edit first set of records" style="width:15px;" /></a>
+									<a href="#" onclick="openFirstRecSet();"><i style="height:15px;width:15px;" title="Edit first set of records" class="far fa-edit"></i></a>
 								</span>
 							</div>
 							<div style="font-weight:bold;">
@@ -362,7 +363,7 @@ if($editor && $submitAction){
 										<td>
 											<input id="decimallatitude" name="decimallatitude" type="text" style="width:80px;" />
 											<span style="cursor:pointer;padding:3px;" onclick="openSpatialInputWindow('input-point');">
-												<img src="../../images/globe.svg" style="border:0;width:13px;" />
+												<i style="height:15px;width:15px;" class="fas fa-globe"></i>
 											</span>
 										</td>
 									</tr>
@@ -391,7 +392,7 @@ if($editor && $submitAction){
 											<span style="margin-left:20px;font-weight:bold;">Datum:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
-												<img src="../../images/editplus.png" style="border:0;width:14px;" />
+												<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 											</span>
 										</td>
 									</tr>
@@ -489,7 +490,7 @@ if($editor && $submitAction){
 											</select>
 											<span style="margin-left:20px;font-size:80%">
 												Georefer by:
-												<input name="georeferencedby" type="text" value="<?php echo $PARAMS_ARR['un']; ?>" style="width:75px" readonly />
+												<input name="georeferencedby" type="text" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" style="width:75px" readonly />
 											</span>
 										</td>
 									</tr>

@@ -38,7 +38,6 @@ class OccurrenceSkeletal {
 
 	public function addOccurrence($postArr): bool
 	{
-		global $USERNAME;
 		$status = false;
 		if($this->collid){
 			$postArr = $this->cleanOccurrenceArr($postArr);
@@ -60,7 +59,7 @@ class OccurrenceSkeletal {
 				}
 			}
 			$sql = 'INSERT INTO omoccurrences('.trim($sql1,' ,').',recordenteredby,dateentered) '.
-				'VALUES('.trim($sql2,' ,').',"'.$USERNAME.'","'.date('Y-m-d H:i:s').'")';
+				'VALUES('.trim($sql2,' ,').',"'.$GLOBALS['USERNAME'].'","'.date('Y-m-d H:i:s').'")';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$status = true;

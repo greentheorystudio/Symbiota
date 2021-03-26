@@ -127,10 +127,11 @@ class TaxonomyDynamicListManager{
             'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
             'WHERE ((te1.parenttid = '.$this->tid.' OR t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
             'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
-            'AND (t3.RankId = 30 OR t3.RankId = 40 OR ISNULL(t3.RankId)) '.
+            'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
             'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
             'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
-            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) ';
+            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) '.
+            'AND (t1.SciName LIKE "% %" OR t1.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
         if($this->descLimit){
             $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
         }

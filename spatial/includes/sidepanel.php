@@ -193,17 +193,17 @@
                                 <option value="gpx">GPX</option>
                                 <option value="png">Map PNG Image</option>
                             </select>
-                            <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(false,queryRecCnt);"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
+                            <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(false,queryRecCnt);"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
                         </div>
                         <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
                             <?php
-                            if($SYMB_UID){
-                                echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+                            if($GLOBALS['SYMB_UID']){
+                                echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><i style="height:15px;width:15px;" class="fas fa-layer-group"></i></button></div>';
                             }
                             ?>
-                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><img src="../images/list.svg" style="width:15px; height:15px" /></button></a></div>
-                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><img src="../images/table.png" style="width:15px; height:15px" /></button></a></div>
-                            <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button></a></div>
+                            <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
                         </div>
                     </div>
                     <div id="queryrecords"></div>
@@ -242,7 +242,7 @@
                     <div style="margin-bottom:30px;">
                         <div style='font-weight:bold;float:left;margin-bottom:5px;'>Taxa Count: <span id="taxaCountNum">0</span></div>
                         <div style="float:right;margin-bottom:5px;">
-                            <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download CSV" onclick="exportTaxaCSV();"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
+                            <button data-role="none" id="taxacsvdownload" class="icon-button" title="Download CSV" onclick="exportTaxaCSV();"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
                         </div>
                     </div>
                     <div style="margin:5px 0 5px 0;clear:both;"><hr /></div>
@@ -260,12 +260,12 @@
                                     <option value="geojson">GeoJSON</option>
                                     <option value="gpx">GPX</option>
                                 </select>
-                                <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(true,queryRecCnt);"><img src="../images/download.svg" style="width:15px; height:15px" /></button>
+                                <button data-role="none" class="icon-button" title="Download" onclick="processDownloadRequest(true,queryRecCnt);"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>
                             </div>
                             <div style="width:250px;display:flex;justify-content:flex-end;align-items:center;">
                                 <?php
-                                if($SYMB_UID){
-                                    echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+                                if($GLOBALS['SYMB_UID']){
+                                    echo '<div><button data-role="none" class="icon-button" title="Dataset Management" onclick="showDatasetManagementPopup();"><i style="height:15px;width:15px;" class="fas fa-layer-group"></i></button></div>';
                                 }
                                 ?>
                             </div>

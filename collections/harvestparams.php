@@ -1,29 +1,30 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 
-if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
+if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE.' '.$SEARCHTEXT['PAGE_TITLE']; ?></title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.$SEARCHTEXT['PAGE_TITLE']; ?></title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/shared.js?ver=1"></script>
     <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=20"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210313"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+        const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
 
         $(document).ready(function() {
             initializeSearchStorage(<?php echo $queryId; ?>);
@@ -218,7 +219,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
 				<input type="text" id="elevhigh" size="10" name="elevhigh" onchange="processTextParamChange();" />
 			</div>
             <?php
-            if($QUICK_HOST_ENTRY_IS_ACTIVE) {
+            if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
                 ?>
                 <div>
                     <?php echo $SEARCHTEXT['ASSOC_HOST_INPUT']; ?> <input type="text" id="assochost" size="43" name="assochost" onchange="processTextParamChange();" title="<?php echo $SEARCHTEXT['TITLE_TEXT_1']; ?>" />
@@ -251,7 +252,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-box');">
-                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                    <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -278,7 +279,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-circle');">
-                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                    <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -293,7 +294,7 @@ if(file_exists($SERVER_ROOT.'/config/includes/searchVarCustom.php')){
                         <button type="button" style="width:200px;" onclick="openSpatialInputWindow('input');">
                             Open Spatial Window
                             <span style="float:right;cursor:pointer;">
-                                <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                                <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                             </span>
                         </button>
                     </div>

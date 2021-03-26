@@ -20,12 +20,11 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function getMaxCnt($geo = false){
-        global $SOLR_URL;
         if($geo) {
             $this->setSpatial();
         }
         $solrWhere = $this->getSOLRWhere();
-        $solrURL = $SOLR_URL.'/select?'.($solrWhere?'q='.$solrWhere:'');
+        $solrURL = $GLOBALS['SOLR_URL'].'/select?'.($solrWhere?'q='.$solrWhere:'');
         $solrURL .= '&rows=1&start=1&wt=json';
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
@@ -35,10 +34,9 @@ class SOLRManager extends OccurrenceManager{
 
     public function getTaxaArr(): array
     {
-        global $SOLR_URL;
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere();
-        $solrURLpre = $SOLR_URL.'/select?';
+        $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
         $solrURLsuf = '&rows='.$cnt.'&start=1&fl=family,tidinterpreted,sciname,accFamily&group=true&group.field=familyscinamecode&wt=json';
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
@@ -48,11 +46,10 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function getOccArr($geo = false): array{
-        global $SOLR_URL;
         $returnArr = array();
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere($geo);
-        $solrURLpre = $SOLR_URL.'/select?';
+        $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
         $solrURLsuf = '&rows='.$cnt.'&start=0&fl=occid&wt=json';
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
@@ -67,11 +64,10 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function getRecordArr($pageRequest,$cntPerPage){
-        global $SOLR_URL;
         $canReadRareSpp = false;
         $bottomLimit = ($pageRequest - 1)*$cntPerPage;
         $solrWhere = $this->getSOLRWhere();
-        $solrURLpre = $SOLR_URL.'/select?';
+        $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
             $sortArr = array();
             $sortFields = array('Collection' => 'CollectionName','Catalog Number' => 'catalogNumber','Family' => 'family',
@@ -111,13 +107,12 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function getGeoArr($pageRequest,$cntPerPage){
-        global $SOLR_URL;
         $bottomLimit = 0;
         $solrWhere = $this->getSOLRWhere(true);
         if($pageRequest > 0) {
             $bottomLimit = ($pageRequest - 1) * $cntPerPage;
         }
-        $solrURLpre = $SOLR_URL.'/select?';
+        $solrURLpre = $GLOBALS['SOLR_URL'].'/select?';
         $solrURLsuf = '&rows='.$cntPerPage.'&start='.($bottomLimit?:'0');
         $solrURLsuf .= '&fl=occid,recordedBy,recordNumber,displayDate,sciname,family,accFamily,tidinterpreted,decimalLatitude,decimalLongitude,'.
             'localitySecurity,locality,collid,catalogNumber,otherCatalogNumbers,InstitutionCode,CollectionCode,CollectionName&wt=json';
@@ -130,10 +125,9 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function checkQuerySecurity($q){
-        global $USER_RIGHTS, $IS_ADMIN;
         $canReadRareSpp = false;
-        if($USER_RIGHTS){
-            if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+        if($GLOBALS['USER_RIGHTS']){
+            if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 $canReadRareSpp = true;
             }
         }
@@ -150,11 +144,10 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRRecList($sArr): array{
-        global $USER_RIGHTS, $IS_ADMIN, $IMAGE_DOMAIN;
         $returnArr = array();
         $canReadRareSpp = false;
-        if($USER_RIGHTS){
-            if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+        if($GLOBALS['USER_RIGHTS']){
+            if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 $canReadRareSpp = true;
             }
         }
@@ -187,8 +180,8 @@ class SOLRManager extends OccurrenceManager{
             $returnArr[$occId]['sex'] = ($k['sex'] ?? '');
             $localitySecurity = ($k['localitySecurity'] ?? false);
             if(!$localitySecurity || $canReadRareSpp
-                || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))
-                || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['RareSppReader'], true))){
+                || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
+                || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
                 $returnArr[$occId]['locality'] = str_replace('.,',',',$locality);
                 $returnArr[$occId]['collnumber'] = ($k['recordNumber'] ?? '');
                 $returnArr[$occId]['habitat'] = (isset($k['habitat'])?$k['habitat'][0]:'');
@@ -208,8 +201,8 @@ class SOLRManager extends OccurrenceManager{
             }
             if(isset($k['thumbnailurl'])){
                 $tnUrl = $k['thumbnailurl'][0];
-                if($IMAGE_DOMAIN && strpos($tnUrl, '/') === 0) {
-                    $tnUrl = $IMAGE_DOMAIN . $tnUrl;
+                if($GLOBALS['IMAGE_DOMAIN'] && strpos($tnUrl, '/') === 0) {
+                    $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                 }
                 $returnArr[$occId]['img'] = $tnUrl;
             }
@@ -219,11 +212,10 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRMapRecList($sArr): array{
-        global $USER_RIGHTS, $IS_ADMIN;
         $returnArr = array();
         $canReadRareSpp = false;
-        if($USER_RIGHTS){
-            if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+        if($GLOBALS['USER_RIGHTS']){
+            if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 $canReadRareSpp = true;
             }
         }
@@ -242,8 +234,8 @@ class SOLRManager extends OccurrenceManager{
             $returnArr[$occId]['lat'] = ($k['decimalLatitude'] ?? '');
             $returnArr[$occId]['lon'] = ($k['decimalLongitude'] ?? '');
             if(!$localitySecurity || $canReadRareSpp
-                || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))
-                || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['RareSppReader'], true))){
+                || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
+                || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
                 $returnArr[$occId]['l'] = str_replace('.,',',',$locality);
             }
             else{
@@ -263,18 +255,17 @@ class SOLRManager extends OccurrenceManager{
 
 
     public function translateSOLRGeoCollList($sArr): array{
-        global $USER_RIGHTS, $IS_ADMIN;
         $returnArr = array();
         $color = 'e69e67';
         foreach($sArr as $k){
             $canReadRareSpp = false;
             $collid = $this->xmlentities($k['collid']);
             $localitySecurity = $k['localitySecurity'];
-            if($USER_RIGHTS){
-                if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+            if($GLOBALS['USER_RIGHTS']){
+                if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
                     $canReadRareSpp = true;
                 }
-                elseif(array_key_exists('RareSppReader',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['RareSppReader'], true)){
+                elseif(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true)){
                     $canReadRareSpp = true;
                 }
             }
@@ -327,7 +318,6 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function translateSOLRGeoTaxaList($sArr): array{
-        global $USER_RIGHTS, $IS_ADMIN;
         $returnArr = array();
         $taxaMapper = array();
         $taxaMapper['undefined'] = 'undefined';
@@ -353,11 +343,11 @@ class SOLRManager extends OccurrenceManager{
             $canReadRareSpp = false;
             $collid = $k['collid'];
             $localitySecurity = $k['localitySecurity'];
-            if($USER_RIGHTS){
-                if($IS_ADMIN || array_key_exists('CollAdmin',$USER_RIGHTS) || array_key_exists('RareSppAdmin',$USER_RIGHTS) || array_key_exists('RareSppReadAll',$USER_RIGHTS)){
+            if($GLOBALS['USER_RIGHTS']){
+                if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
                     $canReadRareSpp = true;
                 }
-                elseif(array_key_exists('RareSppReader',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['RareSppReader'], true)){
+                elseif(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true)){
                     $canReadRareSpp = true;
                 }
             }
@@ -461,17 +451,15 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function updateSOLR(): void{
-        global $SOLR_URL;
         $needsFullUpdate = $this->checkLastSOLRUpdate();
         $command = ($needsFullUpdate?'dock':'delta-import');
-        file_get_contents($SOLR_URL.'/dataimport?command='.$command.'&clean=false');
+        file_get_contents($GLOBALS['SOLR_URL'].'/dataimport?command='.$command.'&clean=false');
         if($needsFullUpdate){
             $this->resetSOLRInfoFile();
         }
     }
 
     public function deleteSOLRDocument($occid): void{
-        global $SOLR_URL;
         $pArr = array();
         if(!is_array($occid) || count($occid) < 1000){
             if(is_array($occid)){
@@ -492,7 +480,7 @@ class SOLRManager extends OccurrenceManager{
             );
             $ch = curl_init();
             $options = array(
-                CURLOPT_URL => $SOLR_URL.'/update',
+                CURLOPT_URL => $GLOBALS['SOLR_URL'].'/update',
                 CURLOPT_POST => true,
                 CURLOPT_HTTPHEADER => $headers,
                 CURLOPT_TIMEOUT => 90,
@@ -521,7 +509,7 @@ class SOLRManager extends OccurrenceManager{
                 );
                 $ch = curl_init();
                 $options = array(
-                    CURLOPT_URL => $SOLR_URL.'/update',
+                    CURLOPT_URL => $GLOBALS['SOLR_URL'].'/update',
                     CURLOPT_POST => true,
                     CURLOPT_HTTPHEADER => $headers,
                     CURLOPT_TIMEOUT => 90,
@@ -536,17 +524,16 @@ class SOLRManager extends OccurrenceManager{
     }
 
     public function cleanSOLRIndex($collid): void{
-        global $SOLR_URL;
         $SOLROccArr = array();
         $mysqlOccArr = array();
         $solrWhere = 'q=(collid:('.$collid.'))';
-        $solrURL = $SOLR_URL.'/select?'.$solrWhere;
+        $solrURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere;
         $solrURL .= '&rows=1&start=1&wt=json';
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
         $cnt = $solrArr['response']['numFound'];
-        $occURL = $SOLR_URL.'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
+        $occURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
         //echo str_replace(' ','%20',$occURL);
         $solrOccArrJson = file_get_contents(str_replace(' ','%20',$occURL));
         $solrOccArr = json_decode($solrOccArrJson, true);
@@ -568,13 +555,12 @@ class SOLRManager extends OccurrenceManager{
     }
 
     private function checkLastSOLRUpdate(): bool{
-        global $SERVER_ROOT, $SOLR_FULL_IMPORT_INTERVAL;
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');
         $needsUpdate = false;
 
-        if(file_exists($SERVER_ROOT.'/temp/data/solr.json')){
-            $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
+        if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json')){
+            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json'), true);
             $lastDate = ($infoArr['lastFullImport'] ?? '');
             if($lastDate){
                 try {
@@ -586,7 +572,7 @@ class SOLRManager extends OccurrenceManager{
                 $interval = $now->diff($lastDate);
                 $hours = $interval->h;
                 $hours += ($interval->days * 24);
-                if($hours >= $SOLR_FULL_IMPORT_INTERVAL){
+                if($hours >= $GLOBALS['SOLR_FULL_IMPORT_INTERVAL']){
                     $needsUpdate = true;
                 }
             }
@@ -602,18 +588,17 @@ class SOLRManager extends OccurrenceManager{
     }
 
     private function resetSOLRInfoFile(): void{
-        global $SERVER_ROOT;
         $now = new DateTime();
         $now = $now->format('Y-m-d H:i:sP');
         $infoArr = array();
 
-        if(file_exists($SERVER_ROOT.'/temp/data/solr.json')){
-            $infoArr = json_decode(file_get_contents($SERVER_ROOT.'/temp/data/solr.json'), true);
-            unlink($SERVER_ROOT.'/temp/data/solr.json');
+        if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json')){
+            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json'), true);
+            unlink($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json');
         }
         $infoArr['lastFullImport'] = $now;
 
-        $fp = fopen($SERVER_ROOT.'/temp/data/solr.json', 'wb');
+        $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json', 'wb');
         fwrite($fp, json_encode($infoArr));
         fclose($fp);
     }

@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../classes/ReportsManager.php');
 
 $rm = new ReportsManager();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>SCAN Reports</title>
     <style>
