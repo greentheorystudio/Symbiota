@@ -2,10 +2,10 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryUpload.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/glossaryloader.php');
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/glossaryloader.php');
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
@@ -15,7 +15,7 @@ $batchTaxaStr = array_key_exists('batchtid',$_REQUEST)?$_REQUEST['batchtid']: ''
 $batchSource = array_key_exists('batchsources',$_REQUEST)?str_replace("'", '&#39;',$_REQUEST['batchsources']): '';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -50,11 +50,11 @@ if($isEditor){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Glossary Term Loader</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Term Loader</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>

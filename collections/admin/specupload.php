@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../../classes/SpecUploadDirect.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDigir.php');
 include_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 3600);
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -125,7 +125,7 @@ if($action === 'Automap Fields'){
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 $duManager->readUploadParameters();
@@ -197,12 +197,13 @@ if(array_key_exists('sf',$_POST)){
 }
 $duManager->loadFieldMap();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Specimen Uploader</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Uploader</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js" type="text/javascript"></script>
@@ -418,16 +419,16 @@ $duManager->loadFieldMap();
  						$reportArr = $duManager->getTransferReport();
 						echo '<div>Occurrences pending transfer: '.$reportArr['occur'];
 						if($reportArr['occur']){
-							echo ' <a href="uploadviewer.php?collid='.$collid.'" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-							echo ' <a href="uploadcsv.php?collid='.$collid.'" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+							echo ' <a href="uploadviewer.php?collid='.$collid.'" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+							echo ' <a href="uploadcsv.php?collid='.$collid.'" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 						}
 						echo '</div>';
 						echo '<div style="margin-left:15px;">';
 						echo '<div>Records to be updated: ';
 						echo $reportArr['update'];
 						if($reportArr['update']){
-							echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-							echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+							echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+							echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNOTNULL" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 							if($uploadType !== $SKELETAL && $uploadType !== $NFNUPLOAD) {
                                 echo '&nbsp;&nbsp;&nbsp;<span style="color:orange"><b>Caution:</b></span> incoming records will replace existing records';
                             }
@@ -442,8 +443,8 @@ $duManager->loadFieldMap();
                             }
 							echo $reportArr['new'];
 							if($reportArr['new']){
-								echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-								echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+								echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+								echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=occid:ISNULL" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 								if($uploadType === $NFNUPLOAD) {
                                     echo '<span style="margin-left:15px;color:orange">&gt;&gt; Records failed to link to records within this collection and will not be imported</span>';
                                 }
@@ -454,8 +455,8 @@ $duManager->loadFieldMap();
 							echo '<div>Records matching on catalog number that will be appended : ';
 							echo $reportArr['matchappend'];
 							if($reportArr['matchappend']){
-								echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=matchappend" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-								echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=matchappend" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+								echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=matchappend" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+								echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=matchappend" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 							}
 							echo '</div>';
 							echo '<div style="margin-left:15px;"><span style="color:orange;">WARNING:</span> This will result in records with duplicate catalog numbers</div>';
@@ -465,8 +466,8 @@ $duManager->loadFieldMap();
 								echo '<div>Records that will be syncronized with central database: ';
 								echo $reportArr['sync'];
 								if($reportArr['sync']){
-									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=sync" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=sync" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=sync" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=sync" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 								}
 								echo '</div>';
 								echo '<div style="margin-left:15px;">These are typically records that have been originally processed within the portal, exported and integrated into a local management database, and then reimported and synchronized with the portal records by matching on catalog number.</div>';
@@ -476,8 +477,8 @@ $duManager->loadFieldMap();
 								echo '<div>Previous loaded records not matching incoming records: ';
 								echo $reportArr['exist'];
 								if($reportArr['exist']){
-									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=exist" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=exist" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=exist" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=exist" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 								}
 								echo '</div>';
 								echo '<div style="margin-left:15px;">';
@@ -489,8 +490,8 @@ $duManager->loadFieldMap();
 								echo '<div style="color:red;">Records that will be removed due to NULL Primary Identifier: ';
 								echo $reportArr['nulldbpk'];
 								if($reportArr['nulldbpk']){
-									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=dbpk:ISNULL" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=dbpk:ISNULL" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=dbpk:ISNULL" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=dbpk:ISNULL" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 								}
 								echo '</div>';
 							}
@@ -498,8 +499,8 @@ $duManager->loadFieldMap();
 								echo '<div style="color:red;">Records that will be removed due to DUPLICATE Primary Identifier: ';
 								echo $reportArr['dupdbpk'];
 								if($reportArr['dupdbpk']){
-									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=dupdbpk" target="_blank" title="Preview 1st 1000 Records"><img src="../../images/list.svg" style="width:12px;" /></a>';
-									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=dupdbpk" target="_self" title="Download Records"><img src="../../images/download.svg" style="width:12px;" /></a>';
+									echo ' <a href="uploadviewer.php?collid='.$collid.'&searchvar=dupdbpk" target="_blank" title="Preview 1st 1000 Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a>';
+									echo ' <a href="uploadcsv.php?collid='.$collid.'&searchvar=dupdbpk" target="_self" title="Download Records"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>';
 								}
 								echo '</div>';
 							}

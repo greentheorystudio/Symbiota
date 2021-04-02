@@ -3,6 +3,15 @@ INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
 ALTER TABLE `adminlanguages`
   ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
 
+CREATE TABLE `configurations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `configurationName` varchar(100) NOT NULL,
+  `configurationDataType` varchar(15) NOT NULL DEFAULT 'string',
+  `configurationValue` text NOT NULL,
+  `dateApplied` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
+
 ALTER TABLE `fmchklstcoordinates`
   DROP FOREIGN KEY `FKchklsttaxalink`,
   DROP INDEX `IndexUnique`;
@@ -43,7 +52,7 @@ CREATE TABLE `igsnverification` (
   KEY `FK_igsn_occid_idx` (`occid`),
   KEY `INDEX_igsn` (`igsn`),
   CONSTRAINT `FK_igsn_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 
 ALTER TABLE `images`
   ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),
@@ -123,7 +132,7 @@ CREATE TABLE `omoccurpaleo` (
   UNIQUE KEY `UNIQUE_occid` (`occid`),
   KEY `FK_paleo_occid_idx` (`occid`),
   CONSTRAINT `FK_paleo_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Occurrence Paleo tables';
+) COMMENT='Occurrence Paleo tables';
 
 CREATE TABLE `omoccurpaleogts` (
   `gtsid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -136,7 +145,7 @@ CREATE TABLE `omoccurpaleogts` (
   UNIQUE KEY `UNIQUE_gtsterm` (`gtsid`),
   KEY `FK_gtsparent_idx` (`parentgtsid`),
   CONSTRAINT `FK_gtsparent` FOREIGN KEY (`parentgtsid`) REFERENCES `omoccurpaleogts` (`gtsid`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=245 DEFAULT CHARSET=utf8;
+);
 
 ALTER TABLE `omoccurpoints`
   DROP COLUMN `errradiuspoly`,
@@ -165,7 +174,7 @@ CREATE TABLE `taxonkingdoms` (
     PRIMARY KEY (`kingdom_id`),
     INDEX `INDEX_kingdom_name` (`kingdom_name` ASC),
     KEY `INDEX_kingdoms` (`kingdom_id`,`kingdom_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 
 INSERT INTO `taxonkingdoms` VALUES (1, 'Bacteria');
 INSERT INTO `taxonkingdoms` VALUES (2, 'Protozoa');
@@ -456,7 +465,7 @@ CREATE TABLE `uploadspectemppoints` (
     PRIMARY KEY (`geoID`),
     UNIQUE KEY `upspid` (`upspid`),
     SPATIAL KEY `point` (`point`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM;
 
 DELIMITER
 //

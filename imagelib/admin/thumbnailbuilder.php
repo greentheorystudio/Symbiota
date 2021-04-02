@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../imagelib/admin/thumbnailbuilder.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -12,11 +12,11 @@ $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']: '';
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
 
 $isEditor = false;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = true;
 }
 elseif($collid){
-	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = true;
 	}
 }
@@ -25,11 +25,11 @@ $imgManager = new ImageCleaner();
 $imgManager->setCollid($collid);
 $imgManager->setTid($tid);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-<title><?php echo $DEFAULT_TITLE; ?> Thumbnail Builder</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Thumbnail Builder</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function resetRebuildForm(f){
 			f.catNumLow.value = "";

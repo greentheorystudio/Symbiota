@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/KeyDataManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -58,18 +58,19 @@ if($chars){
 }
 ?>
 
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Web-Key
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Web-Key
         <?php echo preg_replace('/<[^>]+>/','',$dataManager->getClName()); ?>
     </title>
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/ident.key.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/ident.key.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php 
@@ -78,18 +79,18 @@ if($chars){
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
     if($dynClid){
         if($dataManager->getClType() === 'Specimen Checklist'){
-            echo '<a href="'.$CLIENT_ROOT.'/collections/list.php?tabindex=0">';
+            echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/collections/list.php?tabindex=0">';
             echo 'Occurrence Checklist';
             echo '</a> &gt;&gt; ';
         }
     }
     elseif($clid){
-        echo '<a href="'.$CLIENT_ROOT.'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
+        echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clid.'&proj='.$projValue.'">';
         echo 'Checklist: '.$dataManager->getClName();
         echo '</a> &gt;&gt; ';
     }
     elseif($pid){
-        echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+        echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'">';
         echo 'Project Checklists';
         echo '</a> &gt;&gt; ';
     }
@@ -128,7 +129,7 @@ if($chars){
                     if(count($languages) > 1){
                         echo "<div id='langlist' style='margin:0.5em;'>Languages: <select name='lang' onchange='setLang(this);'>\n";
                         foreach($languages as $l){
-                            echo "<option value='".$l."' ".($DEFAULT_LANG === $l? 'SELECTED' : '').">$l</option>\n";
+                            echo "<option value='".$l."' ".($GLOBALS['DEFAULT_LANG'] === $l? 'SELECTED' : '').">$l</option>\n";
                         }
                         echo "</select></div>\n";
                     }
@@ -149,11 +150,11 @@ if($chars){
                             <tr><td colspan='2'>
                                 <h2>
                                     <?php
-                                    if($FLORA_MOD_IS_ACTIVE){
+                                    if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
                                         echo '<a href="../checklists/checklist.php?cl='.$clid.'&dynclid='.$dynClid.'&proj='.$projValue.'" target="_blank">';
                                     }
                                     echo $dataManager->getClName(). ' ';
-                                    if($FLORA_MOD_IS_ACTIVE){
+                                    if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
                                         echo '</a>';
                                     }
                                     ?>
@@ -181,7 +182,7 @@ if($chars){
                                     echo "<tr><td><div style='margin:0 5px 0 10px;'><a href='".$newSpLink."' target='_blank'><i>$disName</i></a></div></td>\n";
                                     echo "<td style='text-align: right;'>\n";
                                     if($isEditor){
-                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$DEFAULT_LANG."' target='_blank'><img src='../images/edit.svg' style='width:15px;border:0;' title='Edit morphology' /></a>\n";
+                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$GLOBALS['DEFAULT_LANG']."' target='_blank'><i style='height:15px;width:15px;' title='Edit morphology' class='far fa-edit'></i></a>\n";
                                     }
                                     echo "</td></tr>\n";
                                 }

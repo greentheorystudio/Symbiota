@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
@@ -18,11 +18,11 @@ if(!$clName){
 	$clName = $gameManager->getClName();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Name Game</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -620,7 +620,7 @@ if(!$clName){
 	
 	<div id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Name Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/> 

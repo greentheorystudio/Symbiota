@@ -6,7 +6,7 @@ if(file_exists('../../../config/symbini.php')){
 	include_once(__DIR__ . '/../../../config/symbini.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
 }
-elseif(isset($SERVER_ROOT) && $SERVER_ROOT){ 
+elseif(isset($GLOBALS['SERVER_ROOT']) && $GLOBALS['SERVER_ROOT']){
 	include_once(__DIR__ . '/../../../config/symbini.php');
 	@include(__DIR__ . '/../../../collections/specprocessor/standalone_scripts/ImageBatchConnectionFactory.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
@@ -22,8 +22,8 @@ if(isset($silent) && $silent) {
 	$logMode = 2;
 }
 $imageProcessor->setLogMode($logMode);
-if(!$logProcessorPath && $LOG_PATH) {
-	$logProcessorPath = $LOG_PATH;
+if(!$logProcessorPath && $GLOBALS['LOG_PATH']) {
+	$logProcessorPath = $GLOBALS['LOG_PATH'];
 }
 $imageProcessor->setLogPath($logProcessorPath);
 
@@ -31,7 +31,7 @@ $imageProcessor->setDbMetadata($dbMetadata);
 $imageProcessor->setSourcePathBase($sourcePathBase);
 $imageProcessor->setTargetPathBase($targetPathBase);
 $imageProcessor->setImgUrlBase($imgUrlBase);
-$imageProcessor->setServerRoot($SERVER_ROOT);
+$imageProcessor->setServerRoot($GLOBALS['SERVER_ROOT']);
 if($webPixWidth) {
 	$imageProcessor->setWebPixWidth($webPixWidth);
 }

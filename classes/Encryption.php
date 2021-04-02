@@ -6,8 +6,7 @@ class Encryption{
 
 	public static function encrypt($plainText): string
 	{
-		global $SECURITY_KEY;
-		if(!isset($SECURITY_KEY) || !$SECURITY_KEY) {
+		if(!isset($GLOBALS['SECURITY_KEY']) || !$GLOBALS['SECURITY_KEY']) {
 			return $plainText;
 		}
 		if(!function_exists('openssl_encrypt')) {
@@ -28,8 +27,7 @@ class Encryption{
 	}
 
 	public static function decrypt($cipherTextIn) {
-		global $SECURITY_KEY;
-		if(!isset($SECURITY_KEY) || !$SECURITY_KEY) {
+		if(!isset($GLOBALS['SECURITY_KEY']) || !$GLOBALS['SECURITY_KEY']) {
 			return $cipherTextIn;
 		}
 		if(!function_exists('openssl_decrypt')) {
@@ -55,13 +53,12 @@ class Encryption{
 	}
 
 	public static function getKey(){
-		global $SECURITY_KEY;
-		if (strlen($SECURITY_KEY) > 32) {
-			return substr($SECURITY_KEY,0,32);
+		if (strlen($GLOBALS['SECURITY_KEY']) > 32) {
+			return substr($GLOBALS['SECURITY_KEY'],0,32);
 		}
 
-		if(strlen($SECURITY_KEY) < 32) {
-			return str_pad($SECURITY_KEY, 32, $SECURITY_KEY[0], STR_PAD_BOTH);
+		if(strlen($GLOBALS['SECURITY_KEY']) < 32) {
+			return str_pad($GLOBALS['SECURITY_KEY'], 32, $GLOBALS['SECURITY_KEY'][0], STR_PAD_BOTH);
 		}
 		return '';
 	}

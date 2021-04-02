@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 
@@ -24,7 +24,7 @@ $dlManager = new OccurrenceDownload();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
  	$isEditor = true;
 }
 
@@ -43,11 +43,11 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
 	'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Occurrence Export Manager</title>
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
@@ -56,7 +56,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<div id="innertext" style="background-color:white;">
 			<?php
 			if($collid && $isEditor){
-				if($ACTIVATE_GEOLOCATE_TOOLKIT){
+				if($GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']){
 					?>
 					<form name="expgeolocateform" action="../download/downloadhandler.php" method="post" onsubmit="">
 						<fieldset>

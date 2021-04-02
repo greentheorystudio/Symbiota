@@ -6,16 +6,15 @@ class OccurrenceCrowdSource {
 	private $conn;
 	private $collid;
 	private $omcsid;
-	private $headArr;
+	private $headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
+        'associatedCollectors','eventDate','verbatimEventDate','country','stateProvince','county','locality',
+        'decimalLatitude','decimalLongitude','coordinateUncertaintyInMeters','verbatimCoordinates','minimumElevationInMeters',
+        'maximumElevationInMeters','verbatimElevation','habitat','reproductiveCondition','substrate','occurrenceRemarks',
+        'processingstatus','dateLastModified');
 
 	public function __construct() {
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
-			'associatedCollectors','eventDate','verbatimEventDate','country','stateProvince','county','locality',
-			'decimalLatitude','decimalLongitude','coordinateUncertaintyInMeters','verbatimCoordinates','minimumElevationInMeters',
-			'maximumElevationInMeters','verbatimElevation','habitat','reproductiveCondition','substrate','occurrenceRemarks',
-			'processingstatus','dateLastModified');
 	}
 
 	public function __destruct(){
@@ -167,7 +166,6 @@ class OccurrenceCrowdSource {
 
 	public function getUserStats($catid): array
 	{
-		global $SYMB_UID;
 		$retArr = array();
 		$sql = 'SELECT c.collid, CONCAT_WS(":",c.institutioncode,c.collectioncode) as collcode, c.collectionname, '.
 			'q.reviewstatus, q.isvolunteer, COUNT(q.occid) AS cnt, SUM(IFNULL(q.points,2)) AS points '.
@@ -177,7 +175,7 @@ class OccurrenceCrowdSource {
 			$sql .= 'INNER JOIN omcollcatlink cat ON c.collid = cat.collid WHERE (cat.ccpk = '.$catid.') ';
 		}
 		$sql .= 'GROUP BY c.collid,q.reviewstatus,q.uidprocessor,q.isvolunteer '.
-			'HAVING (q.uidprocessor = '.$SYMB_UID.' OR q.uidprocessor IS NULL) '.
+			'HAVING (q.uidprocessor = '.$GLOBALS['SYMB_UID'].' OR q.uidprocessor IS NULL) '.
 			'ORDER BY c.institutioncode,c.collectioncode,q.reviewstatus';
 		//echo $sql;
 		$rs = $this->conn->query($sql);

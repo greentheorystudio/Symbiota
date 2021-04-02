@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php'); 
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/fieldstandardization.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -30,22 +30,22 @@ $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0; 
-if($IS_ADMIN || ($collMap['colltype'] === 'General Observations')
-	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations')
+	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
 if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
-	$obsUid = $SYMB_UID;
+	$obsUid = $GLOBALS['SYMB_UID'];
 	$cleanManager->setObsUid($obsUid);
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Field Standardization</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Field Standardization</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 	
 	</script>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
@@ -53,26 +53,26 @@ if($targetTid){
     $urlVars = ($descLimit?'desclimit=1':'').'&orderinput='.$orderInput.'&familyinput='.$familyInput.'&scinameinput='.$scinameInput.'&commoninput='.$commonInput.'&sortSelect='.$sortSelect.'&targettid='.$targetTid;
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE . ($targetTid?' Dynamic Species List: ' . $listManager->getSciName():''); ?></title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
-	<script type="text/javascript" src="../js/jquery.js"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#orderinput").autocomplete({
-				source: function( request, response ) {
-					$.getJSON( "../webservices/autofillsciname.php", {
-					    term: request.term,
+    <title><?php echo $GLOBALS['DEFAULT_TITLE'] . ($targetTid?' Dynamic Species List: ' . $listManager->getSciName():''); ?></title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#orderinput").autocomplete({
+                source: function( request, response ) {
+                    $.getJSON( "../webservices/autofillsciname.php", {
+                        term: request.term,
                         limit: 10,
                         rlimit: 100,
-                        hideauth: true,
+                        hideauth: false,
                         taid: 1
                     }, response );
-				},
+                },
                 select: function( event, ui ) {
                     processSelection('orderinput',ui.item.id);
                 },
@@ -81,7 +81,7 @@ if($targetTid){
                         document.getElementById('orderinput').value = '';
                     }
                 }
-			},{ minLength: 3 });
+            },{ minLength: 3 });
 
             $("#familyinput").autocomplete({
                 source: function( request, response ) {
@@ -89,7 +89,7 @@ if($targetTid){
                         term: request.term,
                         limit: 10,
                         rlimit: 140,
-                        hideauth: true,
+                        hideauth: false,
                         taid: 1
                     }, response );
                 },
@@ -108,7 +108,7 @@ if($targetTid){
                     $.getJSON( "../webservices/autofillsciname.php", {
                         term: request.term,
                         limit: 10,
-                        hideauth: true,
+                        hideauth: false,
                         taid: 1
                     }, response );
                 },
@@ -172,7 +172,7 @@ if($targetTid){
             }
             return true;
         }
-	</script>
+    </script>
 </head>
 <body>
 <?php
@@ -282,7 +282,7 @@ include(__DIR__ . '/../header.php');
     <div>
         <?php
         if($tableArr){
-            $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/taxa/';
+            $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/';
             $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
             $navStr = '<div style="clear:both;display:flex;justify-content:center;">';
             $lastPage = ($qryCnt / 100) + 1;

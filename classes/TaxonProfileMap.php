@@ -88,13 +88,12 @@ class TaxonProfileMap {
 	
 	private function getTaxaWhere(): string
 	{
-		global $USER_RIGHTS;
 		$sql = '';
 		$sql .= 'WHERE (o.tidinterpreted IN('.implode(',',array_keys($this->synMap)).')) '.
 			'AND (o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
-		if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) &&
-			!array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS) && array_key_exists('RareSppReader',$USER_RIGHTS)){
-			$sql .= 'AND ((o.CollId IN ('.implode(',',$USER_RIGHTS['RareSppReader']).')) OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+		if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) &&
+			!array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS']) && array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+			$sql .= 'AND ((o.CollId IN ('.implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']).')) OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
 		}
 		return $sql;
 	}

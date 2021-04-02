@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyEditorManager.php');
-header('Cache-control: private; Content-Type: text/html; charset=' .$CHARSET);
+header('Cache-control: private; Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../ident/tools/editor.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
-$langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$DEFAULT_LANG;
+$langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
 $charValue = array_key_exists('char',$_REQUEST)?$_REQUEST['char']: '';
 $childrenStr = array_key_exists('children',$_REQUEST)?$_REQUEST['children']: '';
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
@@ -24,7 +24,7 @@ $editorManager->setLanguage($langValue);
 $editorManager->setTid($tid);
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('KeyEditor',$USER_RIGHTS) || array_key_exists('KeyAdmin',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS']) || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -34,11 +34,12 @@ if($isEditor && $action && $action === 'Submit Changes') {
     $editorManager->processTaxa($addArr,$removeArr);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Identification Character Editor</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Identification Character Editor</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
         let dataChanged = false;
         window.onbeforeunload = verifyClose;

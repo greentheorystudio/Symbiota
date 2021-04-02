@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/VoucherManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
@@ -9,7 +9,7 @@ $tabIndex = array_key_exists('tabindex',$_POST)?$_POST['tabindex']:0;
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -58,12 +58,13 @@ elseif( $action === 'Add Voucher'){
 }
 $clArray = $vManager->getChecklistData();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Species Details: <?php echo $vManager->getTaxonName(). ' of ' .$vManager->getClName(); ?></title>
-		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+        <script src="../js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../js/jquery.js"></script>
 		<script type="text/javascript" src="../js/jquery-ui.js"></script>
 		<script type="text/javascript">
@@ -249,11 +250,11 @@ $clArray = $vManager->getChecklistData();
 					</div>
 					<div id="voucherdiv">
 						<?php 
-						if($OCCURRENCE_MOD_IS_ACTIVE){
+						if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE']){
 							?>
 							<div style="float:right;margin-top:10px;">
 								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
-									<img src="../images/link.svg"  style="border:0;width:15px;" />
+									<i style='width:15px;height:15px;' class="fas fa-link"></i>
 								</a>
 							</div>
 							<h3>Voucher Information</h3>
@@ -283,13 +284,14 @@ $clArray = $vManager->getChecklistData();
                                     }
 									echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
 									?>
-									<a href="#" onclick="toggle('vouch-<?php echo $occid;?>')"><img src="../images/edit.svg" style="width:20px;height:20px;" /></a>
+									<a href="#" onclick="toggle('vouch-<?php echo $occid;?>')"><i style='width:15px;height:15px;' class="far fa-edit"></i></a>
 									<form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this voucher record?');">
 										<input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
 										<input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
 										<input type='hidden' name='oiddel' id='oiddel' value="<?php echo $occid;?>" />
 										<input type='hidden' name='tabindex' value="1" />
-										<input type="image" name="action" src="../images/del.png" style="width:15px;" value="Delete Voucher" title="Delete Voucher" />
+                                        <input type='hidden' name='action' value="Delete Voucher" />
+										<button style="margin:0;padding:2px;" type="submit" title="Delete Voucher"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
 									</form>
 									<div id="vouch-<?php echo $occid;?>" style='margin:10px;clear:both;display:none;'>
 										<form action="clsppeditor.php" method='post' name='editvoucher'>

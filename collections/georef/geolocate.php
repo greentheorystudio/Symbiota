@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $locality = $_REQUEST['locality'];
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
@@ -28,7 +28,7 @@ elseif(preg_match('/R\d{1,2}[EW]\sS\d{1,2}/i',$locality)){
 	$locality = preg_replace('/\sS(\d{1,2})/', ' Sec$1', $locality);
 }
 
-if(strtolower($CHARSET) === 'iso-8859-1'){
+if(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
 	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') === 'UTF-8'){
 		$country = utf8_encode($country);
 	}
@@ -48,16 +48,16 @@ $state = removeAccents($state);
 $county = removeAccents($county);
 
 $urlVariables = 'country='.urlencode($country).'&state='.urlencode($state).'&county='.urlencode($county).'&locality='.urlencode($locality);
-if(isset($PORTAL_GUID) && $PORTAL_GUID){
-	$urlVariables .= '&gc='.$PORTAL_GUID;
+if(isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
+	$urlVariables .= '&gc='.$GLOBALS['PORTAL_GUID'];
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title>GEOLocate Tool</title>
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<style>
 		iframe {
 			width: 1020px;

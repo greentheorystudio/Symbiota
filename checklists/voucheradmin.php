@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -19,7 +19,7 @@ $clManager->setClid($clid);
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = 1;
 	if($action === 'SaveSearch'){
 		$clManager->saveQueryVariables($_POST);
@@ -39,12 +39,13 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 }
 $clManager->setCollectionVariables();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Checklist Administration</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -104,7 +105,7 @@ if($clid && $isEditor){
 			<?php
 			echo $clManager->getQueryVariableStr();
 			?>
-			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><img src="../images/edit.svg" style="width:15px;border:0;"/></a></span>
+			<span style="margin-left:10px;"><a href="#" onclick="toggle('sqlbuilderdiv');return false;" title="Edit Search Statement"><i style='width:15px;height:15px;' class="far fa-edit"></i></a></span>
 		</div>
 	<?php
 	}
@@ -162,7 +163,7 @@ if($clid && $isEditor){
 								<div>
 									<b>Lat North:</b>
 									<input id="upperlat" type="text" name="latnorth" style="width:70px;" value="<?php echo $termArr['latnorth'] ?? ''; ?>" title="Latitude North" />
-									<a href="#" onclick="openSpatialInputWindow('input-box');"><img src="../images/globe.svg" style="width:15px;" title="Find Coordinate" /></a>
+									<a href="#" onclick="openSpatialInputWindow('input-box');"><i style='width:15px;height:15px;' title="Find Coordinate" class="fas fa-globe"></i></a>
 								</div>
 								<div>
 									<b>Lat South:</b>
@@ -260,9 +261,7 @@ if($clid && $isEditor){
 								echo ' (excludes taxa from children checklists)';
 							}
 							?>
-						</div>
-						<div style='float:left;'>
-							<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><img src="../images/refresh.png" style="border:0;" title="Refresh List" /></a>
+                            <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><i style='width:15px;height:15px;' title="Refresh List" class="fas fa-redo-alt"></i></a>
 						</div>
 					<?php
 					}
@@ -345,7 +344,7 @@ if($clid && $isEditor){
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
 												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-													<img src="../images/link.svg" style="width:13px;" title="Link Voucher Specimens" />
+													<i style='width:15px;height:15px;' title="Link Voucher Specimens" class="fas fa-link"></i>
 												</a>
 											</div>
 										<?php
