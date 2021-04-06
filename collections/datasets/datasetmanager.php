@@ -128,6 +128,7 @@ if($isEditor){
             cursor:pointer;
         }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
@@ -351,7 +352,7 @@ include(__DIR__ . '/../../header.php');
                                         <td>
                                             <?php echo $recArr['catnum']; ?>
                                             <a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;">
-                                                <img src="../../images/info.png" style="width:15px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                             </a>
                                         </td>
                                         <td>
@@ -452,7 +453,7 @@ include(__DIR__ . '/../../header.php');
                                                         <input name="uid" type="hidden" value="<?php echo $uid; ?>" />
                                                         <input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
                                                         <input name="tabindex" type="hidden" value="2" />
-                                                        <input name="submitimage" type="image" src="../../images/drop.png" />
+                                                        <button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
                                                     </form>
                                                 </li>
                                                 <?php

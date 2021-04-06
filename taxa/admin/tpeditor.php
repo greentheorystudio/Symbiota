@@ -121,6 +121,7 @@ if($editable && $action){
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -189,7 +190,7 @@ if($editable && $action){
 			 	}
 				echo "<div style='font-size:16px;margin-top:15px;margin-left:10px;'><a href='../index.php?taxon=".$tEditor->getTid()."' style='color:#990000;text-decoration:none;'><b><i>".$tEditor->getSciName(). '</i></b></a> ' .$tEditor->getAuthor();
 				if($tEditor->getRankId() > 140) {
-                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><img style='border:0;height:10px;' src='../../images/toparent.png' title='Go to Parent' /></a>";
+                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><i style='height:15px;width:15px;' title='Go to Parent' class='far fa-level-up-alt'></i></a>";
                 }
 				echo "</div>\n";
 				echo "<div id='family' style='margin-left:20px;margin-top:0.25em;'><b>Family:</b> ".$tEditor->getFamily()."</div>\n";
@@ -214,7 +215,7 @@ if($editable && $action){
 							<div style="margin:10px 0;">
 								<b><?php echo ($vernList?'Common Names':'No common in system'); ?></b> 
 								<span onclick="toggle('addvern');" title="Add a New Common Name">
-									<img style="border:0;width:15px;" src="../../images/add.png"/>
+									<i style="height:15px;width:15px;color:green;color:green;" class="fas fa-plus"></i>
 								</span>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernList?'none':'block'); ?>;">
@@ -260,7 +261,7 @@ if($editable && $action){
 											<div style="margin-left:10px;">
 												<b><?php echo $vernArr['vernacularname']; ?></b>
 												<span onclick="toggle('vid-<?php echo $vernArr['vid']; ?>');" title="Edit Common Name">
-													<img style="border:0;width:12px;" src="../../images/edit.svg" />
+													<i style="height:15px;width:15px;" class="far fa-edit"></i>
 												</span>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin-left:20px;">
@@ -298,8 +299,9 @@ if($editable && $action){
 													<input type='hidden' name='delvern' value='<?php echo $vernArr['vid']; ?>' />
 													<input type='hidden' name='tid' value='<?php echo $tEditor->getTid(); ?>' />
 													<input name='action' type='hidden' value='Delete Common Name' /> 
-													<input name='submitaction' type='image' value='Delete Common Name' style='height:12px;' src='../../images/del.png' /> 
-													Delete Common Name
+													<button style="margin:0;padding:2px;" type="submit">
+                                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i> Delete Common Name
+                                                    </button>
 												</form>
 											</div>
 											<?php 
@@ -318,7 +320,7 @@ if($editable && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="Edit Synonym Sort Order">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0;width:12px;" src="../../images/edit.svg"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>

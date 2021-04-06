@@ -75,6 +75,7 @@ if($formSubmit === 'dlexsiccati'){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=130926"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){
@@ -302,7 +303,7 @@ if($formSubmit === 'dlexsiccati'){
 							<?php
 							$dlUrl = 'index.php?formsubmit=dlexsiccati&searchterm='.$searchTerm.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId;
 							?>
-							<a href="<?php echo $dlUrl; ?>" target="_blank"><img src="../../images/download.svg" style="width:15px" /></a>
+							<a href="<?php echo $dlUrl; ?>" target="_blank"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>
 						</div>
 						<div style="margin:5px 0 0 5px;">
 							<input name="formsubmit" type="submit" value="Rebuild List" />
@@ -314,8 +315,8 @@ if($formSubmit === 'dlexsiccati'){
 			<?php
 			if($isEditor){
 				?>
-				<div style="cursor:pointer;float:right;" onclick="toggle('exsadddiv');" title="Edit Exsiccati Number">
-					<img style="border:0;" src="../../images/add.png" />
+				<div style="cursor:pointer;float:right;" onclick="toggle('exsadddiv');" title="Add Exsiccati Number">
+					<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 				</div>
 				<div id="exsadddiv" style="display:none;">
 					<form name="exsaddform" action="index.php" method="post" onsubmit="return verfifyExsAddForm(this)">
@@ -383,10 +384,10 @@ if($formSubmit === 'dlexsiccati'){
 					?>
 					<div style="float:right;">
 						<span style="cursor:pointer;" onclick="toggleExsEditDiv('exseditdiv');" title="Edit Exsiccati">
-							<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
+							<i style="height:20px;width:20px;" class="far fa-edit"></i>
 						</span>
 						<span style="cursor:pointer;" onclick="toggleNumAddDiv('numadddiv');" title="Add Exsiccati Number">
-							<img style="border:0;" src="../../images/add.png" />
+							<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 						</span>
 					</div>
 					<?php
@@ -518,10 +519,10 @@ if($formSubmit === 'dlexsiccati'){
 				?>
 				<div style="float:right;">
 					<span style="cursor:pointer;" onclick="toggleNumEditDiv('numeditdiv');" title="Edit Exsiccati Number">
-						<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg"/>
+						<i style="height:20px;width:20px;" class="far fa-edit"></i>
 					</span>
 					<span style="cursor:pointer;" onclick="toggleOccAddDiv('occadddiv');" title="Add Occurrence to Exsiccati Number">
-						<img style="border:0;" src="../../images/add.png" />
+						<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 					</span>
 				</div>
 				<?php
@@ -710,7 +711,7 @@ if($formSubmit === 'dlexsiccati'){
 									if($isEditor){
 										?>
 										<div style="cursor:pointer;float:right;" onclick="toggle('occeditdiv-<?php echo $k; ?>');" title="Edit Occurrence Link">
-											<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg"/>
+                                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
 										</div>
 										<?php
 									}

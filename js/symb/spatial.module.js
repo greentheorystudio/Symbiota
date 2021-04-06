@@ -356,7 +356,7 @@ function buildLayerTableRow(lArr,removable){
         trfragment += '<td style="width:50px;">';
         if(removable){
             const onclick = "removeUserLayer('" + layerID + "');";
-            trfragment += '<input type="image" style="margin-left:5px;" src="../images/del.png" onclick="'+onclick+'" title="Remove layer">';
+            trfragment += '<button style="margin:0;padding:2px;" type="button" onclick="'+onclick+'" title="Remove layer"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
         }
         trfragment += '</td>';
         const layerTable = document.getElementById("layercontroltable");

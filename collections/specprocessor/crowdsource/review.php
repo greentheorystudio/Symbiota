@@ -34,6 +34,7 @@ $projArr = $csManager->getProjectDetails();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Crowdsourcing Reviewer</title>
     <link href="../../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <script src="../../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function selectAll(cbObj){
             const cbStatus = cbObj.checked;
@@ -237,11 +238,11 @@ $projArr = $csManager->getProjectDetails();
 											<?php
 											if($isEditor || $rArr['reviewstatus'] === 5){
 												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid='.$occid.'" target="_blank">';
-												echo '<img src="../../../images/edit.svg" style="border:solid 1px gray;height:13px;" />';
+												echo '<i style="height:15px;width:15px;" class="far fa-edit"></i>';
 												echo '</a>';
 											}
 											else{
-												echo '<img src="../../../images/cross-out.png" style="border:solid 1px gray;height:13px;" />';
+												echo '<i style="height:15px;width:15px;" class="far fa-times-circle"></i>';
 											}
 											?>
 										</td>

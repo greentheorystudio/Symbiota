@@ -48,6 +48,7 @@ if(!$addAuth){
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=2"></script>
@@ -84,7 +85,7 @@ if(!$addAuth){
 					?>
 					<div style="float:right;margin:10px;">
 						<a href="#" onclick="toggle('newauthordiv');">
-							<img src="../images/add.png" alt="Create New Author" />
+							<i style="height:15px;width:15px;color:green;" title="Create New Author" class="fas fa-plus"></i>
 						</a>
 					</div>
 					<?php

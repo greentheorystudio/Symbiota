@@ -61,6 +61,7 @@ if($isEditor && $formSubmit === 'Create Term') {
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -163,7 +164,7 @@ if($isEditor && $formSubmit === 'Create Term') {
 									}
 									?>
 								</select> 
-								<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" /></a>&nbsp;&nbsp;
+								<a href="#" onclick="toggle('addLangDiv');return false;"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>&nbsp;&nbsp;
 							</div>
 							<div id="addLangDiv" style="float:left;display:none">
 								<input name="newlang" type="text" maxlength="45" style="width:200px;" /> 

@@ -50,6 +50,7 @@ if($isEditor){
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -173,8 +174,9 @@ if($isEditor){
                             echo '</td>';
                             echo '<td>'.$jArr['taxon'].'</td>';
                             echo '<td>';
-                            echo '<form action="fgbatch.php" method="post" style="" onsubmit="">';
-                            echo '<input type="image" src="../../images/del.png" name="action" value="Cancel Job" title="Cancel Job" style="width:15px;" />';
+                            echo '<form action="fgbatch.php" method="post">';
+                            echo '<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                            echo '<input type="hidden" name="action" value="Cancel Job">';
                             echo '<input type="hidden" name="collid" value="'.$collId.'">';
                             echo '<input type="hidden" name="jobid" value="'.$job.'">';
                             echo '</form>';
@@ -207,7 +209,8 @@ if($isEditor){
                             echo '<td>'.$jArr['taxon'].'</td>';
                             echo '<td>';
                             echo '<form action="fgbatch.php" method="post" style="" onsubmit="">';
-                            echo '<input type="image" src="../../images/del.png" name="action" value="Delete Results" title="Delete Results" style="width:15px;" />';
+                            echo '<button style="margin:0;padding:2px;" title="Delete Results" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                            echo '<input type="hidden" name="action" value="Delete Results">';
                             echo '<input type="hidden" name="collid" value="'.$collId.'">';
                             echo '<input type="hidden" name="jobid" value="'.$job.'">';
                             echo '</form>';

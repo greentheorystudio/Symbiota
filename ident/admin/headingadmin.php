@@ -38,7 +38,8 @@ $headingArr = $charManager->getHeadingArr();
 	<title>Heading Administration</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="../../js/symb/shared.js"></script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value === ""){
@@ -94,7 +95,7 @@ $headingArr = $charManager->getHeadingArr();
 						<ul>
 							<?php 
 							foreach($headingArr as $headingId => $headArr){
-								echo '<li><a href="#" onclick="toggle(\'headingedit-'.$headingId.'\');">'.$headArr['name'].' <img src="../../images/edit.svg" style="width:13px" /></a></li>';
+								echo '<li><a href="#" onclick="toggle(\'headingedit-'.$headingId.'\');">'.$headArr['name'].' <i style="height:15px;width:15px;" class="far fa-edit"></i></a></li>';
 								?>
 								<div id="headingedit-<?php echo $headingId; ?>" style="display:none;margin:20px;">
 									<fieldset style="padding:15px;">

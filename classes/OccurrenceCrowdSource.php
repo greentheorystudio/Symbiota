@@ -6,16 +6,15 @@ class OccurrenceCrowdSource {
 	private $conn;
 	private $collid;
 	private $omcsid;
-	private $headArr;
+	private $headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
+        'associatedCollectors','eventDate','verbatimEventDate','country','stateProvince','county','locality',
+        'decimalLatitude','decimalLongitude','coordinateUncertaintyInMeters','verbatimCoordinates','minimumElevationInMeters',
+        'maximumElevationInMeters','verbatimElevation','habitat','reproductiveCondition','substrate','occurrenceRemarks',
+        'processingstatus','dateLastModified');
 
 	public function __construct() {
         $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->headArr = array('catalogNumber','family','sciname','identifiedBy','dateIdentified','recordedBy','recordNumber',
-			'associatedCollectors','eventDate','verbatimEventDate','country','stateProvince','county','locality',
-			'decimalLatitude','decimalLongitude','coordinateUncertaintyInMeters','verbatimCoordinates','minimumElevationInMeters',
-			'maximumElevationInMeters','verbatimElevation','habitat','reproductiveCondition','substrate','occurrenceRemarks',
-			'processingstatus','dateLastModified');
 	}
 
 	public function __destruct(){

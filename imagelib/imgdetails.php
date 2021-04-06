@@ -76,6 +76,7 @@ if($imgArr){
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/symb/imagelib.imgdetails.js?ver=20210313" type="text/javascript"></script>
@@ -158,7 +159,7 @@ if($imgArr){
 										</select>
 										* Users registered within system
 										<a href="#" onclick="toggle('iepor');return false;" title="Display photographer override field">
-											<img src="../images/editplus.png" style="border:0;width:12px;" />
+											<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 										</a>
 									</div>
 									<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr['photographer']?'block':'none'); ?>;">
@@ -298,7 +299,7 @@ if($imgArr){
 							?>
 							<div style="float:right;margin-right:10px;" title="Must have editing privileges for this collection managing image">
 								<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2">
-									<img src="../images/edit.svg" style="border:0;width:20px;height:20px;" />
+                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
 								</a>
 							</div>
 							<?php
@@ -306,7 +307,7 @@ if($imgArr){
 						else if($isEditor){
                             ?>
                             <div style="float:right;margin-right:10px;cursor:pointer;">
-                                <img src="../images/edit.svg" style="border:0;width:20px;height:20px;" onclick="toggle('imageedit');" />
+                                <i style="height:20px;width:20px;" class="far fa-edit" onclick="toggle('imageedit');"></i>
                             </div>
                             <?php
                         }

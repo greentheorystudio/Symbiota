@@ -31,6 +31,7 @@ if($isEditor){
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script>
@@ -152,7 +153,7 @@ include(__DIR__ . '/../../header.php');
                                         <?php echo $recArr['collector']; ?>
                                     </a>
                                     <a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-                                        <img src="../../images/edit.svg" style="width:20px;height:20px;" />
+                                        <i style="height:20px;width:20px;" class="far fa-edit"></i>
                                     </a>
                                 </td>
                                 <td>

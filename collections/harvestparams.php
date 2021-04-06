@@ -15,6 +15,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/symb/shared.js?ver=1"></script>
@@ -251,7 +252,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-box');">
-                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                    <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -278,7 +279,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
                     </div>
                 </div>
                 <div style="float:right;cursor:pointer;" onclick="openSpatialInputWindow('input-circle');">
-                    <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                    <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                 </div>
             </div>
             <div style="clear:both;width:600px;float:left;border:2px solid brown;padding:10px;margin-bottom:10px;">
@@ -293,7 +294,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
                         <button type="button" style="width:200px;" onclick="openSpatialInputWindow('input');">
                             Open Spatial Window
                             <span style="float:right;cursor:pointer;">
-                                <img src="../images/globe.svg" style="width:15px;" title="Open Spatial Window" />
+                                <i style="height:15px;width:15px;" title="Open Spatial Window" class="fas fa-globe"></i>
                             </span>
                         </button>
                     </div>

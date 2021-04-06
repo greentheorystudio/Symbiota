@@ -47,7 +47,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dichotomous Key Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<meta name='keywords' content='' />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
         let cseXmlHttp;
         let targetStr;
@@ -138,7 +138,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 	<div id="innertext">
 	<?php if($editable){ ?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editcontrols');" title="Toggle Editing on and off">
-			<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
+            <i style="height:20px;width:20px;" class="far fa-edit"></i>
 		</div>
 	<?php } ?>
 		<h1>Dichotomous Key Loader</h1>
@@ -154,7 +154,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 		foreach($rows as $rowCnt => $row){
 			if($rowCnt === 0 && $row['parentstmtid']){
 				echo "<a href='dichotomous.php?stmtid=".$row['parentstmtid']."'>";
-				echo "<img src='../../images/back.png' style='height:10px;border:0;'/> Go Back";
+				echo "<i style='height:15px;width:15px;' class='far fa-arrow-alt-circle-left'></i> Go Back";
 				echo '</a>';
 			}
 			?>
@@ -165,10 +165,10 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 						if($editable){
 						?>
 							<span class="editcontrols" style="cursor:pointer;display:none;" onclick="toggle('editdiv<?php echo $rowCnt; ?>');" title="Edit Statements">
-								<img style="border:0;width:12px;margin-left:5px;" src="../../images/edit.svg"/>
+								<i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</span>
 							<span class="editcontrols" style="cursor:pointer;display:none;" onclick="toggle('adddiv<?php echo $rowCnt; ?>');" title="Add a New Cuplet">
-								<img style="border:0;width:12px;margin-left:5px;" src="../../images/add.png"/>
+								<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 							</span>
 						<?php 
 						}

@@ -257,7 +257,7 @@ class KeyDataManager extends Manager{
 					}
                     $url = $row->helpurl;
                     if($url) {
-						$charName .= " <a href='$url' target='_blank' style='border:0;'><img src='../images/info.png' style='border:0;width:12px;'></a>";
+						$charName .= " <a href='$url' target='_blank' style='border:0;'><i style='height:15px;width:15px;color:green;' class='fas fa-info-circle'></i></a>";
 					}
                     $cs = $row->CS;
                     $charStateName = $row->CharStateName;

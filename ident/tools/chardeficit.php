@@ -32,7 +32,8 @@ $charStr = '';
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Deficit Finder</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
+    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
 		function openPopup(urlStr,windowName){
             let wWidth = 900;
             try{

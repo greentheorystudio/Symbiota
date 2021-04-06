@@ -151,6 +151,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
             height: 600px;
         }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
     <script src="../../js/jquery-ui.js" type="text/javascript"></script>
     <?php
@@ -158,8 +159,9 @@ $commentArr = $indManager->getCommentArr($isEditor);
         ?>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=2" type="text/css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210313" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210325" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -1136,7 +1138,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                         if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
                             ?>
                             <div style="float:right;" title="Manage Edits">
-                                <a href="../editor/editreviewer.php?collid=<?php echo $collid.'&occid='.$occid; ?>"><img src="../../images/edit.svg" style="border:0;width:14px;" /></a>
+                                <a href="../editor/editreviewer.php?collid=<?php echo $collid.'&occid='.$occid; ?>"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
                             </div>
                             <?php
                         }

@@ -76,6 +76,7 @@ $headingAdminUrl = 'headingadmin.php';
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -304,7 +305,7 @@ $headingAdminUrl = 'headingadmin.php';
 										}
 										?>
 									</select> 
-									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"><i style="height:20px;width:20px;" class="far fa-edit"></i></a>
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
@@ -339,7 +340,7 @@ $headingAdminUrl = 'headingadmin.php';
 				<div id="charstatediv">
 					<div style="float:right;margin:10px;">
 						<a href="#" onclick="toggle('newstatediv');">
-							<img src="../../images/add.png" alt="Create New Character State" />
+							<i style="height:20px;width:20px;color:green;" title="Create New Character State" class="fas fa-plus"></i>
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?php echo ($charStateArr?'none':'block');?>;">
@@ -377,14 +378,14 @@ $headingAdminUrl = 'headingadmin.php';
 							<div>
 								<div id="csplus-<?php echo $cs; ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?php echo $cs; ?>);return false;">
-										<img src="../../images/plus.png" style="width:10px;" />
+										<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 										<?php echo $stateArr['charstatename']; ?>
 									</a>
 								</div>
 								<div id="<?php echo 'cs-'.$cs.'Div'; ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?php echo $cs; ?>);return false;">
-											<img src="../../images/minus.png" style="width:10px;" />
+											<i style="height:15px;width:15px;" class="fas fa-minus"></i>
 											<?php echo $stateArr['charstatename']; ?>
 										</a>
 									</div>

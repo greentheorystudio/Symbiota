@@ -17,6 +17,7 @@ $tLinks = $keyManager->getTaxonRelevance();
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -94,7 +95,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
 								</form>
 							</div>
 							<?php 
@@ -118,7 +119,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
 								</form>
 							</div>
 							<?php 
