@@ -58,7 +58,7 @@
 								<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" ><b>BROWSE</b> the Flora  &amp; Image Library</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/map/mapinterface.php" target="_blank">Map Search</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
 							</li>
 						</ul>
 					</li>
