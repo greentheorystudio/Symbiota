@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:'';
@@ -17,7 +17,7 @@ if($lang) {
 
 $statusStr = '';
 $editable = false;
-if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 	$editable = true;
 }
 
@@ -33,14 +33,14 @@ if($editable){
 		});
 	</script>
 	<div style="float:right;" onclick="toggle('adddescrblock');" title="Add a New Description">
-		<img style='border:0;width:15px;' src='../../images/add.png'/>
+		<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 	</div>
 	<div id='adddescrblock' style='display:none;'>
 		<form name='adddescrblockform' action="tpeditor.php" method="get">
 			<fieldset style='width:90%;margin:10px;padding:10px;'>
     			<legend><b>New Description Block</b></legend>
 				<div style=''>
-					Language: <input id="language" name="language" type="text" value="<?php echo $DEFAULT_LANG; ?>" />
+					Language: <input id="language" name="language" type="text" value="<?php echo $GLOBALS['DEFAULT_LANG']; ?>" />
 				</div>
 				<div style=''>
 					Caption: <input id='caption' name='caption' style='width:300px;' type='text' />
@@ -72,7 +72,7 @@ if($editable){
     		<fieldset style='width:90%;margin:10px 5px 5px 5px;padding:10px;'>
 				<legend><b><?php echo ($dArr['caption']?: 'Description ' .$dArr['displaylevel']); ?></b></legend>
 				<div style="float:right;" onclick="toggle('dblock-<?php echo $tdbid;?>');" title="Edit Description Block">
-					<img style='border:0;width:12px;' src='../../images/edit.svg'/>
+                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 				</div>
 				<?php 
 				if($descEditor->getTid() !== $dArr['tid']){
@@ -130,8 +130,9 @@ if($editable){
 								<input type='hidden' name='tid' value='<?php echo $descEditor->getTid();?>' />
 								<input type="hidden" name="tabindex" value="4" />
 								<input type='hidden' name='action' value='Delete Description Block'>
-								<input name='submitaction' value='Delete Description Block' style='margin:10px 0 0 20px;height:12px;' type='image' src='../../images/del.png'/>
-								Delete Description Block (Including all statements below) 
+								<button style="margin:0;padding:2px;" type="submit">
+                                    <i style="height:15px;width:15px;" class="far fa-trash-alt"></i> Delete Description Block (Including all statements below)
+                                </button>
 							</form>
 						</div>
 					</fieldset>
@@ -140,7 +141,7 @@ if($editable){
 					<fieldset style="padding:10px;">
 						<legend><b>Statements</b></legend>
 						<div onclick="toggle('addstmt-<?php echo $tdbid;?>');" style="float:right;" title="Add a New Statement">
-							<img style='border:0;width:15px;' src='../../images/add.png'/>
+                            <i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 						</div>
 						<div id='addstmt-<?php echo $tdbid;?>' style='display:<?php echo ($action === 'Add Description Block'?'block':'none'); ?>'>
 							<form name='adddescrstmtform' action="tpeditor.php" method="post">
@@ -174,7 +175,7 @@ if($editable){
 								<div style="margin-top:3px;clear:both;">
 									<b><?php echo $stmtArr['heading'];?></b>:
 									<?php echo $stmtArr['statement'];?>
-									<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><img style='border:0;width:12px;' src='../../images/edit.svg'/></span>
+									<span onclick="toggle('edstmt-<?php echo $tdsid;?>');" title="Edit Statement"><i style="height:15px;width:15px;" class="far fa-edit"></i></span>
 								</div>
 								<div class="edstmt-<?php echo $tdsid;?>" style="clear:both;display:none;">
 									<div style='margin:5px 0 5px 20px;border:2px solid cyan;padding:5px;'>
@@ -204,8 +205,9 @@ if($editable){
 											<input type='hidden' name='tid' value='<?php echo $descEditor->getTid();?>' />
 											<input type="hidden" name="tabindex" value="4" />
 											<input type='hidden' name='action' value='Delete Statement'>
-											<input name='submitaction' value='Delete Statement' style='margin:10px 0 0 20px;height:12px;' type='image' src='../../images/del.png'/>
-											Delete Statement 
+											<button style="margin:0;padding:2px;" type="submit">
+                                                <i style="height:15px;width:15px;" class="far fa-trash-alt"></i> Delete Statement
+                                            </button>
 										</form>
 									</div>
 								</div>

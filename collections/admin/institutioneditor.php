@@ -1,8 +1,8 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/InstitutionManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -26,12 +26,12 @@ foreach($fullCollList as $k => $v){
 
 $editorCode = 0;
 $statusStr = '';
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$editorCode = 3;
 }
-elseif(array_key_exists('CollAdmin',$USER_RIGHTS)){
+elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
 	$editorCode = 1;
-	if($collList && array_intersect($USER_RIGHTS['CollAdmin'],array_keys($collList))){
+	if($collList && array_intersect($GLOBALS['USER_RIGHTS']['CollAdmin'],array_keys($collList))){
 		$editorCode = 2;
 	}
 }
@@ -88,11 +88,12 @@ if($editorCode){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Institution Editor</title>
-	<link type="text/css" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
-	<link type="text/css" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
+	<link type="text/css" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
+	<link type="text/css" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
 		function toggle(target){
             const tDiv = document.getElementById(target);
@@ -164,13 +165,13 @@ include(__DIR__ . '/../../header.php');
 			?>
 			<div style="float:right;">
 				<a href="institutioneditor.php">
-					<img src="<?php echo $CLIENT_ROOT;?>/images/toparent.png" style="width:15px;border:0;" title="Return to Institution List" />
+					<i style="height:15px;width:15px;" title="Return to Institution List" class="fas fa-level-up-alt"></i>
 				</a>
 				<?php 
 				if($editorCode > 1){
 					?>
 					<a href="#" onclick="toggle('editdiv');">
-						<img src="<?php echo $CLIENT_ROOT;?>/images/edit.svg" style="width:15px;border:0;" title="Edit Institution" />
+						<i style="height:20px;width:20px;" title="Edit Institution" class="far fa-edit"></i>
 					</a>
 					<?php 
 				}
@@ -352,8 +353,8 @@ include(__DIR__ . '/../../header.php');
 								foreach($collList as $id => $collName){
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
 									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
-									if($editorCode === 3 || in_array($id, $USER_RIGHTS['CollAdmin'], true)) {
-                                        echo ' <div class="editdiv" style="margin-left:10px;display:' . ($eMode ? '' : 'none') . '"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><img src="../../images/del.png" style="width:15px;"/></a></div>';
+									if($editorCode === 3 || in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
+                                        echo ' <div class="editdiv" style="margin-left:10px;display:' . ($eMode ? '' : 'none') . '"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a></div>';
                                     }
 									echo '</div>';
 								}
@@ -369,7 +370,7 @@ include(__DIR__ . '/../../header.php');
 							$addList = array();
 							foreach($fullCollList as $collid => $collArr){
 								if($collArr['iid'] !== $iid){
-									if($IS_ADMIN || (isset($USER_RIGHTS['CollAdmin']) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+									if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 										$addList[$collid] = $collArr;
 									}
 								}
@@ -423,7 +424,7 @@ include(__DIR__ . '/../../header.php');
         ?>
         <div style="float:right;">
             <a href="#" onclick="toggle('instadddiv');">
-                <img src="<?php echo $CLIENT_ROOT;?>/images/add.png" style="width:15px;border:0;" title="Add a New Institution" />
+                <i style="height:20px;width:20px;color:green;" title="Add a New Institution" class="fas fa-plus"></i>
             </a>
         </div>
         <div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
@@ -552,7 +553,7 @@ include(__DIR__ . '/../../header.php');
                                 <option value="">--------------------------------------</option>
                                 <?php
                                 foreach($fullCollList as $collid => $collArr){
-                                    if($collArr['iid'] && ($IS_ADMIN || ($USER_RIGHTS['CollAdmin'] && in_array($collid, $USER_RIGHTS['CollAdmin'], true)))){
+                                    if($collArr['iid'] && ($GLOBALS['IS_ADMIN'] || ($GLOBALS['USER_RIGHTS']['CollAdmin'] && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)))){
                                         echo '<option value="'.$collid.'"'.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
                                     }
                                 }
@@ -578,8 +579,8 @@ include(__DIR__ . '/../../header.php');
                         foreach($instList as $iid => $iArr){
                             echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
                             echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
-                            if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$USER_RIGHTS['CollAdmin'])){
-                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$CLIENT_ROOT.'/images/edit.svg" style="width:13px;" /></a>';
+                            if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$GLOBALS['USER_RIGHTS']['CollAdmin'])){
+                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><i style="height:15px;width:15px;" title="Edit Institution" class="far fa-edit"></i></a>';
                             }
                             echo '</a></li>';
                         }

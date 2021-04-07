@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $targetId = $_REQUEST['targetid'];
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -12,21 +12,21 @@ $recordedBy = array_key_exists('recordedby',$_POST)?$_POST['recordedby']:'';
 $recordNumber = array_key_exists('recordnumber',$_POST)?$_POST['recordnumber']:'';
 
 $collEditorArr = array();
-if(array_key_exists('CollAdmin',$USER_RIGHTS)){
-	$collEditorArr = $USER_RIGHTS['CollAdmin'];
+if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
+	$collEditorArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
 }
-if(array_key_exists('CollEditor',$USER_RIGHTS)){
-	$collEditorArr = array_unique(array_merge($collEditorArr,$USER_RIGHTS['CollEditor']));
+if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+	$collEditorArr = array_unique(array_merge($collEditorArr,$GLOBALS['USER_RIGHTS']['CollEditor']));
 }
 
 $occManager = new OccurrenceSupport();
-$collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
+$collArr = $occManager->getCollectionArr($GLOBALS['IS_ADMIN']?'all':$collEditorArr);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Search Page</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Search Page</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />	
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -93,7 +93,7 @@ $collArr = $occManager->getCollectionArr($IS_ADMIN?'all':$collEditorArr);
 <body style="background-color: white;">
 	<div id="innertext">
 		<?php 
-		if($IS_ADMIN || $collEditorArr){
+		if($GLOBALS['IS_ADMIN'] || $collEditorArr){
 			?>
 			<form name="occform" action="occurrencesearch.php" method="post" onsubmit="return verifyOccurSearchForm(this)" >
 				<fieldset style="width:650px;">

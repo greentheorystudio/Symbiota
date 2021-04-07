@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
@@ -10,22 +10,22 @@ $harvManager = new OccurrenceSupport();
 
 $isEditor = 0;
 $collList = array();
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
 	$collList[] = 'all';
 }
 else{
-	if(array_key_exists('CollEditor',$USER_RIGHTS)){
-		if(in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+	if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+		if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 			$isEditor = 1;
 		}
-		$collList = $USER_RIGHTS['CollEditor'];
+		$collList = $GLOBALS['USER_RIGHTS']['CollEditor'];
 	}
-	if(array_key_exists('CollAdmin',$USER_RIGHTS)){
-		if(in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
+		if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 			$isEditor = 1;
 		}
-		$collList = array_merge($collList,$USER_RIGHTS['CollAdmin']);
+		$collList = array_merge($collList,$GLOBALS['USER_RIGHTS']['CollAdmin']);
 	}
 }
 
@@ -35,11 +35,11 @@ if($isEditor && $action === 'Download Records') {
 }
 ?>
 <!DOCTYPE HTML>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-	    <title><?php echo $DEFAULT_TITLE; ?> - Occurrence Harvester</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Occurrence Harvester</title>
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>

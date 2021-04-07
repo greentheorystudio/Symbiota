@@ -6,27 +6,26 @@ use PHPMailer\PHPMailer\Exception;
 class Mailer {
     public function sendEmail($emailAddr,$subject,$bodyStr)
     {
-        global $DEFAULT_TITLE, $ADMIN_EMAIL, $SMTP_HOST, $SMTP_PORT, $SMTP_ENCRYPTION, $SMTP_ENCRYPTION_MECHANISM, $SMTP_USERNAME, $SMTP_PASSWORD;
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = $SMTP_HOST;
-            if(isset($SMTP_USERNAME, $SMTP_PASSWORD)){
+            $mail->Host = $GLOBALS['SMTP_HOST'];
+            if(isset($GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'])){
                 $mail->SMTPAuth = true;
-                $mail->Username = $SMTP_USERNAME;
-                $mail->Password = $SMTP_PASSWORD;
+                $mail->Username = $GLOBALS['SMTP_USERNAME'];
+                $mail->Password = $GLOBALS['SMTP_PASSWORD'];
             }
-            if($SMTP_ENCRYPTION){
-                if($SMTP_ENCRYPTION_MECHANISM === 'STARTTLS'){
+            if($GLOBALS['SMTP_ENCRYPTION']){
+                if($GLOBALS['SMTP_ENCRYPTION_MECHANISM'] === 'STARTTLS'){
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 }
-                if($SMTP_ENCRYPTION_MECHANISM === 'SMTPS'){
+                if($GLOBALS['SMTP_ENCRYPTION_MECHANISM'] === 'SMTPS'){
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                 }
             }
-            $mail->Port = $SMTP_PORT;
+            $mail->Port = $GLOBALS['SMTP_PORT'];
 
-            $mail->setFrom($ADMIN_EMAIL, $DEFAULT_TITLE . ' Admin');
+            $mail->setFrom($GLOBALS['ADMIN_EMAIL'], $GLOBALS['DEFAULT_TITLE'] . ' Admin');
             $mail->addAddress($emailAddr);
 
             $mail->isHTML(true);

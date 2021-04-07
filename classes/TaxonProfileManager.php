@@ -154,7 +154,7 @@ class TaxonProfileManager {
         while($row = $result->fetch_object()){
             $this->sciName = $row->SciName;
             $a = $row->Author;
-            $this->acceptedTaxa[$row->Tid] = "<i>$this->sciName</i> $a";
+            $this->acceptedTaxa[$row->Tid] = '<i>$this->sciName</i> ' . $a;
             if($this->taxAuthId){
                 $this->rankId = $row->RankId;
                 $this->author = $a;
@@ -482,7 +482,6 @@ class TaxonProfileManager {
 
     public function echoImages($start, $length = 0, $useThumbnail = 1, $caption = 'photographer'): bool
     {
-        global $IMAGE_DOMAIN;
         $status = false;
         if(!isset($this->imageArr)){
             $this->setTaxaImages();
@@ -504,12 +503,12 @@ class TaxonProfileManager {
             $imgUrl = $imgObj['url'];
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
-            if($IMAGE_DOMAIN){
+            if($GLOBALS['IMAGE_DOMAIN']){
                 if(strpos($imgUrl, '/') === 0) {
-                    $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
                 if(strpos($imgThumbnail, '/') === 0) {
-                    $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+                    $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                 }
             }
             if($imgObj['occid']){
@@ -518,13 +517,13 @@ class TaxonProfileManager {
             if($useThumbnail && $imgObj['thumbnailurl']) {
                 $imgUrl = $imgThumbnail;
             }
-            echo '<div class="tptnimg"><a href="'.$imgAnchor.'">';
+            echo '<a href="'.$imgAnchor.'">';
             $titleStr = $imgObj['caption'];
             if($imgObj['sciname'] !== $this->sciName) {
                 $titleStr .= ' (linked from ' . $imgObj['sciname'] . ')';
             }
             echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$spDisplay.' image" />';
-            echo '</a></div>';
+            echo '</a>';
             echo '<div class="photographer">';
             if($caption === 'photographer' && $imgObj['photographer']){
                 echo $imgObj['photographer'].'&nbsp;&nbsp;';
@@ -604,7 +603,6 @@ class TaxonProfileManager {
 
     public function getMapArr($tidStr = ''): array
     {
-        global $IMAGE_DOMAIN;
         $maps = array();
         if(!$tidStr){
             $tidArr = Array($this->tid,$this->submittedTid);
@@ -621,8 +619,8 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             if($row = $result->fetch_object()){
                 $imgUrl = $row->url;
-                if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-                    $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+                if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $maps[] = $imgUrl;
             }

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecLoans.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 $collId = $_REQUEST['collid'];
@@ -15,9 +15,9 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
 
 $isEditor = 0;
-if($SYMB_UID && $collId){
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))
-		|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['SYMB_UID'] && $collId){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+		|| (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
@@ -86,12 +86,13 @@ $loanOutList = $loanManager->getLoanOutList($searchTerm,$displayAll);
 $loansOnWay = $loanManager->getLoanOnWayList();
 $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Loan Management</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Loan Management</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -110,7 +111,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     </div>
 	<div id="innertext">
 		<?php 
-		if($SYMB_UID && $isEditor && $collId){
+		if($GLOBALS['SYMB_UID'] && $isEditor && $collId){
 			if($statusStr){
 				?>
 				<hr/>
@@ -156,7 +157,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 							?>
 							<div id="loanoutToggle" style="float:right;margin:10px;">
 								<a href="#" onclick="displayNewLoanOut();">
-									<img src="../../images/add.png" alt="Create New Loan" />
+									<i style="height:15px;width:15px;color:green;" title="Create New Loan" class="fas fa-plus"></i>
 								</a>
 							</div>
 							<?php
@@ -171,7 +172,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 											Entered By:
 										</span><br />
 										<span>
-											<input type="text" autocomplete="off" name="createdbyown" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
+											<input type="text" autocomplete="off" name="createdbyown" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" onchange=" " />
 										</span>
 									</div>
 									<div style="padding-top:15px;float:right;">
@@ -197,7 +198,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										</span>
 										<span>
 											<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
-												<img src="../../images/add.png" style="width:15px;" />
+												<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 											</a>
 										</span>
 									</div>
@@ -261,7 +262,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 							?>
 							<div id="loaninToggle" style="float:right;margin:10px;">
 								<a href="#" onclick="displayNewLoanIn();">
-									<img src="../../images/add.png" alt="Create New Loan" />
+									<i style="height:15px;width:15px;color:green;" title="Create New Loan" class="fas fa-plus"></i>
 								</a>
 							</div>
 							<?php
@@ -276,7 +277,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 											Entered By:
 										</span><br />
 										<span>
-											<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
+											<input type="text" autocomplete="off" name="createdbyborr" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" onchange=" " />
 										</span>
 									</div>
 									<div style="padding-top:15px;float:right;">
@@ -303,7 +304,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										</span>
 										<span>
 											<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
-												<img src="../../images/add.png" style="width:15px;" />
+												<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 											</a>
 										</span>
 									</div>
@@ -369,8 +370,8 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 			elseif($loanType === 'exchange'){
 				include_once('exchangedetails.php');
 			}
-			else if(!$SYMB_UID){
-                echo '<h2>Please <a href="'.$CLIENT_ROOT.'/profile/index.php?collid='.$collId.'&refurl='.$CLIENT_ROOT.'/collections/loans/index.php?collid='.$collId.'">login</a></h2>';
+			else if(!$GLOBALS['SYMB_UID']){
+                echo '<h2>Please <a href="'.$GLOBALS['CLIENT_ROOT'].'/profile/index.php?collid='.$collId.'&refurl='.$GLOBALS['CLIENT_ROOT'].'/collections/loans/index.php?collid='.$collId.'">login</a></h2>';
             }
             elseif(!$collId){
                 echo '<h2>Collection not defined</h2>';
@@ -379,7 +380,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
                 echo '<h2>You are not authorized to manage loans</h2>';
             }
 		}
-		else if(!$SYMB_UID){
+		else if(!$GLOBALS['SYMB_UID']){
             echo 'Please <a href="../../profile/index.php?refurl=../collections/loans/index.php?collid='.$collId.'">login</a>';
         }
         elseif(!$isEditor){

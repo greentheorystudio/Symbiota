@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
@@ -20,7 +20,7 @@ if($pid) {
 }
 
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('ProjAdmin',$USER_RIGHTS) && in_array($pid, $USER_RIGHTS['ProjAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']) && in_array($pid, $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
     $isEditor = 1;
 }
 
@@ -71,11 +71,11 @@ if(!$researchList && !$editMode){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Inventory Projects</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
@@ -89,6 +89,7 @@ if(!$researchList && !$editMode){
             cursor:pointer;
         }
     </style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
@@ -221,7 +222,7 @@ echo '</div>';
         if($isEditor && !$newProj){
             ?>
             <div style="float:right;" title="Toggle Editing Functions">
-                <a href="#" onclick="toggleById('tabs');return false;"><img src="../images/edit.svg" style="width:20px;height:20px;" /></a>
+                <a href="#" onclick="toggleById('tabs');return false;"><i style="width:20px;height:20px;" class="fas fa-cog"></i></a>
             </div>
             <?php
         }
@@ -366,23 +367,23 @@ echo '</div>';
                     <div style="font-weight:bold;font-size:130%;">
                         Research Checklists
                         <span onclick="toggleResearchInfoBox();" title="What is a Research Species List?" style="cursor:pointer;">
-								<img src="../images/help-circle.svg" style="height:15px;"/>
+								<i style="height:15px;width:15px;" class="far fa-question-circle"></i>
 							</span>
                         <?php
                         if($coordJson){
                             ?>
                             <a href="#" onclick="openSpatialViewerWindow('<?php echo $coordJson; ?>');" title="Map Checklists">
-                                <img src='../images/globe.svg' style='width:14px;border:0' />
+                                <i style='height:15px;width:15px;' class="fas fa-globe"></i>
                             </a>
                             <?php
                         }
                         ?>
                     </div>
                     <?php
-                    if($KEY_MOD_IS_ACTIVE){
+                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                         ?>
                         <div style="margin-left:15px;font-size:90%">
-                            The <img src="../images/key.svg" style="width: 12px;" alt="Golden Key Symbol" />
+                            The <i style="width: 12px;" class="fas fa-key"></i>
                             symbol opens the species list as an interactive key.
                         </div>
                         <?php
@@ -398,10 +399,10 @@ echo '</div>';
                                         <?php echo $value; ?>
                                     </a>
                                     <?php
-                                    if($KEY_MOD_IS_ACTIVE){
+                                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                                         ?>
                                         <a href='../ident/key.php?cl=<?php echo $key; ?>&proj=<?php echo $pid; ?>&taxon=All+Species'>
-                                            <img style='width:12px;border:0;' src='../images/key.svg'/>
+                                            <i style='width:12px;border:0;' class="fas fa-key"></i>
                                         </a>
                                         <?php
                                     }
@@ -420,7 +421,7 @@ echo '</div>';
         }
     }
     else{
-        echo '<h1>'.$DEFAULT_TITLE.' Projects</h1>';
+        echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Projects</h1>';
         $projectArr = $projManager->getProjectList();
         foreach($projectArr as $pid => $projList){
             ?>

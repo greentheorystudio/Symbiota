@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $userId = $_REQUEST['userid'];
 
@@ -17,7 +17,7 @@ $pHandler->setUid($userId);
 $person = $pHandler->getPerson();
 $tokenCount = $pHandler->getTokenCnt();
 $isSelf = true;
-if($userId !== $SYMB_UID) {
+if($userId !== $GLOBALS['SYMB_UID']) {
     $isSelf = false;
 }
 $listArr = $clManager->getManagementLists($userId);
@@ -318,7 +318,7 @@ $listArr = $clManager->getManagementLists($userId);
 		<div>
 			<b><u>Taxonomic Relationships</u></b>
 			<a href="#" onclick="toggle('addtaxonrelationdiv')" title="Add a new taxonomic relationship">
-				<img style='border:0;width:15px;' src='../images/add.png'/>
+                <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 			</a>
 		</div>
 		<div id="addtaxonrelationdiv" style="display:none;">
@@ -380,7 +380,7 @@ $listArr = $clManager->getManagementLists($userId);
 					if($utArr['notes']) {
                         echo ', ' . $utArr['notes'];
                     }
-					echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><img src="../images/drop.png" style="width:14px;" /></a>';
+					echo ' <a href="viewprofile.php?action=delusertaxonomy&utid='.$utid.'&userid='.$userId.'"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
 					echo '</li>';
 				}
 				echo '</ul>';

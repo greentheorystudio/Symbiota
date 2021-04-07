@@ -51,7 +51,7 @@ $headers = array(
 
 $ch = curl_init();
 $options = array(
-    CURLOPT_URL => $SOLR_URL.'/select',
+    CURLOPT_URL => $GLOBALS['SOLR_URL'].'/select',
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_TIMEOUT => 90,

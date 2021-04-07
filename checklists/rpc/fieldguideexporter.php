@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistFGExportManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageLibraryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
@@ -71,12 +71,12 @@ if($view === 'thumb'){
 			$imgTn = $imgArr['thumbnailurl'];
 			if($imgTn){
 				$imgUrl = $imgTn;
-				if($IMAGE_DOMAIN && strpos($imgTn, '/') === 0){
-					$imgUrl = $IMAGE_DOMAIN.$imgTn;
+				if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgTn, '/') === 0){
+					$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
 				}
 			}
-			elseif($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-				$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+			elseif($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+				$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 			}
 			$recordListHtml .= '<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">';
 			$recordListHtml .= '<div class="tnimg">';

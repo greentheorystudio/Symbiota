@@ -546,9 +546,8 @@ class SpecProcessorManager {
 
  	public function downloadReportData($target): void
 	{
-		global $CHARSET;
 		$fileName = 'SymbSpecNoImages_'.time().'.csv';
-		header ('Content-Type: text/csv; charset='.$CHARSET);
+		header ('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
 		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
 		$headerArr = array('occid','catalogNumber','sciname','recordedBy','recordNumber','eventDate','country','stateProvince','county');
 		$sqlFrag = '';
@@ -587,11 +586,10 @@ class SpecProcessorManager {
 
 	public function getLogListing(): array
 	{
-		global $LOG_PATH;
 		$retArr = array();
 		if($this->collid){
-			$LOG_PATHFrag = ($this->projectType === 'local'?'imgProccessing':$this->projectType).'/';
-			if(file_exists($LOG_PATH . $LOG_PATHFrag) && $fh = opendir($LOG_PATH . $LOG_PATHFrag)) {
+			$GLOBALS['LOG_PATHFrag'] = ($this->projectType === 'local'?'imgProccessing':$this->projectType).'/';
+			if(file_exists($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag']) && $fh = opendir($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag'])) {
 				while($fileName = readdir($fh)){
 					if(strpos($fileName,$this->collid.'_') === 0){
 						$retArr[] = $fileName;
@@ -640,10 +638,9 @@ class SpecProcessorManager {
 	}
 
 	public function getSourcePathDefault(){
-		global $IPLANT_IMAGE_IMPORT_PATH;
 		$sourcePath = $this->sourcePath;
-		if(!$sourcePath && $this->projectType === 'iplant' && $IPLANT_IMAGE_IMPORT_PATH){
-			$sourcePath = $IPLANT_IMAGE_IMPORT_PATH;
+		if(!$sourcePath && $this->projectType === 'iplant' && $GLOBALS['IPLANT_IMAGE_IMPORT_PATH']){
+			$sourcePath = $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'];
 			if(strpos($sourcePath, '--INSTITUTION_CODE--')) {
 				$sourcePath = str_replace('--INSTITUTION_CODE--', $this->institutionCode, $sourcePath);
 			}

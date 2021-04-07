@@ -40,10 +40,9 @@ class OccurrenceManager{
 
     public function getDatasetArr(): array
     {
-        global $SYMB_UID;
         $retArr = array();
-        if($SYMB_UID){
-            $sql = 'SELECT DISTINCT datasetid, name FROM omoccurdatasets WHERE uid = '.$SYMB_UID.' OR datasetid IN(SELECT tablepk FROM userroles WHERE uid = '.$SYMB_UID.' AND role IN("DatasetAdmin","DatasetEditor"))';
+        if($GLOBALS['SYMB_UID']){
+            $sql = 'SELECT DISTINCT datasetid, name FROM omoccurdatasets WHERE uid = '.$GLOBALS['SYMB_UID'].' OR datasetid IN(SELECT tablepk FROM userroles WHERE uid = '.$GLOBALS['SYMB_UID'].' AND role IN("DatasetAdmin","DatasetEditor"))';
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
                 $retArr[$r->datasetid] = $r->name;
@@ -649,7 +648,6 @@ class OccurrenceManager{
     }
 
     public function outputFullCollArr($occArr,$expanded = true): void{
-        global $DEFAULTCATID, $CLIENT_ROOT;
         if(isset($occArr['cat'])){
             $categoryArr = $occArr['cat'];
             if($expanded){
@@ -686,7 +684,7 @@ class OccurrenceManager{
                             </td>
                             <td style="padding:9px 5px;width:10px;">
                                 <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                    <img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($DEFAULTCATID !== $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($DEFAULTCATID !== $catid?'display:none;':'') ?>" />
+                                    <img id="plus-<?php echo $idStr; ?>" src="../images/plus_sm.png" style="<?php echo ($GLOBALS['DEFAULTCATID'] !== $catid?'':'display:none;') ?>" /><img id="minus-<?php echo $idStr; ?>" src="../images/minus_sm.png" style="<?php echo ($GLOBALS['DEFAULTCATID'] !== $catid?'display:none;':'') ?>" />
                                 </a>
                             </td>
                             <td style="padding-top:8px;">
@@ -699,7 +697,7 @@ class OccurrenceManager{
                         </tr>
                         <tr>
                             <td colspan="4">
-                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID && $DEFAULTCATID !== $catid?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
+                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($GLOBALS['DEFAULTCATID'] && $GLOBALS['DEFAULTCATID'] !== $catid?'display:none;':'') ?>margin:10px;padding:10px 20px;border:inset">
                                     <table>
                                         <?php
                                         foreach($catArr as $collid => $collName2){
@@ -710,7 +708,7 @@ class OccurrenceManager{
                                                     if($collName2['icon']){
                                                         $cIcon = (strpos($collName2['icon'], 'images') === 0 ?'../':'').$collName2['icon'];
                                                         ?>
-                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
+                                                        <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
                                                         <?php
                                                     }
                                                     ?>
@@ -720,7 +718,7 @@ class OccurrenceManager{
                                                 </td>
                                                 <td style="padding:6px">
                                                     <div class="collectiontitle">
-                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
+                                                        <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
                                                             <?php
                                                             $codeStr = ' ('.$collName2['instcode'];
                                                             if($collName2['collcode']) {
@@ -747,7 +745,7 @@ class OccurrenceManager{
                         <tr>
                             <td>
                                 <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                    <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
+                                    <img id="plus-<?php echo $idStr; ?>" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/plus_sm.png" style="<?php echo ($GLOBALS['DEFAULTCATID'] === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/minus_sm.png" style="<?php echo ($GLOBALS['DEFAULTCATID'] === $catid?'':'display:none;') ?>" />
                                 </a>
                             </td>
                             <td>
@@ -755,13 +753,13 @@ class OccurrenceManager{
                             </td>
                             <td>
 			    		<span style='text-decoration:none;color:black;font-size:14px;font-weight:bold;'>
-				    		<a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
+				    		<a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
 				    	</span>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="3">
-                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID===$catid?'':'display:none;') ?>margin:10px 0;">
+                                <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($GLOBALS['DEFAULTCATID']===$catid?'':'display:none;') ?>margin:10px 0;">
                                     <table style="margin-left:15px;">
                                         <?php
                                         foreach($catArr as $collid => $collName2){
@@ -770,9 +768,9 @@ class OccurrenceManager{
                                                 <td>
                                                     <?php
                                                     if($collName2['icon']){
-                                                        $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$collName2['icon'];
+                                                        $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$GLOBALS['CLIENT_ROOT'].'/':'').$collName2['icon'];
                                                         ?>
-                                                        <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
+                                                        <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
                                                             <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
                                                         </a>
                                                         <?php
@@ -783,7 +781,7 @@ class OccurrenceManager{
                                                     <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="processCollectionParamChange(this.form);" onclick="processCatCheckboxes('<?php echo $idStr; ?>')" checked />
                                                 </td>
                                                 <td style="padding:6px">
-                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
                                                         <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
                                                     </a>
                                                 </td>
@@ -816,7 +814,7 @@ class OccurrenceManager{
                                 if($cArr['icon']){
                                     $cIcon = (strpos($cArr['icon'], 'images') === 0 ?'../':'').$cArr['icon'];
                                     ?>
-                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
+                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'><img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" /></a>
                                     <?php
                                 }
                                 ?>
@@ -826,7 +824,7 @@ class OccurrenceManager{
                             </td>
                             <td style="padding:6px">
                                 <div class="collectiontitle">
-                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
+                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>'>
                                         <?php
                                         $codeStr = ' ('.$cArr['instcode'];
                                         if($cArr['collcode']) {
@@ -847,9 +845,9 @@ class OccurrenceManager{
                             <td>
                                 <?php
                                 if($cArr['icon']){
-                                    $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$cArr['icon'];
+                                    $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$GLOBALS['CLIENT_ROOT'].'/':'').$cArr['icon'];
                                     ?>
-                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
+                                    <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
                                         <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
                                     </a>
                                     <?php
@@ -860,7 +858,7 @@ class OccurrenceManager{
                                 <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" onchange="processCollectionParamChange(this.form);" onclick="processCheckAllCheckboxes()" checked />
                             </td>
                             <td style="padding:6px">
-                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
+                                <a href = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
                                     <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
                                 </a>
                             </td>

@@ -1,8 +1,8 @@
 <?php
 ob_start();
 $isTaxonEditor = false;
-if($SYMB_UID){
-    if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
         $isTaxonEditor = true;
     }
 }
@@ -10,7 +10,7 @@ if($isTaxonEditor){
     ?>
     <div id="editbutton">
         <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
-            <img id='editicon' src='../images/edit.svg' style="width:20px;height:20px;"/>
+            <i style="height:20px;width:20px;" class="far fa-edit"></i>
         </a>
     </div>
     <?php
@@ -27,7 +27,7 @@ if($taxonRank > 180){
         <?php echo $taxonManager->getAuthor(); ?>
         <?php
         $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
-        echo "<a href='".$parentLink."'><img id='parenttaxonicon' src='../images/toparent.png' title='Go to Parent' /></a>";
+        echo "<a href='".$parentLink."'><i id='parenttaxonicon' style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
         if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
@@ -41,13 +41,13 @@ else{
         <?php
         $displayName = $spDisplay;
         if($taxonRank === 180) {
-            $displayName = '<i>' . $displayName . '</i> ';
+            $displayName = '<i>' . $displayName . '</i>';
         }
-        $displayName .= $taxonManager->getAuthor().' ';
+        $displayName .= ' ' . $taxonManager->getAuthor().' ';
         if($taxonRank > 140){
             $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
             $displayName .= ' <a href="'.$parentLink.'">';
-            $displayName .= '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
+            $displayName .= '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             $displayName .= '</a>';
         }
         echo "<div id='sciname' class='".$styleClass."' >".$displayName."</div> ";
@@ -162,12 +162,12 @@ $centralImageDiv = ob_get_clean();
 
 ob_start();
 if($descArr = $taxonManager->getDescriptions()){
-    if(isset($PORTAL_TAXA_DESC)){
+    if(isset($GLOBALS['PORTAL_TAXA_DESC'])){
         $tempArr = array();
         $descIndex = 0;
         foreach($descArr as $dArr){
             foreach($dArr as $id => $vArr){
-                if($vArr['caption'] === $PORTAL_TAXA_DESC){
+                if($vArr['caption'] === $GLOBALS['PORTAL_TAXA_DESC']){
                     if($descArr[$descIndex]){
                         $tempArr = $descArr[$descIndex][$id];
                         unset($descArr[$descIndex][$id]);
@@ -237,7 +237,7 @@ $descTabsDiv = ob_get_clean();
 ob_start();
 $url = '';
 $mAnchor = '';
-if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
+if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
@@ -280,7 +280,7 @@ ob_start();
                 <?php echo 'Click to Display<br/>100 Initial Images'; ?>
             </a><br/>
             - - - - -<br/>
-            <a href="index.php?taxon=<?php echo $taxonManager->getTid(); ?>&allimages=1">
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"2","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
                 <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
             </a>
         </div>
@@ -308,7 +308,7 @@ ob_start();
         echo '<legend>';
         echo 'Species within <b>'.$taxonManager->getClName().'</b>&nbsp;&nbsp;';
         if($taxonManager->getParentClid()){
-            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" /></a>';
+            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i></a>';
         }
         echo '</legend>';
     }
@@ -334,11 +334,11 @@ ob_start();
                         $imgUrl = $subArr['thumbnailurl'];
                     }
                     if(strpos($imgUrl, '/') === 0) {
-                        if($IMAGE_DOMAIN){
-                            $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                         }
                         else{
-                            $imgUrl = $CLIENT_ROOT . $imgUrl;
+                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
@@ -358,11 +358,11 @@ ob_start();
                 if(array_key_exists('map',$subArr) && $subArr['map']){
                     $mapUrl = $subArr['map'];
                     if(strpos($mapUrl, '/') === 0) {
-                        if($IMAGE_DOMAIN){
-                            $mapUrl = $IMAGE_DOMAIN . $mapUrl;
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
                         }
                         else{
-                            $mapUrl = $CLIENT_ROOT . $mapUrl;
+                            $mapUrl = $GLOBALS['CLIENT_ROOT'] . $mapUrl;
                         }
                     }
                     echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';

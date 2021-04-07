@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -20,10 +20,10 @@ $occManager->setOccId($occid);
 			<fieldset style="padding:15px;margin:10px 0;">
 				<legend><b>History of Internal Edits</b></legend>
 				<?php 
-				if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
+				if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 					?>
 					<div style="float:right;" title="Manage Edit History">
-						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><img src="../../images/edit.svg" style="border:0;width:14px;" /></a>
+						<a href="../editor/editreviewer.php?collid=<?php echo $collId.'&occid='.$occid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 					</div>
 					<?php
 				}

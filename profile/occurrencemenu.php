@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $specHandler = new ProfileManager();
-$specHandler->setUid($SYMB_UID);
+$specHandler->setUid($GLOBALS['SYMB_UID']);
 
 $genArr = array();
 $cArr = array();
@@ -24,7 +24,7 @@ foreach($collArr as $id => $collectionArr){
 ?>
 <div style="margin:10px;">
     <?php
-    if($SYMB_UID){
+    if($GLOBALS['SYMB_UID']){
         if(!$collArr) {
             echo '<div style="margin:40px 15px;font-weight:bold">You do not yet have management permissions for any occurrence projects</div>';
         }
@@ -122,8 +122,8 @@ foreach($collArr as $id => $collectionArr){
             <?php
         }
         $genAdminArr = array();
-        if($genArr && isset($USER_RIGHTS['CollAdmin'])){
-            $genAdminArr = array_intersect_key($genArr,array_flip($USER_RIGHTS['CollAdmin']));
+        if($genArr && isset($GLOBALS['USER_RIGHTS']['CollAdmin'])){
+            $genAdminArr = array_intersect_key($genArr,array_flip($GLOBALS['USER_RIGHTS']['CollAdmin']));
             if($genAdminArr){
                 ?>
                 <fieldset>
@@ -150,7 +150,7 @@ foreach($collArr as $id => $collectionArr){
                     ?>
                     <li><a href="../collections/georef/batchgeoreftool.php">Cross Collection Georeferencing Tool</a></li>
                     <?php
-                    if(isset($USER_RIGHTS['CollAdmin']) && count(array_diff($USER_RIGHTS['CollAdmin'],array_keys($genAdminArr))) > 1){
+                    if(isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && count(array_diff($GLOBALS['USER_RIGHTS']['CollAdmin'],array_keys($genAdminArr))) > 1){
                         ?>
                         <li><a href="../collections/cleaning/taxonomycleaner.php">Cross Collection Taxonomy Cleaning Tool</a></li>
                         <?php

@@ -33,7 +33,7 @@ $numDays = 30;
 //---------------------------DO NOT CHANGE BELOW HERE-----------------------------
 
 ini_set('max_execution_time', 120);
-include_once($SERVER_ROOT.'/classes/PluginsManager.php');
+include_once($GLOBALS['SERVER_ROOT'].'/classes/PluginsManager.php');
 $pluginManager = new PluginsManager();
 $slideshow = $pluginManager->createSlidewhow($ssId,$numSlides,$width,$numDays,$imageType,$clId,$dayInterval,$interval);
 echo $slideshow;

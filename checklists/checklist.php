@@ -2,10 +2,10 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-if($CHECKLIST_FG_EXPORT) {
+if($GLOBALS['CHECKLIST_FG_EXPORT']) {
     include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
 }
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
@@ -47,7 +47,7 @@ $clArray = array();
 if($clValue || $dynClid){
     $clArray = $clManager->getClMetaData();
 }
-$activateKey = $KEY_MOD_IS_ACTIVE;
+$activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
 if($clValue && $clArray['defaultSettings']){
     $defaultArr = json_decode($clArray['defaultSettings'], true);
@@ -120,7 +120,7 @@ if(array_key_exists('printlist_x',$_POST)) {
 }
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
     $isEditor = true;
 
     if(array_key_exists('tidtoadd',$_POST)){
@@ -156,7 +156,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 $taxaArray = array();
 if($clValue || $dynClid){
     $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
-    if($CHECKLIST_FG_EXPORT){
+    if($GLOBALS['CHECKLIST_FG_EXPORT']){
         $fgManager = new ChecklistFGExportManager();
         if($clValue){
             $fgManager->setClValue($clValue);
@@ -175,17 +175,18 @@ if($clArray['locality']){
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <meta charset="<?php echo $CHARSET; ?>">
-    <title><?php echo $DEFAULT_TITLE; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
+    <meta charset="<?php echo $GLOBALS['CHARSET']; ?>">
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
     <link type="text/css" href="../css/bootstrap.css" rel="stylesheet" />
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.js" type="text/javascript"></script>
-    <script src="<?php echo $CLIENT_ROOT; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         <?php
@@ -200,7 +201,7 @@ if($clArray['locality']){
         const checklistLocality = "<?php echo $locStr; ?>";
         const checklistAbstract = "<?php echo (array_key_exists('abstract',$clArray)?$clArray['abstract']:''); ?>";
         const checklistNotes = "<?php echo (array_key_exists('notes',$clArray)?$clArray['notes']:''); ?>";
-        const fieldguideDisclaimer = "This field guide was produced through the <?php echo $DEFAULT_TITLE; ?> portal. This field guide is intended for educational use only, no commercial uses are allowed. It is created under Fair Use copyright provisions supporting educational uses of information. All rights are reserved to authors and photographers unless otherwise specified.";
+        const fieldguideDisclaimer = "This field guide was produced through the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal. This field guide is intended for educational use only, no commercial uses are allowed. It is created under Fair Use copyright provisions supporting educational uses of information. All rights are reserved to authors and photographers unless otherwise specified.";
 
         function lazyLoadData(index,callback){
             let startindex = 0;
@@ -221,13 +222,13 @@ if($clArray['locality']){
     </script>
     <script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=20200806"></script>
     <?php
-    if($CHECKLIST_FG_EXPORT){
+    if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/pdfmake.min.js" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/vfs_fonts.js" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/jszip.min.js" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $CLIENT_ROOT; ?>/js/symb/checklists.fieldguideexport.js?ver=60" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/pdfmake.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/vfs_fonts.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jszip.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/FileSaver.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/checklists.fieldguideexport.js?ver=60" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -298,7 +299,7 @@ if(!$printMode){
     echo '<div class="navpath">';
     if($pid){
         echo '<a href="../index.php">Home</a> &gt; ';
-        echo '<a href="'.$CLIENT_ROOT.'/projects/index.php?pid='.$pid.'">';
+        echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'">';
         echo $clManager->getProjName();
         echo '</a> &gt; ';
         echo '<b>'.$clManager->getClName().'</b>';
@@ -317,18 +318,18 @@ if(!$printMode){
             ?>
             <div style="float:right;width:auto;">
 					<span>
-						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="Checklist Administration">
-							<img style="height:15px" src="../images/editA.svg" />
+						<a href="checklistadmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Checklist Administration">
+							<i style='width:20px;height:20px;' class="fas fa-cog"></i>
                         </a>
 					</span>
                 <span>
-						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;" title="Manage Linked Voucher">
-							<img style="height:15px" src="../images/editV.svg" />
+						<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid; ?>" style="margin-right:10px;text-decoration: none;" title="Manage Linked Voucher">
+							<i style='width:20px;height:20px;' class="fas fa-link"></i>
                         </a>
 					</span>
                 <span onclick="toggle('editspp');return false;">
-						<a href="#" title="Edit Species List">
-							<img style="height:15px" src="../images/editspp.svg" />
+						<a href="#" style="text-decoration: none;" title="Edit Species List">
+							<i style='width:20px;height:20px;' class="fas fa-clipboard-list"></i>
                         </a>
 					</span>
             </div>
@@ -345,7 +346,7 @@ if(!$printMode){
             ?>
             <div style="float:left;padding:5px;">
                 <a href="../ident/key.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid;?>&taxon=All+Species">
-                    <img src='../images/key.svg' style="width:15px; height:15px" title='Open Symbiota Key' />
+                    <i style='width:15px; height:15px;' class="fas fa-key"></i>
                 </a>
             </div>
             <?php
@@ -353,12 +354,12 @@ if(!$printMode){
         if(!$printMode && $taxaArray){
             ?>
             <div style="padding:5px;">
+                <span onmouseover="mopen('m1')" onmouseout="mclosetime()">
+                    <i class="fas fa-gamepad"></i>
+                </span>
                 <ul id="sddm">
                     <li>
-					    	<span onmouseover="mopen('m1')" onmouseout="mclosetime()">
-					    		<img src="../images/games/games.png" style="height:17px;" title="Access Species List Games" />
-					    	</span>
-                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
+					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
                             $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon.($clManager->getThesFilter()? '&thesfilter=' .$clManager->getThesFilter(): '');
                             ?>
@@ -442,7 +443,7 @@ if(!$printMode){
                                 <div>
                                     <div style="margin-left:10px;">
                                         <?php
-                                        if($DISPLAY_COMMON_NAMES){
+                                        if($GLOBALS['DISPLAY_COMMON_NAMES']){
                                             echo "<input data-role='none' type='checkbox' name='searchcommon' value='1' ".($searchCommon? 'checked' : ''). '/> Common Names<br/>';
                                         }
                                         ?>
@@ -464,7 +465,7 @@ if(!$printMode){
                             </div>
                             <div>
                                 <?php
-                                if($DISPLAY_COMMON_NAMES) {
+                                if($GLOBALS['DISPLAY_COMMON_NAMES']) {
                                     echo "<input data-role='none' id='showcommon' name='showcommon' type='checkbox' value='1' " . ($showCommon ? 'checked' : '') . '/> Common Names';
                                 }
                                 ?>
@@ -507,24 +508,24 @@ if(!$printMode){
                                     <div style="width:100px;display:flex;justify-content:flex-end;align-items:center;">
                                         <div id="wordicondiv" style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Export to DOCX" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');">
-                                                <img src="../images/wordicon.png" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="far fa-file-word"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Print in Browser" onclick="changeOptionFormAction('checklist.php','_blank');">
-                                                <img src="../images/printer.svg" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="fas fa-print"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
                                             <button class="icon-button" style="margin:0;padding:2px;" title="Download List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');">
-                                                <img src="../images/download.svg" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;" class="fas fa-download"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <?php
-                            if($CHECKLIST_FG_EXPORT){
+                            if($GLOBALS['CHECKLIST_FG_EXPORT']){
                                 ?>
                                 <div style="margin:5px 0 0 5px;clear:both;">
                                     <a class="" href="#" onclick="openFieldGuideExporter();"><b>Open Export Panel</b></a>
@@ -598,7 +599,7 @@ if(!$printMode){
                         <div style="text-align:center;padding:10px">
                             <div>
                                 <a href='<?php echo $url; ?>' target="_blank">
-                                    Open in Spatial Window
+                                    <i style='width:40px;height:40px;' title="Open in Spatial Window" class="fas fa-globe"></i>
                                 </a>
                             </div>
                         </div>
@@ -677,7 +678,7 @@ if(!$printMode){
                                 <?php
                                 $spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
                                 if($imgSrc){
-                                    $imgSrc = ($IMAGE_DOMAIN && strpos($imgSrc, 'http') !== 0 ?$IMAGE_DOMAIN: '').$imgSrc;
+                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgSrc, 'http') !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
                                         echo "<a href='" . $spUrl . "' target='_blank'>";
                                     }
@@ -756,7 +757,7 @@ if(!$printMode){
                             ?>
                             <span class="editspp" style="display:<?php echo ($editMode?'inline':'none'); ?>;">
 									<a href="#" onclick="return openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>','editorwindow');">
-										<img src='../images/edit.svg' style='width:13px;' title='edit details' />
+										<i style='width:13px;height:13px;' title='edit details' class="fas fa-edit"></i>
 									</a>
 								</span>
                             <?php
@@ -764,7 +765,7 @@ if(!$printMode){
                                 ?>
                                 <span class="editspp" style="display:none;">
 										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<img src='../images/link.svg' style='width:13px;' title='Link Voucher Specimens' />
+											<i style='width:13px;height:13px;' title='Link Voucher Specimens' class="fas fa-link"></i>
 										</a>
 									</span>
                                 <?php
@@ -833,7 +834,7 @@ if(!$printMode) {
     include(__DIR__ . '/../footer.php');
 }
 
-if($CHECKLIST_FG_EXPORT){
+if($GLOBALS['CHECKLIST_FG_EXPORT']){
     ?>
     <div id="fieldguideexport" data-role="popup" class="well" style="width:600px;min-height:250px;font-size:14px;">
         <a class="boxclose fieldguideexport_close" id="boxclose"></a>
