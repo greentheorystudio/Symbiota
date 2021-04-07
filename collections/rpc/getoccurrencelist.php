@@ -156,13 +156,13 @@ if($occurArr){
             if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
                 $isEditor = true;
             }
-            $instCode = $fieldArr['institutioncode'];
-            if($fieldArr['collectioncode']) {
-                $instCode .= ':' . $fieldArr['collectioncode'];
-            }
             $htmlStr .= '<tr><td colspan="2"><h2>';
             $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'">'.$fieldArr['collectionname'].'</a>';
             $htmlStr .= '</h2><hr /></td></tr>';
+        }
+        $instCode = $fieldArr['institutioncode'];
+        if($fieldArr['collectioncode']) {
+            $instCode .= ':' . $fieldArr['collectioncode'];
         }
         $htmlStr .= '<tr><td style="width:60px;vertical-align:top;text-align:center;">';
         $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'&acronym='.$fieldArr['institutioncode'].'">';
