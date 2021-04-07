@@ -234,8 +234,9 @@
 
 #img-div{
 	margin-top: 15px;
-	height:			300px;
-	overflow:		hidden;
+	width: 100%;
+	display: none;
+	clear: both;
 }
 
 #img-tab-div{
@@ -348,18 +349,30 @@ div.spptab{
 	overflow: 			auto;
 }
 
+#img-container{
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+}
+
 div.imgthumb{
 	margin: 		5px;
-	float:	 	left;
-	text-align: 	center;
-	position:		relative;
-	overflow:		hidden;
+	float:left;
+	text-align: 	left;
+	width: 220px;
+	height: 250px;
 }
 
 div.imgthumb img{
-	width: 		400px;
+	max-width: 		215px;
+	max-height: 		220px;
 	margin: 	0;
 	border:		1px dotted grey;
+}
+
+div.imgthumb a{
+
 }
 
 div.imgthumb a:hover img {
@@ -369,7 +382,7 @@ div.imgthumb a:hover img {
 div.imgthumb div.photographer{
 	font-size:		75%;
 	text-align: 	right;
-	width: 			auto;
+	width: 			180px;
 	margin: 2px 15px 2px 2px;
 }
 
