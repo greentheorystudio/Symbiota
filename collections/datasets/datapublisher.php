@@ -89,6 +89,7 @@ if($isEditor && array_key_exists('colliddel', $_POST)) {
 	<style type="text/css">
 		.nowrap { white-space: nowrap; }
 	</style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/collections.gbifpublisher.js"></script>
@@ -177,7 +178,7 @@ include(__DIR__ . '/../../header.php');
 		?>
 		<div style="float:right;">
 			<a href="#" title="Display Publishing Control Panel" onclick="toggle('dwcaadmindiv')">
-				<img style="border:0;width:12px;" src="../../images/edit.svg" />
+                <i style="height:20px;width:20px;" class="far fa-edit"></i>
 			</a>
 		</div>
 		<?php
@@ -258,7 +259,10 @@ include(__DIR__ . '/../../header.php');
 					<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this archive?');">
 						<input type="hidden" name="colliddel" value="<?php echo $dArr['collid']; ?>">
 						<input type="hidden" name="collid" value="<?php echo $dArr['collid']; ?>">
-						<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="Delete Archive" style="width:15px;" />
+                        <input type="hidden" name="action" value="DeleteCollid">
+						<button type="submit" class="icon-button" style="margin:0;padding:2px;" title="Delete Archive">
+                            <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                        </button>
 					</form>
 				</div>
 				<div><b>Description:</b> <?php echo $dArr['description']; ?></div>
@@ -470,7 +474,10 @@ include(__DIR__ . '/../../header.php');
 								?>
 								<form action="datapublisher.php" method="post" style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this archive?');">
 									<input type="hidden" name="colliddel" value="<?php echo $v['collid']; ?>">
-									<input type="image" src="../../images/del.png" name="action" value="DeleteCollid" title="Delete Archive" style="width:15px;" />
+                                    <input type="hidden" name="action" value="DeleteCollid">
+									<button type="submit" class="icon-button" style="margin:0;padding:2px;" title="Delete Archive">
+                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                    </button>
 								</form>
 								<?php
 							}

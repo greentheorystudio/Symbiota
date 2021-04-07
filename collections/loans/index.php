@@ -92,6 +92,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -156,7 +157,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 							?>
 							<div id="loanoutToggle" style="float:right;margin:10px;">
 								<a href="#" onclick="displayNewLoanOut();">
-									<img src="../../images/add.png" alt="Create New Loan" />
+									<i style="height:15px;width:15px;color:green;" title="Create New Loan" class="fas fa-plus"></i>
 								</a>
 							</div>
 							<?php
@@ -197,7 +198,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										</span>
 										<span>
 											<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
-												<img src="../../images/add.png" style="width:15px;" />
+												<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 											</a>
 										</span>
 									</div>
@@ -261,7 +262,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 							?>
 							<div id="loaninToggle" style="float:right;margin:10px;">
 								<a href="#" onclick="displayNewLoanIn();">
-									<img src="../../images/add.png" alt="Create New Loan" />
+									<i style="height:15px;width:15px;color:green;" title="Create New Loan" class="fas fa-plus"></i>
 								</a>
 							</div>
 							<?php
@@ -303,7 +304,7 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 										</span>
 										<span>
 											<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
-												<img src="../../images/add.png" style="width:15px;" />
+												<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 											</a>
 										</span>
 									</div>

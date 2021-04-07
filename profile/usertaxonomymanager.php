@@ -41,6 +41,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script>
@@ -95,7 +96,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			<h2>Taxonomic Interest User Permissions</h2>
 			<div style="float:right;" title="Add a new taxonomic relationship">
 				<a href="#" onclick="toggle('addUserDiv')">
-					<img style='border:0;width:15px;' src='../images/add.png'/>
+                    <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 				</a>
 			</div>
 			<div id="addUserDiv" style="display:none;">
@@ -170,7 +171,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 							echo '<b>'.$username.'</b>';
 							?>
 							<a href="usertaxonomymanager.php?delutid=all&deluid=<?php echo $uid.'&es='.$editorStatus; ?>" onclick="return confirm('Are you sure you want to remove all taxonomy links for this user?');" title="Delete all taxonomic relationships for this user">
-								<img src="../images/drop.png" style="width:12px;" />
+								<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 							</a>
 							<?php
 							foreach($uArr as $utid => $utArr){
@@ -183,7 +184,7 @@ $editorArr = $utManager->getTaxonomyEditors();
                                 }
 								?>
 								<a href="usertaxonomymanager.php?delutid=<?php echo $utid; ?>" onclick="return confirm('Are you sure you want to remove this taxonomy links for this user?');" title="Delete this user taxonomic relationship">
-									<img src="../images/drop.png" style="width:12px;" />
+									<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 								</a>
 								<?php
 								echo '</li>';

@@ -10,7 +10,7 @@ if($isTaxonEditor){
     ?>
     <div id="editbutton">
         <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
-            <img id='editicon' src='../images/edit.svg' style="width:20px;height:20px;"/>
+            <i style="height:20px;width:20px;" class="far fa-edit"></i>
         </a>
     </div>
     <?php
@@ -27,7 +27,7 @@ if($taxonRank > 180){
         <?php echo $taxonManager->getAuthor(); ?>
         <?php
         $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
-        echo "<a href='".$parentLink."'><img id='parenttaxonicon' src='../images/toparent.png' title='Go to Parent' /></a>";
+        echo "<a href='".$parentLink."'><i id='parenttaxonicon' style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
         if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
@@ -47,7 +47,7 @@ else{
         if($taxonRank > 140){
             $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
             $displayName .= ' <a href="'.$parentLink.'">';
-            $displayName .= '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
+            $displayName .= '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             $displayName .= '</a>';
         }
         echo "<div id='sciname' class='".$styleClass."' >".$displayName."</div> ";
@@ -308,7 +308,7 @@ ob_start();
         echo '<legend>';
         echo 'Species within <b>'.$taxonManager->getClName().'</b>&nbsp;&nbsp;';
         if($taxonManager->getParentClid()){
-            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" /></a>';
+            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i></a>';
         }
         echo '</legend>';
     }

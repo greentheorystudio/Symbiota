@@ -65,17 +65,17 @@ if($recArr){
     $recordListHtml .= '</select>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div>';
-    $recordListHtml .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$qryCnt.');"><img src="../images/download.svg" style="width:15px; height:15px" /></button>';
+    $recordListHtml .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$qryCnt.');"><i style="height:15px;width:15px;" class="fas fa-download"></i></button>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '</div>';
     $recordListHtml .= '<div style="width:400px;display:flex;justify-content:flex-end;align-items:center;">';
     if($GLOBALS['SYMB_UID']){
-        $recordListHtml .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><img src="../images/dataset.png" style="width:15px;" /></button></div>';
+        $recordListHtml .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><i style="height:15px;width:15px;" class="fas fa-layer-group"></i></button></div>';
     }
-    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><img src="../images/list.svg" style="width:15px; height:15px" /></button></a></div>';
-    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><img src="../images/globe.svg" style="width:15px; height:15px" /></button></a></div>';
+    $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
+    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="height:15px;width:15px;" class="fas fa-globe"></i></button></a></div>';
     if(strlen($stArrJson) <= 1800){
-        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><img src="../images/link.svg" style="width:15px; height:15px" /></button></div>';
+        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>';
     }
     if($qryCnt > 1){
         $recordListHtml .= '<div>';
@@ -165,11 +165,11 @@ if($recArr){
         $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
         if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
-            $recordListHtml .= '<img src="../images/edit.svg" style="height:13px;" title="Edit Record" />';
+            $recordListHtml .= '<i style="height:15px;width:15px;" title="Edit Record" class="far fa-edit"></i>';
             $recordListHtml .= '</a>';
         }
         if(isset($occArr['img'])){
-            $recordListHtml .= '<img src="../images/image.png" style="height:13px;margin-left:5px;" title="Has Image" />';
+            $recordListHtml .= '<i style="height:15px;width:15px;margin-left:5px;" title="Has Image" class="fas fa-camera"></i>';
         }
         $recordListHtml .= '</td>'."\n";
         $recordListHtml .= '<td>'.$collection.'</td>'."\n";

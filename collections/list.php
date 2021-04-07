@@ -41,6 +41,7 @@ $resetPageNum = false;
             cursor:pointer;
         }
     </style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>

@@ -67,6 +67,7 @@ if($chars){
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/ident.key.js" type="text/javascript"></script>
@@ -181,7 +182,7 @@ if($chars){
                                     echo "<tr><td><div style='margin:0 5px 0 10px;'><a href='".$newSpLink."' target='_blank'><i>$disName</i></a></div></td>\n";
                                     echo "<td style='text-align: right;'>\n";
                                     if($isEditor){
-                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$GLOBALS['DEFAULT_LANG']."' target='_blank'><img src='../images/edit.svg' style='width:15px;border:0;' title='Edit morphology' /></a>\n";
+                                        echo "<a href='tools/editor.php?tid=$tid&lang=".$GLOBALS['DEFAULT_LANG']."' target='_blank'><i style='height:15px;width:15px;' title='Edit morphology' class='far fa-edit'></i></a>\n";
                                     }
                                     echo "</td></tr>\n";
                                 }

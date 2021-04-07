@@ -188,9 +188,10 @@ function createOccurDiv(catalogNumber, occid, action){
 	newAnchor2.setAttribute("id", "a2-"+occid);
 	newAnchor2.setAttribute("href", "#");
 	newAnchor2.setAttribute("onclick", "openEditPopup("+occid+",true);return false;");
-	const newImg = document.createElement('img');
-	newImg.setAttribute("src", "../../images/jpg.png");
-	newImg.setAttribute("style", "width:13px;margin-left:5px;");
+	const newImg = document.createElement('i');
+	newImg.setAttribute("class", "far fa-file-image");
+	newImg.setAttribute("style", "height:15px;width:15px;margin-left:5px;");
+
 	newAnchor2.appendChild(newImg);
 
 	const newDiv = document.createElement('div');

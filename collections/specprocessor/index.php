@@ -41,6 +41,7 @@ if(!is_numeric($tabIndex)) {
 }
 
 $specManager = new SpecProcessorManager();
+$csManager = new OccurrenceCrowdSource();
 $specManager->setCollId($collid);
 
 $isEditor = false;
@@ -69,7 +70,6 @@ if($isEditor){
 		$specManager->deleteProject($_POST['sppriddel']);
 	}
 	elseif($action === 'Add to Queue'){
-		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
 		$statusStr = $csManager->addToQueue($_POST['omcsid'],$_POST['family'],$_POST['taxon'],$_POST['country'],$_POST['stateprovince'],$_POST['limit']);
 		if(is_numeric($statusStr)){
@@ -78,13 +78,11 @@ if($isEditor){
 		$action = '';
 	}
 	elseif($action === 'delqueue'){
-		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
 		$statusStr = $csManager->deleteQueue();
 	}
 	elseif($action === 'Edit Crowdsource Project'){
 		$omcsid = $_POST['omcsid'];
-		$csManager = new OccurrenceCrowdSource();
 		$csManager->setCollid($collid);
 		$statusStr = $csManager->editProject($omcsid,$_POST['instr'],$_POST['url']);
 	}
@@ -96,15 +94,13 @@ if($isEditor){
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js?ver=131106" type="text/javascript"></script>
 		<script>
 			$(document).ready(function() {
 				$('#tabs').tabs({
-					select: function() {
-						return true;
-					},
 					active: <?php echo $tabIndex; ?>,
 					beforeLoad: function( event, ui ) {
 						$(ui.panel).html("<p>Loading...</p>");
@@ -164,7 +160,7 @@ if($isEditor){
 							and crowdsourcing data entry. 
 							Use tabs above for access tools.     
 						</div>
-						<div style="margin:10px;height:400px;">
+						<div style="margin:10px;min-height:400px;">
 							<h2>Image Loading</h2>
 							<div style="margin:15px">
 								The batch image loading module is designed to batch process specimen images that are deposited in a 
@@ -189,7 +185,7 @@ if($isEditor){
 							</div>
 
 							<h2>Optical Character Resolution (OCR)</h2>
-							<div style="margin:15px">
+							<div style="margin:15px;">
 								The OCR module gives collection managers the ability to batch OCR specimen images using the Tesseract OCR 
 								engine or process and upload text files containing OCR obtained from other OCR software.   
 							</div>

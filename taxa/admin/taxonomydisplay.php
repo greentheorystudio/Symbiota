@@ -28,6 +28,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -65,7 +66,7 @@ include(__DIR__ . '/../../header.php');
 			?>
 			<div style="float:right;" title="Add a New Taxon">
 				<a href="taxonomyloader.php">
-					<img style='border:0;width:15px;' src='../../images/add.png'/>
+					<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 				</a>
 			</div>
 			<?php

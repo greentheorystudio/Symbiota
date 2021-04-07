@@ -37,7 +37,8 @@ if($isEditor){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Mass Updater</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script>
         let addStr = ";";
         let removeStr = ";";
 

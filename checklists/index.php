@@ -14,6 +14,7 @@ $clManager->setProj($pid);
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialViewerWindow(coordArrJson) {
             let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
@@ -50,7 +51,7 @@ $clManager->setProj($pid);
                             if(array_key_exists('coords',$projArr)){
                                 ?>
                                 <a href="#" onclick="openSpatialViewerWindow('<?php echo $projArr['coords']; ?>');" title='Show checklists on map'>
-                                    <img src='../images/globe.svg' style='width:10px;border:0' />
+                                    <i style='width:15px;height:15px;' class="fas fa-globe"></i>
                                 </a>
                                 <?php
                             }

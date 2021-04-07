@@ -31,6 +31,7 @@ if($searchTaxon) {
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
@@ -102,7 +103,7 @@ include(__DIR__ . '/../../header.php');
 	if($isEditor){
 		?>
 		<div style="float:right;cursor:pointer;" onclick="toggle('editobj');" title="Toggle Editing Functions">
-			<img style="border:0;width:20px;height:20px;" src="../../images/edit.svg" />
+            <i style="height:20px;width:20px;" class="far fa-edit"></i>
 		</div>
 		<?php 
 	}
@@ -160,7 +161,7 @@ include(__DIR__ . '/../../header.php');
 							?>
 							<span class="editobj" style="display:none;">
 								<a href="rarespecies.php?submitaction=deletespecies&tidtodel=<?php echo $tid;?>">
-									<img src="../../images/del.png" style="width:13px;border:0;" title="remove species from list" />
+									<i style="height:15px;width:15px;" title="Remove species from list" class="far fa-trash-alt"></i>
 								</a>
 							</span>
 							<?php

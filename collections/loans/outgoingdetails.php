@@ -71,7 +71,7 @@ $specList = $loanManager->getSpecList($loanId);
 						?>
 						<span>
 							<a href="../admin/institutioneditor.php?iid=<?php echo $loanArr['iidborrower']; ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
-								<img src="../../images/edit.svg" style="width:15px;" />
+								<i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</a>
 						</span>
 						<?php 
@@ -200,7 +200,7 @@ $specList = $loanManager->getSpecList($loanId);
 	<div id="outloanspecdiv">
 		<div style="float:right;margin:10px;">
 			<a href="#" onclick="toggle('newspecdiv');">
-				<img src="../../images/add.png" title="Add New Specimen" />
+				<i style="height:20px;width:20px;color:green;" title="Add New Specimen" class="fas fa-plus"></i>
 			</a>
 		</div>
 		<div id="newspecdiv" style="display:<?php echo ($eMode?'block':'none'); ?>;">
@@ -277,7 +277,7 @@ $specList = $loanManager->getSpecList($loanId);
 									<?php echo $specArr['catalognumber']; ?>
 								</a>
 								<a href="#" onclick="openEditorPopup(<?php echo $specArr['occid']; ?>); return false;">
-									<img src="../../images/edit.svg" style="width:20px;height:20px;" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 							</td>
 							<td>

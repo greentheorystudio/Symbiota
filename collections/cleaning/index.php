@@ -38,6 +38,7 @@ if($collMap['colltype'] === 'General Observations'){
 		table.styledtable td { white-space: nowrap; }
 		h3 { text-decoration:underline }
 	</style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -124,7 +125,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['coord']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+									<i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}
@@ -135,10 +136,10 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" /><span style="font-size:70%;margin-left:-3px;">b-geo</span>
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i><span style="font-size:70%;margin-left:-3px;">b-geo</span>
 								</a>
 								<?php
 							}
@@ -149,7 +150,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord_verbatim']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}
@@ -160,7 +161,7 @@ if($collMap['colltype'] === 'General Observations'){
 							if($statsArr['noCoord_noVerbatim']){
 								?>
 								<a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
-									<img src="../../images/edit.svg" style="width:10px" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 								<?php
 							}

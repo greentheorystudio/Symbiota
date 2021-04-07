@@ -107,6 +107,7 @@ if($traitID){
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
@@ -258,10 +259,10 @@ if($traitID){
 		if($isEditor === 2){
 			echo '<div style="float:right;margin:0 3px;font-size:90%">';
 			if($mode === 1){
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />review</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			}
 			else{
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />edit</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			}
 			echo '</div>';
 		}

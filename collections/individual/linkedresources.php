@@ -37,7 +37,7 @@ $indManager->setOccid($occid);
                 echo '<a href="../../checklists/checklist.php?showvouchers=1&cl='.$id.'" target="_blank">'.$clName.'</a>&nbsp;&nbsp;';
                 if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && in_array($id, $GLOBALS['USER_RIGHTS']['ClAdmin'], true)){
                     $confirmLine = "'Are you sure you want to remove this voucher link ? '";
-                    echo '<a href="index.php?delvouch='.$id.'&occid='.$occid.'" title="Delete voucher link" onclick="return confirm('.$confirmLine.')"><img src="../../images/drop.png" style="width:12px;" /></a>';
+                    echo '<a href="index.php?delvouch='.$id.'&occid='.$occid.'" title="Delete voucher link" onclick="return confirm('.$confirmLine.')"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
                 }
                 echo '</li>';
             }
@@ -112,7 +112,7 @@ $indManager->setOccid($occid);
         echo '<fieldset style="padding:20px;margin:15px;">';
         echo '<legend>Dataset Linkages</legend>';
         if($GLOBALS['SYMB_UID']) {
-            echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><img src="../../images/add.png" /></a></div>';
+            echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a></div>';
         }
         $dsDisplayStr = '';
         foreach($datasetArr as $dsid => $dsArr){

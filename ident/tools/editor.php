@@ -39,6 +39,7 @@ if($isEditor && $action && $action === 'Submit Changes') {
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Identification Character Editor</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
         let dataChanged = false;
         window.onbeforeunload = verifyClose;

@@ -40,6 +40,7 @@ if($GLOBALS['IS_ADMIN']){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> User Management</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -74,7 +75,7 @@ if($GLOBALS['IS_ADMIN']){
 				<h1>
 					<?php 
 						echo $user['firstname']. ' ' .$user['lastname']. ' (#' .$user['uid']. ') ';
-						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=".$user['uid']. "'><img src='../images/edit.svg' style='border:0;width:15px;' /></a>";
+						echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=".$user['uid']. "'><i style='height:15px;width:15px;' class='far fa-edit'></i></a>";
 					?>
 				</h1>
 				<div style="margin-left:10px;">
@@ -146,7 +147,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b> 
 									<a href="usermanagement.php?delrole=SuperAdmin&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+										<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -160,7 +161,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b> 
 									<a href="usermanagement.php?delrole=Taxonomy&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -174,7 +175,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b> 
 									<a href="usermanagement.php?delrole=TaxonProfile&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -188,7 +189,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b>
 									<a href="usermanagement.php?delrole=KeyAdmin&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -202,7 +203,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b>
 									<a href="usermanagement.php?delrole=KeyEditor&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -216,7 +217,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b>
 									<a href="usermanagement.php?delrole=RareSppAdmin&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -230,7 +231,7 @@ if($GLOBALS['IS_ADMIN']){
 									echo '</span>'; 
 									?></b>
 									<a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo $userId; ?>">
-										<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php 
@@ -243,7 +244,7 @@ if($GLOBALS['IS_ADMIN']){
 									$cName = '';
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid='.$k.'" target="_blank">'.$v['name'].'</a></span>';
 									echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0;width:15px;' title='Delete permission' />";
+									echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
 									echo '</a></li>';
 								}
 								echo '</ul>';
@@ -255,7 +256,7 @@ if($GLOBALS['IS_ADMIN']){
 								foreach($collList as $k => $v){
 									echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid='.$k.'" target="_blank">'.$v['name'].'</a></span>';
 									echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-									echo "<img src='../images/del.png' style='border:0;width:15px;' title='Delete permission' />";
+									echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
 									echo '</a></li>';
 								}
 								echo '</ul>';
@@ -272,7 +273,7 @@ if($GLOBALS['IS_ADMIN']){
 										<li>
 											<?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
 											<a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo $collId?>&userid=<?php echo $userId; ?>">
-												<img src="../images/del.png" style="border:0;width:15px;" title="Delete permission" />
+                                                <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
 											</a>
 										</li>
 										<?php 
@@ -293,7 +294,7 @@ if($GLOBALS['IS_ADMIN']){
 										foreach($projList as $k => $v){
 											echo '<li><a href="../projects/index.php?pid='.$k.'" target="_blank"><span title="'.$v['aby'].'">'.$v['name'].'</span></a>';
 											echo "<a href='usermanagement.php?delrole=ProjAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0;width:15px;' title='Delete permission' />";
+											echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
 											echo '</a></li>';
 										}
 										?>
@@ -316,7 +317,7 @@ if($GLOBALS['IS_ADMIN']){
 											echo '<span title="'.$v['aby'].'">'.$name.'</span>';
 											echo '</a>';
 											echo "<a href='usermanagement.php?delrole=ClAdmin&tablepk=$k&userid=$userId'>";
-											echo "<img src='../images/del.png' style='border:0;width:15px;' title='Delete permission' />";
+											echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
 											echo '</a></li>';
 										}
 										?>
