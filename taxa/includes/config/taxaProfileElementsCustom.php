@@ -10,7 +10,7 @@ if($taxonRank > 180){
         echo $taxonManager->getAuthor();
         $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
         echo ' <a href="'.$parentLink.'">';
-        echo '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
+        echo '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
         echo '</a>';
         if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
@@ -32,7 +32,7 @@ else{
         if($taxonRank > 140){
             $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
             echo ' <a href="'.$parentLink.'">';
-            echo '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
+            echo '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             echo '</a>';
         }
         ?>
@@ -314,14 +314,16 @@ $penaDescTabsDiv = ob_get_clean();
 ob_start();
 ?>
     <div id="img-div">
-        <?php
-        if(($taxonManager->getImageCount() > 100) && !$showAllImages){
-            $taxonManager->echoImages(1, 100,0);
-        }
-        else{
-            $taxonManager->echoImages(1, $taxonManager->getImageCount(), 0);
-        }
-        ?>
+        <div id="img-container">
+            <?php
+            if(($taxonManager->getImageCount() > 100) && !$showAllImages){
+                $taxonManager->echoImages(1, 100,0);
+            }
+            else{
+                $taxonManager->echoImages(1, $taxonManager->getImageCount(), 0);
+            }
+            ?>
+        </div>
     </div>
 <?php
 $penaImgDiv = ob_get_clean();
