@@ -3332,9 +3332,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE `taxonunits`;
 
 ALTER TABLE `taxonunits`
-    DROP INDEX `UNIQUE_taxonunits`;
-
-ALTER TABLE `taxonunits`
     ADD COLUMN `kingdomid` int(11) NOT NULL AFTER `taxonunitid`,
     ADD UNIQUE INDEX `INDEX-Unique`(`kingdomid`, `rankid`),
     ADD CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE;
@@ -3568,7 +3565,7 @@ ALTER TABLE `uploadspectemp`
     ADD PRIMARY KEY (`upspid`);
 
 ALTER TABLE `uploadspectemp`
-    CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR (32) NULL DEFAULT NULL COMMENT '' PreservedSpecimen, LivingSpecimen, HumanObservation '',
+    CHANGE COLUMN `basisOfRecord` `basisOfRecord` VARCHAR (32) NULL DEFAULT NULL COMMENT 'PreservedSpecimen, LivingSpecimen, HumanObservation',
     ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
     ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`),
     ADD INDEX `Index_decimalLatitude`(`decimalLatitude`),
