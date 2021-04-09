@@ -464,13 +464,9 @@ CREATE TABLE `uploadspectemppoints` (
     SPATIAL KEY `point` (`point`)
 ) ENGINE=MyISAM;
 
-DELIMITER
-//
-CREATE TRIGGER `uploadspectemp_insert`
-    AFTER INSERT
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
+DELIMITER //
+CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp`
+    FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		INSERT INTO uploadspectemppoints (`upspid`,`point`)
 		VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
@@ -478,11 +474,8 @@ END IF;
 END
 //
 
-CREATE TRIGGER `uploadspectemp_update`
-    AFTER UPDATE
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
+CREATE TRIGGER `uploadspectemp_update` AFTER UPDATE ON `uploadspectemp`
+    FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		IF EXISTS (SELECT `upspid` FROM uploadspectemppoints WHERE `upspid`=NEW.`upspid`) THEN
     UPDATE uploadspectemppoints
@@ -496,15 +489,13 @@ END IF;
 END
 //
 
-CREATE TRIGGER `uploadspectemp_delete`
-    BEFORE DELETE
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
+CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp`
+    FOR EACH ROW BEGIN
     DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
-END //
+END
+    //
 
-DELIMITER;
+DELIMITER ;
 
 ALTER TABLE `uploadtaxa`
     DROP INDEX `UNIQUE_sciname` ,
