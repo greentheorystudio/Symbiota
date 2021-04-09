@@ -71,7 +71,7 @@ else{
 }
 ?>
 <div id="querydiv" style="clear:both;width:830px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
-	<form name="queryform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" onsubmit="return verifyQueryForm()">
+	<form name="queryform" id="queryform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" onsubmit="return verifyQueryForm()">
 		<fieldset style="padding:5px;">
 			<legend><b>Record Search Form</b></legend>
 			<?php 
@@ -462,7 +462,7 @@ else{
 				<input type="button" name="submitaction" value="Display Editor" onclick="submitQueryEditor(this.form)" />
 				<input type="button" name="submitaction" value="Display Table" onclick="submitQueryTable(this.form)" />
 				<span style="margin-left:10px;">
-					<input type="button" name="reset" value="Reset Form" onclick="resetQueryForm(this.form)" /> 
+					<input type="button" name="reset" value="Reset Form" onclick="resetQueryForm()" />
 				</span>
 				<span style="margin-left:10px;">
 					<b>Sort by:</b> 

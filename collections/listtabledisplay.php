@@ -98,27 +98,6 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
             };
             http.send(params);
         }
-
-        function setOccurrenceList(listPage){
-            sessionStorage.collSearchPage = listPage;
-            document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
-            const http = new XMLHttpRequest();
-            const url = "rpc/getoccurrencelist.php";
-            const queryid = document.getElementById('queryId').value;
-            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    if(!http.responseText) {
-                        http.responseText = "<p>An error occurred retrieving records.</p>";
-                    }
-                    document.getElementById("queryrecords").innerHTML = http.responseText;
-                }
-            };
-            http.send(params);
-        }
     </script>
 </head>
 <body style="margin-left: 0;margin-right: 0;background-color:white;border:0;">

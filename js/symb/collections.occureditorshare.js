@@ -20,7 +20,7 @@ function verifyLeaveForm(){
 
 function submitQueryEditor(f){
 	f.action = "occurrenceeditor.php";
-	if(verifyQueryForm(f)) {
+	if(verifyQueryForm()) {
 		f.submit();
 	}
 	return true;
@@ -28,7 +28,7 @@ function submitQueryEditor(f){
 
 function submitQueryTable(f){
 	f.action = "occurrencetabledisplay.php";
-	if(verifyQueryForm(f)) {
+	if(verifyQueryForm()) {
 		f.submit();
 	}
 	return true;
@@ -56,7 +56,8 @@ function detectBatchUpdateField(){
 	}
 }
 
-function verifyQueryForm(f){
+function verifyQueryForm(){
+	const f = document.getElementById("queryform");
 	if(!verifyLeaveForm()) {
 		return false;
 	}
@@ -166,7 +167,8 @@ function verifyQueryForm(f){
 	return true;
 }
 
-function resetQueryForm(f){
+function resetQueryForm(){
+	const f = document.getElementById("queryform");
 	f.q_catalognumber.value = "";
 	f.q_othercatalognumbers.value = "";
 	f.q_recordedby.value = "";

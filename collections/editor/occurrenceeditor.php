@@ -513,7 +513,7 @@ else{
     <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=171127"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
 </head>
 <body>
 <div id="innertext">

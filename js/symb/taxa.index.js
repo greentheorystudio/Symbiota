@@ -5,13 +5,6 @@ $(document).ready(function() {
 	$('#desctabs').tabs();
 	$("#desctabs").show();
 
-	const imgDiv = document.getElementById("img-div");
-	if(imgDiv.scrollHeight > imgDiv.clientHeight) {
-		document.getElementById("img-tab-div").style.display = 'block';
-	}
-	if(allImages){
-		expandExtraImages();
-	}
 });
 
 function toggle(target){
@@ -22,9 +15,9 @@ function toggle(target){
 			if(divObj.style.display === "none"){
 				divObj.style.display="";
 			}
-		 	else {
-		 		divObj.style.display="none";
-		 	}
+			else {
+				divObj.style.display="none";
+			}
 		}
 	}
 }
@@ -34,10 +27,10 @@ function toggleLinks(target){
 	if(ele){
 		if(ele.style.display === "none"){
 			ele.style.display="block";
-        }
-	 	else {
-	 		ele.style.display="none";
-        }
+		}
+		else {
+			ele.style.display="none";
+		}
 	}
 	$('html,body').animate({scrollTop:$("#"+target).offset().top}, 500);
 }
@@ -91,11 +84,16 @@ function findPos(obj){
 	curleft = obj.offsetLeft;
 	curtop = obj.offsetTop;
 	return [curleft,curtop];
-}	
+}
 
 function expandExtraImages(){
-	document.getElementById("img-div").style.overflow = "visible";
-	document.getElementById("img-tab-div").style.display = "none";
+	const display = document.getElementById("img-div").style.display;
+	if(!display || display === 'none'){
+		document.getElementById("img-div").style.display = "block";
+	}
+	if(display === 'block'){
+		document.getElementById("img-div").style.display = "none";
+	}
 }
 
 function openMapPopup(taxonVar,clid){

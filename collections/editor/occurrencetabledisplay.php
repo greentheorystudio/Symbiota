@@ -138,7 +138,7 @@ else{
     <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=201711"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div id="">
