@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class GlossaryUpload{
 	
@@ -225,7 +225,6 @@ class GlossaryUpload{
 
 	public function transferUpload(): void
 	{
-		global $SYMB_UID;
 		$languageArr = array();
 		$this->outputMsg('Starting data transfer...');
 		
@@ -251,7 +250,7 @@ class GlossaryUpload{
 		if($existingTerms){
 			$this->outputMsg('Adding translations for existing terms... ');
 			$sql = 'INSERT INTO glossary(term,definition,`language`,source,notes,resourceurl,uid) '.
-				'SELECT term, definition, `language`, source, notes, resourceurl, '.$SYMB_UID.' '.
+				'SELECT term, definition, `language`, source, notes, resourceurl, '.$GLOBALS['SYMB_UID'].' '.
 				'FROM uploadglossary '.
 				'WHERE term IS NOT NULL AND currentGroupId IS NOT NULL ';
 			if(!$this->conn->query($sql)){
@@ -280,7 +279,7 @@ class GlossaryUpload{
 		
 		$this->outputMsg('Adding new '.$primaryLanguage.' terms... ');
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,translator,author,notes,resourceurl,uid) '.
-			'SELECT term, definition, `language`, source, translator, author, notes, resourceurl, '.$SYMB_UID.' '.
+			'SELECT term, definition, `language`, source, translator, author, notes, resourceurl, '.$GLOBALS['SYMB_UID'].' '.
 			'FROM uploadglossary '.
 			'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$primaryLanguage.'" ';
 		if(!$this->conn->query($sql)){
@@ -342,7 +341,7 @@ class GlossaryUpload{
 			if($lang !== $primaryLanguage){
 				$this->outputMsg('Adding new '.$lang.' terms... ');
 				$sql = 'INSERT INTO glossary(term,definition,`language`,source,translator,author,notes,resourceurl,uid) '.
-					'SELECT term, definition, `language`, source, translator, author, notes, resourceurl, '.$SYMB_UID.' '.
+					'SELECT term, definition, `language`, source, translator, author, notes, resourceurl, '.$GLOBALS['SYMB_UID'].' '.
 					'FROM uploadglossary '.
 					'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$lang.'" ';
 				if(!$this->conn->query($sql)){
@@ -449,13 +448,12 @@ class GlossaryUpload{
 	
 	private function setUploadTargetPath(): void
 	{
-		global $TEMP_DIR_ROOT, $SERVER_ROOT;
-		$tPath = $TEMP_DIR_ROOT;
+		$tPath = $GLOBALS['TEMP_DIR_ROOT'];
 		if(!$tPath){
 			$tPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tPath){
-			$tPath = $SERVER_ROOT;
+			$tPath = $GLOBALS['SERVER_ROOT'];
 			if(substr($tPath,-1) !== '/') {
 				$tPath .= '/';
 			}
@@ -488,17 +486,16 @@ class GlossaryUpload{
 
 	public function setVerboseMode($vMode): void
 	{
-		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
 			if($this->verboseMode === 2){
-				$LOG_PATH = $SERVER_ROOT;
-				$subStr = substr($SERVER_ROOT,-1);
+				$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'];
+				$subStr = substr($GLOBALS['SERVER_ROOT'],-1);
 				if($subStr !== '/' && $subStr !== '\\') {
-					$LOG_PATH .= '/';
+					$GLOBALS['LOG_PATH'] .= '/';
 				}
-				$LOG_PATH .= 'content/logs/glossaryloader_' .date('Ymd'). '.log';
-				$this->logFH = fopen($LOG_PATH, 'ab');
+				$GLOBALS['LOG_PATH'] .= 'content/logs/glossaryloader_' .date('Ymd'). '.log';
+				$this->logFH = fopen($GLOBALS['LOG_PATH'], 'ab');
 				fwrite($this->logFH, 'Start time: ' .date('Y-m-d h:i:s A')."\n");
 			}
 		}
@@ -524,7 +521,6 @@ class GlossaryUpload{
 
 	private function encodeString($inStr): string
 	{
-		global $CHARSET;
 		$retStr = $inStr;
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
@@ -540,7 +536,7 @@ class GlossaryUpload{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		
 		if($inStr){
-			$charLower = strtolower($CHARSET);
+			$charLower = strtolower($GLOBALS['CHARSET']);
 			if($charLower === 'utf-8' || $charLower === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);

@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class TaxonProfileManager {
 
@@ -21,6 +21,7 @@ class TaxonProfileManager {
     private $synTidArr = array();
     private $securityStatus;
     private $displayLocality = 1;
+    private $numChildren;
 
     private $clName;
     private $clid;
@@ -77,7 +78,7 @@ class TaxonProfileManager {
                 $this->submittedSciName = $row->SciName;
                 $this->submittedAuthor = $row->Author;
                 $this->author = $row->Author;
-                $this->rankId = $row->RankId;
+                $this->rankId = (int)$row->RankId;
                 $this->taxonNotes = $row->Notes;
                 $this->taxonSources = $row->Source;
                 $this->parentTid = $row->ParentTID;
@@ -89,7 +90,7 @@ class TaxonProfileManager {
             $this->tid = $this->submittedTid;
             $this->sciName = $this->submittedSciName;
 
-            if($this->rankId >= 140 && $this->rankId < 220){
+            if($this->rankId >= 140 && $this->rankId <= 220){
                 $this->setSppData();
             }
         }
@@ -98,7 +99,7 @@ class TaxonProfileManager {
             $this->submittedSciName = $row->SciName;
             $this->submittedAuthor = $row->Author;
             $this->author = $row->Author;
-            $this->rankId = $row->RankId;
+            $this->rankId = (int)$row->RankId;
             $this->taxonNotes = $row->Notes;
             $this->taxonSources = $row->Source;
             $this->parentTid = $row->ParentTID;
@@ -113,7 +114,7 @@ class TaxonProfileManager {
                 $this->setAccepted();
             }
 
-            if ($this->rankId >= 140 && $this->rankId < 220) {
+            if ($this->rankId >= 140 && $this->rankId <= 220) {
                 $this->setSppData();
             }
         }
@@ -153,7 +154,7 @@ class TaxonProfileManager {
         while($row = $result->fetch_object()){
             $this->sciName = $row->SciName;
             $a = $row->Author;
-            $this->acceptedTaxa[$row->Tid] = "<i>$this->sciName</i> $a";
+            $this->acceptedTaxa[$row->Tid] = '<i>$this->sciName</i> ' . $a;
             if($this->taxAuthId){
                 $this->rankId = $row->RankId;
                 $this->author = $a;
@@ -230,12 +231,22 @@ class TaxonProfileManager {
 
     public function setSppData(): void
     {
+        $sqlWhereRank = '';
+        if($this->rankId === 140){
+            $sqlWhereRank = ' AND t.rankid = 180';
+        }
+        elseif($this->rankId <= 180){
+            $sqlWhereRank = ' AND t.rankid = 220';
+        }
+        elseif($this->rankId <= 220){
+            $sqlWhereRank = ' AND t.rankid > 220';
+        }
         $this->sppArray = array();
         if($this->clid){
             $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN fmchklsttaxalink ctl ON ctl.TID = t.tid '.
-                'WHERE (ctl.clid = '.$this->clid.') AND t.rankid = 220 AND (te.taxauthid = 1) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (ctl.clid = '.$this->clid.')'.$sqlWhereRank.' AND (te.taxauthid = 1) AND (te.parenttid = '.$this->tid.')';
         }
         elseif($this->pid){
             $sql = 'SELECT DISTINCT t.tid, t.sciname, t.securitystatus '.
@@ -244,13 +255,13 @@ class TaxonProfileManager {
                 'INNER JOIN fmchklsttaxalink ctl ON ts.Tid = ctl.TID '.
                 'INNER JOIN fmchklstprojlink cpl ON ctl.clid = cpl.clid '.
                 'WHERE (ts.taxauthid = 1) AND (te.taxauthid = 1) AND (cpl.pid = '.$this->pid.') '.
-                'AND (te.parenttid = '.$this->tid.') AND (t.rankid = 220)';
+                'AND (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1) AND (t.rankid = 220) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
         }
         //echo $sql; exit;
 
@@ -263,12 +274,13 @@ class TaxonProfileManager {
             $tids[] = $row->tid;
         }
         $result->close();
+        $this->numChildren = count($tids);
 
         if(!$tids){
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
                 'INNER JOIN taxaenumtree te ON ts.tid = te.tid '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1) AND (t.rankid = 220) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
             //echo $sql;
 
             $result = $this->con->query($sql);
@@ -314,9 +326,6 @@ class TaxonProfileManager {
                 $tid = $snArr['tid'];
                 if($mapArr = $this->getMapArr($tid)){
                     $this->sppArray[$sn]['map'] = array_shift($mapArr);
-                }
-                else{
-                    $this->sppArray[$sn]['map'] = $this->getGoogleStaticMap($tid);
                 }
             }
         }
@@ -370,6 +379,10 @@ class TaxonProfileManager {
             $str .= '</span>';
         }
         return $str;
+    }
+
+    public function getVernacularArr(){
+        return $this->vernaculars;
     }
 
     public function setSynonyms(): void
@@ -428,7 +441,7 @@ class TaxonProfileManager {
         if($this->tid){
             $tidArr = Array($this->tid);
             $sql1 = 'SELECT DISTINCT ts.tid '.
-                'FROM taxstatus ts INNER JOIN taxaenumtree tn ON ts.tid = tn.tid '.
+                'FROM taxstatus AS ts LEFT JOIN taxaenumtree AS tn ON ts.tid = tn.tid '.
                 'WHERE tn.taxauthid = 1 AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
                 'AND tn.parenttid = '.$this->tid;
             $rs1 = $this->con->query($sql1);
@@ -439,13 +452,13 @@ class TaxonProfileManager {
 
             $tidStr = implode(',',$tidArr);
             $sql = 'SELECT t.sciname, ti.imgid, ti.url, ti.thumbnailurl, ti.originalurl, ti.caption, ti.occid, '.
-                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer '.
-                'FROM images ti LEFT JOIN users u ON ti.photographeruid = u.uid '.
-                'INNER JOIN taxstatus ts ON ti.tid = ts.tid '.
-                'INNER JOIN taxa t ON ti.tid = t.tid '.
+                'IFNULL(ti.photographer,CONCAT_WS(" ",u.firstname,u.lastname)) AS photographer, ti.owner '.
+                'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
+                'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
+                'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
                 'WHERE ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.') AND ti.SortSequence < 500 AND ti.thumbnailurl IS NOT NULL ';
             if(!$this->displayLocality) {
-                $sql .= 'AND ti.occid IS NULL ';
+                $sql .= 'AND ISNULL(ti.occid) ';
             }
             $sql .= 'ORDER BY ti.sortsequence ';
             //echo $sql;
@@ -460,6 +473,7 @@ class TaxonProfileManager {
                 $this->imageArr[$row->imgid]['photographer'] = $row->photographer;
                 $this->imageArr[$row->imgid]['caption'] = $row->caption;
                 $this->imageArr[$row->imgid]['occid'] = $row->occid;
+                $this->imageArr[$row->imgid]['owner'] = $row->owner;
                 $this->imageArr[$row->imgid]['sciname'] = $row->sciname;
             }
             $result->free();
@@ -468,7 +482,6 @@ class TaxonProfileManager {
 
     public function echoImages($start, $length = 0, $useThumbnail = 1, $caption = 'photographer'): bool
     {
-        global $IMAGE_DOMAIN;
         $status = false;
         if(!isset($this->imageArr)){
             $this->setTaxaImages();
@@ -479,6 +492,7 @@ class TaxonProfileManager {
         $trueLength = ($length&&count($this->imageArr)>$length+$start?$length:count($this->imageArr)-$start);
         $spDisplay = $this->getDisplayName();
         $iArr = array_slice($this->imageArr,$start,$trueLength,true);
+        echo '<div>';
         foreach($iArr as $imgId => $imgObj){
             if($start === 0 && $trueLength === 1){
                 echo "<div id='centralimage'>";
@@ -489,12 +503,12 @@ class TaxonProfileManager {
             $imgUrl = $imgObj['url'];
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
-            if($IMAGE_DOMAIN){
+            if($GLOBALS['IMAGE_DOMAIN']){
                 if(strpos($imgUrl, '/') === 0) {
-                    $imgUrl = $IMAGE_DOMAIN . $imgUrl;
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
                 if(strpos($imgThumbnail, '/') === 0) {
-                    $imgThumbnail = $IMAGE_DOMAIN . $imgThumbnail;
+                    $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                 }
             }
             if($imgObj['occid']){
@@ -503,13 +517,13 @@ class TaxonProfileManager {
             if($useThumbnail && $imgObj['thumbnailurl']) {
                 $imgUrl = $imgThumbnail;
             }
-            echo '<div class="tptnimg"><a href="'.$imgAnchor.'">';
+            echo '<a href="'.$imgAnchor.'">';
             $titleStr = $imgObj['caption'];
             if($imgObj['sciname'] !== $this->sciName) {
                 $titleStr .= ' (linked from ' . $imgObj['sciname'] . ')';
             }
             echo '<img src="'.$imgUrl.'" title="'.$titleStr.'" alt="'.$spDisplay.' image" />';
-            echo '</a></div>';
+            echo '</a>';
             echo '<div class="photographer">';
             if($caption === 'photographer' && $imgObj['photographer']){
                 echo $imgObj['photographer'].'&nbsp;&nbsp;';
@@ -521,6 +535,7 @@ class TaxonProfileManager {
             echo '</div>';
             $status = true;
         }
+        echo '</div>';
         return $status;
     }
 
@@ -530,6 +545,29 @@ class TaxonProfileManager {
             return 0;
         }
         return count($this->imageArr);
+    }
+
+    public function getFilteredImageArr($type, $limit = 0): array
+    {
+        $returnArr = array();
+        if(!$limit){
+            $limit = $this->getImageCount();
+        }
+        $count = 0;
+        foreach($this->imageArr as $imgId => $imgObj){
+            if($count >= $limit){
+                break;
+            }
+            if($type === 'field' && !$imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+            if($type === 'specimen' && $imgObj['occid']){
+                $returnArr[$imgId] = $imgObj;
+                $count++;
+            }
+        }
+        return $returnArr;
     }
 
     public function getTaxaLinks(): array
@@ -565,7 +603,6 @@ class TaxonProfileManager {
 
     public function getMapArr($tidStr = ''): array
     {
-        global $IMAGE_DOMAIN;
         $maps = array();
         if(!$tidStr){
             $tidArr = Array($this->tid,$this->submittedTid);
@@ -582,8 +619,8 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             if($row = $result->fetch_object()){
                 $imgUrl = $row->url;
-                if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-                    $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+                if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+                    $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $maps[] = $imgUrl;
             }
@@ -592,107 +629,7 @@ class TaxonProfileManager {
         return $maps;
     }
 
-    public function getGoogleStaticMap($tidStr = ''){
-        global $MAPPING_BOUNDARIES, $GOOGLE_MAP_KEY, $TAXON_PROFILE_MAP_CENTER, $TAXON_PROFILE_MAP_ZOOM;
-        $googleUrl = '';
-        if(!$tidStr){
-            $tidArr = Array($this->tid,$this->submittedTid);
-            if($this->synonyms) {
-                $tidArr = array_merge($tidArr, array_keys($this->synonyms));
-            }
-            $tidStr = trim(implode(',',$tidArr),' ,');
-        }
-
-        $mapArr = array();
-        if($tidStr){
-            $minLat = 90;
-            $maxLat = -90;
-            $minLong = 180;
-            $maxLong = -180;
-            $latlonArr = array();
-            if($MAPPING_BOUNDARIES){
-                $latlonArr = explode(';',$MAPPING_BOUNDARIES);
-            }
-
-            $sqlBase = 'SELECT t.sciname, gi.DecimalLatitude, gi.DecimalLongitude ' .
-                'FROM omoccurgeoindex gi INNER JOIN taxa t ON gi.tid = t.tid ' .
-                'WHERE (gi.tid IN ('.$tidStr.')) ';
-            $sql = $sqlBase;
-            if(count($latlonArr) === 4){
-                $sql .= 'AND (gi.DecimalLatitude BETWEEN ' .$latlonArr[2]. ' AND ' .$latlonArr[0]. ') ' .
-                    'AND (gi.DecimalLongitude BETWEEN ' .$latlonArr[3]. ' AND ' .$latlonArr[1]. ') ';
-            }
-            $sql .= 'ORDER BY RAND() LIMIT 50';
-            //echo "<div>".$sql."</div>"; exit;
-            $result = $this->con->query($sql);
-            while($row = $result->fetch_object()){
-                $lat = round($row->DecimalLatitude,2);
-                if($lat < $minLat) {
-                    $minLat = $lat;
-                }
-                if($lat > $maxLat) {
-                    $maxLat = $lat;
-                }
-                $long = round($row->DecimalLongitude,2);
-                if($long < $minLong) {
-                    $minLong = $long;
-                }
-                if($long > $maxLong) {
-                    $maxLong = $long;
-                }
-                $mapArr[] = $lat. ',' .$long;
-            }
-            $result->free();
-            if(!$mapArr && $latlonArr){
-                $result = $this->con->query($sqlBase. 'LIMIT 50');
-                while($row = $result->fetch_object()){
-                    $lat = round($row->DecimalLatitude,2);
-                    if($lat < $minLat) {
-                        $minLat = $lat;
-                    }
-                    if($lat > $maxLat) {
-                        $maxLat = $lat;
-                    }
-                    $long = round($row->DecimalLongitude,2);
-                    if($long < $minLong) {
-                        $minLong = $long;
-                    }
-                    if($long > $maxLong) {
-                        $maxLong = $long;
-                    }
-                    $mapArr[] = $lat. ',' .$long;
-                }
-                $result->free();
-            }
-            if(!$mapArr) {
-                return 0;
-            }
-            $latDist = $maxLat - $minLat;
-            $longDist = $maxLong - $minLong;
-
-            $googleUrl = '//maps.googleapis.com/maps/api/staticmap?size=256x256&maptype=terrain';
-            if($GOOGLE_MAP_KEY) {
-                $googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
-            }
-            if($TAXON_PROFILE_MAP_CENTER) {
-                $googleUrl .= '&center=' . $TAXON_PROFILE_MAP_CENTER;
-            }
-            if($TAXON_PROFILE_MAP_ZOOM) {
-                $googleUrl .= '&zoom='.$TAXON_PROFILE_MAP_ZOOM;
-            }
-            elseif($latDist < 3 || $longDist < 3) {
-                $googleUrl .= '&zoom=6';
-            }
-        }
-        $coordStr = implode('|',$mapArr);
-        if(!$coordStr) {
-            return '';
-        }
-        $googleUrl .= '&markers=' .$coordStr;
-        return $googleUrl;
-    }
-
-    public function getDescriptions(){
+    public function getDescriptions($inlineStatements = false){
         $retArr = array();
         if($this->tid){
             $rsArr = array();
@@ -712,14 +649,14 @@ class TaxonProfileManager {
             $usedCaptionArr = array();
             foreach($rsArr as $n => $rowArr){
                 if($rowArr['tid'] === $this->tid){
-                    $retArr = $this->loadDescriptionArr($rowArr, $retArr);
+                    $retArr = $this->loadDescriptionArr($rowArr, $retArr,$inlineStatements);
                     $usedCaptionArr[] = $rowArr['caption'];
                 }
             }
             reset($rsArr);
             foreach($rsArr as $n => $rowArr){
                 if($rowArr['tid'] !== $this->tid && !in_array($rowArr['caption'], $usedCaptionArr, true)){
-                    $retArr = $this->loadDescriptionArr($rowArr, $retArr);
+                    $retArr = $this->loadDescriptionArr($rowArr, $retArr,$inlineStatements);
                 }
             }
 
@@ -728,7 +665,7 @@ class TaxonProfileManager {
         return $retArr;
     }
 
-    private function loadDescriptionArr($rowArr,$retArr){
+    private function loadDescriptionArr($rowArr,$retArr,$inlineStatements){
         $indexKey = 0;
         if(!in_array(strtolower($rowArr['language']), $this->langArr, true)){
             $indexKey = 1;
@@ -741,11 +678,24 @@ class TaxonProfileManager {
         if(strpos($rowArr['statement'], '<p>') === 0){
             $rowArr['statement'] = substr($rowArr['statement'], 3);
         }
-        if($rowArr['displayheader'] && $rowArr['heading']){
-            $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+        if(!$inlineStatements){
+            if($rowArr['displayheader'] && $rowArr['heading']){
+                $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            }
+            else{
+                $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            }
         }
         else{
-            $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+            if(substr($rowArr['statement'], -4) === '</p>'){
+                $rowArr['statement'] = substr($rowArr['statement'], 0, -4);
+            }
+            if($rowArr['displayheader'] && $rowArr['heading']){
+                $statementStr = '<span><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -7) === '</span>' ?'':'</span>');
+            }
+            else{
+                $statementStr = '<span>'.$rowArr['statement'].(substr($rowArr['statement'], -7) === '</span>' ?'':'</span>');
+            }
         }
         $retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = $statementStr;
         return $retArr;
@@ -828,6 +778,10 @@ class TaxonProfileManager {
     public function getSynonymArr(): array
     {
         return $this->synTidArr;
+    }
+
+    public function getNumChildren(){
+        return $this->numChildren;
     }
 
     public function getSecurityStatus(){

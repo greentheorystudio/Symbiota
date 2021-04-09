@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class ExsiccatiManager {
 
@@ -543,13 +543,12 @@ class ExsiccatiManager {
 
 	public function batchImport($targetCollid,$postArr): string
     {
-		global $SYMB_UID;
-        $statusStr = '';
+		$statusStr = '';
 		$transferCnt = 0;
 		if(array_key_exists('occid[]',$postArr)){
 			$datasetId = '';
 			if(array_key_exists('dataset',$postArr) && $postArr['dataset']){
-				$sqlDs = 'INSERT INTO omoccurdatasets(name, uid) VALUES("'.$this->cleanInStr($postArr['dataset']).'",'.$SYMB_UID.') ';
+				$sqlDs = 'INSERT INTO omoccurdatasets(name, uid) VALUES("'.$this->cleanInStr($postArr['dataset']).'",'.$GLOBALS['SYMB_UID'].') ';
 				if($this->conn->query($sqlDs)){
 					$datasetId = $this->conn->insert_id;
 				}
@@ -675,11 +674,10 @@ class ExsiccatiManager {
 
 	public function getTargetCollArr(): array
     {
-		global $USER_RIGHTS;
-        $retArr = array();
-        $collArr = $USER_RIGHTS['CollAdmin'] ?? array();
-        if(isset($USER_RIGHTS['CollEditor'])){
-			$collArr = array_merge($collArr,$USER_RIGHTS['CollEditor']);
+		$retArr = array();
+        $collArr = $GLOBALS['USER_RIGHTS']['CollAdmin'] ?? array();
+        if(isset($GLOBALS['USER_RIGHTS']['CollEditor'])){
+			$collArr = array_merge($collArr,$GLOBALS['USER_RIGHTS']['CollEditor']);
 		}
 		if($collArr){
 			$sql ='SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode '.

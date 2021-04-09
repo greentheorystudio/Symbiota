@@ -63,7 +63,7 @@ function prepareFieldGuideExport(taxCnt){
         }
     }
     pdfFileTot = Math.ceil(taxCnt/lazyLoadCnt);
-    projFileName = checklistName.replace(/ /g,"_");
+    projFileName = checklistName.replaceAll(/ /g,"_");
     pdfDocGenerator = '';
     dataArr = [];
     tempImgArr = [];

@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -100,7 +100,7 @@ if($userChecklists || $checklistArr){
             if($userChecklists){
                 ?>
                 <div style="float:right;margin-right:15px;">
-                    <a href="#" onclick="toggle('voucheradddiv');return false;" title="Link Specimen to Checklist as Voucher" ><img src="../../images/add.png" /></a>
+                    <a href="#" onclick="toggle('voucheradddiv');return false;" title="Link Specimen to Checklist as Voucher" ><i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i></a>
                 </div>
                 <div id="voucheradddiv" style="display:<?php echo ($checklistArr?'none':'block'); ?>;">
                     <form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
@@ -128,7 +128,7 @@ if($userChecklists || $checklistArr){
                     echo '<a href="../../checklists/checklist.php?showvouchers=1&cl='.$vClid.'" target="_blank">'.$vClName.'</a> ';
                     if(array_key_exists($vClid, $userChecklists)){
                         echo '<a href="occurrenceeditor.php?submitaction=deletevoucher&delclid='.$vClid.'&occid='.$occid.'&tabtarget=3" title="Delete voucher link" onclick="return confirm(\"Are you sure you want to remove this voucher link?\")">';
-                        echo '<img src="../../images/drop.png" style="width:12px;" />';
+                        echo '<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>';
                         echo '</a>';
                     }
                     echo '</div>';
@@ -162,7 +162,7 @@ if($userChecklists || $checklistArr){
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
 					if($note) {
-                        echo ' - ' . $notes;
+                        echo ' - ' . $note;
                     }
 					echo '</div>';
 					echo '<div style="20px 0px"><hr/><hr/></div>';
@@ -205,12 +205,12 @@ if($userChecklists || $checklistArr){
 									if(!$tnUrl) {
                                         $tnUrl = $url;
                                     }
-									if($IMAGE_DOMAIN){
+									if($GLOBALS['IMAGE_DOMAIN']){
 										if(strpos($url, '/') === 0) {
-                                            $url = $IMAGE_DOMAIN . $url;
+                                            $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                         }
 										if(strpos($tnUrl, '/') === 0) {
-                                            $tnUrl = $IMAGE_DOMAIN . $tnUrl;
+                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                                         }
 									}
 									echo '<div style="float:left;margin:10px;">';
@@ -242,7 +242,7 @@ if($userChecklists || $checklistArr){
 	<fieldset>
 		<legend><b>Genetic Resources</b></legend>
 		<div style="float:right;">
-			<a href="#" onclick="toggle('genadddiv');return false;" title="Add a new genetic resource" ><img src="../../images/add.png" /></a>
+			<a href="#" onclick="toggle('genadddiv');return false;" title="Add a new genetic resource" ><i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i></a>
 		</div>
 		<div id="genadddiv" style="display:<?php echo ($genticArr?'none':'block'); ?>;">
 			<fieldset>
@@ -278,10 +278,10 @@ if($userChecklists || $checklistArr){
                         </div>
                         <div style="margin:2px;float:right;">
                             <?php
-                            /*if(isset($GENBANK_SUB_TOOL_PATH)){
-                                include_once $GENBANK_SUB_TOOL_PATH."/genbankgen/plugin.php";
+                            /*if(isset($GLOBALS['GENBANK_SUB_TOOL_PATH'])){
+                                include_once $GLOBALS['GENBANK_SUB_TOOL_PATH']."/genbankgen/plugin.php";
                                 if(class_exists('\GenBankGen\Plugin')) {
-                                    $defaults->SYMB_UID = $SYMB_UID;
+                                    $defaults->SYMB_UID = $GLOBALS['SYMB_UID'];
                                     $p = new \GenBankGen\Plugin($defaults);
                                     echo $p->embed();
                                 }
@@ -297,7 +297,7 @@ if($userChecklists || $checklistArr){
 			foreach($genticArr as $genId => $gArr){
 				?>
 				<div style="float:right;">
-					<a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><img src="../../images/edit.png" /></a>
+					<a href="#" onclick="toggle('genedit-<?php echo $genId; ?>');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 				</div>
 				<div style="margin:15px;">
 					<div style="font-weight:bold;margin-bottom:5px;"><?php echo $gArr['name']; ?></div>
@@ -363,15 +363,15 @@ if($userChecklists || $checklistArr){
 	</fieldset>
 </div>
 <?php
-if(isset($GENBANK_SUB_TOOL_PATH) && file_exists($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php')){
+if(isset($GLOBALS['GENBANK_SUB_TOOL_PATH']) && file_exists($GLOBALS['GENBANK_SUB_TOOL_PATH']. '/genbankgen/plugin.php')){
     ?>
     <div id="geneticdiv"  style="width:795px;">
         <fieldset>
             <legend><b>GenBank Submission</b></legend>
             <?php
-            include_once($GENBANK_SUB_TOOL_PATH. '/genbankgen/plugin.php');
+            include_once($GLOBALS['GENBANK_SUB_TOOL_PATH']. '/genbankgen/plugin.php');
             if(class_exists('\GenBankGen\Plugin')) {
-                $defaults['SYMB_UID'] = $SYMB_UID;
+                $defaults['SYMB_UID'] = $GLOBALS['SYMB_UID'];
                 $p = new \GenBankGen\Plugin($defaults);
                 echo $p->embed();
             }

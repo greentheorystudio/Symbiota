@@ -57,7 +57,44 @@ function toggleFieldBox(target){
     }
 }
 
-function openMapPU(){
-    const url = '../map/googlemap.php?starr=' + starrJson + '&jsoncollstarr=' + collJson + '&maptype=occquery';
-    window.open(url,'gmap','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=1,resizable=1,width=1150,height=900,left=20,top=20');
+function selectAllDataset(cbElem){
+    let boxesChecked = true;
+    if(!cbElem.checked) {
+        boxesChecked = false;
+    }
+    const f = cbElem.form;
+    for(let i = 0;i<f.length;i++){
+        if(f.elements[i].name === "occid[]") {
+            f.elements[i].checked = boxesChecked;
+        }
+    }
+}
+
+function hasSelectedOccid(f){
+    let isSelected = false;
+    for(let h = 0;h<f.length;h++){
+        if(f.elements[h].name === "occid[]" && f.elements[h].checked){
+            isSelected = true;
+            break;
+        }
+    }
+    if(!isSelected){
+        alert('Please select at least one occurrence to be added to the dataset');
+        return false;
+    }
+    return true;
+}
+
+function displayDatasetTools(){
+    $('.dataset-div').toggle();
+    document.getElementById("dataset-tools").scrollIntoView({behavior: 'smooth'});
+}
+
+function validateOccurListForm(f){
+    if(f.targetdatasetid.value === ""){
+        alert('Please select a dataset to append occurrences, or select Create New Dataset');
+        return false;
+    }
+    document.getElementById("dsstarrjson").value = JSON.stringify(stArr);
+    return true;
 }

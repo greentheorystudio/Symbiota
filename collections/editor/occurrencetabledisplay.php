@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
@@ -17,7 +17,7 @@ $occManager = new OccurrenceEditorManager();
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);
 }
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 
@@ -51,10 +51,10 @@ $headMap = array();
 $qryCnt = 0;
 $statusStr = '';
 
-if($SYMB_UID){
+if($GLOBALS['SYMB_UID']){
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 		$isEditor = 1;
 	}
 
@@ -63,17 +63,17 @@ if($SYMB_UID){
     }
 	if(!$isEditor){
 		if($isGenObs){
-			if(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
+			if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 				$isEditor = 2;
 			}
 			elseif($action){
 				 $isEditor = 2;
 			}
-			elseif($occManager->getObserverUid() === $SYMB_UID){
+			elseif($occManager->getObserverUid() === $GLOBALS['SYMB_UID']){
 				$isEditor = 2;
 			}
 		}
-		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
+		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 			$isEditor = 2;
 		}
 	}
@@ -87,7 +87,7 @@ if($SYMB_UID){
 		}
 		$occManager->setSqlWhere();
 		$statusStr = $occManager->batchUpdateField($_POST['bufieldname'],$_POST['buoldvalue'],$_POST['bunewvalue'],$_POST['bumatch']);
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
 	}
@@ -125,19 +125,20 @@ else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrencetabledisplay.php?'.$_SERVER['QUERY_STRING']);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Table View</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Table View</title>
     <style type="text/css">
 		table.styledtable td {
 		    white-space: nowrap;
 		}
     </style>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=201711"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div id="">
@@ -150,11 +151,11 @@ else{
 		if(($isEditor || $crowdSourceMode)){
 			?>
 			<div style="text-align:right;width:790px;margin:-30px 15px 5px 0;">
-				<a href="#" title="Search / Filter" onclick="toggleSearch();return false;"><img src="../../images/find.png" style="width:14px;" /></a>
+				<a href="#" title="Search / Filter" onclick="toggleSearch();return false;"><i style="height:15px;width:15px;" class="fas fa-search"></i></a>
 				<?php
 				if($isEditor === 1 || $isGenObs){
 					?>
-					<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><img src="../../images/editplus.png" style="width:14px;" /></a>
+					<a href="#" title="Batch Update Tool" onclick="toggleBatchUpdate();return false;"><i style="height:15px;width:15px;" class="far fa-plus-square"></i></a>
 					<?php
 				}
 				?>
@@ -271,7 +272,7 @@ else{
                             <?php
                         }
                         else{
-                            if(!$isGenObs || $IS_ADMIN){
+                            if(!$isGenObs || $GLOBALS['IS_ADMIN']){
                                 ?>
                                 <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Management</a> &gt;&gt;
                                 <?php
@@ -310,7 +311,7 @@ else{
 						echo '<td>';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" title="open in same window">'.$id.'</a> ';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
-						echo '<img src="../../images/newwin.png" style="width:10px;" />';
+						echo '<i style="height:15px;width:15px;" class="fas fa-external-link-alt"></i>';
 						echo '</a>';
 						echo '</td>'."\n";
 						foreach($headerMap as $k => $v){

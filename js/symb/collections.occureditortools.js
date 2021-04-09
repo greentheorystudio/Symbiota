@@ -56,39 +56,6 @@ function toggleCsMode(modeId){
 	}
 }
 
-function openMappingAid() {
-	const f = document.fullform;
-	const latDef = f.decimallatitude.value;
-	const lngDef = f.decimallongitude.value;
-	const errRadius = f.coordinateuncertaintyinmeters.value;
-	let zoom = 5;
-	if(latDef && lngDef) {
-		zoom = 11;
-	}
-	const mapWindow = open("mappointaid.php?latdef=" + latDef + "&lngdef=" + lngDef + "&errrad=" + errRadius + "&zoom=" + zoom, "mappointaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if(mapWindow != null){
-		if (mapWindow.opener == null) {
-			mapWindow.opener = self;
-		}
-		mapWindow.focus();
-	}
-	else{
-		alert("Unable to open map, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
-function openMappingPolyAid() {
-	const zoom = 5;
-	const mapWindow = open("../../tools/mappolyaid.php?zoom=" + zoom, "mappolyaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if(mapWindow != null){
-		if (mapWindow.opener == null) mapWindow.opener = self;
-		mapWindow.focus();
-	}
-	else{
-		alert("Unable to open map, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
 function geoLocateLocality(){
 	const f = document.fullform;
 	const country = encodeURIComponent(f.country.value);
@@ -159,17 +126,17 @@ function geoLocateUpdateCoord(latValue,lngValue,coordErrValue, footprintWKT){
 }
 
 function insertUtm(f) {
-	const zValue = document.getElementById("utmzone").value.replace(/^\s+|\s+$/g, "");
+	const zValue = document.getElementById("utmzone").value.replaceAll(/^\s+|\s+$/g, "");
 	const hValue = document.getElementById("hemisphere").value;
-	const eValue = document.getElementById("utmeast").value.replace(/^\s+|\s+$/g, "");
-	const nValue = document.getElementById("utmnorth").value.replace(/^\s+|\s+$/g, "");
+	const eValue = document.getElementById("utmeast").value.replaceAll(/^\s+|\s+$/g, "");
+	const nValue = document.getElementById("utmnorth").value.replaceAll(/^\s+|\s+$/g, "");
 	if(zValue && eValue && nValue){
 		if(isNumeric(eValue) && isNumeric(nValue)){
 			let vcStr = f.verbatimcoordinates.value;
-			vcStr = vcStr.replace(/\d{2}.*\d+E\s+\d+N[;\s]*/g, "");
-			vcStr = vcStr.replace(/(Northern)|(Southern)/g, "");
-			vcStr = vcStr.replace(/^\s+|\s+$/g, "");
-			vcStr = vcStr.replace(/^;|;$/g, "");
+			vcStr = vcStr.replaceAll(/\d{2}.*\d+E\s+\d+N[;\s]*/g, "");
+			vcStr = vcStr.replaceAll(/(Northern)|(Southern)/g, "");
+			vcStr = vcStr.replaceAll(/^\s+|\s+$/g, "");
+			vcStr = vcStr.replaceAll(/^;|;$/g, "");
 			if(vcStr !== ""){
 				vcStr = vcStr + "; ";
 			}
@@ -236,13 +203,13 @@ function utm2LatLng(zValue, eValue, nValue, datum){
 }
 
 function insertLatLng(f) {
-	const latDeg = document.getElementById("latdeg").value.replace(/^\s+|\s+$/g, "");
-	let latMin = document.getElementById("latmin").value.replace(/^\s+|\s+$/g, "");
-	let latSec = document.getElementById("latsec").value.replace(/^\s+|\s+$/g, "");
+	const latDeg = document.getElementById("latdeg").value.replaceAll(/^\s+|\s+$/g, "");
+	let latMin = document.getElementById("latmin").value.replaceAll(/^\s+|\s+$/g, "");
+	let latSec = document.getElementById("latsec").value.replaceAll(/^\s+|\s+$/g, "");
 	const latNS = document.getElementById("latns").value;
-	const lngDeg = document.getElementById("lngdeg").value.replace(/^\s+|\s+$/g, "");
-	let lngMin = document.getElementById("lngmin").value.replace(/^\s+|\s+$/g, "");
-	let lngSec = document.getElementById("lngsec").value.replace(/^\s+|\s+$/g, "");
+	const lngDeg = document.getElementById("lngdeg").value.replaceAll(/^\s+|\s+$/g, "");
+	let lngMin = document.getElementById("lngmin").value.replaceAll(/^\s+|\s+$/g, "");
+	let lngSec = document.getElementById("lngsec").value.replaceAll(/^\s+|\s+$/g, "");
 	const lngEW = document.getElementById("lngew").value;
 	if(latDeg && latMin && lngDeg && lngMin){
 		if(latMin === "") {
@@ -269,9 +236,9 @@ function insertLatLng(f) {
 			}
 			else{
 				let vcStr = f.verbatimcoordinates.value;
-				vcStr = vcStr.replace(/-*\d{2}[�\u00B0]+[NS\d.\s'"-�\u00B0]+[EW;]+/g, "");
-				vcStr = vcStr.replace(/^\s+|\s+$/g, "");
-				vcStr = vcStr.replace(/^;|;$/g, "");
+				vcStr = vcStr.replaceAll(/-*\d{2}[�\u00B0]+[NS\d.\s'"-�\u00B0]+[EW;]+/g, "");
+				vcStr = vcStr.replaceAll(/^\s+|\s+$/g, "");
+				vcStr = vcStr.replaceAll(/^;|;$/g, "");
 				if(vcStr !== ""){
 					vcStr = vcStr + "; ";
 				}
@@ -311,13 +278,13 @@ function insertLatLng(f) {
 }
 
 function insertTRS(f) {
-	const township = document.getElementById("township").value.replace(/^\s+|\s+$/g, "");
-	const townshipNS = document.getElementById("townshipNS").value.replace(/^\s+|\s+$/g, "");
-	const range = document.getElementById("range").value.replace(/^\s+|\s+$/g, "");
-	const rangeEW = document.getElementById("rangeEW").value.replace(/^\s+|\s+$/g, "");
-	const section = document.getElementById("section").value.replace(/^\s+|\s+$/g, "");
-	const secdetails = document.getElementById("secdetails").value.replace(/^\s+|\s+$/g, "");
-	const meridian = document.getElementById("meridian").value.replace(/^\s+|\s+$/g, "");
+	const township = document.getElementById("township").value.replaceAll(/^\s+|\s+$/g, "");
+	const townshipNS = document.getElementById("townshipNS").value.replaceAll(/^\s+|\s+$/g, "");
+	const range = document.getElementById("range").value.replaceAll(/^\s+|\s+$/g, "");
+	const rangeEW = document.getElementById("rangeEW").value.replaceAll(/^\s+|\s+$/g, "");
+	const section = document.getElementById("section").value.replaceAll(/^\s+|\s+$/g, "");
+	const secdetails = document.getElementById("secdetails").value.replaceAll(/^\s+|\s+$/g, "");
+	const meridian = document.getElementById("meridian").value.replaceAll(/^\s+|\s+$/g, "");
 
 	let vCoord;
 	if (!township || !range) {

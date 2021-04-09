@@ -1,7 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
@@ -11,12 +11,13 @@ $keyManager->setLangId($langId);
 $keyManager->setCid($cid);
 $tLinks = $keyManager->getTaxonRelevance();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>Taxonomy Linkage</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -94,7 +95,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
 								</form>
 							</div>
 							<?php 
@@ -118,7 +119,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:15px;" />
+									<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
 								</form>
 							</div>
 							<?php 

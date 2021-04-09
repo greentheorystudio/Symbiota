@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -22,11 +22,11 @@ $collPubArr = array();
 $publishGBIF = false;
 $publishIDIGBIO = false;
 
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
 }
 elseif($collid){
-	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
 }
@@ -39,7 +39,7 @@ if($isEditor){
 		}
 	}
 	elseif($action === 'Create New Collection'){
-		if($IS_ADMIN){
+		if($GLOBALS['IS_ADMIN']){
 			$newCollid = $collManager->submitCollAdd($_POST);
 			if(is_numeric($newCollid)){
 				$statusStr = 'New collection added successfully! <br/>Click <a href="../admin/specuploadmanagement.php?collid='.$newCollid.'&action=addprofile">here</a> to upload occurrence records for this new collection.';
@@ -61,7 +61,7 @@ if($isEditor){
 		}
 	}
 }
-if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY && $collid){
+if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY'] && $collid){
 	$collPubArr = $collManager->getCollPubArr($collid);
 	if($collPubArr[$collid]['publishToGbif']){
 		$publishGBIF = true;
@@ -74,12 +74,13 @@ $collDataFull = $collManager->getCollectionMetadata();
 $collData = $collDataFull[$collid];
 $collManager->cleanOutArr($collData);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' ' .($collid?$collData['collectionname']: '') ; ?> Collection Profiles</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
@@ -100,13 +101,17 @@ $collManager->cleanOutArr($collData);
 			}
 
 		});
-	
-		function openMappingAid() {
-            const mapWindow = open("../../tools/mappointaid.php?formname=colleditform&latname=latitudedecimal&longname=longitudedecimal", "mappointaid", "resizable=0,width=800,height=700,left=20,top=20");
+
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
-		}
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
 
 		function verifyCollEditForm(f){
 			if(f.institutioncode.value === ''){
@@ -121,7 +126,7 @@ $collManager->cleanOutArr($collData);
 				alert("The Symbiota Generated GUID option cannot be selected for a collection that is managed locally outside of the data portal (e.g. Snapshot management type). In this case, the GUID must be generated within the source collection database and delivered to the data portal as part of the upload process.");
 				return false;
 			}
-			else if(!isNumeric(f.latdec.value) || !isNumeric(f.lngdec.value)){
+			else if(!isNumeric(f.latitudedecimal.value) || !isNumeric(f.longitudedecimal.value)){
 				alert("Latitdue and longitude values must be in the decimal format (numeric only)");
 				return false;
 			}
@@ -289,7 +294,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="text" name="institutioncode" value="<?php echo ($collid?$collData['institutioncode']:'');?>" style="width:75px;" />
 									<a id="instcodeinfo" href="#" onclick="return false" title="More information about Institution Code">
-										<img src="../../images/info.png" style="width:15px;" />
+										<i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="instcodeinfodialog">
 										The name (or acronym) in use by the institution having custody of the occurrence records. This field is required. 
@@ -304,7 +309,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="text" name="collectioncode" value="<?php echo ($collid?$collData['collectioncode']:'');?>" style="width:75px;" />
 									<a id="collcodeinfo" href="#" onclick="return false" title="More information about Collection Code">
-										<img src="../../images/info.png" style="width:15px;" />
+										<i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="collcodeinfodialog">
 										The name, acronym, or code identifying the collection or data set from which the record was derived. This field is optional. 
@@ -358,9 +363,9 @@ $collManager->cleanOutArr($collData);
 									Latitude:
 								</td>
 								<td>
-									<input id="latdec" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
-									<span style="cursor:pointer;" onclick="openMappingAid();">
-										<img src="../../images/world.png" style="width:12px;" />
+									<input id="decimallatitude" type="text" name="latitudedecimal" value="<?php echo ($collid?$collData['latitudedecimal']:'');?>" />
+									<span style="cursor:pointer;" onclick="openSpatialInputWindow('input-point');">
+										<i style="height:15px;width:15px;" class="fas fa-globe"></i>
 									</span>
 								</td>
 							</tr>
@@ -369,7 +374,7 @@ $collManager->cleanOutArr($collData);
 									Longitude:
 								</td>
 								<td>
-									<input id="lngdec" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
+									<input id="decimallongitude" type="text" name="longitudedecimal" value="<?php echo ($collid?$collData['longitudedecimal']:'');?>" />
 								</td>
 							</tr>
 							<?php 
@@ -403,7 +408,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="checkbox" name="publicedits" value="1" <?php echo ($collData && $collData['publicedits']?'CHECKED':''); ?> />
 									<a id="peditsinfo" href="#" onclick="return false" title="More information about Public Edits">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="peditsinfodialog">
 										Checking public edits will allow any user logged into the system to modify occurrence records
@@ -419,12 +424,12 @@ $collManager->cleanOutArr($collData);
 								</td>
 								<td>
 									<?php 
-									if(isset($RIGHTS_TERMS)){
+									if(isset($GLOBALS['RIGHTS_TERMS'])){
 										?>
 										<select name="rights">
 											<?php
 											$hasOrphanTerm = true; 
-											foreach($RIGHTS_TERMS as $k => $v){
+											foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
 												$selectedTerm = '';
 												if($collid && strtolower($collData['rights']) === strtolower($v)){
 													$selectedTerm = 'SELECTED';
@@ -446,7 +451,7 @@ $collManager->cleanOutArr($collData);
 									}
 									?>
 									<a id="rightsinfo" href="#" onclick="return false" title="More information about Rights">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="rightsinfodialog">
 										A legal document giving official permission to do something with the resource. 
@@ -462,7 +467,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="text" name="rightsholder" value="<?php echo ($collid?$collData['rightsholder']:'');?>" style="width:90%;" />
 									<a id="rightsholderinfo" href="#" onclick="return false" title="More information about Rights Holder">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="rightsholderinfodialog">
 										The organization or person managing or owning the rights of the resource.
@@ -477,7 +482,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="text" name="accessrights" value="<?php echo ($collid?$collData['accessrights']:'');?>" style="width:90%;" />
 									<a id="accessrightsinfo" href="#" onclick="return false" title="More information about Access Rights">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="accessrightsinfodialog">
 										Informations or a URL link to page with details explaining how one can use the data.   
@@ -498,7 +503,7 @@ $collManager->cleanOutArr($collData);
 										<option value="symbiotaUUID" <?php echo ($collid && $collData['guidtarget'] === 'symbiotaUUID'?'SELECTED':''); ?>>Symbiota Generated GUID (UUID)</option>
 									</select>
 									<a id="guidinfo" href="#" onclick="return false" title="More information about Global Unique Identifier">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="guidinfodialog">
 										Occurrence Id is generally used for Snapshot datasets when a Global Unique Identifier (GUID) field  
@@ -513,7 +518,7 @@ $collManager->cleanOutArr($collData);
 								</td>
 							</tr>
                             <?php
-                            if(isset($GBIF_USERNAME, $GBIF_PASSWORD, $GBIF_ORG_KEY) && $GBIF_USERNAME && $GBIF_PASSWORD && $GBIF_ORG_KEY) {
+                            if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && $GLOBALS['GBIF_USERNAME'] && $GLOBALS['GBIF_PASSWORD'] && $GLOBALS['GBIF_ORG_KEY']) {
                                 ?>
 	                            <tr>
 	                                <td>
@@ -525,7 +530,7 @@ $collManager->cleanOutArr($collData);
                                                         onchange="checkGUIDSource(this.form);" <?php echo($publishGBIF ? 'CHECKED' : ''); ?> />
                                             <a id="pubagginfo" href="#" onclick="return false"
                                                title="More information about Publishing to Aggregators">
-                                                <img src="../../images/info.png" style="width:15px;"/>
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                             </a>
                                         </div>
 	                                </td>
@@ -540,7 +545,7 @@ $collManager->cleanOutArr($collData);
 								<td>
 									<input type="text" name="individualurl" style="width:90%;" value="<?php echo ($collid?$collData['individualurl']:'');?>" title="Dynamic link to source database individual record page" />
 									<a id="sourceurlinfo" href="#" onclick="return false" title="More information about Source Records URL">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="sourceurlinfodialog">
 										Adding a URL template here will dynamically generate and add the occurrence details page a link to the
@@ -578,7 +583,7 @@ $collManager->cleanOutArr($collData);
 										</div>
 									</div>
 									<a id="iconinfo" href="#" onclick="return false" title="What is an Icon?">
-										<img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a>
 									<div id="iconinfodialog">
 										Upload an icon image file or enter the URL of an image icon that represents the collection. If entering the URL of an image already located 
@@ -587,7 +592,7 @@ $collManager->cleanOutArr($collData);
 								</td>
 							</tr>
 							<?php 
-							if($IS_ADMIN){ 
+							if($GLOBALS['IS_ADMIN']){ 
 								?>
 								<tr>
 									<td>
@@ -600,7 +605,7 @@ $collManager->cleanOutArr($collData);
 											<option <?php echo ($collid && $collData['colltype'] === 'General Observations'?'SELECTED':''); ?>>General Observations</option>
 										</select>
 										<a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
-											<img src="../../images/info.png" style="width:15px;" />
+                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 										</a>
 										<div id="colltypeinfodialog">
                                             Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
@@ -625,7 +630,7 @@ $collManager->cleanOutArr($collData);
 											<option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
 										</select>
 										<a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
-											<img src="../../images/info.png" style="width:15px;" />
+                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 										</a>
 										<div id="managementinfodialog">
 											Use Snapshot when there is a separate in-house database maintained in the collection and the dataset 
@@ -641,7 +646,7 @@ $collManager->cleanOutArr($collData);
 									<td>
 										<input type="text" name="sortseq" value="<?php echo ($collid?$collData['sortseq']:'');?>" />
 										<a id="sortinfo" href="#" onclick="return false" title="More information about Sorting">
-											<img src="../../images/info.png" style="width:15px;" />
+                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 										</a>
 										<div id="sortinfodialog">
 											Leave this field empty if you want the collections to sort alphabetically (default) 
@@ -661,7 +666,7 @@ $collManager->cleanOutArr($collData);
 										echo $collData['guid'];
 										?> 
 										<a id="collectionguidinfo" href="#" onclick="return false" title="More information">
-											<img src="../../images/info.png" style="width:15px;" />
+                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 										</a>
 										<div id="collectionguidinfodialog">
 											Global Unique Identifier for this collection.  
@@ -690,7 +695,7 @@ $collManager->cleanOutArr($collData);
 									<td>
 										<input type="text" name="collectionguid" value="" style="width:90%;" />
 										<a id="collectionguidinfo" href="#" onclick="return false" title="More information">
-											<img src="../../images/info.png" style="width:15px;" />
+                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 										</a>
 										<div id="collectionguidinfodialog">
 											Global Unique Identifier for this collection. 
@@ -739,10 +744,10 @@ $collManager->cleanOutArr($collData);
 							echo $instArr['institutionname'].($instArr['institutioncode']?' ('.$instArr['institutioncode'].')':'');
 							?>
 							<a href="../admin/institutioneditor.php?emode=1&targetcollid=<?php echo $collid.'&iid='.$instArr['iid']; ?>" title="Edit institution address">
-								<img src="../../images/edit.png" style="width:14px;" />
+								<i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</a>
 							<a href="collmetadata.php?collid=<?php echo $collid.'&removeiid='.$instArr['iid']; ?>" title="Unlink institution address">
-								<img src="../../images/drop.png" style="width:14px;" />
+								<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 							</a>
 							<?php 
 							echo '</div>';

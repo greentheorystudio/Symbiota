@@ -9,8 +9,7 @@ ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 $schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']: 'symbiota';
 $cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
 $taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?$_POST['taxonFilterCode']:0;
-$stArrCollJson = array_key_exists('jsoncollstarr',$_REQUEST)?$_REQUEST['jsoncollstarr']:'';
-$stArrSearchJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
@@ -19,17 +18,12 @@ $solrManager = new SOLRManager();
 
 $occWhereStr = '';
 
-if($stArrSearchJson){
-	$stArrSearchJson = str_replace('%apos;',"'",$stArrSearchJson);
-	$collStArr = json_decode($stArrCollJson, true);
-	$searchArr = json_decode($stArrSearchJson, true);
-	if($collStArr) {
-		$searchArr = array_merge($searchArr, $collStArr);
-	}
-	$occurManager->setSearchTermsArr($searchArr);
+if($stArrJson){
+	$stArr = json_decode($stArrJson, true);
+	$occurManager->setSearchTermsArr($stArr);
 
-    if($SOLR_MODE){
-    	$solrManager->setSearchTermsArr($searchArr);
+    if($GLOBALS['SOLR_MODE']){
+    	$solrManager->setSearchTermsArr($stArr);
         if($schema === 'checklist'){
             if($taxonFilterCode){
                 $solrArr = $solrManager->getTaxaArr();
@@ -57,7 +51,7 @@ if($stArrSearchJson){
 if($schema === 'backup'){
     $collid = $_POST['collid'];
 	if($collid && is_numeric($collid)){
-		if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+		if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 			$dwcaHandler->setSchemaType('backup');
 			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setVerboseMode(0);
@@ -94,18 +88,18 @@ else{
 
 	$redactLocalities = 1;
 	$rareReaderArr = array();
-	if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS)){
+	if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS'])){
 		$redactLocalities = 0;
 	}
-	elseif(array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+	elseif(array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
 		$redactLocalities = 0;
 	}
 	else{
-		if(array_key_exists('CollEditor', $USER_RIGHTS)){
-			$rareReaderArr = $USER_RIGHTS['CollEditor'];
+		if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
+			$rareReaderArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
 		}
-		if(array_key_exists('RareSppReader', $USER_RIGHTS)){
-			$rareReaderArr = array_unique(array_merge($rareReaderArr,$USER_RIGHTS['RareSppReader']));
+		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+			$rareReaderArr = array_unique(array_merge($rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
 	}
 	if($schema === 'georef'){
@@ -184,7 +178,7 @@ else{
 				$dwcaHandler->setIsPublicDownload();
 			}
 			if(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
-                if($SOLR_MODE && $occWhereStr){
+                if($GLOBALS['SOLR_MODE'] && $occWhereStr){
                     $dwcaHandler->setCustomWhereSql($occWhereStr);
                 }
                 else{
@@ -249,10 +243,10 @@ else{
 				header('Content-Type: application/zip');
 			}
 			elseif($format === 'csv'){
-				header('Content-Type: text/csv; charset='.$CHARSET);
+				header('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
 			}
 			else{
-				header('Content-Type: text/html; charset='.$CHARSET);
+				header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
 			}
 
 			header('Content-Disposition: attachment; filename='.basename($outputFile));

@@ -1,7 +1,7 @@
 <?php
-include_once('Manager.php');
-include_once('TaxonomyUtilities.php');
-include_once('EOLUtilities.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/EOLUtilities.php');
 
 class TaxonomyHarvester extends Manager{
 
@@ -665,7 +665,6 @@ class TaxonomyHarvester extends Manager{
 	}
 
 	private function loadNewTaxon($taxonArr, $tidAccepted = 0){
-		global $USER_RIGHTS, $CLIENT_ROOT;
 		$newTid = 0;
 		if(!$taxonArr) {
 			return false;
@@ -762,13 +761,13 @@ class TaxonomyHarvester extends Manager{
 						$this->logOrEcho('ERROR updating kingdom string: '.$this->conn->error,1);
 					}
 					$taxonDisplay = $taxonArr['sciname'];
-					if(isset($USER_RIGHTS['Taxonomy'])){
-						$taxonDisplay = '<a href="'.$CLIENT_ROOT.'/taxa/taxonomy/taxoneditor.php?tid='.$newTid.'" target="_blank">'.$taxonArr['sciname'].'</a>';
+					if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
+						$taxonDisplay = '<a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$newTid.'" target="_blank">'.$taxonArr['sciname'].'</a>';
 					}
 					$accStr = 'accepted';
 					if($tidAccepted !== $newTid){
-						if(isset($USER_RIGHTS['Taxonomy'])){
-							$accStr = 'synonym of taxon <a href="'.$CLIENT_ROOT.'/taxa/taxonomy/taxoneditor.php?tid='.$tidAccepted.'" target="_blank">#'.$tidAccepted.'</a>';
+						if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
+							$accStr = 'synonym of taxon <a href="'.$GLOBALS['CLIENT_ROOT'].'/taxa/taxonomy/taxoneditor.php?tid='.$tidAccepted.'" target="_blank">#'.$tidAccepted.'</a>';
 						}
 						else{
 							$accStr = 'synonym of taxon #'.$tidAccepted;
@@ -1167,16 +1166,15 @@ class TaxonomyHarvester extends Manager{
 
 	public function setTaxonomicResources($resourceArr): ?bool
 	{
-		global $TAXONOMIC_AUTHORITIES;
 		if(!$resourceArr){
 			$this->logOrEcho('ERROR: Taxonomic Authority list not defined');
 			return false;
 		}
-		if(!isset($TAXONOMIC_AUTHORITIES) || !$TAXONOMIC_AUTHORITIES || !is_array($TAXONOMIC_AUTHORITIES)){
+		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES']) || !$GLOBALS['TAXONOMIC_AUTHORITIES'] || !is_array($GLOBALS['TAXONOMIC_AUTHORITIES'])){
 			$this->logOrEcho('ERROR activating Taxonomic Authority list (TAXONOMIC_AUTHORITIES) not configured correctly');
 			return false;
 		}
-		$this->taxonomicResources = array_intersect_key(array_change_key_case($TAXONOMIC_AUTHORITIES),array_flip($resourceArr));
+		$this->taxonomicResources = array_intersect_key(array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']),array_flip($resourceArr));
 		return true;
 	}
 

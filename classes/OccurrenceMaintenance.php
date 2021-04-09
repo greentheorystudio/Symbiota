@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('SOLRManager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/SOLRManager.php');
 
 class OccurrenceMaintenance {
 
@@ -271,8 +271,7 @@ class OccurrenceMaintenance {
 
 	public function updateCollectionStats($collid, $full = false): bool
 	{
-        global $SOLR_MODE;
-	    set_time_limit(600);
+        set_time_limit(600);
 		$recordCnt = 0;
 		$georefCnt = 0;
 		$familyCnt = 0;
@@ -426,7 +425,7 @@ class OccurrenceMaintenance {
 				$this->outputMsg($errStr, 2);
 			}
 		}
-		if($SOLR_MODE){
+		if($GLOBALS['SOLR_MODE']){
             $solrManager = new SOLRManager();
             $solrManager->updateSOLR();
         }

@@ -1,8 +1,8 @@
 <?php
 ob_start();
 $isTaxonEditor = false;
-if($SYMB_UID){
-    if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
         $isTaxonEditor = true;
     }
 }
@@ -10,7 +10,7 @@ if($isTaxonEditor){
     ?>
     <div id="editbutton">
         <a href="admin/tpeditor.php?tid=<?php echo $taxonManager->getTid(); ?>" <?php echo 'title="Edit Taxon Data"'; ?>>
-            <img id='editicon' src='../images/edit.png'/>
+            <i style="height:20px;width:20px;" class="far fa-edit"></i>
         </a>
     </div>
     <?php
@@ -27,7 +27,7 @@ if($taxonRank > 180){
         <?php echo $taxonManager->getAuthor(); ?>
         <?php
         $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
-        echo "<a href='".$parentLink."'><img id='parenttaxonicon' src='../images/toparent.png' title='Go to Parent' /></a>";
+        echo "<a href='".$parentLink."'><i id='parenttaxonicon' style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
         if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
@@ -38,19 +38,20 @@ if($taxonRank > 180){
 else{
     ?>
     <div id="scinameheader" class="<?php echo $styleClass; ?>">
-    <?php
-    $displayName = $spDisplay;
-    if($taxonRank == 180) {
-        $displayName = '<i>' . $displayName . '</i> spp. ';
-    }
-    if($taxonRank > 140){
-        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
-        $displayName .= ' <a href="'.$parentLink.'">';
-        $displayName .= '<img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" />';
-        $displayName .= '</a>';
-    }
-    echo "<div id='sciname' class='<?php echo $styleClass; ?>' >$displayName</div>";
-    ?>
+        <?php
+        $displayName = $spDisplay;
+        if($taxonRank === 180) {
+            $displayName = '<i>' . $displayName . '</i>';
+        }
+        $displayName .= ' ' . $taxonManager->getAuthor().' ';
+        if($taxonRank > 140){
+            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+            $displayName .= ' <a href="'.$parentLink.'">';
+            $displayName .= '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
+            $displayName .= '</a>';
+        }
+        echo "<div id='sciname' class='".$styleClass."' >".$displayName."</div> ";
+        ?>
     </div>
     <?php
 }
@@ -161,12 +162,12 @@ $centralImageDiv = ob_get_clean();
 
 ob_start();
 if($descArr = $taxonManager->getDescriptions()){
-    if(isset($PORTAL_TAXA_DESC)){
+    if(isset($GLOBALS['PORTAL_TAXA_DESC'])){
         $tempArr = array();
         $descIndex = 0;
         foreach($descArr as $dArr){
             foreach($dArr as $id => $vArr){
-                if($vArr['caption'] === $PORTAL_TAXA_DESC){
+                if($vArr['caption'] === $GLOBALS['PORTAL_TAXA_DESC']){
                     if($descArr[$descIndex]){
                         $tempArr = $descArr[$descIndex][$id];
                         unset($descArr[$descIndex][$id]);
@@ -234,32 +235,21 @@ else{
 $descTabsDiv = ob_get_clean();
 
 ob_start();
-$url = ''; $aUrl = ''; $gAnchor = '';
-if($OCCURRENCE_MOD_IS_ACTIVE && $displayLocality){
-    $gAnchor = "openMapPopup('".$taxonManager->getTid()."',".($taxonManager->getClid()?:0). ')';
-}
-if($mapSrc = $taxonManager->getMapArr()){
-    $url = array_shift($mapSrc);
-    $aUrl = $url;
-}
-elseif($gAnchor){
-    $url = $taxonManager->getGoogleStaticMap();
-}
-if($url){
+$url = '';
+$mAnchor = '';
+if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
+    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
+    if($mapSrc = $taxonManager->getMapArr()){
+        $url = array_shift($mapSrc);
+    }
     echo '<div class="mapthumb">';
-    if($gAnchor){
-        echo '<a href="#" onclick="'.$gAnchor.';return false">';
-    }
-    elseif($aUrl){
-        echo '<a href="'.$aUrl.'">';
-    }
-    echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
-    if($aUrl || $gAnchor) {
+    if($url){
+        echo '<a href="#" onclick="'.$mAnchor.';return false">';
+        echo '<a href="'.$url.'">';
+        echo '<img src="'.$url.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
         echo '</a>';
     }
-    if($gAnchor) {
-        echo '<br /><a href="#" onclick="' . $gAnchor . ';return false">Open Interactive Map</a>';
-    }
+    echo '<br /><a href="#" onclick="' . $mAnchor . ';return false">Open Interactive Map</a>';
     echo '</div>';
 }
 $mapThumbDiv = ob_get_clean();
@@ -268,7 +258,12 @@ ob_start();
 ?>
 <div id="img-div">
     <?php
-    $taxonManager->echoImages(1);
+    if(($taxonManager->getImageCount() > 100) && !$showAllImages){
+        $taxonManager->echoImages(1, 100);
+    }
+    else{
+        $taxonManager->echoImages(1);
+    }
     ?>
 </div>
 <?php
@@ -276,12 +271,31 @@ $imgDiv = ob_get_clean();
 
 ob_start();
 ?>
-<div id="img-tab-div" style="display:<?php echo $taxonManager->getImageCount()> 6?'block':'none';?>;">
-    <a href="#" onclick="expandExtraImages();return false;">
+<div id="img-tab-div" style="display:<?php echo ((($taxonManager->getImageCount() > 6) && !$showAllImages)?'block':'none');?>;">
+    <?php
+    if($taxonManager->getImageCount() > 100){
+        ?>
         <div id="img-tab-expand">
-            <?php echo 'Click to Display<br/>'.$taxonManager->getImageCount().' Total Images'; ?>
+            <a href="#" onclick="expandExtraImages();return false;">
+                <?php echo 'Click to Display<br/>100 Initial Images'; ?>
+            </a><br/>
+            - - - - -<br/>
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"2","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
+                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+            </a>
         </div>
-    </a>
+        <?php
+    }
+    else{
+        ?>
+        <div id="img-tab-expand">
+            <a href="#" onclick="expandExtraImages();return false;">
+                <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
+            </a>
+        </div>
+        <?php
+    }
+    ?>
 </div>
 <?php
 $imgTabDiv = ob_get_clean();
@@ -294,7 +308,7 @@ ob_start();
         echo '<legend>';
         echo 'Species within <b>'.$taxonManager->getClName().'</b>&nbsp;&nbsp;';
         if($taxonManager->getParentClid()){
-            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><img id="parenttaxonicon" src="../images/toparent.png" title="Go to Parent" /></a>';
+            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i></a>';
         }
         echo '</legend>';
     }
@@ -302,6 +316,7 @@ ob_start();
     <div>
         <?php
         if($sppArr = $taxonManager->getSppArray()){
+            echo "<div class='flexwrapbox'>";
             $cnt = 0;
             ksort($sppArr);
             foreach($sppArr as $sciNameKey => $subArr){
@@ -314,15 +329,16 @@ ob_start();
 
                 if(array_key_exists('url',$subArr)){
                     $imgUrl = $subArr['url'];
-                    if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-                        $imgUrl = $IMAGE_DOMAIN.$imgUrl;
-                    }
                     echo "<a href='index.php?taxon=".$subArr['tid']. '&taxauthid=' .$taxAuthId.($clValue? '&cl=' .$clValue: '')."'>";
-
                     if($subArr['thumbnailurl']){
                         $imgUrl = $subArr['thumbnailurl'];
-                        if($IMAGE_DOMAIN && strpos($subArr['thumbnailurl'], '/') === 0){
-                            $imgUrl = $IMAGE_DOMAIN.$subArr['thumbnailurl'];
+                    }
+                    if(strpos($imgUrl, '/') === 0) {
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
+                        }
+                        else{
+                            $imgUrl = $GLOBALS['CLIENT_ROOT'] . $imgUrl;
                         }
                     }
                     echo '<img class="taxonimage" src="'.$imgUrl.'" title="'.$subArr['caption'].'" alt="Image of '.$sciNameKey.'" />';
@@ -340,7 +356,16 @@ ob_start();
 
                 echo '<div class="sppmap">';
                 if(array_key_exists('map',$subArr) && $subArr['map']){
-                    echo '<img src="'.$subArr['map'].'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
+                    $mapUrl = $subArr['map'];
+                    if(strpos($mapUrl, '/') === 0) {
+                        if($GLOBALS['IMAGE_DOMAIN']){
+                            $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
+                        }
+                        else{
+                            $mapUrl = $GLOBALS['CLIENT_ROOT'] . $mapUrl;
+                        }
+                    }
+                    echo '<img src="'.$mapUrl.'" title="'.$spDisplay.'" alt="'.$spDisplay.'" />';
                 }
                 elseif($taxonManager->getRankId()>140){
                     echo '<div class="spptext">Map not<br />Available</div>';
@@ -350,6 +375,7 @@ ob_start();
                 echo '</div>';
                 $cnt++;
             }
+            echo '</div>';
         }
         ?>
         <div class="clear"><hr></div>
@@ -360,7 +386,7 @@ $imgBoxDiv = ob_get_clean();
 
 ob_start();
 echo '<div id="footerlinkstoggle">';
-if(($taxonRank > 180) && $taxonRank > 180 && $links) {
+if($taxonRank > 180 && $links) {
     echo '<a href="#" onclick="toggleLinks(\'links\');return false;">Web Links</a>';
 }
 

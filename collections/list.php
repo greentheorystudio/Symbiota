@@ -1,8 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:1;
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:0;
 $targetTid = array_key_exists('targettid',$_REQUEST)?$_REQUEST['targettid']:0;
@@ -10,172 +12,137 @@ $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:1
 $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
 
 if(!is_numeric($taxonFilter)) {
-    $taxonFilter = 1;
+    $taxonFilter = 0;
 }
 if(!is_numeric($cntPerPage)) {
     $cntPerPage = 100;
 }
 
 $collManager = new OccurrenceListManager();
-$stArr = array();
-$collArr = array();
-$stArrSearchJson = '';
-$stArrCollJson = '';
 $resetPageNum = false;
-
-if(isset($_REQUEST['taxa']) || isset($_REQUEST['country']) || isset($_REQUEST['state']) || isset($_REQUEST['county']) || isset($_REQUEST['local']) || isset($_REQUEST['elevlow']) || isset($_REQUEST['elevhigh']) || isset($_REQUEST['upperlat']) || isset($_REQUEST['pointlat']) || isset($_REQUEST['collector']) || isset($_REQUEST['collnum']) || isset($_REQUEST['eventdate1']) || isset($_REQUEST['eventdate2']) || isset($_REQUEST['catnum']) || isset($_REQUEST['typestatus']) || isset($_REQUEST['hasimages']) || isset($_REQUEST['hasgenetic'])){
-    $stArr = $collManager->getSearchTerms();
-    $stArrSearchJson = json_encode($stArr);
-    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
-        $resetPageNum = true;
-    }
-}
-
-if(isset($_REQUEST['db'])){
-    $reqDBStrStr = str_replace(array('(', ')'), '', $_REQUEST['db']);
-    if($reqDBStrStr === 'all' || preg_match('/^[0-9,;]+$/', $reqDBStrStr)){
-        $collArr['db'] = $reqDBStrStr;
-        $stArrCollJson = json_encode($collArr);
-        if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
-            $resetPageNum = true;
-        }
-    }
-    if(!isset($_REQUEST['page']) || !$_REQUEST['page']) {
-        $resetPageNum = true;
-    }
-}
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Collections Search Results</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
-	<style type="text/css">
-		.ui-tabs .ui-tabs-nav li { width:32%; }
-		.ui-tabs .ui-tabs-nav li a { margin-left:10px;}
-	</style>
-	<script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
-	<script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
-    <script type="text/javascript" src="../js/symb/collections.search.js"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <style type="text/css">
+        .ui-tabs .ui-tabs-nav li { width:32%; }
+        .ui-tabs .ui-tabs-nav li a { margin-left:10px;}
+        a.boxclose{
+            float:right;
+            width:36px;
+            height:36px;
+            background:transparent url(../images/spatial_close_icon.png) repeat top left;
+            margin-top:-35px;
+            margin-right:-35px;
+            cursor:pointer;
+        }
+    </style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
+    <script type="text/javascript" src="../js/symb/collections.search.js?ver=3"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210313"></script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
-	<script type="text/javascript">
-        let starrJson = '';
-        let collJson = '';
+        let stArr = {};
         let listPage = <?php echo $pageNumber; ?>;
 
         $(document).ready(function() {
-            <?php
-            if($stArrSearchJson){
-                ?>
-                starrJson = '<?php echo $stArrSearchJson; ?>';
-                sessionStorage.jsonstarr = starrJson;
-                <?php
-            }
-            else{
-                ?>
-                if(sessionStorage.jsonstarr){
-                    starrJson = sessionStorage.jsonstarr;
-                }
-                <?php
-            }
-            ?>
-
-            <?php
-            if($stArrCollJson){
-                ?>
-                collJson = '<?php echo $stArrCollJson; ?>';
-                sessionStorage.jsoncollstarr = collJson;
-                <?php
-            }
-            else{
-                ?>
-                if(sessionStorage.jsoncollstarr){
-                    collJson = sessionStorage.jsoncollstarr;
-                }
-                <?php
-            }
-            ?>
-
-            <?php
-            if(!$resetPageNum){
-                ?>
-                if(sessionStorage.collSearchPage){
-                    listPage = sessionStorage.collSearchPage;
-                }
-                else{
-                    sessionStorage.collSearchPage = listPage;
-                }
-                <?php
-            }
-            else{
-                echo "sessionStorage.collSearchPage = listPage;\n";
-            }
-            ?>
-
-            document.getElementById("taxatablink").href = 'checklist.php?starr='+starrJson+'&jsoncollstarr='+collJson+'&taxonfilter=<?php echo $taxonFilter; ?>';
-            document.getElementById("mapdllink").href = 'download/index.php?starr='+starrJson+'&jsoncollstarr='+collJson+'&dltype=georef';
-            document.getElementById("kmldlcolljson").value = collJson;
-            document.getElementById("kmldlstjson").value = starrJson;
-
-            setOccurrenceList(listPage);
+            $('#csvoptions').popup({
+                transition: 'all 0.3s',
+                scrolllock: true
+            });
             $('#tabs').tabs({
                 active: <?php echo $tabIndex; ?>,
                 beforeLoad: function( event, ui ) {
                     $(ui.panel).html("<p>Loading...</p>");
                 }
             });
+            <?php
+            if($stArrJson){
+                ?>
+                initializeSearchStorage(<?php echo $queryId; ?>);
+                loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                <?php
+            }
+            ?>
+
+            stArr = getSearchTermsArr();
+            setOccurrenceList(listPage);
         });
 
         function setOccurrenceList(listPage){
-            sessionStorage.collSearchPage = listPage;
             document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
-            $.ajax({
-                type: "POST",
-                url: "rpc/getoccurrencelist.php",
-                data: {
-                    starr: starrJson,
-                    jsoncollstarr: collJson,
-                    targettid: <?php echo $targetTid; ?>,
-                    page: listPage
-                },
-                dataType: "html"
-            }).done(function(msg) {
-                if(!msg) {
-                    msg = "<p>An error occurred retrieving records.</p>";
+            const http = new XMLHttpRequest();
+            const url = "rpc/getoccurrencelist.php";
+            const queryid = document.getElementById('queryId').value;
+            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(!http.responseText) {
+                        http.responseText = "<p>An error occurred retrieving records.</p>";
+                    }
+                    document.getElementById("queryrecords").innerHTML = http.responseText;
                 }
-                document.getElementById("queryrecords").innerHTML = msg;
-            });
+            };
+            http.send(params);
         }
 
-		function addAllVouchersToCl(clidIn){
+        function addAllVouchersToCl(clidIn){
             const occJson = document.getElementById("specoccjson").value;
+            const http = new XMLHttpRequest();
+            const url = "rpc/addallvouchers.php";
+            const params = 'clid='+clidIn+'&jsonOccArr='+occJson+'&tid=<?php echo ($targetTid?:'0'); ?>';
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(http.responseText === "1"){
+                        alert("Success! All vouchers added to checklist.");
+                    }
+                    else{
+                        alert(http.responseText);
+                    }
+                }
+            };
+            http.send(params);
+        }
 
-            $.ajax({
-				type: "POST",
-				url: "rpc/addallvouchers.php",
-				data: { clid: clidIn, jsonOccArr: occJson, tid: <?php echo ($targetTid?:'0'); ?> }
-			}).done(function( msg ) {
-				if(msg === "1"){
-					alert("Success! All vouchers added to checklist.");
-				}
-				else{
-					alert(msg);
-				}
-			});
-		}
+        function getTaxaList(val){
+            document.getElementById("dh-taxonFilterCode").value = val;
+            document.getElementById("taxalist").innerHTML = "<p>Loading...</p>";
+            const http = new XMLHttpRequest();
+            const url = "rpc/getchecklist.php";
+            const jsonStarr = JSON.stringify(stArr);
+            const params = 'starr='+jsonStarr+'&taxonfilter='+val;
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    document.getElementById("taxalist").innerHTML = http.responseText;
+                }
+            };
+            http.send(params);
+        }
 
-        function copySearchUrl(){
-            const urlPrefix = document.getElementById('urlPrefixBox').value;
-            const urlFixed = urlPrefix + '&page=' + sessionStorage.collSearchPage;
-            const copyBox = document.getElementById('urlFullBox');
-            copyBox.value = urlFixed;
-            copyBox.focus();
-            copyBox.setSelectionRange(0,copyBox.value.length);
-            document.execCommand("copy");
-            copyBox.value = '';
+        function submitInteractiveKeyFormTaxaList(){
+            document.getElementById("interactiveKeyFormTaxonfilter").value = document.getElementById("taxonfilter").value;
+            document.getElementById('interactiveKeyForm').submit();
+        }
+
+        function submitChecklistExplorerFormTaxaList(){
+            document.getElementById("checklistExplorerFormTaxonfilter").value = document.getElementById("taxonfilter").value;
+            document.getElementById('checklistExplorerForm').submit();
         }
     </script>
 </head>
@@ -184,99 +151,47 @@ if(isset($_REQUEST['db'])){
 include(__DIR__ . '/../header.php');
 echo '<div class="navpath">';
 echo '<a href="../index.php">Home</a> &gt;&gt; ';
-echo '<a href="index.php">Collections</a> &gt;&gt; ';
-echo '<a href="harvestparams.php">Search Criteria</a> &gt;&gt; ';
+echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'index.php\');">Collections</a> &gt;&gt; ';
+echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'harvestparams.php\');">Search Criteria</a> &gt;&gt; ';
 echo '<b>Specimen Records</b>';
 echo '</div>';
 ?>
 <div id="innertext">
-	<div id="tabs" style="width:95%;">
-		<ul>
-			<li>
-				<a id='taxatablink' href=''>
-					<span>Species List</span>
-				</a>
-			</li>
-			<li>
-				<a href="#speclist">
-					<span>Occurrence Records</span>
-				</a>
-			</li>
-			<li>
-				<a href="#maps">
-					<span>Map</span>
-				</a>
-			</li>
-		</ul>
-		<div id="speclist">
+    <div id="tabs" style="width:95%;">
+        <ul>
+            <li><a href='#taxalistdiv' onclick='getTaxaList();'>Species List</a></li>
+            <li><a href="#speclist">Occurrence Records</a></li>
+        </ul>
+        <div id="speclist">
             <div id="queryrecords"></div>
-		</div>
-		<div id="maps" style="min-height:400px;margin-bottom:10px;">
-			<div class="button" style="margin-top:20px;float:right;width:13px;height:13px;" title="Download Coordinate Data">
-				<a id='mapdllink' href=''><img src="../images/dl.png"/></a>
-			</div>
-			<div style='margin-top:10px;'>
-				<h2>Google Map</h2>
-			</div>
-			<div style='margin:10px 0 0 20px;'>
-				<a href="#" onclick="openMapPU();" >
-                    Display coordinates in Google Map
-				</a>
-			</div>
-			<div style='margin:10px 0 0 20px;'>
-                Google Maps is a web mapping service provided by Google that features a map that users can pan (by
-                dragging the mouse) and zoom (by using the mouse wheel). Collection points are displayed as colored markers
-                that when clicked on, displays the full information for that collection. When multiple species are queried
-                (separated by semi-colons), different colored markers denote each individual species.
-			</div>
-
-			<div style='margin-top:10px;'>
-				<h2>Google Earth (KML)</h2>
-			</div>
-			<form name="kmlform" action="../map/googlekml.php" method="post" onsubmit="">
-				<div style='margin:10px 0 0 20px;'>
-                    This creates an KML file that can be opened in the Google Earth mapping application. Note that you
-                    must have <a href="http://earth.google.com/" target="_blank"> Google Earth</a> installed on your computer
-                    to make use of this option.
-				</div>
-				<div style="margin:20px;">
-					<input name="jsoncollstarr" id="kmldlcolljson" type="hidden" value='' />
-					<input name="starr" id="kmldlstjson" type="hidden" value='' />
-					<button name="formsubmit" type="submit" value="Create KML">Create KML</button>
-				</div>
-				<div style='margin:10px 0 0 20px;'>
-					<a href="#" onclick="toggleFieldBox('fieldBox');">
-                        Add Extra Fields
-					</a>
-				</div>
-				<div id="fieldBox" style="display:none;">
-					<fieldset>
-						<div style="width:600px;">
-							<?php
-							$occFieldArr = Array('occurrenceid','family', 'scientificname', 'sciname',
-								'tidinterpreted', 'scientificnameauthorship', 'identifiedby', 'dateidentified', 'identificationreferences',
-								'identificationremarks', 'taxonremarks', 'identificationqualifier', 'typestatus', 'recordedby', 'recordnumber',
-								'associatedcollectors', 'eventdate', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear',
-								'verbatimeventdate', 'habitat', 'substrate', 'fieldnumber','occurrenceremarks', 'associatedtaxa', 'verbatimattributes',
-								'dynamicproperties', 'reproductivecondition', 'cultivationstatus', 'establishmentmeans',
-								'lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
-								'country', 'stateprovince', 'county', 'municipality', 'locality',
-								'decimallatitude', 'decimallongitude','geodeticdatum', 'coordinateuncertaintyinmeters',
-								'locationremarks', 'verbatimcoordinates', 'georeferencedby', 'georeferenceprotocol', 'georeferencesources',
-								'georeferenceverificationstatus', 'georeferenceremarks', 'minimumelevationinmeters', 'maximumelevationinmeters',
-								'verbatimelevation','language',
-								'labelproject','basisofrecord');
-							foreach($occFieldArr as $k => $v){
-								echo '<div style="float:left;margin-right:5px;">';
-								echo '<input type="checkbox" name="kmlFields[]" value="'.$v.'" />'.$v.'</div>';
-							}
-							?>
-						</div>
-					</fieldset>
-				</div>
-			</form>
         </div>
-	</div>
+        <div id="taxalistdiv">
+            <div id="taxalist"></div>
+        </div>
+    </div>
+    <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
+</div>
+<!-- Data Download Form -->
+<?php include_once('csvoptions.php'); ?>
+<div style="display:none;">
+    <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
+        <input id="starrjson" name="starrjson" type="hidden" />
+        <input id="dh-q" name="dh-q" type="hidden" />
+        <input id="dh-fq" name="dh-fq" type="hidden" />
+        <input id="dh-fl" name="dh-fl" type="hidden" />
+        <input id="dh-rows" name="dh-rows" type="hidden" />
+        <input id="dh-type" name="dh-type" type="hidden" />
+        <input id="dh-filename" name="dh-filename" type="hidden" />
+        <input id="dh-contentType" name="dh-contentType" type="hidden" />
+        <input id="dh-selections" name="dh-selections" type="hidden" />
+        <input id="dh-taxonFilterCode" name="dh-taxonFilterCode" type="hidden" />
+        <input id="schemacsv" name="schemacsv" type="hidden" />
+        <input id="identificationscsv" name="identificationscsv" type="hidden" />
+        <input id="imagescsv" name="imagescsv" type="hidden" />
+        <input id="formatcsv" name="formatcsv" type="hidden" />
+        <input id="zipcsv" name="zipcsv" type="hidden" />
+        <input id="csetcsv" name="csetcsv" type="hidden" />
+    </form>
 </div>
 <?php
 include(__DIR__ . '/../footer.php');

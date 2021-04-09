@@ -1,5 +1,5 @@
 <?php
-include_once('Manager.php');
+include_once(__DIR__ . '/Manager.php');
 
 class KeyDataManager extends Manager{
 
@@ -202,8 +202,8 @@ class KeyDataManager extends Manager{
 		$countMin = $this->taxaCount * $this->relevanceValue;
 		$loopCnt = 0;
 		while(!$charList && $loopCnt < 10){
-			$sqlRev = 'SELECT tc.CID, Count(tc.TID) AS c FROM '.
-				'(SELECT DISTINCT tList.TID, d.CID FROM ('.$this->sql.') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> '-')) AS tc '.
+			$sqlRev = 'SELECT tc.CID, COUNT(tc.TID) AS c FROM '.
+				'(SELECT DISTINCT tList.TID, d.CID FROM ('.$this->sql.') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID WHERE (d.CS <> "-")) AS tc '.
 				'GROUP BY tc.CID HAVING ((Count(tc.TID)) > ' .$countMin. ')';
 			$rs = $this->conn->query($sqlRev);
 			//echo $sqlRev.'<br/>';
@@ -257,7 +257,7 @@ class KeyDataManager extends Manager{
 					}
                     $url = $row->helpurl;
                     if($url) {
-						$charName .= " <a href='$url' target='_blank' style='border:0;'><img src='../images/info.png' style='border:0;width:12px;'></a>";
+						$charName .= " <a href='$url' target='_blank' style='border:0;'><i style='height:15px;width:15px;color:green;' class='fas fa-info-circle'></i></a>";
 					}
                     $cs = $row->CS;
                     $charStateName = $row->CharStateName;
@@ -412,22 +412,19 @@ class KeyDataManager extends Manager{
 
     public function getTaxaList(): array
 	{
-        $taxaList[] = null;
-        unset($taxaList);
         //echo $this->sql; exit;
         $result = $this->conn->query($this->sql);
         $returnArray = array();
-        $sppArr = array();
         $count = 0;
         while ($row = $result->fetch_object()){
+            $sppArr = array();
             $family = $row->Family;
             $tid = $row->tid;
             $displayName = $row->DisplayName;
-            unset($sppArr);
             if(array_key_exists($family, $returnArray)) {
 				$sppArr = $returnArray[$family];
 			}
-            if(!$returnArray[$family][$tid]){
+            if(!array_key_exists($tid, $sppArr)) {
                 $count++;
                 $sppArr[$tid] = $displayName;
                 $returnArray[$family] = $sppArr;
@@ -491,12 +488,11 @@ class KeyDataManager extends Manager{
 
     public function getIntroHtml(): string
 	{
-        global $ADMIN_EMAIL;
-		$returnStr = "<h2>Please enter a checklist, taxonomic group, and then select 'Submit Criteria'</h2>";
+        $returnStr = "<h2>Please enter a checklist, taxonomic group, and then select 'Submit Criteria'</h2>";
         $returnStr .= 'This key is still in the developmental phase. The application, data model, and actual data will need tuning. ' .
 			'The key has been developed to minimize the exclusion of species due to the ' .
             "lack of data. The consequences of this is that a 'shrubs' selection may show non-shrubs until that information is corrected. ".
-            "User input is necessary for the key to improve! Please email me with suggestions, comments, or problems: <a href='".$ADMIN_EMAIL."'>".$ADMIN_EMAIL. '</a><br><br>';
+            "User input is necessary for the key to improve! Please email me with suggestions, comments, or problems: <a href='".$GLOBALS['ADMIN_EMAIL']."'>".$GLOBALS['ADMIN_EMAIL']. '</a><br><br>';
         $returnStr .= '<b>Note:</b> If few morphological characters are displayed for a particular checklist, it is likely due to not yet having enough ' .
 			'morphological data compiled for that subset of species. If you would like to help, please email me at the above address. ';
         return $returnStr;

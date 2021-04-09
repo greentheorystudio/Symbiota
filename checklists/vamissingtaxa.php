@@ -13,7 +13,7 @@ $vManager->setClid($clid);
 $vManager->setCollectionVariables();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -31,8 +31,7 @@ else{
 
 <div id="innertext" style="background-color:white;">
 	<div style='float:left;font-weight:bold;margin-left:5px'>
-
-		<?php
+        <?php
 		if($displayMode == 2){
 			echo 'Problem Taxa: ';
 		}
@@ -41,14 +40,10 @@ else{
 		}
 		echo $vManager->getMissingTaxaCount();
 		?>
-	</div>
-	<div style="float:left;margin-left:5px">
-		<a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><img src="../images/refresh.png" style="border:0;" title="Refresh List" /></a>
-	</div>
-	<div style="float:left;margin-left:5px;">
-		<a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode == 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
-			<img src="<?php echo $CLIENT_ROOT; ?>/images/dl.png" style="border:0;" />
-		</a>
+        <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><i style='width:15px;height:15px;' title="Refresh List" class="fas fa-redo-alt"></i></a>
+        <a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode == 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
+            <i style='width:15px;height:15px;' class="fas fa-download"></i>
+        </a>
 	</div>
 	<div style="float:right;">
 		<form name="displaymodeform" method="post" action="voucheradmin.php">
@@ -186,7 +181,7 @@ else{
                     <div>
                         <a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
                         <a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-                            <img src="../images/link.png" style="width:13px;" title="Link Voucher Specimens" />
+                            <i style='width:15px;height:15px;' title="Link Voucher Specimens" class="fas fa-link"></i>
                         </a>
                     </div>
                     <?php

@@ -1,5 +1,5 @@
 <?php
-include_once('KeyManager.php');
+include_once(__DIR__ . '/KeyManager.php');
 
 class KeyMassUpdate extends KeyManager{
 	
@@ -134,7 +134,7 @@ class KeyMassUpdate extends KeyManager{
 	{
 		echo '<tr><td>';
 		echo '<span style="margin-left:'.($indent*10).'px"><b>'.($indent?'<i>':'').$sciname.($indent?'</i>':'').'</b></span>';
-		echo '<a href="editor.php?tid='.$tid.'" target="_blank"><img src="../../images/edit.png" /></a>';
+		echo '<a href="editor.php?tid='.$tid.'" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 		echo '</td>';
 		foreach($this->stateArr as $cs => $csName){
 			$isSelected = false;

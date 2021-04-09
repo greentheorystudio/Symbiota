@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class OccurrenceLabel{
 
@@ -21,12 +21,11 @@ class OccurrenceLabel{
 
 	public function queryOccurrences($postArr): array
 	{
-		global $USER_RIGHTS, $IS_ADMIN, $SYMB_UID;
 		$canReadRareSpp = false;
-		if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
 			$canReadRareSpp = true;
 		}
-		elseif((array_key_exists('CollEditor', $USER_RIGHTS) && in_array($this->collid, $USER_RIGHTS['CollEditor'], true)) || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($this->collid, $USER_RIGHTS['RareSppReader'], true))){
+		elseif((array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($this->collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($this->collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
 			$canReadRareSpp = true;
 		}
 		$retArr = array();
@@ -134,7 +133,7 @@ class OccurrenceLabel{
 			if($this->collArr['colltype'] === 'General Observations'){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
 				if(!array_key_exists('extendedsearch', $postArr)) {
-					$sqlWhere .= ' AND (o.observeruid = ' . $SYMB_UID . ') ';
+					$sqlWhere .= ' AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
 				}
 			}
 			elseif(!array_key_exists('extendedsearch', $postArr)){
@@ -154,7 +153,7 @@ class OccurrenceLabel{
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$localitySecurity = $r->localitySecurity;
-				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid === $SYMB_UID)){
+				if(!$localitySecurity || $canReadRareSpp || ($r->observeruid === $GLOBALS['SYMB_UID'])){
 					$occId = $r->occid;
 					$retArr[$occId]['collid'] = $r->collid;
 					$retArr[$occId]['q'] = $r->q;
@@ -171,13 +170,12 @@ class OccurrenceLabel{
 
 	public function getLabelArray($occidArr, $speciesAuthors): array
 	{
-		global $SYMB_UID;
 		$retArr = array();
 		if($occidArr){
 			$authorArr = array();
 			$sqlWhere = 'WHERE (o.occid IN('.implode(',',$occidArr).')) ';
 			if($this->collArr['colltype'] === 'General Observations') {
-				$sqlWhere .= 'AND (o.observeruid = ' . $SYMB_UID . ') ';
+				$sqlWhere .= 'AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
 			}
 			$sql1 = 'SELECT o.occid, t2.author '.
 				'FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted '.
@@ -280,20 +278,19 @@ class OccurrenceLabel{
 
 	public function getLabelProjects(): array
 	{
-		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT labelproject, observeruid '.
 				'FROM omoccurrences '.
 				'WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
 			if($this->collArr['colltype'] === 'General Observations') {
-				$sql .= 'AND (observeruid = ' . $SYMB_UID . ') ';
+				$sql .= 'AND (observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
 			}
 			$sql .= 'ORDER BY labelproject';
 			$rs = $this->conn->query($sql);
 			$altArr = array();
 			while($r = $rs->fetch_object()){
-				if($SYMB_UID === $r->observeruid){
+				if($GLOBALS['SYMB_UID'] === $r->observeruid){
 					$retArr[] = $r->labelproject;
 				}
 				else{
@@ -313,7 +310,6 @@ class OccurrenceLabel{
 
 	public function getAnnoQueue(): array
 	{
-		global $SYMB_UID;
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT o.occid, d.detid, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, '.
@@ -322,7 +318,7 @@ class OccurrenceLabel{
 				'FROM omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
 				'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
 			if($this->collArr['colltype'] === 'General Observations'){
-				$sql .= ' AND (o.observeruid = '.$SYMB_UID.') ';
+				$sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
 			}
 			$sql .= 'LIMIT 400 ';
 			//echo $sql;
@@ -341,7 +337,6 @@ class OccurrenceLabel{
 	
 	public function exportCsvFile($postArr, $speciesAuthors): void
 	{
-		global $CHARSET;
 		$occidArr = $postArr['occid'];
 		if($occidArr){
 			$labelArr = $this->getLabelArray($occidArr, $speciesAuthors);
@@ -350,7 +345,7 @@ class OccurrenceLabel{
 				header('Content-Description: Symbiota Label Output File');
 				header ('Content-Type: text/csv');
 				header ('Content-Disposition: attachment; filename="'.$fileName.'"'); 
-				header('Content-Transfer-Encoding: '.strtoupper($CHARSET));
+				header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));
 				header('Expires: 0');
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');

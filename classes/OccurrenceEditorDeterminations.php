@@ -376,7 +376,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$retHtml .= '<td><input type="checkbox" name="occid[]" value="'.$r->occid.'" checked /></td>';
 			$retHtml .= '<td>';
 			$retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?:'[no catalog number]').'</a>';
-			$retHtml .= '<a href="#" onclick="openEditorPopup('.$r->occid.'); return false;"><img src="../../images/edit.png" /></a>';
+			$retHtml .= '<a href="#" onclick="openEditorPopup('.$r->occid.'); return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			$retHtml .= '</td>';
 			$retHtml .= '<td>'.$r->sciname.'</td>';
 			$retHtml .= '<td>'.$r->collector.'; '.$loc.'</td>';

@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class ImageDetailManager {
 	
@@ -63,13 +63,12 @@ class ImageDetailManager {
 
 	public function editImage($postArr): string
 	{
-		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$status = '';
-		$searchStr = $IMAGE_ROOT_URL;
+		$searchStr = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($searchStr,-1) !== '/') {
 			$searchStr .= '/';
 		}
-		$replaceStr = $IMAGE_ROOT_PATH;
+		$replaceStr = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($replaceStr,-1) !== '/') {
 			$replaceStr .= '/';
 		}

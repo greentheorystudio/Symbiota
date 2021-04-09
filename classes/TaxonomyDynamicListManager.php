@@ -1,10 +1,10 @@
 <?php
-include_once('DbConnection.php');
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class TaxonomyDynamicListManager{
 
-	private $conn;
+    private $conn;
     private $tid = 0;
     private $descLimit = false;
     private $sortField = '';
@@ -13,16 +13,16 @@ class TaxonomyDynamicListManager{
     private $tidArr = array();
     private $sciname = '';
 
-	public function __construct(){
+    public function __construct(){
         $connection = new DbConnection();
-	    $this->conn = $connection->getConnection();
-	}
+        $this->conn = $connection->getConnection();
+    }
 
- 	public function __destruct(){
-		if(!($this->conn === null)) {
-			$this->conn->close();
-		}
-	}
+    public function __destruct(){
+        if(!($this->conn === null)) {
+            $this->conn->close();
+        }
+    }
 
     public function getHigherRankArr(): array
     {
@@ -80,7 +80,7 @@ class TaxonomyDynamicListManager{
             'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
             'WHERE ((te1.parenttid = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
             'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
-            'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
+            'AND (t3.RankId = 30 OR t3.RankId = 40 OR ISNULL(t3.RankId)) '.
             'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
             'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
             'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) ';
@@ -130,7 +130,8 @@ class TaxonomyDynamicListManager{
             'AND (t3.RankId = 30 OR ISNULL(t3.RankId)) '.
             'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
             'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
-            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) ';
+            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) '.
+            'AND (t1.SciName LIKE "% %" OR t1.TID NOT IN(SELECT parenttid FROM taxstatus)) ';
         if($this->descLimit){
             $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
         }
@@ -194,6 +195,21 @@ class TaxonomyDynamicListManager{
         return $returnArr;
     }
 
+    public function getSpAmtByParent($tid): int
+    {
+        $cnt = 0;
+        $sql = 'SELECT COUNT(DISTINCT t.TID) AS cnt '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+            'WHERE t.RankId >= 220 AND te.parenttid = '.$tid.' ';
+        //echo "<div>Sql: ".$sql."</div>";
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $cnt = $r->cnt;
+        }
+        $rs->free();
+        return $cnt;
+    }
+
     public function setSciName(): void
     {
         $sql = 'SELECT SciName FROM taxa WHERE TID = '.$this->tid.' ';
@@ -205,12 +221,12 @@ class TaxonomyDynamicListManager{
     }
 
     public function setTid($id): void
-	{
-		if(is_numeric($id)) {
-			$this->tid = $id;
-			$this->setSciName();
-		}
-	}
+    {
+        if(is_numeric($id)) {
+            $this->tid = $id;
+            $this->setSciName();
+        }
+    }
 
     public function setDescLimit($value): void
     {

@@ -1,7 +1,7 @@
 <?php 
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=141210"></script>
+<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
 <div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>
@@ -67,11 +67,11 @@ $specList = $loanManager->getSpecList($loanId);
 						</select>
 					</span>
 					<?php
-					if($IS_ADMIN){
+					if($GLOBALS['IS_ADMIN']){
 						?>
 						<span>
 							<a href="../admin/institutioneditor.php?iid=<?php echo $loanArr['iidborrower']; ?>" target="_blank" title="Edit institution details (option available only to Super Admin)">
-								<img src="../../images/edit.png" style="width:15px;" />
+								<i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</a>
 						</span>
 						<?php 
@@ -200,7 +200,7 @@ $specList = $loanManager->getSpecList($loanId);
 	<div id="outloanspecdiv">
 		<div style="float:right;margin:10px;">
 			<a href="#" onclick="toggle('newspecdiv');">
-				<img src="../../images/add.png" title="Add New Specimen" />
+				<i style="height:20px;width:20px;color:green;" title="Add New Specimen" class="fas fa-plus"></i>
 			</a>
 		</div>
 		<div id="newspecdiv" style="display:<?php echo ($eMode?'block':'none'); ?>;">
@@ -277,7 +277,7 @@ $specList = $loanManager->getSpecList($loanId);
 									<?php echo $specArr['catalognumber']; ?>
 								</a>
 								<a href="#" onclick="openEditorPopup(<?php echo $specArr['occid']; ?>); return false;">
-									<img src="../../images/edit.png" />
+                                    <i style="height:15px;width:15px;" class="far fa-edit"></i>
 								</a>
 							</td>
 							<td>

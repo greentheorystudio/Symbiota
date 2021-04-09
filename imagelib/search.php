@@ -1,7 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
@@ -9,8 +9,8 @@ $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
 $view = array_key_exists('imagedisplay',$_REQUEST)?$_REQUEST['imagedisplay']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
-    $catId = $DEFAULTCATID;
+if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
+    $catId = $GLOBALS['DEFAULTCATID'];
 }
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
@@ -66,11 +66,11 @@ if($action && $action === 'Load Images') {
     $jsonStArr = json_encode($stArr);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Library</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
@@ -78,9 +78,7 @@ if($action && $action === 'Load Images') {
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/symb/images.index.js?ver=20170711" type="text/javascript"></script>
 	<meta name='keywords' content='' />
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
 		let phArr = <?php echo (isset($previousCriteria['phjson'])&&$previousCriteria['phjson']?"JSON.parse('".$previousCriteria['phjson']."')": 'new Array()'); ?>;
 
@@ -326,7 +324,7 @@ if($action && $action === 'Load Images') {
 						<div id="specobsdiv">
 							<div style="margin:0 0 10px 20px;">
 								<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo ((!$dbArr || in_array('all', $dbArr, true))?'checked':''); ?>/>
-								Select/Deselect all <a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php">Collections</a>
+								Select/Deselect all <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php">Collections</a>
 							</div>
 							<?php 
 							if($specArr){
@@ -396,12 +394,12 @@ if($action && $action === 'Load Images') {
 								$imgTn = $imgArr['thumbnailurl'];
 								if($imgTn){
 									$imgUrl = $imgTn;
-									if($IMAGE_DOMAIN && strpos($imgTn, '/') === 0){
-										$imgUrl = $IMAGE_DOMAIN.$imgTn;
+									if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgTn, '/') === 0){
+										$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
 									}
 								}
-								elseif($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0){
-									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+								elseif($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}
 								?>
 								<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">

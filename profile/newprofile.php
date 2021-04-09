@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $login = array_key_exists('login',$_POST)?$_POST['login']:'';
 $emailAddr = array_key_exists('emailaddr',$_POST)?$_POST['emailaddr']:'';
@@ -38,11 +38,11 @@ if($action === 'Create Login'){
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> - New User Profile</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">
         canvas {
             border: 1px solid #000;
@@ -85,7 +85,7 @@ if($action === 'Create Login'){
 				f.pwd2.focus();
 				return false;
 			}
-			if(f.login.value.replace(/\s/g, "") === ""){
+			if(f.login.value.replaceAll(/\s/g, "") === ""){
 				window.alert("User Name must contain a value");
 				return false;
 			}
@@ -93,15 +93,15 @@ if($action === 'Create Login'){
 		        alert("Login name should only contain 0-9A-Za-z_!@ (spaces are not allowed)");
 		        return false;
 		    }
-			if(f.emailaddr.value.replace(/\s/g, "") === "" ){
+			if(f.emailaddr.value.replaceAll(/\s/g, "") === "" ){
 				window.alert("Email address is required");
 				return false;
 			}
-			if(f.firstname.value.replace(/\s/g, "") === ""){
+			if(f.firstname.value.replaceAll(/\s/g, "") === ""){
 				window.alert("First Name must contain a value");
 				return false;
 			}
-			if(f.lastname.value.replace(/\s/g, "") === ""){
+			if(f.lastname.value.replaceAll(/\s/g, "") === ""){
 				window.alert("Last Name must contain a value");
 				return false;
 			}

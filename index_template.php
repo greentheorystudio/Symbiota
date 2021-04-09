@@ -1,16 +1,14 @@
 <?php
 include_once(__DIR__ . '/config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
-        <title><?php echo $DEFAULT_TITLE; ?> Home</title>
-        <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-        <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <meta name='keywords' content='' />
-        <script type="text/javascript">
-            <?php include_once('config/googleanalytics.php'); ?>
-        </script>
+        <?php include_once('config/googleanalytics.php'); ?>
     </head>
     <body>
         <?php

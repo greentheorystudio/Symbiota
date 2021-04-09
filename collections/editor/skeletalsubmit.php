@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/skeletalsubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -19,26 +19,27 @@ if($collid){
 $statusStr = '';
 $isEditor = 0;
 if($collid){
-	if($IS_ADMIN){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+	elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 		$isEditor = 1;
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Skeletal Record Submission</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />	
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Skeletal Record Submission</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.occurskeletalsubmit.js?ver=170502" type="text/javascript"></script>
+	<script src="../../js/symb/collections.occurskeletalsubmit.js?ver=20210325" type="text/javascript"></script>
 	<script src="../../js/symb/shared.js?ver=150324" type="text/javascript"></script>
 </head>
 <body>
@@ -62,9 +63,9 @@ if($collid){
 			<fieldset style="padding:0 15px 15px 15px;position:relative;">
 				<legend>
 					<b>Skeletal Data</b> 
-					<a id="optionimgspan" href="#" onclick="showOptions()"><img src="../../images/list.png" style="width:12px;" title="Display Options" /></a>
+					<a id="optionimgspan" href="#" onclick="showOptions()"><i style="height:15px;width:15px;" title="Display Options" class="fas fa-list"></i></a>
 					<a id="hidespan" href="#" style="display:none;" onclick="hideOptions()">Hide</a>
-					<a href="#" onclick="toggle('descriptiondiv')"><img src="../../images/info.png" style="width:12px;" title="Description of Tool" /></a>
+					<a href="#" onclick="toggle('descriptiondiv')"><i style="height:15px;width:15px;color:green;" title="Description of Tool" class="fas fa-info-circle"></i></a>
 				</legend>
 				<div id="descriptiondiv" style="display:none;margin:10px;width:80%">
 					<div style="margin-bottom:5px">
@@ -127,11 +128,11 @@ if($collid){
 								<input id="fscientificnameauthorship" name="scientificnameauthorship" type="text" value="" />
 							</div>
 							<?php
-							if($IS_ADMIN || isset($USER_RIGHTS['Taxonomy'])){ 
+							if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){ 
 								?>
 								<div style="float:left;padding:2px 3px;">
 									<a href="../../taxa/admin/taxonomyloader.php" target="_blank">
-										<img src="../../images/add.png" style="width:14px;" title="Add new name to taxonomic thesaurus" />
+										<i style="height:15px;width:15px;color:green;" title="Add new name to taxonomic thesaurus" class="fas fa-plus"></i>
 									</a>
 								</div>
 								<?php

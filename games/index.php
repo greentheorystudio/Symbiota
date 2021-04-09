@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
 
@@ -9,14 +9,12 @@ $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
 
  ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Games</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Games</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
 		function checkForm(f){
 			if(f.clid.value === ""){
@@ -35,7 +33,7 @@ $clArr = $gameManager->getChecklistArr($pid);
 	?>
 	
 	<div id="innertext">
-		<h1><?php echo $DEFAULT_TITLE; ?> Games</h1>
+		<h1><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Games</h1>
 		
 		<div style='margin:10px;'>
 			Games are designed to provide a fun interface for exploring the species found 

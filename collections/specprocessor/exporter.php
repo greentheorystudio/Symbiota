@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
@@ -27,7 +27,7 @@ $dlManager = new OccurrenceDownload();
 $collMeta = $dlManager->getCollectionMetadata($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
  	$isEditor = true;
 }
 
@@ -46,12 +46,13 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
 	'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Occurrence Export Manager</title>
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
@@ -367,7 +368,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<div style="margin:10px 0;">
 												<input type="checkbox" name="newrecs" value="1" /> (e.g. records processed within portal)
 												<a id="newrecsinfo" href="#" onclick="return false" title="More Information">
-													<img src="../../images/info.png" style="width:13px;" />
+                                                    <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 												</a>
 												<div id="newrecsinfodialog">
 													Limit to new records entered and processed directly within the
@@ -468,7 +469,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="symbiota" CHECKED />
 											Symbiota Native
 											<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
-												<img src="../../images/info.png" style="width:13px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 											</a><br/>
 											<div id="schemanativeinfodialog">
 												Symbiota native is very similar to Darwin Core except with the addtion of a few fields
@@ -477,7 +478,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 											<input type="radio" name="schema" value="dwc" />
 											Darwin Core
 											<a id="schemainfodwc" href="#" target="" title="More Information">
-												<img src="../../images/info.png" style="width:13px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 											</a><br/>
 											<div id="schemadwcinfodialog">
 												Darwin Core is a TDWG endorsed exchange standard specifically for biodiversity datasets.

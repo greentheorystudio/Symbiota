@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -24,11 +24,14 @@ if($action === 'SubmitAdd'){
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = 1;
 
 	if($action === 'SubmitEdit'){
 		$clManager->editMetaData($_POST);
+		if(array_key_exists('footprintwkt',$_POST) && $_POST['footprintwkt'] !== ''){
+            $clManager->savePolygon($_POST['footprintwkt']);
+        }
 		header('Location: checklist.php?cl='.$clid.'&pid='.$pid);
 	}
 	elseif($action === 'DeleteCheck'){
@@ -61,12 +64,13 @@ if($clArray['defaultsettings']){
 
 $voucherProjects = $clManager->getVoucherProjects();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Checklist Administration</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
@@ -75,7 +79,7 @@ $voucherProjects = $clManager->getVoucherProjects();
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
-	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=20170530"></script>
+	<script type="text/javascript" src="../js/symb/checklists.checklistadmin.js?ver=20210218"></script>
 </head>
 
 <body>
@@ -134,7 +138,7 @@ if($clid && $isEditor){
 						<li>
 							<?php echo $uName; ?>
 							<a href="checklistadmin.php?clid=<?php echo $clid.'&deleteuid='.$uid.'&pid='.$pid.'&tabindex='.$tabIndex; ?>" onclick="return confirm('Are you sure you want to remove editing rights for this user?');" title="Delete this user">
-								<img src="../images/drop.png" style="width:12px;" />
+                                <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 							</a>
 						</li>
 					<?php

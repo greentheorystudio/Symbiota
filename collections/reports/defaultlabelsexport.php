@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
 @include('Image/Barcode.php');
 @include('Image/Barcode2.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -22,11 +22,11 @@ $labelManager = new OccurrenceLabel();
 
 $collid = $_POST['collid'];
 $hPrefix = $_POST['lhprefix'];
-$hMid = $_POST['lhmid'];
+$hMid = (int)$_POST['lhmid'];
 $hSuffix = $_POST['lhsuffix'];
 $lFooter = $_POST['lfooter'];
 $occIdArr = $_POST['occid'];
-$rowsPerPage = $_POST['rpp'];
+$rowsPerPage = (int)$_POST['rpp'];
 $speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
 $showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
 $useBarcode = array_key_exists('bc',$_POST)?$_POST['bc']:0;
@@ -58,8 +58,8 @@ if($rowsPerPage === 3){
 $labelManager->setCollid($collid);
 
 $isEditor = 0;
-if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)) || (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true))){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 		$isEditor = 1;
 	}
 }
@@ -101,8 +101,8 @@ foreach($labelArr as $occid => $occArr){
 		if($occArr['catalognumber']){
 			$textrun = $section->addTextRun('cnbarcode');
 			$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
-			imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-			$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
+			imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
+			$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
 			imagedestroy($bc);
 		}
 	}
@@ -331,8 +331,8 @@ foreach($labelArr as $occid => $occArr){
 			if($useBarcode && $occArr['catalognumber']){
 				$textrun = $section->addTextRun('cnbarcode');
 				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
-				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
+				imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
+				$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
 				if($occArr['othercatalognumbers']){
 					$textrun->addTextBreak(1);
 					$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
@@ -360,8 +360,8 @@ foreach($labelArr as $occid => $occArr){
 				$textrun->addLine(array('weight'=>2,'width'=>$lineWidth,'height'=>0,'dash'=>'dash'));
 				$textrun->addTextBreak(1);
 				$bc = $bcObj->draw(strtoupper($occid), 'Code39', 'png',false,40);
-				imagepng($bc,$SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png');
-				$textrun->addImage($SERVER_ROOT.'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
+				imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
+				$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
 				if($occArr['catalognumber']){
 					$textrun->addTextBreak(1);
 					$textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
@@ -373,7 +373,7 @@ foreach($labelArr as $occid => $occArr){
 	}
 }
 
-$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.'.$exportExtension;
+$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.'.$exportExtension;
 $phpWord->save($targetFile, $exportEngine);
 
 header('Content-Description: File Transfer');
@@ -382,7 +382,7 @@ header('Content-Disposition: attachment; filename='.basename($targetFile));
 header('Content-Transfer-Encoding: binary');
 header('Content-Length: '.filesize($targetFile));
 readfile($targetFile);
-$files = glob($SERVER_ROOT.'/temp/report/*');
+$files = glob($GLOBALS['SERVER_ROOT'].'/temp/report/*');
 foreach($files as $file){
 	if(is_file($file) && strpos($file, $ses_id) !== false) {
 		unlink($file);

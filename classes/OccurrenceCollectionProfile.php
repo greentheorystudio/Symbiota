@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceMaintenance.php');
-include_once('UuidFactory.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class OccurrenceCollectionProfile {
 
@@ -120,7 +120,6 @@ class OccurrenceCollectionProfile {
 
 	public function getMetadataHtml($collArr): string
 	{
-		global $SYMB_UID, $RIGHTS_TERMS;
 		$outStr = '<div>'.$collArr['fulldescription'].'</div>';
 		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr['contact'].($collArr['email']? ' (' .str_replace('@', '&#64;',$collArr['email']). ')' : '').'</div>';
 		if($collArr['homepage']){
@@ -165,7 +164,7 @@ class OccurrenceCollectionProfile {
 		$outStr .= '<div style="margin-top:5px;">';
 		if($collArr['managementtype'] === 'Live Data'){
 			$outStr .= '<b>Live Data Download:</b> ';
-			if($SYMB_UID){
+			if($GLOBALS['SYMB_UID']){
 				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">DwC-Archive File</a>';
 			}
 			else{
@@ -180,7 +179,7 @@ class OccurrenceCollectionProfile {
 				$delimiter = '';
 				foreach($pathArr as $pArr){
 					$outStr .= $delimiter.'<a href="'.$pArr['path'].'" target="_blank">'.$pArr['title'].'</a>';
-					$delimiter = '<br/>';
+					$delimiter = ', ';
 				}
 				$outStr .= '</div>';
 			}
@@ -193,8 +192,8 @@ class OccurrenceCollectionProfile {
 			$rightsUrl = '';
             if(strpos($rights, 'http') === 0){
                 $rightsUrl = $rights;
-                if($RIGHTS_TERMS) {
-                    foreach($RIGHTS_TERMS as $name => $url){
+                if($GLOBALS['RIGHTS_TERMS']) {
+                    foreach($GLOBALS['RIGHTS_TERMS'] as $name => $url){
                         if($url === $rights){
                             $rights = $name;
                         }
@@ -327,7 +326,6 @@ class OccurrenceCollectionProfile {
 	}
 
     public function submitCollAdd($postArr){
-		global $SYMB_UID;
 		$instCode = $this->cleanInStr($postArr['institutioncode']);
 		$collCode = $this->cleanInStr($postArr['collectioncode']);
 		$coleName = $this->cleanInStr($postArr['collectionname']);
@@ -385,7 +383,7 @@ class OccurrenceCollectionProfile {
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
 			$sql = 'INSERT INTO omcollectionstats(collid,recordcnt,uploadedby) '.
-				'VALUES('.$cid.',0,"'.$SYMB_UID.'")';
+				'VALUES('.$cid.',0,"'.$GLOBALS['SYMB_UID'].'")';
 			$this->conn->query($sql);
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
@@ -404,9 +402,8 @@ class OccurrenceCollectionProfile {
 
 	private function addIconImageFile(): string
 	{
-		global $SERVER_ROOT, $CLIENT_ROOT;
-		$targetPath = $SERVER_ROOT.'/content/collicon/';
-		$urlBase = $CLIENT_ROOT.'/content/collicon/';
+		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
+		$urlBase = $GLOBALS['CLIENT_ROOT'].'/content/collicon/';
 		$urlPrefix = 'http://';
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 			$urlPrefix = 'https://';
@@ -504,8 +501,7 @@ class OccurrenceCollectionProfile {
 
 	public function triggerGBIFCrawl($datasetKey): void
 	{
-        global $GBIF_USERNAME,$GBIF_PASSWORD;
-        $loginStr = $GBIF_USERNAME.':'.$GBIF_PASSWORD;
+        $loginStr = $GLOBALS['GBIF_USERNAME'].':'.$GLOBALS['GBIF_PASSWORD'];
         $url = 'http://api.gbif.org/v1/dataset/'.$datasetKey.'/crawl';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -641,10 +637,9 @@ class OccurrenceCollectionProfile {
     }
 
     public function findIdigbioKey($guid){
-        global $CLIENT_ROOT;
         $url = 'http://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:%22';
         $url .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://');
-        $url .= $_SERVER['HTTP_HOST'].$CLIENT_ROOT;
+        $url .= $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'];
         $url .= '/webservices/dwc/'.$guid.'%22}';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');

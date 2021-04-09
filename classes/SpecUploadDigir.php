@@ -1,5 +1,5 @@
 <?php
-include_once('SpecUploadBase.php');
+include_once(__DIR__ . '/SpecUploadBase.php');
 
 class SpecUploadDigir extends SpecUploadBase {
 
@@ -14,9 +14,8 @@ class SpecUploadDigir extends SpecUploadBase {
 	private $fieldDataArr = array();
 
  	public function __construct(){
- 		global $CLIENT_ROOT;
- 	    parent::__construct();
- 		$this->defaultSchema = $CLIENT_ROOT. '/collections/admin/darwinsymbiota.xsd';
+ 		parent::__construct();
+ 		$this->defaultSchema = $GLOBALS['CLIENT_ROOT']. '/collections/admin/darwinsymbiota.xsd';
  		set_time_limit(10000);
  	}
 

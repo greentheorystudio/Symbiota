@@ -1,21 +1,15 @@
 <?php
-include_once('Manager.php');
-include_once('OccurrenceEditorManager.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
 
 class OccurrenceCleaner extends Manager{
 
 	private $collid;
 	private $obsUid;
 	private $featureCount = 0;
-	private $googleApi;
-
+	
 	public function __construct(){
-		parent::__construct(null);
-		$urlPrefix = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$urlPrefix = 'https://';
-		}
-		$this->googleApi = $urlPrefix.'maps.googleapis.com/maps/api/geocode/json?sensor=false';
+		parent::__construct();
 	}
 
 	public function getDuplicateCatalogNumber($type,$start,$limit = 500): array
@@ -613,44 +607,44 @@ class OccurrenceCleaner extends Manager{
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			echo '<li>Checking occurrence <a href="../editor/occurrenceeditor.php?occid='.$r->occid.'" target="_blank">'.$r->occid.'</a>...</li>';
-			$googleUnits = $this->callGoogleApi($r->decimallatitude, $r->decimallongitude);
+			$geocodedUnits = $this->callOSMApi($r->decimallatitude, $r->decimallongitude);
 			$ranking = 0;
 			$protocolStr = '';
-			if(isset($googleUnits['country'])){
-				if($this->countryUnitsEqual($googleUnits['country'],$r->country)){
+			if(isset($geocodedUnits['country'])){
+				if($this->countryUnitsEqual($geocodedUnits['country'],$r->country)){
 					$ranking = 2;
-					$protocolStr = 'GoogleApiMatch:countryEqual';
-					if(isset($googleUnits['state'])){
-						if($this->unitsEqual($googleUnits['state'], $r->stateprovince)){
+					$protocolStr = 'OpenStreetMapApiMatch:countryEqual';
+					if(isset($geocodedUnits['state'])){
+						if($this->unitsEqual($geocodedUnits['state'], $r->stateprovince)){
 							$ranking = 5;
-							$protocolStr = 'GoogleApiMatch:stateEqual';
-							if(isset($googleUnits['county'])){
-								if($this->countyUnitsEqual($googleUnits['county'], $r->county)){
+							$protocolStr = 'OpenStreetMapApiMatch:stateEqual';
+							if(isset($geocodedUnits['county'])){
+								if($this->countyUnitsEqual($geocodedUnits['county'], $r->county)){
 									$ranking = 7;
-									$protocolStr = 'GoogleApiMatch:countyEqual';
+									$protocolStr = 'OpenStreetMapApiMatch:countyEqual';
 								}
 								else{
-									echo '<li style="margin-left:15px;">County not equal (source: '.$r->county.'; Google value: '.$googleUnits['county'].')</li>';
+									echo '<li style="margin-left:15px;">County not equal (source: '.$r->county.'; OpenStreetMap value: '.$geocodedUnits['county'].')</li>';
 								}
 							}
 							else{
-								echo '<li style="margin-left:15px;">County not provided by Google</li>';
+								echo '<li style="margin-left:15px;">County not provided by OpenStreetMap</li>';
 							}
 						}
 						else{
-							echo '<li style="margin-left:15px;">State/Province not equal (source: '.$r->stateprovince.'; Google value: '.$googleUnits['state'].')</li>';
+							echo '<li style="margin-left:15px;">State/Province not equal (source: '.$r->stateprovince.'; OpenStreetMap value: '.$geocodedUnits['state'].')</li>';
 						}
 					}
 					else{
-						echo '<li style="margin-left:15px;">State/Province not provided by Google</li>';
+						echo '<li style="margin-left:15px;">State/Province not provided by OpenStreetMap</li>';
 					}
 				}
 				else{
-					echo '<li style="margin-left:15px;">Country not equal (source: '.$r->country.'; Google value: '.$googleUnits['country'].')</li>';
+					echo '<li style="margin-left:15px;">Country not equal (source: '.$r->country.'; OpenStreetMap value: '.$geocodedUnits['country'].')</li>';
 				}
 			}
 			else{
-				echo '<li style="margin-left:15px;">Country not provided by Google</li>';
+				echo '<li style="margin-left:15px;">Country not provided by OpenStreetMap</li>';
 			}
 			if($ranking){
 				$this->setVerification($r->occid, 'coordinate', $ranking, $protocolStr);
@@ -664,93 +658,77 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 	}
 
-	private function callGoogleApi($lat, $lng): array
+	private function callOSMApi($lat, $lng): array
 	{
 		$retArr = array();
-		$apiUrl = $this->googleApi.'&latlng='.$lat.','.$lng;
+		$url = 'https://nominatim.openstreetmap.org/reverse?lat='.$lat.'&lon='.$lng.'&format=json';
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_URL, $apiUrl);
-
-		$data = curl_exec($curl);
+		curl_setopt($curl, CURLOPT_URL, $url);
+        $data = curl_exec($curl);
 		curl_close($curl);
-
-		$dataObj = json_decode($data, true);
-		$retArr['status'] = $dataObj->status;
-		if($dataObj->status === 'OK'){
-			$rs = $dataObj->results[0];
-			if($rs->address_components){
-				$compArr = $rs->address_components;
-				foreach($compArr as $compObj){
-					if($compObj->long_name && $compObj->types){
-						$longName = $compObj->long_name;
-						$types = $compObj->types;
-						if($types[0] === 'country'){
-							$retArr['country'] = $longName;
-						}
-						elseif($types[0] === 'administrative_area_level_1'){
-							$retArr['state'] = $longName;
-						}
-						elseif($types[0] === 'administrative_area_level_2'){
-							$retArr['county'] = $longName;
-						}
-					}
-				}
-			}
+        $dataObj = json_decode($data, true);
+		if(array_key_exists('address',$dataObj)){
+			$addressArr = $dataObj['address'];
+			$retArr['country'] = $addressArr['country'];
+            $retArr['state'] = $addressArr['state'];
+            $retArr['county'] = $addressArr['county'];
+		}
+		elseif(array_key_exists('error',$dataObj)){
+			echo '<li style="margin-left:15px;">Error in getting return from OpenStreetMap API (error: '.$dataObj['error'].')</li>';
 		}
 		else{
-			echo '<li style="margin-left:15px;">Unable to get return from Google API (status: '.$dataObj->status.')</li>';
-		}
+            echo '<li style="margin-left:15px;">Unable to get results from OpenStreetMap API</li>';
+        }
 		return $retArr;
 	}
 
-	private function unitsEqual($googleTerm, $dbTerm): bool
+	private function unitsEqual($osmTerm, $dbTerm): bool
 	{
-		$googleTerm = strtolower(trim($googleTerm));
+        $osmTerm = strtolower(trim($osmTerm));
 		$dbTerm = strtolower(trim($dbTerm));
 
-		return $googleTerm === $dbTerm;
+		return $osmTerm === $dbTerm;
 	}
 
-	private function countryUnitsEqual($countryGoogle,$countryDb): bool
+	private function countryUnitsEqual($countryOSM,$countryDb): bool
 	{
 
-		if($this->unitsEqual($countryGoogle,$countryDb)) {
+		if($this->unitsEqual($countryOSM,$countryDb)) {
 			return true;
 		}
 
-		$countryGoogle = strtolower(trim($countryGoogle));
+        $countryOSM = strtolower(trim($countryOSM));
 		$countryDb = strtolower(trim($countryDb));
 
 		$synonymArr = array();
 		$synonymArr[] = array('united states','usa','united states of america','u.s.a.');
 
 		foreach($synonymArr as $synArr){
-			if(in_array($countryGoogle, $synArr, true) && in_array($countryDb, $synArr, true)) {
+			if(in_array($countryOSM, $synArr, true) && in_array($countryDb, $synArr, true)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private function countyUnitsEqual($countyGoogle,$countyDb): bool
+	private function countyUnitsEqual($countyOSM,$countyDb): bool
 	{
-		$countyGoogle = strtolower(trim($countyGoogle));
+        $countyOSM = strtolower(trim($countyOSM));
 		$countyDb = strtolower(trim($countyDb));
 
-		$countyGoogle = trim(str_replace(array('county','parish'), '', $countyGoogle));
-		return strpos($countyDb, $countyGoogle) !== false;
+        $countyOSM = trim(str_replace(array('county','parish'), '', $countyOSM));
+		return strpos($countyDb, $countyOSM) !== false;
 	}
 
 	private function setVerification($occid, $category, $ranking, $protocol = '', $source = '', $notes = ''): void
 	{
-		global $SYMB_UID;
 		$sql = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, source, notes, uid) '.
 			'VALUES('.$occid.',"'.$category.'",'.$ranking.','.
 			($protocol?'"'.$protocol.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.
 			($notes?'"'.$notes.'"':'NULL').','.
-			$SYMB_UID.')';
+			$GLOBALS['SYMB_UID'].')';
 		if(!$this->conn->query($sql)){
 			$this->errorMessage = 'ERROR thrown setting occurrence verification: '.$this->conn->error;
 			echo '<li style="margin-left:15px;">'.$this->errorMessage.'</li>';

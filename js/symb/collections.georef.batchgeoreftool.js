@@ -229,8 +229,8 @@ function analyseLocalityStr(){
 		if(extractStr1){
 			document.getElementById("utmdiv").style.display = "block";
 			f.utmzone.value = extractArr[1];
-			f.utmeast.value = extractArr[2].replace(/\s/g,'');
-			f.utmnorth.value = extractArr[3].replace(/\s/g,'');
+			f.utmeast.value = extractArr[2].replaceAll(/\s/g,'');
+			f.utmnorth.value = extractArr[3].replaceAll(/\s/g,'');
 			insertUtm(f);
 			sourceStr = 'UTM from label';
 		}
@@ -342,10 +342,10 @@ function openFirstRecSet(){
 }
 
 function insertUtm(f) {
-	const zValue = f.utmzone.value.replace(/^\s+|\s+$/g, "");
+	const zValue = f.utmzone.value.replaceAll(/^\s+|\s+$/g, "");
 	const hValue = f.hemisphere.value;
-	const eValue = f.utmeast.value.replace(/^\s+|\s+$/g, "");
-	const nValue = f.utmnorth.value.replace(/^\s+|\s+$/g, "");
+	const eValue = f.utmeast.value.replaceAll(/^\s+|\s+$/g, "");
+	const nValue = f.utmnorth.value.replaceAll(/^\s+|\s+$/g, "");
 	if(zValue && eValue && nValue){
 		if(isNumeric(eValue) && isNumeric(nValue)){
 			const zNum = parseInt(zValue);
@@ -417,20 +417,6 @@ function updateMinElev(minFeetValue){
 function updateMaxElev(maxFeetValue){
 	const f = document.georefform;
 	f.maximumelevationinmeters.value = Math.round(maxFeetValue*.0305)*10;
-}
-
-function openMappingAid() {
-	const f = document.georefform;
-	const latDef = f.decimallatitude.value;
-	const lngDef = f.decimallongitude.value;
-	let zoom = 5;
-	if(latDef && lngDef) {
-		zoom = 11;
-	}
-	let mapWindow = open("../editor/mappointaid.php?latdef=" + latDef + "&lngdef=" + lngDef + "&zoom=" + zoom, "geomapaid", "resizable=0,width=800,height=700,left=20,top=20");
-	if (mapWindow.opener == null) {
-		mapWindow.opener = self;
-	}
 }
 
 function toggle(target){

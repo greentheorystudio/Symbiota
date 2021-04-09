@@ -394,7 +394,7 @@ if($export){
 	$textrun->addTextBreak(2);
 	$textrun->addText(htmlspecialchars(($english?'Signed':'').($engspan?'/':'').($spanish?'Firma':'').':______________________________________  '.($english?'Date':'').($engspan?'/':'').($spanish?'Fecha':'').':______________'),'otherFont');
 	
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$identifier.'_invoice.'.$exportExtension;
+	$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$identifier.'_invoice.'.$exportExtension;
 	$phpWord->save($targetFile, $exportEngine);
 
 	header('Content-Description: File Transfer');
@@ -407,7 +407,7 @@ if($export){
 }
 else{
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title><?php echo $identifier; ?> Invoice</title>
 			<style type="text/css">

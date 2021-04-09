@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
-    $catId = $DEFAULTCATID;
+if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
+    $catId = $GLOBALS['DEFAULTCATID'];
 }
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $totalCnt = array_key_exists('totalcnt',$_REQUEST)?$_REQUEST['totalcnt']:0;
@@ -20,16 +20,17 @@ if($collId){
 }
 $_SESSION['statsOrderArr'] = $orderArr;
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<meta name="keywords" content="Natural history collections yearly statistics" />
-		<title><?php echo $DEFAULT_TITLE; ?> Order Distribution</title>
-		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
-		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" />
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Order Distribution</title>
+		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
+		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/collections.index.js"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210313"></script>
 	</head>
 	<body>
 		<?php
@@ -75,7 +76,9 @@ $_SESSION['statsOrderArr'] = $orderArr;
 				<div style='float:left;margin-left:25px;margin-top:10px;width:16px;height:16px;padding:2px;' title="Save CSV">
 					<form name="orderstatscsv" id="orderstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 						<input type="hidden" name="action" value='Download Order Dist' />
-						<input type="image" name="action" src="../../images/dl.png" onclick="" />
+						<button class="icon-button" type="submit">
+                            <i style="height:15px;width:15px;" class="fas fa-download"></i>
+                        </button>
 					</form>
 				</div>
 			</fieldset>

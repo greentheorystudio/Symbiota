@@ -1,6 +1,6 @@
 <?php
-include_once('Manager.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class ImageCleaner extends Manager{
 
@@ -307,21 +307,20 @@ class ImageCleaner extends Manager{
 
 	private function unlinkImageFile($url,$origTs): bool
 	{
-		global $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL;
-	    $status = false;
-		if(!$IMAGE_ROOT_PATH){
+		$status = false;
+		if(!$GLOBALS['IMAGE_ROOT_PATH']){
 			$this->logOrEcho('FATAL ERROR: IMAGE_ROOT_PATH not configured within portal configuration file',1);
 			exit;
 		}
-		if(!$IMAGE_ROOT_URL){
+		if(!$GLOBALS['IMAGE_ROOT_URL']){
 			$this->logOrEcho('FATAL ERROR: IMAGE_ROOT_URL not configured within portal configuration file',1);
 			exit;
 		}
 		if(strpos($url, 'http') === 0){
 			$url = parse_url($url, PHP_URL_PATH);
 		}
-		if(strpos($url, $IMAGE_ROOT_URL) === 0){
-			$path = $IMAGE_ROOT_PATH.substr($url,strlen($IMAGE_ROOT_URL));
+		if(strpos($url, $GLOBALS['IMAGE_ROOT_URL']) === 0){
+			$path = $GLOBALS['IMAGE_ROOT_PATH'].substr($url,strlen($GLOBALS['IMAGE_ROOT_URL']));
 			if($p = strpos($path,'?')) {
 				$path = substr($path, 0, $p);
 			}

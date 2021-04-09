@@ -1,23 +1,17 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
  
 class InventoryProjectManager {
 
 	private $conn;
 	private $pid;
-	private $googleUrl;
-	private $researchCoord = array();
+	private $researchCoord = '';
 	private $isPublic = 1;
 	private $errorStr;
 
 	public function __construct(){
-        global $GOOGLE_MAP_KEY;
-		$connection = new DbConnection();
+        $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		$this->googleUrl = 'http://maps.google.com/maps/api/staticmap?size=120x150&maptype=terrain';
-		if($GOOGLE_MAP_KEY) {
-			$this->googleUrl .= '&key=' . $GOOGLE_MAP_KEY;
-		}
 	}
 
 	public function __destruct(){
@@ -118,14 +112,13 @@ class InventoryProjectManager {
 	
 	public function getResearchChecklists(): array
 	{
-		global $USER_RIGHTS;
 		$retArr = array();
 		if($this->pid){
 			$sql = 'SELECT c.clid, c.name, c.latcentroid, c.longcentroid, c.access '.
 				'FROM fmchklstprojlink cpl INNER JOIN fmchecklists c ON cpl.clid = c.clid '.
 				'WHERE (cpl.pid = '.$this->pid.') AND ((c.access != "private")';
-			if(array_key_exists('ClAdmin',$USER_RIGHTS)){
-				$sql .= ' OR (c.clid IN ('.implode(',',$USER_RIGHTS['ClAdmin']).'))) ';
+			if(array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])){
+				$sql .= ' OR (c.clid IN ('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))) ';
 			}
 			else{
 				$sql .= ') ';
@@ -133,28 +126,23 @@ class InventoryProjectManager {
 			$sql .= 'ORDER BY c.SortSequence, c.name';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
-			$cnt = 0;
 			while($row = $rs->fetch_object()){
-				$retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
-				if($cnt < 50 && $row->latcentroid){
-					$this->researchCoord[] = $row->latcentroid.','.$row->longcentroid;
-				}
-				$cnt++;
+                $coordArr = array();
+                $projCoordArr = array();
+                $retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
+                if($this->researchCoord){
+                    $projCoordArr = json_decode($this->researchCoord, true);
+                }
+                if($row->latcentroid && $row->longcentroid){
+                    $coordArr[] = (float)$row->latcentroid;
+                    $coordArr[] = (float)$row->longcentroid;
+                    $projCoordArr[] = $coordArr;
+                    $this->researchCoord = json_encode($projCoordArr);
+                }
 			}
 			$rs->free();
 		}
 		return $retArr;
-	}
-	
-	public function getGoogleStaticMap(): string
-	{
-		$googleUrlLocal = $this->googleUrl;
-		$coordStr = implode('%7C',$this->researchCoord);
-		if(!$coordStr) {
-			return '';
-		}
-		$googleUrlLocal .= '&markers=size:tiny%7C' .$coordStr;
-		return $googleUrlLocal;
 	}
 	
 	public function getManagers(): array
@@ -238,13 +226,12 @@ class InventoryProjectManager {
 
 	public function getClAddArr(): array
 	{
-		global $USER_RIGHTS;
 		$returnArr = array();
 		$sql = 'SELECT c.clid, c.name, c.access '.
 			'FROM fmchecklists c LEFT JOIN (SELECT clid FROM fmchklstprojlink WHERE (pid = '.$this->pid.')) pl ON c.clid = pl.clid '.
 			'WHERE (pl.clid IS NULL) AND (c.access = "public" ';
-		if(array_key_exists('ClAdmin',$USER_RIGHTS)){
-			$sql .= ' OR (c.clid IN ('.implode(',',$USER_RIGHTS['ClAdmin']).'))) ';
+		if(array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])){
+			$sql .= ' OR (c.clid IN ('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).'))) ';
 		}
 		else{
 			$sql .= ') ';
@@ -284,6 +271,10 @@ class InventoryProjectManager {
 	public function getErrorStr(){
 		return $this->errorStr;
 	}
+
+    public function getResearchCoords(){
+        return $this->researchCoord;
+    }
 
 	private function cleanInStr($str){
 		$newStr = trim($str);

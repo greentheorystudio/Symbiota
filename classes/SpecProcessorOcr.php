@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class SpecProcessorOcr{
 
@@ -91,7 +91,6 @@ class SpecProcessorOcr{
 
 	private function ocrImage($url = ''): string
 	{
-		global $TESSERACT_PATH;
 		$retStr = '';
 		if(!$url) {
 			$url = $this->imgUrlLocal;
@@ -99,12 +98,12 @@ class SpecProcessorOcr{
 		if($url){
 			$output = array();
 			$outputFile = substr($url,0, -4);
-			if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
-				if(strpos($TESSERACT_PATH, 'C:') == 0){
-					exec('"'.$TESSERACT_PATH.'" '.$url.' '.$outputFile,$output);
+			if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
+				if(strpos($GLOBALS['TESSERACT_PATH'], 'C:') == 0){
+					exec('"'.$GLOBALS['TESSERACT_PATH'].'" '.$url.' '.$outputFile,$output);
 				}
 				else{
-					exec($TESSERACT_PATH.' '.$url.' '.$outputFile,$output);
+					exec($GLOBALS['TESSERACT_PATH'].' '.$url.' '.$outputFile,$output);
 				}
 			}
 			else{
@@ -153,12 +152,11 @@ class SpecProcessorOcr{
 
 	private function loadImage($imgUrl): bool
 	{
-		global $IMAGE_DOMAIN;
 		$status = false;
 		if($imgUrl){
 			if(strpos($imgUrl, '/') == 0){
-				if($IMAGE_DOMAIN){
-					$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+				if($GLOBALS['IMAGE_DOMAIN']){
+					$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 				}
 				else{
 					$urlDomain = 'http://';
@@ -829,23 +827,22 @@ class SpecProcessorOcr{
 		$this->verbose = $s;
 		if($this->verbose == 1 || $this->verbose == 3){
 			if($this->tempPath){
-				$LOG_PATH = $this->tempPath.'log_'.date('Ymd').'.log';
-				$this->logFH = fopen($LOG_PATH, 'ab');
+				$GLOBALS['LOG_PATH'] = $this->tempPath.'log_'.date('Ymd').'.log';
+				$this->logFH = fopen($GLOBALS['LOG_PATH'], 'ab');
 			}
 		}
 	}
 
 	private function setTempPath(): void
 	{
-		global $SERVER_ROOT, $TEMP_DIR_ROOT;
-		if($TEMP_DIR_ROOT){
-			$tempPath = $TEMP_DIR_ROOT;
+		if($GLOBALS['TEMP_DIR_ROOT']){
+			$tempPath = $GLOBALS['TEMP_DIR_ROOT'];
 		}
 		else{
 			$tempPath = ini_get('upload_tmp_dir');
 		}
 		if(!$tempPath){
-			$tempPath = $SERVER_ROOT;
+			$tempPath = $GLOBALS['SERVER_ROOT'];
 			if(substr($tempPath,-1) !== '/') {
 				$tempPath .= '/';
 			}
@@ -909,7 +906,6 @@ class SpecProcessorOcr{
 
 	private function encodeString($inStr): string
 	{
-		global $CHARSET;
 		$retStr = $inStr;
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
@@ -925,7 +921,7 @@ class SpecProcessorOcr{
 		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
 		
 		if($inStr){
-			$lowerStr = strtolower($CHARSET);
+			$lowerStr = strtolower($GLOBALS['CHARSET']);
 			if($lowerStr === 'utf-8' || $lowerStr === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);

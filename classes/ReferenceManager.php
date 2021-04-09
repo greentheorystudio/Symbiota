@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class ReferenceManager{
 
@@ -126,10 +126,9 @@ class ReferenceManager{
 	
 	public function createReference($pArr): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceobject(title,ReferenceTypeId,ispublished,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.$this->cleanInStr($pArr['newreftitle']).'","'.$this->cleanInStr($pArr['newreftype']).'","'.$this->cleanInStr($pArr['ispublished']).'",'.$SYMB_UID.',now()) ';
+			'VALUES("'.$this->cleanInStr($pArr['newreftitle']).'","'.$this->cleanInStr($pArr['newreftype']).'","'.$this->cleanInStr($pArr['ispublished']).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refId = $this->conn->insert_id;
@@ -408,10 +407,9 @@ class ReferenceManager{
 	
 	public function createAuthor($firstName,$middleName,$lastName): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceauthors(firstname,middlename,lastname,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.$this->cleanInStr($firstName).'","'.$this->cleanInStr($middleName).'","'.$this->cleanInStr($lastName).'",'.$SYMB_UID.',now()) ';
+			'VALUES("'.$this->cleanInStr($firstName).'","'.$this->cleanInStr($middleName).'","'.$this->cleanInStr($lastName).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refAuthId = $this->conn->insert_id;
@@ -459,7 +457,6 @@ class ReferenceManager{
 	
 	public function editReference($pArr): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		$refId = $pArr['refid'];
 		unset($pArr['parentRefId2'], $pArr['refGroup']);
@@ -471,7 +468,7 @@ class ReferenceManager{
 					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 				}
 			}
-			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
+			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$statusStr = 'SUCCESS: information saved';
@@ -538,7 +535,6 @@ class ReferenceManager{
 	
 	public function editAuthor($pArr): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		$authId = $pArr['authid'];
 		if(is_numeric($authId)){
@@ -548,7 +544,7 @@ class ReferenceManager{
 					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
 				}
 			}
-			$sql = 'UPDATE referenceauthors SET '.substr($sql,1).',modifieduid='.$SYMB_UID.',modifiedtimestamp=now() WHERE (refauthorid = '.$authId.')';
+			$sql = 'UPDATE referenceauthors SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refauthorid = '.$authId.')';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$statusStr = 'SUCCESS: information saved';

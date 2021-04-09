@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class Manager  {
 	protected $conn;
@@ -27,9 +27,9 @@ class Manager  {
 		}
 	}
 
-	protected function setLogFH($LOG_PATH): void
+	protected function setLogFH($path): void
 	{
-		$this->logFH = fopen($LOG_PATH, 'ab');
+		$this->logFH = fopen($path, 'ab');
 	}
 
 	protected function logOrEcho($str, $indexLevel=0, $tag = 'li'): void

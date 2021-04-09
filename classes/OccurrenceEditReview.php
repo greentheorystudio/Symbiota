@@ -1,5 +1,5 @@
 <?php
-include_once('Manager.php');
+include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceEditReview extends Manager{
 
@@ -23,8 +23,7 @@ class OccurrenceEditReview extends Manager{
 
     public function setCollId($id): string
 	{
-        global $SYMB_UID;
-	    $collName = '';
+        $collName = '';
 	    if(is_numeric($id)){
 			$this->collid = $id;
 			$sql = 'SELECT collectionname, institutioncode, collectioncode, colltype '.
@@ -40,7 +39,7 @@ class OccurrenceEditReview extends Manager{
 				}
 				$collName .= ')';
 				if($r->colltype === 'General Observations') {
-					$this->obsUid = $SYMB_UID;
+					$this->obsUid = $GLOBALS['SYMB_UID'];
 				}
 			}
 			$rs->free();

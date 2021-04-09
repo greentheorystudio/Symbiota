@@ -1,5 +1,5 @@
 <?php
-require_once('Manager.php');
+include_once(__DIR__ . '/Manager.php');
 
 class WebServiceBase extends Manager{
 
@@ -10,9 +10,8 @@ class WebServiceBase extends Manager{
 
 	public function validateSecurityKey($k): bool
 	{
-		global $SECURITY_KEY;
-	    if(isset($SECURITY_KEY)){
-			if($k === $SECURITY_KEY){
+		if(isset($GLOBALS['SECURITY_KEY'])){
+			if($k === $GLOBALS['SECURITY_KEY']){
 				return true;
 			}
 

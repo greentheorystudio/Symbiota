@@ -1,15 +1,12 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class SpatialModuleManager{
-	
-	protected $conn;
-	private $collArrIndex = 0;
+
+    protected $conn;
     protected $searchTermsArr = array();
-    protected $localSearchArr = array();
     protected $recordCount = 0;
-    private $searchTerms = 0;
-    private $taxaSearchType;
+    private $sqlWhere = '';
     private $taxaArr = array();
 
     public function __construct(){
@@ -17,55 +14,14 @@ class SpatialModuleManager{
         $this->conn = $connection->getConnection();
     }
 
-	public function __destruct(){
- 		if(!($this->conn === false)) {
+    public function __destruct(){
+        if(!($this->conn === false)) {
             $this->conn->close();
         }
-	}
-
-    public function getFullCollectionList($catId = ''): array{
-        $retArr = array();
-        $sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, cat.category '.
-            'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-            'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-            'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
-        //echo "<div>SQL: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        while($r = $result->fetch_object()){
-            $collType = (stripos($r->colltype, 'observation') !== false?'obs':'spec');
-            if($r->ccpk){
-                if(!isset($retArr[$collType]['cat'][$r->ccpk]['name'])){
-                    $retArr[$collType]['cat'][$r->ccpk]['name'] = $r->category;
-                }
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-                $retArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
-            }
-            else{
-                $retArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
-                $retArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
-                $retArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-                $retArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
-            }
-        }
-        $result->close();
-        if(isset($retArr['spec']['cat'][$catId])){
-            $targetArr = $retArr['spec']['cat'][$catId];
-            unset($retArr['spec']['cat'][$catId]);
-            array_unshift($retArr['spec']['cat'],$targetArr);
-        }
-        elseif(isset($retArr['obs']['cat'][$catId])){
-            $targetArr = $retArr['obs']['cat'][$catId];
-            unset($retArr['obs']['cat'][$catId]);
-            array_unshift($retArr['obs']['cat'],$targetArr);
-        }
-        return $retArr;
     }
 
     public function getLayersArr(): array{
-        global $GEOSERVER_URL, $GEOSERVER_LAYER_WORKSPACE;
-        $url = $GEOSERVER_URL.'/wms?service=wms&version=2.0.0&request=GetCapabilities';
+        $url = $GLOBALS['GEOSERVER_URL'].'/wms?service=wms&version=2.0.0&request=GetCapabilities';
         $xml = simplexml_load_string(file_get_contents($url));
         $layers = $xml->Capability->Layer->Layer;
         $retArr = Array();
@@ -73,7 +29,7 @@ class SpatialModuleManager{
             $nameArr = explode(':',(string)$l->Name);
             $workspace = $nameArr[0];
             $layername = $nameArr[1];
-            if($workspace === $GEOSERVER_LAYER_WORKSPACE){
+            if($workspace === $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
                 $i = strtolower((string)$l->Title);
                 $retArr[$i]['Name'] = $layername;
                 $retArr[$i]['Title'] = (string)$l->Title;
@@ -86,10 +42,10 @@ class SpatialModuleManager{
                 }
                 $keywordArr = $l->KeywordList->Keyword;
                 foreach ($keywordArr as $k){
-                    if($k == 'features') {
+                    if($k === 'features') {
                         $retArr[$i]['layerType'] = 'vector';
                     }
-                    elseif($k == 'GeoTIFF') {
+                    elseif($k === 'GeoTIFF') {
                         $retArr[$i]['layerType'] = 'raster';
                     }
                 }
@@ -100,8 +56,8 @@ class SpatialModuleManager{
 
         return $retArr;
     }
-	
-	public function getOccStrFromGeoJSON($json): string{
+
+    public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
         $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
@@ -178,120 +134,6 @@ class SpatialModuleManager{
         return $synArr;
     }
 
-    public function outputFullMapCollArr($occArr): void{
-        global $DEFAULTCATID, $CLIENT_ROOT;
-        if(isset($occArr['cat'])){
-            $categoryArr = $occArr['cat'];
-            ?>
-            <table>
-                <?php
-                foreach($categoryArr as $catid => $catArr){
-                    $name = $catArr['name'];
-                    unset($catArr['name']);
-                    $idStr = $this->collArrIndex.'-'.$catid;
-                    ?>
-                    <tr>
-                        <td>
-                            <a href="#" onclick="toggleCat('<?php echo $idStr; ?>');return false;">
-                                <img id="plus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/plus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'display:none;':'') ?>" /><img id="minus-<?php echo $idStr; ?>" src="<?php echo $CLIENT_ROOT; ?>/images/minus_sm.png" style="<?php echo ($DEFAULTCATID === $catid?'':'display:none;') ?>" />
-                            </a>
-                        </td>
-                        <td>
-                            <input id="cat<?php echo $idStr; ?>Input" data-role="none" name="cat[]" value="<?php echo $catid; ?>" type="checkbox" onchange="buildQueryStrings();" onclick="selectAllCat(this,'cat-<?php echo $idStr; ?>')" checked />
-                        </td>
-                        <td>
-			    		<span style='text-decoration:none;color:black;font-size:14px;font-weight:bold;'>
-				    		<a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?catid=<?php echo $catid; ?>' target="_blank" ><?php echo $name; ?></a>
-				    	</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div id="cat-<?php echo $idStr; ?>" style="<?php echo ($DEFAULTCATID===$catid?'':'display:none;') ?>margin:10px 0;">
-                                <table style="margin-left:15px;">
-                                    <?php
-                                    foreach($catArr as $collid => $collName2){
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <?php
-                                                if($collName2['icon']){
-                                                    $cIcon = (strpos($collName2['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$collName2['icon'];
-                                                    ?>
-                                                    <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                                        <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
-                                                    </a>
-                                                    <?php
-                                                }
-                                                ?>
-                                            </td>
-                                            <td style="padding:6px">
-                                                <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" class="cat-<?php echo $idStr; ?>" onchange="buildQueryStrings();" onclick="unselectCat('cat<?php echo $idStr; ?>Input')" checked />
-                                            </td>
-                                            <td style="padding:6px">
-                                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                                    <?php echo $collName2['collname']. ' (' .$collName2['instcode']. ')'; ?>
-                                                </a>
-                                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                                    more info
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php
-                }
-                ?>
-            </table>
-            <?php
-        }
-        if(isset($occArr['coll'])){
-            $collArr = $occArr['coll'];
-            ?>
-            <table>
-                <?php
-                foreach($collArr as $collid => $cArr){
-                    ?>
-                    <tr>
-                        <td>
-                            <?php
-                            if($cArr['icon']){
-                                $cIcon = (strpos($cArr['icon'], 'images') === 0 ?$CLIENT_ROOT.'/':'').$cArr['icon'];
-                                ?>
-                                <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' target="_blank" >
-                                    <img src="<?php echo $cIcon; ?>" style="border:0;width:30px;height:30px;" />
-                                </a>
-                                <?php
-                            }
-                            ?>
-                            &nbsp;
-                        </td>
-                        <td style="padding:6px;">
-                            <input name="db[]" value="<?php echo $collid; ?>" data-role="none" type="checkbox" onchange="buildQueryStrings();" onclick="uncheckAll(this.form)" checked />
-                        </td>
-                        <td style="padding:6px">
-                            <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='text-decoration:none;color:black;font-size:14px;' target="_blank" >
-                                <?php echo $cArr['collname']. ' (' .$cArr['instcode']. ')'; ?>
-                            </a>
-                            <a href = '<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>' style='font-size:75%;' target="_blank" >
-                                more info
-                            </a>
-                        </td>
-                    </tr>
-                    <?php
-                }
-                ?>
-            </table>
-            <?php
-        }
-        $this->collArrIndex++;
-    }
-
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
@@ -338,334 +180,7 @@ class SpatialModuleManager{
         return $returnStr;
     }
 
-    public function getSqlWhere(): string
-    {
-        $sqlWhere = '';
-        if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
-            if($this->searchTermsArr['db'] !== 'all'){
-                if($this->searchTermsArr['db'] === 'allspec'){
-                    $sqlWhere .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype = "Preserved Specimens")) ';
-                }
-                elseif($this->searchTermsArr['db'] === 'allobs'){
-                    $sqlWhere .= 'AND (o.collid IN(SELECT collid FROM omcollections WHERE colltype IN("General Observations","Observations"))) ';
-                }
-                else{
-                    $dbArr = explode(';',$this->searchTermsArr['db']);
-                    $dbStr = '';
-                    if(isset($dbArr[0]) && $dbArr[0]){
-                        $dbStr = '(o.collid IN(' .trim($dbArr[0]). ')) ';
-                    }
-                    if(isset($dbArr[1]) && $dbArr[1]){
-                        $dbStr .= ($dbStr?'OR ':'').'(o.CollID IN(SELECT collid FROM omcollcatlink WHERE (ccpk IN('.$dbArr[1].')))) ';
-                    }
-                    $sqlWhere .= 'AND ('.$dbStr.') ';
-                }
-            }
-            else{
-                $sqlWhere .= 'AND (o.collid IS NOT NULL) ';
-            }
-        }
-
-        if(array_key_exists('taxa',$this->searchTermsArr)&&$this->searchTermsArr['taxa']){
-            $sqlWhereTaxa = '';
-            $useThes = (array_key_exists('usethes',$this->searchTermsArr)?$this->searchTermsArr['usethes']:0);
-            $this->taxaSearchType = $this->searchTermsArr['taxontype'];
-            $taxaArr = explode(';',trim($this->searchTermsArr['taxa']));
-            $this->taxaArr = Array();
-            foreach($taxaArr as $sName){
-                $this->taxaArr[trim($sName)] = Array();
-            }
-            if((int)$this->taxaSearchType === 5){
-                $this->setSciNamesByVerns();
-            }
-            else if($useThes){
-                $this->setSynonyms();
-            }
-
-            foreach($this->taxaArr as $key => $valueArray){
-                if((int)$this->taxaSearchType === 4){
-                    $rs1 = $this->conn->query("SELECT tid FROM taxa WHERE (sciname = '".$key."')");
-                    if($r1 = $rs1->fetch_object()){
-                        $sqlWhereTaxa = 'OR (o.tidinterpreted IN(SELECT DISTINCT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid IN('.$r1->tid.'))) ';
-                    }
-                }
-                else{
-                    if((int)$this->taxaSearchType === 5){
-                        $famArr = array();
-                        if(array_key_exists('families',$valueArray)){
-                            $famArr = $valueArray['families'];
-                        }
-                        if(array_key_exists('tid',$valueArray)){
-                            $tidArr = $valueArray['tid'];
-                            $sql = 'SELECT DISTINCT t.sciname '.
-                                'FROM taxa t LEFT JOIN taxaenumtree e ON t.tid = e.tid '.
-                                'WHERE t.rankid = 140 AND e.taxauthid = 1 AND e.parenttid IN('.implode(',',$tidArr).')';
-                            $rs = $this->conn->query($sql);
-                            while($r = $rs->fetch_object()){
-                                $famArr[] = $r->family;
-                            }
-                        }
-                        if($famArr){
-                            $famArr = array_unique($famArr);
-                            $sqlWhereTaxa .= 'OR (o.family IN("'.implode('","',$famArr).'")) ';
-                        }
-                        if(array_key_exists('scinames',$valueArray)){
-                            foreach($valueArray['scinames'] as $sciName){
-                                $sqlWhereTaxa .= "OR (o.sciname Like '".$sciName."%') ";
-                            }
-                        }
-                    }
-                    else{
-                        if((int)$this->taxaSearchType === 2 || ((int)$this->taxaSearchType === 1 && (strtolower(substr($key,-5)) === 'aceae' || strtolower(substr($key,-4)) === 'idae'))){
-                            $sqlWhereTaxa .= "OR (o.family = '".$key."') ";
-                        }
-                        if((int)$this->taxaSearchType === 3 || ((int)$this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
-                            $sqlWhereTaxa .= "OR (o.sciname LIKE '".$key."%') ";
-                        }
-                    }
-                    if(array_key_exists('synonyms',$valueArray)){
-                        $synArr = $valueArray['synonyms'];
-                        if($synArr){
-                            if((int)$this->taxaSearchType === 1 || (int)$this->taxaSearchType === 2 || (int)$this->taxaSearchType === 5){
-                                foreach($synArr as $synTid => $sciName){
-                                    if(strpos($sciName,'aceae') || strpos($sciName,'idae')){
-                                        $sqlWhereTaxa .= "OR (o.family = '".$sciName."') ";
-                                    }
-                                }
-                            }
-                            $sqlWhereTaxa .= 'OR (o.tidinterpreted IN('.implode(',',array_keys($synArr)).')) ';
-                        }
-                    }
-                }
-            }
-            $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
-        }
-        if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
-            $countryArr = explode(';',$this->searchTermsArr['country']);
-            $tempArr = array();
-            foreach($countryArr as $value){
-                $tempArr[] = "(o.Country = '".trim($value)."')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(' OR ',$countryArr);
-        }
-        if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
-            $stateAr = explode(';',$this->searchTermsArr['state']);
-            $tempArr = array();
-            foreach($stateAr as $value){
-                $tempArr[] = "(o.StateProvince LIKE '".trim($value)."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(' OR ',$stateAr);
-        }
-        if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
-            $countyArr = explode(';',$this->searchTermsArr['county']);
-            $tempArr = array();
-            foreach($countyArr as $value){
-                $tempArr[] = "(o.county LIKE '".trim($value)."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(' OR ',$countyArr);
-        }
-        if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
-            $localArr = explode(';',$this->searchTermsArr['local']);
-            $tempArr = array();
-            foreach($localArr as $value){
-                $tempArr[] = "(o.municipality LIKE '".trim($value)."%' OR o.Locality LIKE '%".trim($value)."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(' OR ',$localArr);
-        }
-        if(array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('polyArr',$this->searchTermsArr)){
-            $geoSqlStrArr = array();
-            if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
-                $sqlFragArr = array();
-                $objArr = $this->searchTermsArr['circleArr'];
-
-                if($objArr){
-                    foreach($objArr as $obj => $oArr){
-                        $radius = $oArr['radius'] * 0.621371;
-                        $sqlFragArr[] = '(( 3959 * acos( cos( radians(' .$oArr['pointlong']. ') ) * cos( radians( o.DecimalLatitude ) ) * cos( radians( o.DecimalLongitude ) - radians(' .$oArr['pointlat']. ') ) + sin( radians(' .$oArr['pointlong']. ') ) * sin(radians(o.DecimalLatitude)) ) ) < ' .$radius. ') ';
-                        $this->localSearchArr[] = 'Point radius: ' .$oArr['pointlat']. ', ' .$oArr['pointlong']. ', within ' .$radius. ' miles';
-                    }
-                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
-                }
-            }
-            if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
-                //$polyStr = str_replace("\\", '',$this->searchTermsArr['polyArr']);
-                $sqlFragArr = array();
-                $geomArr = $this->searchTermsArr['polyArr'];
-                if($geomArr){
-                    foreach($geomArr as $geom){
-                        $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
-                    }
-                    $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
-                }
-            }
-            if($geoSqlStrArr){
-                $sqlWhere .= 'AND ('.implode(' OR ', $geoSqlStrArr).') ';
-            }
-        }
-        if(array_key_exists('collector',$this->searchTermsArr)&&$this->searchTermsArr['collector']){
-            $collectorArr = explode(';',$this->searchTermsArr['collector']);
-            $tempArr = array();
-            foreach($collectorArr as $value){
-                $tempArr[] = "(o.recordedBy LIKE '%".trim($value)."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(', ',$collectorArr);
-        }
-        if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
-            $remarksArr = explode(';',$this->searchTermsArr['occurrenceRemarks']);
-            $tempArr = array();
-            foreach($remarksArr as $value){
-                $tempArr[] = "(o.occurrenceRemarks LIKE '%".trim($value)."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-            $this->localSearchArr[] = implode(' OR ',$remarksArr);
-        }
-        if(array_key_exists('collnum',$this->searchTermsArr)&&$this->searchTermsArr['collnum']){
-            $collNumArr = explode(';',$this->searchTermsArr['collnum']);
-            $rnWhere = '';
-            foreach($collNumArr as $v){
-                $v = trim($v);
-                if($p = strpos($v,' - ')){
-                    $term1 = trim(substr($v,0,$p));
-                    $term2 = trim(substr($v,$p+3));
-                    if(is_numeric($term1) && is_numeric($term2)){
-                        $rnWhere = 'OR (o.recordnumber BETWEEN '.$term1.' AND '.$term2.')';
-                    }
-                    else{
-                        $catTerm = 'o.recordnumber BETWEEN "'.$term1.'" AND "'.$term2.'"';
-                        if(strlen($term1) === strlen($term2)) {
-                            $catTerm .= ' AND length(o.recordnumber) = ' . strlen($term2);
-                        }
-                        $rnWhere = 'OR ('.$catTerm.')';
-                    }
-                }
-                elseif(is_numeric($v)){
-                    $rnWhere .= 'OR (o.recordNumber = '.$v.') ';
-                }
-                else{
-                    $rnWhere .= 'OR (o.recordNumber = "'.$v.'") ';
-                }
-            }
-            if($rnWhere){
-                $sqlWhere .= 'AND (' .substr($rnWhere,3). ') ';
-                $this->localSearchArr[] = implode(', ',$collNumArr);
-            }
-        }
-        if(array_key_exists('eventdate1',$this->searchTermsArr)&&$this->searchTermsArr['eventdate1']){
-            $dateArr = array();
-            if(strpos($this->searchTermsArr['eventdate1'],' to ')){
-                $dateArr = explode(' to ',$this->searchTermsArr['eventdate1']);
-            }
-            elseif(strpos($this->searchTermsArr['eventdate1'],' - ')){
-                $dateArr = explode(' - ',$this->searchTermsArr['eventdate1']);
-            }
-            else{
-                $dateArr[] = $this->searchTermsArr['eventdate1'];
-                if(isset($this->searchTermsArr['eventdate2'])){
-                    $dateArr[] = $this->searchTermsArr['eventdate2'];
-                }
-            }
-            if($eDate1 = $this->formatDate($dateArr[0])){
-                $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
-                if($eDate2){
-                    $sqlWhere .= 'AND (DATE(o.eventdate) BETWEEN "'.$eDate1.'" AND "'.$eDate2.'") ';
-                }
-                else if(substr($eDate1,-5) === '00-00'){
-                    $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,5).'%") ';
-                }
-                elseif(substr($eDate1,-2) === '00'){
-                    $sqlWhere .= 'AND (o.eventdate LIKE "'.substr($eDate1,0,8).'%") ';
-                }
-                else{
-                    $sqlWhere .= 'AND (DATE(o.eventdate) = "'.$eDate1.'") ';
-                }
-            }
-            $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
-        }
-        if(array_key_exists('catnum',$this->searchTermsArr)&&$this->searchTermsArr['catnum']){
-            $catStr = $this->searchTermsArr['catnum'];
-            $isOccid = false;
-            if(strpos($catStr, 'occid') === 0){
-                $catStr = trim(substr($catStr,5));
-                $isOccid = true;
-            }
-            $catArr = explode(',',str_replace(';',',',$catStr));
-            $betweenFrag = array();
-            $inFrag = array();
-            foreach($catArr as $v){
-                if($p = strpos($v,' - ')){
-                    $term1 = trim(substr($v,0,$p));
-                    $term2 = trim(substr($v,$p+3));
-                    if(is_numeric($term1) && is_numeric($term2)){
-                        if($isOccid){
-                            $betweenFrag[] = '(o.occid BETWEEN '.$term1.' AND '.$term2.')';
-                        }
-                        else{
-                            $betweenFrag[] = '(o.catalogNumber BETWEEN '.$term1.' AND '.$term2.')';
-                        }
-                    }
-                    else{
-                        $catTerm = 'o.catalogNumber BETWEEN "'.$term1.'" AND "'.$term2.'"';
-                        if(strlen($term1) === strlen($term2)) {
-                            $catTerm .= ' AND length(o.catalogNumber) = ' . strlen($term2);
-                        }
-                        $betweenFrag[] = '('.$catTerm.')';
-                    }
-                }
-                else{
-                    $vStr = trim($v);
-                    $inFrag[] = $vStr;
-                    if(is_numeric($vStr) && strpos($vStr, '0') === 0){
-                        $inFrag[] = ltrim($vStr,0);
-                    }
-                }
-            }
-            $catWhere = '';
-            if($betweenFrag){
-                $catWhere .= 'OR '.implode(' OR ',$betweenFrag);
-            }
-            if($inFrag){
-                if($isOccid){
-                    $catWhere .= 'OR (o.occid IN('.implode(',',$inFrag).')) ';
-                }
-                else{
-                    $catWhere .= 'OR (o.catalogNumber IN("'.implode('","',$inFrag).'")) ';
-                }
-            }
-            $sqlWhere .= 'AND ('.substr($catWhere,3).') ';
-            $this->localSearchArr[] = $this->searchTermsArr['catnum'];
-        }
-        if(array_key_exists('othercatnum',$this->searchTermsArr)&&$this->searchTermsArr['othercatnum']){
-            $otherCatStr = $this->searchTermsArr['othercatnum'];
-            $sqlWhere .= 'AND (o.otherCatalogNumbers IN("'.$otherCatStr.'")) ';
-            $this->localSearchArr[] = $this->searchTermsArr['othercatnum'];
-        }
-        if(array_key_exists('typestatus',$this->searchTermsArr)&&$this->searchTermsArr['typestatus']){
-            $sqlWhere .= 'AND (o.typestatus IS NOT NULL) ';
-            $this->localSearchArr[] = 'is type';
-        }
-        if(array_key_exists('hasimages',$this->searchTermsArr)&&$this->searchTermsArr['hasimages']){
-            $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images)) ';
-            $this->localSearchArr[] = 'has images';
-        }
-        if(array_key_exists('hasgenetic',$this->searchTermsArr)&&$this->searchTermsArr['hasgenetic']){
-            $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
-            $this->localSearchArr[] = 'has genetic data';
-        }
-        $retStr = 'WHERE ';
-        if($sqlWhere){
-            $retStr .= substr($sqlWhere,4).' AND';
-        }
-        $retStr .= ' (o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
-        return $retStr;
-    }
-
-    public function getOccPointMapGeoJson($mapWhere,$pageRequest,$cntPerPage){
-        global $USER_RIGHTS;
+    public function getOccPointMapGeoJson($pageRequest,$cntPerPage){
         $geomArr = array();
         $featuresArr = array();
         $sql = 'SELECT DISTINCT o.occid, o.collid, o.family, o.sciname, o.tidinterpreted, o.`year`, o.`month`, o.`day`, '.
@@ -676,21 +191,27 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
-        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity))) ';
+        $sql .= $this->sqlWhere;
+        if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
+            if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity))) ';
             }
             else{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity)) ';
             }
         }
         $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
-        $sql .= 'LIMIT ' .($pageRequest?$pageRequest:0). ',' .$cntPerPage;
-        //echo '<div>SQL: ' .$sql. '</div>';
+        $sql .= 'LIMIT ' .($pageRequest ?: 0). ',' .$cntPerPage;
+        //return '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $geoArr = array();
@@ -725,8 +246,7 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function getOccPointDownloadGeoJson($mapWhere,$pageRequest,$cntPerPage){
-        global $USER_RIGHTS;
+    public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
         $geomArr = array();
         $featuresArr = array();
         $sql = 'SELECT DISTINCT o.occid, o.collid, o.catalogNumber, o.otherCatalogNumbers, o.sciname, o.associatedCollectors, '.
@@ -742,13 +262,19 @@ class SpatialModuleManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($mapWhere, 'WHERE ') !== 0){
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
             $sql .= 'WHERE ';
         }
-        $sql .= $mapWhere;
-        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+        $sql .= $this->sqlWhere;
+        if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
+            if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
             }
             else{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
@@ -821,17 +347,22 @@ class SpatialModuleManager{
         return json_encode($geomArr);
     }
 
-    public function setRecordCnt($sqlWhere): void
+    public function setRecordCnt(): void
     {
-        global $USER_RIGHTS;
         $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
         }
-        $sql .= $sqlWhere;
-        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        $sql .= $this->sqlWhere;
+        if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
+            if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
             }
             else{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
@@ -845,21 +376,26 @@ class SpatialModuleManager{
         $result->close();
     }
 
-    public function getMapRecordPageArr($pageRequest,$cntPerPage,$mapWhere): array
+    public function getMapRecordPageArr($pageRequest,$cntPerPage): array
     {
-        global $USER_RIGHTS;
         $retArr = array();
         $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
+            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        $sql .= $mapWhere;
-        if(!array_key_exists('SuperAdmin',$USER_RIGHTS) && !array_key_exists('CollAdmin',$USER_RIGHTS) && !array_key_exists('RareSppAdmin',$USER_RIGHTS) && !array_key_exists('RareSppReadAll',$USER_RIGHTS)){
-            if(array_key_exists('RareSppReader',$USER_RIGHTS)){
-                $sql .= ' AND (o.CollId IN (' .implode(',',$USER_RIGHTS['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
+            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        $sql .= $this->sqlWhere;
+        if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
+            if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
+                $sql .= ' AND (o.CollId IN (' .implode(',',$GLOBALS['USER_RIGHTS']['RareSppReader']). ') OR (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL)) ';
             }
             else{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
@@ -871,7 +407,7 @@ class SpatialModuleManager{
         //echo "<div>Spec sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         $canReadRareSpp = false;
-        if(array_key_exists('SuperAdmin', $USER_RIGHTS) || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+        if(array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
             $canReadRareSpp = true;
         }
         while($r = $result->fetch_object()){
@@ -888,8 +424,8 @@ class SpatialModuleManager{
             $retArr[$occId]['lon'] = $this->cleanOutStr($r->DecimalLongitude);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
-                || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true))
-                || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($collId, $USER_RIGHTS['RareSppReader'], true))){
+                || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
+                || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
                 $retArr[$occId]['l'] = str_replace('.,',',',$r->locality);
             }
             else{
@@ -1027,7 +563,17 @@ class SpatialModuleManager{
     public function setSearchTermsArr($stArr): void
     {
         $this->searchTermsArr = $stArr;
-        $this->searchTerms = 1;
+    }
+
+    public function setSqlWhere($whereStr): void
+    {
+        if(!$whereStr){
+            $whereStr = 'WHERE ';
+        }
+        else{
+            $whereStr .= 'AND ';
+        }
+        $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
 
     public function getRecordCnt(): int

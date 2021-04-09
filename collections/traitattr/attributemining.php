@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/traitattr/attributemining.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/attributemining.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
@@ -24,28 +24,28 @@ if(!is_numeric($traitID)) {
 }
 
 $collRights = array();
-if(array_key_exists('CollAdmin',$USER_RIGHTS)) {
-    $collRights = $USER_RIGHTS['CollAdmin'];
+if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
+    $collRights = $GLOBALS['USER_RIGHTS']['CollAdmin'];
 }
-if(array_key_exists('CollEditor',$USER_RIGHTS)) {
-    $collRights = array_merge($collRights, $USER_RIGHTS['CollEditor']);
+if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
+    $collRights = array_merge($collRights, $GLOBALS['USER_RIGHTS']['CollEditor']);
 }
 
 $isEditor = 0; 
-if($SYMB_UID){
-	if(!$IS_ADMIN && count($collRights) === 1){
+if($GLOBALS['SYMB_UID']){
+	if(!$GLOBALS['IS_ADMIN'] && count($collRights) === 1){
         $collid = current($collRights);
 	}
 	elseif($selectAll){
 		$collid = 'all';
 	}
 	elseif(is_array($collid)){
-		if(!$IS_ADMIN) {
+		if(!$GLOBALS['IS_ADMIN']) {
             $collid = array_intersect($collid, $collRights);
         }
 		$collid = implode(',',$collid);
 	}
-	if($IS_ADMIN){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 1;
 	}
 	elseif(is_numeric($collid)){
@@ -60,7 +60,7 @@ if($SYMB_UID){
 
 $attrManager = new OccurrenceAttributes();
 $attrManager->setCollid($collid);
-$collArr = $attrManager->getCollectionList($IS_ADMIN?'':$collRights);
+$collArr = $attrManager->getCollectionList($GLOBALS['IS_ADMIN']?'':$collRights);
 
 $statusStr = '';
 if($isEditor && $submitForm === 'Batch Assign State(s)' && $collid && $fieldName) {
@@ -91,11 +91,11 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 	'behavior' => 'Behavior', 'reproductivecondition' => 'Reproductive Condition', 'lifestage' => 'Life Stage', 
 	'sex' => 'Sex');
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Occurrence Attribute Mining Tool</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
@@ -178,7 +178,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			if(is_numeric($collid)) {
                 echo '<a href="../misc/collprofiles.php?collid=' . $collid . '&emode=1">Collection Management</a> &gt;&gt;';
             }
-			if($IS_ADMIN || count($collRights) > 1) {
+			if($GLOBALS['IS_ADMIN'] || count($collRights) > 1) {
                 echo '<a href="attributemining.php">Adjust Collection Selection</a> &gt;&gt;';
             }
 			?>

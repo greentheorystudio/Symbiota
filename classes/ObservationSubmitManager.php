@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('ImageShared.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/ImageShared.php');
 
 class ObservationSubmitManager {
 
@@ -22,7 +22,6 @@ class ObservationSubmitManager {
 	}
 
 	public function addObservation($postArr){
-		global $SYMB_UID;
 		$newOccId = '';
 		if($postArr && $this->collId){
 			$eventYear = 'NULL'; $eventMonth = 'NULL'; $eventDay = 'NULL'; $startDay = 'NULL';
@@ -94,7 +93,7 @@ class ObservationSubmitManager {
 			($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
 			($postArr['georeferenceremarks']?'"'.$this->cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
 			($postArr['minimumelevationinmeters']?:'NULL').','.
-				$SYMB_UID.',"'.date('Y-m-d H:i:s').'") ';
+				$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'") ';
 			//echo $sql;
 			if($this->conn->query($sql)){
 				$newOccId = $this->conn->insert_id;
@@ -130,7 +129,7 @@ class ObservationSubmitManager {
 				}
 				if(is_numeric($postArr['confidenceranking'])){
 					$sqlVer = 'INSERT INTO omoccurverification(occid,category,ranking,uid) '.
-							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$SYMB_UID.')';
+							'VALUES('.$newOccId.',"identification",'.$postArr['confidenceranking'].','.$GLOBALS['SYMB_UID'].')';
 					$this->conn->query($sqlVer);
 				}
 			}
@@ -143,7 +142,6 @@ class ObservationSubmitManager {
 
 	private function addImages($postArr,$newOccId,$tid): bool
 	{
-		global $SYMB_UID;
 		$status = true;
 		$imgManager = new ImageShared();
 		$subTargetPath = $this->collMap['institutioncode'];
@@ -154,7 +152,7 @@ class ObservationSubmitManager {
 		for($i=1;$i<=5;$i++){
 			$imgManager->setTargetPath($subTargetPath.'/'.date('Ym').'/');
 			$imgManager->setMapLargeImg(false);
-			$imgManager->setPhotographerUid($SYMB_UID);
+			$imgManager->setPhotographerUid($GLOBALS['SYMB_UID']);
 			$imgManager->setSortSeq(40);
 			$imgManager->setOccid($newOccId);
 			$imgManager->setTid($tid);
@@ -191,12 +189,11 @@ class ObservationSubmitManager {
 
 	public function getChecklists(): array
 	{
-		global $USER_RIGHTS;
 		$retArr = array();
-		if(isset($USER_RIGHTS['ClAdmin'])){
+		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin'])){
 			$sql = 'SELECT clid, name, access '.
 				'FROM fmchecklists '.
-				'WHERE clid IN('.implode(',',$USER_RIGHTS['ClAdmin']).') '.
+				'WHERE clid IN('.implode(',',$GLOBALS['USER_RIGHTS']['ClAdmin']).') '.
 				'ORDER BY name';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -250,10 +247,9 @@ class ObservationSubmitManager {
 
 	public function getUserName(): string
 	{
-		global $SYMB_UID;
 		$retStr = '';
-		if(is_numeric($SYMB_UID)){
-			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$SYMB_UID;
+		if(is_numeric($GLOBALS['SYMB_UID'])){
+			$sql = 'SELECT CONCAT_WS(", ",lastname,firstname) AS username FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retStr = $r->username;

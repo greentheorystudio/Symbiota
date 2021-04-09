@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('ImageShared.php');
-include_once('EOLUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/EOLUtilities.php');
 
 class EOLManager {
 
@@ -90,11 +90,10 @@ class EOLManager {
 	
 	private function queryEolIdentifier($tid, $sciName, $makePrimaryLink): bool
 	{
-		global $EOL_KEY;
 		$retStatus = false;
 		$url = 'http://eol.org/api/search/1.0.json?q='.urlencode($sciName);
-		if($EOL_KEY) {
-			$url .= '&key=' . $EOL_KEY;
+		if($GLOBALS['EOL_KEY']) {
+			$url .= '&key=' . $GLOBALS['EOL_KEY'];
 		}
 		if($fh = fopen($url, 'rb')){
 			echo '<li>Reading identifier for '.$sciName.' (tid: <a href="../index.php?taxon='.$tid.'" target="_blank">'.$tid.'</a>)... ';
@@ -201,12 +200,11 @@ class EOLManager {
 
 	private function mapEolImages($tid, $identifier): bool
 	{
-		global $EOL_KEY;
 		$retStatus = false;
 		$url = 'http://eol.org/api/pages/1.0.json?id='.$identifier.'&images_per_page=20&vetted=2&details=1';
 		//echo $url;
-		if($EOL_KEY) {
-			$url .= '&key=' . $EOL_KEY;
+		if($GLOBALS['EOL_KEY']) {
+			$url .= '&key=' . $GLOBALS['EOL_KEY'];
 		}
 		if($fh = fopen($url, 'rb')){
 			$content = '';
@@ -371,10 +369,9 @@ class EOLManager {
 	
 	private function encodeString($inStr): string
 	{
-		global $CHARSET;
- 		$retStr = trim($inStr);
+		$retStr = trim($inStr);
  		if($retStr){
-			$charStr = strtolower($CHARSET);
+			$charStr = strtolower($GLOBALS['CHARSET']);
  			if($charStr === 'utf-8' || $charStr === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);

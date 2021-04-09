@@ -1,35 +1,35 @@
 <?php
-include_once('DbConnection.php');
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class TaxonomyAPIManager{
 
-	private $conn;
-	private $taxAuthId = 0;
+    private $conn;
+    private $taxAuthId = 0;
     private $rankLimit = 0;
     private $rankLow = 0;
     private $rankHigh = 0;
     private $limit = 0;
     private $hideAuth = false;
     private $hideProtected = false;
-	
-	public function __construct(){
-        $connection = new DbConnection();
-	    $this->conn = $connection->getConnection();
-	}
 
- 	public function __destruct(){
-		if(!($this->conn === null)) {
+    public function __construct(){
+        $connection = new DbConnection();
+        $this->conn = $connection->getConnection();
+    }
+
+    public function __destruct(){
+        if(!($this->conn === null)) {
             $this->conn->close();
         }
-	}
+    }
 
     public function generateSciNameList($queryString): array
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
             'FROM taxa AS t ';
- 	    if($this->taxAuthId){
+        if($this->taxAuthId){
             $sql .= 'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
         }
         $sql .= 'WHERE t.SciName LIKE "'.$this->cleanInStr($queryString).'%" ';
@@ -61,7 +61,7 @@ class TaxonomyAPIManager{
             $retArr[$sciName]['author'] = $r->Author;
         }
 
- 	    return $retArr;
+        return $retArr;
     }
 
     public function generateVernacularList($queryString): array
@@ -82,8 +82,8 @@ class TaxonomyAPIManager{
 
         return $retArr;
     }
- 	
-	public function setTaxAuthId($val): void
+
+    public function setTaxAuthId($val): void
     {
         $this->taxAuthId = $this->cleanInStr($val);
     }
@@ -110,15 +110,20 @@ class TaxonomyAPIManager{
 
     public function setHideAuth($val): void
     {
-        $this->hideAuth = $this->cleanInStr($val);
+        if($val === 'true'){
+            $this->hideAuth = true;
+        }
+        else{
+            $this->hideAuth = false;
+        }
     }
 
     public function setHideProtected($val): void
     {
         $this->hideProtected = $this->cleanInStr($val);
     }
-	
-	protected function cleanInStr($str){
+
+    protected function cleanInStr($str){
         $newStr = trim($str);
         $newStr = preg_replace('/\s\s+/', ' ',$newStr);
         $newStr = $this->conn->real_escape_string($newStr);

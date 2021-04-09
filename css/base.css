@@ -79,8 +79,6 @@ div.tnimg img{
 	position: absolute;
 	max-height: 160px;
 	max-width: 160px;
-	width: 		160px;
-	height:		160px;
 	top: -9999px;
 	bottom: -9999px;
 	left: -9999px;
@@ -122,6 +120,21 @@ div.navpath a {
 div.navpath a:hover {
 	color: #C0C0C0;
 	font-size: 11px;
+}
+
+button:hover{
+	background: #e4f2fb;
+}
+
+button.icon-button {
+	margin: 5px;
+	padding: 5px;
+}
+
+.checkbox-elem {
+	margin:5px;
+	padding:5px;
+	border:1px dashed orange;
 }
 
 div.button {
@@ -194,7 +207,6 @@ div.button:hover {
 }
 
 .collectiontitle a{
-	font-size: 80%;
 	margin-left: 3px;
 }
 
@@ -415,4 +427,9 @@ ol.mp_list li.mp_highlighted {
 .quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
+}
+
+.flexwrapbox{
+	display: flex;
+	flex-wrap: wrap;
 }

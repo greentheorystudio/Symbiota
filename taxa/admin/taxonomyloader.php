@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
@@ -13,7 +13,7 @@ $status = '';
 $loaderObj = new TaxonomyEditorManager();
  
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
  
@@ -24,15 +24,15 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
     }
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Taxon Loader: </title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxon Loader: </title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20200516"></script>
+	<script src="../../js/symb/taxa.taxonomyloader.js?ver=20210313"></script>
 </head>
 <body>
 <?php

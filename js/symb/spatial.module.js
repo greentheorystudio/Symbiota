@@ -1,78 +1,145 @@
-$(window).resize(function(){
-    let winHeight = $(window).height();
-    winHeight = winHeight + "px";
-    document.getElementById('spatialpanel').style.height = winHeight;
-    $("#accordion").accordion("refresh");
-});
-
-$(document).on("pageloadfailed", function(event){
-    event.preventDefault();
-});
-
-$(document).ready(function() {
-    setLayersTable();
-
-    $( "#taxa" )
-        .bind( "keydown", function( event ) {
-            if ( event.keyCode == $.ui.keyCode.TAB &&
-                $( this ).data( "autocomplete" ).menu.active ) {
-                event.preventDefault();
-            }
+let spatialModuleInitialising = false;
+let inputResponseData = {};
+let geoPolyArr = [];
+let geoCircleArr = [];
+let geoBoundingBoxArr = {};
+let geoPointArr = [];
+let layersArr = [];
+let mouseCoords = [];
+let selections = [];
+let collSymbology = [];
+let taxaSymbology = [];
+let collKeyArr = [];
+let taxaKeyArr = [];
+let queryRecCnt = 0;
+let draw;
+let clustersource;
+let loadPointsEvent = false;
+let taxaCnt = 0;
+let lazyLoadCnt = 20000;
+let clusterDistance = 50;
+let clusterPoints = true;
+let showHeatMap = false;
+let heatMapRadius = 5;
+let heatMapBlur = 15;
+let mapSymbology = 'coll';
+let clusterKey = 'CollectionName';
+let maxFeatureCount;
+let currentResolution;
+let activeLayer = 'none';
+let shapeActive = false;
+let pointActive = false;
+let spiderCluster;
+let spiderFeature;
+let hiddenClusters = [];
+let clickedFeatures = [];
+let dragDrop1 = false;
+let dragDrop2 = false;
+let dragDrop3 = false;
+let dragDropTarget = '';
+let dsOldestDate = '';
+let dsNewestDate = '';
+let tsOldestDate = '';
+let tsNewestDate = '';
+let dateSliderActive = false;
+let sliderdiv = '';
+let loadingTimer = 0;
+let loadingComplete = true;
+let returnClusters = false;
+let dsAnimDuration = '';
+let dsAnimTime = '';
+let dsAnimImageSave = false;
+let dsAnimReverse = false;
+let dsAnimDual = false;
+let dsAnimLow = '';
+let dsAnimHigh = '';
+let dsAnimStop = true;
+let dsAnimation = '';
+let zipFile = '';
+let zipFolder = '';
+let transformStartAngle = 0;
+let transformD = [0,0];
+let transformFirstPoint = false;
+const dragDropStyle = {
+    'Point': new ol.style.Style({
+        image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,255,0,0.5)'
+            }),
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: '#ff0',
+                width: 1
+            })
         })
-        .autocomplete({
-            source: function( request, response ) {
-                const t = document.getElementById("taxontype").value;
-                let rankLow = '';
-                let rankHigh = '';
-                let rankLimit = '';
-                let source = '';
-                if(t == 5){
-                    source = '../webservices/autofillvernacular.php';
-                }
-                else{
-                    source = '../webservices/autofillsciname.php';
-                }
-                if(t == 4){
-                    rankLow = 21;
-                    rankHigh = 139;
-                }
-                else if(t == 2){
-                    rankLimit = 140;
-                }
-                else if(t == 3){
-                    rankLow = 141;
-                }
-                else{
-                    rankLow = 140;
-                }
-                //console.log('term: '+request.term+'rlow: '+rankLow+'rhigh: '+rankHigh+'rlimit: '+rankLimit);
-                $.getJSON( source, {
-                    term: extractLast( request.term ),
-                    rlow: rankLow,
-                    rhigh: rankHigh,
-                    rlimit: rankLimit,
-                    hideauth: true,
-                    limit: 20
-                }, response );
-            },
-            appendTo: "#taxa_autocomplete",
-            search: function() {
-                const term = extractLast( this.value );
-                if ( term.length < 4 ) {
-                    return false;
-                }
-            },
-            focus: function() {
-                return false;
-            },
-            select: function( event, ui ) {
-                const terms = split( this.value );
-                terms.pop();
-                terms.push( ui.item.value );
-                this.value = terms.join( ", " );
-                return false;
-            }
-        },{});
+    }),
+    'LineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#f00',
+            width: 3
+        })
+    }),
+    'Polygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(170,170,170,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        })
+    }),
+    'MultiPoint': new ol.style.Style({
+        image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+                color: 'rgba(255,0,255,0.5)'
+            }),
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: '#f0f',
+                width: 1
+            })
+        })
+    }),
+    'MultiLineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#0f0',
+            width: 3
+        })
+    }),
+    'MultiPolygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(170,170,170,0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#000000',
+            width: 1
+        })
+    })
+};
+
+const mapProjection = new ol.proj.Projection({
+    code: 'EPSG:3857'
+});
+
+const wgs84Projection = new ol.proj.Projection({
+    code: 'EPSG:4326',
+    units: 'degrees'
+});
+
+const projection = ol.proj.get('EPSG:4326');
+const projectionExtent = projection.getExtent();
+const tileSize = 512;
+const maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
+const resolutions = new Array(16);
+for (let z = 0; z < 16; ++z) {
+    resolutions[z] = maxResolution / Math.pow(2, z);
+}
+
+const baselayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+        crossOrigin: 'anonymous'
+    })
 });
 
 function addLayerToSelList(layer,title){
@@ -89,6 +156,20 @@ function addLayerToSelList(layer,title){
     else{
         document.getElementById("selectlayerselect").value = origValue;
     }
+}
+
+function addQueryToDataset(){
+    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+    document.getElementById("dsstarrjson").value = JSON.stringify(searchTermsArr);
+    document.getElementById("datasetformaction").value = 'addAllToDataset';
+    document.getElementById("datasetform").submit();
+}
+
+function addSelectionsToDataset(){
+    document.getElementById("selectedtargetdatasetid").value = document.getElementById("targetdatasetid").value;
+    document.getElementById("occarrjson").value = JSON.stringify(selections);
+    document.getElementById("datasetformaction").value = 'addSelectedToDataset';
+    document.getElementById("datasetform").submit();
 }
 
 function adjustSelectionsTab(){
@@ -182,16 +263,6 @@ function animateDS(){
     }
 }
 
-function arrayIndexSort(obj){
-    const keys = [];
-    for(const key in obj){
-        if(obj.hasOwnProperty(key)){
-            keys.push(key);
-        }
-    }
-    return keys;
-}
-
 function autoColorColl(){
     document.getElementById("randomColorColl").disabled = true;
     changeMapSymbology('coll');
@@ -266,13 +337,7 @@ function buildLayerTableRow(lArr,removable){
     let trfragment = '';
     const layerID = lArr['Name'];
     const layerType = lArr['layerType'];
-    if(layerType !== 'vector'){
-        const infoArr = [];
-        infoArr['id'] = layerID;
-        infoArr['title'] = lArr['Title'];
-        rasterLayers.push(infoArr);
-    }
-    const addLayerFunction = (layerType === 'vector' ? 'editVectorLayers' : 'editRasterLayers');
+    const addLayerFunction = 'editVectorLayers';
     const divid = "lay-" + layerID;
     if(!document.getElementById(divid)){
         trfragment += '<td style="width:30px;">';
@@ -291,7 +356,7 @@ function buildLayerTableRow(lArr,removable){
         trfragment += '<td style="width:50px;">';
         if(removable){
             const onclick = "removeUserLayer('" + layerID + "');";
-            trfragment += '<input type="image" style="margin-left:5px;" src="../images/del.png" onclick="'+onclick+'" title="Remove layer">';
+            trfragment += '<button style="margin:0;padding:2px;" type="button" onclick="'+onclick+'" title="Remove layer"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
         }
         trfragment += '</td>';
         const layerTable = document.getElementById("layercontroltable");
@@ -305,87 +370,6 @@ function buildLayerTableRow(lArr,removable){
         setActiveLayer();
     }
     toggleLayerTable();
-}
-
-function buildQueryStrings(){
-    solrqArr = [];
-    solrgeoqArr = [];
-    newsolrqString = '';
-    getCollectionParams();
-    prepareTaxaParams(function(){
-        getTextParams();
-        getGeographyParams();
-        if(solrqArr.length > 0 || solrgeoqArr.length > 0){
-            buildSOLRQString();
-        }
-    });
-}
-
-function buildRasterCalcDropDown(){
-    let selectionList = '<option value="">Select Layer</option>';
-    overlayLayers.sort();
-    for(let l in overlayLayers){
-        if(overlayLayers.hasOwnProperty(l)){
-            const newOption = '<option value="' + overlayLayers[l]['id'] + '">' + overlayLayers[l]['id'] + '</option>';
-            selectionList += newOption;
-        }
-    }
-    document.getElementById("rastcalcoverlay1").innerHTML = selectionList;
-    document.getElementById("rastcalcoverlay2").innerHTML = selectionList;
-}
-
-function buildReclassifyDropDown(){
-    let newOption;
-    let selectionList = '<option value="">Select Layer</option>';
-    for(let i in rasterLayers){
-        if(rasterLayers.hasOwnProperty(i)){
-            newOption = '<option value="'+rasterLayers[i]['id']+'">'+rasterLayers[i]['title']+'</option>';
-            selectionList += newOption;
-        }
-    }
-    if(overlayLayers.length > 0){
-        for(let l in overlayLayers){
-            if(overlayLayers.hasOwnProperty(l)){
-                newOption = '<option value="'+overlayLayers[l]['id']+'">'+overlayLayers[l]['id']+'</option>';
-                selectionList += newOption;
-            }
-        }
-    }
-    document.getElementById("reclassifysourcelayer").innerHTML = selectionList;
-}
-
-function buildSOLRQString(){
-    newsolrqString = 'q=';
-    let tempqStr = '';
-    let tempfqStr = '';
-    if(solrqArr.length > 0){
-        for(let i in solrqArr){
-            if(solrqArr.hasOwnProperty(i) && solrqArr[i] !== '()'){
-                tempqStr += ' AND '+solrqArr[i];
-            }
-        }
-        if(tempqStr){
-            tempqStr = tempqStr.substr(5,tempqStr.length);
-            tempqStr += ' AND (decimalLatitude:[* TO *] AND decimalLongitude:[* TO *] AND sciname:[* TO *])';
-            document.getElementById("dh-q").value = tempqStr;
-            newsolrqString += tempqStr;
-        }
-    }
-    else{
-        document.getElementById("dh-q").value = '(sciname:[* TO *])';
-        newsolrqString += '(sciname:[* TO *])';
-    }
-
-    if(solrgeoqArr.length > 0){
-        for(let i in solrgeoqArr){
-            if(solrgeoqArr.hasOwnProperty(i)){
-                tempfqStr += ' OR geo:'+solrgeoqArr[i];
-            }
-        }
-        tempfqStr = tempfqStr.substr(4,tempfqStr.length);
-        document.getElementById("dh-fq").value = tempfqStr;
-        newsolrqString += '&fq='+tempfqStr;
-    }
 }
 
 function buildTaxaKey(){
@@ -456,22 +440,40 @@ function buildTaxaKeyPiece(key,family,tidinterpreted,sciname){
     taxaKeyArr[family][key] = keyHTML;
 }
 
-function buildVectorizeDropDown(){
-    let selectionList = '<option value="">Select Layer</option>';
-    vectorizeLayers.sort();
-    for(let l in vectorizeLayers){
-        if(vectorizeLayers.hasOwnProperty(l)){
-            const newOption = '<option value="' + vectorizeLayers[l] + '">' + vectorizeLayers[l] + '</option>';
-            selectionList += newOption;
-        }
-    }
-    document.getElementById("vectorizesourcelayer").innerHTML = selectionList;
-}
-
 function changeBaseMap(){
     let blsource;
     const selection = document.getElementById('base-map').value;
     const baseLayer = map.getLayers().getArray()[0];
+    if(selection === 'googleroadmap'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlealteredroadmap'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googleterrain'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlehybrid'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
+    if(selection === 'googlesatellite'){
+        blsource = new ol.source.XYZ({
+            url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+            crossOrigin: 'anonymous'
+        });
+    }
     if(selection === 'worldtopo'){
         blsource = new ol.source.XYZ({
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
@@ -557,12 +559,54 @@ function changeCollColor(color,key){
 function changeDraw() {
     const value = typeSelect.value;
     if (value !== 'None') {
-        draw = new ol.interaction.Draw({
-            source: selectsource,
-            type: (value)
-        });
+        if (value === 'Box') {
+            draw = new ol.interaction.Draw({
+                source: selectsource,
+                type: 'Circle',
+                geometryFunction: ol.interaction.Draw.createBox()
+            });
+        }
+        else {
+            draw = new ol.interaction.Draw({
+                source: selectsource,
+                type: value
+            });
+        }
 
         draw.on('drawend', function(evt){
+            if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('point')){
+                const featureClone = evt.feature.clone();
+                const geoType = featureClone.getGeometry().getType();
+                const geoJSONFormat = new ol.format.GeoJSON();
+                if(geoType === 'Point'){
+                    selectsource.clear();
+                    selectedFeatures.clear();
+                    uncertaintycirclesource.clear();
+                    const selectiongeometry = featureClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                    let pointCoords = JSON.parse(geojsonStr).coordinates;
+                    const pointObj = {
+                        decimalLatitude: pointCoords[1],
+                        decimalLongitude: pointCoords[0]
+                    };
+                    geoPointArr.push(pointObj);
+                    selectedFeatures.push(evt.feature);
+                    processInputSelections();
+                    if((INPUTTOOLSARR.includes('uncertainty') || INPUTTOOLSARR.includes('radius')) && document.getElementById("inputpointuncertainty")){
+                        if(document.getElementById("inputpointuncertainty").value && !isNaN(document.getElementById("inputpointuncertainty").value && document.getElementById("inputpointuncertainty").value > 0)){
+                            const pointRadius = {};
+                            pointRadius.pointlat = pointCoords[1];
+                            pointRadius.pointlong = pointCoords[0];
+                            pointRadius.radius = document.getElementById("inputpointuncertainty").value;
+                            createUncertaintyCircleFromPointRadius(pointRadius);
+                        }
+                    }
+                }
+            }
+            else{
+                evt.feature.set('geoType',typeSelect.value);
+            }
             typeSelect.value = 'None';
             map.removeInteraction(draw);
             if(!shapeActive){
@@ -583,7 +627,6 @@ function changeDraw() {
             }
             draw = '';
         });
-
         map.addInteraction(draw);
     }
     else{
@@ -649,11 +692,11 @@ function changeRecordPage(page){
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "rpc/changemaprecordpage.php";
+    const jsonStarr = JSON.stringify(searchTermsArr);
     if(SOLRMODE){
-        params = solrqString+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
+        params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     else{
-        const jsonStarr = JSON.stringify(searchTermsArr);
         params = 'starr='+jsonStarr+'&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     //console.log(url+'?'+params);
@@ -836,61 +879,6 @@ function checkPointToolSource(selector){
     }
 }
 
-function checkReclassifyForm(){
-    const rasterLayer = document.getElementById("reclassifysourcelayer").value;
-    const outputName = document.getElementById("reclassifyOutputName").value;
-    const rasterMinVal = document.getElementById("reclassifyRasterMin").value;
-    const rasterMaxVal = document.getElementById("reclassifyRasterMax").value;
-    const colorVal = document.getElementById("reclassifyColorVal").value;
-    if(rasterLayer === "") alert("Please select a raster layer to reclassify.");
-    else if(outputName === "") alert("Please enter a name for the output overlay.");
-    else if(layersArr[outputName]) alert("The name for the output you entered is already being used by another layer. Please enter a different name.");
-    else if(colorVal === "FFFFFF") alert("Please select a color other than white for this overlay.");
-    else if(rasterMinVal === "" || rasterMaxVal === "") alert("Please enter a min and max value for the raster to reclassify.");
-    else if(isNaN(rasterMinVal) || isNaN(rasterMaxVal)) alert("Please enter only numbers for the min and max values.");
-    else{
-        $("#reclassifytool").popup("hide");
-        reclassifyRaster();
-    }
-}
-
-function checkReclassifyToolOpen(){
-    if(rasterLayers.length > 0){
-        document.getElementById("reclassifyOutputName").value = "";
-        buildReclassifyDropDown();
-        document.getElementById("reclassifysourcelayer").selectedIndex = 0;
-        setReclassifyTable();
-        $("#maptools").popup("hide");
-        $("#reclassifytool").popup("show");
-    }
-    else{
-        alert('There are no raster layers available.')
-    }
-}
-
-function checkVectorizeForm(){
-    const rasterLayer = document.getElementById("vectorizesourcelayer").value;
-    if(rasterLayer === "") {
-        alert("Please select an overlay layer to vectorize.");
-    }
-    else{
-        $("#vectorizeoverlaytool").popup("hide");
-        vectorizeRaster();
-    }
-}
-
-function checkVectorizeOverlayToolOpen(){
-    if(checkObjectNotEmpty(vectorizeLayers) && selectInteraction.getFeatures().getArray().length === 1){
-        buildVectorizeDropDown();
-        document.getElementById("vectorizesourcelayer").selectedIndex = 0;
-        $("#maptools").popup("hide");
-        $("#vectorizeoverlaytool").popup("show");
-    }
-    else{
-        alert('To use this tool, you must first use the Reclassify Tool to create at least one reclassified raster layer and have one, and only one, polygon selected from your Shapes layer to define the vectorize boundaries.')
-    }
-}
-
 function cleanSelectionsLayer(){
     const selLayerFeatures = layersArr['select'].getSource().getFeatures();
     const currentlySelected = selectInteraction.getFeatures().getArray();
@@ -899,14 +887,6 @@ function cleanSelectionsLayer(){
             layersArr['select'].getSource().removeFeature(selLayerFeatures[i]);
         }
     }
-}
-
-function clearReclassifyForm() {
-    document.getElementById("reclassifysourcelayer").selectedIndex = 0;
-    document.getElementById("reclassifyOutputName").value = "";
-    const tableDiv = document.getElementById("reclassifyTableDiv");
-    tableDiv.removeChild(tableDiv.childNodes[0]);
-    setReclassifyTable();
 }
 
 function clearSelections(){
@@ -938,6 +918,76 @@ function clearTaxaSymbology(){
 
 function closeOccidInfoBox(){
     finderpopupcloser.onclick();
+}
+
+function convertMysqlWKT(wkt) {
+    let long;
+    let lat;
+    let wktStr = '';
+    let adjustedStr = '';
+    let coordStr = '';
+    if(wkt.substring(0,7) === 'POLYGON'){
+        adjustedStr = wkt.substring(8,wkt.length-1);
+        const adjustedStrArr = adjustedStr.split('),');
+        for(let ps in adjustedStrArr){
+            if(adjustedStrArr.hasOwnProperty(ps)){
+                coordStr += '(';
+                let subStr = adjustedStrArr[ps].substring(1,adjustedStrArr[ps].length);
+                if(adjustedStrArr[ps].substring(adjustedStrArr[ps].length - 1,adjustedStrArr[ps].length) === ')'){
+                    subStr = subStr.substring(0,subStr.length - 1);
+                }
+                const subStrArr = subStr.split(',');
+                for(let ss in subStrArr){
+                    if(subStrArr.hasOwnProperty(ss)){
+                        const geocoords = subStrArr[ss].split(' ');
+                        lat = geocoords[0];
+                        long = geocoords[1];
+                        coordStr += long+' '+lat+',';
+                    }
+                }
+                coordStr = coordStr.substring(0,coordStr.length-1);
+                coordStr += '),';
+            }
+        }
+        coordStr = coordStr.substring(0,coordStr.length-1);
+        wktStr = 'POLYGON('+coordStr+')';
+    }
+    else if(wkt.substring(0,12) === 'MULTIPOLYGON'){
+        adjustedStr = wkt.substring(13,wkt.length-1);
+        const adjustedStrArr = adjustedStr.split(')),');
+        for(let ps in adjustedStrArr){
+            if(adjustedStrArr.hasOwnProperty(ps)){
+                coordStr += '(';
+                const subStr = adjustedStrArr[ps].substring(2,adjustedStrArr[ps].length);
+                const subStrArr = subStr.split('),');
+                for(let ss in subStrArr){
+                    if(subStrArr.hasOwnProperty(ss)){
+                        coordStr += '(';
+                        if(subStrArr[ss].substring(subStrArr[ss].length - 2,subStrArr[ss].length) === '))'){
+                            subStrArr[ss] = subStrArr[ss].substring(0,subStrArr[ss].length - 2);
+                        }
+                        const subSubStrArr = subStrArr[ss].split(',');
+                        for(let sss in subSubStrArr){
+                            if(subSubStrArr.hasOwnProperty(sss)){
+                                const geocoords = subSubStrArr[sss].split(' ');
+                                lat = geocoords[0];
+                                long = geocoords[1];
+                                coordStr += long+' '+lat+',';
+                            }
+                        }
+                        coordStr = coordStr.substring(0,coordStr.length-1);
+                        coordStr += '),';
+                    }
+                }
+                coordStr = coordStr.substring(0,coordStr.length-1);
+                coordStr += '),';
+            }
+        }
+        coordStr = coordStr.substring(0,coordStr.length-1);
+        wktStr = 'MULTIPOLYGON('+coordStr+')';
+    }
+
+    return wktStr;
 }
 
 function coordFormat(){
@@ -1003,6 +1053,38 @@ function createBuffers(){
     }
     else{
         alert('You must have at least one shape selected in your Shapes layer to create a buffer polygon.');
+    }
+}
+
+function createCirclesFromCircleArr(circleArr, selected){
+    for(let i in circleArr){
+        if(circleArr.hasOwnProperty(i)){
+            const centerCoords = ol.proj.fromLonLat([circleArr[i].pointlong, circleArr[i].pointlat]);
+            const circle = new ol.geom.Circle(centerCoords);
+            circle.setRadius(Number(circleArr[i].radius));
+            const circleFeature = new ol.Feature(circle);
+            selectsource.addFeature(circleFeature);
+            document.getElementById("selectlayerselect").value = 'select';
+            setActiveLayer();
+            if(selected){
+                selectedFeatures.push(circleFeature);
+            }
+        }
+    }
+    document.getElementById("selectlayerselect").value = 'select';
+    setActiveLayer();
+}
+
+function createCircleFromPointRadius(prad, selected){
+    const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
+    const circle = new ol.geom.Circle(centerCoords);
+    circle.setRadius(Number(prad.radius));
+    const circleFeature = new ol.Feature(circle);
+    selectsource.addFeature(circleFeature);
+    document.getElementById("selectlayerselect").value = 'select';
+    setActiveLayer();
+    if(selected){
+        selectedFeatures.push(circleFeature);
     }
 }
 
@@ -1220,6 +1302,28 @@ function createPolyDifference(){
     }
 }
 
+function createPolygonFromBoundingBox(bbox, selected){
+    const coordArr = [];
+    const ringArr = [];
+    const geoJSONFormat = new ol.format.GeoJSON();
+    coordArr.push([bbox.leftlong, bbox.bottomlat]);
+    coordArr.push([bbox.rightlong, bbox.bottomlat]);
+    coordArr.push([bbox.rightlong, bbox.upperlat]);
+    coordArr.push([bbox.leftlong, bbox.upperlat]);
+    coordArr.push([bbox.leftlong, bbox.bottomlat]);
+    ringArr.push(coordArr);
+    const newTurfPolygon = turf.polygon(ringArr);
+    const newpoly = geoJSONFormat.readFeature(newTurfPolygon);
+    newpoly.getGeometry().transform(wgs84Projection,mapProjection);
+    newpoly.set('geoType','Box');
+    selectsource.addFeature(newpoly);
+    document.getElementById("selectlayerselect").value = 'select';
+    setActiveLayer();
+    if(selected){
+        selectedFeatures.push(newpoly);
+    }
+}
+
 function createPolyIntersect(){
     let shapeCount = 0;
     selectInteraction.getFeatures().forEach(function(feature){
@@ -1315,6 +1419,29 @@ function createPolyIntersect(){
     }
 }
 
+function createPolysFromPolyArr(polyArr, selected){
+    const wktFormat = new ol.format.WKT();
+    for(let i in polyArr){
+        if(polyArr.hasOwnProperty(i)){
+            let wktStr = '';
+            if(SOLRMODE){
+                wktStr = polyArr[i];
+            }
+            else{
+                wktStr = convertMysqlWKT(polyArr[i]);
+            }
+            const newpoly = wktFormat.readFeature(wktStr, mapProjection);
+            newpoly.getGeometry().transform(wgs84Projection,mapProjection);
+            selectsource.addFeature(newpoly);
+            if(selected){
+                selectedFeatures.push(newpoly);
+            }
+        }
+    }
+    document.getElementById("selectlayerselect").value = 'select';
+    setActiveLayer();
+}
+
 function createPolyUnion(){
     let shapeCount = 0;
     selectInteraction.getFeatures().forEach(function(feature){
@@ -1374,6 +1501,60 @@ function createPolyUnion(){
     }
 }
 
+function createShapesFromSearchTermsArr(){
+    if(searchTermsArr.hasOwnProperty('upperlat')){
+        const boundingBox = {};
+        boundingBox.upperlat = searchTermsArr['upperlat'];
+        boundingBox.bottomlat = searchTermsArr['bottomlat'];
+        boundingBox.leftlong = searchTermsArr['leftlong'];
+        boundingBox.rightlong = searchTermsArr['rightlong'];
+        if(boundingBox.upperlat && boundingBox.bottomlat && boundingBox.leftlong && boundingBox.rightlong){
+            createPolygonFromBoundingBox(boundingBox, true);
+        }
+    }
+    if(searchTermsArr.hasOwnProperty('pointlat')){
+        const pointRadius = {};
+        pointRadius.pointlat = searchTermsArr['pointlat'];
+        pointRadius.pointlong = searchTermsArr['pointlong'];
+        pointRadius.radius = searchTermsArr['radius'];
+        if(pointRadius.pointlat && pointRadius.pointlong && pointRadius.radius){
+            createCircleFromPointRadius(pointRadius, true);
+        }
+    }
+    if(searchTermsArr.hasOwnProperty('circleArr')){
+        let circleArr;
+        if(JSON.parse(searchTermsArr['circleArr'])){
+            circleArr = JSON.parse(searchTermsArr['circleArr']);
+        }
+        else{
+            circleArr = searchTermsArr['circleArr'];
+        }
+        if(Array.isArray(circleArr)){
+            createCirclesFromCircleArr(circleArr, true);
+        }
+    }
+    if(searchTermsArr.hasOwnProperty('polyArr')){
+        let polyArr;
+        if(JSON.parse(searchTermsArr['polyArr'])){
+            polyArr = JSON.parse(searchTermsArr['polyArr']);
+        }
+        else{
+            polyArr = searchTermsArr['polyArr'];
+        }
+        if(Array.isArray(polyArr)){
+            createPolysFromPolyArr(polyArr, true);
+        }
+    }
+}
+
+function createUncertaintyCircleFromPointRadius(prad){
+    const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
+    const circle = new ol.geom.Circle(centerCoords);
+    circle.setRadius(Number(prad.radius));
+    const circleFeature = new ol.Feature(circle);
+    uncertaintycirclesource.addFeature(circleFeature);
+}
+
 function deleteSelections(){
     selectInteraction.getFeatures().forEach(function(feature){
         layersArr['select'].getSource().removeFeature(feature);
@@ -1407,10 +1588,10 @@ function downloadShapesLayer(){
         'featureProjection': mapProjection
     });
     if(dlType === 'kml'){
-        exportStr = exportStr.replace(/<kml xmlns="http:\/\/www.opengis.net\/kml\/2.2" xmlns:gx="http:\/\/www.google.com\/kml\/ext\/2.2" xmlns:xsi="http:\/\/www.w3.org\/2001\/XMLSchema-instance" xsi:schemaLocation="http:\/\/www.opengis.net\/kml\/2.2 https:\/\/developers.google.com\/kml\/schema\/kml22gx.xsd">/g,'<kml xmlns="http://www.opengis.net/kml/2.2"><Document id="root_doc"><Folder><name>shapes_export</name>');
-        exportStr = exportStr.replace(/<Placemark>/g,'<Placemark><Style><LineStyle><color>ff000000</color><width>1</width></LineStyle><PolyStyle><color>4DAAAAAA</color><fill>1</fill></PolyStyle></Style>');
-        exportStr = exportStr.replace(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
-        exportStr = exportStr.replace(/<\/kml>/g,'</Folder></Document></kml>');
+        exportStr = exportStr.replaceAll(/<kml xmlns="http:\/\/www.opengis.net\/kml\/2.2" xmlns:gx="http:\/\/www.google.com\/kml\/ext\/2.2" xmlns:xsi="http:\/\/www.w3.org\/2001\/XMLSchema-instance" xsi:schemaLocation="http:\/\/www.opengis.net\/kml\/2.2 https:\/\/developers.google.com\/kml\/schema\/kml22gx.xsd">/g,'<kml xmlns="http://www.opengis.net/kml/2.2"><Document id="root_doc"><Folder><name>shapes_export</name>');
+        exportStr = exportStr.replaceAll(/<Placemark>/g,'<Placemark><Style><LineStyle><color>ff000000</color><width>1</width></LineStyle><PolyStyle><color>4DAAAAAA</color><fill>1</fill></PolyStyle></Style>');
+        exportStr = exportStr.replaceAll(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
+        exportStr = exportStr.replaceAll(/<\/kml>/g,'</Folder></Document></kml>');
     }
     const filename = 'shapes_' + getDateTimeString() + '.' + dlType;
     const blob = new Blob([exportStr], {type: filetype});
@@ -1497,16 +1678,6 @@ function exportTaxaCSV(){
     }
 }
 
-function extensionSelected(obj){
-    if(obj.checked === true){
-        document.getElementById('csvzip').checked = true;
-    }
-}
-
-function extractLast(term){
-    return split( term ).pop();
-}
-
 function findOccCluster(occid){
     const clusters = layersArr['pointv'].getSource().getFeatures();
     for(let c in clusters){
@@ -1565,70 +1736,6 @@ function findOccPointInCluster(cluster,occid){
             return cFeatures[f];
         }
     }
-}
-
-function finishGetGeographyParams(){
-    if(!geoCallOut){
-        if(SOLRMODE) {
-            if(solrgeoqArr.length > 0){
-                buildSOLRQString();
-            }
-        }
-        else{
-            if(geoPolyArr.length > 0){
-                searchTermsArr['polyArr'] = geoPolyArr;
-            }
-            if(geoCircleArr.length > 0){
-                searchTermsArr['circleArr'] = geoCircleArr;
-            }
-            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
-        }
-    }
-}
-
-function formatCheckDate(dateStr){
-    if(dateStr !== ""){
-        const dateArr = parseDate(dateStr);
-        if(dateArr['y'] === 0){
-            alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-            return false;
-        }
-        else{
-            if(dateArr['m'] > 12){
-                alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-                return false;
-            }
-
-            if(dateArr['d'] > 28){
-                if(dateArr['d'] > 31
-                    || (dateArr['d'] === 30 && dateArr['m'] === 2)
-                    || (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
-                    alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-                    return false;
-                }
-            }
-
-            let mStr = dateArr['m'];
-            if(mStr.length === 1){
-                mStr = "0" + mStr;
-            }
-            let dStr = dateArr['d'];
-            if(dStr.length === 1){
-                dStr = "0" + dStr;
-            }
-            return dateArr['y'] + "-" + mStr + "-" + dStr;
-        }
-    }
-}
-
-function generateRandColor(){
-    let hexColor = '';
-    const x = Math.round(0xffffff * Math.random()).toString(16);
-    const y = (6 - x.length);
-    const z = '000000';
-    const z1 = z.substring(0, y);
-    hexColor = z1 + x;
-    return hexColor;
 }
 
 function generateReclassifySLD(valueArr,layername){
@@ -1729,66 +1836,16 @@ function generateWPSPolyExtractXML(valueArr,layername,geojsonstr){
     return xmlContent;
 }
 
-function getCollectionParams(){
-    collectionParams = false;
-    searchTermsArr['db'] = '';
-    const dbElements = document.getElementsByName("db[]");
-    let c = false;
-    let all = true;
-    let collid = '';
-    const collidArr = [];
-    let solrqfrag = '';
-    for(let i = 0; i < dbElements.length; i++){
-        const dbElement = dbElements[i];
-        if(dbElement.checked && !isNaN(dbElement.value)){
-            if(SOLRMODE) {
-                if(c === true) {
-                    collid = collid+" ";
-                }
-                collid = collid + dbElement.value;
-            }
-            else{
-                collidArr.push(dbElement.value);
-            }
-            c = true;
-            collectionParams = true;
-        }
-        if(!dbElement.checked && !isNaN(dbElement.value)){
-            all = false;
-        }
-    }
-    if(all === false && c === true){
-        if(SOLRMODE) {
-            if(collid.substr(collid.length-1,collid.length)===','){
-                collid = collid.substr(0,collid.length-1);
-            }
-            solrqfrag = '(collid:('+collid+'))';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            searchTermsArr['db'] = collidArr.join(",")+";";
-            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
-        }
-        return true;
-    }
-    else if(all === false && c === false){
-        alert("Please choose at least one collection");
-        return false;
-    }
-    else{
-        return true;
-    }
-}
-
-function getDateTimeString(){
-    const now = new Date();
-    let dateTimeString = now.getFullYear().toString();
-    dateTimeString += (((now.getMonth()+1) < 10)?'0':'')+(now.getMonth()+1).toString();
-    dateTimeString += ((now.getDate() < 10)?'0':'')+now.getDate().toString();
-    dateTimeString += ((now.getHours() < 10)?'0':'')+now.getHours().toString();
-    dateTimeString += ((now.getMinutes() < 10)?'0':'')+now.getMinutes().toString();
-    dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
-    return dateTimeString;
+function getArrayBuffer(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = () => {
+            const arrayBuffer = reader.result;
+            const bytes = new Uint8Array(arrayBuffer);
+            resolve(bytes);
+        };
+    });
 }
 
 function getDragDropStyle(feature, resolution) {
@@ -1802,9 +1859,6 @@ function getDragDropStyle(feature, resolution) {
 }
 
 function getGeographyParams(){
-    geogParams = false;
-    searchTermsArr['polyArr'] = [];
-    searchTermsArr['circleArr'] = [];
     geoPolyArr = [];
     geoCircleArr = [];
     let totalArea = 0;
@@ -1814,8 +1868,6 @@ function getGeographyParams(){
         let area_km;
         let area;
         let areaFeat;
-        let solrqfrag = '';
-        let geoSolrqString = '';
         if(feature){
             const selectedClone = feature.clone();
             const geoType = selectedClone.getGeometry().getType();
@@ -1862,54 +1914,32 @@ function getGeographyParams(){
                 const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                 const simplegeometry = polySimple.getGeometry();
                 const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                const wmswktString = wktFormat.writeGeometry(fixedgeometry);
-                const geocoords = fixedgeometry.getCoordinates();
-                const mysqlWktString = writeMySQLWktString(geoType, geocoords);
                 if(SOLRMODE) {
-                    geoSolrqString = '"Intersects('+wmswktString+')"';
-                    solrqfrag = geoSolrqString;
-                    solrgeoqArr.push(solrqfrag);
+                    const wmswktString = wktFormat.writeGeometry(fixedgeometry);
+                    geoPolyArr.push(wmswktString);
                 }
                 else{
+                    const geocoords = fixedgeometry.getCoordinates();
+                    const mysqlWktString = writeMySQLWktString(geoType, geocoords);
                     geoPolyArr.push(mysqlWktString);
                 }
-                geogParams = true;
             }
             if(geoType === 'Circle'){
                 const center = selectedClone.getGeometry().getCenter();
                 const radius = selectedClone.getGeometry().getRadius();
                 const edgeCoordinate = [center[0] + radius, center[1]];
-                let groundRadius = ol.sphere.getDistance(
-                    ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326'),
-                    ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326')
-                );
-                groundRadius = groundRadius/1000;
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+                const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
                 const circleArea = Math.PI * groundRadius * groundRadius;
                 totalArea = totalArea + circleArea;
-                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
-                if(SOLRMODE) {
-                    geoSolrqString = '{!geofilt sfield=geo pt='+fixedcenter[1]+','+fixedcenter[0]+' d='+groundRadius+'}';
-                    solrqfrag = geoSolrqString;
-                    solrgeoqArr.push(solrqfrag);
-                    buildSOLRQString();
-                    geoCallOut = true;
-                    solroccqString = 'q=*:*&fq='+geoSolrqString;
-                    getSOLROccArr(function(res){
-                        geoCallOut = false;
-                        if(res){
-                            finishGetGeographyParams();
-                        }
-                    });
-                }
-                else{
-                    const circleObj = {
-                        pointlat: fixedcenter[0],
-                        pointlong: fixedcenter[1],
-                        radius: groundRadius
-                    };
-                    geoCircleArr.push(circleObj);
-                }
-                geogParams = true;
+                const circleObj = {
+                    pointlat: fixedcenter[1],
+                    pointlong: fixedcenter[0],
+                    radius: radius,
+                    groundradius: groundRadius
+                };
+                geoCircleArr.push(circleObj);
             }
         }
     });
@@ -1919,15 +1949,18 @@ function getGeographyParams(){
     else{
         document.getElementById("polyarea").value = totalArea.toFixed(2);
     }
-    finishGetGeographyParams();
-}
-
-function getISOStrFromDateObj(dObj){
-    const dYear = dObj.getFullYear();
-    const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
-    const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
-
-    return dYear+'-'+dMonth+'-'+dDay;
+    if(geoPolyArr.length > 0){
+        setSearchTermsArrKeyValue('polyArr',JSON.stringify(geoPolyArr));
+    }
+    else{
+        clearSearchTermsArrKey('polyArr');
+    }
+    if(geoCircleArr.length > 0){
+        setSearchTermsArrKeyValue('circleArr',JSON.stringify(geoCircleArr));
+    }
+    else{
+        clearSearchTermsArrKey('circleArr');
+    }
 }
 
 function getPointInfoArr(cluster){
@@ -1960,49 +1993,17 @@ function getPointStyle(feature) {
     return style;
 }
 
-function getSOLROccArr(callback){
-    getQueryRecCnt(true,function(res) {
-        if(queryRecCnt > 0){
-            const occArr = [];
-            const http = new XMLHttpRequest();
-            const url = "rpc/SOLRConnector.php";
-            const params = solroccqString + '&rows=' + queryRecCnt + '&start=0&fl=occid&wt=json';
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    const resArr = JSON.parse(http.responseText);
-                    const recArr = resArr['response']['docs'];
-                    for(let i in recArr){
-                        if(recArr.hasOwnProperty(i)){
-                            occArr.push(recArr[i]['occid']);
-                        }
-                    }
-                    callback(occArr);
-                }
-            };
-            http.send(params);
-        }
-    });
-}
-
-function getQueryRecCnt(occ,callback){
+function getQueryRecCnt(callback){
     let params;
     let url;
     let http;
     queryRecCnt = 0;
+    const jsonStarr = JSON.stringify(searchTermsArr);
     if(SOLRMODE){
         let qStr = '';
-        if(occ){
-            qStr = solroccqString;
-        }
-        else{
-            qStr = solrqString;
-        }
         http = new XMLHttpRequest();
         url = "rpc/SOLRConnector.php";
-        params = qStr+'&rows=0&start=0&wt=json';
+        params = 'starr=' + jsonStarr + '&rows=0&start=0&wt=json';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -2017,7 +2018,6 @@ function getQueryRecCnt(occ,callback){
         http.send(params);
     }
     else{
-        const jsonStarr = JSON.stringify(searchTermsArr);
         http = new XMLHttpRequest();
         url = "rpc/MYSQLConnector.php";
         params = 'starr=' + jsonStarr + '&rows=0&start=0&type=reccnt';
@@ -2033,337 +2033,6 @@ function getQueryRecCnt(occ,callback){
         };
         http.send(params);
     }
-}
-
-function getTextParams(){
-    textParams = false;
-    let solrqfrag = '';
-    let countryval = document.getElementById("country").value.trim();
-    let stateval = document.getElementById("state").value.trim();
-    let countyval = document.getElementById("county").value.trim();
-    let localityval = document.getElementById("locality").value.trim();
-    let collectorval = document.getElementById("collector").value.trim();
-    let collnumval = document.getElementById("collnum").value.trim();
-    let colldate1 = document.getElementById("eventdate1").value.trim();
-    let colldate2 = document.getElementById("eventdate2").value.trim();
-    let occurrenceremarksval = document.getElementById("occurrenceRemarks").value.trim();
-    let catnumval = document.getElementById("catnum").value.trim();
-    let othercatnumval = document.getElementById("othercatnum").value.trim();
-    const typestatus = document.getElementById("typestatus").checked;
-    const hasimages = document.getElementById("hasimages").checked;
-    const hasgenetic = document.getElementById("hasgenetic").checked;
-    searchTermsArr['country'] = '';
-    searchTermsArr['state'] = '';
-    searchTermsArr['county'] = '';
-    searchTermsArr['local'] = '';
-    searchTermsArr['collector'] = '';
-    searchTermsArr['collnum'] = '';
-    searchTermsArr['eventdate1'] = '';
-    searchTermsArr['eventdate2'] = '';
-    searchTermsArr['occurrenceRemarks'] = '';
-    searchTermsArr['catnum'] = '';
-    searchTermsArr['othercatnum'] = '';
-    searchTermsArr['typestatus'] = '';
-    searchTermsArr['hasimages'] = '';
-    searchTermsArr['hasgenetic'] = '';
-
-    if(countryval){
-        if(SOLRMODE) {
-            if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
-                if(countryval.indexOf('USA') === -1){
-                    countryval += ',USA';
-                }
-                if(countryval.indexOf('United States') === -1){
-                    countryval += ',United States';
-                }
-                if(countryval.indexOf('U.S.A.') === -1){
-                    countryval += ',U.S.A.';
-                }
-                if(countryval.indexOf('United States of America') === -1){
-                    countryval += ',United States of America';
-                }
-            }
-            const countryvals = countryval.split(',');
-            let countrySolrqString = '';
-            for(let i = 0; i < countryvals.length; i++){
-                if(countrySolrqString) countrySolrqString += " OR ";
-                countrySolrqString += '(country:"'+countryvals[i]+'")';
-            }
-            solrqfrag = '('+countrySolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else {
-            countryval = countryval.replace(",", ";");
-            if(countryval.indexOf('USA') !== -1 || countryval.indexOf('United States') !== -1 || countryval.indexOf('U.S.A.') !== -1 || countryval.indexOf('United States of America') !== -1){
-                if(countryval.indexOf('USA') === -1){
-                    countryval += ';USA';
-                }
-                if(countryval.indexOf('United States') === -1){
-                    countryval += ';United States';
-                }
-                if(countryval.indexOf('U.S.A.') === -1){
-                    countryval += ';U.S.A.';
-                }
-                if(countryval.indexOf('United States of America') === -1){
-                    countryval += ';United States of America';
-                }
-            }
-            searchTermsArr['country'] = countryval;
-        }
-        textParams = true;
-    }
-    if(stateval){
-        if(SOLRMODE) {
-            const statevals = stateval.split(',');
-            let stateSolrqString = '';
-            for(let i = 0; i < statevals.length; i++){
-                if(stateSolrqString) stateSolrqString += " OR ";
-                stateSolrqString += '(StateProvince:"'+statevals[i]+'")';
-            }
-            solrqfrag = '('+stateSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            stateval = stateval.replace(",", ";");
-            searchTermsArr['state'] = stateval;
-        }
-        textParams = true;
-    }
-    if(countyval){
-        if(SOLRMODE) {
-            const countyvals = countyval.split(',');
-            let countySolrqString = '';
-            for(let i = 0; i < countyvals.length; i++){
-                if(countySolrqString) countySolrqString += " OR ";
-                countySolrqString += "(county:"+countyvals[i].replace(" ","\\ ")+"*)";
-            }
-            solrqfrag = '('+countySolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            countyval = countyval.replace(" Co.", "");
-            countyval = countyval.replace(" County", "");
-            countyval = countyval.replace(",", ";");
-            searchTermsArr['county'] = countyval;
-        }
-        textParams = true;
-    }
-    if(localityval){
-        if(SOLRMODE) {
-            const localityvals = localityval.split(',');
-            let localitySolrqString = '';
-            for(let i = 0; i < localityvals.length; i++){
-                if(localitySolrqString) localitySolrqString += " OR ";
-                localitySolrqString += "(";
-                if(localityvals[i].indexOf(" ") !== -1){
-                    let templocalitySolrqString = '';
-                    const vals = localityvals[i].split(" ");
-                    for(i = 0; i < vals.length; i++){
-                        if(templocalitySolrqString) templocalitySolrqString += " AND ";
-                        templocalitySolrqString += '((municipality:'+vals[i]+'*) OR (locality:*'+vals[i]+'*))';
-                    }
-                    localitySolrqString += templocalitySolrqString;
-                }
-                else{
-                    localitySolrqString += '(locality:*'+localityvals[i]+'*)';
-                }
-                localitySolrqString += ")";
-            }
-            solrqfrag = '('+localitySolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            localityval = localityval.replace(",", ";");
-            searchTermsArr['local'] = localityval;
-        }
-        textParams = true;
-    }
-    if(collectorval){
-        if(SOLRMODE) {
-            const collectorvals = collectorval.split(',');
-            let collectorSolrqString = '';
-            if(collectorvals.length === 1){
-                collectorSolrqString = '(recordedBy:*'+collectorvals[0].replace(" ","\\ ")+'*)';
-            }
-            else if(collectorvals.length > 1){
-                for (let i in collectorvals){
-                    collectorSolrqString += ' OR (recordedBy:*'+collectorvals[i].replace(" ","\\ ")+'*)';
-                }
-                collectorSolrqString = collectorSolrqString.substr(4,collectorSolrqString.length);
-            }
-            solrqfrag = '('+collectorSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            collectorval = collectorval.replace(",", ";");
-            searchTermsArr['collector'] = collectorval;
-        }
-        textParams = true;
-    }
-    if(collnumval){
-        if(SOLRMODE) {
-            const collnumvals = collnumval.split(',');
-            let collnumSolrqString = '';
-            for (let i in collnumvals){
-                if(collnumvals[i].indexOf(" - ") !== -1){
-                    const pos = collnumvals[i].indexOf(" - ");
-                    const t1 = collnumvals[i].substr(0, pos).trim();
-                    const t2 = collnumvals[i].substr(pos + 3, collnumvals[i].length).trim();
-                    if(!isNaN(t1) && !isNaN(t2)){
-                        collnumSolrqString += ' OR (recordNumber:['+t1+' TO '+t2+'])';
-                    }
-                    else{
-                        collnumSolrqString += " OR (recordNumber:['"+t1+"' TO '"+t2+"'])";
-                    }
-                }
-                else{
-                    collnumSolrqString += ' OR (recordNumber:"'+collnumvals[i]+'")';
-                }
-            }
-            collnumSolrqString = collnumSolrqString.substr(4,collnumSolrqString.length);
-            solrqfrag = '('+collnumSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            collnumval = collnumval.replace(",", ";");
-            searchTermsArr['collnum'] = collnumval;
-        }
-        textParams = true;
-    }
-    if(colldate1 || colldate2){
-        if(SOLRMODE) {
-            let colldateSolrqString = '';
-            if(!colldate1 && colldate2){
-                colldate1 = colldate2;
-                colldate2 = '';
-            }
-            colldate1 = formatCheckDate(colldate1);
-            if(colldate2){
-                colldate2 = formatCheckDate(colldate2);
-            }
-            if(colldate2){
-                colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate2+'T23:59:59.999Z])';
-            }
-            else{
-                if(colldate1.substr(colldate1.length-5,colldate1.length) === '00-00'){
-                    colldateSolrqString += '(coll_year:'+colldate1.substr(0,4)+')';
-                }
-                else if(colldate1.substr(colldate1.length-2,colldate1.length) === '00'){
-                    colldateSolrqString += '((coll_year:'+colldate1.substr(0,4)+') AND (coll_month:'+colldate1.substr(5,7)+'))';
-                }
-                else{
-                    colldateSolrqString += '(eventDate:['+colldate1+'T00:00:00Z TO '+colldate1+'T23:59:59.999Z])';
-                }
-            }
-            solrqfrag = '('+colldateSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            searchTermsArr['eventdate1'] = colldate1;
-            if(colldate1 && colldate2){
-                searchTermsArr['eventdate2'] = colldate2;
-            }
-        }
-        textParams = true;
-    }
-    if(occurrenceremarksval){
-        if(SOLRMODE) {
-            const occurrenceremarksvals = occurrenceremarksval.split(',');
-            let occurrenceremarksSolrqString = '';
-            for(let i = 0; i < occurrenceremarksvals.length; i++){
-                if(occurrenceremarksSolrqString) occurrenceremarksSolrqString += " OR ";
-                occurrenceremarksSolrqString += "(";
-                if(occurrenceremarksvals[i].indexOf(" ") !== -1){
-                    let tempremarksSolrqString = '';
-                    const vals = occurrenceremarksvals[i].split(" ");
-                    for(i = 0; i < vals.length; i++){
-                        if(tempremarksSolrqString) tempremarksSolrqString += " AND ";
-                        tempremarksSolrqString += '((occurrenceRemarks:*'+vals[i]+'*))';
-                    }
-                    occurrenceremarksSolrqString += tempremarksSolrqString;
-                }
-                else{
-                    occurrenceremarksSolrqString += '(occurrenceRemarks:*'+occurrenceremarksvals[i]+'*)';
-                }
-                occurrenceremarksSolrqString += ")";
-            }
-            solrqfrag = '('+occurrenceremarksSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            occurrenceremarksval = occurrenceremarksval.replace(",", ";");
-            searchTermsArr['occurrenceRemarks'] = occurrenceremarksval;
-        }
-        textParams = true;
-    }
-    if(catnumval){
-        if(SOLRMODE) {
-            const catnumvals = catnumval.split(',');
-            let catnumSolrqString = '';
-            for(let i = 0; i < catnumvals.length; i++){
-                if(catnumSolrqString) catnumSolrqString += " OR ";
-                catnumSolrqString += '(catalogNumber:"'+catnumvals[i]+'")';
-            }
-            solrqfrag = '('+catnumSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            catnumval = catnumval.replace(",", ";");
-            searchTermsArr['catnum'] = catnumval;
-        }
-        textParams = true;
-    }
-    if(othercatnumval){
-        if(SOLRMODE) {
-            const othercatnumvals = othercatnumval.split(',');
-            let othercatnumSolrqString = '';
-            for(let i = 0; i < othercatnumvals.length; i++){
-                if(othercatnumSolrqString) othercatnumSolrqString += " OR ";
-                othercatnumSolrqString += '(otherCatalogNumbers:"'+othercatnumvals[i]+'")';
-            }
-            solrqfrag = '('+othercatnumSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            othercatnumval = othercatnumval.replace(",", ";");
-            searchTermsArr['othercatnum'] = othercatnumval;
-        }
-        textParams = true;
-    }
-    if(typestatus){
-        if(SOLRMODE) {
-            const typestatusSolrqString = "(typeStatus:[* TO *])";
-            solrqfrag = '('+typestatusSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            searchTermsArr['typestatus'] = true;
-        }
-        textParams = true;
-    }
-    if(hasimages){
-        if(SOLRMODE) {
-            const hasimagesSolrqString = "(imgid:[* TO *])";
-            solrqfrag = '('+hasimagesSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            searchTermsArr['hasimages'] = true;
-        }
-        textParams = true;
-    }
-    if(hasgenetic){
-        if(SOLRMODE) {
-            const hasgeneticSolrqString = "(resourcename:[* TO *])";
-            solrqfrag = '('+hasgeneticSolrqString+')';
-            solrqArr.push(solrqfrag);
-        }
-        else{
-            searchTermsArr['hasgenetic'] = true;
-        }
-        textParams = true;
-    }
-    document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
 }
 
 function getTurfPointFeaturesetAll(){
@@ -2451,15 +2120,6 @@ function getWGS84CirclePoly(center,radius){
     return turfFeature;
 }
 
-function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1],16),
-        g: parseInt(result[2],16),
-        b: parseInt(result[3],16)
-    } : null;
-}
-
 function hideFeature(feature){
     const invisibleStyle = new ol.style.Style({
         image: new ol.style.Circle({
@@ -2472,60 +2132,19 @@ function hideFeature(feature){
     feature.setStyle(invisibleStyle);
 }
 
-function hideWorking(){
-    $('#loadingOverlay').popup('hide');
-}
-
-function imagePostFunction(image, src) {
-    const img = image.getImage();
-    if(typeof window.btoa === 'function'){
-        const xhr = new XMLHttpRequest();
-        const dataEntries = src.split("&");
-        let url;
-        let params = "";
-        for (let i = 0 ; i< dataEntries.length ; i++){
-            if (i===0){
-                url = dataEntries[i];
-            }
-            else{
-                params = params + "&"+dataEntries[i];
-            }
-        }
-        xhr.open('POST', url, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function(e) {
-            if (this.status === 200) {
-                const uInt8Array = new Uint8Array(this.response);
-                let i = uInt8Array.length;
-                const binaryString = new Array(i);
-                while (i--) {
-                    binaryString[i] = String.fromCharCode(uInt8Array[i]);
-                }
-                const data = binaryString.join('');
-                const type = xhr.getResponseHeader('content-type');
-                if (type.indexOf('image') === 0) {
-                    img.src = 'data:' + type + ';base64,' + window.btoa(data);
-                }
-            }
-        };
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send(params);
-    }
-    else {
-        img.src = src;
-    }
-}
-
 function lazyLoadPoints(index,callback){
     let params;
     let url;
     let startindex = 0;
     loadingComplete = true;
-    if(index > 0) startindex = index*lazyLoadCnt;
+    if(index > 0) {
+        startindex = index * lazyLoadCnt;
+    }
     const http = new XMLHttpRequest();
+    const jsonStarr = JSON.stringify(searchTermsArr);
     if(SOLRMODE){
         url = "rpc/SOLRConnector.php";
-        params = solrqString+'&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
+        params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
         //console.log(url+'?'+params);
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -2539,7 +2158,6 @@ function lazyLoadPoints(index,callback){
         http.send(params);
     }
     else{
-        const jsonStarr = JSON.stringify(searchTermsArr);
         url = "rpc/MYSQLConnector.php";
         params = 'starr=' + jsonStarr + '&rows=' + lazyLoadCnt + '&start=' + startindex + '&type=geoquery';
         //console.log(url+'?'+params);
@@ -2556,54 +2174,80 @@ function lazyLoadPoints(index,callback){
     }
 }
 
+function loadInputParentParams(){
+    if(opener.document.getElementById('upperlat') && opener.document.getElementById('upperlat').value && INPUTTOOLSARR.includes('box')){
+        processInputParentBoxParams();
+    }
+    if(opener.document.getElementById('pointlat') && opener.document.getElementById('pointlat').value && INPUTTOOLSARR.includes('circle')){
+        processInputParentPointRadiusParams();
+    }
+    if(opener.document.getElementById('polyArr') && opener.document.getElementById('polyArr').value && INPUTTOOLSARR.length === 0){
+        processInputParentPolyArrParams();
+    }
+    if(opener.document.getElementById('circleArr') && opener.document.getElementById('circleArr').value && INPUTTOOLSARR.length === 0){
+        processInputParentCircleArrParams();
+    }
+    if(opener.document.getElementById('decimallatitude') && opener.document.getElementById('decimallatitude').value && opener.document.getElementById('decimallongitude') && opener.document.getElementById('decimallongitude').value && INPUTTOOLSARR.includes('point')){
+        processInputParentPointParams();
+    }
+    if(opener.document.getElementById('footprintWKT') && opener.document.getElementById('footprintWKT').value && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt')){
+        processInputParentPolyWKTParams();
+    }
+}
+
 function loadPoints(){
-    solrqString = '';
-    taxaCnt = 0;
-    collSymbology = [];
-    taxaSymbology = [];
-    selections = [];
-    dsOldestDate = '';
-    dsNewestDate = '';
-    removeDateSlider();
-    solrqString = newsolrqString;
-    showWorking();
-    pointvectorsource = new ol.source.Vector({
-        wrapX: false
-    });
-    layersArr['pointv'].setSource(pointvectorsource);
-    getQueryRecCnt(false,function(res) {
-        if(queryRecCnt > 0){
-            loadPointsEvent = true;
-            setLoadingTimer();
-            loadPointWFSLayer(0);
-            //cleanSelectionsLayer();
-            setRecordsTab();
-            changeRecordPage(1);
-            $('#recordstab').tabs({active: 1});
-            $("#accordion").accordion("option","active",1);
-            //selectInteraction.getFeatures().clear();
-            if(!pointActive){
-                const infoArr = [];
-                infoArr['Name'] = 'pointv';
-                infoArr['layerType'] = 'vector';
-                infoArr['Title'] = 'Points';
-                infoArr['Abstract'] = '';
-                infoArr['DefaultCRS'] = '';
-                buildLayerTableRow(infoArr,true);
-                pointActive = true;
+    searchTermsArr = getSearchTermsArr();
+    if(validateSearchTermsArr(searchTermsArr)){
+        taxaCnt = 0;
+        collSymbology = [];
+        taxaSymbology = [];
+        selections = [];
+        dsOldestDate = '';
+        dsNewestDate = '';
+        removeDateSlider();
+        showWorking();
+        pointvectorsource = new ol.source.Vector({
+            wrapX: false
+        });
+        layersArr['pointv'].setSource(pointvectorsource);
+        getQueryRecCnt(function() {
+            if(queryRecCnt > 0){
+                loadPointsEvent = true;
+                setCopySearchUrlDiv();
+                setLoadingTimer();
+                loadPointWFSLayer(0);
+                //cleanSelectionsLayer();
+                setRecordsTab();
+                changeRecordPage(1);
+                $('#recordstab').tabs({active: 1});
+                $("#accordion").accordion("option","active",1);
+                //selectInteraction.getFeatures().clear();
+                if(!pointActive){
+                    const infoArr = [];
+                    infoArr['Name'] = 'pointv';
+                    infoArr['layerType'] = 'vector';
+                    infoArr['Title'] = 'Points';
+                    infoArr['Abstract'] = '';
+                    infoArr['DefaultCRS'] = '';
+                    buildLayerTableRow(infoArr,true);
+                    pointActive = true;
+                }
             }
-        }
-        else{
-            setRecordsTab();
-            if(pointActive){
-                removeLayerToSelList('pointv');
-                pointActive = false;
+            else{
+                setRecordsTab();
+                if(pointActive){
+                    removeLayerToSelList('pointv');
+                    pointActive = false;
+                }
+                loadPointsEvent = false;
+                hideWorking();
+                alert('There were no records matching your query.');
             }
-            loadPointsEvent = false;
-            hideWorking();
-            alert('There were no records matching your query.');
-        }
-    });
+        });
+    }
+    else{
+        alert('Please enter search criteria.');
+    }
 }
 
 function openIndPopup(occid){
@@ -2614,236 +2258,6 @@ function openOccidInfoBox(occid,label){
     const occpos = findOccClusterPosition(occid);
     finderpopupcontent.innerHTML = label;
     finderpopupoverlay.setPosition(occpos);
-}
-
-function openPopup(urlStr){
-    wWidth = document.body.offsetWidth*0.90;
-    newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=1,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
-    if (newWindow.opener == null) newWindow.opener = self;
-    return false;
-}
-
-function parseDate(dateStr){
-    const dateObj = new Date(dateStr);
-    let dateTokens;
-    let y = 0;
-    let m = 0;
-    let d = 0;
-    try{
-        const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/; //Format: yyyy-mm-dd
-        const validformat2 = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/; //Format: mm/dd/yyyy
-        const validformat3 = /^\d{1,2} \D+ \d{2,4}$/; //Format: dd mmm yyyy
-        if(validformat1.test(dateStr)){
-            dateTokens = dateStr.split("-");
-            y = dateTokens[0];
-            m = dateTokens[1];
-            d = dateTokens[2];
-        }
-        else if(validformat2.test(dateStr)){
-            dateTokens = dateStr.split("/");
-            m = dateTokens[0];
-            d = dateTokens[1];
-            y = dateTokens[2];
-            if(y.length === 2){
-                if(y < 20){
-                    y = "20" + y;
-                }
-                else{
-                    y = "19" + y;
-                }
-            }
-        }
-        else if(validformat3.test(dateStr)){
-            dateTokens = dateStr.split(" ");
-            d = dateTokens[0];
-            mText = dateTokens[1];
-            y = dateTokens[2];
-            if(y.length === 2){
-                if(y < 15){
-                    y = "20" + y;
-                }
-                else{
-                    y = "19" + y;
-                }
-            }
-            mText = mText.substring(0,3);
-            mText = mText.toLowerCase();
-            const mNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
-            m = mNames.indexOf(mText)+1;
-        }
-        else if(dateObj instanceof Date){
-            y = dateObj.getFullYear();
-            m = dateObj.getMonth() + 1;
-            d = dateObj.getDate();
-        }
-    }
-    catch(ex){
-    }
-    const retArr = [];
-    retArr["y"] = y.toString();
-    retArr["m"] = m.toString();
-    retArr["d"] = d.toString();
-    return retArr;
-}
-
-function prepareTaxaData(callback){
-    const http = new XMLHttpRequest();
-    const url = "rpc/gettaxalinks.php";
-    const taxaArrStr = JSON.stringify(taxaArr);
-    const params = 'taxajson=' + taxaArrStr + '&type=' + taxontype + '&thes=' + thes;
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            taxaArr = JSON.parse(http.responseText);
-            callback(1);
-        }
-    };
-    http.send(params);
-}
-
-function prepareTaxaParams(callback){
-    taxaParams = false;
-    searchTermsArr['usethes'] = '';
-    searchTermsArr['taxontype'] = '';
-    searchTermsArr['taxa'] = '';
-    let taxaval = document.getElementById("taxa").value.trim();
-    if(taxaval){
-        taxontype = document.getElementById("taxontype").value;
-        thes = !!document.getElementById("thes").checked;
-        if(SOLRMODE) {
-            taxaArr = [];
-            const taxavals = taxaval.split(',');
-            const taxaSolrqString = '';
-            for (let i in taxavals){
-                const name = taxavals[i].trim();
-                taxaArr.push(name);
-            }
-            prepareTaxaData(function(res){
-                if(taxaArr){
-                    let taxaSolrqString = '';
-                    for (let i in taxaArr){
-                        if(taxaArr.hasOwnProperty(i)){
-                            if(taxontype === 4){
-                                taxaSolrqString = " OR (parenttid:"+i+")";
-                            }
-                            else{
-                                if(taxontype === 5){
-                                    let famArr = [];
-                                    let scinameArr = [];
-                                    if(taxaArr[i]["families"]){
-                                        famArr = taxaArr[i]["families"];
-                                    }
-                                    if(famArr.length > 0){
-                                        taxaSolrqString += " OR (family:("+famArr.join()+"))";
-                                    }
-                                    if(taxaArr[i]["scinames"]){
-                                        scinameArr = taxaArr[i]["scinames"];
-                                        if(scinameArr.length > 0){
-                                            for (let s in scinameArr){
-                                                if(scinameArr.hasOwnProperty(s)){
-                                                    taxaSolrqString += " OR ((sciname:"+scinameArr[s].replace(/ /g,"\\ ")+") OR (sciname:"+scinameArr[s].replace(/ /g,"\\ ")+"\\ *))";
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                else{
-                                    if((taxontype === 2 || taxontype === 1) && ((i.substr(i.length - 5) === "aceae") || (i.substr(i.length - 4) === "idae"))){
-                                        taxaSolrqString += " OR (family:"+i+")";
-                                    }
-                                    if((taxontype === 3 || taxontype === 1) && ((i.substr(i.length - 5) !== "aceae") || (i.substr(i.length - 4) !== "idae"))){
-                                        taxaSolrqString += " OR ((sciname:"+i.replace(/ /g,"\\ ")+") OR (sciname:"+i.replace(/ /g,"\\ ")+"\\ *))";
-                                    }
-                                }
-                                if(taxaArr[i]["synonyms"]){
-                                    let synArr = [];
-                                    synArr = taxaArr[i]["synonyms"];
-                                    const tidArr = [];
-                                    if(taxontype === 1 || taxontype === 2 || taxontype === 5){
-                                        for (let syn in synArr){
-                                            if(synArr.hasOwnProperty(syn) && (synArr[syn].indexOf('aceae') !== -1 || synArr[syn].indexOf('idae') !== -1)){
-                                                taxaSolrqString += " OR (family:"+synArr[syn]+")";
-                                            }
-                                        }
-                                    }
-                                    for (let syn in synArr){
-                                        if(synArr.hasOwnProperty(syn)){
-                                            tidArr.push(syn);
-                                        }
-                                    }
-                                    taxaSolrqString += " OR (tidinterpreted:("+tidArr.join(' ')+"))";
-                                }
-                            }
-                        }
-                    }
-                    taxaSolrqString = taxaSolrqString.substr(4,taxaSolrqString.length);
-                    solrqfrag = '('+taxaSolrqString+')';
-                    solrqArr.push(solrqfrag);
-                }
-                callback(1);
-            });
-        }
-        else{
-            taxaval = taxaval.replace(",", ";");
-            searchTermsArr['usethes'] = thes;
-            searchTermsArr['taxontype'] = taxontype;
-            searchTermsArr['taxa'] = taxaval;
-            document.getElementById("starrjson").value = JSON.stringify(searchTermsArr);
-
-        }
-        taxaParams = true;
-    }
-    else{
-        callback(1);
-    }
-}
-
-function prepCsvControlForm(){
-    let cset;
-    let format;
-    let schema;
-    if (document.getElementById('csvschemasymb').checked) {
-        schema = document.getElementById('csvschemasymb').value;
-    }
-    if (document.getElementById('csvschemadwc').checked) {
-        schema = document.getElementById('csvschemadwc').value;
-    }
-    if (document.getElementById('csvformatcsv').checked) {
-        format = document.getElementById('csvformatcsv').value;
-    }
-    if (document.getElementById('csvformattab').checked) {
-        format = document.getElementById('csvformattab').value;
-    }
-    if (document.getElementById('csvcsetiso').checked) {
-        cset = document.getElementById('csvcsetiso').value;
-    }
-    if (document.getElementById('csvcsetutf').checked) {
-        cset = document.getElementById('csvcsetutf').value;
-    }
-    document.getElementById("schemacsv").value = schema;
-    document.getElementById("dh-filename").value = document.getElementById("dh-filename").value+'.'+schema;
-    if(document.getElementById("csvidentifications").checked === true){
-        document.getElementById("identificationscsv").value = 1;
-    }
-    if(document.getElementById("csvimages").checked === true){
-        document.getElementById("imagescsv").value = 1;
-    }
-    document.getElementById("formatcsv").value = format;
-    document.getElementById("csetcsv").value = cset;
-    if(document.getElementById("csvzip").checked === true){
-        document.getElementById("zipcsv").value = 1;
-        document.getElementById("dh-type").value = 'zip';
-        document.getElementById("dh-contentType").value = 'application/zip';
-    }
-    else{
-        document.getElementById("zipcsv").value = false;
-        document.getElementById("dh-type").value = 'csv';
-        document.getElementById("dh-contentType").value = 'text/csv; charset='+cset;
-    }
-    $("#csvoptions").popup("hide");
-    document.getElementById("datadownloadform").submit();
 }
 
 function primeSymbologyData(features){
@@ -2881,9 +2295,9 @@ function primeSymbologyData(features){
             }
             //var namestring = (sciname?sciname:'')+(tidinterpreted?tidinterpreted:'');
             let namestring = (sciname ? sciname : '');
-            namestring = namestring.replace(" ","");
+            namestring = namestring.replaceAll(" ","");
             namestring = namestring.toLowerCase();
-            namestring = namestring.replace(/[^A-Za-z0-9 ]/g,'');
+            namestring = namestring.replaceAll(/[^A-Za-z0-9 ]/g,'');
             if(!collSymbology[collName]){
                 collSymbology[collName] = [];
                 collSymbology[collName]['collid'] = collid;
@@ -2932,51 +2346,362 @@ function processCheckSelection(c){
     adjustSelectionsTab();
 }
 
-function processDownloadRequest(selection){
-    document.getElementById("dh-fl").value = '';
-    document.getElementById("dh-type").value = '';
-    document.getElementById("dh-filename").value = '';
-    document.getElementById("dh-contentType").value = '';
-    document.getElementById("dh-selections").value = '';
-    const dlType = (selection ? document.getElementById("selectdownloadselect").value : document.getElementById("querydownloadselect").value);
-    if(dlType){
-        const filename = 'spatialdata_' + getDateTimeString();
-        let contentType = '';
-        if(dlType === 'kml') {
-            contentType = 'application/vnd.google-earth.kml+xml';
+function processInputParentBoxParams(){
+    const boundingBox = {};
+    boundingBox.upperlat = opener.document.getElementById('upperlat').value;
+    boundingBox.bottomlat = opener.document.getElementById('bottomlat').value;
+    boundingBox.leftlong = opener.document.getElementById('leftlong').value;
+    boundingBox.rightlong = opener.document.getElementById('rightlong').value;
+    if(boundingBox.upperlat && boundingBox.bottomlat && boundingBox.leftlong && boundingBox.rightlong){
+        createPolygonFromBoundingBox(boundingBox, true);
+    }
+}
+
+function processInputParentCircleArrParams(){
+    const circleArr = JSON.parse(opener.document.getElementById('circleArr').value);
+    if(Array.isArray(circleArr)){
+        createCirclesFromCircleArr(circleArr, true);
+    }
+}
+
+function processInputParentPointParams(){
+    let decLat = null;
+    let decLong = null;
+    if(opener.document.getElementById('decimallatitude')){
+        decLat = opener.document.getElementById('decimallatitude').value;
+    }
+    if(opener.document.getElementById('decimallongitude')){
+        decLong = opener.document.getElementById('decimallongitude').value;
+    }
+    if(decLat && decLong){
+        let openerRadius = 0;
+        if(opener.document.getElementById('coordinateuncertaintyinmeters') && opener.document.getElementById('coordinateuncertaintyinmeters').value && INPUTTOOLSARR.includes('uncertainty')){
+            if(!isNaN(opener.document.getElementById('coordinateuncertaintyinmeters').value)){
+                openerRadius = opener.document.getElementById('coordinateuncertaintyinmeters').value;
+            }
         }
-        else if(dlType === 'geojson') {
-            contentType = 'application/vnd.geo+json';
+        if(opener.document.getElementById('pointradiusmeters') && opener.document.getElementById('pointradiusmeters').value && INPUTTOOLSARR.includes('radius')){
+            if(!isNaN(opener.document.getElementById('pointradiusmeters').value)){
+                openerRadius = opener.document.getElementById('pointradiusmeters').value;
+            }
         }
-        else if(dlType === 'gpx') {
-            contentType = 'application/gpx+xml';
+        if(openerRadius > 0){
+            const centerCoords = ol.proj.fromLonLat([decLat, decLong]);
+            const circle = new ol.geom.Circle(centerCoords);
+            circle.setRadius(Number(openerRadius));
+            const circleFeature = new ol.Feature(circle);
+            uncertaintycirclesource.addFeature(circleFeature);
         }
-        document.getElementById("dh-type").value = dlType;
-        document.getElementById("dh-filename").value = filename;
-        document.getElementById("dh-contentType").value = contentType;
-        if(selection) {
-            document.getElementById("dh-selections").value = selections.join();
+        const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
+            decLong, decLat
+        ]));
+        const pointFeature = new ol.Feature(pointGeom);
+        selectsource.addFeature(pointFeature);
+        selectedFeatures.push(pointFeature);
+        processInputSelections();
+        const selectextent = selectsource.getExtent();
+        map.getView().fit(selectextent,map.getSize());
+        let fittedZoom = map.getView().getZoom();
+        if(fittedZoom > 10){
+            map.getView().setZoom(fittedZoom - 8);
         }
-        if(!selection && dlType === 'csv'){
-            document.getElementById("dh-fl").value = 'occid';
+    }
+}
+
+function processInputParentPointRadiusParams(){
+    const pointRadius = {};
+    pointRadius.pointlat = opener.document.getElementById('pointlat').value;
+    pointRadius.pointlong = opener.document.getElementById('pointlong').value;
+    pointRadius.radius = opener.document.getElementById('radius').value;
+    if(pointRadius.pointlat && pointRadius.pointlong && pointRadius.radius){
+        createCircleFromPointRadius(pointRadius, true);
+    }
+}
+
+function processInputParentPolyArrParams(){
+    const polyArr = JSON.parse(opener.document.getElementById('polyArr').value);
+    if(Array.isArray(polyArr)){
+        createPolysFromPolyArr(polyArr, true);
+    }
+}
+
+function processInputParentPolyWKTParams(){
+    let wktStr = '';
+    if(opener.document.getElementById('footprintWKT')){
+        wktStr = opener.document.getElementById('footprintWKT').value;
+    }
+    if(wktStr !== '' && (wktStr.startsWith("POLYGON") || wktStr.startsWith("MULTIPOLYGON"))){
+        let wktFormat = new ol.format.WKT();
+        const footprintpoly = wktFormat.readFeature(wktStr, mapProjection);
+        if(footprintpoly){
+            footprintpoly.getGeometry().transform(wgs84Projection,mapProjection);
+            selectsource.addFeature(footprintpoly);
+            selectedFeatures.push(footprintpoly);
+            processInputSelections();
         }
-        else{
-            document.getElementById("dh-fl").value = SOLRFields;
+    }
+    const selectextent = selectsource.getExtent();
+    map.getView().fit(selectextent,map.getSize());
+    let fittedZoom = map.getView().getZoom();
+    if(fittedZoom > 10){
+        map.getView().setZoom(fittedZoom - 8);
+    }
+}
+
+function processInputPointUncertaintyChange(){
+    uncertaintycirclesource.clear();
+    const uncertaintyValue = document.getElementById("inputpointuncertainty").value;
+    if(uncertaintyValue && !isNaN(uncertaintyValue) && uncertaintyValue > 0){
+        selectInteraction.getFeatures().forEach(function(feature){
+            if(feature){
+                const featureClone = feature.clone();
+                const geoType = featureClone.getGeometry().getType();
+                const geoJSONFormat = new ol.format.GeoJSON();
+                if(geoType === 'Point'){
+                    const selectiongeometry = featureClone.getGeometry();
+                    const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                    const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                    let pointCoords = JSON.parse(geojsonStr).coordinates;
+                    const pointRadius = {};
+                    pointRadius.pointlat = pointCoords[1];
+                    pointRadius.pointlong = pointCoords[0];
+                    pointRadius.radius = document.getElementById("inputpointuncertainty").value;
+                    createUncertaintyCircleFromPointRadius(pointRadius);
+                }
+            }
+        });
+    }
+}
+
+function processInputSelections(){
+    inputResponseData = {};
+    geoPolyArr = [];
+    geoCircleArr = [];
+    geoBoundingBoxArr = {};
+    geoPointArr = [];
+    let totalArea = 0;
+    let submitReady = false;
+    selectInteraction.getFeatures().forEach(function(feature){
+        let turfSimple;
+        let options;
+        let area_km;
+        let area;
+        let areaFeat;
+        if(feature){
+            const selectedClone = feature.clone();
+            const geoType = selectedClone.getGeometry().getType();
+            const wktFormat = new ol.format.WKT();
+            const geoJSONFormat = new ol.format.GeoJSON();
+            if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
+                const boxType = (selectedClone.values_.hasOwnProperty('geoType') && selectedClone.values_.geoType === 'Box');
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                let polyCoords = JSON.parse(geojsonStr).coordinates;
+                if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('box') && boxType){
+                    geoBoundingBoxArr = {
+                        upperlat: polyCoords[0][2][1],
+                        bottomlat: polyCoords[0][0][1],
+                        leftlong: polyCoords[0][0][0],
+                        rightlong: polyCoords[0][1][0]
+                    };
+                }
+                else{
+                    if (geoType === 'MultiPolygon') {
+                        areaFeat = turf.multiPolygon(polyCoords);
+                        area = turf.area(areaFeat);
+                        area_km = area/1000/1000;
+                        totalArea = totalArea + area_km;
+                        for (let e in polyCoords) {
+                            if(polyCoords.hasOwnProperty(e)){
+                                let singlePoly = turf.polygon(polyCoords[e]);
+                                //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
+                                if(singlePoly.geometry.coordinates.length > 10){
+                                    options = {tolerance: 0.001, highQuality: true};
+                                    singlePoly = turf.simplify(singlePoly,options);
+                                }
+                                //console.log('end multipolygon length: '+singlePoly.geometry.coordinates.length);
+                                polyCoords[e] = singlePoly.geometry.coordinates;
+                            }
+                        }
+                        turfSimple = turf.multiPolygon(polyCoords);
+                    }
+                    if (geoType === 'Polygon') {
+                        areaFeat = turf.polygon(polyCoords);
+                        area = turf.area(areaFeat);
+                        area_km = area / 1000 / 1000;
+                        totalArea = totalArea + area_km;
+                        //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
+                        if(areaFeat.geometry.coordinates.length > 10){
+                            options = {tolerance: 0.001, highQuality: true};
+                            areaFeat = turf.simplify(areaFeat,options);
+                        }
+                        //console.log('end multipolygon length: '+areaFeat.geometry.coordinates.length);
+                        polyCoords = areaFeat.geometry.coordinates;
+                        turfSimple = turf.polygon(polyCoords);
+                    }
+                    const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
+                    const simplegeometry = polySimple.getGeometry();
+                    const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
+                    if(SOLRMODE || INPUTTOOLSARR.includes('wkt')) {
+                        const wmswktString = wktFormat.writeGeometry(fixedgeometry);
+                        geoPolyArr.push(wmswktString);
+                    }
+                    else{
+                        const geocoords = fixedgeometry.getCoordinates();
+                        const mysqlWktString = writeMySQLWktString(geoType, geocoords);
+                        geoPolyArr.push(mysqlWktString);
+                    }
+                }
+            }
+            if(geoType === 'Circle'){
+                const center = selectedClone.getGeometry().getCenter();
+                const radius = selectedClone.getGeometry().getRadius();
+                const edgeCoordinate = [center[0] + radius, center[1]];
+                const fixedcenter = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
+                const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
+                const circleArea = Math.PI * groundRadius * groundRadius;
+                totalArea = totalArea + circleArea;
+                const circleObj = {
+                    pointlat: fixedcenter[1],
+                    pointlong: fixedcenter[0],
+                    radius: radius,
+                    groundradius: groundRadius
+                };
+                geoCircleArr.push(circleObj);
+            }
+            if(geoType === 'Point'){
+                const selectiongeometry = selectedClone.getGeometry();
+                const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                let pointCoords = JSON.parse(geojsonStr).coordinates;
+                const pointObj = {
+                    decimalLatitude: pointCoords[1],
+                    decimalLongitude: pointCoords[0]
+                };
+                geoPointArr.push(pointObj);
+            }
         }
-        if(dlType === 'csv'){
-            $("#csvoptions").popup("show");
-        }
-        else if(dlType === 'kml' || dlType === 'geojson' || dlType === 'gpx'){
-            document.getElementById("datadownloadform").submit();
-        }
-        else if(dlType === 'png'){
-            const imagefilename = 'map_' + getDateTimeString() + '.png';
-            exportMapPNG(imagefilename,false);
-        }
+    });
+    if(totalArea === 0){
+        document.getElementById("polyarea").value = totalArea;
     }
     else{
-        alert('Please select a download type.')
+        document.getElementById("polyarea").value = totalArea.toFixed(2);
     }
+    if(INPUTWINDOWMODE && ((INPUTTOOLSARR.length === 0) || (INPUTTOOLSARR.length > 0 && selectInteraction.getFeatures().getLength() === 1))){
+        if(geoPolyArr.length > 0){
+            submitReady = true;
+            inputResponseData['polyArr'] = geoPolyArr;
+        }
+        if(geoCircleArr.length > 0){
+            submitReady = true;
+            inputResponseData['circleArr'] = geoCircleArr;
+        }
+        if(geoBoundingBoxArr.hasOwnProperty('upperlat')){
+            submitReady = true;
+            inputResponseData['boundingBoxArr'] = geoBoundingBoxArr;
+        }
+        if(geoPointArr.length > 0){
+            submitReady = true;
+            inputResponseData['pointArr'] = geoPointArr;
+        }
+    }
+    document.getElementById("inputSubmitButton").disabled = !submitReady;
+}
+
+function processInputSubmit(){
+    const changeEvent = new Event("change");
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.length === 0){
+        if(opener.document.getElementById('polyArr') && inputResponseData.hasOwnProperty('polyArr')){
+            opener.document.getElementById('polyArr').value = JSON.stringify(inputResponseData['polyArr']);
+            opener.document.getElementById('polyArr').dispatchEvent(changeEvent);
+            if(opener.document.getElementById("spatialParamasNoCriteria")){
+                opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            }
+            if(opener.document.getElementById("spatialParamasCriteria")){
+                opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            }
+        }
+        if(opener.document.getElementById('circleArr') && inputResponseData.hasOwnProperty('circleArr')){
+            opener.document.getElementById('circleArr').value = JSON.stringify(inputResponseData['circleArr']);
+            opener.document.getElementById('circleArr').dispatchEvent(changeEvent);
+            if(opener.document.getElementById("spatialParamasNoCriteria")){
+                opener.document.getElementById("spatialParamasNoCriteria").style.display = "none";
+            }
+            if(opener.document.getElementById("spatialParamasCriteria")){
+                opener.document.getElementById("spatialParamasCriteria").style.display = "block";
+            }
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('box') && inputResponseData.hasOwnProperty('boundingBoxArr')){
+        if(opener.document.getElementById('upperlat')){
+            opener.document.getElementById('upperlat').value = inputResponseData['boundingBoxArr']['upperlat'];
+            opener.document.getElementById('upperlat').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('bottomlat')){
+            opener.document.getElementById('bottomlat').value = inputResponseData['boundingBoxArr']['bottomlat'];
+            opener.document.getElementById('bottomlat').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('leftlong')){
+            opener.document.getElementById('leftlong').value = inputResponseData['boundingBoxArr']['leftlong'];
+            opener.document.getElementById('leftlong').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('rightlong')){
+            opener.document.getElementById('rightlong').value = inputResponseData['boundingBoxArr']['rightlong'];
+            opener.document.getElementById('rightlong').dispatchEvent(changeEvent);
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('circle') && inputResponseData.hasOwnProperty('circleArr')){
+        if(opener.document.getElementById('pointlat')){
+            opener.document.getElementById('pointlat').value = inputResponseData['circleArr'][0]['pointlat'];
+        }
+        if(opener.document.getElementById('pointlong')){
+            opener.document.getElementById('pointlong').value = inputResponseData['circleArr'][0]['pointlong'];
+        }
+        if(opener.document.getElementById('radiusunits')){
+            opener.document.getElementById('radiusunits').value = 'km';
+        }
+        if(opener.document.getElementById('radiustemp')){
+            opener.document.getElementById('radiustemp').value = (inputResponseData['circleArr'][0]['radius'] / 1000);
+        }
+        if(opener.document.getElementById('radius')){
+            opener.document.getElementById('radius').value = inputResponseData['circleArr'][0]['radius'];
+        }
+        if(opener.document.getElementById('groundradius')){
+            opener.document.getElementById('groundradius').value = inputResponseData['circleArr'][0]['groundradius'];
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('polygon') && INPUTTOOLSARR.includes('wkt') && inputResponseData.hasOwnProperty('polyArr')){
+        if(opener.document.getElementById('footprintWKT')){
+            opener.document.getElementById('footprintWKT').value = inputResponseData['polyArr'][0];
+            opener.document.getElementById('footprintWKT').dispatchEvent(changeEvent);
+        }
+    }
+    if(INPUTWINDOWMODE && INPUTTOOLSARR.includes('point') && inputResponseData.hasOwnProperty('pointArr')){
+        if(opener.document.getElementById('decimallatitude')){
+            opener.document.getElementById('decimallatitude').value = inputResponseData['pointArr'][0]['decimalLatitude'];
+            opener.document.getElementById('decimallatitude').dispatchEvent(changeEvent);
+        }
+        if(opener.document.getElementById('decimallongitude')){
+            opener.document.getElementById('decimallongitude').value = inputResponseData['pointArr'][0]['decimalLongitude'];
+            opener.document.getElementById('decimallongitude').dispatchEvent(changeEvent);
+        }
+        if(INPUTTOOLSARR.includes('uncertainty')){
+            if(opener.document.getElementById('coordinateuncertaintyinmeters')){
+                opener.document.getElementById('coordinateuncertaintyinmeters').value = document.getElementById('inputpointuncertainty').value;
+                opener.document.getElementById('coordinateuncertaintyinmeters').dispatchEvent(changeEvent);
+            }
+        }
+        if(INPUTTOOLSARR.includes('radius')){
+            if(opener.document.getElementById('pointradiusmeters')){
+                opener.document.getElementById('pointradiusmeters').value = document.getElementById('inputpointuncertainty').value;
+                opener.document.getElementById('pointradiusmeters').dispatchEvent(changeEvent);
+            }
+        }
+    }
+    self.close();
 }
 
 function processPointSelection(sFeature){
@@ -2995,6 +2720,18 @@ function processPointSelection(sFeature){
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
     adjustSelectionsTab();
+}
+
+function processVectorInteraction(){
+    if(!spatialModuleInitialising){
+        if(!INPUTWINDOWMODE){
+            setSpatialParamBox();
+            getGeographyParams();
+        }
+        else{
+            processInputSelections();
+        }
+    }
 }
 
 function refreshLayerOrder(){
@@ -3103,19 +2840,6 @@ function removeUserLayer(layerID){
         $("#accordion").accordion("option","active",0);
         pointActive = false;
     }
-    else if(overlayLayers[layerID]){
-        const layerTileSourceName = layerID + 'Source';
-        const layerRasterSourceName = layerID + 'RasterSource';
-        layersArr[layerTileSourceName] = '';
-        layersArr[layerRasterSourceName] = '';
-        layersArr[layerID].setVisible(false);
-        const index = overlayLayers.indexOf(layerID);
-        overlayLayers.splice(index, 1);
-        if(vectorizeLayers[layerID]){
-            const vecindex = vectorizeLayers.indexOf(layerID);
-            vectorizeLayers.splice(vecindex, 1);
-        }
-    }
     else{
         layersArr[layerID].setSource(blankdragdropsource);
         if(layerID === 'dragdrop1') {
@@ -3186,36 +2910,6 @@ function saveKeyImage(){
         document.body.removeChild(keyClone);
         keyClone = '';
     });
-}
-
-function selectAll(cb){
-    let boxesChecked = true;
-    if(!cb.checked){
-        boxesChecked = false;
-    }
-    const f = cb.form;
-    for(let i=0; i<f.length; i++){
-        if(f.elements[i].name === "db[]" || f.elements[i].name === "cat[]" || f.elements[i].name === "occid[]"){
-            f.elements[i].checked = boxesChecked;
-        }
-        if(f.elements[i].name === "occid[]"){
-            f.elements[i].onchange();
-        }
-    }
-}
-
-function selectAllCat(cb,target){
-    let boxesChecked = true;
-    if(!cb.checked){
-        boxesChecked = false;
-    }
-    const inputObjs = document.getElementsByTagName("input");
-    for (let i = 0; i < inputObjs.length; i++) {
-        const inputObj = inputObjs[i];
-        if(inputObj.getAttribute("class") === target || inputObj.getAttribute("className") === target){
-            inputObj.checked = boxesChecked;
-        }
-    }
 }
 
 function setActiveLayer(){
@@ -3313,6 +3007,18 @@ function setClusterSymbol(feature) {
         }
     }
     return style;
+}
+
+function setCopySearchUrlDiv(){
+    const stArrJson = JSON.stringify(searchTermsArr);
+    if(document.getElementById('copySearchUrlDiv')){
+        if(stArrJson.length <= 1800){
+            document.getElementById("copySearchUrlDiv").style.display = "block";
+        }
+        else{
+            document.getElementById("copySearchUrlDiv").style.display = "none";
+        }
+    }
 }
 
 function setDownloadFeatures(features){
@@ -3433,6 +3139,68 @@ function setDSValues(){
     layersArr['pointv'].getSource().changed();
 }
 
+function setInputFormBySearchTermsArr(){
+    if(searchTermsArr.hasOwnProperty('taxa')){
+        document.getElementById("taxa").value = searchTermsArr['taxa'];
+        document.getElementById("taxontype").value = searchTermsArr['taxontype'];
+        if(searchTermsArr.hasOwnProperty('thes')){
+            document.getElementById("thes").checked = true;
+        }
+    }
+    if(searchTermsArr.hasOwnProperty('country')){
+        document.getElementById("country").value = searchTermsArr['country'];
+    }
+    if(searchTermsArr.hasOwnProperty('state')){
+        document.getElementById("state").value = searchTermsArr['state'];
+    }
+    if(searchTermsArr.hasOwnProperty('county')){
+        document.getElementById("county").value = searchTermsArr['county'];
+    }
+    if(searchTermsArr.hasOwnProperty('locality')){
+        document.getElementById("locality").value = searchTermsArr['locality'];
+    }
+    if(searchTermsArr.hasOwnProperty('elevlow')){
+        document.getElementById("elevlow").value = searchTermsArr['elevlow'];
+    }
+    if(searchTermsArr.hasOwnProperty('elevhigh')){
+        document.getElementById("elevhigh").value = searchTermsArr['elevhigh'];
+    }
+    if(searchTermsArr.hasOwnProperty('collector')){
+        document.getElementById("collector").value = searchTermsArr['collector'];
+    }
+    if(searchTermsArr.hasOwnProperty('collnum')){
+        document.getElementById("collnum").value = searchTermsArr['collnum'];
+    }
+    if(searchTermsArr.hasOwnProperty('eventdate1')){
+        document.getElementById("eventdate1").value = searchTermsArr['eventdate1'];
+    }
+    if(searchTermsArr.hasOwnProperty('eventdate2')){
+        document.getElementById("eventdate2").value = searchTermsArr['eventdate2'];
+    }
+    if(searchTermsArr.hasOwnProperty('occurrenceRemarks')){
+        document.getElementById("occurrenceRemarks").value = searchTermsArr['occurrenceRemarks'];
+    }
+    if(searchTermsArr.hasOwnProperty('catnum')){
+        document.getElementById("catnum").value = searchTermsArr['catnum'];
+    }
+    if(searchTermsArr.hasOwnProperty('othercatnum')){
+        document.getElementById("othercatnum").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('typestatus')){
+        document.getElementById("typestatus").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('hasimages')){
+        document.getElementById("hasimages").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('hasgenetic')){
+        document.getElementById("hasgenetic").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('upperlat') || searchTermsArr.hasOwnProperty('pointlat') || searchTermsArr.hasOwnProperty('circleArr') || searchTermsArr.hasOwnProperty('polyArr')){
+        document.getElementById("noshapecriteria").style.display = "none";
+        document.getElementById("shapecriteria").style.display = "block";
+    }
+}
+
 function setLayersTable(){
     const http = new XMLHttpRequest();
     const url = "rpc/getlayersarr.php";
@@ -3467,70 +3235,6 @@ function setLoadingTimer(){
     if(queryRecCnt < 50000) loadingTimer = 5000;
     if(queryRecCnt < 10000) loadingTimer = 3000;
     if(queryRecCnt < 5000) loadingTimer = 1000;
-}
-
-function setReclassifyTable(){
-    if(document.getElementById("reclassifytable")){
-        const currentTable = document.getElementById("reclassifytable");
-        currentTable.parentNode.removeChild(currentTable);
-    }
-    const newTable = document.createElement('table');
-    newTable.setAttribute("id","reclassifytable");
-    newTable.setAttribute("class","styledtable");
-    newTable.setAttribute("style","font-family:Arial;font-size:12px;margin-top:15px;margin-left:auto;margin-right:auto;width:330px;");
-    const newTHead = document.createElement('thead');
-    const newTHeadRow = document.createElement('tr');
-    let newTHeadHead1 = document.createElement('th');
-    newTHeadHead1.setAttribute("style","text-align:center;");
-    newTHeadHead1.innerHTML = "Raster Min Value";
-    newTHeadRow.appendChild(newTHeadHead1);
-    newTHeadHead1 = document.createElement('th');
-    newTHeadHead1.setAttribute("style","text-align:center;");
-    newTHeadHead1.innerHTML = "Raster Max Value";
-    newTHeadRow.appendChild(newTHeadHead1);
-    const newTHeadHead2 = document.createElement('th');
-    newTHeadHead2.setAttribute("style","text-align:center;");
-    newTHeadHead2.innerHTML = "Color";
-    newTHeadRow.appendChild(newTHeadHead2);
-    newTHead.appendChild(newTHeadRow);
-    newTable.appendChild(newTHead);
-    const newTBody = document.createElement('tbody');
-    newTBody.setAttribute("id","reclassifyTBody");
-    const newRow = document.createElement('tr');
-    let newRastValCell = document.createElement('td');
-    newRastValCell.setAttribute("style","width:150px;");
-    let newRastValInput = document.createElement('input');
-    newRastValInput.setAttribute("data-role","none");
-    newRastValInput.setAttribute("type","text");
-    newRastValInput.setAttribute("id","reclassifyRasterMin");
-    newRastValInput.setAttribute("style","width:150px;margin-left:10px;");
-    newRastValInput.setAttribute("value","");
-    newRastValCell.appendChild(newRastValInput);
-    newRow.appendChild(newRastValCell);
-    newRastValCell = document.createElement('td');
-    newRastValCell.setAttribute("style","width:150px;");
-    newRastValInput = document.createElement('input');
-    newRastValInput.setAttribute("data-role","none");
-    newRastValInput.setAttribute("type","text");
-    newRastValInput.setAttribute("id","reclassifyRasterMax");
-    newRastValInput.setAttribute("style","width:150px;margin-left:10px;");
-    newRastValInput.setAttribute("value","");
-    newRastValCell.appendChild(newRastValInput);
-    newRow.appendChild(newRastValCell);
-    const newColorValCell = document.createElement('td');
-    newColorValCell.setAttribute("style","width:30px;");
-    const newColorValInput = document.createElement('input');
-    newColorValInput.setAttribute("data-role","none");
-    newColorValInput.setAttribute("id","reclassifyColorVal");
-    newColorValInput.setAttribute("class","color");
-    newColorValInput.setAttribute("style","cursor:pointer;border:1px black solid;height:20px;width:20px;margin-left:5px;margin-bottom:-2px;font-size:0px;");
-    newColorValInput.setAttribute("value","FFFFFF");
-    newColorValCell.appendChild(newColorValInput);
-    newRow.appendChild(newColorValCell);
-    newTBody.appendChild(newRow);
-    newTable.appendChild(newTBody);
-    document.getElementById("reclassifyTableDiv").appendChild(newTable);
-    jscolor.init();
 }
 
 function setRecordsTab(){
@@ -3623,6 +3327,72 @@ function setSymbol(feature){
     return style;
 }
 
+function setTransformHandleStyle(){
+    if(!transformInteraction instanceof ol.interaction.Transform){
+        return;
+    }
+    const circle = new ol.style.RegularShape({
+        fill: new ol.style.Fill({color:[255,255,255,0.01]}),
+        stroke: new ol.style.Stroke({width:1, color:[0,0,0,0.01]}),
+        radius: 8,
+        points: 10
+    });
+    transformInteraction.setStyle ('rotate', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf0e2',
+            font:"16px Fontawesome",
+            textAlign: "left",
+            fill:new ol.style.Fill({color:'red'})
+        }),
+        image: circle
+    }));
+    transformInteraction.setStyle ('rotate0', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf0e2',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        }),
+    }));
+    transformInteraction.setStyle('translate', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf047',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.setStyle ('scaleh1', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf07d',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.style.scaleh3 = transformInteraction.style.scaleh1;
+    transformInteraction.setStyle('scalev', new ol.style.Style({
+        text: new ol.style.Text ({
+            text:'\uf07e',
+            font:"20px Fontawesome",
+            fill: new ol.style.Fill({ color:'red' }),
+            stroke: new ol.style.Stroke({ width:1, color:'red' })
+        })
+    }));
+    transformInteraction.style.scalev2 = transformInteraction.style.scalev;
+    transformInteraction.set('translate', transformInteraction.get('translate'));
+}
+
+function showDatasetManagementPopup(){
+    if(selections.length > 0){
+        document.getElementById("datasetselecteddiv").style.display = "block";
+    }
+    else{
+        document.getElementById("datasetselecteddiv").style.display = "none";
+    }
+    $("#datasetmanagement").popup("show");
+}
+
 function showFeature(feature){
     let featureStyle;
     if(feature.get('features')){
@@ -3632,10 +3402,6 @@ function showFeature(feature){
         featureStyle = setSymbol(feature);
     }
     feature.setStyle(featureStyle);
-}
-
-function showWorking(){
-    $('#loadingOverlay').popup('show');
 }
 
 function spiderifyPoints(features){
@@ -3715,10 +3481,6 @@ function spiderifyPoints(features){
     }
 }
 
-function split(val) {
-    return val.split( /,\s*/ );
-}
-
 function stopDSAnimation(){
     dsAnimStop = true;
     /*tsOldestDate = dsAnimLow;
@@ -3740,38 +3502,6 @@ function stopDSAnimation(){
     dsAnimLow = '';
     dsAnimHigh = '';
     dsAnimation = '';
-}
-
-function toggle(target){
-    const ele = document.getElementById(target);
-    if(ele){
-        if(ele.style.display === "none"){
-            ele.style.display = "block";
-        }
-        else {
-            ele.style.display = "none";
-        }
-    }
-    else{
-        const divObjs = document.getElementsByTagName("div");
-        for (let i = 0; i < divObjs.length; i++) {
-            const divObj = divObjs[i];
-            if(divObj.getAttribute("class") === target || divObj.getAttribute("className") === target){
-                if(divObj.style.display === "none"){
-                    divObj.style.display = "block";
-                }
-                else {
-                    divObj.style.display = "none";
-                }
-            }
-        }
-    }
-}
-
-function toggleCat(catid){
-    toggle("minus-"+catid);
-    toggle("plus-"+catid);
-    toggle("cat-"+catid);
 }
 
 function toggleDateSlider(){
@@ -3846,16 +3576,6 @@ function toggleUploadLayer(c,title){
         layersArr[layer].setVisible(false);
         removeLayerToSelList(c.value);
     }
-}
-
-function uncheckAll(f){
-    document.getElementById('dballcb').checked = false;
-}
-
-function unselectCat(catTarget){
-    const catObj = document.getElementById(catTarget);
-    catObj.checked = false;
-    uncheckAll();
 }
 
 function updateSelections(seloccid,infoArr){
@@ -4009,13 +3729,6 @@ function writeMySQLWktString(type,geocoords) {
     }
 
     return wktStr;
-}
-
-function zipSelected(obj){
-    if(obj.checked === false){
-        document.getElementById("csvimages").checked = false;
-        document.getElementById("csvidentifications").checked = false;
-    }
 }
 
 function zoomToSelections(){

@@ -1,7 +1,7 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceMaintenance.php');
-include_once('UuidFactory.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/UuidFactory.php');
 
 class ImageLocalProcessor {
 
@@ -58,28 +58,27 @@ class ImageLocalProcessor {
  
 
 	public function __construct(){
-		global $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_LG_WIDTH, $IMG_FILE_SIZE_LIMIT, $LOG_PATH, $SERVER_ROOT;
 		ini_set('memory_limit','1024M');
 		ini_set('auto_detect_line_endings', true);
 		$connection = new DbConnection();
 		$this->conn = $connection->getConnection();
-		if($IMG_WEB_WIDTH) {
-			$this->webPixWidth = $IMG_WEB_WIDTH;
+		if($GLOBALS['IMG_WEB_WIDTH']) {
+			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($IMG_TN_WIDTH) {
-			$this->tnPixWidth = $IMG_TN_WIDTH;
+		if($GLOBALS['IMG_TN_WIDTH']) {
+			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}
-		if($IMG_LG_WIDTH) {
-			$this->lgPixWidth = $IMG_LG_WIDTH;
+		if($GLOBALS['IMG_LG_WIDTH']) {
+			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
-		if($IMG_FILE_SIZE_LIMIT) {
-			$this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
+		if($GLOBALS['IMG_FILE_SIZE_LIMIT']) {
+			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
 		}
-		if($LOG_PATH) {
-			$this->logPath = $LOG_PATH;
+		if($GLOBALS['LOG_PATH']) {
+			$this->logPath = $GLOBALS['LOG_PATH'];
 		}
-		if($SERVER_ROOT) {
-			$this->serverRoot = $SERVER_ROOT;
+		if($GLOBALS['SERVER_ROOT']) {
+			$this->serverRoot = $GLOBALS['SERVER_ROOT'];
 		}
 	}
 
@@ -116,7 +115,6 @@ class ImageLocalProcessor {
 
 	public function batchLoadImages(): void
 	{
-		global $IMAGE_ROOT_PATH, $IMAGE_ROOT_URL, $IMAGE_DOMAIN;
 		if(strpos($this->sourcePathBase, 'http') === 0){
 			$headerArr = get_headers($this->sourcePathBase);
 			if(!$headerArr){
@@ -142,19 +140,19 @@ class ImageLocalProcessor {
 			exit();
 		}
 		if(!$this->targetPathBase){
-			$this->targetPathBase = $IMAGE_ROOT_PATH;
+			$this->targetPathBase = $GLOBALS['IMAGE_ROOT_PATH'];
 		}
 		if(!$this->targetPathBase){
-			$this->targetPathBase = $IMAGE_ROOT_PATH;
+			$this->targetPathBase = $GLOBALS['IMAGE_ROOT_PATH'];
 		}
 		if($this->targetPathBase && substr($this->targetPathBase,-1) !== '/' && substr($this->targetPathBase,-1) !== "\\"){
 			$this->targetPathBase .= '/';
 		}
 		
 		if(!$this->imgUrlBase){
-			$this->imgUrlBase = $IMAGE_ROOT_URL;
+			$this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 		}
-		if($IMAGE_DOMAIN && strpos($this->imgUrlBase, 'http://') !== 0 && strpos($this->imgUrlBase, 'https://') !== 0) {
+		if($GLOBALS['IMAGE_DOMAIN'] && strpos($this->imgUrlBase, 'http://') !== 0 && strpos($this->imgUrlBase, 'https://') !== 0) {
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -1663,15 +1661,14 @@ class ImageLocalProcessor {
 	}
 	
 	private function uriExists($url) {
-		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$exists = false;
 		$localUrl = '';
 		if(strpos($url, '/') === 0){
-			if($IMAGE_DOMAIN){
-				$url = $IMAGE_DOMAIN.$url;
+			if($GLOBALS['IMAGE_DOMAIN']){
+				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
-			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) === 0){
-				$localUrl = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$url);
+			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
+				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
 				$urlPrefix = 'http://';
@@ -1714,14 +1711,13 @@ class ImageLocalProcessor {
 	
 	private function encodeString($inStr): string
 	{
-		global $CHARSET;
 		$retStr = trim($inStr);
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
 		$inStr= str_replace($search, $replace, $inStr);
 		
 		if($inStr){
-			$charLower = strtolower($CHARSET);
+			$charLower = strtolower($GLOBALS['CHARSET']);
 			if($charLower === 'utf-8' || $charLower === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);

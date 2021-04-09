@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class KeyManager{
 
@@ -37,9 +37,8 @@ class KeyManager{
 
 	protected function insertDescr($tid, $cid, $cs): void
 	{
-		global $USERNAME;
 		if(is_numeric($tid) && is_numeric($cid) && $cs){
-			$sql = 'INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ('.$tid.', '.$cid.", '".$cs."', '".$USERNAME."')";
+			$sql = 'INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ('.$tid.', '.$cid.", '".$cs."', '".$GLOBALS['USERNAME']."')";
 			$this->conn->query($sql);
 		}
 	}

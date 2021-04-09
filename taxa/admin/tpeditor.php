@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
@@ -22,7 +22,7 @@ if($lang) {
 
 $statusStr = '';
 $editable = false;
-if($IS_ADMIN || array_key_exists('TaxonProfile',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 	$editable = true;
 }
 
@@ -50,7 +50,7 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $editVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$editVernArr['username'] = $PARAMS_ARR['un'];
+		$editVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
 		$statusStr = $tEditor->editVernacular($editVernArr);
 	}
 	elseif($action === 'Add Common Name'){
@@ -68,7 +68,7 @@ if($editable && $action){
 		if($_REQUEST['sortsequence']) {
             $addVernArr['sortsequence'] = $_REQUEST['sortsequence'];
         }
-		$addVernArr['username'] = $PARAMS_ARR['un'];
+		$addVernArr['username'] = $GLOBALS['PARAMS_ARR']['un'];
 		$statusStr = $tEditor->addVernacular($addVernArr);
 	}
 	elseif($action === 'Delete Common Name'){
@@ -115,12 +115,13 @@ if($editable && $action){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Taxon Editor: ' .$tEditor->getSciName(); ?></title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
@@ -189,7 +190,7 @@ if($editable && $action){
 			 	}
 				echo "<div style='font-size:16px;margin-top:15px;margin-left:10px;'><a href='../index.php?taxon=".$tEditor->getTid()."' style='color:#990000;text-decoration:none;'><b><i>".$tEditor->getSciName(). '</i></b></a> ' .$tEditor->getAuthor();
 				if($tEditor->getRankId() > 140) {
-                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><img style='border:0;height:10px;' src='../../images/toparent.png' title='Go to Parent' /></a>";
+                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><i style='height:15px;width:15px;' title='Go to Parent' class='far fa-level-up-alt'></i></a>";
                 }
 				echo "</div>\n";
 				echo "<div id='family' style='margin-left:20px;margin-top:0.25em;'><b>Family:</b> ".$tEditor->getFamily()."</div>\n";
@@ -214,7 +215,7 @@ if($editable && $action){
 							<div style="margin:10px 0;">
 								<b><?php echo ($vernList?'Common Names':'No common in system'); ?></b> 
 								<span onclick="toggle('addvern');" title="Add a New Common Name">
-									<img style="border:0;width:15px;" src="../../images/add.png"/>
+									<i style="height:15px;width:15px;color:green;color:green;" class="fas fa-plus"></i>
 								</span>
 							</div>
 							<div id="addvern" class="addvern" style="display:<?php echo ($vernList?'none':'block'); ?>;">
@@ -260,7 +261,7 @@ if($editable && $action){
 											<div style="margin-left:10px;">
 												<b><?php echo $vernArr['vernacularname']; ?></b>
 												<span onclick="toggle('vid-<?php echo $vernArr['vid']; ?>');" title="Edit Common Name">
-													<img style="border:0;width:12px;" src="../../images/edit.png" />
+													<i style="height:15px;width:15px;" class="far fa-edit"></i>
 												</span>
 											</div>
 											<form name="updatevern" action="tpeditor.php" method="post" style="margin-left:20px;">
@@ -298,8 +299,9 @@ if($editable && $action){
 													<input type='hidden' name='delvern' value='<?php echo $vernArr['vid']; ?>' />
 													<input type='hidden' name='tid' value='<?php echo $tEditor->getTid(); ?>' />
 													<input name='action' type='hidden' value='Delete Common Name' /> 
-													<input name='submitaction' type='image' value='Delete Common Name' style='height:12px;' src='../../images/del.png' /> 
-													Delete Common Name
+													<button style="margin:0;padding:2px;" type="submit">
+                                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i> Delete Common Name
+                                                    </button>
 												</form>
 											</div>
 											<?php 
@@ -318,7 +320,7 @@ if($editable && $action){
 							if($synonymArr = $tEditor->getSynonym()){
 								?>
 								<div style="float:right;" title="Edit Synonym Sort Order">
-									<a href="#"  onclick="toggle('synsort');return false;"><img style="border:0;width:12px;" src="../../images/edit.png"/></a>
+									<a href="#"  onclick="toggle('synsort');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 								</div>
 								<div style="font-weight:bold;margin-left:15px;">
 									<ul>
@@ -374,7 +376,7 @@ if($editable && $action){
 					<h2>You must be logged in and authorized to taxon data.</h2>
 					<h3>
 						<?php 
-							echo "Click <a href='".$CLIENT_ROOT. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$CLIENT_ROOT."/taxa/admin/tpeditor.php'>here</a> to login";
+							echo "Click <a href='".$GLOBALS['CLIENT_ROOT']. '/profile/index.php?tid=' .$tEditor->getTid(). '&refurl=' .$GLOBALS['CLIENT_ROOT']."/taxa/admin/tpeditor.php'>here</a> to login";
 						?>
 					</h3>
 				</div>

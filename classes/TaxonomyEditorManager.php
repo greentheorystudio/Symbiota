@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class TaxonomyEditorManager{
 
@@ -221,7 +221,6 @@ class TaxonomyEditorManager{
 
 	public function submitTaxonEdits($postArr): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		$sql = 'UPDATE taxa SET '.
 			'unitind1 = '.($postArr['unitind1']?'"'.$this->cleanInStr($postArr['unitind1']).'"':'NULL').', '.
@@ -235,7 +234,7 @@ class TaxonomyEditorManager{
 			'source = '.($postArr['source']?'"'.$this->cleanInStr($postArr['source']).'"':'NULL').', '.
 			'notes = '.($postArr['notes']?'"'.$this->cleanInStr($postArr['notes']).'"':'NULL').', '.
 			'securitystatus = '.(is_numeric($postArr['securitystatus'])?$postArr['securitystatus']:'0').', '.
-			'modifiedUid = '.$SYMB_UID.', '.
+			'modifiedUid = '.$GLOBALS['SYMB_UID'].', '.
 			'modifiedTimeStamp = "'.date('Y-m-d H:i:s').'",'.
 			'sciname = "'.$this->cleanInStr(($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
 			$postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
@@ -533,7 +532,6 @@ class TaxonomyEditorManager{
 	}
 
 	public function loadNewName($dataArr){
-		global $SYMB_UID;
 		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.$this->cleanInStr($dataArr['sciname']).'",'.
@@ -548,7 +546,7 @@ class TaxonomyEditorManager{
 			($dataArr['source']?'"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
 			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
 			$this->cleanInStr($dataArr['securitystatus']).','.
-			$SYMB_UID.',"'.date('Y-m-d H:i:s').'")';
+			$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
 		//echo "sqlTaxa: ".$sqlTaxa;
 		if($this->conn->query($sqlTaxa)){
 			$tid = $this->conn->insert_id;

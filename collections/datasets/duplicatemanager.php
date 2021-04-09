@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php'); 
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $dupeDepth = array_key_exists('dupedepth',$_REQUEST)?$_REQUEST['dupedepth']:0;
@@ -10,7 +10,7 @@ $limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
-if(!$SYMB_UID){
+if(!$GLOBALS['SYMB_UID']){
 	header('Location: ../../profile/index.php?refurl=../collections/datasets/duplicatemanager.php?'.$_SERVER['QUERY_STRING']);
 }
 
@@ -19,8 +19,8 @@ $collMap = $dupManager->getCollMap($collId);
 
 $statusStr = '';
 $isEditor = 0; 
-if($IS_ADMIN || ($collMap['colltype'] === 'General Observations')
-	|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations')
+	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
@@ -36,14 +36,15 @@ if($isEditor && $formSubmit){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Occurrence Cleaner</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Cleaner</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">
 		table.styledtable td { white-space: nowrap; }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function verifyEditForm(f){
 			if(f.title === ""){
@@ -199,7 +200,7 @@ if($isEditor && $formSubmit){
 								<div style="clear:both;margin:10px 0;">
 									<div style="font-weight:bold;font-size:120%;">
 										<?php echo $dupArr['title']; ?> 
-										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><img src="../../images/edit.png" style="width:13px;" /></span> 
+										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><i style="height:15px;width:15px;" class="far fa-edit"></i></span>
 									</div>
 									<?php 
 									if(isset($dupArr['desc'])) {
@@ -254,7 +255,9 @@ if($isEditor && $formSubmit){
 														<input name="limit" type="hidden" value="<?php echo $limit; ?>" />
 														<input name="action" type="hidden" value="<?php echo $action; ?>" />
 														<input name="formsubmit" type="hidden" value="occdelete" />
-														<input name="submit" type="image" src="../../images/del.png" style="width:15px;" />
+														<button style="margin:0;padding:2px;" type="submit">
+                                                            <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                                        </button>
 													</form>
 												</div>
 												<div style="margin-left:15px;clear:both;">

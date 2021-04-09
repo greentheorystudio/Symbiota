@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceAccessStats.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceAccessStats.php');
 
 class OccurrenceDownload{
 
@@ -22,21 +22,20 @@ class OccurrenceDownload{
     private $occArr = array();
 
  	public function __construct(){
-		global $IS_ADMIN, $USER_RIGHTS, $CHARSET;
- 		$connection = new DbConnection();
+		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
 
-		if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
 			$this->redactLocalities = false;
 		}
-		if(array_key_exists('CollEditor', $USER_RIGHTS)){
-			$this->rareReaderArr = $USER_RIGHTS['CollEditor'];
+		if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS'])){
+			$this->rareReaderArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
 		}
-		if(array_key_exists('RareSppReader', $USER_RIGHTS)){
-			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$USER_RIGHTS['RareSppReader']));
+		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
+			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
 
-		$this->charSetSource = strtoupper($CHARSET);
+		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
 		$this->charSetOut = $this->charSetSource;
 	}
 
@@ -115,7 +114,6 @@ class OccurrenceDownload{
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
 		header('Content-Length: '.filesize($filePath.$fileName));
-		ob_clean();
 		flush();
 		readfile($filePath.$fileName);
 		if(file_exists($filePath.$fileName)) {
@@ -176,7 +174,6 @@ class OccurrenceDownload{
 
 	private function getDataEntryXML($days, $limit): string
 	{
-		global $DEFAULT_TITLE, $CLIENT_ROOT, $IMAGE_DOMAIN;
 		$newDoc = new DOMDocument('1.0',$this->charSetOut);
 
 		$rootElem = $newDoc->createElement('rss');
@@ -189,7 +186,7 @@ class OccurrenceDownload{
 		$rootElem->appendChild($channelElem);
 
 		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($DEFAULT_TITLE.' New Occurrence Records'));
+		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' New Occurrence Records'));
 		$channelElem->appendChild($titleElem);
 
 		$serverDomain = 'http://';
@@ -202,14 +199,14 @@ class OccurrenceDownload{
 		}
 		$urlPathPrefix = '';
 		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$CLIENT_ROOT.(substr($CLIENT_ROOT,-1) === '/'?'':'/');
+			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
 		}
 
 		$linkElem = $newDoc->createElement('link');
 		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$DEFAULT_TITLE.' portal'));
+		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$GLOBALS['DEFAULT_TITLE'].' portal'));
 		$channelElem->appendChild($descriptionElem);
 		$languageElem = $newDoc->createElement('language','en-us');
 		$channelElem->appendChild($languageElem);
@@ -268,8 +265,8 @@ class OccurrenceDownload{
 
 			$tnUrl = $r->thumbnailurl;
 			if(strpos($tnUrl, '/') === 0){
-				if($IMAGE_DOMAIN){
-					$tnUrl = $IMAGE_DOMAIN.$tnUrl;
+				if($GLOBALS['IMAGE_DOMAIN']){
+					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
 				}
 				else{
 					$tnUrl = $serverDomain.$tnUrl;
@@ -375,10 +372,9 @@ class OccurrenceDownload{
 
 	private function getSql(): string
 	{
-        global $SOLR_MODE;
-	    $sql = '';
+        $sql = '';
 		if($this->schemaType === 'checklist'){
-            if($SOLR_MODE && ($this->tidArr || $this->occArr)){
+            if($GLOBALS['SOLR_MODE'] && ($this->tidArr || $this->occArr)){
                 if($this->taxonFilter){
                     $tidStr = implode(',',$this->tidArr);
                     $sql = 'SELECT DISTINCT ts.family, t.sciname AS scientificName, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
@@ -451,7 +447,7 @@ class OccurrenceDownload{
 				'LEFT JOIN taxa t ON o.tidinterpreted = t.tid ';
 			$sql .= $this->setTableJoins($this->sqlWhere);
 			$this->applyConditions();
-            if($SOLR_MODE && $this->occArr){
+            if($GLOBALS['SOLR_MODE'] && $this->occArr){
                 $occStr = implode(',',$this->occArr);
                 $sql .= 'WHERE o.occid IN('.$occStr.') ';
             }
@@ -486,11 +482,10 @@ class OccurrenceDownload{
 
 	private function getOutputFilePath(): string
 	{
-		global $SERVER_ROOT, $TEMP_DIR_ROOT;
-		$retStr = $TEMP_DIR_ROOT;
+		$retStr = $GLOBALS['TEMP_DIR_ROOT'];
 		$sbStr = substr($retStr,-1);
 		if(!$retStr){
-			$retStr = $SERVER_ROOT;
+			$retStr = $GLOBALS['SERVER_ROOT'];
 			$subStr = substr($retStr,-1);
 			if($subStr !== '/' && $subStr !== "\\") {
 				$retStr .= '/';
@@ -508,9 +503,8 @@ class OccurrenceDownload{
 
 	private function getOutputFileName(): string
 	{
-		global $DEFAULT_TITLE;
 		$retStr = '';
-		$fileName = str_replace(Array('.', ':'), '',$DEFAULT_TITLE);
+		$fileName = str_replace(Array('.', ':'), '',$GLOBALS['DEFAULT_TITLE']);
 		if(stripos($fileName,'the ') === 0) {
 			$fileName = substr($fileName, 4);
 		}

@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistLoaderManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
-if(!$SYMB_UID) {
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -16,15 +16,15 @@ $clLoaderManager->setClid($clid);
 $clMeta = $clLoaderManager->getChecklistMetadata();
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $USER_RIGHTS['ClAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
 	$isEditor = true;
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Species Checklist Loader</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Species Checklist Loader</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
 		function validateUploadForm(){
             let testStr = document.getElementById("uploadfile").value;
@@ -54,7 +54,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 		<a href='../../index.php'>Home</a> &gt;&gt;
 		<?php
 		if($pid) {
-            echo '<a href="' . $CLIENT_ROOT . '/projects/index.php?pid=' . $pid . '">';
+            echo '<a href="' . $GLOBALS['CLIENT_ROOT'] . '/projects/index.php?pid=' . $pid . '">';
         }
 		echo '<a href="../checklist.php?cl='.$clid.'&pid='.$pid.'">Return to Checklist</a> &gt;&gt; ';
 		?>
@@ -62,7 +62,7 @@ if($IS_ADMIN || (array_key_exists('ClAdmin',$USER_RIGHTS) && in_array($clid, $US
 	</div>
 	<div id="innertext">
 		<h1>
-			<a href="<?php echo $CLIENT_ROOT. '/checklists/checklist.php?cl=' .$clid.'&pid='.$pid; ?>">
+			<a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?cl=' .$clid.'&pid='.$pid; ?>">
 				<?php echo $clMeta['name']; ?>
 			</a>
 		</h1>

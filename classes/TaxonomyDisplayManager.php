@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('TaxonomyUtilities.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class TaxonomyDisplayManager{
 
@@ -15,11 +15,10 @@ class TaxonomyDisplayManager{
 	private $isEditor = false;
 	
 	public function __construct(){
-        global $USER_RIGHTS, $IS_ADMIN;
-		$connection = new DbConnection();
+        $connection = new DbConnection();
 	    $this->conn = $connection->getConnection();
-		if($USER_RIGHTS){
-			if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+		if($GLOBALS['USER_RIGHTS']){
+			if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 				$this->isEditor = true;
 			}
 		}
@@ -252,7 +251,7 @@ class TaxonomyDisplayManager{
 				}
 				if($this->taxonRank < 140 && !$this->displayFullTree && $taxonRankId === 140){
 					echo '<a href="taxonomydisplay.php?target='.$sciName.'">';
-					echo '<img src="../../images/tochild.png" style="width:9px;" />';
+					echo '<i style="height:15px;width:15px;" class="fas fa-level-down-alt"></i>';
 					echo '</a>';
 				}
 				echo '</div>';

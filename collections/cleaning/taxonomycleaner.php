@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -22,29 +22,30 @@ if(is_array($collid)) {
 $activeCollArr = explode(',', $collid);
 
 foreach($activeCollArr as $k => $id){
-	if(!isset($USER_RIGHTS['CollAdmin']) || !in_array($id, $USER_RIGHTS['CollAdmin'], true)) {
+	if(!isset($GLOBALS['USER_RIGHTS']['CollAdmin']) || !in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
         unset($activeCollArr[$k]);
     }
 }
 if(!$activeCollArr && strpos($collid, ',')) {
     $collid = 0;
 }
-$cleanManager->setCollId($IS_ADMIN?$collid:implode(',',$activeCollArr));
+$cleanManager->setCollId($GLOBALS['IS_ADMIN']?$collid:implode(',',$activeCollArr));
 
 $isEditor = false;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = true;
 }
 elseif($activeCollArr){
 	$isEditor = true;
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE; ?> Occurrence Taxon Cleaner</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Taxon Cleaner</title>
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css?ver=3" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js?ver=3" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js?ver=3" type="text/javascript"></script>
 		<script>
@@ -188,7 +189,7 @@ elseif($activeCollArr){
 					<?php
 					if($activeCollArr && count($collMap) > 1){
 						?>
-						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><img src="../../images/add.png" style="width:12px" /></a></div>
+						<div style="float:left;margin-left:5px;"><a href="#" onclick="toggle('mult_coll_fs')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a></div>
 						<div style="clear:both">
 							<fieldset id="mult_coll_fs" style="display:none;padding: 15px;margin:20px;">
 								<legend><b>Multiple Collection Selector</b></legend>
@@ -196,7 +197,7 @@ elseif($activeCollArr){
 									<div><input name="selectall" type="checkbox" onclick="selectAllCollections(this);" /> Select / Unselect All</div>
 									<?php
 									foreach($collMap as $id => $collArr){
-										if(in_array($id, $USER_RIGHTS['CollAdmin'], true)){
+										if(in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 											echo '<div>';
 											echo '<input name="collid[]" type="checkbox" value="'.$id.'" '.(in_array($id, $activeCollArr, true) ?'CHECKED':'').' /> ';
 											echo $collArr['collectionname'].' ('.$collArr['code'].')';

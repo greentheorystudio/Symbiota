@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
@@ -16,8 +16,8 @@ $statusStr = '';
 $imagesExist = $apiManager->checkImages($collId);
 
 $isEditor = 0;		 
-if($SYMB_UID){
-	if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 		$isEditor = 1;
 	}
 }
@@ -44,12 +44,13 @@ if($isEditor){
     $currentCount = count($currentJobs);
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $collMetadata['collectionname']; ?> Fieldguide Batch Processing Utility</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
@@ -173,8 +174,9 @@ if($isEditor){
                             echo '</td>';
                             echo '<td>'.$jArr['taxon'].'</td>';
                             echo '<td>';
-                            echo '<form action="fgbatch.php" method="post" style="" onsubmit="">';
-                            echo '<input type="image" src="../../images/del.png" name="action" value="Cancel Job" title="Cancel Job" style="width:15px;" />';
+                            echo '<form action="fgbatch.php" method="post">';
+                            echo '<button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                            echo '<input type="hidden" name="action" value="Cancel Job">';
                             echo '<input type="hidden" name="collid" value="'.$collId.'">';
                             echo '<input type="hidden" name="jobid" value="'.$job.'">';
                             echo '</form>';
@@ -207,7 +209,8 @@ if($isEditor){
                             echo '<td>'.$jArr['taxon'].'</td>';
                             echo '<td>';
                             echo '<form action="fgbatch.php" method="post" style="" onsubmit="">';
-                            echo '<input type="image" src="../../images/del.png" name="action" value="Delete Results" title="Delete Results" style="width:15px;" />';
+                            echo '<button style="margin:0;padding:2px;" title="Delete Results" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                            echo '<input type="hidden" name="action" value="Delete Results">';
                             echo '<input type="hidden" name="collid" value="'.$collId.'">';
                             echo '<input type="hidden" name="jobid" value="'.$job.'">';
                             echo '</form>';

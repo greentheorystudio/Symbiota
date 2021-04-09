@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid= array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $omcsid= array_key_exists('omcsid',$_REQUEST)?$_REQUEST['omcsid']:0;
@@ -13,11 +13,11 @@ if(!$omcsid) {
 }
 
 $isEditor = 0;
-if($IS_ADMIN){
+if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
 }
 elseif($collid){
-	if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
 }
@@ -38,7 +38,7 @@ $projArr = $csManager->getProjectDetails();
 	}
 	if($isEditor && $collid && $omcsid){
 		?>
-		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.png" /></a></div>
+		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><i style="height:20px;width:20px;" class="far fa-edit"></i></a></div>
 		<div style="font-weight:bold;font-size:130%;"><?php echo (($omcsid && $projArr)?$projArr['name']:''); ?></div>
 		<div>
 			This module can be used to submit and manage records for data entry by the
@@ -91,7 +91,7 @@ $projArr = $csManager->getProjectDetails();
 							echo $unprocessedCnt;
 							echo '</a> ';
 							echo '<a href="index.php?submitaction=delqueue&tabindex=2&collid='.$collid.'&omcsid='.$omcsid.'">';
-							echo '<img src="../../images/drop.png" style="width:12px;" title="Delete all unprocessed records from queue" />';
+							echo '<i style="height:15px;width:15px;" title="Delete all unprocessed records from queue" class="far fa-trash-alt"></i>';
 							echo '</a>';
 						}
 						else{

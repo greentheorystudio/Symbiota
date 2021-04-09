@@ -1,8 +1,8 @@
 <?php
-include_once('DbConnection.php');
-include_once('OccurrenceUtilities.php');
-include_once('OccurrenceEditorManager.php');
-include_once('SOLRManager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceUtilities.php');
+include_once(__DIR__ . '/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/SOLRManager.php');
 
 class OccurrenceAPIManager{
 
@@ -40,7 +40,6 @@ class OccurrenceAPIManager{
 
     public function getOccLookupArr(): array
     {
-        global $USER_RIGHTS;
         $returnArr = array();
         $sql = 'SELECT o.occid, o.collid, o.dbpk, o.institutioncode, o.collectioncode, o.catalogNumber, o.otherCatalogNumbers, o.family, '.
             'o.sciname, o.tidinterpreted, o.scientificNameAuthorship, o.recordedBy, o.recordNumber, o.eventDate, o.country, '.
@@ -51,8 +50,8 @@ class OccurrenceAPIManager{
         //echo "<div>Sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         $canReadRareSpp = false;
-        if($USER_RIGHTS){
-            if(array_key_exists('SuperAdmin',$USER_RIGHTS) || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
+        if($GLOBALS['USER_RIGHTS']){
+            if(array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 $canReadRareSpp = true;
             }
         }
@@ -75,8 +74,8 @@ class OccurrenceAPIManager{
             $returnArr[$occId]['observeruid'] = $row->observeruid;
             $localitySecurity = $row->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
-                || (array_key_exists('CollEditor', $USER_RIGHTS) && in_array($row->collid, $USER_RIGHTS['CollEditor'], true))
-                || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($row->collid, $USER_RIGHTS['RareSppReader'], true))){
+                || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($row->collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
+                || (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array($row->collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))){
                 $returnArr[$occId]['locality'] = $row->locality;
                 $returnArr[$occId]['decimallatitude'] = $row->decimallatitude;
                 $returnArr[$occId]['decimallongitude'] = $row->decimallongitude;
@@ -103,7 +102,6 @@ class OccurrenceAPIManager{
 
     public function processImageUpload($pArr): void
     {
-        global $PARAMS_ARR, $SOLR_MODE;
         $occManager = new OccurrenceEditorImages();
         $occId = ($pArr['occid']?:$this->getOccFromCatNum($pArr['collid'],$pArr['catnum']));
         if($occId){
@@ -113,13 +111,13 @@ class OccurrenceAPIManager{
                 $this->processImageUploadDetermination($occId,$pArr);
             }
             $iArr = array(
-                'photographeruid' => $PARAMS_ARR['uid'],
+                'photographeruid' => $GLOBALS['PARAMS_ARR']['uid'],
                 'occid' => $occId,
                 'caption' => $pArr['caption'],
                 'notes' => $pArr['notes']
             );
             $occManager->addImage($iArr);
-            if($SOLR_MODE){
+            if($GLOBALS['SOLR_MODE']){
                 $solrManager = new SOLRManager();
                 $solrManager->updateSOLR();
             }
@@ -134,8 +132,7 @@ class OccurrenceAPIManager{
 
     public function processImageUploadDetermination($occId,$pArr): void
     {
-        global $SOLR_MODE;
-	    $detTidAccepted = 0;
+        $detTidAccepted = 0;
         $detFamily = '';
         $detSciNameAuthor = '';
         $sciname = $pArr['sciname'];
@@ -171,7 +168,7 @@ class OccurrenceAPIManager{
                 'occid' => $occId
             );
             $occManager->addDetermination($iArr,1);
-            if($SOLR_MODE){
+            if($GLOBALS['SOLR_MODE']){
                 $solrManager = new SOLRManager();
                 $solrManager->updateSOLR();
             }
@@ -197,12 +194,11 @@ class OccurrenceAPIManager{
 
     public function validateEditor($collid): bool
     {
-        global $USER_RIGHTS;
         $isEditor = false;
-        if(array_key_exists('SuperAdmin',$USER_RIGHTS) || ($collid && array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+        if(array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) || ($collid && array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
             $isEditor = true;
         }
-        elseif($collid && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+        elseif($collid && array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
             $isEditor = true;
         }
 

@@ -1,22 +1,20 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
 $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';
 
 $imgLibManager = new ImageLibraryManager();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-<title><?php echo $DEFAULT_TITLE; ?> Image Library</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Library</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
 	<?php

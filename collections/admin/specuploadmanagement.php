@@ -1,9 +1,9 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecUpload.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -38,7 +38,7 @@ $duManager->setUspid($uspid);
 
 $statusStr = '';
 $isEditor = 0;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 if($isEditor){
@@ -73,11 +73,12 @@ if($isEditor){
 $duManager->readUploadParameters();
 ?>
 
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Specimen Upload Profile Manager</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Upload Profile Manager</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
 		function checkUploadListForm(f){
 			if(f.uspid.length == null){
@@ -199,7 +200,7 @@ $duManager->readUploadParameters();
 						<legend style="font-weight:bold;font-size:120%;">Upload Options</legend>
 						<div style="float:right;">
 							<?php 
-							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><img src="'.$CLIENT_ROOT.'/images/add.png" style="width:15px;border:0;" title="Add a New Upload Profile" /></a>';
+							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-plus"></i></a>';
 							?>
 						</div>
 						<?php 
@@ -209,7 +210,7 @@ $duManager->readUploadParameters();
 						 		<div style="margin:10px;">
 									<input type="radio" name="uspid" value="<?php echo $id.'-'.$v['uploadtype'];?>" />
 									<?php echo $v['title']; ?>
-									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo $collid.'&uspid='.$id; ?>" title="View/Edit Parameters"><img src="../../images/edit.png" /></a>
+									<a href="specuploadmanagement.php?action=editprofile&collid=<?php echo $collid.'&uspid='.$id; ?>" title="View/Edit Parameters"><i style="height:20px;width:20px;" class="far fa-edit"></i></a>
 									<input type="hidden" name="uploadtype" value="<?php echo $v['uploadtype'];?>" />
 								</div>
 								<?php 

@@ -1,6 +1,6 @@
 <?php
-include_once('DbConnection.php');
-include_once('Manager.php');
+include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceAccessStats {
 
@@ -59,8 +59,7 @@ class OccurrenceAccessStats {
 
 	private function logError($sqlStr): void
 	{
-		global $SERVER_ROOT;
-		$logFH = fopen($SERVER_ROOT.'/content/logs/statsError_'.date('Y-m-d').'.log', 'ab');
+		$logFH = fopen($GLOBALS['SERVER_ROOT'].'/content/logs/statsError_'.date('Y-m-d').'.log', 'ab');
 		fwrite($logFH,$this->errorMessage."\n");
 		fwrite($logFH,$sqlStr."\n");
 		fclose($logFH);

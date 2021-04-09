@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occId = $_GET['occid'];
 $occIndex = $_GET['occindex'];
@@ -14,7 +14,7 @@ $specImgArr = $occManager->getImageMap();
 ?>
 <div id="imagediv" style="width:795px;">
 	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="Add a New Image">
-		<img style="border:0;width:12px;" src="../../images/add.png" />
+		<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 	</div>
 	<div id="addimgdiv" style="display:<?php echo ($specImgArr?'none':''); ?>;">
 		<form name="imgnewform" action="occurrenceeditor.php" method="post" enctype="multipart/form-data" onsubmit="return verifyImgAddForm(this);">
@@ -75,7 +75,7 @@ $specImgArr = $occManager->getImageMap();
 						?>
 					</select>
 					<a href="#" onclick="toggle('imgaddoverride');return false;" title="Display photographer override field">
-						<img src="../../images/editplus.png" style="border:0;width:13px;" />
+						<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0 0 5px 10px;display:none;">
@@ -135,15 +135,15 @@ $specImgArr = $occManager->getImageMap();
 							$imgUrl = $imgArr['url'];
 							$origUrl = $imgArr['origurl'];
 							$tnUrl = $imgArr['tnurl'];
-							if($IMAGE_DOMAIN){
+							if($GLOBALS['IMAGE_DOMAIN']){
 								if(strpos($imgUrl, '/') === 0){
-									$imgUrl = $IMAGE_DOMAIN.$imgUrl;
+									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}
 								if($origUrl && strpos($origUrl, '/') === 0){
-									$origUrl = $IMAGE_DOMAIN.$origUrl;
+									$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
 								}
 								if($tnUrl && strpos($tnUrl, '/') === 0){
-									$tnUrl = $IMAGE_DOMAIN.$tnUrl;
+									$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
 								}
 							}
 							
@@ -171,7 +171,7 @@ $specImgArr = $occManager->getImageMap();
 						</td>
 						<td style="text-align:left;padding:10px;">
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-								<img style="border:0;width:12px;" src="../../images/edit.png" />
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</div>
 							<div style="margin-top:30px">
 								<div>
@@ -291,7 +291,7 @@ $specImgArr = $occManager->getImageMap();
 												?>
 											</select>
 											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="Display photographer override field">
-												<img src="../../images/editplus.png" style="border:0;width:13px;" />
+												<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr['photographer']?'block':'none'); ?>;">
@@ -314,7 +314,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Web URL: </b><br/>
 											<input name="url" type="text" value="<?php echo $imgArr['url']; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr['url'],$IMAGE_ROOT_URL) === 0){ ?>
+											<?php if(stripos($imgArr['url'],$GLOBALS['IMAGE_ROOT_URL']) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameweburl" value="1" />
 													Rename web image file on server to match above edit
@@ -325,7 +325,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Large Image URL: </b><br/>
 											<input name="origurl" type="text" value="<?php echo $imgArr['origurl']; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr['origurl'],$IMAGE_ROOT_URL) === 0){ ?>
+											<?php if(stripos($imgArr['origurl'],$GLOBALS['IMAGE_ROOT_URL']) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renameorigurl" value="1" />
 													Rename large image file on server to match above edit
@@ -336,7 +336,7 @@ $specImgArr = $occManager->getImageMap();
 										<div>
 											<b>Thumbnail URL: </b><br/>
 											<input name="tnurl" type="text" value="<?php echo $imgArr['tnurl']; ?>" style="width:95%;" />
-											<?php if(stripos($imgArr['tnurl'],$IMAGE_ROOT_URL) === 0){ ?>
+											<?php if(stripos($imgArr['tnurl'],$GLOBALS['IMAGE_ROOT_URL']) === 0){ ?>
 												<div style="margin-left:10px;">
 													<input type="checkbox" name="renametnurl" value="1" />
 													Rename thumbnail file on server to match above edit

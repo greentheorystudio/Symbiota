@@ -1,5 +1,5 @@
 <?php
-include_once('TPEditorManager.php');
+include_once(__DIR__ . '/TPEditorManager.php');
 
 class TPDescEditorManager extends TPEditorManager{
 
@@ -86,12 +86,11 @@ class TPDescEditorManager extends TPEditorManager{
 
 	public function addDescriptionBlock(): string
 	{
-		global $SYMB_UID;
 		$status = '';
 		if(is_numeric($_REQUEST['tid'])){
 			$sql = 'INSERT INTO taxadescrblock(tid,uid,'.($_REQUEST['language']? 'language,' : '').($_REQUEST['displaylevel']? 'displaylevel,' : '').
 				'notes,caption,source,sourceurl) '.
-				'VALUES('.$_REQUEST['tid'].','.$SYMB_UID.
+				'VALUES('.$_REQUEST['tid'].','.$GLOBALS['SYMB_UID'].
 				','.($_REQUEST['language']?'"'.$this->cleanInStr($_REQUEST['language']).'",': '').
 				($_REQUEST['displaylevel']?$this->taxonCon->real_escape_string($_REQUEST['displaylevel']). ',' : '').
 				($_REQUEST['notes']?'"'.$this->cleanInStr($_REQUEST['notes']).'",': 'NULL,').

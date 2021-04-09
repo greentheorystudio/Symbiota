@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
 $clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
@@ -18,17 +18,15 @@ if(!$clName){
 	$clName = $gameManager->getClName();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Name Game</title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Name Game</title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
-	</script>
+    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<style type="text/css">
 		.lettertable{
             border:1px solid #000000;
@@ -491,7 +489,7 @@ if(!$clName){
 				document.getElementById("counter").innerHTML = "<div id='rw' style='width:190px;text-align:center;' onmouseover=\"this.className='buttonover'\" onmouseout=\"this.className='buttonout'\" onmousedown=\"this.className='buttondown'\" onmouseup=\"this.className='buttonup'\" class='buttonout' onclick='showWord()'><b>Reveal the Species</b></div>";
 				played++;
 				document.getElementById("plays").innerHTML = played.toString();
-                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
                 document.getElementById("splash").innerHTML = "<div style='font-size:20px;color:red;text-align:center;'>Too Bad</div><div style='font-size:16px;color:#0000FF;text-align:center;'><a href='#' onClick=\"openPopup('../taxa/index.php?taxon="+myNewString+"','tpwin');\"><b>Click here for more about this species</b></a></div>";
 				document.getElementById("splash").style.display = "";
 				document.getElementById("rate").innerHTML = ((won/played)*100).toFixed(0)+"%";
@@ -505,7 +503,7 @@ if(!$clName){
 				document.getElementById("plays").innerHTML = played.toString();
 				won++;
 				document.getElementById("wins").innerHTML = won.toString();
-                myNewString = RealName.replace(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
+                myNewString = RealName.replaceAll(/\u00A0\u00A0\u00A0\u00A0/g, "%20");
                 if (secondWord !== '')
 					document.getElementById("attempt").innerHTML = chosenWord.toUpperCase()+"<br><span style=\"font-size:12px\">"+secondWord+"</span>";
 				else
@@ -622,7 +620,7 @@ if(!$clName){
 	
 	<div id="innertext">
 		<div style="width:100%;text-align:center;">
-			<h1><?php echo $DEFAULT_TITLE; ?> Name Game</h1>
+			<h1><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Name Game</h1>
 		</div>
 		<div style="width:100%;text-align:center;margin:10px;">
 			I am thinking of a species found within the following checklist: <b><?php echo $clName;?></b><br/> 

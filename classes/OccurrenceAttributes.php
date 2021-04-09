@@ -1,5 +1,5 @@
-<?php 
-include_once('Manager.php');
+<?php
+include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceAttributes extends Manager {
 
@@ -391,8 +391,7 @@ class OccurrenceAttributes extends Manager {
 
 	public function saveReviewStatus($traitID, $postArr): bool
 	{
-		global $SYMB_UID;
-	    $status = false;
+		$status = false;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
 			if(strpos($postKey, 'stateid-') === 0){
@@ -415,7 +414,7 @@ class OccurrenceAttributes extends Manager {
 			if($addArr){
 				foreach($addArr as $id){
 					if(is_numeric($id)){
-						$sql = 'INSERT INTO tmattributes(stateid,occid,createduid) VALUES('.$id.','.$this->targetOccid.','.$SYMB_UID.') ';
+						$sql = 'INSERT INTO tmattributes(stateid,occid,createduid) VALUES('.$id.','.$this->targetOccid.','.$GLOBALS['SYMB_UID'].') ';
 						//echo $sql.'<br/>';
 						if(!$this->conn->query($sql)){
 							$this->errorMessage = 'ERROR addin occurrence attribute: '.$this->conn->error;
@@ -499,7 +498,6 @@ class OccurrenceAttributes extends Manager {
 
 	public function submitBatchAttributes($traitID, $fieldName, $tidFilter, $stateIDArr, $fieldValueArr, $notes, $reviewStatus): bool
 	{
-		global $SYMB_UID;
 		set_time_limit(1800);
 		$status = true;
 		$fieldArr = array();
@@ -541,7 +539,7 @@ class OccurrenceAttributes extends Manager {
 			$occidChuckArr = array_chunk($occArr, '200000');
 			foreach($occidChuckArr as $oArr){
 				$sqlUpdate = 'UPDATE tmattributes '.
-					'SET source = "Field mining: '.$this->cleanInStr($fieldName).'", createduid = '.$SYMB_UID;
+					'SET source = "Field mining: '.$this->cleanInStr($fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
 				if($notes) {
 					$sqlUpdate .= ', notes = "' . $this->cleanInStr($notes) . '"';
 				}

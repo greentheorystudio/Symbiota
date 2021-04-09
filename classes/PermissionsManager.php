@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -163,7 +163,6 @@ class PermissionsManager{
 
 	public function addPermission($uid,$role,$tablePk,$secondaryVariable = ''): string
 	{
-		global $SYMB_UID;
 		$statusStr = '';
 		if(is_numeric($uid)){
 			$sql = 'SELECT uid,role,tablepk,secondaryVariable,uidassignedby '.
@@ -178,7 +177,7 @@ class PermissionsManager{
 			if(!$rs->num_rows){
 				$sql1 = 'INSERT INTO userroles(uid,role,tablepk,secondaryVariable,uidassignedby) '.
 					'VALUES('.$uid.',"'.$role.'",'.($tablePk?:'NULL').','.
-					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$SYMB_UID.')';
+					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
 				if(!$this->conn->query($sql1)){
 					$statusStr = 'ERROR adding user permission: '.$this->conn->error;
 				}

@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -18,7 +18,7 @@ if(!is_numeric($clid)) {
 }
 
 $obsManager = new ObservationSubmitManager();
-if($SOLR_MODE) {
+if($GLOBALS['SOLR_MODE']) {
     $solrManager = new SOLRManager();
 }
 $obsManager->setCollid($collId);
@@ -30,18 +30,18 @@ if(!$collId && $collMap) {
 $isEditor = 0;
 $occid = 0;
 if($collMap){
-	if($IS_ADMIN){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollAdmin'], true)){
+	elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 		$isEditor = 1;
 	}
-	elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId, $USER_RIGHTS['CollEditor'], true)){
+	elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 		$isEditor = 1;
 	}
 	if($isEditor && $action === 'Submit Observation'){
 		$occid = $obsManager->addObservation($_POST);
-        if($SOLR_MODE) {
+        if($GLOBALS['SOLR_MODE']) {
             $solrManager->updateSOLR();
         }
 	}
@@ -51,11 +51,11 @@ if($collMap){
 }
 ?>
 
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Observation Submission</title>
-	<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Observation Submission</title>
+	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../../css/jquery-ui.css" rel="stylesheet" />
 	<script type="text/javascript">
 		<?php 
@@ -67,10 +67,23 @@ if($collMap){
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.coordinateValidation.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=170222" type="text/javascript"></script>
+	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
+	<script src="../../js/symb/collections.observationsubmit.js?ver=20210313" type="text/javascript"></script>
+    <script type="text/javascript">
+        function openSpatialInputWindow(type) {
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            if (mapWindow.opener == null) {
+                mapWindow.opener = self;
+            }
+            mapWindow.addEventListener('blur', function(){
+                mapWindow.close();
+                mapWindow = null;
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -153,7 +166,7 @@ if($collMap){
 							<input type="text" id="eventdate" name="eventdate" tabindex="18" style="width:120px;background-color:lightyellow;" onchange="verifyDate(this);" title="format: yyyy-mm-dd" />
 						</div>
 						<div style="float:left;margin:15px 0 0 5px;cursor:pointer;" onclick="toggle('obsextradiv')">
-							<img src="../../images/editplus.png" style="width:15px;" />
+							<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 						</div>
 					</div>
 					<div id="obsextradiv" style="clear:both;padding:3px 0 0 10px;margin-bottom:20px;display:none;">
@@ -210,14 +223,14 @@ if($collMap){
 						<div style="float:left;">
 							Latitude
 							<br/>
-							<input type="text" id="pointlat" name="decimallatitude" tabindex="44" maxlength="10" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLatValue(this.form)" title="Decimal Format (eg 34.5436)" />
+							<input type="text" id="decimallatitude" name="decimallatitude" tabindex="44" maxlength="10" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLatValue(this.form)" title="Decimal Format (eg 34.5436)" />
 						</div>
 						<div style="float:left;">
 							Longitude
 							<br/>
-							<input type="text" id="pointlong" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
-							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openMappingAid('obsform','decimallatitude','decimallongitude');">
-								<img src="../../images/world.png" style="width:12px;" title="Coordinate Map Aid" />
+							<input type="text" id="decimallongitude" name="decimallongitude" tabindex="46" maxlength="13" style="width:88px;background-color:lightyellow;" value="" onchange="verifyLngValue(this.form)" title="Decimal Format (eg -112.5436)" />
+							<span style="margin:15px 5px 0 5px;cursor:pointer;" onclick="openSpatialInputWindow('input-point,uncertainty');">
+								<i style="height:15px;width:15px;" title="Coordinate Map Aid" class="fas fa-globe"></i>
 							</span>
 							<span style="margin:15px 2px 0 2px;text-align:center;font-size:85%;font-weight:bold;color:maroon;background-color:#FFFFD7;padding:2px;border:1px outset #A0A0A0;cursor:pointer;" onclick="toggle('dmsdiv');">
 								DMS
@@ -226,7 +239,7 @@ if($collMap){
 						<div style="float:left;">
 							Uncertainty(m)
 							<br/>
-							<input type="text" name="coordinateuncertaintyinmeters" tabindex="48" maxlength="10" style="width:80px;background-color:lightyellow;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" />
+							<input type="text" id="coordinateuncertaintyinmeters" name="coordinateuncertaintyinmeters" tabindex="48" maxlength="10" style="width:80px;background-color:lightyellow;" onchange="inputIsNumeric(this, 'Lat/long uncertainty')" title="Uncertainty in Meters" />
 						</div>
 						<div style="float:left;">
 							Datum
@@ -354,7 +367,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img2div')" title="Add a Second Image">
-							<img src="../../images/add.png" style="width:15px;" />
+							<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img2div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -371,7 +384,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img3div')" title="Add a third Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img3div" style='padding:10px;width:675px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -388,7 +401,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img4div')" title="Add a forth Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img4div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>
@@ -405,7 +418,7 @@ if($collMap){
 							</span>
 						</div>
 						<div style="width:100%;cursor:pointer;text-align:right;margin-top:-15px;" onclick="toggle('img5div')" title="Add a fifth Image">
-							<img src="../../images/add.png" style="width:15px;" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 					</div>
 					<div id="img5div" style='padding:10px;width:700px;border:1px solid yellow;background-color:#FFFF99;display:none;'>

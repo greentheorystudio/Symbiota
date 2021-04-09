@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class SiteMapManager{
 	
@@ -21,17 +21,16 @@ class SiteMapManager{
 
 	public function setCollectionList(): void
 	{
-		global $USER_RIGHTS, $IS_ADMIN;
 		$adminArr = array();
 		$editorArr = array();
 		$sql = 'SELECT c.collid, CONCAT_WS(":",c.institutioncode, c.collectioncode) AS ccode, c.collectionname, c.colltype '.
 			'FROM omcollections c ';
-		if(!$IS_ADMIN){
-			if(array_key_exists('CollAdmin',$USER_RIGHTS)){
-				$adminArr = $USER_RIGHTS['CollAdmin'];
+		if(!$GLOBALS['IS_ADMIN']){
+			if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
+				$adminArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
 			}
-			if(array_key_exists('CollEditor',$USER_RIGHTS)){
-				$editorArr = $USER_RIGHTS['CollEditor'];
+			if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+				$editorArr = $GLOBALS['USER_RIGHTS']['CollEditor'];
 			}
 			if($adminArr || $editorArr){
 				$sql .= 'WHERE (c.collid IN('.implode(',',array_merge($adminArr,$editorArr)).')) ';
@@ -47,7 +46,7 @@ class SiteMapManager{
 			if($rs){
 				while($row = $rs->fetch_object()){
 					$name = $row->collectionname.($row->ccode? ' (' .$row->ccode. ')' : '');
-					$isCollAdmin = ($IS_ADMIN|| in_array($row->collid, $adminArr, true) ?1:0);
+					$isCollAdmin = ($GLOBALS['IS_ADMIN']|| in_array($row->collid, $adminArr, true) ?1:0);
 					if($row->colltype === 'Observations'){
 						$this->obsArr[$row->collid]['name'] = $name;
 						$this->obsArr[$row->collid]['isadmin'] = $isCollAdmin; 
@@ -83,10 +82,9 @@ class SiteMapManager{
 
 	public function getChecklistList($clArr): array
 	{
-		global $IS_ADMIN;
 		$returnArr = array();
 		$sql = 'SELECT clid, name, access FROM fmchecklists ';
-		if(!$IS_ADMIN && $clArr){
+		if(!$GLOBALS['IS_ADMIN'] && $clArr){
 			$sql .= 'WHERE (access LIKE "public%" OR clid IN('.implode(',',$clArr).')) ';
 		}
 		else{

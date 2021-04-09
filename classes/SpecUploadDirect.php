@@ -1,5 +1,5 @@
 <?php
-include_once('SpecUploadBase.php');
+include_once(__DIR__ . '/SpecUploadBase.php');
 
 class SpecUploadDirect extends SpecUploadBase {
 
@@ -39,14 +39,12 @@ class SpecUploadDirect extends SpecUploadBase {
 
  	public function uploadData($finalTransfer): void
 	{
- 		global $CHARSET;
-		
-		$sourceConn = $this->getSourceConnection();
+ 		$sourceConn = $this->getSourceConnection();
 		if($sourceConn){
 			$this->prepUploadData();
 			echo "<li style='font-weight:bold;'>Connected to Source Database</li>";
 			set_time_limit(800);
-			$sourceConn->query('SET NAMES ' .str_replace('-','',strtolower($CHARSET)). ';');
+			$sourceConn->query('SET NAMES ' .str_replace('-','',strtolower($GLOBALS['CHARSET'])). ';');
 			if($result = $sourceConn->query($this->queryStr)){
 				echo "<li style='font-weight:bold;'>Results obtained from Source Connection, now reading Resultset... </li>";
 				$this->transferCount = 0;

@@ -105,7 +105,7 @@ if($export){
 		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	}
 	
-	$targetFile = $SERVER_ROOT.'/temp/report/'.$PARAMS_ARR['un'].'_mailing_label.'.$exportExtension;
+	$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_mailing_label.'.$exportExtension;
 	$phpWord->save($targetFile, $exportEngine);
 
 	header('Content-Description: File Transfer');
@@ -118,7 +118,7 @@ if($export){
 }
 else{
 	?>
-	<html lang="<?php echo $DEFAULT_LANG; ?>">
+	<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
 			<title>Mailing Label</title>
 			<style type="text/css">

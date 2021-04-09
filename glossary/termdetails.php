@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ../profile/index.php?refurl=' . $CLIENT_ROOT . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
@@ -12,7 +12,7 @@ $glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
-if($IS_ADMIN || array_key_exists('Taxonomy',$USER_RIGHTS)){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
 
@@ -95,11 +95,11 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Glossary Management</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Management</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
 	<style type="text/css">
 		#tabs a{
@@ -108,6 +108,7 @@ if($glossId){
 			font-weight: normal;
 		}
 	</style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
@@ -224,7 +225,7 @@ if($glossId){
 										}
 										?>
 									</select> 
-									<a href="#" onclick="toggle('addLangDiv');return false;"><img src="../images/add.png" /></a>&nbsp;&nbsp;
+									<a href="#" onclick="toggle('addLangDiv');return false;"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>&nbsp;&nbsp;
 								</div>
 								<div id="addLangDiv" style="float:left;display:none">
 									<input name="newlang" type="text" maxlength="45" style="width:200px;" /> 
@@ -287,7 +288,7 @@ if($glossId){
 									foreach($taxaArr as $taxId => $sciname){
 										echo '<li><form name="taxadelform" id="'.$sciname.'" action="termdetails.php" style="margin-top:0;margin-bottom:0;" method="post">';
 										echo $sciname;
-										echo '<input style="margin-left:15px;" type="image" src="../images/del.png" title="Delete Taxa Group">';
+										echo '<button style="margin:0;padding:2px;" title="Delete Taxa Group" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
 										echo '<input name="glossid" type="hidden" value="'.$glossId.'" />';
 										echo '<input name="tid" type="hidden" value="'.$taxId.'" />';
 										echo '<input name="formsubmit" type="hidden" value="Delete Taxa Group" />';
@@ -320,7 +321,7 @@ if($glossId){
 					$otherRelationshipsArr = $glosManager->getOtherRelatedTerms();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$synonymArr||$otherRelationshipsArr?'display:none;':''); ?>" onclick="toggle('addsyndiv');" title="Add a New Synonym">
-						<img style="border:0;width:12px;" src="../images/add.png" />
+                        <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 					</div>
 					<div id="addsyndiv" style="margin-bottom:10px;<?php echo ($synonymArr||$otherRelationshipsArr?'display:none;':''); ?>;">
 						<form name="relnewform" action="termdetails.php#termrelateddiv" method="post" onsubmit="return verifyRelLinkForm(this);">
@@ -381,12 +382,15 @@ if($glossId){
 											<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 											<input name="gltlinkid" type="hidden" value="<?php echo $synArr['gltlinkid']; ?>" />
 											<input name="relglossid" type="hidden" value="<?php echo $synGlossId; ?>" />
-											<input type="image" name="formsubmit" src='../images/del.png' value="Remove Synonym" style="width:12px" <?php echo ($disableRemoveSyn?'disabled':''); ?>>
+                                            <input name="formsubmit" type="hidden" value="Remove Synonym" />
+											<button style="margin:0;padding:2px;" type="submit" <?php echo ($disableRemoveSyn?'disabled':''); ?>>
+                                                <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                            </button>
 										</form>
 									</div>
 									<div style="float:right;margin:5px;cursor:pointer;" title="Edit Term">
 										<a href="termdetails.php?glossid=<?php echo $synGlossId; ?>">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+                                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
 										</a>
 									</div>
 									<div style='' >
@@ -441,12 +445,15 @@ if($glossId){
 												<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 												<input name="gltlinkid" type="hidden" value="<?php echo $relArr['gltlinkid']; ?>" />
 												<input name="relglossid" type="hidden" value="<?php echo $relGlossId; ?>" />
-												<input type="image" name="formsubmit" src='../images/del.png' value="Unlink Related Term" style="width:13px" <?php echo ($disableRemoveRel?'disabled':''); ?>>
+                                                <input name="formsubmit" type="hidden" value="Unlink Related Term" />
+												<button style="margin:0;padding:2px;" type="submit" <?php echo ($disableRemoveRel?'disabled':''); ?>>
+                                                    <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                                </button>
 											</form>
 										</div>
 										<div style="float:right;margin:5px;" title="Edit Term">
 											<a href="termdetails.php?glossid=<?php echo $relGlossId; ?>">
-												<img style="border:0;width:12px;" src="../images/edit.png" />
+                                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
 											</a>
 										</div>
 										<div>
@@ -471,7 +478,7 @@ if($glossId){
 					$translationArr = $glosManager->getTranslations();
 					?>
 					<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$translationArr?'display:none;':''); ?>" onclick="toggle('addtransdiv');" title="Add a New Translation">
-						<img style="border:0;width:12px;" src="../images/add.png" />
+                        <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 					</div>
 					<div id="addtransdiv" style="margin-bottom:10px;<?php echo ($translationArr?'display:none;':''); ?>;">
 						<form name="translinkform" action="termdetails.php#termtransdiv" method="post" onsubmit="return verifyTransLinkForm(this);">
@@ -520,7 +527,10 @@ if($glossId){
 												<input name="glossid" type="hidden" value="<?php echo $glossId; ?>" />
 												<input name="gltlinkid" type="hidden" value="<?php echo $transArr['gltlinkid']; ?>" />
 												<input name="relglossid" type="hidden" value="<?php echo $transGlossId; ?>" />
-												<input type="image" name="formsubmit" src='../images/del.png' value="Remove Translation" style="width:13px;">
+                                                <input name="formsubmit" type="hidden" value="Remove Translation" />
+												<button style="margin:0;padding:2px;" type="submit">
+                                                    <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
+                                                </button>
 											</form>
 										</div>
 										<?php 
@@ -528,7 +538,7 @@ if($glossId){
 									?>
 									<div style="float:right;margin:5px;" title="Edit Term Data">
 										<a href="termdetails.php?glossid=<?php echo $transGlossId; ?>">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+                                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
 										</a>
 									</div>
 									<div>
@@ -557,7 +567,7 @@ if($glossId){
 				<div id="termimagediv" style="min-height:300px;">
 					<div id="imagediv" style="">
 						<div style="margin:10px;float:right;cursor:pointer;<?php echo (!$termImgArr?'display:none;':''); ?>" onclick="toggle('addimgdiv');" title="Add a New Image">
-							<img style="border:0;width:12px;" src="../images/add.png" />
+                            <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</div>
 						<div id="addimgdiv" style="<?php echo ($termImgArr?'display:none;':''); ?>;">
 							<form name="imgnewform" action="termdetails.php#termimagediv" method="post" enctype="multipart/form-data" onsubmit="return verifyNewImageForm();">
@@ -634,13 +644,13 @@ if($glossId){
 									?>
 									<fieldset style="margin-top:10px;">
 										<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-											<img style="border:0;width:12px;" src="../images/edit.png" />
+                                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
 										</div>
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if($IMAGE_DOMAIN && strpos($imgUrl, '/') === 0) {
-                                                $imgUrl = $IMAGE_DOMAIN.$imgUrl;
+											if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0) {
+                                                $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                                             }
 											$displayUrl = $imgUrl;
 											?>

@@ -1,5 +1,5 @@
 <?php
-include_once('DbConnection.php');
+include_once(__DIR__ . '/DbConnection.php');
 
 class GlossaryManager{
 
@@ -33,25 +33,24 @@ class GlossaryManager{
 	private $errorStr;
 	
  	public function __construct(){
-		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH, $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_FILE_SIZE_LIMIT;
- 		$connection = new DbConnection();
+		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
-		$this->imageRootPath = $IMAGE_ROOT_PATH;
+		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
 			$this->imageRootPath .= '/';
 		}
-		$this->imageRootUrl = $IMAGE_ROOT_URL;
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($this->imageRootUrl,-1) !== '/') {
 			$this->imageRootUrl .= '/';
 		}
-		if($IMG_TN_WIDTH){
-			$this->tnPixWidth = $IMG_TN_WIDTH;
+		if($GLOBALS['IMG_TN_WIDTH']){
+			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}
-		if($IMG_WEB_WIDTH){
-			$this->webPixWidth = $IMG_WEB_WIDTH;
+		if($GLOBALS['IMG_WEB_WIDTH']){
+			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($IMG_FILE_SIZE_LIMIT){
-			$this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
+		if($GLOBALS['IMG_FILE_SIZE_LIMIT']){
+			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
 		}
  	}
  	
@@ -302,8 +301,7 @@ class GlossaryManager{
 
 	public function createTerm($pArr): bool
 	{
-		global $SYMB_UID;
- 		$status = true;
+		$status = true;
 		$term = $this->cleanInStr($pArr['term']);
 		$def = $this->cleanInStr($pArr['definition']);
 		$lang = $this->cleanInStr($pArr['language']);
@@ -315,7 +313,7 @@ class GlossaryManager{
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,author,translator,notes,resourceurl,uid) '.
 			'VALUES("'.$term.'",'.($def?'"'.$def.'"':'NULL').','.($lang?'"'.$lang.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.($author?'"'.$author.'"':'NULL').','.($translator?'"'.$translator.'"':'NULL').','.
-			($notes?'"'.$notes.'"':'NULL').','.($resourceUrl?'"'.$resourceUrl.'"':'NULL').','.$SYMB_UID.') ';
+			($notes?'"'.$notes.'"':'NULL').','.($resourceUrl?'"'.$resourceUrl.'"':'NULL').','.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql; exit;
 		if($this->conn->query($sql)){
 			$this->glossId = $this->conn->insert_id;
@@ -829,7 +827,6 @@ class GlossaryManager{
 
 	private function databaseImage($imgWebUrl,$imgTnUrl): string
 	{
-		global $SYMB_UID;
 		if(!$imgWebUrl) {
 			return 'ERROR: web url is null ';
 		}
@@ -843,7 +840,7 @@ class GlossaryManager{
 		$glossId = $_REQUEST['glossid'];
 		$status = 'File added successfully!';
 		$sql = 'INSERT INTO glossaryimages(glossid,url,thumbnailurl,structures,notes,createdBy,uid) '.
-			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.$this->cleanInStr($_REQUEST['structures']).'","'.$this->cleanInStr($_REQUEST['notes']).'","'.$this->cleanInStr($_REQUEST['createdBy']).'",'.$SYMB_UID.') ';
+			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.$this->cleanInStr($_REQUEST['structures']).'","'.$this->cleanInStr($_REQUEST['notes']).'","'.$this->cleanInStr($_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$status = 'ERROR Loading Data: ' .$this->conn->error. '<br/>SQL: ' .$sql;
@@ -852,15 +849,14 @@ class GlossaryManager{
 	}
 	
 	public function uriExists($url){
-		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
- 		$exists = false;
+		$exists = false;
 		$localUrl = '';
 		if(strpos($url, '/') == 0){
-			if($IMAGE_DOMAIN){
-				$url = $IMAGE_DOMAIN.$url;
+			if($GLOBALS['IMAGE_DOMAIN']){
+				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
-			elseif($IMAGE_ROOT_URL && strpos($url,$IMAGE_ROOT_URL) == 0){
-				$localUrl = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$url);
+			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) == 0){
+				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
 				$url = $this->getServerDomain().$url;
@@ -895,14 +891,13 @@ class GlossaryManager{
 	
 	public function createNewImage($subExt, $targetWidth, $qualityRating = 0): bool
 	{
-		global $USE_IMAGE_MAGICK;
 		$status = false;
 		if($this->sourcePath && $this->uriExists($this->sourcePath)){
 			if(!$qualityRating) {
 				$qualityRating = $this->jpgCompression;
 			}
 			
-	        if($USE_IMAGE_MAGICK) {
+	        if($GLOBALS['USE_IMAGE_MAGICK']) {
 				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating);
 			} 
 			elseif(function_exists('gd_info') && extension_loaded('gd')) {
@@ -981,9 +976,8 @@ class GlossaryManager{
 	
 	public function getUrlBase(): string
 	{
-		global $IMAGE_DOMAIN;
- 		$urlBase = $this->urlBase;
-		if($IMAGE_DOMAIN){
+		$urlBase = $this->urlBase;
+		if($GLOBALS['IMAGE_DOMAIN']){
 			$urlBase = $this->getServerDomain().$urlBase;
     	}
 		return $urlBase;

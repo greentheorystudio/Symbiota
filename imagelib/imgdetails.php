@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageDetailManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $imgId = $_REQUEST['imgid'];
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
@@ -11,7 +11,7 @@ $imgManager = new ImageDetailManager($imgId);
 
 $imgArr = $imgManager->getImageMetadata();
 $isEditor = false;
-if($IS_ADMIN || $imgArr['username'] === $USERNAME || ($imgArr['photographeruid'] && $imgArr['photographeruid'] === $SYMB_UID)){
+if($GLOBALS['IS_ADMIN'] || $imgArr['username'] === $GLOBALS['USERNAME'] || ($imgArr['photographeruid'] && $imgArr['photographeruid'] === $GLOBALS['SYMB_UID'])){
 	$isEditor = true;
 }
 
@@ -42,13 +42,13 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if($IMAGE_DOMAIN){
+	if($GLOBALS['IMAGE_DOMAIN']){
 		if(strpos($imgUrl, '/') === 0){
-			$imgUrl = $IMAGE_DOMAIN.$imgUrl;
-			$metaUrl = $IMAGE_DOMAIN.$metaUrl;
+			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
+			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
 		}
 		if($origUrl && strpos($origUrl, '/') === 0){
-			$origUrl = $IMAGE_DOMAIN.$origUrl;
+			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
 		}
 	}
 	if(strpos($metaUrl, '/') === 0){
@@ -57,28 +57,29 @@ if($imgArr){
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<?php
 	if($imgArr){
 		?>
 		<meta property="og:title" content="<?php echo $imgArr['sciname']; ?>"/>
-		<meta property="og:site_name" content="<?php echo $DEFAULT_TITLE; ?>"/>
+		<meta property="og:site_name" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?>"/>
 		<meta property="og:image" content="<?php echo $metaUrl; ?>"/>
 		<meta name="twitter:card" content="photo" data-dynamic="true" />
 		<meta name="twitter:title" content="<?php echo $imgArr['sciname']; ?>" />
 		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
+		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
 		<?php
 	}
 	?>
-	<title><?php echo $DEFAULT_TITLE. ' Image Details: #' .$imgId; ?></title>
-	<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-	<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Image Details: #' .$imgId; ?></title>
+	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.imgdetails.js?ver=150910" type="text/javascript"></script>
+	<script src="../js/symb/imagelib.imgdetails.js?ver=20210313" type="text/javascript"></script>
 	<script src="../js/symb/shared.js" type="text/javascript"></script>
 </head>
 <body>
@@ -103,7 +104,7 @@ if($imgArr){
 			?>
 			<div style="width:100%;float:right;clear:both;margin-top:10px;">
 				<div style="float:right;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr['sciname']; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
+					<a class="twitter-share-button" data-text="<?php echo $imgArr['sciname']; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
 					<script>
 						window.twttr=(function(d,s,id){
                             let js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
@@ -158,7 +159,7 @@ if($imgArr){
 										</select>
 										* Users registered within system
 										<a href="#" onclick="toggle('iepor');return false;" title="Display photographer override field">
-											<img src="../images/editplus.png" style="border:0;width:12px;" />
+											<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 										</a>
 									</div>
 									<div id="iepor" style="margin-top:2px;display:<?php echo ($imgArr['photographer']?'block':'none'); ?>;">
@@ -203,7 +204,7 @@ if($imgArr){
 										<b>Web Image:</b><br/>
 										<input name="url" type="text" value="<?php echo $imgArr['url'];?>" style="width:90%;" maxlength="150" />
 										<?php
-                                        if(stripos($imgArr['url'],$IMAGE_ROOT_URL) === 0){
+                                        if(stripos($imgArr['url'],$GLOBALS['IMAGE_ROOT_URL']) === 0){
                                             ?>
                                             <div style="margin-left:70px;">
                                                 <input type="checkbox" name="renameweburl" value="1" />
@@ -217,7 +218,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<b>Thumbnail:</b><br/>
 										<input name="thumbnailurl" type="text" value="<?php echo $imgArr['thumbnailurl'];?>" style="width:90%;" maxlength="150">
-										<?php if(stripos($imgArr['thumbnailurl'],$IMAGE_ROOT_URL) === 0){ ?>
+										<?php if(stripos($imgArr['thumbnailurl'],$GLOBALS['IMAGE_ROOT_URL']) === 0){ ?>
 										<div style="margin-left:70px;">
 											<input type="checkbox" name="renametnurl" value="1" />
 											Rename thumbnail image file on server to match above edit (web server file editing privileges required)
@@ -228,7 +229,7 @@ if($imgArr){
 									<div style="margin-top:2px;">
 										<b>Large Image:</b><br/>
 										<input name="originalurl" type="text" value="<?php echo $imgArr['originalurl'];?>" style="width:90%;" maxlength="150">
-										<?php if(stripos($imgArr['originalurl'],$IMAGE_ROOT_URL) === 0){ ?>
+										<?php if(stripos($imgArr['originalurl'],$GLOBALS['IMAGE_ROOT_URL']) === 0){ ?>
 										<div style="margin-left:80px;">
 											<input type="checkbox" name="renameorigurl" value="1" />
 											Rename large image file on server to match above edit (web server file editing privileges required)
@@ -298,7 +299,7 @@ if($imgArr){
 							?>
 							<div style="float:right;margin-right:10px;" title="Must have editing privileges for this collection managing image">
 								<a href="../collections/editor/occurrenceeditor.php?occid=<?php echo $imgArr['occid']; ?>&tabtarget=2">
-									<img src="../images/edit.png" style="border:0;" />
+                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
 								</a>
 							</div>
 							<?php
@@ -306,7 +307,7 @@ if($imgArr){
 						else if($isEditor){
                             ?>
                             <div style="float:right;margin-right:10px;cursor:pointer;">
-                                <img src="../images/edit.png" style="border:0;" onclick="toggle('imageedit');" />
+                                <i style="height:20px;width:20px;" class="far fa-edit" onclick="toggle('imageedit');"></i>
                             </div>
                             <?php
                         }
@@ -377,12 +378,12 @@ if($imgArr){
 						<div style="margin-top:20px;">
 							Do you see an error or have a comment about this image? <br/>If so, send email to:
 							<?php
-							$emailSubject = $DEFAULT_TITLE.' Image #'.$imgId;
-							$emailBody = 'Image being referenced: http://'.$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/imagelib/imgdetails.php?imgid='.$imgId;
-							$emailRef = 'subject='.$emailSubject.'&cc='.$ADMIN_EMAIL.'&body='.$emailBody;
+							$emailSubject = $GLOBALS['DEFAULT_TITLE'].' Image #'.$imgId;
+							$emailBody = 'Image being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId;
+							$emailRef = 'subject='.$emailSubject.'&cc='.$GLOBALS['ADMIN_EMAIL'].'&body='.$emailBody;
 							?>
-							<a href="mailto:<?php echo $ADMIN_EMAIL.'?'.$emailRef; ?>">
-								<?php echo $ADMIN_EMAIL; ?>
+							<a href="mailto:<?php echo $GLOBALS['ADMIN_EMAIL'].'?'.$emailRef; ?>">
+								<?php echo $GLOBALS['ADMIN_EMAIL']; ?>
 							</a>
 
 						</div>

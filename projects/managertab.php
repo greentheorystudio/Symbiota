@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $pid = $_REQUEST['pid'];
 
@@ -17,7 +17,7 @@ $projManager->setPid($pid);
 	if($managerArr){
 		foreach($managerArr as $uid => $userName){
 			echo '<li title="'.$uid.'">';
-			echo $userName.' <a href="index.php?tabindex=1&emode=1&projsubmit=deluid&pid='.$pid.'&uid='.$uid.'" title="Remove manager"><img src="../images/del.png" style="width:13px;" /></a>';
+			echo $userName.' <a href="index.php?tabindex=1&emode=1&projsubmit=deluid&pid='.$pid.'&uid='.$uid.'" title="Remove manager"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
 			echo '</li>';
 		}
 	}
