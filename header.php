@@ -50,7 +50,7 @@
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
                     </li>
                     <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Search Collections</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/harvestparams.php" >Search Collections</a>
                     </li>
                     <li>
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank">Spatial Module</a>
