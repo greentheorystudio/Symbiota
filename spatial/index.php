@@ -180,6 +180,7 @@ $dbArr = array();
                                 terms.pop();
                                 terms.push( ui.item.value );
                                 this.value = terms.join( ", " );
+                                processTaxaParamChange();
                                 return false;
                             }
                         },{}
@@ -236,19 +237,19 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-                if($stArrJson){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
-                <?php
+            if($stArrJson){
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
+            }
+            ?>
+            searchTermsArr = getSearchTermsArr();
+            setInputFormBySearchTermsArr();
+            createShapesFromSearchTermsArr();
+            setCollectionForms();
+            loadPoints();
+            <?php
             }
             ?>
             spatialModuleInitialising = false;
