@@ -30,7 +30,7 @@ if($collId){
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210313"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210410"></script>
 	</head>
 	<body>
 		<?php
