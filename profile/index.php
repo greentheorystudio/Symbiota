@@ -79,7 +79,7 @@ elseif($action === 'Login'){
 elseif($action === 'Retrieve Login'){
 	if($emailAddr){
 		if($pHandler->lookupUserName($emailAddr)){
-			$statusStr = 'Your login name will be emailed to you.';
+			$statusStr = 'Your login name has been emailed to you. Please check your junk folder if no email appears in your inbox.';
 		}
 		else{
 			$statusStr = $pHandler->getErrorStr();

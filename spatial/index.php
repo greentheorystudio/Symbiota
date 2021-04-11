@@ -89,7 +89,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210325" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20210313" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20210410" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
 
@@ -180,6 +180,7 @@ $dbArr = array();
                                 terms.pop();
                                 terms.push( ui.item.value );
                                 this.value = terms.join( ", " );
+                                processTaxaParamChange();
                                 return false;
                             }
                         },{}
@@ -236,19 +237,19 @@ $dbArr = array();
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-                if($stArrJson){
-                    ?>
-                    initializeSearchStorage(<?php echo $queryId; ?>);
-                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-                    <?php
-                }
-                ?>
-                searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
-                <?php
+            if($stArrJson){
+            ?>
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+            <?php
+            }
+            ?>
+            searchTermsArr = getSearchTermsArr();
+            setInputFormBySearchTermsArr();
+            createShapesFromSearchTermsArr();
+            setCollectionForms();
+            loadPoints();
+            <?php
             }
             ?>
             spatialModuleInitialising = false;
