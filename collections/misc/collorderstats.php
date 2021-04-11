@@ -27,9 +27,10 @@ $_SESSION['statsOrderArr'] = $orderArr;
 		<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 		<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210313"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210410"></script>
 	</head>
 	<body>
 		<?php
@@ -75,7 +76,9 @@ $_SESSION['statsOrderArr'] = $orderArr;
 				<div style='float:left;margin-left:25px;margin-top:10px;width:16px;height:16px;padding:2px;' title="Save CSV">
 					<form name="orderstatscsv" id="orderstatscsv" action="collstatscsv.php" method="post" onsubmit="">
 						<input type="hidden" name="action" value='Download Order Dist' />
-						<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
+						<button class="icon-button" type="submit">
+                            <i style="height:15px;width:15px;" class="fas fa-download"></i>
+                        </button>
 					</form>
 				</div>
 			</fieldset>

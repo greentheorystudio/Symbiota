@@ -70,6 +70,7 @@ $voucherProjects = $clManager->getVoucherProjects();
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
@@ -137,7 +138,7 @@ if($clid && $isEditor){
 						<li>
 							<?php echo $uName; ?>
 							<a href="checklistadmin.php?clid=<?php echo $clid.'&deleteuid='.$uid.'&pid='.$pid.'&tabindex='.$tabIndex; ?>" onclick="return confirm('Are you sure you want to remove editing rights for this user?');" title="Delete this user">
-								<img src="../images/drop.png" style="width:12px;" />
+                                <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 							</a>
 						</li>
 					<?php

@@ -93,6 +93,7 @@ if($editorCode){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
 	<link type="text/css" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
 	<link type="text/css" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script>
 		function toggle(target){
             const tDiv = document.getElementById(target);
@@ -164,13 +165,13 @@ include(__DIR__ . '/../../header.php');
 			?>
 			<div style="float:right;">
 				<a href="institutioneditor.php">
-					<img src="<?php echo $GLOBALS['CLIENT_ROOT'];?>/images/toparent.png" style="width:15px;border:0;" title="Return to Institution List" />
+					<i style="height:15px;width:15px;" title="Return to Institution List" class="fas fa-level-up-alt"></i>
 				</a>
 				<?php 
 				if($editorCode > 1){
 					?>
 					<a href="#" onclick="toggle('editdiv');">
-						<img src="<?php echo $GLOBALS['CLIENT_ROOT'];?>/images/edit.svg" style="width:15px;border:0;" title="Edit Institution" />
+						<i style="height:20px;width:20px;" title="Edit Institution" class="far fa-edit"></i>
 					</a>
 					<?php 
 				}
@@ -353,7 +354,7 @@ include(__DIR__ . '/../../header.php');
 									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
 									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
 									if($editorCode === 3 || in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
-                                        echo ' <div class="editdiv" style="margin-left:10px;display:' . ($eMode ? '' : 'none') . '"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><img src="../../images/del.png" style="width:15px;"/></a></div>';
+                                        echo ' <div class="editdiv" style="margin-left:10px;display:' . ($eMode ? '' : 'none') . '"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a></div>';
                                     }
 									echo '</div>';
 								}
@@ -423,7 +424,7 @@ include(__DIR__ . '/../../header.php');
         ?>
         <div style="float:right;">
             <a href="#" onclick="toggle('instadddiv');">
-                <img src="<?php echo $GLOBALS['CLIENT_ROOT'];?>/images/add.png" style="width:15px;border:0;" title="Add a New Institution" />
+                <i style="height:20px;width:20px;color:green;" title="Add a New Institution" class="fas fa-plus"></i>
             </a>
         </div>
         <div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
@@ -579,7 +580,7 @@ include(__DIR__ . '/../../header.php');
                             echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
                             echo $iArr['institutionname'].' ('.$iArr['institutioncode'].')';
                             if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$GLOBALS['USER_RIGHTS']['CollAdmin'])){
-                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><img src="'.$GLOBALS['CLIENT_ROOT'].'/images/edit.svg" style="width:13px;" /></a>';
+                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><i style="height:15px;width:15px;" title="Edit Institution" class="far fa-edit"></i></a>';
                             }
                             echo '</a></li>';
                         }

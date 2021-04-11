@@ -68,7 +68,8 @@ if($GLOBALS['SYMB_UID']){
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css" />
-	<script src="../../js/jquery.js?ver=20130917" type="text/javascript"></script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
+    <script src="../../js/jquery.js?ver=20130917" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js?ver=20130917" type="text/javascript"></script>
 	<script>
 		function toggleById(target){
@@ -112,7 +113,7 @@ if($GLOBALS['SYMB_UID']){
 		if($editCode > 0 && $collid){
 			?>
 			<div style="float:right;margin:3px;cursor:pointer;" onclick="toggleById('controlpanel');" title="Toggle Manager's Control Panel">
-				<img style='border:0;width:20px;height:20px;' src='../../images/edit.svg' />
+                <i style='width:20px;height:20px;' class="fas fa-cog"></i>
 			</div>
 			<?php
 		}
@@ -388,7 +389,7 @@ if($GLOBALS['SYMB_UID']){
 							<?php
 							echo '<div>' .$addrArr['institutionname'];
 							if($editCode > 1) {
-                                echo ' <a href="../admin/institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><img src="../../images/edit.svg" style="width:13px;" /></a>';
+                                echo ' <a href="../admin/institutioneditor.php?emode=1&targetcollid=' . $collid . '&iid=' . $addrArr['iid'] . '" title="Edit institution information"><i style="width:13px;" class="far fa-edit"></i></a>';
                             }
 							echo '</div>';
 							if($addrArr['institutionname2']) {

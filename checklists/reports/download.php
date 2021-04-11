@@ -10,6 +10,7 @@ $clid = $_REQUEST['clid'];
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script>
@@ -83,7 +84,7 @@ $clid = $_REQUEST['clid'];
 									<input type="radio" name="schema" value="symbiota" onclick="georefRadioClicked(this)" CHECKED />
 									Symbiota Native
 									<a id="schemanativeinfo" href="#" onclick="return false" title="More Information">
-										<img src="../../images/info.png" style="width:13px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a><br/>
 									<div id="schemanativeinfodialog">
 										Symbiota native is very similar to Darwin Core except with the addtion of a few fields
@@ -92,7 +93,7 @@ $clid = $_REQUEST['clid'];
 									<input type="radio" name="schema" value="dwc" onclick="georefRadioClicked(this)" />
 									Darwin Core
 									<a id="schemadwcinfo" href="#" target="" title="More Information">
-										<img src="../../images/info.png" style="width:13px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 									</a><br/>
 									<div id="schemadwcinfodialog">
 										Darwin Core (DwC) is a TDWG endorsed exchange standard specifically for biodiversity datasets.

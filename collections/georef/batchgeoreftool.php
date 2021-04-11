@@ -108,6 +108,7 @@ if($editor && $submitAction){
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210313"></script>
@@ -218,7 +219,7 @@ if($editor && $submitAction){
 											</select>
 										</div>
 										<div style="float:left;">
-											<img src="../../images/add.png" onclick="toggle('advfilterdiv')" title="Advanced Options" />
+											<i style="height:15px;width:15px;color:green;" onclick="toggle('advfilterdiv')" title="Advanced Options" class="fas fa-plus"></i>
 										</div>
 									</div>
 								</div>
@@ -256,16 +257,16 @@ if($editor && $submitAction){
 						<form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
 							<div style="float:right;">
 								<span>
-									<a href="#" onclick="geoCloneTool();"><img src="../../images/list.svg" title="Search for clones previously georeferenced" style="width:15px;" /></a>
+									<a href="#" onclick="geoCloneTool();"><i style="height:15px;width:15px;" title="Search for clones previously georeferenced" class="fas fa-list"></i></a>
 								</span>
 								<span style="margin-left:10px;">
 									<a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="GeoLocate locality" style="width:15px;" /></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="analyseLocalityStr();"><img src="../../images/find.png" title="Analyse Locality string for embedded Lat/Long or UTM" style="width:15px;" /></a>
+									<a href="#" onclick="analyseLocalityStr();"><i style="height:15px;width:15px;" title="Analyse Locality string for embedded Lat/Long or UTM" class="fas fa-search"></i></a>
 								</span>
 								<span style="margin-left:10px;">
-									<a href="#" onclick="openFirstRecSet();"><img src="../../images/edit.svg" title="Edit first set of records" style="width:15px;" /></a>
+									<a href="#" onclick="openFirstRecSet();"><i style="height:15px;width:15px;" title="Edit first set of records" class="far fa-edit"></i></a>
 								</span>
 							</div>
 							<div style="font-weight:bold;">
@@ -362,7 +363,7 @@ if($editor && $submitAction){
 										<td>
 											<input id="decimallatitude" name="decimallatitude" type="text" style="width:80px;" />
 											<span style="cursor:pointer;padding:3px;" onclick="openSpatialInputWindow('input-point');">
-												<img src="../../images/globe.svg" style="border:0;width:13px;" />
+												<i style="height:15px;width:15px;" class="fas fa-globe"></i>
 											</span>
 										</td>
 									</tr>
@@ -391,7 +392,7 @@ if($editor && $submitAction){
 											<span style="margin-left:20px;font-weight:bold;">Datum:</span>
 											<input id="geodeticdatum" name="geodeticdatum" type="text" value="" style="width:75px;" />
 											<span style="cursor:pointer;margin-left:3px;" onclick="toggle('utmdiv');">
-												<img src="../../images/editplus.png" style="border:0;width:14px;" />
+												<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 											</span>
 										</td>
 									</tr>

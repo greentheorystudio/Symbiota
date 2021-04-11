@@ -150,6 +150,7 @@ if($isEditor){
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>

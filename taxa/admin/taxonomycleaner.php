@@ -39,6 +39,7 @@ $status = '';
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Name Cleaner</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php

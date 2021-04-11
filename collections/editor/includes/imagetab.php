@@ -14,7 +14,7 @@ $specImgArr = $occManager->getImageMap();
 ?>
 <div id="imagediv" style="width:795px;">
 	<div style="float:right;cursor:pointer;" onclick="toggle('addimgdiv');" title="Add a New Image">
-		<img style="border:0;width:12px;" src="../../images/add.png" />
+		<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
 	</div>
 	<div id="addimgdiv" style="display:<?php echo ($specImgArr?'none':''); ?>;">
 		<form name="imgnewform" action="occurrenceeditor.php" method="post" enctype="multipart/form-data" onsubmit="return verifyImgAddForm(this);">
@@ -75,7 +75,7 @@ $specImgArr = $occManager->getImageMap();
 						?>
 					</select>
 					<a href="#" onclick="toggle('imgaddoverride');return false;" title="Display photographer override field">
-						<img src="../../images/editplus.png" style="border:0;width:13px;" />
+						<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 					</a>
 				</div>
 				<div id="imgaddoverride" style="margin:0 0 5px 10px;display:none;">
@@ -171,7 +171,7 @@ $specImgArr = $occManager->getImageMap();
 						</td>
 						<td style="text-align:left;padding:10px;">
 							<div style="float:right;cursor:pointer;" onclick="toggle('img<?php echo $imgId; ?>editdiv');" title="Edit Image MetaData">
-								<img style="border:0;width:12px;" src="../../images/edit.svg" />
+                                <i style="height:15px;width:15px;" class="far fa-edit"></i>
 							</div>
 							<div style="margin-top:30px">
 								<div>
@@ -291,7 +291,7 @@ $specImgArr = $occManager->getImageMap();
 												?>
 											</select>
 											<a href="#" onclick="toggle('imgeditoverride<?php echo $imgId; ?>');return false;" title="Display photographer override field">
-												<img src="../../images/editplus.png" style="border:0;width:13px;" />
+												<i style="height:15px;width:15px;" class="far fa-plus-square"></i>
 											</a>
 										</div>
 										<div id="imgeditoverride<?php echo $imgId; ?>" style="display:<?php echo ($imgArr['photographer']?'block':'none'); ?>;">

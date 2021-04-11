@@ -41,11 +41,12 @@ $resetPageNum = false;
             cursor:pointer;
         }
     </style>
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=3"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210313"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210410"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

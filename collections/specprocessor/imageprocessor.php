@@ -31,6 +31,7 @@ if($spprid) {
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <style type="text/css">.profileDiv{ clear:both; margin:2px 0 } </style>
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
     <script src="../../js/jquery-ui.js" type="text/javascript"></script>
     <script src="../../js/symb/shared.js" type="text/javascript"></script>
@@ -285,7 +286,7 @@ if($spprid) {
                             if($spprid){
                                 ?>
                                 <div style="position:absolute;top:10px;right:10px;" onclick="toggle('editdiv');toggle('imgprocessdiv')" title="Close Editor">
-                                    <img src="../../images/edit.svg" style="border:0;width:20px;height:20px;" />
+                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
                                 </div>
                                 <input name="projecttype" type="hidden" value="<?php echo $projectType; ?>" />
                                 <?php
@@ -324,7 +325,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="speckeypattern" type="text" style="width:300px;" value="<?php echo $specManager->getSpecKeyPattern(); ?>" />
                                     <a id="speckeypatterninfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="speckeypatterninfodialog">
                                         Regular expression needed to extract the unique identifier from source text.
@@ -341,7 +342,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="patternreplace" type="text" style="width:300px;" value="<?php echo ($specManager->getPatternReplace()?:'-- Optional --'); ?>" />
                                     <a id="patternreplaceinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="patternreplaceinfodialog">
                                         Optional regular expression for match on Catalog Number to be replaced with replacement term.
@@ -357,7 +358,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="replacestr" type="text" style="width:300px;" value="<?php echo ($specManager->getReplaceStr()?:'-- Optional --'); ?>" />
                                     <a id="replacestrinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="replacestrinfodialog">
                                         Optional replacement string to apply for Expression replacement term matches on catalogNumber.
@@ -371,7 +372,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="sourcepath" type="text" style="width:400px;" value="<?php echo $specManager->getSourcePath(); ?>" />
                                     <a id="sourcepathinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="sourcepathinfodialog">
                                         <div id="sourcePathInfoIplant" class="profileDiv" style="display:<?php echo ($projectType === 'iplant'?'block':'none'); ?>">
@@ -402,7 +403,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="targetpath" type="text" style="width:400px;" value="<?php echo ($specManager->getTargetPath()?:$GLOBALS['IMAGE_ROOT_PATH']); ?>" />
                                     <a id="targetpathinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="targetpathinfodialog">
                                         Web server path to where the image derivatives will be depositied.
@@ -418,7 +419,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="imgurl" type="text" style="width:400px;" value="<?php echo ($specManager->getImgUrlBase()?:$GLOBALS['IMAGE_ROOT_URL']); ?>" />
                                     <a id="imgurlinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="imgurlinfodialog">
                                         Image URL prefix that will access the target folder from the browser.
@@ -435,7 +436,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="webpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getWebPixWidth()?:$GLOBALS['IMG_WEB_WIDTH']); ?>" />
                                     <a id="webpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="webpixwidthinfodialog">
                                         Width of the standard web image.
@@ -450,7 +451,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="tnpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getTnPixWidth()?:$GLOBALS['IMG_TN_WIDTH']); ?>" />
                                     <a id="tnpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="tnpixwidthinfodialog">
                                         Width of the image thumbnail. Width should be greater than image sizing within the thumbnail display pages.
@@ -464,7 +465,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="lgpixwidth" type="text" style="width:50px;" value="<?php echo ($specManager->getLgPixWidth()?:$GLOBALS['IMG_LG_WIDTH']); ?>" />
                                     <a id="lgpixwidthinfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="lgpixwidthinfodialog">
                                         Width of the large version of the image.
@@ -482,7 +483,7 @@ if($spprid) {
                                 <div style="float:left;">
                                     <input name="jpgcompression" type="text" style="width:50px;" value="<?php echo $specManager->getJpgQuality(); ?>" />
                                     <a id="jpgcompressioninfo" href="#" onclick="return false" title="More Information">
-                                        <img src="../../images/info.png" style="width:15px;" />
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <div id="jpgcompressioninfodialog">
                                         JPG quality refers to amount of compression applied.
@@ -556,10 +557,10 @@ if($spprid) {
                             <fieldset style="padding:15px;">
                                 <legend><b><?php echo $specManager->getTitle(); ?></b></legend>
                                 <div style="position:absolute;top:10px;right:35px;" title="Show all saved profiles or add a new one...">
-                                    <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><img src="../../images/add.png" style="border:0;" /></a>
+                                    <a href="index.php?tabindex=1&collid=<?php echo $collid; ?>"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
                                 </div>
                                 <div style="position:absolute;top:10px;right:10px;" title="Open Editor">
-                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><img src="../../images/edit.svg" style="border:0;width:15px;" /></a>
+                                    <a href="#" onclick="toggle('editdiv');toggle('imgprocessdiv');return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
                                 </div>
                                 <?php
                                 if($projectType === 'idigbio'){

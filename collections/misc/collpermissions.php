@@ -74,6 +74,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 			return true;
 		}
 	</script>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 </head>
 <body>
@@ -105,7 +106,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 							<li>
 								<?php echo $uName; ?> 
 								<a href="collpermissions.php?collid=<?php echo $collId.'&deladmin='.$uid; ?>" onclick="return confirm('Are you sure you want to remove administrative rights for this user?');" title="Delete permissions for this user">
-									<img src="../../images/drop.png" style="width:12px;" />
+									<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 								</a>
 							</li>
 							<?php 
@@ -137,7 +138,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 						<li>
 							<?php echo $uName; ?> 
 							<a href="collpermissions.php?collid=<?php echo $collId.'&deleditor='.$uid; ?>" onclick="return confirm('Are you sure you want to remove editing rights for this user?');" title="Delete permissions for this user">
-								<img src="../../images/drop.png" style="width:12px;" />
+                                <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 							</a>
 						</li>
 						<?php 
@@ -172,7 +173,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 							<li>
 								<?php echo $uName; ?> 
 								<a href="collpermissions.php?collid=<?php echo $collId.'&delrare='.$uid; ?>" onclick="return confirm('Are you sure you want to remove user rights to view locality details for rare species?');" title="Delete permissions for this user">
-									<img src="../../images/drop.png" style="width:12px;" />
+                                    <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 								</a>
 							</li>
 							<?php 
@@ -240,7 +241,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 					<legend><b>Identification Editors</b></legend>
 					<div style="float:right;" title="Add a new user">
 						<a href="#" onclick="toggle('addUserDiv');return false;">
-							<img style='border:0;width:15px;' src='../../images/add.png'/>
+							<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 						</a>
 					</div>
 					<div id="addUserDiv" style="display:none;">
@@ -305,7 +306,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 								<li>
 									<?php echo $username.' (All approved taxonomic ranges listed below)'; ?> 
 									<a href="collpermissions.php?collid=<?php echo $collId.'&delidenteditor='.$uid.'&utid=all'; ?>" onclick="return confirm('Are you sure you want to remove identification editing rights for this user?');" title="Delete permissions for this user">
-										<img src="../../images/drop.png" style="width:12px;" />
+                                        <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 									</a>
 								</li>
 								<?php
@@ -318,7 +319,7 @@ if($collMetadata['colltype'] === 'General Observations') {
 									if(!$hasAll){ 
 										?> 
 										<a href="collpermissions.php?collid=<?php echo $collId.'&delidenteditor='.$uid.'&utid='.$utid; ?>" onclick="return confirm('Are you sure you want to remove identification editing rights for this user?');" title="Delete permissions for this user">
-											<img src="../../images/drop.png" style="width:12px;" />
+                                            <i style="height:15px;width:15px;" class="far fa-trash-alt"></i>
 										</a>
 										<?php 
 									}

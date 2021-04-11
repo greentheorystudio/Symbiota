@@ -24,6 +24,7 @@ $sciArr = array();
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
         const imageArr = [];
         const sciNameArr = [];
@@ -158,10 +159,10 @@ echo '</a> &gt;&gt; ';
 			<div style="width:450px;text-align:center;">
 				<div style="width:100%;">
 					<div style="float:left;cursor:pointer;text-align:center;" onclick="insertNewImage()">
-						<img src="../images/skipthisone.png" title="Skip to Next Species" />
+						<i style="height:15px;width:15px;" class="fas fa-step-forward"></i>
 					</div>
 					<div id="rightarrow" style="float:right;cursor:pointer;text-align:center;" onclick="nextImage()">
-						<img src="../images/rightarrow.png" title="Show Next Image" />
+						<i style="height:15px;width:15px;" class="far fa-arrow-alt-circle-right"></i>
 					</div>
 					<div style="width:200px;margin-left:auto;margin-right:auto;">
 						Image <span id="imageindex">1</span> of <span id="imagecount">?</span>

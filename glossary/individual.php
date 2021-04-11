@@ -46,6 +46,7 @@ if($glossId){
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
@@ -61,7 +62,7 @@ if($glossId){
 					?>
 					<div style="float:right;margin-right:15px;" title="Edit Term Data">
 						<a href="termdetails.php?glossid=<?php echo $glossId;?>" onclick="self.resizeTo(1250, 900);">
-							<img style="border:0;width:12px;" src="../images/edit.svg" />
+                            <i style="height:15px;width:15px;" class="far fa-edit"></i>
 						</a>
 					</div>
 					<?php

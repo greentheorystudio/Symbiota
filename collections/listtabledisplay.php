@@ -42,11 +42,12 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
     <script src="../js/jquery.js" type="text/javascript"></script>
     <script src="../js/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script src="../js/symb/collections.search.js?ver=3" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210313"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210410"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -93,27 +94,6 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
                     else{
                         document.getElementById("tablediv").innerHTML = "<p>An error occurred retrieving records.</p>";
                     }
-                }
-            };
-            http.send(params);
-        }
-
-        function setOccurrenceList(listPage){
-            sessionStorage.collSearchPage = listPage;
-            document.getElementById("queryrecords").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
-            const http = new XMLHttpRequest();
-            const url = "rpc/getoccurrencelist.php";
-            const queryid = document.getElementById('queryId').value;
-            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    if(!http.responseText) {
-                        http.responseText = "<p>An error occurred retrieving records.</p>";
-                    }
-                    document.getElementById("queryrecords").innerHTML = http.responseText;
                 }
             };
             http.send(params);

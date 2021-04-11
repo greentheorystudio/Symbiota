@@ -38,7 +38,7 @@ $projArr = $csManager->getProjectDetails();
 	}
 	if($isEditor && $collid && $omcsid){
 		?>
-		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a></div>
+		<div style="float:right;"><a href="#" onclick="toggle('projFormDiv')"><i style="height:20px;width:20px;" class="far fa-edit"></i></a></div>
 		<div style="font-weight:bold;font-size:130%;"><?php echo (($omcsid && $projArr)?$projArr['name']:''); ?></div>
 		<div>
 			This module can be used to submit and manage records for data entry by the
@@ -91,7 +91,7 @@ $projArr = $csManager->getProjectDetails();
 							echo $unprocessedCnt;
 							echo '</a> ';
 							echo '<a href="index.php?submitaction=delqueue&tabindex=2&collid='.$collid.'&omcsid='.$omcsid.'">';
-							echo '<img src="../../images/drop.png" style="width:12px;" title="Delete all unprocessed records from queue" />';
+							echo '<i style="height:15px;width:15px;" title="Delete all unprocessed records from queue" class="far fa-trash-alt"></i>';
 							echo '</a>';
 						}
 						else{

@@ -98,7 +98,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 if(!$clid){
 	?>
 	<div style="float:right;">
-		<a href="#" onclick="toggle('checklistDiv')" title="Create a New Checklist"><img src="../images/add.png" /></a>
+		<a href="#" onclick="toggle('checklistDiv')" title="Create a New Checklist"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
 	<?php
 }
@@ -167,7 +167,7 @@ if(!$clid){
 					<input id="decimallongitude" type="text" name="longcentroid" style="width:110px;" value="<?php echo ($clArray?$clArray['longcentroid']:''); ?>" />
 				</div>
 				<div style="float:left;margin:25px 3px;">
-					<a href="#" onclick="openSpatialInputWindow('input-point,radius');"><img src="../images/globe.svg" style="width:12px;" /></a>
+					<a href="#" onclick="openSpatialInputWindow('input-point,radius');"><i style='width:15px;height:15px;' class="fas fa-globe"></i></a>
 				</div>
 				<div style="float:left;margin-left:15px;">
 					<b>Point Radius (meters)</b><br/>
@@ -177,13 +177,13 @@ if(!$clid){
 					<fieldset style="width:275px;padding:10px">
 						<legend><b>Polygon Footprint</b></legend>
 						<div style="float:right;margin:10px;">
-							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><img src="../images/globe.svg" style="width:14px;" /></a>
+							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><i style='width:15px;height:15px;' class="fas fa-globe"></i></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
                             'Polygon footprint defined<br/>Click globe to view/edit'
 						</div>
 						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'none':'block'); ?>;">
-                            'Polygon footprint not defined<br/>Click globe to create polygon'
+                            Polygon footprint not defined<br/>Click globe to create polygon
 						</div>
 						<input type="hidden" id="footprintWKT" name="footprintwkt" onchange="processFootprintWktChange();" value="<?php echo ($clArray?$clArray['footprintwkt']:''); ?>" />
 					</fieldset>
@@ -288,7 +288,7 @@ if(!$clid){
 						<?php echo $vName; ?>
 					</a>
 					<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-						<img src="../images/edit.svg" style="width:15px;border:0;" title="Edit Checklist" />
+						<i style='width:15px;height:15px;' title="Edit Checklist" class="far fa-edit"></i>
 					</a>
 				</li>
 				<?php
@@ -321,7 +321,7 @@ if(!$clid){
 						<?php echo $projName; ?>
 					</a>
 					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-						<img src="../images/edit.svg" style="width:15px;border:0;" title="Edit Project" />
+						<i style='width:15px;height:15px;' title="Edit Project" class="far fa-edit"></i>
 					</a>
 				</li>
 				<?php

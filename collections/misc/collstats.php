@@ -220,9 +220,10 @@ if($action !== 'Update Statistics'){
 			<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 			<link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
+            <script src="../../js/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/jquery.js"></script>
 			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210313"></script>
+			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210410"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -766,7 +767,9 @@ if($action !== 'Update Statistics'){
                                                     <input type="hidden" name="taxon" value='<?php echo $cPartentTaxon; ?>' />
                                                     <input type="hidden" name="country" value='<?php echo $cCountry; ?>' />
 													<input type="hidden" name="action" id="action" value='Download Stats per Coll' />
-													<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
+													<button type="submit">
+                                                        <i style="height:15px;width:15px;" class="fas fa-download"></i>
+                                                    </button>
 												</div>
 											</div>
 										</form>
@@ -784,7 +787,9 @@ if($action !== 'Update Statistics'){
 													</div>
 													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="Save CSV">
 														<input type="hidden" name="action" value='Download Family Dist' />
-														<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
+                                                        <button type="submit">
+                                                            <i style="height:15px;width:15px;" class="fas fa-download"></i>
+                                                        </button>
 													</div>
 												</div>
 											</form>
@@ -798,7 +803,9 @@ if($action !== 'Update Statistics'){
 													</div>
 													<div style='float:left;margin-left:6px;width:16px;height:16px;padding:2px;' title="Save CSV">
 														<input type="hidden" name="action" value='Download Geo Dist' />
-														<input type="image" name="action" src="../../images/download.svg" style="width:15px;" />
+                                                        <button type="submit">
+                                                            <i style="height:15px;width:15px;" class="fas fa-download"></i>
+                                                        </button>
 													</div>
 												</div>
 											</form>

@@ -65,6 +65,7 @@ else{
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
 		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
 		<script>
@@ -122,7 +123,7 @@ else{
 					List View = viewing basic field data through a list view (e.g. default occurrence listing tab within the general search interface),
 					Map View = occurrence represented as a dot within any of the map-based search interfaces
 				</div>
-				<div id="desc_info" style="float:left;margin-left:5px;"><a href="#" onclick="toggle('desc_details');toggle('desc_info');"><img src="../../images/info.png" style="width:12px" /></a></div>
+				<div id="desc_info" style="float:left;margin-left:5px;"><a href="#" onclick="toggle('desc_details');toggle('desc_info');"><i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i></a></div>
 			</div>
 			<?php
 			if($isEditor){
@@ -198,7 +199,7 @@ else{
 				</div>
 				<div style="font-weight:bold;font-size:130%;">
 					<?php echo $collName; ?>
-					<a href="<?php echo $navPageBase.'&action=export'; ?>" title="Download Results"><img src="../../images/download.svg" style="margin-left:10px;width:14px;" /></a>
+					<a href="<?php echo $navPageBase.'&action=export'; ?>" title="Download Results"><i style="height:15px;width:15px;" class="fas fa-download"></i></a>
 				</div>
 				<div style="width:400px">
 					<div style="clear:both"><?php echo $navStr; ?></div>

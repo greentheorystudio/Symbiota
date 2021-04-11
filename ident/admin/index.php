@@ -27,6 +27,7 @@ $headingAdminUrl = 'headingadmin.php';
     <title>Character Admin</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript">
 		function validateNewCharForm(f){
@@ -68,7 +69,7 @@ $headingAdminUrl = 'headingadmin.php';
 			<div id="addeditchar">
 				<div style="float:right;margin:10px;">
 					<a href="#" onclick="toggle('addchardiv');">
-						<img src="../../images/add.png" alt="Create New Character" />
+						<i style="height:20px;width:20px;color:green;" title="Create New Character" class="fas fa-plus"></i>
 					</a>
 				</div>
 				<div id="addchardiv" style="display:none;margin-bottom:8px;">
@@ -109,7 +110,7 @@ $headingAdminUrl = 'headingadmin.php';
 										}
 										?>
 									</select> 
-									<a href="#" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.svg" style="width:20px;height:20px;" /></a>
+									<a href="#" onclick="openHeadingAdmin(); return false;"><i style="height:20px;width:20px;" class="far fa-edit"></i></a>
 								</div>
 							</div>
 							<div style="padding-top:6px;clear:both;">

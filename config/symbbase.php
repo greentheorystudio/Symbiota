@@ -4,8 +4,6 @@ include_once(__DIR__ . '/../classes/ProfileManager.php');
 ini_set('session.gc_maxlifetime',3600);
 session_start();
 
-set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT'] . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT']. '/config/' . PATH_SEPARATOR . $GLOBALS['SERVER_ROOT']. '/classes/');
-
 if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
     $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
 }
@@ -51,7 +49,7 @@ if(isset($_SESSION['userrights'])){
     $GLOBALS['USER_RIGHTS'] = $_SESSION['userrights'];
 }
 
-$GLOBALS['CSS_VERSION'] = '20210316';
+$GLOBALS['CSS_VERSION'] = '20210406';
 if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLOBALS['CSS_VERSION'])) {
     $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
 }
