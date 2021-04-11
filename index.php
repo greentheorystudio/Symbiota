@@ -1,26 +1,23 @@
 <?php
-include_once("config/symbini.php");
-header("Content-Type: text/html; charset=".$CHARSET);
+include_once(__DIR__ . '/config/symbini.php');
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <meta http-equiv="X-Frame-Options" content="deny">
-    <title><?php echo $DEFAULT_TITLE; ?> Home</title>
-    <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="css/main.css<?php echo (isset($CSS_VERSION_LOCAL)?'?ver='.$CSS_VERSION_LOCAL:''); ?>" type="text/css" rel="stylesheet" />
-    <script type="text/javascript">
-        <?php include_once($SERVER_ROOT.'/config/googleanalytics.php'); ?>
-    </script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+    <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <meta name='keywords' content='' />
+    <?php include_once('config/googleanalytics.php'); ?>
 </head>
 <body>
 <?php
-include($SERVER_ROOT.'/header.php');
+include(__DIR__ . '/header.php');
 ?>
-<!-- This is inner text! -->
 <div  id="innertext">
     <h1>Welcome to SeedTrack</h1>
 
-    <div style="padding: 0px 10px;">
+    <div style="padding: 0 10px;">
         The Symbiota software system has developed a library of webtools to aid biologists in establishing specimen-based
         biological research and can be extended to the seed banking plant conservation community and expand its number of users.
         Symbiota is a data access technology connecting biodiversity collections around the world and serves as a data management
@@ -33,13 +30,13 @@ include($SERVER_ROOT.'/header.php');
         and flexibility.
     </div>
 
-    <div style="margin-top:10px;padding: 0px 10px;">
+    <div style="margin-top:10px;padding: 0 10px;">
         The module will be developed using existing functionality within Symbiota to track ex-situ plant and seed collections,
         and add further functionality to track plant propagation methods used in growing events and link those events to
         specimen based collections. The new data module will have the ability to be visible to users who wish to incorporate
         the new plant conservation feature.
     </div>
-    <div style="margin-top:10px;padding: 0px 10px;">
+    <div style="margin-top:10px;padding: 0 10px;">
         The restoration module will be developed as an extension to the Symbiota biological informatics system to:
         <ol start="1" type="1">
             <li>Provide users (plant conservationists, seed collectors, data managers, curators, and researchers) with
@@ -56,7 +53,7 @@ include($SERVER_ROOT.'/header.php');
 </div>
 
 <?php
-include($SERVER_ROOT.'/footer.php');
+include(__DIR__ . '/footer.php');
 ?>
 </body>
 </html>
