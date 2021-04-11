@@ -200,7 +200,7 @@ $duManager->readUploadParameters();
 						<legend style="font-weight:bold;font-size:120%;">Upload Options</legend>
 						<div style="float:right;">
 							<?php 
-							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-trash-alt"></i></a>';
+							echo '<a href="specuploadmanagement.php?collid='.$collid.'&action=addprofile"><i style="height:20px;width:20px;" title="Add a New Upload Profile" class="fas fa-plus"></i></a>';
 							?>
 						</div>
 						<?php 

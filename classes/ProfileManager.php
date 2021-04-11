@@ -276,7 +276,7 @@ class ProfileManager extends Manager{
                     $bodyStr .= '<' .$GLOBALS['ADMIN_EMAIL']. '>';
                 }
                 (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                $returnStr = 'Your new password was just emailed to: ' .$emailAddr;
+                $returnStr = 'Your new password has been emailed to: ' .$emailAddr.' Please check your junk folder if no email appears in your inbox.';
             }
             else{
                 $returnStr = 'Reset Failed! Contact Administrator';
