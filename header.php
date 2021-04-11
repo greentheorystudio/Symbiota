@@ -59,9 +59,6 @@
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" >Image Search</a>
                     </li>
                     <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" >Search Images</a>
-                    </li>
-                    <li>
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
                     </li>
                 </ul>
