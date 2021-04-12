@@ -111,7 +111,7 @@ function validateSearchTermsArr(stArr){
         stArr.hasOwnProperty('country') ||
         stArr.hasOwnProperty('state') ||
         stArr.hasOwnProperty('county') ||
-        stArr.hasOwnProperty('locality') ||
+        stArr.hasOwnProperty('local') ||
         stArr.hasOwnProperty('elevlow') ||
         stArr.hasOwnProperty('elevhigh') ||
         stArr.hasOwnProperty('collector') ||
