@@ -14,23 +14,23 @@ $footerRowElements = Array();
 
 if($taxonRank){
     if($taxonRank > 180 && !$displayingChildren){
-        $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv,$editButtonDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$penaCentralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($penaImgDiv,$penaImgTabDiv);
         $footerRowElements = Array();
     }
     elseif($taxonRank === 180 || $displayingChildren){
-        $topRowElements = Array($penaScinameHeaderDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$editButtonDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array();
     }
     else{
-        $topRowElements = Array($editButtonDiv,$penaScinameHeaderDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$editButtonDiv);
         $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$penaDescTabsDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
         $footerRowElements = Array();
     }
