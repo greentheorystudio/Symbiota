@@ -8,7 +8,7 @@ $limit = $_REQUEST['limit'] ?? 0;
 
 $activityManager = new OccurrenceDownload();
 
-header('Content-Description: '.$DEFAULT_TITLE.' Data Entry Activity');
+header('Content-Description: '.$GLOBALS['DEFAULT_TITLE'].' Data Entry Activity');
 header('Content-Type: '.($format === 'json'?'application/json':'text/xml'));
 
 echo $activityManager->getDataEntryActivity($format,$days,$limit);

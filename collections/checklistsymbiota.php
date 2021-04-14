@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceChecklistManager.php');
 include_once(__DIR__ . '/../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
@@ -21,7 +21,7 @@ if($stArrJson){
 	$checklistManager->setSearchTermsArr($stArr);
 }
 
-if($SOLR_MODE){
+if($GLOBALS['SOLR_MODE']){
     $solrManager->setSearchTermsArr($stArr);
     $solrArr = $solrManager->getTaxaArr();
     $tidArr = $solrManager->getSOLRTidList($solrArr);

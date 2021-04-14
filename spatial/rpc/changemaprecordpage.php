@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
 $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
@@ -29,12 +29,12 @@ if($selArrJson){
 if($stArrJson){
     $stArr = json_decode($stArrJson, true);
     if(strlen($stArrJson) <= 1800){
-        $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$CLIENT_ROOT.'/spatial/index.php';
+        $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/spatial/index.php';
         $urlArgs = '?starr='.$stArrJson;
         $copyURL = $urlPrefix.$urlArgs;
     }
 
-    if($SOLR_MODE){
+    if($GLOBALS['SOLR_MODE']){
         $solrManager->setSearchTermsArr($stArr);
         $qStr = 'q='.$solrManager->getSOLRWhere(true);
         $solrManager->setQStr($qStr);

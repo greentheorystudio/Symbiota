@@ -4,9 +4,9 @@ include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageLocalProcessor.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/specprocessor/processor.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -22,7 +22,7 @@ $specManager = new SpecProcessorManager();
 $specManager->setCollId($collid);
 
 $isEditor = false;
-if($IS_ADMIN || (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = true;
 }
 
@@ -33,11 +33,11 @@ if(in_array($action, array('dlnoimg','unprocnoimg','noskel','unprocwithdata'))){
 
 $statusStr = '';
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Specimen Processor Control Panel</title>
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="<?php echo $CLIENT_ROOT; ?>/css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<?php
@@ -69,11 +69,11 @@ $statusStr = '';
 						$imageProcessor = new ImageLocalProcessor();
 
 						$imageProcessor->setLogMode(3);
-						$LOG_PATH = $SERVER_ROOT.(substr($SERVER_ROOT,-1) === '/'?'':'/').'content/logs/imgProccessing';
-						if(!file_exists($LOG_PATH) && !mkdir($LOG_PATH) && !is_dir($LOG_PATH)) {
-                            throw new RuntimeException(sprintf('Directory "%s" was not created', $LOG_PATH));
+						$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'content/logs/imgProccessing';
+						if(!file_exists($GLOBALS['LOG_PATH']) && !mkdir($GLOBALS['LOG_PATH']) && !is_dir($GLOBALS['LOG_PATH'])) {
+                            throw new RuntimeException(sprintf('Directory "%s" was not created', $GLOBALS['LOG_PATH']));
                         }
-						$imageProcessor->setLogPath($LOG_PATH);
+						$imageProcessor->setLogPath($GLOBALS['LOG_PATH']);
 						$logFile = $collid.'_'.$specManager->getInstitutionCode();
 						if($specManager->getCollectionCode()) {
                             $logFile .= '-' . $specManager->getCollectionCode();
@@ -86,7 +86,7 @@ $statusStr = '';
 						$imageProcessor->setSourcePathBase($specManager->getSourcePath());
 						$imageProcessor->setTargetPathBase($specManager->getTargetPath());
 						$imageProcessor->setImgUrlBase($specManager->getImgUrlBase());
-						$imageProcessor->setServerRoot($SERVER_ROOT);
+						$imageProcessor->setServerRoot($GLOBALS['SERVER_ROOT']);
 						if($specManager->getWebPixWidth()) {
                             $imageProcessor->setWebPixWidth($specManager->getWebPixWidth());
                         }

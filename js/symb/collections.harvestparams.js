@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $( "#taxa" )
-    	.bind( "keydown", function( event ) {
+        .bind( "keydown", function( event ) {
             if ( event.keyCode == $.ui.keyCode.TAB &&
                 $( this ).data( "autocomplete" ).menu.active ) {
                 event.preventDefault();
@@ -26,6 +26,7 @@ $(document).ready(function() {
                 terms.pop();
                 terms.push( ui.item.value );
                 this.value = terms.join( ", " );
+                processTaxaParamChange();
                 return false;
             }
         },{});
@@ -139,38 +140,38 @@ function setHarvestParamsForm(){
 }
 
 function resetHarvestParamsForm(f){
-	f.thes.checked = true;
-	f.type.value = 1;
-	f.taxa.value = '';
-	f.country.value = '';
-	f.state.value = '';
-	f.county.value = '';
-	f.local.value = '';
-	f.elevlow.value = '';
-	f.elevhigh.value = '';
+    f.thes.checked = true;
+    f.type.value = 1;
+    f.taxa.value = '';
+    f.country.value = '';
+    f.state.value = '';
+    f.county.value = '';
+    f.local.value = '';
+    f.elevlow.value = '';
+    f.elevhigh.value = '';
     if(f.assochost){
         f.assochost.value = '';
     }
-	f.upperlat.value = '';
-	f.bottomlat.value = '';
-	f.leftlong.value = '';
-	f.rightlong.value = '';
-	f.pointlat.value = '';
-	f.pointlong.value = '';
-	f.radiustemp.value = '';
-	f.radiusunits.value = 'km';
-	f.radius.value = '';
+    f.upperlat.value = '';
+    f.bottomlat.value = '';
+    f.leftlong.value = '';
+    f.rightlong.value = '';
+    f.pointlat.value = '';
+    f.pointlong.value = '';
+    f.radiustemp.value = '';
+    f.radiusunits.value = 'km';
+    f.radius.value = '';
     f.polyArr.value = '';
     f.circleArr.value = '';
-	f.collector.value = '';
-	f.collnum.value = '';
-	f.eventdate1.value = '';
-	f.eventdate2.value = '';
+    f.collector.value = '';
+    f.collnum.value = '';
+    f.eventdate1.value = '';
+    f.eventdate2.value = '';
     f.occurrenceRemarks.value = '';
-	f.catnum.value = '';
+    f.catnum.value = '';
     f.othercatnum.checked = true;
-	f.typestatus.checked = false;
-	f.hasimages.checked = false;
+    f.typestatus.checked = false;
+    f.hasimages.checked = false;
     f.hasgenetic.checked = false;
     document.getElementById('showtable').checked = false;
     document.getElementById("spatialParamasNoCriteria").style.display = "block";

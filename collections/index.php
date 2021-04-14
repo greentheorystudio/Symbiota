@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
@@ -9,8 +9,8 @@ $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 if(!is_numeric($catId)) {
     $catId = 0;
 }
-if(!$catId && isset($DEFAULTCATID) && $DEFAULTCATID) {
-    $catId = $DEFAULTCATID;
+if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
+    $catId = $GLOBALS['DEFAULTCATID'];
 }
 
 $collManager = new OccurrenceManager();
@@ -21,19 +21,19 @@ $obsArr = ($collList['obs'] ?? null);
 
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $DEFAULT_TITLE; ?> Collections Search</title>
-		<link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search</title>
+		<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../js/jquery.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
-        <script src="../js/symb/search.term.manager.js?ver=20210313" type="text/javascript"></script>
+        <script src="../js/symb/search.term.manager.js?ver=20210412" type="text/javascript"></script>
         <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
         <script type="text/javascript">
-            const SOLRMODE = '<?php echo $SOLR_MODE; ?>';
+            const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
 
             $('html').hide();
             $(document).ready(function() {

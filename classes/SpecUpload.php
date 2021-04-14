@@ -447,23 +447,22 @@ class SpecUpload{
 	
 	public function setVerboseMode($vMode, $logTitle = ''): void
 	{
-		global $SERVER_ROOT;
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
-			if(($this->verboseMode == 2) && $SERVER_ROOT) {
-				$LOG_PATH = $SERVER_ROOT;
-				if(substr($SERVER_ROOT,-1) !== '/' && substr($SERVER_ROOT,-1) !== '\\') {
-                    $LOG_PATH .= '/';
+			if(($this->verboseMode == 2) && $GLOBALS['SERVER_ROOT']) {
+				$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'];
+				if(substr($GLOBALS['SERVER_ROOT'],-1) !== '/' && substr($GLOBALS['SERVER_ROOT'],-1) !== '\\') {
+                    $GLOBALS['LOG_PATH'] .= '/';
                 }
-				$LOG_PATH .= 'content/logs/';
+				$GLOBALS['LOG_PATH'] .= 'content/logs/';
 				if($logTitle){
-					$LOG_PATH .= $logTitle;
+					$GLOBALS['LOG_PATH'] .= $logTitle;
 				}
 				else{
-					$LOG_PATH .= 'dataupload';
+					$GLOBALS['LOG_PATH'] .= 'dataupload';
 				}
-				$LOG_PATH .= '_'.date('Ymd'). '.log';
-				$this->logFH = fopen($LOG_PATH, 'ab');
+				$GLOBALS['LOG_PATH'] .= '_'.date('Ymd'). '.log';
+				$this->logFH = fopen($GLOBALS['LOG_PATH'], 'ab');
 				fwrite($this->logFH, 'Start time: ' .date('Y-m-d h:i:s A')."\n");
 			}
 		}

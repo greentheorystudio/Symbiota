@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
@@ -33,12 +33,13 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Reference Management</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Reference Management</title>
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../js/symb/references.index.js?ver=2"></script>
@@ -53,7 +54,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
     </div>
 	<div id="innertext">
 		<?php 
-		if($SYMB_UID){
+		if($GLOBALS['SYMB_UID']){
 			if($statusStr){
 				?>
 				<hr/>
@@ -86,7 +87,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 			<div id="reflistdiv" style="min-height:200px;">
 				<div style="float:right;margin:10px;">
 					<a href="#" onclick="toggle('newreferencediv');">
-						<img src="../images/add.png" alt="Create New Reference" />
+						<i style="height:20px;width:20px;color:green;" title="Create New Reference" class="fas fa-plus"></i>
 					</a>
 				</div>
 				<div id="newreferencediv" style="display:none;">
@@ -157,7 +158,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 			</div>
 			<?php 
 		}
-		else if(!$SYMB_UID){
+		else if(!$GLOBALS['SYMB_UID']){
             echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
         }
         else{

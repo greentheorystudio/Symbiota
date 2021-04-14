@@ -49,33 +49,32 @@ class ImageShared{
 	private $errArr = array();
 
 	public function __construct(){
-		global $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH, $IMG_WEB_WIDTH, $IMG_TN_WIDTH, $IMG_LG_WIDTH, $IMG_FILE_SIZE_LIMIT, $DEFAULT_TITLE;
- 		$connection = new DbConnection();
+		$connection = new DbConnection();
  		$this->conn = $connection->getConnection();
- 		$this->imageRootPath = $IMAGE_ROOT_PATH;
+ 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
 			$this->imageRootPath .= '/';
 		}
-		$this->imageRootUrl = $IMAGE_ROOT_URL;
+		$this->imageRootUrl = $GLOBALS['IMAGE_ROOT_URL'];
 		if(substr($this->imageRootUrl,-1) !== '/') {
 			$this->imageRootUrl .= '/';
 		}
-		if($IMG_TN_WIDTH){
-			$this->tnPixWidth = $IMG_TN_WIDTH;
+		if($GLOBALS['IMG_TN_WIDTH']){
+			$this->tnPixWidth = $GLOBALS['IMG_TN_WIDTH'];
 		}
-		if($IMG_WEB_WIDTH){
-			$this->webPixWidth = $IMG_WEB_WIDTH;
+		if($GLOBALS['IMG_WEB_WIDTH']){
+			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
 		}
-		if($IMG_LG_WIDTH){
-			$this->lgPixWidth = $IMG_LG_WIDTH;
+		if($GLOBALS['IMG_LG_WIDTH']){
+			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
-		if($IMG_FILE_SIZE_LIMIT){
-			$this->webFileSizeLimit = $IMG_FILE_SIZE_LIMIT;
+		if($GLOBALS['IMG_FILE_SIZE_LIMIT']){
+			$this->webFileSizeLimit = $GLOBALS['IMG_FILE_SIZE_LIMIT'];
 		}
 		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		$opts = array(
 			'http'=>array(
-				'user_agent' => $DEFAULT_TITLE,
+				'user_agent' => $GLOBALS['DEFAULT_TITLE'],
 				'method'=> 'GET',
 				'header'=> implode("\r\n", array('Content-type: text/plain;'))
 			)
@@ -186,12 +185,11 @@ class ImageShared{
 
 	public function parseUrl($url): bool
 	{
-		global $IMAGE_DOMAIN;
- 		$status = false;
+		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if(strpos($url, '/') === 0){
-			if($IMAGE_DOMAIN){
-				$url = $IMAGE_DOMAIN.$url;
+			if($GLOBALS['IMAGE_DOMAIN']){
+				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
 			else{
 				$urlPrefix = 'http://';
@@ -361,14 +359,13 @@ class ImageShared{
 
 	public function createNewImage($subExt, $targetWidth, $qualityRating = 0, $targetPathOverride = ''): bool
 	{
-		global $USE_IMAGE_MAGICK;
 		$status = false;
 		if($this->sourcePath){
 			if(!$qualityRating) {
 				$qualityRating = $this->jpgCompression;
 			}
 
-			if($USE_IMAGE_MAGICK) {
+			if($GLOBALS['USE_IMAGE_MAGICK']) {
 				$status = $this->createNewImageImagick($subExt,$targetWidth,$qualityRating,$targetPathOverride);
 			}
 			elseif(function_exists('gd_info') && extension_loaded('gd')) {
@@ -468,8 +465,7 @@ class ImageShared{
 
 	private function databaseImage($imgWebUrl,$imgTnUrl,$imgLgUrl): bool
 	{
-		global $USERNAME;
- 		$status = true;
+		$status = true;
 		if($imgWebUrl){
 			$urlBase = $this->getUrlBase();
 			if(stripos($imgWebUrl, 'http://') !== 0 && stripos($imgWebUrl, 'https://') !== 0){
@@ -507,7 +503,7 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				$this->cleanInStr($USERNAME).'",'.
+				$this->cleanInStr($GLOBALS['USERNAME']).'",'.
 				($this->sortSeq?:'50').','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
@@ -676,9 +672,8 @@ class ImageShared{
 
 	public function getUrlBase(): string
 	{
-		global $IMAGE_DOMAIN;
 		$urlBase = $this->urlBase;
-		if($IMAGE_DOMAIN){
+		if($GLOBALS['IMAGE_DOMAIN']){
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -846,18 +841,17 @@ class ImageShared{
 	}
 
 	public function uriExists($uri) {
-		global $IMAGE_DOMAIN, $IMAGE_ROOT_URL, $IMAGE_ROOT_PATH;
 		$exists = false;
 
 		if(strpos($uri, '/') === 0){
-			if($IMAGE_ROOT_URL && strpos($uri,$IMAGE_ROOT_URL) === 0){
-				$fileName = str_replace($IMAGE_ROOT_URL,$IMAGE_ROOT_PATH,$uri);
+			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($uri,$GLOBALS['IMAGE_ROOT_URL']) === 0){
+				$fileName = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$uri);
 				if(file_exists($fileName)) {
 					$exists = true;
 				}
 			}
-			if($IMAGE_DOMAIN){
-				$uri = $IMAGE_DOMAIN.$uri;
+			if($GLOBALS['IMAGE_DOMAIN']){
+				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
 			}
 			else{
 				$urlPrefix = 'http://';
@@ -934,10 +928,9 @@ class ImageShared{
 	}
 
 	private static function getImgDim1($imgUrl) {
-		global $DEFAULT_TITLE;
 		$opts = array(
 				'http'=>array(
-						'user_agent' => $DEFAULT_TITLE,
+						'user_agent' => $GLOBALS['DEFAULT_TITLE'],
 						'method'=> 'GET',
 						'header'=> implode("\r\n", array('Content-type: text/plain;'))
 				)

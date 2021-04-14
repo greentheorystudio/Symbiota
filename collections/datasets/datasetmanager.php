@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $datasetId = array_key_exists('datasetid',$_REQUEST)?$_REQUEST['datasetid']:0;
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
-if(!$SYMB_UID) {
+if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . $_SERVER['QUERY_STRING']);
 }
 
@@ -27,7 +27,7 @@ $mdArr = $datasetManager->getDatasetMetadata($datasetId);
 $role = '';
 $roleLabel = '';
 $isEditor = 0;
-if($SYMB_UID === $mdArr['uid']){
+if($GLOBALS['SYMB_UID'] === $mdArr['uid']){
     $isEditor = 1;
     $role = 'owner';
 }
@@ -110,11 +110,11 @@ if($isEditor){
 }
 
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Occurrence Dataset Manager</title>
-    <link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
+    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
@@ -128,11 +128,12 @@ if($isEditor){
             cursor:pointer;
         }
     </style>
+    <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../../js/symb/shared.js"></script>
-    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210313"></script>
+    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210412"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {
@@ -351,7 +352,7 @@ include(__DIR__ . '/../../header.php');
                                         <td>
                                             <?php echo $recArr['catnum']; ?>
                                             <a href="#" onclick="openIndPopup(<?php echo $occid; ?>); return false;">
-                                                <img src="../../images/info.png" style="width:15px;" />
+                                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                             </a>
                                         </td>
                                         <td>
@@ -452,7 +453,7 @@ include(__DIR__ . '/../../header.php');
                                                         <input name="uid" type="hidden" value="<?php echo $uid; ?>" />
                                                         <input name="datasetid" type="hidden" value="<?php echo $datasetId; ?>" />
                                                         <input name="tabindex" type="hidden" value="2" />
-                                                        <input name="submitimage" type="image" src="../../images/drop.png" />
+                                                        <button style="margin:0;padding:2px;" type="submit"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
                                                     </form>
                                                 </li>
                                                 <?php

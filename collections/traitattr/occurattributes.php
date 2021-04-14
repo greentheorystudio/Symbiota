@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-if(!$SYMB_UID) {
-    header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . $_SERVER['QUERY_STRING']);
+if(!$GLOBALS['SYMB_UID']) {
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . $_SERVER['QUERY_STRING']);
 }
 
 $collid = $_REQUEST['collid'];
@@ -42,15 +42,15 @@ if(!is_numeric($start)) {
 }
 
 $isEditor = 0; 
-if($SYMB_UID){
-	if($IS_ADMIN){
+if($GLOBALS['SYMB_UID']){
+	if($GLOBALS['IS_ADMIN']){
 		$isEditor = 2;
 	}
 	elseif($collid){
-		if(array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'], true)){
+		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 			$isEditor = 2;
 		}
-		elseif(array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'], true)){
+		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
 			$isEditor = 1;
 		}
 	}
@@ -66,7 +66,7 @@ $statusStr = '';
 if($isEditor){
 	if($submitForm === 'Save and Next'){
 		$attrManager->setTargetOccid($_POST['targetoccid']);
-		if(!$attrManager->saveAttributes($_POST,$_POST['notes'],$SYMB_UID)){
+		if(!$attrManager->saveAttributes($_POST,$_POST['notes'],$GLOBALS['SYMB_UID'])){
 			$statusStr = $attrManager->getErrorMessage();
 		}
 	}
@@ -101,12 +101,13 @@ if($traitID){
 	}
 }
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title>Occurrence Attribute batch Editor</title>
-		<link href="../../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-		<link href="../../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+		<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../../js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
@@ -116,7 +117,7 @@ if($traitID){
             const imgLgArr = [];
 
             <?php
-			$imgDomain = $IMAGE_DOMAIN;
+			$imgDomain = $GLOBALS['IMAGE_DOMAIN'];
 			if(!$imgDomain){
 				$imgDomain = 'http://';
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
@@ -258,10 +259,10 @@ if($traitID){
 		if($isEditor === 2){
 			echo '<div style="float:right;margin:0 3px;font-size:90%">';
 			if($mode === 1){
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />review</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=2&traitid='.$traitID.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			}
 			else{
-				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><img src="../../images/edit.svg" style="width:15px;height:15px;" />edit</a>';
+				echo '<a href="occurattributes.php?collid='.$collid.'&mode=1&traitid='.$traitID.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
 			}
 			echo '</div>';
 		}

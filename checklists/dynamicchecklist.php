@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/DynamicChecklistManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
  
 $lat = $_POST['lat'];
 $lng = $_POST['lng'];
 $radius = $_POST['radius'];
 $radiusunits = $_POST['radiusunits'];
-$dynamicRadius = ($DYN_CHECKLIST_RADIUS ?? 5);
+$dynamicRadius = ($GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 5);
 $tid = $_POST['tid'];
 $interface = $_POST['interface'];
 
@@ -21,10 +21,10 @@ else{
 }
 
 if($interface === 'key'){
-	header('Location: ' .$CLIENT_ROOT. '/ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
+	header('Location: ' .$GLOBALS['CLIENT_ROOT']. '/ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
 }
 else{
-	header('Location: ' .$CLIENT_ROOT. '/checklists/checklist.php?dynclid=' .$dynClid);
+	header('Location: ' .$GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?dynclid=' .$dynClid);
 }
 flush();
 $dynClManager->removeOldChecklists();

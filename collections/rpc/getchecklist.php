@@ -20,7 +20,7 @@ $checklistManager = new OccurrenceChecklistManager();
 if($stArrJson){
     $stArr = json_decode($stArrJson, true);
 
-    if($SOLR_MODE){
+    if($GLOBALS['SOLR_MODE']){
         $solrManager->setSearchTermsArr($stArr);
         $solrArr = $solrManager->getTaxaArr();
         if($taxonFilter && is_numeric($taxonFilter)){
@@ -41,36 +41,38 @@ if($stArrJson){
 }
 ?>
 <div>
-    <div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Download Checklist Data'>
-        <a style="cursor:pointer;" onclick="processDownloadChecklist();"><img style="width:15px;" src="../../images/download.svg" /></a>
-	</div>
+    <div style="height:20px;float:right;width:400px;display:flex;justify-content:flex-end;align-items:center;">
+    <button class="icon-button" title="Download Checklist Data" onclick="processDownloadChecklist();">
+        <i style='width:15px;height:15px;' class="fas fa-download"></i>
+    </button>
 	<?php
-	if($KEY_MOD_IS_ACTIVE){
+	if($GLOBALS['KEY_MOD_IS_ACTIVE']){
 	?>
-		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Interactive Key Interface'>
-			<form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-                <a style="cursor:pointer;" onclick="submitInteractiveKeyFormTaxaList();"><img style='width:15px;' src='../../images/key.svg'/></a>
-                <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
-                <input type="hidden" id="interactiveKeyFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
-                <input type="hidden" name="interface" value='key' />
-            </form>
-		</div>
-	<?php
-	}
-	if($FLORA_MOD_IS_ACTIVE){
-	?>
-		<div class='button' style='margin:10px;float:right;width:13px;height:13px;' title='Open in Checklist Explorer Interface'>
-			<form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-                <a style="cursor:pointer;" onclick="submitChecklistExplorerFormTaxaList();"><img style='width:15px;' src='../../images/list.svg'/></a>
-                <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
-                <input type="hidden" id="checklistExplorerFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
-                <input type="hidden" name="interface" value='checklist' />
-            </form>
-		</div>
+        <button class="icon-button" title='Open in Interactive Key Interface' onclick="submitInteractiveKeyFormTaxaList();">
+            <i style='width:15px;height:15px;' class="fas fa-key"></i>
+        </button>
+        <form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+            <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
+            <input type="hidden" id="interactiveKeyFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
+            <input type="hidden" name="interface" value='key' />
+        </form>
 	<?php
 	}
+	if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
 	?>
-	<div style='margin:10px;float:right;'>
+        <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
+            <i style='width:15px;height:15px;' class="fas fa-list"></i>
+        </button>
+        <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+            <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
+            <input type="hidden" id="checklistExplorerFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
+            <input type="hidden" name="interface" value='checklist' />
+        </form>
+	<?php
+	}
+	?>
+    </div>
+	<div style='margin-bottom:10px;float:left;'>
         Taxonomic Filter:
         <select id="taxonfilter" name="taxonfilter" onchange="getTaxaList(this.value);">
             <option value="">Raw Data</option>

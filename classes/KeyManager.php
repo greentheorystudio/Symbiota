@@ -37,9 +37,8 @@ class KeyManager{
 
 	protected function insertDescr($tid, $cid, $cs): void
 	{
-		global $USERNAME;
 		if(is_numeric($tid) && is_numeric($cid) && $cs){
-			$sql = 'INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ('.$tid.', '.$cid.", '".$cs."', '".$USERNAME."')";
+			$sql = 'INSERT INTO kmdescr (TID, CID, CS, Source) VALUES ('.$tid.', '.$cid.", '".$cs."', '".$GLOBALS['USERNAME']."')";
 			$this->conn->query($sql);
 		}
 	}

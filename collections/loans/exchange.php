@@ -15,7 +15,7 @@ if($transInstList){
 	?>
 	<div id="exchangeToggle" style="float:right;margin:10px;">
 		<a href="#" onclick="displayNewExchange()">
-			<img src="../../images/add.png" alt="Create New Exchange" />
+			<i style="height:15px;width:15px;color:green;" title="Create New Exchange" class="fas fa-plus"></i>
 		</a>
 	</div>
 	<?php
@@ -50,7 +50,7 @@ else{
 					Entered By:
 				</span><br />
 				<span>
-					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $PARAMS_ARR['un']; ?>" onchange=" " />
+					<input type="text" autocomplete="off" name="createdby" tabindex="96" maxlength="32" style="width:100px;" value="<?php echo $GLOBALS['PARAMS_ARR']['un']; ?>" onchange=" " />
 				</span>
 			</div><br />
 			<div style="padding-top:6px;float:left;">
@@ -71,7 +71,7 @@ else{
 				</span>
 				<span>
 					<a href="../admin/institutioneditor.php?emode=1" target="_blank" title="Add a New Institution">
-						<img src="../../images/add.png" style="width:15px;" />
+						<i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
 					</a>
 				</span>
 			</div>

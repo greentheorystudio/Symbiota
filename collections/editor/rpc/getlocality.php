@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
-header('Content-Type: application/json; charset=' .$CHARSET);
+header('Content-Type: application/json; charset=' .$GLOBALS['CHARSET']);
 
 $recordedBy = $_REQUEST['recordedby'];
 $eventDate = $_REQUEST['eventdate'];
@@ -11,7 +11,7 @@ $dupManager = new OccurrenceDuplicate();
 $retArr = $dupManager->getDupeLocality($recordedBy, $eventDate, $locality);
 
 if($retArr){
-	if($CHARSET === 'UTF-8'){
+	if($GLOBALS['CHARSET'] === 'UTF-8'){
 		echo json_encode($retArr);
 	}
 	else{

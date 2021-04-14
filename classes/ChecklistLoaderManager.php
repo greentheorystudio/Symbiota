@@ -231,19 +231,18 @@ class ChecklistLoaderManager {
 
 	private function encodeString($inStr): string
 	{
-		global $CHARSET;
 		$retStr = $inStr;
 		$search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
 		$replace = array("'","'",'"','"','*','-','-');
 		$inStr= str_replace($search, $replace, $inStr);
 
 		if($inStr){
-			if(strtolower($CHARSET) === 'utf-8' || strtolower($CHARSET) === 'utf8'){
+			if(strtolower($GLOBALS['CHARSET']) === 'utf-8' || strtolower($GLOBALS['CHARSET']) === 'utf8'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
 				}
 			}
-			elseif(strtolower($CHARSET) === 'iso-8859-1'){
+			elseif(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
 					$retStr = utf8_decode($inStr);
 				}

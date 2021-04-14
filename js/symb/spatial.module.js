@@ -356,7 +356,7 @@ function buildLayerTableRow(lArr,removable){
         trfragment += '<td style="width:50px;">';
         if(removable){
             const onclick = "removeUserLayer('" + layerID + "');";
-            trfragment += '<input type="image" style="margin-left:5px;" src="../images/del.png" onclick="'+onclick+'" title="Remove layer">';
+            trfragment += '<button style="margin:0;padding:2px;" type="button" onclick="'+onclick+'" title="Remove layer"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
         }
         trfragment += '</td>';
         const layerTable = document.getElementById("layercontroltable");
@@ -692,7 +692,7 @@ function changeRecordPage(page){
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "rpc/changemaprecordpage.php";
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
@@ -1998,7 +1998,7 @@ function getQueryRecCnt(callback){
     let url;
     let http;
     queryRecCnt = 0;
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         let qStr = '';
         http = new XMLHttpRequest();
@@ -2141,7 +2141,7 @@ function lazyLoadPoints(index,callback){
         startindex = index * lazyLoadCnt;
     }
     const http = new XMLHttpRequest();
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         url = "rpc/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
@@ -3010,7 +3010,7 @@ function setClusterSymbol(feature) {
 }
 
 function setCopySearchUrlDiv(){
-    const stArrJson = JSON.stringify(searchTermsArr);
+    const stArrJson = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(document.getElementById('copySearchUrlDiv')){
         if(stArrJson.length <= 1800){
             document.getElementById("copySearchUrlDiv").style.display = "block";

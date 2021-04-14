@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
@@ -108,7 +108,7 @@ $procManager->setProjVariables('OCR Harvest');
 	<fieldset style="padding:20px;margin-top:20px;">
 		<legend><b>Batch OCR Images using the Tesseract OCR Engine</b></legend>
 		<?php
-		if(isset($TESSERACT_PATH) && $TESSERACT_PATH){
+		if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
 			?>
 			<form name="batchTessform" action="processor.php" method="post" onsubmit="return validateBatchTessForm(this)">
 				<div style="padding:3px;">
@@ -178,7 +178,7 @@ $procManager->setProjVariables('OCR Harvest');
 						<td>
 							<input name="speckeypattern" type="text" style="width:300px;" value="<?php echo $procManager->getSpecKeyPattern(); ?>" />
 							<a id="speckeypatterninfo" href="#" onclick="return false" title="More Information">
-								<img src="../../images/info.png" style="width:15px;" />
+                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 							</a>
 							<div id="speckeypatterninfodialog">
 								Regular expression needed to extract the unique identifier from source text.
@@ -199,7 +199,7 @@ $procManager->setProjVariables('OCR Harvest');
 								<input name="ocrfile" type="file" size="50" onchange="this.form.sourcepath.value = ''" />
 								<input name="MAX_FILE_SIZE" type="hidden" value="10000000" />
 								<a id="ocrfileinfo" href="#" onclick="return false" title="More Information">
-									<img src="../../images/info.png" style="width:15px;" />
+                                    <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 								</a>
 								<div id="ocrfileinfodialog">
 									Browse and select zip file that contains the multiple OCR text files.
@@ -208,7 +208,7 @@ $procManager->setProjVariables('OCR Harvest');
 							<div class="pathElem" style="display:none;"> 
 								<input name="sourcepath" type="text" style="width:350px;" value="<?php echo $procManager->getSourcePath(); ?>" />
 								<a id="sourcepathinfo" href="#" onclick="return false" title="More Information">
-									<img src="../../images/info.png" style="width:15px;" />
+                                    <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 								</a>
 								<div id="sourcepathinfodialog">
 									File path or URL to folder containing the OCR text files.
@@ -226,7 +226,7 @@ $procManager->setProjVariables('OCR Harvest');
 						<td> 
 							<input name="ocrsource" type="text" value="" />
 							<a id="ocrsourceinfo" href="#" onclick="return false" title="More Information">
-								<img src="../../images/info.png" style="width:15px;" />
+                                <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
 							</a>
 							<div id="ocrsourceinfodialog">
 								Short string describing OCR Source (e.g. ABBYY, Tesseract, etc). This value is placed in source field with current date appended.

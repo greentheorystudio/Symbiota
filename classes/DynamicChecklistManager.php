@@ -17,14 +17,13 @@ class DynamicChecklistManager {
 	}
 
 	public function createChecklist($lat, $lng, $radius, $radiusUnits, $tidFilter){
-		global $SYMB_UID;
 		if($radiusUnits === 'mi') {
 			$radius = round($radius * 1.6);
 		}
 		$dynPk = 0;
 		$sql = 'INSERT INTO fmdynamicchecklists(name,details,expiration,uid) '.
 			'VALUES ("'.round($lat,5).' '.round($lng,5).' within '.round($radius,1).' km","'.$lat.' '.$lng.' within '.$radius.' km","'.
-			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?:'NULL').')';
+			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($GLOBALS['SYMB_UID']?:'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$dynPk = $this->conn->insert_id;
@@ -56,7 +55,6 @@ class DynamicChecklistManager {
 	}
 	
 	public function createDynamicChecklist($lat, $lng, $radiusUnit, $tidFilter){
-		global $SYMB_UID;
 		$dynPK = 0;
 		$specCnt = 0;
 		$radius = 0;
@@ -88,7 +86,7 @@ class DynamicChecklistManager {
 		$radius *= 1.60934;
 		$sql2 = 'INSERT INTO fmdynamicchecklists(name,details,expiration,uid) '.
 			'VALUES ("'.round($lat,5).' '.round($lng,5).' within '.round($radius,1).' km","'.$lat.' '.$lng.' within '.$radius.' km","'.
-			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($SYMB_UID?:'NULL').')';
+			date('Y-m-d',mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))).'",'.($GLOBALS['SYMB_UID']?:'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql2)){
 			$dynPK = $this->conn->insert_id;

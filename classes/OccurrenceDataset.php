@@ -22,9 +22,8 @@ class OccurrenceDataset {
 
     public function getDatasetMetadata($dsid): array
     {
-        global $SYMB_UID;
         $retArr = array();
-        if($SYMB_UID && $dsid){
+        if($GLOBALS['SYMB_UID'] && $dsid){
             $sql = 'SELECT datasetid, name, notes, uid, sortsequence, initialtimestamp '.
                 'FROM omoccurdatasets '.
                 'WHERE (datasetid = '.$dsid.') ';
@@ -39,7 +38,7 @@ class OccurrenceDataset {
             $rs->free();
             $sql1 = 'SELECT role '.
                 'FROM userroles '.
-                'WHERE (tablename = "omoccurdatasets") AND (tablepk = '.$dsid.') AND (uid = '.$SYMB_UID.') ';
+                'WHERE (tablename = "omoccurdatasets") AND (tablepk = '.$dsid.') AND (uid = '.$GLOBALS['SYMB_UID'].') ';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $retArr['roles'][] = $r1->role;
@@ -51,12 +50,11 @@ class OccurrenceDataset {
 
     public function getDatasetArr(): array
     {
-        global $SYMB_UID;
         $retArr = array();
-        if($SYMB_UID){
+        if($GLOBALS['SYMB_UID']){
             $sql = 'SELECT datasetid, name, notes, sortsequence, initialtimestamp '.
                 'FROM omoccurdatasets '.
-                'WHERE (uid = '.$SYMB_UID.') '.
+                'WHERE (uid = '.$GLOBALS['SYMB_UID'].') '.
                 'ORDER BY sortsequence,name';
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -69,7 +67,7 @@ class OccurrenceDataset {
 
             $sql1 = 'SELECT d.datasetid, d.name, d.notes, d.sortsequence, d.initialtimestamp, r.role '.
                 'FROM omoccurdatasets d INNER JOIN userroles r ON d.datasetid = r.tablepk '.
-                'WHERE (r.uid = '.$SYMB_UID.') AND (r.role IN("DatasetAdmin","DatasetEditor","DatasetReader")) '.
+                'WHERE (r.uid = '.$GLOBALS['SYMB_UID'].') AND (r.role IN("DatasetAdmin","DatasetEditor","DatasetReader")) '.
                 'ORDER BY sortsequence,name';
             //echo $sql1;
             $rs1 = $this->conn->query($sql1);
@@ -138,7 +136,6 @@ class OccurrenceDataset {
 
     public function cloneDatasets($targetArr): bool
     {
-        global $SYMB_UID;
         $status = true;
         $sql = 'SELECT datasetid, name, notes, sortsequence FROM omoccurdatasets '.
             'WHERE datasetid IN('.implode(',',$targetArr).')';
@@ -148,7 +145,7 @@ class OccurrenceDataset {
             $newNameTemp = $newName;
             $cnt = 1;
             do{
-                $sql1 = 'SELECT datasetid FROM omoccurdatasets WHERE name = "'.$newNameTemp.'" AND uid = '.$SYMB_UID;
+                $sql1 = 'SELECT datasetid FROM omoccurdatasets WHERE name = "'.$newNameTemp.'" AND uid = '.$GLOBALS['SYMB_UID'];
                 $nameExists = false;
                 $rs1 = $this->conn->query($sql1);
                 while($rs1->fetch_object()){
@@ -160,7 +157,7 @@ class OccurrenceDataset {
             }while($nameExists);
             $newName = $newNameTemp;
             $sql2 = 'INSERT INTO omoccurdatasets(name, notes, sortsequence, uid) '.
-                'VALUES("'.$newName.'","'.$r->notes.'",'.($r->sortsequence?:'""').','.$SYMB_UID.')';
+                'VALUES("'.$newName.'","'.$r->notes.'",'.($r->sortsequence?:'""').','.$GLOBALS['SYMB_UID'].')';
             if($this->conn->query($sql2)){
                 $this->datasetId = $this->conn->insert_id;
                 $sql3 = 'INSERT INTO omoccurdatasetlink(occid, datasetid, notes) '.
