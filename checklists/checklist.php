@@ -208,7 +208,7 @@ if($clArray['locality']){
             if(index > 0) startindex = (index*lazyLoadCnt) + 1;
             const http = new XMLHttpRequest();
             const url = "rpc/fieldguideexporter.php";
-            const params = 'rows=' + lazyLoadCnt + '&photogArr=' + JSON.stringify(photog) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid . '&thesfilter=' . ($thesFilter ?: 1); ?>';
+            const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid . '&thesfilter=' . ($thesFilter ?: 1); ?>';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

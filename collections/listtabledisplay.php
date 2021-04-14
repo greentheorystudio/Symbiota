@@ -82,7 +82,7 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
             const http = new XMLHttpRequest();
             const url = "rpc/changetablepage.php";
             const queryid = document.getElementById('queryId').value;
-            const params = 'starr='+JSON.stringify(stArr)+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&occindex='+index+'&sortfield1='+sortfield1+'&sortfield2='+sortfield2+'&sortorder='+sortorder;
+            const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&occindex='+index+'&sortfield1='+sortfield1+'&sortfield2='+sortfield2+'&sortorder='+sortorder;
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
