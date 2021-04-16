@@ -369,13 +369,14 @@ class TaxonProfileManager {
 
     public function getVernacularStr(){
         $str = '';
-        if($this->vernaculars){
-            $str = array_shift($this->vernaculars);
+        $strArr = $this->vernaculars;
+        if($strArr){
+            $str = array_shift($strArr);
         }
-        if($this->vernaculars){
+        if($strArr){
             $str .= "<span class='verns' onclick=\"toggle('verns');\" style='cursor:pointer;display:inline;font-size:70%;' title='Click here to show more common names'>,&nbsp;&nbsp;more...</span>";
             $str .= "<span class='verns' onclick=\"toggle('verns');\" style='display:none;'>, ";
-            $str .= implode(', ',$this->vernaculars);
+            $str .= implode(', ',$strArr);
             $str .= '</span>';
         }
         return $str;
