@@ -187,7 +187,7 @@
                         <div style="display:flex;justify-content:flex-start;align-items:center;">
                             <select data-role="none" id="querydownloadselect">
                                 <option>Download Type</option>
-                                <option value="csv">CSV</option>
+                                <option value="csv">CSV/ZIP</option>
                                 <option value="kml">KML</option>
                                 <option value="geojson">GeoJSON</option>
                                 <option value="gpx">GPX</option>

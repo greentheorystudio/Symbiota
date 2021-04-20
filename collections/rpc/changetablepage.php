@@ -58,7 +58,7 @@ if($recArr){
     $recordListHtml .= '<div>';
     $recordListHtml .= '<select data-role="none" id="querydownloadselect">';
     $recordListHtml .= '<option>Download Type</option>';
-    $recordListHtml .= '<option value="csv">CSV</option>';
+    $recordListHtml .= '<option value="csv">CSV/ZIP</option>';
     $recordListHtml .= '<option value="kml">KML</option>';
     $recordListHtml .= '<option value="geojson">GeoJSON</option>';
     $recordListHtml .= '<option value="gpx">GPX</option>';

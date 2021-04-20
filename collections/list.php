@@ -46,7 +46,7 @@ $resetPageNum = false;
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=3"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210412"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210420"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
