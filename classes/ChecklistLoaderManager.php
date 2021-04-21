@@ -40,100 +40,104 @@ class ChecklistLoaderManager {
 			if(in_array($vStr, Array('scientificnamewithauthor', 'scientificname', 'taxa', 'speciesname', 'taxon'))){
 				$vStr = 'sciname';
 			}
-			$headerArr[$vStr] = $k;
+			if(is_string($vStr) || is_int($vStr)){
+                $headerArr[$vStr] = $k;
+            }
 		}
 		if(array_key_exists('sciname',$headerArr)){
 			$cnt = 0;
 			flush();
 			while($valueArr = fgetcsv($fh)){
-				$sciNameStr = $this->cleanInStr($valueArr[$headerArr['sciname']]);
-				if($sciNameStr){
-					$tid = 0;
-					$rankId = 0;
-					$family = '';
-					$sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
-					if($thesId && is_numeric($thesId)){
-						$sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
-							'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.
-							'INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid '.
-							'WHERE (ts.taxauthid = '.$thesId.') ';
-					}
-					else{
-						$sql = 'SELECT t.tid, t.sciname, ts.family, t.rankid '.
-							'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-							'WHERE ts.taxauthid = 1 ';
-					}
-					$cleanSciName = $this->encodeString($sciNameArr['sciname']);
-					$sql .= 'AND (t.sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
-					$rs = $this->conn->query($sql);
-					if($rs){
-						while($row = $rs->fetch_object()){
-							$tid = $row->tid;
-							$rankId = $row->rankid;
-							$family = $row->family;
-							if($sciNameStr === $row->sciname) {
-								break;
-							}
-						}
-						$rs->free();
-					}
+				if($valueArr){
+                    $sciNameStr = $this->cleanInStr($valueArr[$headerArr['sciname']]);
+                    if($sciNameStr){
+                        $tid = 0;
+                        $rankId = 0;
+                        $family = '';
+                        $sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
+                        if($thesId && is_numeric($thesId)){
+                            $sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
+                                'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.
+                                'INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid '.
+                                'WHERE (ts.taxauthid = '.$thesId.') ';
+                        }
+                        else{
+                            $sql = 'SELECT t.tid, t.sciname, ts.family, t.rankid '.
+                                'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+                                'WHERE ts.taxauthid = 1 ';
+                        }
+                        $cleanSciName = $this->encodeString($sciNameArr['sciname']);
+                        $sql .= 'AND (t.sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
+                        $rs = $this->conn->query($sql);
+                        if($rs){
+                            while($row = $rs->fetch_object()){
+                                $tid = $row->tid;
+                                $rankId = $row->rankid;
+                                $family = $row->family;
+                                if($sciNameStr === $row->sciname) {
+                                    break;
+                                }
+                            }
+                            $rs->free();
+                        }
 
-					//Load taxon into checklist
-					if($tid){
-						if($rankId >= 180){
-							$sqlInsert = '';
-							$sqlValues = '';
-							if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
-								$famValue = $this->cleanInStr($valueArr[$headerArr['family']]);
-								if(strcasecmp($family, $famValue)){
-									$sqlInsert .= ',familyoverride';
-									$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['family']]).'"';
-								}
-							}
-							if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
-								$sqlInsert .= ',habitat';
-								$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['habitat']]).'"';
-							}
-							if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
-								$sqlInsert .= ',abundance';
-								$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['abundance']]).'"';
-							}
-							if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
-								$sqlInsert .= ',notes';
-								$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['notes']]).'"';
-							}
-							if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
-								$sqlInsert .= ',internalnotes';
-								$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['internalnotes']]).'"';
-							}
-							if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
-								$sqlInsert .= ',source';
-								$sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['source']]).'"';
-							}
+                        //Load taxon into checklist
+                        if($tid){
+                            if($rankId >= 180){
+                                $sqlInsert = '';
+                                $sqlValues = '';
+                                if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
+                                    $famValue = $this->cleanInStr($valueArr[$headerArr['family']]);
+                                    if(strcasecmp($family, $famValue)){
+                                        $sqlInsert .= ',familyoverride';
+                                        $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['family']]).'"';
+                                    }
+                                }
+                                if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
+                                    $sqlInsert .= ',habitat';
+                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['habitat']]).'"';
+                                }
+                                if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
+                                    $sqlInsert .= ',abundance';
+                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['abundance']]).'"';
+                                }
+                                if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
+                                    $sqlInsert .= ',notes';
+                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['notes']]).'"';
+                                }
+                                if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
+                                    $sqlInsert .= ',internalnotes';
+                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['internalnotes']]).'"';
+                                }
+                                if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
+                                    $sqlInsert .= ',source';
+                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['source']]).'"';
+                                }
 
-							$sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';
-							//echo $sql; exit;
-							if($this->conn->query($sql)){
-								$successCnt++;
-							}
-							else{
-								$this->errorArr[] = $sciNameStr." (TID = $tid) failed to load<br />Error msg: ".$this->conn->error;
-								//echo $sql."<br />";
-							}
-						}
-						else{
-							$this->errorArr[] = $sciNameStr. ' failed to load (taxon must be of genus, species, or infraspecific ranking)';
-						}
-					}
-					else{
-						$this->problemTaxa[] = $cleanSciName;
-					}
-					$cnt++;
-					if($cnt%500 === 0) {
-						echo '<li style="margin-left:10px;">'.$cnt.' taxa loaded</li>';
-						flush();
-					}
-				}
+                                $sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';
+                                //echo $sql; exit;
+                                if($this->conn->query($sql)){
+                                    $successCnt++;
+                                }
+                                else{
+                                    $this->errorArr[] = $sciNameStr." (TID = $tid) failed to load<br />Error msg: ".$this->conn->error;
+                                    //echo $sql."<br />";
+                                }
+                            }
+                            else{
+                                $this->errorArr[] = $sciNameStr. ' failed to load (taxon must be of genus, species, or infraspecific ranking)';
+                            }
+                        }
+                        else{
+                            $this->problemTaxa[] = $cleanSciName;
+                        }
+                        $cnt++;
+                        if($cnt%500 === 0) {
+                            echo '<li style="margin-left:10px;">'.$cnt.' taxa loaded</li>';
+                            flush();
+                        }
+                    }
+                }
 			}
 			fclose($fh);
 			if($cnt && $this->clMeta['type'] === 'rarespp'){

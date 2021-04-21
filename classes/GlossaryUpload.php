@@ -81,96 +81,114 @@ class GlossaryUpload{
 			$id = 1;
 			$recordCnt = 0;
 			while($recordArr = fgetcsv($fh)){
-				foreach($languageArr as $lang){
-					$term = '';
-					$definition = '';
-					$source = '';
-					$author = '';
-					$translator = '';
-					$notes = '';
-					$resourceUrl = '';
-					$synonym = '';
-					foreach($fieldMap as $csvField => $field){
-						if($field === $lang.'_term'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$term = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_definition'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$definition = $this->cleanInStr($this->encodeString($recordArr[$index]));
-							if(strlen($definition) > 2000){
-								$definition = '';
-								$this->outputMsg('Definition for '.$term.' in '.ucfirst($lang).' is more than 2000 characters and was set to NULL.');
-							}
-						}
-						if($field === $lang.'_source'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$source = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_author'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$author = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_translator'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$translator = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_notes'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$notes = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_resourceurl'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$resourceUrl = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-						if($field === $lang.'_synonym'){
-							$index = array_search($csvField, array_keys($fieldMap), true);
-							$synonym = $this->cleanInStr($this->encodeString($recordArr[$index]));
-						}
-					}
-					if($term){
-						$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,newGroupId) ';
-						if($source){
-                            $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
-                        }
-						else{
-                            $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
-                        }
-						$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",'.$id.')';
-						//echo "<div>".$sql."</div>";
-						if($this->conn->query($sql)){
-							$recordCnt++;
-							if($recordCnt%1000 === 0){
-								$this->outputMsg('Upload count: '.$recordCnt,1);
-								flush();
-							}
-						}
-						else{
-							$this->outputMsg('ERROR loading term: '.$this->conn->error);
-						}
-						if($synonym){
-							$sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
-							if($source){
-                                $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
+				if($recordArr){
+                    foreach($languageArr as $lang){
+                        $term = '';
+                        $definition = '';
+                        $source = '';
+                        $author = '';
+                        $translator = '';
+                        $notes = '';
+                        $resourceUrl = '';
+                        $synonym = '';
+                        foreach($fieldMap as $csvField => $field){
+                            if($field === $lang.'_term'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $term = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
                             }
-							else{
-                                $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
+                            if($field === $lang.'_definition'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $definition = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                                if(strlen($definition) > 2000){
+                                    $definition = '';
+                                    $this->outputMsg('Definition for '.$term.' in '.ucfirst($lang).' is more than 2000 characters and was set to NULL.');
+                                }
                             }
-							$sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",1,'.$id.')';
-							//echo "<div>".$sql."</div>";
-							if($this->conn->query($sql)){
-								$recordCnt++;
-								if($recordCnt%1000 === 0){
-									$this->outputMsg('Upload count: '.$recordCnt,1);
-									flush();
-								}
-							}
-							else{
-								$this->outputMsg('ERROR loading term: '.$this->conn->error);
-							}
-						}
-					}
-				}
+                            if($field === $lang.'_source'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $source = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                            if($field === $lang.'_author'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $author = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                            if($field === $lang.'_translator'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $translator = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                            if($field === $lang.'_notes'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $notes = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                            if($field === $lang.'_resourceurl'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $resourceUrl = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                            if($field === $lang.'_synonym'){
+                                $index = array_search($csvField, array_keys($fieldMap), true);
+                                if(is_string($index) || is_int($index)){
+                                    $synonym = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                }
+                            }
+                        }
+                        if($term){
+                            $sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,newGroupId) ';
+                            if($source){
+                                $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
+                            }
+                            else{
+                                $sql .= 'VALUES ("'.$term.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
+                            }
+                            $sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",'.$id.')';
+                            //echo "<div>".$sql."</div>";
+                            if($this->conn->query($sql)){
+                                $recordCnt++;
+                                if($recordCnt%1000 === 0){
+                                    $this->outputMsg('Upload count: '.$recordCnt,1);
+                                    flush();
+                                }
+                            }
+                            else{
+                                $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                            }
+                            if($synonym){
+                                $sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
+                                if($source){
+                                    $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'","'.$source.'",';
+                                }
+                                else{
+                                    $sql .= 'VALUES ("'.$synonym.'",'.($definition?'"'.$definition.'"':'null').',"'.ucfirst($lang).'",'.($batchSources?'"'.$batchSources.'"':'null').',';
+                                }
+                                $sql .= ($author?'"'.$author.'"':'null').','.($translator?'"'.$translator.'"':'null').','.($notes?'"'.$notes.'"':'null').','.($resourceUrl?'"'.$resourceUrl.'"':'null').',"'.$tidStr.'",1,'.$id.')';
+                                //echo "<div>".$sql."</div>";
+                                if($this->conn->query($sql)){
+                                    $recordCnt++;
+                                    if($recordCnt%1000 === 0){
+                                        $this->outputMsg('Upload count: '.$recordCnt,1);
+                                        flush();
+                                    }
+                                }
+                                else{
+                                    $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                                }
+                            }
+                        }
+                    }
+                }
 				$id++;
 			}
 			$this->conn->query('COMMIT');

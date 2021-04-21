@@ -149,9 +149,11 @@ class KeyDataManager extends Manager{
 			foreach($attrs as $attr){
 				if(strpos($attr,'-') !== false) {
                     $fragments = explode('-',$attr);
-                    $cid = $fragments[0];
-                    $cs = $fragments[1];
-                    $this->charArr[$cid][] = $cs;
+                    if($fragments){
+                        $cid = $fragments[0];
+                        $cs = $fragments[1];
+                        $this->charArr[$cid][] = $cs;
+                    }
                 }
 			}
 		}

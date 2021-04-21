@@ -46,7 +46,9 @@ if($isEditor){
 	elseif($action === 'Add Identification Editor'){
 		$identEditor = $_POST['identeditor'];
 		$pTokens = explode(':',$identEditor);
-		$permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
+		if($pTokens){
+            $permManager->addPermission($pTokens[0],'CollTaxon',$collId,$pTokens[1]);
+        }
 	}
 }
 $collMetadataFull = $permManager->getCollectionMetadata($collId);

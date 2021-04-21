@@ -19,11 +19,13 @@ if(strpos($windowType,'input') === 0){
     $inputWindowMode = true;
     if(strpos($windowType, '-') !== false){
         $windowTypeArr = explode('-',$windowType);
-        $windowToolsArr = explode(',',$windowTypeArr[1]);
-        foreach($windowToolsArr as $tool){
-            $inputWindowModeTools[] = $tool;
+        if($windowTypeArr){
+            $windowToolsArr = explode(',',$windowTypeArr[1]);
+            foreach($windowToolsArr as $tool){
+                $inputWindowModeTools[] = $tool;
+            }
+            $inputWindowSubmitText = 'Coordinates';
         }
-        $inputWindowSubmitText = 'Coordinates';
     }
     else{
         $inputWindowSubmitText = 'Criteria';
@@ -263,7 +265,7 @@ $dbArr = array();
     </div>
     <div data-role="panel" data-dismissible=false class="overflow:hidden;" id="defaultpanel" data-swipe-close=false data-position="left" data-display="overlay" >
         <div class="panel-content">
-            <?php include_once('includes/sidepanel.php'); ?>
+            <?php include_once(__DIR__ . '/includes/sidepanel.php'); ?>
             <a href="#" id="panelclosebutton" data-rel="close" data-role="button" data-theme="a" data-icon="delete" data-inline="true"></a>
         </div>
     </div>
@@ -286,7 +288,7 @@ $dbArr = array();
         <div id="mapscale_metric"></div>
     </div>
 
-    <?php include_once('includes/controlpanel.php'); ?>
+    <?php include_once(__DIR__ . '/includes/controlpanel.php'); ?>
 </div>
 
 <script type="text/javascript">
@@ -1091,15 +1093,15 @@ $dbArr = array();
     setTransformHandleStyle();
 </script>
 
-<?php include_once('includes/datasetmanagement.php'); ?>
+<?php include_once(__DIR__ . '/includes/datasetmanagement.php'); ?>
 
-<?php include_once('includes/mapsettings.php'); ?>
+<?php include_once(__DIR__ . '/includes/mapsettings.php'); ?>
 
-<?php include_once('includes/infowindow.php'); ?>
+<?php include_once(__DIR__ . '/includes/infowindow.php'); ?>
 
-<?php include_once('includes/layercontroller.php'); ?>
+<?php include_once(__DIR__ . '/includes/layercontroller.php'); ?>
 
-<?php include_once('../collections/csvoptions.php'); ?>
+<?php include_once(__DIR__ . '/../collections/csvoptions.php'); ?>
 
 <!-- Data Download Form -->
 <div style="display:none;">

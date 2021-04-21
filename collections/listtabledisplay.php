@@ -154,7 +154,7 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
 </div>
 <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
 <!-- Data Download Form -->
-<?php include_once('csvoptions.php'); ?>
+<?php include_once(__DIR__ . '/csvoptions.php'); ?>
 <div style="display:none;">
     <form name="datadownloadform" id="datadownloadform" action="rpc/datadownloader.php" method="post">
         <input id="starrjson" name="starrjson" type="hidden" />

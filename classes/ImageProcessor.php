@@ -207,37 +207,42 @@ class ImageProcessor {
                         }
                         if(is_numeric($origFileNameIndex) && is_numeric($mediaMd5Index)){
                             while(($data = fgetcsv($fh,1000, ',')) !== FALSE){
-                                if($data[$mediaMd5Index]){
-                                    $origFileName = basename($data[$origFileNameIndex]);
-                                    if(strpos($origFileName,'/') !== false){
-                                        $origFileName = substr($origFileName,(strrpos($origFileName,'/')+1));
-                                    }
-                                    elseif(strpos($origFileName,'\\') !== false){
-                                        $origFileName = substr($origFileName,(strrpos($origFileName,'\\')+1));
-                                    }
-                                    if(preg_match($pmTerm,$origFileName,$matchArr)){
-                                        if(array_key_exists(1,$matchArr) && $matchArr[1]){
-                                            $specPk = $matchArr[1];
-                                            if($postArr['patternreplace']) {
-                                                $specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
+                                if($data){
+                                    if($data[$mediaMd5Index]){
+                                        $origFileName = basename($data[$origFileNameIndex]);
+                                        if(strpos($origFileName,'/') !== false){
+                                            $origFileName = substr($origFileName,(strrpos($origFileName,'/')+1));
+                                        }
+                                        elseif(strpos($origFileName,'\\') !== false){
+                                            $origFileName = substr($origFileName,(strrpos($origFileName,'\\')+1));
+                                        }
+                                        if(preg_match($pmTerm,$origFileName,$matchArr)){
+                                            if(array_key_exists(1,$matchArr) && $matchArr[1]){
+                                                $specPk = $matchArr[1];
+                                                if($postArr['patternreplace']) {
+                                                    $specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
+                                                }
+                                                $occid = $this->getOccid($specPk,$origFileName);
+                                                if($occid){
+                                                    $baseUrl = $idigbioImageUrl.$data[$mediaMd5Index];
+                                                    $webUrl = $baseUrl.'?size=webview';
+                                                    $tnUrl = $baseUrl.'?size=thumbnail';
+                                                    $lgUrl = $baseUrl;
+                                                    $this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$origFileName);
+                                                }
                                             }
-                                            $occid = $this->getOccid($specPk,$origFileName);
-                                            if($occid){
-                                                $baseUrl = $idigbioImageUrl.$data[$mediaMd5Index];
-                                                $webUrl = $baseUrl.'?size=webview';
-                                                $tnUrl = $baseUrl.'?size=thumbnail';
-                                                $lgUrl = $baseUrl;
-                                                $this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$origFileName);
-                                            }
+                                        }
+                                        else{
+                                            $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
                                         }
                                     }
                                     else{
-                                        $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
+                                        $index = array_search('idigbio:mediaStatusDetail', $headerArr, true);
+                                        if(is_string($index) || is_int($index)){
+                                            $errMsg = $data[$index];
+                                            $this->logOrEcho('NOTICE: File skipped due to apparent iDigBio upload failure (iDigBio Error:'.$errMsg.') ',2);
+                                        }
                                     }
-                                }
-                                else{
-                                    $errMsg = $data[array_search('idigbio:mediaStatusDetail', $headerArr, true)];
-                                    $this->logOrEcho('NOTICE: File skipped due to apparent iDigBio upload failure (iDigBio Error:'.$errMsg.') ',2);
                                 }
                             }
                             $this->cleanHouse(array($this->collid));
@@ -334,69 +339,71 @@ class ImageProcessor {
             if($fh = fopen($fullPath,'rb')){
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
-                    $catalogNumber = (isset($fieldMap['catalognumber'])?$this->cleanInStr($recordArr[$fieldMap['catalognumber']]):'');
-                    $originalUrl = (isset($fieldMap['originalurl'])?$this->cleanInStr($recordArr[$fieldMap['originalurl']]):'');
-                    $url = (isset($fieldMap['url'])?$this->cleanInStr($recordArr[$fieldMap['url']]):'');
-                    if(!$url) {
-                        $url = 'empty';
-                    }
-                    $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?$this->cleanInStr($recordArr[$fieldMap['thumbnailurl']]):'');
-                    if($catalogNumber && $originalUrl){
-                        echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
-                        $occArr = array();
-                        $sql = 'SELECT occid FROM omoccurrences WHERE collid = '.$this->collid.' AND catalognumber = "'.$catalogNumber.'"';
-                        $rs = $this->conn->query($sql);
-                        while($r = $rs->fetch_object()){
-                            $occArr[] = $r->occid;
+                    if($recordArr){
+                        $catalogNumber = (isset($fieldMap['catalognumber'])?$this->cleanInStr($recordArr[$fieldMap['catalognumber']]):'');
+                        $originalUrl = (isset($fieldMap['originalurl'])?$this->cleanInStr($recordArr[$fieldMap['originalurl']]):'');
+                        $url = (isset($fieldMap['url'])?$this->cleanInStr($recordArr[$fieldMap['url']]):'');
+                        if(!$url) {
+                            $url = 'empty';
                         }
-                        $rs->free();
-                        if($occArr){
-                            $origFileName = substr(strrchr($originalUrl, '/'), 1);
-                            $urlFileName = substr(strrchr($url, '/'), 1);
-                            foreach($occArr as $k => $occid){
-                                $sql1 = 'SELECT imgid, url, originalurl, thumbnailurl FROM images WHERE (occid = '.$occid.')';
-                                $rs1 = $this->conn->query($sql1);
-                                while($r1 = $rs1->fetch_object()){
-                                    $uFileName = substr(strrchr($r1->url, '/'), 1);
-                                    $oFileName = substr(strrchr($r1->originalurl, '/'), 1);
-                                    if(($oFileName && ($oFileName === $origFileName || $oFileName === $urlFileName)) || ($uFileName && ($uFileName === $origFileName || $uFileName === $urlFileName))){
-                                        $sql2 = 'UPDATE images '.
-                                            'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').' '.
-                                            'WHERE imgid = '.$r1->imgid;
-                                        if($this->conn->query($sql2)){
-                                            echo '<li style="margin-left:10px">Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
-                                            $this->deleteImage($r1->url);
-                                            $this->deleteImage($r1->originalurl);
-                                            $this->deleteImage($r1->thumbnailurl);
-                                            unset($occArr[$k]);
-                                            break;
-                                        }
+                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?$this->cleanInStr($recordArr[$fieldMap['thumbnailurl']]):'');
+                        if($catalogNumber && $originalUrl){
+                            echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
+                            $occArr = array();
+                            $sql = 'SELECT occid FROM omoccurrences WHERE collid = '.$this->collid.' AND catalognumber = "'.$catalogNumber.'"';
+                            $rs = $this->conn->query($sql);
+                            while($r = $rs->fetch_object()){
+                                $occArr[] = $r->occid;
+                            }
+                            $rs->free();
+                            if($occArr){
+                                $origFileName = substr(strrchr($originalUrl, '/'), 1);
+                                $urlFileName = substr(strrchr($url, '/'), 1);
+                                foreach($occArr as $k => $occid){
+                                    $sql1 = 'SELECT imgid, url, originalurl, thumbnailurl FROM images WHERE (occid = '.$occid.')';
+                                    $rs1 = $this->conn->query($sql1);
+                                    while($r1 = $rs1->fetch_object()){
+                                        $uFileName = substr(strrchr($r1->url, '/'), 1);
+                                        $oFileName = substr(strrchr($r1->originalurl, '/'), 1);
+                                        if(($oFileName && ($oFileName === $origFileName || $oFileName === $urlFileName)) || ($uFileName && ($uFileName === $origFileName || $uFileName === $urlFileName))){
+                                            $sql2 = 'UPDATE images '.
+                                                'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').' '.
+                                                'WHERE imgid = '.$r1->imgid;
+                                            if($this->conn->query($sql2)){
+                                                echo '<li style="margin-left:10px">Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
+                                                $this->deleteImage($r1->url);
+                                                $this->deleteImage($r1->originalurl);
+                                                $this->deleteImage($r1->thumbnailurl);
+                                                unset($occArr[$k]);
+                                                break;
+                                            }
 
-                                        echo '<li style="margin-left:10px">ERROR updating existing image record: '.$this->conn->error.'</li>';
+                                            echo '<li style="margin-left:10px">ERROR updating existing image record: '.$this->conn->error.'</li>';
+                                        }
                                     }
+                                    $rs1->free();
                                 }
-                                $rs1->free();
-                            }
-                        }
-                        else{
-                            $sqlIns = 'INSERT INTO omoccurrences(collid,catalognumber,processingstatus,dateentered) '.
-                                'VALUES('.$this->collid.',"'.$catalogNumber.'","unprocessed",now())';
-                            if($this->conn->query($sqlIns)){
-                                $occArr[] = $this->conn->insert_id;
-                                echo '<li style="margin-left:10px">Unable to find record with matching catalogNumber; new occurrence record created</li>';
                             }
                             else{
-                                echo '<li style="margin-left:10px">ERROR creating new occurrence record: '.$this->conn->error.'</li>';
+                                $sqlIns = 'INSERT INTO omoccurrences(collid,catalognumber,processingstatus,dateentered) '.
+                                    'VALUES('.$this->collid.',"'.$catalogNumber.'","unprocessed",now())';
+                                if($this->conn->query($sqlIns)){
+                                    $occArr[] = $this->conn->insert_id;
+                                    echo '<li style="margin-left:10px">Unable to find record with matching catalogNumber; new occurrence record created</li>';
+                                }
+                                else{
+                                    echo '<li style="margin-left:10px">ERROR creating new occurrence record: '.$this->conn->error.'</li>';
+                                }
                             }
-                        }
-                        foreach($occArr as $occid){
-                            $sqlInsert = 'INSERT INTO images(occid,url,originalurl,thumbnailurl) '.
-                                'VALUES('.$occid.',"'.$url.'","'.$originalUrl.'",'.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').')';
-                            if($this->conn->query($sqlInsert)){
-                                echo '<li style="margin-left:10px">Image URLs linked to: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
-                            }
-                            else{
-                                echo '<li style="margin-left:10px">ERROR loading image: '.$this->conn->error.'</li>';
+                            foreach($occArr as $occid){
+                                $sqlInsert = 'INSERT INTO images(occid,url,originalurl,thumbnailurl) '.
+                                    'VALUES('.$occid.',"'.$url.'","'.$originalUrl.'",'.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').')';
+                                if($this->conn->query($sqlInsert)){
+                                    echo '<li style="margin-left:10px">Image URLs linked to: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
+                                }
+                                else{
+                                    echo '<li style="margin-left:10px">ERROR loading image: '.$this->conn->error.'</li>';
+                                }
                             }
                         }
                     }

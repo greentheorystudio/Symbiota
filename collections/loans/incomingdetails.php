@@ -1,4 +1,8 @@
-<?php 
+<?php
+/** @var SpecLoans $loanManager */
+/** @var string $loanId */
+/** @var string $collId */
+/** @var string $loanType */
 $specList = $loanManager->getSpecList($loanId);
 ?>
 <div id="tabs" style="margin:0;">

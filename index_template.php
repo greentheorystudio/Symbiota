@@ -8,7 +8,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <meta name='keywords' content='' />
-        <?php include_once('config/googleanalytics.php'); ?>
+        <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
     </head>
     <body>
         <?php

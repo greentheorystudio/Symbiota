@@ -323,7 +323,9 @@ class ImageLocalProcessor {
 	{
 		set_time_limit(3600);
 		$headerArr = get_headers($this->sourcePathBase.$pathFrag);
-		preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
+		if($headerArr){
+            preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
+        }
 		if($codeArr[1] === 200){
 			$dom = new DOMDocument();
 			$dom->loadHTMLFile($this->sourcePathBase.$pathFrag);
@@ -480,12 +482,14 @@ class ImageLocalProcessor {
 				if($width && $height){
 					if(strpos($sourcePath, 'http://') === 0 || strpos($sourcePath, 'https://') === 0) {
 						$x = array_change_key_case(get_headers($sourcePath.$fileName, 1),CASE_LOWER); 
-						if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
-							$fileSize = $x['content-length'][1]; 
-						}
- 						else { 
- 							$fileSize = $x['content-length']; 
- 						}
+						if($x){
+                            if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                                $fileSize = $x['content-length'][1];
+                            }
+                            else {
+                                $fileSize = $x['content-length'];
+                            }
+                        }
 					} 
 					else { 
 						$fileSize = @filesize($sourcePath.$fileName);
@@ -953,24 +957,26 @@ class ImageLocalProcessor {
 						$catNum = 0;
 						$recMap = array();
 						foreach($headerArr as $k => $hStr){
-							if($hStr === 'catalognumber') {
-								$catNum = $recordArr[$k];
-							}
-							if(array_key_exists($hStr,$symbMap)){
-								$valueStr = '';
-								if(array_key_exists($k,$recordArr)) {
-									$valueStr = $recordArr[$k];
-								}
-								if($valueStr){
-									if(strpos($valueStr, '"') === 0 && substr($valueStr,-1) === '"'){
-										$valueStr = substr($valueStr,1, -1);
-									}
-									$valueStr = trim($valueStr);
-									if($valueStr) {
-										$recMap[$hStr] = $valueStr;
-									}
-								}
-							}
+							if($recordArr){
+                                if($hStr === 'catalognumber') {
+                                    $catNum = $recordArr[$k];
+                                }
+                                if(array_key_exists($hStr,$symbMap)){
+                                    $valueStr = '';
+                                    if(array_key_exists($k,$recordArr)) {
+                                        $valueStr = $recordArr[$k];
+                                    }
+                                    if($valueStr){
+                                        if(strpos($valueStr, '"') === 0 && substr($valueStr,-1) === '"'){
+                                            $valueStr = substr($valueStr,1, -1);
+                                        }
+                                        $valueStr = trim($valueStr);
+                                        if($valueStr) {
+                                            $recMap[$hStr] = $valueStr;
+                                        }
+                                    }
+                                }
+                            }
 						}
 
 						if((!array_key_exists('sciname',$recMap) || !$recMap['sciname'])){
@@ -1067,16 +1073,28 @@ class ImageLocalProcessor {
 		
 							$activeFields = array_keys($recMap);
 							if(in_array('ometid', $activeFields, true)) {
-								unset($activeFields[array_search('ometid', $activeFields, true)]);
+								$index = array_search('ometid', $activeFields, true);
+                                if(is_string($index) || is_int($index)){
+                                    unset($activeFields[$index]);
+                                }
 							}
 							if(in_array('omenid', $activeFields, true)) {
-								unset($activeFields[array_search('omenid', $activeFields, true)]);
+								$index = array_search('omenid', $activeFields, true);
+                                if(is_string($index) || is_int($index)){
+                                    unset($activeFields[$index]);
+                                }
 							}
 							if(in_array('exsiccatititle', $activeFields, true)) {
-								unset($activeFields[array_search('exsiccatititle', $activeFields, true)]);
+								$index = array_search('exsiccatititle', $activeFields, true);
+                                if(is_string($index) || is_int($index)){
+                                    unset($activeFields[$index]);
+                                }
 							}
 							if(in_array('exsiccatinumber', $activeFields, true)) {
-								unset($activeFields[array_search('exsiccatinumber', $activeFields, true)]);
+								$index = array_search('exsiccatinumber', $activeFields, true);
+                                if(is_string($index) || is_int($index)){
+                                    unset($activeFields[$index]);
+                                }
 							}
 							
 							$termArr = array();
