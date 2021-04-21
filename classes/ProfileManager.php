@@ -292,10 +292,11 @@ class ProfileManager extends Manager{
     {
         $newPassword = '';
         $alphabet = str_split('0123456789abcdefghijklmnopqrstuvwxyz');
-        for($i = 0; $i<8; $i++) {
-            try {
-                $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
-            } catch (Exception $e) {
+        if($alphabet){
+            for($i = 0; $i<8; $i++) {
+                try {
+                    $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
+                } catch (Exception $e) {}
             }
         }
         return $newPassword;

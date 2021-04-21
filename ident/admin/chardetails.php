@@ -546,10 +546,7 @@ $headingAdminUrl = 'headingadmin.php';
 			</div>	
 			<?php 
 		}
-		else if(!$isEditor){
-            echo '<h2>You are not authorized to add characters</h2>';
-        }
-        else{
+		else{
             echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
         }
 		?>

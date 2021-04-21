@@ -107,11 +107,13 @@ class GamesManager {
 				}
 				$rs->free();
 				$k = array_rand($tidArr);
-				$randTaxa = $tidArr[$k];
+				if(is_string($k) || is_int($k)){
+                    $randTaxa = $tidArr[$k];
+                }
 				if($randTaxa){
 					$previous[] = $randTaxa;
 					$ootdInfo['clid'] = $clid;
-					
+
 					$sql2 = 'SELECT t.TID, t.SciName, t.UnitName1, s.family '.
 						'FROM taxa AS t INNER JOIN taxstatus AS s ON t.TID = s.tid '.
 						'WHERE s.taxauthid = 1 AND t.TID = '.$randTaxa.' ';
@@ -124,7 +126,7 @@ class GamesManager {
 						$ootdInfo['family'] = $row->family;
 					}
 					$rs->free();
-					
+
 					$files = array();
 					$sql3 = 'SELECT i.url '.
 						'FROM images i '.
@@ -162,7 +164,7 @@ class GamesManager {
 					}
 					$rs->free();
 					$ootdInfo['images'] = $files;
-					
+
 					if(array_diff($tidArr,$previous)){
 						$fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json', 'wb');
 						fwrite($fp, json_encode($previous));
