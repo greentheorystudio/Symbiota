@@ -221,8 +221,10 @@ class ImageShared{
 		$imgInfo = null;
 		if(stripos($fPath, 'http://') === 0 || stripos($fPath, 'https://') === 0){
 			if($dimArr = self::getImgDim($fPath)){
-				$this->sourceWidth = $dimArr[0];
-				$this->sourceHeight = $dimArr[1];
+				if($dimArr){
+                    $this->sourceWidth = $dimArr[0];
+                    $this->sourceHeight = $dimArr[1];
+                }
 			}
 
 			if($pos = strrpos($fName,'/')){
@@ -821,17 +823,19 @@ class ImageShared{
 		if($this->sourcePath && !$this->sourceFileSize){
 			if(stripos($this->sourcePath, 'http://') === 0 || stripos($this->sourcePath, 'https://') === 0){
 				$x = array_change_key_case(get_headers($this->sourcePath, 1),CASE_LOWER);
-				if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
-					if(isset($x['content-length'][1])) {
-						$this->sourceFileSize = $x['content-length'][1];
-					}
-					elseif(isset($x['content-length'])) {
-						$this->sourceFileSize = $x['content-length'];
-					}
-				}
-	 			else if(isset($x['content-length'])) {
-					$this->sourceFileSize = $x['content-length'];
-				}
+				if($x){
+                    if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                        if(isset($x['content-length'][1])) {
+                            $this->sourceFileSize = $x['content-length'][1];
+                        }
+                        elseif(isset($x['content-length'])) {
+                            $this->sourceFileSize = $x['content-length'];
+                        }
+                    }
+                    else if(isset($x['content-length'])) {
+                        $this->sourceFileSize = $x['content-length'];
+                    }
+                }
 	 		}
 			else{
 				$this->sourceFileSize = filesize($this->sourcePath);
@@ -945,29 +949,31 @@ class ImageShared{
 					$i += 4;
 					if($new_block[$i+2] === "\x4A" && $new_block[$i+3] === "\x46" && $new_block[$i+4] === "\x49" && $new_block[$i+5] === "\x46" && $new_block[$i+6] === "\x00") {
 						$block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
-						$block_size = hexdec($block_size[1]);
-						while(!feof($handle)) {
-							$i += $block_size;
-							$new_block .= fread($handle, $block_size);
-							if(isset($new_block[$i]) && $new_block[$i] === "\xFF") {
-								$sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
-								if(in_array($new_block[$i + 1], $sof_marker, true)) {
-									$size_data = $new_block[$i+2] . $new_block[$i+3] . $new_block[$i+4] . $new_block[$i+5] . $new_block[$i+6] . $new_block[$i+7] . $new_block[$i+8];
-									$unpacked = unpack('H*', $size_data);
-									$unpacked = $unpacked[1];
-									$height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
-									$width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
-									return array($width, $height);
-								}
+						if(is_array($block_size)){
+                            $block_size = hexdec($block_size[1]);
+                            while(!feof($handle)) {
+                                $i += $block_size;
+                                $new_block .= fread($handle, $block_size);
+                                if(is_int($i) && isset($new_block[$i]) && $new_block[$i] === "\xFF") {
+                                    $sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
+                                    if(in_array($new_block[$i + 1], $sof_marker, true)) {
+                                        $size_data = $new_block[$i+2] . $new_block[$i+3] . $new_block[$i+4] . $new_block[$i+5] . $new_block[$i+6] . $new_block[$i+7] . $new_block[$i+8];
+                                        $unpacked = unpack('H*', $size_data);
+                                        $unpacked = $unpacked[1];
+                                        $height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
+                                        $width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
+                                        return array($width, $height);
+                                    }
 
-								$i += 2;
-								$block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
-								$block_size = hexdec($block_size[1]);
-							}
-							else {
-								return false;
-							}
-						}
+                                    $i += 2;
+                                    $block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
+                                    $block_size = hexdec($block_size[1]);
+                                }
+                                else {
+                                    return false;
+                                }
+                            }
+                        }
 					}
 				}
 			}

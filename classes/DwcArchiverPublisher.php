@@ -248,19 +248,23 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$domainName = parse_url($r->portalDomain, PHP_URL_HOST);
-			if(strpos($domainName, 'www.') === 0) {
-				$domainName = substr($domainName, 4);
-			}
-			if(isset($retArr[$domainName])){
-				$retArr[$domainName]['cnt'] += $r->cnt;
-				if(strpos($retArr[$domainName]['url'],'/www.') && !strpos($r->portalDomain,'/www.')) {
-					$retArr[$domainName]['url'] = $r->portalDomain;
-				}
-			}
-			else{
-				$retArr[$domainName]['cnt'] = $r->cnt;
-				$retArr[$domainName]['url'] = $r->portalDomain;
-			}
+			if($domainName){
+                if(strpos($domainName, 'www.') === 0) {
+                    $domainName = substr($domainName, 4);
+                }
+                if(is_string($domainName) || is_int($domainName)){
+                    if(isset($retArr[$domainName])){
+                        $retArr[$domainName]['cnt'] += $r->cnt;
+                        if(strpos($retArr[$domainName]['url'],'/www.') && !strpos($r->portalDomain,'/www.')) {
+                            $retArr[$domainName]['url'] = $r->portalDomain;
+                        }
+                    }
+                    else{
+                        $retArr[$domainName]['cnt'] = $r->cnt;
+                        $retArr[$domainName]['url'] = $r->portalDomain;
+                    }
+                }
+            }
 		}
 		return $retArr;
 	}
@@ -297,12 +301,14 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	{
 		if(strpos($filePath, 'http') === 0) {
 			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
-			if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
-				$x = $x['content-length'][1]; 
-			}
-			else { 
-				$x = $x['content-length']; 
-			}
+			if($x){
+                if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                    $x = $x['content-length'][1];
+                }
+                else {
+                    $x = $x['content-length'];
+                }
+            }
 		}
 		else { 
 			$x = @filesize($filePath); 

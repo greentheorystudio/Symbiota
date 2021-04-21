@@ -1,4 +1,5 @@
 <?php
+/** @var array $dupArr */
 include_once(__DIR__ . '/../../config/symbini.php'); 
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -67,7 +68,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>

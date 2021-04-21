@@ -58,7 +58,7 @@ if($recArr){
     $recordListHtml .= '<div>';
     $recordListHtml .= '<select data-role="none" id="querydownloadselect">';
     $recordListHtml .= '<option>Download Type</option>';
-    $recordListHtml .= '<option value="csv">CSV</option>';
+    $recordListHtml .= '<option value="csv">CSV/ZIP</option>';
     $recordListHtml .= '<option value="kml">KML</option>';
     $recordListHtml .= '<option value="geojson">GeoJSON</option>';
     $recordListHtml .= '<option value="gpx">GPX</option>';
@@ -163,7 +163,7 @@ if($recArr){
         $recordListHtml .= '<td class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="'.$id.'" /></td>'."\n";
         $recordListHtml .= '<td>';
         $recordListHtml .= '<a href="#" onclick="return openIndPU('.$id.','.($targetClid?: '0'). ')">' .$id.'</a> ';
-        if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $fieldArr['observeruid'])){
+        if($isEditor || ($GLOBALS['SYMB_UID'] && $GLOBALS['SYMB_UID'] === $occArr['observeruid'])){
             $recordListHtml .= '<a href="editor/occurrenceeditor.php?occid='.$id.'" target="_blank">';
             $recordListHtml .= '<i style="height:15px;width:15px;" title="Edit Record" class="far fa-edit"></i>';
             $recordListHtml .= '</a>';

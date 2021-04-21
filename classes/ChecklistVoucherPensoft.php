@@ -29,7 +29,10 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		foreach($headerArr as $headerValue){
 			$colLet = $letters[$columnCnt%26].'1';
 			if($columnCnt > 26) {
-				$colLet .= $letters[floor($columnCnt / 26)];
+				$index = floor($columnCnt / 26);
+                if(is_string($index) || is_int($index)){
+                    $colLet .= $letters[$index];
+                }
 			}
 			$taxaSheet->setCellValue($colLet, $headerValue);
 			$columnCnt++;
@@ -41,7 +44,10 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			foreach($headerArr as $headerKey => $v){
 				$colLet = $letters[$columnCnt%26].$rowCnt;
 				if($columnCnt > 26) {
-					$colLet .= $letters[floor($columnCnt / 26)];
+					$index = floor($columnCnt / 26);
+                    if(is_string($index) || is_int($index)){
+                        $colLet .= $letters[$index];
+                    }
 				}
 				$cellValue = ($recArr[$headerKey] ?? '');
 				$taxaSheet->setCellValue($colLet, $cellValue);
@@ -69,7 +75,10 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			foreach($headerArr as $headerValue){
 				$colLet = $letters[$columnCnt%26];
 				if($columnCnt > 25) {
-					$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
+					$index = floor(($columnCnt / 26) - 1);
+                    if(is_string($index) || is_int($index)){
+                        $colLet = $letters[$index] . $colLet;
+                    }
 				}
 				$materialsSheet->setCellValue($colLet.'1', $headerValue);
 				$columnCnt++;
@@ -80,7 +89,10 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 				foreach($rowArr as $colKey => $cellValue){
 					$colLet = $letters[$columnCnt%26];
 					if($columnCnt > 25) {
-						$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
+						$index = floor(($columnCnt / 26) - 1);
+                        if(is_string($index) || is_int($index)){
+                            $colLet = $letters[$index] . $colLet;
+                        }
 					}
 					$materialsSheet->setCellValue($colLet.$rowCnt, $cellValue);
 					$columnCnt++;

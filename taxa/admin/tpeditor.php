@@ -31,7 +31,10 @@ if($editable && $action){
 		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
 			if($sortValue && (strpos($sortKey, 'syn-') == 0)){
-				$synSortArr[substr($sortKey,4)] = $sortValue;
+				$index = substr($sortKey,4);
+                if(is_string($index) || is_int($index)){
+                    $synSortArr[$index] = $sortValue;
+                }
 			}
 		}
 		$statusStr = $tEditor->editSynonymSort($synSortArr);
@@ -100,7 +103,10 @@ if($editable && $action){
 		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
 			if($sortValue && strpos($sortKey, 'imgid-') == 0){
-				$imgSortArr[substr($sortKey,6)]  = $sortValue;
+				$index = substr($sortKey,6);
+                if(is_string($index) || is_int($index)){
+                    $imgSortArr[$index]  = $sortValue;
+                }
 			}
 		}
 		$statusStr = $tImageEditor->editImageSort($imgSortArr);

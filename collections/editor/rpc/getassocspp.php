@@ -9,12 +9,14 @@ $queryStr = $con->real_escape_string($_REQUEST['term']);
 $str1 = '';$str2 = '';$str3 = '';
 $strArr = explode(' ',$queryStr);
 $strCnt = count($strArr);
-$str1 = $strArr[0];
-if($strCnt > 1){
-    $str2 = $strArr[1];
-}
-if($strCnt > 2){
-    $str3 = $strArr[2];
+if($strArr){
+    $str1 = $strArr[0];
+    if($strCnt > 1){
+        $str2 = $strArr[1];
+    }
+    if($strCnt > 2){
+        $str3 = $strArr[2];
+    }
 }
 
 if($str1){

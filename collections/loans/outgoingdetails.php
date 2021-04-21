@@ -1,4 +1,9 @@
-<?php 
+<?php
+/** @var SpecLoans $loanManager */
+/** @var string $loanId */
+/** @var string $collId */
+/** @var string $loanType */
+/** @var string $eMode */
 $specList = $loanManager->getSpecList($loanId);
 ?>
 <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
