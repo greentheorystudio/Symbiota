@@ -362,13 +362,13 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 				<?php 
 			}
 			elseif($loanType === 'out'){
-				include_once('outgoingdetails.php');
+				include_once(__DIR__ . '/outgoingdetails.php');
 			}
 			elseif($loanType === 'in'){
-				include_once('incomingdetails.php');
+				include_once(__DIR__ . '/incomingdetails.php');
 			}
 			elseif($loanType === 'exchange'){
-				include_once('exchangedetails.php');
+				include_once(__DIR__ . '/exchangedetails.php');
 			}
 			else if(!$GLOBALS['SYMB_UID']){
                 echo '<h2>Please <a href="'.$GLOBALS['CLIENT_ROOT'].'/profile/index.php?collid='.$collId.'&refurl='.$GLOBALS['CLIENT_ROOT'].'/collections/loans/index.php?collid='.$collId.'">login</a></h2>';

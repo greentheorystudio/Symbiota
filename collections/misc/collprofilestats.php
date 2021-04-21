@@ -1,5 +1,6 @@
 <?php
-include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+/** @var OccurrenceCollectionProfile $collManager */
+/** @var int $collid */
 
 $statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
 
