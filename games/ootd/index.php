@@ -22,7 +22,9 @@ foreach($imageArr as $k => $imgValue){
 
 if($submitAction){
 	$scinameAnswerArr = explode(' ',trim($_POST['sciname_answer']));
-	$genusAnswer = strtolower($scinameAnswerArr[0]);
+	if($scinameAnswerArr){
+        $genusAnswer = strtolower($scinameAnswerArr[0]);
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

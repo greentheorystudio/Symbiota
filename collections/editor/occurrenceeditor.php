@@ -1,4 +1,5 @@
 <?php
+/** @var array $processingStatusArr */
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
@@ -12,7 +13,7 @@ $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
 $occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?$_REQUEST['occindex']:false;
 $ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
+$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 if(!$action && array_key_exists('carryloc',$_REQUEST)){
     $goToMode = 2;
@@ -31,10 +32,7 @@ else{
 if($crowdSourceMode){
     $occManager->setCrowdSourceMode(1);
 }
-
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 
 $isEditor = 0;
 $displayQuery = 0;
@@ -62,17 +60,17 @@ if($GLOBALS['SYMB_UID']){
 
     if($isGenObs){
         if(file_exists('includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php')){
-            include('includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php');
+            include(__DIR__ . '/includes/config/occurVarGenObs'.$GLOBALS['SYMB_UID'].'.php');
         }
         elseif(file_exists('includes/config/occurVarGenObsDefault.php')){
-            include('includes/config/occurVarGenObsDefault.php');
+            include(__DIR__ . '/includes/config/occurVarGenObsDefault.php');
         }
     }
     else if($collId && file_exists('includes/config/occurVarColl'.$collId.'.php')){
-        include('includes/config/occurVarColl'.$collId.'.php');
+        include(__DIR__ . '/includes/config/occurVarColl'.$collId.'.php');
     }
     elseif(file_exists('includes/config/occurVarDefault.php')){
-        include('includes/config/occurVarDefault.php');
+        include(__DIR__ . '/includes/config/occurVarDefault.php');
     }
     if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']) {
         $occManager->setExsiccatiMode(true);
@@ -538,7 +536,7 @@ else{
         if(!$occArr && !$goToMode) {
             $displayQuery = 1;
         }
-        include 'includes/queryform.php';
+        include __DIR__ . '/includes/queryform.php';
         ?>
         <div id="navDiv">
             <?php
@@ -1080,7 +1078,7 @@ else{
                                                 </div>
                                             </div>
                                             <?php
-                                            include_once('includes/geotools.php');
+                                            include_once(__DIR__ . '/includes/geotools.php');
                                             $georefExtraDiv = 'display:';
                                             if(array_key_exists('georeferencedby',$occArr) && $occArr['georeferencedby']){
                                                 $georefExtraDiv .= 'block';
@@ -1516,7 +1514,7 @@ else{
                         <td id="imgtd" style="display:none;width:430px;vertical-align:top;">
                             <?php
                             if($occId && ($fragArr || $specImgArr )){
-                                include_once('includes/imgprocessor.php');
+                                include_once(__DIR__ . '/includes/imgprocessor.php');
                             }
                             ?>
                         </td></tr>

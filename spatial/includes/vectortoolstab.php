@@ -1,3 +1,6 @@
+<?php
+/** @var string $inputWindowMode */
+?>
 <div id="polycalculatortab" style="width:379px;padding:0;">
     <div style="padding:10px;">
         <div style="height:45px;">

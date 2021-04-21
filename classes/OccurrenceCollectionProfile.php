@@ -1092,7 +1092,7 @@ class OccurrenceCollectionProfile {
         //echo $sql;
         while($r = $rs->fetch_object()){
             $order = str_replace(array('"',"'"), '',$r->SciName);
-            if($order){
+            if($order && (is_numeric($order) || is_string($order))){
                 $statsArr[$order]['SpecimensPerOrder'] = $r->SpecimensPerOrder;
                 $statsArr[$order]['GeorefSpecimensPerOrder'] = $r->GeorefSpecimensPerOrder;
                 $statsArr[$order]['IDSpecimensPerOrder'] = $r->IDSpecimensPerOrder;

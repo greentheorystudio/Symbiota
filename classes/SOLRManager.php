@@ -699,75 +699,83 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('country',$this->searchTermsArr) && $this->searchTermsArr['country']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['country']);
             $countryArr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($countryArr as $k => $value){
-                if($value === 'NULL'){
-                    $countryArr[$k] = '-country:["" TO *]';
-                    $tempArr[] = '(Country IS NULL)';
+            if($countryArr){
+                $tempArr = array();
+                foreach($countryArr as $k => $value){
+                    if($value === 'NULL'){
+                        $countryArr[$k] = '-country:["" TO *]';
+                        $tempArr[] = '(Country IS NULL)';
+                    }
+                    else{
+                        $tempArr[] = '(country:"'.trim($value).'")';
+                    }
                 }
-                else{
-                    $tempArr[] = '(country:"'.trim($value).'")';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$countryArr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$countryArr);
         }
         if(array_key_exists('state',$this->searchTermsArr) && $this->searchTermsArr['state']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['state']);
             $stateAr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($stateAr as $k => $value){
-                if($value === 'NULL'){
-                    $tempArr[] = '-StateProvince:["" TO *]';
-                    $stateAr[$k] = 'State IS NULL';
+            if($stateAr){
+                $tempArr = array();
+                foreach($stateAr as $k => $value){
+                    if($value === 'NULL'){
+                        $tempArr[] = '-StateProvince:["" TO *]';
+                        $stateAr[$k] = 'State IS NULL';
+                    }
+                    else{
+                        $tempArr[] = '(StateProvince:"'.trim($value).'")';
+                    }
                 }
-                else{
-                    $tempArr[] = '(StateProvince:"'.trim($value).'")';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$stateAr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$stateAr);
         }
         if(array_key_exists('county',$this->searchTermsArr) && $this->searchTermsArr['county']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['county']);
             $countyArr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($countyArr as $k => $value){
-                if($value === 'NULL'){
-                    $tempArr[] = '-county:["" TO *]';
-                    $countyArr[$k] = 'County IS NULL';
+            if($countyArr){
+                $tempArr = array();
+                foreach($countyArr as $k => $value){
+                    if($value === 'NULL'){
+                        $tempArr[] = '-county:["" TO *]';
+                        $countyArr[$k] = 'County IS NULL';
+                    }
+                    else{
+                        $value = trim(str_ireplace(' county',' ',$value));
+                        $tempArr[] = '(county:'.str_replace(' ','\ ',trim($value)).'*)';
+                    }
                 }
-                else{
-                    $value = trim(str_ireplace(' county',' ',$value));
-                    $tempArr[] = '(county:'.str_replace(' ','\ ',trim($value)).'*)';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$countyArr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$countyArr);
         }
         if(array_key_exists('local',$this->searchTermsArr) && $this->searchTermsArr['local']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['local']);
             $localArr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($localArr as $k => $value){
-                if(strpos($value,' ')){
-                    $wordArr = explode(' ',$value);
-                    $tempStrArr = array();
-                    foreach($wordArr as $w => $word){
-                        $tempStrArr[] = '((municipality:'.trim($word).'*) OR (locality:*'.trim($word).'*))';
+            if($localArr){
+                $tempArr = array();
+                foreach($localArr as $k => $value){
+                    if(strpos($value,' ')){
+                        $wordArr = explode(' ',$value);
+                        $tempStrArr = array();
+                        foreach($wordArr as $w => $word){
+                            $tempStrArr[] = '((municipality:'.trim($word).'*) OR (locality:*'.trim($word).'*))';
+                        }
+                        $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
                     }
-                    $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
+                    else if($value === 'NULL'){
+                        $tempArr[] = '-locality:["" TO *]';
+                        $localArr[$k] = 'Locality IS NULL';
+                    }
+                    else{
+                        $tempArr[] = '((municipality:'.trim($value).'*) OR (locality:*'.trim($value).'*))';
+                    }
                 }
-                else if($value === 'NULL'){
-                    $tempArr[] = '-locality:["" TO *]';
-                    $localArr[$k] = 'Locality IS NULL';
-                }
-                else{
-                    $tempArr[] = '((municipality:'.trim($value).'*) OR (locality:*'.trim($value).'*))';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$localArr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$localArr);
         }
         if((array_key_exists('elevlow',$this->searchTermsArr) && is_numeric($this->searchTermsArr['elevlow'])) || (array_key_exists('elevhigh',$this->searchTermsArr) && is_numeric($this->searchTermsArr['elevhigh']))){
             $elevlow = 0;
@@ -785,42 +793,46 @@ class SOLRManager extends OccurrenceManager{
         if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['assochost']);
             $hostAr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($hostAr as $k => $value){
-                if($value === 'NULL'){
-                    $tempArr[] = '((assocrelationship:"host") AND (-assocverbatimsciname:["" TO *]))';
-                    $hostAr[$k] = 'Host IS NULL';
+            if($hostAr){
+                $tempArr = array();
+                foreach($hostAr as $k => $value){
+                    if($value === 'NULL'){
+                        $tempArr[] = '((assocrelationship:"host") AND (-assocverbatimsciname:["" TO *]))';
+                        $hostAr[$k] = 'Host IS NULL';
+                    }
+                    else{
+                        $tempArr[] = '((assocrelationship:"host") AND (assocverbatimsciname:*'.str_replace(' ','\ ',trim($value)).'*))';
+                    }
                 }
-                else{
-                    $tempArr[] = '((assocrelationship:"host") AND (assocverbatimsciname:*'.str_replace(' ','\ ',trim($value)).'*))';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$hostAr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$hostAr);
         }
         if(array_key_exists('collector',$this->searchTermsArr) && $this->searchTermsArr['collector']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['collector']);
             $collectorArr = explode(';',$searchStr);
-            $tempArr = array();
-            if(count($collectorArr) === 1){
-                if($collectorArr[0] === 'NULL'){
-                    $tempArr[] = '(-recordedBy:["" TO *])';
-                    $collectorArr[] = 'Collector IS NULL';
-                }
-                else{
-                    $tempInnerArr = array();
-                    $collValueArr = explode(' ',trim($collectorArr[0]));
-                    foreach($collValueArr as $collV){
-                        $tempInnerArr[] = '(recordedBy:*'.str_replace(' ','\ ',$collV).'*) ';
+            if($collectorArr){
+                $tempArr = array();
+                if(count($collectorArr) === 1){
+                    if($collectorArr[0] === 'NULL'){
+                        $tempArr[] = '(-recordedBy:["" TO *])';
+                        $collectorArr[] = 'Collector IS NULL';
                     }
-                    $tempArr[] = implode(' AND ', $tempInnerArr);
+                    else{
+                        $tempInnerArr = array();
+                        $collValueArr = explode(' ',trim($collectorArr[0]));
+                        foreach($collValueArr as $collV){
+                            $tempInnerArr[] = '(recordedBy:*'.str_replace(' ','\ ',$collV).'*) ';
+                        }
+                        $tempArr[] = implode(' AND ', $tempInnerArr);
+                    }
                 }
+                elseif(count($collectorArr) > 1){
+                    $tempArr[] = '(recordedBy:('.implode(' ',$collectorArr).')) ';
+                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(', ',$collectorArr);
             }
-            elseif(count($collectorArr) > 1){
-                $tempArr[] = '(recordedBy:('.implode(' ',$collectorArr).')) ';
-            }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(', ',$collectorArr);
         }
         if(array_key_exists('collnum',$this->searchTermsArr) && $this->searchTermsArr['collnum']){
             $collNumArr = explode(';',$this->searchTermsArr['collnum']);
@@ -863,50 +875,54 @@ class SOLRManager extends OccurrenceManager{
                     $dateArr[] = $this->searchTermsArr['eventdate2'];
                 }
             }
-            if($dateArr[0] === 'NULL'){
-                $qArr[] = '(-eventDate:["" TO *])';
-                $this->localSearchArr[] = 'Date IS NULL';
-            }
-            elseif($eDate1 = $this->formatDate($dateArr[0])){
-                $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
-                if($eDate2){
-                    $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z])';
+            if($dateArr){
+                if($dateArr[0] === 'NULL'){
+                    $qArr[] = '(-eventDate:["" TO *])';
+                    $this->localSearchArr[] = 'Date IS NULL';
                 }
-                else if(substr($eDate1,-5) === '00-00'){
-                    $qArr[] = '(coll_year:'.substr($eDate1,0,4).')';
+                elseif($eDate1 = $this->formatDate($dateArr[0])){
+                    $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
+                    if($eDate2){
+                        $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z])';
+                    }
+                    else if(substr($eDate1,-5) === '00-00'){
+                        $qArr[] = '(coll_year:'.substr($eDate1,0,4).')';
+                    }
+                    elseif(substr($eDate1,-2) === '00'){
+                        $qArr[] = '((coll_year:'.substr($eDate1,0,4).') AND (coll_month:'.substr($eDate1,5,7).'))';
+                    }
+                    else{
+                        $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate1.'T23:59:59.999Z])';
+                    }
+                    $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
                 }
-                elseif(substr($eDate1,-2) === '00'){
-                    $qArr[] = '((coll_year:'.substr($eDate1,0,4).') AND (coll_month:'.substr($eDate1,5,7).'))';
-                }
-                else{
-                    $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate1.'T23:59:59.999Z])';
-                }
-                $this->localSearchArr[] = $this->searchTermsArr['eventdate1'].(isset($this->searchTermsArr['eventdate2'])?' to '.$this->searchTermsArr['eventdate2']:'');
             }
         }
         if(array_key_exists('occurrenceRemarks',$this->searchTermsArr) && $this->searchTermsArr['occurrenceRemarks']){
             $searchStr = str_replace('%apos;',"'",$this->searchTermsArr['occurrenceRemarks']);
             $remarksArr = explode(';',$searchStr);
-            $tempArr = array();
-            foreach($remarksArr as $k => $value){
-                if(strpos($value,' ')){
-                    $wordArr = explode(' ',$value);
-                    $tempStrArr = array();
-                    foreach($wordArr as $w => $word){
-                        $tempStrArr[] = '((occurrenceRemarks:*'.trim($word).'*))';
+            if($remarksArr){
+                $tempArr = array();
+                foreach($remarksArr as $k => $value){
+                    if(strpos($value,' ')){
+                        $wordArr = explode(' ',$value);
+                        $tempStrArr = array();
+                        foreach($wordArr as $w => $word){
+                            $tempStrArr[] = '((occurrenceRemarks:*'.trim($word).'*))';
+                        }
+                        $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
                     }
-                    $tempArr[] = '('.implode(' AND ',$tempStrArr).')';
+                    else if($value === 'NULL'){
+                        $tempArr[] = '-occurrenceRemarks:["" TO *]';
+                        $remarksArr[$k] = 'Occurrence Remarks IS NULL';
+                    }
+                    else{
+                        $tempArr[] = '((occurrenceRemarks:*'.trim($value).'*))';
+                    }
                 }
-                else if($value === 'NULL'){
-                    $tempArr[] = '-occurrenceRemarks:["" TO *]';
-                    $remarksArr[$k] = 'Occurrence Remarks IS NULL';
-                }
-                else{
-                    $tempArr[] = '((occurrenceRemarks:*'.trim($value).'*))';
-                }
+                $qArr[] = '('.implode(' OR ',$tempArr).')';
+                $this->localSearchArr[] = implode(' OR ',$remarksArr);
             }
-            $qArr[] = '('.implode(' OR ',$tempArr).')';
-            $this->localSearchArr[] = implode(' OR ',$remarksArr);
         }
         if(array_key_exists('catnum',$this->searchTermsArr) && $this->searchTermsArr['catnum']){
             $catStr = $this->searchTermsArr['catnum'];

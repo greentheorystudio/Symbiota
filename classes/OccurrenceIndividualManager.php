@@ -278,7 +278,9 @@ class OccurrenceIndividualManager extends Manager{
     public function getDuplicateArr(){
         $dupManager = new OccurrenceDuplicate();
         $retArr = $dupManager->getClusterArr($this->occid);
-        unset($retArr[$this->occid]);
+        if($retArr){
+            unset($retArr[$this->occid]);
+        }
         return $retArr;
     }
 
@@ -431,15 +433,17 @@ class OccurrenceIndividualManager extends Manager{
         if($result){
             while($r = $result->fetch_object()){
                 $k = substr($r->initialtimestamp,0,16);
-                if(!isset($retArr[$k]['editor'])){
-                    $retArr[$k]['editor'] = $r->editor;
-                    $retArr[$k]['ts'] = $r->initialtimestamp;
-                    $retArr[$k]['reviewstatus'] = $r->reviewstatus;
-                    $retArr[$k]['appliedstatus'] = $r->appliedstatus;
+                if($k){
+                    if(!isset($retArr[$k]['editor'])){
+                        $retArr[$k]['editor'] = $r->editor;
+                        $retArr[$k]['ts'] = $r->initialtimestamp;
+                        $retArr[$k]['reviewstatus'] = $r->reviewstatus;
+                        $retArr[$k]['appliedstatus'] = $r->appliedstatus;
+                    }
+                    $retArr[$k]['edits'][$r->ocedid]['fieldname'] = $r->fieldname;
+                    $retArr[$k]['edits'][$r->ocedid]['old'] = $r->fieldvalueold;
+                    $retArr[$k]['edits'][$r->ocedid]['new'] = $r->fieldvaluenew;
                 }
-                $retArr[$k]['edits'][$r->ocedid]['fieldname'] = $r->fieldname;
-                $retArr[$k]['edits'][$r->ocedid]['old'] = $r->fieldvalueold;
-                $retArr[$k]['edits'][$r->ocedid]['new'] = $r->fieldvaluenew;
             }
             $result->free();
         }
@@ -754,7 +758,7 @@ class OccurrenceIndividualManager extends Manager{
                 if($this->occArr['sciname']){
                     $taxon = $this->occArr['sciname'];
                     $tok = explode(' ',$this->occArr['sciname']);
-                    if((count($tok) > 1) && strlen($tok[0]) > 2) {
+                    if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
                     $sql .= 'AND (t.sciname = "'.$this->cleanInStr($taxon).'") ';

@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
-$collid = ((array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']))?$_REQUEST['collid']:0);
+$collid = ((array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']))?(int)$_REQUEST['collid']:0);
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $eMode = array_key_exists('emode',$_REQUEST)?htmlspecialchars($_REQUEST['emode']):0;
 
@@ -486,7 +486,7 @@ if($GLOBALS['SYMB_UID']){
 				</div>
 			</fieldset>
 			<?php
-			include('collprofilestats.php');
+			include(__DIR__ . '/collprofilestats.php');
 		}
 		else{
 			?>

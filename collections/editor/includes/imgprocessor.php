@@ -1,3 +1,11 @@
+<?php
+/** @var array $fragArr */
+/** @var string $occId */
+/** @var string $collId */
+/** @var string $occIndex */
+/** @var string $crowdSourceMode */
+/** @var array $occArr */
+?>
 <script>
 $(function() {
 	$( "#zoomInfoDialog" ).dialog({

@@ -111,7 +111,7 @@ class SpecUploadFile extends SpecUploadBase{
             while($recordArr = $this->getRecordArr($fh)){
                 $recMap = array();
                 foreach($indexArr as $symbField => $index){
-                    if(array_key_exists((int)$index,$recordArr)){
+                    if(array_key_exists((int)$index, $recordArr) && $recordArr && (is_string($index) || is_int($index))) {
                         $valueStr = $recordArr[$index];
                         if(strpos($valueStr, '"') === 0 && substr($valueStr,-1) === '"'){
                             $valueStr = substr($valueStr,1, -1);
