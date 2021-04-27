@@ -363,7 +363,9 @@ class OccurrenceUtilities {
                 }
                 elseif($recMap['eventdate'] > 2200000 && $recMap['eventdate'] < 2500000){
                     $dArr = explode('/',jdtogregorian($recMap['eventdate']));
-                    $recMap['eventdate'] = $dArr[2].'-'.$dArr[0].'-'.$dArr[1];
+                    if($dArr){
+                        $recMap['eventdate'] = $dArr[2].'-'.$dArr[0].'-'.$dArr[1];
+                    }
                 }
                 elseif($recMap['eventdate'] > 19000000){
                     $recMap['eventdate'] = substr($recMap['eventdate'],0,4).'-'.substr($recMap['eventdate'],4,2).'-'.substr($recMap['eventdate'],6,2);
@@ -391,7 +393,9 @@ class OccurrenceUtilities {
             }
             elseif($recMap['latestdatecollected'] > 2200000 && $recMap['latestdatecollected'] < 2500000){
                 $dArr = explode('/',jdtogregorian($recMap['latestdatecollected']));
-                $recMap['latestdatecollected'] = $dArr[2].'-'.$dArr[0].'-'.$dArr[1];
+                if($dArr){
+                    $recMap['latestdatecollected'] = $dArr[2].'-'.$dArr[0].'-'.$dArr[1];
+                }
             }
             elseif($recMap['latestdatecollected'] > 19000000){
                 $recMap['latestdatecollected'] = substr($recMap['latestdatecollected'],0,4).'-'.substr($recMap['latestdatecollected'],4,2).'-'.substr($recMap['latestdatecollected'],6,2);
@@ -469,7 +473,7 @@ class OccurrenceUtilities {
             $lngValue = (array_key_exists('decimallongitude',$recMap)?$recMap['decimallongitude']:'');
             if(($latValue && !is_numeric($latValue)) || ($lngValue && !is_numeric($lngValue))){
                 $llArr = self::parseVerbatimCoordinates(trim($latValue.' '.$lngValue),'LL');
-                if(array_key_exists('lat',$llArr) && array_key_exists('lng',$llArr)){
+                if($llArr && array_key_exists('lat',$llArr) && array_key_exists('lng',$llArr)){
                     $recMap['decimallatitude'] = $llArr['lat'];
                     $recMap['decimallongitude'] = $llArr['lng'];
                 }

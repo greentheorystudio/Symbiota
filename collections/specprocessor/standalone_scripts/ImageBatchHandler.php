@@ -1,7 +1,22 @@
 <?php
+/** @var string $logProcessorPath */
+/** @var string $dbMetadata */
+/** @var string $sourcePathBase */
+/** @var string $targetPathBase */
+/** @var string $imgUrlBase */
+/** @var int $webPixWidth */
+/** @var int $tnPixWidth */
+/** @var int $lgPixWidth */
+/** @var int $webFileSizeLimit */
+/** @var int $lgFileSizeLimit */
+/** @var string $jpgQuality */
+/** @var string $keepOrig */
+/** @var string $createNewRec */
+/** @var string $logTitle */
+/** @var array $collArr */
 date_default_timezone_set('America/Phoenix');
 
-require_once('ImageBatchConf.php');
+require_once(__DIR__ . '/ImageBatchConf.php');
 if(file_exists('../../../config/symbini.php')){
 	include_once(__DIR__ . '/../../../config/symbini.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
@@ -12,8 +27,8 @@ elseif(isset($GLOBALS['SERVER_ROOT']) && $GLOBALS['SERVER_ROOT']){
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
 }
 else{
-	@include('ImageBatchConnectionFactory.php');
-	require_once('ImageBatchProcessor.php');
+	@include(__DIR__ . '/ImageBatchConnectionFactory.php');
+	require_once(__DIR__ . '/ImageBatchProcessor.php');
 }
 
 $imageProcessor = new ImageBatchProcessor();

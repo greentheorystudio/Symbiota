@@ -87,7 +87,9 @@ class KeyEditorManager extends KeyManager{
 			if($pos) {
 				$charHeading = substr($charHeading, $pos + 2);
 			}
-			$this->chars[$charHeading][$charKey] = $charValue;
+			if($charHeading){
+                $this->chars[$charHeading][$charKey] = $charValue;
+            }
 
 			$cidDepValue = $row->CIDDependance;
 			$csDepValue = $row->CSDependance;
@@ -169,9 +171,11 @@ class KeyEditorManager extends KeyManager{
 		if($stateArr){
 			foreach($stateArr as $value){
 				$tok = explode('_',$value);
-				$cid = $tok[0];
-				$cs = $tok[1];
-				$retArr[$cid][] = $cs; 
+				if($tok){
+                    $cid = $tok[0];
+                    $cs = $tok[1];
+                    $retArr[$cid][] = $cs;
+                }
 			}
 		}
 		return $retArr;

@@ -231,12 +231,14 @@ class TaxonomyHarvester extends Manager{
 				}
 				else{
 					$parentArr = $this->getParentArr($taxonArr);
-					$parentTid = $this->addColTaxon($parentArr['sciname']);
-					if(!$parentTid){
-						$taxonArr['family'] = $this->getColParent($baseArr,'Family');
-						$this->buildTaxonArr($parentArr);
-						$parentTid = $this->loadNewTaxon($parentArr);
-					}
+					if($parentArr){
+                        $parentTid = $this->addColTaxon($parentArr['sciname']);
+                        if(!$parentTid){
+                            $taxonArr['family'] = $this->getColParent($baseArr,'Family');
+                            $this->buildTaxonArr($parentArr);
+                            $parentTid = $this->loadNewTaxon($parentArr);
+                        }
+                    }
 				}
 				if($parentTid) {
 					$taxonArr['parent']['tid'] = $parentTid;
@@ -587,7 +589,7 @@ class TaxonomyHarvester extends Manager{
 		$eolManager = new EOLUtilities();
 		if($eolManager->pingEOL()){
 			$searchRet = $eolManager->searchEOL($term);
-			if(isset($searchRet['id'])){
+			if($searchRet && isset($searchRet['id'])){
 				$searchSyns = (strpos($searchRet['title'], $term) === false);
 				$tid = $this->addEolTaxonById($searchRet['id'], $searchSyns, $term);
 			}
@@ -615,12 +617,12 @@ class TaxonomyHarvester extends Manager{
 			}
 			if(isset($taxonArr['taxonConcepts']) && $taxonConceptId = key($taxonArr['taxonConcepts'])) {
 				$conceptArr = $eolManager->getHierarchyEntries($taxonConceptId);
-				if(isset($conceptArr['parent'])){
+				if($conceptArr && isset($conceptArr['parent'])){
 					$parentTid = $this->getTid($conceptArr['parent']);
 					if(!$parentTid && isset($conceptArr['parent']['taxonConceptID'])){
 						$parentTid = $this->addEolTaxonById($conceptArr['parent']['taxonConceptID']);
 					}
-					if($parentTid){
+					if($parentTid && is_string($conceptArr['parent'])){
 						$conceptArr['parent']['tid'] = $parentTid;
 						$taxonArr['parent'] = $conceptArr['parent'];
 					}

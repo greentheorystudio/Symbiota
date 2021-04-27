@@ -46,10 +46,10 @@ if($isEditor && $action === 'Submit Occurrence') {
     }
 }
 if($collid && file_exists('includes/config/occurVarColl'.$collid.'.php')){
-	include('includes/config/occurVarColl'.$collid.'.php');
+	include(__DIR__ . '/includes/config/occurVarColl'.$collid.'.php');
 }
 elseif(file_exists('includes/config/occurVarDefault.php')){
-	include('includes/config/occurVarDefault.php');
+	include(__DIR__ . '/includes/config/occurVarDefault.php');
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

@@ -1,3 +1,21 @@
+const popupcontainer = document.getElementById('popup');
+const popupcontent = document.getElementById('popup-content');
+const popupcloser = document.getElementById('popup-closer');
+
+const popupoverlay = new ol.Overlay({
+    element: popupcontainer,
+    autoPan: true,
+    autoPanAnimation: {
+        duration: 250
+    }
+});
+
+popupcloser.onclick = function() {
+    popupoverlay.setPosition(undefined);
+    popupcloser.blur();
+    return false;
+};
+
 let vectorsource = new ol.source.Vector({
     wrapX: true
 });
@@ -92,6 +110,7 @@ const map = new ol.Map({
         layersArr['radius'],
         layersArr['vector']
     ],
+    overlays: [popupoverlay],
     renderer: 'canvas'
 });
 
@@ -173,3 +192,25 @@ map.addControl(scaleLineControl_us);
 map.addControl(scaleLineControl_metric);
 map.addControl(mousePositionControl);
 map.addInteraction(dragAndDropInteraction);
+
+map.on('singleclick', function(evt) {
+    let infoHTML;
+    if(evt.originalEvent.altKey){
+        infoHTML = '';
+        const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+            return feature;
+        });
+        if(feature){
+            const properties = feature.getKeys();
+            for(let i in properties){
+                if(properties.hasOwnProperty(i) && String(properties[i]) !== 'geometry'){
+                    infoHTML += '<b>'+properties[i]+':</b> '+feature.get(properties[i])+'<br />';
+                }
+            }
+            if(infoHTML){
+                popupcontent.innerHTML = infoHTML;
+                popupoverlay.setPosition(evt.coordinate);
+            }
+        }
+    }
+});

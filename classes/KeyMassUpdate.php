@@ -186,7 +186,9 @@ class KeyMassUpdate extends KeyManager{
 			foreach($inputArr as $v){
 	 			if($v){
 					$t = explode('-',$v);
-					$retArr[$t[0]][] = $t[1];
+					if($t){
+                        $retArr[$t[0]][] = $t[1];
+                    }
 	 			}
 	 		}
 		}

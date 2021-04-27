@@ -55,7 +55,7 @@ $htmlStr .= '<div style="height:20px;width:275px;display:flex;justify-content:fl
 $htmlStr .= '<div>';
 $htmlStr .= '<select data-role="none" id="querydownloadselect">';
 $htmlStr .= '<option>Download Type</option>';
-$htmlStr .= '<option value="csv">CSV</option>';
+$htmlStr .= '<option value="csv">CSV/ZIP</option>';
 $htmlStr .= '<option value="kml">KML</option>';
 $htmlStr .= '<option value="geojson">GeoJSON</option>';
 $htmlStr .= '<option value="gpx">GPX</option>';

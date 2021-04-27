@@ -587,7 +587,9 @@ class FieldGuideManager {
     {
         $this->jobId = $val;
         $jobArr = explode('_',$val,2);
-        $this->token = $jobArr[1];
+        if($jobArr){
+            $this->token = $jobArr[1];
+        }
     }
 
     public function setViewMode($val): void
