@@ -1,4 +1,9 @@
 <?php
+/** @var string $displayQuery */
+/** @var OccurrenceEditorManager $occManager */
+/** @var int $crowdSourceMode */
+/** @var int $isGenObs */
+/** @var string $collId */
 if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) {
     $displayQuery = $_REQUEST['displayquery'];
 }

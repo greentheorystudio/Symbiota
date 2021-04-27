@@ -10,7 +10,7 @@ $dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']: '';
 if(!$clName){
 	$gameManager = new GamesManager();
 	if($clid){
-		$gameManager->setClid($id);
+		$gameManager->setClid($clid);
 	}
 	elseif($dynClid){
 		$gameManager->setDynClid($dynClid);

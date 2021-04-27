@@ -16,7 +16,7 @@ if($url){
 	}
 	else{
 		$headers = @get_headers($url,1);
-		if(isset($headers['Content-Type'])) {
+		if($headers && isset($headers['Content-Type'])) {
             $mimeType = $headers['Content-Type'];
         }
 	}

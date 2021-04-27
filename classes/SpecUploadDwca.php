@@ -393,12 +393,14 @@ class SpecUploadDwca extends SpecUploadBase{
                                 $indexArr = array_keys($this->sourceArr,$sMap['field']);
                                 $index = array_shift($indexArr);
                                 if(array_key_exists($index,$recordArr)){
-                                    $valueStr = trim($recordArr[$index]);
-                                    if($valueStr){
-                                        if($cset != $this->encoding) {
-                                            $valueStr = $this->encodeString($valueStr);
+                                    if($recordArr){
+                                        $valueStr = trim($recordArr[$index]);
+                                        if($valueStr){
+                                            if($cset != $this->encoding) {
+                                                $valueStr = $this->encodeString($valueStr);
+                                            }
+                                            $recMap[$symbField] = $valueStr;
                                         }
-                                        $recMap[$symbField] = $valueStr;
                                     }
                                 }
                             }
@@ -532,12 +534,14 @@ class SpecUploadDwca extends SpecUploadBase{
                             $indexArr = array_keys($sourceArr,$iMap['field']);
                             $index = array_shift($indexArr);
                             if(array_key_exists($index,$recordArr)){
-                                $valueStr = trim($recordArr[$index]);
-                                if($valueStr){
-                                    if($cset != $this->encoding) {
-                                        $valueStr = $this->encodeString($valueStr);
+                                if($recordArr){
+                                    $valueStr = trim($recordArr[$index]);
+                                    if($valueStr){
+                                        if($cset != $this->encoding) {
+                                            $valueStr = $this->encodeString($valueStr);
+                                        }
+                                        $recMap[$symbField] = $valueStr;
                                     }
-                                    $recMap[$symbField] = $valueStr;
                                 }
                             }
                         }
@@ -587,7 +591,9 @@ class SpecUploadDwca extends SpecUploadBase{
             if($this->enclosure){
                 foreach($recordArr as $k => $v){
                     if(strpos($v, $this->enclosure) === 0 && substr($v,-1) === $this->enclosure){
-                        $recordArr[$k] = substr($v,1, -1);
+                        if($recordArr){
+                            $recordArr[$k] = substr($v,1, -1);
+                        }
                     }
                 }
             }

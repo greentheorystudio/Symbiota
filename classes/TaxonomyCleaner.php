@@ -66,8 +66,10 @@ class TaxonomyCleaner extends Manager{
 			$taxonHarvester = new  TaxonomyHarvester();
 			if($this->targetKingdom){
 				$kingArr = explode(':',$this->targetKingdom);
-				$taxonHarvester->setKingdomTid($kingArr[0]);
-				$taxonHarvester->setKingdomName($kingArr[1]);
+				if($kingArr){
+                    $taxonHarvester->setKingdomTid($kingArr[0]);
+                    $taxonHarvester->setKingdomName($kingArr[1]);
+                }
 			}
 			$taxonHarvester->setTaxonomicResources($taxResource);
 			$taxonHarvester->setVerboseMode(2);
@@ -127,17 +129,19 @@ class TaxonomyCleaner extends Manager{
 						}
 						foreach($matchArr as $tid => $scinameMatch){
 							$snTokens = explode(' ',$scinameMatch);
-							foreach($snTokens as $k => $v){
-								if(in_array($v, $strTestArr, true)) {
-									$snTokens[$k] = '<b>' . $v . '</b>';
-								}
-							}
-							$idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
-							$echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
-								'<span id="remapSpan-'.$itemCnt.'"></span></span>';
-							$this->logOrEcho($echoStr,2);
-							$itemCnt++;
+							if($snTokens){
+                                foreach($snTokens as $k => $v){
+                                    if(in_array($v, $strTestArr, true)) {
+                                        $snTokens[$k] = '<b>' . $v . '</b>';
+                                    }
+                                }
+                                $idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
+                                $echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
+                                    '<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
+                                    '<span id="remapSpan-'.$itemCnt.'"></span></span>';
+                                $this->logOrEcho($echoStr,2);
+                                $itemCnt++;
+                            }
 						}
 					}
 					else{

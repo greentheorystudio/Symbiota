@@ -321,13 +321,15 @@ class ChecklistFGExportManager {
         if(is_array($photogArr)){
             foreach($photogArr as $str){
                 $parts = explode('---',$str);
-                $id = $parts[0];
-                $name = $parts[1];
-                if($id) {
-                    $this->photogIdArr[] = $id;
-                }
-                elseif($name) {
-                    $this->photogNameArr[] = $name;
+                if($parts){
+                    $id = $parts[0];
+                    $name = $parts[1];
+                    if($id) {
+                        $this->photogIdArr[] = $id;
+                    }
+                    elseif($name) {
+                        $this->photogNameArr[] = $name;
+                    }
                 }
             }
         }

@@ -1,3 +1,8 @@
+<?php
+/** @var boolean $inputWindowMode */
+/** @var array $inputWindowModeTools */
+/** @var string $inputWindowSubmitText */
+?>
 <div id="maptoolcontainer">
     <div id="maptoolbox">
         <div class="topToolboxRow">

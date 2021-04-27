@@ -384,10 +384,12 @@ class ImageLibraryManager{
                 else{
                     $taxaStr = str_replace(',', ';',$taxa);
                     $taxaArr = explode(';',$taxaStr);
-                    foreach($taxaArr as $key => $sciName){
-                        $snStr = trim($sciName);
-                        $snStr = ucfirst($snStr);
-                        $taxaArr[$key] = $snStr;
+                    if($taxaArr){
+                        foreach($taxaArr as $key => $sciName){
+                            $snStr = trim($sciName);
+                            $snStr = ucfirst($snStr);
+                            $taxaArr[$key] = $snStr;
+                        }
                     }
                     $taxaStr = implode(';',$taxaArr);
                 }
@@ -497,8 +499,10 @@ class ImageLibraryManager{
             else{
                 $dbArr = explode(';',$this->searchTermsArr['db']);
                 $dbStr = '';
-                if(isset($dbArr[0]) && $dbArr[0]){
-                    $dbStr = '(o.collid IN(' .trim($dbArr[0]). ')) ';
+                if($dbArr){
+                    if(isset($dbArr[0]) && $dbArr[0]){
+                        $dbStr = '(o.collid IN(' .trim($dbArr[0]). ')) ';
+                    }
                 }
                 $sqlWhere .= 'AND ('.$dbStr.') ';
             }
@@ -617,7 +621,7 @@ class ImageLibraryManager{
                     $dateArr[] = $this->searchTermsArr['uploaddate2'];
                 }
             }
-            if($eDate1 = $this->formatDate($dateArr[0])){
+            if($dateArr && $eDate1 = $this->formatDate($dateArr[0])){
                 $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
                 if($eDate2){
                     $sqlWhere .= 'AND (i.InitialTimeStamp BETWEEN "'.$this->cleanInStr($eDate1).'" AND "'.$this->cleanInStr($eDate2).'") ';

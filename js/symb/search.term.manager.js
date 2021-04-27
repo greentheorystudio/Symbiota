@@ -111,7 +111,7 @@ function validateSearchTermsArr(stArr){
         stArr.hasOwnProperty('country') ||
         stArr.hasOwnProperty('state') ||
         stArr.hasOwnProperty('county') ||
-        stArr.hasOwnProperty('locality') ||
+        stArr.hasOwnProperty('local') ||
         stArr.hasOwnProperty('elevlow') ||
         stArr.hasOwnProperty('elevhigh') ||
         stArr.hasOwnProperty('collector') ||
@@ -389,6 +389,9 @@ function processDownloadRequest(selection,rows){
             document.getElementById("dh-fl").value = SOLRFields;
         }
         if(dlType === 'csv'){
+            if(rows > 150000){
+                toggleDownloadCompressionOption();
+            }
             $("#csvoptions").popup("show");
         }
         else if(dlType === 'kml' || dlType === 'geojson' || dlType === 'gpx'){
@@ -401,6 +404,12 @@ function processDownloadRequest(selection,rows){
     }
     else{
         alert('Please select a download type.')
+    }
+}
+
+function toggleDownloadCompressionOption(){
+    if(document.getElementById("zipSelectionRow")){
+        document.getElementById("zipSelectionRow").style.display = "none";
     }
 }
 
