@@ -21,7 +21,7 @@ class GamesManager {
 			$this->conn->close();
 		}
 	}
-	
+
 	public function getChecklistArr($projId = 0): array
 	{
 		$retArr = array();
@@ -54,15 +54,15 @@ class GamesManager {
 			if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json')){
 				$oldArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
 				$lastDate = $oldArr['lastDate'];
-				$lastCLID = $oldArr['clid'];
-				if(($currentDate > $lastDate) || ($clid !== $lastCLID)){
+				$lastCLID = (int)$oldArr['clid'];
+				if(($currentDate > $lastDate) || ((int)$clid !== $lastCLID)){
 					$replace = 1;
 				}
 			}
 			else{
 				$replace = 1;
 			}
-			
+
 			if($replace === 1){
 				$previous = array();
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json')){
@@ -87,12 +87,12 @@ class GamesManager {
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_organism300_5.jpg')){
 					unlink($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_organism300_5.jpg');
 				}
-				
+
 				$ootdInfo = array();
 				$ootdInfo['lastDate'] = $currentDate;
-				
+
 				$tidArr = array();
-				$sql = 'SELECT l.TID, COUNT(i.imgid) AS cnt '. 
+				$sql = 'SELECT l.TID, COUNT(i.imgid) AS cnt '.
 					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
 					'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
 					'LEFT JOIN omcollections c ON o.collid = c.collid '.
@@ -136,7 +136,7 @@ class GamesManager {
 					$cnt = 1;
 					$rs = $this->conn->query($sql3);
 					while(($row = $rs->fetch_object()) && ($cnt < 6)){
-						if(strpos($row->url, '/') === 0){
+						if(strncmp($row->url, '/', 1) === 0){
 							if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
 								$file = $GLOBALS['IMAGE_DOMAIN'].$row->url;
 							}
@@ -175,12 +175,12 @@ class GamesManager {
 					fclose($fp);
 				}
 			}
-			
+
 			$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
 		}
 		return $infoArr;
 	}
-	
+
 	public function getFlashcardImages(): array
 	{
 		$retArr = array();
@@ -215,7 +215,7 @@ class GamesManager {
 		if($retArr){
 			$tidStr = implode(',',array_keys($retArr));
 			$tidComplete = array();
-	
+
 			if($this->showCommon){
 				$sqlV = 'SELECT ts.tidaccepted, v.vernacularname '.
 					'FROM taxavernaculars v INNER JOIN taxstatus ts ON v.tid = ts.tid '.
@@ -230,7 +230,7 @@ class GamesManager {
 					$rsV->free();
 				}
 			}
-			
+
 			$sqlImg = 'SELECT DISTINCT i.url, ts.tidaccepted FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
 				'WHERE ts.tidaccepted IN('.$tidStr.') AND i.occid IS NULL '.
 				'ORDER BY i.sortsequence';
@@ -243,17 +243,17 @@ class GamesManager {
 				}
 				if($iCnt < 5){
 					$url = $rImg->url;
-					if($GLOBALS['IMAGE_DOMAIN'] && strpos($url, '/') === 0){
+					if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0){
 						$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 					}
 					$retArr[$rImg->tidaccepted]['url'][] = $url;
 				}
 				else{
-					$tidComplete[$rImg->tidaccepted] = $rImg->tidaccepted; 
+					$tidComplete[$rImg->tidaccepted] = $rImg->tidaccepted;
 				}
 			}
 			$rsImg->free();
-			
+
 			if(count($tidComplete) < count($retArr)){
 				$newTidStr = implode(',',array_keys(array_diff_key($retArr,$tidComplete)));
 				$sqlImg2 = 'SELECT DISTINCT i.url, ts.parenttid FROM images i INNER JOIN taxstatus ts ON i.tid = ts.tid '.
@@ -267,19 +267,19 @@ class GamesManager {
 					}
 					if($iCnt < 5){
 						$url = $rImg2->url;
-						if($GLOBALS['IMAGE_DOMAIN'] && strpos($url, '/') === 0){
+						if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0){
 							$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 						}
 						$retArr[$rImg2->parenttid]['url'][] = $url;
 					}
 				}
 				$rsImg2->free();
-			}		
+			}
 		}
-		
+
 		return $retArr;
 	}
-	
+
 	public function echoFlashcardTaxonFilterList(): void
 	{
 		$returnArr = array();
@@ -305,7 +305,7 @@ class GamesManager {
 				$returnArr[] = $row->family;
 			}
 			$rsFamily->free();
-			
+
 			if($this->clid){
 				$sqlGenus = 'SELECT DISTINCT t.unitname1 '.
 					'FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
@@ -379,7 +379,7 @@ class GamesManager {
 		while($childStr);
 		$this->clidStr = implode(',',$clidArr);
 	}
-	
+
 	public function getClid(){
 		return $this->clid;
 	}
@@ -426,7 +426,7 @@ class GamesManager {
 		}
 		$this->lang = $lang;
 	}
-	
+
 	public function getClName(): string
 	{
 		$retStr = '';
@@ -446,5 +446,5 @@ class GamesManager {
 			$rs->free();
 		}
 		return $retStr;
-	}	
+	}
 }
