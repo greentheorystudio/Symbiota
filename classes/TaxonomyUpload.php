@@ -98,101 +98,103 @@ class TaxonomyUpload{
 				asort($taxonUnitIndexArr);
 				$childParentArr = array();
 				while($recordArr = fgetcsv($fh)){
-					$parentStr = '';
-					foreach($taxonUnitIndexArr as $index => $rankId){
-						$taxonStr = $recordArr[$index];
-						if($taxonStr){
-							if(!array_key_exists($taxonStr,$childParentArr)){
-								if($rankId === 10){
-									$childParentArr[$taxonStr]['p'] = $taxonStr;
-									$childParentArr[$taxonStr]['r'] = $rankId;
-								}
-								elseif($parentStr){
-									$childParentArr[$taxonStr]['p'] = $parentStr;
-									$childParentArr[$taxonStr]['r'] = $rankId;
-									if($rankId > 140 && $familyIndex && $recordArr[$familyIndex]){
-										$childParentArr[$taxonStr]['f'] = $recordArr[$familyIndex];
-									}
-								}
-							}
-							$parentStr = $taxonStr;
-						}
-					}
-					if($parentIndex){
-						$recordArr[$parentIndex] = 'PENDING:'.$parentStr;
-					}
-					if(in_array('scinameinput', $fieldMap, true)){
-						$inputArr = array();
-						foreach($uploadTaxaIndexArr as $recIndex => $targetField){
-							$valIn = $this->cleanInStr($this->encodeString($recordArr[$recIndex]));
-							if($targetField === 'acceptance' && !is_numeric($valIn)){
-								$valInTest = strtolower($valIn);
-								if($valInTest === 'accepted' || $valInTest === 'valid'){
-									$valIn = 1;
-								}
-								elseif($valInTest === 'not accepted' || $valInTest === 'synonym'){
-									$valIn = 0;
-								}
-								else{
-									$valIn = '';
-								}
-							}
-							if($valIn) {
-								$inputArr[$targetField] = $valIn;
-							}
-						}
-						if(array_key_exists('scinameinput', $inputArr)){
-							if(isset($inputArr['unitname1'])){
-                                $nameArr = array();
-							    $sciArr['unitname1'] = $inputArr['unitname1'];
-                                $nameArr[] = $inputArr['unitname1'];
-                                $sciArr['unitname2'] = ($inputArr['unitname2'] ?? '');
-                                if(isset($inputArr['unitname2'])){
-                                    $nameArr[] = $inputArr['unitname2'];
+					if($recordArr){
+                        $parentStr = '';
+                        foreach($taxonUnitIndexArr as $index => $rankId){
+                            $taxonStr = $recordArr[$index];
+                            if($taxonStr){
+                                if(!array_key_exists($taxonStr,$childParentArr)){
+                                    if($rankId === 10){
+                                        $childParentArr[$taxonStr]['p'] = $taxonStr;
+                                        $childParentArr[$taxonStr]['r'] = $rankId;
+                                    }
+                                    elseif($parentStr){
+                                        $childParentArr[$taxonStr]['p'] = $parentStr;
+                                        $childParentArr[$taxonStr]['r'] = $rankId;
+                                        if($rankId > 140 && $familyIndex && $recordArr[$familyIndex]){
+                                            $childParentArr[$taxonStr]['f'] = $recordArr[$familyIndex];
+                                        }
+                                    }
                                 }
-                                $sciArr['unitind3'] = ($inputArr['unitind3'] ?? '');
-                                if(isset($inputArr['unitind3'])){
-                                    $nameArr[] = $inputArr['unitind3'];
-                                }
-                                $sciArr['unitname3'] = ($inputArr['unitname3'] ?? '');
-                                if(isset($inputArr['unitname3'])){
-                                    $nameArr[] = $inputArr['unitname3'];
-                                }
-                                $sciName = implode(' ', $nameArr);
-                                $sciArr['sciname'] = $sciName;
-                                $sciArr['rankid'] = ($inputArr['rankid'] ?? '');
+                                $parentStr = $taxonStr;
                             }
-							else{
-                                $sciArr = (new TaxonomyUtilities)->parseScientificName($inputArr['scinameinput'],($inputArr['rankid'] ?? 0));
+                        }
+                        if($parentIndex){
+                            $recordArr[$parentIndex] = 'PENDING:'.$parentStr;
+                        }
+                        if(in_array('scinameinput', $fieldMap, true)){
+                            $inputArr = array();
+                            foreach($uploadTaxaIndexArr as $recIndex => $targetField){
+                                $valIn = $this->cleanInStr($this->encodeString($recordArr[$recIndex]));
+                                if($targetField === 'acceptance' && !is_numeric($valIn)){
+                                    $valInTest = strtolower($valIn);
+                                    if($valInTest === 'accepted' || $valInTest === 'valid'){
+                                        $valIn = 1;
+                                    }
+                                    elseif($valInTest === 'not accepted' || $valInTest === 'synonym'){
+                                        $valIn = 0;
+                                    }
+                                    else{
+                                        $valIn = '';
+                                    }
+                                }
+                                if($valIn) {
+                                    $inputArr[$targetField] = $valIn;
+                                }
                             }
-							foreach($sciArr as $sciKey => $sciValue){
-								if(!array_key_exists($sciKey, $inputArr)) {
-									$inputArr[$sciKey] = $sciValue;
-								}
-							}
-							$sql1 = '';
-							$sql2 = '';
-							unset($inputArr['identificationqualifier']);
-							foreach($inputArr as $k => $v){
-								$sql1 .= ','.$k;
-								$inValue = $this->cleanInStr($v);
-								$sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
-							}
-							$sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
-							//echo "<div>".$sql."</div>";
-							if($this->conn->query($sql)){
-								if($recordCnt%1000 === 0){
-									$this->outputMsg('Upload count: '.$recordCnt,1);
-									flush();
-								}
-							}
-							else{
-								$this->outputMsg('ERROR loading taxon: '.$this->conn->error);
-							}
-						}
-						unset($inputArr);
-					}
-					$recordCnt++;
+                            if(array_key_exists('scinameinput', $inputArr)){
+                                if(isset($inputArr['unitname1'])){
+                                    $nameArr = array();
+                                    $sciArr['unitname1'] = $inputArr['unitname1'];
+                                    $nameArr[] = $inputArr['unitname1'];
+                                    $sciArr['unitname2'] = ($inputArr['unitname2'] ?? '');
+                                    if(isset($inputArr['unitname2'])){
+                                        $nameArr[] = $inputArr['unitname2'];
+                                    }
+                                    $sciArr['unitind3'] = ($inputArr['unitind3'] ?? '');
+                                    if(isset($inputArr['unitind3'])){
+                                        $nameArr[] = $inputArr['unitind3'];
+                                    }
+                                    $sciArr['unitname3'] = ($inputArr['unitname3'] ?? '');
+                                    if(isset($inputArr['unitname3'])){
+                                        $nameArr[] = $inputArr['unitname3'];
+                                    }
+                                    $sciName = implode(' ', $nameArr);
+                                    $sciArr['sciname'] = $sciName;
+                                    $sciArr['rankid'] = ($inputArr['rankid'] ?? '');
+                                }
+                                else{
+                                    $sciArr = (new TaxonomyUtilities)->parseScientificName($inputArr['scinameinput'],($inputArr['rankid'] ?? 0));
+                                }
+                                foreach($sciArr as $sciKey => $sciValue){
+                                    if(!array_key_exists($sciKey, $inputArr)) {
+                                        $inputArr[$sciKey] = $sciValue;
+                                    }
+                                }
+                                $sql1 = '';
+                                $sql2 = '';
+                                unset($inputArr['identificationqualifier']);
+                                foreach($inputArr as $k => $v){
+                                    $sql1 .= ','.$k;
+                                    $inValue = $this->cleanInStr($v);
+                                    $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
+                                }
+                                $sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
+                                //echo "<div>".$sql."</div>";
+                                if($this->conn->query($sql)){
+                                    if($recordCnt%1000 === 0){
+                                        $this->outputMsg('Upload count: '.$recordCnt,1);
+                                        flush();
+                                    }
+                                }
+                                else{
+                                    $this->outputMsg('ERROR loading taxon: '.$this->conn->error);
+                                }
+                            }
+                            unset($inputArr);
+                        }
+                        $recordCnt++;
+                    }
 				}
 
 				foreach($childParentArr as $taxon => $tArr){

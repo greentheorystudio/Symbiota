@@ -23,7 +23,9 @@ $activeCollArr = explode(',', $collid);
 
 foreach($activeCollArr as $k => $id){
 	if(!isset($GLOBALS['USER_RIGHTS']['CollAdmin']) || !in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
-        unset($activeCollArr[$k]);
+        if($activeCollArr){
+            unset($activeCollArr[$k]);
+        }
     }
 }
 if(!$activeCollArr && strpos($collid, ',')) {

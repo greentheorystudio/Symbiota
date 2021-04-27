@@ -1,4 +1,9 @@
 <?php
+/** @var array $topRowElements */
+/** @var array $leftColumnElements */
+/** @var array $rightColumnElements */
+/** @var array $bottomRowElements */
+/** @var array $footerRowElements */
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -75,10 +80,10 @@ $taxonManager->setDisplayLocality($displayLocality);
 $descr = array();
 
 if(file_exists('includes/config/taxaProfileTemplateCustom.php')){
-    include('includes/config/taxaProfileTemplateCustom.php');
+    include(__DIR__ . '/includes/config/taxaProfileTemplateCustom.php');
 }
 else{
-    include('includes/config/taxaProfileTemplateDefault.php');
+    include(__DIR__ . '/includes/config/taxaProfileTemplateDefault.php');
 }
 ?>
 

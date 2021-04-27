@@ -1,4 +1,5 @@
 <?php
+/** @var string $qCustomField1 */
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
@@ -13,12 +14,10 @@ $reset = array_key_exists('reset',$_REQUEST)?$_REQUEST['reset']:false;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $occManager = new OccurrenceEditorManager();
+$solrManager = new SOLRManager();
 
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);
-}
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
 }
 
 $isEditor = 0;
@@ -164,7 +163,7 @@ else{
 			if(!$recArr) {
                 $displayQuery = 1;
             }
-			include 'includes/queryform.php';
+			include __DIR__ . '/includes/queryform.php';
 			if($recArr){
 				$headerArr = array();
 				foreach($recArr as $id => $occArr){

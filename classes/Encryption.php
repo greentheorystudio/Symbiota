@@ -27,16 +27,12 @@ class Encryption{
 	}
 
 	public static function decrypt($cipherTextIn) {
-		if(!isset($GLOBALS['SECURITY_KEY']) || !$GLOBALS['SECURITY_KEY']) {
-			return $cipherTextIn;
-		}
-		if(!function_exists('openssl_decrypt')) {
-			return $cipherTextIn;
-		}
-		if(strpos($cipherTextIn,'CollEditor') !== false || strpos($cipherTextIn,'CollAdmin') !== false) {
-			return $cipherTextIn;
-		}
-		if(strpos($cipherTextIn,'uid=') !== false) {
+		if(!isset($GLOBALS['SECURITY_KEY']) ||
+            !$GLOBALS['SECURITY_KEY'] ||
+            !function_exists('openssl_decrypt') ||
+            strpos($cipherTextIn,'CollEditor') !== false ||
+            strpos($cipherTextIn,'CollAdmin') !== false ||
+            strpos($cipherTextIn,'uid=') !== false) {
 			return $cipherTextIn;
 		}
 		$key = self::getKey();

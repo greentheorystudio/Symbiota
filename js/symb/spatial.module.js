@@ -692,7 +692,7 @@ function changeRecordPage(page){
     const selJson = JSON.stringify(selections);
     const http = new XMLHttpRequest();
     const url = "rpc/changemaprecordpage.php";
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
@@ -1998,7 +1998,7 @@ function getQueryRecCnt(callback){
     let url;
     let http;
     queryRecCnt = 0;
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         let qStr = '';
         http = new XMLHttpRequest();
@@ -2141,7 +2141,7 @@ function lazyLoadPoints(index,callback){
         startindex = index * lazyLoadCnt;
     }
     const http = new XMLHttpRequest();
-    const jsonStarr = JSON.stringify(searchTermsArr);
+    const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(SOLRMODE){
         url = "rpc/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
@@ -2386,11 +2386,12 @@ function processInputParentPointParams(){
             }
         }
         if(openerRadius > 0){
-            const centerCoords = ol.proj.fromLonLat([decLat, decLong]);
-            const circle = new ol.geom.Circle(centerCoords);
-            circle.setRadius(Number(openerRadius));
-            const circleFeature = new ol.Feature(circle);
-            uncertaintycirclesource.addFeature(circleFeature);
+            document.getElementById('inputpointuncertainty').value = openerRadius;
+            const pointRadius = {};
+            pointRadius.pointlat = Number(decLat);
+            pointRadius.pointlong = Number(decLong);
+            pointRadius.radius = Number(openerRadius);
+            createUncertaintyCircleFromPointRadius(pointRadius);
         }
         const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
             decLong, decLat
@@ -3010,7 +3011,7 @@ function setClusterSymbol(feature) {
 }
 
 function setCopySearchUrlDiv(){
-    const stArrJson = JSON.stringify(searchTermsArr);
+    const stArrJson = encodeURIComponent(JSON.stringify(searchTermsArr));
     if(document.getElementById('copySearchUrlDiv')){
         if(stArrJson.length <= 1800){
             document.getElementById("copySearchUrlDiv").style.display = "block";

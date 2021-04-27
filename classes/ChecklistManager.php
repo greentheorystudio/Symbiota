@@ -171,65 +171,73 @@ class ChecklistManager {
 			$tid = $row->tid;
 			$sciName = $this->cleanOutStr($row->sciname);
 			$taxonTokens = explode(' ',$sciName);
-			if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
-				if(in_array('x',$taxonTokens, true)) {
-					unset($taxonTokens[array_search('x', $taxonTokens, true)]);
-				}
-				if(in_array('X',$taxonTokens, true)) {
-					unset($taxonTokens[array_search('X', $taxonTokens, true)]);
-				}
-				$newArr = array();
-				foreach($taxonTokens as $v){
-					$newArr[] = $v;
-				}
-				$taxonTokens = $newArr;
-			}
-			if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
-				if(count($taxonTokens) === 1) {
-					$sciName .= ' sp.';
-				}
-				if($this->showVouchers){
-					$clStr = '';
-					if($row->habitat) {
-						$clStr = ', ' . $row->habitat;
-					}
-					if($row->abundance) {
-						$clStr .= ', ' . $row->abundance;
-					}
-					if($row->notes) {
-						$clStr .= ', ' . $row->notes;
-					}
-					if($row->source) {
-						$clStr .= ', <u>source</u>: ' . $row->source;
-					}
-					if($clStr) {
-						$this->taxaList[$tid]['notes'] = substr($clStr, 2);
-					}
-				}
-				$this->taxaList[$tid]['sciname'] = $sciName;
-				$this->taxaList[$tid]['family'] = $family;
-				$tidReturn[] = $tid;
-				if($this->showAuthors){
-					$this->taxaList[$tid]['author'] = $this->cleanOutStr($row->author);
-				}
-    		}
-            if(!in_array($family, $familyCntArr, true)){
-                $familyCntArr[] = $family;
+			if($taxonTokens){
+                if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
+                    if(in_array('x',$taxonTokens, true)) {
+                        $index = array_search('x', $taxonTokens, true);
+                        if(is_string($index) || is_int($index)){
+                            unset($taxonTokens[$index]);
+                        }
+                    }
+                    if(in_array('X',$taxonTokens, true)) {
+                        $index = array_search('X', $taxonTokens, true);
+                        if(is_string($index) || is_int($index)){
+                            unset($taxonTokens[$index]);
+                        }
+                    }
+                    $newArr = array();
+                    foreach($taxonTokens as $v){
+                        $newArr[] = $v;
+                    }
+                    $taxonTokens = $newArr;
+                }
+                if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
+                    if(count($taxonTokens) === 1) {
+                        $sciName .= ' sp.';
+                    }
+                    if($this->showVouchers){
+                        $clStr = '';
+                        if($row->habitat) {
+                            $clStr = ', ' . $row->habitat;
+                        }
+                        if($row->abundance) {
+                            $clStr .= ', ' . $row->abundance;
+                        }
+                        if($row->notes) {
+                            $clStr .= ', ' . $row->notes;
+                        }
+                        if($row->source) {
+                            $clStr .= ', <u>source</u>: ' . $row->source;
+                        }
+                        if($clStr) {
+                            $this->taxaList[$tid]['notes'] = substr($clStr, 2);
+                        }
+                    }
+                    $this->taxaList[$tid]['sciname'] = $sciName;
+                    $this->taxaList[$tid]['family'] = $family;
+                    $tidReturn[] = $tid;
+                    if($this->showAuthors){
+                        $this->taxaList[$tid]['author'] = $this->cleanOutStr($row->author);
+                    }
+                }
+                if(!in_array($family, $familyCntArr, true)){
+                    $familyCntArr[] = $family;
+                }
+                if(!in_array($taxonTokens[0], $genusCntArr, true)){
+                    $genusCntArr[] = $taxonTokens[0];
+                }
+                $this->filterArr[$taxonTokens[0]] = '';
+                if(count($taxonTokens) > 1 && $taxonTokens[0]. ' ' .$taxonTokens[1] !== $speciesPrev){
+                    $this->speciesCount++;
+                    $speciesPrev = $taxonTokens[0]. ' ' .$taxonTokens[1];
+                }
+                if(!$taxonPrev || $sciName !== $taxonPrev){
+                    $this->taxaCount++;
+                }
+                $taxonPrev = implode(' ',$taxonTokens);
             }
-            if(!in_array($taxonTokens[0], $genusCntArr, true)){
-                $genusCntArr[] = $taxonTokens[0];
-            }
-			$this->filterArr[$taxonTokens[0]] = '';
-    		if(count($taxonTokens) > 1 && $taxonTokens[0]. ' ' .$taxonTokens[1] !== $speciesPrev){
-    			$this->speciesCount++;
-    			$speciesPrev = $taxonTokens[0]. ' ' .$taxonTokens[1];
-    		}
-    		if(!$taxonPrev || $sciName !== $taxonPrev){
-    			$this->taxaCount++;
-    		}
-    		$taxonPrev = implode(' ',$taxonTokens);
 		}
-        $this->familyCount = count($familyCntArr);
+		$this->familyCount = count($familyCntArr);
         $this->genusCount = count($genusCntArr);
 		$this->filterArr = array_keys($this->filterArr);
 		sort($this->filterArr);

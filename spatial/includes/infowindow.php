@@ -1,3 +1,7 @@
+<?php
+/** @var array $inputWindowModeTools */
+/** @var string $windowType */
+?>
 <div id="infopopup" data-role="popup" class="well" style="width:400px;height:400px;">
     <a class="boxclose infopopup_close" id="boxclose"></a>
     <?php

@@ -40,7 +40,7 @@ class TaxonomyUtilities {
 			$inStr = preg_replace('/\s\s+/',' ',$inStr);
 
 			$sciNameArr = explode(' ',$inStr);
-			if(count($sciNameArr)){
+			if($sciNameArr){
 				if(strtolower($sciNameArr[0]) === 'x'){
 					$retArr['unitind1'] = array_shift($sciNameArr);
 				}

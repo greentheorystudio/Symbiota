@@ -27,29 +27,31 @@ class SpatialModuleManager{
         $retArr = Array();
         foreach ($layers as $l){
             $nameArr = explode(':',(string)$l->Name);
-            $workspace = $nameArr[0];
-            $layername = $nameArr[1];
-            if($workspace === $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
-                $i = strtolower((string)$l->Title);
-                $retArr[$i]['Name'] = $layername;
-                $retArr[$i]['Title'] = (string)$l->Title;
-                $retArr[$i]['Abstract'] = (string)$l->Abstract;
-                $crsArr = $l->CRS;
-                foreach ($crsArr as $c){
-                    if(strpos($c, 'EPSG:') !== false) {
-                        $retArr[$i]['DefaultCRS'] = (string)$c;
+            if($nameArr){
+                $workspace = $nameArr[0];
+                $layername = $nameArr[1];
+                if($workspace === $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
+                    $i = strtolower((string)$l->Title);
+                    $retArr[$i]['Name'] = $layername;
+                    $retArr[$i]['Title'] = (string)$l->Title;
+                    $retArr[$i]['Abstract'] = (string)$l->Abstract;
+                    $crsArr = $l->CRS;
+                    foreach ($crsArr as $c){
+                        if(strpos($c, 'EPSG:') !== false) {
+                            $retArr[$i]['DefaultCRS'] = (string)$c;
+                        }
                     }
+                    $keywordArr = $l->KeywordList->Keyword;
+                    foreach ($keywordArr as $k){
+                        if($k === 'features') {
+                            $retArr[$i]['layerType'] = 'vector';
+                        }
+                        elseif($k === 'GeoTIFF') {
+                            $retArr[$i]['layerType'] = 'raster';
+                        }
+                    }
+                    $retArr[$i]['legendUrl'] = (string)$l->Style->LegendURL->OnlineResource->attributes('xlink', TRUE)->href;
                 }
-                $keywordArr = $l->KeywordList->Keyword;
-                foreach ($keywordArr as $k){
-                    if($k === 'features') {
-                        $retArr[$i]['layerType'] = 'vector';
-                    }
-                    elseif($k === 'GeoTIFF') {
-                        $retArr[$i]['layerType'] = 'raster';
-                    }
-                }
-                $retArr[$i]['legendUrl'] = (string)$l->Style->LegendURL->OnlineResource->attributes('xlink', TRUE)->href;
             }
         }
         ksort($retArr);
@@ -450,37 +452,43 @@ class SpatialModuleManager{
         $y=''; $m=''; $d='';
         if(preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/',$inDate)){
             $dateTokens = explode('-',$inDate);
-            $y = $dateTokens[0];
-            $m = $dateTokens[1];
-            $d = $dateTokens[2];
+            if($dateTokens){
+                $y = $dateTokens[0];
+                $m = $dateTokens[1];
+                $d = $dateTokens[2];
+            }
         }
         elseif(preg_match('/^\d{1,2}\/*\d{0,2}\/\d{2,4}$/',$inDate)){
             $dateTokens = explode('/',$inDate);
-            $m = $dateTokens[0];
-            if(count($dateTokens) === 3){
-                $d = $dateTokens[1];
-                $y = $dateTokens[2];
-            }
-            else{
-                $d = '00';
-                $y = $dateTokens[1];
+            if($dateTokens){
+                $m = $dateTokens[0];
+                if(count($dateTokens) === 3){
+                    $d = $dateTokens[1];
+                    $y = $dateTokens[2];
+                }
+                else{
+                    $d = '00';
+                    $y = $dateTokens[1];
+                }
             }
         }
         elseif(preg_match('/^\d{0,2}\s*\D+\s*\d{2,4}$/',$inDate)){
             $dateTokens = explode(' ',$inDate);
-            if(count($dateTokens) === 3){
-                $y = $dateTokens[2];
-                $mText = substr($dateTokens[1],0,3);
-                $d = $dateTokens[0];
+            if($dateTokens){
+                if(count($dateTokens) === 3){
+                    $y = $dateTokens[2];
+                    $mText = substr($dateTokens[1],0,3);
+                    $d = $dateTokens[0];
+                }
+                else{
+                    $y = $dateTokens[1];
+                    $mText = substr($dateTokens[0],0,3);
+                    $d = '00';
+                }
+                $mText = strtolower($mText);
+                $mNames = Array('ene' =>1, 'jan' =>1, 'feb' =>2, 'mar' =>3, 'abr' =>4, 'apr' =>4, 'may' =>5, 'jun' =>6, 'jul' =>7, 'aug' =>8, 'sep' =>9, 'oct' =>10, 'nov' =>11, 'dec' =>12);
+                $m = $mNames[$mText];
             }
-            else{
-                $y = $dateTokens[1];
-                $mText = substr($dateTokens[0],0,3);
-                $d = '00';
-            }
-            $mText = strtolower($mText);
-            $mNames = Array('ene' =>1, 'jan' =>1, 'feb' =>2, 'mar' =>3, 'abr' =>4, 'apr' =>4, 'may' =>5, 'jun' =>6, 'jul' =>7, 'aug' =>8, 'sep' =>9, 'oct' =>10, 'nov' =>11, 'dec' =>12);
-            $m = $mNames[$mText];
         }
         elseif(preg_match('/^\s*\d{4}\s*$/',$inDate)){
             $retDate = $inDate.'-00-00';

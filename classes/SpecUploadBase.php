@@ -73,10 +73,16 @@ class SpecUploadBase extends SpecUpload{
                     $sourceField = $row->sourcefield;
                     $symbField = $row->symbspecfield;
                     if(strpos($symbField, 'ID-') === 0){
-                        $this->identFieldMap[substr($symbField,3)]['field'] = $sourceField;
+                        $index = substr($symbField,3);
+                        if(is_string($index) || is_int($index)){
+                            $this->identFieldMap[$index]['field'] = $sourceField;
+                        }
                     }
                     elseif(strpos($symbField, 'IM-') === 0){
-                        $this->imageFieldMap[substr($symbField,3)]['field'] = $sourceField;
+                        $index = substr($symbField,3);
+                        if(is_string($index) || is_int($index)){
+                            $this->imageFieldMap[$index]['field'] = $sourceField;
+                        }
                     }
                     else{
                         $this->fieldMap[$symbField]['field'] = $sourceField;
@@ -258,7 +264,9 @@ class SpecUploadBase extends SpecUpload{
                 $tranlatedFieldName = str_replace(array('_',' ','.'),'',$fieldName);
                 if($autoMap){
                     if(array_key_exists($tranlatedFieldName,$translationMap)) {
-                        $tranlatedFieldName = strtolower($translationMap[$tranlatedFieldName]);
+                        if(is_string($tranlatedFieldName) || is_int($tranlatedFieldName)){
+                            $tranlatedFieldName = strtolower($translationMap[$tranlatedFieldName]);
+                        }
                     }
                     if(in_array($tranlatedFieldName, $symbFields, true)){
                         $isAutoMapped = true;
@@ -1296,26 +1304,28 @@ class SpecUploadBase extends SpecUpload{
                     }
                     if($valueStr && $size && strpos($size,',') !== false){
                         $tok = explode(',',$size);
-                        $m = $tok[0];
-                        $d = $tok[1];
-                        if($m && $d){
-                            $dec = substr($valueStr,strpos($valueStr,'.'));
-                            if(strlen($dec) > $d){
-                                $valueStr = round($valueStr,$d);
-                            }
-                            $rawLen = strlen(str_replace(array('-','.'),'',$valueStr));
-                            if($rawLen > $m){
-                                if(strpos($valueStr,'.') !== false){
-                                    $decLen = strlen(substr($valueStr,strpos($valueStr,'.')));
-                                    if($decLen < ($rawLen - $m)){
-                                        $valueStr = '';
+                        if($tok){
+                            $m = $tok[0];
+                            $d = $tok[1];
+                            if($m && $d){
+                                $dec = substr($valueStr,strpos($valueStr,'.'));
+                                if(strlen($dec) > $d){
+                                    $valueStr = round($valueStr,$d);
+                                }
+                                $rawLen = strlen(str_replace(array('-','.'),'',$valueStr));
+                                if($rawLen > $m){
+                                    if(strpos($valueStr,'.') !== false){
+                                        $decLen = strlen(substr($valueStr,strpos($valueStr,'.')));
+                                        if($decLen < ($rawLen - $m)){
+                                            $valueStr = '';
+                                        }
+                                        else{
+                                            $valueStr = round($valueStr,$decLen - ($rawLen - $m));
+                                        }
                                     }
                                     else{
-                                        $valueStr = round($valueStr,$decLen - ($rawLen - $m));
+                                        $valueStr = '';
                                     }
-                                }
-                                else{
-                                    $valueStr = '';
                                 }
                             }
                         }
