@@ -1,19 +1,19 @@
 <?php
 include_once(__DIR__ . '/config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
                 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',<?php echo $GOOGLE_TAG_MANAGER_ID; ?>);</script>
+        })(window,document,'script','dataLayer',<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>);</script>
     <!-- End Google Tag Manager -->
-    <title><?php echo $DEFAULT_TITLE; ?> Home</title>
-    <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+    <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/jquery-ui.css" type="text/css" rel="Stylesheet" />
     <style>
         #cycler, #cycler2{position:relative;height:180px;}
@@ -54,7 +54,7 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GOOGLE_TAG_MANAGER_ID; ?>"
+    <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>"
             height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
@@ -95,7 +95,7 @@ include(__DIR__ . '/header.php');
             $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
             echo $quicksearch;
             ?>
-            <div class="as"> <a href="<?php echo $CLIENT_ROOT; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
+            <div class="as"> <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
         </div>
     </div>
 </div>

@@ -1,47 +1,30 @@
 <?php
-/*
- ******  Create a custom template below to add to your taxon profile pages  ********************************************
- *
- * DEFAULT TEMPLATE:
- *
- * if($taxonRank){
- *      if($taxonRank > 180){
- *          $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
- *          $leftColumnElements = Array($familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
- *          $rightColumnElements = Array($descTabsDiv);
- *          $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
- *          $footerRowElements = Array($footerLinksDiv);
- *      }
- *      elseif($taxonRank == 180){
- *          $topRowElements = array();
- *          $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
- *          $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
- *          $bottomRowElements = Array($imgBoxDiv);
- *          $footerRowElements = Array($footerLinksDiv);
- *      }
- *      else{
- *          $topRowElements = array();
- *          $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
- *          $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
- *          $bottomRowElements = Array($imgBoxDiv);
- *          $footerRowElements = Array($footerLinksDiv);
- *      }
- *  }
- *  elseif($taxonValue){
- *      $topRowElements = Array($notFoundDiv);
- *  }
- *  else{
- *      $topRowElements = Array('ERROR!');
- *  }
- *
- * ******  Add custom plugins defined in the taxaProfileElementsCustom file  ********************************************
- *
- * EXAMPLE:
- * $topRowElements = Array($pluginName);
- *
- ***********************************************************************************************************************
- *
- */
+/** @var int $taxonRank */
+/** @var string $editButtonDiv */
+/** @var string $scinameHeaderDiv */
+/** @var string $ambiguousDiv */
+/** @var string $webLinksDiv */
+/** @var string $taxonNotesDiv */
+/** @var string $taxonSourcesDiv */
+/** @var string $familyDiv */
+/** @var string $vernacularsDiv */
+/** @var string $synonymsDiv */
+/** @var string $centralImageDiv */
+/** @var string $descTabsDiv */
+/** @var string $mapThumbDiv */
+/** @var string $imgDiv */
+/** @var string $imgTabDiv */
+/** @var string $footerLinksDiv */
+/** @var string $projectDiv */
+/** @var string $imgBoxDiv */
+/** @var string $taxonValue */
+/** @var string $notFoundDiv */
+/** @var string $IRLNativeStatus */
+/** @var string $IRLVernacularsDiv */
+/** @var string $IRLSynonymsDiv */
+/** @var string $IRLCentralImageDiv */
+/** @var string $IRLDescTabsDiv */
+/** @var string $IRLImgDiv */
 
 //Enter one to many custom cascading style sheet files 
 //$CSSARR = array('example1.css','example2.css');

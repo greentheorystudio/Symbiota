@@ -1,4 +1,22 @@
 <?php
+/** @var TaxonProfileManager $taxonManager */
+/** @var int $taxonRank */
+/** @var string $styleClass */
+/** @var string $spDisplay */
+/** @var string $projValue */
+/** @var string $taxAuthId */
+/** @var string $ambiguous */
+/** @var array $synonymArr */
+/** @var string $acceptedName */
+/** @var array $links */
+/** @var string $clValue */
+/** @var string $lang */
+/** @var string $vernStr */
+/** @var string $synStr */
+/** @var boolean $isEditor */
+/** @var int $displayLocality */
+/** @var string $showAllImages */
+/** @var string $taxonValue */
 include_once(__DIR__ . '/../../../classes/IRLManager.php');
 
 $IRLManager = new IRLManager();
