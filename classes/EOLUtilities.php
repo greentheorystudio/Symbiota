@@ -101,19 +101,33 @@ class EOLUtilities {
 				$uniqueList = array();
 				foreach($eolObj->synonyms as $synObj){
 					if(!in_array($synObj->synonym, $uniqueList, true)){
-						$uniqueList[] = $synObj->synonym;
-                        $taxonArr['syns'][$cnt]['scientificName'] = $synObj->synonym;
-						if(isset($synObj->relationship)) {
-							$taxonArr['syns'][$cnt]['synreason'] = $synObj->relationship;
-						}
-						$cnt++;
+						if(array_key_exists('syns',$taxonArr)){
+                            $synArr = $taxonArr['syns'];
+                        }
+						else{
+                            $synArr = array();
+                        }
+                        if(array_key_exists($cnt,$synArr)){
+                            $cntArr = $synArr[$cnt];
+                        }
+                        else{
+                            $cntArr = array();
+                        }
+                        $uniqueList[] = $synObj->synonym;
+                        $cntArr['scientificName'] = $synObj->synonym;
+                        if(isset($synObj->relationship)) {
+                            $cntArr['synreason'] = $synObj->relationship;
+                        }
+                        $synArr[$cnt] = $cntArr;
+                        $taxonArr['syns'] = $synArr;
+                        $cnt++;
 					}
 				}
 			}
 			if($includeCommonNames && isset($eolObj->vernacularNames)){
 				foreach($eolObj->vernacularNames as $vernObj){
 					if(in_array($vernObj->language, $this->targetLanguages, true)){
-						$taxonArr['verns'][] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
+						$taxonArr['verns'] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
 					}
 				}
 			}
@@ -150,14 +164,14 @@ class EOLUtilities {
 					if($includeSynonyms){
 						$synonyms = $eolObj->synonyms;
 						foreach($synonyms as $synObj){
-							$taxonArr['syns'][] = array('scientificName' => $synObj->scientificName,'synreason' => $synObj->taxonomicStatus);
+							$taxonArr['syns'] = array('scientificName' => $synObj->scientificName,'synreason' => $synObj->taxonomicStatus);
 						}
 					}
 					if($includeCommonNames){
 						$vernacularNames = $eolObj->vernacularNames;
 						foreach($vernacularNames as $vernObj){
 							if(in_array($vernObj->language, $this->targetLanguages, true)){
-								$taxonArr['verns'][] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
+								$taxonArr['verns'] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
 							}
 						}
 					}

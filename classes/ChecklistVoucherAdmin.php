@@ -671,12 +671,14 @@ class ChecklistVoucherAdmin {
 		if($fileName){
 			if(strlen($fileName) > 20){
 				$nameArr = explode(' ',$fileName);
-				foreach($nameArr as $k => $w){
-					if(strlen($w) > 3) {
-						$nameArr[$k] = substr($w, 0, 4);
-					}
-				}
-				$fileName = implode('',$nameArr);
+				if($nameArr){
+                    foreach($nameArr as $k => $w){
+                        if(strlen($w) > 3) {
+                            $nameArr[$k] = substr($w, 0, 4);
+                        }
+                    }
+                    $fileName = implode('',$nameArr);
+                }
 			}
 		}
 		else{
@@ -720,7 +722,7 @@ class ChecklistVoucherAdmin {
 		$sqlFrag = '';
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			if(count($vArr) === 2 && $vArr[0] && $vArr[1]) {
+			if($vArr && count($vArr) === 2 && $vArr[0] && $vArr[1]) {
 				$sqlFrag .= ',(' . $this->clid . ',' . $vArr[0] . ',' . $vArr[1] . ')';
 			}
 		}
@@ -766,30 +768,32 @@ class ChecklistVoucherAdmin {
 		$tidsUsed = array();
 		foreach($occidArr as $v){
 			$vArr = explode('-',$v);
-			$tid = $vArr[1];
-			$occid = $vArr[0];
-			if(is_numeric($occid) && is_numeric($tid) && count($vArr) === 2){
-				if($useCurrentTaxon){
-					$sql = 'SELECT tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tid = '.$tid;
-					$rs = $this->conn->query($sql);
-					if($r = $rs->fetch_object()){
-						$tid = $r->tidaccepted;
-					}
-					$rs->free();
-				}
-				if(!in_array($tid, $tidsUsed, true)){
-					$sql = 'INSERT INTO fmchklsttaxalink(clid,tid) VALUES('.$this->clid.','.$tid.')';
-					$tidsUsed[] = $tid;
-					//echo $sql;
-					if(!$this->conn->query($sql)){
-						trigger_error('Unable to add taxon; '.$this->conn->error,E_USER_WARNING);
-					}
-				}
-				$sql2 = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES ('.$this->clid.','.$occid.','.$tid.')';
-				if(!$this->conn->query($sql2)){
-					trigger_error('Unable to link taxon voucher; '.$this->conn->error,E_USER_WARNING);
-				}
-			}
+			if($vArr){
+                $tid = $vArr[1];
+                $occid = $vArr[0];
+                if(is_numeric($occid) && is_numeric($tid) && count($vArr) === 2){
+                    if($useCurrentTaxon){
+                        $sql = 'SELECT tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tid = '.$tid;
+                        $rs = $this->conn->query($sql);
+                        if($r = $rs->fetch_object()){
+                            $tid = $r->tidaccepted;
+                        }
+                        $rs->free();
+                    }
+                    if(!in_array($tid, $tidsUsed, true)){
+                        $sql = 'INSERT INTO fmchklsttaxalink(clid,tid) VALUES('.$this->clid.','.$tid.')';
+                        $tidsUsed[] = $tid;
+                        //echo $sql;
+                        if(!$this->conn->query($sql)){
+                            trigger_error('Unable to add taxon; '.$this->conn->error,E_USER_WARNING);
+                        }
+                    }
+                    $sql2 = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES ('.$this->clid.','.$occid.','.$tid.')';
+                    if(!$this->conn->query($sql2)){
+                        trigger_error('Unable to link taxon voucher; '.$this->conn->error,E_USER_WARNING);
+                    }
+                }
+            }
 		}
 	}
 

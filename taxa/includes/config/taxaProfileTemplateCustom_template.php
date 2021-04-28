@@ -48,10 +48,11 @@
 
 //Enter one to many custom javascript files
 //$JSARR = array('example1.js','example2.js'); 
-
-include('includes/config/taxaProfileElementsDefault.php');
+/** @var int $taxonRank */
+/** @var string $taxonValue */
+include(__DIR__ . '/taxaProfileElementsDefault.php');
 if(file_exists('includes/config/taxaProfileElementsCustom.php')){
-    include('includes/config/taxaProfileElementsCustom.php');
+    include(__DIR__ . '/taxaProfileElementsCustom.php');
 }
 
 $topRowElements = array(); //Top horizontal bar in taxon profile page

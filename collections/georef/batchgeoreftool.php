@@ -111,7 +111,7 @@ if($editor && $submitAction){
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js"></script>
 		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js"></script>
-		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210313"></script>
+		<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/collections.georef.batchgeoreftool.js?ver=20210420"></script>
         <script type="text/javascript">
             function openSpatialInputWindow(type) {
                 let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -122,6 +122,26 @@ if($editor && $submitAction){
                     mapWindow.close();
                     mapWindow = null;
                 });
+            }
+
+            function geoCloneTool(){
+                const selObj = document.getElementById("locallist");
+                let cloneWindow;
+                if (selObj.selectedIndex > -1) {
+                    const f = document.queryform;
+                    let url = "georefclone.php?";
+                    url = url + "locality=" + selObj.options[selObj.selectedIndex].text;
+                    url = url + "&country=" + f.qcountry.value;
+                    url = url + "&state=" + f.qstate.value;
+                    url = url + "&county=" + f.qcounty.value;
+                    url = url + "&collid=" + f.collid.value;
+                    cloneWindow = open(url, "geoclonetool", "resizable=1,scrollbars=1,toolbar=1,width=1000,height=800,left=20,top=20");
+                    if (cloneWindow.opener == null) {
+                        cloneWindow.opener = self;
+                    }
+                } else {
+                    alert("Select a locality in list to open that record set in the editor");
+                }
             }
         </script>
 	</head>

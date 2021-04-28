@@ -28,7 +28,10 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 		foreach($headerArr as $headerValue){
 			$colLet = $letters[$columnCnt%26].'1';
 			if($columnCnt > 26) {
-				$colLet .= $letters[floor($columnCnt / 26)];
+				$index = floor($columnCnt / 26);
+			    if(is_string($index) || is_int($index)){
+                    $colLet .= $letters[$index];
+                }
 			}
             try {
                 $objPHPExcel->getActiveSheet()->setCellValue($colLet, $headerValue);
@@ -42,7 +45,10 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 			foreach($headerArr as $headerKey => $v){
 				$colLet = $letters[$columnCnt%26].$rowCnt;
 				if($columnCnt > 26) {
-					$colLet .= $letters[floor($columnCnt / 26)];
+					$index = floor($columnCnt / 26);
+                    if(is_string($index) || is_int($index)){
+                        $colLet .= $letters[$index];
+                    }
 				}
 				$cellValue = ($recArr[$headerKey] ?? '');
                 try {
@@ -74,7 +80,10 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 			foreach($headerArr as $headerValue){
 				$colLet = $letters[$columnCnt%26];
 				if($columnCnt > 25) {
-					$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
+					$index = floor(($columnCnt / 26) - 1);
+                    if(is_string($index) || is_int($index)){
+                        $colLet = $letters[$index] . $colLet;
+                    }
 				}
                 try {
                     $objPHPExcel->getActiveSheet()->setCellValue($colLet . '1', $headerValue);
@@ -87,7 +96,10 @@ class ChecklistVoucherPensoftExcel extends ChecklistVoucherPensoft {
 				foreach($rowArr as $colKey => $cellValue){
 					$colLet = $letters[$columnCnt%26];
 					if($columnCnt > 25) {
-						$colLet = $letters[floor(($columnCnt / 26) - 1)] . $colLet;
+						$index = floor(($columnCnt / 26) - 1);
+                        if(is_string($index) || is_int($index)){
+                            $colLet = $letters[$index] . $colLet;
+                        }
 					}
                     try {
                         $objPHPExcel->getActiveSheet()->setCellValue($colLet . $rowCnt, $cellValue);

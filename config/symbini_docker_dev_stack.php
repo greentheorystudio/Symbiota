@@ -83,4 +83,4 @@ $GLOBALS['CSS_VERSION_LOCAL'] = '20170414';		//Changing this variable will force
 //set terms for reproductiveCondition drop-down menu
 //$REPRODUCTIVE_CONDITION_TERMS = array("term1", "term2", "term3", "term4", "term5", "etc..");
 
-include_once('symbbase.php');
+include_once(__DIR__ . '/symbbase.php');

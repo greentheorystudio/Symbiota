@@ -11,6 +11,8 @@ $targetCollid = array_key_exists('targetcollid',$_REQUEST)?$_REQUEST['targetcoll
 $eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
 $instCodeDefault = array_key_exists('instcode',$_REQUEST)?$_REQUEST['instcode']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']: '';
+$addCollId = array_key_exists('addcollid',$_POST)?$_POST['addcollid']: '';
+$removeCollId = array_key_exists('removecollid',$_REQUEST)?$_REQUEST['removecollid']:'';
 
 $instManager = new InstitutionManager();
 $fullCollList = $instManager->getCollectionList();
@@ -69,8 +71,8 @@ if($editorCode){
             }
         }
         elseif($formSubmit === 'Add Collection'){
-            if($instManager->addCollection($_POST['addcollid'],$iid)){
-                $collList[$_POST['addcollid']] = $fullCollList[$_POST['addcollid']]['name'];
+            if($instManager->addCollection($addCollId,$iid)){
+                $collList[$addCollId] = $fullCollList[$addCollId]['name'];
             }
             else{
                 $statusStr = $instManager->getErrorStr();
@@ -79,7 +81,7 @@ if($editorCode){
         elseif(isset($_GET['removecollid'])){
             if($instManager->removeCollection($_GET['removecollid'])){
                 $statusStr = 'SUCCESS! Institution removed';
-                unset($collList[$_GET['removecollid']]);
+                unset($collList[$removeCollId]);
             }
             else{
                 $statusStr = $instManager->getErrorStr();

@@ -1,4 +1,6 @@
 <?php
+/** @var array $occArr */
+/** @var int $goToMode */
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
@@ -275,7 +277,7 @@ if($GLOBALS['SYMB_UID']){
 								</div>
 							</div>
 							<?php
-							include_once('includes/geotools.php');
+							include_once(__DIR__ . '/includes/geotools.php');
 							$georefExtraDiv = 'display:';
 							if(array_key_exists('georeferencedby',$occArr) && $occArr['georeferencedby']){
 								$georefExtraDiv .= 'block';

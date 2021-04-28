@@ -1,3 +1,9 @@
+<?php
+/** @var SpecLoans $loanManager */
+/** @var string $exchangeId */
+/** @var string $collId */
+/** @var string $loanType */
+?>
 <div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#exchangedetaildiv"><span>Exchange Details</span></a></li>

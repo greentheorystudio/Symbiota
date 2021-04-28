@@ -205,7 +205,7 @@ elseif($action === 'listdupsrecordedby'){
 					$dupArr = array();
 					foreach($_POST['dupid'] as $v){
 						$vArr = explode(':',$v);
-						if(count($vArr) > 1){
+						if($vArr && count($vArr) > 1){
 							$target = $_POST['dup'.$vArr[0].'target'];
 							if($target !== $vArr[1]) {
                                 $dupArr[$target][] = $vArr[1];

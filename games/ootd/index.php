@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
-$oodID = array_key_exists('oodid',$_REQUEST)?$_REQUEST['oodid']:1;
+$oodID = array_key_exists('oodid',$_REQUEST)?(int)$_REQUEST['oodid']:1;
 $ootdGameChecklist = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
 $ootdGameTitle = array_key_exists('title',$_REQUEST)?$_REQUEST['title']:0;
 $ootdGameType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:0;
@@ -22,7 +22,9 @@ foreach($imageArr as $k => $imgValue){
 
 if($submitAction){
 	$scinameAnswerArr = explode(' ',trim($_POST['sciname_answer']));
-	$genusAnswer = strtolower($scinameAnswerArr[0]);
+	if($scinameAnswerArr){
+        $genusAnswer = strtolower($scinameAnswerArr[0]);
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -35,7 +37,7 @@ if($submitAction){
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
 	<script type="text/javascript" src="../../js/symb/games.ootd.js"></script>
-	
+
 	<script type="text/javascript">
 		$(function() {
             const dialogArr = new Array("game");
@@ -54,7 +56,7 @@ if($submitAction){
 			}
 
 		});
-		
+
 		function toggleById(target){
             const obj = document.getElementById(target);
             if(obj.style.display === "none"){
@@ -124,7 +126,7 @@ if($submitAction){
 <body>
     <?php
 	include(__DIR__ . '/../../header.php');
-	?> 
+	?>
 	<div id="innertext" style="">
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">
@@ -174,9 +176,9 @@ if($submitAction){
 								</div>
 								<div>
 									<input name="oodid" type="hidden" value="<?php echo $oodID; ?>" />
-									<input name="cl" type="hidden" value="<?php echo $ootdGameChecklist; ?>" /> 
-									<input name="title" type="hidden" value="<?php echo $ootdGameTitle; ?>" /> 
-									<input name="type" type="hidden" value="<?php echo $ootdGameType; ?>" /> 
+									<input name="cl" type="hidden" value="<?php echo $ootdGameChecklist; ?>" />
+									<input name="title" type="hidden" value="<?php echo $ootdGameTitle; ?>" />
+									<input name="type" type="hidden" value="<?php echo $ootdGameType; ?>" />
 								</div>
 							</div>
 						</form>
@@ -211,7 +213,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			
+
 			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_both" class="middlecenter">
@@ -220,7 +222,7 @@ if($submitAction){
 							<b>Sorry, that is not correct</b>
 						</div>
 						<div style="margin-top:25px;font-size:18px;" >
-							<b>Hint:</b> The family is <u>not</u> 
+							<b>Hint:</b> The family is <u>not</u>
 							<?php echo $_POST['family_answer']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
@@ -234,7 +236,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			
+
 			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname" class="middlecenter">
@@ -243,7 +245,7 @@ if($submitAction){
 							<b>Sorry, that is not correct</b>
 						</div>
 						<div style="margin-top:25px;font-size:18px;" >
-							On the bright side, <b>you did get the family right</b>; it's 
+							On the bright side, <b>you did get the family right</b>; it's
 							<?php echo $gameInfo['family']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
@@ -257,7 +259,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			
+
 			elseif(($submitAction !== 'giveup') && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) == strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname" class="middlecenter">
@@ -266,7 +268,7 @@ if($submitAction){
 							<b>Sorry, that is not correct</b>
 						</div>
 						<div style="margin-top:25px;font-size:18px;" >
-							<b>You did get the scientific name right</b>; it's 
+							<b>You did get the scientific name right</b>; it's
 							<?php echo $gameInfo['sciname']; ?>, but the family is not <?php echo $_POST['family_answer']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
@@ -280,7 +282,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			
+
 			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname" class="middlecenter">
@@ -289,7 +291,7 @@ if($submitAction){
 							<b>Sorry, that is not correct</b>
 						</div>
 						<div style="margin-top:25px;font-size:18px;" >
-							On the bright side, <b>you did get the genus right</b>; it's 
+							On the bright side, <b>you did get the genus right</b>; it's
 							<?php echo $gameInfo['genus']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
@@ -303,7 +305,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			
+
 			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname" class="middlecenter">
@@ -312,7 +314,7 @@ if($submitAction){
 							<b>Sorry, that is not correct</b>
 						</div>
 						<div style="margin-top:25px;font-size:18px;" >
-							On the bright side, <b>you did get the family and genus right</b>; The family 
+							On the bright side, <b>you did get the family and genus right</b>; The family
 							is <?php echo $gameInfo['family']; ?>, and the genus is <?php echo $gameInfo['genus']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
@@ -355,6 +357,6 @@ if($submitAction){
 
 	<?php
 	include(__DIR__ . '/../../footer.php');
-	?> 
+	?>
 </body>
 </html>

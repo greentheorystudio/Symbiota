@@ -260,17 +260,19 @@ class SpecUpload{
 				foreach($varArr as $varStr){
 					if(strpos($varStr,':')){
 						$vArr = explode(':',$varStr);
-						$sql .= 'AND '.$vArr[0];
-						switch($vArr[1]){
-							case 'ISNULL':
-								$sql .= ' IS NULL ';
-								break;
-							case 'ISNOTNULL':
-								$sql .= ' IS NOT NULL ';
-								break;
-							default:
-								$sql .= ' = "'.$vArr[1].'" ';
-						}
+						if($vArr){
+                            $sql .= 'AND '.$vArr[0];
+                            switch($vArr[1]){
+                                case 'ISNULL':
+                                    $sql .= ' IS NULL ';
+                                    break;
+                                case 'ISNOTNULL':
+                                    $sql .= ' IS NOT NULL ';
+                                    break;
+                                default:
+                                    $sql .= ' = "'.$vArr[1].'" ';
+                            }
+                        }
 					}
 				}
 			}

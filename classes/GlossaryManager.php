@@ -988,12 +988,14 @@ class GlossaryManager{
 		if($this->sourcePath){
 			if(stripos($this->sourcePath, 'http://') == 0 || stripos($this->sourcePath, 'https://') == 0){
 				$x = array_change_key_case(get_headers($this->sourcePath, 1),CASE_LOWER); 
-				if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
-					$fileSize = $x['content-length'][1]; 
-				}
-	 			else { 
-	 				$fileSize = $x['content-length']; 
-	 			}
+				if($x){
+                    if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                        $fileSize = $x['content-length'][1];
+                    }
+                    else {
+                        $fileSize = $x['content-length'];
+                    }
+                }
 	 		}
 			else{
 				$fileSize = filesize($this->sourcePath);

@@ -1,3 +1,6 @@
+<?php
+/** @var array $datasetArr */
+?>
 <div id="datasetmanagement" data-role="popup" class="well" style="width:500px;height:175px;font-size:14px;">
     <a class="boxclose datasetmanagement_close" id="boxclose"></a>
     <h2>Dataset Management</h2>
