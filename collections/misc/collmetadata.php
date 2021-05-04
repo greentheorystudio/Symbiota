@@ -70,9 +70,11 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 		$publishIDIGBIO = true;
 	}
 }
-$collDataFull = $collManager->getCollectionMetadata();
-$collData = $collDataFull[$collid];
-$collManager->cleanOutArr($collData);
+if($collid){
+    $collDataFull = $collManager->getCollectionMetadata();
+    $collData = $collDataFull[$collid];
+    $collManager->cleanOutArr($collData);
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>

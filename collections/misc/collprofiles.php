@@ -48,17 +48,17 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 
 $editCode = 0;
 if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN']){
-		$editCode = 3;
-	}
-	else if($collid){
-		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-			$editCode = 2;
-		}
-		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-			$editCode = 1;
-		}
-	}
+    if($GLOBALS['IS_ADMIN']){
+        $editCode = 3;
+    }
+    else if($collid){
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+            $editCode = 2;
+        }
+        elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+            $editCode = 1;
+        }
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
