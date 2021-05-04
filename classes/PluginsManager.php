@@ -425,7 +425,7 @@ return <<<EOD
             <div class="quicksearchscinameselectorlabel">Scientific Name</div>
             <div>
                 <label>
-                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" $commonChecked>
+                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" autocomplete="off" $commonChecked>
                     <div class="switch"></div>
                 </label>
             </div>
