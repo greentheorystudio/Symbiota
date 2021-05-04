@@ -269,11 +269,6 @@ h1{
 	margin-top: -164px;
 	padding-top: 231px;
 	margin-bottom: 83px;
-	background: url(/images/monarch-v5.png) no-repeat;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
 }
 input#quicksearchtaxon {
 	border: solid 5px #679146;
