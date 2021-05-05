@@ -297,7 +297,7 @@ elseif($activeCollArr){
 										</div>
 										<div style="clear:both;">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-											<button name="submitaction" type="submit" value="AnalyzingNames" ><?php echo ($startIndex?'Continue Analyzing Names':'Analyze Taxonomic Names'); ?></button>
+											<button name="submitaction" type="submit" value="AnalyzingNames" ><?php echo ($startIndex?'Continue Resolving Names':'Resolve Taxonomic Names'); ?></button>
 										</div>
 									</div>
 								</div>
