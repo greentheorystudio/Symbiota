@@ -10,7 +10,7 @@ if(!$GLOBALS['SYMB_UID']) {
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $autoClean = array_key_exists('autoclean',$_POST)?(int)$_POST['autoclean']:0;
 $targetKingdom = array_key_exists('targetkingdom',$_POST)?(int)$_POST['targetkingdom']:0;
-$taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:array();
+$taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:'';
 $startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
 $limit = array_key_exists('limit',$_POST)?$_POST['limit']:20;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
@@ -160,8 +160,8 @@ elseif($activeCollArr){
 			<?php
 			if($collid && is_numeric($collid)){
 				?>
-				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Menu</a> &gt;&gt;
-				<a href="index.php?collid=<?php echo $collid; ?>&emode=1">Data Cleaning Menu</a> &gt;&gt;
+				<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+				<a href="index.php?collid=<?php echo $collid; ?>&emode=1">Data Cleaning Tools</a> &gt;&gt;
 				<?php
 			}
 			else{
@@ -170,7 +170,7 @@ elseif($activeCollArr){
 				<?php
 			}
 			?>
-			<b>Taxonomic Name Cleaner</b>
+			<b>Taxonomic Name Resolution Module</b>
 		</div>
 		<div id="innertext">
 			<?php
@@ -234,6 +234,7 @@ elseif($activeCollArr){
 								echo '<ul>';
 								$cleanManager->setAutoClean($autoClean);
 								$cleanManager->setTargetKingdom($targetKingdom);
+                                $cleanManager->setTargetKingdom($targetKingdom);
 								$startIndex = $cleanManager->analyzeTaxa($taxResource, $startIndex, $limit);
 								echo '</ul>';
 							}
@@ -244,28 +245,28 @@ elseif($activeCollArr){
 					</div>
 					<div style="margin:20px;">
 						<fieldset style="padding:20px;">
-							<legend><b>Action Menu</b></legend>
 							<form name="maincleanform" action="taxonomycleaner.php" method="post" onsubmit="return verifyCleanerForm(this)">
 								<div style="margin-bottom:15px;">
-									<b>Specimen records not indexed to central taxonomic thesaurus</b>
-									<div style="margin-left:10px;">
-										<u>Specimens</u>: <?php echo $badSpecimenCount; ?><br/>
-										<u>Scientific names</u>: <?php echo $badTaxaCount; ?>
+									<b>Occurrence records with scientific names that are not associated with the taxonomic thesaurus</b>
+									<div style="margin-left:10px;margin-top:8px;">
+										<u>Records</u>: <?php echo $badSpecimenCount; ?><br/>
+										<u>Unique scientific names</u>: <?php echo $badTaxaCount; ?>
 									</div>
 								</div>
 								<hr/>
 								<div style="margin:20px 10px">
 									<div style="margin:10px 0;">
-										Following tool will crawl through unindexed names and attempt to resolve name discrepancies
+										Use this tool to attempt to resolve unassociated scientific names through a selected taxonomic data source and
+                                        add resolved names to the taxonomic thesaurus.
 									</div>
 									<div style="margin:10px;">
 										<div style="margin-bottom:5px;">
 											<fieldset style="padding:15px;margin:10px 0;">
-												<legend><b>Taxonomic Resource</b></legend>
+												<legend><b>Taxonomic Data Source</b></legend>
 												<?php
 												$taxResourceList = $cleanManager->getTaxonomicResourceList();
 												foreach($taxResourceList as $taKey => $taValue){
-													echo '<input name="taxresource[]" type="checkbox" value="'.$taKey.'" '.(in_array($taKey, $taxResource, true) ?'checked':'').' /> '.$taValue.'<br/>';
+													echo '<input name="taxresource" type="radio" value="'.$taKey.'" '.($taxResource === $taKey ?'checked':'').' /> '.$taValue.'<br/>';
 												}
 												?>
 											</fieldset>
@@ -284,15 +285,15 @@ elseif($activeCollArr){
 											</select>
 										</div>
 										<div style="margin-bottom:5px;">
-											Names Processed per Run: <input name="limit" type="text" value="<?php echo $limit; ?>" style="width:40px" />
+											Number of names to process per run: <input name="limit" type="text" value="<?php echo $limit; ?>" style="width:40px" />
 										</div>
 										<div style="margin-bottom:5px;">
-											Start Index: <input name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
+											Start index: <input name="startindex" type="text" value="<?php echo $startIndex; ?>" title="Enter a taxon name or letter of the alphabet to indicate where the processing should start" />
 										</div>
-										<div style="height:50px;">
-											<div style="">Clean and Mapping Function:</div>
-											<div style="float:left;margin-left:15px;"><input name="autoclean" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> Semi-Manual</div>
-											<div style="float:left;margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean === 1?'checked':''); ?> /> Fully Automatic</div>
+										<div style="margin-bottom:5px;">
+                                            Processing:
+                                            <span style="margin-left:15px;"><input name="autoclean" type="radio" value="0" <?php echo (!$autoClean?'checked':''); ?> /> Manual</span>
+                                            <span style="margin-left:10px;"><input name="autoclean" type="radio" value="1" <?php echo ($autoClean === 1?'checked':''); ?> /> Automatic</span>
 										</div>
 										<div style="clear:both;">
 											<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
