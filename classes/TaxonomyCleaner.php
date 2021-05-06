@@ -84,7 +84,7 @@ class TaxonomyCleaner extends Manager{
             while($r = $rs->fetch_object()){
                 $editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
                     '/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
-                    $this->collid.'\'); return false;">'.$r->cnt.' specimens <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
+                    $this->collid.'\'); return false;">'.$r->cnt.' '.((int)$r->cnt === 1?'occurrence':'occurrences').' <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
                 $this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
                 if($r->family) {
                     $taxonHarvester->setDefaultFamily($r->family);

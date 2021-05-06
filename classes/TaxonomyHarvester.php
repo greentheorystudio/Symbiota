@@ -55,11 +55,11 @@ class TaxonomyHarvester extends Manager{
 		}
 	}
 
-	private function parseCleanCheck($term){
-		$taxonArr = array('sciname' => $term);
-		$this->buildTaxonArr($taxonArr);
+	private function parseCleanCheck($term): void
+    {
+		$taxonArr = $this->buildTaxonArr(array('sciname' => $term));
 		$tid = $this->getTid($taxonArr);
-		if(!$tid && isset($taxonArr['rankid']) && $taxonArr['rankid'] > 220 && $taxonArr['unitname2'] === $taxonArr['unitname3']) {
+		if(!$tid && isset($taxonArr['rankid']) && (int)$taxonArr['rankid'] > 220 && $taxonArr['unitname2'] === $taxonArr['unitname3']) {
 			$parentArr = $this->getParentArr($taxonArr);
 			if($parentArr){
 				$parentTid = $this->getTid($parentArr);
@@ -75,13 +75,12 @@ class TaxonomyHarvester extends Manager{
 				}
 			}
 		}
-		return $tid;
 	}
 
     private function addColTaxon($sciName): int
     {
         $tid = 0;
-        if($sciName){
+        if($sciName && $sciName !== 'Biota'){
             $adjustedName = str_ireplace(array(' subsp. ',' subsp ',' ssp. ',' ssp ',' var. ',' var ',' f. ',' fo. '), ' ', $sciName);
             $adjustedName = str_ireplace(array('?'), ' ', $adjustedName);
             $url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name='.str_replace(' ','%20',$adjustedName);
@@ -89,24 +88,12 @@ class TaxonomyHarvester extends Manager{
             $retArr = $this->getContentString($url);
             $content = $retArr['str'];
             $resultArr = json_decode($content,true);
-            $numResults = $resultArr['number_of_results_returned'];
-            if($numResults){
-                $targetKey = 0;
-                $submitArr = array();
-                $rankArr = array();
-                $skipCnt = 0;
+            $numResults = (int)$resultArr['number_of_results_returned'];
+            if($numResults > 0){
                 foreach($resultArr['result'] as $k => $tArr){
-                    $rankArr[$k] = 0;
-                    if($adjustedName !== $tArr['name']){
-                        $skipCnt++;
-                        if($skipCnt > 2) {
-                            break;
-                        }
-                        continue;
-                    }
+                    $loadTaxon = true;
                     $taxonKingdom = $this->getColParent($tArr, 'Kingdom');
                     if($this->kingdomName && $this->kingdomName !== $taxonKingdom){
-                        unset($rankArr[$k]);
                         $colPrefix = 'http://www.catalogueoflife.org/col/browse/tree/id/';
                         if(strpos($adjustedName,' ')) {
                             $colPrefix = 'http://www.catalogueoflife.org/col/details/species/id/';
@@ -114,57 +101,37 @@ class TaxonomyHarvester extends Manager{
                         $msg = '<a href="'.$colPrefix.$resultArr['results'][$k]['id'].'" target="_blank">';
                         $msg .= $sciName.'</a> skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
                         $this->logOrEcho($msg,2);
-                        continue;
+                        $loadTaxon = false;
                     }
-                    if($this->defaultFamily && $this->defaultFamily === $this->getColParent($tArr, 'Family')) {
-                        $rankArr[$k] += 2;
+                    if(isset($tArr['author']) && $tArr['author'] && stripos($tArr['author'], 'nom. illeg.') !== false) {
+                        $loadTaxon = false;
                     }
-                    if($tArr['name_status'] === 'accepted name') {
-                        $rankArr[$k] += 2;
+                    if($loadTaxon){
+                        $tid = $this->addColTaxonByResult($resultArr['result'][$k]);
                     }
-                    if(isset($tArr['author']) && $tArr['author']){
-                        if(stripos($tArr['author'],'nom. illeg.') !== false){
-                            unset($rankArr[$k]);
-                            continue;
-                        }
-                        if($this->defaultAuthor){
-                            $author1 = str_replace(array(' ','.'), '', $this->defaultAuthor);
-                            $author2 = str_replace(array(' ','.'), '', $tArr['author']);
-                            similar_text($author1, $author2, $percent);
-                            if($author1 === $author2) {
-                                $rankArr[$k] += 2;
-                            }
-                            elseif($percent > 80) {
-                                ++$rankArr[$k];
-                            }
-                        }
-                    }
-                    $submitArr[$k] = $resultArr['result'][$k];
-                }
-                if($rankArr){
-                    asort($rankArr);
-                    end($rankArr);
-                    $targetKey = key($rankArr);
-                    if(isset($rankArr[0]) && $rankArr[$targetKey] === $rankArr[0]) {
-                        $targetKey = 0;
-                    }
-                }
-                $this->logOrEcho($sciName.' found within Catalog of Life',2);
-                if(array_key_exists($targetKey, $submitArr) && $submitArr[$targetKey]){
-                    $tid = $this->addColTaxonByResult($submitArr[$targetKey]);
-                }
-                else{
-                    $this->logOrEcho('Targeted taxon return does not exist',2);
                 }
             }
             else{
                 $this->logOrEcho('Taxon not found',2);
             }
         }
-        else{
-            $this->logOrEcho('ERROR harvesting COL name: null input name',1);
-        }
         return $tid;
+    }
+
+    private function getColTaxonArrById($id): array
+    {
+        $retArr = array();
+        if($id){
+            $url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&id='.$id;
+            //echo $url.'<br/>';
+            $retArr = $this->getContentString($url);
+            $content = $retArr['str'];
+            $resultArr = json_decode($content,true);
+            if(isset($resultArr['result'][0])){
+                $retArr = $resultArr['result'][0];
+            }
+        }
+        return $retArr;
     }
 
     private function addColTaxonById($id): int
@@ -197,43 +164,64 @@ class TaxonomyHarvester extends Manager{
         if($baseArr){
             $tidAccepted = 0;
             if($baseArr['name_status'] === 'synonym' && isset($baseArr['accepted_name'])){
-                $tidAccepted = $this->addColTaxonById($baseArr['accepted_name']['id']);
+                $tidAccepted = $this->getTid($this->getColNode($baseArr['accepted_name']));
+                if(!$tidAccepted){
+                    $tidAccepted = $this->addColTaxon($baseArr['accepted_name']['name']);
+                }
             }
             $taxonArr = $this->getColNode($baseArr);
             if(isset($taxonArr['taxonRank']) && $taxonArr['taxonRank'] !== 'Unranked'){
-                if($taxonArr['rankid'] === 10){
+                if((int)$taxonArr['rankid'] === 10){
                     $taxonArr['parent']['tid'] = 'self';
                 }
                 else{
-                    $parentTid = 0;
-                    if(isset($baseArr['classification'])){
-                        do{
-                            $parentArr = $this->getColNode(array_pop($baseArr['classification']));
-                            if(isset($parentArr['sciname'])){
-                                $parentTid = $this->getTid($parentArr);
-                                if(!$parentTid && isset($parentArr['id'])) {
-                                    $parentTid = $this->addColTaxonById($parentArr['id']);
+                    $parentName = '';
+                    $parentId = 0;
+                    if(isset($baseArr['classification']) && is_array($baseArr['classification'])){
+                        $higherTaxArr = array_reverse($baseArr['classification']);
+                        foreach($higherTaxArr as $htArr){
+                            $taxArr = $this->getColNode($htArr);
+                            $tId = $this->getTid($taxArr);
+                            if(!$tId){
+                                $colArr = $this->getColNode($this->getColTaxonArrById($taxArr['id']));
+                                if(isset($colArr['taxonRank']) && $colArr['taxonRank'] !== 'Unranked'){
+                                    if(isset($colArr['author'])){
+                                        $taxArr['author'] = $colArr['author'];
+                                    }
+                                    if($parentName){
+                                        $taxArr['parent']['sciname'] = $parentName;
+                                    }
+                                    if($parentId){
+                                        $taxArr['parent']['tid'] = $parentId;
+                                    }
+                                    $tId = $this->loadNewTaxon($taxArr);
                                 }
                             }
-                        }
-                        while(!$parentTid && $baseArr['classification']);
-                        if($parentArr) {
-                            $taxonArr['parent'] = $parentArr;
+                            if($tId){
+                                $parentName = $taxArr['sciname'];
+                                $parentId = $tId;
+                            }
                         }
                     }
                     else{
                         $parentArr = $this->getParentArr($taxonArr);
                         if($parentArr){
-                            $parentTid = $this->addColTaxon($parentArr['sciname']);
-                            if(!$parentTid){
+                            $parentId = $this->addColTaxon($parentArr['sciname']);
+                            if(!$parentId){
                                 $taxonArr['family'] = $this->getColParent($baseArr,'Family');
-                                $this->buildTaxonArr($parentArr);
-                                $parentTid = $this->loadNewTaxon($parentArr);
+                                $parentArr = $this->buildTaxonArr($parentArr);
+                                $parentId = $this->loadNewTaxon($parentArr);
+                            }
+                            if($parentId){
+                                $parentName = $parentArr['sciname'];
                             }
                         }
                     }
-                    if($parentTid) {
-                        $taxonArr['parent']['tid'] = $parentTid;
+                    if($parentName){
+                        $taxonArr['parent']['sciname'] = $parentName;
+                    }
+                    if($parentId){
+                        $taxonArr['parent']['tid'] = $parentId;
                     }
                 }
             }
@@ -398,8 +386,7 @@ class TaxonomyHarvester extends Manager{
 			$taxonArr['taxonRank'] = $nodeArr['rank'];
 		}
 		$this->setRankId($taxonArr);
-		$this->buildTaxonArr($taxonArr);
-		return $taxonArr;
+        return $this->buildTaxonArr($taxonArr);
 	}
 
 	private function getWormParentID($wormNode, $stopID, $previousID = null){
@@ -510,7 +497,7 @@ class TaxonomyHarvester extends Manager{
 					$resultArr = json_decode($content,true);
 					if(isset($resultArr['Synonyms']['Synonym']['AcceptedName'])){
 						$acceptedNode = $this->getTropicosNode($resultArr['Synonyms']['Synonym']['AcceptedName']);
-						$this->buildTaxonArr($acceptedNode);
+                        $acceptedNode = $this->buildTaxonArr($acceptedNode);
 						$acceptedTid = $this->getTid($acceptedNode);
 						if(!$acceptedTid && isset($acceptedNode['id'])) {
 							$this->addTropicosTaxonByID($acceptedNode['id']);
@@ -655,7 +642,6 @@ class TaxonomyHarvester extends Manager{
 			}
 			fclose($fh);
 			$retArr['str'] = $contentStr;
-			//Get code
 			$statusStr = $http_response_header[0];
 			if(preg_match( '#HTTP/[0-9.]+\s+(\d+)#',$statusStr, $out)){
 				$retArr['code'] = (int)$out[1];
@@ -669,7 +655,7 @@ class TaxonomyHarvester extends Manager{
 		$newTid = 0;
         if($taxonArr) {
             if((!isset($taxonArr['sciname']) || !$taxonArr['sciname']) && isset($taxonArr['scientificName']) && $taxonArr['scientificName']){
-                $this->buildTaxonArr($taxonArr);
+                $taxonArr = $this->buildTaxonArr($taxonArr);
             }
             $sql = 'SELECT tid FROM taxa WHERE (sciname = "'.$taxonArr['sciname'].'") ';
             if($this->kingdomName) {
@@ -917,7 +903,21 @@ class TaxonomyHarvester extends Manager{
                     'rankid' => 10
                 );
             }
-            if($taxonArr['rankid'] > 140){
+            if((int)$taxonArr['rankid'] > 220){
+                $parArr = array(
+                    'sciname' => $taxonArr['unitname1'].' '.$taxonArr['unitname2'],
+                    'taxonRank' => 'species',
+                    'rankid' => 220
+                );
+            }
+            elseif((int)$taxonArr['rankid'] > 180){
+                $parArr = array(
+                    'sciname' => $taxonArr['unitname1'],
+                    'taxonRank' => 'genus',
+                    'rankid' => 180
+                );
+            }
+            elseif((int)$taxonArr['rankid'] > 140){
                 $familyStr = $this->defaultFamily;
                 if(isset($taxonArr['family']) && $taxonArr['family']) {
                     $familyStr = $taxonArr['family'];
@@ -937,25 +937,11 @@ class TaxonomyHarvester extends Manager{
                     $rs->free();
                 }
             }
-            if($taxonArr['rankid'] > 180){
-                $parArr = array(
-                    'sciname' => $taxonArr['unitname1'],
-                    'taxonRank' => 'genus',
-                    'rankid' => 180
-                );
-            }
-            if($taxonArr['rankid'] > 220){
-                $parArr = array(
-                    'sciname' => $taxonArr['unitname1'].' '.$taxonArr['unitname2'],
-                    'taxonRank' => 'species',
-                    'rankid' => 220
-                );
-            }
         }
         return $parArr;
     }
 
-	public function buildTaxonArr(&$taxonArr): void
+	public function buildTaxonArr($taxonArr): array
 	{
 		if(is_array($taxonArr)){
 			$rankid = array_key_exists('rankid', $taxonArr)?$taxonArr['rankid']:0;
@@ -967,6 +953,7 @@ class TaxonomyHarvester extends Manager{
 				$taxonArr = array_merge((new TaxonomyUtilities)->parseScientificName($sciname,$rankid),$taxonArr);
 			}
 		}
+		return $taxonArr;
 	}
 
 	public function getCloseMatch($taxonStr): array
@@ -1060,7 +1047,8 @@ class TaxonomyHarvester extends Manager{
 		return $retArr;
 	}
 
-	public function getTid($taxonArr){
+	public function getTid($taxonArr): int
+    {
 		$tid = 0;
 		if(isset($taxonArr['sciname']) && $taxonArr['sciname']){
 			$sciname = $taxonArr['sciname'];
@@ -1072,66 +1060,65 @@ class TaxonomyHarvester extends Manager{
 				$tidArr[$r->tid]['rankid'] = $r->rankid;
 			}
 			$rs->free();
-			if(!$tidArr) {
-				return 0;
-			}
-			if(count($tidArr) === 1){
-				$tid = key($tidArr);
-			}
-			elseif(count($tidArr) > 1){
-				$sqlPar = 'SELECT DISTINCT e.tid, t.tid AS parenttid, t.sciname, t.rankid '.
-					'FROM taxaenumtree e INNER JOIN taxa t ON e.parenttid = t.tid '.
-					'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (e.tid IN('.implode(',',array_keys($tidArr)).')) AND (t.rankid IN (10,140)) ';
-				$rsPar = $this->conn->query($sqlPar);
-				while($rPar = $rsPar->fetch_object()){
-					if($r->rankid === 10) {
-						$tidArr[$rPar->tid]['kingdom'] = $rPar->sciname;
-					}
-					elseif($r->rankid === 140) {
-						$tidArr[$rPar->tid]['family'] = $rPar->sciname;
-					}
-				}
-				$rsPar->free();
+			if($tidArr) {
+                if(count($tidArr) === 1){
+                    $tid = key($tidArr);
+                }
+                elseif(count($tidArr) > 1){
+                    $sqlPar = 'SELECT DISTINCT e.tid, t.tid AS parenttid, t.sciname, t.rankid '.
+                        'FROM taxaenumtree e INNER JOIN taxa t ON e.parenttid = t.tid '.
+                        'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (e.tid IN('.implode(',',array_keys($tidArr)).')) AND (t.rankid IN (10,140)) ';
+                    $rsPar = $this->conn->query($sqlPar);
+                    while($rPar = $rsPar->fetch_object()){
+                        if($r->rankid === 10) {
+                            $tidArr[$rPar->tid]['kingdom'] = $rPar->sciname;
+                        }
+                        elseif($r->rankid === 140) {
+                            $tidArr[$rPar->tid]['family'] = $rPar->sciname;
+                        }
+                    }
+                    $rsPar->free();
 
-				$goodArr = array();
-				foreach($tidArr as $t => $tArr){
-					$goodArr[$t] = 0;
-					if(isset($taxonArr['rankid']) && $taxonArr['rankid'] && $tArr['rankid'] === $taxonArr['rankid']) {
-						$goodArr[$t] = 1;
-					}
-					if(isset($tArr['family']) && $tArr['family']){
-						if(isset($taxonArr['family']) && $taxonArr['family']){
-							if(strtolower($tArr['family']) === strtolower($taxonArr['family'])){
-								$goodArr[$t] += 2;
-							}
-						}
-						elseif($this->defaultFamily){
-							if(strtolower($tArr['family']) === strtolower($this->defaultFamily)){
-								$goodArr[$t] += 2;
-							}
-						}
-					}
-					if($this->kingdomName && isset($tArr['kingdom']) && $tArr['kingdom'] && strtolower($tArr['kingdom']) === strtolower($this->kingdomName)) {
-						$goodArr[$t] += 2;
-					}
-					if(isset($taxonArr['author']) && $taxonArr['author']){
-						$author1 = str_replace(array(' ','.'), '', $taxonArr['author']);
-						$author2 = str_replace(array(' ','.'), '', $tArr['author']);
-						similar_text($author1, $author2, $percent);
-						if($author1 === $author2) {
-							$goodArr[$t] += 2;
-						}
-						elseif($percent > 80) {
-							++$goodArr[$t];
-						}
-					}
-				}
-				asort($goodArr);
-				end($goodArr);
-				$tid = key($goodArr);
+                    $goodArr = array();
+                    foreach($tidArr as $t => $tArr){
+                        $goodArr[$t] = 0;
+                        if(isset($taxonArr['rankid']) && $taxonArr['rankid'] && $tArr['rankid'] === $taxonArr['rankid']) {
+                            $goodArr[$t] = 1;
+                        }
+                        if(isset($tArr['family']) && $tArr['family']){
+                            if(isset($taxonArr['family']) && $taxonArr['family']){
+                                if(strtolower($tArr['family']) === strtolower($taxonArr['family'])){
+                                    $goodArr[$t] += 2;
+                                }
+                            }
+                            elseif($this->defaultFamily){
+                                if(strtolower($tArr['family']) === strtolower($this->defaultFamily)){
+                                    $goodArr[$t] += 2;
+                                }
+                            }
+                        }
+                        if($this->kingdomName && isset($tArr['kingdom']) && $tArr['kingdom'] && strtolower($tArr['kingdom']) === strtolower($this->kingdomName)) {
+                            $goodArr[$t] += 2;
+                        }
+                        if(isset($taxonArr['author']) && $taxonArr['author']){
+                            $author1 = str_replace(array(' ','.'), '', $taxonArr['author']);
+                            $author2 = str_replace(array(' ','.'), '', $tArr['author']);
+                            similar_text($author1, $author2, $percent);
+                            if($author1 === $author2) {
+                                $goodArr[$t] += 2;
+                            }
+                            elseif($percent > 80) {
+                                ++$goodArr[$t];
+                            }
+                        }
+                    }
+                    asort($goodArr);
+                    end($goodArr);
+                    $tid = key($goodArr);
+                }
 			}
 		}
-		return $tid;
+		return (int)$tid;
 	}
 
 	private function getTidAccepted($tid): int
@@ -1140,13 +1127,13 @@ class TaxonomyHarvester extends Manager{
 		$sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$tid.')';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retTid = $r->tidaccepted;
+			$retTid = (int)$r->tidaccepted;
 		}
 		$rs->free();
 		return $retTid;
 	}
 
-	public function setTaxAuthId($id): void
+    public function setTaxAuthId($id): void
 	{
 		if(is_numeric($id)){
 			$this->taxAuthId = $id;
