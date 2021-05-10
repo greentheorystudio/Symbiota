@@ -1,4 +1,27 @@
 <?php
+/** @var int $taxonRank */
+/** @var string $editButtonDiv */
+/** @var string $penaButtonsDiv */
+/** @var string $penaScinameHeaderDiv */
+/** @var string $ambiguousDiv */
+/** @var string $webLinksDiv */
+/** @var string $taxonNotesDiv */
+/** @var string $taxonSourcesDiv */
+/** @var string $familyDiv */
+/** @var string $penaVernacularsDiv */
+/** @var string $synonymsDiv */
+/** @var string $centralImageDiv */
+/** @var string $penaCentralImageDiv */
+/** @var string $penaDescTabsDiv */
+/** @var string $mapThumbDiv */
+/** @var string $penaImgDiv */
+/** @var string $penaImgTabDiv */
+/** @var string $footerLinksDiv */
+/** @var string $projectDiv */
+/** @var string $imgBoxDiv */
+/** @var string $taxonValue */
+/** @var string $notFoundDiv */
+
 $displayingChildren = array_key_exists('displaychildren',$_REQUEST)?$_REQUEST['displaychildren']: 0;
 
 include('includes/config/taxaProfileElementsDefault.php');
@@ -14,25 +37,25 @@ $footerRowElements = Array();
 
 if($taxonRank){
     if($taxonRank > 180 && !$displayingChildren){
-        $topRowElements = Array($editButtonDiv,$scinameHeaderDiv,$ambiguousDiv,$webLinksDiv);
-        $leftColumnElements = Array($familyDiv,$vernacularsDiv,$synonymsDiv,$centralImageDiv);
-        $rightColumnElements = Array($descTabsDiv);
-        $bottomRowElements = Array($mapThumbDiv,$imgDiv,$imgTabDiv);
-        $footerRowElements = Array($wisFloraFooterLinksDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv,$editButtonDiv);
+        $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$penaCentralImageDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
+        $bottomRowElements = Array($penaImgDiv,$penaImgTabDiv);
+        $footerRowElements = Array();
     }
     elseif($taxonRank === 180 || $displayingChildren){
-        $topRowElements = Array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$editButtonDiv);
+        $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
-        $footerRowElements = Array($wisFloraFooterLinksDiv);
+        $footerRowElements = Array();
     }
     else{
-        $topRowElements = Array();
-        $leftColumnElements = Array($scinameHeaderDiv,$familyDiv,$projectDiv,$centralImageDiv);
-        $rightColumnElements = Array($editButtonDiv,$descTabsDiv);
+        $topRowElements = Array($penaScinameHeaderDiv,$editButtonDiv);
+        $leftColumnElements = Array($penaVernacularsDiv,$penaButtonsDiv,$centralImageDiv);
+        $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($imgBoxDiv);
-        $footerRowElements = Array($wisFloraFooterLinksDiv);
+        $footerRowElements = Array();
     }
 }
 elseif($taxonValue){
@@ -41,4 +64,3 @@ elseif($taxonValue){
 else{
     $topRowElements = Array('ERROR!');
 }
-?>
