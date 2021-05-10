@@ -1,4 +1,27 @@
 <?php
+/** @var int $taxonRank */
+/** @var string $editButtonDiv */
+/** @var string $penaButtonsDiv */
+/** @var string $penaScinameHeaderDiv */
+/** @var string $ambiguousDiv */
+/** @var string $webLinksDiv */
+/** @var string $taxonNotesDiv */
+/** @var string $taxonSourcesDiv */
+/** @var string $familyDiv */
+/** @var string $penaVernacularsDiv */
+/** @var string $synonymsDiv */
+/** @var string $centralImageDiv */
+/** @var string $penaCentralImageDiv */
+/** @var string $penaDescTabsDiv */
+/** @var string $mapThumbDiv */
+/** @var string $penaImgDiv */
+/** @var string $penaImgTabDiv */
+/** @var string $footerLinksDiv */
+/** @var string $projectDiv */
+/** @var string $imgBoxDiv */
+/** @var string $taxonValue */
+/** @var string $notFoundDiv */
+
 $displayingChildren = array_key_exists('displaychildren',$_REQUEST)?$_REQUEST['displaychildren']: 0;
 
 include('includes/config/taxaProfileElementsDefault.php');

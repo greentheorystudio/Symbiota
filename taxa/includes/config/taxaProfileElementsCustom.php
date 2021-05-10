@@ -297,7 +297,7 @@ if($descArr = $taxonManager->getDescriptions(true)){
                             echo $stmt. ' ';
                         }
                         ?>
-                    </div style="clear:both;">
+                    </div>
                 </div>
                 <?php
             }
