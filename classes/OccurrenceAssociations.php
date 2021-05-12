@@ -5,7 +5,7 @@ include_once(__DIR__ . '/GPoint.php');
 class OccurrenceAssociations extends Manager {
 
  	public function __construct(){
-		parent::__construct(null);
+		parent::__construct();
  	}
 
 	public function parseAssociatedTaxa($collid = 0): void
