@@ -588,7 +588,7 @@ class ChecklistManager {
 
 	public function setThesFilter($filt): void
 	{
-		$this->thesFilter = $filt;
+		$this->thesFilter = (int)$filt;
 	}
 
 	public function getThesFilter(): int

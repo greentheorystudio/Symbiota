@@ -200,4 +200,16 @@ class TaxonomyUtilities {
 
 		return $status;
 	}
+
+    public function getTidAccepted($tid,$taxAuthId): int
+    {
+        $retTid = 0;
+        $sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$taxAuthId.') AND (tid = '.$tid.')';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $retTid = (int)$r->tidaccepted;
+        }
+        $rs->free();
+        return $retTid;
+    }
 }

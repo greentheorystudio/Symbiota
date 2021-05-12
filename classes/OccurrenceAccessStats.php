@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Manager.php');
 
 class OccurrenceAccessStats {
 
@@ -310,7 +309,8 @@ class OccurrenceAccessStats {
 		return $this->errorMessage;
 	}
 
-	private function cleanInStr($str){
+	private function cleanInStr($str): string
+    {
 		$newStr = trim($str);
 		if($newStr){
 			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
