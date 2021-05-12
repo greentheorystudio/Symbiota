@@ -16,6 +16,10 @@ $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_L
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 $showAllImages = array_key_exists('allimages',$_REQUEST);
 
+if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
+    $taxonValue = htmlspecialchars($_REQUEST['quicksearchtaxon']);
+}
+
 $taxonManager = new TaxonProfileManager();
 if($taxAuthId || $taxAuthId === 0) {
     $taxonManager->setTaxAuthId($taxAuthId);

@@ -61,7 +61,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Cleaning Tools Index</a> &gt;&gt;
+		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
 		<b>Coordinate Political Units Validator</b>
 	</div>
 
@@ -70,7 +70,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
