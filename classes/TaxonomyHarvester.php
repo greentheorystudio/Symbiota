@@ -1004,7 +1004,7 @@ class TaxonomyHarvester extends Manager{
 				if(!$retArr){
 					$searchStr = substr($unitname1,0,4).'%';
 					$searchStr .= ' '.substr($unitname2,0,4).'%';
-					if(count($unitname3) > 2) {
+					if($unitname3 && count($unitname3) > 2) {
 						$searchStr .= ' ' . substr($unitname3, 0, 5) . '%';
 					}
 					$sql = 'SELECT tid, sciname FROM taxa WHERE (sciname LIKE "'.$searchStr.'") ';

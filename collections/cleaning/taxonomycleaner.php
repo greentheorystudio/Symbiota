@@ -97,11 +97,11 @@ elseif($activeCollArr){
 					data: { collid: "<?php echo $collid; ?>", oldsciname: oldName, tid: targetTid, idq: idQualifier }
 				}).done(function( res ) {
 					if(Number(res) === 1){
-						$("#remapSpan-"+msgCode).text(" >>> Taxon remapped successfully!");
+						$("#remapSpan-"+msgCode).text(" >>> Occurrences remapped successfully!");
 						$("#remapSpan-"+msgCode).css('color', 'green');
 					}
 					else{
-						$("#remapSpan-"+msgCode).text(" >>> Taxon remapping failed!");
+						$("#remapSpan-"+msgCode).text(" >>> Occurrence remapping failed!");
 						$("#remapSpan-"+msgCode).css('color', 'orange');
 					}
 				});
