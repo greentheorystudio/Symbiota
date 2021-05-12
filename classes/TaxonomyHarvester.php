@@ -2,10 +2,12 @@
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/EOLUtilities.php');
+include_once(__DIR__ . '/Utilities.php');
 
 class TaxonomyHarvester extends Manager{
 
     private $taxonomicResource = '';
+    private $tidAccepted = 0;
     private $taxAuthId = 1;
     private $defaultAuthor;
     private $defaultFamily;
@@ -24,7 +26,7 @@ class TaxonomyHarvester extends Manager{
 		if($term){
 			$this->fullyResolved = true;
 			if(!$this->taxonomicResource){
-				$this->logOrEcho('External taxonomic data source not selected ',1);
+				echo '<li style="margin-left:15px;">External taxonomic data source not selected</li>';
 				return false;
 			}
 			$this->parseCleanCheck($term);
@@ -37,19 +39,19 @@ class TaxonomyHarvester extends Manager{
     {
         if($term) {
             if($resourceKey === 'col'){
-                $this->logOrEcho('Checking <b>Catalog of Life</b>...',1);
+                echo '<li style="margin-left:15px;">Checking <b>Catalog of Life</b>...</li>';
                 $this->addColTaxon($term);
             }
             elseif($resourceKey === 'worms'){
-                $this->logOrEcho('Checking <b>WoRMS</b>...',1);
+                echo '<li style="margin-left:15px;">Checking <b>WoRMS</b>...</li>';
                 $this->addWormsTaxon($term);
             }
             elseif($resourceKey === 'tropicos'){
-                $this->logOrEcho('Checking <b>TROPICOS</b>...',1);
+                echo '<li style="margin-left:15px;">Checking <b>TROPICOS</b>...</li>';
                 $this->addTropicosTaxon($term);
             }
             elseif($resourceKey === 'eol'){
-                $this->logOrEcho('Checking <b>EOL</b>...',1);
+                echo '<li style="margin-left:15px;">Checking <b>EOL</b>...</li>';
                 $this->addEolTaxon($term);
             }
 		}
@@ -65,7 +67,7 @@ class TaxonomyHarvester extends Manager{
 				$parentTid = $this->getTid($parentArr);
 				if($parentTid){
 					$taxonArr['parent']['tid'] = $parentTid;
-					$parentTidAccepted = $this->getTidAccepted($parentTid);
+					$parentTidAccepted = (new TaxonomyUtilities)->getTidAccepted($parentTid,$this->taxAuthId);
 					if($parentTidAccepted === $parentTid){
 						$tid = $this->loadNewTaxon($taxonArr);
 					}
@@ -77,7 +79,7 @@ class TaxonomyHarvester extends Manager{
 		}
 	}
 
-    private function addColTaxon($sciName): int
+    private function addColTaxon($sciName,$singleNode = null): int
     {
         $tid = 0;
         if($sciName && $sciName !== 'Biota'){
@@ -85,7 +87,7 @@ class TaxonomyHarvester extends Manager{
             $adjustedName = str_ireplace(array('?'), ' ', $adjustedName);
             $url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&name='.str_replace(' ','%20',$adjustedName);
             //echo $url.'<br/>';
-            $retArr = $this->getContentString($url);
+            $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
             $resultArr = json_decode($content,true);
             $numResults = (int)$resultArr['number_of_results_returned'];
@@ -100,19 +102,19 @@ class TaxonomyHarvester extends Manager{
                         }
                         $msg = '<a href="'.$colPrefix.$resultArr['results'][$k]['id'].'" target="_blank">';
                         $msg .= $sciName.'</a> skipped due to not matching targeted kingdom: '.$this->kingdomName.' (!= '.$taxonKingdom.')';
-                        $this->logOrEcho($msg,2);
+                        echo '<li style="margin-left:30px;">'.$msg.'</li>';
                         $loadTaxon = false;
                     }
                     if(isset($tArr['author']) && $tArr['author'] && stripos($tArr['author'], 'nom. illeg.') !== false) {
                         $loadTaxon = false;
                     }
                     if($loadTaxon){
-                        $tid = $this->addColTaxonByResult($resultArr['result'][$k]);
+                        $tid = $this->addColTaxonByResult($resultArr['result'][$k],$singleNode);
                     }
                 }
             }
             else{
-                $this->logOrEcho('Taxon not found',2);
+                echo '<li style="margin-left:30px;">Taxon not found</li>';
             }
         }
         return $tid;
@@ -124,7 +126,7 @@ class TaxonomyHarvester extends Manager{
         if($id){
             $url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&id='.$id;
             //echo $url.'<br/>';
-            $retArr = $this->getContentString($url);
+            $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
             $resultArr = json_decode($content,true);
             if(isset($resultArr['result'][0])){
@@ -140,7 +142,7 @@ class TaxonomyHarvester extends Manager{
         if($id){
             $url = 'http://webservice.catalogueoflife.org/col/webservice?response=full&format=json&id='.$id;
             //echo $url.'<br/>';
-            $retArr = $this->getContentString($url);
+            $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
             $resultArr = json_decode($content,true);
             if(isset($resultArr['result'][0])){
@@ -148,16 +150,16 @@ class TaxonomyHarvester extends Manager{
                 $tid = $this->addColTaxonByResult($baseArr);
             }
             else{
-                $this->logOrEcho('Targeted taxon return does not exist(2)',2);
+                echo '<li style="margin-left:30px;">Targeted taxon return does not exist</li>';
             }
         }
         else{
-            $this->logOrEcho('ERROR harvesting COL name: null input identifier',1);
+            echo '<li style="margin-left:15px;">ERROR harvesting COL name: null input identifier</li>';
         }
         return $tid;
     }
 
-    private function addColTaxonByResult($baseArr): int
+    private function addColTaxonByResult($baseArr,$singleNode = null): int
     {
         $taxonArr = array();
         $tidAccepted = 0;
@@ -177,7 +179,7 @@ class TaxonomyHarvester extends Manager{
                 else{
                     $parentName = '';
                     $parentId = 0;
-                    if(isset($baseArr['classification']) && is_array($baseArr['classification'])){
+                    if(!$singleNode && isset($baseArr['classification']) && is_array($baseArr['classification'])){
                         $higherTaxArr = array_reverse($baseArr['classification']);
                         foreach($higherTaxArr as $htArr){
                             $taxArr = $this->getColNode($htArr);
@@ -203,10 +205,22 @@ class TaxonomyHarvester extends Manager{
                             }
                         }
                     }
+                    elseif(isset($baseArr['accepted_name']['classification']) && $baseArr['name_status'] === 'synonym'){
+                        $parentArr = current($baseArr['accepted_name']['classification']);
+                        $parentId = $this->addColTaxon($parentArr['name'],true);
+                        if(!$parentId){
+                            $taxonArr['family'] = $this->getColParent($baseArr,'Family');
+                            $parentArr = $this->buildTaxonArr($parentArr);
+                            $parentId = $this->loadNewTaxon($parentArr);
+                        }
+                        if($parentId){
+                            $parentName = $parentArr['name'];
+                        }
+                    }
                     else{
                         $parentArr = $this->getParentArr($taxonArr);
-                        if($parentArr){
-                            $parentId = $this->addColTaxon($parentArr['sciname']);
+                        if($parentArr && $parentArr['sciname'] !== $baseArr['name']){
+                            $parentId = $this->addColTaxon($parentArr['sciname'],true);
                             if(!$parentId){
                                 $taxonArr['family'] = $this->getColParent($baseArr,'Family');
                                 $parentArr = $this->buildTaxonArr($parentArr);
@@ -227,7 +241,7 @@ class TaxonomyHarvester extends Manager{
             }
         }
         else{
-            $this->logOrEcho('ERROR harvesting COL name: null result',1);
+            echo '<li style="margin-left:15px;">ERROR harvesting COL name: null result</li>';
         }
         return $this->loadNewTaxon($taxonArr, $tidAccepted);
     }
@@ -295,14 +309,14 @@ class TaxonomyHarvester extends Manager{
     {
 		$tid = 0;
 		$url = 'http://www.marinespecies.org/rest/AphiaIDByName/'.rawurlencode($sciName).'?marine_only=false';
-		$retArr = $this->getContentString($url);
+		$retArr = (new Utilities)->getContentString($url);
 		$id = $retArr['str'];
 		if(is_numeric($id)){
-			$this->logOrEcho('Taxon found within WoRMS',2);
+			echo '<li style="margin-left:30px;">Taxon found within WoRMS</li>';
 			$tid = $this->addWormsTaxonByID($id);
 		}
 		else{
-			$this->logOrEcho('Taxon not found',2);
+			echo '<li style="margin-left:30px;">Taxon not found</li>';
 		}
 		return $tid;
 	}
@@ -310,13 +324,13 @@ class TaxonomyHarvester extends Manager{
 	private function addWormsTaxonByID($id): int
     {
 		if(!is_numeric($id)){
-			$this->logOrEcho('ERROR harvesting from worms: illegal identifier: '.$id,1);
+			echo '<li style="margin-left:15px;">ERROR harvesting from worms: illegal identifier: '.$id.'</li>';
 			return 0;
 		}
 		$taxonArr= array();
 		$acceptedTid = 0;
 		$url = 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$id;
-		if($resultStr = $this->getWormsReturnStr($this->getContentString($url),$url)){
+		if($resultStr = $this->getWormsReturnStr((new Utilities)->getContentString($url),$url)){
 			$taxonArr= $this->getWormsNode(json_decode($resultStr,true));
 			if($taxonArr['acceptance'] === 'unaccepted' && isset($taxonArr['validID'])){
 				$acceptedTid = $this->addWormsTaxonByID($taxonArr['validID']);
@@ -326,7 +340,7 @@ class TaxonomyHarvester extends Manager{
 			}
 			else{
 				$url = 'http://www.marinespecies.org/rest/AphiaClassificationByAphiaID/'.$id;
-				if($parentStr = $this->getWormsReturnStr($this->getContentString($url),$url)){
+				if($parentStr = $this->getWormsReturnStr((new Utilities)->getContentString($url),$url)){
 					$parentArr = json_decode($parentStr,true);
 					if(($parentID = $this->getWormParentID($parentArr, $id)) && $parentTid = $this->addWormsTaxonByID($parentID)) {
 						$taxonArr['parent'] = array('tid' => $parentTid);
@@ -344,10 +358,10 @@ class TaxonomyHarvester extends Manager{
 			$resultStr = $retArr['str'];
 		}
 		elseif($retArr['code'] === 204){
-			$this->logOrEcho('Identifier not found within WoRMS: '.$url,2);
+			echo '<li style="margin-left:30px;">Identifier not found within WoRMS: '.$url.'</li>';
 		}
 		else{
-			$this->logOrEcho('ERROR returning WoRMS object (code: '.$retArr['code'].'): '.$url,1);
+			echo '<li style="margin-left:15px;">ERROR returning WoRMS object (code: '.$retArr['code'].'): '.$url.'</li>';
 		}
 		return $resultStr;
 	}
@@ -423,7 +437,7 @@ class TaxonomyHarvester extends Manager{
                 $id = 0;
                 foreach($resultArr as $k => $arr){
                     if(array_key_exists('Error', $arr)){
-                        $this->logOrEcho('Taxon not found (code:1)',2);
+                        echo '<li style="margin-left:30px;">Taxon not found (code:1)</li>';
                         return;
                     }
                     if(!array_key_exists('NomenclatureStatusID', $arr) || (int)$arr['NomenclatureStatusID'] === 1){
@@ -432,19 +446,19 @@ class TaxonomyHarvester extends Manager{
                     }
                 }
                 if($id){
-                    $this->logOrEcho('Taxon found within TROPICOS',2);
+                    echo '<li style="margin-left:30px;">Taxon found within TROPICOS</li>';
                     $this->addTropicosTaxonByID($id);
                 }
                 else{
-                    $this->logOrEcho('Taxon not found (code:2)',2);
+                    echo '<li style="margin-left:30px;">Taxon not found (code:2)</li>';
                 }
             }
             else{
-                $this->logOrEcho('ERROR: unable to connect to TROPICOS web services ('.$url.')',1);
+                echo '<li style="margin-left:15px;">ERROR: unable to connect to TROPICOS web services ('.$url.')</li>';
             }
 		}
 		else{
-            $this->logOrEcho('Error: TROPICOS API key required! Contact portal manager to establish key for portal',1);
+            echo '<li style="margin-left:15px;">Error: TROPICOS API key required! Contact portal manager to establish key for portal</li>';
         }
 	}
 
@@ -579,11 +593,11 @@ class TaxonomyHarvester extends Manager{
 				$tid = $this->addEolTaxonById($searchRet['id'], $searchSyns, $term);
 			}
 			else{
-				$this->logOrEcho('Taxon not found',2);
+				echo '<li style="margin-left:30px;">Taxon not found</li>';
 			}
 		}
 		else{
-			$this->logOrEcho('EOL web services are not available ',1);
+			echo '<li style="margin-left:15px;">EOL web services are not available</li>';
 			return false;
 		}
 		return $tid;
@@ -620,39 +634,21 @@ class TaxonomyHarvester extends Manager{
 			}
 		}
 		else{
-			$this->logOrEcho('EOL web services are not available ',1);
+			echo '<li style="margin-left:15px;">EOL web services are not available</li>';
 		}
 		if($taxonArr) {
-			$this->logOrEcho('Taxon found within EOL', 2);
+			echo '<li style="margin-left:30px;">Taxon found within EOL</li>';
 		}
 		else{
-			$this->logOrEcho('Taxon ID not found ('.$eolTaxonId.')',2);
+			echo '<li style="margin-left:30px;">Taxon ID not found ('.$eolTaxonId.')</li>';
 		}
 		return $this->loadNewTaxon($taxonArr);
 	}
 
-	private function getContentString($url): array
-	{
-		$retArr = array();
-		if($url && $fh = fopen($url, 'rb')) {
-			stream_set_timeout($fh, 10);
-			$contentStr = '';
-			while($line = fread($fh, 1024)){
-				$contentStr .= trim($line);
-			}
-			fclose($fh);
-			$retArr['str'] = $contentStr;
-			$statusStr = $http_response_header[0];
-			if(preg_match( '#HTTP/[0-9.]+\s+(\d+)#',$statusStr, $out)){
-				$retArr['code'] = (int)$out[1];
-			}
-		}
-		return $retArr;
-	}
-
 	private function loadNewTaxon($taxonArr, $tidAccepted = null): int
     {
-		$newTid = 0;
+		$this->tidAccepted = 0;
+        $newTid = 0;
         if($taxonArr) {
             if((!isset($taxonArr['sciname']) || !$taxonArr['sciname']) && isset($taxonArr['scientificName']) && $taxonArr['scientificName']){
                 $taxonArr = $this->buildTaxonArr($taxonArr);
@@ -694,7 +690,7 @@ class TaxonomyHarvester extends Manager{
                         $newTid = (int)$this->conn->insert_id;
                     }
                     else{
-                        $this->logOrEcho('ERROR inserting '.$taxonArr['sciname'].': '.$this->conn->error,1);
+                        echo '<li style="margin-left:15px;">ERROR inserting '.$taxonArr['sciname'].': '.$this->conn->error.'</li>';
                     }
                 }
                 if($newTid){
@@ -723,19 +719,19 @@ class TaxonomyHarvester extends Manager{
                             $sqlHier = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
                                 'VALUES('.$newTid.','.$parentTid.','.$this->taxAuthId.')';
                             if(!$this->conn->query($sqlHier)){
-                                $this->logOrEcho('ERROR adding new tid to taxaenumtree (step 1): '.$this->conn->error,1);
+                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 1): '.$this->conn->error.'</li>';
                             }
                             $sqlHier2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) '.
                                 'SELECT '.$newTid.' AS tid, parenttid, taxauthid FROM taxaenumtree WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$parentTid.')';
                             if(!$this->conn->query($sqlHier2)){
-                                $this->logOrEcho('ERROR adding new tid to taxaenumtree (step 2): '.$this->conn->error,1);
+                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 2): '.$this->conn->error.'</li>';
                             }
                             $sqlKing = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
                                 'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
                                 'SET t.kingdomname = t2.sciname '.
                                 'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t.tid = '.$newTid.') AND (t2.rankid = 10)';
                             if(!$this->conn->query($sqlKing)){
-                                $this->logOrEcho('ERROR updating kingdom string: '.$this->conn->error,1);
+                                echo '<li style="margin-left:15px;">ERROR updating kingdom string: '.$this->conn->error.'</li>';
                             }
                             $taxonDisplay = $taxonArr['sciname'];
                             if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
@@ -749,12 +745,13 @@ class TaxonomyHarvester extends Manager{
                                 else{
                                     $accStr = 'synonym of taxon #'.$tidAccepted;
                                 }
+                                $this->tidAccepted = $tidAccepted;
                             }
-                            $this->logOrEcho('Taxon <b>'.$taxonDisplay.'</b> added to thesaurus as '.$accStr,1);
+                            echo '<li style="margin-left:15px;">Taxon <b>'.$taxonDisplay.'</b> added to thesaurus as '.$accStr.'</li>';
                         }
                     }
                     else{
-                        $this->logOrEcho('ERROR loading '.$taxonArr['sciname'].': unable to get parentTid',1);
+                        echo '<li style="margin-left:15px;">ERROR loading '.$taxonArr['sciname'].': unable to get parentTid</li>';
                     }
                 }
             }
@@ -773,7 +770,7 @@ class TaxonomyHarvester extends Manager{
                                 $acceptanceReason = $synArr['synreason'];
                             }
                             if($acceptanceReason === 'misspelling'){
-                                $this->logOrEcho('Name not added because it is marked as a misspelling',1);
+                                echo '<li style="margin-left:15px;">Name not added because it is marked as a misspelling</li>';
                                 $this->fullyResolved = false;
                             }
                             else{
@@ -790,7 +787,7 @@ class TaxonomyHarvester extends Manager{
                         $sqlVern = 'INSERT INTO taxavernaculars(tid,vernacularname,language) '.
                             'VALUES('.$newTid.',"'.$vernArr['vernacularName'].'","'.$vernArr['language'].'")';
                         if(!$this->conn->query($sqlVern)){
-                            $this->logOrEcho('ERROR loading vernacular '.$taxonArr['sciname'].': '.$this->conn->error,1);
+                            echo '<li style="margin-left:15px;">ERROR loading vernacular '.$taxonArr['sciname'].': '.$this->conn->error.'</li>';
                         }
                     }
                 }
@@ -815,19 +812,19 @@ class TaxonomyHarvester extends Manager{
                 $taxonArr['parent'] = $this->getParentArr($taxonArr);
             }
             if(!isset($taxonArr['sciname']) || !$taxonArr['sciname']){
-                $this->logOrEcho('ERROR loading '.$taxonArr['sciname'].': Input scientific name not defined',1);
+                echo '<li style="margin-left:15px;">ERROR loading '.$taxonArr['sciname'].': Input scientific name not defined</li>';
                 $retVal = false;
             }
             elseif(!isset($taxonArr['parent']) || !$taxonArr['parent']){
-                $this->logOrEcho('ERROR loading '.$taxonArr['sciname'].': Parent name not definable',1);
+                echo '<li style="margin-left:15px;">ERROR loading '.$taxonArr['sciname'].': Parent name not definable</li>';
                 $retVal = false;
             }
             elseif(!isset($taxonArr['unitname1']) || !$taxonArr['unitname1']){
-                $this->logOrEcho('ERROR loading '.$taxonArr['sciname'].': unitname1 not defined',1);
+                echo '<li style="margin-left:15px;">ERROR loading '.$taxonArr['sciname'].': unitname1 not defined</li>';
                 $retVal = false;
             }
             elseif(!isset($taxonArr['rankid']) || !$taxonArr['rankid']){
-                $this->logOrEcho('ERROR loading '.$taxonArr['sciname'].': rankid not defined',1);
+                echo '<li style="margin-left:15px;">ERROR loading '.$taxonArr['sciname'].': rankid not defined</li>';
                 $retVal = false;
             }
         }
@@ -911,8 +908,18 @@ class TaxonomyHarvester extends Manager{
                 );
             }
             elseif((int)$taxonArr['rankid'] > 180){
+                $genusName = '';
+                if(strpos($taxonArr['unitname1'], ' ') !== false){
+                    $genusNameArr = explode(' ', $taxonArr['unitname1']);
+                    if($genusNameArr){
+                        $genusName = $genusNameArr[0];
+                    }
+                }
+                else{
+                    $genusName = $taxonArr['unitname1'];
+                }
                 $parArr = array(
-                    'sciname' => $taxonArr['unitname1'],
+                    'sciname' => $genusName,
                     'taxonRank' => 'genus',
                     'rankid' => 180
                 );
@@ -1121,16 +1128,9 @@ class TaxonomyHarvester extends Manager{
 		return (int)$tid;
 	}
 
-	private function getTidAccepted($tid): int
+	public function getTidAccepted(): int
     {
-		$retTid = 0;
-		$sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$tid.')';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retTid = (int)$r->tidaccepted;
-		}
-		$rs->free();
-		return $retTid;
+		return $this->tidAccepted;
 	}
 
     public function setTaxAuthId($id): void
@@ -1171,7 +1171,7 @@ class TaxonomyHarvester extends Manager{
             $this->taxonomicResource = $resource;
         }
 		else{
-            $this->logOrEcho('ERROR: Taxonomic Data Source is not defined');
+            echo '<li>ERROR: Taxonomic Data Source is not defined</li>';
         }
 	}
 

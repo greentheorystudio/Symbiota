@@ -57,7 +57,7 @@ class TaxonomyCleaner extends Manager{
 			$isTaxonomyEditor = true;
 		}
 		$endIndex = 0;
-		$this->logOrEcho('Starting taxa check ');
+		echo '<li>Starting taxa check</li>';
 		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
 		if($startIndex) {
 			$sql .= 'AND (sciname > "' . $this->cleanInStr($startIndex) . '") ';
@@ -76,8 +76,6 @@ class TaxonomyCleaner extends Manager{
                 }
             }
             $taxonHarvester->setTaxonomicResources($taxResource);
-            $taxonHarvester->setVerboseMode(2);
-            $this->setVerboseMode(2);
             $taxaAdded = false;
             $taxaCnt = 1;
             $itemCnt = 0;
@@ -85,7 +83,7 @@ class TaxonomyCleaner extends Manager{
                 $editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
                     '/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
                     $this->collid.'\'); return false;">'.$r->cnt.' '.((int)$r->cnt === 1?'occurrence':'occurrences').' <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
-                $this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
+                echo '<li><div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div></li>';
                 if($r->family) {
                     $taxonHarvester->setDefaultFamily($r->family);
                 }
@@ -99,7 +97,7 @@ class TaxonomyCleaner extends Manager{
                 if($taxonArr && $taxonArr['sciname']){
                     $sciname = $taxonArr['sciname'];
                     if($sciname !== $r->sciname){
-                        $this->logOrEcho('Interpreted base name: <b>'.$sciname.'</b>',1);
+                        echo '<li style="margin-left:15px;">Interpreted base name: <b>'.$sciname.'</b></li>';
                     }
                     $tid = $taxonHarvester->getTid($taxonArr);
                 }
@@ -109,14 +107,14 @@ class TaxonomyCleaner extends Manager{
                         $manualCheck = false;
                     }
                     else{
-                        $this->logOrEcho('Taxon not fully resolved...',1);
+                        echo '<li style="margin-left:15px;">Taxon not fully resolved...</li>';
                     }
                     $taxonArr = (new TaxonomyUtilities)->parseScientificName($sciname,$this->conn);
                     $tid = $taxonHarvester->getTid($taxonArr);
                 }
                 if($taxonArr && $taxonArr['sciname'] && $tid && $this->autoClean) {
                     $this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, ($taxonArr['identificationqualifier'] ?? ''));
-                    $this->logOrEcho('Occurrences mapped to <b>'.$sciname.'</b>',1);
+                    echo '<li style="margin-left:15px;">Occurrences mapped to '.($taxonHarvester->getTidAccepted()?'taxon #'.$taxonHarvester->getTidAccepted():'<b>'.$sciname.'</b>').'</li>';
                     $manualCheck = false;
                 }
                 if($manualCheck){
@@ -124,7 +122,7 @@ class TaxonomyCleaner extends Manager{
                     if($isTaxonomyEditor){
                         $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
                     }
-                    $this->logOrEcho('Checking close matches in thesaurus'.$thesLink.'...',1);
+                    echo '<li style="margin-left:15px;">Checking close matches in thesaurus'.$thesLink.'...</li>';
                     if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
                         $strTestArr = array();
                         for($x=1; $x <= 3; $x++){
@@ -145,13 +143,13 @@ class TaxonomyCleaner extends Manager{
                                 $echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
                                     '<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
                                     '<span id="remapSpan-'.$itemCnt.'"></span></span>';
-                                $this->logOrEcho($echoStr,2);
+                                echo '<li style="margin-left:30px;">'.$echoStr.'</li>';
                                 $itemCnt++;
                             }
 						}
 					}
 					else{
-						$this->logOrEcho('No close matches found',2);
+						echo '<li style="margin-left:30px;">No close matches found</li>';
 					}
 					$manStr = 'Manual search: ';
 					$manStr .= '<form onsubmit="return false" style="display:inline;">';
@@ -160,7 +158,7 @@ class TaxonomyCleaner extends Manager{
 					$manStr .= '<button onclick="batchUpdate(this.form,\''.$r->sciname.'\','.$taxaCnt.')">Remap</button>';
 					$manStr .= '<span id="remapSpan-'.$taxaCnt.'-c"></span>';
 					$manStr .= '</form>';
-					$this->logOrEcho($manStr,2);
+					echo '<li style="margin-left:30px;">'.$manStr.'</li>';
 				}
 				$taxaCnt++;
 				$endIndex = preg_replace("/[^A-Za-z\-. ]/", '', $r->sciname );
@@ -172,7 +170,7 @@ class TaxonomyCleaner extends Manager{
 			}
 		}
 
-		$this->logOrEcho('<b>Done with taxa check </b>');
+		echo '<li><b>Done with taxa check </b></li>';
 		return $endIndex;
 	}
 
