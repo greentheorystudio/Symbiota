@@ -211,7 +211,7 @@ if(is_array($imgObj)){
 $url = '';
 $mAnchor = '';
 if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
-    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
+    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',false)";
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
     }
