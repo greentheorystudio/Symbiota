@@ -9,13 +9,14 @@ ini_set('max_execution_time', 180);
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
+$clusterPoints = !(array_key_exists('clusterpoints', $_REQUEST) && $_REQUEST['clusterpoints'] === 'false');
 
 $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
 
-if(strpos($windowType,'input') === 0){
+if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
     if(strpos($windowType, '-') !== false){
         $windowTypeArr = explode('-',$windowType);
@@ -90,7 +91,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=1" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210414" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210512" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -235,23 +236,26 @@ $dbArr = array();
             });
 
             <?php
+            if(!$clusterPoints){
+                echo 'deactivateClustering();';
+            }
             if($inputWindowMode){
                 echo 'loadInputParentParams();';
             }
             if($queryId || $stArrJson){
-            if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
-            }
-            ?>
-            searchTermsArr = getSearchTermsArr();
-            setInputFormBySearchTermsArr();
-            createShapesFromSearchTermsArr();
-            setCollectionForms();
-            loadPoints();
-            <?php
+                if($stArrJson){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                searchTermsArr = getSearchTermsArr();
+                setInputFormBySearchTermsArr();
+                createShapesFromSearchTermsArr();
+                setCollectionForms();
+                loadPoints();
+                <?php
             }
             ?>
             spatialModuleInitialising = false;
