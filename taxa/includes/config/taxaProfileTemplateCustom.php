@@ -38,7 +38,7 @@ $footerRowElements = Array();
 if($taxonRank){
     if($taxonRank > 180 && !$displayingChildren){
         $topRowElements = Array($penaScinameHeaderDiv,$ambiguousDiv,$editButtonDiv);
-        $leftColumnElements = Array($familyDiv,$penaVernacularsDiv,$penaButtonsDiv,$penaCentralImageDiv);
+        $leftColumnElements = Array($familyDiv,$penaVernacularsDiv,$synonymsDiv,$penaButtonsDiv,$penaCentralImageDiv);
         $rightColumnElements = Array($penaDescTabsDiv);
         $bottomRowElements = Array($penaImgDiv,$penaImgTabDiv);
         $footerRowElements = Array();
