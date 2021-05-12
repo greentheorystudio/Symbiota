@@ -366,7 +366,6 @@ div.spptab{
 
 #scinameheader{
 	display:		block;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	font-size:		26px;
 }
 
@@ -462,7 +461,6 @@ div.spptab{
 #ambiguous{
 	display:		block;
 	float:			left;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	font-weight:	bold;
 	clear:			both;
 }
@@ -512,7 +510,6 @@ div.spptab{
 	margin-left:	10px;
 	margin-top: 0;
 	margin-bottom:0;
-	font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;
 	font-size:		22px;
 }
 
