@@ -62,51 +62,6 @@ class TaxonomyDynamicListManager{
         return $tid;
     }
 
-    public function setTaxaCnt(): void
-    {
-        $taxCnt = 0;
-        $sql = 'SELECT COUNT(CONCAT(t1.TID,t2.TID,t3.TID,t4.TID,t5.TID,t6.TID)) AS cnt '.
-            'FROM taxaenumtree AS te1 LEFT JOIN taxa AS t1 ON te1.tid = t1.TID '.
-            'LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
-            'LEFT JOIN taxaenumtree AS te2 ON t1.TID = te2.tid '.
-            'LEFT JOIN taxa AS t2 ON te2.parenttid = t2.TID '.
-            'LEFT JOIN taxaenumtree AS te3 ON t1.TID = te3.tid '.
-            'LEFT JOIN taxa AS t3 ON te3.parenttid = t3.TID '.
-            'LEFT JOIN taxaenumtree AS te4 ON t1.TID = te4.tid '.
-            'LEFT JOIN taxa AS t4 ON te4.parenttid = t4.TID '.
-            'LEFT JOIN taxaenumtree AS te5 ON t1.TID = te5.tid '.
-            'LEFT JOIN taxa AS t5 ON te5.parenttid = t5.TID '.
-            'LEFT JOIN taxaenumtree AS te6 ON t1.TID = te6.tid '.
-            'LEFT JOIN taxa AS t6 ON te6.parenttid = t6.TID '.
-            'WHERE ((te1.parenttid = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) '.
-            'AND (t2.RankId = 10 OR ISNULL(t2.RankId)) '.
-            'AND (t3.RankId = 30 OR t3.RankId = 40 OR ISNULL(t3.RankId)) '.
-            'AND (t4.RankId = 60 OR ISNULL(t4.RankId)) '.
-            'AND (t5.RankId = 100 OR ISNULL(t5.RankId)) '.
-            'AND (t6.RankId = 140 OR ISNULL(t6.RankId)) ';
-        if($this->descLimit){
-            $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
-        }
-        //echo "<div>Count sql: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($row = $result->fetch_object()){
-            $taxCnt += $row->cnt;
-        }
-        $sql = 'SELECT COUNT(t1.TID) AS cnt '.
-            'FROM taxa AS t1 LEFT JOIN taxstatus AS ts ON t1.TID = ts.tid '.
-            'WHERE ((t1.TID = '.$this->tid.') AND t1.RankId >= 180 AND ts.tid = ts.tidaccepted) ';
-        if($this->descLimit){
-            $sql .= 'AND t1.TID IN(SELECT tid FROM taxadescrblock) ';
-        }
-        //echo "<div>Count sql: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($row = $result->fetch_object()){
-            $taxCnt += $row->cnt;
-        }
-        $result->free();
-        $this->taxaCnt = $taxCnt;
-    }
-
     public function getTableArr(): array
     {
         $returnArr = array();
@@ -174,6 +129,7 @@ class TaxonomyDynamicListManager{
             $returnArr[$indexId]['familyName'] = $r->familyName;
         }
         $rs->free();
+        $this->taxaCnt = count($returnArr);
         return $returnArr;
     }
 

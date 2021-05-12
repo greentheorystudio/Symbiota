@@ -29,7 +29,7 @@ $exportDoc = array_key_exists('exportdoc',$_REQUEST)?$_REQUEST['exportdoc']:0;
 $statusStr='';
 $locStr = '';
 
-if($action !== 'Rebuild List' && !array_key_exists('dllist_x',$_POST)) {
+if($action !== 'Rebuild List' && $action !== 'Download List') {
     $searchSynonyms = 1;
 }
 if($action === 'Rebuild List') {
@@ -110,12 +110,12 @@ if($showAlphaTaxa) {
 $clid = $clManager->getClid();
 $pid = $clManager->getPid();
 
-if (array_key_exists('dllist_x',$_POST)) {
+if($action === 'Download List') {
     $clManager->downloadChecklistCsv();
     exit();
 }
 
-if(array_key_exists('printlist_x',$_POST)) {
+if($action === 'Print List') {
     $printMode = 1;
 }
 
@@ -458,7 +458,7 @@ if(!$printMode){
                                     <?php
                                     $taxonAuthList = $clManager->getTaxonAuthorityList();
                                     foreach($taxonAuthList as $taCode => $taValue){
-                                        echo "<option value='".$taCode."' " .($taCode == $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
+                                        echo "<option value='".$taCode."' " .((int)$taCode === $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
                                     }
                                     ?>
                                 </select>
@@ -471,7 +471,7 @@ if(!$printMode){
                                 ?>
                             </div>
                             <div>
-                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?>onclick="showImagesChecked(this.form);" />
+                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
                                 Display as Images
                             </div>
                             <?php
@@ -502,22 +502,21 @@ if(!$printMode){
                                     echo "<input type='hidden' name='pagenumber' value='" . $pageNumber . "' />";
                                 }
                                 ?>
-
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
                                     <input type="submit" name="submitaction" value="Rebuild List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');" />
                                     <div style="width:100px;display:flex;justify-content:flex-end;align-items:center;">
                                         <div id="wordicondiv" style="margin-right:5px;">
-                                            <button class="icon-button" style="margin:0;padding:2px;" title="Export to DOCX" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');">
+                                            <button class="icon-button" type="submit" name="submitaction" value="Export to DOCX" style="margin:0;padding:2px;" title="Export to DOCX" onclick="changeOptionFormAction('defaultchecklistexport.php','_self');">
                                                 <i style="height:15px;width:15px;" class="far fa-file-word"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
-                                            <button class="icon-button" style="margin:0;padding:2px;" title="Print in Browser" onclick="changeOptionFormAction('checklist.php','_blank');">
+                                            <button class="icon-button" type="submit" name="submitaction" value="Print List" style="margin:0;padding:2px;" title="Print in Browser" onclick="changeOptionFormAction('checklist.php','_blank');">
                                                 <i style="height:15px;width:15px;" class="fas fa-print"></i>
                                             </button>
                                         </div>
                                         <div style="margin-right:5px;">
-                                            <button class="icon-button" style="margin:0;padding:2px;" title="Download List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');">
+                                            <button class="icon-button" type="submit" name="submitaction" value="Download List" style="margin:0;padding:2px;" title="Download List" onclick="changeOptionFormAction('checklist.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid; ?>','_self');">
                                                 <i style="height:15px;width:15px;" class="fas fa-download"></i>
                                             </button>
                                         </div>
