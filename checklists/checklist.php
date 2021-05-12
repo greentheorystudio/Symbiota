@@ -458,7 +458,7 @@ if(!$printMode){
                                     <?php
                                     $taxonAuthList = $clManager->getTaxonAuthorityList();
                                     foreach($taxonAuthList as $taCode => $taValue){
-                                        echo "<option value='".$taCode."' " .($taCode == $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
+                                        echo "<option value='".$taCode."' " .((int)$taCode === $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
                                     }
                                     ?>
                                 </select>
@@ -471,7 +471,7 @@ if(!$printMode){
                                 ?>
                             </div>
                             <div>
-                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?>onclick="showImagesChecked(this.form);" />
+                                <input data-role='none' name='showimages' type='checkbox' value='1' <?php echo ($showImages? 'checked' : ''); ?> onclick="showImagesChecked(this.form);" />
                                 Display as Images
                             </div>
                             <?php
