@@ -46,7 +46,6 @@ if($targetTid){
     $listManager->setDescLimit($descLimit);
     $listManager->setSortField($sortSelect);
     $listManager->setPageIndex($index);
-    $listManager->setTaxaCnt();
     $tableArr = $listManager->getTableArr();
     $vernacularArr = $listManager->getVernacularArr();
     $qryCnt = (int)$listManager->getTaxaCnt();

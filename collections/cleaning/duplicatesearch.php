@@ -111,8 +111,8 @@ elseif($action === 'listdupsrecordedby'){
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Cleaning Module Index</a> &gt;&gt;
-		<b>Duplicate Occurrences</b>
+		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
+		<b>Duplicate Merging Module</b>
 	</div>
 
 	<div id="innertext" style="background-color:white;">
