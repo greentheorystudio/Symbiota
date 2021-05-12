@@ -134,7 +134,8 @@ if($action && $isEditor){
 	<div class='navpath'>
 		<a href="../../index.php">Home</a> &gt;&gt;
 		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=off">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Cleaning Tools Index</a> 
+		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
+        <b>Geography Cleaning Module</b>
 		<?php 
 		if($mode) {
             echo '&gt;&gt; <a href="politicalunits.php?collid=' . $collid . '"><b>Political Geography Cleaning Menu</b></a>';
@@ -147,7 +148,7 @@ if($action && $isEditor){
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
@@ -157,7 +158,6 @@ if($action && $isEditor){
 		if($isEditor){
 			?>
 			<fieldset style="padding:20px;position:relative">
-				<legend><b>Geographic Report</b></legend>
 				<?php
 				if($target === 'geolocal'){
 					if($mode) {

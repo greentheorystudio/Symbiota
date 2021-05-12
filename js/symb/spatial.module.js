@@ -1555,6 +1555,11 @@ function createUncertaintyCircleFromPointRadius(prad){
     uncertaintycirclesource.addFeature(circleFeature);
 }
 
+function deactivateClustering(){
+    document.getElementById("clusterswitch").checked = false;
+    changeClusterSetting();
+}
+
 function deleteSelections(){
     selectInteraction.getFeatures().forEach(function(feature){
         layersArr['select'].getSource().removeFeature(feature);

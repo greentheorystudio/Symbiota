@@ -11,7 +11,7 @@ class ImageCleaner extends Manager{
 	private $imgManager;
 
 	public function __construct() {
-		parent::__construct(null);
+		parent::__construct();
 		$this->verboseMode = 2;
 		set_time_limit(2000);
 		$this->imgManager = new ImageShared();

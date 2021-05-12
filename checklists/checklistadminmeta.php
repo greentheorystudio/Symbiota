@@ -204,7 +204,7 @@ if(!$clid){
 						?>
 					</div>
 					<div>
-						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['dimages'])? 'checked' : ''); ?>onclick="showImagesDefaultChecked(this.form);" />
+						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['dimages'])? 'checked' : ''); ?> onclick="showImagesDefaultChecked(this.form);" />
                         Display as Images
 					</div>
                     <?php

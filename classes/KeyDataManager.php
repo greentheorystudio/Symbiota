@@ -20,7 +20,7 @@ class KeyDataManager extends Manager{
 	private $dynClid;
 
 	public function __construct(){
-        parent::__construct(null);
+        parent::__construct();
     }
 
 	public function setProject($projValue){
