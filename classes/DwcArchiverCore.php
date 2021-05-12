@@ -44,7 +44,7 @@ class DwcArchiverCore extends Manager{
     private $geolocateVariables = array();
 
     public function __construct(){
-        parent::__construct(null);
+        parent::__construct();
         if(!class_exists('DOMDocument')){
             exit('FATAL ERROR: PHP DOMDocument class is not installed, please contact your server admin');
         }

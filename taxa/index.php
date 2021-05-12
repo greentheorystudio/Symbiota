@@ -16,6 +16,10 @@ $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_L
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 $showAllImages = array_key_exists('allimages',$_REQUEST);
 
+if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
+    $taxonValue = htmlspecialchars($_REQUEST['quicksearchtaxon']);
+}
+
 $taxonManager = new TaxonProfileManager();
 if($taxAuthId || $taxAuthId === 0) {
     $taxonManager->setTaxAuthId($taxAuthId);
@@ -104,7 +108,7 @@ else{
         const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
-    <script src="../js/symb/taxa.index.js?ver=2021040622" type="text/javascript"></script>
+    <script src="../js/symb/taxa.index.js?ver=20210512" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){
