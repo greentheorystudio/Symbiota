@@ -370,18 +370,18 @@ div.spptab{
 
 #scinameheader.species{
 	float: 			left;
-	font-size:		16px;
+	font-size:		130%;
 	margin-left:	10px;
 	margin-bottom:	0;
 }
 
 #scinameheader.genus{
-	font-size:		16px;
+	font-size:		130%;
 	margin-left:	10px;
 }
 
 #scinameheader.higher{
-	font-size:		16px;
+	font-size:		130%;
 	margin-left:	10px;
 }
 
@@ -504,13 +504,14 @@ div.spptab{
 	display:		block;
 	margin-left:	10px;
 	margin-top:		0.5em;
-	font-size:		130%;
+	font-size:		110%;
 }
 
 #synonyms{
 	display:		block;
-	margin-left:	20px;
+	margin-left:	10px;
 	margin-top:		0.5em;
+	font-size:		110%;
 }
 
 #nocentralimage{
