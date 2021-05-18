@@ -1,6 +1,13 @@
 <?php
 include_once(__DIR__ . '/config/symbini.php');
+include_once(__DIR__ . '/classes/IRLManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+
+$IRLManager = new IRLManager();
+
+$totalTaxa = number_format($IRLManager->getTotalTaxa());
+$totalTaxaWithDesc = number_format($IRLManager->getTotalTaxaWithDesc());
+$totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords());
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -16,40 +23,25 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/jquery-ui.css" type="text/css" rel="Stylesheet" />
     <style>
-        #cycler, #cycler2{position:relative;height:180px;}
-        #cycler img, #cycler2 img{position:absolute;z-index:1;background-color:#ffffff;}
-        #cycler img.active, #cycler2 img.active{z-index:3}
-        .bolditalic {
-            font-weight: bold;
-            font-style: italic;
+        .totals-row {
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+        }
+        .totals-box {
+            width: 22%;
+            border: solid 4px #cccccc;
+            padding: 30px;
+            color: gray;
+            display: flex;
+            flex-direction:column;
+            align-items:center;
         }
     </style>
+    <script src="js/all.min.js" type="text/javascript"></script>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/jquery-ui.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
-    <script>
-        function cycleImages(){
-            var $active = $('#cycler .active');
-            var $next = ($active.next().length > 0) ? $active.next() : $('#cycler img:first');
-            $next.css('z-index',2);//move the next image up the pile
-            $active.fadeOut(1000,function(){//fade out the top image
-                $active.css('z-index',1).show().removeClass('active');//reset the z-index and unhide the image
-                $next.css('z-index',3).addClass('active');//make the next image the top one
-            });
-
-            var $active = $('#cycler2 .active');
-            var $next = ($active.next().length > 0) ? $active.next() : $('#cycler2 img:first');
-            $next.css('z-index',2);//move the next image up the pile
-            $active.fadeOut(1000,function(){//fade out the top image
-                $active.css('z-index',1).show().removeClass('active');//reset the z-index and unhide the image
-                $next.css('z-index',3).addClass('active');//make the next image the top one
-            });
-        }
-
-        $(document).ready(function(){
-            setInterval('cycleImages()', 3000);
-        })
-    </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -96,6 +88,24 @@ include(__DIR__ . '/header.php');
             echo $quicksearch;
             ?>
             <div class="as"> <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
+        </div>
+    </div>
+
+    <div class="totals-row">
+        <div class="totals-box">
+            <i style="color:gray;height:60px;width:60px;" class="fas fa-leaf"></i>
+            <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxa; ?></h2>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;"> Total Taxa</h5>
+        </div>
+        <div class="totals-box">
+            <i style="color:gray;height:60px;width:60px;" class="icon-style fas fa-star"></i>
+            <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxaWithDesc; ?></h2>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Total Taxa With Descriptions</h5>
+        </div>
+        <div class="totals-box">
+            <i style="color:gray;height:60px;width:60px;" class="fas fa-book"></i>
+            <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalOccurrenceRecords; ?></h2>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Total Occurrence Records</h5>
         </div>
     </div>
 </div>

@@ -77,4 +77,43 @@ class IRLManager {
         $result->free();
         return $returnArr;
     }
+
+    public function getTotalTaxa(): int
+    {
+        $total = 0;
+        $sql = 'SELECT COUNT(TID) AS cnt FROM taxa WHERE RankId >= 180 ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $total = (int)$row->cnt;
+        }
+        $result->free();
+        return $total;
+    }
+
+    public function getTotalTaxaWithDesc(): int
+    {
+        $total = 0;
+        $sql = 'SELECT COUNT(TID) AS cnt FROM taxa WHERE TID IN(SELECT tid FROM taxadescrblock) ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $total = (int)$row->cnt;
+        }
+        $result->free();
+        return $total;
+    }
+
+    public function getTotalOccurrenceRecords(): int
+    {
+        $total = 0;
+        $sql = 'SELECT COUNT(occid) AS cnt FROM omoccurrences ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $total = (int)$row->cnt;
+        }
+        $result->free();
+        return $total;
+    }
 }
