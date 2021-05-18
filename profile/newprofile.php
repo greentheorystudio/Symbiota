@@ -55,12 +55,30 @@ if($action === 'Create Login'){
         let randNumber = 0;
 
         $(document).ready(function() {
-            randNumber = Math.floor(1000000 + Math.random() * 900000);
+            setRandomNumber();
+        });
+
+        function setRandomNumber() {
+            document.getElementById("submitButton").disabled = true;
+            document.getElementById("human-entry").value = '';
+            const randNumb1 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb2 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb3 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb4 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb5 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb6 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb7 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb8 = (Math.round(Math.random() * 9.5)).toString();
+            const randNumb9 = (Math.round(Math.random() * 9.5)).toString();
+            randNumber = randNumb1 + randNumb2 + randNumb3 + randNumb4 + randNumb5 + randNumb6 + randNumb7 + randNumb8 + randNumb9;
             const canvas = document.getElementById("captchaCanvas");
             const ctx = canvas.getContext("2d");
-            ctx.font = "80px Times New Roman";
-            ctx.fillText(randNumber.toString(), 10, 100);
-        });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "55px Times New Roman";
+            ctx.textAlign = "center";
+            ctx.fillText(randNumber.toString(), canvas.width/2, canvas.height/2);
+            setTimeout(setRandomNumber, 120000);
+        }
 
         function validateform(f){
 			const pwd1 = f.pwd.value;
