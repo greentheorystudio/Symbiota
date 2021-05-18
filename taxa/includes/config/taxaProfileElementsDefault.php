@@ -256,7 +256,7 @@ ob_start();
 $url = '';
 $mAnchor = '';
 if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
-    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',".($taxonManager->getClid()?:'0'). ')';
+    $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',true)";
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
     }
