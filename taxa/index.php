@@ -108,7 +108,7 @@ else{
         const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
-    <script src="../js/symb/taxa.index.js?ver=2021040622" type="text/javascript"></script>
+    <script src="../js/symb/taxa.index.js?ver=20210512" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){
