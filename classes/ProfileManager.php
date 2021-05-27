@@ -20,7 +20,7 @@ class ProfileManager extends Manager{
         parent::__construct();
         $connection = new DbConnection();
         $dbVersion = $connection->getVersion();
-        if((strpos($dbVersion, '5.') === 0) || (strpos($dbVersion, 'ma') === 0)){
+        if((strncmp($dbVersion, '5.', 2) === 0) || (strncmp($dbVersion, 'ma', 2) === 0)){
             $this->encryption = 'password';
         }
         else{
@@ -39,7 +39,7 @@ class ProfileManager extends Manager{
         unset($_SESSION['userrights'], $_SESSION['userparams']);
     }
 
-    public function authenticate($pwdStr = ''): bool
+    public function authenticate($pwdStr = null): bool
     {
         $authStatus = false;
         unset($_SESSION['userrights'], $_SESSION['userparams']);
@@ -183,7 +183,7 @@ class ProfileManager extends Manager{
         return $success;
     }
 
-    public function deleteProfile($reset = 0){
+    public function deleteProfile($reset = null){
         $success = false;
         if($this->uid){
             $connection = new DbConnection();
@@ -199,7 +199,7 @@ class ProfileManager extends Manager{
         return $success;
     }
 
-    public function changePassword ($newPwd, $oldPwd = '', $isSelf = 0): bool
+    public function changePassword ($newPwd, $oldPwd = null, $isSelf = null): bool
     {
         $success = false;
         if($newPwd){
@@ -292,10 +292,11 @@ class ProfileManager extends Manager{
     {
         $newPassword = '';
         $alphabet = str_split('0123456789abcdefghijklmnopqrstuvwxyz');
-        for($i = 0; $i<8; $i++) {
-            try {
-                $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
-            } catch (Exception $e) {
+        if($alphabet){
+            for($i = 0; $i<8; $i++) {
+                try {
+                    $newPassword .= $alphabet[random_int(0, count($alphabet) - 1)];
+                } catch (Exception $e) {}
             }
         }
         return $newPassword;
@@ -305,122 +306,113 @@ class ProfileManager extends Manager{
     {
         $status = false;
         $manager = new Manager();
-        $middle = $manager->checkFieldExists('users','middleinitial');
-        $firstName = $postArr['firstname'];
-        if($middle) {
-            $middle = $postArr['middleinitial'];
-        }
-        $lastName = $postArr['lastname'];
-        if($postArr['institution'] && $postArr['title'] && preg_match('/[a-z]+[A-Z]+[a-z]+[A-Z]+/', $postArr['institution']) && preg_match('/[a-z]+[A-Z]+[a-z]+[A-Z]+/', $postArr['title']) && !trim(strpos($postArr['institution'], ' ')) && !trim(strpos($postArr['title'], ' '))) {
-            return false;
-        }
+        $firstName = $this->cleanInStr($postArr['firstname']);
+        $lastName = $this->cleanInStr($postArr['lastname']);
+        $email = $this->cleanInStr($postArr['emailaddr']);
+        if($firstName && $lastName && $email && $this->userName){
+            $person = new Person();
+            $person->setPassword($postArr['pwd']);
+            $person->setUserName($this->userName);
+            $person->setFirstName($firstName);
+            $person->setMiddleInitial($postArr['middleinitial']);
+            $person->setLastName($lastName);
+            $person->setTitle($postArr['title']);
+            $person->setInstitution($postArr['institution']);
+            $person->setDepartment($postArr['department']);
+            $person->setAddress($postArr['address']);
+            $person->setCity($postArr['city']);
+            $person->setState($postArr['state']);
+            $person->setZip($postArr['zip']);
+            $person->setCountry($postArr['country']);
+            $person->setEmail($email);
+            $person->setUrl($postArr['url']);
+            $person->setBiography($postArr['biography']);
+            $person->setIsPublic(isset($postArr['ispublic'])?1:0);
 
-        $person = new Person();
-        $person->setPassword($postArr['pwd']);
-        $person->setUserName($this->userName);
-        $person->setFirstName($firstName);
-        if($middle) {
-            $person->setMiddleInitial($middle);
-        }
-        $person->setLastName($lastName);
-        $person->setTitle($postArr['title']);
-        $person->setInstitution($postArr['institution']);
-        $person->setDepartment($postArr['department']);
-        $person->setAddress($postArr['address']);
-        $person->setCity($postArr['city']);
-        $person->setState($postArr['state']);
-        $person->setZip($postArr['zip']);
-        $person->setCountry($postArr['country']);
-        $person->setEmail($postArr['emailaddr']);
-        $person->setUrl($postArr['url']);
-        $person->setBiography($postArr['biography']);
-        $person->setIsPublic(isset($postArr['ispublic'])?1:0);
-
-        $fields = 'INSERT INTO users (';
-        $values = 'VALUES (';
-        $fields .= 'firstname ';
-        $values .= '"'.$this->cleanInStr($person->getFirstName()).'"';
-        if($middle){
+            $fields = 'INSERT INTO users (';
+            $values = 'VALUES (';
+            $fields .= 'firstname ';
+            $values .= '"'.$this->cleanInStr($person->getFirstName()).'"';
             $fields .= ', middleinitial ';
             $values .= ', "'.$this->cleanInStr($person->getMiddleInitial()).'"';
-        }
-        $fields .= ', lastname';
-        $values .= ', "'.$this->cleanInStr($person->getLastName()).'"';
-        $fields .= ', username';
-        $values .= ', "'.$this->cleanInStr($person->getUserName()).'"';
-        $fields .= ', password';
-        if($this->encryption === 'password'){
-            $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'")';
-        }
-        if($this->encryption === 'sha2'){
-            $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224)';
-        }
-        if($person->getTitle()){
-            $fields .= ', title';
-            $values .= ', "'.$this->cleanInStr($person->getTitle()).'"';
-        }
-        if($person->getInstitution()){
-            $fields .= ', institution';
-            $values .= ', "'.$this->cleanInStr($person->getInstitution()).'"';
-        }
-        if($person->getDepartment()){
-            $fields .= ', department';
-            $values .= ', "'.$this->cleanInStr($person->getDepartment()).'"';
-        }
-        if($person->getAddress()){
-            $fields .= ', address';
-            $values .= ', "'.$this->cleanInStr($person->getAddress()).'"';
-        }
-        if($person->getCity()){
-            $fields .= ', city';
-            $values .= ', "'.$this->cleanInStr($person->getCity()).'"';
-        }
-        $fields .= ', state';
-        $values .= ', "'.$this->cleanInStr($person->getState()).'"';
-        $fields .= ', country';
-        $values .= ', "'.$this->cleanInStr($person->getCountry()).'"';
-        if($person->getZip()){
-            $fields .= ', zip';
-            $values .= ', "'.$this->cleanInStr($person->getZip()).'"';
-        }
-        if($person->getPhone()){
-            $fields .= ', phone';
-            $values .= ', "'.$this->cleanInStr($person->getPhone()).'"';
-        }
-        if($person->getEmail()){
-            $fields .= ', email';
-            $values .= ', "'.$this->cleanInStr($person->getEmail()).'"';
-        }
-        if($person->getUrl()){
-            $fields .= ', url';
-            $values .= ', "'.$person->getUrl().'"';
-        }
-        if($person->getBiography()){
-            $fields .= ', biography';
-            $values .= ', "'.$this->cleanInStr($person->getBiography()).'"';
-        }
-        if($person->getIsPublic()){
-            $fields .= ', ispublic';
-            $values .= ', '.$person->getIsPublic();
-        }
+            $fields .= ', lastname';
+            $values .= ', "'.$this->cleanInStr($person->getLastName()).'"';
+            $fields .= ', username';
+            $values .= ', "'.$this->cleanInStr($person->getUserName()).'"';
+            $fields .= ', password';
+            if($this->encryption === 'password'){
+                $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'")';
+            }
+            if($this->encryption === 'sha2'){
+                $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224)';
+            }
+            if($person->getTitle()){
+                $fields .= ', title';
+                $values .= ', "'.$this->cleanInStr($person->getTitle()).'"';
+            }
+            if($person->getInstitution()){
+                $fields .= ', institution';
+                $values .= ', "'.$this->cleanInStr($person->getInstitution()).'"';
+            }
+            if($person->getDepartment()){
+                $fields .= ', department';
+                $values .= ', "'.$this->cleanInStr($person->getDepartment()).'"';
+            }
+            if($person->getAddress()){
+                $fields .= ', address';
+                $values .= ', "'.$this->cleanInStr($person->getAddress()).'"';
+            }
+            if($person->getCity()){
+                $fields .= ', city';
+                $values .= ', "'.$this->cleanInStr($person->getCity()).'"';
+            }
+            $fields .= ', state';
+            $values .= ', "'.$this->cleanInStr($person->getState()).'"';
+            $fields .= ', country';
+            $values .= ', "'.$this->cleanInStr($person->getCountry()).'"';
+            if($person->getZip()){
+                $fields .= ', zip';
+                $values .= ', "'.$this->cleanInStr($person->getZip()).'"';
+            }
+            if($person->getPhone()){
+                $fields .= ', phone';
+                $values .= ', "'.$this->cleanInStr($person->getPhone()).'"';
+            }
+            if($person->getEmail()){
+                $fields .= ', email';
+                $values .= ', "'.$this->cleanInStr($person->getEmail()).'"';
+            }
+            if($person->getUrl()){
+                $fields .= ', url';
+                $values .= ', "'.$person->getUrl().'"';
+            }
+            if($person->getBiography()){
+                $fields .= ', biography';
+                $values .= ', "'.$this->cleanInStr($person->getBiography()).'"';
+            }
+            if($person->getIsPublic()){
+                $fields .= ', ispublic';
+                $values .= ', '.$person->getIsPublic();
+            }
 
-        $sql = $fields.') '.$values.')';
-        //echo "SQL: ".$sql;
-        $connection = new DbConnection();
-        $editCon = $connection->getConnection();
-        if($editCon->query($sql)){
-            $person->setUid($editCon->insert_id);
-            $this->uid = $person->getUid();
-            $status = true;
-            $this->userName = $person->getUserName();
-            $this->displayName = $person->getFirstName();
-            $this->reset();
-            $this->authenticate();
+            $sql = $fields.') '.$values.')';
+            //echo "SQL: ".$sql;
+            $connection = new DbConnection();
+            $editCon = $connection->getConnection();
+            if($editCon->query($sql)){
+                $person->setUid($editCon->insert_id);
+                $this->uid = $person->getUid();
+                $status = true;
+                $this->userName = $person->getUserName();
+                $this->displayName = $person->getFirstName();
+                $this->reset();
+                $this->authenticate();
+            }
+            else{
+                $this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
+            }
+            $editCon->close();
         }
-        else{
-            $this->errorStr = 'FAILED: Unable to create user.<div style="margin-left:55px;">Please contact system administrator for assistance.</div>';
-        }
-        $editCon->close();
 
         return $status;
     }
@@ -471,7 +463,7 @@ class ProfileManager extends Manager{
         return $status;
     }
 
-    public function changeLogin($newLogin, $pwd = ''): bool
+    public function changeLogin($newLogin, $pwd = null): bool
     {
         $status = true;
         if($this->uid){
@@ -572,7 +564,8 @@ class ProfileManager extends Manager{
         return $retArr;
     }
 
-    public function getPersonalOccurrenceCount($collId){
+    public function getPersonalOccurrenceCount($collId): int
+    {
         $retCnt = 0;
         if($this->uid){
             $sql = 'SELECT count(*) AS reccnt FROM omoccurrences WHERE observeruid = '.$this->uid.' AND collid = '.$collId;
@@ -629,7 +622,7 @@ class ProfileManager extends Manager{
         $statement->close();
     }
 
-    public function deleteUserTaxonomy($utid,$editorStatus = ''): string
+    public function deleteUserTaxonomy($utid,$editorStatus = null): string
     {
         $statusStr = 'SUCCESS: Taxonomic relationship deleted';
         if(is_numeric($utid) || $utid === 'all'){
@@ -807,7 +800,7 @@ class ProfileManager extends Manager{
         $this->rememberMe = $test;
     }
 
-    public function setUserName($un = ''): bool
+    public function setUserName($un = null): bool
     {
         if($un){
             if(!$this->validateUserName($un)) {
@@ -830,7 +823,8 @@ class ProfileManager extends Manager{
         return true;
     }
 
-    public function getUserName($uId){
+    public function getUserName($uId): string
+    {
         $un = '';
         $sql = 'SELECT username FROM users WHERE uid = '.$uId.' ';
         //echo $sql;
@@ -871,10 +865,13 @@ class ProfileManager extends Manager{
     private function validateUserName($un): bool
     {
         $status = true;
+        if(!$this->cleanInStr($un)){
+            $status = false;
+        }
         if (preg_match('/^[0-9A-Za-z_!@#$\s.+\-]+$/', $un) === 0) {
             $status = false;
         }
-        if (strpos($un, ' ') === 0) {
+        if (strncmp($un, ' ', 1) === 0) {
             $status = false;
         }
         if (substr($un,-1) === ' ') {
@@ -1041,7 +1038,8 @@ class ProfileManager extends Manager{
         return $retArr;
     }
 
-    public function getTokenCnt(){
+    public function getTokenCnt(): int
+    {
         $cnt = 0;
         $sql = 'SELECT COUNT(token) AS cnt FROM useraccesstokens WHERE uid = '.$this->uid;
         //echo $sql;
@@ -1053,13 +1051,14 @@ class ProfileManager extends Manager{
         return $cnt;
     }
 
-    public function getUid($un){
-        $uid = '';
+    public function getUid($un): int
+    {
+        $uid = 0;
         $sql = 'SELECT uid FROM users WHERE username = "'.$un.'"  ';
         //echo $sql;
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
-            $uid = $row->uid;
+            $uid = (int)$row->uid;
             $result->close();
         }
         return $uid;

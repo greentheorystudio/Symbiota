@@ -177,21 +177,23 @@ class PluginsManager {
 						$file = $row->url;
 					}
 					if(fopen($file, 'rb') && $size = getimagesize(str_replace(' ', '%20', $file))) {
-						$width = $size[0];
-						$height = $size[1];
-						$files[$imgId]['url'] = $file;
-						$files[$imgId]['width'] = $width;
-						$files[$imgId]['height'] = $height;
-						$files[$imgId]['imgid'] = $row->imgid;
-						$files[$imgId]['tid'] = $row->tid;
-						$files[$imgId]['occid'] = $row->occid;
-						$files[$imgId]['photographer'] = $row->photographer;
-						$files[$imgId]['owner'] = $row->owner;
-						$files[$imgId]['SciName'] = $row->SciName;
-						$files[$imgId]['occsciname'] = $row->occsciname;
-						$files[$imgId]['photographerName'] = $row->photographerName;
-						$files[$imgId]['identifier'] = $row->identifier;
-						$cnt++;
+						if($size){
+                            $width = $size[0];
+                            $height = $size[1];
+                            $files[$imgId]['url'] = $file;
+                            $files[$imgId]['width'] = $width;
+                            $files[$imgId]['height'] = $height;
+                            $files[$imgId]['imgid'] = $row->imgid;
+                            $files[$imgId]['tid'] = $row->tid;
+                            $files[$imgId]['occid'] = $row->occid;
+                            $files[$imgId]['photographer'] = $row->photographer;
+                            $files[$imgId]['owner'] = $row->owner;
+                            $files[$imgId]['SciName'] = $row->SciName;
+                            $files[$imgId]['occsciname'] = $row->occsciname;
+                            $files[$imgId]['photographerName'] = $row->photographerName;
+                            $files[$imgId]['identifier'] = $row->identifier;
+                            $cnt++;
+                        }
 					}
 				}
 			}
@@ -423,7 +425,7 @@ return <<<EOD
             <div class="quicksearchscinameselectorlabel">Scientific Name</div>
             <div>
                 <label>
-                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" $commonChecked>
+                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" autocomplete="off" $commonChecked>
                     <div class="switch"></div>
                 </label>
             </div>

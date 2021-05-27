@@ -15,10 +15,11 @@ class TaxonomyCleaner extends Manager{
 	private $verificationMode = 0;
 
 	public function __construct(){
-		parent::__construct(null);
+		parent::__construct();
 	}
 
-	public function getBadTaxaCount(){
+	public function getBadTaxaCount(): int
+    {
 		$retCnt = 0;
 		if($this->collid){
 			$sql = 'SELECT COUNT(DISTINCT sciname) AS taxacnt '.$this->getSqlFragment();
@@ -33,7 +34,8 @@ class TaxonomyCleaner extends Manager{
 		return $retCnt;
 	}
 
-	public function getBadSpecimenCount(){
+	public function getBadSpecimenCount(): int
+    {
 		$retCnt = 0;
 		if($this->collid){
 			$sql = 'SELECT COUNT(*) AS cnt '.$this->getSqlFragment();
@@ -48,100 +50,106 @@ class TaxonomyCleaner extends Manager{
 		return $retCnt;
 	}
 
-	public function analyzeTaxa($taxResource, $startIndex, $limit = 50){
+	public function analyzeTaxa($taxResource, $startIndex, $limit = null){
 		set_time_limit(1800);
 		$isTaxonomyEditor = false;
 		if($GLOBALS['USER_RIGHTS'] && array_key_exists('Taxonomy', $GLOBALS['USER_RIGHTS'])) {
 			$isTaxonomyEditor = true;
 		}
 		$endIndex = 0;
-		$this->logOrEcho('Starting taxa check ');
+		echo '<li>Starting taxa check</li>';
 		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
 		if($startIndex) {
 			$sql .= 'AND (sciname > "' . $this->cleanInStr($startIndex) . '") ';
 		}
-		$sql .= 'GROUP BY sciname, family ORDER BY sciname LIMIT '.$limit;
+		$sql .= 'GROUP BY sciname, family ORDER BY sciname LIMIT '.($limit ?: 50);
 		//echo $sql; exit;
 		if($rs = $this->conn->query($sql)){
 			$taxonHarvester = new  TaxonomyHarvester();
 			if($this->targetKingdom){
 				$kingArr = explode(':',$this->targetKingdom);
-				$taxonHarvester->setKingdomTid($kingArr[0]);
-				$taxonHarvester->setKingdomName($kingArr[1]);
-			}
-			$taxonHarvester->setTaxonomicResources($taxResource);
-			$taxonHarvester->setVerboseMode(2);
-			$this->setVerboseMode(2);
-			$taxaAdded = false;
-			$taxaCnt = 1;
-			$itemCnt = 0;
-			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
-					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
-					$this->collid.'\'); return false;">'.$r->cnt.' specimens <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
-				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
-				if($r->family) {
-					$taxonHarvester->setDefaultFamily($r->family);
-				}
-				if($r->scientificnameauthorship) {
-					$taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
-				}
-				$sciname = $r->sciname;
-				$tid = 0;
-				$manualCheck = true;
-				$taxonArr = (new TaxonomyUtilities)->parseScientificName($r->sciname,$this->conn);
-				if($taxonArr && $taxonArr['sciname']){
-					$sciname = $taxonArr['sciname'];
-					if($sciname !== $r->sciname){
-						$this->logOrEcho('Interpreted base name: <b>'.$sciname.'</b>',1);
-					}
-					$tid = $taxonHarvester->getTid($taxonArr);
-					if($tid && $this->autoClean){
-						$this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, ($taxonArr['identificationqualifier'] ?? ''));
-						$this->logOrEcho('Taxon remapped to <b>'.$sciname.'</b>',1);
-						$manualCheck = false;
-					}
-				}
-				if(!$tid && $taxonHarvester->processSciname($sciname)) {
-					$taxaAdded= true;
-					if($taxonHarvester->isFullyResolved()){
-						$manualCheck = false;
+				if($kingArr){
+                    $taxonHarvester->setKingdomTid($kingArr[0]);
+                    if(isset($kingArr[1])){
+                        $taxonHarvester->setKingdomName($kingArr[1]);
+                    }
+                }
+            }
+            $taxonHarvester->setTaxonomicResources($taxResource);
+            $taxaAdded = false;
+            $taxaCnt = 1;
+            $itemCnt = 0;
+            while($r = $rs->fetch_object()){
+                $editLink = '[<a href="#" onclick="openPopup(\''.$GLOBALS['CLIENT_ROOT'].
+                    '/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1='.urlencode($r->sciname).'&collid='.
+                    $this->collid.'\'); return false;">'.$r->cnt.' '.((int)$r->cnt === 1?'occurrence':'occurrences').' <i style="height:15px;width:15px;" class="far fa-edit"></i></a>]';
+                echo '<li><div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div></li>';
+                if($r->family) {
+                    $taxonHarvester->setDefaultFamily($r->family);
+                }
+                if($r->scientificnameauthorship) {
+                    $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
+                }
+                $sciname = $r->sciname;
+                $tid = 0;
+                $manualCheck = true;
+                $taxonArr = (new TaxonomyUtilities)->parseScientificName($r->sciname,$this->conn);
+                if($taxonArr && $taxonArr['sciname']){
+                    $sciname = $taxonArr['sciname'];
+                    if($sciname !== $r->sciname){
+                        echo '<li style="margin-left:15px;">Interpreted base name: <b>'.$sciname.'</b></li>';
+                    }
+                    $tid = $taxonHarvester->getTid($taxonArr);
+                }
+                if(!$tid && $taxonHarvester->processSciname($sciname)) {
+                    $taxaAdded= true;
+                    if($taxonHarvester->isFullyResolved()){
+                        $manualCheck = false;
+                    }
+                    else{
+                        echo '<li style="margin-left:15px;">Taxon not fully resolved...</li>';
+                    }
+                    $taxonArr = (new TaxonomyUtilities)->parseScientificName($sciname,$this->conn);
+                    $tid = $taxonHarvester->getTid($taxonArr);
+                }
+                if($taxonArr && $taxonArr['sciname'] && $tid && $this->autoClean) {
+                    $this->remapOccurrenceTaxon($this->collid, $r->sciname, $tid, ($taxonArr['identificationqualifier'] ?? ''));
+                    echo '<li style="margin-left:15px;">Occurrences mapped to '.($taxonHarvester->getTidAccepted()?'taxon #'.$taxonHarvester->getTidAccepted():'<b>'.$sciname.'</b>').'</li>';
+                    $manualCheck = false;
+                }
+                if($manualCheck){
+                    $thesLink = '';
+                    if($isTaxonomyEditor){
+                        $thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
+                    }
+                    echo '<li style="margin-left:15px;">Checking close matches in thesaurus'.$thesLink.'...</li>';
+                    if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
+                        $strTestArr = array();
+                        for($x=1; $x <= 3; $x++){
+                            $indexStr = 'unitname'.$x;
+                            if(isset($taxonArr[$indexStr]) && $taxonArr['unitname'.$x]) {
+                                $strTestArr[] = $taxonArr['unitname' . $x];
+                            }
+                        }
+                        foreach($matchArr as $tid => $scinameMatch){
+                            $snTokens = explode(' ',$scinameMatch);
+                            if($snTokens){
+                                foreach($snTokens as $k => $v){
+                                    if(in_array($v, $strTestArr, true)) {
+                                        $snTokens[$k] = '<b>' . $v . '</b>';
+                                    }
+                                }
+                                $idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
+                                $echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
+                                    '<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
+                                    '<span id="remapSpan-'.$itemCnt.'"></span></span>';
+                                echo '<li style="margin-left:30px;">'.$echoStr.'</li>';
+                                $itemCnt++;
+                            }
+						}
 					}
 					else{
-						$this->logOrEcho('Taxon not fully resolved...',1);
-					}
-				}
-				if($manualCheck){
-					$thesLink = '';
-					if($isTaxonomyEditor){
-						$thesLink = ' <a href="#" onclick="openPopup(\'../../taxa/taxonomy/taxonomyloader.php\'); return false;" title="Open Thesaurus New Record Form"><i style="height:15px;width:15px;" class="far fa-edit"></i><b style="font-size:70%;">T</b></a>';
-					}
-					$this->logOrEcho('Checking close matches in thesaurus'.$thesLink.'...',1);
-					if($matchArr = $taxonHarvester->getCloseMatch($sciname)){
-						$strTestArr = array();
-						for($x=1; $x <= 3; $x++){
-							$indexStr = 'unitname'.$x;
-							if(isset($taxonArr[$indexStr]) && $taxonArr['unitname'.$x]) {
-								$strTestArr[] = $taxonArr['unitname' . $x];
-							}
-						}
-						foreach($matchArr as $tid => $scinameMatch){
-							$snTokens = explode(' ',$scinameMatch);
-							foreach($snTokens as $k => $v){
-								if(in_array($v, $strTestArr, true)) {
-									$snTokens[$k] = '<b>' . $v . '</b>';
-								}
-							}
-							$idQual = (isset($taxonArr['identificationqualifier'])?str_replace("'", '', $taxonArr['identificationqualifier']):'');
-							$echoStr = '<i>'.implode(' ',$snTokens).'</i> =&gt; <span class="hideOnLoad">wait for page to finish loading...</span><span class="displayOnLoad" style="display:none">'.
-								'<a href="#" onclick="return remappTaxon(\''.urlencode($r->sciname).'\','.$tid.',\''.$idQual.'\','.$itemCnt.')" style="color:blue"> remap to this taxon</a>'.
-								'<span id="remapSpan-'.$itemCnt.'"></span></span>';
-							$this->logOrEcho($echoStr,2);
-							$itemCnt++;
-						}
-					}
-					else{
-						$this->logOrEcho('No close matches found',2);
+						echo '<li style="margin-left:30px;">No close matches found</li>';
 					}
 					$manStr = 'Manual search: ';
 					$manStr .= '<form onsubmit="return false" style="display:inline;">';
@@ -150,7 +158,7 @@ class TaxonomyCleaner extends Manager{
 					$manStr .= '<button onclick="batchUpdate(this.form,\''.$r->sciname.'\','.$taxaCnt.')">Remap</button>';
 					$manStr .= '<span id="remapSpan-'.$taxaCnt.'-c"></span>';
 					$manStr .= '</form>';
-					$this->logOrEcho($manStr,2);
+					echo '<li style="margin-left:30px;">'.$manStr.'</li>';
 				}
 				$taxaCnt++;
 				$endIndex = preg_replace("/[^A-Za-z\-. ]/", '', $r->sciname );
@@ -162,7 +170,7 @@ class TaxonomyCleaner extends Manager{
 			}
 		}
 
-		$this->logOrEcho('<b>Done with taxa check </b>');
+		echo '<li><b>Done with taxa check </b></li>';
 		return $endIndex;
 	}
 
@@ -334,7 +342,7 @@ class TaxonomyCleaner extends Manager{
 		flush();
 	}
 
-	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifierIn = ''): int
+	public function remapOccurrenceTaxon($collid, $oldSciname, $tid, $idQualifierIn = null): int
 	{
 		$affectedRows = 0;
 		$idQualifier = '';
@@ -407,246 +415,6 @@ class TaxonomyCleaner extends Manager{
 	public function getVerificationCounts(): array
 	{
 		return [];
-	}
-
-	public function verifyTaxa($verSource): void
-	{
-		$this->logOrEcho('Starting accepted taxa verification');
-		$sql = 'SELECT t.sciname, t.tid, t.author, ts.tidaccepted '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.tid = ts.tidaccepted) '.
-			'AND (t.verificationStatus IS NULL OR t.verificationStatus = 0 OR t.verificationStatus = 2 OR t.verificationStatus = 3)';
-		$sql .= 'LIMIT 1';
-		//echo '<div>'.$sql.'</div>';
-		if($rs = $this->conn->query($sql)){
-			while($accArr = $rs->fetch_assoc()){
-				$externalTaxonObj = array();
-				if($externalTaxonObj){
-					$this->verifyTaxonObj($externalTaxonObj,$accArr,$accArr['tid']);
-				}
-				else{
-					$this->logOrEcho('Taxon not found', 1);
-				}
-			}
-			$rs->free();
-		}
-		else{
-			$this->logOrEcho('ERROR: unable query accepted taxa',1);
-			$this->logOrEcho($sql);
-		}
-		$this->logOrEcho('Finished accepted taxa verification');
-
-		$this->logOrEcho('Starting remaining taxa verification');
-		$sql = 'SELECT t.sciname, t.tid, t.author, ts.tidaccepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') '.
-			'AND (t.verificationStatus IS NULL OR t.verificationStatus = 0 OR t.verificationStatus = 2 OR t.verificationStatus = 3)';
-		$sql .= 'LIMIT 1';
-		//echo '<div>'.$sql.'</div>';
-		if($rs = $this->conn->query($sql)){
-			while($taxonArr = $rs->fetch_assoc()){
-				$externalTaxonObj = array();
-				if($verSource === 'col') {
-					$externalTaxonObj = $this->getTaxonObjSpecies2000($taxonArr['sciname']);
-				}
-				if($externalTaxonObj){
-					$this->verifyTaxonObj($externalTaxonObj,$taxonArr,$taxonArr['tidaccepted']);
-				}
-				else{
-					$this->logOrEcho('Taxon not found', 1);
-				}
-			}
-			$rs->free();
-		}
-		else{
-			$this->logOrEcho('ERROR: unable query unaccepted taxa',1);
-			$this->logOrEcho($sql);
-		}
-		$this->logOrEcho('Finishing remaining taxa verification');
-	}
-
-	private function verifyTaxonObj($externalTaxonObj, $internalTaxonObj, $tidCurrentAccepted): void
-	{
-		if($externalTaxonObj){
-			$source = $externalTaxonObj['source_database'];
-			if($this->testValidity){
-				$sql = 'UPDATE taxa SET validitystatus = 1, validitysource = "'.$source.'" WHERE (tid = '.$internalTaxonObj['tid'].')';
-				$this->conn->query($sql);
-			}
-			if($this->checkAuthor && $externalTaxonObj['author'] && $internalTaxonObj['author'] !== $externalTaxonObj['author']) {
-				$sql = 'UPDATE taxa SET author = '.$externalTaxonObj['author'].' WHERE (tid = '.$internalTaxonObj['tid'].')';
-				$this->conn->query($sql);
-			}
-			if($this->testTaxonomy){
-				$nameStatus = $externalTaxonObj['name_status'];
-
-				if($this->verificationMode === 0){
-					if($nameStatus === 'accepted'){
-						$synArr = $externalTaxonObj['synonyms'];
-						foreach($synArr as $synObj){
-							$this->evaluateTaxonomy($synObj,$tidCurrentAccepted);
-						}
-					}
-				}
-				elseif($this->verificationMode === 1){
-					if($externalTaxonObj['tid'] === $tidCurrentAccepted){
-						if($nameStatus === 'accepted'){
-							$synArr = $externalTaxonObj['synonyms'];
-							foreach($synArr as $synObj){
-								$this->evaluateTaxonomy($synObj,$tidCurrentAccepted);
-							}
-						}
-						elseif($nameStatus === 'synonym'){
-							$accObj = $externalTaxonObj['accepted_name'];
-							$accTid = $this->evaluateTaxonomy($accObj,0);
-							$sql = 'UPDATE taxstatus SET tidaccetped = '.$accTid.' WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.
-								$externalTaxonObj['tid'].') AND (tidaccepted = '.$tidCurrentAccepted.')';
-							$this->conn->query($sql);
-							$this->updateDependentData($externalTaxonObj['tid'],$accTid);
-							$synArr = $externalTaxonObj['synonyms'];
-							foreach($synArr as $synObj){
-								$this->evaluateTaxonomy($synObj,$accTid);
-							}
-						}
-					}
-					else if($nameStatus === 'accepted'){
-						$this->evaluateTaxonomy($externalTaxonObj,0);
-					}
-					elseif($nameStatus === 'synonym'){
-						$sql = 'SELECT sciname FROM taxa WHERE (tid = '.$externalTaxonObj['tidaccepted'].')';
-						$rs = $this->conn->query($sql);
-						$systemAccName = '';
-						if($r = $rs->fetch_object()){
-							$systemAccName = $r->sciname;
-						}
-						$rs->free();
-						$accObj = $externalTaxonObj['accepted_name'];
-						if($accObj['name'] !== $systemAccName){
-							$tidToBeAcc = $this->evaluateTaxonomy($accObj,0);
-							$sql = 'UPDATE taxstatus SET tidaccetped = '.$tidToBeAcc.' WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.
-								$externalTaxonObj['tid'].') AND (tidaccepted = '.$externalTaxonObj['tidaccepted'].')';
-							$this->conn->query($sql);
-						}
-					}
-				}
-			}
-		}
-		else if($this->testValidity){
-			$sql = 'UPDATE taxa SET validitystatus = 0, validitysource = "Species 2000" WHERE (tid = '.$externalTaxonObj['tid'].')';
-			$this->conn->query($sql);
-		}
-	}
-
-	private function evaluateTaxonomy($testObj, $anchorTid){
-		$retTid = 0;
-		$sql = 'SELECT t.tid, ts.tidaccepted, t.sciname, t.author '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.')';
-		if(array_key_exists('name',$testObj)){
-			$sql .= ' AND (t.sciname = "'.$testObj['name'].'")';
-		}
-		else{
-			$sql .= ' AND (t.tid = "'.$testObj['tid'].'")';
-		}
-		$rs = $this->conn->query($sql);
-		if($rs){
-			if($this->testValidity){
-				$sql = 'UPDATE taxa SET validitystatus = 1, validitysource = "Species 2000" WHERE (t.sciname = "'.$testObj['name'].'")';
-				$this->conn->query($sql);
-			}
-			while($r = $rs->fetch_object()){
-				$retTid = $r->tid;
-				if(!$anchorTid) {
-					$anchorTid = $retTid;
-				}
-				$tidAcc = $r->tidaccepted;
-				if($tidAcc !== $anchorTid){
-					$sql = 'UPDATE taxstatus SET tidaccepted = '.$anchorTid.' WHERE (taxauthid = '.$this->taxAuthId.
-						') AND (tid = '.$retTid.') AND (tidaccepted = '.$tidAcc.')';
-					$this->conn->query($sql);
-					$sql = 'UPDATE taxstatus SET tidaccepted = '.$anchorTid.' WHERE (taxauthid = '.$this->taxAuthId.
-						') AND (tidaccepted = '.$retTid.')';
-					$this->conn->query($sql);
-					if($retTid === $tidAcc){
-						$this->updateDependentData($tidAcc,$anchorTid);
-					}
-				}
-			}
-		}
-		else{
-			$parsedArr = (new TaxonomyUtilities)->parseScientificName($testObj['name'],$this->conn);
-			// $this->loadNewTaxon($parsedArr);
-		}
-		return $retTid;
-	}
-
-	private function updateDependentData($tid, $tidNew): void
-	{
-		if(is_numeric($tid) && is_numeric($tidNew)){
-			$this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND (tid = '.$tid.')');
-			$this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE (tid = '.$tid.')');
-			$this->conn->query('DELETE FROM kmdescr WHERE (tid = '.$tid.')');
-			$this->resetCharStateInheritance($tidNew);
-
-			$sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE (tid = '.$tid.')';
-			$this->conn->query($sqlVerns);
-
-			$sqltl = 'UPDATE taxalinks SET tid = '.$tidNew.' WHERE (tid = '.$tid.')';
-			$this->conn->query($sqltl);
-		}
-	}
-
-	private function resetCharStateInheritance($tid): void
-	{
-		$sqlAdd1 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-			'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-			'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-			'FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) '.
-			'INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) '.
-			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) '.
-			'INNER JOIN taxa t2 ON ts2.tid = t2.tid) '.
-			'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-			'WHERE (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.tid = ts2.tidaccepted) '.
-			'AND (t2.tid = '.$tid.') AND ISNULL(d2.CID)';
-		$this->conn->query($sqlAdd1);
-
-		if($this->rankId === 140){
-			$sqlAdd2a = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-				'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-				'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-				'FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) '.
-				'INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) '.
-				'INNER JOIN taxa t2 ON ts2.tid = t2.tid) '.
-				'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-				'WHERE (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.tid = ts2.tidaccepted) '.
-				'AND (t2.RankId = 180) AND (t1.tid = '.$tid.') AND ISNULL(d2.CID)';
-			$this->conn->query($sqlAdd2a);
-			$sqlAdd2b = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-				'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-				'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-				'FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) '.
-				'INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) '.
-				'INNER JOIN taxa t2 ON ts2.tid = t2.tid) '.
-				'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-				"WHERE (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.family = '".$this->sciName."') AND (ts2.tid = ts2.tidaccepted) ".
-				'AND (t2.RankId = 220) AND ISNULL(d2.CID)';
-			$this->conn->query($sqlAdd2b);
-		}
-
-		if($this->rankId > 140 && $this->rankId < 220){
-			$sqlAdd3 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-				'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-				'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-				'FROM ((((taxa AS t1 INNER JOIN kmdescr d1 ON t1.TID = d1.TID) '.
-				'INNER JOIN taxstatus ts1 ON d1.TID = ts1.tid) '.
-				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID) '.
-				'INNER JOIN taxa t2 ON ts2.tid = t2.tid) '.
-				'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-				'WHERE (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.tid = ts2.tidaccepted) '.
-				'AND (t2.RankId = 220) AND (t1.tid = '.$tid.') AND ISNULL(d2.CID)';
-			$this->conn->query($sqlAdd3);
-		}
 	}
 
 	public function getCollMap(): array

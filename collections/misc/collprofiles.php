@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
-$collid = ((array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']))?$_REQUEST['collid']:0);
+$collid = ((array_key_exists('collid',$_REQUEST) && is_numeric($_REQUEST['collid']))?(int)$_REQUEST['collid']:0);
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $eMode = array_key_exists('emode',$_REQUEST)?htmlspecialchars($_REQUEST['emode']):0;
 
@@ -48,17 +48,17 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 
 $editCode = 0;
 if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN']){
-		$editCode = 3;
-	}
-	else if($collid){
-		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-			$editCode = 2;
-		}
-		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-			$editCode = 1;
-		}
-	}
+    if($GLOBALS['IS_ADMIN']){
+        $editCode = 3;
+    }
+    else if($collid){
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+            $editCode = 2;
+        }
+        elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+            $editCode = 1;
+        }
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -486,7 +486,7 @@ if($GLOBALS['SYMB_UID']){
 				</div>
 			</fieldset>
 			<?php
-			include('collprofilestats.php');
+			include(__DIR__ . '/collprofilestats.php');
 		}
 		else{
 			?>

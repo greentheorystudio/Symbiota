@@ -650,7 +650,7 @@ class OccurrenceDuplicate {
                         if(strpos($lastName,'.')) {
                             $lastName = $r2->recordedby;
                         }
-                        if(isset($lastName) && $lastName && !preg_match('#\d#',$lastName)){
+                        if(isset($lastName) && $lastName && !preg_match('#\d#',$lastName) && (is_string($recNum) || is_numeric($recNum))){
                             $rArr[$recNum][$lastName][$r2->dupid][] = $r2->occid;
                             if($r2->collid === $collid && ($this->obsUid || $r2->observeruid === $this->obsUid)) {
                                 $keepArr[$recNum][$lastName] = 1;
@@ -738,22 +738,31 @@ class OccurrenceDuplicate {
     }
 
     public function parseLastName($collName){
+        $lastNameArr = array();
         $collName = trim($collName);
         if(!$collName) {
             return '';
         }
         $primaryArr = explode(';',$collName);
-        $primaryArr = explode('&',$primaryArr[0]);
-        $primaryArr = explode(' and ',$primaryArr[0]);
-        $lastNameArr = explode(',',$primaryArr[0]);
-        if(count($lastNameArr) > 1){
-            $lastName = array_shift($lastNameArr);
+        if($primaryArr){
+            $primaryArr = explode('&',$primaryArr[0]);
         }
-        else{
-            $tempArr = explode(' ',$lastNameArr[0]);
-            $lastName = array_pop($tempArr);
-            while($tempArr && (strpos($lastName,'.') || $lastName === 'III' || strlen($lastName)<3)){
+        if($primaryArr){
+            $primaryArr = explode(' and ',$primaryArr[0]);
+        }
+        if($primaryArr){
+            $lastNameArr = explode(',',$primaryArr[0]);
+        }
+        if($lastNameArr){
+            if(count($lastNameArr) > 1){
+                $lastName = array_shift($lastNameArr);
+            }
+            else{
+                $tempArr = isset($lastNameArr[0])?explode(' ',$lastNameArr[0]):array();
                 $lastName = array_pop($tempArr);
+                while($tempArr && (strpos($lastName,'.') || $lastName === 'III' || strlen($lastName)<3)){
+                    $lastName = array_pop($tempArr);
+                }
             }
         }
         return $lastName;

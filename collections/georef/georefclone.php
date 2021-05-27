@@ -21,15 +21,6 @@ $locality = trim(preg_replace('/[\[\])\d.\-,\s]*$/', '', $locality),'( ');
 $geoManager = new OccurrenceGeorefTools();
 
 $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $searchType, ($collType?$collid:'0'));
-
-$latCen = 41.0;
-$lngCen = -95.0;
-$coorArr = explode(';',$MAPPING_BOUNDARIES);
-if($coorArr && count($coorArr) === 4){
-	$latCen = ($coorArr[0] + $coorArr[2])/2;
-	$lngCen = ($coorArr[1] + $coorArr[3])/2;
-}
-
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
@@ -37,79 +28,52 @@ if($coorArr && count($coorArr) === 4){
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-		<script src="//www.google.com/jsapi"></script>
-		<script src="//maps.googleapis.com/maps/api/js?<?php echo (isset($GOOGLE_MAP_KEY) && $GOOGLE_MAP_KEY?'key='.$GOOGLE_MAP_KEY:''); ?>"></script>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
+        <style type="text/css">
+            .map {
+                height: 600px;
+                overflow: hidden;
+            }
+        </style>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210512" type="text/javascript"></script>
 		<script type="text/javascript">
-            let map;
-            const infoWins = [];
-
-            function initialize(){
-				const dmLatLng = new google.maps.LatLng(<?php echo $latCen. ',' .$lngCen; ?>);
-                const dmOptions = {
-                    zoom: 3,
-                    center: dmLatLng,
-                    mapTypeId: google.maps.MapTypeId.TERRAIN,
-                    scaleControl: true
-                };
-                map = new google.maps.Map(document.getElementById("map_canvas"), dmOptions);
-
-				<?php
-				$minLng = 180;
-				$minLat = 90;
-				$maxLng = -180;
-				$maxLat = -90;
-
-				foreach($clones as $id => $occArr){
-					if($occArr['lat'] < $minLat) {
-                        $minLat = $occArr['lat'];
+            $(document).ready(function() {
+                const cloneArr = JSON.parse('<?php echo json_encode($clones); ?>');
+                for(let id in cloneArr){
+                    if(cloneArr.hasOwnProperty(id)){
+                        const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
+                            Number(cloneArr[id]['lng']), Number(cloneArr[id]['lat'])
+                        ]));
+                        const pointFeature = new ol.Feature(pointGeom);
+                        let latLngStr = cloneArr[id]['lat'] + ' ' + cloneArr[id]['lng'];
+                        if(cloneArr[id]['err']) {
+                            latLngStr += ' (+-' + cloneArr[id]['err'] + 'm)';
+                        }
+                        pointFeature.set('latlngstr',latLngStr);
+                        pointFeature.set('georefby',cloneArr[id]['georefby']);
+                        pointFeature.set('cnt',cloneArr[id]['cnt'] + ' matching records');
+                        pointFeature.set('locality',cloneArr[id]['locality']);
+                        pointFeature.set('lat',cloneArr[id]['lat']);
+                        pointFeature.set('lng',cloneArr[id]['lng']);
+                        pointFeature.set('err',cloneArr[id]['err']);
+                        vectorsource.addFeature(pointFeature);
                     }
-					if($occArr['lat'] > $maxLat) {
-                        $maxLat = $occArr['lat'];
-                    }
-					if($occArr['lng'] < $minLng) {
-                        $minLng = $occArr['lng'];
-                    }
-					if($occArr['lng'] > $maxLng) {
-                        $maxLng = $occArr['lng'];
-                    }
-					
-					$outStr = '<div>'.$occArr['lat'].' '.$occArr['lng'].' ';
-					if($occArr['err']) {
-                        $outStr .= ' (+-' . $occArr['err'] . 'm)';
-                    }
-					if($occArr['georefby']) {
-                        $outStr .= '<br/>Georeferenced by: ' . $occArr['georefby'];
-                    }
-					$outStr .= '<br/>'.$occArr['cnt'].' matching records<br/>';
-					$outStr .= $occArr['locality'].'<br/>';
-					$outStr .= "<a href='#' onclick='cloneCoord(".$occArr['lat'].','.$occArr['lng'].','.($occArr['err']?:'0').")' title='Clone Coordinates'><b>Use Coordinates</b></a>";
-					$outStr .= '</div>';
-					?>
-					const m<?php echo $id; ?> = new google.maps.Marker({
-						position: new google.maps.LatLng(<?php echo $occArr['lat'].','.$occArr['lng']; ?>),
-						map: map
-					});
+                }
+                const vectorextent = vectorsource.getExtent();
+                map.getView().fit(vectorextent,map.getSize());
+                let fittedZoom = map.getView().getZoom();
+                if(fittedZoom > 10){
+                    map.getView().setZoom(fittedZoom - 8);
+                }
+            });
 
-					google.maps.event.addListener(m<?php echo $id; ?>, 'click', function(){
-						for(let w = 0; w < infoWins.length; w++ ) {
-                            const win = infoWins[w];
-                            win.close();
-						}
-						const iWin = new google.maps.InfoWindow({ content: <?php echo '"'.$outStr.'"'; ?> });
-						infoWins.push( iWin );
-						iWin.open(map,m<?php echo $id; ?>);
-					});
-					<?php 
-				}
-				?>
-
-				const swLatLng = new google.maps.LatLng(<?php echo $minLat.','.$minLng; ?>);
-				const neLatLng = new google.maps.LatLng(<?php echo $maxLat.','.$maxLng; ?>);
-                const llBounds = new google.maps.LatLngBounds(swLatLng, neLatLng);
-                map.fitBounds(llBounds);
-			}
-
-			function cloneCoord(lat,lng,err){
+            function cloneCoord(lat,lng,err){
 				try{
 					if(err === 0) {
 					    err = "";
@@ -144,7 +108,7 @@ if($coorArr && count($coorArr) === 4){
 			}
 		</script>
 	</head>
-	<body style="background-color:#ffffff;" onload="initialize()">
+	<body style="background-color:#ffffff;">
 		<div id="innertext">
 			<fieldset style="padding:10px;">
 				<legend><b>Search Form</b></legend>
@@ -181,9 +145,39 @@ if($coorArr && count($coorArr) === 4){
 			if($clones){
 				?>
 				<div style="margin:3px;font-weight:bold;">
-					Click on markers to view and clone coordinates
+					Hold down the alt key and click on markers to view and clone coordinates
 				</div>
-				<div id='map_canvas' style='width:750px; height:600px; clear:both;'></div>
+				<div style="height: 600px;">
+                    <?php include_once(__DIR__ . '/../../spatial/viewerElement.php'); ?>
+                </div>
+                <script type="text/javascript">
+                    map.on('singleclick', function(evt) {
+                        let infoHTML;
+                        if(evt.originalEvent.altKey){
+                            infoHTML = '';
+                            const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                                return feature;
+                            });
+                            if(feature){
+                                let errVal = Number(feature.get('err'));
+                                if(!errVal){
+                                    errVal = 0;
+                                }
+                                infoHTML = feature.get('latlngstr')+'<br />';
+                                if(feature.get('georefby')) {
+                                    infoHTML += '<b>Georeferenced by:</b> '+feature.get('georefby')+'<br />';
+                                }
+                                infoHTML += feature.get('cnt')+'<br />';
+                                infoHTML += feature.get('locality')+'<br />';
+                                infoHTML += "<a href='#' onclick='cloneCoord("+feature.get('lat')+','+feature.get('lng')+','+errVal+");' title='Clone Coordinates'><b>Use Coordinates</b></a>";
+                                if(infoHTML){
+                                    popupcontent.innerHTML = infoHTML;
+                                    popupoverlay.setPosition(evt.coordinate);
+                                }
+                            }
+                        }
+                    });
+                </script>
 				<?php 
 			}
 			else{

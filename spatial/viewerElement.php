@@ -14,6 +14,11 @@ if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) 
     const initialMapCenter = <?php echo $mapCenter; ?>;
 </script>
 <div id="map" class="map">
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
+
     <div id="mapinfo">
         <div id="mapscale_us"></div>
         <div id="mapscale_metric"></div>
@@ -39,4 +44,4 @@ if(isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) && $GLOBALS['SPATIAL_INITIAL_ZOOM']) 
         <div id="mapcoords"></div>
     </div>
 </div>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.viewer.js?ver=3" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.viewer.js?ver=20210416" type="text/javascript"></script>

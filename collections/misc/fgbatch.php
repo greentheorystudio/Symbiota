@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
@@ -9,11 +10,17 @@ $taxon = array_key_exists('taxon',$_POST)?$_POST['taxon']:'';
 $jobId = array_key_exists('jobid',$_POST)?$_POST['jobid']:0;
 
 $apiManager = new FieldGuideManager();
+$cleanManager = new OccurrenceCleaner();
 $currentJobs = array();
 $currentResults = array();
 $currentCount = 0;
 $statusStr = '';
 $imagesExist = $apiManager->checkImages($collId);
+
+if($collId) {
+    $cleanManager->setCollId($collId);
+}
+$collMap = $cleanManager->getCollMap();
 
 $isEditor = 0;		 
 if($GLOBALS['SYMB_UID']){
@@ -46,7 +53,7 @@ if($isEditor){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $collMetadata['collectionname']; ?> Fieldguide Batch Processing Utility</title>
+	<title><?php echo $collMap['collectionname']; ?> Fieldguide Batch Processing Utility</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />

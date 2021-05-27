@@ -96,8 +96,8 @@ function expandExtraImages(){
 	}
 }
 
-function openMapPopup(taxonVar,clid){
-	const url = '../spatial/index.php?starr={"usethes":true,"taxontype":"1","taxa":"' + taxonVar + '"}';
+function openMapPopup(taxonVar,clustering){
+	const url = '../spatial/index.php?starr={"usethes":true,"taxontype":"1","taxa":"' + taxonVar + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
 	window.open(url, '_blank');
 }
 

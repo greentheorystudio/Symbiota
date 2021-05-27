@@ -312,11 +312,13 @@ class TaxonProfileManager {
                     $firstPos = strpos($sciName, ' ',2)+2;
                     $sciName = substr($sciName,0,strpos($sciName, ' ',$firstPos));
                 }
-                $this->sppArray[$sciName]['imgid'] = $row->imgid;
-                $this->sppArray[$sciName]['url'] = $row->url;
-                $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
-                $this->sppArray[$sciName]['photographer'] = $row->photographer;
-                $this->sppArray[$sciName]['caption'] = $row->caption;
+                if(is_string($sciName) || is_int($sciName)){
+                    $this->sppArray[$sciName]['imgid'] = $row->imgid;
+                    $this->sppArray[$sciName]['url'] = $row->url;
+                    $this->sppArray[$sciName]['thumbnailurl'] = $row->thumbnailurl;
+                    $this->sppArray[$sciName]['photographer'] = $row->photographer;
+                    $this->sppArray[$sciName]['caption'] = $row->caption;
+                }
             }
             $result->close();
         }

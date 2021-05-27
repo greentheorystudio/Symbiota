@@ -1555,6 +1555,11 @@ function createUncertaintyCircleFromPointRadius(prad){
     uncertaintycirclesource.addFeature(circleFeature);
 }
 
+function deactivateClustering(){
+    document.getElementById("clusterswitch").checked = false;
+    changeClusterSetting();
+}
+
 function deleteSelections(){
     selectInteraction.getFeatures().forEach(function(feature){
         layersArr['select'].getSource().removeFeature(feature);
@@ -2386,11 +2391,12 @@ function processInputParentPointParams(){
             }
         }
         if(openerRadius > 0){
-            const centerCoords = ol.proj.fromLonLat([decLat, decLong]);
-            const circle = new ol.geom.Circle(centerCoords);
-            circle.setRadius(Number(openerRadius));
-            const circleFeature = new ol.Feature(circle);
-            uncertaintycirclesource.addFeature(circleFeature);
+            document.getElementById('inputpointuncertainty').value = openerRadius;
+            const pointRadius = {};
+            pointRadius.pointlat = Number(decLat);
+            pointRadius.pointlong = Number(decLong);
+            pointRadius.radius = Number(openerRadius);
+            createUncertaintyCircleFromPointRadius(pointRadius);
         }
         const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
             decLong, decLat

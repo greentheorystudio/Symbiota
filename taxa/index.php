@@ -1,4 +1,9 @@
 <?php
+/** @var array $topRowElements */
+/** @var array $leftColumnElements */
+/** @var array $rightColumnElements */
+/** @var array $bottomRowElements */
+/** @var array $footerRowElements */
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -10,6 +15,10 @@ $projValue = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 $showAllImages = array_key_exists('allimages',$_REQUEST);
+
+if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
+    $taxonValue = htmlspecialchars($_REQUEST['quicksearchtaxon']);
+}
 
 $taxonManager = new TaxonProfileManager();
 if($taxAuthId || $taxAuthId === 0) {
@@ -75,10 +84,10 @@ $taxonManager->setDisplayLocality($displayLocality);
 $descr = array();
 
 if(file_exists('includes/config/taxaProfileTemplateCustom.php')){
-    include('includes/config/taxaProfileTemplateCustom.php');
+    include(__DIR__ . '/includes/config/taxaProfileTemplateCustom.php');
 }
 else{
-    include('includes/config/taxaProfileTemplateDefault.php');
+    include(__DIR__ . '/includes/config/taxaProfileTemplateDefault.php');
 }
 ?>
 
@@ -99,7 +108,7 @@ else{
         const allImages = <?php echo ($showAllImages?'true':'false'); ?>;
         let tid = <?php echo $taxonManager->getTid(); ?>;
     </script>
-    <script src="../js/symb/taxa.index.js?ver=2021040622" type="text/javascript"></script>
+    <script src="../js/symb/taxa.index.js?ver=20210512" type="text/javascript"></script>
     <?php
     if(isset($CSSARR)){
         foreach($CSSARR as $cssVal){

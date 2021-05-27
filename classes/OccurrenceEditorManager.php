@@ -792,18 +792,48 @@ class OccurrenceEditorManager {
 
         $editedFields = trim($occArr['editedfields']);
         $editArr = array_unique(explode(';',$editedFields));
-        foreach($editArr as $k => $fName){
-            $trimmedName = trim($fName);
-            if($trimmedName === 'host' || $trimmedName === 'hostassocid'){
-                $quickHostEntered = true;
-                unset($editArr[$k]);
-            }
-            if(!$trimmedName){
-                unset($editArr[$k]);
-            }
-            else if(strcasecmp($fName, 'exstitle') === 0) {
-                unset($editArr[$k]);
-                $editArr[$k] = 'title';
+        if($editArr){
+            foreach($editArr as $k => $fName){
+                $trimmedName = trim($fName);
+                if($trimmedName === 'host' || $trimmedName === 'hostassocid'){
+                    $quickHostEntered = true;
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                }
+                if(!$trimmedName){
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                }
+                else if(strcasecmp($fName, 'exstitle') === 0) {
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                    if($editArr && (is_string($k) || is_int($k))){
+                        $editArr[$k] = 'title';
+                    }
+                }
+
+                if($trimmedName === 'host' || $trimmedName === 'hostassocid'){
+                    $quickHostEntered = true;
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                }
+                if(!$trimmedName){
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                }
+                else if(strcasecmp($fName, 'exstitle') === 0) {
+                    if($editArr && (is_string($k) || is_int($k))){
+                        unset($editArr[$k]);
+                    }
+                    if($editArr && (is_string($k) || is_int($k))){
+                        $editArr[$k] = 'title';
+                    }
+                }
             }
         }
         if($editArr || $quickHostEntered){
@@ -844,36 +874,40 @@ class OccurrenceEditorManager {
 
                 if($oldValues['recordenteredby'] === 'preprocessed' || (!$oldValues['recordenteredby'] && ($oldValues['processingstatus'] === 'unprocessed' || $oldValues['processingstatus'] === 'stage 1'))){
                     $occArr['recordenteredby'] = $GLOBALS['USERNAME'];
-                    $editArr[] = 'recordenteredby';
+                    if($editArr){
+                        $editArr[] = 'recordenteredby';
+                    }
                 }
 
                 $sqlEditsBase = 'INSERT INTO omoccuredits(occid,reviewstatus,appliedstatus,uid,fieldname,fieldvaluenew,fieldvalueold) '.
                     'VALUES ('.$occArr['occid'].',1,'.($autoCommit?'1':'0').','.$GLOBALS['SYMB_UID'].',';
                 foreach($editArr as $fieldName){
-                    if(!array_key_exists($fieldName,$occArr)){
-                        $occArr[$fieldName] = 0;
-                    }
-                    $newValue = $this->cleanInStr($occArr[$fieldName]);
-                    $oldValue = $this->cleanInStr($oldValues[$fieldName]);
-                    if(($oldValue !== $newValue) && $fieldName !== 'tidinterpreted') {
-                        if($fieldName === 'ometid'){
-                            $exsTitleStr = '';
-                            $sql = 'SELECT title FROM omexsiccatititles WHERE ometid = '.$occArr['ometid'];
-                            $rs = $this->conn->query($sql);
-                            if($r = $rs->fetch_object()){
-                                $exsTitleStr = $r->title;
-                            }
-                            $rs->free();
-                            if($newValue) {
-                                $newValue = $exsTitleStr . ' (ometid: ' . $occArr['ometid'] . ')';
-                            }
-                            if($oldValue) {
-                                $oldValue = $oldValues['title'] . ' (ometid: ' . $oldValues['ometid'] . ')';
-                            }
+                    if(is_string($fieldName) || is_int($fieldName)){
+                        if(!array_key_exists($fieldName,$occArr)){
+                            $occArr[$fieldName] = 0;
                         }
-                        $sqlEdit = $sqlEditsBase.'"'.$fieldName.'","'.$newValue.'","'.$oldValue.'")';
-                        //echo '<div>'.$sqlEdit.'</div>';
-                        $this->conn->query($sqlEdit);
+                        $newValue = $this->cleanInStr($occArr[$fieldName]);
+                        $oldValue = $this->cleanInStr($oldValues[$fieldName]);
+                        if(($oldValue !== $newValue) && $fieldName !== 'tidinterpreted') {
+                            if($fieldName === 'ometid'){
+                                $exsTitleStr = '';
+                                $sql = 'SELECT title FROM omexsiccatititles WHERE ometid = '.$occArr['ometid'];
+                                $rs = $this->conn->query($sql);
+                                if($r = $rs->fetch_object()){
+                                    $exsTitleStr = $r->title;
+                                }
+                                $rs->free();
+                                if($newValue) {
+                                    $newValue = $exsTitleStr . ' (ometid: ' . $occArr['ometid'] . ')';
+                                }
+                                if($oldValue) {
+                                    $oldValue = $oldValues['title'] . ' (ometid: ' . $oldValues['ometid'] . ')';
+                                }
+                            }
+                            $sqlEdit = $sqlEditsBase.'"'.$fieldName.'","'.$newValue.'","'.$oldValue.'")';
+                            //echo '<div>'.$sqlEdit.'</div>';
+                            $this->conn->query($sqlEdit);
+                        }
                     }
                 }
             }
@@ -1801,7 +1835,7 @@ class OccurrenceEditorManager {
                 $imageMap[$imgId]['sortseq'] = $row->sortsequence;
                 if(strpos($row->originalurl, 'api.idigbio.org') && strtotime($row->initialtimestamp) > strtotime('-2 days')) {
                     $headerArr = get_headers($row->originalurl,1);
-                    if($headerArr['Content-Type'] === 'image/svg+xml') {
+                    if($headerArr && $headerArr['Content-Type'] === 'image/svg+xml') {
                         $imageMap[$imgId]['error'] = 'NOTICE: iDigBio image derivatives not yet available, it may take upto 24 hours before image processing is complete';
                     }
                 }
@@ -1823,15 +1857,17 @@ class OccurrenceEditorManager {
         if($result){
             while($r = $result->fetch_object()){
                 $k = substr($r->initialtimestamp,0,16);
-                if(!isset($retArr[$k]['editor'])){
-                    $retArr[$k]['editor'] = $r->editor;
-                    $retArr[$k]['ts'] = $r->initialtimestamp;
-                    $retArr[$k]['reviewstatus'] = $r->reviewstatus;
-                    $retArr[$k]['appliedstatus'] = $r->appliedstatus;
+                if($k){
+                    if(!isset($retArr[$k]['editor'])){
+                        $retArr[$k]['editor'] = $r->editor;
+                        $retArr[$k]['ts'] = $r->initialtimestamp;
+                        $retArr[$k]['reviewstatus'] = $r->reviewstatus;
+                        $retArr[$k]['appliedstatus'] = $r->appliedstatus;
+                    }
+                    $retArr[$k]['edits'][$r->ocedid]['fieldname'] = $r->fieldname;
+                    $retArr[$k]['edits'][$r->ocedid]['old'] = $r->fieldvalueold;
+                    $retArr[$k]['edits'][$r->ocedid]['new'] = $r->fieldvaluenew;
                 }
-                $retArr[$k]['edits'][$r->ocedid]['fieldname'] = $r->fieldname;
-                $retArr[$k]['edits'][$r->ocedid]['old'] = $r->fieldvalueold;
-                $retArr[$k]['edits'][$r->ocedid]['new'] = $r->fieldvaluenew;
             }
             $result->free();
         }
@@ -1894,7 +1930,7 @@ class OccurrenceEditorManager {
         if(array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS'])){
             foreach($GLOBALS['USER_RIGHTS']['CollTaxon'] as $vStr){
                 $tok = explode(':',$vStr);
-                if($tok[0] === $this->collId){
+                if($tok && $tok[0] === $this->collId){
                     $udIdArr[] = $tok[1];
                 }
             }
@@ -1949,7 +1985,7 @@ class OccurrenceEditorManager {
                 if($sciname){
                     $taxon = $sciname;
                     $tok = explode(' ',$sciname);
-                    if((count($tok) > 1) && strlen($tok[0]) > 2) {
+                    if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
                     $sqlWhere .= '(t.sciname = "'.$this->cleanInStr($taxon).'") ';

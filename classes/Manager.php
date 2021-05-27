@@ -69,16 +69,17 @@ class Manager  {
 		return $this->errorMessage;
 	}
 
-   public function getWarningArr(): array
-   {
-		return $this->warningArr;
-	}
+    public function getWarningArr(): array
+    {
+        return $this->warningArr;
+    }
 
 	protected function cleanOutStr($str){
 		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
 	}
 
-	protected function cleanInStr($str){
+	protected function cleanInStr($str): string
+    {
 		$newStr = trim($str);
 		if($newStr){
 			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
@@ -87,13 +88,13 @@ class Manager  {
 		return $newStr;
 	}
 
-	protected function cleanInArray($arr): array
-	{
-		$newArray = array();
-		foreach($arr as $key => $value){
-			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
-		}
-		return $newArray;
-	}
+    protected function cleanInArray($arr): array
+    {
+        $newArray = array();
+        foreach($arr as $key => $value){
+            $newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
+        }
+        return $newArray;
+    }
 
 }

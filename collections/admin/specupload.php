@@ -82,8 +82,10 @@ $NFNUPLOAD = 9;
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
-	$uspid = $tok[0];
-	$uploadType = (int)$tok[1];
+	if($tok){
+        $uspid = $tok[0];
+        $uploadType = (int)$tok[1];
+    }
 }
 
 $duManager = new SpecUploadBase();

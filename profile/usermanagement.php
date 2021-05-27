@@ -27,8 +27,10 @@ if($GLOBALS['IS_ADMIN']){
 			$tablePk = '';
 			if(strpos($pname,'-')){
 				$tok = explode('-',$pname);
-				$role = $tok[0];
-				$tablePk = $tok[1];
+				if($tok){
+                    $role = $tok[0];
+                    $tablePk = $tok[1];
+                }
 			}
 			$userManager->addPermission($userId, $role, $tablePk);
 		}

@@ -101,19 +101,33 @@ class EOLUtilities {
 				$uniqueList = array();
 				foreach($eolObj->synonyms as $synObj){
 					if(!in_array($synObj->synonym, $uniqueList, true)){
-						$uniqueList[] = $synObj->synonym;
-                        $taxonArr['syns'][$cnt]['scientificName'] = $synObj->synonym;
-						if(isset($synObj->relationship)) {
-							$taxonArr['syns'][$cnt]['synreason'] = $synObj->relationship;
-						}
-						$cnt++;
+						if(array_key_exists('syns',$taxonArr)){
+                            $synArr = $taxonArr['syns'];
+                        }
+						else{
+                            $synArr = array();
+                        }
+                        if(array_key_exists($cnt,$synArr)){
+                            $cntArr = $synArr[$cnt];
+                        }
+                        else{
+                            $cntArr = array();
+                        }
+                        $uniqueList[] = $synObj->synonym;
+                        $cntArr['scientificName'] = $synObj->synonym;
+                        if(isset($synObj->relationship)) {
+                            $cntArr['synreason'] = $synObj->relationship;
+                        }
+                        $synArr[$cnt] = $cntArr;
+                        $taxonArr['syns'] = $synArr;
+                        $cnt++;
 					}
 				}
 			}
 			if($includeCommonNames && isset($eolObj->vernacularNames)){
 				foreach($eolObj->vernacularNames as $vernObj){
 					if(in_array($vernObj->language, $this->targetLanguages, true)){
-						$taxonArr['verns'][] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
+						$taxonArr['verns'] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
 					}
 				}
 			}
@@ -124,10 +138,11 @@ class EOLUtilities {
 		return $taxonArr;
 	}
 
-	public function getHierarchyEntries($id, $includeSynonyms = true, $includeCommonNames = true){
+	public function getHierarchyEntries($id): array
+    {
 		$taxonArr = array();
 		if($id){
-			$url = 'http://eol.org/api/hierarchy_entries/1.0/'.$id.'.json?common_names='.($includeCommonNames?'true':'false').'&synonyms='.($includeSynonyms?'true':'false');
+			$url = 'http://eol.org/api/hierarchy_entries/1.0/'.$id.'.json?common_names=true&synonyms=true';
 			if($fh = fopen($url, 'rb')){
 				$content = '';
 				while($line = fread($fh, 1024)){
@@ -147,20 +162,18 @@ class EOLUtilities {
 						$taxonArr['sourceURL'] = $eolObj->source;
 					}
 
-					if($includeSynonyms){
-						$synonyms = $eolObj->synonyms;
-						foreach($synonyms as $synObj){
-							$taxonArr['syns'][] = array('scientificName' => $synObj->scientificName,'synreason' => $synObj->taxonomicStatus);
-						}
-					}
-					if($includeCommonNames){
-						$vernacularNames = $eolObj->vernacularNames;
-						foreach($vernacularNames as $vernObj){
-							if(in_array($vernObj->language, $this->targetLanguages, true)){
-								$taxonArr['verns'][] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
-							}
-						}
-					}
+                    $synonyms = $eolObj->synonyms;
+                    foreach($synonyms as $synObj){
+                        $taxonArr['syns'] = array('scientificName' => $synObj->scientificName,'synreason' => $synObj->taxonomicStatus);
+                    }
+
+                    $vernacularNames = $eolObj->vernacularNames;
+                    foreach($vernacularNames as $vernObj){
+                        if(in_array($vernObj->language, $this->targetLanguages, true)){
+                            $taxonArr['verns'] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
+                        }
+                    }
+
 					if($eolObj->ancestors && $eolObj->parentNameUsageID){
 						$ancArr = array_reverse((array)$eolObj->ancestors);
 						$parArr = $this->getParentArray($ancArr,$eolObj->parentNameUsageID);
@@ -177,7 +190,6 @@ class EOLUtilities {
 		}
 		else{
 			$this->errorStr = 'Input ID is null';
-			return false;
 		}
 		return $taxonArr;
 	}
