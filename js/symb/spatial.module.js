@@ -15,6 +15,7 @@ let queryRecCnt = 0;
 let draw;
 let clustersource;
 let loadPointsEvent = false;
+let toggleSelectedPoints = false;
 let taxaCnt = 0;
 let lazyLoadCnt = 20000;
 let clusterDistance = 50;
@@ -2726,6 +2727,16 @@ function processPointSelection(sFeature){
     const style = (sFeature.get('features') ? setClusterSymbol(sFeature) : setSymbol(sFeature));
     sFeature.setStyle(style);
     adjustSelectionsTab();
+}
+
+function processToggleSelectedChange(){
+    toggleSelectedPoints = document.getElementById("toggleselectedswitch").checked;
+    if(clusterPoints){
+        loadPointWFSLayer(0);
+    }
+    else{
+        layersArr['pointv'].setSource(pointvectorsource);
+    }
 }
 
 function processVectorInteraction(){
