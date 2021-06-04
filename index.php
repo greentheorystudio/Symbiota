@@ -34,7 +34,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
             var photographerArray = [
                 "Denise Knapp",
                 "Denise Knapp",
-                "William Hoyer",
+                "",
                 "",
                 "Morgan Ball",
                 "Morgan Ball",
