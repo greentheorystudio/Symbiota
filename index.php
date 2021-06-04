@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
-        <title><?php echo $DEFAULT_TITLE; ?> Home</title>
-        <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-        <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link type="text/css" href="css/jquery-ui.css" rel="stylesheet" />
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
@@ -31,15 +31,34 @@ header('Content-Type: text/html; charset=' .$CHARSET);
                 "url(images/layout/Image10.jpg)",
                 "url(images/layout/Image11.jpg)",
                 "url(images/layout/Image12.jpg)"];
+            var photographerArray = [
+                "Denise Knapp",
+                "Denise Knapp",
+                "William Hoyer",
+                "",
+                "Morgan Ball",
+                "Morgan Ball",
+                "Morgan Ball",
+                "Morgan Ball",
+                "Morgan Ball",
+                "Morgan Ball"];
             var curIndex = 0;
             var imgDuration = 4000;
 
             function slideShow() {
                 setTimeout(function() {
                     document.getElementById('bannerDiv').style.backgroundImage = imgArray[curIndex];
+                    if(photographerArray[curIndex] !== ""){
+                        document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + photographerArray[curIndex] + ')</div>';
+                    }
+                    else{
+                        document.getElementById('imageCredit').innerHTML = '';
+                    }
                 },1000);
                 curIndex++;
-                if(curIndex == imgArray.length) { curIndex = 0; }
+                if(curIndex === imgArray.length) {
+                    curIndex = 0;
+                }
                 setTimeout(slideShow, imgDuration);
             }
         </script>
