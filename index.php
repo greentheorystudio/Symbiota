@@ -12,11 +12,13 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
                 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID'] ?? ''; ?>');</script>
+        })(window,document,'script','dataLayer','<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID'] ?? ''; ?>');
+    </script>
     <!-- End Google Tag Manager -->
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
@@ -27,6 +29,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             display: flex;
             width: 100%;
             justify-content: space-evenly;
+            margin-top: 20px;
         }
         .totals-box {
             width: 22%;
@@ -37,6 +40,92 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             flex-direction:column;
             align-items:center;
         }
+
+        .hero-container {
+            background-image: url("images/layout/home-header-image.jpeg");
+            width: 100%;
+            height: 1000px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+
+        .title-container {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            color: white;
+            padding-left: 20px;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 15px;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 500px;
+            height: 35px;
+            padding-left: 10px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .login-container a {
+            color: white;
+        }
+
+        .login-link {
+            font-family: 'Patua One';
+            font-size: 16px;
+            color: white;
+            margin: 10px;
+        }
+
+        .nav-bar-container {
+            position: absolute;
+            top: 150px;
+            left: 0;
+        }
+
+        .quicksearch-container {
+            position: absolute;
+            top: 525px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-content: center;
+            color: black;
+        }
+
+        .heading-container {
+            position: absolute;
+            top: 750px;
+            left: 0;
+            width: 100%;
+            color: white;
+        }
+
+        .heading-inner {
+            padding: 15px;
+            width: 75%;
+            background-color: rgba(0, 0, 0, 0.5);
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .fa-leaf, .fa-dna, .fa-map-marked-alt{
+            color: #1599AB;
+            filter: drop-shadow(10px 10px 4px lightgrey);
+            height: 60px;
+            width: 60px;
+        }
+
+        #innertext{
+            min-height:200px;
+        }
     </style>
     <script src="js/all.min.js" type="text/javascript"></script>
     <script src="js/jquery.js" type="text/javascript"></script>
@@ -46,68 +135,33 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
 <?php
-include(__DIR__ . '/header.php');
+include(__DIR__ . '/home-header.php');
 ?>
-<div  id="innertext">
-    <div style="margin-top:15px;padding: 0 10px;">
-        Sweeping along 156 miles of Florida’s eastern coast, the Indian River Lagoon (IRL) is home to a wealth of habitats
-        and spectacular biodiversity. Its seagrass beds, mangroves, oyster reefs, salt marshes, tidal flats, scrubland,
-        beaches and dunes nurture more than 3,500 species of plants, animals and other organisms.
-    </div>
-    <div style="margin-top:15px;padding: 0 10px;">
-        The IRL’s rich biodiversity is largely due to its unique geographic location at the transition between cool, temperate
-        and warm, subtropical climate zones. Designated as an “estuary of national significance” by the U.S. Environmental
-        Protection Agency, the IRL also provides enormous human benefits, supporting thousands of jobs and generating hundreds
-        of millions of dollars in income and revenue annually.
-    </div>
-    <div style="margin-top:15px;padding: 0 10px;">
-        With a dynamic and growing taxonomic species database, ecological and life history information, and extensive documentation
-        of the IRL’s many habitats, the Indian River Lagoon Species Inventory portal is intended to be a multi-purpose tool
-        to enhance scientific knowledge of the IRL ecosystem; support sound policy-making by decisionmakers and natural resources
-        managers; and advance public awareness of the need for steadfast stewardship of the lagoon’s health.
-    </div>
-    <div style="margin-top:15px;padding: 0 10px;">
-        As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
-    </div>
-    <div class="searcharea">
-        <div class="searchtop">
-            <?php
-            $searchText = '';
-            $buttonText = 'Search';
-            $placeholderText = 'Scientific Name';
-            include_once(__DIR__ . '/classes/PluginsManager.php');
-            $pluginManager = new PluginsManager();
-            $pluginManager->setQuickSearchShowSelector(true);
-            $pluginManager->setQuickSearchDefaultSetting('common');
-            $quicksearch = $pluginManager->createQuickSearch($buttonText,$searchText);
-            echo $quicksearch;
-            ?>
-            <div class="as"> <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
-        </div>
-    </div>
-
+<div id="innertext">
     <div class="totals-row">
         <div class="totals-box">
-            <i style="color:gray;height:60px;width:60px;" class="fas fa-leaf"></i>
+            <i style="height:60px;width:60px;" class="fas fa-leaf"></i>
+            <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxaWithDesc; ?></h2>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Species Reports</h5>
+        </div>
+        <div class="totals-box">
+            <i style="height:60px;width:60px;" class="fas fa-dna"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxa; ?></h2>
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;"> Total Taxa</h5>
         </div>
         <div class="totals-box">
-            <i style="color:gray;height:60px;width:60px;" class="icon-style fas fa-star"></i>
-            <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxaWithDesc; ?></h2>
-            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Total Taxa With Descriptions</h5>
-        </div>
-        <div class="totals-box">
-            <i style="color:gray;height:60px;width:60px;" class="fas fa-book"></i>
+            <i style="height:60px;width:60px;" class="fas fa-map-marked-alt"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalOccurrenceRecords; ?></h2>
-            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Total Occurrence Records</h5>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Occurrence Records</h5>
         </div>
     </div>
+    <p style="margin-top: 25px;width: 100%;text-align: center;font-size: 16px;">
+        As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
+    </p>
 </div>
 
 <?php

@@ -1,11 +1,40 @@
+/* patua-one-regular - latin */
+@font-face {
+	font-family: 'Patua One';
+	font-style: normal;
+	font-weight: 400;
+	src: url('fonts/patua-one-v11-latin-regular.eot'); /* IE9 Compat Modes */
+	src: local(''),
+	url('fonts/patua-one-v11-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('fonts/patua-one-v11-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+	url('fonts/patua-one-v11-latin-regular.woff') format('woff'), /* Modern Browsers */
+	url('fonts/patua-one-v11-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+	url('fonts/patua-one-v11-latin-regular.svg#PatuaOne') format('svg'); /* Legacy iOS */
+}
+
+/* fira-sans-regular - latin */
+@font-face {
+	font-family: 'Fira Sans';
+	font-style: normal;
+	font-weight: 400;
+	src: url('../fonts/fira-sans-v11-latin-regular.eot'); /* IE9 Compat Modes */
+	src: local(''),
+	url('../fonts/fira-sans-v11-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('../fonts/fira-sans-v11-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+	url('../fonts/fira-sans-v11-latin-regular.woff') format('woff'), /* Modern Browsers */
+	url('../fonts/fira-sans-v11-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+	url('../fonts/fira-sans-v11-latin-regular.svg#FiraSans') format('svg'); /* Legacy iOS */
+}
+body, html {
+	height: 100%;
+	overflow-x: hidden;
+}
+
 body{
-	width: 80%;
-	min-width:1005px;
-	margin-top:0;
-	background-color:#336699;
-	font-family: arial, helvetica, sans-serif;
-	font-size: 14px;
-	line-height: 16px;
+	font-family: 'Fira Sans';
+	font-size: 12px;
+	line-height: 14px;
+	margin: 0;
 }
 
 #maintable{
@@ -56,9 +85,12 @@ div.menuitem a:hover {
 }
 
 #innertext{
+	width: 80%;
 	min-height:400px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
+	font-family: 'Fira Sans';
+	font-size: 12px;
 }
 
 div.navpath {
@@ -66,43 +98,74 @@ div.navpath {
 	padding-bottom: 0;
 	padding-left: 10px;
 	margin-bottom: 0;
+	font-family: 'Fira Sans';
+	font-size: 8px;
+	color: #333F48;
+	font-variant: small-caps;
 }
 
 h1{
-	font-family: georgia, serif;
+	font-family: 'Patua One';
 	font-size: 24px;
-	font-weight: normal;
+	line-height: 26px;
+}
+
+h2{
+	font-family: 'Patua One';
+	font-size: 20px;
+}
+
+h3{
+	font-family: 'Patua One';
+	font-size: 20px;
+	line-height: 21px;
+}
+
+h4{
+	font-family: 'Fira Sans';
+	font-size: 16px;
+	font-weight: bold;
+}
+
+h5{
+	font-family: 'Fira Sans';
+	font-size: 14px;
+	font-weight: bold;
+}
+
+p{
+	font-family: 'Fira Sans';
+	font-size: 12px;
 }
 
 #top_navbar{
 	clear:both;
-	height:33px;
-	background-image:url(images/menu_pri_background.jpg);
-	background-repeat:repeat-x;
-	background-position:top;
-	background-color:#c2c2c2;
+	background-color: #173753;
+	padding: 0;
+}
+.nav-bar-container {
+	width: 100%;
+	background-color: #173753;
+	display: flex;
+	justify-content: center;
 }
 #right_navbarlinks{
 	clear:both;
-	font-size:11px;
 	float:right;
 	color:#000000;
 	margin-top:9px;
 }
 #hor_dropdown{
 	list-style:none;
-	float:left;
-	position:relative;
-	font-size:12px;
+	font-size: 12px;
 	width:auto;
-	height:31px;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding-left:0;
-	background-image:url(images/menu_pri_background.jpg);
-	background-repeat:repeat-x;
-	background-position:top;
-	background-color:#c2c2c2;
+	color: white;
+	font-family: 'Fira Sans';
+	text-transform: uppercase;
+	background-color: #173753;
+	margin: 0;
+	padding: 0;
+	height: 64px;
 }
 #hor_dropdown li{
 	float:left;
@@ -112,28 +175,24 @@ h1{
 }
 #hor_dropdown a{
 	display:block;
-	color:#000000;
-	text-decoration:none;
-	padding: 8px 10px 10px;
-	background-image: url(images/menu-item_divider.jpg);
-	background-repeat: no-repeat;
-	background-position: right bottom;
+	color: white;
+	text-decoration: none;
+	padding: 25px 15px;
 }
 #hor_dropdown a:hover{
-	background-color:#999999;
-	color:#FFFFFF;
-	padding: 8px 10px 10px;
-	background-image:none;
+	background-color: #FDBA35;
+	color: black;
+	padding: 25px 15px;
 }
 /* Submenu */
 #hor_dropdown ul {
 	list-style:none;
 	position:absolute;
 	left:0;
-	top:33px;
+	top: 64px;
 	padding:0;
 	z-index:1000;
-	background-color:#dcdcdc;
+	background-color: #173753;
 	visibility: hidden;
 	opacity: 0;
 	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
@@ -145,7 +204,7 @@ h1{
 }
 #hor_dropdown ul a{
 	white-space:nowrap;
-	padding: 5px 8px 5px 5px;
+	padding: 25px 15px;
 	text-decoration:none;
 	text-indent:8px;
 }
@@ -156,13 +215,14 @@ h1{
 #hor_dropdown li:hover ul a {
 	text-decoration:none;
 	text-indent:8px;
-	padding: 5px 8px 5px 5px;
-	background-image: none;
-	background-color:#dcdcdc;
+	padding: 25px 15px;
+	background-color: #173753;
+	color: white;
 	z-index:1000;
 }
 #hor_dropdown li:hover ul li a:hover {
-	background:#999999;
+	background-color: #FDBA35;
+	color: black;
 }
 /* Submenu to right */
 #hor_dropdown li ul li ul {
@@ -174,7 +234,7 @@ h1{
 }
 #hor_dropdown li ul li:hover ul {
 	left:100%;
-	top:0;
+	top: 0;
 	visibility: visible;
 	opacity: 1;
 	padding:0;
@@ -183,21 +243,25 @@ h1{
 #hor_dropdown li ul li:hover ul a {
 	text-decoration:none;
 	text-indent:8px;
-	padding: 5px 8px 5px 5px;
+	padding: 25px 15px;
 	background-image: none;
-	background-color:#dcdcdc;
+	background-color: #173753;
 	z-index:1000;
 }
 #hor_dropdown li ul li:hover ul li a:hover {
-	background:#999999;
+	background-color: #FDBA35;
+	color: black;
 }
 
 .as {
 	clear: both;
-	padding-top: 20px;
 	font-size: 15px;
-	margin-right: 60px;
-	text-align: right;
+	text-align: left;
+	margin-bottom: -15px;
+	margin-left: 55%;
+}
+.as a {
+	color: black;
 }
 #quicksearchbutton {
 	text-transform: uppercase;
@@ -264,11 +328,12 @@ h1{
 	margin-right: auto;
 }
 .searcharea {
-	width: 100%;
-	max-width: none;
-	margin-top: -164px;
-	padding-top: 231px;
-	margin-bottom: 83px;
+	width: 54%;
+	padding-top: 5px;
+	height: 90px;
+	background-color: rgba(255, 255, 255, 0.6);
+	margin-left: auto;
+	margin-right: auto;
 }
 input#quicksearchtaxon {
 	border: solid 5px #679146;
@@ -324,12 +389,6 @@ div.spptab{
 h1.heading{
 	text-align:center;
 	color: #408080;
-}
-#innertext h2{
-	font-weight: bold;
-	color: #036;
-	text-align:center;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 table.table-border td p.label, table.table-border td span, table.table-border td p.heading, ol.report-caterories table.table-border td{
@@ -510,4 +569,10 @@ ol.report-caterories li p.heading {
 }
 .genus_italics {
 	font-style:italic;
+}
+
+.footer{
+	height: 175px;
+	display: flex;
+	align-items: center;
 }
