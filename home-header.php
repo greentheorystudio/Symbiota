@@ -4,6 +4,9 @@
             Species Inventory</h1>
     </div>
     <div class="login-container">
+        <div>
+            <a class="login-link" href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/contact.php'>Contact Us</a>
+        </div>
         <?php
         if($GLOBALS['USER_DISPLAY_NAME']){
             ?>
@@ -48,8 +51,8 @@
                 <div class="as"> <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
                 <?php
                 $searchText = '';
-                $buttonText = 'Search';
-                $placeholderText = 'Scientific Name';
+                $buttonText = 'Search the Inventory';
+                $placeholderText = '';
                 include_once(__DIR__ . '/classes/PluginsManager.php');
                 $pluginManager = new PluginsManager();
                 $pluginManager->setQuickSearchShowSelector(true);

@@ -53,8 +53,8 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         .title-container {
             position: absolute;
-            top: 15px;
-            left: 0;
+            top: 30px;
+            left: 30px;
             color: white;
             padding-left: 20px;
         }
@@ -77,8 +77,8 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         }
 
         .login-link {
-            font-family: 'Patua One';
-            font-size: 16px;
+            font-family: 'Fira Sans';
+            font-size: 9pt;
             color: white;
             margin: 10px;
         }
@@ -126,6 +126,12 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         #innertext{
             min-height:200px;
         }
+
+        h3{
+            font-family: 'Fira Sans';
+            font-size: 14pt;
+            font-weight: normal;
+        }
     </style>
     <script src="js/all.min.js" type="text/javascript"></script>
     <script src="js/jquery.js" type="text/javascript"></script>
@@ -146,21 +152,21 @@ include(__DIR__ . '/home-header.php');
         <div class="totals-box">
             <i style="height:60px;width:60px;" class="fas fa-leaf"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxaWithDesc; ?></h2>
-            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Species Reports</h5>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;">Species Reports</h5>
         </div>
         <div class="totals-box">
             <i style="height:60px;width:60px;" class="fas fa-dna"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxa; ?></h2>
-            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;"> Total Taxa</h5>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;"> Total Taxa</h5>
         </div>
         <div class="totals-box">
             <i style="height:60px;width:60px;" class="fas fa-map-marked-alt"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalOccurrenceRecords; ?></h2>
-            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;">Occurrence Records</h5>
+            <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;">Occurrence Records</h5>
         </div>
     </div>
     <p style="margin-top: 25px;width: 100%;text-align: center;font-size: 16px;">
-        As you explore the portal and its resources, please reach out with comments, questions and concerns to irlwebmaster@si.edu
+        As you explore the portal and its resources, please reach out with comments, questions and concerns to <a href="mailto:irlwebmaster@si.edu">irlwebmaster@si.edu</a>
     </p>
 </div>
 

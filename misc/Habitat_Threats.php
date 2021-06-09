@@ -84,6 +84,7 @@ include(__DIR__ . '/../header.php');
                     grows best in natural undeveloped areas (Middleton <em>et al.</em> 2008). More information on
                     mosquito impoundments can be found by
                     navigating to the impoundment link on the main habitat page.</p>
+                <a name="shoreline"></a>
                 <p class="title">Shoreline Development</p><br/>
                 <p class="body">Land
                     use changes from the growing population and urbanization in Florida
@@ -100,6 +101,7 @@ include(__DIR__ . '/../header.php');
                     managed by the Florida Department of Environmental Protection. Proper
                     management provides conservation from further development and encourages
                     restoration programs that work to increase habitat acreage.</p>
+                <a name="muck"></a>
                 <p class="title">Muck &amp; Nutrients</p>
                 <p class="body">Accumulations
                     of fine-grained, organic-rich clays and silt known as muck are introduced
@@ -131,6 +133,7 @@ include(__DIR__ . '/../header.php');
                     Coupled with decreases in terrestrial and industrial runoff, further
                     dredging projects could result in long-term reductions of muck throughout
                     the IRL.</p>
+                <a name="invasives"></a>
                 <p class="title">Invasive Species</p>
                 <p class="body">Bioinvasions
                     have become high profile issues affecting ecosystem dynamics in
@@ -156,6 +159,7 @@ include(__DIR__ . '/../header.php');
                     or impossible to reverse, and can only be managed to prevent further
                     range expansion.</p>
 
+                <a name="weather"></a>
                 <p class="title">Hurricanes</p>
                 <p class="body">Salt marshes, mangroves and other coastal ecosystems
                     can usually recover quickly from natural disturbances such as fire
@@ -182,6 +186,7 @@ include(__DIR__ . '/../header.php');
                     decades, and restored swamps may have altered biodiversity and plant
                     zonation (Ellison &amp; Farnsworth 1990).</p>
 
+                <a name="sealevel"></a>
                 <p class="title">Sea Level Rise</p>
                 <p class="body">Much
                     attention has been given to the effects of rising sea level on coastal
