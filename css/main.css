@@ -479,11 +479,17 @@ p{
 	clear: both;
 	font-size: 15px;
 	text-align: left;
-	margin-bottom: -15px;
-	margin-left: 55%;
+	position: absolute;
+	top: 10px;
+	left: 475px;
 }
 .as a {
 	color: black;
+}
+#quicksearch {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 #quicksearchbutton {
 	text-align: center;
@@ -491,12 +497,14 @@ p{
 	font-size: 13pt;
 	margin: 5em auto;
 	padding: 20px;
+	height: 75px;
+	width: 250px;
 	background-color: rgba(16, 114, 127, 0.75);
 	border: 0;
 	color: #FFF;
-	overflow: hidden;
-	height: auto;
-	transition: all 0.5s;
+	margin-left: 20px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
 #quicksearchbutton:hover,
 #quicksearchbutton:active {
@@ -506,35 +514,29 @@ p{
 	cursor: pointer;
 }
 .searchtop {
-	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
+	position: relative;
 }
 .searcharea {
-	width: 54%;
-	padding-top: 5px;
-	height: 90px;
-	background-color: rgba(255, 255, 255, 0.6);
 	margin-left: auto;
 	margin-right: auto;
 }
+#quicksearchinputcontainer {
+	padding: 10px;
+	background-color: rgba(255, 255, 255, 0.6);
+}
 input#quicksearchtaxon {
-	border: solid 5px #679146;
+	border: solid 0.75pt #10727F;
 }
 #quicksearchtext {
 	margin-top: 0px;
 	padding-bottom: 0px;
 	float: left;
 }
-#quicksearchbutton {
-	margin-left: 10px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	float: left;
-}
 #quicksearchtaxon {
-	width: 70%;
-	height: 70px;
+	width: 600px;
+	height: 50px;
 	float: left;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
