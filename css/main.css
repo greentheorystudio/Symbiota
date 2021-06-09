@@ -498,7 +498,7 @@ p{
 	margin: 5em auto;
 	padding: 20px;
 	height: 75px;
-	width: 250px;
+	width: 210px;
 	background-color: rgba(16, 114, 127, 0.75);
 	border: 0;
 	color: #FFF;
@@ -524,7 +524,7 @@ p{
 }
 #quicksearchinputcontainer {
 	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.6);
+	background-color: rgba(255, 255, 255, 0.75);
 }
 input#quicksearchtaxon {
 	border: solid 0.75pt #10727F;
@@ -537,7 +537,6 @@ input#quicksearchtaxon {
 #quicksearchtaxon {
 	width: 600px;
 	height: 50px;
-	float: left;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 	font-size: 24px;
