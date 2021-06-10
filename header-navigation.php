@@ -79,7 +79,7 @@
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Total_Biodiv.php" >Biodiversity</a>
         </li>
         <li>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist" >Checklists</a>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/index.php" >Checklists</a>
         </li>
         <li>
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Protect-IRL.php" >Stewardship</a>
