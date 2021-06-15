@@ -121,6 +121,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             position: sticky;
             min-height: 200px;
             width: 80%;
+            z-index: 1;
         }
         ol, ul {
             list-style: none;
@@ -128,32 +129,16 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         .sideNavMover {
             position: sticky;
             top: 50px;
-            left: 50px;
+            left: 0;
+            z-index: 50000;
         }
         .sideNavContainer {
             position: relative;
         }
-
-
-
-
-
-
-
-
         .no-touch #cd-vertical-nav {
             position: absolute;
             left: 0;
             top: 0;
-            -webkit-transform: translateY(-50%);
-            -moz-transform: translateY(-50%);
-            -ms-transform: translateY(-50%);
-            -o-transform: translateY(-50%);
-            transform: translateY(-50%);
-            z-index: 1;
-        }
-        .no-touch #cd-vertical-nav li {
-            text-align: right;
         }
         .no-touch #cd-vertical-nav a {
             display: inline-block;
@@ -190,7 +175,6 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         }
         .no-touch #cd-vertical-nav .cd-dot {
             position: relative;
-            /* we set a top value in order to align the dot with the label. If you change label's font, you may need to change this top value*/
             top: 8px;
             height: 12px;
             width: 12px;
@@ -207,10 +191,11 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         }
         .no-touch #cd-vertical-nav .cd-label {
             position: relative;
-            margin-left: 10px;
+            margin-left: 20px;
+            margin-top: -10px;
             padding: .4em .5em;
+            width: 300px;
             color: black;
-            font-size: 14px;
             font-size: 0.875rem;
             -webkit-transition: -webkit-transform 0.2s, opacity 0.2s;
             -moz-transition: -moz-transform 0.2s, opacity 0.2s;
