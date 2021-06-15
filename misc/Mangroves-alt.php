@@ -142,7 +142,6 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         }
         .no-touch #cd-vertical-nav a {
             display: inline-block;
-            /* prevent weird movements on hover when you use a CSS3 transformation - webkit browsers */
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
         }
@@ -160,7 +159,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             -o-transform: scale(0.6);
             transform: scale(0.6);
         }
-        .no-touch #cd-vertical-nav a:hover span {
+        .no-touch #cd-vertical-nav a:hover span, .no-touch #cd-vertical-nav a.is-selected span {
             -webkit-transform: scale(1);
             -moz-transform: scale(1);
             -ms-transform: scale(1);
@@ -170,8 +169,8 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         .no-touch #cd-vertical-nav a:hover .cd-label {
             opacity: 1;
         }
-        .no-touch #cd-vertical-nav a.is-selected .cd-dot {
-            background-color: white;
+        .no-touch #cd-vertical-nav a.is-selected .cd-dot, .no-touch #cd-vertical-nav a:hover .cd-dot {
+            background-color: #EF434C;
         }
         .no-touch #cd-vertical-nav .cd-dot {
             position: relative;
@@ -179,7 +178,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             height: 12px;
             width: 12px;
             border-radius: 50%;
-            background-color: #d88683;
+            background-color: #242038;
             -webkit-transition: -webkit-transform 0.2s, background-color 0.5s;
             -moz-transition: -moz-transform 0.2s, background-color 0.5s;
             transition: transform 0.2s, background-color 0.5s;
@@ -207,7 +206,6 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             -o-transform-origin: 100% 50%;
             transform-origin: 100% 50%;
         }
-
         .touch #cd-vertical-nav {
             position: fixed;
             z-index: 1;
@@ -270,20 +268,20 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/modernizr.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            var contentSections = $('.cd-section'),
-                navigationItems = $('#cd-vertical-nav a');
+            var contentSections = $('.cd-section');
+            var navigationItems = $('#cd-vertical-nav a');
 
             updateNavigation();
-            $(window).on('scroll', function(){
-                updateNavigation();
-            });
 
-            //smooth scroll to the section
+            document.addEventListener('scroll', function (event) {
+                updateNavigation();
+            }, true);
+
             navigationItems.on('click', function(event){
                 event.preventDefault();
                 smoothScroll(this.hash);
             });
-            //close navigation on touch devices when selectin an elemnt from the list
+
             $('.touch #cd-vertical-nav a').on('click', function(){
                 $('.touch #cd-vertical-nav').removeClass('open');
             });
@@ -377,12 +375,12 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
     </div>
     <div id="innertext">
         <div id="intro-section" class="cd-section">
-            <p style="height:300px;">
+            <p>
                 Of Florida’s estimated 469,000 acres of mangrove forests, the Indian River Lagoon contains roughly 8,000
                 acres of mangroves, which play critical ecological roles as fish nurseries, shoreline stabilizers, and
                 pollution mitigators.
             </p>
-            <p style="height:300px;">
+            <p>
                 However, an estimated 76 to 85 percent of this acreage has become inaccessible as nursery habitat for
                 local fisheries through construction of mosquito ditches and impoundments. Though mangroves are
                 protected in Florida by state law, mangrove habitat loss is a problem globally as these edge ecosystems
@@ -391,20 +389,20 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         </div>
         <div id="species-section" class="cd-section">
             <h4>Mangrove Species</h4>
-            <p style="height:300px;">
+            <p>
                 In the IRL, the most recognizable and common species is the <b>red mangrove</b>. Dominating the shoreline from
                 the upper subtidal to the lower intertidal zones, red mangroves are easily identified by their tangled,
                 reddish “prop roots” that grow outward and down from the trunk into the water and underlying sediments.
                 The tree often appears to be standing or walking on the surface of the water.
             </p>
-            <p style="height:300px;">
+            <p>
                 In the tropics, trees may grow to more than 80 feet (24 meters) in height; however, in Florida, trees
                 typically average around 20 feet (6 meters) in height. Leaves have glossy, bright green upper surfaces
                 and pale undersides. Trees flower throughout the year, peaking in spring and summer. The seed-like
                 propagules of the red mangrove are pencil-shaped, and may reach nearly a foot in length (30 cm) as they
                 mature on the parent tree.
             </p>
-            <p style="height:300px;">
+            <p>
                 <b>Black mangroves</b> typically grow immediately inland of red mangroves. Though they may reach 65 feet
                 (20 meters) in some locations, Florida populations typically grow to 50 feet (15 meters.) Instead of
                 prop roots, black mangroves feature thick stands of pneumatophores, stick-like branches which aid in
@@ -415,16 +413,16 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         </div>
         <div id="environmental-section" class="cd-section">
             <h4>Environmental Benefits</h4>
-            <p style="height:300px;">
+            <p>
                 Long viewed as inhospitable, marginal environments, mangroves provide numerous environmental benefits.
             </p>
-            <p style="height:300px;">
+            <p>
                 Often referred to as the bridge between land and sea, mangroves provide their coastlines a critical
                 first line of defense against erosion and storms. Aerial roots trap sediments in and assist in preventing
                 coastal erosion. As storms approach and pass by, branches in the canopies and roots in the water reduce
                 the force of winds and waves, blunting the edge of strong storm impacts.
             </p>
-            <p style="height:300px;">
+            <p>
                 Mangroves are extremely absorbent carbon sinks—but managed improperly, they stand to be supercharged
                 sources of carbon that could exacerbate global warming processes. The 34 million acres (14 million
                 hectares) of global mangrove forest occupies the equivalent of only 2.5 percent of the Amazon rain
