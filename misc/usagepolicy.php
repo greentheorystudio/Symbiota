@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-header('Content-Type: text/html; charset=' . $CHARSET);
+header('Content-Type: text/html; charset=' . $GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title><?php echo $DEFAULT_TITLE; ?> Data Usage Guidelines</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet"/>
-    <link href="../css/main.css<?php echo(isset($CSS_VERSION_LOCAL) ? '?ver=' . $CSS_VERSION_LOCAL : ''); ?>"
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
+    <link href="../css/main.css<?php echo(isset($GLOBALS['CSS_VERSION']_LOCAL) ? '?ver=' . $GLOBALS['CSS_VERSION']_LOCAL : ''); ?>"
           type="text/css" rel="stylesheet"/>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
@@ -26,7 +26,7 @@ include(__DIR__ . '/../header.php');
         <div style="margin:10px;">
             <?php
             echo $DEFAULT_TITLE . '. ' . date('Y') . '. ';
-            echo 'http//:' . $_SERVER['HTTP_HOST'] . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) === '/' ? '' : '/') . 'index.php. ';
+            echo 'http//:' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) === '/' ? '' : '/') . 'index.php. ';
             echo 'Accessed on ' . date('F d') . '. ';
             ?>
         </div>
@@ -37,13 +37,13 @@ include(__DIR__ . '/../header.php');
         <div style="margin:10px;">
             Biodiversity occurrence data published by: &lt;List of Collections&gt;
             (Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-            <?php echo 'http//:' . $_SERVER['HTTP_HOST'] . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) === '/' ? '' : '/') . 'index.php'; ?>
+            <?php echo 'http//:' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) === '/' ? '' : '/') . 'index.php'; ?>
             , YYYY-MM-DD)<br/><br/>
             <b>For example:</b><br/>
             Biodiversity occurrence data published by:
             Field Museum of Natural History, Museum of Vertebrate Zoology, and New York Botanical Garden
             (Accessed through <?php echo $DEFAULT_TITLE; ?> Data Portal,
-            <?php echo 'http//:' . $_SERVER['HTTP_HOST'] . $CLIENT_ROOT . (substr($CLIENT_ROOT, -1) === '/' ? '' : '/') . 'index.php, ' . date('Y-m-d') . ')'; ?>
+            <?php echo 'http//:' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . (substr($GLOBALS['CLIENT_ROOT'], -1) === '/' ? '' : '/') . 'index.php, ' . date('Y-m-d') . ')'; ?>
         </div>
     </div>
     <div>

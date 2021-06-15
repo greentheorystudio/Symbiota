@@ -4,15 +4,7 @@
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
         </li>
         <li>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Maps.php" >The Indian River Lagoon</a>
-            <ul>
-                <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Whatsa_lagoon.php" >What is a Lagoon</a>
-                </li>
-                <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Maps.php" >The Indian River Lagoon</a>
-                </li>
-            </ul>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Maps-alt.php" >The Indian River Lagoon</a>
         </li>
         <li>
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Whatsa_Habitat.php" >Habitats</a>
@@ -33,7 +25,7 @@
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Hammock_Habitat.php" >Maritime Hammocks</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Mangroves.php" >Mangroves</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Mangroves-alt.php" >Mangroves</a>
                 </li>
                 <li>
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/impoundments.php" >Mosquito Impoundments</a>

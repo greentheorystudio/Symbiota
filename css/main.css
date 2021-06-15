@@ -307,7 +307,7 @@ div.menuitem a:hover {
 }
 
 #innertext{
-	width: 80%;
+	width: 70%;
 	min-height:400px;
 	margin: 0 auto;
 	padding: 10px 15px 15px;
@@ -322,8 +322,12 @@ div.navpath {
 	margin-bottom: 0;
 	font-family: 'Fira Sans';
 	font-size: 9pt;
-	color: #333F48;
+	color: #FDBA35;
 	font-variant: small-caps;
+}
+
+div.navpath a, div.navpath a:hover {
+	color: #FDBA35;
 }
 
 h1{
@@ -358,6 +362,11 @@ h5{
 p{
 	font-family: 'Fira Sans';
 	font-size: 12px;
+}
+
+.intro-text {
+	font-family: 'Fira Sans';
+	font-size: 14px;
 }
 
 #top_navbar{
@@ -399,12 +408,12 @@ p{
 	display:block;
 	color: white;
 	text-decoration: none;
-	padding: 25px 15px;
+	padding: 25px 22px;
 }
 #hor_dropdown a:hover{
 	background-color: #FDBA35;
 	color: black;
-	padding: 25px 15px;
+	padding: 25px 22px;
 }
 /* Submenu */
 #hor_dropdown ul {
@@ -498,11 +507,11 @@ p{
 	margin: 5em auto;
 	padding: 20px;
 	height: 75px;
-	width: 210px;
+	min-width: 210px;
 	background-color: rgba(16, 114, 127, 0.75);
 	border: 0;
 	color: #FFF;
-	margin-left: 20px;
+	margin-left: 48px;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
@@ -519,12 +528,14 @@ p{
 	position: relative;
 }
 .searcharea {
+	width: 62%;
 	margin-left: auto;
 	margin-right: auto;
 }
 #quicksearchinputcontainer {
 	padding: 10px;
 	background-color: rgba(255, 255, 255, 0.75);
+	position: relative;
 }
 input#quicksearchtaxon {
 	border: solid 0.75pt #10727F;
@@ -757,7 +768,6 @@ ol.report-caterories li p.heading {
 
 .footer{
 	margin-top: 20px;
-	background-color: #e2e8ec;
-	opacity: 64%;
+	background-color: rgba(226, 232, 236, 0.64);
 	padding: 20px;
 }

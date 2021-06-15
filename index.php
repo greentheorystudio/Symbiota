@@ -42,7 +42,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         }
 
         .hero-container {
-            background-image: url("images/layout/home-header-image.jpeg");
+            background-image: url("images/layout/home-header-image.jpg");
             width: 100%;
             height: 1000px;
             background-position: center;
@@ -51,10 +51,30 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             position: relative;
         }
 
+        .top-shade-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 150px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 5000000;
+        }
+
+        .logo-image {
+            height: 160px;
+        }
+
         .title-container {
             position: absolute;
             top: 30px;
-            left: 30px;
+            left: 150px;
             color: white;
             padding-left: 20px;
         }
@@ -108,8 +128,8 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         }
 
         .heading-inner {
-            padding: 15px;
-            width: 75%;
+            padding: 20px;
+            width: 60%;
             background-color: rgba(0, 0, 0, 0.5);
             margin-left: auto;
             margin-right: auto;
@@ -136,6 +156,18 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
     <script src="js/all.min.js" type="text/javascript"></script>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            const quicksearchDiv = document.getElementById('quicksearchinputcontainer');
+            const linkDiv = document.createElement('div');
+            linkDiv.setAttribute("class","as");
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute("href","<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php");
+            linkElement.innerHTML = "Advanced Search";
+            linkDiv.appendChild(linkElement);
+            quicksearchDiv.appendChild(linkDiv);
+         });
+    </script>
     <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
 </head>
 <body>
@@ -145,6 +177,10 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="hero-container">
+    <div class="top-shade-container"></div>
+    <div class="logo-container">
+        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
+    </div>
     <div class="title-container">
         <h1>Indian River Lagoon<br />
             Species Inventory</h1>
@@ -162,7 +198,6 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
     <div class="quicksearch-container">
         <div class="searcharea">
             <div class="searchtop">
-                <div class="as"> <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/dynamictaxalist.php"> Advanced Search</a></div>
                 <?php
                 $searchText = '';
                 $buttonText = 'Search the Inventory';
@@ -201,11 +236,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;">Occurrence Records</h5>
         </div>
     </div>
-    <p style="margin-top: 25px;width: 100%;text-align: center;font-size: 16px;">
-        As you explore the portal and its resources, please reach out with comments, questions and concerns to <a href="mailto:irlwebmaster@si.edu">irlwebmaster@si.edu</a>
-    </p>
 </div>
-
 <?php
 include(__DIR__ . '/footer.php');
 ?>

@@ -3,7 +3,7 @@
 </div>
 <div class="footer">
     <div style="width:100%;display:flex;justify-content:center;align-items:center;">
-        <div style="width: 60%;text-align: center;font-family:'Fira Sans';font-size: 12pt;">
+        <div style="width: 450px;text-align: center;font-family:'Fira Sans';font-size: 12pt;line-height: normal;">
             The Indian River Lagoon Species Inventory is a partner initiative of the Smithsonian Marine Station at Fort Pierce and the Indian River Lagoon National Estuary Program.
         </div>
     </div>
