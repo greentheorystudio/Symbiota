@@ -115,12 +115,11 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            height: 4000px;
         }
         #innertext{
             position: sticky;
             min-height: 200px;
-            width: 80%;
+            width: 60%;
             z-index: 1;
         }
         ol, ul {
@@ -389,27 +388,35 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         </div>
         <div id="species-section" class="cd-section">
             <h4>Mangrove Species</h4>
-            <p>
-                In the IRL, the most recognizable and common species is the <b>red mangrove</b>. Dominating the shoreline from
-                the upper subtidal to the lower intertidal zones, red mangroves are easily identified by their tangled,
-                reddish “prop roots” that grow outward and down from the trunk into the water and underlying sediments.
-                The tree often appears to be standing or walking on the surface of the water.
-            </p>
-            <p>
-                In the tropics, trees may grow to more than 80 feet (24 meters) in height; however, in Florida, trees
-                typically average around 20 feet (6 meters) in height. Leaves have glossy, bright green upper surfaces
-                and pale undersides. Trees flower throughout the year, peaking in spring and summer. The seed-like
-                propagules of the red mangrove are pencil-shaped, and may reach nearly a foot in length (30 cm) as they
-                mature on the parent tree.
-            </p>
-            <p>
-                <b>Black mangroves</b> typically grow immediately inland of red mangroves. Though they may reach 65 feet
-                (20 meters) in some locations, Florida populations typically grow to 50 feet (15 meters.) Instead of
-                prop roots, black mangroves feature thick stands of pneumatophores, stick-like branches which aid in
-                aeration that grow upward from the ground. Leaves are narrower than those of red mangroves, and are often
-                encrusted with salt. Black mangroves flower throughout spring and early summer, producing lima
-                bean-shaped propagules.
-            </p>
+            <div style="display:flex;justify-content: space-between">
+                <div style="display:flex;flex-direction:column;">
+                    <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/red_mangrove%20.jpg" />
+                    <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/black_mangrove.jpg" />
+                </div>
+                <div>
+                    <p>
+                        In the IRL, the most recognizable and common species is the <b>red mangrove</b>. Dominating the shoreline from
+                        the upper subtidal to the lower intertidal zones, red mangroves are easily identified by their tangled,
+                        reddish “prop roots” that grow outward and down from the trunk into the water and underlying sediments.
+                        The tree often appears to be standing or walking on the surface of the water.
+                    </p>
+                    <p>
+                        In the tropics, trees may grow to more than 80 feet (24 meters) in height; however, in Florida, trees
+                        typically average around 20 feet (6 meters) in height. Leaves have glossy, bright green upper surfaces
+                        and pale undersides. Trees flower throughout the year, peaking in spring and summer. The seed-like
+                        propagules of the red mangrove are pencil-shaped, and may reach nearly a foot in length (30 cm) as they
+                        mature on the parent tree.
+                    </p>
+                    <p>
+                        <b>Black mangroves</b> typically grow immediately inland of red mangroves. Though they may reach 65 feet
+                        (20 meters) in some locations, Florida populations typically grow to 50 feet (15 meters.) Instead of
+                        prop roots, black mangroves feature thick stands of pneumatophores, stick-like branches which aid in
+                        aeration that grow upward from the ground. Leaves are narrower than those of red mangroves, and are often
+                        encrusted with salt. Black mangroves flower throughout spring and early summer, producing lima
+                        bean-shaped propagules.
+                    </p>
+                </div>
+            </div>
         </div>
         <div id="environmental-section" class="cd-section">
             <h4>Environmental Benefits</h4>
@@ -422,6 +429,11 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
                 coastal erosion. As storms approach and pass by, branches in the canopies and roots in the water reduce
                 the force of winds and waves, blunting the edge of strong storm impacts.
             </p>
+            <div style="margin:15px;display:flex;justify-content: space-around;">
+                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/wave_action.jpg" />
+                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/leaf_litter.JPG" />
+                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/nursery%20.jpg" />
+            </div>
             <p>
                 Mangroves are extremely absorbent carbon sinks—but managed improperly, they stand to be supercharged
                 sources of carbon that could exacerbate global warming processes. The 34 million acres (14 million
