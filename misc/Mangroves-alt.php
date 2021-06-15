@@ -113,10 +113,12 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             margin-top: 30px;
             width: 100%;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: flex-start;
+            height: 4000px;
         }
         #innertext{
+            position: sticky;
             min-height: 200px;
             width: 80%;
         }
@@ -125,8 +127,8 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         }
         .sideNavMover {
             position: sticky;
-            align-self: flex-start;
-            margin-top: 50px;
+            top: 50px;
+            left: 50px;
         }
         .sideNavContainer {
             position: relative;
