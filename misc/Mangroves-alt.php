@@ -134,22 +134,22 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         .sideNavContainer {
             position: relative;
         }
-        .no-touch #cd-vertical-nav {
+        #cd-vertical-nav {
             position: absolute;
             left: 0;
             top: 0;
         }
-        .no-touch #cd-vertical-nav a {
+        #cd-vertical-nav a {
             display: inline-block;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
         }
-        .no-touch #cd-vertical-nav a:after {
+        #cd-vertical-nav a:after {
             content: "";
             display: table;
             clear: both;
         }
-        .no-touch #cd-vertical-nav a span {
+        #cd-vertical-nav a span {
             float: left;
             display: inline-block;
             -webkit-transform: scale(0.6);
@@ -158,20 +158,20 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             -o-transform: scale(0.6);
             transform: scale(0.6);
         }
-        .no-touch #cd-vertical-nav a:hover span, .no-touch #cd-vertical-nav a.is-selected span {
+        #cd-vertical-nav a:hover span, #cd-vertical-nav a.is-selected span {
             -webkit-transform: scale(1);
             -moz-transform: scale(1);
             -ms-transform: scale(1);
             -o-transform: scale(1);
             transform: scale(1);
         }
-        .no-touch #cd-vertical-nav a:hover .cd-label {
+        #cd-vertical-nav a:hover .cd-label {
             opacity: 1;
         }
-        .no-touch #cd-vertical-nav a.is-selected .cd-dot, .no-touch #cd-vertical-nav a:hover .cd-dot {
+        #cd-vertical-nav a.is-selected .cd-dot, #cd-vertical-nav a:hover .cd-dot {
             background-color: #EF434C;
         }
-        .no-touch #cd-vertical-nav .cd-dot {
+        #cd-vertical-nav .cd-dot {
             position: relative;
             top: 8px;
             height: 12px;
@@ -187,7 +187,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             -o-transform-origin: 50% 50%;
             transform-origin: 50% 50%;
         }
-        .no-touch #cd-vertical-nav .cd-label {
+        #cd-vertical-nav .cd-label {
             position: relative;
             margin-left: 20px;
             margin-top: -10px;
@@ -204,62 +204,6 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             -ms-transform-origin: 100% 50%;
             -o-transform-origin: 100% 50%;
             transform-origin: 100% 50%;
-        }
-        .touch #cd-vertical-nav {
-            position: fixed;
-            z-index: 1;
-            right: 5%;
-            bottom: 30px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 90%;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
-            -webkit-transform-origin: right bottom;
-            -moz-transform-origin: right bottom;
-            -ms-transform-origin: right bottom;
-            -o-transform-origin: right bottom;
-            transform-origin: right bottom;
-            -webkit-transform: scale(0);
-            -moz-transform: scale(0);
-            -ms-transform: scale(0);
-            -o-transform: scale(0);
-            transform: scale(0);
-            -webkit-transition-property: -webkit-transform;
-            -moz-transition-property: -moz-transform;
-            transition-property: transform;
-            -webkit-transition-duration: 0.2s;
-            -moz-transition-duration: 0.2s;
-            transition-duration: 0.2s;
-            border-radius: 0.25em;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-        .touch #cd-vertical-nav a {
-            display: block;
-            padding: 1em;
-            border-bottom: 1px solid rgba(62, 57, 71, 0.1);
-        }
-        .touch #cd-vertical-nav a span:first-child {
-            display: none;
-        }
-        .touch #cd-vertical-nav a.is-selected span:last-child {
-            color: #d88683;
-        }
-        .touch #cd-vertical-nav.open {
-            -webkit-transform: scale(1);
-            -moz-transform: scale(1);
-            -ms-transform: scale(1);
-            -o-transform: scale(1);
-            transform: scale(1);
-        }
-        .touch #cd-vertical-nav li:last-child a {
-            border-bottom: none;
-        }
-
-        @media only screen and (min-width: 768px) {
-            .touch #cd-vertical-nav {
-                bottom: 40px;
-            }
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>

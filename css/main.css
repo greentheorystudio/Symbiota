@@ -373,6 +373,7 @@ p{
 	clear:both;
 	background-color: #173753;
 	padding: 0;
+	min-width: 900px;
 }
 .nav-bar-container {
 	width: 100%;
