@@ -110,7 +110,7 @@ if($occArr){
 	$trCnt = 0;
 	foreach($occArr as $occId => $recArr){
 		$trCnt++;
-		$infoBoxLabel = "'".$recArr['c']."'";
+		$infoBoxLabel = "'".($recArr['c'] ?: 'Not available')."'";
 		$recordListHtml .= '<tr '.(($trCnt%2)?'class="alt"':'').' id="tr'.$occId.'" >';
 		$recordListHtml .= '<td style="width:10px;">';
 		$recordListHtml .= '<input type="checkbox" class="occcheck" id="ch'.$occId.'" name="occid[]" value="'.$occId.'" onchange="processCheckSelection(this);" '.(in_array($occId, $selections, true) ? 'checked' : '').' />';
