@@ -289,6 +289,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div style="clear:both;height:8px;"></div>
+                        <div>
+                            <div style="width:100%;display:flex;justify-content:flex-start;align-items:center;">
+                                <span><input data-role="none" type='checkbox' id='toggleselectedswitch' onchange="processToggleSelectedChange();">Show Only Selected Points</span>
+                            </div>
+                        </div>
                     </div>
                     <div style="clear:both;height:10px;"></div>
                     <table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">
