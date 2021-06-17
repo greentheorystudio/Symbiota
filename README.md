@@ -46,12 +46,10 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 - `character-set-server=utf8` - replace utf8 with your desired character set
 - `collation-server=utf8_general_ci` - replace utf8_general_ci with your desired collation
 - `skip-character-set-client-handshake`
-- `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION`
+- `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION`
 - `key_buffer_size=100M`
 - `max_allowed_packet=100M`
 - `thread_cache_size=38`
-- `query_cache_limit=100M`
-- `query_cache_size=0M`
 
 ## Installation
 

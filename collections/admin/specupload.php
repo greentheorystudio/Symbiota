@@ -780,6 +780,16 @@ $duManager->loadFieldMap();
                                                     ?>
                                                 </select>
                                             </div>
+                                            <div style="margin:10px 0;">
+                                                Existing Records:
+                                                <select name="existingrecords">
+                                                    <?php
+                                                    $existingManagement = $duManager->getExistingRecordManagement();
+                                                    echo '<option value="update" '.($existingManagement === 'update'?'SELECTED':'').'>Update existing records (Replaces records with incoming records)</option>';
+                                                    echo '<option value="skip" '.($existingManagement === 'skip'?'SELECTED':'').'>Skip existing records (Do not update)</option>';
+                                                    ?>
+                                                </select>
+                                            </div>
                                             <div style="margin:10px;">
                                                 <input type="submit" name="action" value="Start Upload" />
                                                 <input type="hidden" name="uspid" value="<?php echo $uspid;?>" />
