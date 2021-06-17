@@ -421,17 +421,19 @@ return <<<EOD
     </script>
     <form name="quicksearch" id="quicksearch" action="$clientRoot/taxa/index.php" method="get" onsubmit="return verifyQuickSearch();">
         <div id="quicksearchtext" style="display:$searchTextCssDisplay;"><b>$searchText</b></div>
-        <div class="quicksearchselectorcontainer" style="display:$selectorTextCssDisplay;">
-            <div class="quicksearchscinameselectorlabel">Scientific Name</div>
-            <div>
-                <label>
-                    <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" autocomplete="off" $commonChecked>
-                    <div class="switch"></div>
-                </label>
+        <div id="quicksearchinputcontainer">
+            <div class="quicksearchselectorcontainer" style="display:$selectorTextCssDisplay;">
+                <div class="quicksearchscinameselectorlabel">Scientific Name</div>
+                <div>
+                    <label>
+                        <input type="checkbox" class="switch" name="quicksearchselector" id="quicksearchcommonselector" onchange="quicksearchselectorchange();" autocomplete="off" $commonChecked>
+                        <div class="switch"></div>
+                    </label>
+                </div>
+                <div class="quicksearchcommonselectorlabel">Common Name</div>
             </div>
-            <div class="quicksearchcommonselectorlabel">Common Name</div>
+            <input type="text" name="quicksearchtaxon" placeholder="$initialPlaceholder" id="quicksearchtaxon" title="Enter taxon name here." />
         </div>
-        <input type="text" name="quicksearchtaxon" placeholder="$initialPlaceholder" id="quicksearchtaxon" title="Enter taxon name here." />
         <input type="hidden" name="taxon" id="quicksearchtaxonvalue" />
         <button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms">$buttonText</button>
     </form>

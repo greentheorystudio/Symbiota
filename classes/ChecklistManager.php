@@ -552,7 +552,7 @@ class ChecklistManager {
 			$sql .= 'AND (p.pid = ' . $this->pid . ') ';
 		}
 		$sql .= 'ORDER BY p.projname, c.Name';
-		echo $sql;
+		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
             $coordArr = array();
