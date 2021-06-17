@@ -412,7 +412,7 @@ $duManager->loadFieldMap();
 	 		echo "<ul style='margin:10px;font-weight:bold;'>";
 	 		$duManager->uploadData($finalTransfer);
 			echo '</ul>';
-			if(!$finalTransfer && $duManager->getTransferCount()){
+			if(!$finalTransfer){
 				?>
  				<fieldset style="margin:15px;">
  					<legend style="<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><b>Final transfer</b></legend>
