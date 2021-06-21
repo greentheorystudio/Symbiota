@@ -69,7 +69,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			return true;
 		}
 	</script>
-	<script type="text/javascript" src="../js/symb/shared.js"></script>
+	<script type="text/javascript" src="../js/symb/shared.js?ver=20210621"></script>
 </head>
 <body>
 	<?php

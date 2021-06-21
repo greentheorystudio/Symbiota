@@ -148,8 +148,8 @@ if(!$clName){
 		function openPopup(urlStr,windowName){
             let wWidth = 900;
             try{
-				if(document.getElementById('maintable').offsetWidth){
-					wWidth = document.getElementById('maintable').offsetWidth*1.05;
+				if(document.getElementById('innertext').offsetWidth){
+					wWidth = document.getElementById('innertext').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
