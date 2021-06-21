@@ -6,27 +6,6 @@ body{
 	font-size: 12px;
 }
 
-#maintable {
-	border-spacing: 0;
-	height: 500px;
-}
-
-#maintable td{
-	vertical-align: top;
-}
-
-#middleleft{
-	width:	160px;
-}
-
-#middleleftnomenu{
-	width:	20px;
-}
-
-#middlecenter{
-	height:	350px;
-}
-
 #innertext{
 	margin:	10px;
 	background-color: #FFFFFF;
@@ -232,15 +211,6 @@ div.button:hover {
 
 #omlisttable img{
 	border: medium double #990000;
-}
-
-/* Slideshow Plugin */
-#slideshowcontainer{
-	border: 2px solid black;
-	border-radius:10px;
-	padding:10px;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 /* misc */
