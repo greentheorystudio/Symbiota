@@ -1,6 +1,6 @@
 <div id="mainContainer">
     <div id="bannerContainer">
-        <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/defaultheader.jpg" />
+        <h1 class="title">Your New Symbiota Portal</h1>
     </div>
     <div id="topNavigation">
         <div id="rightNavigationLinks">

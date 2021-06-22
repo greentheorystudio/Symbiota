@@ -403,3 +403,18 @@ ol.mp_list li.mp_highlighted {
 	display: flex;
 	flex-wrap: wrap;
 }
+
+.pmargin{
+	margin: 10px;
+}
+
+.sitemapDataManagementContainer{
+	margin: 30px 0 10px 10px;
+	padding-left: 25px;
+	padding-right: 15px;
+}
+
+.indentedWarning{
+	color: red;
+	margin-left: 10px;
+}
