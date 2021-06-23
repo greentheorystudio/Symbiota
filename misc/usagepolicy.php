@@ -13,15 +13,13 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 include(__DIR__ . '/../header.php');
 ?>
 <div id="innertext">
-    <h1>Guidelines for Acceptable Use of Data</h1><br />
+    <h1>Guidelines for Acceptable Use of Data</h1>
 
     <h2>Recommended Citation Formats</h2>
-    <div style="margin:10px">
+    <div class="pmargin">
         Use one of the following formats to cite data retrieved from the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> network:
-        <div style="font-weight:bold;margin-top:10px;">
-            General Citation:
-        </div>
-        <div style="margin:10px;">
+        <h3>General Citation:</h3>
+        <div class="pmargin">
             <?php
             echo $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. ';
             echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php. ';
@@ -29,10 +27,8 @@ include(__DIR__ . '/../header.php');
             ?>
         </div>
 
-        <div style="font-weight:bold;margin-top:10px;">
-            Usage of occurrence data from specific institutions:
-        </div>
-        <div style="margin:10px;">
+        <h3>Usage of occurrence data from specific institutions:</h3>
+        <div class="pmargin">
             Biodiversity occurrence data published by: &lt;List of Collections&gt;
             (Accessed through <?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Portal,
             <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php'; ?>, YYYY-MM-DD)<br/><br/>
@@ -43,11 +39,9 @@ include(__DIR__ . '/../header.php');
             <?php echo 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'index.php, '.date('Y-m-d').')'; ?>
         </div>
     </div>
-    <div>
-    </div>
 
     <h2>Occurrence Record Use Policy</h2>
-    <div style="margin:10px;">
+    <div class="pmargin">
         <ul>
             <li>
                 While <?php echo $GLOBALS['DEFAULT_TITLE']; ?> will make every effort possible to control and document the quality
@@ -71,7 +65,7 @@ include(__DIR__ . '/../header.php');
     </div>
 
     <h2>Images</h2>
-    <div style="margin:15px;">
+    <div class="pmargin">
         Images within this website have been generously contributed by their owners to
         promote education and research. These contributors retain the full copyright for
         their images. Unless stated otherwise, images are made available under the Creative Commons
@@ -82,7 +76,7 @@ include(__DIR__ . '/../header.php');
     </div>
 
     <h2>Notes on Specimen Records and Images</h2>
-    <div style="margin:15px;">
+    <div class="pmargin">
         Specimens are used for scientific research and because of skilled preparation and
         careful use they may last for hundreds of years. Some collections have specimens
         that were collected over 100 years ago that are no longer occur within the area.
