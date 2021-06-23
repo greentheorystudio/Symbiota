@@ -10,6 +10,7 @@ body{
 }
 
 #mainContainer{
+	display: block;
 	margin-top: 20px;
 	border: 1px solid black;
 }
@@ -40,31 +41,25 @@ div.navpath {
 
 #topNavigation {
 	clear:both;
-	height:33px;
 	background-color:#c2c2c2;
+	padding: 0;
+	display: flex;
+	justify-content: space-between;
 }
 #rightNavigationLinks{
-	clear:both;
-	font-size:11px;
-	float:right;
-	color:#000000;
-	margin-top:9px;
+	display: flex;
+	align-items: center;
 }
 
 #rightNavigationLinks span{
-	margin-right: 5px;
+	margin-right: 15px;
 }
 #horizontalDropDown{
 	list-style:none;
-	float:left;
-	position:relative;
-	font-size:12px;
 	width:auto;
-	height:31px;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding-left:0;
 	background-color:#c2c2c2;
+	margin: 0;
+	padding: 0;
 }
 #horizontalDropDown li{
 	float:left;
@@ -75,21 +70,18 @@ div.navpath {
 #horizontalDropDown a{
 	display:block;
 	color:#000000;
-	text-decoration:none;
-	padding: 8px 10px 10px;
+	text-decoration: none;
+	padding: 20px 15px;
 }
 #horizontalDropDown a:hover{
 	background-color:#999999;
-	color:#FFFFFF;
-	padding: 8px 10px 10px;
-	background-image:none;
 }
 /* Submenu */
 #horizontalDropDown ul {
 	list-style:none;
 	position:absolute;
 	left:0;
-	top:33px;
+	top: 58px;
 	padding:0;
 	z-index:1000;
 	background-color:#dcdcdc;
@@ -104,7 +96,7 @@ div.navpath {
 }
 #horizontalDropDown ul a{
 	white-space:nowrap;
-	padding: 5px 8px 5px 5px;
+	padding: 10px 15px;
 	text-decoration:none;
 	text-indent:8px;
 }
@@ -115,7 +107,7 @@ div.navpath {
 #horizontalDropDown li:hover ul a {
 	text-decoration:none;
 	text-indent:8px;
-	padding: 5px 8px 5px 5px;
+	padding: 10px 15px;
 	background-color:#dcdcdc;
 	z-index:1000;
 }
@@ -132,7 +124,7 @@ div.navpath {
 }
 #horizontalDropDown li ul li:hover ul {
 	left:100%;
-	top:0;
+	top: 0;
 	visibility: visible;
 	opacity: 1;
 	padding:0;
@@ -141,7 +133,7 @@ div.navpath {
 #horizontalDropDown li ul li:hover ul a {
 	text-decoration:none;
 	text-indent:8px;
-	padding: 5px 8px 5px 5px;
+	padding: 10px 15px;
 	background-color:#dcdcdc;
 	z-index:1000;
 }
