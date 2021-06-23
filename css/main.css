@@ -340,7 +340,7 @@ body{
 
 #mainContainer{
 	display: block;
-	margin-top: 20px;
+	height: 100%;
 	border: 1px solid black;
 	background-color: #F6F6F6;
 }
@@ -603,6 +603,7 @@ h5{
 
 .footerContainer{
 	clear: both;
+	height: 40px;
 }
 
 .footer{
