@@ -398,6 +398,20 @@ class SpecUploadBase extends SpecUpload{
     protected function cleanUpload(): void
     {
 
+        if($this->existingRecordManagement === 'skip'){
+            $this->outputMsg('<li>Removing existing records from upload... </li>');
+            $sql = 'DELETE u.* FROM uploadspectemp AS u INNER JOIN omoccurrences AS o ON (u.dbpk = o.dbpk) AND (u.collid = o.collid) '.
+                'WHERE (u.collid IN('.$this->collId.')) AND (ISNULL(u.occid)) AND (u.dbpk IS NOT NULL) AND (o.dbpk IS NOT NULL)';
+            $this->conn->query($sql);
+        }
+        else if($this->collMetadataArr['managementtype'] === 'Snapshot' || $this->collMetadataArr['managementtype'] === 'Aggregate'){
+            $this->outputMsg('<li>Linking records (e.g. matching Primary Identifier)... </li>');
+            $sql = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON (u.dbpk = o.dbpk) AND (u.collid = o.collid) '.
+                'SET u.occid = o.occid '.
+                'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.dbpk IS NOT NULL) AND (o.dbpk IS NOT NULL)';
+            $this->conn->query($sql);
+        }
+
         if($this->collMetadataArr['managementtype'] === 'Snapshot' || $this->collMetadataArr['managementtype'] === 'Aggregate'){
             $this->outputMsg('<li>Linking records (e.g. matching Primary Identifier)... </li>');
             $sql = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON (u.dbpk = o.dbpk) AND (u.collid = o.collid) '.
@@ -1376,7 +1390,7 @@ class SpecUploadBase extends SpecUpload{
         if(!$this->transferCount) {
             $this->setTransferCount();
         }
-        return $this->transferCount;
+        return (int)$this->transferCount;
     }
 
     private function setTransferCount(): void
