@@ -208,7 +208,7 @@ $duManager->loadFieldMap();
     <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/shared.js" type="text/javascript"></script>
+	<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
 	<script>
 
 		function verifyFileUploadForm(f){
@@ -412,7 +412,7 @@ $duManager->loadFieldMap();
 	 		echo "<ul style='margin:10px;font-weight:bold;'>";
 	 		$duManager->uploadData($finalTransfer);
 			echo '</ul>';
-			if(!$finalTransfer && $duManager->getTransferCount()){
+			if(!$finalTransfer){
 				?>
  				<fieldset style="margin:15px;">
  					<legend style="<?php echo (($uploadType === $SKELETAL)?'background-color:lightgreen':''); ?>"><b>Final transfer</b></legend>
@@ -777,6 +777,16 @@ $duManager->loadFieldMap();
                                                     foreach($processingList as $ps){
                                                         echo '<option value="'.$ps.'">'.ucwords($ps).'</option>';
                                                     }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div style="margin:10px 0;">
+                                                Existing Records:
+                                                <select name="existingrecords">
+                                                    <?php
+                                                    $existingManagement = $duManager->getExistingRecordManagement();
+                                                    echo '<option value="update" '.($existingManagement === 'update'?'SELECTED':'').'>Update existing records (Replaces records with incoming records)</option>';
+                                                    echo '<option value="skip" '.($existingManagement === 'skip'?'SELECTED':'').'>Skip existing records (Do not update)</option>';
                                                     ?>
                                                 </select>
                                             </div>

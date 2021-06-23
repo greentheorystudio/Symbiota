@@ -22,6 +22,7 @@ class SpecUpload{
 	protected $storedProcedure;
 	protected $lastUploadDate;
 	protected $uploadType;
+    protected $existingRecordManagement;
 
 	protected $verboseMode = 1;
 	private $logFH;
@@ -284,8 +285,8 @@ class SpecUpload{
 	{
     	if($this->uspid){
 			$sql = 'SELECT usp.collid, usp.title, usp.Platform, usp.server, usp.port, usp.Username, usp.Password, usp.SchemaName, '.
-	    		'usp.code, usp.path, usp.pkfield, usp.querystr, usp.cleanupsp, cs.uploaddate, usp.uploadtype '.
-				'FROM uploadspecparameters usp LEFT JOIN omcollectionstats cs ON usp.collid = cs.collid '.
+	    		'usp.code, usp.path, usp.pkfield, usp.querystr, usp.cleanupsp, cs.uploaddate, usp.uploadtype, usp.existingrecords '.
+				'FROM uploadspecparameters AS usp LEFT JOIN omcollectionstats AS cs ON usp.collid = cs.collid '.
 	    		'WHERE (usp.uspid = '.$this->uspid.')';
 			//echo $sql;
 			$result = $this->conn->query($sql);
@@ -309,6 +310,7 @@ class SpecUpload{
 	    		$this->storedProcedure = $row->cleanupsp;
 	    		$this->lastUploadDate = $row->uploaddate;
 	    		$this->uploadType = (int)$row->uploadtype;
+                $this->existingRecordManagement = $row->existingrecords;
 	    		if(!$this->lastUploadDate) {
 					$this->lastUploadDate = date('Y-m-d H:i:s');
 				}
@@ -330,6 +332,7 @@ class SpecUpload{
 			', path = '.($profileArr['path']?'"'.$profileArr['path'].'"':'NULL').
 			', pkfield = '.($profileArr['pkfield']?'"'.$profileArr['pkfield'].'"':'NULL').
 			', querystr = '.($profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').
+            ', existingrecords = '.($profileArr['existingrecords']?'"'.$this->cleanInStr($profileArr['existingrecords']).'"':'"update"').
 			', cleanupsp = '.($profileArr['cleanupsp']?'"'.$profileArr['cleanupsp'].'"':'NULL').' '.
 			'WHERE (uspid = '.$this->uspid.')';
 		//echo $sql;
@@ -342,7 +345,7 @@ class SpecUpload{
 
     public function createUploadProfile($profileArr){
 		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, '.
-			'pkfield, username, password, schemaname, cleanupsp, querystr) VALUES ('.$this->collId.','.
+			'pkfield, username, password, schemaname, cleanupsp, existingrecords, querystr) VALUES ('.$this->collId.','.
 			$profileArr['uploadtype'].',"'.$this->cleanInStr($profileArr['title']).'",'.
 			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.$this->cleanInStr($profileArr['platform']).'"':'NULL').','.
 			(isset($profileArr['server'])&&$profileArr['platform']?'"'.$this->cleanInStr($profileArr['server']).'"':'NULL').','.
@@ -354,6 +357,7 @@ class SpecUpload{
 			(isset($profileArr['password'])&&$profileArr['password']?'"'.$this->cleanInStr($profileArr['password']).'"':'NULL').','.
 			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.$this->cleanInStr($profileArr['schemaname']).'"':'NULL').','.
 			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.$this->cleanInStr($profileArr['cleanupsp']).'"':'NULL').','.
+            (isset($profileArr['existingrecords'])&&$profileArr['existingrecords']?'"'.$this->cleanInStr($profileArr['existingrecords']).'"':'"update"').','.
 			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
@@ -435,6 +439,10 @@ class SpecUpload{
 	public function getUploadType(){
 		return $this->uploadType;
 	}
+
+    public function getExistingRecordManagement(){
+        return $this->existingRecordManagement;
+    }
 	
 	public function setUploadType($uploadType): void
 	{
