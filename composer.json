@@ -52,7 +52,6 @@
       "@php -r \"file_exists('./temp/images') || mkdir('./temp/images');\"",
       "@php -r \"file_exists('./temp/ootd') || mkdir('./temp/ootd');\"",
       "@php -r \"file_exists('./temp/report') || mkdir('./temp/report');\"",
-      "@php -r \"file_exists('./temp/slideshow') || mkdir('./temp/slideshow');\"",
       "@php -r \"file_exists('./temp/symbocr') || mkdir('./temp/symbocr');\""
 
     ],
