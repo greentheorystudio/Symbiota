@@ -98,7 +98,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         .login-link {
             font-family: 'Fira Sans';
-            font-size: 9pt;
+            font-size: 11pt;
             color: white;
             margin: 10px;
         }
@@ -111,7 +111,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         .quicksearch-container {
             position: absolute;
-            top: 525px;
+            top: 375px;
             left: 0;
             width: 100%;
             display: flex;
@@ -121,7 +121,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         .heading-container {
             position: absolute;
-            top: 750px;
+            top: 625px;
             left: 0;
             width: 100%;
             color: white;
@@ -129,14 +129,14 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         .heading-inner {
             padding: 20px;
-            width: 60%;
+            width: 62%;
             background-color: rgba(0, 0, 0, 0.5);
             margin-left: auto;
             margin-right: auto;
             text-align: center;
         }
 
-        .fa-leaf, .fa-dna, .fa-map-marked-alt{
+        .fa-leaf, .fa-map-marked-alt{
             color: #1599AB;
             filter: drop-shadow(10px 10px 4px lightgrey);
             height: 60px;
@@ -149,7 +149,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
 
         h3{
             font-family: 'Fira Sans';
-            font-size: 14pt;
+            font-size: 16pt;
             font-weight: normal;
         }
     </style>
@@ -226,7 +226,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;">Species Reports</h5>
         </div>
         <div class="totals-box">
-            <i style="height:60px;width:60px;" class="fas fa-dna"></i>
+            <i style="height:60px;width:60px;background-image: url('images/layout/fat_tree.svg');background-size:cover;filter: drop-shadow(10px 10px 4px lightgrey);"></i>
             <h2 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 3.5em;text-align: center;margin-bottom: 5px;"><?php echo $totalTaxa; ?></h2>
             <h5 style="font-family:'Whitney A','Whitney B',Helvetica,Arial,sans-serif;color: gray;font-weight: 300;font-size: 2.1em;text-align: center;line-height: normal;"> Total Taxa</h5>
         </div>

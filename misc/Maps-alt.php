@@ -47,8 +47,8 @@ include(__DIR__ . '/../header.php');
                 <div style='width:100%;height:225px;background-image: url("../images/layout/What_Is_a_Lagoon.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:100px;">
                     <div style="padding:20px;">
-                        <div style="font-family: 'Fira Sans';font-size: 14pt;font-weight: bold;margin-bottom:20px;">What is a Lagoon?</div>
-                        <div style="font-family: 'Fira Sans';font-size: 8pt;font-style: italic;">
+                        <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;margin-bottom:20px;">What is a Lagoon?</div>
+                        <div style="font-family: 'Fira Sans';font-size: 10pt;font-style: italic;">
                             Between land and sea, lagoons are defined by flux.
                         </div>
                     </div>
@@ -60,8 +60,8 @@ include(__DIR__ . '/../header.php');
                 <div style='width:100%;height:225px;background-image: url("../images/layout/Dune_Westward_Canaveral_National_Seashore.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:100px;">
                     <div style="padding:20px;">
-                        <div style="font-family: 'Fira Sans';font-size: 14pt;font-weight: bold;margin-bottom:20px;">Habitats</div>
-                        <div style="font-family: 'Fira Sans';font-size: 8pt;font-style: italic;">
+                        <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;margin-bottom:20px;">Habitats</div>
+                        <div style="font-family: 'Fira Sans';font-size: 10pt;font-style: italic;">
                             The Indian River Lagoon is a mosaic of natural elements.
                         </div>
                     </div>
@@ -73,8 +73,8 @@ include(__DIR__ . '/../header.php');
                 <div style='width:100%;height:225px;background-image: url("../images/layout/algae_bloom.jpeg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:100px;">
                     <div style="padding:20px;">
-                        <div style="font-family: 'Fira Sans';font-size: 14pt;font-weight: bold;margin-bottom:20px;">Threats</div>
-                        <div style="font-family: 'Fira Sans';font-size: 8pt;font-style: italic;">
+                        <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;margin-bottom:20px;">Threats</div>
+                        <div style="font-family: 'Fira Sans';font-size: 10pt;font-style: italic;">
                             A delightful environment for humans comes at a cost.
                         </div>
                     </div>

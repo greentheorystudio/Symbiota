@@ -75,7 +75,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
 
         .login-link {
             font-family: 'Fira Sans';
-            font-size: 9pt;
+            font-size: 11pt;
             color: white;
             margin: 10px;
         }
@@ -119,7 +119,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         #innertext{
             position: sticky;
             min-height: 200px;
-            width: 60%;
+            width: 70%;
             z-index: 1;
         }
         ol, ul {
@@ -334,8 +334,8 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             <h4>Mangrove Species</h4>
             <div style="display:flex;justify-content: space-between">
                 <div style="display:flex;flex-direction:column;">
-                    <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/red_mangrove%20.jpg" />
-                    <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/black_mangrove.jpg" />
+                    <img style="border:0;width:400px;margin: 20px 25px 10px 0;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/red_mangrove%20.jpg" />
+                    <img style="border:0;width:400px;margin: 4px 25px 10px 4px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/black_mangrove.jpg" />
                 </div>
                 <div>
                     <p>
@@ -373,10 +373,10 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
                 coastal erosion. As storms approach and pass by, branches in the canopies and roots in the water reduce
                 the force of winds and waves, blunting the edge of strong storm impacts.
             </p>
-            <div style="margin:15px;display:flex;justify-content: space-around;">
-                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/wave_action.jpg" />
-                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/leaf_litter.JPG" />
-                <img style="border:0;width:300px;margin: 10px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/nursery%20.jpg" />
+            <div style="margin: 15px 0;display:flex;justify-content: space-between;">
+                <img style="border:0;width:320px;margin: 0 0 10px 0;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/wave_action.jpg" />
+                <img style="border:0;width:320px;margin: 0 0 10px 0;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/leaf_litter.JPG" />
+                <img style="border:0;width:320px;margin: 0 0 10px 0;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/nursery%20.jpg" />
             </div>
             <p>
                 Mangroves are extremely absorbent carbon sinks—but managed improperly, they stand to be supercharged

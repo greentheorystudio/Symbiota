@@ -254,56 +254,9 @@ body, html {
 
 body{
 	font-family: 'Fira Sans';
-	font-size: 12pt;
-	line-height: 14px;
+	font-size: 14pt;
+	line-height: 18px;
 	margin: 0;
-}
-
-#maintable{
-	width: 100%;
-	background-color:#FFFFFF;
-	border:1px solid #333333;
-}
-
-td.header{
-	color:#FFFFFF;
-	background-color:#000000;
-	text-align:left;
-	padding: 0;
-}
-
-td.middlecenter{
-	padding:0;
-}
-
-div.menu {
-	background-color:   white;
-	margin:				15px;
-	border:   			1px solid #CCCCFF;
-	padding-bottom:   	25px;
-	overflow:   		hidden;
-	width:   			150px;
-	border-radius:		0.5em 0.5em 1.5em 0.5em;
-	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
-}
-
-div.menuheader{
-	background-color:   #C0C0C0;
-	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size:   		13px;
-	color:   			white;
-	overflow:   		hidden;
-	text-align:   		center;
-	padding:   			3px;
-	margin:			   	0;
-}
-
-div.menuitem a {
-	color: #669999;
-}
-
-div.menuitem a:hover {
-	color: 	#00008B;
 }
 
 #innertext{
@@ -312,7 +265,8 @@ div.menuitem a:hover {
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 	font-family: 'Fira Sans';
-	font-size: 12px;
+	font-size: 14px;
+	line-height: 18px;
 }
 
 div.navpath {
@@ -321,52 +275,54 @@ div.navpath {
 	padding-left: 10px;
 	margin-bottom: 0;
 	font-family: 'Fira Sans';
-	font-size: 9pt;
-	color: #FDBA35;
+	font-size: 14pt;
+	color: #242038;
 	font-variant: small-caps;
 }
 
 div.navpath a, div.navpath a:hover {
-	color: #FDBA35;
+	color: #242038;
 }
 
 h1{
 	font-family: 'Patua One';
-	font-size: 24px;
-	line-height: 26px;
+	font-size: 26px;
+	line-height: 28px;
 }
 
 h2{
 	font-family: 'Patua One';
-	font-size: 20px;
+	font-size: 22px;
 }
 
 h3{
 	font-family: 'Patua One';
-	font-size: 20px;
-	line-height: 21px;
+	font-size: 22px;
+	line-height: 34px;
 }
 
 h4{
 	font-family: 'Fira Sans';
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: bold;
 }
 
 h5{
 	font-family: 'Fira Sans';
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: bold;
 }
 
 p{
 	font-family: 'Fira Sans';
-	font-size: 12px;
+	font-size: 16px;
+	line-height: 24px;
 }
 
 .intro-text {
 	font-family: 'Fira Sans';
-	font-size: 14px;
+	font-size: 16px;
+	line-height: 18px;
 }
 
 #top_navbar{
@@ -389,7 +345,7 @@ p{
 }
 #hor_dropdown{
 	list-style:none;
-	font-size: 9pt;
+	font-size: 11pt;
 	width:auto;
 	color: white;
 	font-family: 'Fira Sans';
@@ -409,12 +365,12 @@ p{
 	display:block;
 	color: white;
 	text-decoration: none;
-	padding: 25px 22px;
+	padding: 25px 18px;
 }
 #hor_dropdown a:hover{
 	background-color: #FDBA35;
 	color: black;
-	padding: 25px 22px;
+	padding: 25px 18px;
 }
 /* Submenu */
 #hor_dropdown ul {
@@ -487,7 +443,7 @@ p{
 
 .as {
 	clear: both;
-	font-size: 15px;
+	font-size: 17px;
 	text-align: left;
 	position: absolute;
 	top: 10px;
@@ -512,7 +468,7 @@ p{
 	background-color: rgba(16, 114, 127, 0.75);
 	border: 0;
 	color: #FFF;
-	margin-left: 48px;
+	margin-left: 105px;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
@@ -529,7 +485,7 @@ p{
 	position: relative;
 }
 .searcharea {
-	width: 62%;
+	width: 65%;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -596,13 +552,13 @@ table.table-border td p.label, table.table-border td span, table.table-border td
 p.title{
 	color: #408080;
 	font-weight:bold;
-	font-size:16px;
+	font-size:18px;
 	margin:0 0 5px 0 !important;
 }
 p.body, p.body-align-left{
 	color: #393939 !important;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size:12px;
+	font-size:14px;
 	text-align:justify !important;
 	line-height: 20px;
 }
@@ -611,7 +567,7 @@ p.body-align-left{
 }
 table.table-border td p.heading{
 	font-weight: bold;
-	font-size:14px;
+	font-size:16px;
 	padding:0 !important;
 	margin:0 !important;
 }
@@ -641,7 +597,7 @@ p.footer_note{
 }
 span.caption{
 	font-family: Verdana, Geneva, sans-serif;
-	font-size: 10px;
+	font-size: 12px;
 	font-weight: normal;
 	color: #393939;
 	line-height: 15px;
@@ -684,7 +640,7 @@ table.alternate{
 table.alternate th{
 	background-color:#f0f0f0;
 	color:#393939;
-	font-size:14px;
+	font-size:16px;
 	font-weight:bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	padding:5px;
@@ -728,7 +684,7 @@ table.species-table tr:last-child td {
 	border:0px;
 }
 table.species-table tr td{
-	font-size:15px;
+	font-size:17px;
 	font-weight:bold;
 }
 table.species-table tr td.label{
