@@ -14,12 +14,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div  id="innertext">
-            <h1></h1>
+        <div id="innertext">
+            <h1>Welcome to your Symbiota portal!</h1>
 
-            <div style="padding: 0 10px;">
-                Description and introduction of project
-            </div>
+            <p>
+                Here's where all the great stuff on your homepage goes.
+            </p>
         </div>
 
         <?php
