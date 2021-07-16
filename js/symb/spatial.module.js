@@ -37,6 +37,9 @@ let clickedFeatures = [];
 let dragDrop1 = false;
 let dragDrop2 = false;
 let dragDrop3 = false;
+let dragDrop4 = false;
+let dragDrop5 = false;
+let dragDrop6 = false;
 let dragDropTarget = '';
 let dsOldestDate = '';
 let dsNewestDate = '';
@@ -2858,15 +2861,36 @@ function removeUserLayer(layerID){
         pointActive = false;
     }
     else{
-        layersArr[layerID].setSource(blankdragdropsource);
-        if(layerID === 'dragdrop1') {
-            dragDrop1 = false;
+        if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
+            layersArr[layerID].setSource(blankdragdropsource);
+            const sourceIndex = dragDropTarget + 'Source';
+            delete layersArr[sourceIndex];
+            if(layerID === 'dragdrop1') {
+                dragDrop1 = false;
+            }
+            else if(layerID === 'dragdrop2') {
+                dragDrop2 = false;
+            }
+            else if(layerID === 'dragdrop3') {
+                dragDrop3 = false;
+            }
         }
-        else if(layerID === 'dragdrop2') {
-            dragDrop2 = false;
-        }
-        else if(layerID === 'dragdrop3') {
-            dragDrop3 = false;
+        else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
+            map.removeLayer(layersArr[layerID]);
+            layersArr[layerID].setSource(null);
+            const sourceIndex = dragDropTarget + 'Source';
+            const imageIndex = dragDropTarget + 'Image';
+            delete layersArr[sourceIndex];
+            delete layersArr[imageIndex];
+            if(layerID === 'dragdrop4') {
+                dragDrop4 = false;
+            }
+            else if(layerID === 'dragdrop5') {
+                dragDrop5 = false;
+            }
+            else if(layerID === 'dragdrop6') {
+                dragDrop6 = false;
+            }
         }
     }
     document.getElementById("selectlayerselect").value = 'none';
@@ -3087,7 +3111,30 @@ function setDragDropTarget(){
         return true;
     }
     else{
-        alert('You may only have 3 uploaded layers at a time. Please remove one of the currently uploaded layers to upload more.');
+        alert('You may only have 3 uploaded vector layers at a time. Please remove one of the currently uploaded layers to upload more.');
+        return false;
+    }
+}
+
+function setRasterDragDropTarget(){
+    dragDropTarget = '';
+    if(!dragDrop4){
+        dragDrop4 = true;
+        dragDropTarget = 'dragdrop4';
+        return true;
+    }
+    else if(!dragDrop5){
+        dragDrop5 = true;
+        dragDropTarget = 'dragdrop5';
+        return true;
+    }
+    else if(!dragDrop6){
+        dragDrop6 = true;
+        dragDropTarget = 'dragdrop6';
+        return true;
+    }
+    else{
+        alert('You may only have 3 uploaded raster layers at a time. Please remove one of the currently uploaded layers to upload more.');
         return false;
     }
 }

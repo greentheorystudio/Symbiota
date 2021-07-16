@@ -63,7 +63,7 @@ $clManager->setCollectionVariables();
             });
         }
     </script>
-	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=130330"></script>
+	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=20210621"></script>
 	<style type="text/css">
 		li{margin:5px;}
 	</style>

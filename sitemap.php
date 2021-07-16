@@ -19,7 +19,7 @@ $smManager = new SiteMapManager();
 			return false;
 		}
 	</script>
-	<script type="text/javascript" src="js/symb/shared.js"></script>
+	<script type="text/javascript" src="js/symb/shared.js?ver=20210621"></script>
 </head>
 <body>
 	<?php
@@ -27,26 +27,29 @@ $smManager = new SiteMapManager();
 	?>
 	<div id="innertext">
 		<h2>Site Map</h2>
-		<div style="margin:10px;">
+		<div class="pmargin">
 			<h3>Collections</h3>
 			<ul>
 				<li><a href="collections/index.php">Search Engine</a> - search collections</li>
 				<li><a href="collections/misc/collprofiles.php">Collections</a> - list of collection participating in project</li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>
 				<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
-				<li>Data Publishing</li>
-				<li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
-				<li style="margin-left:15px"><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
-				<?php
-				if(file_exists('webservices/dwc/rss.xml')){
-					echo '<li style="margin-left:15px;"><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
-				}
-				?>
+				<li>Data Publishing
+                    <ul>
+                        <li><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
+                        <li><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
+                        <?php
+                        if(file_exists('webservices/dwc/rss.xml')){
+                            echo '<li><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
+                        }
+                        ?>
+                    </ul>
+                </li>
 				<li><a href="collections/misc/rarespecies.php">Rare Species</a> - list of taxa where locality information is hidden due to rare/threatened/endangered status</li>
 
 			</ul>
 
-			<div style="margin-top:10px;"><h3>Image Library</h3></div>
+			<h3>Image Library</h3>
 			<ul>
 				<li><a href="imagelib/index.php">Image Library</a></li>
 				<li><a href="imagelib/search.php">Interactive Search Tool</a></li>
@@ -54,7 +57,7 @@ $smManager = new SiteMapManager();
 				<li><a href="misc/usagepolicy.php">Usage Policy and Copyright Information</a></li>
 			</ul>
 
-            <div style="margin-top:10px;"><h3>Taxonomy</h3></div>
+            <h3>Taxonomy</h3>
 			<ul>
 				<li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
 				<li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
@@ -68,7 +71,7 @@ $smManager = new SiteMapManager();
 			}
 			$projList = $smManager->getProjectList();
 			if($projList){
-				echo '<div style="margin-top:10px;"><h2>Biotic Inventory Projects</h2></div><ul>';
+				echo '<h2>Biotic Inventory Projects</h2><ul>';
 				foreach($projList as $pid => $pArr){
 					echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr['name']."</a></li>\n";
 					echo '<ul><li>Manager: ' .$pArr['managers']."</li></ul>\n";
@@ -77,7 +80,7 @@ $smManager = new SiteMapManager();
 			}
 			?>
 
-			<div style="margin-top:10px;"><h3>Dynamic Species Lists</h3></div>
+			<h3>Dynamic Species Lists</h3>
 			<ul>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=checklist">
@@ -93,7 +96,7 @@ $smManager = new SiteMapManager();
 				</li>
 			</ul>
 
-			<fieldset style="margin:30px 0 10px 10px;padding-left:25px;padding-right:15px;">
+			<fieldset class="sitemapDataManagementContainer">
 				<legend><b>Data Management Tools</b></legend>
 				<?php
 				if($GLOBALS['SYMB_UID']){
@@ -135,7 +138,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if(!$GLOBALS['KEY_MOD_IS_ACTIVE'] && array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
 							?>
-							<div style="color:red;margin-left:10px;">
+							<div class="indentedWarning">
                                 Note: The Identification Key module is deactivated within this portal. However, you can override by activating idividual keys within the checklist administration page.
 							</div>
 							<?php
@@ -178,7 +181,7 @@ $smManager = new SiteMapManager();
 					}
 					?>
 					<h3>Images</h3>
-					<div style="margin:10px;">
+					<div class="pmargin">
                         See the Symbiota documentation on
                         <a href="http://symbiota.org/docs/image-submission-2/">Image Submission</a>
                         for an overview of how images are managed within a Symbiota data portal. Field images without
@@ -243,16 +246,19 @@ $smManager = new SiteMapManager();
 					<?php
 					if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 						?>
-						<div style="margin:10px;">
+						<div class="pmargin">
                             The following Species Profile page editing features are also available to editors via an
                             editing link located in the upper right of each Species Profile page.
 						</div>
 						<ul>
 							<li><a href="taxa/admin/tpeditor.php?taxon=">Synonyms / Common Names</a></li>
 							<li><a href="taxa/admin/tpeditor.php?taxon=&tabindex=4">Text Descriptions</a></li>
-							<li><a href="taxa/admin/tpeditor.php?taxon=&tabindex=1">Edit Images</a></li>
-							<li style="margin-left:15px;"><a href="taxa/admin/tpeditor.php?taxon=&category=imagequicksort&tabindex=2">Edit Image Sorting Order</a></li>
-							<li style="margin-left:15px;"><a href="taxa/admin/tpeditor.php?taxon=&category=imageadd&tabindex=3">Add a new image</a></li>
+							<li><a href="taxa/admin/tpeditor.php?taxon=&tabindex=1">Edit Images</a>
+                                <ul>
+                                    <li><a href="taxa/admin/tpeditor.php?taxon=&category=imagequicksort&tabindex=2">Edit Image Sorting Order</a></li>
+                                    <li><a href="taxa/admin/tpeditor.php?taxon=&category=imageadd&tabindex=3">Add a new image</a></li>
+                                </ul>
+                            </li>
 						</ul>
 						<?php
 					}
@@ -286,7 +292,7 @@ $smManager = new SiteMapManager();
 					</ul>
 
 					<h3>Checklists</h3>
-					<div style="margin:10px;">
+					<div class="pmargin">
                         Tools for managing Checklists are available from each checklist display page.
                         Editing symbols located in the upper right of the page will display
                         editing options for that checklist.
@@ -309,7 +315,7 @@ $smManager = new SiteMapManager();
 					if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
 						?>
 						<h3>Exsiccati</h3>
-						<div style="margin:10px;">
+						<div class="pmargin">
                             The Exsiccati module is activated for this portal.
                             The exsiccati index (listed below) can be browsed or searched by everyone.
                             However, to add or modify exsiccati titles or series,
@@ -323,17 +329,15 @@ $smManager = new SiteMapManager();
 					?>
 
 					<h3>Collections</h3>
-					<div style="margin:10px;">
+					<div class="pmargin">
                         Tools for managing data specific to a particular collection are available through the collection&#39;s profile page.
                         Clicking on a collection name in the list below will take you to this page for that given collection.
                         An additional method to reach this page is by clicking on the collection name within the specimen search engine.
                         The editing symbol located in the upper right of Collection Profile page will open
                         the editing pane and display a list of editing options.
 					</div>
-					<div style="margin:10px;">
-						<div style="font-weight:bold;">
-                            List of collections you have permissions to edit
-						</div>
+					<div class="pmargin">
+						<h4>List of collections you have permissions to edit</h4>
 						<ul>
 						<?php
 						$smManager->setCollectionList();
@@ -354,7 +358,7 @@ $smManager = new SiteMapManager();
 					</div>
 
 					<h3>Observations</h3>
-					<div style="margin:10px;">
+					<div class="pmargin">
                         Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.
                         One difference is the General Observation project. This project serves two central purposes:
                         1) Allows registered users to submit a image voucherd field observation.
@@ -363,15 +367,13 @@ $smManager = new SiteMapManager();
                         <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on specimen processing capabilities.
                         Note that observation projects are not activated on all Symbiota data portals.
                     </div>
-					<div style="margin:10px;">
+					<div class="pmargin">
 						<?php
 						$obsList = $smManager->getObsArr();
 						$genObsList = $smManager->getGenObsArr();
 						$obsManagementStr = '';
 						?>
-						<div style="font-weight:bold;">
-                            Observation Image Voucher Submission
-						</div>
+						<h4>Observation Image Voucher Submission</h4>
 						<ul>
 							<?php
 							if($obsList){
@@ -408,9 +410,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<div style="font-weight:bold;">
-                                Personal Specimen Management and Label Printing Features
-							</div>
+							<h4>Personal Specimen Management and Label Printing Features</h4>
 							<ul>
 								<?php
 								foreach($genObsList as $k => $oArr){
@@ -428,9 +428,7 @@ $smManager = new SiteMapManager();
 						}
 						if($obsManagementStr){
 							?>
-							<div style="font-weight:bold;">
-                                Observation Project Management
-							</div>
+							<h4>Observation Project Management</h4>
 							<ul>
 								<?php echo $obsManagementStr; ?>
 							</ul>
