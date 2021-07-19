@@ -1,9 +1,12 @@
 # Green Theory Studio's Symbiota
 
-The Green Theory Studio fork of Symbiota is a cleaned and updated version of the original, offering all of the same tools 
+The [Green Theory Studio](https://greentheorystudio.com/) fork of Symbiota is a cleaned and updated version of the original, offering all of the same tools 
 for generating, managing, and disseminating biodiversity data. It is compatible with the newest version of MySQL and is more 
 secure than the original, requiring fewer third-party services to configure.
 
+[You can explore this version of Symbiota through our demo portal.](https://greentheorystudio.net/symbiota-demo/) If you would like 
+login access to the demo portal to explore the administrative features, 
+[please send us a messagage through our contact page.](https://greentheorystudio.com/contact/)
 ## Requirements
 
 Symbiota can be installed on any Linux, Windows, or Mac operating systems, but requires an additional server application
