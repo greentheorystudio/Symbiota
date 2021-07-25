@@ -21,7 +21,7 @@
             </li>
             <li>
                 <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" >Inventories</a>
-                <ul>
+                <!-- <ul>
                     <li>
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" >Project 1</a>
                     </li>
@@ -34,7 +34,7 @@
                     <li>
                         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=4" >Project 4</a>
                     </li>
-                </ul>
+                </ul> -->
             </li>
             <li>
                 <a href="#" >Interactive Tools</a>
