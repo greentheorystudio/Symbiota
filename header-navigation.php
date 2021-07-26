@@ -4,7 +4,7 @@
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
         </li>
         <li>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Maps-alt.php" >The Indian River Lagoon</a>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Maps.php" >The Indian River Lagoon</a>
         </li>
         <li>
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Whatsa_Habitat.php" >Habitats</a>

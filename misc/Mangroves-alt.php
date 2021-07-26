@@ -1,14 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
-
-$IRLManager = new IRLManager();
-
-$mangrovePlantArr = $IRLManager->getChecklistTaxa(15);
-$mangroveAlgaeArr = $IRLManager->getChecklistTaxa(16);
-$mangroveAnimalArr = $IRLManager->getChecklistTaxa(17);
-$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -23,160 +15,14 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
             background-position: center bottom;
         }
 
-        .page-title-container {
-            position: absolute;
-            top: 280px;
-            left: 35px;
-            padding: 0 20px;
-            background-color: rgba(226, 232, 236, 0.58);
-        }
-
-        .top-text-container {
-            position: absolute;
-            top: 360px;
-            left: 35px;
-            width: 85%;
-            padding: 0 20px;
-            background-color: rgba(226, 232, 236, 0.58);
-        }
-        #bodyContainer{
-            margin-top: 30px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
         #innertext{
             position: sticky;
-            min-height: 200px;
-            width: 70%;
-            z-index: 1;
-        }
-        ol, ul {
-            list-style: none;
-        }
-        .sideNavMover {
-            position: sticky;
-            top: 50px;
-            left: 0;
-            z-index: 50000;
-        }
-        .sideNavContainer {
-            position: relative;
-        }
-        #cd-vertical-nav {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-        #cd-vertical-nav a {
-            display: inline-block;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-        #cd-vertical-nav a:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        #cd-vertical-nav a span {
-            float: left;
-            display: inline-block;
-            -webkit-transform: scale(0.6);
-            -moz-transform: scale(0.6);
-            -ms-transform: scale(0.6);
-            -o-transform: scale(0.6);
-            transform: scale(0.6);
-        }
-        #cd-vertical-nav a:hover span, #cd-vertical-nav a.is-selected span {
-            -webkit-transform: scale(1);
-            -moz-transform: scale(1);
-            -ms-transform: scale(1);
-            -o-transform: scale(1);
-            transform: scale(1);
-        }
-        #cd-vertical-nav a:hover .cd-label {
-            opacity: 1;
-        }
-        #cd-vertical-nav a.is-selected .cd-dot, #cd-vertical-nav a:hover .cd-dot {
-            background-color: #EF434C;
-        }
-        #cd-vertical-nav .cd-dot {
-            position: relative;
-            top: 8px;
-            height: 12px;
-            width: 12px;
-            border-radius: 50%;
-            background-color: #242038;
-            -webkit-transition: -webkit-transform 0.2s, background-color 0.5s;
-            -moz-transition: -moz-transform 0.2s, background-color 0.5s;
-            transition: transform 0.2s, background-color 0.5s;
-            -webkit-transform-origin: 50% 50%;
-            -moz-transform-origin: 50% 50%;
-            -ms-transform-origin: 50% 50%;
-            -o-transform-origin: 50% 50%;
-            transform-origin: 50% 50%;
-        }
-        #cd-vertical-nav .cd-label {
-            position: relative;
-            margin-left: 20px;
-            margin-top: -10px;
-            padding: .4em .5em;
-            width: 300px;
-            color: black;
-            font-size: 0.875rem;
-            -webkit-transition: -webkit-transform 0.2s, opacity 0.2s;
-            -moz-transition: -moz-transform 0.2s, opacity 0.2s;
-            transition: transform 0.2s, opacity 0.2s;
-            opacity: 0;
-            -webkit-transform-origin: 100% 50%;
-            -moz-transform-origin: 100% 50%;
-            -ms-transform-origin: 100% 50%;
-            -o-transform-origin: 100% 50%;
-            transform-origin: 100% 50%;
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/modernizr.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var contentSections = $('.cd-section');
-            var navigationItems = $('#cd-vertical-nav a');
-
-            updateNavigation();
-
-            document.addEventListener('scroll', function (event) {
-                updateNavigation();
-            }, true);
-
-            navigationItems.on('click', function(event){
-                event.preventDefault();
-                smoothScroll(this.hash);
-            });
-
-            $('.touch #cd-vertical-nav a').on('click', function(){
-                $('.touch #cd-vertical-nav').removeClass('open');
-            });
-
-            function updateNavigation() {
-                contentSections.each(function(){
-                    $this = $(this);
-                    var activeSection = $('#cd-vertical-nav a[href="#'+$this.attr('id')+'"]').data('number') - 1;
-                    if ( ( $this.offset().top - $(window).height()/2 < $(window).scrollTop() ) && ( $this.offset().top + $this.height() - $(window).height()/2 > $(window).scrollTop() ) ) {
-                        navigationItems.eq(activeSection).addClass('is-selected');
-                    }else {
-                        navigationItems.eq(activeSection).removeClass('is-selected');
-                    }
-                });
-            }
-
-            function smoothScroll(hash) {
-                var element = document.querySelector(hash);
-                element.scrollIntoView({ behavior: 'smooth', block: 'start'});
-            }
-        });
-    </script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/static-page.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
@@ -209,21 +55,21 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
         <h1>Mangroves</h1>
     </div>
     <div class="top-text-container">
-        <p class="intro-text">
+        <h3>
             One of Florida's true natives, mangroves are uniquely evolved to leverage the state's many miles of low-lying
             coastline for their benefit.
-        </p>
-        <p class="intro-text">
+        </h3>
+        <h3>
             Flooded twice daily by ocean tides, or fringing brackish waters like the Indian River Lagoon, mangroves are bristling
             with adaptations that allow them to thrive in water up to 100 times saltier than most plants can tolerate.
-        </p>
+        </h3>
     </div>
 </div>
 <div id="bodyContainer">
     <div class="sideNavMover">
         <div class="sideNavContainer">
             <nav id="cd-vertical-nav">
-                <ul>
+                <ul class="vertical-nav-list">
                     <li>
                         <a href="#intro-section" data-number="1">
                             <span class="cd-dot"></span>

@@ -26,7 +26,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
     <link href="css/jquery-ui.css" type="text/css" rel="Stylesheet" />
     <style>
         .hero-container {
-            background-image: url("images/layout/home-header-image.jpg");
+            background-image: url("content/imglib/static/20Donahue1.jpg");
         }
     </style>
     <script src="js/all.min.js" type="text/javascript"></script>
