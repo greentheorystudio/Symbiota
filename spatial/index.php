@@ -90,8 +90,10 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/stream.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/FileSaver.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/html2canvas.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/geotiff.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/plotty.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20210621" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210527" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210705" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
     <script type="text/javascript">
         let searchTermsArr = {};
@@ -427,6 +429,9 @@ $dbArr = array();
     const dragdroplayer3 = new ol.layer.Vector({
         source: blankdragdropsource
     });
+    const dragdroplayer4 = new ol.layer.Image();
+    const dragdroplayer5 = new ol.layer.Image();
+    const dragdroplayer6 = new ol.layer.Image();
 
     const spiderLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
@@ -439,6 +444,9 @@ $dbArr = array();
     layersArr['dragdrop1'] = dragdroplayer1;
     layersArr['dragdrop2'] = dragdroplayer2;
     layersArr['dragdrop3'] = dragdroplayer3;
+    layersArr['dragdrop4'] = dragdroplayer4;
+    layersArr['dragdrop5'] = dragdroplayer5;
+    layersArr['dragdrop6'] = dragdroplayer6;
     layersArr['uncertainty'] = uncertaintycirclelayer;
     layersArr['select'] = selectlayer;
     layersArr['pointv'] = pointvectorlayer;
@@ -556,7 +564,7 @@ $dbArr = array();
         let filename = event.file.name.split('.');
         const fileType = filename.pop();
         filename = filename.join("");
-        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip'){
+        if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif'){
             if(fileType === 'geojson' || fileType === 'kml'){
                 if(setDragDropTarget()){
                     const infoArr = [];
@@ -608,9 +616,50 @@ $dbArr = array();
                     });
                 }
             }
+            else if(fileType === 'tif'){
+                if(setRasterDragDropTarget()){
+                    event.file.arrayBuffer().then((data) => {
+                        const infoArr = [];
+                        infoArr['Name'] = dragDropTarget;
+                        infoArr['layerType'] = 'raster';
+                        infoArr['Title'] = filename;
+                        infoArr['Abstract'] = '';
+                        infoArr['DefaultCRS'] = '';
+                        const sourceIndex = dragDropTarget + 'Source';
+                        const imageIndex = dragDropTarget + 'Image';
+                        const tiff = GeoTIFF.parse(data);
+                        const image = tiff.getImage();
+                        layersArr[imageIndex] = image;
+                        const rawBox = image.getBoundingBox();
+                        const box = [rawBox[0],rawBox[1] - (rawBox[3] - rawBox[1]), rawBox[2], rawBox[1]];
+                        const bands = image.readRasters();
+                        const canvasElement = document.createElement('canvas');
+                        const minValue = 0;
+                        const maxValue = 1200;
+                        const plot = new plotty.plot({
+                            canvas: canvasElement,
+                            data: bands[0],
+                            width: image.getWidth(),
+                            height: image.getHeight(),
+                            domain: [minValue, maxValue],
+                            colorScale: 'earth'
+                        });
+                        plot.render();
+                        layersArr[sourceIndex] = new ol.source.ImageStatic({
+                            url: canvasElement.toDataURL("image/png"),
+                            imageExtent: box,
+                            projection: 'EPSG:4326'
+                        });
+                        layersArr[dragDropTarget].setSource(layersArr[sourceIndex]);
+                        map.addLayer(layersArr[dragDropTarget]);
+                        buildLayerTableRow(infoArr,true);
+                        toggleLayerTable();
+                    });
+                }
+            }
         }
         else{
-            alert('The drag and drop file loading only supports GeoJSON, kml, and shapefile zip archives.');
+            alert('The drag and drop file loading only supports GeoJSON, kml, tif, and shapefile zip archives.');
         }
     });
 
@@ -919,7 +968,7 @@ $dbArr = array();
         if(evt.originalEvent.altKey){
             layerIndex = activeLayer + "Source";
             viewResolution = (mapView.getResolution());
-            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv' && activeLayer !== 'dragdrop1' && activeLayer !== 'dragdrop2' && activeLayer !== 'dragdrop3'){
+            if(activeLayer !== 'none' && activeLayer !== 'select' && activeLayer !== 'pointv' && activeLayer !== 'dragdrop1' && activeLayer !== 'dragdrop2' && activeLayer !== 'dragdrop3' && activeLayer !== 'dragdrop4' && activeLayer !== 'dragdrop5' && activeLayer !== 'dragdrop6'){
                 url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
                 if (url) {
                     $.ajax({
@@ -949,7 +998,7 @@ $dbArr = array();
                     });
                 }
             }
-            else if(activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3' || activeLayer === 'select'){
+            else if(activeLayer === 'none' || activeLayer === 'dragdrop1' || activeLayer === 'dragdrop2' || activeLayer === 'dragdrop3' || activeLayer === 'select'){
                 infoHTML = '';
                 const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                     if (layer === layersArr[activeLayer]) {
@@ -968,6 +1017,35 @@ $dbArr = array();
                         popupoverlay.setPosition(evt.coordinate);
                     }
                 }
+            }
+            else if(activeLayer === 'dragdrop4' || activeLayer === 'dragdrop5' || activeLayer === 'dragdrop6'){
+                infoHTML = '';
+                const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                const imageIndex = activeLayer + 'Image';
+                const image = layersArr[imageIndex];
+                const meta = image.getFileDirectory();
+                const x_min = meta.ModelTiepoint[3];
+                const x_max = x_min + meta.ModelPixelScale[0] * meta.ImageWidth;
+                const y_min = meta.ModelTiepoint[4];
+                const y_max = y_min - meta.ModelPixelScale[1] * meta.ImageLength;
+                const x = Math.floor(image.getWidth()*(coords[0] - x_min)/(x_max - x_min));
+                const y = image.getHeight()-Math.ceil(image.getHeight()*(coords[1] - y_max)/(y_min - y_max));
+                const bands = image.readRasters();
+                const canvasElement = document.createElement('canvas');
+                const minValue = 0;
+                const maxValue = 1200;
+                const plot = new plotty.plot({
+                    canvas: canvasElement,
+                    data: bands[0],
+                    width: image.getWidth(),
+                    height: image.getHeight(),
+                    domain: [minValue, maxValue],
+                    colorScale: 'earth'
+                });
+                const rasterValue = plot.atPoint(x,y);
+                infoHTML += '<b>Value:</b> '+rasterValue+'<br />';
+                popupcontent.innerHTML = infoHTML;
+                popupoverlay.setPosition(evt.coordinate);
             }
             else if(activeLayer === 'pointv'){
                 infoHTML = '';
