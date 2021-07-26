@@ -331,6 +331,7 @@ body{
 	font-family: 'Source Sans Pro';
 	font-size: 16px;
 	line-height: 18px;
+	border: 1px solid black;
 }
 
 .title {
@@ -341,7 +342,7 @@ body{
 #mainContainer{
 	display: block;
 	height: 100%;
-	border: 1px solid black;
+	width: 100%;
 	background-color: #F6F6F6;
 }
 
@@ -455,7 +456,7 @@ h5{
 	list-style:none;
 	position:absolute;
 	left:0;
-	top: 58px;
+	top: 57px;
 	padding:0;
 	z-index:1000;
 	background-color: #798C1F;
