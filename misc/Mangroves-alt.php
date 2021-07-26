@@ -20,77 +20,7 @@ $vernacularArr = $IRLManager->getChecklistVernaculars();
     <style>
         .hero-container {
             background-image: url("../images/layout/Mangrove_top_photo.jpg");
-            width: 100%;
-            height: 1000px;
             background-position: center bottom;
-            background-repeat: no-repeat;
-            background-size: cover;
-            position: relative;
-        }
-
-        .top-shade-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 150px;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .logo-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 5000000;
-        }
-
-        .logo-image {
-            height: 160px;
-        }
-
-        .title-container {
-            position: absolute;
-            top: 30px;
-            left: 150px;
-            color: white;
-            padding-left: 20px;
-        }
-
-        .login-container {
-            position: absolute;
-            top: 15px;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            width: 500px;
-            height: 35px;
-            padding-left: 10px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        .login-container a {
-            color: white;
-        }
-
-        .login-link {
-            font-family: 'Fira Sans';
-            font-size: 11pt;
-            color: white;
-            margin: 10px;
-        }
-
-        .nav-bar-container {
-            position: absolute;
-            top: 150px;
-            left: 0;
-        }
-
-        .breadcrumb-container {
-            position: absolute;
-            top: 225px;
-            left: 30px;
-            width: 100%;
         }
 
         .page-title-container {
