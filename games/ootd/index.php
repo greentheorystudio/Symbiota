@@ -216,7 +216,7 @@ if($submitAction){
 
 			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
-				<div id="incorrect_both" class="middlecenter">
+				<div id="incorrect_both">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Sorry, that is not correct</b>
@@ -239,7 +239,7 @@ if($submitAction){
 
 			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
-				<div id="incorrect_sciname" class="middlecenter">
+				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Sorry, that is not correct</b>
@@ -262,7 +262,7 @@ if($submitAction){
 
 			elseif(($submitAction !== 'giveup') && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) == strtolower($gameInfo['sciname']))){
 				?>
-				<div id="incorrect_sciname" class="middlecenter">
+				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Sorry, that is not correct</b>
@@ -285,7 +285,7 @@ if($submitAction){
 
 			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
-				<div id="incorrect_sciname" class="middlecenter">
+				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Sorry, that is not correct</b>
@@ -308,7 +308,7 @@ if($submitAction){
 
 			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
-				<div id="incorrect_sciname" class="middlecenter">
+				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Sorry, that is not correct</b>
@@ -330,7 +330,7 @@ if($submitAction){
 			}
 			elseif($submitAction === 'giveup'){
 				?>
-				<div id="giveup" class="middlecenter">
+				<div id="giveup">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 						<div style="font-size:25px;" >
 							<b>Too bad!</b>

@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-header("Content-Type: text/html; charset=".$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
@@ -17,7 +17,7 @@ header("Content-Type: text/html; charset=".$GLOBALS['CHARSET']);
 		?>
 		<div id="innertext">
 
-			Add static, dynamic and form content here.<br/>
+			Add static, dynamic and form content here.
 			
 		</div>
 		<?php
