@@ -44,6 +44,9 @@ class SpecifyDwcArchiverOccurrence{
 	public function __construct(){
 		global $serverRoot, $charset;
 
+		$connection = new DbConnection();
+		$this->conn = $connection->getConnection();
+
 		//Ensure that PHP DOMDocument class is installed
 		if(!class_exists('DOMDocument')){
 			exit('FATAL ERROR: PHP DOMDocument class is not installed, please contact your server admin');
@@ -404,7 +407,6 @@ class SpecifyDwcArchiverOccurrence{
 	}
 	
 	public function setCollArr($collTarget, $collType = ''){
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
 		$collTarget = $this->cleanInStr($collTarget);
 		$collType = $this->cleanInStr($collType);
 		$sqlWhere = '';
@@ -1502,8 +1504,7 @@ class SpecifyDwcArchiverOccurrence{
 		}
 		$this->writeOutRecord($fh,$fieldOutArr);
 		if(!$this->collArr){
-			$this->conn = MySQLiConnectionFactory::getCon("readonly");
-			//Collection array not previously primed by source  
+			//Collection array not previously primed by source
 			$sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences o ';
 			if($this->conditionSql){
 				$sql1 .= $this->conditionSql;
@@ -1521,8 +1522,17 @@ class SpecifyDwcArchiverOccurrence{
 		$this->setUpperTaxonomy();
 		
 		//echo $sql; exit;
-		$this->conn = MySQLiConnectionFactory::getCon("specify");
-		if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+		$Specify_server = array(
+			'host' => '172.28.1.1',
+			'username' => 'root',
+			'password' => 'password',
+			'database' => 'specify',
+			'port' => '3306',
+			'charset' => 'utf8',
+			'version' => '5.7'
+		);
+		$specifyConn = new mysqli($Specify_server['host'], $Specify_server['username'], $Specify_server['password'], $Specify_server['database'], $Specify_server['port']);
+		if($rs = $specifyConn->query($sql,MYSQLI_USE_RESULT)){
 			if(!$this->serverDomain){
 				$this->serverDomain = "http://";
 				if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) $this->serverDomain = "https://";
@@ -1635,8 +1645,17 @@ class SpecifyDwcArchiverOccurrence{
 		
 		//Output records
 		$sql = $this->getSqlDeterminations();
-		$this->conn = MySQLiConnectionFactory::getCon("specify");
-		if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+		$Specify_server = array(
+			'host' => '172.28.1.1',
+			'username' => 'root',
+			'password' => 'password',
+			'database' => 'specify',
+			'port' => '3306',
+			'charset' => 'utf8',
+			'version' => '5.7'
+		);
+		$specifyConn = new mysqli($Specify_server['host'], $Specify_server['username'], $Specify_server['password'], $Specify_server['database'], $Specify_server['port']);
+		if($rs = $specifyConn->query($sql,MYSQLI_USE_RESULT)){
 			while($r = $rs->fetch_assoc()){
 				$r['recordId'] = 'urn:uuid:'.$r['recordId'];
 				$this->encodeArr($r);
@@ -1669,8 +1688,17 @@ class SpecifyDwcArchiverOccurrence{
 		
 		//Output records
 		$sql = $this->getSqlImages();
-		$this->conn = MySQLiConnectionFactory::getCon("specify");
-		if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+		$Specify_server = array(
+			'host' => '172.28.1.1',
+			'username' => 'root',
+			'password' => 'password',
+			'database' => 'specify',
+			'port' => '3306',
+			'charset' => 'utf8',
+			'version' => '5.7'
+		);
+		$specifyConn = new mysqli($Specify_server['host'], $Specify_server['username'], $Specify_server['password'], $Specify_server['database'], $Specify_server['port']);
+		if($rs = $specifyConn->query($sql,MYSQLI_USE_RESULT)){
 			
 			if(!$this->serverDomain){
 				$this->serverDomain = "http://";
@@ -1987,7 +2015,6 @@ class SpecifyDwcArchiverOccurrence{
 	}
 
 	private function setUpperTaxonomy(){
-		$this->conn = MySQLiConnectionFactory::getCon("readonly");
 		if(!$this->upperTaxonomy){
 			$sqlOrder = 'SELECT t.sciname AS family, t2.sciname AS taxonorder '.
 				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
