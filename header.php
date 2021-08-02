@@ -19,40 +19,15 @@
             <li>
                 <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" >Browse Images</a>
             </li>
-            <li>
-                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?" >Inventories</a>
-                <!-- <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=1" >Project 1</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=2" >Project 2</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=3" >Project 3</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php?pid=4" >Project 4</a>
-                    </li>
-                </ul> -->
-            </li>
-            <li>
-                <a href="#" >Interactive Tools</a>
-                <!-- <ul>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=1" >Dynamic Checklist 1</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=2" >Dynamic Checklist 2</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=3" >Dynamic Checklist 3</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist&tid=4" >Dynamic Checklist 4</a>
-                    </li>
-                </ul> -->
-            </li>
+            <?php
+            if($GLOBALS['IS_ADMIN']){
+                ?>
+                <li>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/specifyupdater.php" >Specify Updater</a>
+                </li>
+                <?php
+            }
+            ?>
         </ul>
         <div id="rightNavigationLinks">
             <?php
