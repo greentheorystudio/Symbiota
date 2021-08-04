@@ -296,13 +296,25 @@ div.navpath {
 	padding-left: 10px;
 	margin-bottom: 0;
 	font-family: 'Fira Sans';
-	font-size: 12px;
+	font-size: 14px;
 	color: #242038;
 	font-variant: small-caps;
 }
 
 div.navpath a, div.navpath a:hover {
 	color: #242038;
+}
+
+.titlefont{
+	font-family: granville, serif;
+	font-weitht: bold;
+	font-variant: small-caps;
+	font-size: 28pt;
+	line-height: 29pt;
+	display: block;
+	margin-top: 0.85em;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 h1{
@@ -342,8 +354,15 @@ h5{
 
 p{
 	font-family: 'Fira Sans';
-	font-size: 14px;
+	font-size: 16px;
 	line-height: normal;
+}
+
+.photo-credit-container{
+	font-family: 'Fira Sans';
+	font-size: 12px;
+	line-height: normal;
+	color: white;
 }
 
 .intro-text {
@@ -869,6 +888,14 @@ ol.report-caterories li p.heading {
 	top: 280px;
 	left: 35px;
 	padding: 0 20px;
+	background-color: rgba(226, 232, 236, 0.58);
+}
+
+.photo-credit-container {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	padding: 4px;
 	background-color: rgba(226, 232, 236, 0.58);
 }
 

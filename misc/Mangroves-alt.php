@@ -32,8 +32,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
         <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
     </div>
     <div class="title-container">
-        <h1>Indian River Lagoon<br />
-            Species Inventory</h1>
+        <span class="titlefont">Indian River Lagoon<br />
+            Species Inventory</span>
     </div>
     <div class="login-container">
         <?php

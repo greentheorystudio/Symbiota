@@ -24,11 +24,6 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
     <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/jquery-ui.css" type="text/css" rel="Stylesheet" />
-    <style>
-        .hero-container {
-            background-image: url("content/imglib/static/20Donahue1.jpg");
-        }
-    </style>
     <script src="js/all.min.js" type="text/javascript"></script>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/jquery-ui.js" type="text/javascript"></script>
@@ -45,6 +40,56 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
          });
     </script>
     <?php include_once(__DIR__ . '/config/googleanalytics.php'); ?>
+    <script type="text/javascript">
+        var imgArray = [
+            "url(content/imglib/static/09ThomanR1.jpg)",
+            "url(content/imglib/static/20Donahue1.jpg)",
+            "url(content/imglib/static/21ShirahD1.jpg)",
+            "url(content/imglib/static/21VanMeterS2.jpg)",
+            "url(content/imglib/static/04BergerJ3.jpg)",
+            "url(content/imglib/static/11SmithA1.jpg)",
+            "url(content/imglib/static/17AdamsN1.jpg)",
+            "url(content/imglib/static/18FischerD1.JPG)",
+            "url(content/imglib/static/19CunninghamD1.jpg)",
+            "url(content/imglib/static/19GilbertD1.jpg)",
+            "url(content/imglib/static/19PalmerC2.jpg)",
+            "url(content/imglib/static/21SmithA1.jpg)",
+            "url(content/imglib/static/06KemptonR1.jpg)",
+            "url(content/imglib/static/13ClarkeG1.jpg)",
+            "url(content/imglib/static/13CorapiP1.jpg)",
+            "url(content/imglib/static/17Spratt2.jpg)",
+            "url(content/imglib/static/18CoteM1.JPG)",
+            "url(content/imglib/static/18PhippsL2.jpg)",
+            "url(content/imglib/static/18SimonsT1.jpg)",
+            "url(content/imglib/static/20MandevilleJ2.jpg)"];
+        var photographerArray = [
+            "R. Thoman",
+            "M. Donahue",
+            "D. Shirah",
+            "S. Van Meter",
+            "J. Berger",
+            "A. Smith",
+            "N. Adams",
+            "D. Fischer",
+            "D. Cunningham",
+            "D. Gilbert",
+            "C. Palmer",
+            "A. Smith",
+            "R. Kempton",
+            "G. Clarke",
+            "P. Corapi",
+            "R. Spratt",
+            "M. Cote",
+            "L. Phipps",
+            "T. Simons",
+            "J. Mandeville"];
+
+        $(document).ready(function() {
+            const imgIndex = Math.floor(Math.random() * 20);
+            document.getElementById('hero-container').style.backgroundImage = imgArray[imgIndex];
+            document.getElementById('photographerName').innerHTML = photographerArray[imgIndex];
+        });
+    </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -52,14 +97,14 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
     <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
-<div class="hero-container">
+<div class="hero-container" id="hero-container">
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
     </div>
     <div class="title-container">
-        <h1>Indian River Lagoon<br />
-            Species Inventory</h1>
+        <span class="titlefont">Indian River Lagoon<br />
+            Species Inventory</span>
     </div>
     <div class="login-container">
         <?php
@@ -92,6 +137,9 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         <div class="heading-inner">
             <h3>The <b>Indian River Lagoon Species Inventory</b> is a dynamic and growing research resource and ecological encyclopedia that documents the biodiversity of the 156-mile-long estuary system along Florida’s Atlantic coast.</h3>
         </div>
+    </div>
+    <div class="photo-credit-container">
+        Photographer: <span id="photographerName"></span>
     </div>
 </div>
 <div id="innertext">
