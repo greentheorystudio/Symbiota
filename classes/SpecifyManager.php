@@ -35,10 +35,17 @@ class SpecifyManager {
 		$limitBottom = 0;
 		$totalUpload = 0;
 		$intervalUpload = 0;
+        $occurrenceArr = array();
+        $determinationArr = array();
+        $imageArr = array();
         $collectionObjectIDArr = array();
+        $collectionEventIDArr = array();
+        $localityIDArr = array();
 		if($index > 1){
             $limitBottom = $limit * $index;
         }
+
+        echo '<li>Gathering Specify collection objects...</li>';
 		$sql = 'SELECT co.CollectionObjectID, co.GUID, co.AltCatalogNumber, co.FieldNumber, co.CollectingEventID, '.
             'CONCAT_WS(" ",co.Remarks,coa.Remarks) AS occurrenceRemarks '.
 			'FROM collectionobject AS co LEFT JOIN collectionobjectattribute AS coa ON co.CollectionObjectAttributeID = coa.CollectionObjectAttributeID '.
@@ -46,28 +53,33 @@ class SpecifyManager {
 		$rs = $this->conn->query($sql);
 		//echo $sql;
         while($r = $rs->fetch_object()){
-			$coreId = $r->CollectionObjectID;
-            if($coreId){
-                $collectingEventId = $r->CollectingEventID;
-                $occurrenceArr = array();
-                $determinationArr = array();
-                $imageArr = array();
-                $collectorStr = '';
-                $associatedCollectorStr = '';
-                $habitatStr = '';
+			$coreId = (int)$r->CollectionObjectID;
+            $collectionObjectIDArr[$coreId] = null;
+            $collectionEventIDArr[(int)$r->CollectingEventID] = $coreId;
+            $occurrenceArr[$coreId]['occurrenceid'] = $r->GUID;
+            $occurrenceArr[$coreId]['catalognumber'] = $r->AltCatalogNumber;
+            $occurrenceArr[$coreId]['recordnumber'] = $r->FieldNumber;
+            $occurrenceArr[$coreId]['occurrenceremarks'] = $r->occurrenceRemarks;
+        }
+		$rs->close();
 
-                $occurrenceArr['occurrenceid'] = $r->GUID;
-                $occurrenceArr['catalognumber'] = $r->AltCatalogNumber;
-                $occurrenceArr['recordnumber'] = $r->FieldNumber;
-                $occurrenceArr['occurrenceremarks'] = $r->occurrenceRemarks;
 
-                $colSql = 'SELECT a.FirstName, a.MiddleInitial, a.LastName, c.IsPrimary '.
+        $collectionObjectIDStr = implode(',', array_keys($collectionObjectIDArr));
+
+        if($collectionObjectIDStr){
+            $collectionEventIDStr = implode(',', array_keys($collectionEventIDArr));
+
+            if($collectionEventIDStr){
+                echo '<li>Gathering Specify collectors...</li>';
+                $colSql = 'SELECT c.CollectingEventID, a.FirstName, a.MiddleInitial, a.LastName, c.IsPrimary '.
                     'FROM collector AS c LEFT JOIN agent AS a ON c.AgentID = a.AgentID '.
-                    'WHERE c.CollectingEventID = '.$collectingEventId.' '.
-                    'ORDER BY c.OrderNumber ';
+                    'WHERE c.CollectingEventID IN('.$collectionEventIDStr.') '.
+                    'ORDER BY c.CollectingEventID, c.OrderNumber ';
                 $colRs = $this->conn->query($colSql);
                 //echo $colSql;
                 while($colR = $colRs->fetch_object()){
+                    $id = (int)$colR->CollectingEventID;
+                    $objid = $collectionEventIDArr[$id];
                     $primary = (int)$colR->IsPrimary;
                     $collector = $colR->MiddleInitial;
                     if($colR->FirstName){
@@ -77,282 +89,342 @@ class SpecifyManager {
                         $collector = $colR->LastName . ($collector ? ', ' . $collector : '');
                     }
                     if($primary === 1){
-                        $collectorStr = ($collectorStr ? $collectorStr . ', ' : '') . $collector;
+                        $occurrenceArr[$objid]['recordedby'] = (isset($occurrenceArr[$objid]['recordedby']) ? $occurrenceArr[$objid]['recordedby'] . ', ' : '') . $collector;
                     }
                     else{
-                        $associatedCollectorStr = ($associatedCollectorStr ? $associatedCollectorStr . ', ' : '') . $collector;
+                        $occurrenceArr[$objid]['associatedcollectors'] = (isset($occurrenceArr[$objid]['associatedcollectors']) ? $occurrenceArr[$objid]['associatedcollectors'] . ', ' : '') . $collector;
                     }
                 }
                 $colRs->close();
 
-                $occurrenceArr['recordedby'] = $collectorStr;
-                $occurrenceArr['associatedcollectors'] = $associatedCollectorStr;
-
-                $colEvSql = 'SELECT ce.LocalityID, ce.StartDate, ce.StartDateVerbatim, ce.VerbatimLocality, ce.Remarks '.
+                echo '<li>Gathering Specify collection events...</li>';
+                $colEvSql = 'SELECT ce.CollectingEventID, ce.LocalityID, ce.StartDate, ce.StartDateVerbatim, ce.VerbatimLocality, ce.Remarks '.
                     'FROM collectingevent AS ce '.
-                    'WHERE ce.CollectingEventID = '.$collectingEventId.' ';
+                    'WHERE ce.CollectingEventID IN('.$collectionEventIDStr.') ';
                 $colEvRs = $this->conn->query($colEvSql);
                 while($colEvR = $colEvRs->fetch_object()){
-                    $localityId = $colEvR->LocalityID;
-                    $occurrenceArr['eventdate'] = (($colEvR->StartDate && $colEvR->StartDate !== '')?$colEvR->StartDate:'0000-00-00');
-                    $occurrenceArr['verbatimeventdate'] = $colEvR->StartDateVerbatim;
-                    $habitatStr = $colEvR->VerbatimLocality;
+                    $id = (int)$colEvR->CollectingEventID;
+                    $objid = $collectionEventIDArr[$id];
+                    $localityIDArr[(int)$colEvR->LocalityID] = $objid;
+                    $occurrenceArr[$objid]['eventdate'] = (($colEvR->StartDate && $colEvR->StartDate !== '')?$colEvR->StartDate:'0000-00-00');
+                    $occurrenceArr[$objid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
+                    $occurrenceArr[$objid]['habitat'] = $colEvR->VerbatimLocality;
                     if($colEvR->Remarks && $colEvR->Remarks !== ''){
-                        $habitatStr = ' ' . $colEvR->Remarks;
+                        $occurrenceArr[$objid]['habitat'] .= ' ' . $colEvR->Remarks;
                     }
-
-                    $locSql = 'SELECT geo1.RankID AS geo1RankId, geo1.`Name` AS geo1Name, geo2.RankID AS geo2RankId, geo2.`Name` AS geo2Name, '.
-                        'geo3.RankID AS geo3RankId, geo3.`Name` AS geo3Name, loc.LocalityName, loc.Remarks, loc.Latitude1, loc.Latitude2, '.
-                        'loc.Longitude1, loc.Longitude2, ld.Township, ld.TownshipDirection, ld.RangeDesc, ld.RangeDirection, ld.Section, '.
-                        'ld.SectionPart, ld.WaterBody, ld.UtmNorthing, ld.UtmEasting, ld.UtmDatum, ld.RangeDirection, ld.Section, loc.Datum, '.
-                        'loc.Lat1Text, loc.Lat2Text, loc.Long1Text, loc.Long2Text, loc.MinElevation, loc.MaxElevation, loc.VerbatimElevation, '.
-                        'loc.NamedPlace '.
-                        'FROM locality AS loc LEFT JOIN localitydetail AS ld ON loc.LocalityID = ld.LocalityID '.
-                        'LEFT JOIN geography AS geo1 ON loc.GeographyID = geo1.GeographyID '.
-                        'LEFT JOIN geography AS geo2 ON geo1.ParentID = geo2.GeographyID '.
-                        'LEFT JOIN geography AS geo3 ON geo2.ParentID = geo3.GeographyID '.
-                        'WHERE loc.LocalityID = '.$localityId.' ';
-                    $locRs = $this->conn->query($locSql);
-                    //echo $locSql;
-                    while($locR = $locRs->fetch_object()){
-                        if($locR->NamedPlace && $locR->NamedPlace !== ''){
-                            $occurrenceArr['locality'] = $locR->NamedPlace . '. ';
-                        }
-                        if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a'){
-                            $occurrenceArr['locality'] .= $locR->LocalityName;
-                        }
-                        $occurrenceArr['locationremarks'] = $locR->Remarks;
-                        $occurrenceArr['trstownship'] = $locR->Township . ($locR->TownshipDirection ? ' ' . $locR->TownshipDirection : '');
-                        $occurrenceArr['trsrange'] = $locR->RangeDesc . ($locR->RangeDirection ? ' ' . $locR->RangeDirection : '');
-                        $occurrenceArr['trssection'] = $locR->Section;
-                        $occurrenceArr['trssectiondetails'] = $locR->SectionPart;
-                        $occurrenceArr['waterbody'] = $locR->WaterBody;
-                        $occurrenceArr['utmnorthing'] = $locR->UtmNorthing;
-                        $occurrenceArr['utmeasting'] = $locR->UtmEasting;
-                        $occurrenceArr['utmzoning'] = $locR->UtmDatum;
-                        $occurrenceArr['geodeticdatum'] = $locR->Datum;
-                        $occurrenceArr['minimumelevationinmeters'] = $locR->MinElevation;
-                        $occurrenceArr['maximumelevationinmeters'] = $locR->MaxElevation;
-                        $occurrenceArr['verbatimelevation'] = $locR->VerbatimElevation;
-                        if($locR->Lat1Text){
-                            $verbatimLat = $locR->Lat1Text . ($locR->Lat2Text ? ' - ' . $locR->Lat2Text : '');
-                            $verbatimLong = $locR->Long1Text . ($locR->Long2Text ? ' - ' . $locR->Long2Text : '');
-                            $occurrenceArr['verbatimcoordinates'] = $verbatimLat . ', ' . $verbatimLong;
-                        }
-                        if(!$locR->Latitude2){
-                            $occurrenceArr['decimallatitude'] = $locR->Latitude1;
-                            $occurrenceArr['decimallongitude'] = $locR->Longitude1;
-                        }
-                        if((int)$locR->geo1RankId === 200){
-                            $occurrenceArr['country'] = $locR->geo1Name;
-                        }
-                        if((int)$locR->geo2RankId === 200){
-                            $occurrenceArr['country'] = $locR->geo2Name;
-                        }
-                        if((int)$locR->geo3RankId === 200){
-                            $occurrenceArr['country'] = $locR->geo3Name;
-                        }
-                        if((int)$locR->geo1RankId === 300){
-                            $occurrenceArr['stateprovince'] = $locR->geo1Name;
-                        }
-                        if((int)$locR->geo2RankId === 300){
-                            $occurrenceArr['stateprovince'] = $locR->geo2Name;
-                        }
-                        if((int)$locR->geo3RankId === 300){
-                            $occurrenceArr['stateprovince'] = $locR->geo3Name;
-                        }
-                        if((int)$locR->geo1RankId === 400){
-                            $occurrenceArr['county'] = $locR->geo1Name;
-                        }
-                        if((int)$locR->geo2RankId === 400){
-                            $occurrenceArr['county'] = $locR->geo2Name;
-                        }
-                        if((int)$locR->geo3RankId === 400){
-                            $occurrenceArr['county'] = $locR->geo3Name;
-                        }
-                    }
-                    $locRs->close();
-
-                    $geoCSql = 'SELECT MaxUncertaintyEst, Protocol, Source, GeoRefRemarks '.
-                        'FROM geocoorddetail '.
-                        'WHERE LocalityID = '.$localityId.' '.
-                        'ORDER BY TimestampCreated, GeoCoordDetailID DESC LIMIT 1 ';
-                    $geoCRs = $this->conn->query($geoCSql);
-                    //echo $geoCSql;
-                    while($geoCR = $geoCRs->fetch_object()){
-                        $occurrenceArr['coordinateuncertaintyinmeters'] = $geoCR->MaxUncertaintyEst;
-                        $occurrenceArr['georeferenceprotocol'] = $geoCR->Protocol;
-                        $occurrenceArr['georeferencesources'] = $geoCR->Source;
-                        $occurrenceArr['georeferenceremarks'] = $geoCR->GeoRefRemarks;
-                    }
-                    $geoCRs->close();
                 }
                 $colEvRs->close();
+            }
 
-                $occurrenceArr['habitat'] = $habitatStr;
+            $localityIDStr = implode(',', array_keys($localityIDArr));
 
-                $detSql = 'SELECT det.DeterminationID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
-                    'det.SubSpQualifier, det.IsCurrent, det.GUID, tx.FullName, tx.Author, ag.LastName, ag.MiddleInitial, ag.FirstName '.
-                    'FROM determination AS det LEFT JOIN taxon AS tx ON det.TaxonID = tx.TaxonID '.
-                    'LEFT JOIN agent AS ag ON det.DeterminerID = ag.AgentID '.
-                    'WHERE det.CollectionObjectID = '.$coreId.' '.
-                    'ORDER BY det.DeterminedDate ';
-                $detRs = $this->conn->query($detSql);
-                while($detR = $detRs->fetch_object()){
-                    $qualifier = '';
-                    $detCoreId = $detR->DeterminationID;
-                    $isCurrent = (int)$detR->IsCurrent;
-                    $determiner = $detR->MiddleInitial;
-                    if($detR->FirstName){
-                        $determiner = $detR->FirstName . ($determiner ? ' ' . $determiner : '');
+            if($localityIDStr){
+                echo '<li>Gathering Specify collection localities...</li>';
+                $locSql = 'SELECT loc.LocalityID, geo1.RankID AS geo1RankId, geo1.`Name` AS geo1Name, geo2.RankID AS geo2RankId, geo2.`Name` AS geo2Name, '.
+                    'geo3.RankID AS geo3RankId, geo3.`Name` AS geo3Name, loc.LocalityName, loc.Remarks, loc.Latitude1, loc.Latitude2, '.
+                    'loc.Longitude1, loc.Longitude2, ld.Township, ld.TownshipDirection, ld.RangeDesc, ld.RangeDirection, ld.Section, ld.Drainage, '.
+                    'ld.SectionPart, ld.WaterBody, ld.UtmNorthing, ld.UtmEasting, ld.UtmDatum, ld.RangeDirection, ld.Section, '.
+                    'loc.Lat1Text, loc.Lat2Text, loc.Long1Text, loc.Long2Text, loc.MinElevation, loc.MaxElevation, loc.VerbatimElevation, '.
+                    'loc.NamedPlace, loc.Text3 '.
+                    'FROM locality AS loc LEFT JOIN localitydetail AS ld ON loc.LocalityID = ld.LocalityID '.
+                    'LEFT JOIN geography AS geo1 ON loc.GeographyID = geo1.GeographyID '.
+                    'LEFT JOIN geography AS geo2 ON geo1.ParentID = geo2.GeographyID '.
+                    'LEFT JOIN geography AS geo3 ON geo2.ParentID = geo3.GeographyID '.
+                    'WHERE loc.LocalityID IN('.$localityIDStr.') ';
+                $locRs = $this->conn->query($locSql);
+                //echo $locSql;
+                while($locR = $locRs->fetch_object()){
+                    $id = (int)$locR->LocalityID;
+                    $objid = $localityIDArr[$id];
+                    $sectionDetails = '';
+                    if($locR->Drainage || $locR->TownshipDirection || $locR->RangeDirection || $locR->SectionPart || $locR->WaterBody){
+                        $sectionDetails .= ($locR->Drainage?$locR->Drainage . '; ':'');
+                        $sectionDetails .= ($locR->TownshipDirection?'T' . $locR->TownshipDirection . ' ':'');
+                        $sectionDetails .= ($locR->RangeDirection?'R' . $locR->RangeDirection . ' ':'');
+                        $sectionDetails .= ($locR->SectionPart?'sec' . $locR->SectionPart . ' ':'');
+                        $sectionDetails .= ($locR->WaterBody ?: '');
                     }
-                    if($detR->LastName){
-                        $determiner = $detR->LastName . ($determiner ? ', ' . $determiner : '');
+                    if($locR->NamedPlace && $locR->NamedPlace !== ''){
+                        $occurrenceArr[$objid]['locality'] = $locR->NamedPlace . '. ';
                     }
-                    if($detR->Qualifier){
-                        $qualifier = $detR->Qualifier;
+                    if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a'){
+                        $occurrenceArr[$objid]['locality'] = ($occurrenceArr[$objid]['locality'] ?? '') . $locR->LocalityName;
                     }
-                    if($detR->VarQualifer){
-                        $qualifier = $detR->VarQualifer;
+                    $occurrenceArr[$objid]['locationremarks'] = $locR->Remarks;
+                    $occurrenceArr[$objid]['trstownship'] = $locR->Township;
+                    $occurrenceArr[$objid]['trsrange'] = $locR->RangeDesc;
+                    $occurrenceArr[$objid]['trssection'] = $locR->Section;
+                    $occurrenceArr[$objid]['trssectiondetails'] = $sectionDetails;
+                    $occurrenceArr[$objid]['utmnorthing'] = $locR->UtmNorthing;
+                    $occurrenceArr[$objid]['utmeasting'] = $locR->UtmEasting;
+                    $occurrenceArr[$objid]['utmzoning'] = $locR->UtmDatum;
+                    $occurrenceArr[$objid]['geodeticdatum'] = $locR->Text3;
+                    $occurrenceArr[$objid]['minimumelevationinmeters'] = $locR->MinElevation;
+                    $occurrenceArr[$objid]['maximumelevationinmeters'] = $locR->MaxElevation;
+                    $occurrenceArr[$objid]['verbatimelevation'] = $locR->VerbatimElevation;
+                    if($locR->Lat1Text){
+                        $verbatimLat = $locR->Lat1Text . ($locR->Lat2Text ? ' - ' . $locR->Lat2Text : '');
+                        $verbatimLong = $locR->Long1Text . ($locR->Long2Text ? ' - ' . $locR->Long2Text : '');
+                        $occurrenceArr[$objid]['verbatimcoordinates'] = $verbatimLat . ', ' . $verbatimLong;
                     }
-                    if($detR->SubSpQualifier){
-                        $qualifier = $detR->SubSpQualifier;
+                    if(!$locR->Latitude2){
+                        $occurrenceArr[$objid]['decimallatitude'] = $locR->Latitude1;
+                        $occurrenceArr[$objid]['decimallongitude'] = $locR->Longitude1;
                     }
-                    if($detR->TypeStatusName){
-                        $occurrenceArr['typestatus'] = ($occurrenceArr['typestatus'] ? $occurrenceArr['typestatus'] . ', ' : '') . $detR->TypeStatusName;
+                    if((int)$locR->geo1RankId === 200){
+                        $occurrenceArr[$objid]['country'] = $locR->geo1Name;
                     }
-                    if($isCurrent === 1){
-                        $occurrenceArr['scientificname'] = $detR->FullName;
-                        $occurrenceArr['scientificnameauthorship'] = $detR->Author;
-                        $occurrenceArr['identifiedby'] = $determiner;
-                        $occurrenceArr['dateidentified'] = $detR->DeterminedDate;
-                        $occurrenceArr['identificationremarks'] = $detR->Remarks;
-                        $occurrenceArr['identificationqualifier'] = $qualifier;
+                    if((int)$locR->geo2RankId === 200){
+                        $occurrenceArr[$objid]['country'] = $locR->geo2Name;
                     }
-                    $determinationArr[$detCoreId]['scientificname'] = $detR->FullName;
-                    $determinationArr[$detCoreId]['scientificnameauthorship'] = $detR->Author;
-                    $determinationArr[$detCoreId]['identifiedby'] = ($determiner ?: $occurrenceArr['recordedby']);
-                    $determinationArr[$detCoreId]['dateidentified'] = (($detR->Text2 && $detR->Text2 !== '')?$detR->Text2:'N/A');
-                    $determinationArr[$detCoreId]['dateidentifiedinterpreted'] = $detR->DeterminedDate;
-                    $determinationArr[$detCoreId]['identificationremarks'] = $detR->Remarks;
-                    $determinationArr[$detCoreId]['identificationqualifier'] = $qualifier;
-                    $determinationArr[$detCoreId]['identificationiscurrent'] = $isCurrent;
-                    $determinationArr[$detCoreId]['recordId'] = $detR->GUID;
+                    if((int)$locR->geo3RankId === 200){
+                        $occurrenceArr[$objid]['country'] = $locR->geo3Name;
+                    }
+                    if((int)$locR->geo1RankId === 300){
+                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo1Name;
+                    }
+                    if((int)$locR->geo2RankId === 300){
+                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo2Name;
+                    }
+                    if((int)$locR->geo3RankId === 300){
+                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo3Name;
+                    }
+                    if((int)$locR->geo1RankId === 400){
+                        $occurrenceArr[$objid]['county'] = $locR->geo1Name;
+                    }
+                    if((int)$locR->geo2RankId === 400){
+                        $occurrenceArr[$objid]['county'] = $locR->geo2Name;
+                    }
+                    if((int)$locR->geo3RankId === 400){
+                        $occurrenceArr[$objid]['county'] = $locR->geo3Name;
+                    }
                 }
-                $detRs->close();
+                $locRs->close();
 
-                $imgSql = 'SELECT att.AttachmentID, att.GUID, att.AttachmentLocation, att.CopyrightHolder, att.License, att.Remarks, '.
-                    'att.MimeType '.
-                    'FROM collectionobjectattachment AS coa LEFT JOIN attachment AS att ON coa.AttachmentID = att.AttachmentID '.
-                    'WHERE coa.CollectionObjectID = '.$coreId.' ';
-                $imgRs = $this->conn->query($imgSql);
-                while($imgR = $imgRs->fetch_object()){
-                    $imgCoreId = $imgR->AttachmentID;
-                    $imageArr[$imgCoreId]['identifier'] = $imgR->GUID;
-                    $imageArr[$imgCoreId]['accessuri'] = 'https://wisflora.herbarium.wisc.edu/specifyimages/originals/' . $imgR->AttachmentLocation;
-                    $imageArr[$imgCoreId]['owner'] = $imgR->CopyrightHolder;
-                    $imageArr[$imgCoreId]['usageterms'] = $imgR->License;
-                    $imageArr[$imgCoreId]['comments'] = $imgR->Remarks;
-                    $imageArr[$imgCoreId]['format'] = $imgR->MimeType;
+                echo '<li>Gathering Specify georeferencing details...</li>';
+                $geoCSql = 'SELECT LocalityID, MaxUncertaintyEst, Protocol, Source, GeoRefRemarks '.
+                    'FROM geocoorddetail '.
+                    'WHERE LocalityID IN('.$localityIDStr.') '.
+                    'ORDER BY LocalityID, TimestampCreated, GeoCoordDetailID DESC ';
+                $geoCRs = $this->conn->query($geoCSql);
+                //echo $geoCSql;
+                $id = 0;
+                while($geoCR = $geoCRs->fetch_object()){
+                    if($id !== (int)$geoCR->LocalityID){
+                        $id = (int)$geoCR->LocalityID;
+                        $objid = $localityIDArr[$id];
+                        $occurrenceArr[$objid]['coordinateuncertaintyinmeters'] = $geoCR->MaxUncertaintyEst;
+                        $occurrenceArr[$objid]['georeferenceprotocol'] = $geoCR->Protocol;
+                        $occurrenceArr[$objid]['georeferencesources'] = $geoCR->Source;
+                        $occurrenceArr[$objid]['georeferenceremarks'] = $geoCR->GeoRefRemarks;
+                    }
                 }
-                $imgRs->close();
+                $geoCRs->close();
+            }
 
-                $occurrenceArr = OccurrenceUtilities::occurrenceArrayCleaning($occurrenceArr);
-
-                /*$occinsertsql = 'INSERT INTO omoccurrences(collid,dbpk,basisOfRecord,occurrenceID,catalogNumber,sciname,scientificNameAuthorship,'.
-                    'identifiedBy,dateIdentified,identificationRemarks,identificationQualifier,typeStatus,recordedBy,recordNumber,associatedCollectors,'.
-                    'eventDate,verbatimEventDate,habitat,occurrenceRemarks,waterBody,country,stateProvince,county,locality,decimalLatitude,'.
-                    'decimalLongitude,geodeticDatum,coordinateUncertaintyInMeters,locationRemarks,verbatimCoordinates,georeferenceProtocol,'.
-                    'georeferenceSources,georeferenceRemarks,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
-                    'VALUES (1,'.$coreId.',"PreservedSpecimen",'.
-                    (isset($occurrenceArr['occurrenceid'])?'"'.$this->conn->real_escape_string($occurrenceArr['occurrenceid']).'"':'NULL').','.
-                    (isset($occurrenceArr['catalognumber'])?'"'.$this->conn->real_escape_string($occurrenceArr['catalognumber']).'"':'NULL').','.
-                    (isset($occurrenceArr['scientificname'])?'"'.$this->conn->real_escape_string($occurrenceArr['scientificname']).'"':'NULL').','.
-                    (isset($occurrenceArr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($occurrenceArr['scientificnameauthorship']).'"':'NULL').','.
-                    (isset($occurrenceArr['identifiedby'])?'"'.$this->conn->real_escape_string($occurrenceArr['identifiedby']).'"':'NULL').','.
-                    (isset($occurrenceArr['dateIdentified'])?'"'.$this->conn->real_escape_string($occurrenceArr['dateIdentified']).'"':'NULL').','.
-                    (isset($occurrenceArr['identificationremarks'])?'"'.$this->conn->real_escape_string($occurrenceArr['identificationremarks']).'"':'NULL').','.
-                    (isset($occurrenceArr['identificationqualifier'])?'"'.$this->conn->real_escape_string($occurrenceArr['identificationqualifier']).'"':'NULL').','.
-                    (isset($occurrenceArr['typestatus'])?'"'.$this->conn->real_escape_string($occurrenceArr['typestatus']).'"':'NULL').','.
-                    (isset($occurrenceArr['recordedby'])?'"'.$this->conn->real_escape_string($occurrenceArr['recordedby']).'"':'NULL').','.
-                    (isset($occurrenceArr['recordnumber'])?'"'.$this->conn->real_escape_string($occurrenceArr['recordnumber']).'"':'NULL').','.
-                    (isset($occurrenceArr['associatedcollectors'])?'"'.$this->conn->real_escape_string($occurrenceArr['associatedcollectors']).'"':'NULL').','.
-                    (isset($occurrenceArr['eventdate'])?'"'.$this->conn->real_escape_string($occurrenceArr['eventdate']).'"':'NULL').','.
-                    (isset($occurrenceArr['verbatimeventdate'])?'"'.$this->conn->real_escape_string($occurrenceArr['verbatimeventdate']).'"':'NULL').','.
-                    (isset($occurrenceArr['habitat'])?'"'.$this->conn->real_escape_string($occurrenceArr['habitat']).'"':'NULL').','.
-                    (isset($occurrenceArr['occurrenceremarks'])?'"'.$this->conn->real_escape_string($occurrenceArr['occurrenceremarks']).'"':'NULL').','.
-                    (isset($occurrenceArr['waterbody'])?'"'.$this->conn->real_escape_string($occurrenceArr['waterbody']).'"':'NULL').','.
-                    (isset($occurrenceArr['country'])?'"'.$this->conn->real_escape_string($occurrenceArr['country']).'"':'NULL').','.
-                    (isset($occurrenceArr['stateprovince'])?'"'.$this->conn->real_escape_string($occurrenceArr['stateprovince']).'"':'NULL').','.
-                    (isset($occurrenceArr['county'])?'"'.$this->conn->real_escape_string($occurrenceArr['county']).'"':'NULL').','.
-                    (isset($occurrenceArr['locality'])?'"'.$this->conn->real_escape_string($occurrenceArr['locality']).'"':'NULL').','.
-                    (isset($occurrenceArr['decimallatitude'])?'"'.$this->conn->real_escape_string($occurrenceArr['decimallatitude']).'"':'NULL').','.
-                    (isset($occurrenceArr['decimallongitude'])?'"'.$this->conn->real_escape_string($occurrenceArr['decimallongitude']).'"':'NULL').','.
-                    (isset($occurrenceArr['geodeticdatum'])?'"'.$this->conn->real_escape_string($occurrenceArr['geodeticdatum']).'"':'NULL').','.
-                    (isset($occurrenceArr['coordinateuncertaintyinmeters'])?'"'.$this->conn->real_escape_string($occurrenceArr['coordinateuncertaintyinmeters']).'"':'NULL').','.
-                    (isset($occurrenceArr['locationremarks'])?'"'.$this->conn->real_escape_string($occurrenceArr['locationremarks']).'"':'NULL').','.
-                    (isset($occurrenceArr['verbatimcoordinates'])?'"'.$this->conn->real_escape_string($occurrenceArr['verbatimcoordinates']).'"':'NULL').','.
-                    (isset($occurrenceArr['georeferenceprotocol'])?'"'.$this->conn->real_escape_string($occurrenceArr['georeferenceprotocol']).'"':'NULL').','.
-                    (isset($occurrenceArr['georeferencesources'])?'"'.$this->conn->real_escape_string($occurrenceArr['georeferencesources']).'"':'NULL').','.
-                    (isset($occurrenceArr['georeferenceremarks'])?'"'.$this->conn->real_escape_string($occurrenceArr['georeferenceremarks']).'"':'NULL').','.
-                    (isset($occurrenceArr['minimumelevationinmeters'])?'"'.$this->conn->real_escape_string($occurrenceArr['minimumelevationinmeters']).'"':'NULL').','.
-                    (isset($occurrenceArr['maximumelevationinmeters'])?'"'.$this->conn->real_escape_string($occurrenceArr['maximumelevationinmeters']).'"':'NULL').','.
-                    (isset($occurrenceArr['verbatimelevation'])?'"'.$this->conn->real_escape_string($occurrenceArr['verbatimelevation']).'"':'NULL').
-                    ')';
-                if($this->conn->query($occinsertsql)){
-                    $occid = $this->conn->insert_id;
-
-                    if($determinationArr){
-                        foreach($determinationArr as $id => $idarr){
-                            $detinsertsql = 'INSERT INTO omoccurdeterminations(occid,identifiedBy,dateIdentified,dateIdentifiedInterpreted,'.
-                                'sciname,scientificNameAuthorship,identificationQualifier,iscurrent,identificationRemarks) '.
-                                'VALUES ('.$occid.','.
-                                (isset($idarr['identifiedby'])?'"'.$this->conn->real_escape_string($idarr['identifiedby']).'"':'NULL').','.
-                                (isset($idarr['dateidentified'])?'"'.$this->conn->real_escape_string($idarr['dateidentified']).'"':'NULL').','.
-                                (isset($idarr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($idarr['dateidentifiedinterpreted']).'"':'NULL').','.
-                                (isset($idarr['scientificname'])?'"'.$this->conn->real_escape_string($idarr['scientificname']).'"':'NULL').','.
-                                (isset($idarr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($idarr['scientificnameauthorship']).'"':'NULL').','.
-                                (isset($idarr['identificationqualifier'])?'"'.$this->conn->real_escape_string($idarr['identificationqualifier']).'"':'NULL').','.
-                                (isset($idarr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($idarr['identificationiscurrent']).'"':'NULL').','.
-                                (isset($idarr['identificationremarks'])?'"'.$this->conn->real_escape_string($idarr['identificationremarks']).'"':'NULL').
-                                ')';
-                            if(!$this->conn->query($detinsertsql)){
-                                echo '<li>'.$detinsertsql.'</li>';
-                            }
-                        }
-                    }
-
-                    if($imageArr){
-                        foreach($imageArr as $id => $idarr){
-                            $imginsertsql = 'INSERT INTO images(occid,url,owner,accessrights,caption,format) '.
-                                'VALUES ('.$occid.','.
-                                (isset($idarr['accessuri'])?'"'.$idarr['accessuri'].'"':'NULL').','.
-                                (isset($idarr['owner'])?'"'.$idarr['owner'].'"':'NULL').','.
-                                (isset($idarr['usageterms'])?'"'.$idarr['usageterms'].'"':'NULL').','.
-                                (isset($idarr['comments'])?'"'.$idarr['comments'].'"':'NULL').','.
-                                (isset($idarr['format'])?'"'.$idarr['format'].'"':'NULL').
-                                ')';
-                            if(!$this->conn->query($imginsertsql)){
-                                echo '<li>'.$imginsertsql.'</li>';
-                            }
-                        }
-                    }
+            echo '<li>Gathering Specify determinations...</li>';
+            $detSql = 'SELECT det.CollectionObjectID, det.DeterminationID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
+                'det.SubSpQualifier, det.IsCurrent, tx.FullName, tx.Author, ag.LastName, ag.MiddleInitial, ag.FirstName '.
+                'FROM determination AS det LEFT JOIN taxon AS tx ON det.TaxonID = tx.TaxonID '.
+                'LEFT JOIN agent AS ag ON det.DeterminerID = ag.AgentID '.
+                'WHERE det.CollectionObjectID IN('.$collectionObjectIDStr.') '.
+                'ORDER BY det.CollectionObjectID, det.DeterminedDate ';
+            $detRs = $this->conn->query($detSql);
+            while($detR = $detRs->fetch_object()){
+                $qualifier = '';
+                $id = (int)$detR->CollectionObjectID;
+                $detCoreId = $detR->DeterminationID;
+                $isCurrent = (int)$detR->IsCurrent;
+                $determiner = $detR->MiddleInitial;
+                if($detR->FirstName){
+                    $determiner = $detR->FirstName . ($determiner ? ' ' . $determiner : '');
+                }
+                if($detR->LastName){
+                    $determiner = $detR->LastName . ($determiner ? ', ' . $determiner : '');
+                }
+                if($detR->Qualifier){
+                    $qualifier = $detR->Qualifier;
+                }
+                if($detR->VarQualifer){
+                    $qualifier = $detR->VarQualifer;
+                }
+                if($detR->SubSpQualifier){
+                    $qualifier = $detR->SubSpQualifier;
+                }
+                if($detR->TypeStatusName){
+                    $occurrenceArr[$id]['typestatus'] = (isset($occurrenceArr[$id]['typestatus']) ? $occurrenceArr[$id]['typestatus'] . ', ' : '') . $detR->TypeStatusName;
+                }
+                if($isCurrent === 1){
+                    $occurrenceArr[$id]['scientificname'] = $detR->FullName;
+                    $occurrenceArr[$id]['scientificnameauthorship'] = $detR->Author;
+                    $occurrenceArr[$id]['identifiedby'] = $determiner;
+                    $occurrenceArr[$id]['dateidentified'] = $detR->DeterminedDate;
+                    $occurrenceArr[$id]['identificationremarks'] = $detR->Remarks;
+                    $occurrenceArr[$id]['identificationqualifier'] = $qualifier;
+                }
+                $determinationArr[$id][$detCoreId]['scientificname'] = $detR->FullName;
+                $determinationArr[$id][$detCoreId]['scientificnameauthorship'] = $detR->Author;
+                if($determiner){
+                    $determinationArr[$id][$detCoreId]['identifiedby'] = $determiner;
+                }
+                elseif(isset($occurrenceArr[$id]['recordedby'])){
+                    $determinationArr[$id][$detCoreId]['identifiedby'] = $occurrenceArr[$id]['recordedby'];
                 }
                 else{
-                    echo '<li>'.$occinsertsql.'</li>';
-                }*/
+                    $determinationArr[$id][$detCoreId]['identifiedby'] = 'N/A';
+                }
+                $determinationArr[$id][$detCoreId]['dateidentified'] = (($detR->Text2 && $detR->Text2 !== '')?$detR->Text2:'N/A');
+                $determinationArr[$id][$detCoreId]['dateidentifiedinterpreted'] = $detR->DeterminedDate;
+                $determinationArr[$id][$detCoreId]['identificationremarks'] = $detR->Remarks;
+                $determinationArr[$id][$detCoreId]['identificationqualifier'] = $qualifier;
+                $determinationArr[$id][$detCoreId]['identificationiscurrent'] = $isCurrent;
+            }
+            $detRs->close();
 
-                $totalUpload++;
-                $intervalUpload++;
-                if($intervalUpload === 1000){
-                    echo '<li>'.$totalUpload.' records uploaded</li>';
-                    $intervalUpload = 0;
+            echo '<li>Gathering Specify images...</li>';
+            $imgSql = 'SELECT coa.CollectionObjectID, att.AttachmentID, att.AttachmentLocation, att.CopyrightHolder, att.License, att.Remarks, '.
+                'att.MimeType '.
+                'FROM collectionobjectattachment AS coa LEFT JOIN attachment AS att ON coa.AttachmentID = att.AttachmentID '.
+                'WHERE coa.CollectionObjectID IN('.$collectionObjectIDStr.') ';
+            $imgRs = $this->conn->query($imgSql);
+            while($imgR = $imgRs->fetch_object()){
+                $id = (int)$imgR->CollectionObjectID;
+                $imgCoreId = $imgR->AttachmentID;
+                $imageArr[$id][$imgCoreId]['accessuri'] = 'https://wisflora.herbarium.wisc.edu/specifyimages/originals/' . $imgR->AttachmentLocation;
+                $imageArr[$id][$imgCoreId]['owner'] = $imgR->CopyrightHolder;
+                $imageArr[$id][$imgCoreId]['usageterms'] = $imgR->License;
+                $imageArr[$id][$imgCoreId]['comments'] = $imgR->Remarks;
+                $imageArr[$id][$imgCoreId]['format'] = $imgR->MimeType;
+            }
+            $imgRs->close();
+
+            echo '<li>Inserting occurrences...</li>';
+            $occinsertsqlprefix = 'INSERT INTO omoccurrences(collid,dbpk,basisOfRecord,occurrenceID,catalogNumber,sciname,scientificNameAuthorship,'.
+                'identifiedBy,dateIdentified,identificationRemarks,identificationQualifier,typeStatus,recordedBy,recordNumber,associatedCollectors,'.
+                'eventDate,verbatimEventDate,habitat,occurrenceRemarks,waterBody,country,stateProvince,county,locality,decimalLatitude,'.
+                'decimalLongitude,geodeticDatum,coordinateUncertaintyInMeters,locationRemarks,verbatimCoordinates,georeferenceProtocol,'.
+                'georeferenceSources,georeferenceRemarks,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
+                'VALUES ';
+            $occinsertsql = '';
+            $rep = 0;
+            foreach($occurrenceArr as $id => $idarr){
+                $idarr = OccurrenceUtilities::occurrenceArrayCleaning($idarr);
+                $occinsertsql .= '(1,'.$id.',"PreservedSpecimen",'.
+                    (isset($idarr['occurrenceid'])?'"'.$this->conn->real_escape_string($idarr['occurrenceid']).'"':'NULL').','.
+                    (isset($idarr['catalognumber'])?'"'.$this->conn->real_escape_string($idarr['catalognumber']).'"':'NULL').','.
+                    (isset($idarr['scientificname'])?'"'.$this->conn->real_escape_string($idarr['scientificname']).'"':'NULL').','.
+                    (isset($idarr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($idarr['scientificnameauthorship']).'"':'NULL').','.
+                    (isset($idarr['identifiedby'])?'"'.$this->conn->real_escape_string($idarr['identifiedby']).'"':'NULL').','.
+                    (isset($idarr['dateIdentified'])?'"'.$this->conn->real_escape_string($idarr['dateIdentified']).'"':'NULL').','.
+                    (isset($idarr['identificationremarks'])?'"'.$this->conn->real_escape_string($idarr['identificationremarks']).'"':'NULL').','.
+                    (isset($idarr['identificationqualifier'])?'"'.$this->conn->real_escape_string($idarr['identificationqualifier']).'"':'NULL').','.
+                    (isset($idarr['typestatus'])?'"'.$this->conn->real_escape_string($idarr['typestatus']).'"':'NULL').','.
+                    (isset($idarr['recordedby'])?'"'.$this->conn->real_escape_string($idarr['recordedby']).'"':'NULL').','.
+                    (isset($idarr['recordnumber'])?'"'.$this->conn->real_escape_string($idarr['recordnumber']).'"':'NULL').','.
+                    (isset($idarr['associatedcollectors'])?'"'.$this->conn->real_escape_string($idarr['associatedcollectors']).'"':'NULL').','.
+                    (isset($idarr['eventdate'])?'"'.$this->conn->real_escape_string($idarr['eventdate']).'"':'NULL').','.
+                    (isset($idarr['verbatimeventdate'])?'"'.$this->conn->real_escape_string($idarr['verbatimeventdate']).'"':'NULL').','.
+                    (isset($idarr['habitat'])?'"'.$this->conn->real_escape_string($idarr['habitat']).'"':'NULL').','.
+                    (isset($idarr['occurrenceremarks'])?'"'.$this->conn->real_escape_string($idarr['occurrenceremarks']).'"':'NULL').','.
+                    (isset($idarr['country'])?'"'.$this->conn->real_escape_string($idarr['country']).'"':'NULL').','.
+                    (isset($idarr['stateprovince'])?'"'.$this->conn->real_escape_string($idarr['stateprovince']).'"':'NULL').','.
+                    (isset($idarr['county'])?'"'.$this->conn->real_escape_string($idarr['county']).'"':'NULL').','.
+                    (isset($idarr['locality'])?'"'.$this->conn->real_escape_string($idarr['locality']).'"':'NULL').','.
+                    (isset($idarr['decimallatitude'])?'"'.$this->conn->real_escape_string($idarr['decimallatitude']).'"':'NULL').','.
+                    (isset($idarr['decimallongitude'])?'"'.$this->conn->real_escape_string($idarr['decimallongitude']).'"':'NULL').','.
+                    (isset($idarr['geodeticdatum'])?'"'.$this->conn->real_escape_string($idarr['geodeticdatum']).'"':'NULL').','.
+                    (isset($idarr['coordinateuncertaintyinmeters'])?'"'.$this->conn->real_escape_string($idarr['coordinateuncertaintyinmeters']).'"':'NULL').','.
+                    (isset($idarr['locationremarks'])?'"'.$this->conn->real_escape_string($idarr['locationremarks']).'"':'NULL').','.
+                    (isset($idarr['verbatimcoordinates'])?'"'.$this->conn->real_escape_string($idarr['verbatimcoordinates']).'"':'NULL').','.
+                    (isset($idarr['georeferenceprotocol'])?'"'.$this->conn->real_escape_string($idarr['georeferenceprotocol']).'"':'NULL').','.
+                    (isset($idarr['georeferencesources'])?'"'.$this->conn->real_escape_string($idarr['georeferencesources']).'"':'NULL').','.
+                    (isset($idarr['georeferenceremarks'])?'"'.$this->conn->real_escape_string($idarr['georeferenceremarks']).'"':'NULL').','.
+                    (isset($idarr['minimumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['minimumelevationinmeters']).'"':'NULL').','.
+                    (isset($idarr['maximumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['maximumelevationinmeters']).'"':'NULL').','.
+                    (isset($idarr['verbatimelevation'])?'"'.$this->conn->real_escape_string($idarr['verbatimelevation']).'"':'NULL').
+                    '),';
+                $rep++;
+                if($rep === 1000){
+                    $occinsertsql = substr($occinsertsql, 0, -1);
+                    $this->conn->query($occinsertsqlprefix . $occinsertsql);
+                    $rep = 0;
+                    $occinsertsql = '';
                 }
             }
-		}
-		$rs->close();
+            $occinsertsql = substr($occinsertsql, 0, -1);
+            if(!$occinsertsql || $this->conn->query($occinsertsqlprefix . $occinsertsql)){
+                $occSql = 'SELECT occid, dbpk FROM omoccurrences WHERE dbpk IN('.$collectionObjectIDStr.') ';
+                $occRs = $this->conn->query($occSql);
+                while($occR = $occRs->fetch_object()){
+                    $occid = (int)$occR->occid;
+                    $dbpk = (int)$occR->dbpk;
+                    $collectionObjectIDArr[$dbpk] = $occid;
+                }
+                $occRs->close();
 
+                if($determinationArr){
+                    echo '<li>Inserting determinations...</li>';
+                    $detinsertsqlprefix = 'INSERT INTO omoccurdeterminations(occid,identifiedBy,dateIdentified,dateIdentifiedInterpreted,'.
+                        'sciname,scientificNameAuthorship,identificationQualifier,iscurrent,identificationRemarks) '.
+                        'VALUES ';
+                    $detinsertsql = '';
+                    $rep = 0;
+                    foreach($determinationArr as $oid => $detarr){
+                        $occ = $collectionObjectIDArr[$oid];
+                        foreach($detarr as $did => $darr){
+                            $detinsertsql .= '('.$occ.','.
+                                (isset($darr['identifiedby'])?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
+                                (isset($darr['dateidentified'])?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
+                                (isset($darr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
+                                (isset($darr['scientificname'])?'"'.$this->conn->real_escape_string($darr['scientificname']).'"':'NULL').','.
+                                (isset($darr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($darr['scientificnameauthorship']).'"':'NULL').','.
+                                (isset($darr['identificationqualifier'])?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
+                                (isset($darr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
+                                (isset($darr['identificationremarks'])?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
+                                '),';
+                            $rep++;
+                            if($rep === 1000){
+                                $detinsertsql = substr($detinsertsql, 0, -1);
+                                $this->conn->query($detinsertsqlprefix . $detinsertsql);
+                                $rep = 0;
+                                $detinsertsql = '';
+                            }
+                        }
+                    }
+                    $detinsertsql = substr($detinsertsql, 0, -1);
+                    $this->conn->query($detinsertsqlprefix . $detinsertsql);
+                }
 
+                if($imageArr){
+                    echo '<li>Inserting images...</li>';
+                    $imginsertsqlprefix = 'INSERT INTO images(occid,url,owner,accessrights,caption,format) '.
+                        'VALUES ';
+                    $imginsertsql = '';
+                    $rep = 0;
+                    foreach($imageArr as $oid => $imgarr){
+                        $occ = $collectionObjectIDArr[$oid];
+                        foreach($imgarr as $iid => $iarr){
+                            $imginsertsql .= '('.$occ.','.
+                                (isset($iarr['accessuri'])?'"'.$iarr['accessuri'].'"':'NULL').','.
+                                (isset($iarr['owner'])?'"'.$iarr['owner'].'"':'NULL').','.
+                                (isset($iarr['usageterms'])?'"'.$iarr['usageterms'].'"':'NULL').','.
+                                (isset($iarr['comments'])?'"'.$iarr['comments'].'"':'NULL').','.
+                                (isset($iarr['format'])?'"'.$iarr['format'].'"':'NULL').
+                                '),';
+                            $rep++;
+                            if($rep === 1000){
+                                $imginsertsql = substr($imginsertsql, 0, -1);
+                                $this->conn->query($imginsertsqlprefix . $imginsertsql);
+                                $rep = 0;
+                                $imginsertsql = '';
+                            }
+                        }
+                    }
+                    $imginsertsql = substr($imginsertsql, 0, -1);
+                    $this->conn->query($imginsertsqlprefix . $imginsertsql);
+                }
+            }
+        }
 
         echo '<li>Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>';
 		return true;
