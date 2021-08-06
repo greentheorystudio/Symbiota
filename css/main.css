@@ -352,7 +352,7 @@ h5{
 	line-height: normal;
 }
 
-p{
+.statictext, p{
 	font-family: 'Fira Sans';
 	font-size: 16px;
 	line-height: normal;
@@ -952,6 +952,7 @@ ol.report-caterories li p.heading {
 
 .sideNavContainer {
 	position: relative;
+	width: 225px;
 }
 
 #cd-vertical-nav {
@@ -988,6 +989,10 @@ ol.report-caterories li p.heading {
 	-ms-transform: scale(1);
 	-o-transform: scale(1);
 	transform: scale(1);
+}
+
+.cd-label {
+	width: 1000px;
 }
 
 #cd-vertical-nav a .cd-label {
@@ -1031,4 +1036,10 @@ ol.report-caterories li p.heading {
 	-ms-transform: scale(1);
 	-o-transform: scale(1);
 	transform: scale(1);
+}
+
+.imageCaption {
+	margin-top: 3px;
+	padding-left: 5px;
+	font-size: 12px;
 }

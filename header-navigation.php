@@ -19,7 +19,7 @@
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Dunes.php" >Dunes</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Mangroves-alt.php" >Mangroves</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Mangroves.php" >Mangroves</a>
                 </li>
                 <li>
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Hammock_Habitat.php" >Maritime Hammocks</a>
@@ -45,22 +45,22 @@
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php" >Threats</a>
             <ul>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Seagrass_Emerging_Issues.php#hydrology" >Altered Hydrology</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/impoundments.php" >Mosquito Impoundments</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php#shoreline" >Shoreline Development</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/development.php" >Shoreline Development</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php#muck" >Muck &amp; Nutrients</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/muck-nutrients.php" >Muck &amp; Nutrients</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php#invasives" >Invasive Species</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/invasives.php" >Invasive Species</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php#weather" >Extreme Weather</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/weather.php" >Extreme Weather</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Habitat_Threats.php#sealevel" >Climate Change</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/climate-change.php" >Climate Change</a>
                 </li>
             </ul>
         </li>

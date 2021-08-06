@@ -2,223 +2,251 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
-
-$IRLManager = new IRLManager();
-
-$invertebrateArr = $IRLManager->getChecklistTaxa(18);
-$vertebrateArr = $IRLManager->getChecklistTaxa(19);
-$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>Oyster Reef Habitats</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css"
-          rel="stylesheet"/>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css"
-          rel="stylesheet"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <style>
+        .hero-container {
+            background-image: url("../content/imglib/static/20SacksP1_N.JPG");
+            background-position: center bottom;
+        }
+
+        #innertext{
+            position: sticky;
+        }
+    </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/modernizr.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/static-page.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-<div id="innertext">
-    <h2>Oyster Reef Habitats</h2>
-    <table style="width:700px;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td align="center">
-                <img border="0" src="../content/imglib/OysterFlat1.jpg" hspace="5" vspace="5" width="542" height="237">
-            </td>
-        </tr>
-    </table>
-    <br/>
-    <table style="width:700px;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td><p class="body">Oyster reefs, often referred to as oyster bars, are common
-                    submerged habitats in the southern United States. Oyster reefs in Florida are
-                    found in nearshore areas and estuaries of both coasts, but grow especially
-                    vigorously near estuarine river mouths where waters are brackish and less than
-                    10 meters deep. For example, the Apalachicola River in northern Florida is a
-                    particularly productive area for oysters, and supplies over 90% of the state's
-                    annual oyster catch. Within the Indian River Lagoon, oyster reefs may be found
-                    in the vicinity of spoil islands and impounded areas. In addition to being
-                    commercially valuable, oyster reefs serve a number of important ecological roles
-                    in coastal systems: providing important habitat for a large number of species;
-                    improving water quality; stabilizing bottom areas, and influencing water
-                    circulation patterns within estuaries.</p>
-
-                <table class="image_left">
-                    <tr>
-                        <td><img border="5" src="../content/imglib/Crasso_virgin2.jpg" align="left" style="margin: 5px"
-                                 width="228" height="218"></td>
-                    </tr>
-                </table>
-                <p class="body">Oyster reefs are built primarily by the eastern oyster,
-                    <i>Crassostrea virginica,</i> through successive reproduction and
-                    settlement of larvae onto existing reef structure. Oysters in Florida spawn from
-                    late spring through the fall. The planktonic larvae that develop require a hard
-                    substratum to settle upon in order to complete development to the juvenile
-                    stage, and prefer to settle on the shells of other oysters. Thus, over time,
-                    continued settlement and subsequent growth of generations of oysters may form
-                    massive reef structures consisting of staggering numbers of individuals. Luntz
-                    (1960), estimated that 5,895 oysters, the equivalent of 45 bushels, occurred
-                    within a single square yard of oyster reef.</p>
-                <p class="body">As successive generations of oysters settle and grow,
-                    reefs become highly complex, with many structural irregularities and infoldings
-                    that provide a wealth of microhabitats for many different species of animals.
-                    Wells (1961) listed 303 different species utilizing oyster reef as habitat in
-                    North Carolina. Common Indian River Lagoon species associated with oyster reefs
-                    include bivalves such as the hard clam (<i>Mercenaria mercenaria</i>) and bay
-                    scallop (<i>Argopecten irradians concentricus</i>); space competitors such as
-                    the scorched mussel (<i>Brachidontes exustus</i>), ribbed mussel (<i>Geukensia
-                        demissa</i>), the jingle shell (<i>Anomia simplex</i>), and barnacles of the <i>Balanus</i>
-                    genus; gastropod mollusks such as the conchs (<i>Melongena</i> spp. and <i>Strombas</i>
-                    spp.) and rocksnails (<i>Thais</i> spp.); numerous sponge species; flatworms;
-                    polychaete worms; amphipods; isopods; shrimp; and fishes such as blennies,
-                    gobies, spadefish, snappers, drum, and seatrout, among others.</p>
-
-                <p class="body">Beyond providing smaller organisms with habitat, oyster
-                    reefs also provide food to a wide variety of secondary consumers. Many species
-                    of fish prey upon oyster reef associates; while others such as the black drum (<i>Pogonias
-                        cromis</i>) and cow-nosed ray (<i>Rhinoptera bonasus</i>) prey upon oysters
-                    themselves. Other species that utilize oyster reefs for foraging and feeding
-                    include the xanthid crabs, also known as mud crabs; swimming crabs of the genus <i>Callinectes</i>;
-                    mollusks such as the thick lipped oyster drill (<i>Eupleura caudata</i>), the
-                    sharp-rib drill (<i>E. sulcidentata</i>), the Atlantic oyster drill (<i>Urosalpinx
-                        cinerea</i>), the Tampa drill (<i>U. tampaensis</i>), the knobbed whelk (<i>Busycon
-                        carica</i>), the lighthire whelk (<i>B. contrarium</i>), and the pear whelk (<i>B.
-                        spiratum pyruloides</i>); flatworms such as oyster leeches (<i>Stylochus </i>spp.);
-                    boring sponges (C<i>liona</i> spp.); and annelid worms (P<i>olydora</i> spp.).</p>
-
-                <p class="body">Oyster reefs also contribute to improved water quality
-                    in areas where they occur. Oysters are filter feeders which strain microalgae,
-                    suspended particulate organic matter, and possibly dissolved organic matter from
-                    the water column over their gills in order to feed. Under optimal temperature
-                    and salinity conditions, a single oyster may filter as much as 15 liters of
-                    water per hour, up to 1500 times its body volume. Spread over an entire reef,
-                    for an entire day, the potential for oysters to improve water clarity is
-                    immense. Additionally, since oysters are <a href="#sessile"
-                                                                onClick="popDef('non-motile;  living permanently attached to a substratum', '#sessile');"
-                                                                name="sessile">sessile</a>, and bioaccumulate some
-                    potential toxins and pollutants found in the water column, they have been used
-                    to assess the environmental health of some areas.</p>
-
-                <p class="body">Over-harvesting, as well as persistent diseases such as
-                    MSX and Dermo have taken a devastating toll on many oyster populations along the
-                    east and Gulf coasts. In recent years, oyster reef restoration has been a
-                    concern for resource managers all along the East Coast of the United States, but
-                    especially in areas where oyster harvesting has historically been commercially
-                    important. In the late 1800s, for example, annual oyster harvests in the
-                    southeastern United States routinely topped 10 million pounds per year, and
-                    peaked in 1908 when the harvest was nearly 20 million pounds. However, annual
-                    harvests since that time have declined steadily. Today, annual harvests for
-                    oysters in the southeast averages approximately 3 million pounds per year. In
-                    many areas, efforts are underway to revitalize depleted oyster reefs and
-                    encourage growth of new reefs. For example, the Florida Department of
-                    Agriculture has stockpiled calico scallop shells from processors and placed
-                    these on depleted oyster reefs from the spring through the fall spawning
-                    periods, when larvae are most abundant in the water column. Oyster larvae,
-                    having a preference for settling on shell material, then attach themselves onto
-                    the newly placed shells and metamorphose to the juvenile stage. These young
-                    oysters, under optimal conditions, will grow to marketable size in as little as
-                    18 - 24 months.</p>
-
-                <p class="body"><i>A more detailed look at some emerging human-induced threats facing the oyster reefs
-                        of the IRL is <a href="Oystereef_Emerging_Issues.php">available here</a></i></p>
-                <p class="title">Click a highlighted link to read more about individual species:</p>
-            </td>
-        </tr>
-    </table>
-
-    <table style="border:0;width:700px;margin-left:auto;margin-right:auto;" cellpadding="2"
-           class="table-border no-border alternate">
-        <tr>
-            <th>Species Name</th>
-            <th>Common name</th>
-            <th>Comments</th>
-        </tr>
+<div class="hero-container">
+    <div class="top-shade-container"></div>
+    <div class="logo-container">
+        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
+    </div>
+    <div class="title-container">
+        <span class="titlefont">Indian River Lagoon<br />
+            Species Inventory</span>
+    </div>
+    <div class="login-container">
         <?php
-        if($invertebrateArr){
-            ?>
-            <tr class="heading">
-                <td colspan="3"><p class="label">Invertebrates:</p></td>
-            </tr>
-            <?php
-            foreach($invertebrateArr as $id => $taxArr){
-                echo '<tr>';
-                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
-                if(array_key_exists($id,$vernacularArr)){
-                    $vernacularStr = implode(', ', $vernacularArr[$id]);
-                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
-                }
-                else{
-                    echo '<td><span></span></td>'."\n";
-                }
-                echo '<td><span>'.$taxArr['notes'].'</span></td>';
-                echo '</tr>';
-            }
-        }
-        if($vertebrateArr){
-            ?>
-            <tr class="heading">
-                <td colspan="3"><p class="label">Vertebrates:</p></td>
-            </tr>
-            <?php
-            foreach($vertebrateArr as $id => $taxArr){
-                echo '<tr>';
-                echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
-                if(array_key_exists($id,$vernacularArr)){
-                    $vernacularStr = implode(', ', $vernacularArr[$id]);
-                    echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
-                }
-                else{
-                    echo '<td><span></span></td>'."\n";
-                }
-                echo '<td><span>'.$taxArr['notes'].'</span></td>';
-                echo '</tr>';
-            }
-        }
+        include(__DIR__ . '/../header-login.php');
         ?>
-    </table>
-
-    <table style="width:700px;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td>
-                <p class="title">Further Reading</p>
-                <p class="body">Bahr, L.M. and W.P. Lanier. 1981. The Ecology
-                    of Intertidal Oyster Reefs of the South Atlantic Coast: a <br/>&nbsp;&nbsp; Community
-                    Profile. U.S. Fish and Wildlife Service, Blot. Program, Washington D.C. FWS/OBS 81/15. 105 pp.</p>
-                <p class="body">Burrell, V.G. 1986. Species Profiles: Life
-                    Histories and Environmental Requirements of Coastal Fishes and <br/>
-                    &nbsp;&nbsp; Invertebrates (South Atlantic):
-                    American Oyster. U.S. Fish and Wildlife Service. Biological Report 82(11.57). <br/>&nbsp;&nbsp; U.S.
-                    Army Corps of Engineers. TR EL-82-4. 17 pp.</p>
-                <p class="body">Kumari, Siva, and C. Solis. 1995. The State of
-                    the Bay: a Characterization of the Galveston Bay Ecosystem. Rice university, Houston, TX. Accessed
-                    on-line at: <a HREF="http://galvbaydata.org/StateoftheBay/tabid/1846/Default.aspx">www.rice.edu/armadillo/Galveston/Chap3/oyster.html</a>.
-                </p>
-                <p class="body">Livingston, Robert J. 1990. Inshore Marine Habitats. In: Ecosystems of Florida, Ronald
-                    L. Myers and John J. <br/>&nbsp;&nbsp; Ewel, Eds. University of Central Florida Press, Orlando, FL.
-                    Pp. 549-573.</p>
-                <p class="body">Lunz, G.R., Jr. 1960. Intertidal Oysters. Wards
-                    Natl. Sci. Bull. 34(1): 3-7</p>
-                <p class="body">Wells, H.W. 1961. The Fauna of Oyster Beds with Special Reference to the Salinity
-                    Factor. Ecological <br/>&nbsp;&nbsp; Monographs 31(3): 239-266.</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p class="footer_note">Report by K. Hill,
-                    Smithsonian Marine Station<br>
-                    Submit additional information, photos or comments to:<br>
-                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
-                </p>
-            </td>
-        </tr>
-    </table>
+    </div>
+    <div class="nav-bar-container">
+        <?php
+        include(__DIR__ . '/../header-navigation.php');
+        ?>
+    </div>
+    <div class="breadcrumb-container">
+        <div class='navpath'>
+            <a href="Maps.php">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <b>Oyster Reefs</b>
+        </div>
+    </div>
+    <div class="page-title-container">
+        <h1>Oyster Reefs</h1>
+    </div>
+    <div class="top-text-container">
+        <h3>
+            Oysters have been an important part of Florida’s human history for thousands of years. Huge shell middens at
+            archaeological sites throughout the state indicate the species’ importance to the indigenous people of Florida;
+            in modern times, oysters have continued to serve as a valuable fishery. A better understanding of their ecological
+            role has also emerged.
+        </h3>
+    </div>
+    <div class="photo-credit-container">
+        Photo credit: P. Sacks
+    </div>
+</div>
+<div id="bodyContainer">
+    <div class="sideNavMover">
+        <div class="sideNavContainer">
+            <nav id="cd-vertical-nav">
+                <ul class="vertical-nav-list">
+                    <li>
+                        <a href="#intro-section" data-number="1">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Intro</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#reef-formation-section" data-number="2">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Reef Formation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#environmental-benefits-section" data-number="3">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Environmental Benefits</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#threats-section" data-number="4">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Threats and Restoration</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div id="innertext">
+        <div id="intro-section" class="cd-section">
+            <p>
+                Oyster reefs, often referred to as oyster bars, are common submerged habitats in the southern United States.
+                Oyster reefs in Florida are found in nearshore areas and estuaries of both coasts, but grow especially vigorously
+                near estuarine river mouths where waters are brackish and less than 30 feet (10 meters) deep. For example,
+                the Apalachicola River in northern Florida is a particularly productive area for oysters; the region supplies
+                over 90 percent of the state's annual oyster catch.
+            </p>
+            <p>
+                Within the Indian River Lagoon, oyster reefs occur in the vicinity of spoil islands and impounded areas. In
+                addition to being commercially valuable, oyster reefs serve a number of important ecological roles in coastal
+                systems: providing important habitat for a large number of species; improving water quality; stabilizing bottom
+                areas, and influencing water circulation patterns within estuaries.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/1_Linda_Walters_Oysters_Mosquito_Lagoon.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+        <div id="reef-formation-section" class="cd-section">
+            <h4>Reef Formation</h4>
+            <p>
+                Oyster reefs are built primarily by the eastern oyster, Crassostrea virginica, through successive reproduction
+                and settlement of larvae onto existing reef structure. Oysters in Florida spawn from late spring through
+                the fall. Oysters’ planktonic, free-swimming larvae require a hard surface to settle upon in order to complete
+                development to the juvenile stage, with a strong preference for oyster shells over other materials.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/19TweedieD1_S.jpg" />
+                    <figcaption>
+                        <i>Credit: D. Tweedie</i>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                Successive generations of oysters may form massive reefs with staggering numbers of individuals. An estimated
+                5,895 oysters, or the equivalent of 45 bushels, can be found within a single square yard of oyster reef.
+            </p>
+            <p>
+                Over time, reefs develop into highly complex structures, with many nooks and crannies that provide a wealth
+                of microhabitats for many different species of animals. In North Carolina, one study found 303 different
+                species utilizing oyster reef as habitat.
+            </p>
+            <div style="display:flex;justify-content: center;align-content: center;">
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_BlueCrabOysters_WaltersLinda.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_RaccoonInOysters_WaltersLinda.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Ibis_WaltersLinda.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                Common Indian River Lagoon species associated with oyster reefs include hard clam and bay scallop; space
+                competitors such as the scorched mussel, ribbed mussel, the jingle shell, and <i>Balanus</i> barnacles; and gastropod
+                mollusks including conchs and rocksnails. Sponges, crabs, whelks, flatworms and annelid worms are also common.
+            </p>
+            <p>
+                These abundant food sources draw a diversity of fish to oyster beds for feeding. In addition to preying upon
+                the reef’s smaller residents, some utilize the oysters themselves for food, including the black drum and
+                cow-nosed ray.
+            </p>
+        </div>
+        <div id="environmental-benefits-section" class="cd-section">
+            <h4>Environmental Benefits</h4>
+            <p>
+                Oysters provide numerous benefits to their surrounding ecosystems, as well as to humans.
+            </p>
+            <p>
+                Oyster reefs are renowned for their ability to improve water quality in the areas where they occur. As filter
+                feeders, oysters flow water over their gills to feed, straining out microalgae, suspended organic particles,
+                and possibly dissolved organic matter from the water column. Under ideal temperature and salinity conditions,
+                a single oyster may filter as much as 4 gallons (15 liters) of water per hour, up to 1,500 times its body
+                volume. Spread over an entire reef, for an entire day, the potential for oysters to improve water clarity
+                is immense.
+            </p>
+            <p>
+                Filter feeding also results in oysters accumulating several toxins and pollutants that may be found in the
+                water column into their tissues. This makes them useful indicators of the environmental health of some areas.
+            </p>
+            <p>
+                Finally, the reefs themselves provide valuable shoreline stabilization and protection against erosion from
+                wave action and storms. By dissipating incoming waves, reefs protect against sediment dislodging from shore,
+                which diminishes water quality.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Oyster_Reef_Monitoring_LW.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+        <div id="threats-section" class="cd-section">
+            <h4>Threats and Restoration</h4>
+            <p>
+                Oyster reef restoration has been a concern for resource managers all along the East Coast of the United States,
+                but especially in areas where oyster harvesting has historically been commercially important. Over-harvesting,
+                intensified coastal development, water pollution and persistent diseases such as MSX and Dermo have levied a
+                devastating toll on many oyster populations along the east and Gulf coasts.
+            </p>
+            <p>
+                In the late 1800s, annual oyster harvests in the southeastern United States routinely topped 10 million pounds
+                per year, and peaked in 1908 when the harvest was nearly 20 million pounds. Today, annual harvests for oysters
+                in the Southeast averages approximately 3 million pounds per year.
+            </p>
+            <p>
+                In many areas, efforts are underway to revitalize depleted oyster reefs and encourage growth of new reefs.
+                For example, the Florida Department of Agriculture has stockpiled calico scallop shells from processors and
+                placed these on depleted oyster reefs from the spring through the fall spawning periods, when larvae are most
+                abundant. Oyster larvae, having a preference for settling on shell material, then attach themselves onto the
+                newly placed shells and metamorphose to the juvenile stage. These young oysters, under optimal conditions,
+                will grow to marketable size in as little as 18 - 24 months.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Biodegradable_Restoration_Materials_LW.jpg" />
+                    <figcaption>
+                        <i>Credit: L. Walters</i>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                Throughout the Indian River Lagoon, elsewhere in Florida, and along many areas of the Atlantic coastline,
+                restoration efforts have also focused on installing artificial reef lines made of natural oyster shells to
+                protect shorelines and provide areas for oyster larvae to colonize.
+            </p>
+        </div>
+    </div>
 </div>
 <?php
 include(__DIR__ . '/../footer.php');

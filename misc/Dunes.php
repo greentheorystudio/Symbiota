@@ -2,371 +2,319 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/IRLManager.php');
 header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
-
-$IRLManager = new IRLManager();
-
-$foredunePlantsArr = $IRLManager->getChecklistTaxa(3);
-$backdunePlantsArr = $IRLManager->getChecklistTaxa(4);
-$duneAnimalsArr = $IRLManager->getChecklistTaxa(5);
-$vernacularArr = $IRLManager->getChecklistVernaculars();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>Dune Habitats</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css"
-          rel="stylesheet"/>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css"
-          rel="stylesheet"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <style>
+        .hero-container {
+            background-image: url("../content/imglib/static/1_18PastorR1.jpg");
+            background-position: center bottom;
+        }
+
+        #innertext{
+            position: sticky;
+        }
+    </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/modernizr.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/static-page.js" type="text/javascript"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 </head>
 <body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-<div id="innertext">
-    <h2>Dune Habitats</h2>
-    <table style="width:700px;margin-left:auto;margin-right:auto;" cellpadding="5" cellspacing="3">
-        <tr>
-            <td>
-                <center><img border="0" src="../content/imglib/Dune4.jpg" hspace="20" vspace="5" width="445"
-                             height="108"></center>
-            </td>
-        </tr>
-    </table>
-    <br/>
-    <table style="width:700px;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td><p class="title">Dune Formation:</p>
+<div class="hero-container">
+    <div class="top-shade-container"></div>
+    <div class="logo-container">
+        <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/janky_mangrove_logo_med.png" />
+    </div>
+    <div class="title-container">
+        <span class="titlefont">Indian River Lagoon<br />
+            Species Inventory</span>
+    </div>
+    <div class="login-container">
+        <?php
+        include(__DIR__ . '/../header-login.php');
+        ?>
+    </div>
+    <div class="nav-bar-container">
+        <?php
+        include(__DIR__ . '/../header-navigation.php');
+        ?>
+    </div>
+    <div class="breadcrumb-container">
+        <div class='navpath'>
+            <a href="Maps.php">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <b>Dunes</b>
+        </div>
+    </div>
+    <div class="page-title-container">
+        <h1>Dunes</h1>
+    </div>
+    <div class="top-text-container">
+        <h3>
+            On virtually any barrier island, wind and sand combine to create sand dunes. Dunes play a vital role in protecting
+            coastlines and property from storms, high winds and saltwater intrusion.
+        </h3>
+    </div>
+    <div class="photo-credit-container">
+        Photo credit: R. Pastor
+    </div>
+</div>
+<div id="bodyContainer">
+    <div class="sideNavMover">
+        <div class="sideNavContainer">
+            <nav id="cd-vertical-nav">
+                <ul class="vertical-nav-list">
+                    <li>
+                        <a href="#intro-section" data-number="1">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Intro</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#dune-formation-section" data-number="2">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Dune Formation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#dune-systems-section" data-number="3">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Dune Systems</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#dune-plants-section" data-number="4">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Dune Plants</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#dune-animals-section" data-number="5">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Dune Animals</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#human-impacts-section" data-number="6">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Human Impacts</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div id="innertext">
+        <div id="intro-section" class="cd-section">
+            <p>
+                Dunes also act as sand reservoirs, which are important for replenishing coastlines after tropical storms,
+                hurricanes, intense wave action, or other erosional events.
+            </p>
+        </div>
+        <div id="dune-formation-section" class="cd-section">
+            <h4>Dune Formation</h4>
+            <p>
+                The process of dune formation begins with the transport of sand landward. This happens in three ways: saltation,
+                surface creep, or suspension.
+            </p>
+            <p>
+                Saltation occurs when winds blow medium-sized sand grains up the slope of a beach. Surface creep occurs when
+                larger grains are rolled along the beach as they collide with smaller wind-blown particles during the saltation
+                process.
+            </p>
+            <p>
+                The most common transport process is suspension. Wind picks up small sand grains and brings them landward
+                in onshore breezes. When plants, driftwood and other obstructions impede wind and causes the airflow to lose
+                momentum, suspended grains fall out of the air on the slip face, or lee side of the obstruction, where they
+                accumulate.
+            </p>
+            <p>
+                Over time, sand builds up behind obstructions, creating a series of long, elevated spits of sand, called
+                wind shadows. These grow at right angles to the shoreline, and as they present an ever-larger barrier to
+                the wind, sand accumulates more rapidly. Plants colonize these stabilized areas, and their roots further
+                anchor the sand and fortify the dune structure. As plants continue to colonize the upper beach, wind shadows
+                join together to form dunes, which lie parallel to the shoreline.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_dune_transition_LHS.jpg" />
+                    <figcaption>
+                        <i>Credit: H. Sweat</i>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+        <div id="dune-systems-section" class="cd-section">
+            <h4>Dune Systems</h4>
+            <p>
+                Within dune systems, which resemble a series of low peaks and valleys, the first dune above the intertidal
+                zone is called the primary dune, or foredune. This is the area of active colonization by plants, and the area
+                most affected by waves and heavy winds.
+            </p>
+            <p>
+                Landward over the crest of the foredune lies the swale: a low, somewhat wet area separating primary dunes
+                from secondary dunes. In swales, winds can scour the sand nearly down to the water table, and plant communities
+                may consist of more freshwater species that show some salinity tolerance. It is in the shelter of swales
+                that scrub communities and maritime forests first become established.
+            </p>
+            <p>
+                Many dune systems also feature secondary dunes. These dunes form when severe storms breach primary dunes
+                and deposit sand further inland. Deposition of sand onto secondary dunes also occurs as winds blow fine-grained
+                sand inland over the primary dune. Due to their relative stability over time, and because they are generally
+                protected by primary dunes, secondary dunes support a significantly broader variety of vegetation than primary
+                dunes.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Dune_Eastward_Avalon_State_Park_Fort_Pierce.jpg" />
+                    <figcaption>
+                        <i>Credit: H. Sweat</i>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+        <div id="dune-plants-section" class="cd-section">
+            <h4>Dune Systems</h4>
+            <p>
+                Vegetation colonizing the upper beach and foredune must be well-adapted to periodic disturbance, and generally
+                consists of grassy, salt-adapted species. Growth of these colonizing species must keep pace with the rate
+                of sand build-up along the foredune, which can be rapid.
+            </p>
+            <p>
+                Beyond the pioneering zone in the shelter of swales and secondary dunes, plants are generally more protected
+                from the effects of salt spray, seawater and sand burial. The resulting communities are more diverse than
+                on adjacent beaches.
+            </p>
+            <p>
+                When established dunes remain stable over time, plants’ cycles of growth, reproduction and leaf shedding
+                slowly enriches the sandy soil with decaying plant matter. As this humus accumulates, soils become richer
+                and hold more water. This allows other types of vegetation to take root, and begins the process of succession,
+                where shrubs and trees replace the pioneering vines and herbaceous species.
+            </p>
 
-                <p class="body">On virtually any barrier island, wind and sand combine to create sand dunes.
-                    Dunes play a vital role in protecting coastlines and property. They act as
-                    buffers against severe storms, protecting the lands beyond the dune from salt
-                    water intrusion, high wind and storm surges. Dunes also act as sand reservoirs,
-                    which are important for replenishing coastlines after tropical storms,
-                    hurricanes, intense wave action, or other erosional events.</p>
+            <h5>Foredune</h5>
+            <p>
+                On the foredune, beach pioneers include railroad vine and shoreline sea purslane. South of Cape Hatteras,
+                sea oats are the principal dune colonizer; this coarse grass grows up to 6 feet tall and spreads laterally
+                via rhizomes. Along with sea oats, two other dune-building species, bitter panic grass and beach cordgrass,
+                are stimulated to grow upward by burial in sand.
+            </p>
+            <p>
+                Subsequent lateral growth in these plants allows for the construction and stabilization of a continuous dune
+                ridge.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_foredune_LHS.jpg" />
+                    <figcaption>
+                        <i>Credit: H. Sweat</i>
+                    </figcaption>
+                </figure>
+            </div>
 
-                <p class="body">The process of dune formation begins with the transport
-                    of sand landward via saltation, surface creep, or suspension. Saltation occurs
-                    when medium sized grains of sand are transported up the slope of a beach as the
-                    result of winds blowing them along the beach surface. Surface creep is the
-                    movement of larger sized grains that are rolled along the beach surface due to
-                    collisions with bouncing mid-sized sand grains as they are blown up the beach
-                    during the saltation process.</p>
-                <p class="body">Perhaps the most common transport process is
-                    suspension, in which small sand grains are picked up by winds and blown landward
-                    in onshore breezes. This sand is deposited on the upper beach when the flow of
-                    wind is impeded by some obstruction (plants, driftwood, flotsam, etc.) that
-                    causes the wind to lose speed and momentum. Suspended sand grains then fall out
-                    of the air and are deposited on the slip face, or lee side of the obstruction. Over time, sand
-                    builds up behind
-                    obstructions, creating a series of elongate, elevated spits of sand called wind
-                    shadows, which lie at right angles to the shoreline. As they increase in size,
-                    wind shadows present an even larger barrier to wind, thus more and more sand
-                    accretes quickly. Plants are able to colonize wind shadow areas because they are
-                    significantly more stable than other areas on the beach. As plants begin to
-                    grow, their roots then assist in further stabilizing and anchoring deposited
-                    sands. Later, as more plants colonize the upper beach, wind shadows are joined
-                    together laterally to form dunes which lie parallel to the shoreline.</p>
+            <h5>Dune Crest</h5>
+            <p>
+                The dune crest is the area where shrubby and woody species begin to replace herbaceous vines and grasses.
+                Common herbaceous plants of the dune crest include sea ox-eye daisy, beach sunflower, firewheel, and annual
+                phlox. Also common on dune crests are several woody species including sea grape, saw palmetto, and the invasive
+                Brazilian pepper.
+            </p>
+            <p>
+                Many of the woody species growing on dune crests are low-growing and shrubby, while inland the same species
+                can demonstrate a more robust growth habit. Dry, low-nutrient soils, frequent high winds and salt spray
+                conspire to stunt dune-situated individuals. Salt spray kills the tender terminal buds of many trees and
+                shrubs on contact, resulting in the salt-pruned, windswept tree canopies of Florida's dune communities.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Seagrape_Georgia_Schroeder.jpg" />
+                    <figcaption>
+                        Seagrape, <i>Coccoloba uvifera</i>. <i>Credit: G. Schroeder</i>
+                    </figcaption>
+                </figure>
+            </div>
 
-                <center>
-                    <img border="0" src="../content/imglib/Dune2.gif" hspace="3" vspace="3" width="295"
-                         height="120"><br>
-                    <span class="caption">Profile of a coastal dune system showing 1)
-              stable backdune;&nbsp;&nbsp;<br>
-              2) secondary dunes; 3) primary dune; 4) foreshore.&nbsp;</span><br/>
-                </center>
+            <h5>Swales</h5>
+            <p>
+                Swales between dunes gain an increased measure of protection from winds and salt spray as the dune system
+                builds over time. Swales can support freshwater plants, though most plants that grow in swales have some
+                degrees of salinity tolerance as well. Stands of sea grape, saw palmetto, and the Brazilian pepper are common
+                woody species on dune crests and in swales.
+            </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_backdune_LHS.jpg" />
+                    <figcaption>
+                        <i>Credit: H. Sweat</i>
+                    </figcaption>
+                </figure>
+            </div>
 
-                <br/>
-                <p class="body">Depending on local wind and wave patterns, a single
-                    dune, or a system of dunes may be created over time. Within dune systems, which
-                    resemble a series of low peaks and valleys, the first dune above the intertidal
-                    zone is called the primary dune. This is the area of active colonization by
-                    plants, and the area most affected by waves and heavy winds. Over the crest of
-                    the primary dune is the swale: a low, somewhat wet area that separates primary
-                    dunes from secondary dunes. In swales, winds generally scour the sand nearly
-                    down to the water table, and plant communities may consist of more freshwater
-                    species that show some salinity tolerance.</p>
-                <p class="body">It is in the shelter of swales that
-                    scrub communities and maritime forests first become established. In many dune
-                    systems, secondary dunes are also observed. These dunes form when severe storms
-                    breach primary dunes and deposit sand further inland. Deposition of sand onto
-                    secondary dunes also occurs as winds blow fine-grained sand inland over the
-                    primary dune to secondary dunes. Due to their relative stability over time, and
-                    because they are generally protected by primary dunes, secondary dunes support a
-                    significantly broader variety of vegetation than primary dunes.</p>
-
-                <p class="title">Dune Plants:</p><br/>
-                <p class="body">Vegetation colonizing the upper beach and
-                    foredune must be well adapted to periodic disturbance, and is generally
-                    characterized by the presence of salt-adapted, grassy species. Growth of these
-                    colonizing species must keep pace with the rate of sand build-up along the
-                    foredune if the plants are to survive. On the foredune, beach pioneers such as
-                    railroad vine (<i>Ipomoea pes-caprae</i>) and shoreline sea purslane (<i>Sesuvium
-                        portulacastrum</i>) meet the primary species of dune colonizers. South of Cape
-                    Hatteras, sea oats (<i>Uniola paniculata</i>), a coarse grass that grows
-                    as tall as 6 feet and spreads laterally via rhizomes is the principal dune
-                    colonizer (Stalter 1993). Sea oats and 2 other dune-building species, bitter
-                    panic grass (<i>Panicum amarum</i>) and beach cordgrass (<i>Spartina
-                        patens</i>), have growth patterns in which upward growth is actually stimulated
-                    by burial in sand.</p>
-                <p class="body">Subsequent lateral growth in these plants allows for the
-                    construction and stabilization of a continuous dune ridge. Other plant species
-                    that colonize foredunes must be able to grow at a relatively fast rate to
-                    prevent their burial in sand (Wagner 1964; Oertel and Lassen 1976; Myers and
-                    Ewel 1990).></p>
-                <p class="body">The dune crest is the area where herbaceous vines and
-                    grasses begin to be replaced by shrubby or woody species. Common herbaceous
-                    plants of the dune crest include sea ox-eye daisy (<i>Borrichia
-                        frutescens</i>), beach sunflower (<i>Helianthus debilis</i>), firewheel (<i>Gaillardia
-                        pulchella</i>), and annual phlox (<i>Phlox drummondii</i>). Also common on dune
-                    crests are several woody species including sea grape (<i>Coccoloba uvifera</i>),
-                    saw palmetto (<i>Serenoa repens</i>), and the invasive Brazilian pepper (<i>Schinus
-                        terebinthifolius</i>).</p>
-                <p class="body">Many of the woody species growing on dune crests are
-                    often observed to be low-growing and shrubby, despite their growing as robust
-                    shrubs or trees in areas inland of the dunes. Much of the reason for this growth
-                    habit is due to the well-drained, low nutrient soils of dunes, as well as to the
-                    effects of high winds and salt spray. Though most grasses and vines found on
-                    dune crests are well adapted to saline conditions, the tender terminal buds of
-                    many trees and shrubs growing on dune crests and in swales are killed upon
-                    contact with salt spray, resulting in the salt-pruned, windswept canopies
-                    commonly seen in the low, stunted trees of Florida's dune communities.</p>
-                <p class="body">Swales located between dunes gain an increased measure
-                    of protection from winds and salt spray as the dune system builds over time.
-                    Because swales can be scoured down nearly to the water table, they are able to
-                    support freshwater plants, though most plants that grow in swales have some
-                    degrees of salinity tolerance as well. Stands of sea grape (<i>Coccoloba uvifera</i>),
-                    saw palmetto (<i>Serenoa repens</i>), and the <a href="#invasive"
-                                                                     onClick="popDef('non-native', '#invasive');"
-                                                                     name="invasive">invasive</a> Brazilian pepper (<i>Schinus
-                        terebinthifolius</i>) are common woody species on dune crests and in swales.</p>
-                <p class="body">Backdunes and secondary dunes generally support a wider
-                    variety of vegetation than do foredunes. Additionally, the same species that
-                    grow as low shrubs or stunted trees on dune crests, grow in backdune areas as
-                    well; though in these more protected locales, they are often able to attain full
-                    height. Saw palmetto (<i>Serenoa repens</i>), cabbage palm (<i>Sabal palmetto</i>),
-                    live oak (<i>Quercus virginiana</i>), and prickly pear cactus (<i>Opuntia
-                        stricta</i>), are all common inhabitants of backdunes and secondary dunes.</p>
-                <p class="title">Dune animals:</p>
-                <p class="body">A number rodents, some of which are becoming
-                    increasingly rare, utilize dune habitats. The threatened southeastern beach
-                    mouse (<i>Peromyscus polionotus niveiventris</i>) can be found in disjunct
-                    populations from Cape Canaveral to Sebastian Inlet. Other rodents that inhabit
-                    dunes include the cotton mouse (<i>Peromyscus gossypinus palmarius</i>), cotton
-                    rat (<i>Sigmodon hispidus littoralis</i> ), and rice rat<i> (Oryzomys palustris)</i>.&nbsp;&nbsp;
-                    Rabbits, including the eastern cottontail rabbit (<i>Sylvilagus floridanus</i>), and the marsh
-                    rabbit
-                    (<i>Sylvilagus palustris paludicola</i>), are also observed on dunes. Several other mammals such as
-                    gray
-                    foxes (<i>Urocyon cinereoargenteus</i>), raccoons (<i>Procyon lotor</i>), feral
-                    pigs (<i>Sus scrofa</i>), and feral cats (<i>Felis catus</i>) also use dunes for
-                    feeding.</p>
-                <p class="body">Many species of shorebirds utilize dunes for feeding;
-                    and several species also nest in dune habitats. Among the nesting species are
-                    the willet (<i>Catoptrophorus semipalmatus</i>), American oystercatcher (<i>Haematopus
-                        palliatus), </i>and Wilson's plover (<i>Charadrius wilsonia</i>), which prefer
-                    nest sites in dune areas with sparse grass or herbaceous cover. The laughing
-                    gull (<i>Larus atricilla</i>), Caspian tern (<i>Sterna caspia</i>), and the
-                    gull-billed tern (<i>Sterna nilotica</i>) also nest in dunes, but prefer
-                    areas with somewhat more dense coverage.</p>
-
-                <p class="body">Reptiles are also common inhabitants of dunes. Several
-                    species of anoles, among them the green anole (<i>Anolis carolinensis</i>), and
-                    the brown anole (<i>Anolis sagrei</i>), are quite common. Gopher
-                    tortoises (<i>Gopherus polyphemus</i>), while not plentiful, can often be
-                    observed in stable backdune areas. Many different types of snakes also live and
-                    feed in dune systems. Eastern diamondback rattlesnakes (<i>Crotalus adamanteus</i>),
-                    yellow rat snakes (<i>Elaphe obsoleta quadrivittata</i>), eastern coachwhip
-                    snakes (<i>Masticophis flagellum</i>), Florida rough green snakes (<i>Opheodrys
-                        aestivus carinatus</i>), and coastal dunes crowned snakes (<i>Tantilla relicta
-                        pamlica</i>) all utilize grassy dunes or more woody areas of backdunes as
-                    habitat.</p>
-
-                <p class="title">Human Impacts:</p>
-                <p class="body">In spite of the stabilizing ability of dune
-                    plants, dunes are highly susceptible to human impacts. Vehicles traversing
-                    beaches, as well as heavy foot traffic, damage vegetation by shifting sand and
-                    roots, thus destabilizing the dune community. Coastal development can also
-                    impact the natural process of dune replenishment by adversely influencing
-                    natural erosion patterns.</p>
-
-                <p class="title">Select a highlighted link below to learn more about that species:</p>
-
-                <table border="0" class="table-border no-border alternate">
-                    <tr>
-                        <th>Species Name</th>
-                        <th>Common Name</th>
-                        <th>Habitat Usage</th>
-                        <th>Special Status</th>
-                    </tr>
-                    <?php
-                    if($foredunePlantsArr){
-                        ?>
-                        <tr class="heading">
-                            <td><p class="label">Foredune Plants:</p></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <?php
-                        foreach($foredunePlantsArr as $id => $taxArr){
-                            echo '<tr>';
-                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
-                            if(array_key_exists($id,$vernacularArr)){
-                                $vernacularStr = implode(', ', $vernacularArr[$id]);
-                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
-                            }
-                            else{
-                                echo '<td><span></span></td>'."\n";
-                            }
-                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
-                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
-                            echo '</tr>';
-                        }
-                    }
-                    if($backdunePlantsArr){
-                        ?>
-                        <tr class="heading">
-                            <td><p class="label">Backdune Plants:</p></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <?php
-                        foreach($backdunePlantsArr as $id => $taxArr){
-                            echo '<tr>';
-                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
-                            if(array_key_exists($id,$vernacularArr)){
-                                $vernacularStr = implode(', ', $vernacularArr[$id]);
-                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
-                            }
-                            else{
-                                echo '<td><span></span></td>'."\n";
-                            }
-                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
-                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
-                            echo '</tr>';
-                        }
-                    }
-                    if($duneAnimalsArr){
-                        ?>
-                        <tr class="heading">
-                            <td><p class="label">Dune Animals:</p></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <?php
-                        foreach($duneAnimalsArr as $id => $taxArr){
-                            echo '<tr>';
-                            echo '<td><span><i><a href="../taxa/index.php?taxon='.$id.'">'.$taxArr['sciname'].'</a></i></span></td>';
-                            if(array_key_exists($id,$vernacularArr)){
-                                $vernacularStr = implode(', ', $vernacularArr[$id]);
-                                echo '<td><span>'.wordwrap($vernacularStr,60,"<br />\n",true).'</span></td>'."\n";
-                            }
-                            else{
-                                echo '<td><span></span></td>'."\n";
-                            }
-                            echo '<td><span>'.$taxArr['habitat'].'</span></td>';
-                            echo '<td><span>'.$taxArr['notes'].'</span></td>';
-                            echo '</tr>';
-                        }
-                    }
-                    ?>
-                </table>
-
-                <p class="body"><sup>1</sup> Found throughout the IRL<br/>
-                    <sup>2 </sup> Most common in Northern IRL in Cape Canaveral area</td>
-        </tr>
-    </table>
-    <table style="width:700px;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td>
-                <p class="title">Further Reading:</p>
-                <p class="body">Austin
-                    1998. Classification of plant communities in south Florida. Internet
-                    document.
-                <p class="body">Carter, R.W.G., T.G.F. Curtis, and M.J.
-                    Sheehy-Skeffington. 1992. Coastal dunes<br>
-                    &nbsp;&nbsp;&nbsp; geomorphology, ecology and
-                    management for conservation. A.A.<br>
-                    &nbsp;&nbsp;&nbsp; Balkema/Rotterdam/Brookfield.</p>
-                <p class="body">Florida Natural Areas Inventory, Department of Natural Resources. 1990. Guide to the<br>
-                    &nbsp;&nbsp;&nbsp; Natural Communities of Florida.
-                    Publication. 11pp. Tallahassee, FL.</p>
-                <p class="body">Komar, P.D. and Moore, J.R., editors.
-                    1983. CRC handbook of coastal processes and<br>
-                    &nbsp;&nbsp;&nbsp; erosion. CRC Press, Inc.
-                    Boca Raton, Florida.</p>
-                <p class="body">Komar, P.D. 1998. Beach processes and
-                    sedimentation, 2<sup>nd</sup> edition. Prentice Hall,<br>
-                    &nbsp;&nbsp;&nbsp; Upper Saddle
-                    River, New Jersey.</p>
-                <p class="body">Myers, R.L. and J.J. Ewel, eds. 1990.
-                    Ecosystems of Florida. University of Central<br>
-                    &nbsp;&nbsp;&nbsp; Florida Press, Orlando, FL.
-                    765 pp.</p>
-                <p class="body">Oertel, G.F. and M. Lassen. 1976.
-                    Developmental sequences in Georgia coastal dunes<br>
-                    &nbsp;&nbsp;&nbsp; and distribution of
-                    dune plants. Bull. GA. Acad. Sci. 34: 35 - 48.</p>
-                <p class="body">Otvos, E.G. 1981. Barrier island
-                    formation through nearshore aggradation -<br>
-                    &nbsp;&nbsp;&nbsp; stratigraphic and field
-                    evidence. Mar. Geol. 43:195-243.</p>
-                <p class="body">Packham, J.R. and A.J. Willis. 1997.
-                    Ecology of dunes, salt marsh and shingle.<br>
-                    &nbsp;&nbsp;&nbsp; Chapman and Hall, London.</p>
-                <p class="body">Pethick, J. 1984. An introduction to
-                    coastal geomorphology. Edward Arnold, London.<br>
-                    <br>
-                    Pilkey, O.H. and M.E. Feld. 1972.
-                    Onshore transport of continental shelf sediment:<br>
-                    &nbsp;&nbsp;&nbsp; Atlantic southeastern
-                    United States. In: Swift, D.J.P., D.B. Duane and O.H. Pilkey,<br>
-                    &nbsp;&nbsp;&nbsp; eds. Shelf
-                    Sediment Transport: Process and Pattern. Dowden, Hutchinson, Ross.<br>
-                    &nbsp;&nbsp;&nbsp; Stroudsburg, PA</p>
-                <p class="body">Schmalzer, P.A. 1995. Biodiversity of
-                    saline and brackish marshes of the Indian River<br>
-                    &nbsp;&nbsp;&nbsp; Lagoon: historic and
-                    current patterns. Bulletin of Marine Science 57(1): 37-48</p>
-                <p class="body">Schmalzer, P.A., B.W. Duncan, V.L.
-                    Larson, S. Boyle, and M. Gimond. 1996.<br>
-                    &nbsp;&nbsp;&nbsp; Reconstructing historic
-                    landscapes of the Indian River Lagoon. Proceedings of<br>
-                    &nbsp;&nbsp;&nbsp; Eco-Informa '96.
-                    11:849 - 854. Global Networks for Environmental Information,<br>
-                    &nbsp;&nbsp;&nbsp; Environmental Research Institute of Michigan (ERIM), Ann Arbor, MI</p>
-                <p class="body">Stalter, R. 1976. Factors affecting
-                    vegetational zonation on coastal dunes, Georgetown<br>
-                    &nbsp;&nbsp;&nbsp; County, SC. In: R.R.
-                    Lewis, and D.P. Cole, eds. 3<sup>rd</sup> Proc. Annu. Conf. Restoring<br>
-                    &nbsp;&nbsp;&nbsp; Coastal Veg. Fla. Hillsborough Comm. Coll., Tampa, FL</p>
-                <p class="body">Stalter, R. 1993. Dry coastal
-                    ecosystems of the eastern United States of America. In:<br>
-                    &nbsp;&nbsp;&nbsp; Ecosystems of
-                    the World. Volume 2. Elsevier Science Publications, New York, NY.</p>
-                <p class="body">Tyndall, R.W. 1985. Role of seed
-                    burial, salt spray, and soil moisture deficit in plant<br>
-                    &nbsp;&nbsp;&nbsp; distribution on
-                    the North Carolina Outer Banks. Ph.D. Thesis, University of<br>
-                    &nbsp;&nbsp;&nbsp; Maryland,
-                    College Park, MD.</p>
-                <p class="body">Wagner, R.H. 1964. The ecology of <i>Uniola
-                        paniculata</i> L. in the dune-strand habitat of<br>
-                    &nbsp;&nbsp;&nbsp; North Carolina. Ecol.
-                    Monogr. 34: 79 - 96.</p>
-                <p>&nbsp;
-                <p class="footer_note">
-                    Report by: K. Hill, Smithsonian Marine Station<br>
-                    Submit additional information, photos or comments to:<br>
-                    <a href="mailto:IRLWebmaster@si.edu">IRLWebmaster@si.edu</a>
-        </tr>
-    </table>
+            <h5>Backdune</h5>
+            <p>
+                Backdunes and secondary dunes generally support a wider variety of vegetation than foredunes. The same species
+                that grow as low shrubs or stunted trees on dune crests do grow in backdune areas as well, but in these more
+                protected locales they are often able to attain full height. Saw palmetto, cabbage palm, live oak, and
+                prickly pear cactus are all common inhabitants of backdunes and secondary dunes.
+            </p>
+        </div>
+        <div id="dune-animals-section" class="cd-section">
+            <h4>Dune Animals</h4>
+            <p>
+                A number of rodents, some of which are becoming increasingly rare, utilize dune habitats. The threatened
+                southeastern beach mouse can be found in scattered populations from Cape Canaveral to Sebastian Inlet. Other
+                rodents that inhabit dunes include the cotton mouse, cotton rat and rice rat, as well as eastern cottontail
+                rabbit and the marsh rabbit. Several other mammals such as gray foxes, raccoons, feral pigs and feral cats
+                also use dunes for feeding.
+            </p>
+            <div style="display:flex;justify-content: center;align-content: center;">
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/08_CorapiP1.jpg" />
+                    <figcaption>
+                        <i>Credit: P. Corapi</i>
+                    </figcaption>
+                </figure>
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_crab_burrow_LHS.jpg" />
+                    <figcaption>
+                        <i>Credit: H. Sweat</i>
+                    </figcaption>
+                </figure>
+                <figure style="margin:0;">
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/10_beach_mouse_burrow.jpg" />
+                    <figcaption>
+                        <i>Credit: NASA</i>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                Many species of shorebirds utilize dunes for feeding; and several species also nest in dune habitats. Among
+                the nesting species are the willet, American oystercatcher, and Wilson's plover, which prefer nest sites in
+                dune areas with sparse grass or herbaceous cover. The laughing gull, Caspian tern, and the gull-billed tern
+                also nest in dunes but prefer areas with somewhat more dense coverage.
+            </p>
+            <p>
+                Reptiles are also common inhabitants of dunes. Several species of anoles and snakes are common, including
+                green anole, Eastern coachwhip snakes and Florida rough green snakes. Gopher tortoises, while not plentiful,
+                can often be observed in stable backdune areas.
+            </p>
+        </div>
+        <div id="human-impacts-section" class="cd-section">
+            <h4>Dune Animals</h4>
+            <p>
+                In spite of the stabilizing ability of dune plants, dunes are highly susceptible to human impacts. Vehicles
+                traversing beaches, as well as heavy foot traffic, damage vegetation by shifting sand and roots, thus
+                destabilizing the dune community. Coastal development can also impact the natural process of dune replenishment
+                by adversely influencing natural erosion patterns.
+            </p>
+        </div>
+    </div>
 </div>
 <?php
 include(__DIR__ . '/../footer.php');

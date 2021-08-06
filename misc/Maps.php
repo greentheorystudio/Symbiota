@@ -53,6 +53,9 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             of the longest barrier island complex in the United States.
         </h3>
     </div>
+    <div class="photo-credit-container">
+        Photo credit: M. La Martina
+    </div>
 </div>
 <div id="bodyContainer">
     <div class="sideNavMover">
@@ -77,6 +80,18 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                             <span class="cd-label">Dynamics of the IRL</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="#wind-section" data-number="4">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">The Role of Wind</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#inlets-section" data-number="5">
+                            <span class="cd-dot"></span>
+                            <span class="cd-label">Inlets and Tides</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -89,6 +104,9 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 due to the lagoon’s unique geographic location, at the transition between cool, temperate and warm, subtropical
                 climate zones.
             </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRLZonesMap.gif" />
+            </div>
             <p>
                 Designated as an “estuary of national significance” by the U.S. Environmental Protection Agency, the IRL
                 also provides enormous human benefits, supporting thousands of jobs and generating $7.6 billion annually
@@ -99,7 +117,12 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
             <h3>What Is a Lagoon?</h3>
             <div style="display:flex;justify-content: space-between">
                 <div style="width: 100%;">
-                    <img style="border:0;width:475px;margin: 15px;float: left;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_16_MassaungJ1.jpg" />
+                    <figure style="float: left;margin-right: 30px;">
+                        <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_16_MassaungJ1.jpg" />
+                        <figcaption>
+                            Aerial view of the Indian River Lagoon. <i>(Credit: J. Massaung)</i>
+                        </figcaption>
+                    </figure>
                     <p>
                         Lagoons are shallow coastal bodies of water, separated from the ocean by a series of barrier islands
                         which lie parallel to the shoreline.
@@ -111,27 +134,35 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                     </p>
                     <p>
                         Lagoons are classified into three main types:
-                        <ul>
-                            <li>
-                                <b>Leaky lagoons</b> have wide tidal channels, fast currents and unimpaired exchange of water
-                                with the ocean.
-                            </li>
-                            <li>
-                                <b>Choked lagoons</b> occur along high-energy coastlines, and have one or more long, narrow
-                                channels which restrict water exchange with the ocean. Water circulation within this type
-                                of lagoon is dominated by wind patterns.
-                            </li>
-                            <li>
-                                <b>Restricted lagoons</b> have multiple channels, well-defined exchange with the ocean,
-                                and tend to show a net-seaward transport of water. Wind patterns in restricted lagoons
-                                can also cause surface currents to develop, thus helping to transport large volumes of water
-                                downwind.
-                            </li>
-                        </ul>
+                    </p>
+                    <ul class="statictext">
+                        <li>
+                            <b>Leaky lagoons</b> have wide tidal channels, fast currents and unimpaired exchange of water
+                            with the ocean.
+                        </li>
+                        <li>
+                            <b>Choked lagoons</b> occur along high-energy coastlines, and have one or more long, narrow
+                            channels which restrict water exchange with the ocean. Water circulation within this type
+                            of lagoon is dominated by wind patterns.
+                        </li>
+                        <li>
+                            <b>Restricted lagoons</b> have multiple channels, well-defined exchange with the ocean,
+                            and tend to show a net-seaward transport of water. Wind patterns in restricted lagoons
+                            can also cause surface currents to develop, thus helping to transport large volumes of water
+                            downwind.
+                        </li>
+                    </ul>
+
+                    <p>
                         The Indian River Lagoon is a <b>restricted-type lagoon</b>.
                     </p>
                     <div style="margin: 15px 0;display:flex;justify-content: center;">
-                        <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_07_OwenP1.jpg" />
+                        <figure style="margin: 15px;">
+                            <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_07_OwenP1.jpg" />
+                            <figcaption>
+                                Jupiter Inlet <i>(Credit: P. Owen)</i>
+                            </figcaption>
+                        </figure>
                     </div>
                 </div>
             </div>
@@ -143,10 +174,20 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 originates in Volusia County; the Banana River, in Brevard County; and the Indian River Lagoon, which spans
                 nearly the entire coastal extent of Brevard, Indian River, St. Lucie and Martin counties.
             </p>
+            <div style="margin: 15px 0;display:flex;justify-content: center;">
+                <figure style="margin: 15px;">
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRL_map_UMCES.png" />
+                    <figcaption>
+                        <i>Map courtesy Jane Thomas, University of Maryland Center for Environmental Science</i>
+                    </figcaption>
+                </figure>
+            </div>
             <p>
                 Other properties of lagoons may change depending on its size and physical characteristics. The Indian River
                 Lagoon, for example, is significantly longer than it is wide.
             </p>
+        </div>
+        <div id="wind-section" class="cd-section">
             <h4>The Role of Wind</h4>
             <p>
                 Lagoons like the IRL tend to be well-mixed because they are heavily influenced by wind patterns.
@@ -160,6 +201,8 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                 Winds also influence the direction of the lagoon’s water flow. Currents can switch from north-flowing to
                 south-flowing, or be completely stagnant, depending on the prevailing winds.
             </p>
+        </div>
+        <div id="inlets-section" class="cd-section">
             <h4>Inlets and Tides</h4>
             <p>
                 The southern portion of the IRL exchanges water with the ocean through three jettied, human-made inlets,

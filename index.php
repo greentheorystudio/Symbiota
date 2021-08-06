@@ -139,7 +139,7 @@ $totalOccurrenceRecords = number_format($IRLManager->getTotalOccurrenceRecords()
         </div>
     </div>
     <div class="photo-credit-container">
-        Photographer: <span id="photographerName"></span>
+        Photo credit: <span id="photographerName"></span>
     </div>
 </div>
 <div id="innertext">
