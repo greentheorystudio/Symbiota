@@ -1,6 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
+include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
@@ -10,37 +11,24 @@ $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
 $view = array_key_exists('imagedisplay',$_REQUEST)?$_REQUEST['imagedisplay']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+
+if(!is_numeric($catId)) {
+    $catId = 0;
+}
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = $GLOBALS['DEFAULTCATID'];
 }
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $imgLibManager = new ImageLibraryManager();
+$collManager = new OccurrenceManager();
 
-$collList = $imgLibManager->getFullCollectionList($catId);
+$collList = $collManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
+$otherCatArr = $collManager->getOccurVoucherProjects();
+
 $imageArr = array();
 $taxaList = array();
-
-if($action && $action === 'Load Images') {
-    if($stArr){
-        $imgLibManager->setSearchTermsArr($stArr);
-    }
-    else{
-        //$imgLibManager->readRequestVariables();
-        $stArr = $imgLibManager->getSearchTermsArr();
-    }
-    $imgLibManager->setSqlWhere();
-    if($view === 'thumbnail'){
-        $imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
-    }
-    if($view === 'taxalist'){
-        $taxaList = $imgLibManager->getFamilyList();
-    }
-    $recordCnt = $imgLibManager->getRecordCnt();
-    $jsonStArr = json_encode($stArr);
-}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -56,16 +44,14 @@ if($action && $action === 'Load Images') {
     <script src="../js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
+        $('html').hide();
         let stArr = {};
-        let phArr = <?php echo (isset($previousCriteria['phjson'])&&$previousCriteria['phjson']?"JSON.parse('".$previousCriteria['phjson']."')": 'new Array()'); ?>;
-        const starr = JSON.stringify(<?php echo $jsonStArr; ?>);
-        const view = '<?php echo $view; ?>';
+        let phArr = new Array();
         let selectedFamily = '';
 
         $(document).ready(function() {
 			let qtaxaArr;
             $('#tabs').tabs({
-				active: <?php echo (($imageArr || $taxaList)?'2':'0'); ?>,
 				beforeLoad: function( event, ui ) {
 					$(ui.panel).html("<p>Loading...</p>");
 				}
@@ -84,7 +70,7 @@ if($action && $action === 'Load Images') {
 				}
 			});
 
-            $('#taxa').manifest({
+            $('#taxainput').manifest({
                 marcoPolo: {
                     url: 'rpc/imagesearchautofill.php',
                     data: {
@@ -96,7 +82,7 @@ if($action && $action === 'Load Images') {
                 }
             });
 
-            $('#common').manifest({
+            $('#commoninput').manifest({
                 marcoPolo: {
                     url: 'rpc/imagesearchautofill.php',
                     data: {
@@ -108,31 +94,7 @@ if($action && $action === 'Load Images') {
                 }
             });
 
-            $('#country').manifest({
-                marcoPolo: {
-                    url: 'rpc/imagesearchautofill.php',
-                    data: {
-                        t: 'country'
-                    },
-                    formatItem: function (data) {
-                        return data.name;
-                    }
-                }
-            });
-
-            $('#state').manifest({
-                marcoPolo: {
-                    url: 'rpc/imagesearchautofill.php',
-                    data: {
-                        t: 'state'
-                    },
-                    formatItem: function (data) {
-                        return data.name;
-                    }
-                }
-            });
-
-            $('#keywords').manifest({
+            $('#keywordsinput').manifest({
                 marcoPolo: {
                     url: 'rpc/imagesearchautofill.php',
                     data: {
@@ -157,64 +119,47 @@ if($action && $action === 'Load Images') {
                 stArr = getSearchTermsArr();
                 setParamsForm();
                 setCollectionForms();
-                loadPoints();
+                changeImagePage("",stArr['imagedisplay'],1);
                 <?php
             }
             ?>
 
-			<?php
-			if($stArr){
-				if(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] !== '3'){
-					?>
-					if(document.getElementById('taxastr').value){
-                        qtaxaArr = document.getElementById('taxastr').value.split(";");
-                        for(let i = 0; i < qtaxaArr.length; i++){
-							$('#taxa').manifest('add',qtaxaArr[i]);
-						}
-					}
-					<?php
-				}
-				elseif(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3'){
-					?>
-					if(document.getElementById('taxastr').value){
-                        qtaxaArr = document.getElementById('taxastr').value.split(";");
-                        for(let i = 0; i < qtaxaArr.length; i++){
-							$('#common').manifest('add',qtaxaArr[i]);
-						}
-					}
-					<?php
-				}
-				?>
-				if(document.getElementById('countrystr').value){
-                    const qcountryArr = document.getElementById('countrystr').value.split(";");
-                    for(let i = 0; i < qcountryArr.length; i++){
-						$('#country').manifest('add',qcountryArr[i]);
-					}
-				}
-				if(document.getElementById('statestr').value){
-                    const qstateArr = document.getElementById('statestr').value.split(";");
-                    for(let i = 0; i < qstateArr.length; i++){
-						$('#state').manifest('add',qstateArr[i]);
-					}
-				}
-				if(document.getElementById('keywordstr').value){
-                    const qkeywordArr = document.getElementById('keywordstr').value.split(";");
-                    for(let i = 0; i < qkeywordArr.length; i++){
-						$('#keywords').manifest('add',qkeywordArr[i]);
-					}
-				}
-				if(document.getElementById('phjson').value){
-                    const qphArr = JSON.parse(document.getElementById('phjson').value);
-                    for(let i = 0; i < qphArr.length; i++){
-						$('#photographer').manifest('add',qphArr[i].name);
-					}
-				}
-				<?php
-			}
-			?>
+			$('#taxainput').on('manifestchange', function (event, data) {
+                const taxavals = $('#taxainput').manifest('values');
+                if(taxavals.length > 0){
+                    document.getElementById('taxa').value = taxavals.join();
+                }
+                else{
+                    document.getElementById('taxa').value = '';
+                }
+                processTaxaParamChange();
+            });
+
+            $('#commoninput').on('manifestchange', function (event, data) {
+                const taxavals = $('#commoninput').manifest('values');
+                if(taxavals.length > 0){
+                    document.getElementById('taxa').value = taxavals.join();
+                }
+                else{
+                    document.getElementById('taxa').value = '';
+                }
+                processTaxaParamChange();
+            });
+
+            $('#keywordsinput').on('manifestchange', function (event, data) {
+                const keywordvals = $('#keywordsinput').manifest('values');
+                if(keywordvals.length > 0){
+                    document.getElementById('imagekeyword').value = keywordvals.join();
+                }
+                else{
+                    document.getElementById('imagekeyword').value = '';
+                }
+                processTextParamChange();
+            });
 			
 			$('#photographer').on('marcopoloselect', function (event, data) {
 				phArr.push({name:data.name,id:data.id});
+                processPhotographerChange();
 			});
 			
 			$('#photographer').on('manifestremove',function (event, data){
@@ -223,148 +168,27 @@ if($action && $action === 'Load Images') {
 						phArr.splice(i,1);
 					}
 				}
+                processPhotographerChange();
 			});
-			<?php
-			
-			if($view === 'thumbnail' && !$imageArr){
-				echo "alert('There were no images matching your search critera');";
-			}
-			?>
+            $('html').show();
 		});
-		
-		function changeImagePage(taxonIn,viewIn,starrIn,pageIn){
-            document.getElementById("imagebox").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
-            const http = new XMLHttpRequest();
-            const url = "rpc/changeimagepage.php";
-            const queryid = document.getElementById('queryId').value;
-            const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&queryId='+queryid+'&page='+pageIn+'&view='+viewIn+'&taxon='+taxonIn;
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    if(!http.responseText) {
-                        http.responseText = "<p>An error occurred retrieving records.</p>";
-                    }
-                    document.getElementById("imagebox").innerHTML = http.responseText;
-                    if(viewIn === 'thumb'){
-                        document.getElementById("imagetab").innerHTML = 'Images';
-                    }
-                    else{
-                        document.getElementById("imagetab").innerHTML = 'Taxa List';
-                    }
-                }
-            };
-            http.send(params);
-        }
 
-        function setParamsForm(){
-            const stArr = getSearchTermsArr();
-            if(stArr['usethes']){
-                document.harvestparams.thes.checked = true;
+        function processParamsForm(){
+            const f = document.getElementById('imagesearchform');
+            const searchTermsArr = getSearchTermsArr();
+            if(!validateSearchTermsArr(searchTermsArr)){
+                alert('Please enter search criteria.');
+                return false;
             }
-            if(stArr['taxontype']){
-                document.harvestparams.type.value = stArr['taxontype'];
-            }
-            if(stArr['taxa']){
-                document.harvestparams.taxa.value = stArr['taxa'];
-            }
-            let countryStr = '';
-            if (stArr['country']) {
-                countryStr = stArr['country'];
-                countryArr = countryStr.split(";");
-                if (countryArr.indexOf('USA') > -1 || countryArr.indexOf('usa') > -1) {
-                    countryStr = countryArr[0];
-                }
-                document.harvestparams.country.value = countryStr;
-            }
-            if(stArr['state']){
-                document.harvestparams.state.value = stArr['state'];
-            }
-            if(stArr['county']){
-                document.harvestparams.county.value = stArr['county'];
-            }
-            if(stArr['local']){
-                document.harvestparams.local.value = stArr['local'];
-            }
-            if(stArr['elevlow']){
-                document.harvestparams.elevlow.value = stArr['elevlow'];
-            }
-            if(stArr['elevhigh']){
-                document.harvestparams.elevhigh.value = stArr['elevhigh'];
-            }
-            if(stArr['assochost']){
-                document.harvestparams.assochost.value = stArr['assochost'];
-            }
-            if(stArr['upperlat']){
-                document.harvestparams.upperlat.value = stArr['upperlat'];
-                document.harvestparams.bottomlat.value = stArr['bottomlat'];
-                document.harvestparams.leftlong.value = stArr['leftlong'];
-                document.harvestparams.rightlong.value = stArr['rightlong'];
-            }
-            if(stArr['pointlat']){
-                document.harvestparams.pointlat.value = stArr['pointlat'];
-                document.harvestparams.pointlong.value = stArr['pointlong'];
-                document.harvestparams.radius.value = stArr['radius'];
-                document.harvestparams.groundradius.value = stArr['groundradius'];
-                document.harvestparams.radiustemp.value = stArr['radiustemp'];
-                document.harvestparams.radiusunits.value = stArr['radiusunits'];
-            }
-            if(stArr['polyArr']){
-                document.harvestparams.polyArr.value = stArr['polyArr'];
-                document.getElementById("spatialParamasNoCriteria").style.display = "none";
-                document.getElementById("spatialParamasCriteria").style.display = "block";
-            }
-            if(stArr['circleArr']){
-                document.harvestparams.circleArr.value = stArr['circleArr'];
-                document.getElementById("spatialParamasNoCriteria").style.display = "none";
-                document.getElementById("spatialParamasCriteria").style.display = "block";
-            }
-            if(stArr['collector']){
-                document.harvestparams.collector.value = stArr['collector'];
-            }
-            if(stArr['collnum']){
-                document.harvestparams.collnum.value = stArr['collnum'];
-            }
-            if(stArr['eventdate1']){
-                document.harvestparams.eventdate1.value = stArr['eventdate1'];
-            }
-            if(stArr['eventdate2']){
-                document.harvestparams.eventdate2.value = stArr['eventdate2'];
-            }
-            if(stArr['occurrenceRemarks']){
-                document.harvestparams.occurrenceRemarks.value = stArr['occurrenceRemarks'];
-            }
-            if(stArr['catnum']){
-                document.harvestparams.catnum.value = stArr['catnum'];
-            }
-            document.harvestparams.othercatnum.checked = !!stArr['othercatnum'];
-            if(stArr['typestatus']){
-                document.harvestparams.typestatus.checked = true;
-            }
-            if(stArr['hasimages']){
-                document.harvestparams.hasimages.checked = true;
-            }
-            if(stArr['hasgenetic']){
-                document.harvestparams.hasgenetic.checked = true;
-            }
-            if(sessionStorage.collsearchtableview){
-                document.getElementById('showtable').checked = true;
-                changeTableDisplay();
-            }
-        }
-
-        function verifyCollForm(f){
             let formVerified = false;
-            for(let h=0; h<f.length; h++){
+            for(let h=0; h < f.length; h++){
                 if(f.elements[h].name === "db[]" && f.elements[h].checked){
                     formVerified = true;
-                }
-                else{
-                    document.getElementById("dballcb").checked = false;
+                    break;
                 }
                 if(f.elements[h].name === "cat[]" && f.elements[h].checked){
                     formVerified = true;
+                    break;
                 }
             }
             if(!formVerified){
@@ -372,8 +196,8 @@ if($action && $action === 'Load Images') {
                 return false;
             }
             else{
-                for(let i=0; i<f.length; i++){
-                    if(f.elements[i].name === "cat[]" && f.elements[i].checked){
+                for(let i=0; i < f.length; i++){
+                    if(f.elements[i].name === "cat[]" && f.elements[i].checked && document.getElementById('cat-' + f.elements[i].value)){
                         const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
                         for(let j=0; j<childrenEle.length; j++){
                             if(childrenEle[j].tagName === "DIV"){
@@ -390,59 +214,96 @@ if($action && $action === 'Load Images') {
                         }
                     }
                 }
+                changeImagePage("",searchTermsArr['imagedisplay'],1);
             }
-            return formVerified;
+        }
+		
+		function changeImagePage(taxon,view,page){
+            document.getElementById("imagebox").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
+            const http = new XMLHttpRequest();
+            const url = "rpc/changeimagepage.php";
+            const queryid = document.getElementById('queryId').value;
+            const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&queryId='+queryid+'&page='+page+'&view='+view+'&taxon='+taxon;
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(!http.responseText) {
+                        http.responseText = "<p>An error occurred retrieving records.</p>";
+                    }
+                    document.getElementById("imagebox").innerHTML = http.responseText;
+                    if(view === 'thumb'){
+                        document.getElementById("imagetab").innerHTML = 'Images';
+                    }
+                    else{
+                        document.getElementById("imagetab").innerHTML = 'Taxa List';
+                    }
+                }
+            };
+            http.send(params);
         }
 
-        function submitImageForm(){
-            let taxastr;
-            const taxavals = $('#taxa').manifest('values');
-            const commonvals = $('#common').manifest('values');
-            const countryvals = $('#country').manifest('values');
-            const statevals = $('#state').manifest('values');
-            const keywordsvals = $('#keywords').manifest('values');
-            if(taxavals.length > 0){
-                taxastr = taxavals.join(";");
-                document.getElementById('taxastr').value = taxastr;
+        function setParamsForm(){
+            const stArr = getSearchTermsArr();
+            if(stArr['usethes']){
+                document.getElementById("thes").checked = true;
             }
-            else if(commonvals.length > 0){
-                taxastr = commonvals.join(";");
-                document.getElementById('taxastr').value = taxastr;
+            if(stArr['taxontype']){
+                document.getElementById("taxontype").value = stArr['taxontype'];
+                processTaxonTypeChange();
             }
-            else{
-                document.getElementById('taxastr').value = '';
-            }
-            if(countryvals.length > 0){
-                document.getElementById('countrystr').value = countryvals.join();
-            }
-            else{
-                document.getElementById('countrystr').value = '';
-            }
-            if(statevals.length > 0){
-                document.getElementById('statestr').value = statevals.join();
-            }
-            else{
-                document.getElementById('statestr').value = '';
-            }
-            if(keywordsvals.length > 0){
-                document.getElementById('keywordstr').value = keywordsvals.join();
-            }
-            else{
-                document.getElementById('keywordstr').value = '';
-            }
-            if(phArr.length > 0){
-                const phids = [];
-                for(let i = 0; i < phArr.length; i++){
-                    phids.push(phArr[i].id);
+            if(stArr['taxa']){
+                document.getElementById('taxa').value = stArr['taxa'];
+                const qtaxaArr = document.getElementById('taxa').value.split(";");
+                if(Nuber(document.getElementById("taxontype").value) === 2){
+                    for(let i = 0; i < qtaxaArr.length; i++){
+                        $('#taxainput).manifest('add',qtaxaArr[i]);
+                    }
                 }
-                document.getElementById('phuidstr').value = phids.join();
-                document.getElementById('phjson').value = JSON.stringify(phArr);
+                if(Nuber(document.getElementById("taxontype").value) === 3){
+                    for(let i = 0; i < qtaxaArr.length; i++){
+                        $('#commoninput').manifest('add',qtaxaArr[i]);
+                    }
+                }
             }
-            else{
-                document.getElementById('phuidstr').value = '';
-                document.getElementById('phjson').value = '';
+            if(stArr['imagedisplay']){
+                document.getElementById("imagedisplay").value = stArr['imagedisplay'];
+                processImageDisplayChange();
             }
-            return verifyCollForm(document.getElementById('imagesearchform'));
+            if(stArr['phuid']){
+                document.getElementById("phuid").value = stArr['phuid'];
+            }
+            if(stArr['phjson']){
+                document.getElementById("phjson").value = stArr['phjson'];
+                phArr = JSON.parse(document.getElementById('phjson').value);
+                for(let i = 0; i < phArr.length; i++){
+                    $('#photographer').manifest('add',phArr[i].name);
+                }
+            }
+            if(stArr['imagetag']){
+                document.getElementById("imagetag").value = stArr['imagetag'];
+            }
+            if(stArr['imagekeyword']){
+                document.getElementById("imagekeyword").value = stArr['imagekeyword'];
+                const qkeywordArr = document.getElementById('imagekeyword').value.split(";");
+                for(let i = 0; i < qkeywordArr.length; i++){
+                    $('#keywordsinput').manifest('add',qkeywordArr[i].name);
+                }
+            }
+            if(stArr['uploaddate1']){
+                document.getElementById("uploaddate1").value = stArr['uploaddate1'];
+            }
+            if(stArr['uploaddate2']){
+                document.getElementById("uploaddate2").value = stArr['uploaddate2'];
+            }
+            if(stArr['imagecount']){
+                document.getElementById("imagecount").value = stArr['imagecount'];
+            }
+            document.getElementById("imagetypeall").checked = stArr['imagetypeall'];
+            document.getElementById("imagetypespecimenonly").checked = stArr['imagetypespecimenonly'];
+            document.getElementById("imagetypeobservationonly").checked = stArr['imagetypeobservationonly'];
+            document.getElementById("imagetypefieldonly").checked = stArr['imagetypefieldonly'];
         }
 
         function processTaxonTypeChange(){
@@ -452,7 +313,6 @@ if($action && $action === 'Load Images') {
                 document.getElementById('thesdiv').style.display = "block";
                 document.getElementById('commonbox').style.display = "none";
                 document.getElementById('taxabox').style.display = "block";
-
             }
             if(taxonType === 3){
                 clearSciNameVals();
@@ -460,7 +320,6 @@ if($action && $action === 'Load Images') {
                 document.getElementById('taxabox').style.display = "none";
                 document.getElementById('thesdiv').style.display = "none";
                 document.getElementById('thes').checked = false;
-
             }
         }
 
@@ -477,24 +336,39 @@ if($action && $action === 'Load Images') {
         }
 
         function clearSciNameVals(){
-            let tvals = $('#taxa').manifest('values');
+            let tvals = $('#taxainput').manifest('values');
             for (let i = 0; i < tvals.length; i++) {
-                $('#taxa').manifest('remove', i);
+                $('#taxainput').manifest('remove', i);
             }
-            document.getElementById('taxastr').value = "";
+            document.getElementById('taxa').value = "";
         }
 
         function clearCommonNameVals(){
-            let vals = $('#common').manifest('values');
+            let vals = $('#commoninput').manifest('values');
             for (let i = 0; i < vals.length; i++) {
-                $('#common').manifest('remove', i);
+                $('#commoninput').manifest('remove', i);
             }
-            document.getElementById('taxastr').value = "";
+            document.getElementById('taxa').value = "";
+        }
+
+        function processPhotographerChange(){
+            if(phArr.length > 0){
+                const phids = [];
+                for(let i = 0; i < phArr.length; i++){
+                    phids.push(phArr[i].id);
+                }
+                document.getElementById('phuid').value = phids.join();
+                document.getElementById('phjson').value = JSON.stringify(phArr);
+            }
+            else{
+                document.getElementById('phuid').value = '';
+                document.getElementById('phjson').value = '';
+            }
+            processTextParamChange();
         }
     </script>
 </head>
 <body>
-
 	<?php
 	include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
@@ -511,23 +385,23 @@ if($action && $action === 'Load Images') {
                 <li id="imagetab" style="display:none;"><a href="#imagesdiv"><span id="imagetabtext">Images</span></a></li>
 			</ul>
 			
-			<form name="imagesearchform" id="imagesearchform" action="search.php" method="get" onsubmit="return submitImageForm();">
+			<form id="imagesearchform" action="search.php" method="post">
 				<div id="criteriadiv">
 					<div id="thesdiv" style="margin-left:160px;display:block;" >
-						<input type='checkbox' id='thes' name='thes' onchange="processTaxaParamChange();" value='1' checked /> Include Synonyms
+						<input type='checkbox' id='thes' onchange="processTaxaParamChange();" value='1' checked /> Include Synonyms
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;">
-							<select id="taxontype" name="nametype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
+							<select id="taxontype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
 								<option id='sciname' value='2'>Scientific Name</option>
 								<option id='commonname' value='3'>Common Name</option>
 							</select>
 						</div>
-						<div id="taxabox" style="float:left;margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'none':'block'); ?>;">
-							<input id="taxa" type="text" style="width:450px;" name="taxa" value="" title="Separate multiple names w/ commas" autocomplete="off" />
+						<div id="taxabox" style="float:left;margin-bottom:10px;display:block;">
+							<input id="taxainput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
-						<div id="commonbox" style="margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'block':'none'); ?>;">
-							<input id="common" type="text" style="width:450px;" name="common" value="" title="Separate multiple names w/ commas" autocomplete="off" />
+						<div id="commonbox" style="margin-bottom:10px;display:none;">
+							<input id="commoninput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 					</div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
@@ -536,7 +410,7 @@ if($action && $action === 'Load Images') {
 							Photographers: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="photographer" style="width:450px;" name="photographer" value="" title="Separate multiple photographers w/ commas" />
+							<input type="text" id="photographer" style="width:450px;" title="Separate multiple photographers w/ commas" />
 						</div>
 					</div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
@@ -546,12 +420,12 @@ if($action && $action === 'Load Images') {
 						?>
 						<div>
 							Image Tags: 
-							<select id="tags" style="width:350px;" name="tags" >
+							<select id="imagetag" style="width:350px;" onchange="processTextParamChange();">
 								<option value="">Select Tag</option>
 								<option value="">--------------</option>
 								<?php 
 								foreach($tagArr as $k){
-									echo '<option value="'.$k.'" '.((array_key_exists('tags',$previousCriteria))&&($previousCriteria['tags'] === $k)?'SELECTED ':'').'>'.$k.'</option>';
+									echo '<option value="'.$k.'" >'.$k.'</option>';
 								}
 								?>
 							</select>
@@ -564,7 +438,7 @@ if($action && $action === 'Load Images') {
 							Image Keywords: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="keywords" style="width:350px;" name="keywords" value="" title="Separate multiple keywords w/ commas" />
+							<input type="text" id="keywordsinput" style="width:350px;" title="Separate multiple keywords w/ commas" />
 						</div>
 					</div>
                     <div style="clear:both;margin-top:5px;">
@@ -572,22 +446,22 @@ if($action && $action === 'Load Images') {
                             Date Uploaded:
                         </div>
                         <div style="float:left;margin-bottom:10px;">
-                            <input type="text" id="uploaddate1" size="32" name="uploaddate1" style="width:100px;" value="<?php echo (array_key_exists('uploaddate1',$previousCriteria)?$previousCriteria['uploaddate1']:''); ?>" title="Single date or start date of range" /> -
-                            <input type="text" id="uploaddate2" size="32" name="uploaddate2" style="width:100px;" value="<?php echo (array_key_exists('uploaddate2',$previousCriteria)?$previousCriteria['uploaddate2']:''); ?>" title="End date of range; leave blank if searching for single date" />
+                            <input type="text" id="uploaddate1" size="32" style="width:100px;" onchange="processTextParamChange();" title="Single date or start date of range" /> -
+                            <input type="text" id="uploaddate2" size="32" style="width:100px;" onchange="processTextParamChange();" title="End date of range; leave blank if searching for single date" />
                         </div>
                     </div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
 					<div style="margin-top:5px;">
 						Limit Image Counts: 
-						<select id="imagecount" name="imagecount">
-							<option value="all" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'all')?'SELECTED ':''); ?>>All images</option>
-							<option value="taxon" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'taxon')?'SELECTED ':''); ?>>One per taxon</option>
-							<option value="specimen" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'specimen')?'SELECTED ':''); ?>>One per occurrence</option>
+						<select id="imagecount" onchange="processTextParamChange();">
+							<option value="all">All images</option>
+							<option value="taxon">One per taxon</option>
+							<option value="specimen">One per occurrence</option>
 						</select>
 					</div>
 					<div style="margin-top:5px;">
 						Image Display: 
-						<select id="imagedisplay" name="imagedisplay" onchange="processImageDisplayChange();processTextParamChange();">
+						<select id="imagedisplay" onchange="processImageDisplayChange();processTextParamChange();">
 							<option value="thumbnail">Thumbnails</option>
 							<option value="famlist">Taxa List</option>
 						</select>
@@ -599,29 +473,27 @@ if($action && $action === 'Load Images') {
 									<p><b>Limit Image Type:</b></p>
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='all' <?php echo (((!array_key_exists('imagetype',$previousCriteria)) || (array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'all'))?'CHECKED':''); ?> > All Images
+									<input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();"> All Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='specimenonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'specimenonly')?'CHECKED':''); ?> > Occurrence Images
+									<input type='radio' id='imagetypespecimenonly' value='specimenonly' onchange="processTextParamChange();"> Occurrence Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='observationonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'observationonly')?'CHECKED':''); ?> > Image Vouchered Observations
+									<input type='radio' id='imagetypeobservationonly' value='observationonly' onchange="processTextParamChange();"> Image Vouchered Observations
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='fieldonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'fieldonly')?'CHECKED':''); ?> > Field Images (lacking specific locality details)
+									<input type='radio' id='imagetypefieldonly' value='fieldonly' onchange="processTextParamChange();"> Field Images (lacking specific locality details)
 								</div>
 							</td>
 						</tr>
 					</table>
 					<div><hr></div>
-					<input id="taxastr" name="taxastr" type="hidden" value="<?php echo ((array_key_exists('taxastr',$previousCriteria))?$previousCriteria['taxastr']:''); ?>" />
-					<input id="countrystr" name="countrystr" type="hidden" value="<?php echo ((array_key_exists('countrystr',$previousCriteria))?$previousCriteria['countrystr']:''); ?>" />
-					<input id="statestr" name="statestr" type="hidden" value="<?php echo ((array_key_exists('statestr',$previousCriteria))?$previousCriteria['statestr']:''); ?>" />
-					<input id="keywordstr" name="keywordstr" type="hidden" value="<?php echo ((array_key_exists('keywordstr',$previousCriteria))?$previousCriteria['keywordstr']:''); ?>" />
-					<input id="phuidstr" name="phuidstr" type="hidden" value="<?php echo ((array_key_exists('phuidstr',$previousCriteria))?$previousCriteria['phuidstr']:''); ?>" />
-					<input id="phjson" name="phjson" type="hidden" value='<?php echo ((array_key_exists('phjson',$previousCriteria))?$previousCriteria['phjson']:''); ?>' />
-                    <input type="hidden" id="queryId" name="queryId" value='<?php echo $queryId; ?>' />
-					<button id="loadimages" style='margin: 20px' name="submitaction" type="submit" value="Load Images" >Load Images</button>
+					<input id="taxa" type="hidden" value="" />
+					<input id="imagekeyword" type="hidden" value="" />
+					<input id="phuid" type="hidden" value="" />
+					<input id="phjson" type="hidden" value='' />
+                    <input type="hidden" id="queryId" value='<?php echo $queryId; ?>' />
+					<button style='margin: 20px' type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>
 					<div style="clear:both;"></div>
 				</div>
 				
@@ -630,21 +502,21 @@ if($action && $action === 'Load Images') {
 					if($specArr || $obsArr){
 						?>
 						<div id="specobsdiv">
-							<div style="margin:0 0 10px 20px;">
-								<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" />
-								Select/Deselect all Collections
-							</div>
+                            <div style="margin:0 0 10px 20px;">
+                                <input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
+                                Select/Deselect All
+                            </div>
 							<?php 
 							if($specArr){
-								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
-								$imgLibManager->outputFullMapCollArr($dbArr,$specArr);
+								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                                $collManager->outputFullCollArr($specArr);
 							}
 							if($specArr && $obsArr) {
                                 echo '<hr style="clear:both;margin:20px 0;"/>';
                             }
 							if($obsArr){
-								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
-								$imgLibManager->outputFullMapCollArr($dbArr,$obsArr);
+								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                                $collManager->outputFullCollArr($obsArr);
 							}
 							?>
 							<div style="clear:both;"></div>

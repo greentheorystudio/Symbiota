@@ -127,6 +127,11 @@ function validateSearchTermsArr(stArr){
         stArr.hasOwnProperty('upperlat') ||
         stArr.hasOwnProperty('pointlat') ||
         stArr.hasOwnProperty('circleArr') ||
+        stArr.hasOwnProperty('phuid') ||
+        stArr.hasOwnProperty('imagetag') ||
+        stArr.hasOwnProperty('imagekeyword') ||
+        stArr.hasOwnProperty('uploaddate1') ||
+        stArr.hasOwnProperty('uploaddate2') ||
         stArr.hasOwnProperty('polyArr')
     ){
         populated = true;
@@ -192,7 +197,7 @@ function processCollectionParamChange(f){
 function processTaxaParamChange(){
     let taxaval = document.getElementById("taxa")?document.getElementById("taxa").value.trim():null;
     const taxontype = document.getElementById("taxontype")?document.getElementById("taxontype").value:null;
-    const thes = document.getElementById("thes")?!!document.getElementById("thes").checked:null;
+    const thes = document.getElementById("thes")?!!document.getElementById("thes").checked:true;
     taxaval = taxaval.replaceAll(",", ";");
     if(taxaval){
         setSearchTermsArrKeyValue('usethes',thes);
@@ -223,7 +228,18 @@ function processTextParamChange(){
     const typestatus = document.getElementById("typestatus")?document.getElementById("typestatus").checked:null;
     const hasimages = document.getElementById("hasimages")?document.getElementById("hasimages").checked:null;
     const hasgenetic = document.getElementById("hasgenetic")?document.getElementById("hasgenetic").checked:null;
-    let imagedisplayval = document.getElementById("imagedisplay")?document.getElementById("imagedisplay").value:null;
+    let imagedisplayval = document.getElementById("imagedisplay")?document.getElementById("imagedisplay").value:'thumbnail';
+    let phuidval = document.getElementById("phuid")?document.getElementById("phuid").value:null;
+    let phjsonval = document.getElementById("phjson")?document.getElementById("phjson").value:null;
+    let imagetagval = document.getElementById("imagetag")?document.getElementById("imagetag").value:null;
+    let imagekeywordval = document.getElementById("imagekeyword")?document.getElementById("imagekeyword").value:null;
+    let uploaddate1val = document.getElementById("uploaddate1")?document.getElementById("uploaddate1").value:null;
+    let uploaddate2val = document.getElementById("uploaddate2")?document.getElementById("uploaddate2").value:null;
+    let imagecountval = document.getElementById("imagecount")?document.getElementById("imagecount").value:'all';
+    const imagetypeall = document.getElementById("imagetypeall")?!!document.getElementById("imagetypeall").checked:true;
+    const imagetypespecimenonly = document.getElementById("imagetypespecimenonly")?!!document.getElementById("imagetypespecimenonly").checked:false;
+    const imagetypeobservationonly = document.getElementById("imagetypeobservationonly")?!!document.getElementById("imagetypeobservationonly").checked:false;
+    const imagetypefieldonly = document.getElementById("imagetypefieldonly")?!!document.getElementById("imagetypefieldonly").checked:false;
 
     if(countryval){
         countryval = countryval.replaceAll(",", ";");
@@ -348,12 +364,50 @@ function processTextParamChange(){
     else{
         clearSearchTermsArrKey('hasgenetic');
     }
-    if(imagedisplayval){
-        setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    if(phuidval){
+        phuidval = phuidval.replaceAll(",", ";");
+        setSearchTermsArrKeyValue('phuid',phuidval);
     }
     else{
-        clearSearchTermsArrKey('imagedisplay');
+        clearSearchTermsArrKey('phuid');
     }
+    if(phjsonval){
+        setSearchTermsArrKeyValue('phjson',phjsonval);
+    }
+    else{
+        clearSearchTermsArrKey('phjson');
+    }
+    if(imagetagval){
+        setSearchTermsArrKeyValue('imagetag',imagetagval);
+    }
+    else{
+        clearSearchTermsArrKey('imagetag');
+    }
+    if(imagekeywordval){
+        imagekeywordval = imagekeywordval.replaceAll(",", ";");
+        setSearchTermsArrKeyValue('imagekeyword',imagekeywordval);
+    }
+    else{
+        clearSearchTermsArrKey('imagekeyword');
+    }
+    if(uploaddate1val){
+        setSearchTermsArrKeyValue('uploaddate1',uploaddate1val);
+    }
+    else{
+        clearSearchTermsArrKey('uploaddate1');
+    }
+    if(uploaddate2val){
+        setSearchTermsArrKeyValue('uploaddate2',uploaddate2val);
+    }
+    else{
+        clearSearchTermsArrKey('uploaddate2');
+    }
+    setSearchTermsArrKeyValue('imagecount',imagecountval);
+    setSearchTermsArrKeyValue('imagetypeall',imagetypeall);
+    setSearchTermsArrKeyValue('imagetypespecimenonly',imagetypespecimenonly);
+    setSearchTermsArrKeyValue('imagetypeobservationonly',imagetypeobservationonly);
+    setSearchTermsArrKeyValue('imagetypefieldonly',imagetypefieldonly);
 }
 
 function redirectWithQueryId(url){

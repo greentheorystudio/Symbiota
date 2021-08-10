@@ -18,7 +18,6 @@ $collManager = new OccurrenceManager();
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
-
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

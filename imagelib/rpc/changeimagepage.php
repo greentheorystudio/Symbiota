@@ -20,7 +20,6 @@ $imgLibManager->setSearchTermsArr($stArr);
 
 $recordListHtml = '';
 if($view === 'thumb'){
-	
 	$imgLibManager->setTaxon($taxon);
 	$imgLibManager->setSqlWhere();
 	$imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
@@ -30,7 +29,7 @@ if($view === 'thumb'){
 	$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 	if($lastPage > $startPage){
 		$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-		$onclick = 'changeImagePage("","thumb",starr,';
+		$onclick = 'changeImagePage("","thumb",';
 		$hrefPrefix = "<a href='#' onclick='".$onclick;
 		$pageBar = '<div style="float:left" >';
 		if($startPage > 1){
@@ -140,7 +139,7 @@ elseif($view === 'famlist'){
 	
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a family to see genera list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","genlist",starr,1';
+		$onChange = '"'.$value.'","genlist",1';
 		$famChange = '"'.$value.'"';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
 	}
@@ -149,11 +148,11 @@ elseif($view === 'genlist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getGenusList($taxon);
 	
-	$topOnChange = '"","famlist",starr,1';
+	$topOnChange = '"","famlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to family list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a genus to see species list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","splist",starr,1';
+		$onChange = '"'.$value.'","splist",1';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
 	}
 }
@@ -161,11 +160,11 @@ elseif($view === 'splist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getSpeciesList($taxon);
 	
-	$topOnChange = 'selectedFamily,"genlist",starr,1';
+	$topOnChange = 'selectedFamily,"genlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to genera list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a species to see images.</div>";
 	foreach($taxaList as $key => $value){
-		$onChange = '"'.$value.'","thumb",starr,1';
+		$onChange = '"'.$value.'","thumb",1';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
 	}
 }
