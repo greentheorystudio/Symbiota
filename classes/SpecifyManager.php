@@ -21,7 +21,8 @@ class SpecifyManager {
     {
         $specifyCnt = 0;
         $sql = 'SELECT COUNT(DISTINCT CollectionObjectID) as cnt '.
-            'FROM collectionobject ';
+            'FROM collectionobject '.
+            'WHERE AltCatalogNumber LIKE "%MAD" OR (AltCatalogNumber LIKE "v%" AND AltCatalogNumber LIKE "%WIS") ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $specifyCnt = $r->cnt;
@@ -33,29 +34,28 @@ class SpecifyManager {
 	public function uploadSpecifyRecords($limit,$index)
 	{
 		$limitBottom = 0;
-		$totalUpload = 0;
-		$intervalUpload = 0;
-        $occurrenceArr = array();
+		$occurrenceArr = array();
         $determinationArr = array();
         $imageArr = array();
         $collectionObjectIDArr = array();
         $collectionEventIDArr = array();
         $localityIDArr = array();
 		if($index > 1){
-            $limitBottom = $limit * $index;
+            $limitBottom = $limit * ($index - 1);
         }
 
         echo '<li>Gathering Specify collection objects...</li>';
 		$sql = 'SELECT co.CollectionObjectID, co.GUID, co.AltCatalogNumber, co.FieldNumber, co.CollectingEventID, '.
             'CONCAT_WS(" ",co.Remarks,coa.Remarks) AS occurrenceRemarks '.
 			'FROM collectionobject AS co LEFT JOIN collectionobjectattribute AS coa ON co.CollectionObjectAttributeID = coa.CollectionObjectAttributeID '.
+            'WHERE co.AltCatalogNumber LIKE "%MAD" OR (co.AltCatalogNumber LIKE "v%" AND co.AltCatalogNumber LIKE "%WIS") '.
             'LIMIT ' . $limitBottom . ',' . $limit;
 		$rs = $this->conn->query($sql);
 		//echo $sql;
         while($r = $rs->fetch_object()){
 			$coreId = (int)$r->CollectionObjectID;
             $collectionObjectIDArr[$coreId] = null;
-            $collectionEventIDArr[(int)$r->CollectingEventID] = $coreId;
+            $collectionEventIDArr[(int)$r->CollectingEventID][] = $coreId;
             $occurrenceArr[$coreId]['occurrenceid'] = $r->GUID;
             $occurrenceArr[$coreId]['catalognumber'] = $r->AltCatalogNumber;
             $occurrenceArr[$coreId]['recordnumber'] = $r->FieldNumber;
@@ -79,7 +79,7 @@ class SpecifyManager {
                 //echo $colSql;
                 while($colR = $colRs->fetch_object()){
                     $id = (int)$colR->CollectingEventID;
-                    $objid = $collectionEventIDArr[$id];
+                    $objidarr = $collectionEventIDArr[$id];
                     $primary = (int)$colR->IsPrimary;
                     $collector = $colR->MiddleInitial;
                     if($colR->FirstName){
@@ -88,11 +88,13 @@ class SpecifyManager {
                     if($colR->LastName){
                         $collector = $colR->LastName . ($collector ? ', ' . $collector : '');
                     }
-                    if($primary === 1){
-                        $occurrenceArr[$objid]['recordedby'] = (isset($occurrenceArr[$objid]['recordedby']) ? $occurrenceArr[$objid]['recordedby'] . ', ' : '') . $collector;
-                    }
-                    else{
-                        $occurrenceArr[$objid]['associatedcollectors'] = (isset($occurrenceArr[$objid]['associatedcollectors']) ? $occurrenceArr[$objid]['associatedcollectors'] . ', ' : '') . $collector;
+                    foreach($objidarr as $oid){
+                        if($primary === 1){
+                            $occurrenceArr[$oid]['recordedby'] = (isset($occurrenceArr[$oid]['recordedby']) ? $occurrenceArr[$oid]['recordedby'] . ', ' : '') . $collector;
+                        }
+                        else{
+                            $occurrenceArr[$oid]['associatedcollectors'] = (isset($occurrenceArr[$oid]['associatedcollectors']) ? $occurrenceArr[$oid]['associatedcollectors'] . ', ' : '') . $collector;
+                        }
                     }
                 }
                 $colRs->close();
@@ -101,16 +103,19 @@ class SpecifyManager {
                 $colEvSql = 'SELECT ce.CollectingEventID, ce.LocalityID, ce.StartDate, ce.StartDateVerbatim, ce.VerbatimLocality, ce.Remarks '.
                     'FROM collectingevent AS ce '.
                     'WHERE ce.CollectingEventID IN('.$collectionEventIDStr.') ';
+                //echo $colEvSql;
                 $colEvRs = $this->conn->query($colEvSql);
                 while($colEvR = $colEvRs->fetch_object()){
                     $id = (int)$colEvR->CollectingEventID;
-                    $objid = $collectionEventIDArr[$id];
-                    $localityIDArr[(int)$colEvR->LocalityID] = $objid;
-                    $occurrenceArr[$objid]['eventdate'] = (($colEvR->StartDate && $colEvR->StartDate !== '')?$colEvR->StartDate:'0000-00-00');
-                    $occurrenceArr[$objid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
-                    $occurrenceArr[$objid]['habitat'] = $colEvR->VerbatimLocality;
-                    if($colEvR->Remarks && $colEvR->Remarks !== ''){
-                        $occurrenceArr[$objid]['habitat'] .= ' ' . $colEvR->Remarks;
+                    $objidarr = $collectionEventIDArr[$id];
+                    foreach($objidarr as $oid){
+                        $localityIDArr[(int)$colEvR->LocalityID][] = $oid;
+                        $occurrenceArr[$oid]['eventdate'] = (($colEvR->StartDate && $colEvR->StartDate !== '')?$colEvR->StartDate:'0000-00-00');
+                        $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
+                        $occurrenceArr[$oid]['habitat'] = $colEvR->VerbatimLocality;
+                        if($colEvR->Remarks && $colEvR->Remarks !== ''){
+                            $occurrenceArr[$oid]['habitat'] .= ' ' . $colEvR->Remarks;
+                        }
                     }
                 }
                 $colEvRs->close();
@@ -135,7 +140,7 @@ class SpecifyManager {
                 //echo $locSql;
                 while($locR = $locRs->fetch_object()){
                     $id = (int)$locR->LocalityID;
-                    $objid = $localityIDArr[$id];
+                    $objidarr = $localityIDArr[$id];
                     $sectionDetails = '';
                     if($locR->Drainage || $locR->TownshipDirection || $locR->RangeDirection || $locR->SectionPart || $locR->WaterBody){
                         $sectionDetails .= ($locR->Drainage?$locR->Drainage . '; ':'');
@@ -144,59 +149,61 @@ class SpecifyManager {
                         $sectionDetails .= ($locR->SectionPart?'sec' . $locR->SectionPart . ' ':'');
                         $sectionDetails .= ($locR->WaterBody ?: '');
                     }
-                    if($locR->NamedPlace && $locR->NamedPlace !== ''){
-                        $occurrenceArr[$objid]['locality'] = $locR->NamedPlace . '. ';
-                    }
-                    if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a'){
-                        $occurrenceArr[$objid]['locality'] = ($occurrenceArr[$objid]['locality'] ?? '') . $locR->LocalityName;
-                    }
-                    $occurrenceArr[$objid]['locationremarks'] = $locR->Remarks;
-                    $occurrenceArr[$objid]['trstownship'] = $locR->Township;
-                    $occurrenceArr[$objid]['trsrange'] = $locR->RangeDesc;
-                    $occurrenceArr[$objid]['trssection'] = $locR->Section;
-                    $occurrenceArr[$objid]['trssectiondetails'] = $sectionDetails;
-                    $occurrenceArr[$objid]['utmnorthing'] = $locR->UtmNorthing;
-                    $occurrenceArr[$objid]['utmeasting'] = $locR->UtmEasting;
-                    $occurrenceArr[$objid]['utmzoning'] = $locR->UtmDatum;
-                    $occurrenceArr[$objid]['geodeticdatum'] = $locR->Text3;
-                    $occurrenceArr[$objid]['minimumelevationinmeters'] = $locR->MinElevation;
-                    $occurrenceArr[$objid]['maximumelevationinmeters'] = $locR->MaxElevation;
-                    $occurrenceArr[$objid]['verbatimelevation'] = $locR->VerbatimElevation;
-                    if($locR->Lat1Text){
-                        $verbatimLat = $locR->Lat1Text . ($locR->Lat2Text ? ' - ' . $locR->Lat2Text : '');
-                        $verbatimLong = $locR->Long1Text . ($locR->Long2Text ? ' - ' . $locR->Long2Text : '');
-                        $occurrenceArr[$objid]['verbatimcoordinates'] = $verbatimLat . ', ' . $verbatimLong;
-                    }
-                    if(!$locR->Latitude2){
-                        $occurrenceArr[$objid]['decimallatitude'] = $locR->Latitude1;
-                        $occurrenceArr[$objid]['decimallongitude'] = $locR->Longitude1;
-                    }
-                    if((int)$locR->geo1RankId === 200){
-                        $occurrenceArr[$objid]['country'] = $locR->geo1Name;
-                    }
-                    if((int)$locR->geo2RankId === 200){
-                        $occurrenceArr[$objid]['country'] = $locR->geo2Name;
-                    }
-                    if((int)$locR->geo3RankId === 200){
-                        $occurrenceArr[$objid]['country'] = $locR->geo3Name;
-                    }
-                    if((int)$locR->geo1RankId === 300){
-                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo1Name;
-                    }
-                    if((int)$locR->geo2RankId === 300){
-                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo2Name;
-                    }
-                    if((int)$locR->geo3RankId === 300){
-                        $occurrenceArr[$objid]['stateprovince'] = $locR->geo3Name;
-                    }
-                    if((int)$locR->geo1RankId === 400){
-                        $occurrenceArr[$objid]['county'] = $locR->geo1Name;
-                    }
-                    if((int)$locR->geo2RankId === 400){
-                        $occurrenceArr[$objid]['county'] = $locR->geo2Name;
-                    }
-                    if((int)$locR->geo3RankId === 400){
-                        $occurrenceArr[$objid]['county'] = $locR->geo3Name;
+                    foreach($objidarr as $oid){
+                        if($locR->NamedPlace && $locR->NamedPlace !== ''){
+                            $occurrenceArr[$oid]['locality'] = $locR->NamedPlace . '. ';
+                        }
+                        if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a'){
+                            $occurrenceArr[$oid]['locality'] = ($occurrenceArr[$oid]['locality'] ?? '') . $locR->LocalityName;
+                        }
+                        $occurrenceArr[$oid]['locationremarks'] = $locR->Remarks;
+                        $occurrenceArr[$oid]['trstownship'] = $locR->Township;
+                        $occurrenceArr[$oid]['trsrange'] = $locR->RangeDesc;
+                        $occurrenceArr[$oid]['trssection'] = $locR->Section;
+                        $occurrenceArr[$oid]['trssectiondetails'] = $sectionDetails;
+                        $occurrenceArr[$oid]['utmnorthing'] = $locR->UtmNorthing;
+                        $occurrenceArr[$oid]['utmeasting'] = $locR->UtmEasting;
+                        $occurrenceArr[$oid]['utmzoning'] = $locR->UtmDatum;
+                        $occurrenceArr[$oid]['geodeticdatum'] = $locR->Text3;
+                        $occurrenceArr[$oid]['minimumelevationinmeters'] = $locR->MinElevation;
+                        $occurrenceArr[$oid]['maximumelevationinmeters'] = $locR->MaxElevation;
+                        $occurrenceArr[$oid]['verbatimelevation'] = $locR->VerbatimElevation;
+                        if($locR->Lat1Text){
+                            $verbatimLat = $locR->Lat1Text . ($locR->Lat2Text ? ' - ' . $locR->Lat2Text : '');
+                            $verbatimLong = $locR->Long1Text . ($locR->Long2Text ? ' - ' . $locR->Long2Text : '');
+                            $occurrenceArr[$oid]['verbatimcoordinates'] = $verbatimLat . ', ' . $verbatimLong;
+                        }
+                        if(!$locR->Latitude2){
+                            $occurrenceArr[$oid]['decimallatitude'] = $locR->Latitude1;
+                            $occurrenceArr[$oid]['decimallongitude'] = $locR->Longitude1;
+                        }
+                        if((int)$locR->geo1RankId === 200){
+                            $occurrenceArr[$oid]['country'] = $locR->geo1Name;
+                        }
+                        if((int)$locR->geo2RankId === 200){
+                            $occurrenceArr[$oid]['country'] = $locR->geo2Name;
+                        }
+                        if((int)$locR->geo3RankId === 200){
+                            $occurrenceArr[$oid]['country'] = $locR->geo3Name;
+                        }
+                        if((int)$locR->geo1RankId === 300){
+                            $occurrenceArr[$oid]['stateprovince'] = $locR->geo1Name;
+                        }
+                        if((int)$locR->geo2RankId === 300){
+                            $occurrenceArr[$oid]['stateprovince'] = $locR->geo2Name;
+                        }
+                        if((int)$locR->geo3RankId === 300){
+                            $occurrenceArr[$oid]['stateprovince'] = $locR->geo3Name;
+                        }
+                        if((int)$locR->geo1RankId === 400){
+                            $occurrenceArr[$oid]['county'] = $locR->geo1Name;
+                        }
+                        if((int)$locR->geo2RankId === 400){
+                            $occurrenceArr[$oid]['county'] = $locR->geo2Name;
+                        }
+                        if((int)$locR->geo3RankId === 400){
+                            $occurrenceArr[$oid]['county'] = $locR->geo3Name;
+                        }
                     }
                 }
                 $locRs->close();
@@ -212,28 +219,31 @@ class SpecifyManager {
                 while($geoCR = $geoCRs->fetch_object()){
                     if($id !== (int)$geoCR->LocalityID){
                         $id = (int)$geoCR->LocalityID;
-                        $objid = $localityIDArr[$id];
-                        $occurrenceArr[$objid]['coordinateuncertaintyinmeters'] = $geoCR->MaxUncertaintyEst;
-                        $occurrenceArr[$objid]['georeferenceprotocol'] = $geoCR->Protocol;
-                        $occurrenceArr[$objid]['georeferencesources'] = $geoCR->Source;
-                        $occurrenceArr[$objid]['georeferenceremarks'] = $geoCR->GeoRefRemarks;
+                        $objidarr = $localityIDArr[$id];
+                        foreach($objidarr as $oid){
+                            $occurrenceArr[$oid]['coordinateuncertaintyinmeters'] = $geoCR->MaxUncertaintyEst;
+                            $occurrenceArr[$oid]['georeferenceprotocol'] = $geoCR->Protocol;
+                            $occurrenceArr[$oid]['georeferencesources'] = $geoCR->Source;
+                            $occurrenceArr[$oid]['georeferenceremarks'] = $geoCR->GeoRefRemarks;
+                        }
                     }
                 }
                 $geoCRs->close();
             }
 
             echo '<li>Gathering Specify determinations...</li>';
-            $detSql = 'SELECT det.CollectionObjectID, det.DeterminationID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
+            $detSql = 'SELECT det.CollectionObjectID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
                 'det.SubSpQualifier, det.IsCurrent, tx.FullName, tx.Author, ag.LastName, ag.MiddleInitial, ag.FirstName '.
                 'FROM determination AS det LEFT JOIN taxon AS tx ON det.TaxonID = tx.TaxonID '.
                 'LEFT JOIN agent AS ag ON det.DeterminerID = ag.AgentID '.
                 'WHERE det.CollectionObjectID IN('.$collectionObjectIDStr.') '.
                 'ORDER BY det.CollectionObjectID, det.DeterminedDate ';
+            //echo $detSql;
             $detRs = $this->conn->query($detSql);
             while($detR = $detRs->fetch_object()){
                 $qualifier = '';
                 $id = (int)$detR->CollectionObjectID;
-                $detCoreId = $detR->DeterminationID;
+                $detDate = (($detR->DeterminedDate && trim($detR->DeterminedDate) !== '')?$detR->DeterminedDate:'N/A');
                 $isCurrent = (int)$detR->IsCurrent;
                 $determiner = $detR->MiddleInitial;
                 if($detR->FirstName){
@@ -241,6 +251,9 @@ class SpecifyManager {
                 }
                 if($detR->LastName){
                     $determiner = $detR->LastName . ($determiner ? ', ' . $determiner : '');
+                }
+                if(!$determiner || trim($determiner) === ''){
+                    $determiner = 'N/A';
                 }
                 if($detR->Qualifier){
                     $qualifier = $detR->Qualifier;
@@ -262,30 +275,37 @@ class SpecifyManager {
                     $occurrenceArr[$id]['identificationremarks'] = $detR->Remarks;
                     $occurrenceArr[$id]['identificationqualifier'] = $qualifier;
                 }
-                $determinationArr[$id][$detCoreId]['scientificname'] = $detR->FullName;
-                $determinationArr[$id][$detCoreId]['scientificnameauthorship'] = $detR->Author;
+                $determinationArr[$id][$detDate][$determiner]['scientificname'] = $detR->FullName;
+                $determinationArr[$id][$detDate][$determiner]['scientificnameauthorship'] = $detR->Author;
                 if($determiner){
-                    $determinationArr[$id][$detCoreId]['identifiedby'] = $determiner;
+                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $determiner;
                 }
                 elseif(isset($occurrenceArr[$id]['recordedby'])){
-                    $determinationArr[$id][$detCoreId]['identifiedby'] = $occurrenceArr[$id]['recordedby'];
+                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $occurrenceArr[$id]['recordedby'];
                 }
                 else{
-                    $determinationArr[$id][$detCoreId]['identifiedby'] = 'N/A';
+                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = 'N/A';
                 }
-                $determinationArr[$id][$detCoreId]['dateidentified'] = (($detR->Text2 && $detR->Text2 !== '')?$detR->Text2:'N/A');
-                $determinationArr[$id][$detCoreId]['dateidentifiedinterpreted'] = $detR->DeterminedDate;
-                $determinationArr[$id][$detCoreId]['identificationremarks'] = $detR->Remarks;
-                $determinationArr[$id][$detCoreId]['identificationqualifier'] = $qualifier;
-                $determinationArr[$id][$detCoreId]['identificationiscurrent'] = $isCurrent;
+                if($detR->Text2 && trim($detR->Text2) !== ''){
+                    $determinationArr[$id][$detDate][$determiner]['dateidentified'] = $detR->Text2;
+                }
+                else{
+                    $determinationArr[$id][$detDate][$determiner]['dateidentified'] = $detDate;
+                }
+                $determinationArr[$id][$detDate][$determiner]['dateidentifiedinterpreted'] = $detR->DeterminedDate;
+                $determinationArr[$id][$detDate][$determiner]['identificationremarks'] = $detR->Remarks;
+                $determinationArr[$id][$detDate][$determiner]['identificationqualifier'] = $qualifier;
+                $determinationArr[$id][$detDate][$determiner]['identificationiscurrent'] = $isCurrent;
             }
             $detRs->close();
+            //echo json_encode($determinationArr);
 
             echo '<li>Gathering Specify images...</li>';
             $imgSql = 'SELECT coa.CollectionObjectID, att.AttachmentID, att.AttachmentLocation, att.CopyrightHolder, att.License, att.Remarks, '.
                 'att.MimeType '.
                 'FROM collectionobjectattachment AS coa LEFT JOIN attachment AS att ON coa.AttachmentID = att.AttachmentID '.
                 'WHERE coa.CollectionObjectID IN('.$collectionObjectIDStr.') ';
+            //echo $imgSql;
             $imgRs = $this->conn->query($imgSql);
             while($imgR = $imgRs->fetch_object()){
                 $id = (int)$imgR->CollectionObjectID;
@@ -301,7 +321,7 @@ class SpecifyManager {
             echo '<li>Inserting occurrences...</li>';
             $occinsertsqlprefix = 'INSERT INTO omoccurrences(collid,dbpk,basisOfRecord,occurrenceID,catalogNumber,sciname,scientificNameAuthorship,'.
                 'identifiedBy,dateIdentified,identificationRemarks,identificationQualifier,typeStatus,recordedBy,recordNumber,associatedCollectors,'.
-                'eventDate,verbatimEventDate,habitat,occurrenceRemarks,waterBody,country,stateProvince,county,locality,decimalLatitude,'.
+                'eventDate,verbatimEventDate,habitat,occurrenceRemarks,country,stateProvince,county,locality,decimalLatitude,'.
                 'decimalLongitude,geodeticDatum,coordinateUncertaintyInMeters,locationRemarks,verbatimCoordinates,georeferenceProtocol,'.
                 'georeferenceSources,georeferenceRemarks,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
                 'VALUES ';
@@ -346,12 +366,15 @@ class SpecifyManager {
                 $rep++;
                 if($rep === 1000){
                     $occinsertsql = substr($occinsertsql, 0, -1);
-                    $this->conn->query($occinsertsqlprefix . $occinsertsql);
+                    if(!$this->conn->query($occinsertsqlprefix . $occinsertsql)){
+                        echo '<li>occ insert FAILED...SQL: '.$occinsertsqlprefix . $occinsertsql.'</li>';
+                    }
                     $rep = 0;
                     $occinsertsql = '';
                 }
             }
             $occinsertsql = substr($occinsertsql, 0, -1);
+            //echo $occinsertsqlprefix . $occinsertsql;
             if(!$occinsertsql || $this->conn->query($occinsertsqlprefix . $occinsertsql)){
                 $occSql = 'SELECT occid, dbpk FROM omoccurrences WHERE dbpk IN('.$collectionObjectIDStr.') ';
                 $occRs = $this->conn->query($occSql);
@@ -371,28 +394,34 @@ class SpecifyManager {
                     $rep = 0;
                     foreach($determinationArr as $oid => $detarr){
                         $occ = $collectionObjectIDArr[$oid];
-                        foreach($detarr as $did => $darr){
-                            $detinsertsql .= '('.$occ.','.
-                                (isset($darr['identifiedby'])?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
-                                (isset($darr['dateidentified'])?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
-                                (isset($darr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
-                                (isset($darr['scientificname'])?'"'.$this->conn->real_escape_string($darr['scientificname']).'"':'NULL').','.
-                                (isset($darr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($darr['scientificnameauthorship']).'"':'NULL').','.
-                                (isset($darr['identificationqualifier'])?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
-                                (isset($darr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
-                                (isset($darr['identificationremarks'])?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
-                                '),';
-                            $rep++;
-                            if($rep === 1000){
-                                $detinsertsql = substr($detinsertsql, 0, -1);
-                                $this->conn->query($detinsertsqlprefix . $detinsertsql);
-                                $rep = 0;
-                                $detinsertsql = '';
+                        foreach($detarr as $detdate){
+                            foreach($detdate as $determiner => $darr){
+                                $detinsertsql .= '('.$occ.','.
+                                    (isset($darr['identifiedby'])?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
+                                    (isset($darr['dateidentified'])?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
+                                    (isset($darr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
+                                    (isset($darr['scientificname'])?'"'.$this->conn->real_escape_string($darr['scientificname']).'"':'NULL').','.
+                                    (isset($darr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($darr['scientificnameauthorship']).'"':'NULL').','.
+                                    (isset($darr['identificationqualifier'])?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
+                                    (isset($darr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
+                                    (isset($darr['identificationremarks'])?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
+                                    '),';
+                                $rep++;
+                                if($rep === 1000){
+                                    $detinsertsql = substr($detinsertsql, 0, -1);
+                                    if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
+                                        echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
+                                    }
+                                    $rep = 0;
+                                    $detinsertsql = '';
+                                }
                             }
                         }
                     }
                     $detinsertsql = substr($detinsertsql, 0, -1);
-                    $this->conn->query($detinsertsqlprefix . $detinsertsql);
+                    if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
+                        echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
+                    }
                 }
 
                 if($imageArr){
@@ -423,6 +452,9 @@ class SpecifyManager {
                     $imginsertsql = substr($imginsertsql, 0, -1);
                     $this->conn->query($imginsertsqlprefix . $imginsertsql);
                 }
+            }
+            else{
+                echo '<li>occ insert FAILED...SQL: '.$occinsertsqlprefix . $occinsertsql.'</li>';
             }
         }
 

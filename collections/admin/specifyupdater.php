@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/SpecifyManager.php');
 header("Content-Type: text/html; charset=".$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 6000);
 
-$limit = 10000;
+$limit = 5000;
 $index = array_key_exists("index",$_POST)?$_POST["index"]:1;
 $specifyTotal = array_key_exists("specifytotal",$_POST)?$_POST["specifytotal"]:0;
 $action = array_key_exists("action",$_POST)?$_POST["action"]:0;
@@ -17,7 +17,6 @@ $toValue = $index * $limit;
 if(!$specifyTotal){
     $specifyTotal = $uploadManager->getSpecifyTotal();
 }
-
 ?>
 <html>
 	<head>
@@ -30,7 +29,7 @@ if(!$specifyTotal){
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
         <script type="text/javascript">
             <?php
-                if($action === 'Upload' && $fromValue < $specifyTotal){
+                if($action === 'Upload' && (($index - 1) * $limit) < $specifyTotal){
                     ?>
                     $(document).ready(function() {
                         submitForm();
@@ -63,7 +62,7 @@ if(!$specifyTotal){
                         <legend style="font-weight:bold;font-size:120%;">Uploader</legend>
                         <div style= "margin-top:10px;">
                             <?php
-                            if($toValue < $specifyTotal){
+                            if((($index - 1) * $limit) < $specifyTotal){
                                 echo 'Upload records ' . $fromValue . ' to ' . $toValue . ' of ' . $specifyTotal . ' total.';
                             }
                             else{
@@ -72,10 +71,10 @@ if(!$specifyTotal){
                             ?>
                         </div>
                         <?php
-                        if($toValue < $specifyTotal){
+                        if((($index - 1) * $limit) < $specifyTotal){
                             ?>
                             <div style="margin:10px;">
-                                <input type="hidden" name="index" value="<?php echo $index + 1; ?>" />
+                                <input type="hidden" name="index" value="<?php echo ($index === 1?$index:$index + 1); ?>" />
                                 <input type="hidden" name="specifytotal" value="<?php echo $specifyTotal; ?>" />
                                 <input type="hidden" name="action" value="Upload" />
                                 <input type="submit" />
