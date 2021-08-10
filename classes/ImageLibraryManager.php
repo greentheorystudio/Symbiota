@@ -327,13 +327,10 @@ class ImageLibraryManager{
         $this->searchTermsArr['db'] = '';
         if(array_key_exists('db',$_REQUEST)){
             $dbs = $_REQUEST['db'];
-            if(is_string($dbs)){
-                $dbStr = $dbs.';';
-            }
-            else{
+            if(is_array($dbs)){
                 $dbStr = $this->cleanInStr(implode(',',array_unique($dbs))).';';
             }
-            if(strpos($dbStr,'allspec') !== false){
+            elseif(strpos($dbStr,'allspec') !== false){
                 $dbStr = 'allspec';
             }
             elseif(strpos($dbStr,'allobs') !== false){
