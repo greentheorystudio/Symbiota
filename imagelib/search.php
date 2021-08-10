@@ -28,7 +28,7 @@ if($action && $action === 'Load Images') {
         $imgLibManager->setSearchTermsArr($stArr);
     }
     else{
-        $imgLibManager->readRequestVariables();
+        //$imgLibManager->readRequestVariables();
         $stArr = $imgLibManager->getSearchTermsArr();
     }
     $imgLibManager->setSqlWhere();
@@ -161,7 +161,7 @@ if($action && $action === 'Load Images') {
                 <?php
             }
             ?>
-			
+
 			<?php
 			if($stArr){
 				if(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] !== '3'){
