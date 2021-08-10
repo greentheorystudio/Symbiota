@@ -208,7 +208,7 @@ $duManager->loadFieldMap();
     <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/shared.js" type="text/javascript"></script>
+	<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
 	<script>
 
 		function verifyFileUploadForm(f){

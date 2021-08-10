@@ -43,7 +43,7 @@ elseif($action == 'addAllToDataset'){
     <script src="../../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
     <script type="text/javascript">
         function validateAddForm(f){
             if(f.adduser.value === ""){

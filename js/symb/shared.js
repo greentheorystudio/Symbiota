@@ -26,8 +26,8 @@ function toggle(target){
 
 function openIndividualPopup(clientRoot, occid,clid){
 	let wWidth = 900;
-	if(document.getElementById('maintable')){
-        wWidth = document.getElementById('maintable').offsetWidth*1.05;
+	if(document.getElementById('innertext')){
+        wWidth = document.getElementById('innertext').offsetWidth*1.05;
     }
     else if(document.body.offsetWidth){
         wWidth = document.body.offsetWidth*0.9;
@@ -44,8 +44,8 @@ function openIndividualPopup(clientRoot, occid,clid){
 
 function openPopup(url){
 	let wWidth = 900;
-	if(document.getElementById('maintable')){
-        wWidth = document.getElementById('maintable').offsetWidth*1.05;
+	if(document.getElementById('innertext')){
+        wWidth = document.getElementById('innertext').offsetWidth*1.05;
     }
     else if(document.body.offsetWidth){
         wWidth = document.body.offsetWidth*0.9;
