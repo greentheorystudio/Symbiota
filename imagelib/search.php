@@ -52,7 +52,7 @@ if($action && $action === 'Load Images') {
         $imgLibManager->setSearchTermsArr($stArr);
     }
     else{
-        $imgLibManager->readRequestVariables();
+        //$imgLibManager->readRequestVariables();
         $stArr = $imgLibManager->getSearchTermsArr();
     }
     $imgLibManager->setSqlWhere();
@@ -76,7 +76,7 @@ if($action && $action === 'Load Images') {
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script src="../js/symb/images.index.js?ver=20170711" type="text/javascript"></script>
+	<script src="../js/symb/images.index.js?ver=20210621" type="text/javascript"></script>
 	<meta name='keywords' content='' />
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
@@ -90,7 +90,7 @@ if($action && $action === 'Load Images') {
 					$(ui.panel).html("<p>Loading...</p>");
 				}
 			});
-			
+
 			$('#photographer').manifest({
 				required: true,
 				marcoPolo: {
@@ -103,7 +103,7 @@ if($action && $action === 'Load Images') {
 					}
 				}
 			});
-			
+
 			<?php
 			if($stArr){
 				if(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] !== '3'){
@@ -154,11 +154,11 @@ if($action && $action === 'Load Images') {
 				<?php
 			}
 			?>
-			
+
 			$('#photographer').on('marcopoloselect', function (event, data) {
 				phArr.push({name:data.name,id:data.id});
 			});
-			
+
 			$('#photographer').on('manifestremove',function (event, data){
 				for (let i = 0; i < phArr.length; i++) {
 					if(phArr[i].name === data){
@@ -167,13 +167,13 @@ if($action && $action === 'Load Images') {
 				}
 			});
 			<?php
-			
+
 			if($view === 'thumbnail' && !$imageArr){
 				echo "alert('There were no images matching your search critera');";
 			}
 			?>
 		});
-		
+
 		const starr = JSON.stringify(<?php echo $jsonStArr; ?>);
 		const view = '<?php echo $view; ?>';
         let selectedFamily = '';

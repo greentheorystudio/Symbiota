@@ -1390,7 +1390,7 @@ class SpecUploadBase extends SpecUpload{
         if(!$this->transferCount) {
             $this->setTransferCount();
         }
-        return $this->transferCount;
+        return (int)$this->transferCount;
     }
 
     private function setTransferCount(): void

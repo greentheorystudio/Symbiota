@@ -251,7 +251,7 @@ if($traitID){
 			}
         </script>
 		<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=151229" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php

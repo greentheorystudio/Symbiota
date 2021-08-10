@@ -132,7 +132,7 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
     <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210420"></script>
     <script type="text/javascript">
         let stArr = {};

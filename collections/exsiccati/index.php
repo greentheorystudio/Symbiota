@@ -76,7 +76,7 @@ if($formSubmit === 'dlexsiccati'){
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=130926"></script>
+	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){
 			toggle('exseditdiv');
@@ -206,8 +206,8 @@ if($formSubmit === 'dlexsiccati'){
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('maintable').offsetWidth){
-				wWidth = document.getElementById('maintable').offsetWidth*1.05;
+            if(document.getElementById('innertext').offsetWidth){
+				wWidth = document.getElementById('innertext').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
