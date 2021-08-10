@@ -190,9 +190,9 @@ function processCollectionParamChange(f){
 }
 
 function processTaxaParamChange(){
-    let taxaval = document.getElementById("taxa").value.trim();
-    const taxontype = document.getElementById("taxontype").value;
-    const thes = !!document.getElementById("thes").checked;
+    let taxaval = document.getElementById("taxa")?document.getElementById("taxa").value.trim():null;
+    const taxontype = document.getElementById("taxontype")?document.getElementById("taxontype").value:null;
+    const thes = document.getElementById("thes")?!!document.getElementById("thes").checked:null;
     taxaval = taxaval.replaceAll(",", ";");
     if(taxaval){
         setSearchTermsArrKeyValue('usethes',thes);
@@ -207,22 +207,23 @@ function processTaxaParamChange(){
 }
 
 function processTextParamChange(){
-    let countryval = document.getElementById("country").value.trim();
-    let stateval = document.getElementById("state").value.trim();
-    let countyval = document.getElementById("county").value.trim();
-    let localityval = document.getElementById("locality").value.trim();
-    let elevlowval = document.getElementById("elevlow").value.trim();
-    let elevhighval = document.getElementById("elevhigh").value.trim();
-    let collectorval = document.getElementById("collector").value.trim();
-    let collnumval = document.getElementById("collnum").value.trim();
-    let colldate1 = document.getElementById("eventdate1").value.trim();
-    let colldate2 = document.getElementById("eventdate2").value.trim();
-    let occurrenceremarksval = document.getElementById("occurrenceRemarks").value.trim();
-    let catnumval = document.getElementById("catnum").value.trim();
-    let othercatnumval = document.getElementById("othercatnum").checked;
-    const typestatus = document.getElementById("typestatus").checked;
-    const hasimages = document.getElementById("hasimages").checked;
-    const hasgenetic = document.getElementById("hasgenetic").checked;
+    let countryval = document.getElementById("country")?document.getElementById("country").value.trim():null;
+    let stateval = document.getElementById("state")?document.getElementById("state").value.trim():null;
+    let countyval = document.getElementById("county")?document.getElementById("county").value.trim():null;
+    let localityval = document.getElementById("locality")?document.getElementById("locality").value.trim():null;
+    let elevlowval = document.getElementById("elevlow")?document.getElementById("elevlow").value.trim():null;
+    let elevhighval = document.getElementById("elevhigh")?document.getElementById("elevhigh").value.trim():null;
+    let collectorval = document.getElementById("collector")?document.getElementById("collector").value.trim():null;
+    let collnumval = document.getElementById("collnum")?document.getElementById("collnum").value.trim():null;
+    let colldate1 = document.getElementById("eventdate1")?document.getElementById("eventdate1").value.trim():null;
+    let colldate2 = document.getElementById("eventdate2")?document.getElementById("eventdate2").value.trim():null;
+    let occurrenceremarksval = document.getElementById("occurrenceRemarks")?document.getElementById("occurrenceRemarks").value.trim():null;
+    let catnumval = document.getElementById("catnum")?document.getElementById("catnum").value.trim():null;
+    let othercatnumval = document.getElementById("othercatnum")?document.getElementById("othercatnum").checked:null;
+    const typestatus = document.getElementById("typestatus")?document.getElementById("typestatus").checked:null;
+    const hasimages = document.getElementById("hasimages")?document.getElementById("hasimages").checked:null;
+    const hasgenetic = document.getElementById("hasgenetic")?document.getElementById("hasgenetic").checked:null;
+    let imagedisplayval = document.getElementById("imagedisplay")?document.getElementById("imagedisplay").value:null;
 
     if(countryval){
         countryval = countryval.replaceAll(",", ";");
@@ -346,6 +347,12 @@ function processTextParamChange(){
     }
     else{
         clearSearchTermsArrKey('hasgenetic');
+    }
+    if(imagedisplayval){
+        setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    }
+    else{
+        clearSearchTermsArrKey('imagedisplay');
     }
 }
 
