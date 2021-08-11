@@ -68,7 +68,6 @@
       "chmod -R 777 ./temp/images",
       "chmod -R 777 ./temp/ootd",
       "chmod -R 777 ./temp/report",
-      "chmod -R 777 ./temp/slideshow",
       "chmod -R 777 ./temp/symbocr",
       "chmod -R 777 ./webservices/dwc/rss.xml"
     ],
