@@ -232,7 +232,7 @@ class SpecifyManager {
             }
 
             echo '<li>Gathering Specify determinations...</li>';
-            $detSql = 'SELECT det.CollectionObjectID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
+            $detSql = 'SELECT DISTINCT det.CollectionObjectID, det.DeterminedDate, det.Remarks, det.Qualifier, det.TypeStatusName, det.VarQualifer, det.Text2, '.
                 'det.SubSpQualifier, det.IsCurrent, tx.FullName, tx.Author, ag.LastName, ag.MiddleInitial, ag.FirstName '.
                 'FROM determination AS det LEFT JOIN taxon AS tx ON det.TaxonID = tx.TaxonID '.
                 'LEFT JOIN agent AS ag ON det.DeterminerID = ag.AgentID '.
@@ -271,7 +271,7 @@ class SpecifyManager {
                     $occurrenceArr[$id]['scientificname'] = $detR->FullName;
                     $occurrenceArr[$id]['scientificnameauthorship'] = $detR->Author;
                     $occurrenceArr[$id]['identifiedby'] = $determiner;
-                    $occurrenceArr[$id]['dateidentified'] = $detR->DeterminedDate;
+                    $occurrenceArr[$id]['dateidentified'] = $detDate;
                     $occurrenceArr[$id]['identificationremarks'] = $detR->Remarks;
                     $occurrenceArr[$id]['identificationqualifier'] = $qualifier;
                 }
@@ -301,7 +301,7 @@ class SpecifyManager {
             //echo json_encode($determinationArr);
 
             echo '<li>Gathering Specify images...</li>';
-            $imgSql = 'SELECT coa.CollectionObjectID, att.AttachmentID, att.AttachmentLocation, att.CopyrightHolder, att.License, att.Remarks, '.
+            $imgSql = 'SELECT DISTINCT coa.CollectionObjectID, att.AttachmentID, att.AttachmentLocation, att.CopyrightHolder, att.License, att.Remarks, '.
                 'att.MimeType '.
                 'FROM collectionobjectattachment AS coa LEFT JOIN attachment AS att ON coa.AttachmentID = att.AttachmentID '.
                 'WHERE coa.CollectionObjectID IN('.$collectionObjectIDStr.') ';
@@ -390,13 +390,11 @@ class SpecifyManager {
                     $detinsertsqlprefix = 'INSERT INTO omoccurdeterminations(occid,identifiedBy,dateIdentified,dateIdentifiedInterpreted,'.
                         'sciname,scientificNameAuthorship,identificationQualifier,iscurrent,identificationRemarks) '.
                         'VALUES ';
-                    $detinsertsql = '';
-                    $rep = 0;
                     foreach($determinationArr as $oid => $detarr){
                         $occ = $collectionObjectIDArr[$oid];
                         foreach($detarr as $detdate){
                             foreach($detdate as $determiner => $darr){
-                                $detinsertsql .= '('.$occ.','.
+                                $detinsertsql = '('.$occ.','.
                                     (isset($darr['identifiedby'])?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
                                     (isset($darr['dateidentified'])?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
                                     (isset($darr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
@@ -405,22 +403,12 @@ class SpecifyManager {
                                     (isset($darr['identificationqualifier'])?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
                                     (isset($darr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
                                     (isset($darr['identificationremarks'])?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
-                                    '),';
-                                $rep++;
-                                if($rep === 1000){
-                                    $detinsertsql = substr($detinsertsql, 0, -1);
-                                    if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
-                                        echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
-                                    }
-                                    $rep = 0;
-                                    $detinsertsql = '';
+                                    ')';
+                                if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
+                                    echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
                                 }
                             }
                         }
-                    }
-                    $detinsertsql = substr($detinsertsql, 0, -1);
-                    if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
-                        echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
                     }
                 }
 
