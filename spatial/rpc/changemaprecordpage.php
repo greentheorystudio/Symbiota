@@ -97,7 +97,7 @@ if($occArr){
 	$recordListHtml .= '<form name="selectform" id="selectform" action="" method="post" onsubmit="" target="_blank">';
 	$recordListHtml .= '<div style="margin-bottom:5px;clear:both;">';
 	$recordListHtml .= '<input name="" id="selectallcheck" value="" type="checkbox" onclick="selectAll(this);" '.($allSelected === true? 'checked' : '').' />';
-	$recordListHtml .= 'Select/Deselect all Records';
+	$recordListHtml .= 'Select/Deselect All Records';
 	$recordListHtml .= '</div>';
 	$recordListHtml .= '<table class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;">';
 	$recordListHtml .= '<tr>';
