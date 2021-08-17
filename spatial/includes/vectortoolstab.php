@@ -30,7 +30,7 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the area overlapping of two selected polygons, boxes, or circles.
+            <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the overlapping area of two selected polygons, boxes, or circles.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
