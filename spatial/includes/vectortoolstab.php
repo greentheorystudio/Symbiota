@@ -22,7 +22,7 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
+            <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates a buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
@@ -34,7 +34,7 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons or circles. *Note new polygon will replace all selected shapes.
+            <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons or circles. *Note the new polygon will replace all selected shapes.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
     </div>
