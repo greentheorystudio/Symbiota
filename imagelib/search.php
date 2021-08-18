@@ -5,10 +5,9 @@ include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
-$target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';
+$target = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
 $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
-$view = array_key_exists('imagedisplay',$_REQUEST)?$_REQUEST['imagedisplay']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
 
@@ -40,8 +39,8 @@ $taxaList = array();
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script src="../js/symb/images.index.js?ver=20210809" type="text/javascript"></script>
-    <script src="../js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
+	<script src="../js/symb/images.index.js?ver=20210810" type="text/javascript"></script>
+    <script src="../js/symb/search.term.manager.js?ver=20210810" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();
@@ -175,8 +174,8 @@ $taxaList = array();
 
         function processParamsForm(){
             const f = document.getElementById('imagesearchform');
-            const searchTermsArr = getSearchTermsArr();
-            if(!validateSearchTermsArr(searchTermsArr)){
+            stArr = getSearchTermsArr();
+            if(!validateSearchTermsArr(stArr)){
                 alert('Please enter search criteria.');
                 return false;
             }
@@ -214,11 +213,14 @@ $taxaList = array();
                         }
                     }
                 }
-                changeImagePage("",searchTermsArr['imagedisplay'],1);
+                changeImagePage("",stArr['imagedisplay'],1);
             }
         }
 		
 		function changeImagePage(taxon,view,page){
+            if(!view){
+                view = document.getElementById('imagedisplay').value;
+            }
             document.getElementById("imagebox").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
             const http = new XMLHttpRequest();
             const url = "rpc/changeimagepage.php";
@@ -233,12 +235,14 @@ $taxaList = array();
                         http.responseText = "<p>An error occurred retrieving records.</p>";
                     }
                     document.getElementById("imagebox").innerHTML = http.responseText;
-                    if(view === 'thumb'){
-                        document.getElementById("imagetab").innerHTML = 'Images';
+                    if(view === 'thumbnail'){
+                        document.getElementById("imagetabtext").innerHTML = 'Images';
                     }
                     else{
-                        document.getElementById("imagetab").innerHTML = 'Taxa List';
+                        document.getElementById("imagetabtext").innerHTML = 'Taxa List';
                     }
+                    document.getElementById('imagetab').style.display = "block";
+                    $('#tabs').tabs({ active: 2 });
                 }
             };
             http.send(params);
@@ -256,12 +260,12 @@ $taxaList = array();
             if(stArr['taxa']){
                 document.getElementById('taxa').value = stArr['taxa'];
                 const qtaxaArr = document.getElementById('taxa').value.split(";");
-                if(Nuber(document.getElementById("taxontype").value) === 2){
+                if(Nuber(document.getElementById("taxontype").value) === 1){
                     for(let i = 0; i < qtaxaArr.length; i++){
-                        $('#taxainput).manifest('add',qtaxaArr[i]);
+                        $('#taxainput').manifest('add',qtaxaArr[i]);
                     }
                 }
-                if(Nuber(document.getElementById("taxontype").value) === 3){
+                if(Nuber(document.getElementById("taxontype").value) === 5){
                     for(let i = 0; i < qtaxaArr.length; i++){
                         $('#commoninput').manifest('add',qtaxaArr[i]);
                     }
@@ -308,13 +312,13 @@ $taxaList = array();
 
         function processTaxonTypeChange(){
             const taxonType = Number(document.getElementById('taxontype').value);
-            if(taxonType === 2){
+            if(taxonType === 1){
                 clearCommonNameVals();
                 document.getElementById('thesdiv').style.display = "block";
                 document.getElementById('commonbox').style.display = "none";
                 document.getElementById('taxabox').style.display = "block";
             }
-            if(taxonType === 3){
+            if(taxonType === 5){
                 clearSciNameVals();
                 document.getElementById('commonbox').style.display = "block";
                 document.getElementById('taxabox').style.display = "none";
@@ -393,8 +397,8 @@ $taxaList = array();
 					<div style="clear:both;">
 						<div style="float:left;">
 							<select id="taxontype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
-								<option id='sciname' value='2'>Scientific Name</option>
-								<option id='commonname' value='3'>Common Name</option>
+								<option id='sciname' value='1'>Family or Scientific Name</option>
+								<option id='commonname' value='5'>Common Name</option>
 							</select>
 						</div>
 						<div id="taxabox" style="float:left;margin-bottom:10px;display:block;">
@@ -473,7 +477,7 @@ $taxaList = array();
 									<p><b>Limit Image Type:</b></p>
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();"> All Images
+									<input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();" checked> All Images
 								</div>
 								<div style="margin-top:5px;">
 									<input type='radio' id='imagetypespecimenonly' value='specimenonly' onchange="processTextParamChange();"> Occurrence Images
@@ -509,14 +513,14 @@ $taxaList = array();
 							<?php 
 							if($specArr){
 								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
-                                $collManager->outputFullCollArr($specArr);
+                                $collManager->outputFullCollArr($specArr,false);
 							}
 							if($specArr && $obsArr) {
                                 echo '<hr style="clear:both;margin:20px 0;"/>';
                             }
 							if($obsArr){
 								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
-                                $collManager->outputFullCollArr($obsArr);
+                                $collManager->outputFullCollArr($obsArr,false);
 							}
 							?>
 							<div style="clear:both;"></div>

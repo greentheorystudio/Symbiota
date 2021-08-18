@@ -60,13 +60,13 @@ class OccurrenceManager{
         $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' ';
         $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($mapWhere).$mapWhere;
         if(!$this->conn->query($sql)){
-            $this->errorMessage = 'ERROR adding records to dataset(#'.$datasetID.'): '.$this->conn->error;
+            //$this->errorMessage = 'ERROR adding records to dataset(#'.$datasetID.'): '.$this->conn->error;
             return false;
         }
         return true;
     }
 
-    public function getSqlWhere(): string
+    public function getSqlWhere($image = null): string
     {
         $sqlWhere = '';
         $retStr = '';
@@ -76,10 +76,8 @@ class OccurrenceManager{
         if(array_key_exists('dsid',$this->searchTermsArr) && $this->searchTermsArr['dsid']){
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurdatasetlink WHERE datasetid = ' .$this->searchTermsArr['dsid']. ')) ';
         }
-        if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
-            if($this->searchTermsArr['db'] !== 'all'){
-                $sqlWhere .= 'AND (o.collid IN(' .$this->cleanInStr($this->searchTermsArr['db']). ')) ';
-            }
+        if(array_key_exists('db', $this->searchTermsArr) && $this->searchTermsArr['db'] && $this->searchTermsArr['db'] !== 'all') {
+            $sqlWhere .= 'AND (o.collid IN(' .$this->cleanInStr($this->searchTermsArr['db']). ')) ';
         }
         if(array_key_exists('taxa',$this->searchTermsArr) && $this->searchTermsArr['taxa']){
             $sqlWhereTaxa = '';
@@ -93,7 +91,7 @@ class OccurrenceManager{
             if($this->taxaSearchType === 5){
                 $this->setSciNamesByVerns();
             }
-            else if($useThes){
+            elseif($useThes){
                 $this->setSynonyms();
             }
 
@@ -113,7 +111,7 @@ class OccurrenceManager{
                         if(array_key_exists('tid',$valueArray)){
                             $tidArr = $valueArray['tid'];
                             $sql = 'SELECT DISTINCT t.sciname '.
-                                'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
+                                'FROM taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
                                 'WHERE t.rankid = 140 AND e.taxauthid = 1 AND e.parenttid IN('.implode(',',$tidArr).')';
                             $rs = $this->conn->query($sql);
                             while($r = $rs->fetch_object()){
@@ -126,7 +124,7 @@ class OccurrenceManager{
                         }
                         if(array_key_exists('scinames',$valueArray)){
                             foreach($valueArray['scinames'] as $sciName){
-                                $sqlWhereTaxa .= "OR (o.sciname Like '".$this->cleanInStr($sciName)."%') ";
+                                $sqlWhereTaxa .= "OR (o.sciname LIKE '".$this->cleanInStr($sciName)."%') ";
                             }
                         }
                     }
@@ -151,6 +149,53 @@ class OccurrenceManager{
                             $sqlWhereTaxa .= 'OR (o.tidinterpreted IN('.implode(',',array_keys($synArr)).')) ';
                         }
                     }
+                    if($image){
+                        if($this->taxaSearchType === 1){
+                            $rs1 = $this->conn->query("SELECT tid, rankid FROM taxa WHERE (sciname = '".$key."')");
+                            if(($r1 = $rs1->fetch_object()) && $r1->rankid < 180) {
+                                $sqlWhereTaxa = 'OR (i.tid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid IN('.$r1->tid.'))) ';
+                            }
+                            if(!$sqlWhereTaxa){
+                                $sqlWhereTaxa = "OR (t.sciname LIKE '".$key."%') ";
+                                if(array_key_exists('synonyms',$valueArray)){
+                                    $synArr = $valueArray['synonyms'];
+                                    if($synArr){
+                                        foreach($synArr as $synTid => $sciName){
+                                            if(strpos($sciName,'aceae') || strpos($sciName,'idae')){
+                                                $sqlWhereTaxa .= "OR (o.family = '".$sciName."') ";
+                                            }
+                                        }
+                                        $sqlWhereTaxa .= 'OR (i.tid IN('.implode(',',array_keys($synArr)).')) ';
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            $famArr = array();
+                            if(array_key_exists('families',$valueArray)){
+                                $famArr = $valueArray['families'];
+                            }
+                            if(array_key_exists('tid',$valueArray)){
+                                $tidArr = $valueArray['tid'];
+                                $sql = 'SELECT DISTINCT t.sciname '.
+                                    'FROM taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+                                    'WHERE t.rankid = 140 AND e.taxauthid = 1 AND e.parenttid IN('.implode(',',$tidArr).')';
+                                $rs = $this->conn->query($sql);
+                                while($r = $rs->fetch_object()){
+                                    $famArr[] = $r->family;
+                                }
+                            }
+                            if($famArr){
+                                $famArr = array_unique($famArr);
+                                $sqlWhereTaxa .= 'OR (o.family IN("'.implode('","',$famArr).'")) ';
+                            }
+                            if(array_key_exists('scinames',$valueArray)){
+                                foreach($valueArray['scinames'] as $sciName){
+                                    $sqlWhereTaxa .= "OR (t.sciname LIKE '".$sciName."%') ";
+                                }
+                            }
+                        }
+                    }
                 }
             }
             $sqlWhere .= 'AND (' .substr($sqlWhereTaxa,3). ') ';
@@ -163,7 +208,7 @@ class OccurrenceManager{
                 foreach($countryArr as $k => $value){
                     if($value === 'NULL'){
                         $countryArr[$k] = 'Country IS NULL';
-                        $tempArr[] = '(o.Country IS NULL)';
+                        $tempArr[] = '(ISNULL(o.Country))';
                     }
                     else{
                         $tempArr[] = '(o.Country = "'.$this->cleanInStr($value).'")';
@@ -180,7 +225,7 @@ class OccurrenceManager{
                 $tempArr = array();
                 foreach($stateAr as $k => $value){
                     if($value === 'NULL'){
-                        $tempArr[] = '(o.StateProvince IS NULL)';
+                        $tempArr[] = '(ISNULL(o.StateProvince))';
                         $stateAr[$k] = 'State IS NULL';
                     }
                     else{
@@ -198,7 +243,7 @@ class OccurrenceManager{
                 $tempArr = array();
                 foreach($countyArr as $k => $value){
                     if($value === 'NULL'){
-                        $tempArr[] = '(o.county IS NULL)';
+                        $tempArr[] = '(ISNULL(o.county))';
                         $countyArr[$k] = 'County IS NULL';
                     }
                     else{
@@ -218,7 +263,7 @@ class OccurrenceManager{
                 foreach($localArr as $k => $value){
                     $value = trim($value);
                     if($value === 'NULL'){
-                        $tempArr[] = '(o.locality IS NULL)';
+                        $tempArr[] = '(ISNULL(o.locality))';
                         $localArr[$k] = 'Locality IS NULL';
                     }
                     else{
@@ -236,7 +281,7 @@ class OccurrenceManager{
             if (array_key_exists('elevhigh',$this->searchTermsArr))  { $elevhigh = $this->searchTermsArr['elevhigh']; }
             $sqlWhere .= 'AND ( ' .
                 '	  ( minimumElevationInMeters >= ' .$elevlow. ' AND maximumElevationInMeters <= ' .$elevhigh. ' ) OR ' .
-                '	  ( maximumElevationInMeters is null AND minimumElevationInMeters >= ' .$elevlow. ' AND minimumElevationInMeters <= ' .$elevhigh. ' ) ' .
+                '	  ( ISNULL(maximumElevationInMeters) AND minimumElevationInMeters >= ' .$elevlow. ' AND minimumElevationInMeters <= ' .$elevhigh. ' ) ' .
                 '	) ';
         }
         if(array_key_exists('assochost',$this->searchTermsArr) && $this->searchTermsArr['assochost']){
@@ -245,11 +290,7 @@ class OccurrenceManager{
             if($hostAr){
                 $tempArr = array();
                 foreach($hostAr as $k => $value){
-                    if($value === 'NULL'){
-                        $tempArr[] = '(o.StateProvince IS NULL)';
-                        $hostAr[$k] = 'Host IS NULL';
-                    }
-                    else{
+                    if($value !== 'NULL'){
                         $tempArr[] = '(oas.relationship = "host" AND oas.verbatimsciname LIKE "%'.$this->cleanInStr($value).'%")';
                     }
                 }
@@ -308,7 +349,7 @@ class OccurrenceManager{
             $tempArr = array();
             if($collectorArr && count($collectorArr) === 1){
                 if($collectorArr[0] === 'NULL'){
-                    $tempArr[] = '(o.recordedBy IS NULL)';
+                    $tempArr[] = '(ISNULL(o.recordedBy))';
                     $collectorArr[] = 'Collector IS NULL';
                 }
                 else{
@@ -382,7 +423,7 @@ class OccurrenceManager{
             }
             if($dateArr){
                 if($dateArr[0] === 'NULL'){
-                    $sqlWhere .= 'AND (o.eventdate IS NULL) ';
+                    $sqlWhere .= 'AND (ISNULL(o.eventdate)) ';
                     $this->localSearchArr[] = 'Date IS NULL';
                 }
                 elseif($eDate1 = $this->formatDate($dateArr[0])){
@@ -500,6 +541,61 @@ class OccurrenceManager{
                 $sqlWhere .= 'AND ('.$voucherManager->getSqlFrag().') '.
                     'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid = '.$clid.')) ';
                 $this->localSearchArr[] = $voucherManager->getQueryVariableStr();
+            }
+        }
+        if(array_key_exists('phuid',$this->searchTermsArr)&&$this->searchTermsArr['phuid']){
+            $sqlWhere .= 'AND (i.photographeruid IN(' .$this->cleanInStr($this->searchTermsArr['phuid']). ')) ';
+        }
+        if(array_key_exists('tags',$this->searchTermsArr)&&$this->searchTermsArr['tags']){
+            $sqlWhere .= 'AND (it.keyvalue = "'.$this->cleanInStr($this->searchTermsArr['tags']).'") ';
+        }
+        if(array_key_exists('keywords',$this->searchTermsArr)&&$this->searchTermsArr['keywords']){
+            $keywordArr = explode(';',$this->searchTermsArr['keywords']);
+            $tempArr = array();
+            foreach($keywordArr as $value){
+                $tempArr[] = "(ik.keyword LIKE '%".trim($this->cleanInStr($value))."%')";
+            }
+            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
+        }
+        if(array_key_exists('uploaddate1',$this->searchTermsArr) && $this->searchTermsArr['uploaddate1']){
+            $dateArr = array();
+            if(strpos($this->searchTermsArr['uploaddate1'],' to ')){
+                $dateArr = explode(' to ',$this->searchTermsArr['uploaddate1']);
+            }
+            elseif(strpos($this->searchTermsArr['uploaddate1'],' - ')){
+                $dateArr = explode(' - ',$this->searchTermsArr['uploaddate1']);
+            }
+            else{
+                $dateArr[] = $this->searchTermsArr['uploaddate1'];
+                if(isset($this->searchTermsArr['uploaddate2'])){
+                    $dateArr[] = $this->searchTermsArr['uploaddate2'];
+                }
+            }
+            if($dateArr && $eDate1 = $this->formatDate($dateArr[0])){
+                $eDate2 = (count($dateArr)>1?$this->formatDate($dateArr[1]):'');
+                if($eDate2){
+                    $sqlWhere .= 'AND (i.InitialTimeStamp BETWEEN "'.$this->cleanInStr($eDate1).'" AND "'.$this->cleanInStr($eDate2).'") ';
+                }
+                else if(substr($eDate1,-5) === '00-00'){
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.$this->cleanInStr(substr($eDate1,0,5)).'%") ';
+                }
+                elseif(substr($eDate1,-2) === '00'){
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.$this->cleanInStr(substr($eDate1,0,8)).'%") ';
+                }
+                else{
+                    $sqlWhere .= 'AND (i.InitialTimeStamp LIKE "'.$this->cleanInStr($eDate1).'%") ';
+                }
+            }
+        }
+        if(array_key_exists('imagetype',$this->searchTermsArr) && $this->searchTermsArr['imagetype']){
+            if($this->searchTermsArr['imagetype'] === 'specimenonly'){
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype = "Preserved Specimens") ';
+            }
+            elseif($this->searchTermsArr['imagetype'] === 'observationonly'){
+                $sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype != "Preserved Specimens") ';
+            }
+            elseif($this->searchTermsArr['imagetype'] === 'fieldonly'){
+                $sqlWhere .= 'AND (ISNULL(i.occid)) ';
             }
         }
         if($sqlWhere){
@@ -1065,6 +1161,15 @@ class OccurrenceManager{
 
     public function getClName(){
         return $this->clName;
+    }
+
+    public function setTaxon($taxon): void
+    {
+        if($taxon){
+            $this->searchTermsArr['taxontype'] = 2;
+            $this->searchTermsArr['usethes'] = 1;
+            $this->searchTermsArr['taxa'] = $taxon;
+        }
     }
 
     public function setSearchTermsArr($stArr): void

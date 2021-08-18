@@ -9,7 +9,7 @@ $targetTid = $_REQUEST['targettid'];
 $pageNumber = $_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr= json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 $collManager = null;
