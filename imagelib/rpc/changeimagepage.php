@@ -20,7 +20,6 @@ $imgLibManager->setSearchTermsArr($stArr);
 
 $recordListHtml = '';
 if($view === 'thumb'){
-	
 	$imgLibManager->setTaxon($taxon);
 	$imgLibManager->setSqlWhere();
 	$imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
@@ -30,7 +29,7 @@ if($view === 'thumb'){
 	$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 	if($lastPage > $startPage){
 		$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-		$onclick = 'changeImagePage("","thumb",starr,';
+		$onclick = 'changeImagePage("","thumb",';
 		$hrefPrefix = "<a href='#' onclick='".$onclick;
 		$pageBar = '<div style="float:left" >';
 		if($startPage > 1){
@@ -140,7 +139,7 @@ elseif($view === 'famlist'){
 	
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a family to see genera list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","genlist",starr,1';
+		$onChange = '"'.$value.'","genlist",1';
 		$famChange = '"'.$value.'"';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
 	}
@@ -149,11 +148,11 @@ elseif($view === 'genlist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getGenusList($taxon);
 	
-	$topOnChange = '"","famlist",starr,1';
+	$topOnChange = '"","famlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to family list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a genus to see species list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","splist",starr,1';
+		$onChange = '"'.$value.'","splist",1';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
 	}
 }
@@ -161,13 +160,140 @@ elseif($view === 'splist'){
 	$imgLibManager->setSqlWhere();
 	$taxaList = $imgLibManager->getSpeciesList($taxon);
 	
-	$topOnChange = 'selectedFamily,"genlist",starr,1';
+	$topOnChange = 'selectedFamily,"genlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to genera list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a species to see images.</div>";
 	foreach($taxaList as $key => $value){
-		$onChange = '"'.$value.'","thumb",starr,1';
+		$onChange = '"'.$value.'","thumb",1';
 		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
 	}
 }
 
-echo json_encode($recordListHtml);
+/*if($imageArr || $taxaList){
+    ?>
+    <div id="imagesdiv">
+        <div id="imagebox">
+            <?php
+            if($imageArr){
+                $lastPage = (int) ($recordCnt / $cntPerPage) + 1;
+                $startPage = ($pageNumber > 4?$pageNumber - 4:1);
+                $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
+                $onclick = 'changeImagePage("","thumb",starr,';
+                $hrefPrefix = "<a href='#' onclick='".$onclick;
+                $pageBar = '<div style="float:left" >';
+                if($startPage > 1){
+                    $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
+                    $pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
+                }
+                for($x = $startPage; $x <= $endPage; $x++){
+                    if($pageNumber !== $x){
+                        $pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
+                    }
+                    else{
+                        $pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
+                    }
+                }
+                if(($lastPage - $startPage) >= 10){
+                    $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
+                    $pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
+                }
+                $pageBar .= "</div><div style='float:right;margin-top:4px;margin-bottom:8px;'>";
+                $beginNum = ($pageNumber - 1)*$cntPerPage + 1;
+                $endNum = $beginNum + $cntPerPage - 1;
+                if($endNum > $recordCnt) {
+                    $endNum = $recordCnt;
+                }
+                $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
+                $paginationStr = $pageBar;
+                echo '<div style="width:100%;">'.$paginationStr.'</div>';
+                echo '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
+                echo '<div style="width:98%;margin-left:auto;margin-right:auto;">';
+                foreach($imageArr as $imgArr){
+                    $imgId = $imgArr['imgid'];
+                    $imgUrl = $imgArr['url'];
+                    $imgTn = $imgArr['thumbnailurl'];
+                    if($imgTn){
+                        $imgUrl = $imgTn;
+                        if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgTn, '/') === 0){
+                            $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
+                        }
+                    }
+                    elseif($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+                        $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
+                    }
+                    ?>
+                    <div class="tndiv" style="margin-bottom:15px;margin-top:15px;">
+                        <div class="tnimg">
+                            <?php
+                            if($imgArr['occid']){
+                                echo '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
+                            }
+                            else{
+                                echo '<a href="#" onclick="openImagePopup('.$imgId.');return false;">';
+                            }
+                            echo '<img src="'.$imgUrl.'" />';
+                            echo '</a>';
+                            ?>
+                        </div>
+                        <div>
+                            <?php
+                            $sciname = $imgArr['sciname'];
+                            if($sciname){
+                                if(strpos($imgArr['sciname'],' ')) {
+                                    $sciname = '<i>' . $sciname . '</i>';
+                                }
+                                if($imgArr['tid']) {
+                                    echo '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';
+                                }
+                                echo $sciname;
+                                if($imgArr['tid']) {
+                                    echo '</a>';
+                                }
+                                echo '<br />';
+                            }
+                            if($imgArr['catalognumber']){
+                                echo '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
+                                if(strpos($imgArr['catalognumber'], $imgArr['instcode']) !== 0) {
+                                    echo $imgArr['instcode'] . ': ';
+                                }
+                                echo $imgArr['catalognumber'];
+                                echo '</a>';
+                            }
+                            elseif($imgArr['lastname']){
+                                $pName = $imgArr['firstname'].' '.$imgArr['lastname'];
+                                if(strlen($pName) < 20) {
+                                    echo $pName . '<br />';
+                                }
+                                else {
+                                    echo $imgArr['lastname'] . '<br />';
+                                }
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <?php
+                }
+                echo '</div>';
+                if($lastPage > $startPage){
+                    echo "<div style='clear:both;margin:5px 0 5px 0;'><hr /></div>";
+                    echo '<div style="width:100%;">'.$paginationStr.'</div>';
+                }
+                ?>
+                <div style="clear:both;"></div>
+                <?php
+            }
+            if($taxaList){
+                echo "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a family to see genera list.</div>";
+                foreach($taxaList as $value){
+                    $onChange = '"'.$value.'","genlist",starr,1';
+                    $famChange = '"'.$value.'"';
+                    echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange. ');changeImagePage(' .$onChange."); return false;'>".strtoupper($value). '</a></div>';
+                }
+            }
+            ?>
+        </div>
+    </div>
+    <?php
+}*/
+
+echo $recordListHtml;

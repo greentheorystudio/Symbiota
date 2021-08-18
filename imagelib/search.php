@@ -1,74 +1,38 @@
 <?php 
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
+include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
+$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
 $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
 $pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
 $view = array_key_exists('imagedisplay',$_REQUEST)?$_REQUEST['imagedisplay']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+
+if(!is_numeric($catId)) {
+    $catId = 0;
+}
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = $GLOBALS['DEFAULTCATID'];
 }
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $imgLibManager = new ImageLibraryManager();
+$collManager = new OccurrenceManager();
 
-$collList = $imgLibManager->getFullCollectionList($catId);
+$collList = $collManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
-$stArr = array();
-$previousCriteria = array();
+$otherCatArr = $collManager->getOccurVoucherProjects();
+
 $imageArr = array();
 $taxaList = array();
-$jsonStArr = '';
-
-if($stArrJson && !array_key_exists('db',$_REQUEST)){
-	$stArrJson = str_replace( "'", '"',$stArrJson);
-	$stArr = json_decode($stArrJson, true);
-}
-
-if($_REQUEST || $stArr){
-	if($_REQUEST){
-		$previousCriteria = $_REQUEST;
-	}
-	elseif($stArr){
-		$previousCriteria = $stArr;
-	}
-}
-
-$dbArr = array();
-if(array_key_exists('db',$_REQUEST)){
-	$dbArr = $_REQUEST['db'];
-}
-elseif(array_key_exists('db',$previousCriteria)){
-    $dbArr = explode(';',$previousCriteria['db']);
-}
-
-if($action && $action === 'Load Images') {
-    if($stArr){
-        $imgLibManager->setSearchTermsArr($stArr);
-    }
-    else{
-        $imgLibManager->readRequestVariables();
-        $stArr = $imgLibManager->getSearchTermsArr();
-    }
-    $imgLibManager->setSqlWhere();
-    if($view === 'thumbnail'){
-        $imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
-    }
-    if($view === 'taxalist'){
-        $taxaList = $imgLibManager->getFamilyList();
-    }
-    $recordCnt = $imgLibManager->getRecordCnt();
-    $jsonStArr = json_encode($stArr);
-}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Library</title>
+<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -76,16 +40,18 @@ if($action && $action === 'Load Images') {
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script src="../js/symb/images.index.js?ver=20170711" type="text/javascript"></script>
-	<meta name='keywords' content='' />
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+	<script src="../js/symb/images.index.js?ver=20210809" type="text/javascript"></script>
+    <script src="../js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
+	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
-		let phArr = <?php echo (isset($previousCriteria['phjson'])&&$previousCriteria['phjson']?"JSON.parse('".$previousCriteria['phjson']."')": 'new Array()'); ?>;
+        $('html').hide();
+        let stArr = {};
+        let phArr = new Array();
+        let selectedFamily = '';
 
-        jQuery(document).ready(function($) {
+        $(document).ready(function() {
 			let qtaxaArr;
             $('#tabs').tabs({
-				active: <?php echo (($imageArr || $taxaList)?'2':'0'); ?>,
 				beforeLoad: function( event, ui ) {
 					$(ui.panel).html("<p>Loading...</p>");
 				}
@@ -103,60 +69,97 @@ if($action && $action === 'Load Images') {
 					}
 				}
 			});
-			
-			<?php
-			if($stArr){
-				if(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] !== '3'){
-					?>
-					if(document.getElementById('taxastr').value){
-                        qtaxaArr = document.getElementById('taxastr').value.split(",");
-                        for(let i = 0; i < qtaxaArr.length; i++){
-							$('#taxa').manifest('add',qtaxaArr[i]);
-						}
-					}
-					<?php
-				}
-				elseif(array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3'){
-					?>
-					if(document.getElementById('taxastr').value){
-                        qtaxaArr = document.getElementById('taxastr').value.split(",");
-                        for(let i = 0; i < qtaxaArr.length; i++){
-							$('#common').manifest('add',qtaxaArr[i]);
-						}
-					}
-					<?php
-				}
-				?>
-				if(document.getElementById('countrystr').value){
-                    const qcountryArr = document.getElementById('countrystr').value.split(",");
-                    for(let i = 0; i < qcountryArr.length; i++){
-						$('#country').manifest('add',qcountryArr[i]);
-					}
-				}
-				if(document.getElementById('statestr').value){
-                    const qstateArr = document.getElementById('statestr').value.split(",");
-                    for(let i = 0; i < qstateArr.length; i++){
-						$('#state').manifest('add',qstateArr[i]);
-					}
-				}
-				if(document.getElementById('keywordstr').value){
-                    const qkeywordArr = document.getElementById('keywordstr').value.split(",");
-                    for(let i = 0; i < qkeywordArr.length; i++){
-						$('#keywords').manifest('add',qkeywordArr[i]);
-					}
-				}
-				if(document.getElementById('phjson').value){
-                    const qphArr = JSON.parse(document.getElementById('phjson').value);
-                    for(let i = 0; i < qphArr.length; i++){
-						$('#photographer').manifest('add',qphArr[i].name);
-					}
-				}
-				<?php
-			}
-			?>
+
+            $('#taxainput').manifest({
+                marcoPolo: {
+                    url: 'rpc/imagesearchautofill.php',
+                    data: {
+                        t: 'taxa'
+                    },
+                    formatItem: function (data) {
+                        return data.name;
+                    }
+                }
+            });
+
+            $('#commoninput').manifest({
+                marcoPolo: {
+                    url: 'rpc/imagesearchautofill.php',
+                    data: {
+                        t: 'common'
+                    },
+                    formatItem: function (data) {
+                        return data.name;
+                    }
+                }
+            });
+
+            $('#keywordsinput').manifest({
+                marcoPolo: {
+                    url: 'rpc/imagesearchautofill.php',
+                    data: {
+                        t: 'keywords'
+                    },
+                    formatItem: function (data) {
+                        return data.name;
+                    }
+                }
+            });
+
+            initializeSearchStorage(<?php echo $queryId; ?>);
+            <?php
+            if($queryId || $stArrJson){
+                if($stArrJson){
+                    ?>
+                    initializeSearchStorage(<?php echo $queryId; ?>);
+                    loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                    <?php
+                }
+                ?>
+                stArr = getSearchTermsArr();
+                setParamsForm();
+                setCollectionForms();
+                changeImagePage("",stArr['imagedisplay'],1);
+                <?php
+            }
+            ?>
+
+			$('#taxainput').on('manifestchange', function (event, data) {
+                const taxavals = $('#taxainput').manifest('values');
+                if(taxavals.length > 0){
+                    document.getElementById('taxa').value = taxavals.join();
+                }
+                else{
+                    document.getElementById('taxa').value = '';
+                }
+                processTaxaParamChange();
+            });
+
+            $('#commoninput').on('manifestchange', function (event, data) {
+                const taxavals = $('#commoninput').manifest('values');
+                if(taxavals.length > 0){
+                    document.getElementById('taxa').value = taxavals.join();
+                }
+                else{
+                    document.getElementById('taxa').value = '';
+                }
+                processTaxaParamChange();
+            });
+
+            $('#keywordsinput').on('manifestchange', function (event, data) {
+                const keywordvals = $('#keywordsinput').manifest('values');
+                if(keywordvals.length > 0){
+                    document.getElementById('imagekeyword').value = keywordvals.join();
+                }
+                else{
+                    document.getElementById('imagekeyword').value = '';
+                }
+                processTextParamChange();
+            });
 			
 			$('#photographer').on('marcopoloselect', function (event, data) {
 				phArr.push({name:data.name,id:data.id});
+                processPhotographerChange();
 			});
 			
 			$('#photographer').on('manifestremove',function (event, data){
@@ -165,22 +168,207 @@ if($action && $action === 'Load Images') {
 						phArr.splice(i,1);
 					}
 				}
+                processPhotographerChange();
 			});
-			<?php
-			
-			if($view === 'thumbnail' && !$imageArr){
-				echo "alert('There were no images matching your search critera');";
-			}
-			?>
+            $('html').show();
 		});
+
+        function processParamsForm(){
+            const f = document.getElementById('imagesearchform');
+            const searchTermsArr = getSearchTermsArr();
+            if(!validateSearchTermsArr(searchTermsArr)){
+                alert('Please enter search criteria.');
+                return false;
+            }
+            let formVerified = false;
+            for(let h=0; h < f.length; h++){
+                if(f.elements[h].name === "db[]" && f.elements[h].checked){
+                    formVerified = true;
+                    break;
+                }
+                if(f.elements[h].name === "cat[]" && f.elements[h].checked){
+                    formVerified = true;
+                    break;
+                }
+            }
+            if(!formVerified){
+                alert("Please choose at least one collection!");
+                return false;
+            }
+            else{
+                for(let i=0; i < f.length; i++){
+                    if(f.elements[i].name === "cat[]" && f.elements[i].checked && document.getElementById('cat-' + f.elements[i].value)){
+                        const childrenEle = document.getElementById('cat-' + f.elements[i].value).children;
+                        for(let j=0; j<childrenEle.length; j++){
+                            if(childrenEle[j].tagName === "DIV"){
+                                const divChildren = childrenEle[j].children;
+                                for(let k=0; k<divChildren.length; k++){
+                                    const divChildren2 = divChildren[k].children;
+                                    for(let l=0; l<divChildren2.length; l++){
+                                        if(divChildren2[l].tagName === "INPUT"){
+                                            divChildren2[l].checked = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                changeImagePage("",searchTermsArr['imagedisplay'],1);
+            }
+        }
 		
-		const starr = JSON.stringify(<?php echo $jsonStArr; ?>);
-		const view = '<?php echo $view; ?>';
-        let selectedFamily = '';
+		function changeImagePage(taxon,view,page){
+            document.getElementById("imagebox").innerHTML = "<p>Loading... <img src='../images/workingcircle.gif' style='width:15px;' /></p>";
+            const http = new XMLHttpRequest();
+            const url = "rpc/changeimagepage.php";
+            const queryid = document.getElementById('queryId').value;
+            const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&queryId='+queryid+'&page='+page+'&view='+view+'&taxon='+taxon;
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    if(!http.responseText) {
+                        http.responseText = "<p>An error occurred retrieving records.</p>";
+                    }
+                    document.getElementById("imagebox").innerHTML = http.responseText;
+                    if(view === 'thumb'){
+                        document.getElementById("imagetab").innerHTML = 'Images';
+                    }
+                    else{
+                        document.getElementById("imagetab").innerHTML = 'Taxa List';
+                    }
+                }
+            };
+            http.send(params);
+        }
+
+        function setParamsForm(){
+            const stArr = getSearchTermsArr();
+            if(stArr['usethes']){
+                document.getElementById("thes").checked = true;
+            }
+            if(stArr['taxontype']){
+                document.getElementById("taxontype").value = stArr['taxontype'];
+                processTaxonTypeChange();
+            }
+            if(stArr['taxa']){
+                document.getElementById('taxa').value = stArr['taxa'];
+                const qtaxaArr = document.getElementById('taxa').value.split(";");
+                if(Nuber(document.getElementById("taxontype").value) === 2){
+                    for(let i = 0; i < qtaxaArr.length; i++){
+                        $('#taxainput).manifest('add',qtaxaArr[i]);
+                    }
+                }
+                if(Nuber(document.getElementById("taxontype").value) === 3){
+                    for(let i = 0; i < qtaxaArr.length; i++){
+                        $('#commoninput').manifest('add',qtaxaArr[i]);
+                    }
+                }
+            }
+            if(stArr['imagedisplay']){
+                document.getElementById("imagedisplay").value = stArr['imagedisplay'];
+                processImageDisplayChange();
+            }
+            if(stArr['phuid']){
+                document.getElementById("phuid").value = stArr['phuid'];
+            }
+            if(stArr['phjson']){
+                document.getElementById("phjson").value = stArr['phjson'];
+                phArr = JSON.parse(document.getElementById('phjson').value);
+                for(let i = 0; i < phArr.length; i++){
+                    $('#photographer').manifest('add',phArr[i].name);
+                }
+            }
+            if(stArr['imagetag']){
+                document.getElementById("imagetag").value = stArr['imagetag'];
+            }
+            if(stArr['imagekeyword']){
+                document.getElementById("imagekeyword").value = stArr['imagekeyword'];
+                const qkeywordArr = document.getElementById('imagekeyword').value.split(";");
+                for(let i = 0; i < qkeywordArr.length; i++){
+                    $('#keywordsinput').manifest('add',qkeywordArr[i].name);
+                }
+            }
+            if(stArr['uploaddate1']){
+                document.getElementById("uploaddate1").value = stArr['uploaddate1'];
+            }
+            if(stArr['uploaddate2']){
+                document.getElementById("uploaddate2").value = stArr['uploaddate2'];
+            }
+            if(stArr['imagecount']){
+                document.getElementById("imagecount").value = stArr['imagecount'];
+            }
+            document.getElementById("imagetypeall").checked = stArr['imagetypeall'];
+            document.getElementById("imagetypespecimenonly").checked = stArr['imagetypespecimenonly'];
+            document.getElementById("imagetypeobservationonly").checked = stArr['imagetypeobservationonly'];
+            document.getElementById("imagetypefieldonly").checked = stArr['imagetypefieldonly'];
+        }
+
+        function processTaxonTypeChange(){
+            const taxonType = Number(document.getElementById('taxontype').value);
+            if(taxonType === 2){
+                clearCommonNameVals();
+                document.getElementById('thesdiv').style.display = "block";
+                document.getElementById('commonbox').style.display = "none";
+                document.getElementById('taxabox').style.display = "block";
+            }
+            if(taxonType === 3){
+                clearSciNameVals();
+                document.getElementById('commonbox').style.display = "block";
+                document.getElementById('taxabox').style.display = "none";
+                document.getElementById('thesdiv').style.display = "none";
+                document.getElementById('thes').checked = false;
+            }
+        }
+
+        function processImageDisplayChange(){
+            const displayValue = document.getElementById('imagedisplay').value;
+		    if(displayValue === "thumbnail"){
+                document.getElementById('imagetabtext').innerHTML = "Images";
+            }
+		    if(displayValue === "taxalist"){
+                clearSciNameVals();
+                clearCommonNameVals();
+                document.getElementById('imagetabtext').innerHTML = "Taxa List";
+            }
+        }
+
+        function clearSciNameVals(){
+            let tvals = $('#taxainput').manifest('values');
+            for (let i = 0; i < tvals.length; i++) {
+                $('#taxainput').manifest('remove', i);
+            }
+            document.getElementById('taxa').value = "";
+        }
+
+        function clearCommonNameVals(){
+            let vals = $('#commoninput').manifest('values');
+            for (let i = 0; i < vals.length; i++) {
+                $('#commoninput').manifest('remove', i);
+            }
+            document.getElementById('taxa').value = "";
+        }
+
+        function processPhotographerChange(){
+            if(phArr.length > 0){
+                const phids = [];
+                for(let i = 0; i < phArr.length; i++){
+                    phids.push(phArr[i].id);
+                }
+                document.getElementById('phuid').value = phids.join();
+                document.getElementById('phjson').value = JSON.stringify(phArr);
+            }
+            else{
+                document.getElementById('phuid').value = '';
+                document.getElementById('phjson').value = '';
+            }
+            processTextParamChange();
+        }
     </script>
 </head>
 <body>
-
 	<?php
 	include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
@@ -194,33 +382,26 @@ if($action && $action === 'Load Images') {
 			<ul>
 				<li><a href="#criteriadiv">Search Criteria</a></li>
 				<li><a href="#collectiondiv">Collections</a></li>
-				<?php
-				if($imageArr || $taxaList){
-					?>
-					<li><a href="#imagesdiv"><span id="imagetab"><?php echo ($view === 'thumbnail'?'Images':'Taxa List'); ?></span></a></li>
-					<?php
-				}
-				?>
+                <li id="imagetab" style="display:none;"><a href="#imagesdiv"><span id="imagetabtext">Images</span></a></li>
 			</ul>
 			
-			<form name="imagesearchform" id="imagesearchform" action="search.php" method="get" onsubmit="return submitImageForm();">
+			<form id="imagesearchform" action="search.php" method="post">
 				<div id="criteriadiv">
-					<div id="thesdiv" style="margin-left:160px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'none':'block'); ?>;" >
-						<input type='checkbox' id='thes' name='thes' value='1' <?php echo ((!$action || (array_key_exists('thes',$previousCriteria) && $previousCriteria['thes']))?'CHECKED':''); ?> >Include Synonyms
+					<div id="thesdiv" style="margin-left:160px;display:block;" >
+						<input type='checkbox' id='thes' onchange="processTaxaParamChange();" value='1' checked /> Include Synonyms
 					</div>
 					<div style="clear:both;">
 						<div style="float:left;">
-							<select id="taxontype" name="nametype" onchange="checkTaxonType();" style="padding:5px;margin:5px 10px;">
-								<option id='sciname' value='2' <?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '2')?'SELECTED':''); ?> >Scientific Name</option>
-								<option id='commonname' value='3' <?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'SELECTED':''); ?> >Common Name</option>
+							<select id="taxontype" onchange="processTaxonTypeChange();processTaxaParamChange();" style="padding:5px;margin:5px 10px;">
+								<option id='sciname' value='2'>Scientific Name</option>
+								<option id='commonname' value='3'>Common Name</option>
 							</select>
-							<input id="taxtp" name="taxtp" type="hidden" value="<?php echo (array_key_exists('taxtp',$previousCriteria)?$previousCriteria['taxtp']:'2'); ?>" />
 						</div>
-						<div id="taxabox" style="float:left;margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'none':'block'); ?>;">
-							<input id="taxa" type="text" style="width:450px;" name="taxa" value="" title="Separate multiple names w/ commas" autocomplete="off" />
+						<div id="taxabox" style="float:left;margin-bottom:10px;display:block;">
+							<input id="taxainput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
-						<div id="commonbox" style="margin-bottom:10px;display:<?php echo ((array_key_exists('nametype',$previousCriteria) && $previousCriteria['nametype'] === '3')?'block':'none'); ?>;">
-							<input id="common" type="text" style="width:450px;" name="common" value="" title="Separate multiple names w/ commas" autocomplete="off" />
+						<div id="commonbox" style="margin-bottom:10px;display:none;">
+							<input id="commoninput" type="text" style="width:450px;" title="Separate multiple names w/ commas" autocomplete="off" />
 						</div>
 					</div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
@@ -229,7 +410,7 @@ if($action && $action === 'Load Images') {
 							Photographers: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="photographer" style="width:450px;" name="photographer" value="" title="Separate multiple photographers w/ commas" />
+							<input type="text" id="photographer" style="width:450px;" title="Separate multiple photographers w/ commas" />
 						</div>
 					</div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
@@ -239,12 +420,12 @@ if($action && $action === 'Load Images') {
 						?>
 						<div>
 							Image Tags: 
-							<select id="tags" style="width:350px;" name="tags" >
+							<select id="imagetag" style="width:350px;" onchange="processTextParamChange();">
 								<option value="">Select Tag</option>
 								<option value="">--------------</option>
 								<?php 
 								foreach($tagArr as $k){
-									echo '<option value="'.$k.'" '.((array_key_exists('tags',$previousCriteria))&&($previousCriteria['tags'] === $k)?'SELECTED ':'').'>'.$k.'</option>';
+									echo '<option value="'.$k.'" >'.$k.'</option>';
 								}
 								?>
 							</select>
@@ -257,7 +438,7 @@ if($action && $action === 'Load Images') {
 							Image Keywords: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="keywords" style="width:350px;" name="keywords" value="" title="Separate multiple keywords w/ commas" />
+							<input type="text" id="keywordsinput" style="width:350px;" title="Separate multiple keywords w/ commas" />
 						</div>
 					</div>
                     <div style="clear:both;margin-top:5px;">
@@ -265,24 +446,24 @@ if($action && $action === 'Load Images') {
                             Date Uploaded:
                         </div>
                         <div style="float:left;margin-bottom:10px;">
-                            <input type="text" id="uploaddate1" size="32" name="uploaddate1" style="width:100px;" value="<?php echo (array_key_exists('uploaddate1',$previousCriteria)?$previousCriteria['uploaddate1']:''); ?>" title="Single date or start date of range" /> -
-                            <input type="text" id="uploaddate2" size="32" name="uploaddate2" style="width:100px;" value="<?php echo (array_key_exists('uploaddate2',$previousCriteria)?$previousCriteria['uploaddate2']:''); ?>" title="End date of range; leave blank if searching for single date" />
+                            <input type="text" id="uploaddate1" size="32" style="width:100px;" onchange="processTextParamChange();" title="Single date or start date of range" /> -
+                            <input type="text" id="uploaddate2" size="32" style="width:100px;" onchange="processTextParamChange();" title="End date of range; leave blank if searching for single date" />
                         </div>
                     </div>
 					<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>
 					<div style="margin-top:5px;">
 						Limit Image Counts: 
-						<select id="imagecount" name="imagecount">
-							<option value="all" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'all')?'SELECTED ':''); ?>>All images</option>
-							<option value="taxon" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'taxon')?'SELECTED ':''); ?>>One per taxon</option>
-							<option value="specimen" <?php echo ((array_key_exists('imagecount',$previousCriteria))&&($previousCriteria['imagecount'] === 'specimen')?'SELECTED ':''); ?>>One per occurrence</option>
+						<select id="imagecount" onchange="processTextParamChange();">
+							<option value="all">All images</option>
+							<option value="taxon">One per taxon</option>
+							<option value="specimen">One per occurrence</option>
 						</select>
 					</div>
 					<div style="margin-top:5px;">
 						Image Display: 
-						<select id="imagedisplay" name="imagedisplay" onchange="imageDisplayChanged(this.form)">
-							<option value="thumbnail" <?php echo ((array_key_exists('imagedisplay',$previousCriteria))&&($previousCriteria['imagedisplay'] === 'thumbnail')?'SELECTED ':''); ?>>Thumbnails</option>
-							<option value="taxalist" <?php echo ((array_key_exists('imagedisplay',$previousCriteria))&&($previousCriteria['imagedisplay'] === 'taxalist')?'SELECTED ':''); ?>>Taxa List</option>
+						<select id="imagedisplay" onchange="processImageDisplayChange();processTextParamChange();">
+							<option value="thumbnail">Thumbnails</option>
+							<option value="famlist">Taxa List</option>
 						</select>
 					</div>
 					<table>
@@ -292,28 +473,27 @@ if($action && $action === 'Load Images') {
 									<p><b>Limit Image Type:</b></p>
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='all' <?php echo (((!array_key_exists('imagetype',$previousCriteria)) || (array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'all'))?'CHECKED':''); ?> > All Images
+									<input type='radio' id='imagetypeall' value='all' onchange="processTextParamChange();"> All Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='specimenonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'specimenonly')?'CHECKED':''); ?> > Occurrence Images
+									<input type='radio' id='imagetypespecimenonly' value='specimenonly' onchange="processTextParamChange();"> Occurrence Images
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='observationonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'observationonly')?'CHECKED':''); ?> > Image Vouchered Observations
+									<input type='radio' id='imagetypeobservationonly' value='observationonly' onchange="processTextParamChange();"> Image Vouchered Observations
 								</div>
 								<div style="margin-top:5px;">
-									<input type='radio' name='imagetype' value='fieldonly' <?php echo ((array_key_exists('imagetype',$previousCriteria) && $previousCriteria['imagetype'] === 'fieldonly')?'CHECKED':''); ?> > Field Images (lacking specific locality details)
+									<input type='radio' id='imagetypefieldonly' value='fieldonly' onchange="processTextParamChange();"> Field Images (lacking specific locality details)
 								</div>
 							</td>
 						</tr>
 					</table>
 					<div><hr></div>
-					<input id="taxastr" name="taxastr" type="hidden" value="<?php echo ((array_key_exists('taxastr',$previousCriteria))?$previousCriteria['taxastr']:''); ?>" />
-					<input id="countrystr" name="countrystr" type="hidden" value="<?php echo ((array_key_exists('countrystr',$previousCriteria))?$previousCriteria['countrystr']:''); ?>" />
-					<input id="statestr" name="statestr" type="hidden" value="<?php echo ((array_key_exists('statestr',$previousCriteria))?$previousCriteria['statestr']:''); ?>" />
-					<input id="keywordstr" name="keywordstr" type="hidden" value="<?php echo ((array_key_exists('keywordstr',$previousCriteria))?$previousCriteria['keywordstr']:''); ?>" />
-					<input id="phuidstr" name="phuidstr" type="hidden" value="<?php echo ((array_key_exists('phuidstr',$previousCriteria))?$previousCriteria['phuidstr']:''); ?>" />
-					<input id="phjson" name="phjson" type="hidden" value='<?php echo ((array_key_exists('phjson',$previousCriteria))?$previousCriteria['phjson']:''); ?>' />
-					<button id="loadimages" style='margin: 20px' name="submitaction" type="submit" value="Load Images" >Load Images</button>
+					<input id="taxa" type="hidden" value="" />
+					<input id="imagekeyword" type="hidden" value="" />
+					<input id="phuid" type="hidden" value="" />
+					<input id="phjson" type="hidden" value='' />
+                    <input type="hidden" id="queryId" value='<?php echo $queryId; ?>' />
+					<button style='margin: 20px' type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>
 					<div style="clear:both;"></div>
 				</div>
 				
@@ -322,21 +502,21 @@ if($action && $action === 'Load Images') {
 					if($specArr || $obsArr){
 						?>
 						<div id="specobsdiv">
-							<div style="margin:0 0 10px 20px;">
-								<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo ((!$dbArr || in_array('all', $dbArr, true))?'checked':''); ?>/>
-								Select/Deselect all <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php">Collections</a>
-							</div>
+                            <div style="margin:0 0 10px 20px;">
+                                <input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" checked />
+                                Select/Deselect All
+                            </div>
 							<?php 
 							if($specArr){
-								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
-								$imgLibManager->outputFullMapCollArr($dbArr,$specArr);
+								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                                $collManager->outputFullCollArr($specArr);
 							}
 							if($specArr && $obsArr) {
                                 echo '<hr style="clear:both;margin:20px 0;"/>';
                             }
 							if($obsArr){
-								echo '<button id="loadimages" style="float:right;" name="submitaction" type="submit" value="Load Images" >Load Images</button>';
-								$imgLibManager->outputFullMapCollArr($dbArr,$obsArr);
+								echo '<button style="float:right;" type="button" value="Load Images" onclick="processParamsForm();">Load Images</button>';
+                                $collManager->outputFullCollArr($obsArr);
 							}
 							?>
 							<div style="clear:both;"></div>
@@ -347,135 +527,10 @@ if($action && $action === 'Load Images') {
 					<div style="clear:both;"></div>
 				</div>
 			</form>
-			
-			<?php
-			if($imageArr || $taxaList){
-				?>
-				<div id="imagesdiv">
-					<div id="imagebox">
-						<?php
-						if($imageArr){
-							$lastPage = (int) ($recordCnt / $cntPerPage) + 1;
-							$startPage = ($pageNumber > 4?$pageNumber - 4:1);
-							$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-							$onclick = 'changeImagePage("","thumb",starr,';
-							$hrefPrefix = "<a href='#' onclick='".$onclick;
-							$pageBar = '<div style="float:left" >';
-							if($startPage > 1){
-								$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix."1); return false;'>First</a></span>";
-								$pageBar .= "<span class='pagination' style='margin-right:5px;'>".$hrefPrefix.(($pageNumber - 10) < 1 ?1:$pageNumber - 10)."); return false;'>&lt;&lt;</a></span>";
-							}
-							for($x = $startPage; $x <= $endPage; $x++){
-								if($pageNumber !== $x){
-									$pageBar .= "<span class='pagination' style='margin-right:3px;'>".$hrefPrefix.$x."); return false;'>".$x. '</a></span>';
-								}
-								else{
-									$pageBar .= "<span class='pagination' style='margin-right:3px;font-weight:bold;'>".$x. '</span>';
-								}
-							}
-							if(($lastPage - $startPage) >= 10){
-								$pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10))."); return false;'>&gt;&gt;</a></span>";
-								$pageBar .= "<span class='pagination' style='margin-left:5px;'>".$hrefPrefix.$lastPage."); return false;'>Last</a></span>";
-							}
-							$pageBar .= "</div><div style='float:right;margin-top:4px;margin-bottom:8px;'>";
-							$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
-							$endNum = $beginNum + $cntPerPage - 1;
-							if($endNum > $recordCnt) {
-                                $endNum = $recordCnt;
-                            }
-							$pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
-							$paginationStr = $pageBar;
-							echo '<div style="width:100%;">'.$paginationStr.'</div>';
-							echo '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
-							echo '<div style="width:98%;margin-left:auto;margin-right:auto;">';
-							foreach($imageArr as $imgArr){
-								$imgId = $imgArr['imgid'];
-								$imgUrl = $imgArr['url'];
-								$imgTn = $imgArr['thumbnailurl'];
-								if($imgTn){
-									$imgUrl = $imgTn;
-									if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgTn, '/') === 0){
-										$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
-									}
-								}
-								elseif($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
-									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-								}
-								?>
-								<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">
-									<div class="tnimg">
-										<?php 
-										if($imgArr['occid']){
-											echo '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-										}
-										else{
-											echo '<a href="#" onclick="openImagePopup('.$imgId.');return false;">';
-										}
-										echo '<img src="'.$imgUrl.'" />';
-										echo '</a>';
-										?>
-									</div>
-									<div>
-										<?php 
-										$sciname = $imgArr['sciname'];
-										if($sciname){
-											if(strpos($imgArr['sciname'],' ')) {
-                                                $sciname = '<i>' . $sciname . '</i>';
-                                            }
-											if($imgArr['tid']) {
-                                                echo '<a href="#" onclick="openTaxonPopup(' . $imgArr['tid'] . ');return false;" >';
-                                            }
-											echo $sciname;
-											if($imgArr['tid']) {
-                                                echo '</a>';
-                                            }
-											echo '<br />';
-										}
-										if($imgArr['catalognumber']){
-											echo '<a href="#" onclick="openIndPU('.$imgArr['occid'].');return false;">';
-											if(strpos($imgArr['catalognumber'], $imgArr['instcode']) !== 0) {
-                                                echo $imgArr['instcode'] . ': ';
-                                            }
-											echo $imgArr['catalognumber'];
-											echo '</a>';
-										}
-										elseif($imgArr['lastname']){
-											$pName = $imgArr['firstname'].' '.$imgArr['lastname'];
-											if(strlen($pName) < 20) {
-                                                echo $pName . '<br />';
-                                            }
-											else {
-                                                echo $imgArr['lastname'] . '<br />';
-                                            }
-										}
-										?>
-									</div>
-								</div>
-								<?php
-							}
-							echo '</div>';
-							if($lastPage > $startPage){
-								echo "<div style='clear:both;margin:5px 0 5px 0;'><hr /></div>";
-								echo '<div style="width:100%;">'.$paginationStr.'</div>';
-							}
-							?>
-							<div style="clear:both;"></div>
-							<?php
-						}
-						if($taxaList){
-							echo "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a family to see genera list.</div>";
-							foreach($taxaList as $value){
-								$onChange = '"'.$value.'","genlist",starr,1';
-								$famChange = '"'.$value.'"';
-								echo "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange. ');changeImagePage(' .$onChange."); return false;'>".strtoupper($value). '</a></div>';
-							}
-						}
-						?>
-					</div>
-				</div>
-				<?php
-			}
-			?>
+
+            <div id="imagesdiv">
+                <div id="imagebox"></div>
+            </div>
 		
 		</div>
 	</div>

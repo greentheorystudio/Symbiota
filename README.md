@@ -1,9 +1,12 @@
 # Green Theory Studio's Symbiota
 
-The Green Theory Studio fork of Symbiota is a cleaned and updated version of the original, offering all of the same tools 
+The [Green Theory Studio](https://greentheorystudio.com/) fork of Symbiota is a cleaned and updated version of the original, offering all of the same tools 
 for generating, managing, and disseminating biodiversity data. It is compatible with the newest version of MySQL and is more 
 secure than the original, requiring fewer third-party services to configure.
 
+[You can explore this version of Symbiota through our demo portal.](https://greentheorystudio.net/symbiota-demo/) If you would like 
+login access to the demo portal to explore the administrative features, 
+[please send us a messagage through our contact page.](https://greentheorystudio.com/contact/)
 ## Requirements
 
 Symbiota can be installed on any Linux, Windows, or Mac operating systems, but requires an additional server application
@@ -46,12 +49,10 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 - `character-set-server=utf8` - replace utf8 with your desired character set
 - `collation-server=utf8_general_ci` - replace utf8_general_ci with your desired collation
 - `skip-character-set-client-handshake`
-- `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION`
+- `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION`
 - `key_buffer_size=100M`
 - `max_allowed_packet=100M`
 - `thread_cache_size=38`
-- `query_cache_limit=100M`
-- `query_cache_size=0M`
 
 ## Installation
 

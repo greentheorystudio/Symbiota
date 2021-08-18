@@ -442,7 +442,8 @@ ALTER TABLE `uploadimagetemp`
   ADD COLUMN `locality` varchar(250) NULL AFTER `rights`;
 
 ALTER TABLE `uploadspecparameters`
-  MODIFY COLUMN `Path` varchar(500) NULL DEFAULT NULL AFTER `Code`;
+  MODIFY COLUMN `Path` varchar(500) NULL DEFAULT NULL AFTER `Code`,
+  ADD COLUMN `existingrecords` varchar(45) NOT NULL DEFAULT "update" AFTER `cleanupsp`;
 
 ALTER TABLE `uploadspectemp`
     ADD COLUMN `upspid` int(50) NOT NULL AUTO_INCREMENT FIRST,
