@@ -4,6 +4,7 @@ include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/Person.php');
 include_once(__DIR__ . '/Encryption.php');
 include_once(__DIR__ . '/Mailer.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ProfileManager extends Manager{
 
@@ -50,10 +51,10 @@ class ProfileManager extends Manager{
                     'WHERE (u.username = "'.$this->userName.'") ';
                 if($pwdStr) {
                     if($this->encryption === 'password'){
-                        $this->authSql .= 'AND (u.password = PASSWORD("' . $this->cleanInStr($pwdStr) . '")) ';
+                        $this->authSql .= 'AND (u.password = PASSWORD("' . Sanitizer::cleanInStr($pwdStr) . '")) ';
                     }
                     if($this->encryption === 'sha2'){
-                        $this->authSql .= 'AND (u.password = SHA2("' . $this->cleanInStr($pwdStr) . '", 224)) ';
+                        $this->authSql .= 'AND (u.password = SHA2("' . Sanitizer::cleanInStr($pwdStr) . '", 224)) ';
                     }
                 }
             }
@@ -157,24 +158,24 @@ class ProfileManager extends Manager{
             $editCon = $connection->getConnection();
             $fields = 'UPDATE users SET ';
             $where = 'WHERE (uid = '.$person->getUid().')';
-            $values = 'firstname = "'.$this->cleanInStr($person->getFirstName()).'"';
+            $values = 'firstname = "'.Sanitizer::cleanInStr($person->getFirstName()).'"';
             if($middle) {
-                $values = 'middleinitial = "' . $this->cleanInStr($person->getMiddleInitial()) . '"';
+                $values = 'middleinitial = "' . Sanitizer::cleanInStr($person->getMiddleInitial()) . '"';
             }
-            $values .= ', lastname= "'.$this->cleanInStr($person->getLastName()).'"';
-            $values .= ', title= "'.$this->cleanInStr($person->getTitle()).'"';
-            $values .= ', institution="'.$this->cleanInStr($person->getInstitution()).'"';
-            $values .= ', department= "'.$this->cleanInStr($person->getDepartment()).'"';
-            $values .= ', address= "'.$this->cleanInStr($person->getAddress()).'"';
-            $values .= ', city="'.$this->cleanInStr($person->getCity()).'"';
-            $values .= ', state="'.$this->cleanInStr($person->getState()).'"';
-            $values .= ', zip="'.$this->cleanInStr($person->getZip()).'"';
-            $values .= ', country= "'.$this->cleanInStr($person->getCountry()).'"';
-            $values .= ', phone="'.$this->cleanInStr($person->getPhone()).'"';
-            $values .= ', email="'.$this->cleanInStr($person->getEmail()).'"';
-            $values .= ', url="'.$this->cleanInStr($person->getUrl()).'"';
-            $values .= ', biography="'.$this->cleanInStr($person->getBiography()).'"';
-            $values .= ', ispublic='.($this->cleanInStr($person->getIsPublic())?1:0).' ';
+            $values .= ', lastname= "'.Sanitizer::cleanInStr($person->getLastName()).'"';
+            $values .= ', title= "'.Sanitizer::cleanInStr($person->getTitle()).'"';
+            $values .= ', institution="'.Sanitizer::cleanInStr($person->getInstitution()).'"';
+            $values .= ', department= "'.Sanitizer::cleanInStr($person->getDepartment()).'"';
+            $values .= ', address= "'.Sanitizer::cleanInStr($person->getAddress()).'"';
+            $values .= ', city="'.Sanitizer::cleanInStr($person->getCity()).'"';
+            $values .= ', state="'.Sanitizer::cleanInStr($person->getState()).'"';
+            $values .= ', zip="'.Sanitizer::cleanInStr($person->getZip()).'"';
+            $values .= ', country= "'.Sanitizer::cleanInStr($person->getCountry()).'"';
+            $values .= ', phone="'.Sanitizer::cleanInStr($person->getPhone()).'"';
+            $values .= ', email="'.Sanitizer::cleanInStr($person->getEmail()).'"';
+            $values .= ', url="'.Sanitizer::cleanInStr($person->getUrl()).'"';
+            $values .= ', biography="'.Sanitizer::cleanInStr($person->getBiography()).'"';
+            $values .= ', ispublic='.(Sanitizer::cleanInStr($person->getIsPublic())?1:0).' ';
             $sql = $fields. ' ' .$values. ' ' .$where;
             //echo $sql;
             $success = $editCon->query($sql);
@@ -209,11 +210,11 @@ class ProfileManager extends Manager{
                 $sqlTest = '';
                 if($this->encryption === 'password'){
                     $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
-                        'AND (u.password = PASSWORD("'.$this->cleanInStr($oldPwd).'"))';
+                        'AND (u.password = PASSWORD("'.Sanitizer::cleanInStr($oldPwd).'"))';
                 }
                 if($this->encryption === 'sha2'){
                     $sqlTest = 'SELECT u.uid FROM users u WHERE (u.uid = '.$this->uid.') '.
-                        'AND (u.password = SHA2("'.$this->cleanInStr($oldPwd).'", 224))';
+                        'AND (u.password = SHA2("'.Sanitizer::cleanInStr($oldPwd).'", 224))';
                 }
                 $rsTest = $editCon->query($sqlTest);
                 if(!$rsTest->num_rows) {
@@ -222,11 +223,11 @@ class ProfileManager extends Manager{
             }
             $sql = '';
             if($this->encryption === 'password'){
-                $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPwd).'") '.
+                $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPwd).'") '.
                     'WHERE (uid = '.$this->uid.')';
             }
             if($this->encryption === 'sha2'){
-                $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPwd).'", 224) '.
+                $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPwd).'", 224) '.
                     'WHERE (uid = '.$this->uid.')';
             }
             $successCnt = $editCon->query($sql);
@@ -248,12 +249,12 @@ class ProfileManager extends Manager{
                 $editCon = $connection->getConnection();
                 $sql = '';
                 if($this->encryption === 'password'){
-                    $sql = 'UPDATE users SET password = PASSWORD("'.$this->cleanInStr($newPassword).'") '.
-                        'WHERE (username = "'.$this->cleanInStr($un).'")';
+                    $sql = 'UPDATE users SET password = PASSWORD("'.Sanitizer::cleanInStr($newPassword).'") '.
+                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
                 }
                 if($this->encryption === 'sha2'){
-                    $sql = 'UPDATE users SET password = SHA2("'.$this->cleanInStr($newPassword).'", 224) '.
-                        'WHERE (username = "'.$this->cleanInStr($un).'")';
+                    $sql = 'UPDATE users SET password = SHA2("'.Sanitizer::cleanInStr($newPassword).'", 224) '.
+                        'WHERE (username = "'.Sanitizer::cleanInStr($un).'")';
                 }
                 $status = $editCon->query($sql);
                 $editCon->close();
@@ -261,7 +262,7 @@ class ProfileManager extends Manager{
             if($status){
                 $emailAddr = '';
                 $sql = 'SELECT u.email FROM users u '.
-                    'WHERE (u.username = "'.$this->cleanInStr($un).'")';
+                    'WHERE (u.username = "'.Sanitizer::cleanInStr($un).'")';
                 $result = $this->conn->query($sql);
                 if($row = $result->fetch_object()){
                     $emailAddr = $row->email;
@@ -306,9 +307,9 @@ class ProfileManager extends Manager{
     {
         $status = false;
         $manager = new Manager();
-        $firstName = $this->cleanInStr($postArr['firstname']);
-        $lastName = $this->cleanInStr($postArr['lastname']);
-        $email = $this->cleanInStr($postArr['emailaddr']);
+        $firstName = Sanitizer::cleanInStr($postArr['firstname']);
+        $lastName = Sanitizer::cleanInStr($postArr['lastname']);
+        $email = Sanitizer::cleanInStr($postArr['emailaddr']);
         if($firstName && $lastName && $email && $this->userName){
             $person = new Person();
             $person->setPassword($postArr['pwd']);
@@ -332,55 +333,55 @@ class ProfileManager extends Manager{
             $fields = 'INSERT INTO users (';
             $values = 'VALUES (';
             $fields .= 'firstname ';
-            $values .= '"'.$this->cleanInStr($person->getFirstName()).'"';
+            $values .= '"'.Sanitizer::cleanInStr($person->getFirstName()).'"';
             $fields .= ', middleinitial ';
-            $values .= ', "'.$this->cleanInStr($person->getMiddleInitial()).'"';
+            $values .= ', "'.Sanitizer::cleanInStr($person->getMiddleInitial()).'"';
             $fields .= ', lastname';
-            $values .= ', "'.$this->cleanInStr($person->getLastName()).'"';
+            $values .= ', "'.Sanitizer::cleanInStr($person->getLastName()).'"';
             $fields .= ', username';
-            $values .= ', "'.$this->cleanInStr($person->getUserName()).'"';
+            $values .= ', "'.Sanitizer::cleanInStr($person->getUserName()).'"';
             $fields .= ', password';
             if($this->encryption === 'password'){
-                $values .= ', PASSWORD("'.$this->cleanInStr($person->getPassword()).'")';
+                $values .= ', PASSWORD("'.Sanitizer::cleanInStr($person->getPassword()).'")';
             }
             if($this->encryption === 'sha2'){
-                $values .= ', SHA2("'.$this->cleanInStr($person->getPassword()).'", 224)';
+                $values .= ', SHA2("'.Sanitizer::cleanInStr($person->getPassword()).'", 224)';
             }
             if($person->getTitle()){
                 $fields .= ', title';
-                $values .= ', "'.$this->cleanInStr($person->getTitle()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getTitle()).'"';
             }
             if($person->getInstitution()){
                 $fields .= ', institution';
-                $values .= ', "'.$this->cleanInStr($person->getInstitution()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getInstitution()).'"';
             }
             if($person->getDepartment()){
                 $fields .= ', department';
-                $values .= ', "'.$this->cleanInStr($person->getDepartment()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getDepartment()).'"';
             }
             if($person->getAddress()){
                 $fields .= ', address';
-                $values .= ', "'.$this->cleanInStr($person->getAddress()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getAddress()).'"';
             }
             if($person->getCity()){
                 $fields .= ', city';
-                $values .= ', "'.$this->cleanInStr($person->getCity()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getCity()).'"';
             }
             $fields .= ', state';
-            $values .= ', "'.$this->cleanInStr($person->getState()).'"';
+            $values .= ', "'.Sanitizer::cleanInStr($person->getState()).'"';
             $fields .= ', country';
-            $values .= ', "'.$this->cleanInStr($person->getCountry()).'"';
+            $values .= ', "'.Sanitizer::cleanInStr($person->getCountry()).'"';
             if($person->getZip()){
                 $fields .= ', zip';
-                $values .= ', "'.$this->cleanInStr($person->getZip()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getZip()).'"';
             }
             if($person->getPhone()){
                 $fields .= ', phone';
-                $values .= ', "'.$this->cleanInStr($person->getPhone()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getPhone()).'"';
             }
             if($person->getEmail()){
                 $fields .= ', email';
-                $values .= ', "'.$this->cleanInStr($person->getEmail()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getEmail()).'"';
             }
             if($person->getUrl()){
                 $fields .= ', url';
@@ -388,7 +389,7 @@ class ProfileManager extends Manager{
             }
             if($person->getBiography()){
                 $fields .= ', biography';
-                $values .= ', "'.$this->cleanInStr($person->getBiography()).'"';
+                $values .= ', "'.Sanitizer::cleanInStr($person->getBiography()).'"';
             }
             if($person->getIsPublic()){
                 $fields .= ', ispublic';
@@ -657,10 +658,10 @@ class ProfileManager extends Manager{
         $statusStr = 'SUCCESS adding taxonomic relationship';
 
         $tid = 0;
-        $taxon = $this->cleanInStr($taxon);
-        $editorStatus = $this->cleanInStr($editorStatus);
-        $geographicScope = $this->cleanInStr($geographicScope);
-        $notes = $this->cleanInStr($notes);
+        $taxon = Sanitizer::cleanInStr($taxon);
+        $editorStatus = Sanitizer::cleanInStr($editorStatus);
+        $geographicScope = Sanitizer::cleanInStr($geographicScope);
+        $notes = Sanitizer::cleanInStr($notes);
         $modDate = date('Y-m-d H:i:s');
         $sql1 = 'SELECT tid FROM taxa WHERE sciname = "'.$taxon.'"';
         $rs1 = $this->conn->query($sql1);
@@ -691,7 +692,7 @@ class ProfileManager extends Manager{
         return $statusStr;
     }
 
-    public function dlSpecBackup($collId, $characterSet, $zipFile = 1){
+    public function dlSpecBackup($collId, $characterSet, $zipFile){
         $tempPath = $this->getTempPath();
         $buFileName = $GLOBALS['PARAMS_ARR']['un'].'_'.time();
         $zipArchive = null;
@@ -865,7 +866,7 @@ class ProfileManager extends Manager{
     private function validateUserName($un): bool
     {
         $status = true;
-        if(!$this->cleanInStr($un)){
+        if(!Sanitizer::cleanInStr($un)){
             $status = false;
         }
         if (preg_match('/^[0-9A-Za-z_!@#$\s.+\-]+$/', $un) === 0) {

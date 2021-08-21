@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ChecklistVoucherAdmin {
 
@@ -23,16 +24,14 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function __destruct(){
- 		if($this->closeConnOnDestroy && !($this->conn === false)) {
+ 		if($this->closeConnOnDestroy && $this->conn) {
 			$this->conn->close();
 		}
 	}
 
 	public function setClid($clid): void
 	{
-		if(is_numeric($clid)) {
-			$this->clid = $clid;
-		}
+        $this->clid = $clid;
 	}
 
 	public function setCollectionVariables(): void
@@ -41,7 +40,7 @@ class ChecklistVoucherAdmin {
 			$sql = 'SELECT name, dynamicsql FROM fmchecklists WHERE (clid = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$this->clName = $this->cleanOutStr($row->name);
+				$this->clName = Sanitizer::cleanOutStr($row->name);
 				$sqlFrag = $row->dynamicsql;
 				$varArr = json_decode($sqlFrag,true);
 				if(json_last_error() !== JSON_ERROR_NONE){
@@ -83,7 +82,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.$this->cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -124,10 +123,10 @@ class ChecklistVoucherAdmin {
 			if(preg_match('/ OR \(\(o.decimallatitude/',$sqlFrag) || preg_match('/ OR \(\(o.decimallongitude/',$sqlFrag)){
 				$retArr['latlngor'] = 1;
 			}
-			if(false !== strpos($sqlFrag, 'cultivationStatus')){
+			if(strpos($sqlFrag, 'cultivationStatus') !== false){
 				$retArr['excludecult'] = 1;
 			}
-			if(false !== strpos($sqlFrag, 'decimallatitude')){
+			if(strpos($sqlFrag, 'decimallatitude') !== false){
 				$retArr['onlycoord'] = 1;
 			}
 		}
@@ -138,11 +137,11 @@ class ChecklistVoucherAdmin {
 	{
 		$sqlFrag = '';
 		if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
-			$countryStr = str_replace(';',',',$this->cleanInStr($this->queryVariablesArr['country']));
+			$countryStr = str_replace(';',',',Sanitizer::cleanInStr($this->queryVariablesArr['country']));
 			$sqlFrag = 'AND (o.country IN("'.$countryStr.'")) ';
 		}
 		if(isset($this->queryVariablesArr['state']) && $this->queryVariablesArr['state']){
-			$stateStr = str_replace(';',',',$this->cleanInStr($this->queryVariablesArr['state']));
+			$stateStr = str_replace(';',',',Sanitizer::cleanInStr($this->queryVariablesArr['state']));
 			$sqlFrag .= 'AND (o.stateprovince = "'.$stateStr.'") ';
 		}
 		if(isset($this->queryVariablesArr['county']) && $this->queryVariablesArr['county']){
@@ -150,7 +149,7 @@ class ChecklistVoucherAdmin {
 			$cArr = explode(',', $countyStr);
 			$cStr = '';
 			foreach($cArr as $str){
-				$cStr .= 'OR (o.county LIKE "'.$this->cleanInStr($str).'%") ';
+				$cStr .= 'OR (o.county LIKE "'.Sanitizer::cleanInStr($str).'%") ';
 			}
 			$sqlFrag .= 'AND ('.substr($cStr, 2).') ';
 		}
@@ -159,7 +158,7 @@ class ChecklistVoucherAdmin {
 			$locArr = explode(',', $localityStr);
 			$locStr = '';
 			foreach($locArr as $str){
-				$str = $this->cleanInStr($str);
+				$str = Sanitizer::cleanInStr($str);
 				if(strlen($str) > 4){
 					$locStr .= 'OR (MATCH(f.locality) AGAINST("'.$str.'")) ';
 				}
@@ -170,7 +169,7 @@ class ChecklistVoucherAdmin {
 			$sqlFrag .= 'AND ('.substr($locStr, 2).') ';
 		}
 		if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
-			$tStr = $this->cleanInStr($this->queryVariablesArr['taxon']);
+			$tStr = Sanitizer::cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
 				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid = '.$tidPar.')) ';
@@ -205,10 +204,10 @@ class ChecklistVoucherAdmin {
 			$tempArr = array();
 			foreach($collArr as $str => $postArr){
 				if(strlen($str) < 4 || strtolower($str) === 'best'){
-					$tempArr[] = '(o.recordedby LIKE "%'.$this->cleanInStr($postArr['recordedby']).'%")';
+					$tempArr[] = '(o.recordedby LIKE "%'.Sanitizer::cleanInStr($postArr['recordedby']).'%")';
 				}
 				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.$this->cleanInStr($str).'"))';
+					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($str).'"))';
 				}
 			}
 			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
@@ -249,7 +248,7 @@ class ChecklistVoucherAdmin {
 		return $uvCnt;
 	}
 
-	public function getNonVoucheredTaxa($startLimit,$limit = 100): array
+	public function getNonVoucheredTaxa($startLimit): array
 	{
 		$retArr = array();
 		$sql = 'SELECT t.tid, ts.family, t.sciname '.
@@ -258,17 +257,17 @@ class ChecklistVoucherAdmin {
 			'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
 			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') AND ts.taxauthid = 1 '.
 			'ORDER BY ts.family, t.sciname '.
-			'LIMIT '.($startLimit?$startLimit.',':'').$limit;
+			'LIMIT '.($startLimit?$startLimit.',':'').'100';
 		//echo '<div>'.$sql.'</div>';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->family][$row->tid] = $this->cleanOutStr($row->sciname);
+			$retArr[$row->family][$row->tid] = Sanitizer::cleanOutStr($row->sciname);
 		}
 		$rs->free();
 		return $retArr;
 	}
 
-	public function getNewVouchers($startLimit = 500,$includeAll = 1): array
+	public function getNewVouchers($startLimit, $includeAll): array
 	{
 		$retArr = array();
 		if($sqlFrag = $this->getSqlFrag()){
@@ -276,7 +275,7 @@ class ChecklistVoucherAdmin {
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
-			if($includeAll == 1 || $includeAll == 2){
+			if($includeAll === 1 || $includeAll === 2){
 				$sql = 'SELECT DISTINCT cl.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -289,10 +288,10 @@ class ChecklistVoucherAdmin {
 					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
-				if($includeAll == 1){
+				if($includeAll === 1){
 					$sql .= 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
-				elseif($includeAll == 2){
+				elseif($includeAll === 2){
 					$sql .= 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
 				}
 				$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -312,7 +311,7 @@ class ChecklistVoucherAdmin {
 					$retArr[$r->cltid][$r->occid]['locality'] = $r->locality;
 				}
 			}
-			elseif($includeAll == 3){
+			elseif($includeAll === 3){
 				$sql = 'SELECT DISTINCT t.tid AS cltid, t.sciname AS clsciname, o.occid, '.
 					'IFNULL(CONCAT(c.institutioncode,"-",c.collectioncode,"-",o.catalognumber),"[no catalog number]") AS collcode, '.
 					'o.tidinterpreted, o.sciname, o.recordedby, o.recordnumber, o.eventdate, '.
@@ -355,7 +354,7 @@ class ChecklistVoucherAdmin {
 			//echo '<div>'.$sql.'</div>';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$retArr[$row->tid] = $this->cleanOutStr($row->sciname);
+				$retArr[$row->tid] = Sanitizer::cleanOutStr($row->sciname);
 			}
 			asort($retArr);
 			$rs->free();
@@ -427,13 +426,13 @@ class ChecklistVoucherAdmin {
 			if($row->recordnumber) {
 				$collStr .= ' (' . $row->recordnumber . ')';
 			}
-			$retArr[$cnt]['recordnumber'] = $this->cleanOutStr($collStr);
-			$retArr[$cnt]['specid'] = $this->cleanOutStr($voucherSciname);
+			$retArr[$cnt]['recordnumber'] = Sanitizer::cleanOutStr($collStr);
+			$retArr[$cnt]['specid'] = Sanitizer::cleanOutStr($voucherSciname);
 			$idBy = $row->identifiedby;
 			if($row->dateidentified) {
-				$idBy .= ' (' . $this->cleanOutStr($row->dateidentified) . ')';
+				$idBy .= ' (' . Sanitizer::cleanOutStr($row->dateidentified) . ')';
 			}
-			$retArr[$cnt]['identifiedby'] = $this->cleanOutStr($idBy);
+			$retArr[$cnt]['identifiedby'] = Sanitizer::cleanOutStr($idBy);
 			$cnt++;
 		}
 		$rs->free();
@@ -666,7 +665,8 @@ class ChecklistVoucherAdmin {
 		}
 	}
 
-	protected function getExportFileName(){
+	protected function getExportFileName(): string
+    {
 		$fileName = $this->clName;
 		if($fileName){
 			if(strlen($fileName) > 20){
@@ -735,7 +735,8 @@ class ChecklistVoucherAdmin {
 	}
 
 	public function linkVoucher($taxa,$occid){
-		if(!is_numeric($taxa)){
+		$returnVal = null;
+	    if(!is_numeric($taxa)){
 			$rs = $this->conn->query('SELECT tid FROM taxa WHERE (sciname = "'.$this->conn->real_escape_string($taxa).'")');
 			if($r = $rs->fetch_object()){
 				$taxa = $r->tid;
@@ -744,26 +745,29 @@ class ChecklistVoucherAdmin {
 		$sql = 'INSERT INTO fmvouchers(clid,tid,occid) '.
 			'VALUES ('.$this->clid.','.$taxa.','.$occid.')';
 		if($this->conn->query($sql)){
-			return 1;
+            $returnVal = 1;
 		}
-
-		if($this->conn->errno == 1062){
-			return 'Specimen already a voucher for checklist';
-		}
-
-		$sql2 = 'INSERT INTO fmchklsttaxalink(tid,clid) VALUES('.$taxa.','.$this->clid.')';
-		if($this->conn->query($sql2)){
-			if($this->conn->query($sql)){
-				return 1;
-			}
-
-			return 'Name added to checklist, though unable to link voucher: '.$this->conn->error;
-		}
-
-		return 'Unable to link voucher: '.$this->conn->error;
+		else if((int)$this->conn->errno === 1062){
+            $returnVal = 'Specimen already a voucher for checklist';
+        }
+        else{
+            $sql2 = 'INSERT INTO fmchklsttaxalink(tid,clid) VALUES('.$taxa.','.$this->clid.')';
+            if($this->conn->query($sql2)){
+                if($this->conn->query($sql)){
+                    $returnVal = 1;
+                }
+                else{
+                    $returnVal = 'Name added to checklist, though unable to link voucher: '.$this->conn->error;
+                }
+            }
+        }
+		if(!$returnVal){
+            $returnVal = 'Unable to link voucher: '.$this->conn->error;
+        }
+        return $returnVal;
 	}
 
-	public function linkTaxaVouchers($occidArr,$useCurrentTaxon = 1): void
+	public function linkTaxaVouchers($occidArr, $useCurrentTaxon): void
 	{
 		$tidsUsed = array();
 		foreach($occidArr as $v){
@@ -861,7 +865,7 @@ class ChecklistVoucherAdmin {
 		return $canReadRareSpp;
 	}
 
-	public function getCollectionList($collId = 0): array
+	public function getCollectionList($collId = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname FROM omcollections ';
@@ -894,7 +898,7 @@ class ChecklistVoucherAdmin {
 	private function getTid($sciname): int
 	{
 		$tidRet = 0;
-		$sql = 'SELECT tid FROM taxa WHERE sciname = ("'.$sciname.'")';
+		$sql = 'SELECT tid FROM taxa WHERE sciname = ("'.Sanitizer::cleanInStr($sciname).'")';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$tidRet = $r->tid;
@@ -937,17 +941,5 @@ class ChecklistVoucherAdmin {
 			}
 		}
 		return $retStr;
-	}
-
-	private function cleanOutStr($str){
-		$str = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-		return $str;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

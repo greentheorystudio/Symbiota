@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
 
-$tid = $_REQUEST['tid'];
+$tid = (int)$_REQUEST['tid'];
 $genusStr = array_key_exists('genusstr',$_REQUEST)?$_REQUEST['genusstr']:'';
 
 $taxonEditorObj = new TaxonomyEditorManager();

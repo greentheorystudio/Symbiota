@@ -68,7 +68,7 @@ else{
             $displayName .= '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             $displayName .= '</a>';
         }
-        echo "<div id='sciname' class='".$styleClass."' >".$displayName."</div> ";
+        echo "<div id='sciname' class='".$styleClass."' >".$displayName. '</div> ';
         ?>
     </div>
     <?php
@@ -96,7 +96,7 @@ if($ambiguous){
 $ambiguousDiv = ob_get_clean();
 
 ob_start();
-if($links && $links[0]['sortseq'] == 1){
+if($links && (int)$links[0]['sortseq'] === 1){
     $uStr = str_replace('--SCINAME--',rawurlencode($taxonManager->getSciName()),$links[0]['url']);
     ?>
     <div id="weblinks">
@@ -276,7 +276,7 @@ ob_start();
 ?>
 <div id="img-div">
     <?php
-    if(($taxonManager->getImageCount() > 100) && !$showAllImages){
+    if(!$showAllImages && ($taxonManager->getImageCount() > 100)){
         $taxonManager->echoImages(1, 100);
     }
     else{
@@ -351,7 +351,7 @@ ob_start();
                     if($subArr['thumbnailurl']){
                         $imgUrl = $subArr['thumbnailurl'];
                     }
-                    if(strpos($imgUrl, '/') === 0) {
+                    if(strncmp($imgUrl, '/', 1) === 0) {
                         if($GLOBALS['IMAGE_DOMAIN']){
                             $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                         }
@@ -375,7 +375,7 @@ ob_start();
                 echo '<div class="sppmap">';
                 if(array_key_exists('map',$subArr) && $subArr['map']){
                     $mapUrl = $subArr['map'];
-                    if(strpos($mapUrl, '/') === 0) {
+                    if(strncmp($mapUrl, '/', 1) === 0) {
                         if($GLOBALS['IMAGE_DOMAIN']){
                             $mapUrl = $GLOBALS['IMAGE_DOMAIN'] . $mapUrl;
                         }

@@ -6,11 +6,11 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$resultId = array_key_exists('resid',$_REQUEST)?$_REQUEST['resid']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$resultId = array_key_exists('resid',$_REQUEST)?(int)$_REQUEST['resid']:0;
 $viewMode = array_key_exists('viewmode',$_REQUEST)?$_REQUEST['viewmode']:'full';
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:100;
+$start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
+$limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:100;
 
 $apiManager = new FieldGuideManager();
 $cleanManager = new OccurrenceCleaner();
@@ -18,6 +18,17 @@ $resultArr = array();
 $imageCntArr = array();
 $resultTot = 0;
 $statusStr = '';
+$fgidarr = array();
+$tidArr = array();
+$firstOcc = false;
+$instCode = '';
+$collCode = '';
+$recResults = false;
+$firstImg = false;
+$imgurl = '';
+$firstRadio = false;
+$family = '';
+$fgStatus = '';
 
 if($collId) {
     $cleanManager->setCollId($collId);
@@ -210,10 +221,10 @@ if($isEditor){
                                         $note = '';
                                         $tId = 0;
                                         if(array_key_exists($name,$tidArr) && $tidArr[$name]){
-                                            if($currID == $name){
+                                            if($currID === $name){
                                                 $note = 'Current determination';
                                             }
-                                            else if(count($tidArr[$name]) == 1){
+                                            else if(count($tidArr[$name]) === 1){
                                                 $valid = true;
                                                 $tId = $tidArr[$name][0];
                                             }
@@ -227,7 +238,7 @@ if($isEditor){
                                         if($note) {
                                             $displayName = $name . ' <span style="color:red;">' . $note . '</span>';
                                         }
-                                        echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
+                                        echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
                                         echo '<td>'."\n";
                                         if($firstOcc) {
                                             echo '<a href="../editor/occurrenceeditor.php?occid=' . $occId . '" target="_blank">' . $occId . '</a>' . "\n";
@@ -279,7 +290,7 @@ if($isEditor){
                                     if($fgStatus === 'OK' && !$fgidarr){
                                         $note = '<span style="color:red;">No results provided.</span>';
                                     }
-                                    echo '<tr '.(($setCnt % 2) == 1?'class="alt"':'').'>';
+                                    echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
                                     echo '<td>'."\n";
                                     if($firstOcc) {
                                         echo '<a href="../editor/occurrenceeditor.php?occid=' . $occId . '" target="_blank">' . $occId . '</a>' . "\n";

@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$occid = $_GET['occid'];
-$occIndex = $_GET['occindex'];
-$collId = $_GET['collid'];
+$occid = (int)$_GET['occid'];
+$occIndex = (int)$_GET['occindex'];
+$collId = (int)$_GET['collid'];
 
 $occManager = new OccurrenceEditorManager();
 $occManager->setOccId($occid); 

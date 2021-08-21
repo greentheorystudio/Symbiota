@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecProcessorOcr{
 
@@ -36,7 +37,7 @@ class SpecProcessorOcr{
 		}
 	}
 
-	public function ocrImageById($imgid,$getBest = 0,$sciName=''){
+	public function ocrImageById($imgid,$getBest = null,$sciName=null){
 		$rawStr = '';
 		$sql = 'SELECT url, originalurl FROM images WHERE imgid = '.$imgid;
 		if($rs = $this->conn->query($sql)){
@@ -49,7 +50,7 @@ class SpecProcessorOcr{
 		return $rawStr;
 	}
 	
-	private function ocrImageByUrl($imgUrl,$getBest = 0,$sciName=''){
+	private function ocrImageByUrl($imgUrl,$getBest = null,$sciName=null){
 		if($imgUrl){
 			if($this->loadImage($imgUrl)){
 				$this->cropImage();
@@ -89,7 +90,7 @@ class SpecProcessorOcr{
 		return $rawStr;
 	}
 
-	private function ocrImage($url = ''): string
+	private function ocrImage($url = null): string
 	{
 		$retStr = '';
 		if(!$url) {
@@ -99,7 +100,7 @@ class SpecProcessorOcr{
 			$output = array();
 			$outputFile = substr($url,0, -4);
 			if(isset($GLOBALS['TESSERACT_PATH']) && $GLOBALS['TESSERACT_PATH']){
-				if(strpos($GLOBALS['TESSERACT_PATH'], 'C:') == 0){
+				if(strncmp($GLOBALS['TESSERACT_PATH'], 'C:', 2) === 0){
 					exec('"'.$GLOBALS['TESSERACT_PATH'].'" '.$url.' '.$outputFile,$output);
 				}
 				else{
@@ -128,33 +129,34 @@ class SpecProcessorOcr{
 
 	private function databaseRawStr($imgId,$rawStr,$notes,$source): ?bool
 	{
-		if(is_numeric($imgId) && $rawStr){
+		$retVal = false;
+	    if(is_numeric($imgId) && $rawStr){
 			$score = '';
 			if($rawStr === 'Failed OCR return') {
 				$score = 0;
 			}
 			$sql = 'INSERT INTO specprocessorrawlabels(imgid,rawstr,notes,source,score) '.
-				'VALUE ('.$imgId.',"'.$this->cleanInStr($rawStr).'",'.
-				($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.
-				($source?'"'.$this->cleanInStr($source).'"':'NULL').','.
-				($score?'"'.$this->cleanInStr($score).'"':'NULL').')';
+				'VALUE ('.$imgId.',"'.Sanitizer::cleanInStr($rawStr).'",'.
+				($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').','.
+				($source?'"'.Sanitizer::cleanInStr($source).'"':'NULL').','.
+				($score?'"'.Sanitizer::cleanInStr($score).'"':'NULL').')';
 			//echo 'SQL: '.$sql."\n";
 			if($this->conn->query($sql)){
-				return true;
+                $retVal = true;
 			}
-
-			$this->logMsg('ERROR: Unable to load fragment into database: ' .$this->conn->error,1);
-			$this->logMsg('SQL: ' .$sql,2);
-			return false;
-		}
-		return false;
+			else{
+                $this->logMsg('ERROR: Unable to load fragment into database: ' .$this->conn->error,1);
+                $this->logMsg('SQL: ' .$sql,2);
+            }
+        }
+		return $retVal;
 	}
 
 	private function loadImage($imgUrl): bool
 	{
 		$status = false;
 		if($imgUrl){
-			if(strpos($imgUrl, '/') == 0){
+			if(strncmp($imgUrl, '/', 1) === 0){
 				if($GLOBALS['IMAGE_DOMAIN']){
 					$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 				}
@@ -178,9 +180,12 @@ class SpecProcessorOcr{
 		return $status;
 	}
 
-	public function batchOcrUnprocessed($inCollStr,$procStatus = 'unprocessed',$limit = 0,$getBest = 0): void
+	public function batchOcrUnprocessed($inCollStr,$procStatus = null,$limit = null,$getBest = null): void
 	{
-		if($inCollStr) {
+		if(!$procStatus){
+            $procStatus = 'unprocessed';
+        }
+	    if($inCollStr) {
 			$collArr = array();
 			set_time_limit(600);
 			ini_set('memory_limit','512M');
@@ -232,115 +237,121 @@ class SpecProcessorOcr{
 		$this->collid = $postArr['collid'];
 		$this->ocrSource = $postArr['ocrsource'];
 		$this->specKeyPattern = $postArr['speckeypattern'];
-		if(!$this->specKeyPattern){
+		if($this->specKeyPattern) {
+            if(array_key_exists('sourcepath',$postArr) && $postArr['sourcepath']){
+                $sourcePath = $postArr['sourcepath'];
+            }
+            else{
+                $this->deleteAllOcrFiles = 1;
+                $sourcePath = $this->uploadOcrFile();
+            }
+            if($sourcePath) {
+                if(strncmp($sourcePath, 'http', 4) === 0){
+                    $headerArr = get_headers($sourcePath);
+                    if($headerArr) {
+                        preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
+                        if($codeArr[1] === 403){
+                            $this->errorStr = 'ERROR loading OCR files: sourcePath returned Forbidden ('.$sourcePath.')';
+                            $this->logMsg($this->errorStr);
+                            $status = false;
+                        }
+                        else if($codeArr[1] === 404){
+                            $this->errorStr = 'ERROR loading OCR files: sourcePath returned a page Not Found error ('.$sourcePath.')';
+                            $this->logMsg($this->errorStr);
+                            $status = false;
+                        }
+                        else if($codeArr[1] !== 200){
+                            $this->errorStr = 'ERROR loading OCR files: sourcePath returned error code '.$codeArr[1].' ('.$sourcePath.')';
+                            $this->logMsg($this->errorStr);
+                            $status = false;
+                        }
+                    }
+                    else {
+                        $this->errorStr = 'ERROR loading OCR files: sourcePath returned bad headers ('.$sourcePath.')';
+                        $this->logMsg($this->errorStr);
+                        $status = false;
+                    }
+                }
+                elseif(file_exists($sourcePath)) {
+                    if(substr($sourcePath,-1) !== '/') {
+                        $sourcePath .= '/';
+                    }
+                    if(strncmp($sourcePath, 'http', 4) === 0){
+                        $this->processOcrHtml($sourcePath);
+                    }
+                    else{
+                        $this->processOcrFolder($sourcePath);
+                    }
+                }
+                else {
+                    $this->errorStr = 'ERROR loading OCR files: sourcePath does not exist ('.$sourcePath.')';
+                    $this->logMsg($this->errorStr);
+                    $status = false;
+                }
+            }
+            else {
+                $this->errorStr = 'ERROR loading OCR files: OCR source path is missing';
+                $this->logMsg($this->errorStr);
+                $status = false;
+            }
+        }
+		else {
 			$this->errorStr = 'ERROR loading OCR files: Specimen catalog number pattern missing';
 			$this->logMsg($this->errorStr);
-			return false;
-		}
-		if(array_key_exists('sourcepath',$postArr) && $postArr['sourcepath']){
-			$sourcePath = $postArr['sourcepath'];
-		}
-		else{
-			$this->deleteAllOcrFiles = 1;
-			$sourcePath = $this->uploadOcrFile();
-		}
-		if(!$sourcePath){
-			$this->errorStr = 'ERROR loading OCR files: OCR source path is missing';
-			$this->logMsg($this->errorStr);
-			return false;
-		}
-		if(strpos($sourcePath, 'http') == 0){
-			$headerArr = get_headers($sourcePath);
-			if(!$headerArr){
-				$this->errorStr = 'ERROR loading OCR files: sourcePath returned bad headers ('.$sourcePath.')';
-				$this->logMsg($this->errorStr);
-				return false;
-			} 
-			preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
-			if($codeArr[1] === 403){
-				$this->errorStr = 'ERROR loading OCR files: sourcePath returned Forbidden ('.$sourcePath.')';
-				$this->logMsg($this->errorStr);
-				return false;
-			}
-			if($codeArr[1] === 404){
-				$this->errorStr = 'ERROR loading OCR files: sourcePath returned a page Not Found error ('.$sourcePath.')';
-				$this->logMsg($this->errorStr);
-				return false;
-			}
-			if($codeArr[1] !== 200){
-				$this->errorStr = 'ERROR loading OCR files: sourcePath returned error code '.$codeArr[1].' ('.$sourcePath.')';
-				$this->logMsg($this->errorStr);
-				return false;
-			}
-		}
-		elseif(!file_exists($sourcePath)){
-			$this->errorStr = 'ERROR loading OCR files: sourcePath does not exist ('.$sourcePath.')';
-			$this->logMsg($this->errorStr);
-			return false;
-		}
-		if(substr($sourcePath,-1) !== '/') {
-			$sourcePath .= '/';
-		}
-		if(strpos($sourcePath, 'http') == 0){
-			$this->processOcrHtml($sourcePath);
-		}
-		else{
-			$this->processOcrFolder($sourcePath);
+            $status = false;
 		}
 		$this->logMsg('Done loading OCR files ');
-		
-		
 		return $status;
 	}
 	
-	private function uploadOcrFile(){
+	private function uploadOcrFile(): string
+    {
 		$retPath = '';
-		if(!array_key_exists('ocrfile',$_FILES)){
-			$this->errorStr = 'ERROR loading OCR file: OCR file missing';
-			$this->logMsg($this->errorStr);
-			return false;
-		}
-		if(!$this->tempPath){
-			$this->errorStr = 'ERROR loading OCR file: temp target path empty';
-			$this->logMsg($this->errorStr);
-			return false;
-		}
-		$zipPath = $this->tempPath.'ocrupload.zip';
-		if(file_exists($zipPath)) {
-			unlink($zipPath);
-		}
-		if(is_writable($this->tempPath)){
-            if(move_uploaded_file($_FILES['ocrfile']['tmp_name'], $zipPath)){
-                $zip = new ZipArchive;
-                $res = $zip->open($zipPath);
-                if($res === true) {
-                    $extractPath = $this->tempPath.'ocrtext_'.time().'/';
-                    if (!mkdir($extractPath) && !is_dir($extractPath)) {
-                        throw new RuntimeException(sprintf('Directory "%s" was not created', $extractPath));
-                    }
-                    if($zip->extractTo($extractPath)){
-                        $retPath = $extractPath;
-                    }
-                    $zip->close();
+		if(array_key_exists('ocrfile', $_FILES)) {
+            if($this->tempPath) {
+                $zipPath = $this->tempPath.'ocrupload.zip';
+                if(file_exists($zipPath)) {
                     unlink($zipPath);
                 }
+                if(is_writable($this->tempPath)){
+                    if(move_uploaded_file($_FILES['ocrfile']['tmp_name'], $zipPath)){
+                        $zip = new ZipArchive;
+                        $res = $zip->open($zipPath);
+                        if($res === true) {
+                            $extractPath = $this->tempPath.'ocrtext_'.time().'/';
+                            if (!mkdir($extractPath) && !is_dir($extractPath)) {
+                                throw new RuntimeException(sprintf('Directory "%s" was not created', $extractPath));
+                            }
+                            if($zip->extractTo($extractPath)){
+                                $retPath = $extractPath;
+                            }
+                            $zip->close();
+                            unlink($zipPath);
+                        }
+                        else{
+                            $this->errorStr = 'ERROR unpacking OCR file: '.$res;
+                            $this->logMsg($this->errorStr);
+                        }
+                    }
+                    else{
+                        $this->errorStr = 'ERROR loading OCR file: input file lacks zip extension';
+                        $this->logMsg($this->errorStr);
+                    }
+                }
                 else{
-                    $this->errorStr = 'ERROR unpacking OCR file: '.$res;
+                    $this->errorStr = 'ERROR loading OCR file: Destination is not writable to server';
                     $this->logMsg($this->errorStr);
-                    return false;
                 }
             }
-            else{
-                $this->errorStr = 'ERROR loading OCR file: input file lacks zip extension';
+            else {
+                $this->errorStr = 'ERROR loading OCR file: temp target path empty';
                 $this->logMsg($this->errorStr);
-                return false;
             }
         }
-		else{
-            $this->errorStr = 'ERROR loading OCR file: Destination is not writable to server';
-            $this->logMsg($this->errorStr);
-            return false;
-        }
+		else {
+			$this->errorStr = 'ERROR loading OCR file: OCR file missing';
+			$this->logMsg($this->errorStr);
+		}
 		return $retPath;
 	}
 	
@@ -419,7 +430,7 @@ class SpecProcessorOcr{
 				$imgArr = array();
 				$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
 					'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.$this->cleanInStr($catNumber).'")';
+					'WHERE (o.collid = '.$this->collid.') AND (o.catalognumber = "'.Sanitizer::cleanInStr($catNumber).'")';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){
 					$imgArr[$r->imgid] = $r->url;
@@ -430,7 +441,7 @@ class SpecProcessorOcr{
 					if(strlen($fileBaseName)>4){
 						$sql = 'SELECT i.imgid, IFNULL(i.originalurl,i.url) AS url '.
 							'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid '.
-							'WHERE (o.collid = '.$this->collid.') AND ((i.originalurl LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg") OR (i.url LIKE "%/'.$this->cleanInStr($fileBaseName).'.jpg"))';
+							'WHERE (o.collid = '.$this->collid.') AND ((i.originalurl LIKE "%/'.Sanitizer::cleanInStr($fileBaseName).'.jpg") OR (i.url LIKE "%/'.Sanitizer::cleanInStr($fileBaseName).'.jpg"))';
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
 							$imgArr[$r->imgid] = $r->url;
@@ -506,18 +517,12 @@ class SpecProcessorOcr{
 		return $status;
 	}
 
-	private function imageTrimBorder($c=0, $t=100): bool
+	private function imageTrimBorder(): bool
 	{
-		$img = imagecreatefromjpeg($this->imgUrlLocal);
-		if (!is_numeric($c) || $c < 0 || $c > 255) {
-			return false;
-		}
-		if (!is_numeric($t) || $t < 0 || $t > 255) {
-			$t = 30;
-		}
-
-		$width = imagesx($img);
-		$height = imagesy($img);
+		$retVal = false;
+	    $img = imagecreatefromjpeg($this->imgUrlLocal);
+		$width = (int)imagesx($img);
+		$height = (int)imagesy($img);
 		$bTop = 0;
 		$bLeft = 0;
 		$bBottom = $height - 1;
@@ -529,70 +534,68 @@ class SpecProcessorOcr{
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
-				if(($r < $c-$t || $r > $c+$t) && ($g < $c-$t || $g > $c+$t) && ($b < $c-$t || $b > $c+$t)){
+				if(($r < -100 || $r > 100) && ($g < -100 || $g > 100) && ($b < -100 || $b > 100)){
 					break 2;
 				}
 			}
 		}
 
-		if ($bTop == $height) {
-			return false;
-		}
+		if($bTop !== $height) {
+            for(; $bBottom >= 0; $bBottom -= 2) {
+                for($x = 0; $x < $width; $x += 2) {
+                    $rgb = imagecolorat($img, $x, $bBottom);
+                    $r = ($rgb >> 16) & 0xFF;
+                    $g = ($rgb >> 8) & 0xFF;
+                    $b = $rgb & 0xFF;
+                    if(($r < -100 || $r > 100) && ($g < -100 || $g > 100) && ($b < -100 || $b > 100)){
+                        break 2;
+                    }
+                }
+            }
 
-		for(; $bBottom >= 0; $bBottom -= 2) {
-			for($x = 0; $x < $width; $x += 2) {
-				$rgb = imagecolorat($img, $x, $bBottom);
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
-				if(($r < $c-$t || $r > $c+$t) && ($g < $c-$t || $g > $c+$t) && ($b < $c-$t || $b > $c+$t)){
-					break 2;
-				}
-			}
-		}
+            for(; $bLeft < $width; $bLeft += 2) {
+                for($y = $bTop; $y <= $bBottom; $y += 2) {
+                    $rgb = imagecolorat($img, $bLeft, $y);
+                    $r = ($rgb >> 16) & 0xFF;
+                    $g = ($rgb >> 8) & 0xFF;
+                    $b = $rgb & 0xFF;
+                    if(($r < -100 || $r > 100) && ($g < -100 || $g > 100) && ($b < -100 || $b > 100)){
+                        break 2;
+                    }
+                }
+            }
 
-		for(; $bLeft < $width; $bLeft += 2) {
-			for($y = $bTop; $y <= $bBottom; $y += 2) {
-				$rgb = imagecolorat($img, $bLeft, $y);
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
-				if(($r < $c-$t || $r > $c+$t) && ($g < $c-$t || $g > $c+$t) && ($b < $c-$t || $b > $c+$t)){
-					break 2;
-				}
-			}
-		}
+            for(; $bRight >= 0; $bRight -= 2) {
+                for($y = $bTop; $y <= $bBottom; $y += 2) {
+                    $rgb = imagecolorat($img, $bRight, $y);
+                    $r = ($rgb >> 16) & 0xFF;
+                    $g = ($rgb >> 8) & 0xFF;
+                    $b = $rgb & 0xFF;
+                    if(($r < -100 || $r > 100) && ($g < -100 || $g > 100) && ($b < -100 || $b > 100)){
+                        break 2;
+                    }
+                }
+            }
 
-		for(; $bRight >= 0; $bRight -= 2) {
-			for($y = $bTop; $y <= $bBottom; $y += 2) {
-				$rgb = imagecolorat($img, $bRight, $y);
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
-				if(($r < $c-$t || $r > $c+$t) && ($g < $c-$t || $g > $c+$t) && ($b < $c-$t || $b > $c+$t)){
-					break 2;
-				}
-			}
-		}
+            $bBottom++;
+            $bRight++;
 
-		$bBottom++;
-		$bRight++;
-
-		$w = $bRight - $bLeft;
-		$h = $bBottom - $bTop;
-		if($w < $width || $h < $height){
-			$dest = imagecreatetruecolor($w,$h);
-			if(imagecopy($dest, $img, 0, 0, $bLeft, $bTop, $w, $h)){
-				imagejpeg($dest,$this->imgUrlLocal);
-			}
-			imagedestroy($dest);
-			imagedestroy($img);
-			return true;
+            $w = $bRight - $bLeft;
+            $h = $bBottom - $bTop;
+            if($w < $width || $h < $height){
+                $dest = imagecreatetruecolor($w,$h);
+                if(imagecopy($dest, $img, 0, 0, $bLeft, $bTop, $w, $h)){
+                    imagejpeg($dest,$this->imgUrlLocal);
+                }
+                imagedestroy($dest);
+                imagedestroy($img);
+                $retVal = true;
+            }
 		}
-		return false;
+		return $retVal;
 	}
 
-	private function getBestOCR($sciName = ''): ?string
+	private function getBestOCR($sciName = null): ?string
 	{
 		$rawStr_base = $this->ocrImage();
 		$score_base = $this->scoreOCR($rawStr_base, $sciName);
@@ -610,7 +613,7 @@ class SpecProcessorOcr{
 		return $rawStr_base;
 	}
 
-	private function filterImage($url=''): bool
+	private function filterImage($url = null): bool
 	{
 		$status = false;
 		if(!$url) {
@@ -636,7 +639,7 @@ class SpecProcessorOcr{
 		return $status;
 	}
 
-	private function scoreOCR($rawStr, $sciName = '') {
+	private function scoreOCR($rawStr, $sciName = null) {
 		$sLength = strlen($rawStr);
 		if($sLength > 12) {
 			$numWords = 0;
@@ -656,7 +659,7 @@ class SpecProcessorOcr{
 								if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i === 176) {
 									$goodChars++;
 								}
-								else if(($i < 44 || $i > 59) && !($i == 32 || $i == 35 || $i == 34 || $i == 39 || $i == 38 || $i == 40 || $i == 41 || $i == 61)) {
+								else if(($i < 44 || $i > 59) && !($i === 32 || $i === 35 || $i === 34 || $i === 39 || $i === 38 || $i === 40 || $i === 41 || $i === 61)) {
 									$badChars++;
 								}
 							}
@@ -666,7 +669,7 @@ class SpecProcessorOcr{
 						}
 					}
 				}
-				else if($numBadLines == 1) {
+				else if($numBadLines === 1) {
 					if($numBadLinesIncremented) {
 						$numBadLines++;
 					}
@@ -682,11 +685,11 @@ class SpecProcessorOcr{
 			$numBadChars = 1;
 			$numBadIncremented = false;
 			foreach (count_chars($rawStr, 1) as $i => $val) {
-				if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i == 176) {
+				if(($i > 47 && $i < 60) || ($i > 64 && $i < 91) || ($i > 96 && $i < 123) || $i === 176) {
 					$numGoodChars += $val;
 				}
-				else if(($i < 44 || $i > 59) && !($i == 32 || $i == 35 || $i == 34 || $i == 39 || $i == 38 || $i == 40 || $i == 41 || $i == 61)) {
-					if($numBadChars == 1) {
+				else if(($i < 44 || $i > 59) && !($i === 32 || $i === 35 || $i === 34 || $i === 39 || $i === 38 || $i === 40 || $i === 41 || $i === 61)) {
+					if($numBadChars === 1) {
 						if($numBadIncremented) {
 							$numBadChars += $val;
 						}
@@ -824,8 +827,8 @@ class SpecProcessorOcr{
 
 	public function setVerbose($s): void
 	{
-		$this->verbose = $s;
-		if($this->verbose == 1 || $this->verbose == 3){
+		$this->verbose = (int)$s;
+		if($this->verbose === 1 || $this->verbose === 3){
 			if($this->tempPath){
 				$GLOBALS['LOG_PATH'] = $this->tempPath.'log_'.date('Ymd').'.log';
 				$this->logFH = fopen($GLOBALS['LOG_PATH'], 'ab');
@@ -858,9 +861,9 @@ class SpecProcessorOcr{
 		$this->tempPath = $tempPath;
 	}
 
-	private function logMsg($msg,$indent = 0): void
+	private function logMsg($msg, $indent = null): void
 	{
-		if($this->verbose == 1 || $this->verbose == 3){
+		if($this->verbose === 1 || $this->verbose === 3){
 			if($this->logFH){
 				$msg .= "\n";
 				if($indent) {
@@ -870,7 +873,7 @@ class SpecProcessorOcr{
 			}
 		}
 		elseif($this->verbose > 1 ){
-			echo '<li style="margin-left:'.($indent*15).'px">'.$msg.'</li>';
+			echo '<li style="margin-left:'.($indent?$indent*15:'0').'px">'.$msg.'</li>';
 		}
 	}
 
@@ -934,12 +937,5 @@ class SpecProcessorOcr{
 			}
 		}
 		return $retStr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceGeorefTools {
 
@@ -16,7 +17,7 @@ class OccurrenceGeorefTools {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -139,9 +140,9 @@ class OccurrenceGeorefTools {
 	{
 		if($this->collStr && is_numeric($geoRefArr['decimallatitude']) && is_numeric($geoRefArr['decimallongitude'])) {
 			set_time_limit(1000);
-			$localStr =  $this->cleanInStr(implode(',',$geoRefArr['locallist']));
+			$localStr =  Sanitizer::cleanInStr(implode(',',$geoRefArr['locallist']));
 			unset($geoRefArr['locallist']);
-			$geoRefArr = $this->cleanInArr($geoRefArr);
+			$geoRefArr = Sanitizer::cleanInArray($geoRefArr);
 			if($localStr){
 				$this->addOccurEdits('decimallatitude',$geoRefArr['decimallatitude'],$localStr);
 				$this->addOccurEdits('decimallongitude',$geoRefArr['decimallongitude'],$localStr);
@@ -264,10 +265,10 @@ class OccurrenceGeorefTools {
 			}
 		}
 		else{
-			$sqlWhere .= 'AND o.locality = "'.trim($this->cleanInStr($locality), ' .').'" ';
+			$sqlWhere .= 'AND o.locality = "'.trim(Sanitizer::cleanInStr($locality), ' .').'" ';
 		}
 		if($country){
-			$country = $this->cleanInStr($country);
+			$country = Sanitizer::cleanInStr($country);
 			$synArr = array('usa','u.s.a', 'united states','united states of america','u.s.');
 			if(in_array(strtolower($country), $synArr, true)) {
 				$country = implode('","', $synArr);
@@ -275,11 +276,11 @@ class OccurrenceGeorefTools {
 			$sqlWhere .= 'AND (o.country IN("'.$country.'")) ';
 		}
 		if($state){
-			$sqlWhere .= 'AND (o.stateprovince = "'.$this->cleanInStr($state).'") ';
+			$sqlWhere .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($state).'") ';
 		}
 		if($county){
 			$county = str_ireplace(array(' county',' parish'),'',$county);
-			$sqlWhere .= 'AND (o.county LIKE "'.$this->cleanInStr($county).'%") ';
+			$sqlWhere .= 'AND (o.county LIKE "'.Sanitizer::cleanInStr($county).'%") ';
 		}
 		$sql .= $sqlWhere;
 		$sql .= 'GROUP BY o.decimallatitude, o.decimallongitude LIMIT 25';
@@ -316,7 +317,7 @@ class OccurrenceGeorefTools {
 
 	public function setQueryVariables($k,$v): void
 	{
-		$this->qryVars[$k] = $this->cleanInStr($v);
+		$this->qryVars[$k] = Sanitizer::cleanInStr($v);
 	}
 
 	public function getCollName(){
@@ -355,7 +356,7 @@ class OccurrenceGeorefTools {
 		return $retArr;
 	}
 
-	public function getCountyArr($stateStr = ''): array
+	public function getCountyArr($stateStr = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT county FROM omoccurrences WHERE collid IN('.$this->collStr.') ';
@@ -375,7 +376,7 @@ class OccurrenceGeorefTools {
 		return $retArr;
 	}
 
-	public function getMunicipalityArr($stateStr = ''): array
+	public function getMunicipalityArr($stateStr = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT municipality FROM omoccurrences WHERE collid IN('.$this->collStr.') ';
@@ -409,20 +410,4 @@ class OccurrenceGeorefTools {
 		sort($retArr);
 		return $retArr;
 	}
-
-	private function cleanInArr($arr): array
-	{
-		$retArr = array();
-		foreach($arr as $k => $v){
-			$retArr[$k] = $this->cleanInStr($v);
-		}
-		return $retArr;
-	}
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 }

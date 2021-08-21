@@ -7,12 +7,12 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
-$occId = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;
-$tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
+$tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?$_REQUEST['occindex']:false;
-$ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
+$occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
+$ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 if(!$action && array_key_exists('carryloc',$_REQUEST)){
@@ -45,6 +45,7 @@ $fragArr = array();
 $qryCnt = false;
 $statusStr = '';
 $navStr = '';
+$isLocked = false;
 
 if($GLOBALS['SYMB_UID']){
     $occManager->setOccId($occId);
@@ -86,7 +87,7 @@ if($GLOBALS['SYMB_UID']){
         elseif($action){
             $isEditor = 2;
         }
-        elseif($occManager->getObserverUid() == $GLOBALS['SYMB_UID']){
+        elseif($occManager->getObserverUid() === (int)$GLOBALS['SYMB_UID']){
             $isEditor = 2;
         }
     }
@@ -102,7 +103,7 @@ if($GLOBALS['SYMB_UID']){
             $solrManager->updateSOLR();
         }
     }
-    if($isEditor == 1 || $isEditor == 2 || $crowdSourceMode){
+    if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
         if($action === 'Save OCR'){
             $statusStr = $occManager->insertTextFragment($_POST['imgid'],$_POST['rawtext'],$_POST['rawnotes'],$_POST['rawsource']);
             if(is_numeric($statusStr)){
@@ -139,7 +140,7 @@ if($GLOBALS['SYMB_UID']){
             }
             $tabTarget = 1;
         }
-        if($isEditor == 1 || $isEditor == 2){
+        if($isEditor === 1 || $isEditor === 2){
             if($action === 'Add Record'){
                 if($occManager->addOccurrence($_POST)){
                     $occManager->setQueryVariables();
@@ -315,7 +316,7 @@ if($GLOBALS['SYMB_UID']){
     if($ouid){
         $occManager->setQueryVariables(array('ouid' => $ouid));
     }
-    elseif($occIndex !== false){
+    elseif($occIndex !== 0){
         $occManager->setQueryVariables();
         if($action === 'Delete Occurrence'){
             $qryCnt = $occManager->getQueryRecordCount();		//Value won't be returned unless set in cookies in previous query
@@ -362,7 +363,7 @@ if($GLOBALS['SYMB_UID']){
     }
 
     if($qryCnt !== false){
-        if($qryCnt == 0){
+        if($qryCnt === 0){
             if(!$goToMode){
                 $navStr .= '<div style="margin:20px;font-size:150%;font-weight:bold;">';
                 $navStr .= 'Search returned 0 records</div>'."\n";
@@ -416,14 +417,14 @@ if($GLOBALS['SYMB_UID']){
         $imgCnt = 1;
         foreach($specImgArr as $imgId => $i2){
             $iUrl = $i2['url'];
-            if($imgUrlPrefix && strpos($iUrl, 'http') !== 0) {
+            if($imgUrlPrefix && strncmp($iUrl, 'http', 4) !== 0) {
                 $iUrl = $imgUrlPrefix . $iUrl;
             }
             $imgArr[$imgCnt]['imgid'] = $imgId;
             $imgArr[$imgCnt]['web'] = $iUrl;
             if($i2['origurl']){
                 $lgUrl = $i2['origurl'];
-                if($imgUrlPrefix && strpos($lgUrl, 'http') !== 0) {
+                if($imgUrlPrefix && strncmp($lgUrl, 'http', 4) !== 0) {
                     $lgUrl = $imgUrlPrefix . $lgUrl;
                 }
                 $imgArr[$imgCnt]['lg'] = $lgUrl;
@@ -436,7 +437,6 @@ if($GLOBALS['SYMB_UID']){
         $fragArr = $occManager->getRawTextFragments();
     }
 
-    $isLocked = false;
     if($occId) {
         $isLocked = $occManager->getLock();
     }
@@ -450,7 +450,7 @@ else{
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <?php
-    if($crowdSourceMode == 1){
+    if($crowdSourceMode === 1){
         ?>
         <link href="includes/config/occureditorcrowdsource.css?ver=1805" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
@@ -521,7 +521,7 @@ else{
         <div id="titleDiv">
             <?php
             echo $collMap['collectionname'].' ('.$collMap['institutioncode'].($collMap['collectioncode']?':'.$collMap['collectioncode']:'').')';
-            if($isEditor == 1 || $isEditor == 2 || $crowdSourceMode){
+            if($isEditor === 1 || $isEditor === 2 || $crowdSourceMode){
                 ?>
                 <div id="querySymbolDiv">
                     <a href="#" title="Search / Filter" onclick="toggleQueryForm();"><i style="height:15px;width:15px;" class="fas fa-search"></i></a>
@@ -561,7 +561,7 @@ else{
                     <a href="../../profile/viewprofile.php?tabindex=1" onclick="return verifyLeaveForm()">Personal Management</a> &gt;&gt;
                     <?php
                 }
-                else if($isEditor == 1 || $isEditor == 2){
+                else if($isEditor === 1 || $isEditor === 2){
                     ?>
                     <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1" onclick="return verifyLeaveForm()">Collection Management</a> &gt;&gt;
                     <?php
@@ -572,7 +572,7 @@ else{
                 ?>
                 <b>
                     <?php
-                    if($isEditor == 3) {
+                    if($isEditor === 3) {
                         echo 'Taxonomic ';
                     }
                     ?>

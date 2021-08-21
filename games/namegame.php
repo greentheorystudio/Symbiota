@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../classes/GamesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']: '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 
 if(!$clName){
 	$gameManager = new GamesManager();

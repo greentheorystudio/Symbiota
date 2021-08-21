@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
 
 class PluginsManager {
 
@@ -9,12 +8,7 @@ class PluginsManager {
     private $quickSearchShowSelector = false;
     private $quickSearchDefaultSetting = 'sciname';
 
-	public function __construct(){
-		$connection = new DbConnection();
-		$this->conn = $connection->getConnection();
- 	}
-
- 	public function createQuickSearch($buttonText,$searchText = ''): string
+	public function createQuickSearch($buttonText,$searchText = null): string
 	{
 		$searchTextCssDisplay = ($searchText?'block':'none');
         $selectorTextCssDisplay = ($this->quickSearchShowSelector?'flex':'none');

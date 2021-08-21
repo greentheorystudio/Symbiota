@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/SOLRManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceMaintenance {
 
@@ -21,7 +22,7 @@ class OccurrenceMaintenance {
 	}
 
 	public function __destruct(){
-		if($this->destructConn && !($this->conn === null)){
+		if($this->destructConn && $this->conn){
 			$this->conn->close();
 			$this->conn = null;
 		}
@@ -187,7 +188,7 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 	
-	public function protectRareSpecies($collid = 0): void
+	public function protectRareSpecies($collid = null): void
 	{
 		$this->protectGloballyRareSpecies();
 		$this->protectStateRareSpecies($collid);
@@ -231,7 +232,7 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 
-	public function protectStateRareSpecies($collid = 0): bool
+	public function protectStateRareSpecies($collid = null): bool
 	{
 		$status = true;
 		if($this->verbose) {
@@ -269,7 +270,7 @@ class OccurrenceMaintenance {
 		return $status;
 	}
 
-	public function updateCollectionStats($collid, $full = false): bool
+	public function updateCollectionStats($collid, $full = null): bool
 	{
         set_time_limit(600);
 		$recordCnt = 0;
@@ -385,7 +386,7 @@ class OccurrenceMaintenance {
 
 			$returnArrJson = json_encode($statsArr);
 			$sql = 'UPDATE omcollectionstats '.
-				"SET dynamicProperties = '".$this->cleanInStr($returnArrJson)."' ".
+				"SET dynamicProperties = '".Sanitizer::cleanInStr($returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
 			if(!$this->conn->query($sql)){
 				$errStr = 'WARNING: unable to update collection stats table [1]; '.$this->conn->error;
@@ -467,18 +468,11 @@ class OccurrenceMaintenance {
 		return $this->errorArr;
 	}
 
-	private function outputMsg($str, $indent = 0): void
+	private function outputMsg($str, $indent = null): void
 	{
 		if($this->verbose){
-			echo '<li style="margin-left:'.($indent*10).'px;">'.$str.'</li>';
+			echo '<li style="margin-left:'.($indent?$indent*10:'0').'px;">'.$str.'</li>';
 		}
 		flush();
-	}
-
-	private function cleanInStr($inStr){
-		$retStr = trim($inStr);
-		$retStr = preg_replace('/\s\s+/', ' ',$retStr);
-		$retStr = $this->conn->real_escape_string($retStr);
-		return $retStr;
 	}
 }

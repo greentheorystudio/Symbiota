@@ -2,11 +2,11 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 
-$collId = $_REQUEST['collid'];
+$collId = (int)$_REQUEST['collid'];
 $fieldName = $_REQUEST['fieldname'];
 $oldValue = $_REQUEST['oldvalue'];
-$buMatch = array_key_exists('bumatch',$_REQUEST)?$_REQUEST['bumatch']:0;
-$ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
+$buMatch = array_key_exists('bumatch',$_REQUEST)?(int)$_REQUEST['bumatch']:0;
+$ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $retCnt = '';
 
 if($fieldName){

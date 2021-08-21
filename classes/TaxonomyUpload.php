@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TaxonomyUpload{
 
@@ -24,7 +25,7 @@ class TaxonomyUpload{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === false)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
@@ -32,7 +33,7 @@ class TaxonomyUpload{
 		}
 	}
 
-	public function setUploadFile($ulFileName = ''): void
+	public function setUploadFile($ulFileName = null): void
 	{
 		if($ulFileName){
 			if(file_exists($ulFileName)){
@@ -63,7 +64,7 @@ class TaxonomyUpload{
 
 	public function loadFile($fieldMap): void
 	{
-		$this->outputMsg('Starting Upload',0);
+		$this->outputMsg('Starting Upload');
 		$this->conn->query('DELETE FROM uploadtaxa');
 		$this->conn->query('OPTIMIZE TABLE uploadtaxa');
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb')) !== false){
@@ -125,7 +126,7 @@ class TaxonomyUpload{
                         if(in_array('scinameinput', $fieldMap, true)){
                             $inputArr = array();
                             foreach($uploadTaxaIndexArr as $recIndex => $targetField){
-                                $valIn = $this->cleanInStr($this->encodeString($recordArr[$recIndex]));
+                                $valIn = Sanitizer::cleanInStr($this->encodeString($recordArr[$recIndex]));
                                 if($targetField === 'acceptance' && !is_numeric($valIn)){
                                     $valInTest = strtolower($valIn);
                                     if($valInTest === 'accepted' || $valInTest === 'valid'){
@@ -176,7 +177,7 @@ class TaxonomyUpload{
                                 unset($inputArr['identificationqualifier']);
                                 foreach($inputArr as $k => $v){
                                     $sql1 .= ','.$k;
-                                    $inValue = $this->cleanInStr($v);
+                                    $inValue = Sanitizer::cleanInStr($v);
                                     $sql2 .= ','.($inValue?'"'.$inValue.'"':'NULL');
                                 }
                                 $sql = 'INSERT INTO uploadtaxa('.substr($sql1,1).') VALUES('.substr($sql2,1).')';
@@ -651,7 +652,7 @@ class TaxonomyUpload{
 		$this->conn->query($sql3);
 	}
 
-	private function transferVernaculars($secondRound = 0): void
+	private function transferVernaculars($secondRound = null): void
 	{
 		$sql = 'SELECT tid, vernacular, vernlang, source FROM uploadtaxa WHERE tid IS NOT NULL AND Vernacular IS NOT NULL ';
 		if($secondRound) {
@@ -684,7 +685,7 @@ class TaxonomyUpload{
 				if($vStr){
 					$sqlInsert = 'INSERT INTO taxavernaculars(tid, VernacularName, Language, Source) '.
 						'VALUES('.$r->tid.',"'.$vStr.'","'.$langStr.'",'.($r->source?'"'.$r->source.'"':'NULL').')';
-					if(!$this->conn->query($sqlInsert) && strpos($this->conn->error, 'Duplicate') !== 0) {
+					if(!$this->conn->query($sqlInsert) && strncmp($this->conn->error, 'Duplicate', 9) !== 0) {
 						$this->outputMsg('ERROR: ' . $this->conn->error, 1);
 					}
 				}
@@ -893,22 +894,15 @@ class TaxonomyUpload{
 		}
 	}
 
-	private function outputMsg($str, $indent = 0): void
+	private function outputMsg($str, $indent = null): void
 	{
-		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
-			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
+		if($this->verboseMode > 0 || strncmp($str, 'ERROR', 5) === 0){
+			echo '<li style="margin-left:'.(10*$indent).'px;'.(strncmp($str, 'ERROR', 5) === 0 ?'color:red':'').'">'.$str.'</li>';
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
 			fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 		}
-	}
-
-    private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 
     private function encodeString($inStr): string

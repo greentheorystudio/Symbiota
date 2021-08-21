@@ -3,6 +3,7 @@ include_once(__DIR__ . '/SpecUpload.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -59,7 +60,7 @@ class SpecUploadBase extends SpecUpload{
         return $dbpk;
     }
 
-    public function loadFieldMap($autoBuildFieldMap = false): void
+    public function loadFieldMap($autoBuildFieldMap = null): void
     {
         if($this->uploadType === $this->DIGIRUPLOAD) {
             $autoBuildFieldMap = true;
@@ -72,13 +73,13 @@ class SpecUploadBase extends SpecUpload{
                 while($row = $rs->fetch_object()){
                     $sourceField = $row->sourcefield;
                     $symbField = $row->symbspecfield;
-                    if(strpos($symbField, 'ID-') === 0){
+                    if(strncmp($symbField, 'ID-', 3) === 0){
                         $index = substr($symbField,3);
                         if(is_string($index) || is_int($index)){
                             $this->identFieldMap[$index]['field'] = $sourceField;
                         }
                     }
-                    elseif(strpos($symbField, 'IM-') === 0){
+                    elseif(strncmp($symbField, 'IM-', 3) === 0){
                         $index = substr($symbField,3);
                         if(is_string($index) || is_int($index)){
                             $this->imageFieldMap[$index]['field'] = $sourceField;
@@ -257,7 +258,7 @@ class SpecUploadBase extends SpecUpload{
                 echo '<input type="hidden" name="tf[]" value="'.$translationMap[$fieldName].'" />';
             }
             else{
-                if($this->uploadType === $this->NFNUPLOAD && strpos($fieldName, 'subject_') === 0) {
+                if($this->uploadType === $this->NFNUPLOAD && strncmp($fieldName, 'subject_', 8) === 0) {
                     continue;
                 }
                 $isAutoMapped = false;
@@ -280,7 +281,7 @@ class SpecUploadBase extends SpecUpload{
                 echo "<td>\n";
                 echo "<select name='".$prefix."tf[]' style='background:".(!array_key_exists($fieldName,$sourceSymbArr)&&!$isAutoMapped? 'yellow' : '')."'>";
                 echo "<option value=''>Select Target Field</option>\n";
-                echo "<option value='unmapped'".(isset($sourceSymbArr[$fieldName]) && strpos($sourceSymbArr[$fieldName], 'unmapped') === 0 ? 'SELECTED' : '').">Leave Field Unmapped</option>\n";
+                echo "<option value='unmapped'".(isset($sourceSymbArr[$fieldName]) && strncmp($sourceSymbArr[$fieldName], 'unmapped', 8) === 0 ? 'SELECTED' : '').">Leave Field Unmapped</option>\n";
                 echo "<option value=''>-------------------------</option>\n";
                 if(array_key_exists($fieldName,$sourceSymbArr)){
                     foreach($symbFields as $sField){
@@ -304,7 +305,7 @@ class SpecUploadBase extends SpecUpload{
         echo '</table>';
     }
 
-    public function saveFieldMap($newTitle = ''): string
+    public function saveFieldMap($newTitle = null): string
     {
         $statusStr = '';
         if(!$this->uspid && $newTitle){
@@ -826,7 +827,7 @@ class SpecUploadBase extends SpecUpload{
             }
             foreach($editArr as $appliedStatus => $eArr){
                 $sql = 'INSERT INTO omoccurrevisions(occid, oldValues, newValues, externalSource, reviewStatus, appliedStatus) '.
-                    'VALUES('.$r['occid'].',"'.$this->cleanInStr(json_encode($eArr['old'])).'","'.$this->cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
+                    'VALUES('.$r['occid'].',"'.Sanitizer::cleanInStr(json_encode($eArr['old'])).'","'.Sanitizer::cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
                 if(!$this->conn->query($sql)){
                     $this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision ('.$this->conn->error.')</li>');
                 }
@@ -1183,6 +1184,7 @@ class SpecUploadBase extends SpecUpload{
 
     protected function loadImageRecord($recMap): ?bool
     {
+        $testUrl = '';
         if($recMap){
             if(isset($recMap['originalurl']) && $recMap['originalurl']){
                 $testUrl = $recMap['originalurl'];
@@ -1190,93 +1192,81 @@ class SpecUploadBase extends SpecUpload{
             elseif(isset($recMap['url']) && $recMap['url']){
                 $testUrl = $recMap['url'];
             }
-            else{
-                return false;
-            }
-            if(stripos($testUrl,'.dng') || stripos($testUrl,'.tif')){
-                return false;
-            }
-            $skipFormats = array('image/tiff','image/dng','image/bmp','text/html','application/xml','application/pdf','tif','tiff','dng','html','pdf');
-            $allowedFormats = array('image/jpeg','image/gif','image/png');
-            $imgFormat = '';
-            if(isset($recMap['format']) && $recMap['format']){
-                $imgFormat = strtolower($recMap['format']);
-                if(in_array($imgFormat, $skipFormats, true)) {
-                    return false;
-                }
-            }
-            else{
-                $ext = strtolower(substr(strrchr($testUrl, '.'), 1));
-                if(strpos($testUrl,'?')) {
-                    $ext = substr($ext, 0, strpos($ext, '?'));
-                }
-                if($ext === 'gif') {
-                    $imgFormat = 'image/gif';
-                }
-                if($ext === 'png') {
-                    $imgFormat = 'image/png';
-                }
-                if($ext === 'jpg') {
-                    $imgFormat = 'image/jpeg';
-                }
-                elseif($ext === 'jpeg') {
-                    $imgFormat = 'image/jpeg';
-                }
-                if(!$imgFormat){
-                    $imgFormat = $this->getMimeType($testUrl);
-                    if(!in_array(strtolower($imgFormat), $allowedFormats, true)) {
-                        return false;
-                    }
-                }
-            }
-            if($imgFormat) {
-                $recMap['format'] = $imgFormat;
-            }
-
-            if($this->verifyImageUrls && !$this->urlExists($testUrl)) {
-                $this->outputMsg('<li style="margin-left:20px;">Bad url: '.$testUrl.'</li>');
-                return false;
-            }
-
-            if(strpos($testUrl,'inaturalist.org')){
-                if(strpos($testUrl,'/original.')){
-                    $recMap['originalurl'] = $testUrl;
-                    $recMap['url'] = str_replace('/original.', '/medium.', $testUrl);
-                    $recMap['thumbnailurl'] = str_replace('/original.', '/small.', $testUrl);
-                }
-                elseif(strpos($testUrl,'/medium.')){
-                    $recMap['url'] = $testUrl;
-                    $recMap['thumbnailurl'] = str_replace('/medium.', '/small.', $testUrl);
-                    $recMap['originalurl'] = str_replace('/medium.', '/original.', $testUrl);
-                }
-            }
-
-            if(!isset($recMap['url'])) {
-                $recMap['url'] = 'empty';
-            }
-
-            $sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);
-            if($sqlFragments){
-                $sql = 'INSERT INTO uploadimagetemp(collid'.$sqlFragments['fieldstr'].') '.
-                    'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
-                if($this->conn->query($sql)){
-                    $this->imageTransferCount++;
-                    $repInt = 1000;
-                    if($this->verifyImageUrls) {
-                        $repInt = 100;
-                    }
-                    if($this->imageTransferCount%$repInt === 0) {
-                        $this->outputMsg('<li style="margin-left:10px;">' . $this->imageTransferCount . ' images processed</li>');
-                    }
+            if($testUrl && !stripos($testUrl,'.dng') && !stripos($testUrl,'.tif')){
+                $skipFormats = array('image/tiff','image/dng','image/bmp','text/html','application/xml','application/pdf','tif','tiff','dng','html','pdf');
+                $allowedFormats = array('image/jpeg','image/gif','image/png');
+                $imgFormat = '';
+                if(isset($recMap['format']) && $recMap['format']){
+                    $imgFormat = strtolower($recMap['format']);
                 }
                 else{
-                    $this->outputMsg('<li>FAILED adding image record #' .$this->imageTransferCount. '</li>');
-                    $this->outputMsg("<li style='margin-left:10px;'>Error: ".$this->conn->error. '</li>');
-                    $this->outputMsg("<li style='margin:0 0 10px 10px;'>SQL: $sql</li>");
+                    $ext = strtolower(substr(strrchr($testUrl, '.'), 1));
+                    if(strpos($testUrl,'?')) {
+                        $ext = substr($ext, 0, strpos($ext, '?'));
+                    }
+                    if($ext === 'gif') {
+                        $imgFormat = 'image/gif';
+                    }
+                    if($ext === 'png') {
+                        $imgFormat = 'image/png';
+                    }
+                    if($ext === 'jpg') {
+                        $imgFormat = 'image/jpeg';
+                    }
+                    elseif($ext === 'jpeg') {
+                        $imgFormat = 'image/jpeg';
+                    }
+                    if(!$imgFormat){
+                        $imgFormat = $this->getMimeType($testUrl);
+                    }
+                }
+                if($imgFormat && !in_array($imgFormat, $skipFormats, true) && in_array(strtolower($imgFormat), $allowedFormats, true)) {
+                    $recMap['format'] = $imgFormat;
+                    if($this->verifyImageUrls && !$this->urlExists($testUrl)) {
+                        $this->outputMsg('<li style="margin-left:20px;">Bad url: '.$testUrl.'</li>');
+                    }
+                    else{
+                        if(strpos($testUrl,'inaturalist.org')){
+                            if(strpos($testUrl,'/original.')){
+                                $recMap['originalurl'] = $testUrl;
+                                $recMap['url'] = str_replace('/original.', '/medium.', $testUrl);
+                                $recMap['thumbnailurl'] = str_replace('/original.', '/small.', $testUrl);
+                            }
+                            elseif(strpos($testUrl,'/medium.')){
+                                $recMap['url'] = $testUrl;
+                                $recMap['thumbnailurl'] = str_replace('/medium.', '/small.', $testUrl);
+                                $recMap['originalurl'] = str_replace('/medium.', '/original.', $testUrl);
+                            }
+                        }
+
+                        if(!isset($recMap['url'])) {
+                            $recMap['url'] = 'empty';
+                        }
+
+                        $sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);
+                        if($sqlFragments){
+                            $sql = 'INSERT INTO uploadimagetemp(collid'.$sqlFragments['fieldstr'].') '.
+                                'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+                            if($this->conn->query($sql)){
+                                $this->imageTransferCount++;
+                                $repInt = 1000;
+                                if($this->verifyImageUrls) {
+                                    $repInt = 100;
+                                }
+                                if($this->imageTransferCount%$repInt === 0) {
+                                    $this->outputMsg('<li style="margin-left:10px;">' . $this->imageTransferCount . ' images processed</li>');
+                                }
+                            }
+                            else{
+                                $this->outputMsg('<li>FAILED adding image record #' .$this->imageTransferCount. '</li>');
+                                $this->outputMsg("<li style='margin-left:10px;'>Error: ".$this->conn->error. '</li>');
+                                $this->outputMsg("<li style='margin:0 0 10px 10px;'>SQL: $sql</li>");
+                            }
+                        }
+                    }
                 }
             }
         }
-        return true;
     }
 
     private function getSqlFragments($recMap,$fieldMap){
@@ -1284,10 +1274,10 @@ class SpecUploadBase extends SpecUpload{
         $sqlFields = '';
         $sqlValues = '';
         foreach($recMap as $symbField => $valueStr){
-            if(strpos($symbField, 'unmapped') !== 0){
+            if(strncmp($symbField, 'unmapped', 8) !== 0){
                 $sqlFields .= ','.$symbField;
                 $valueStr = $this->encodeString($valueStr);
-                $valueStr = $this->cleanInStr($valueStr);
+                $valueStr = Sanitizer::cleanInStr($valueStr);
                 if($valueStr) {
                     $hasValue = true;
                 }
@@ -1524,7 +1514,7 @@ class SpecUploadBase extends SpecUpload{
         }
         if(function_exists('curl_init')){
             $handle   = curl_init($url);
-            if (false === $handle){
+            if($handle === false){
                 $exists = false;
             }
             curl_setopt($handle, CURLOPT_HEADER, false);
@@ -1546,7 +1536,8 @@ class SpecUploadBase extends SpecUpload{
         return $exists;
     }
 
-    protected function encodeString($inStr){
+    protected function encodeString($inStr): string
+    {
         $retStr = $inStr;
 
         $badwordchars=array("\xe2\x80\x98",

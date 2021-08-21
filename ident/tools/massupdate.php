@@ -7,10 +7,10 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../ident/tools/massupdate.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$clid = $_REQUEST['clid'];
+$clid = (int)$_REQUEST['clid'];
 $taxonFilter = array_key_exists('tf',$_REQUEST)?$_REQUEST['tf']:'';
-$generaOnly = array_key_exists('generaonly',$_POST)?$_POST['generaonly']:0;
-$cidValue = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:'';
+$generaOnly = array_key_exists('generaonly',$_POST)?(int)$_POST['generaonly']:0;
+$cidValue = array_key_exists('cid',$_REQUEST)?(int)$_REQUEST['cid']:0;
 $removeAttrs = array_key_exists('r',$_REQUEST)?$_REQUEST['r']: '';
 $addAttrs = array_key_exists('a',$_REQUEST)?$_REQUEST['a']: '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
@@ -133,7 +133,24 @@ include(__DIR__ . '/../../header.php');
 <div id="innertext">
 	<?php
 	if($clid && $isEditor){
-		if(!$cidValue){
+		if($cidValue) {
+			$inheritStr = "&nbsp;<span title='State has been inherited from parent taxon'><b>(i)</b></span>";
+			?>
+			<div><?php echo $inheritStr; ?> = character state is inherited as true from a parent taxon (genus, family, etc)</div>
+		 	<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+				<?php
+				$muManager->echoTaxaList($taxonFilter,$generaOnly);
+				?>
+			</table>
+			<form name="submitform" action="massupdate.php" method="post">
+				<input type='hidden' name='tf' value='<?php echo $taxonFilter; ?>' />
+				<input type='hidden' name='cid' value='<?php echo $cidValue; ?>' />
+				<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
+				<input type='hidden' name='lang' value='<?php echo $langValue; ?>' />
+			</form>
+			<?php
+	 	}
+		else {
 			?>
 			<form id="filterform" action="massupdate.php" method="post" onsubmit="return verifyFilterForm(this)">
                 <div style="margin: 10px 0;">Select character to edit</div>
@@ -148,9 +165,6 @@ include(__DIR__ . '/../../header.php');
                         }
                         ?>
                     </select>
-                    <?php
-                    count($selectList);
-                    ?>
                 </div>
                 <div style="margin: 10px 0;">
                     <input type="checkbox" name="generaonly" value="1" <?php echo ($generaOnly?'checked':''); ?> />
@@ -171,23 +185,6 @@ include(__DIR__ . '/../../header.php');
 			</form>
 			<?php
 		}
-		else{
-			$inheritStr = "&nbsp;<span title='State has been inherited from parent taxon'><b>(i)</b></span>";
-			?>
-			<div><?php echo $inheritStr; ?> = character state is inherited as true from a parent taxon (genus, family, etc)</div>
-		 	<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
-				<?php 
-				$muManager->echoTaxaList($taxonFilter,$generaOnly);
-				?>
-			</table>
-			<form name="submitform" action="massupdate.php" method="post">
-				<input type='hidden' name='tf' value='<?php echo $taxonFilter; ?>' />
-				<input type='hidden' name='cid' value='<?php echo $cidValue; ?>' />
-				<input type='hidden' name='clid' value='<?php echo $clid; ?>' />
-				<input type='hidden' name='lang' value='<?php echo $langValue; ?>' />
-			</form>
-			<?php
-	 	}
 	}
 	else{  
 		echo '<h1>You appear not to have necessary premissions to edit character data.</h1>';

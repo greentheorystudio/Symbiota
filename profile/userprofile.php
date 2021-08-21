@@ -4,11 +4,7 @@ include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$userId = $_REQUEST['userid'];
-
-if(!is_numeric($userId)) {
-    $userId = 0;
-}
+$userId = (int)$_REQUEST['userid'];
 
 $pHandler = new ProfileManager();
 $clManager = new ChecklistAdmin();

@@ -10,15 +10,11 @@ class WebServiceBase extends Manager{
 
 	public function validateSecurityKey($k): bool
 	{
-		if(isset($GLOBALS['SECURITY_KEY'])){
-			if($k === $GLOBALS['SECURITY_KEY']){
-				return true;
-			}
+		if(isset($GLOBALS['SECURITY_KEY']) && $k === $GLOBALS['SECURITY_KEY']){
+            return true;
+        }
 
-			$this->errorMessage = 'Security Key authentication failed';
-			return false;
-		}
-
-		return true;
-	}
+        $this->errorMessage = 'Security Key authentication failed';
+        return false;
+    }
 }

@@ -64,7 +64,7 @@ class TPImageEditorManager extends TPEditorManager{
         return $imageArr;
     }
 
-    public function echoPhotographerSelect($userId = 0): void
+    public function echoPhotographerSelect($userId = null): void
     {
         $sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
             'FROM users u ORDER BY u.lastname, u.firstname ';

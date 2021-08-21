@@ -7,7 +7,7 @@ $schema = array_key_exists('schema',$_POST)?$_POST['schema']: 'symbiota';
 $cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
 $zip = (array_key_exists('zip',$_POST)?$_POST['zip']:0);
 $format = $_POST['format'];
-$clid = $_POST['clid'];
+$clid = (int)$_POST['clid'];
 
 $dwcaHandler = new DwcArchiverCore();
 

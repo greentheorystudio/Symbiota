@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistVoucherPensoftExcel.php');
 
-$clid = $_REQUEST['clid'];
+$clid = (int)$_REQUEST['clid'];
 $rType = $_REQUEST['rtype'];
 
 if($rType === 'pensoftxlsx'){

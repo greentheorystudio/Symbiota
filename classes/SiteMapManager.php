@@ -14,7 +14,7 @@ class SiteMapManager{
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -101,7 +101,7 @@ class SiteMapManager{
 		return $returnArr;
 	}
 
-	public function getProjectList($projArr = ''): array
+	public function getProjectList($projArr = null): array
 	{
 		$returnArr = array();
 		$sql = 'SELECT p.pid, p.projname, p.managers FROM fmprojects p '.

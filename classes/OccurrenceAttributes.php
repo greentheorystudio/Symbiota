@@ -1,9 +1,10 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceAttributes extends Manager {
 
-	private $collidStr = 0;
+	private $collidStr = '';
 	private $tidFilter;
 	private $traitArr = array();
 	private $targetOccid = 0;
@@ -23,7 +24,7 @@ class OccurrenceAttributes extends Manager {
 		$status = true;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
-			if(strpos($postKey, 'stateid-') === 0){
+			if(strncmp($postKey, 'stateid-', 8) === 0){
 				if(is_array($postValue)){
 					foreach($postValue as $val){
 						$stateArr[] = $val;
@@ -36,7 +37,7 @@ class OccurrenceAttributes extends Manager {
 		}
 		foreach($stateArr as $stateId){
 			if(is_numeric($stateId)){
-				$sql = 'INSERT INTO tmattributes(stateid,occid,notes,createduid) VALUES('.$stateId.','.$this->targetOccid.',"'.$this->cleanInStr($notes).'",'.$uid.') ';
+				$sql = 'INSERT INTO tmattributes(stateid,occid,notes,createduid) VALUES('.$stateId.','.$this->targetOccid.',"'.Sanitizer::cleanInStr($notes).'",'.$uid.') ';
 				if(!$this->conn->query($sql)){
 					$this->errorMessage .= 'ERROR saving occurrence attribute: '.$this->conn->error.'; ';
 					$status = false;
@@ -86,7 +87,8 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 	
-	public function getSpecimenCount(){
+	public function getSpecimenCount(): int
+    {
 		$retCnt = 0;
 		if($this->collidStr){
 			if(!$this->sqlBody) {
@@ -144,7 +146,7 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 
-	public function getTraitArr($traitID, $setAttributes = false): array
+	public function getTraitArr($traitID, $setAttributes = null): array
 	{
 		unset($this->traitArr);
 		$this->traitArr = array();
@@ -238,7 +240,7 @@ class OccurrenceAttributes extends Manager {
 		echo '</div>';
 	}
 
-	private function getTraitUnitString($traitID,$dispaly,$classStr=''): string
+	private function getTraitUnitString($traitID,$dispaly,$classStr=null): string
 	{
 		$controlType = 'checkbox';
 		if($this->traitArr[$traitID]['props']){
@@ -289,7 +291,7 @@ class OccurrenceAttributes extends Manager {
 		return $outStr;
 	}
 
-	public function getTaxonFilterSuggest($str,$exactMatch=false){
+	public function getTaxonFilterSuggest($str,$exactMatch=null){
 		$retArr = array();
 		if($str){
 			$sql = 'SELECT tid, sciname FROM taxa ';
@@ -308,18 +310,10 @@ class OccurrenceAttributes extends Manager {
 		return json_encode($retArr);
 	}
 
-	public function getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start){
+	public function getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start): array
+    {
 		$retArr = array();
-		if($reviewUid && !is_numeric($reviewUid)) {
-			return false;
-		}
-		if($reviewStatus && !is_numeric($reviewStatus)) {
-			return false;
-		}
-		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) {
-			return false;
-		}
-		if(is_numeric($traitID) && $this->collidStr){
+		if($reviewStatus && is_numeric($reviewStatus) && $reviewUid && is_numeric($reviewUid) && is_numeric($traitID) && $this->collidStr && $reviewDate && preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)){
 			$targetOccid = 0;
 			$sql1 = 'SELECT DISTINCT o.occid, IFNULL(o.catalognumber, o.othercatalognumbers) AS catnum '.
 				$this->getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus).' LIMIT '.$start.',1';
@@ -344,18 +338,10 @@ class OccurrenceAttributes extends Manager {
 		return $retArr;
 	}
 	
-	public function getReviewCount($traitID, $reviewUid, $reviewDate, $reviewStatus){
+	public function getReviewCount($traitID, $reviewUid, $reviewDate, $reviewStatus): int
+    {
 		$cnt = 0;
-		if($reviewUid && !is_numeric($reviewUid)) {
-			return false;
-		}
-		if($reviewStatus && !is_numeric($reviewStatus)) {
-			return false;
-		}
-		if($reviewDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)) {
-			return false;
-		}
-		if(is_numeric($traitID) && $this->collidStr){
+		if($reviewDate && $reviewStatus && is_numeric($reviewStatus) && $reviewUid && is_numeric($reviewUid) && is_numeric($traitID) && $this->collidStr  && preg_match('/^\d{4}-\d{2}-\d{2}$/',$reviewDate)){
 			$sql = 'SELECT COUNT(DISTINCT o.occid) as cnt '.
 				$this->getReviewSqlBase($traitID, $reviewUid, $reviewDate, $reviewStatus);
 			//echo $sql;
@@ -394,7 +380,7 @@ class OccurrenceAttributes extends Manager {
 		$status = false;
 		$stateArr = array();
 		foreach($postArr as $postKey => $postValue){
-			if(strpos($postKey, 'stateid-') === 0){
+			if(strncmp($postKey, 'stateid-', 8) === 0){
 				if(is_array($postValue)){
 					foreach($postValue as $val){
 						$stateArr[] = $val;
@@ -437,7 +423,7 @@ class OccurrenceAttributes extends Manager {
 			} 
 			
 			$sql = 'UPDATE tmattributes a INNER JOIN tmstates s ON a.stateid = s.stateid '.
-				'SET a.statuscode = '.$setStatus.', a.notes = "'.$this->cleanInStr($postArr['notes']).'" '.
+				'SET a.statuscode = '.$setStatus.', a.notes = "'.Sanitizer::cleanInStr($postArr['notes']).'" '.
 				'WHERE a.occid = '.$this->targetOccid.' AND s.traitid IN('.implode(',',array_keys($this->traitArr)).')';
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = 'ERROR updating occurrence attribute review status: '.$this->conn->error;
@@ -511,7 +497,7 @@ class OccurrenceAttributes extends Manager {
 			$occArr = array();
 			$sql = 'SELECT DISTINCT occid FROM omoccurrences o '.
 				$this->getMiningSqlFrag($traitID, $fieldName, $tidFilter).
-				'AND ('.$this->cleanInStr($fieldName).' IN("'.implode('","',$fieldArr).'")) ';
+				'AND ('.Sanitizer::cleanInStr($fieldName).' IN("'.implode('","',$fieldArr).'")) ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -539,12 +525,12 @@ class OccurrenceAttributes extends Manager {
 			$occidChuckArr = array_chunk($occArr, '200000');
 			foreach($occidChuckArr as $oArr){
 				$sqlUpdate = 'UPDATE tmattributes '.
-					'SET source = "Field mining: '.$this->cleanInStr($fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
+					'SET source = "Field mining: '.Sanitizer::cleanInStr($fieldName).'", createduid = '.$GLOBALS['SYMB_UID'];
 				if($notes) {
-					$sqlUpdate .= ', notes = "' . $this->cleanInStr($notes) . '"';
+					$sqlUpdate .= ', notes = "' . Sanitizer::cleanInStr($notes) . '"';
 				}
 				if(is_numeric($reviewStatus)) {
-					$sqlUpdate .= ', statuscode = "' . $this->cleanInStr($reviewStatus) . '"';
+					$sqlUpdate .= ', statuscode = "' . Sanitizer::cleanInStr($reviewStatus) . '"';
 				}
 				$sqlUpdate .= ' WHERE stateid IN('.implode(',',$stateIDArr).') AND occid IN('.implode(',',$oArr).')';
 				if(!$this->conn->query($sqlUpdate)){
@@ -556,7 +542,7 @@ class OccurrenceAttributes extends Manager {
 		return $status;
 	}
 	
-	private function getMiningSqlFrag($traitID, $fieldName, $tidFilter, $stringFilter = ''): string
+	private function getMiningSqlFrag($traitID, $fieldName, $tidFilter, $stringFilter = null): string
 	{
 		$sql = '';
 		if($tidFilter){
@@ -571,7 +557,7 @@ class OccurrenceAttributes extends Manager {
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';
 		}
 		if($stringFilter){
-			$sql .= 'AND (o.'.$fieldName.' LIKE "%'.$this->cleanInStr($stringFilter).'%") ';
+			$sql .= 'AND (o.'.$fieldName.' LIKE "%'.Sanitizer::cleanInStr($stringFilter).'%") ';
 		}
 		return $sql;
 	}
@@ -600,15 +586,11 @@ class OccurrenceAttributes extends Manager {
 
 	public function setTidFilter($tid): void
 	{
-		if(is_numeric($tid)){
-			$this->tidFilter = $tid;
-		}
+        $this->tidFilter = $tid;
 	}
 
 	public function setTargetOccid($occid): void
 	{
-		if(is_numeric($occid)){
-			$this->targetOccid = $occid;
-		}
+        $this->targetOccid = $occid;
 	}
 }

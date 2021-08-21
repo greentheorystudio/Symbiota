@@ -16,7 +16,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 require_once(__DIR__ . '/../classes/WsOccurEditor.php');
 
-$occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:0;
+$occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $recordID = array_key_exists('recordid',$_REQUEST)?$_REQUEST['recordid']:'';
 $dwcObj = ($_REQUEST['dwcobj'] ?? '');
 $editType = array_key_exists('edittype',$_REQUEST)?$_REQUEST['edittype']:'occurrence';
@@ -25,9 +25,6 @@ $editor = array_key_exists('editor',$_REQUEST)?$_REQUEST['editor']:'';
 $origTimestamp = array_key_exists('timestamp',$_REQUEST)?$_REQUEST['timestamp']:'';
 $securityKey = array_key_exists('key',$_REQUEST)?$_REQUEST['key']:'';
 
-if(!preg_match('/^[\d,]+$/', $occid)) {
-	$occid = 0;
-}
 $recordID = preg_replace("/[^A-Za-z0-9\-]/", '',$recordID);
 $securityKey = preg_replace("/[^A-Za-z0-9\-]/", '',$securityKey);
 

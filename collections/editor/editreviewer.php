@@ -8,16 +8,16 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/editreviewer.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = $_REQUEST['collid'];
-$displayMode = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'1';
+$collid = (int)$_REQUEST['collid'];
+$displayMode = array_key_exists('display',$_REQUEST)?(int)$_REQUEST['display']:1;
 $faStatus = array_key_exists('fastatus',$_REQUEST)?$_REQUEST['fastatus']:'';
 $frStatus = array_key_exists('frstatus',$_REQUEST)?$_REQUEST['frstatus']:'1,2';
 $editor = array_key_exists('editor',$_REQUEST)?$_REQUEST['editor']:'';
-$queryOccid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:'';
+$queryOccid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $startDate = array_key_exists('startdate',$_REQUEST)?$_REQUEST['startdate']:'';
 $endDate = array_key_exists('enddate',$_REQUEST)?$_REQUEST['enddate']:'';
-$pageNum = array_key_exists('pagenum',$_REQUEST)?$_REQUEST['pagenum']:'0';
-$limitCnt = array_key_exists('limitcnt',$_REQUEST)?$_REQUEST['limitcnt']:'1000';
+$pageNum = array_key_exists('pagenum',$_REQUEST)?(int)$_REQUEST['pagenum']:0;
+$limitCnt = array_key_exists('limitcnt',$_REQUEST)?(int)$_REQUEST['limitcnt']:1000;
 
 $reviewManager = new OccurrenceEditReview();
 $collName = $reviewManager->setCollId($collid);

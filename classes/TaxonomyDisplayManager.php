@@ -26,7 +26,7 @@ class TaxonomyDisplayManager{
 	}
 
  	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -232,11 +232,11 @@ class TaxonomyDisplayManager{
 						$sciName .= ' ' . $this->taxaArr[$key]['author'];
 					}
 				}
-				elseif(!$key){
-					$sciName = '&nbsp;';
-				}
-				else{
+				elseif($key) {
 					$sciName = '<br/>Problematic Rooting (' .$key. ')';
+				}
+				else {
+					$sciName = '&nbsp;';
 				}
 				$indent = $taxonRankId;
 				if($indent > 230) {
@@ -404,7 +404,8 @@ class TaxonomyDisplayManager{
 		}
 	}
 
-	private function cmp($a, $b){
+	private function cmp($a, $b): int
+    {
 		$sciNameA = (array_key_exists($a,$this->taxaArr)?$this->taxaArr[$a]['sciname']: 'unknown (' .$a. ')');
 		$sciNameB = (array_key_exists($b,$this->taxaArr)?$this->taxaArr[$b]['sciname']: 'unknown (' .$b. ')');
 		return strcmp($sciNameA, $sciNameB);

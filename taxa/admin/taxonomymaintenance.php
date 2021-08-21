@@ -14,6 +14,8 @@ $harvesterManager = new TaxonomyHarvester();
 $utilitiesManager = new TaxonomyUtilities();
  
 $isEditor = false;
+$statusStr = '';
+
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }
