@@ -1274,7 +1274,7 @@ class SpecUploadBase extends SpecUpload{
         $sqlFields = '';
         $sqlValues = '';
         foreach($recMap as $symbField => $valueStr){
-            if(strpos($symbField, 'unmapped') !== 0){
+            if(strncmp($symbField, 'unmapped', 8) !== 0){
                 $sqlFields .= ','.$symbField;
                 $valueStr = $this->encodeString($valueStr);
                 $valueStr = Sanitizer::cleanInStr($valueStr);

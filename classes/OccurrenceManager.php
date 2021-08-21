@@ -919,7 +919,7 @@ class OccurrenceManager{
                     if($expanded){
                         ?>
                         <tr>
-                            <td style="<?php ($cArr['icon']?'width:35px':''); ?>">
+                            <td style="<?php echo ($cArr['icon']?'width:35px':''); ?>">
                                 <?php
                                 if($cArr['icon']){
                                     $cIcon = (strncmp($cArr['icon'], 'images', 6) === 0 ?'../':'').$cArr['icon'];

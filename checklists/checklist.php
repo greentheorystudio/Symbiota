@@ -387,7 +387,7 @@ if(!$printMode){
             <?php
             if($clArray['publication']){
                 $pubStr = $clArray['publication'];
-                if(strpos($pubStr, 'http') === 0 && !strpos($pubStr,' ')) {
+                if(strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
                     $pubStr = '<a href="' . $pubStr . '" target="_blank">' . $pubStr . '</a>';
                 }
                 echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
@@ -676,7 +676,7 @@ if(!$printMode){
                                 <?php
                                 $spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
                                 if($imgSrc){
-                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgSrc, 'http') !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
                                         echo "<a href='" . $spUrl . "' target='_blank'>";
                                     }

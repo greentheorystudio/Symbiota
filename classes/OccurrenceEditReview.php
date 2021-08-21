@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceEditReview extends Manager{
 
@@ -506,7 +507,7 @@ class OccurrenceEditReview extends Manager{
 
 	public function setEditorFilter($f): void
     {
-		$this->editorFilter = $this->cleanInStr($f);
+		$this->editorFilter = Sanitizer::cleanInStr($f);
 	}
 	
 	public function setQueryOccidFilter($num): void

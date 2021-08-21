@@ -18,6 +18,6 @@ if(is_numeric($clid) && is_numeric($tid)){
 		if($conn->query($sql)){
 			echo $tid;
 		}
+        $conn->close();
 	}
 }
-$conn->close();
