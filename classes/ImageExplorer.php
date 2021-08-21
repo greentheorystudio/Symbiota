@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageExplorer{
     private $debug = FALSE;
@@ -12,7 +13,7 @@ class ImageExplorer{
 	}
  
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -86,16 +87,16 @@ class ImageExplorer{
 			elseif(count($accArr) > 1){
 				$tidArr = array_merge($this->getTaxaChildren($accArr),$accArr);
 				$tidArr = $this->getTaxaSynonyms($tidArr);
-				$sqlWhere .= 'AND (i.tid IN('.implode(',',$this->cleanInArray($tidArr)).')) ';
+				$sqlWhere .= 'AND (i.tid IN('.implode(',',Sanitizer::cleanInArray($tidArr)).')) ';
 			}
 		}
 		
 		if (isset($searchCriteria['text']) && $searchCriteria['text']) {
-			$sqlWhere .= 'AND o.scientificName like "%'.$this->cleanInStr($searchCriteria['text'][0]).'%" ';
+			$sqlWhere .= 'AND o.scientificName like "%'.Sanitizer::cleanInStr($searchCriteria['text'][0]).'%" ';
 		}
 
 		if(isset($searchCriteria['country']) && $searchCriteria['country']){
-			$countryArr = $this->cleanInArray($searchCriteria['country']);
+			$countryArr = Sanitizer::cleanInArray($searchCriteria['country']);
 			$usaArr = array('usa','united states','united states of america','u.s.a','us');
 			foreach($countryArr as $countryStr){
 				if(in_array(strtolower($countryStr), $usaArr, true)){
@@ -107,23 +108,23 @@ class ImageExplorer{
 		}
 
 		if(isset($searchCriteria['state']) && $searchCriteria['state']){
-			$stateArr = $this->cleanInArray($searchCriteria['state']);
+			$stateArr = Sanitizer::cleanInArray($searchCriteria['state']);
 			$sqlWhere .= 'AND o.stateProvince IN("'.implode('","',$stateArr).'") ';
 		}
 
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
-			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',$this->cleanInArray($searchCriteria['tags'])).'") ';
+			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',Sanitizer::cleanInArray($searchCriteria['tags'])).'") ';
 		}
 		else{
 			$sqlWhere .= 'AND i.sortsequence < 500 ';
 		}
 		
 		if(isset($searchCriteria['collection']) && $searchCriteria['collection']){
-			$sqlWhere .= 'AND o.collid IN('.implode(',',$this->cleanInArray($searchCriteria['collection'])).') ';
+			$sqlWhere .= 'AND o.collid IN('.implode(',',Sanitizer::cleanInArray($searchCriteria['collection'])).') ';
 		}
 
 		if(isset($searchCriteria['photographer']) && $searchCriteria['photographer']){
-			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',$this->cleanInArray($searchCriteria['photographer'])).') ';
+			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',Sanitizer::cleanInArray($searchCriteria['photographer'])).') ';
 		}
 		
 		if (isset($searchCriteria['idToSpecies'], $searchCriteria['idNeeded']) && $searchCriteria['idToSpecies'] && $searchCriteria['idNeeded']) {
@@ -249,21 +250,5 @@ class ImageExplorer{
 		}
 		$rs->free();
 		return array_unique($synArr);
-	}
-
-	private function cleanInArray($arr): array
-	{
- 		$newArray = array();
- 		foreach($arr as $key => $value){
- 			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
- 		}
- 		return $newArray;
- 	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

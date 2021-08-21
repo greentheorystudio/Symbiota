@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageShared{
 
@@ -87,7 +88,7 @@ class ImageShared{
 		if($this->sourceGdImg) {
 			imagedestroy($this->sourceGdImg);
 		}
-		if(!($this->conn === null)){
+		if($this->conn){
 			$this->conn->close();
 			$this->conn = null;
 		}
@@ -130,9 +131,12 @@ class ImageShared{
 
  	}
 
-	public function uploadImage($imgFile = 'imgfile'): bool
+	public function uploadImage($imgFile = null): bool
 	{
-		if($this->targetPath){
+		if(!$imgFile){
+            $imgFile = 'imgfile';
+        }
+	    if($this->targetPath){
 			if(file_exists($this->targetPath)){
 				$imgFileName = basename($_FILES[$imgFile]['name']);
 				$fileName = $this->cleanFileName($imgFileName);
@@ -156,38 +160,45 @@ class ImageShared{
 
 	public function copyImageFromUrl($sourceUri): bool
 	{
-		if(!$sourceUri){
+		$returnVal = false;
+	    if($sourceUri) {
+            if($this->uriExists($sourceUri)) {
+                if($this->targetPath) {
+                    if(file_exists($this->targetPath)) {
+                        $fileName = $this->cleanFileName($sourceUri);
+                        $this->context = stream_context_create( array( 'http' => array( 'header' => 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36') ) );
+                        if(copy($sourceUri, $this->targetPath.$fileName.$this->imgExt, $this->context)){
+                            $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
+                            $this->imgName = $fileName;
+                            $returnVal = true;
+                        }
+                        else{
+                            $this->errArr[] = 'FATAL ERROR: Unable to copy image to target ('.$this->targetPath.$fileName.$this->imgExt.')';
+                        }
+                    }
+                    else {
+                        $this->errArr[] = 'FATAL ERROR: Image target file ('.$this->targetPath.') does not exist in copyImageFromUrl method';
+                    }
+                }
+                else {
+                    $this->errArr[] = 'FATAL ERROR: Image target url NULL in copyImageFromUrl method';
+                }
+            }
+            else {
+                $this->errArr[] = 'FATAL ERROR: Image source file ('.$sourceUri.') does not exist in copyImageFromUrl method';
+            }
+        }
+	    else {
 			$this->errArr[] = 'FATAL ERROR: Image source uri NULL in copyImageFromUrl method';
-			return false;
 		}
-		if(!$this->uriExists($sourceUri)){
-			$this->errArr[] = 'FATAL ERROR: Image source file ('.$sourceUri.') does not exist in copyImageFromUrl method';
-			return false;
-		}
-		if(!$this->targetPath){
-			$this->errArr[] = 'FATAL ERROR: Image target url NULL in copyImageFromUrl method';
-			return false;
-		}
-		if(!file_exists($this->targetPath)){
-			$this->errArr[] = 'FATAL ERROR: Image target file ('.$this->targetPath.') does not exist in copyImageFromUrl method';
-			return false;
-		}
-		$fileName = $this->cleanFileName($sourceUri);
-		$this->context = stream_context_create( array( 'http' => array( 'header' => 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36') ) );
-		if(copy($sourceUri, $this->targetPath.$fileName.$this->imgExt, $this->context)){
-			$this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
-			$this->imgName = $fileName;
-			return true;
-		}
-		$this->errArr[] = 'FATAL ERROR: Unable to copy image to target ('.$this->targetPath.$fileName.$this->imgExt.')';
-		return false;
+	    return $returnVal;
 	}
 
 	public function parseUrl($url): bool
 	{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
-		if(strpos($url, '/') === 0){
+		if(strncmp($url, '/', 1) === 0){
 			if($GLOBALS['IMAGE_DOMAIN']){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
@@ -216,16 +227,15 @@ class ImageShared{
 		return $status;
 	}
 
-	public function cleanFileName($fPath){
+	public function cleanFileName($fPath): string
+    {
 		$fName = $fPath;
 		$imgInfo = null;
-		if(stripos($fPath, 'http://') === 0 || stripos($fPath, 'https://') === 0){
-			if($dimArr = self::getImgDim($fPath)){
-				if($dimArr){
-                    $this->sourceWidth = $dimArr[0];
-                    $this->sourceHeight = $dimArr[1];
-                }
-			}
+		if(strncasecmp($fPath, 'http://', 7) === 0 || strncasecmp($fPath, 'https://', 8) === 0){
+			if(($dimArr = self::getImgDim($fPath)) && $dimArr) {
+                $this->sourceWidth = $dimArr[0];
+                $this->sourceHeight = $dimArr[1];
+            }
 
 			if($pos = strrpos($fName,'/')){
 				$fName = substr($fName,$pos+1);
@@ -266,35 +276,39 @@ class ImageShared{
 		return $fName;
 	}
 
-	public function setTargetPath($subPath = ''): bool
+	public function setTargetPath($subPath = null): bool
 	{
-		$path = $this->imageRootPath;
+		$returnVal = true;
+	    $path = $this->imageRootPath;
 		$url = $this->imageRootUrl;
-		if(!$path){
-			$this->errArr[] = 'FATAL ERROR: Path empty in setTargetPath method';
-			trigger_error('Path empty in setTargetPath method',E_USER_ERROR);
-			return false;
-		}
-		if($subPath){
-			$badChars = array(' ',':','.','"',"'",'>','<','%','*','|','?');
-			$subPath = str_replace($badChars, '', $subPath);
-		}
+		if($path){
+			if($subPath){
+                $badChars = array(' ',':','.','"',"'",'>','<','%','*','|','?');
+                $subPath = str_replace($badChars, '', $subPath);
+            }
+            else{
+                $subPath = 'misc/'.date('Ym').'/';
+            }
+            if(substr($subPath,-1) !== '/') {
+                $subPath .= '/';
+            }
+            $path .= $subPath;
+            $url .= $subPath;
+            if(file_exists($path) && mkdir($path, 0777, true) && is_dir($path)) {
+                $this->targetPath = $path;
+                $this->urlBase = $url;
+            }
+            else{
+                $this->errArr[] = 'FATAL ERROR: Unable to create directory: '.$path;
+                $returnVal = false;
+            }
+        }
 		else{
-			$subPath = 'misc/'.date('Ym').'/';
-		}
-		if(substr($subPath,-1) !== '/') {
-			$subPath .= '/';
-		}
-
-		$path .= $subPath;
-		$url .= $subPath;
-		if(!file_exists($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
-			$this->errArr[] = 'FATAL ERROR: Unable to create directory: '.$path;
-			return false;
-		}
-		$this->targetPath = $path;
-		$this->urlBase = $url;
-		return true;
+            $this->errArr[] = 'FATAL ERROR: Path empty in setTargetPath method';
+            trigger_error('Path empty in setTargetPath method',E_USER_ERROR);
+            $returnVal = false;
+        }
+		return $returnVal;
 	}
 
 	public function processImage(): bool
@@ -316,7 +330,7 @@ class ImageShared{
 		$imgLgUrl = '';
 		if($this->mapLargeImg){
 			if($this->sourceWidth > ($this->webPixWidth*1.2) || $this->sourceFileSize > $this->webFileSizeLimit){
-				if(strpos($this->sourcePath, 'http://') === 0 || strpos($this->sourcePath, 'https://') === 0) {
+				if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
 				else if($this->sourceWidth < ($this->lgPixWidth*1.2)){
@@ -331,12 +345,12 @@ class ImageShared{
 		}
 
 		$imgWebUrl = '';
-		if(strpos($this->sourcePath, 'http://') === 0 || strpos($this->sourcePath, 'https://') === 0){
+		if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0){
 			$imgWebUrl = $this->sourcePath;
 		}
 		if(!$imgWebUrl){
 			if($this->sourceWidth < ($this->webPixWidth*1.2) && $this->sourceFileSize < $this->webFileSizeLimit){
-				if(stripos($this->sourcePath, 'http://') === 0 || stripos($this->sourcePath, 'https://') === 0){
+				if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
 					if(copy($this->sourcePath, $this->targetPath.$this->imgName.$this->imgExt, $this->context)){
 						$imgWebUrl = $this->imgName.$this->imgExt;
 					}
@@ -359,7 +373,7 @@ class ImageShared{
 		return $status;
 	}
 
-	public function createNewImage($subExt, $targetWidth, $qualityRating = 0, $targetPathOverride = ''): bool
+	public function createNewImage($subExt, $targetWidth, $qualityRating = null, $targetPathOverride = null): bool
 	{
 		$status = false;
 		if($this->sourcePath){
@@ -470,13 +484,13 @@ class ImageShared{
 		$status = true;
 		if($imgWebUrl){
 			$urlBase = $this->getUrlBase();
-			if(stripos($imgWebUrl, 'http://') !== 0 && stripos($imgWebUrl, 'https://') !== 0){
+			if(strncasecmp($imgWebUrl, 'http://', 7) !== 0 && strncasecmp($imgWebUrl, 'https://', 8) !== 0){
 				$imgWebUrl = $urlBase.$imgWebUrl;
 			}
-			if($imgTnUrl && stripos($imgTnUrl, 'http://') !== 0 && stripos($imgTnUrl, 'https://') !== 0){
+			if($imgTnUrl && strncasecmp($imgTnUrl, 'http://', 7) !== 0 && strncasecmp($imgTnUrl, 'https://', 8) !== 0){
 				$imgTnUrl = $urlBase.$imgTnUrl;
 			}
-			if($imgLgUrl && stripos($imgLgUrl, 'http://') !== 0 && stripos($imgLgUrl, 'https://') !== 0){
+			if($imgLgUrl && strncasecmp($imgLgUrl, 'http://', 7) !== 0 && strncasecmp($imgLgUrl, 'https://', 8) !== 0){
 				$imgLgUrl = $urlBase.$imgLgUrl;
 			}
 
@@ -505,7 +519,7 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				$this->cleanInStr($GLOBALS['USERNAME']).'",'.
+				Sanitizer::cleanInStr($GLOBALS['USERNAME']).'",'.
 				($this->sortSeq?:'50').','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
@@ -546,7 +560,7 @@ class ImageShared{
 				if($v) {
 					$imgArr[$k] = $v;
 				}
-				$imgObj .= '"'.$k.'":"'.$this->cleanInStr($v).'",';
+				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($v).'",';
 			}
 			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
@@ -592,7 +606,7 @@ class ImageShared{
 				}
 				else{
 					$imgDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgUrl);
-					if((strpos($imgDelPath, 'http') !== 0) && !unlink($imgDelPath)) {
+					if((strncmp($imgDelPath, 'http', 4) !== 0) && !unlink($imgDelPath)) {
 						$this->errArr[] = 'WARNING: Deleted records from database successfully but FAILED to delete image from server (path: '.$imgDelPath.')';
 					}
 
@@ -601,7 +615,7 @@ class ImageShared{
 							$imgThumbnailUrl = substr($imgThumbnailUrl,strlen($domain));
 						}
 						$imgTnDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgThumbnailUrl);
-						if(file_exists($imgTnDelPath) && strpos($imgTnDelPath, 'http') !== 0) {
+						if(file_exists($imgTnDelPath) && strncmp($imgTnDelPath, 'http', 4) !== 0) {
 							unlink($imgTnDelPath);
 						}
 					}
@@ -611,7 +625,7 @@ class ImageShared{
 							$imgOriginalUrl = substr($imgOriginalUrl,strlen($domain));
 						}
 						$imgOriginalDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgOriginalUrl);
-						if(file_exists($imgOriginalDelPath) && strpos($imgOriginalDelPath, 'http') !== 0) {
+						if(file_exists($imgOriginalDelPath) && strncmp($imgOriginalDelPath, 'http', 4) !== 0) {
 							unlink($imgOriginalDelPath);
 						}
 					}
@@ -655,7 +669,6 @@ class ImageShared{
         $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
             $returnArr[$row->tagkey] = $row->description_en;
         }
         $result->close();
@@ -721,12 +734,12 @@ class ImageShared{
 
 	public function setCaption($v): void
 	{
-		$this->caption = $this->cleanInStr($v);
+		$this->caption = Sanitizer::cleanInStr($v);
 	}
 
 	public function setPhotographer($v): void
 	{
-		$this->photographer = $this->cleanInStr($v);
+		$this->photographer = Sanitizer::cleanInStr($v);
 	}
 
 	public function setPhotographerUid($v): void
@@ -738,7 +751,7 @@ class ImageShared{
 
 	public function setSourceUrl($v): void
 	{
-		$this->sourceUrl = $this->cleanInStr($v);
+		$this->sourceUrl = Sanitizer::cleanInStr($v);
 	}
 
 	public function getTargetPath(): string
@@ -752,12 +765,12 @@ class ImageShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = $this->cleanInStr($v);
+		$this->owner = Sanitizer::cleanInStr($v);
 	}
 
 	public function setLocality($v): void
 	{
-		$this->locality = $this->cleanInStr($v);
+		$this->locality = Sanitizer::cleanInStr($v);
 	}
 
 	public function setOccid($v): void
@@ -780,7 +793,7 @@ class ImageShared{
 
 	public function setNotes($v): void
 	{
-		$this->notes = $this->cleanInStr($v);
+		$this->notes = Sanitizer::cleanInStr($v);
 	}
 
 	public function setSortSeq($v): void
@@ -792,7 +805,7 @@ class ImageShared{
 
 	public function setCopyright($v): void
 	{
-		$this->copyright = $this->cleanInStr($v);
+		$this->copyright = Sanitizer::cleanInStr($v);
 	}
 
 	public function getErrArr(): array
@@ -821,7 +834,7 @@ class ImageShared{
 
 	private function setSourceFileSize(){
 		if($this->sourcePath && !$this->sourceFileSize){
-			if(stripos($this->sourcePath, 'http://') === 0 || stripos($this->sourcePath, 'https://') === 0){
+			if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
 				$x = array_change_key_case(get_headers($this->sourcePath, 1),CASE_LOWER);
 				if($x){
                     if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
@@ -846,8 +859,7 @@ class ImageShared{
 
 	public function uriExists($uri) {
 		$exists = false;
-
-		if(strpos($uri, '/') === 0){
+        if(strncmp($uri, '/', 1) === 0){
 			if($GLOBALS['IMAGE_ROOT_URL'] && strpos($uri,$GLOBALS['IMAGE_ROOT_URL']) === 0){
 				$fileName = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$uri);
 				if(file_exists($fileName)) {
@@ -931,13 +943,16 @@ class ImageShared{
 		return $imgDim;
 	}
 
-	private static function getImgDim1($imgUrl) {
-		$opts = array(
-				'http'=>array(
-						'user_agent' => $GLOBALS['DEFAULT_TITLE'],
-						'method'=> 'GET',
-						'header'=> implode("\r\n", array('Content-type: text/plain;'))
-				)
+	private static function getImgDim1($imgUrl): array
+    {
+		$retArr = array();
+	    $opts = array(
+            'http'=>array(
+                    'user_agent' => $GLOBALS['DEFAULT_TITLE'],
+                    'method'=> 'GET',
+                    'header'=> implode("\r\n", array('Content-type: text/plain;')
+                )
+            )
 		);
 		$context = stream_context_create($opts);
 		if($handle = fopen($imgUrl, 'rb', false, $context)){
@@ -964,13 +979,9 @@ class ImageShared{
                                         $width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
                                         return array($width, $height);
                                     }
-
                                     $i += 2;
                                     $block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
                                     $block_size = hexdec($block_size[1]);
-                                }
-                                else {
-                                    return false;
                                 }
                             }
                         }
@@ -978,7 +989,7 @@ class ImageShared{
 				}
 			}
 		}
-		return false;
+		return $retArr;
 	}
 
 	private static function getImgDim2($imgUrl) {
@@ -999,12 +1010,5 @@ class ImageShared{
 			return false;
 		}
 		return array($width,$height);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

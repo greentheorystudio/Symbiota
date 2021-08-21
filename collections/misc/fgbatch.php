@@ -5,9 +5,9 @@ include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $taxon = array_key_exists('taxon',$_POST)?$_POST['taxon']:'';
-$jobId = array_key_exists('jobid',$_POST)?$_POST['jobid']:0;
+$jobId = array_key_exists('jobid',$_POST)?(int)$_POST['jobid']:0;
 
 $apiManager = new FieldGuideManager();
 $cleanManager = new OccurrenceCleaner();

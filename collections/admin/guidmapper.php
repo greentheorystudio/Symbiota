@@ -8,7 +8,7 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $action = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = 0;

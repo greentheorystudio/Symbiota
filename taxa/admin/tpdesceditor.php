@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 

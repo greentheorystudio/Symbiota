@@ -3,6 +3,7 @@ include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/SOLRManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceAPIManager{
 
@@ -19,7 +20,7 @@ class OccurrenceAPIManager{
 	}
 
  	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
             $this->conn->close();
         }
 	}
@@ -228,28 +229,21 @@ class OccurrenceAPIManager{
 
     public function setCollID($val): void
     {
-        $this->collId = $this->cleanInStr($val);
+        $this->collId = Sanitizer::cleanInStr($val);
     }
 
     public function setOccID($val): void
     {
-        $this->occId = $this->cleanInStr($val);
+        $this->occId = Sanitizer::cleanInStr($val);
     }
 
     public function setDBPK($val): void
     {
-        $this->dbpk = $this->cleanInStr($val);
+        $this->dbpk = Sanitizer::cleanInStr($val);
     }
 
     public function setCatNum($val): void
     {
-        $this->catNum = $this->cleanInStr($val);
-    }
-
-    protected function cleanInStr($str){
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $this->conn->real_escape_string($newStr);
-        return $newStr;
+        $this->catNum = Sanitizer::cleanInStr($val);
     }
 }

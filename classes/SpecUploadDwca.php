@@ -29,7 +29,7 @@ class SpecUploadDwca extends SpecUploadBase{
         }
 
         if($this->path){
-            if($this->uploadType == $this->IPTUPLOAD){
+            if($this->uploadType === $this->IPTUPLOAD){
                 if(strpos($this->path,'/resource.do')){
                     $this->path = str_replace('/resource.do','/archive.do',$this->path);
                 }
@@ -42,16 +42,16 @@ class SpecUploadDwca extends SpecUploadBase{
             }
             else{
                 $fp = fopen ($fullPath, 'wb+');
-                $ch = curl_init(str_replace(" ","%20",$this->path));
+                $ch = curl_init(str_replace(' ','%20',$this->path));
                 curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
                 curl_setopt($ch, CURLOPT_FILE, $fp);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                if(!curl_exec($ch)){
+                if(curl_exec($ch)) {
+                    $this->baseFolderName = $localFolder;
+                }
+                else {
                     $this->outputMsg('<li>ERROR: unable to upload file (path: '.$fullPath.') </li>');
                     $this->errorStr = 'ERROR: unable to upload file (path: '.$fullPath.')';
-                }
-                else{
-                    $this->baseFolderName = $localFolder;
                 }
                 curl_close($ch);
                 fclose($fp);
@@ -64,29 +64,29 @@ class SpecUploadDwca extends SpecUploadBase{
                 }
                 else{
                     $msg = 'unknown';
-                    $err = $_FILES['uploadfile']['error'];
-                    if($err == 1) {
+                    $err = (int)$_FILES['uploadfile']['error'];
+                    if($err === 1) {
                         $msg = 'uploaded file exceeds the upload_max_filesize directive in php.ini';
                     }
-                    elseif($err == 2) {
+                    elseif($err === 2) {
                         $msg = 'uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
                     }
-                    elseif($err == 3) {
+                    elseif($err === 3) {
                         $msg = 'uploaded file was only partially uploaded';
                     }
-                    elseif($err == 4) {
+                    elseif($err === 4) {
                         $msg = 'no file was uploaded';
                     }
-                    elseif($err == 5) {
+                    elseif($err === 5) {
                         $msg = 'unknown error 5';
                     }
-                    elseif($err == 6) {
+                    elseif($err === 6) {
                         $msg = 'missing a temporary folder';
                     }
-                    elseif($err == 7) {
+                    elseif($err === 7) {
                         $msg = 'failed to write file to disk';
                     }
-                    elseif($err == 8) {
+                    elseif($err === 8) {
                         $msg = 'a PHP extension stopped the file upload';
                     }
                     $this->outputMsg('<li>ERROR uploading file (target: '.$fullPath.'): '.$msg.' </li>');
@@ -135,7 +135,7 @@ class SpecUploadDwca extends SpecUploadBase{
         else{
             $err = $zip->getStatusString();
             if(!$err){
-                if($this->uploadType == $this->IPTUPLOAD){
+                if($this->uploadType === $this->IPTUPLOAD){
                     $err = 'target path does not appear to be a valid IPT instance';
                 }
                 else{
@@ -150,10 +150,10 @@ class SpecUploadDwca extends SpecUploadBase{
         return $status;
     }
 
-    private function locateBaseFolder($baseDir, $pathFrag = ''): void
+    private function locateBaseFolder($baseDir, $pathFrag = null): void
     {
         if($handle = opendir($baseDir.$pathFrag)) {
-            while(false !== ($item = readdir($handle))){
+            while(($item = readdir($handle)) !== false){
                 if($item){
                     $newPath = $baseDir.$pathFrag;
                     if(is_file($newPath.$item) || strtolower(substr($item,-4)) === '.zip'){
@@ -174,6 +174,7 @@ class SpecUploadDwca extends SpecUploadBase{
 
     private function readMetaFile(): bool
     {
+        $status = true;
         if(!$this->metaArr){
             $this->locateBaseFolder($this->uploadTargetPath.$this->baseFolderName);
             $metaPath = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.'meta.xml';
@@ -245,7 +246,7 @@ class SpecUploadDwca extends SpecUploadBase{
                 else{
                     $this->outputMsg('ERROR: Unable to access core element in meta.xml');
                     $this->errorStr = 'ERROR: Unable to access core element in meta.xml';
-                    return false;
+                    $status = false;
                 }
                 if($this->metaArr){
                     $extensionElements = $metaDoc->getElementsByTagName('extension');
@@ -291,7 +292,7 @@ class SpecUploadDwca extends SpecUploadBase{
                                 }
                                 $this->metaArr[$tagName]['fields'][$extCoreId] = 'coreid';
 
-                                if(($this->metaArr[$tagName]['ignoreHeaderLines'] == 1) && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
+                                if((int)$this->metaArr[$tagName]['ignoreHeaderLines'] === 1 && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
                                     if($this->metaArr[$tagName]['fieldsTerminatedBy'] === '\t'){
                                         $this->delimiter = "\t";
                                     }
@@ -321,16 +322,16 @@ class SpecUploadDwca extends SpecUploadBase{
                 else{
                     $this->errorStr = 'ERROR: Unable to obtain core element from meta.xml';
                     $this->outputMsg($this->errorStr);
-                    return false;
+                    $status = false;
                 }
             }
             else{
                 $this->errorStr = 'ERROR: Malformed DWCA, unable to locate ('.$metaPath.')';
                 $this->outputMsg($this->errorStr);
-                return false;
+                $status = false;
             }
         }
-        return true;
+        return $status;
     }
 
     public function uploadData($finalTransfer): void
@@ -364,7 +365,7 @@ class SpecUploadDwca extends SpecUploadBase{
                 if(file_exists($fullPath)){
                     $fh = fopen($fullPath, 'rb') or die("Can't open occurrence file");
 
-                    if($this->metaArr['occur']['ignoreHeaderLines'] == '1'){
+                    if((int)$this->metaArr['occur']['ignoreHeaderLines'] === 1){
                         $this->getRecordArr($fh);
                     }
 
@@ -389,18 +390,16 @@ class SpecUploadDwca extends SpecUploadBase{
                     while($recordArr = $this->getRecordArr($fh)){
                         $recMap = array();
                         foreach($this->fieldMap as $symbField => $sMap){
-                            if(strpos($symbField, 'unmapped') !== 0){
+                            if(strncmp($symbField, 'unmapped', 8) !== 0){
                                 $indexArr = array_keys($this->sourceArr,$sMap['field']);
                                 $index = array_shift($indexArr);
-                                if(array_key_exists($index,$recordArr)){
-                                    if($recordArr){
-                                        $valueStr = trim($recordArr[$index]);
-                                        if($valueStr){
-                                            if($cset != $this->encoding) {
-                                                $valueStr = $this->encodeString($valueStr);
-                                            }
-                                            $recMap[$symbField] = $valueStr;
+                                if(array_key_exists($index, $recordArr) && $recordArr) {
+                                    $valueStr = trim($recordArr[$index]);
+                                    if($valueStr){
+                                        if($cset !== $this->encoding) {
+                                            $valueStr = $this->encodeString($valueStr);
                                         }
+                                        $recMap[$symbField] = $valueStr;
                                     }
                                 }
                             }
@@ -466,11 +465,11 @@ class SpecUploadDwca extends SpecUploadBase{
         }
     }
 
-    private function removeFiles($baseDir,$pathFrag = ''): void
+    private function removeFiles($baseDir, $pathFrag = null): void
     {
         $dirPath = $baseDir.$pathFrag;
         if($handle = opendir($dirPath)) {
-            while(false !== ($item = readdir($handle))) {
+            while(($item = readdir($handle)) !== false) {
                 if($item){
                     if(is_file($dirPath.$item) || strtolower(substr($item,-4)) === '.zip'){
                         if(stripos($dirPath,$this->uploadTargetPath) === 0){
@@ -530,18 +529,16 @@ class SpecUploadDwca extends SpecUploadBase{
                 while($recordArr = $this->getRecordArr($fh)){
                     $recMap = array();
                     foreach($fieldMap as $symbField => $iMap){
-                        if(strpos($symbField, 'unmapped') !== 0){
+                        if(strncmp($symbField, 'unmapped', 8) !== 0){
                             $indexArr = array_keys($sourceArr,$iMap['field']);
                             $index = array_shift($indexArr);
-                            if(array_key_exists($index,$recordArr)){
-                                if($recordArr){
-                                    $valueStr = trim($recordArr[$index]);
-                                    if($valueStr){
-                                        if($cset != $this->encoding) {
-                                            $valueStr = $this->encodeString($valueStr);
-                                        }
-                                        $recMap[$symbField] = $valueStr;
+                            if(array_key_exists($index, $recordArr) && $recordArr) {
+                                $valueStr = trim($recordArr[$index]);
+                                if($valueStr){
+                                    if($cset !== $this->encoding) {
+                                        $valueStr = $this->encodeString($valueStr);
                                     }
+                                    $recMap[$symbField] = $valueStr;
                                 }
                             }
                         }
@@ -590,10 +587,8 @@ class SpecUploadDwca extends SpecUploadBase{
             $recordArr = explode($this->delimiter,$record);
             if($this->enclosure){
                 foreach($recordArr as $k => $v){
-                    if(strpos($v, $this->enclosure) === 0 && substr($v,-1) === $this->enclosure){
-                        if($recordArr){
-                            $recordArr[$k] = substr($v,1, -1);
-                        }
+                    if($recordArr && strpos($v, $this->enclosure) === 0 && substr($v, -1) === $this->enclosure) {
+                        $recordArr[$k] = substr($v,1, -1);
                     }
                 }
             }

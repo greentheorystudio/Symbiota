@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/TaxonomyCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = $_REQUEST['collid'];
+$collid = (int)$_REQUEST['collid'];
 $oldSciname = $_REQUEST['oldsciname'];
-$tid = $_REQUEST['tid'];
+$tid = (int)$_REQUEST['tid'];
 $idQualifier = ($_REQUEST['idq'] ?? '');
 
 $status = '0';

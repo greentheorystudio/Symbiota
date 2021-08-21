@@ -47,12 +47,12 @@ class TaxonProfileManager {
     }
 
     public function __destruct(){
-        if(!($this->con === null)) {
+        if($this->con) {
             $this->con->close();
         }
     }
 
-    public function setTaxon($t,$isFinal=0): void
+    public function setTaxon($t,$isFinal=null): void
     {
         $t = trim($t);
         $sql = 'SELECT t.TID, ts.family, t.SciName, t.Author, t.RankId, t.Source, t.Notes, ts.ParentTID, t.SecurityStatus, ts.TidAccepted, t2.SciName AS synName '.
@@ -353,11 +353,11 @@ class TaxonProfileManager {
                 if($vid !== $row->vid){
                     $vid = $row->vid;
                     $langStr = strtolower($row->language);
-                    if(!in_array($langStr, $this->langArr, true)){
-                        $tempVernArr[$langStr][] = $row->VernacularName;
-                    }
-                    else{
+                    if(in_array($langStr, $this->langArr, true)) {
                         $this->vernaculars[] = $row->VernacularName;
+                    }
+                    else {
+                        $tempVernArr[$langStr][] = $row->VernacularName;
                     }
                 }
             }
@@ -507,10 +507,10 @@ class TaxonProfileManager {
             $imgAnchor = '../imagelib/imgdetails.php?imgid='.$imgId;
             $imgThumbnail = $imgObj['thumbnailurl'];
             if($GLOBALS['IMAGE_DOMAIN']){
-                if(strpos($imgUrl, '/') === 0) {
+                if(strncmp($imgUrl, '/', 1) === 0) {
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgUrl;
                 }
-                if(strpos($imgThumbnail, '/') === 0) {
+                if(strncmp($imgThumbnail, '/', 1) === 0) {
                     $imgThumbnail = $GLOBALS['IMAGE_DOMAIN'] . $imgThumbnail;
                 }
             }
@@ -550,7 +550,7 @@ class TaxonProfileManager {
         return count($this->imageArr);
     }
 
-    public function getFilteredImageArr($type, $limit = 0): array
+    public function getFilteredImageArr($type, $limit = null): array
     {
         $returnArr = array();
         if(!$limit){
@@ -604,7 +604,7 @@ class TaxonProfileManager {
         return $links;
     }
 
-    public function getMapArr($tidStr = ''): array
+    public function getMapArr($tidStr = null): array
     {
         $maps = array();
         if(!$tidStr){
@@ -622,7 +622,7 @@ class TaxonProfileManager {
             $result = $this->con->query($sql);
             if($row = $result->fetch_object()){
                 $imgUrl = $row->url;
-                if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+                if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                 }
                 $maps[] = $imgUrl;
@@ -632,7 +632,8 @@ class TaxonProfileManager {
         return $maps;
     }
 
-    public function getDescriptions($inlineStatements = false){
+    public function getDescriptions($inlineStatements = null): array
+    {
         $retArr = array();
         if($this->tid){
             $rsArr = array();
@@ -668,7 +669,8 @@ class TaxonProfileManager {
         return $retArr;
     }
 
-    private function loadDescriptionArr($rowArr,$retArr,$inlineStatements){
+    private function loadDescriptionArr($rowArr,$retArr,$inlineStatements): array
+    {
         $indexKey = 0;
         if(!in_array(strtolower($rowArr['language']), $this->langArr, true)){
             $indexKey = 1;
@@ -678,18 +680,10 @@ class TaxonProfileManager {
             $retArr[$indexKey][$rowArr['tdbid']]['source'] = $rowArr['source'];
             $retArr[$indexKey][$rowArr['tdbid']]['url'] = $rowArr['sourceurl'];
         }
-        if(strpos($rowArr['statement'], '<p>') === 0){
+        if(strncmp($rowArr['statement'], '<p>', 3) === 0){
             $rowArr['statement'] = substr($rowArr['statement'], 3);
         }
-        if(!$inlineStatements){
-            if($rowArr['displayheader'] && $rowArr['heading']){
-                $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
-            }
-            else{
-                $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
-            }
-        }
-        else{
+        if($inlineStatements) {
             if(substr($rowArr['statement'], -4) === '</p>'){
                 $rowArr['statement'] = substr($rowArr['statement'], 0, -4);
             }
@@ -699,6 +693,12 @@ class TaxonProfileManager {
             else{
                 $statementStr = '<span>'.$rowArr['statement'].(substr($rowArr['statement'], -7) === '</span>' ?'':'</span>');
             }
+        }
+        else if($rowArr['displayheader'] && $rowArr['heading']){
+            $statementStr = '<p><b>' .$rowArr['heading']. '</b>: '.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
+        }
+        else{
+            $statementStr = '<p>'.$rowArr['statement'].(substr($rowArr['statement'], -4) === '</p>' ?'':'</p>');
         }
         $retArr[$indexKey][$rowArr['tdbid']]['desc'][$rowArr['tdsid']] = $statementStr;
         return $retArr;
@@ -738,7 +738,8 @@ class TaxonProfileManager {
         return $returnArr;
     }
 
-    public function getFamily(){
+    public function getFamily(): string
+    {
         $family = '';
         $sql = 'SELECT t.SciName ' .
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.

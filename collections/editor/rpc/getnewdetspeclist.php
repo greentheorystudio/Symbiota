@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $catNum = array_key_exists('catalognumber',$_REQUEST)?$_REQUEST['catalognumber']:'';
 $sciName = array_key_exists('sciname',$_REQUEST)?$_REQUEST['sciname']:'';
 

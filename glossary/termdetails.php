@@ -7,8 +7,8 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/termdetails.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
-$glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
+$glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
+$glimgId = array_key_exists('glimgid',$_REQUEST)?(int)$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
@@ -649,7 +649,7 @@ if($glossId){
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0) {
+											if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0) {
                                                 $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
                                             }
 											$displayUrl = $imgUrl;

@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 $cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'';
 

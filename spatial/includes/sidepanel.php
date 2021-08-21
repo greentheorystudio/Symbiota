@@ -7,7 +7,10 @@
 <div id="spatialpanel">
     <div id="accordion">
         <?php
-        if(!$inputWindowMode){
+        if($inputWindowMode) {
+            include_once(__DIR__ . '/vectortoolstab.php');
+        }
+        else {
             ?>
             <h3 class="tabtitle">Search Criteria</h3>
             <div id="criteriatab">
@@ -164,7 +167,7 @@
                                     <g>
                                         <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                                     </g>
-                                </svg> = General Observation
+                                </svg> = Observation
                             </div>
                         </div>
                         <div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
@@ -229,7 +232,7 @@
                                     <g>
                                         <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                                     </g>
-                                </svg> = General Observation
+                                </svg> = Observation
                             </div>
                         </div>
                         <div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
@@ -345,9 +348,6 @@
                 </div>
             </div>
             <?php
-        }
-        else{
-            include_once(__DIR__ . '/vectortoolstab.php');
         }
         ?>
     </div>

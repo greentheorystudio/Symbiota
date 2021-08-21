@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 
 $clManager = new ChecklistAdmin();
@@ -55,7 +55,7 @@ $clManager->setClid($clid);
 					<li>
 						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
 						<?php 
-						if($cArr['pclid'] == $clid){
+						if((int)$cArr['pclid'] === $clid){
 							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
 						}
 						?>

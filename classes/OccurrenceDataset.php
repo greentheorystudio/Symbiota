@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/DwcArchiverCore.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceDataset {
 
@@ -15,7 +16,7 @@ class OccurrenceDataset {
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -86,7 +87,7 @@ class OccurrenceDataset {
     public function editDataset($dsid,$name,$notes): bool
     {
         $sql = 'UPDATE omoccurdatasets '.
-            'SET name = "'.$this->cleanInStr($name).'", notes = "'.$this->cleanInStr($notes).'" '.
+            'SET name = "'.Sanitizer::cleanInStr($name).'", notes = "'.Sanitizer::cleanInStr($notes).'" '.
             'WHERE datasetid = '.$dsid;
         if(!$this->conn->query($sql)){
             $this->errorArr[] = 'ERROR saving dataset edits: '.$this->conn->error;
@@ -98,7 +99,7 @@ class OccurrenceDataset {
     public function createDataset($name,$notes,$uid): bool
     {
         $sql = 'INSERT INTO omoccurdatasets (name,notes,uid) '.
-            'VALUES("'.$this->cleanInStr($name).'",'.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').','.$uid.') ';
+            'VALUES("'.Sanitizer::cleanInStr($name).'",'.($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').','.$uid.') ';
         if($this->conn->query($sql)){
             $this->datasetId = $this->conn->insert_id;
         }
@@ -111,6 +112,7 @@ class OccurrenceDataset {
 
     public function mergeDatasets($targetArr): bool
     {
+        $status = true;
         $targetDsid = array_shift($targetArr);
         $sql1 = 'UPDATE omoccurdatasets SET name = CONCAT(name," (merged)") WHERE datasetid = '.$targetDsid;
         if($this->conn->query($sql1)){
@@ -119,19 +121,19 @@ class OccurrenceDataset {
                 $sql3 = 'DELETE FROM omoccurdatasets WHERE datasetid IN('.implode(',',$targetArr).')';
                 if(!$this->conn->query($sql3)){
                     $this->errorArr[] = 'WARNING: Unable to remove extra datasets: '.$this->conn->error;
-                    return false;
+                    $status = false;
                 }
             }
             else{
                 $this->errorArr[] = 'FATAL ERROR: Unable to transfer occurrence records into target dataset: '.$this->conn->error;
-                return false;
+                $status = false;
             }
         }
         else{
             $this->errorArr[] = 'FATAL ERROR: Unable to rename target dataset in prep for merge: '.$this->conn->error;
-            return false;
+            $status = false;
         }
-        return true;
+        return $status;
     }
 
     public function cloneDatasets($targetArr): bool
@@ -178,26 +180,29 @@ class OccurrenceDataset {
 
     public function deleteDataset($dsid): bool
     {
+        $status = true;
         $sql1 = 'DELETE FROM userroles '.
             'WHERE (role IN("DatasetAdmin","DatasetEditor","DatasetReader")) AND (tablename = "omoccurdatasets") AND (tablepk = '.$dsid.') ';
         //echo $sql;
-        if(!$this->conn->query($sql1)){
+        if($this->conn->query($sql1)){
+            $sql2 = 'DELETE FROM omoccurdatasets WHERE datasetid = '.$dsid;
+            if($this->conn->query($sql2)){
+                $sql3 = 'DELETE FROM omoccurdatasetlink WHERE datasetid = '.$dsid;
+                if(!$this->conn->query($sql3)){
+                    $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
+                    $status = false;
+                }
+            }
+            else{
+                $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
+                $status = false;
+            }
+        }
+        else{
             $this->errorArr[] = 'ERROR deleting user: '.$this->conn->error;
-            return false;
+            $status = false;
         }
-
-        $sql2 = 'DELETE FROM omoccurdatasets WHERE datasetid = '.$dsid;
-        if(!$this->conn->query($sql2)){
-            $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
-            return false;
-        }
-
-        $sql3 = 'DELETE FROM omoccurdatasetlink WHERE datasetid = '.$dsid;
-        if(!$this->conn->query($sql3)){
-            $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
-            return false;
-        }
-        return true;
+        return $status;
     }
 
     public function getUsers($datasetId): array
@@ -219,7 +224,7 @@ class OccurrenceDataset {
     public function addUser($datasetID,$uid,$role): bool
     {
         if(is_numeric($uid)){
-            $sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$uid.',"'.$this->cleanInStr($role).'","omoccurdatasets",'.$datasetID.','.$GLOBALS['SYMB_UID'].')';
+            $sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$uid.',"'.Sanitizer::cleanInStr($role).'","omoccurdatasets",'.$datasetID.','.$GLOBALS['SYMB_UID'].')';
             if(!$this->conn->query($sql)){
                 $this->errorArr[] = 'ERROR adding new user: '.$this->conn->error;
                 return false;
@@ -299,11 +304,15 @@ class OccurrenceDataset {
     {
         $status = false;
         if(is_numeric($datasetId)){
-            if(is_numeric($occArr)) $occArr = array($occArr);
+            if(is_numeric($occArr)) {
+                $occArr = array($occArr);
+            }
             foreach($occArr as $v){
                 if(is_numeric($v)){
                     $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) VALUES("'.$v.'",'.$datasetId.') ';
-                    if($this->conn->query($sql)) $status = true;
+                    if($this->conn->query($sql)) {
+                        $status = true;
+                    }
                     else{
                         $this->errorArr[] = 'ERROR adding occurrence ('.$v.'): '.$this->conn->error;
                         $status = false;
@@ -319,7 +328,7 @@ class OccurrenceDataset {
         $retArr = array();
         $sql = 'SELECT u.uid, CONCAT(CONCAT_WS(", ",u.lastname, u.firstname)," - ",u.username," [#",u.uid,"]") AS username '.
             'FROM users u '.
-            'WHERE u.lastname LIKE "%'.$this->cleanInStr($term).'%" OR u.username LIKE "%'.$this->cleanInStr($term).'%" '.
+            'WHERE u.lastname LIKE "%'.Sanitizer::cleanInStr($term).'%" OR u.username LIKE "%'.Sanitizer::cleanInStr($term).'%" '.
             'ORDER BY u.lastname,u.firstname';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()) {
@@ -333,7 +342,9 @@ class OccurrenceDataset {
     {
         $collName = '';
         if($collId){
-            if(!$this->collArr) $this->setCollMetadata($collId);
+            if(!$this->collArr) {
+                $this->setCollMetadata($collId);
+            }
             $collName = $this->collArr['collname'].' ('.$this->collArr['instcode'].($this->collArr['collcode']?':'.$this->collArr['collcode']:'').')';
         }
         return $collName;
@@ -367,12 +378,5 @@ class OccurrenceDataset {
     public function getDatasetId(): int
     {
         return $this->datasetId;
-    }
-
-    private function cleanInStr($str){
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $this->conn->real_escape_string($newStr);
-        return $newStr;
     }
 }

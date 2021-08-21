@@ -4,11 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
 $customField1 = array_key_exists('customfield1',$_REQUEST)?$_REQUEST['customfield1']:'';
 $customType1 = array_key_exists('customtype1',$_REQUEST)?$_REQUEST['customtype1']:'';

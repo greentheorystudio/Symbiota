@@ -12,14 +12,13 @@ class SOLRManager extends OccurrenceManager{
     private $checklistTaxaCnt = 0;
     private $iconColors;
     private $collArr = array();
-    private $taxaSearchType = 0;
 
     public function __construct(){
         parent::__construct();
         $this->iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
     }
 
-    public function getMaxCnt($geo = false){
+    public function getMaxCnt($geo = null){
         if($geo) {
             $this->setSpatial();
         }
@@ -45,7 +44,7 @@ class SOLRManager extends OccurrenceManager{
         return $solrArr['grouped']['familyscinamecode']['groups'];
     }
 
-    public function getOccArr($geo = false): array{
+    public function getOccArr($geo = null): array{
         $returnArr = array();
         $cnt = $this->getMaxCnt();
         $solrWhere = $this->getSOLRWhere($geo);
@@ -201,7 +200,7 @@ class SOLRManager extends OccurrenceManager{
             }
             if(isset($k['thumbnailurl'])){
                 $tnUrl = $k['thumbnailurl'][0];
-                if($GLOBALS['IMAGE_DOMAIN'] && strpos($tnUrl, '/') === 0) {
+                if($GLOBALS['IMAGE_DOMAIN'] && strncmp($tnUrl, '/', 1) === 0) {
                     $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                 }
                 $returnArr[$occId]['img'] = $tnUrl;
@@ -603,7 +602,7 @@ class SOLRManager extends OccurrenceManager{
         fclose($fp);
     }
 
-    public function getSOLRWhere($spatial = false): string
+    public function getSOLRWhere($spatial = null): string
     {
         $qArr = array();
         if(array_key_exists('clid',$this->searchTermsArr) && $this->searchTermsArr['clid']){
@@ -613,14 +612,12 @@ class SOLRManager extends OccurrenceManager{
             }
             $qArr[] = '(CLID:(' .str_replace(',',' ',$value). '))';
         }
-        if(array_key_exists('db',$this->searchTermsArr) && $this->searchTermsArr['db']){
-            if($this->searchTermsArr['db'] !== 'all'){
-                $value = $this->searchTermsArr['db'];
-                if(substr($value,-1) === ','){
-                    $value = substr($value,0,-1);
-                }
-                $qArr[] = '(collid:(' .str_replace(',',' ',$value). '))';
+        if(array_key_exists('db', $this->searchTermsArr) && $this->searchTermsArr['db'] && $this->searchTermsArr['db'] !== 'all') {
+            $value = $this->searchTermsArr['db'];
+            if(substr($value,-1) === ','){
+                $value = substr($value,0,-1);
             }
+            $qArr[] = '(collid:(' .str_replace(',',' ',$value). '))';
         }
         if(array_key_exists('taxa',$this->searchTermsArr)){
             $sqlWhereTaxa = '';

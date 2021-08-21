@@ -24,6 +24,10 @@ $glosManager = new GlossaryManager();
 
 $status = '';
 $fieldMap = array();
+$languageArr = array();
+$tidStr = '';
+$ulSource = '';
+
 if($isEditor){
 	if($ulFileName){
 		$loaderManager->setFileName($ulFileName);

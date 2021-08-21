@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/ProfileManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ChecklistAdmin{
 
@@ -14,7 +15,7 @@ class ChecklistAdmin{
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
             $this->conn->close();
         }
 	}
@@ -30,13 +31,13 @@ class ChecklistAdmin{
                 'FROM fmchecklists c WHERE (c.clid = ' .$this->clid.')';
 	 		$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$this->clName = $this->cleanOutStr($row->name);
-				$retArr['locality'] = $this->cleanOutStr($row->locality);
-				$retArr['notes'] = $this->cleanOutStr($row->notes);
+				$this->clName = Sanitizer::cleanOutStr($row->name);
+				$retArr['locality'] = Sanitizer::cleanOutStr($row->locality);
+				$retArr['notes'] = Sanitizer::cleanOutStr($row->notes);
 				$retArr['type'] = $row->type;
-				$retArr['publication'] = $this->cleanOutStr($row->publication);
-				$retArr['abstract'] = $this->cleanOutStr($row->abstract);
-				$retArr['authors'] = $this->cleanOutStr($row->authors);
+				$retArr['publication'] = Sanitizer::cleanOutStr($row->publication);
+				$retArr['abstract'] = Sanitizer::cleanOutStr($row->abstract);
+				$retArr['authors'] = Sanitizer::cleanOutStr($row->authors);
 				$retArr['parentclid'] = $row->parentclid;
 				$retArr['uid'] = $row->uid;
 				$retArr['latcentroid'] = $row->latcentroid;
@@ -74,7 +75,7 @@ class ChecklistAdmin{
 		$sqlValues = '';
 		foreach($fieldArr as $fieldName => $fieldType){
 			$sqlInsert .= ','.$fieldName;
-			$v = $this->cleanInStr($postArr[$fieldName]);
+			$v = Sanitizer::cleanInStr($postArr[$fieldName]);
 			if($fieldName !== 'abstract') {
                 $v = strip_tags($v, '<i><u><b><a>');
             }
@@ -125,17 +126,17 @@ class ChecklistAdmin{
 		$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
 			'longcentroid'=>'n','pointradiusmeters'=>'n','parentclid'=>'n','access'=>'s','defaultsettings'=>'s');
 		foreach($fieldArr as $fieldName => $fieldType){
-			$v = $this->cleanInStr($postArr[$fieldName]);
+			$v = Sanitizer::cleanInStr($postArr[$fieldName]);
 			if($fieldName !== 'abstract') {
                 $v = strip_tags($v, '<i><u><b><a>');
             }
 
 			if($v){
 				if($fieldType === 's'){
-					$setSql .= ', '.$fieldName.' = "'.$v.'"';
+					$setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
 				}
 				elseif($fieldType === 'n' && is_numeric($v)){
-					$setSql .= ', '.$fieldName.' = "'.$v.'"';
+					$setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
 				}
 				else{
 					$setSql .= ', '.$fieldName.' = NULL';
@@ -218,7 +219,7 @@ class ChecklistAdmin{
     {
 		$status = true;
 		if($this->clid){
-			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.$this->cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
+			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR saving polygon to checklist: '.$this->conn->error;
 				$status = false;
@@ -318,7 +319,7 @@ class ChecklistAdmin{
 		return $statusStr;
 	}
 
-	public function addNewSpecies($dataArr,$setRareSpp = false){
+	public function addNewSpecies($dataArr, $setRareSpp = null){
 		if(!$this->clid) {
             return 'ERROR adding species: checklist identifier not set';
         }
@@ -332,7 +333,7 @@ class ChecklistAdmin{
 					$valueSql .= ','.$v;
 				}
 				else{
-					$valueSql .= ',"'.$this->cleanInStr($v).'"';
+					$valueSql .= ',"'.Sanitizer::cleanInStr($v).'"';
 				}
 			}
 			else{
@@ -367,7 +368,7 @@ class ChecklistAdmin{
 		$statusStr = '';
 		if(is_numeric($tid) && is_numeric($lat) && is_numeric($lng)){
 			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) '.
-				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.$this->cleanInStr($notes).'")';
+				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.Sanitizer::cleanInStr($notes).'")';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add point. '.$this->conn->error;
 			}
@@ -586,17 +587,5 @@ class ChecklistAdmin{
 
 	public function getClName(){
 		return $this->clName;
-	}
-
-	private function cleanOutStr($str){
-        $str = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-		return $str;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

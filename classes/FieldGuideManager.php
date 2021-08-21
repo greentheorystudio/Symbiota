@@ -29,7 +29,7 @@ class FieldGuideManager {
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -228,7 +228,7 @@ class FieldGuideManager {
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(strpos($imgUrl, '/') === 0) {
+            if(strncmp($imgUrl, '/', 1) === 0) {
                 $imgUrl = $localDomain . $imgUrl;
             }
             $returnArr[$imgId]['occid'] = $row->occid;
@@ -448,7 +448,7 @@ class FieldGuideManager {
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(strpos($imgUrl, '/') === 0) {
+            if(strncmp($imgUrl, '/', 1) === 0) {
                 $imgUrl = $localDomain . $imgUrl;
             }
             $returnArr[$imgId]['occid'] = $row->occid;

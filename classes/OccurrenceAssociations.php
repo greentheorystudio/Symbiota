@@ -8,7 +8,7 @@ class OccurrenceAssociations extends Manager {
 		parent::__construct();
  	}
 
-	public function parseAssociatedTaxa($collid = 0): void
+	public function parseAssociatedTaxa($collid = null): void
 	{
 		if(!is_numeric($collid)){
 			echo '<div><b>FAIL ERROR: abort process</b></div>';
@@ -119,7 +119,8 @@ class OccurrenceAssociations extends Manager {
 		flush();
 	}
 
-	private function mineAssocSpeciesMatch($verbStr){
+	private function mineAssocSpeciesMatch($verbStr): int
+    {
 		$retTid = 0;
 		if(preg_match('/^([A-Z])\.?\s([a-z]*)$/',$verbStr,$m)){
 			$sql = 'SELECT tid, sciname '.

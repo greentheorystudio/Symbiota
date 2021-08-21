@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageDetailManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$imgId = $_REQUEST['imgid'];
+$imgId = (int)$_REQUEST['imgid'];
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-$eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 
 $imgManager = new ImageDetailManager($imgId);
 
@@ -43,15 +43,15 @@ if($imgArr){
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
 	if($GLOBALS['IMAGE_DOMAIN']){
-		if(strpos($imgUrl, '/') === 0){
+		if(strncmp($imgUrl, '/', 1) === 0){
 			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
 		}
-		if($origUrl && strpos($origUrl, '/') === 0){
+		if($origUrl && strncmp($origUrl, '/', 1) === 0){
 			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
 		}
 	}
-	if(strpos($metaUrl, '/') === 0){
+	if(strncmp($metaUrl, '/', 1) === 0){
 		$metaUrl = 'http://'.$_SERVER['HTTP_HOST'].$metaUrl;
 	}
 }
@@ -356,7 +356,7 @@ if($imgArr){
 							if($imgArr['copyright']){
 								echo '<div>';
 								echo '<b>Copyright:</b> ';
-								if(stripos($imgArr['copyright'], 'http') === 0){
+								if(strncasecmp($imgArr['copyright'], 'http', 4) === 0){
 									echo '<a href="'.$imgArr['copyright'].'">'.$imgArr['copyright'].'</a>';
 								}
 								else{
