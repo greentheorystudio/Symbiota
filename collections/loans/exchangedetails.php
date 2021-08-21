@@ -164,8 +164,8 @@
                                     }
 									if($exchangeArr['transactiontype'] === 'Shipment'){
 									    ?>
-										<option value="Out" <?php echo ('Out' === $exchangeArr['in_out']?'SELECTED':'');?>>Out</option>
-										<option value="In" <?php echo ('In' === $exchangeArr['in_out']?'SELECTED':'');?>>In</option>
+										<option value="Out" <?php echo ($exchangeArr['in_out'] === 'Out' ?'SELECTED':'');?>>Out</option>
+										<option value="In" <?php echo ($exchangeArr['in_out'] === 'In' ?'SELECTED':'');?>>In</option>
 									    <?php
 									}
 									?>

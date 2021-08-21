@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class GlossaryUpload{
 	
@@ -22,7 +23,7 @@ class GlossaryUpload{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === false)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
@@ -30,7 +31,7 @@ class GlossaryUpload{
         }
 	}
 	
-	public function setUploadFile($ulFileName = ''): void
+	public function setUploadFile($ulFileName = null): void
 	{
 		if($ulFileName){
 			if(file_exists($ulFileName)){
@@ -61,8 +62,8 @@ class GlossaryUpload{
 
 	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources): void
 	{
-		$batchSources = $this->cleanInStr($this->encodeString($batchSources));
-		$this->outputMsg('Starting Upload',0);
+		$batchSources = Sanitizer::cleanInStr($this->encodeString($batchSources));
+		$this->outputMsg('Starting Upload');
 		$this->conn->query('TRUNCATE TABLE uploadglossary');
 		$this->conn->query('OPTIMIZE TABLE uploadglossary');
 		$fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb') or die("Can't open file");
@@ -95,13 +96,13 @@ class GlossaryUpload{
                             if($field === $lang.'_term'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $term = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $term = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_definition'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $definition = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $definition = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                                 if(strlen($definition) > 2000){
                                     $definition = '';
@@ -111,37 +112,37 @@ class GlossaryUpload{
                             if($field === $lang.'_source'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $source = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $source = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_author'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $author = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $author = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_translator'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $translator = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $translator = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_notes'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $notes = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $notes = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_resourceurl'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $resourceUrl = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $resourceUrl = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_synonym'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $synonym = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $synonym = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                         }
@@ -519,22 +520,15 @@ class GlossaryUpload{
 		}
 	}
 
-	private function outputMsg($str, $indent = 0): void
+	private function outputMsg($str, $indent = null): void
 	{
-		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
-			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
+		if($this->verboseMode > 0 || strncmp($str, 'ERROR', 5) === 0){
+			echo '<li style="margin-left:'.(10*$indent).'px;'.(strncmp($str, 'ERROR', 5) === 0 ?'color:red':'').'">'.$str.'</li>';
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
 			fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 		}
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 
 	private function encodeString($inStr): string

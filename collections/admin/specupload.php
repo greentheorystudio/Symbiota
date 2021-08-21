@@ -10,7 +10,7 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = $_REQUEST['collid'];
+$collid = (int)$_REQUEST['collid'];
 $uploadType = (int)$_REQUEST['uploadtype'];
 $uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
@@ -22,10 +22,10 @@ $matchCatNum = array_key_exists('matchcatnum',$_REQUEST);
 $matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST);
 $verifyImages = (array_key_exists('verifyimages', $_REQUEST) && $_REQUEST['verifyimages']);
 $processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
-$finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?$_REQUEST['finaltransfer']:0;
+$finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?(int)$_REQUEST['finaltransfer']:0;
 $dbpk = array_key_exists('dbpk',$_REQUEST)?$_REQUEST['dbpk']:'';
-$recStart = array_key_exists('recstart',$_REQUEST)?$_REQUEST['recstart']:0;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
+$recStart = array_key_exists('recstart',$_REQUEST)?(int)$_REQUEST['recstart']:0;
+$recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;
 
 if(!is_numeric($collid)) {
     $collid = 0;
@@ -987,10 +987,7 @@ $duManager->loadFieldMap();
             }
         }
 	}
-	else if(!$isEditor){
-        echo '<div style="font-weight:bold;font-size:120%;">ERROR: you are not authorized to upload to this collection</div>';
-    }
-    else{
+	elseif($isEditor) {
         ?>
         <div style="font-weight:bold;font-size:120%;">
             ERROR: Either you have tried to reach this page without going through the collection management menu
@@ -1002,6 +999,9 @@ $duManager->loadFieldMap();
         </div>
         <?php
     }
+    else {
+echo '<div style="font-weight:bold;font-size:120%;">ERROR: you are not authorized to upload to this collection</div>';
+}
 	?>
 </div>
 <?php

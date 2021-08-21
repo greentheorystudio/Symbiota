@@ -3,17 +3,13 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$targetTid = array_key_exists('targettid',$_REQUEST)?$_REQUEST['targettid']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:1;
+$targetTid = array_key_exists('targettid',$_REQUEST)?(int)$_REQUEST['targettid']:0;
+$occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:1;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST)?$_REQUEST['sortfield1']:'collection';
 $sortField2 = array_key_exists('sortfield2',$_REQUEST)?$_REQUEST['sortfield2']:'';
 $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
-
-if(!is_numeric($occIndex)) {
-    $occIndex = 0;
-}
 
 $collManager = new OccurrenceListManager();
 $resetOccIndex = false;
@@ -47,7 +43,7 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
     <script src="../js/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script src="../js/symb/collections.search.js?ver=20210621" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210420"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210810"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};

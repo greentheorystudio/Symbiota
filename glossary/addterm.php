@@ -7,8 +7,8 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/addterm.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$relatedGlossId = array_key_exists('relglossid',$_REQUEST)?$_REQUEST['relglossid']:'';
-$taxaTid  = array_key_exists('taxatid',$_REQUEST)?$_REQUEST['taxatid']:0;
+$relatedGlossId = array_key_exists('relglossid',$_REQUEST)?(int)$_REQUEST['relglossid']:0;
+$taxaTid  = array_key_exists('taxatid',$_REQUEST)?(int)$_REQUEST['taxatid']:0;
 $taxaName  = array_key_exists('taxaname',$_REQUEST)?$_REQUEST['taxaname']:'';
 $relationship = array_key_exists('relationship',$_REQUEST)?$_REQUEST['relationship']:'';
 $relatedLanguage = array_key_exists('rellanguage',$_REQUEST)?$_REQUEST['rellanguage']:'';

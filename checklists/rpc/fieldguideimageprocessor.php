@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$imgID = array_key_exists('imgid',$_REQUEST)?$_REQUEST['imgid']:0;
+$imgID = array_key_exists('imgid',$_REQUEST)?(int)$_REQUEST['imgid']:0;
 
 $dataArr = array();
 

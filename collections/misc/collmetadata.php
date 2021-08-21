@@ -8,7 +8,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
 $statusStr = '';
 
@@ -21,6 +21,7 @@ $isEditor = 0;
 $collPubArr = array();
 $publishGBIF = false;
 $publishIDIGBIO = false;
+$collData = array();
 
 if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;

@@ -8,7 +8,7 @@ $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $collId = array_key_exists('collids',$_REQUEST)?$_REQUEST['collids']:'';
 $cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
-$years = array_key_exists('years',$_REQUEST)?$_REQUEST['years']:1;
+$years = array_key_exists('years',$_REQUEST)?(int)$_REQUEST['years']:1;
 
 $famArr = $_SESSION['statsFamilyArr'] ?? Array();
 $geoArr = $_SESSION['statsCountryArr'] ?? Array();
@@ -21,6 +21,9 @@ $collManager = new OccurrenceCollectionProfile();
 
 $fileName = '';
 $outputArr = array();
+$header = array();
+$dataArr = array();
+$headerArr = array();
 if($action === 'Download Family Dist' || $action === 'Download Geo Dist' || $action === 'Download Order Dist'){
 	$header = array('Names','SpecimenCount','GeorefCount','IDCount','IDGeorefCount','GeorefPercent','IDPercent','IDGeorefPercent');
 	if($action === 'Download Family Dist'){

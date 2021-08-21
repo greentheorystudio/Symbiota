@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
  
 class InventoryProjectManager {
 
@@ -15,7 +16,7 @@ class InventoryProjectManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -71,7 +72,7 @@ class InventoryProjectManager {
 		$sql = '';
 		foreach($projArr as $field => $value){
 			if(in_array($field, $fieldArr, true)){
-				$sql .= ','.$field.' = "'.$this->cleanInStr($value).'"';
+				$sql .= ','.$field.' = "'.Sanitizer::cleanInStr($value).'"';
 			}
 		}
 		$sql = 'UPDATE fmprojects SET '.substr($sql,1).' WHERE (pid = '.$this->pid.')';
@@ -95,10 +96,10 @@ class InventoryProjectManager {
 
 	public function addNewProject($projArr){
 		$sql = 'INSERT INTO fmprojects(projname,managers,fulldescription,notes,ispublic) '.
-			'VALUES("'.$this->cleanInStr($projArr['projname']).'",'.
-			($projArr['managers']?'"'.$this->cleanInStr($projArr['managers']).'"':'NULL').','.
-			($projArr['fulldescription']?'"'.$this->cleanInStr($projArr['fulldescription']).'"':'NULL').','.
-			($projArr['notes']?'"'.$this->cleanInStr($projArr['notes']).'"':'NULL').','.
+			'VALUES("'.Sanitizer::cleanInStr($projArr['projname']).'",'.
+			($projArr['managers']?'"'.Sanitizer::cleanInStr($projArr['managers']).'"':'NULL').','.
+			($projArr['fulldescription']?'"'.Sanitizer::cleanInStr($projArr['fulldescription']).'"':'NULL').','.
+			($projArr['notes']?'"'.Sanitizer::cleanInStr($projArr['notes']).'"':'NULL').','.
 			(is_numeric($projArr['ispublic'])?$projArr['ispublic']:'0').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
@@ -203,23 +204,21 @@ class InventoryProjectManager {
 	}
 	
 	public function addChecklist($clid){
-		if(!is_numeric($clid)) {
-			return false;
-		}
-		$sql = 'INSERT INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.','.$clid.') ';
-		if(!$this->conn->query($sql)){
-			return 'ERROR adding checklist to project: '.$this->conn->error;
+		if(is_numeric($clid)) {
+            $sql = 'INSERT INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.','.$clid.') ';
+            if(!$this->conn->query($sql)){
+                return 'ERROR adding checklist to project: '.$this->conn->error;
+            }
 		}
 		return true;
 	}
 
 	public function deleteChecklist($clid){
-		if(!is_numeric($clid)) {
-			return false;
-		}
-		$sql = 'DELETE FROM fmchklstprojlink WHERE (pid = '.$this->pid.') AND (clid = '.$clid.')';
-		if($this->conn->query($sql)){
-			return 'ERROR deleting checklist from project';
+		if(is_numeric($clid)) {
+            $sql = 'DELETE FROM fmchklstprojlink WHERE (pid = '.$this->pid.') AND (clid = '.$clid.')';
+            if($this->conn->query($sql)){
+                return 'ERROR deleting checklist from project';
+            }
 		}
 		return true;
 	}
@@ -272,14 +271,8 @@ class InventoryProjectManager {
 		return $this->errorStr;
 	}
 
-    public function getResearchCoords(){
+    public function getResearchCoords(): string
+    {
         return $this->researchCoord;
     }
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
 }

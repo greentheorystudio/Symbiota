@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
 $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
 

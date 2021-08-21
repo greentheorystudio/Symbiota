@@ -2,7 +2,8 @@
 
 class DwcArchiverOccurrence{
 
-	public static function getOccurrenceArr($schemaType, $extended){
+	public static function getOccurrenceArr($schemaType, $extended): array
+    {
         if($schemaType === 'pensoft'){
         	$occurFieldArr['Taxon_Local_ID'] = 'v.tid AS Taxon_Local_ID';
         }
@@ -259,7 +260,7 @@ class DwcArchiverOccurrence{
 		return $retArr;
 	}
 
-	public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql = true): string
+	public static function getSqlOccurrences($fieldArr, $conditionSql, $tableJoinStr, $fullSql): string
     {
 		$sql = '';
 		if($conditionSql){

@@ -20,13 +20,13 @@ class UuidFactory {
 	}
 
 	public function __destruct(){
-		if($this->destructConn && !($this->conn === null)){
+		if($this->destructConn && $this->conn){
 			$this->conn->close();
 			$this->conn = null;
 		}
 	}
 
-	public function populateGuids($collId = 0): void
+	public function populateGuids($collId = null): void
 	{
 		set_time_limit(1000);
 		
@@ -135,7 +135,7 @@ class UuidFactory {
 		$this->echoStr('GUID batch processing complete (' .date('Y-m-d h:i:s A').")\n");
 	}
 
-    public function getOccurrenceCount($collId = 0): int
+    public function getOccurrenceCount($collId = null): int
 	{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(o.occid) as reccnt '.
@@ -153,7 +153,7 @@ class UuidFactory {
 		return $retCnt;
 	}
 
-	public function getDeterminationCount($collId = 0): int
+	public function getDeterminationCount($collId = null): int
 	{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(d.detid) as reccnt '.
@@ -173,7 +173,7 @@ class UuidFactory {
 		return $retCnt;
 	}
 
-	public function getImageCount($collId = 0): int
+	public function getImageCount($collId = null): int
 	{
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(i.imgid) as reccnt '.
@@ -222,7 +222,8 @@ class UuidFactory {
 
 	public static function getUuidV4(): string
 	{
-		$data = null;
+		$returnStr = '';
+	    $data = null;
 		if(function_exists('openssl_random_pseudo_bytes')){
 			$secure = false;
 			$dataSize = openssl_cipher_iv_length(self::METHOD);
@@ -240,21 +241,22 @@ class UuidFactory {
 			for($cnt = 0; $cnt < 16; $cnt ++) {
 				try {
 					$data .= chr(random_int(0, 255));
-				} catch (Exception $e) {}
+				} catch (Exception $e) {
+                    $returnStr = $e;
+                }
 			}
 		}
-		if(!$data) {
-			return '';
+		if($data) {
+            if($data){
+                $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+            }
+            if($data){
+                $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+            }
+
+            $returnStr = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 		}
-
-		if($data){
-            $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-        }
-        if($data){
-            $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-        }
-
-		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return $returnStr;
 	}
 
 }

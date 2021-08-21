@@ -8,11 +8,22 @@ if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) {
     $displayQuery = $_REQUEST['displayquery'];
 }
 
-$qCatalogNumber=''; $qOtherCatalogNumbers=''; 
-$qRecordedBy=''; $qRecordNumber=''; $qEventDate=''; 
-$qRecordEnteredBy=''; $qObserverUid='';$qDateLastModified='';$qDateEntered='';
-$qProcessingStatus='';$qOrderBy='';$qOrderByDir='';
-$qImgOnly='';$qWithoutImg='';$qExsiccatiId='';
+$qCatalogNumber='';
+$qOtherCatalogNumbers='';
+$qRecordedBy='';
+$qRecordNumber='';
+$qEventDate='';
+$qRecordEnteredBy='';
+$qObserverUid='';
+$qDateLastModified='';
+$qDateEntered='';
+$qProcessingStatus='';
+$qOrderBy='';
+$qOrderByDir='';
+$qImgOnly='';
+$qWithoutImg='';
+$qExsiccatiId='';
+$qOcrFrag = '';
 $qCustomOpenParen1='';$qCustomField1='';$qCustomType1='';$qCustomValue1='';$qCustomCloseParen1='';
 $qCustomAndOr2='';$qCustomOpenParen2='';$qCustomField2='';$qCustomType2='';$qCustomValue2='';$qCustomCloseParen2='';
 $qCustomAndOr3='';$qCustomOpenParen3='';$qCustomField3='';$qCustomType3='';$qCustomValue3='';$qCustomCloseParen3='';

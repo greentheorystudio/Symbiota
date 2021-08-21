@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/TaxonomyHarvester.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TaxonomyCleaner extends Manager{
 
@@ -60,7 +61,7 @@ class TaxonomyCleaner extends Manager{
 		echo '<li>Starting taxa check</li>';
 		$sql = 'SELECT sciname, family, scientificnameauthorship, count(*) as cnt '.$this->getSqlFragment();
 		if($startIndex) {
-			$sql .= 'AND (sciname > "' . $this->cleanInStr($startIndex) . '") ';
+			$sql .= 'AND (sciname > "' . Sanitizer::cleanInStr($startIndex) . '") ';
 		}
 		$sql .= 'GROUP BY sciname, family ORDER BY sciname LIMIT '.($limit ?: 50);
 		//echo $sql; exit;
@@ -364,9 +365,9 @@ class TaxonomyCleaner extends Manager{
 			}
 			$rs->free();
 
-			$oldSciname = $this->cleanInStr($oldSciname);
+			$oldSciname = Sanitizer::cleanInStr($oldSciname);
 			if($idQualifierIn) {
-				$idQualifier = $this->cleanInStr($idQualifierIn);
+				$idQualifier = Sanitizer::cleanInStr($idQualifierIn);
 			}
 			$sqlWhere = 'WHERE (collid IN('.$collid.')) AND (sciname = "'.$oldSciname.'") AND (tidinterpreted IS NULL) ';
 			$sql1 = 'INSERT INTO omoccuredits(occid, FieldName, FieldValueNew, FieldValueOld, uid, ReviewStatus, AppliedStatus'.($hasEditType?',editType ':'').') '.
@@ -455,7 +456,7 @@ class TaxonomyCleaner extends Manager{
 		$sql = 'SELECT tid, sciname FROM taxa ';
 		$queryString = preg_replace('/[()\'"+\-=@$%]+/', '', $queryString);
 		if($queryString){
-			$tokenArr = explode(' ',$queryString);
+			$tokenArr = explode(' ',Sanitizer::cleanInStr($queryString));
 			$token = array_shift($tokenArr);
 			if($token === 'x') {
 				$token = array_shift($tokenArr);

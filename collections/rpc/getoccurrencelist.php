@@ -3,17 +3,18 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'] ?? '';
-$targetTid = $_REQUEST['targettid'];
-$pageNumber = $_REQUEST['page'];
+$targetTid = (int)$_REQUEST['targettid'];
+$pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr= json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 $collManager = null;
 $occurArr = array();
+$isEditor = false;
 
 if(strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
@@ -152,7 +153,6 @@ if($occurArr){
         $specOccArr[] = $occid;
         if($collId !== $prevCollid){
             $prevCollid = $collId;
-            $isEditor = false;
             if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
                 $isEditor = true;
             }
@@ -167,7 +167,7 @@ if($occurArr){
         $htmlStr .= '<tr><td style="width:60px;vertical-align:top;text-align:center;">';
         $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'&acronym='.$fieldArr['institutioncode'].'">';
         if($fieldArr['collicon']){
-            $icon = (strpos($fieldArr['collicon'], 'images') === 0 ?'../':'').$fieldArr['collicon'];
+            $icon = (strncmp($fieldArr['collicon'], 'images', 6) === 0 ?'../':'').$fieldArr['collicon'];
             $htmlStr .= '<img align="bottom" src="'.$icon.'" style="width:35px;border:0px;" />';
         }
         $htmlStr .= '</a>';

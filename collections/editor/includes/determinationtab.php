@@ -3,13 +3,13 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$occId = $_GET['occid'];
-$occIndex = $_GET['occindex'];
+$occId = (int)$_GET['occid'];
+$occIndex = (int)$_GET['occindex'];
 $identBy = $_GET['identby'];
 $dateIdent = $_GET['dateident'];
 $sciName = $_GET['sciname'];
-$crowdSourceMode = $_GET['csmode'];
-$editMode = $_GET['em'];
+$crowdSourceMode = (int)$_GET['csmode'];
+$editMode = (int)$_GET['em'];
 
 $annotatorname = $_GET['annotatorname'];
 $annotatoremail = $_GET['annotatoremail'];

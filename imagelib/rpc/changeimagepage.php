@@ -1,28 +1,37 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageLibraryManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
-$stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$view = array_key_exists('view',$_REQUEST)?$_REQUEST['view']:'';
-$stArr = array();
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
+$stArrJson = $_REQUEST['starr'] ?? '';
+$taxon = $_REQUEST['taxon'] ?? '';
+$view = $_REQUEST['view'] ?? 'thumbnail';
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
+
+$stArr = json_decode($stArrJson, true);
+$copyURL = '';
 $imageArr = array();
 $taxaList = array();
-if($stArrJson){
-	$stArr = json_decode($stArrJson, true);
+$paginationStr = '';
+
+if(strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/search.php';
+    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber.'&imagedisplay='.$view.'&taxon='.$taxon;
+    $copyURL = $urlPrefix.$urlArgs;
 }
 
 $imgLibManager = new ImageLibraryManager();
-$imgLibManager->setSearchTermsArr($stArr);
+$collManager = new OccurrenceManager();
 
+$collManager->setSearchTermsArr($stArr);
 $recordListHtml = '';
-if($view === 'thumb'){
-	
-	$imgLibManager->setTaxon($taxon);
-	$imgLibManager->setSqlWhere();
+if($view === 'thumbnail'){
+    $collManager->setTaxon($taxon);
+    $sqlWhere = $collManager->getSqlWhere(true);
+    $imgLibManager->setSqlWhere($sqlWhere);
 	$imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
 	$recordCnt = $imgLibManager->getRecordCnt();
 	
@@ -30,7 +39,7 @@ if($view === 'thumb'){
 	$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 	if($lastPage > $startPage){
 		$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-		$onclick = 'changeImagePage("","thumb",starr,';
+		$onclick = 'changeImagePage("","thumbnail",';
 		$hrefPrefix = "<a href='#' onclick='".$onclick;
 		$pageBar = '<div style="float:left" >';
 		if($startPage > 1){
@@ -71,11 +80,11 @@ if($view === 'thumb'){
 			$imgTn = $imgArr['thumbnailurl'];
 			if($imgTn){
 				$imgUrl = $imgTn;
-				if($GLOBALS['IMAGE_DOMAIN'] && strpos($imgTn, '/') === 0){
+				if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgTn, '/', 1) === 0){
 					$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
 				}
 			}
-			elseif($GLOBALS['IMAGE_DOMAIN'] && strpos($imgUrl, '/') === 0){
+			elseif($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
 				$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 			}
 			$recordListHtml .= '<div class="tndiv" style="margin-bottom:15px;margin-top:15px;">';
@@ -135,39 +144,42 @@ if($view === 'thumb'){
 	}
 }
 elseif($view === 'famlist'){
-	$imgLibManager->setSqlWhere();
+    $sqlWhere = $collManager->getSqlWhere(true);
+    $imgLibManager->setSqlWhere($sqlWhere);
 	$taxaList = $imgLibManager->getFamilyList();
 	
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a family to see genera list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","genlist",starr,1';
+		$onChange = '"'.$value.'","genlist",1';
 		$famChange = '"'.$value.'"';
-		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange.");changeImagePage(".$onChange."); return false;'>".strtoupper($value)."</a></div>";
+		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeFamily(".$famChange. ');changeImagePage(' .$onChange."); return false;'>".strtoupper($value). '</a></div>';
 	}
 }
 elseif($view === 'genlist'){
-	$imgLibManager->setSqlWhere();
+    $sqlWhere = $collManager->getSqlWhere(true);
+    $imgLibManager->setSqlWhere($sqlWhere);
 	$taxaList = $imgLibManager->getGenusList($taxon);
 	
-	$topOnChange = '"","famlist",starr,1';
+	$topOnChange = '"","famlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to family list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a genus to see species list.</div>";
 	foreach($taxaList as $value){
-		$onChange = '"'.$value.'","splist",starr,1';
-		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
+		$onChange = '"'.$value.'","splist",1';
+		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value. '</a></div>';
 	}
 }
 elseif($view === 'splist'){
-	$imgLibManager->setSqlWhere();
+    $sqlWhere = $collManager->getSqlWhere(true);
+    $imgLibManager->setSqlWhere($sqlWhere);
 	$taxaList = $imgLibManager->getSpeciesList($taxon);
 	
-	$topOnChange = 'selectedFamily,"genlist",starr,1';
+	$topOnChange = 'selectedFamily,"genlist",1';
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:10px;font-weight:bold;'><a href='#' onclick='changeImagePage(".$topOnChange."); return false;'>Return to genera list</a></div>";
 	$recordListHtml .= "<div style='margin-left:20px;margin-bottom:20px;font-weight:bold;'>Select a species to see images.</div>";
 	foreach($taxaList as $key => $value){
-		$onChange = '"'.$value.'","thumb",starr,1';
-		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value."</a></div>";
+		$onChange = '"'.$value.'","thumbnail",1';
+		$recordListHtml .= "<div style='margin-left:30px;'><a href='#' onclick='changeImagePage(".$onChange."); return false;'>".$value. '</a></div>';
 	}
 }
 
-echo json_encode($recordListHtml);
+echo $recordListHtml;
