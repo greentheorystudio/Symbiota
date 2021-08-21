@@ -48,7 +48,7 @@ class OccurrenceMaintenance {
 				'SET family = sciname '.
 				'WHERE occid IN('.implode(',',$occidArr1).')';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update family; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update family.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -71,7 +71,7 @@ class OccurrenceMaintenance {
 		if($occidArr2){
 			$sql = 'UPDATE omoccurrences SET sciname = family WHERE occid IN('.implode(',',$occidArr2).') ';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update sciname using family; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update sciname using family.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -97,7 +97,7 @@ class OccurrenceMaintenance {
 				'SET o.TidInterpreted = t.tid '. 
 				'WHERE o.occid IN('.implode(',',$occidArr3).') ';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update tidinterpreted; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update tidinterpreted.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -123,7 +123,7 @@ class OccurrenceMaintenance {
 				'SET i.tid = o.tidinterpreted '. 
 				'WHERE o.occid IN('.implode(',',$occidArr4).')';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update image tid field; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update image tid field.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -149,7 +149,7 @@ class OccurrenceMaintenance {
 				'SET o.family = ts.family '. 
 				'WHERE o.occid IN('.implode(',',$occidArr5).')';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update family in omoccurrence table; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update family in omoccurrence table.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -175,7 +175,7 @@ class OccurrenceMaintenance {
 				'SET o.scientificNameAuthorship = t.author '. 
 				'WHERE (o.occid IN('.implode(',',$occidArr6).'))';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update author; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update author.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -221,7 +221,7 @@ class OccurrenceMaintenance {
 				'SET o.LocalitySecurity = 1 '.
 				'WHERE (o.LocalitySecurity IS NULL OR o.LocalitySecurity = 0) AND (o.localitySecurityReason IS NULL) AND (o.tidinterpreted IN('.implode(',',$sensitiveArr).'))';
 			if(!$this->conn->query($sql2)){
-				$errStr = 'WARNING: unable to protect globally rare species; '.$this->conn->error;
+				$errStr = 'WARNING: unable to protect globally rare species.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -259,7 +259,7 @@ class OccurrenceMaintenance {
 				'SET localitysecurity = 1 '.
 				'WHERE occid IN('.implode(',',$occArr).')';
 			if(!$this->conn->query($sql2)){
-				$errStr = 'WARNING: unable to protect state level rare species; '.$this->conn->error;
+				$errStr = 'WARNING: unable to protect state level rare species.';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -389,7 +389,7 @@ class OccurrenceMaintenance {
 				"SET dynamicProperties = '".Sanitizer::cleanInStr($returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
 			if(!$this->conn->query($sql)){
-				$errStr = 'WARNING: unable to update collection stats table [1]; '.$this->conn->error;
+				$errStr = 'WARNING: unable to update collection stats table [1].';
 				$this->errorArr[] = $errStr;
 				if($this->verbose) {
 					$this->outputMsg($errStr, 2);
@@ -420,7 +420,7 @@ class OccurrenceMaintenance {
 			',cs.speciescnt = '.$speciesCnt.', cs.datelastmodified = CURDATE() '.
 			'WHERE cs.collid IN('.$collid.')';
 		if(!$this->conn->query($sql)){
-			$errStr = 'WARNING: unable to update collection stats table [2]; '.$this->conn->error;
+			$errStr = 'WARNING: unable to update collection stats table [2].';
 			$this->errorArr[] = $errStr;
 			if($this->verbose) {
 				$this->outputMsg($errStr, 2);

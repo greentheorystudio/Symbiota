@@ -90,7 +90,7 @@ class OccurrenceDataset {
             'SET name = "'.Sanitizer::cleanInStr($name).'", notes = "'.Sanitizer::cleanInStr($notes).'" '.
             'WHERE datasetid = '.$dsid;
         if(!$this->conn->query($sql)){
-            $this->errorArr[] = 'ERROR saving dataset edits: '.$this->conn->error;
+            $this->errorArr[] = 'ERROR saving dataset edits';
             return false;
         }
         return true;
@@ -104,7 +104,7 @@ class OccurrenceDataset {
             $this->datasetId = $this->conn->insert_id;
         }
         else{
-            $this->errorArr[] = 'ERROR creating new dataset: '.$this->conn->error;
+            $this->errorArr[] = 'ERROR creating new dataset.';
             return false;
         }
         return true;
@@ -120,17 +120,17 @@ class OccurrenceDataset {
             if($this->conn->query($sql2)){
                 $sql3 = 'DELETE FROM omoccurdatasets WHERE datasetid IN('.implode(',',$targetArr).')';
                 if(!$this->conn->query($sql3)){
-                    $this->errorArr[] = 'WARNING: Unable to remove extra datasets: '.$this->conn->error;
+                    $this->errorArr[] = 'WARNING: Unable to remove extra datasets.';
                     $status = false;
                 }
             }
             else{
-                $this->errorArr[] = 'FATAL ERROR: Unable to transfer occurrence records into target dataset: '.$this->conn->error;
+                $this->errorArr[] = 'FATAL ERROR: Unable to transfer occurrence records into target dataset.';
                 $status = false;
             }
         }
         else{
-            $this->errorArr[] = 'FATAL ERROR: Unable to rename target dataset in prep for merge: '.$this->conn->error;
+            $this->errorArr[] = 'FATAL ERROR: Unable to rename target dataset in prep for merge.';
             $status = false;
         }
         return $status;
@@ -165,12 +165,12 @@ class OccurrenceDataset {
                 $sql3 = 'INSERT INTO omoccurdatasetlink(occid, datasetid, notes) '.
                     'SELECT occid, '.$this->datasetId.', notes FROM omoccurdatasetlink WHERE datasetid = '.$r->datasetid;
                 if(!$this->conn->query($sql3)){
-                    $this->errorArr[] = 'ERROR: Unable to clone dataset links into new datasets: '.$this->conn->error;
+                    $this->errorArr[] = 'ERROR: Unable to clone dataset links into new datasets.';
                     $status = false;
                 }
             }
             else{
-                $this->errorArr[] = 'ERROR: Unable to create new dataset within clone method: '.$this->conn->error;
+                $this->errorArr[] = 'ERROR: Unable to create new dataset within clone method.';
                 $status = false;
             }
         }
@@ -189,17 +189,17 @@ class OccurrenceDataset {
             if($this->conn->query($sql2)){
                 $sql3 = 'DELETE FROM omoccurdatasetlink WHERE datasetid = '.$dsid;
                 if(!$this->conn->query($sql3)){
-                    $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
+                    $this->errorArr[] = 'ERROR: Unable to delete target datasets.';
                     $status = false;
                 }
             }
             else{
-                $this->errorArr[] = 'ERROR: Unable to delete target datasets: '.$this->conn->error;
+                $this->errorArr[] = 'ERROR: Unable to delete target datasets.';
                 $status = false;
             }
         }
         else{
-            $this->errorArr[] = 'ERROR deleting user: '.$this->conn->error;
+            $this->errorArr[] = 'ERROR deleting user.';
             $status = false;
         }
         return $status;
@@ -226,7 +226,7 @@ class OccurrenceDataset {
         if(is_numeric($uid)){
             $sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES('.$uid.',"'.Sanitizer::cleanInStr($role).'","omoccurdatasets",'.$datasetID.','.$GLOBALS['SYMB_UID'].')';
             if(!$this->conn->query($sql)){
-                $this->errorArr[] = 'ERROR adding new user: '.$this->conn->error;
+                $this->errorArr[] = 'ERROR adding new user.';
                 return false;
             }
         }
@@ -240,7 +240,7 @@ class OccurrenceDataset {
             'WHERE (uid = '.$uid.') AND (role = "'.$role.'") AND (tablename = "omoccurdatasets") AND (tablepk = '.$dsid.') ';
         //echo $sql;
         if(!$this->conn->query($sql)){
-            $this->errorArr[] = 'ERROR deleting user: '.$this->conn->error;
+            $this->errorArr[] = 'ERROR deleting user.';
             return false;
         }
         return $status;
@@ -293,7 +293,7 @@ class OccurrenceDataset {
             $sql = 'DELETE FROM omoccurdatasetlink '.
                 'WHERE (datasetid = '.$datasetId.') AND (occid IN('.implode(',',$occArr).'))';
             if(!$this->conn->query($sql)){
-                $this->errorArr[] = 'ERROR deleting selected occurrences: '.$this->conn->error;
+                $this->errorArr[] = 'ERROR deleting selected occurrences.';
                 return false;
             }
         }
@@ -314,7 +314,7 @@ class OccurrenceDataset {
                         $status = true;
                     }
                     else{
-                        $this->errorArr[] = 'ERROR adding occurrence ('.$v.'): '.$this->conn->error;
+                        $this->errorArr[] = 'ERROR adding occurrence ('.$v.').';
                         $status = false;
                     }
                 }

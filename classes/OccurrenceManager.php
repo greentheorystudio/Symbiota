@@ -59,7 +59,6 @@ class OccurrenceManager{
             $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' ';
             $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($mapWhere).$mapWhere;
             if(!$this->conn->query($sql)){
-                //$this->errorMessage = 'ERROR adding records to dataset(#'.$datasetID.'): '.$this->conn->error;
                 return false;
             }
         }

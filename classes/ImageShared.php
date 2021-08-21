@@ -305,7 +305,6 @@ class ImageShared{
         }
 		else{
             $this->errArr[] = 'FATAL ERROR: Path empty in setTargetPath method';
-            trigger_error('Path empty in setTargetPath method',E_USER_ERROR);
             $returnVal = false;
         }
 		return $returnVal;
@@ -533,7 +532,7 @@ class ImageShared{
 				}
 			}
 			else{
-				$this->errArr[] = 'ERROR loading data: '.$this->conn->error;
+				$this->errArr[] = 'ERROR loading data.';
 				$status = false;
 			}
 		}
@@ -633,7 +632,7 @@ class ImageShared{
 			}
 		}
 		else{
-			$this->errArr[] = 'ERROR: Unable to delete image record: '.$this->conn->error;
+			$this->errArr[] = 'ERROR: Unable to delete image record.';
 			return false;
 		}
 		return true;

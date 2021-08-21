@@ -92,7 +92,7 @@ class VoucherManager {
 		$sqlClUpdate = 'UPDATE fmchklsttaxalink SET '.substr($innerSql,1).
 			' WHERE (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
 		if(!$this->conn->query($sqlClUpdate)){
-			$retStr = 'ERROR editing details: ' .$this->conn->error. '<br/>SQL: ' .$sqlClUpdate. ';<br/> ';
+			$retStr = 'ERROR editing details.';
 		}
 		return $retStr;
 	}
@@ -129,12 +129,12 @@ class VoucherManager {
 					$sqlVouch = 'UPDATE IGNORE fmvouchers SET TID = '.$nTaxon.' '.
 						'WHERE (TID = '.$this->tid.') AND (CLID = '.$this->clid.')';
 					if(!$this->conn->query($sqlVouch)){
-						$statusStr = 'ERROR transferring vouchers during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR transferring vouchers during taxon transfer.';
 					}
 					$sqlVouchDel = 'DELETE FROM fmvouchers v '.
 						'WHERE (v.CLID = '.$this->clid.') AND (v.TID = '.$this->tid.')';
 					if(!$this->conn->query($sqlVouchDel)){
-						$statusStr = 'ERROR removing vouchers during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR removing vouchers during taxon transfer.';
 					}
 					
 					$sqlSourceCl = 'SELECT ctl.Habitat, ctl.Abundance, ctl.Notes, ctl.internalnotes, ctl.source, ctl.Nativity ' .
@@ -167,11 +167,11 @@ class VoucherManager {
 							$this->taxonName = '';
 						}
 						else{
-							$statusStr = 'ERROR removing taxon during taxon transfer: ' .$this->conn->error;
+							$statusStr = 'ERROR removing taxon during taxon transfer.';
 						}
 					}
 					else{
-						$statusStr = 'ERROR updating new taxon during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR updating new taxon during taxon transfer.';
 					}
 				}
 				$rsTarget->close();
@@ -195,7 +195,7 @@ class VoucherManager {
 			}
 		}
 		else{
-			$statusStr = 'ERROR deleting taxon from checklist: ' .$this->conn->error;
+			$statusStr = 'ERROR deleting taxon from checklist.';
 		}
 		return $statusStr;
 	}
@@ -213,7 +213,7 @@ class VoucherManager {
 				'AND o.stateprovince = "'.$rareLocality.'" AND ts2.tid = '.$this->tid;
 			//echo $sqlRare; exit;
 			if(!$this->conn->query($sqlRare)){
-				$statusStr = 'ERROR resetting locality security during taxon delete: ' .$this->conn->error;
+				$statusStr = 'ERROR resetting locality security during taxon delete.';
 			}
 		}
 		$rs->free();
@@ -253,7 +253,7 @@ class VoucherManager {
 				' WHERE (occid = '.$occid.') AND (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR editing voucher: '.$this->conn->error;
+				$statusStr = 'ERROR editing voucher.';
 			}
 		}
 		return $statusStr;
@@ -303,7 +303,7 @@ class VoucherManager {
 			//echo "<div>".$sqlInsert."</div>";
 			if(!$this->conn->query($sqlInsert)){
 				$rs->close();
-                $returnStr = 'ERROR - Voucher insert failed: ' .$this->conn->error;
+                $returnStr = 'ERROR - Voucher insert failed.';
 			}
 
 			$this->tid = $row->tid;
@@ -319,7 +319,7 @@ class VoucherManager {
 		if(is_numeric($delOid)){
 			$sqlDel = 'DELETE FROM fmvouchers WHERE occid = '.$delOid.' AND (TID = '.$this->tid.') AND (CLID = '.$this->clid.')';
 			if(!$this->conn->query($sqlDel)){
-				$statusStr = 'ERROR deleting voucher: '.$this->conn->error;
+				$statusStr = 'ERROR deleting voucher.';
 			}
 		}
 		return $statusStr;

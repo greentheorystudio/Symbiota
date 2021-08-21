@@ -73,7 +73,7 @@ class OccurrenceSkeletal {
 			}
 			else{
 				$status = false;
-				$this->errorStr = 'ERROR adding occurrence record: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding occurrence record.';
 			}
 		}
 		return $status;
@@ -105,7 +105,7 @@ class OccurrenceSkeletal {
 					$status = true;
 				}
 				else{
-					$this->errorStr = 'ERROR updating occurrence record: '.$this->conn->error;
+					$this->errorStr = 'ERROR updating occurrence record.';
 				}
 			}
 		}

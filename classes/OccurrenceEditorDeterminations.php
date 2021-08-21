@@ -71,7 +71,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if($isCurrent){
 			$sqlSetCur1 = 'UPDATE omoccurdeterminations SET iscurrent = 0 WHERE appliedstatus = 1 AND occid = '.$this->occid;
 			if(!$this->conn->query($sqlSetCur1)){
-				$status = 'ERROR resetting dets to not current: '.$this->conn->error;
+				$status = 'ERROR resetting dets to not current.';
 			}
 		}
 		$sciname = Sanitizer::cleanInStr($detArr['sciname']);
@@ -161,13 +161,12 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				$sql = 'UPDATE images SET tid = '.($tidToAdd?:'NULL').' WHERE (occid = '.$this->occid.')';
 				//echo $sql;
 				if(!$this->conn->query($sql)){
-					$status = 'ERROR: Annotation added but failed to remap images to new name';
-					$status .= ': '.$this->conn->error;
+					$status = 'ERROR: Annotation added but failed to remap images to new name.';
 				}
 			}
 		}
 		else{
-			$status = 'ERROR - failed to add determination: '.$this->conn->error;
+			$status = 'ERROR - failed to add determination.';
 		}
 		return $status;
 	}
@@ -190,7 +189,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			'printqueue = '.($detArr['printqueue']?:'NULL').' '.
 			'WHERE (detid = '.$detArr['detid'].')';
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR - failed to edit determination: ' .$this->conn->error;
+			$status = 'ERROR - failed to edit determination.';
 		}
 		return $status;
 	}
@@ -234,7 +233,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		
 		$sql = 'DELETE FROM omoccurdeterminations WHERE (detid = '.$detId.')';
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR - failed to delete determination: ' .$this->conn->error;
+			$status = 'ERROR - failed to delete determination.';
 		}
 
 		return $status;
@@ -261,7 +260,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			'SET appliedstatus = 1, iscurrent = '.$makeCurrent.', '.
 			'identificationremarks = '.($iqStr?'"'.Sanitizer::cleanInStr($iqStr).'"':'NULL').' WHERE detid = '.$detId;
 		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR attempting to apply dertermiantion: '.$this->conn->error;
+			$statusStr = 'ERROR attempting to apply dertermiantion.';
 		}
 		if($makeCurrent){
 			$this->makeDeterminationCurrent($detId);

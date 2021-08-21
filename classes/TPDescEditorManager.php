@@ -33,9 +33,6 @@ class TPDescEditorManager extends TPEditorManager{
 			}
 			$rs->free();
 		}
-		else{
-			trigger_error('Unable to get descriptions; '.$this->taxonCon->error);
-		}
 		if($descrArr){
 			$sql2 = 'SELECT tdbid, tdsid, heading, statement, notes, displayheader, sortsequence '.
 				'FROM taxadescrstmts '.
@@ -50,9 +47,6 @@ class TPDescEditorManager extends TPEditorManager{
 					$descrArr[$r2->tdbid]['stmts'][$r2->tdsid]['sortsequence'] = $r2->sortsequence;
 				}
 				$rs2->free();
-			}
-			else{
-				trigger_error('Unable to get statements; '.$this->taxonCon->error);
 			}
 		}
 		return $descrArr;
@@ -71,7 +65,7 @@ class TPDescEditorManager extends TPEditorManager{
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'ERROR editing description block: ' .$this->taxonCon->error;
+			$status = 'ERROR editing description block.';
 			//$status .= "\nSQL: ".$sql;
 		}
 		return $status;
@@ -83,7 +77,7 @@ class TPDescEditorManager extends TPEditorManager{
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'ERROR deleting description block: ' .$this->taxonCon->error;
+			$status = 'ERROR deleting description block.';
 			//$status .= "\nSQL: ".$sql;
 		}
 		return $status;
@@ -104,7 +98,7 @@ class TPDescEditorManager extends TPEditorManager{
 				($_REQUEST['sourceurl']?'"'.$_REQUEST['sourceurl'].'"': 'NULL').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
-				$status = 'ERROR adding description block: ' .$this->taxonCon->error;
+				$status = 'ERROR adding description block.';
 			}
 		}
 		return $status;
@@ -125,7 +119,7 @@ class TPDescEditorManager extends TPEditorManager{
 		$sql = 'UPDATE taxadescrblock SET tid = '.$this->tid.',displaylevel = '.$displayLevel.' WHERE tdbid = '.$tdbid;
 		//echo $sql;
 		if(!$this->taxonCon->query($sql)){
-			$statusStr = 'ERROR remapping description block: '.$this->taxonCon->error;
+			$statusStr = 'ERROR remapping description block.';
 		}
 		return $statusStr;
 	}
@@ -144,7 +138,7 @@ class TPDescEditorManager extends TPEditorManager{
 				($stArr['sortsequence']?','.Sanitizer::cleanInStr($stArr['sortsequence']):'').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
-				$status = 'ERROR adding description statement: '.$this->taxonCon->error;
+				$status = 'ERROR adding description statement.';
 			}
 		}
 		return $status;
@@ -166,7 +160,7 @@ class TPDescEditorManager extends TPEditorManager{
 				' WHERE (tdsid = '.$stArr['tdsid'].')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
-				$status = 'ERROR editing description statement: ' .$this->taxonCon->error;
+				$status = 'ERROR editing description statement.';
 			}
 		}
 		return $status;
@@ -179,7 +173,7 @@ class TPDescEditorManager extends TPEditorManager{
 			$sql = 'DELETE FROM taxadescrstmts WHERE (tdsid = '.$tdsid.')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
-				$status = 'ERROR deleting description statement: ' .$this->taxonCon->error;
+				$status = 'ERROR deleting description statement.';
 			}
 		}
 		return $status;

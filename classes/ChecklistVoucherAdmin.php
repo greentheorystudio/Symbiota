@@ -227,7 +227,7 @@ class ChecklistVoucherAdmin {
 			$this->queryVariablesArr = array();
 		}
 		else{
-			$statusStr = 'ERROR: '.$this->conn->error;
+			$statusStr = 'ERROR updating.';
 		}
 		return $statusStr;
 	}
@@ -728,9 +728,7 @@ class ChecklistVoucherAdmin {
 		}
 		$sql = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES '.substr($sqlFrag,1);
 		//echo $sql;
-		if(!$this->conn->query($sql)){
-			trigger_error('Unable to link voucher; '.$this->conn->error,E_USER_WARNING);
-		}
+        $this->conn->query($sql);
 		return $retStatus;
 	}
 
@@ -757,12 +755,12 @@ class ChecklistVoucherAdmin {
                     $returnVal = 1;
                 }
                 else{
-                    $returnVal = 'Name added to checklist, though unable to link voucher: '.$this->conn->error;
+                    $returnVal = 'Name added to checklist, though unable to link voucher.';
                 }
             }
         }
 		if(!$returnVal){
-            $returnVal = 'Unable to link voucher: '.$this->conn->error;
+            $returnVal = 'Unable to link voucher.';
         }
         return $returnVal;
 	}
@@ -788,14 +786,10 @@ class ChecklistVoucherAdmin {
                         $sql = 'INSERT INTO fmchklsttaxalink(clid,tid) VALUES('.$this->clid.','.$tid.')';
                         $tidsUsed[] = $tid;
                         //echo $sql;
-                        if(!$this->conn->query($sql)){
-                            trigger_error('Unable to add taxon; '.$this->conn->error,E_USER_WARNING);
-                        }
+                        $this->conn->query($sql);
                     }
                     $sql2 = 'INSERT INTO fmvouchers(clid,occid,tid) VALUES ('.$this->clid.','.$occid.','.$tid.')';
-                    if(!$this->conn->query($sql2)){
-                        trigger_error('Unable to link taxon voucher; '.$this->conn->error,E_USER_WARNING);
-                    }
+                    $this->conn->query($sql2);
                 }
             }
 		}

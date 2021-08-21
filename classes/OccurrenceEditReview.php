@@ -269,7 +269,7 @@ class OccurrenceEditReview extends Manager{
 					'WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>';
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits.';
 					$status = false;
 				}
 			}
@@ -307,7 +307,7 @@ class OccurrenceEditReview extends Manager{
 				$uSql = 'UPDATE omoccurrences SET '.trim($sqlFrag,', ').' WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>'; exit;
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions.';
 					$status = false;
 				}
 			}
@@ -346,7 +346,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccuredits WHERE (ocedid IN('.$ocedidStr.'))';
 		//echo '<div>'.$sql.'</div>'; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting edits: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting edits.';
 			$status = false;
 		}
 		return $status;
@@ -361,7 +361,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccurrevisions WHERE (orid IN('.$idStr.'))';
 		//echo '<div>'.$sql.'</div>';
 		if($this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting revisions: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting revisions.';
 			$status = false;
 		}
 		return $status;

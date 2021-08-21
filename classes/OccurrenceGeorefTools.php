@@ -189,7 +189,7 @@ class OccurrenceGeorefTools {
 				$sql .= ' WHERE (collid IN('.$this->collStr.')) AND (occid IN('.$localStr.'))';
 				//echo $sql; exit;
 				if(!$this->conn->query($sql)){
-					$this->errorStr = 'ERROR batch updating coordinates: '.$this->conn->error;
+					$this->errorStr = 'ERROR batch updating coordinates.';
 					echo $this->errorStr;
 				}
 			}
@@ -213,7 +213,7 @@ class OccurrenceGeorefTools {
 		}
 		//echo $sql.';<br/>';
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR batch updating coordinates: '.$this->conn->error;
+			$this->errorStr = 'ERROR batch updating coordinates.';
 			echo $this->errorStr;
 		}
 	}
