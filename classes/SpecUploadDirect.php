@@ -5,7 +5,8 @@ class SpecUploadDirect extends SpecUploadBase {
 
 	public function analyzeUpload(): bool
 	{
-		if($sourceConn = $this->getSourceConnection()){
+		$status = false;
+	    if($sourceConn = $this->getSourceConnection()){
 			$sql = trim($this->queryStr);
 			if(substr($sql,-1) === ';') {
 				$sql = substr($sql, 0, -1);
@@ -20,21 +21,20 @@ class SpecUploadDirect extends SpecUploadBase {
 					foreach($row as $k => $v){
 						$sourceArr[] = strtolower($k);
 					}
+                    $this->sourceArr = $sourceArr;
+                    $status = true;
 				}
 				else{
 					echo '<div style="font-weight:bold;color:red;margin:25px;font-size:120%;">Query did not return any records</div>';
-					return false;
 				}
 				$rs->close();
-				$this->sourceArr = $sourceArr;
 			}
 			else{
 				echo '<div style="font-weight:bold;margin:15px;">ERROR: '.$sourceConn->error.'</div>';
-				return false;
 			}
 			$sourceConn->close();
 		}
-		return false;
+		return $status;
 	}
 
  	public function uploadData($finalTransfer): void
@@ -75,17 +75,18 @@ class SpecUploadDirect extends SpecUploadBase {
 	}
 	
 	private function getSourceConnection() {
-		if(!$this->server || !$this->username || !$this->password || !$this->schemaName){
+        $connection = null;
+	    if(!$this->server || !$this->username || !$this->password || !$this->schemaName){
 			echo "<div style='color:red;'>One of the required connection variables are null. Please resolve.</div>";
 			return false;
 		}
-		$connection = new mysqli($this->server, $this->username, $this->password, $this->schemaName);
-		if($connection->connect_error){
-			echo "<div style='color:red;'>Could not connect to Source database!</div>";
-			echo "<div style='color:red;'>ERROR: ".mysqli_connect_error(). '</div>';
-			return false;
-		}
-		return $connection;
+
+        $connection = new mysqli($this->server, $this->username, $this->password, $this->schemaName);
+        if($connection->connect_error){
+            echo "<div style='color:red;'>Could not connect to Source database!</div>";
+            echo "<div style='color:red;'>ERROR: ".mysqli_connect_error(). '</div>';
+        }
+        return $connection;
     }
 
 	public function getDbpkOptions(): array

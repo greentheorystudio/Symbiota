@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$clid = $_REQUEST['cl'];
+$clid = (int)$_REQUEST['cl'];
 
 $returnArr = array();
 if(is_numeric($clid)){

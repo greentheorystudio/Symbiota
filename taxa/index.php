@@ -10,8 +10,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
-$clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
-$projValue = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']:0;
+$clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$projValue = array_key_exists('proj',$_REQUEST)?(int)$_REQUEST['proj']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
 $descrDisplayLevel = array_key_exists('displaylevel',$_REQUEST)?$_REQUEST['displaylevel']: '';
 $showAllImages = array_key_exists('allimages',$_REQUEST);

@@ -7,7 +7,6 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
 $status = '';
 
 $loaderObj = new TaxonomyEditorManager();
@@ -70,7 +69,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId == 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".((int)$rankId === 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
 							}
 							?>
 						</select>

@@ -11,7 +11,7 @@ class DynamicChecklistManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -64,7 +64,7 @@ class DynamicChecklistManager {
 		$lng2 = 0;
 		$loopCnt = 1;
 		while($specCnt < 2500 && $loopCnt < 10){
-			$radius = $radiusUnit*$loopCnt;
+			$radius = $radiusUnit * $loopCnt;
 			$latRadius = $radius / 69.1;
 			$lngRadius = cos($lat / 57.3)*($radius / 69.1);
 			$lat1 = $lat - $latRadius;

@@ -6,9 +6,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $loginAs = array_key_exists('loginas',$_REQUEST)?trim($_REQUEST['loginas']): '';
 $searchTerm = array_key_exists('searchterm',$_REQUEST)?trim($_REQUEST['searchterm']): '';
-$userId = array_key_exists('userid',$_REQUEST)?$_REQUEST['userid']: '';
+$userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
 $delRole = array_key_exists('delrole',$_REQUEST)?$_REQUEST['delrole']: '';
-$tablePk = array_key_exists('tablepk',$_REQUEST)?$_REQUEST['tablepk']: '';
+$tablePk = array_key_exists('tablepk',$_REQUEST)?(int)$_REQUEST['tablepk']:0;
 
 $userManager = new PermissionsManager();
 if($GLOBALS['IS_ADMIN']){
@@ -365,28 +365,28 @@ if($GLOBALS['IS_ADMIN']){
 							<h2>Occurrence Management</h2>
 							<?php
 							$showRareSppOption = true;
- 							if(!array_key_exists('RareSppAdmin',$userPermissions)){
+ 							if(array_key_exists('RareSppAdmin', $userPermissions)) {
+								$showRareSppOption = false;
+ 							}
+ 							else {
  								$isRareSppDude = false;
 								?>
 								<div style="margin-left:5px;">
 									<input type='checkbox' name='p[]' value='RareSppAdmin' />
 									Rare Species Administrator (add/remove species from list)
 								</div>
-								<?php 
+								<?php
  							}
- 							else{
+ 							if(array_key_exists('RareSppReadAll', $userPermissions)) {
 								$showRareSppOption = false;
  							}
- 							if(!array_key_exists('RareSppReadAll',$userPermissions)){
-							?>
-							<div style="margin-left:5px;">
-								<input type='checkbox' name='p[]' value='RareSppReadAll' />
-								Can read Rare Species data for all collections
-							</div>
-							<?php 
- 							}
- 							else{
-								$showRareSppOption = false;
+ 							else {
+                                ?>
+                                <div style="margin-left:5px;">
+                                    <input type='checkbox' name='p[]' value='RareSppReadAll' />
+                                    Can read Rare Species data for all collections
+                                </div>
+                                <?php
  							}
 							$collArr = $userManager->getCollectionMetadata(0,'specimens');
 							$obserArr = $userManager->getCollectionMetadata(0,'observations');

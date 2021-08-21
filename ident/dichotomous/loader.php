@@ -4,13 +4,13 @@ include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/DichoManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$nodeId = array_key_exists('nodeid',$_REQUEST)?$_REQUEST['nodeid']:0;
-$stmtId = array_key_exists('stmtid',$_REQUEST)?$_REQUEST['stmtid']:0;
+$nodeId = array_key_exists('nodeid',$_REQUEST)?(int)$_REQUEST['nodeid']:0;
+$stmtId = array_key_exists('stmtid',$_REQUEST)?(int)$_REQUEST['stmtid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $statement = array_key_exists('statement',$_REQUEST)?trim($_REQUEST['statement']): '';
-$parentStmtId = array_key_exists('parentstmtid',$_REQUEST)?$_REQUEST['parentstmtid']:0;
+$parentStmtId = array_key_exists('parentstmtid',$_REQUEST)?(int)$_REQUEST['parentstmtid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']: 0;
 $notes = array_key_exists('notes',$_REQUEST)?$_REQUEST['notes']: '';
 
 $dichoManager = new DichoManager();

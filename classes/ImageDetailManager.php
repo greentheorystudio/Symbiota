@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageDetailManager {
 	
@@ -16,7 +17,7 @@ class ImageDetailManager {
 	}
 
  	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -37,21 +38,21 @@ class ImageDetailManager {
 			if($row = $rs->fetch_object()){
 				$retArr['tid'] = $row->tid;
 				$retArr['sciname'] = $row->sciname;
-				$retArr['author'] = $this->cleanOutStr($row->author);
+				$retArr['author'] = Sanitizer::cleanOutStr($row->author);
 				$retArr['rankid'] = $row->rankid;
 				$retArr['url'] = $row->url;
 				$retArr['thumbnailurl'] = $row->thumbnailurl;
 				$retArr['originalurl'] = $row->originalurl;
-				$retArr['photographer'] = $this->cleanOutStr($row->photographer);
+				$retArr['photographer'] = Sanitizer::cleanOutStr($row->photographer);
 				$retArr['photographerdisplay'] = $row->photographerdisplay;
 				$retArr['photographeruid'] = $row->photographeruid;
-				$retArr['caption'] = $this->cleanOutStr($row->caption);
-				$retArr['owner'] = $this->cleanOutStr($row->owner);
-				$retArr['sourceurl'] = $this->cleanOutStr($row->sourceurl);
-				$retArr['copyright'] = $this->cleanOutStr($row->copyright);
-				$retArr['rights'] = $this->cleanOutStr($row->rights);
-				$retArr['locality'] = $this->cleanOutStr($row->locality);
-				$retArr['notes'] = $this->cleanOutStr($row->notes);
+				$retArr['caption'] = Sanitizer::cleanOutStr($row->caption);
+				$retArr['owner'] = Sanitizer::cleanOutStr($row->owner);
+				$retArr['sourceurl'] = Sanitizer::cleanOutStr($row->sourceurl);
+				$retArr['copyright'] = Sanitizer::cleanOutStr($row->copyright);
+				$retArr['rights'] = Sanitizer::cleanOutStr($row->rights);
+				$retArr['locality'] = Sanitizer::cleanOutStr($row->locality);
+				$retArr['notes'] = Sanitizer::cleanOutStr($row->notes);
 				$retArr['sortsequence'] = $row->sortsequence;
 				$retArr['occid'] = $row->occid;
 				$retArr['username'] = $row->username;
@@ -129,16 +130,16 @@ class ImageDetailManager {
 				 }
 	 		}
 		}
-	 	$caption = $this->cleanInStr($postArr['caption']);
-		$photographer = $this->cleanInStr($postArr['photographer']);
+	 	$caption = Sanitizer::cleanInStr($postArr['caption']);
+		$photographer = Sanitizer::cleanInStr($postArr['photographer']);
 		$photographerUid = $postArr['photographeruid'];
-		$owner = $this->cleanInStr($postArr['owner']);
-		$locality = $this->cleanInStr($postArr['locality']);
+		$owner = Sanitizer::cleanInStr($postArr['owner']);
+		$locality = Sanitizer::cleanInStr($postArr['locality']);
 		$occId = $postArr['occid'];
-		$notes = $this->cleanInStr($postArr['notes']);
-		$sourceUrl = $this->cleanInStr($postArr['sourceurl']);
-		$copyRight = $this->cleanInStr($postArr['copyright']);
-		$rights = $this->cleanInStr($postArr['rights']);
+		$notes = Sanitizer::cleanInStr($postArr['notes']);
+		$sourceUrl = Sanitizer::cleanInStr($postArr['sourceurl']);
+		$copyRight = Sanitizer::cleanInStr($postArr['copyright']);
+		$rights = Sanitizer::cleanInStr($postArr['rights']);
 		$sortSequence = (array_key_exists('sortsequence',$postArr)?$postArr['sortsequence']:0);
 		
 		$sql = 'UPDATE images '.
@@ -188,7 +189,7 @@ class ImageDetailManager {
 		return $retStr;
 	}
 
-	public function echoPhotographerSelect($userId = 0): void
+	public function echoPhotographerSelect($userId = null): void
 	{
 		$sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
 			'FROM users u ORDER BY u.lastname, u.firstname ';
@@ -198,16 +199,4 @@ class ImageDetailManager {
 		}
 		$result->close();
 	}
-
- 	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 }

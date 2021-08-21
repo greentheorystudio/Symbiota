@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ReferenceManager{
 
@@ -128,7 +129,7 @@ class ReferenceManager{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceobject(title,ReferenceTypeId,ispublished,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.$this->cleanInStr($pArr['newreftitle']).'","'.$this->cleanInStr($pArr['newreftype']).'","'.$this->cleanInStr($pArr['ispublished']).'",'.$GLOBALS['SYMB_UID'].',now()) ';
+			'VALUES("'.Sanitizer::cleanInStr($pArr['newreftitle']).'","'.Sanitizer::cleanInStr($pArr['newreftype']).'","'.Sanitizer::cleanInStr($pArr['ispublished']).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refId = $this->conn->insert_id;
@@ -182,7 +183,7 @@ class ReferenceManager{
 				$retArr['ispublished'] = $r->ispublished;
 				$retArr['notes'] = $r->notes;
 				$retArr['ReferenceType'] = $r->ReferenceType;
-				$retArr['ReferenceTypeId'] = $r->ReferenceTypeId;
+				$retArr['ReferenceTypeId'] = (int)$r->ReferenceTypeId;
 			}
 			$rs->close();
 		}
@@ -409,7 +410,7 @@ class ReferenceManager{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO referenceauthors(firstname,middlename,lastname,modifieduid,modifiedtimestamp) '.
-			'VALUES("'.$this->cleanInStr($firstName).'","'.$this->cleanInStr($middleName).'","'.$this->cleanInStr($lastName).'",'.$GLOBALS['SYMB_UID'].',now()) ';
+			'VALUES("'.Sanitizer::cleanInStr($firstName).'","'.Sanitizer::cleanInStr($middleName).'","'.Sanitizer::cleanInStr($lastName).'",'.$GLOBALS['SYMB_UID'].',now()) ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->refAuthId = $this->conn->insert_id;
@@ -465,7 +466,7 @@ class ReferenceManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'refid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE referenceobject SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refid = '.$refId.')';
@@ -541,7 +542,7 @@ class ReferenceManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'authid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE referenceauthors SET '.substr($sql,1).',modifieduid='.$GLOBALS['SYMB_UID'].',modifiedtimestamp=now() WHERE (refauthorid = '.$authId.')';
@@ -566,12 +567,4 @@ class ReferenceManager{
 	{
 		return $this->refAuthId;
 	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 }

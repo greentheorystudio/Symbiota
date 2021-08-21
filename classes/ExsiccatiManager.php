@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ExsiccatiManager {
 
@@ -11,7 +12,7 @@ class ExsiccatiManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
             $this->conn->close();
         }
 	}
@@ -27,14 +28,14 @@ class ExsiccatiManager {
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
-					$retArr['title'] = $this->cleanOutStr($r->title);
-					$retArr['abbreviation'] = $this->cleanOutStr($r->abbreviation);
-					$retArr['editor'] = $this->cleanOutStr($r->editor);
-					$retArr['exsrange'] = $this->cleanOutStr($r->exsrange);
-					$retArr['startdate'] = $this->cleanOutStr($r->startdate);
-					$retArr['enddate'] = $this->cleanOutStr($r->enddate);
-					$retArr['source'] = $this->cleanOutStr($r->source);
-					$retArr['notes'] = $this->cleanOutStr($r->notes);
+					$retArr['title'] = Sanitizer::cleanOutStr($r->title);
+					$retArr['abbreviation'] = Sanitizer::cleanOutStr($r->abbreviation);
+					$retArr['editor'] = Sanitizer::cleanOutStr($r->editor);
+					$retArr['exsrange'] = Sanitizer::cleanOutStr($r->exsrange);
+					$retArr['startdate'] = Sanitizer::cleanOutStr($r->startdate);
+					$retArr['enddate'] = Sanitizer::cleanOutStr($r->enddate);
+					$retArr['source'] = Sanitizer::cleanOutStr($r->source);
+					$retArr['notes'] = Sanitizer::cleanOutStr($r->notes);
 					$retArr['lasteditedby'] = $r->lasteditedby;
 				}
 				$rs->free();
@@ -43,7 +44,7 @@ class ExsiccatiManager {
 		return $retArr;
 	}
 
-	public function getTitleArr($searchTerm = '', $specimenOnly = 0, $imagesOnly = 0, $collId = 0, $sortBy = 0): array
+	public function getTitleArr($searchTerm = null, $specimenOnly = null, $imagesOnly = null, $collId = null, $sortBy = null): array
     {
 		$retArr = array();
 		$sql = 'SELECT DISTINCT et.ometid, et.title, et.editor, et.exsrange, et.abbreviation ';
@@ -67,13 +68,13 @@ class ExsiccatiManager {
 			$sql .= 'FROM omexsiccatititles et ';
 		}
 		if($searchTerm){
-			$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'et.title LIKE "%'.$searchTerm.'%" OR et.abbreviation LIKE "%'.$searchTerm.'%" OR et.editor LIKE "%'.$searchTerm.'%" ';
+			$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'et.title LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" OR et.abbreviation LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" OR et.editor LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" ';
 		}
 		$sql .= $sqlWhere.'ORDER BY '.($sortBy? 'IFNULL(et.abbreviation,et.title)' : 'et.title').', et.startdate';
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				if($sortBy == 1) {
+				if((int)$sortBy === 1) {
 					if($r->abbreviation) {
                         $titleStr = (strlen($r->abbreviation) > 100 ? substr($r->abbreviation, 0, 100) . '...' : $r->abbreviation);
                     }
@@ -90,7 +91,7 @@ class ExsiccatiManager {
 				if($r->exsrange) {
                     $titleStr .= ' [' . $r->exsrange . ']';
                 }
-				$retArr[$r->ometid] = $this->cleanOutStr($titleStr);
+				$retArr[$r->ometid] = Sanitizer::cleanOutStr($titleStr);
 			}
 			$rs->free();
 		}
@@ -117,10 +118,10 @@ class ExsiccatiManager {
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					if(!array_key_exists($r->omenid,$retArr)){
-						$retArr[$r->omenid]['number'] = $this->cleanOutStr($r->exsnumber);
+						$retArr[$r->omenid]['number'] = Sanitizer::cleanOutStr($r->exsnumber);
 						$retArr[$r->omenid]['collector'] = $r->collector;
 						$retArr[$r->omenid]['sciname'] = $r->sciname;
-						$retArr[$r->omenid]['notes'] = $this->cleanOutStr($r->notes);
+						$retArr[$r->omenid]['notes'] = Sanitizer::cleanOutStr($r->notes);
 					}
 				}
 				$rs->free();
@@ -140,12 +141,12 @@ class ExsiccatiManager {
 			if($rs = $this->conn->query($sql)){
 				if($r = $rs->fetch_object()){
 					$retArr['ometid'] = $r->ometid;
-					$retArr['title'] = $this->cleanOutStr($r->title);
-					$retArr['abbreviation'] = $this->cleanOutStr($r->abbreviation);
-					$retArr['editor'] = $this->cleanOutStr($r->editor);
-					$retArr['exsrange'] = $this->cleanOutStr($r->exsrange);
-					$retArr['exsnumber'] = $this->cleanOutStr($r->exsnumber);
-					$retArr['notes'] = $this->cleanOutStr($r->notes);
+					$retArr['title'] = Sanitizer::cleanOutStr($r->title);
+					$retArr['abbreviation'] = Sanitizer::cleanOutStr($r->abbreviation);
+					$retArr['editor'] = Sanitizer::cleanOutStr($r->editor);
+					$retArr['exsrange'] = Sanitizer::cleanOutStr($r->exsrange);
+					$retArr['exsnumber'] = Sanitizer::cleanOutStr($r->exsnumber);
+					$retArr['notes'] = Sanitizer::cleanOutStr($r->notes);
 				}
 				$rs->free();
 			}
@@ -153,7 +154,7 @@ class ExsiccatiManager {
 		return $retArr;
 	}
 
-	public function getExsOccArr($id, $target = 'omenid'): array
+	public function getExsOccArr($id, $target = null): array
     {
 		$retArr = array();
 		$sql = 'SELECT en.omenid, en.exsnumber, ol.ranking, ol.notes, o.occid, o.occurrenceid, o.catalognumber, '.
@@ -166,34 +167,34 @@ class ExsiccatiManager {
 			'INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN omexsiccatinumbers en ON ol.omenid = en.omenid '.
 			'LEFT JOIN images i ON o.occid = i.occid ';
-		if($target === 'omenid'){
-			$sql .= 'WHERE ol.omenid = '.$id;
+		if($target){
+			$sql .= 'WHERE en.ometid = '.$id;
 		}
 		else{
-			$sql .= 'WHERE en.ometid = '.$id;
+			$sql .= 'WHERE ol.omenid = '.$id;
 		}
 		$sql .= ' ORDER BY en.exsnumber+1, ol.ranking, o.recordedby, o.recordnumber';
 		//echo $sql;
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				if(!isset($retArr[$r->omenid][$r->occid])){
-					$retArr[$r->omenid][$r->occid]['exsnum'] = $this->cleanOutStr($r->exsnumber);
-					$retArr[$r->omenid][$r->occid]['ranking'] = $this->cleanOutStr($r->ranking);
-					$retArr[$r->omenid][$r->occid]['notes'] = $this->cleanOutStr($r->notes);
+					$retArr[$r->omenid][$r->occid]['exsnum'] = Sanitizer::cleanOutStr($r->exsnumber);
+					$retArr[$r->omenid][$r->occid]['ranking'] = Sanitizer::cleanOutStr($r->ranking);
+					$retArr[$r->omenid][$r->occid]['notes'] = Sanitizer::cleanOutStr($r->notes);
 					$retArr[$r->omenid][$r->occid]['collid'] = $r->collid;
-					$retArr[$r->omenid][$r->occid]['collname'] = $this->cleanOutStr($r->collectionname);
-					$retArr[$r->omenid][$r->occid]['collcode'] = $this->cleanOutStr($r->collcode);
+					$retArr[$r->omenid][$r->occid]['collname'] = Sanitizer::cleanOutStr($r->collectionname);
+					$retArr[$r->omenid][$r->occid]['collcode'] = Sanitizer::cleanOutStr($r->collcode);
 					$retArr[$r->omenid][$r->occid]['occurrenceid'] = $r->occurrenceid;
 					$retArr[$r->omenid][$r->occid]['catalognumber'] = $r->catalognumber;
-					$retArr[$r->omenid][$r->occid]['sciname'] = $this->cleanOutStr($r->sciname);
-					$retArr[$r->omenid][$r->occid]['author'] = $this->cleanOutStr($r->scientificnameauthorship);
-					$retArr[$r->omenid][$r->occid]['recby'] = $this->cleanOutStr($r->recordedby);
-					$retArr[$r->omenid][$r->occid]['recnum'] = $this->cleanOutStr($r->recordnumber);
+					$retArr[$r->omenid][$r->occid]['sciname'] = Sanitizer::cleanOutStr($r->sciname);
+					$retArr[$r->omenid][$r->occid]['author'] = Sanitizer::cleanOutStr($r->scientificnameauthorship);
+					$retArr[$r->omenid][$r->occid]['recby'] = Sanitizer::cleanOutStr($r->recordedby);
+					$retArr[$r->omenid][$r->occid]['recnum'] = Sanitizer::cleanOutStr($r->recordnumber);
 					$retArr[$r->omenid][$r->occid]['eventdate'] = $r->eventdate;
 					$retArr[$r->omenid][$r->occid]['country'] = $r->country;
 					$retArr[$r->omenid][$r->occid]['state'] = $r->stateprovince;
 					$retArr[$r->omenid][$r->occid]['county'] = $r->county;
-					$retArr[$r->omenid][$r->occid]['locality'] = $this->cleanOutStr(($r->municipality?$r->municipality.'; ':'').$r->locality);
+					$retArr[$r->omenid][$r->occid]['locality'] = Sanitizer::cleanOutStr(($r->municipality?$r->municipality.'; ':'').$r->locality);
 					$retArr[$r->omenid][$r->occid]['lat'] = $r->decimallatitude;
 					$retArr[$r->omenid][$r->occid]['lng'] = $r->decimallongitude;
 				}
@@ -234,7 +235,7 @@ class ExsiccatiManager {
 			$fieldArr['ol.notes'] = 'occurrenceNotes';
 		}
 		if($searchTerm){
-			$sqlInsert .= ($sqlInsert?'AND ':'WHERE ').'et.title LIKE "%'.$searchTerm.'%" OR et.abbreviation LIKE "%'.$searchTerm.'%" OR et.editor LIKE "%'.$searchTerm.'%" ';
+			$sqlInsert .= ($sqlInsert?'AND ':'WHERE ').'et.title LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" OR et.abbreviation LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" OR et.editor LIKE "%'.Sanitizer::cleanInStr($searchTerm).'%" ';
 		}
 		$sql = 'SELECT '.implode(',',array_keys($fieldArr)).' '.
 			'FROM omexsiccatititles et INNER JOIN omexsiccatinumbers en ON et.ometid = en.ometid '.
@@ -258,13 +259,13 @@ class ExsiccatiManager {
 	public function addTitle($pArr,$editedBy): void
     {
 		$sql = 'INSERT INTO omexsiccatititles(title, abbreviation, editor, exsrange, startdate, enddate, source, notes,lasteditedby) '.
-			'VALUES("'.$this->cleanInStr($pArr['title']).'","'.$this->cleanInStr($pArr['abbreviation']).'","'.
-			$this->cleanInStr($pArr['editor']).'",'.
-			($pArr['exsrange']?'"'.$this->cleanInStr($pArr['exsrange']).'"':'NULL').','.
-			($pArr['startdate']?'"'.$this->cleanInStr($pArr['startdate']).'"':'NULL').','.
-			($pArr['enddate']?'"'.$this->cleanInStr($pArr['enddate']).'"':'NULL').','.
-			($pArr['source']?'"'.$this->cleanInStr($pArr['source']).'"':'NULL').','.
-			($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').',"'.
+			'VALUES("'.Sanitizer::cleanInStr($pArr['title']).'","'.Sanitizer::cleanInStr($pArr['abbreviation']).'","'.
+			Sanitizer::cleanInStr($pArr['editor']).'",'.
+			($pArr['exsrange']?'"'.Sanitizer::cleanInStr($pArr['exsrange']).'"':'NULL').','.
+			($pArr['startdate']?'"'.Sanitizer::cleanInStr($pArr['startdate']).'"':'NULL').','.
+			($pArr['enddate']?'"'.Sanitizer::cleanInStr($pArr['enddate']).'"':'NULL').','.
+			($pArr['source']?'"'.Sanitizer::cleanInStr($pArr['source']).'"':'NULL').','.
+			($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').',"'.
 			$editedBy.'")';
 		//echo $sql;
         $this->conn->query($sql);
@@ -274,13 +275,13 @@ class ExsiccatiManager {
 	public function editTitle($pArr,$editedBy): void
     {
 		$sql = 'UPDATE omexsiccatititles '.
-			'SET title = "'.$this->cleanInStr($pArr['title']).'", abbreviation = "'.$this->cleanInStr($pArr['abbreviation']).
-			'", editor = "'.$this->cleanInStr($pArr['editor']).'"'.
-			', exsrange = '.($pArr['exsrange']?'"'.$this->cleanInStr($pArr['exsrange']).'"':'NULL').
-			', startdate = '.($pArr['startdate']?'"'.$this->cleanInStr($pArr['startdate']).'"':'NULL').
-			', enddate = '.($pArr['enddate']?'"'.$this->cleanInStr($pArr['enddate']).'"':'NULL').
-			', source = '.($pArr['source']?'"'.$this->cleanInStr($pArr['source']).'"':'NULL').
-			', notes = '.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').' '.
+			'SET title = "'.Sanitizer::cleanInStr($pArr['title']).'", abbreviation = "'.Sanitizer::cleanInStr($pArr['abbreviation']).
+			'", editor = "'.Sanitizer::cleanInStr($pArr['editor']).'"'.
+			', exsrange = '.($pArr['exsrange']?'"'.Sanitizer::cleanInStr($pArr['exsrange']).'"':'NULL').
+			', startdate = '.($pArr['startdate']?'"'.Sanitizer::cleanInStr($pArr['startdate']).'"':'NULL').
+			', enddate = '.($pArr['enddate']?'"'.Sanitizer::cleanInStr($pArr['enddate']).'"':'NULL').
+			', source = '.($pArr['source']?'"'.Sanitizer::cleanInStr($pArr['source']).'"':'NULL').
+			', notes = '.($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').' '.
 			', lasteditedby = "'.$editedBy.'" '.
 			'WHERE (ometid = '.$pArr['ometid'].')';
 		//echo $sql;
@@ -342,8 +343,8 @@ class ExsiccatiManager {
     {
 		$retStr = '';
 		$sql = 'INSERT INTO omexsiccatinumbers(ometid,exsnumber,notes) '.
-			'VALUES('.$pArr['ometid'].',"'.$this->cleanInStr($pArr['exsnumber']).'",'.
-			($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
+			'VALUES('.$pArr['ometid'].',"'.Sanitizer::cleanInStr($pArr['exsnumber']).'",'.
+			($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$retStr = 'ERROR adding exsiccati number: '.$this->conn->error;
@@ -357,8 +358,8 @@ class ExsiccatiManager {
 		$retStr = '';
 		if($pArr['omenid'] && is_numeric($pArr['omenid'])){
 			$sql = 'UPDATE omexsiccatinumbers '.
-				'SET exsnumber = "'.$this->cleanInStr($pArr['exsnumber']).'",'.
-				'notes = '.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').' '.
+				'SET exsnumber = "'.Sanitizer::cleanInStr($pArr['exsnumber']).'",'.
+				'notes = '.($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').' '.
 				'WHERE (omenid = '.$pArr['omenid'].')';
 			if(!$this->conn->query($sql)){
 				$retStr = 'ERROR editing exsiccati number: '.$this->conn->error;
@@ -432,7 +433,7 @@ class ExsiccatiManager {
 			if($collId === 'occid' && $identifier && is_numeric($identifier)){
 				$sql = 'INSERT INTO omexsiccatiocclink(omenid,occid,ranking,notes) '.
 					'VALUES ('.$pArr['omenid'].','.$identifier.','.$ranking.','.
-					($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
+					($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').')';
 				if(!$this->conn->query($sql)){
 					$retStr = 'ERROR linking occurrence to exsiccati number, SQL: '.$sql;
 				}
@@ -461,7 +462,7 @@ class ExsiccatiManager {
 				while($r = $rs->fetch_object()){
 					$sql = 'INSERT INTO omexsiccatiocclink(omenid,occid,ranking,notes) '.
 						'VALUES('.$pArr['omenid'].', '.$r->occid.', '.$ranking.','.
-						($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
+						($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').')';
 					//echo $sql;
 					if(!$this->conn->query($sql)){
 						$retStr = 'ERROR linking occurrence to exsiccati number, SQL: '.$sql;
@@ -488,7 +489,7 @@ class ExsiccatiManager {
     {
 		if($pArr['omenid'] && $pArr['occid'] && is_numeric($pArr['omenid']) && is_numeric($pArr['occid']) && is_numeric($pArr['ranking'])){
 			$sql = 'UPDATE omexsiccatiocclink '.
-				'SET ranking = '.$pArr['ranking'].', notes = "'.$this->cleanInStr($pArr['notes']).'" '.
+				'SET ranking = '.$pArr['ranking'].', notes = "'.Sanitizer::cleanInStr($pArr['notes']).'" '.
 				'WHERE (omenid = '.$pArr['omenid'].') AND (occid = '.$pArr['occid'].')';
             $this->conn->query($sql);
             $this->conn->close();
@@ -510,14 +511,14 @@ class ExsiccatiManager {
 		if($omenid && is_numeric($omenid) && $targetOmetid && is_numeric($targetOmetid) && $targetExsNumber){
 			$targetOmenid = 0;
 			$sql = 'SELECT omenid FROM omexsiccatinumbers '.
-				'WHERE ometid = '.$targetOmetid.' AND exsnumber = "'.$this->cleanInStr($targetExsNumber).'"';
+				'WHERE ometid = '.$targetOmetid.' AND exsnumber = "'.Sanitizer::cleanInStr($targetExsNumber).'"';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$targetOmenid = $r->omenid;
 			}
 			else{
 				$sql1 = 'INSERT INTO omexsiccatinumbers(ometid, exsnumber) '.
-					'VALUES('.$targetOmetid.',"'.$this->cleanInStr($targetExsNumber).'") ';
+					'VALUES('.$targetOmetid.',"'.Sanitizer::cleanInStr($targetExsNumber).'") ';
 				if($this->conn->query($sql1)){
 					$targetOmenid = $this->conn->insert_id;
 				}
@@ -548,7 +549,7 @@ class ExsiccatiManager {
 		if(array_key_exists('occid[]',$postArr)){
 			$datasetId = '';
 			if(array_key_exists('dataset',$postArr) && $postArr['dataset']){
-				$sqlDs = 'INSERT INTO omoccurdatasets(name, uid) VALUES("'.$this->cleanInStr($postArr['dataset']).'",'.$GLOBALS['SYMB_UID'].') ';
+				$sqlDs = 'INSERT INTO omoccurdatasets(name, uid) VALUES("'.Sanitizer::cleanInStr($postArr['dataset']).'",'.$GLOBALS['SYMB_UID'].') ';
 				if($this->conn->query($sqlDs)){
 					$datasetId = $this->conn->insert_id;
 				}
@@ -559,7 +560,7 @@ class ExsiccatiManager {
 			$occidArr = $postArr['occid[]'];
 			foreach($occidArr as $occid){
 				if(is_numeric($occid)){
-					$catNum = $this->cleanInStr($postArr['cat-'.$occid]);
+					$catNum = Sanitizer::cleanInStr($postArr['cat-'.$occid]);
 					$sql1 = $targetCollid.', "'.$catNum.'", "'.date('Y-m-d H:i:s').'" AS dateEntered '.
 						'FROM omoccurrences WHERE occid = '.$occid;
 					if($this->conn->query($sql1)){
@@ -642,7 +643,7 @@ class ExsiccatiManager {
 		return $fieldArr;
 	}
 
-	public function getCollArr($ometid = 0): array
+	public function getCollArr($ometid = null): array
     {
 		$retArr = array();
 		$sql ='SELECT DISTINCT c.collid, c.collectionname, c.institutioncode, c.collectioncode '.
@@ -697,7 +698,7 @@ class ExsiccatiManager {
 	public function getExsTableRow($occid,$oArr,$omenid,$targetCollid): string
     {
 		$isTarget = false;
-		if($targetCollid == $oArr['collid']) {
+		if((int)$targetCollid === (int)$oArr['collid']) {
             $isTarget = true;
         }
 		$retStr = '<tr>';
@@ -728,16 +729,5 @@ class ExsiccatiManager {
 		$retStr .= '</td>';
 		$retStr .= '</tr>';
 		return $retStr;
-	}
-
-	private function cleanOutStr($str){
-        return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

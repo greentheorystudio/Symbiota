@@ -45,7 +45,7 @@ class KeyMassUpdate extends KeyManager{
 		ksort($this->stateArr);
 	}
 
-	public function echoTaxaList($tidFilter, $generaOnly = false): void
+	public function echoTaxaList($tidFilter, $generaOnly = null): void
 	{
 		$tidArr = array();
 		
@@ -81,7 +81,7 @@ class KeyMassUpdate extends KeyManager{
 		//echo $sql2; exit;
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
-			if($r2->rankid == 140){
+			if((int)$r2->rankid === 140){
 				$famArr[$r2->tid] = $r2->sciname;
 			}
 			elseif(!$generaOnly || $r2->rankid < 220){
@@ -117,7 +117,7 @@ class KeyMassUpdate extends KeyManager{
 		echo $this->headerStr;
 	}
 	
-	private function processTaxa($tid,$indent=0): void
+	private function processTaxa($tid,$indent=null): void
 	{
 		if(isset($this->taxaArr[$tid])){
 			$indent++;
@@ -130,7 +130,7 @@ class KeyMassUpdate extends KeyManager{
 		}
 	}
 
-	private function echoTaxaRow($tid,$sciname,$indent = 0): void
+	private function echoTaxaRow($tid,$sciname,$indent = null): void
 	{
 		echo '<tr><td>';
 		echo '<span style="margin-left:'.($indent*10).'px"><b>'.($indent?'<i>':'').$sciname.($indent?'</i>':'').'</b></span>';
@@ -157,7 +157,7 @@ class KeyMassUpdate extends KeyManager{
 		}
 		echo '</tr>';
 		$this->cnt++;
-		if($this->cnt%40 == 0) {
+		if($this->cnt%40 === 0) {
 			echo $this->headerStr;
 		}
 	}
@@ -232,15 +232,11 @@ class KeyMassUpdate extends KeyManager{
 
 	public function setCid($cid): void
 	{
-		if(is_numeric($cid)) {
-			$this->cid = $cid;
-		}
+        $this->cid = $cid;
 	}
 
 	public function setClid($clid): void
 	{
-		if(is_numeric($clid)) {
-			$this->clid = $clid;
-		}
+        $this->clid = $clid;
 	}
 }

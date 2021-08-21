@@ -30,10 +30,10 @@ include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceAPIManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';
-$uId = array_key_exists('uid',$_POST)?$_POST['uid']:'';
+$uId = array_key_exists('uid',$_POST)?(int)$_POST['uid']:0;
 $token = array_key_exists('token',$_POST)?$_POST['token']:'';
-$collid = array_key_exists('collid',$_POST)?$_POST['collid']:0;
-$occid = array_key_exists('occid',$_POST)?$_POST['occid']:0;
+$collid = array_key_exists('collid',$_POST)?(int)$_POST['collid']:0;
+$occid = array_key_exists('occid',$_POST)?(int)$_POST['occid']:0;
 $catnum = array_key_exists('catnum',$_POST)?$_POST['catnum']:'';
 
 $pHandler = new ProfileManager();

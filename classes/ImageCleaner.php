@@ -77,12 +77,12 @@ class ImageCleaner extends Manager{
 			$testSql = 'SELECT thumbnailurl, url FROM images WHERE (imgid = '.$imgId.') FOR UPDATE ';
 			$textRS = $this->conn->query($testSql);
 			if($testR = $textRS->fetch_object()){
-				if(!$testR->thumbnailurl || (strpos($testR->thumbnailurl, 'processing') === 0 && $testR->thumbnailurl !== 'processing '.date('Y-m-d'))){
+				if(!$testR->thumbnailurl || (strncmp($testR->thumbnailurl, 'processing', 10) === 0 && $testR->thumbnailurl !== 'processing '.date('Y-m-d'))){
 					$tagSql = 'UPDATE images SET thumbnailurl = "processing '.date('Y-m-d').'" '.
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
 				}
-				elseif($testR->url === 'empty' || (strpos($testR->url, 'processing') === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
+				elseif($testR->url === 'empty' || (strncmp($testR->url, 'processing', 10) === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
 					$tagSql = 'UPDATE images SET url = "processing '.date('Y-m-d').'" '.
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
@@ -140,7 +140,7 @@ class ImageCleaner extends Manager{
 		return $sql;
 	}
 
-	private function buildImageDerivatives($imgId, $catNum, $recUrlWeb, $recUrlTn, $recUrlOrig, $setFormat = false): void
+	private function buildImageDerivatives($imgId, $catNum, $recUrlWeb, $recUrlTn, $recUrlOrig, $setFormat = null): void
 	{
 		$status = true;
 		if($this->collid){
@@ -179,7 +179,7 @@ class ImageCleaner extends Manager{
 		}
 		if($this->imgManager->parseUrl($imgUrl)){
 			$imgTnUrl = '';
-			if(!$recUrlTn || strpos($recUrlTn, 'processing') === 0){
+			if(!$recUrlTn || strncmp($recUrlTn, 'processing', 10) === 0){
 				if($this->imgManager->createNewImage('_tn',$this->imgManager->getTnPixWidth(),70)){
 					$imgTnUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_tn.jpg';
 				}
@@ -238,7 +238,8 @@ class ImageCleaner extends Manager{
 		}
 	}
 
-	public function getProcessingCnt($postArr){
+	public function getProcessingCnt($postArr): int
+    {
 		$retCnt = 0;
 		if($this->collid){
 			$sql = 'SELECT COUNT(i.imgid) AS cnt '.$this->getRemoteImageSql($postArr);
@@ -252,7 +253,8 @@ class ImageCleaner extends Manager{
 		return $retCnt;
 	}
 
-	public function getRemoteImageCnt(){
+	public function getRemoteImageCnt(): int
+    {
 		$retCnt = 0;
 		$domain = $_SERVER['HTTP_HOST'];
 		$sql = 'SELECT COUNT(i.imgid) AS cnt '.
@@ -316,7 +318,7 @@ class ImageCleaner extends Manager{
 			$this->logOrEcho('FATAL ERROR: IMAGE_ROOT_URL not configured within portal configuration file',1);
 			exit;
 		}
-		if(strpos($url, 'http') === 0){
+		if(strncmp($url, 'http', 4) === 0){
 			$url = parse_url($url, PHP_URL_PATH);
 		}
 		if(strpos($url, $GLOBALS['IMAGE_ROOT_URL']) === 0){
@@ -418,7 +420,8 @@ class ImageCleaner extends Manager{
 		}
 	}
 
-	public function getSciname(){
+	public function getSciname(): string
+    {
 		$sciname = '';
 		if($this->tidArr){
 			$sql = 'SELECT sciname FROM taxa WHERE (tid = '.$this->tidArr[0].')';

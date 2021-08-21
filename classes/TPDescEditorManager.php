@@ -1,9 +1,14 @@
 <?php
 include_once(__DIR__ . '/TPEditorManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TPDescEditorManager extends TPEditorManager{
 
-	public function getDescriptions($editor = false): array
+    public function __construct(){
+        parent::__construct();
+    }
+
+    public function getDescriptions($editor = null): array
 	{
 		$descrArr = array();
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
@@ -47,7 +52,7 @@ class TPDescEditorManager extends TPEditorManager{
 				$rs2->free();
 			}
 			else{
-				trigger_error('Unable to get statements; '.$this->conn->error);
+				trigger_error('Unable to get statements; '.$this->taxonCon->error);
 			}
 		}
 		return $descrArr;
@@ -56,12 +61,12 @@ class TPDescEditorManager extends TPEditorManager{
 	public function editDescriptionBlock(): string
 	{
 		$sql = 'UPDATE taxadescrblock ' .
-			'SET language = ' .($_REQUEST['language']?'"'.$this->cleanInStr($_REQUEST['language']).'"': 'NULL').
-			',displaylevel = ' .$this->cleanInStr($_REQUEST['displaylevel']).
-			',notes = ' .($_REQUEST['notes']?'"'.$this->cleanInStr($_REQUEST['notes']).'"': 'NULL').
-			',caption = ' .($_REQUEST['caption']?'"'.$this->cleanInStr($_REQUEST['caption']).'"': 'NULL').
-			',source = ' .($_REQUEST['source']?'"'.$this->cleanInStr($_REQUEST['source']).'"': 'NULL').
-			',sourceurl = ' .($_REQUEST['sourceurl']?'"'.$this->cleanInStr($_REQUEST['sourceurl']).'"': 'NULL').
+			'SET language = ' .($_REQUEST['language']?'"'.Sanitizer::cleanInStr($_REQUEST['language']).'"': 'NULL').
+			',displaylevel = ' .Sanitizer::cleanInStr($_REQUEST['displaylevel']).
+			',notes = ' .($_REQUEST['notes']?'"'.Sanitizer::cleanInStr($_REQUEST['notes']).'"': 'NULL').
+			',caption = ' .($_REQUEST['caption']?'"'.Sanitizer::cleanInStr($_REQUEST['caption']).'"': 'NULL').
+			',source = ' .($_REQUEST['source']?'"'.Sanitizer::cleanInStr($_REQUEST['source']).'"': 'NULL').
+			',sourceurl = ' .($_REQUEST['sourceurl']?'"'.Sanitizer::cleanInStr($_REQUEST['sourceurl']).'"': 'NULL').
 			' WHERE (tdbid = ' .$this->taxonCon->real_escape_string($_REQUEST['tdbid']).')';
 		//echo $sql;
 		$status = '';
@@ -91,11 +96,11 @@ class TPDescEditorManager extends TPEditorManager{
 			$sql = 'INSERT INTO taxadescrblock(tid,uid,'.($_REQUEST['language']? 'language,' : '').($_REQUEST['displaylevel']? 'displaylevel,' : '').
 				'notes,caption,source,sourceurl) '.
 				'VALUES('.$_REQUEST['tid'].','.$GLOBALS['SYMB_UID'].
-				','.($_REQUEST['language']?'"'.$this->cleanInStr($_REQUEST['language']).'",': '').
+				','.($_REQUEST['language']?'"'.Sanitizer::cleanInStr($_REQUEST['language']).'",': '').
 				($_REQUEST['displaylevel']?$this->taxonCon->real_escape_string($_REQUEST['displaylevel']). ',' : '').
-				($_REQUEST['notes']?'"'.$this->cleanInStr($_REQUEST['notes']).'",': 'NULL,').
-				($_REQUEST['caption']?'"'.$this->cleanInStr($_REQUEST['caption']).'",': 'NULL,').
-				($_REQUEST['source']?'"'.$this->cleanInStr($_REQUEST['source']).'",': 'NULL,').
+				($_REQUEST['notes']?'"'.Sanitizer::cleanInStr($_REQUEST['notes']).'",': 'NULL,').
+				($_REQUEST['caption']?'"'.Sanitizer::cleanInStr($_REQUEST['caption']).'",': 'NULL,').
+				($_REQUEST['source']?'"'.Sanitizer::cleanInStr($_REQUEST['source']).'",': 'NULL,').
 				($_REQUEST['sourceurl']?'"'.$_REQUEST['sourceurl'].'"': 'NULL').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
@@ -128,15 +133,15 @@ class TPDescEditorManager extends TPEditorManager{
 	public function addStatement($stArr): string
 	{
 		$status = '';
-		$stmtStr = $this->cleanInStr($stArr['statement']);
-		if(strpos($stmtStr, '<p>') === 0 && substr($stmtStr,-4) === '</p>'){
+		$stmtStr = Sanitizer::cleanInStr($stArr['statement']);
+		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdbid'] && is_numeric($stArr['tdbid'])){
 			$sql = 'INSERT INTO taxadescrstmts(tdbid,heading,statement,displayheader'.($stArr['sortsequence']?',sortsequence':'').') '.
-				'VALUES('.$stArr['tdbid'].',"'.$this->cleanInStr($stArr['heading']).
+				'VALUES('.$stArr['tdbid'].',"'.Sanitizer::cleanInStr($stArr['heading']).
 				'","'.$stmtStr.'",'.(array_key_exists('displayheader',$stArr)?'1':'0').
-				($stArr['sortsequence']?','.$this->cleanInStr($stArr['sortsequence']):'').')';
+				($stArr['sortsequence']?','.Sanitizer::cleanInStr($stArr['sortsequence']):'').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
 				$status = 'ERROR adding description statement: '.$this->taxonCon->error;
@@ -148,16 +153,16 @@ class TPDescEditorManager extends TPEditorManager{
 	public function editStatement($stArr): string
 	{
 		$status = '';
-		$stmtStr = $this->cleanInStr($stArr['statement']);
-		if(strpos($stmtStr, '<p>') === 0 && substr($stmtStr,-4) === '</p>'){
+		$stmtStr = Sanitizer::cleanInStr($stArr['statement']);
+		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdsid'] && is_numeric($stArr['tdsid'])){
 			$sql = 'UPDATE taxadescrstmts '.
-				'SET heading = "'.$this->cleanInStr($stArr['heading']).'",'.
+				'SET heading = "'.Sanitizer::cleanInStr($stArr['heading']).'",'.
 				'statement = "'.$stmtStr.'"'.
 				(array_key_exists('displayheader',$stArr)?',displayheader = 1':',displayheader = 0').
-				($stArr['sortsequence']?',sortsequence = '.$this->cleanInStr($stArr['sortsequence']):'').
+				($stArr['sortsequence']?',sortsequence = '.Sanitizer::cleanInStr($stArr['sortsequence']):'').
 				' WHERE (tdsid = '.$stArr['tdsid'].')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){

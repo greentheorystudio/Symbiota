@@ -9,8 +9,8 @@ $con = $connection->getConnection();
 $spatialManager = new SpatialModuleManager();
 
 $taxaArrJson = array_key_exists('taxajson',$_REQUEST)?$_REQUEST['taxajson']:'';
-$taxonType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:0;
-$useThes = array_key_exists('thes',$_REQUEST)?$_REQUEST['thes']:false;
+$taxonType = array_key_exists('type',$_REQUEST)?(int)$_REQUEST['type']:0;
+$useThes = array_key_exists('thes',$_REQUEST)?(int)$_REQUEST['thes']:0;
 
 $tempTaxaArr = array();
 $taxaArr = array();

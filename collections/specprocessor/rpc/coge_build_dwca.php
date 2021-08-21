@@ -3,10 +3,10 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = $_REQUEST['collid'];
+$collid = (int)$_REQUEST['collid'];
 $archiveFile = '';
 $retArr = array();
-if($collid && is_numeric($collid)){
+if($collid){
 	$isEditor = false;
 	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	 	$isEditor = true;

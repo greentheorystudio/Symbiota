@@ -2,8 +2,8 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 
-$dupid = array_key_exists('dupid',$_REQUEST)?$_REQUEST['dupid']:'';
-$occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:'';
+$dupid = array_key_exists('dupid',$_REQUEST)?(int)$_REQUEST['dupid']:0;
+$occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 
 $isEditor = false;
 if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {

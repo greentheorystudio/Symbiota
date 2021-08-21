@@ -3,8 +3,8 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$datasetId = array_key_exists('datasetid',$_REQUEST)?$_REQUEST['datasetid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$datasetId = array_key_exists('datasetid',$_REQUEST)?(int)$_REQUEST['datasetid']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 if(!$GLOBALS['SYMB_UID']) {
@@ -49,12 +49,8 @@ elseif(isset($mdArr['roles'])){
 
 $statusStr = '';
 if($isEditor){
-    if($isEditor < 3){
-        if($action === 'Remove Selected Occurrences'){
-            if(!$datasetManager->removeSelectedOccurrences($datasetId,$_POST['occid'])){
-                $statusStr = implode(',',$datasetManager->getErrorArr());
-            }
-        }
+    if(($isEditor < 3) && ($action === 'Remove Selected Occurrences') && !$datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
+        $statusStr = implode(',',$datasetManager->getErrorArr());
     }
     if($isEditor === 1){
         if($action === 'Save Edits'){
@@ -133,7 +129,7 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
-    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210420"></script>
+    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210810"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {

@@ -16,17 +16,16 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
 $datasetManager = new OccurrenceDataset();
 
 $statusStr = '';
-if($action == 'createNewDataset'){
+if($action === 'createNewDataset'){
     if(!$datasetManager->createDataset($_POST['name'],$_POST['notes'],$GLOBALS['SYMB_UID'])){
         $statusStr = implode(',',$datasetManager->getErrorArr());
     }
 }
-elseif($action == 'addSelectedToDataset'){
+elseif($action === 'addSelectedToDataset'){
     $datasetID = $_POST['datasetid'];
-    if(!$datasetID && $_POST['name']) $datasetManager->createDataset($_POST['name'],'',$GLOBALS['SYMB_UID']);
-}
-elseif($action == 'addAllToDataset'){
-
+    if(!$datasetID && $_POST['name']) {
+        $datasetManager->createDataset($_POST['name'], '', $GLOBALS['SYMB_UID']);
+    }
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -152,7 +151,7 @@ include(__DIR__ . '/../../header.php');
                             <div style="margin-left:15px;">
                                 <?php
                                 echo ($dsArr['notes']?'<div>'.$dsArr['notes'].'</div>':'');
-                                echo '<div>Created: '.$dsArr["ts"].'</div>';
+                                echo '<div>Created: '.$dsArr['ts'].'</div>';
                                 ?>
                             </div>
                         </div>
@@ -181,14 +180,14 @@ include(__DIR__ . '/../../header.php');
                                 elseif($dsArr['role'] === 'DatasetEditor') {
                                     $role = 'Dataset Editor';
                                 }
-                                echo '<b>'.$dsArr["name"].' (#'.$dsid.')</b> - '.$role;
+                                echo '<b>'.$dsArr['name'].' (#'.$dsid.')</b> - '.$role;
                                 ?>
                             </a>
                         </div>
                         <div style="margin-left:15px;">
                             <?php
-                            echo ($dsArr["notes"]?$dsArr["notes"].'<br/>':'');
-                            echo 'Created: '.$dsArr["ts"];
+                            echo ($dsArr['notes']?$dsArr['notes'].'<br/>':'');
+                            echo 'Created: '.$dsArr['ts'];
                             ?>
                         </div>
                         <?php

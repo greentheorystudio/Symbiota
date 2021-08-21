@@ -3,10 +3,10 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$dupeDepth = array_key_exists('dupedepth',$_REQUEST)?$_REQUEST['dupedepth']:0;
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:1000;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$dupeDepth = array_key_exists('dupedepth',$_REQUEST)?(int)$_REQUEST['dupedepth']:0;
+$start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
+$limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:1000;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
@@ -113,51 +113,22 @@ if($isEditor && $formSubmit){
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>
 			<?php 
 		} 
 		if($isEditor){
-			if(!$action){
-				?>
-				<fieldset style="padding:20px;">
-					<legend><b>Duplicate Linkages</b></legend>
-						<div>
-						It is common within some collection domains to collect specimens in duplicate. 
-						Links below list duplicate cluster and aid collection managers in batch linking 
-						their specimen records to duplicate specimens housed at other institutions. 
-						The main method of batch clustering duplicates is by matching 
-						the collector, collector number, and collection date.
-					</div>
-					<div style="margin:25px;font-weight:bold;font-size:120%;">
-						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=listdupes">
-							List linked duplicate clusters 
-						</a>
-					</div>
-					<div style="margin:25px;font-weight:bold;font-size:120%;">
-						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
-							List linked duplicate clusters with conflicted identifications 
-						</a>
-					</div>
-					<div style="margin:25px;font-weight:bold;font-size:120%;">
-						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=batchlinkdupes">
-							Start batch linking duplicates
-						</a>
-					</div>
-				</fieldset>
-				<?php
-			}
-			else{
+			if($action) {
 				if($action === 'batchlinkdupes'){
 					?>
 					<ul>
-						<?php 
-						$dupManager->batchLinkDuplicates($collId,true);
+						<?php
+						$dupManager->batchLinkDuplicates($collId);
 						?>
 					</ul>
-					<?php 
+					<?php
 				}
 				elseif($action === 'listdupes' || $action === 'listdupeconflicts'){
 					$clusterArr = $dupManager->getDuplicateClusterList($collId, $dupeDepth, $start, $limit);
@@ -194,15 +165,15 @@ if($isEditor && $formSubmit){
 							<?php echo $totalCnt.' Duplicate Clusters '.($action === 'listdupeconflicts'?'with Identification Differences':''); ?>
 						</div>
 						<div style="margin:20px 0;clear:both;">
-							<?php 
+							<?php
 							foreach($clusterArr as $dupId => $dupArr){
 								?>
 								<div style="clear:both;margin:10px 0;">
 									<div style="font-weight:bold;font-size:120%;">
-										<?php echo $dupArr['title']; ?> 
+										<?php echo $dupArr['title']; ?>
 										<span onclick="toggle('editdiv-<?php echo $dupId; ?>')" title="Display Editing Controls"><i style="height:15px;width:15px;" class="far fa-edit"></i></span>
 									</div>
-									<?php 
+									<?php
 									if(isset($dupArr['desc'])) {
                                         echo '<div style="margin-left:10px;">' . $dupArr['desc'] . '</div>';
                                     }
@@ -243,9 +214,9 @@ if($isEditor && $formSubmit){
 											?>
 											<div style="margin:10px">
 												<div style="float:left;">
-													<a href="#" onclick="openOccurPopup(<?php echo $occid; ?>); return false;"><b><?php echo $oArr['id']; ?></b></a> =&gt; 
+													<a href="#" onclick="openOccurPopup(<?php echo $occid; ?>); return false;"><b><?php echo $oArr['id']; ?></b></a> =&gt;
 													<?php echo $oArr['recby']; ?>
-												</div> 
+												</div>
 												<div class="editdiv-<?php echo $dupId; ?>" style="display:none;float:left;" title="Delete Specimen from Cluster">
 													<form name="dupdelform-<?php echo $dupId.'-'.$occid; ?>" method="post" action="duplicatemanager.php" onsubmit="return confirm('Are you sure you want to remove this occurrence record from this cluster?');" style="display:inline;">
 														<input name="dupid" type="hidden" value="<?php echo $dupId; ?>" />
@@ -269,12 +240,12 @@ if($isEditor && $formSubmit){
 													?>
 												</div>
 											</div>
-											<?php 
+											<?php
 										}
 										?>
 									</div>
 								</div>
-								<?php 
+								<?php
 							}
 							?>
 						</div>
@@ -288,8 +259,37 @@ if($isEditor && $formSubmit){
 				?>
 				<div>
 					<a href="duplicatemanager.php?collid=<?php echo $collId; ?>">Return to main menu</a>
-				</div> 
-				<?php 
+				</div>
+				<?php
+			}
+			else {
+				?>
+				<fieldset style="padding:20px;">
+					<legend><b>Duplicate Linkages</b></legend>
+						<div>
+						It is common within some collection domains to collect specimens in duplicate.
+						Links below list duplicate cluster and aid collection managers in batch linking
+						their specimen records to duplicate specimens housed at other institutions.
+						The main method of batch clustering duplicates is by matching
+						the collector, collector number, and collection date.
+					</div>
+					<div style="margin:25px;font-weight:bold;font-size:120%;">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=listdupes">
+							List linked duplicate clusters
+						</a>
+					</div>
+					<div style="margin:25px;font-weight:bold;font-size:120%;">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&dupedepth=2&action=listdupeconflicts">
+							List linked duplicate clusters with conflicted identifications
+						</a>
+					</div>
+					<div style="margin:25px;font-weight:bold;font-size:120%;">
+						<a href="duplicatemanager.php?collid=<?php echo $collId; ?>&action=batchlinkdupes">
+							Start batch linking duplicates
+						</a>
+					</div>
+				</fieldset>
+				<?php
 			}
 		}
 		else{

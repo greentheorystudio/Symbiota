@@ -7,9 +7,9 @@ $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
 $state = array_key_exists('state',$_REQUEST)?$_REQUEST['state']:'';
 $county = array_key_exists('county',$_REQUEST)?$_REQUEST['county']:'';
 $locality = array_key_exists('locality',$_REQUEST)?$_REQUEST['locality']:'';
-$searchType = array_key_exists('searchtype',$_POST)?$_POST['searchtype']:1;
-$collType = array_key_exists('colltype',$_POST)?$_POST['colltype']:0;
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$searchType = array_key_exists('searchtype',$_POST)?(int)$_POST['searchtype']:1;
+$collType = array_key_exists('colltype',$_POST)?(int)$_POST['colltype']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 if(!$country || !$state || !$county){
@@ -41,7 +41,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210705" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210817" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
                 const cloneArr = JSON.parse('<?php echo json_encode($clones); ?>');
@@ -118,9 +118,9 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
 						<input name="locality" type="text" value="<?php echo $locality; ?>" style="width:600px" />
 					</div>
 					<div>
-						<input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType === '1'?'checked':''); ?> /> Exact Match
-						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType === '2'?'checked':''); ?> /> Contains
-						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType === '3'?'checked':''); ?> /> Deep Search
+						<input id="exactinput" name="searchtype" type="radio" value="1" <?php echo ($searchType === 1?'checked':''); ?> /> Exact Match
+						<input id="wildsearch" name="searchtype" type="radio" value="2" <?php echo ($searchType === 2?'checked':''); ?> /> Contains
+						<input id="deepsearch" name="searchtype" type="radio" value="3" <?php echo ($searchType === 3?'checked':''); ?> /> Deep Search
 					</div>
 					<?php 
 					if($collid){

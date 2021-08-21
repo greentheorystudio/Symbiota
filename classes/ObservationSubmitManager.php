@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ObservationSubmitManager {
 
@@ -16,7 +17,7 @@ class ObservationSubmitManager {
 	}
 	
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -64,34 +65,34 @@ class ObservationSubmitManager {
 				'stateProvince, county, locality, localitySecurity, decimalLatitude, decimalLongitude, '.
 				'geodeticDatum, coordinateUncertaintyInMeters, georeferenceRemarks, minimumElevationInMeters, observeruid, dateEntered) '.
 
-			'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.$this->cleanInStr($postArr['family']).'"':'NULL').','.
-			'"'.$this->cleanInStr($postArr['sciname']).'","'.
-			$this->cleanInStr($postArr['sciname'].' '.$postArr['scientificnameauthorship']).'",'.
-			($postArr['scientificnameauthorship']?'"'.$this->cleanInStr($postArr['scientificnameauthorship']).'"':'NULL').','.
-			($tid?:'NULL').','.($postArr['taxonremarks']?'"'.$this->cleanInStr($postArr['taxonremarks']).'"':'NULL').','.
-			($postArr['identifiedby']?'"'.$this->cleanInStr($postArr['identifiedby']).'"':'NULL').','.
-			($postArr['dateidentified']?'"'.$this->cleanInStr($postArr['dateidentified']).'"':'NULL').','.
-			($postArr['identificationreferences']?'"'.$this->cleanInStr($postArr['identificationreferences']).'"':'NULL').','.
-			'"'.$this->cleanInStr($postArr['recordedby']).'",'.
-			($postArr['recordnumber']?'"'.$this->cleanInStr($postArr['recordnumber']).'"':'NULL').','.
-			($postArr['associatedcollectors']?'"'.$this->cleanInStr($postArr['associatedcollectors']).'"':'NULL').','.
+			'VALUES ('.$this->collId.',"HumanObservation",'.($postArr['family']?'"'.Sanitizer::cleanInStr($postArr['family']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($postArr['sciname']).'","'.
+			Sanitizer::cleanInStr($postArr['sciname'].' '.$postArr['scientificnameauthorship']).'",'.
+			($postArr['scientificnameauthorship']?'"'.Sanitizer::cleanInStr($postArr['scientificnameauthorship']).'"':'NULL').','.
+			($tid?:'NULL').','.($postArr['taxonremarks']?'"'.Sanitizer::cleanInStr($postArr['taxonremarks']).'"':'NULL').','.
+			($postArr['identifiedby']?'"'.Sanitizer::cleanInStr($postArr['identifiedby']).'"':'NULL').','.
+			($postArr['dateidentified']?'"'.Sanitizer::cleanInStr($postArr['dateidentified']).'"':'NULL').','.
+			($postArr['identificationreferences']?'"'.Sanitizer::cleanInStr($postArr['identificationreferences']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($postArr['recordedby']).'",'.
+			($postArr['recordnumber']?'"'.Sanitizer::cleanInStr($postArr['recordnumber']).'"':'NULL').','.
+			($postArr['associatedcollectors']?'"'.Sanitizer::cleanInStr($postArr['associatedcollectors']).'"':'NULL').','.
 			'"'.$postArr['eventdate'].'",'.$eventYear.','.$eventMonth.','.$eventDay.','.$startDay.','.
-			($postArr['habitat']?'"'.$this->cleanInStr($postArr['habitat']).'"':'NULL').','.
-			($postArr['substrate']?'"'.$this->cleanInStr($postArr['substrate']).'"':'NULL').','.
-			($postArr['occurrenceremarks']?'"'.$this->cleanInStr($postArr['occurrenceremarks']).'"':'NULL').','.
-			($postArr['associatedtaxa']?'"'.$this->cleanInStr($postArr['associatedtaxa']).'"':'NULL').','.
-			($postArr['verbatimattributes']?'"'.$this->cleanInStr($postArr['verbatimattributes']).'"':'NULL').','.
-			($postArr['reproductivecondition']?'"'.$this->cleanInStr($postArr['reproductivecondition']).'"':'NULL').','.
+			($postArr['habitat']?'"'.Sanitizer::cleanInStr($postArr['habitat']).'"':'NULL').','.
+			($postArr['substrate']?'"'.Sanitizer::cleanInStr($postArr['substrate']).'"':'NULL').','.
+			($postArr['occurrenceremarks']?'"'.Sanitizer::cleanInStr($postArr['occurrenceremarks']).'"':'NULL').','.
+			($postArr['associatedtaxa']?'"'.Sanitizer::cleanInStr($postArr['associatedtaxa']).'"':'NULL').','.
+			($postArr['verbatimattributes']?'"'.Sanitizer::cleanInStr($postArr['verbatimattributes']).'"':'NULL').','.
+			($postArr['reproductivecondition']?'"'.Sanitizer::cleanInStr($postArr['reproductivecondition']).'"':'NULL').','.
 			(array_key_exists('cultivationstatus',$postArr)?'1':'0').','.
-			($postArr['establishmentmeans']?'"'.$this->cleanInStr($postArr['establishmentmeans']).'"':'NULL').','.
-			'"'.$this->cleanInStr($postArr['country']).'",'.
-			($postArr['stateprovince']?'"'.$this->cleanInStr($postArr['stateprovince']).'"':'NULL').','.
-			($postArr['county']?'"'.$this->cleanInStr($postArr['county']).'"':'NULL').','.
-			'"'.$this->cleanInStr($postArr['locality']).'",'.$localitySecurity.','.
+			($postArr['establishmentmeans']?'"'.Sanitizer::cleanInStr($postArr['establishmentmeans']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($postArr['country']).'",'.
+			($postArr['stateprovince']?'"'.Sanitizer::cleanInStr($postArr['stateprovince']).'"':'NULL').','.
+			($postArr['county']?'"'.Sanitizer::cleanInStr($postArr['county']).'"':'NULL').','.
+			'"'.Sanitizer::cleanInStr($postArr['locality']).'",'.$localitySecurity.','.
 			$postArr['decimallatitude'].','.$postArr['decimallongitude'].','.
-			($postArr['geodeticdatum']?'"'.$this->cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
+			($postArr['geodeticdatum']?'"'.Sanitizer::cleanInStr($postArr['geodeticdatum']).'"':'NULL').','.
 			($postArr['coordinateuncertaintyinmeters']?'"'.$postArr['coordinateuncertaintyinmeters'].'"':'NULL').','.
-			($postArr['georeferenceremarks']?'"'.$this->cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
+			($postArr['georeferenceremarks']?'"'.Sanitizer::cleanInStr($postArr['georeferenceremarks']).'"':'NULL').','.
 			($postArr['minimumelevationinmeters']?:'NULL').','.
 				$GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'") ';
 			//echo $sql;
@@ -236,7 +237,7 @@ class ObservationSubmitManager {
 			$this->collMap['collid'] = $r->collid;
 			$this->collMap['institutioncode'] = $r->institutioncode;
 			$this->collMap['collectioncode'] = $r->collectioncode;
-			$this->collMap['collectionname'] = $this->cleanOutStr($r->collectionname);
+			$this->collMap['collectionname'] = Sanitizer::cleanOutStr($r->collectionname);
 			$this->collMap['colltype'] = $r->colltype;
 			if(!$this->collId){
 				$this->collId = $r->collid;
@@ -257,16 +258,5 @@ class ObservationSubmitManager {
 			$rs->free();
 		}
 		return $retStr;
-	}
-
-	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-	
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

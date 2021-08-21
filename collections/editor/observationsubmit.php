@@ -9,18 +9,16 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$collId  = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$clid  = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$recordedBy = array_key_exists('recordedby',$_REQUEST)?$_REQUEST['recordedby']:0;
+$collId  = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$clid  = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$recordedBy = array_key_exists('recordedby',$_REQUEST)?(int)$_REQUEST['recordedby']:0;
 
 if(!is_numeric($clid)) {
     $clid = 0;
 }
 
 $obsManager = new ObservationSubmitManager();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 $obsManager->setCollid($collId);
 $collMap = $obsManager->getCollMap(); 
 if(!$collId && $collMap) {

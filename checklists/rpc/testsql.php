@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $sqlFrag = $con->real_escape_string($_REQUEST['sql']);
-$clid = $con->real_escape_string($_REQUEST['clid']); 
+$clid = (int)$_REQUEST['clid'];
 
 $responseStr = '-1';
 if($sqlFrag && $clid && ($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true)))){

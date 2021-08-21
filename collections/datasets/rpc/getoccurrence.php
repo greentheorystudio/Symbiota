@@ -5,8 +5,8 @@ include_once(__DIR__ . '/../../../classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $retArr = array();
-$occid = $_POST['occid'];
-if(is_numeric($occid)){
+$occid = (int)$_POST['occid'];
+if($occid){
 	$sql = 'SELECT recordedby, recordnumber, eventdate ' .
         'FROM omoccurrences ' .
         'WHERE occid = ' .$occid;

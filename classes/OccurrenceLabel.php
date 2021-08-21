@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceLabel{
 
@@ -14,7 +15,7 @@ class OccurrenceLabel{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -32,21 +33,21 @@ class OccurrenceLabel{
 		if($this->collid){
 			$sqlWhere = '';
 			if($postArr['taxa']){
-				$sqlWhere .= 'AND (o.sciname = "'.$this->cleanInStr($postArr['taxa']).'") ';
+				$sqlWhere .= 'AND (o.sciname = "'.Sanitizer::cleanInStr($postArr['taxa']).'") ';
 			}
 			if($postArr['labelproject']){
-				$sqlWhere .= 'AND (o.labelproject = "'.$this->cleanInStr($postArr['labelproject']).'") ';
+				$sqlWhere .= 'AND (o.labelproject = "'.Sanitizer::cleanInStr($postArr['labelproject']).'") ';
 			}
 			if($postArr['recordenteredby']){
-				$sqlWhere .= 'AND (o.recordenteredby = "'.$this->cleanInStr($postArr['recordenteredby']).'") ';
+				$sqlWhere .= 'AND (o.recordenteredby = "'.Sanitizer::cleanInStr($postArr['recordenteredby']).'") ';
 			}
-			$date1 = $this->cleanInStr($postArr['date1']);
-			$date2 = $this->cleanInStr($postArr['date2']);
+			$date1 = Sanitizer::cleanInStr($postArr['date1']);
+			$date2 = Sanitizer::cleanInStr($postArr['date2']);
 			if(!$date1 && $date2){
 				$date1 = $date2;
 				$date2 = '';
 			}
-			$dateTarget = $this->cleanInStr($postArr['datetarget']);
+			$dateTarget = Sanitizer::cleanInStr($postArr['datetarget']);
 			if($date1){
 				if($date2){
 					$sqlWhere .= 'AND (DATE('.$dateTarget.') BETWEEN "'.$date1.'" AND "'.$date2.'") ';
@@ -56,7 +57,7 @@ class OccurrenceLabel{
 				}
 			}
 			if($postArr['recordnumber']){
-				$rnArr = explode(',',$this->cleanInStr($postArr['recordnumber']));
+				$rnArr = explode(',',Sanitizer::cleanInStr($postArr['recordnumber']));
 				$rnBetweenFrag = array();
 				$rnInFrag = array();
 				foreach($rnArr as $v){
@@ -89,7 +90,7 @@ class OccurrenceLabel{
 				$sqlWhere .= 'AND ('.substr($rnWhere,3).') ';
 			}
 			if($postArr['recordedby']){
-				$recordedBy = $this->cleanInStr($postArr['recordedby']);
+				$recordedBy = Sanitizer::cleanInStr($postArr['recordedby']);
 				if(strlen($recordedBy) < 4 || strtolower($recordedBy) === 'best'){
 					$sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
 				}
@@ -98,7 +99,7 @@ class OccurrenceLabel{
 				}
 			}
 			if($postArr['identifier']){
-				$iArr = explode(',',$this->cleanInStr($postArr['identifier']));
+				$iArr = explode(',',Sanitizer::cleanInStr($postArr['identifier']));
 				$iBetweenFrag = array();
 				$iInFrag = array();
 				foreach($iArr as $v){
@@ -425,12 +426,5 @@ class OccurrenceLabel{
 	public function getErrorArr(): array
 	{
 		return $this->errorArr;
-	}
-	
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

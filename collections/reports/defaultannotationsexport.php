@@ -11,7 +11,7 @@ $ses_id = session_id();
 
 $labelManager = new OccurrenceLabel();
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
@@ -22,6 +22,7 @@ $rowsPerPage = 3;
 
 $exportEngine = '';
 $exportExtension = '';
+$labelArr = array();
 if($action === 'Export to DOCX'){
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
@@ -241,7 +242,7 @@ foreach($labelArr as $occid => $occArr){
 			if($occArr['identifiedby']){
 				$textrun->addText('Determiner: '.htmlspecialchars($occArr['identifiedby']),'identifiedFont');
 				if($occArr['dateidentified']){
-					$textrun->addTextBreak(1);
+					$textrun->addTextBreak();
 				}
 			}
 			if($occArr['dateidentified']){

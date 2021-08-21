@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
 $queryCountry = array_key_exists('q_country',$_REQUEST)?$_REQUEST['q_country']:'';
 $ranking = array_key_exists('ranking',$_REQUEST)?$_REQUEST['ranking']:'';
