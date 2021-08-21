@@ -4,17 +4,18 @@ include_once(__DIR__ . '/../../classes/ImageLibraryManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'] ?? '';
 $taxon = $_REQUEST['taxon'] ?? '';
 $view = $_REQUEST['view'] ?? 'thumbnail';
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 
 $stArr = json_decode($stArrJson, true);
 $copyURL = '';
 $imageArr = array();
 $taxaList = array();
+$paginationStr = '';
 
 if(strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/search.php';

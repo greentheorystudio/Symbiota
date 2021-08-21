@@ -10,11 +10,11 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS'])
 
 $attrsValues = array();
 
-$clValue = array_key_exists('cl',$_REQUEST)?htmlspecialchars($_REQUEST['cl'],ENT_QUOTES): '';
-$dynClid = array_key_exists('dynclid',$_REQUEST)?htmlspecialchars($_REQUEST['dynclid'],ENT_QUOTES):0;
+$clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $taxonValue = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon'],ENT_QUOTES): '';
 $action = array_key_exists('submitbutton',$_REQUEST)?htmlspecialchars($_REQUEST['submitbutton'],ENT_QUOTES): '';
-$rv = array_key_exists('rv',$_REQUEST)?htmlspecialchars($_REQUEST['rv'],ENT_QUOTES): '';
+$rv = array_key_exists('rv',$_REQUEST)?(int)$_REQUEST['rv']:0;
 $projValue = array_key_exists('proj',$_REQUEST)?htmlspecialchars($_REQUEST['proj'],ENT_QUOTES): '';
 $langValue = array_key_exists('lang',$_REQUEST)?htmlspecialchars($_REQUEST['lang'],ENT_QUOTES): '';
 $displayMode = array_key_exists('displaymode',$_REQUEST)?htmlspecialchars($_REQUEST['displaymode'],ENT_QUOTES): '';
@@ -26,6 +26,7 @@ if(!$action && array_key_exists('attr',$_REQUEST) && is_array($_REQUEST['attr'])
 
 $dataManager = new KeyDataManager();
 $langValue = 'English';
+$pid = 0;
 if($displayMode) {
     $dataManager->setCommonDisplay(true);
 }

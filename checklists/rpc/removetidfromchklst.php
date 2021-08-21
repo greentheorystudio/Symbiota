@@ -3,8 +3,8 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$clid = $_REQUEST['clid'];
-$tid = $_REQUEST['tid'];
+$clid = (int)$_REQUEST['clid'];
+$tid = (int)$_REQUEST['tid'];
 
 if(is_numeric($clid) && is_numeric($tid)){
 	if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){

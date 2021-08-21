@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ChecklistManager {
 
@@ -36,7 +37,7 @@ class ChecklistManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -146,154 +147,153 @@ class ChecklistManager {
 		return $taxonAuthList;
 	}
 
-	public function getTaxaList($pageNumber = 1,$retLimit = 500){
-		if(!$this->clid && !$this->dynClid) {
-			return false;
-		}
-		$speciesPrev = '';
-		$taxonPrev = '';
-		$tidReturn = array();
-        $genusCntArr = array();
-        $familyCntArr = array();
-		if($this->showImages && $retLimit) {
-			$retLimit = $this->imageLimit;
-		}
-		if(!$this->basicSql) {
-			$this->setClSql();
-		}
-		$result = $this->conn->query($this->basicSql);
-		while($row = $result->fetch_object()){
-			$family = strtoupper($row->family);
-			if(!$family) {
-				$family = 'Family Incertae Sedis';
-			}
-			$this->filterArr[$family] = '';
-			$tid = $row->tid;
-			$sciName = $this->cleanOutStr($row->sciname);
-			$taxonTokens = explode(' ',$sciName);
-			if($taxonTokens){
-                if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
-                    if(in_array('x',$taxonTokens, true)) {
-                        $index = array_search('x', $taxonTokens, true);
-                        if(is_string($index) || is_int($index)){
-                            unset($taxonTokens[$index]);
-                        }
-                    }
-                    if(in_array('X',$taxonTokens, true)) {
-                        $index = array_search('X', $taxonTokens, true);
-                        if(is_string($index) || is_int($index)){
-                            unset($taxonTokens[$index]);
-                        }
-                    }
-                    $newArr = array();
-                    foreach($taxonTokens as $v){
-                        $newArr[] = $v;
-                    }
-                    $taxonTokens = $newArr;
-                }
-                if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
-                    if(count($taxonTokens) === 1) {
-                        $sciName .= ' sp.';
-                    }
-                    if($this->showVouchers){
-                        $clStr = '';
-                        if($row->habitat) {
-                            $clStr = ', ' . $row->habitat;
-                        }
-                        if($row->abundance) {
-                            $clStr .= ', ' . $row->abundance;
-                        }
-                        if($row->notes) {
-                            $clStr .= ', ' . $row->notes;
-                        }
-                        if($row->source) {
-                            $clStr .= ', <u>source</u>: ' . $row->source;
-                        }
-                        if($clStr) {
-                            $this->taxaList[$tid]['notes'] = substr($clStr, 2);
-                        }
-                    }
-                    $this->taxaList[$tid]['sciname'] = $sciName;
-                    $this->taxaList[$tid]['family'] = $family;
-                    $tidReturn[] = $tid;
-                    if($this->showAuthors){
-                        $this->taxaList[$tid]['author'] = $this->cleanOutStr($row->author);
-                    }
-                }
-                if(!in_array($family, $familyCntArr, true)){
-                    $familyCntArr[] = $family;
-                }
-                if(!in_array($taxonTokens[0], $genusCntArr, true)){
-                    $genusCntArr[] = $taxonTokens[0];
-                }
-                $this->filterArr[$taxonTokens[0]] = '';
-                if(count($taxonTokens) > 1 && $taxonTokens[0]. ' ' .$taxonTokens[1] !== $speciesPrev){
-                    $this->speciesCount++;
-                    $speciesPrev = $taxonTokens[0]. ' ' .$taxonTokens[1];
-                }
-                if(!$taxonPrev || $sciName !== $taxonPrev){
-                    $this->taxaCount++;
-                }
-                $taxonPrev = implode(' ',$taxonTokens);
+	public function getTaxaList($pageNumber, $retLimit){
+		if($this->clid && $this->dynClid) {
+            $speciesPrev = '';
+            $taxonPrev = '';
+            $tidReturn = array();
+            $genusCntArr = array();
+            $familyCntArr = array();
+            if($this->showImages && $retLimit) {
+                $retLimit = $this->imageLimit;
             }
+            if(!$this->basicSql) {
+                $this->setClSql();
+            }
+            $result = $this->conn->query($this->basicSql);
+            while($row = $result->fetch_object()){
+                $family = strtoupper($row->family);
+                if(!$family) {
+                    $family = 'Family Incertae Sedis';
+                }
+                $this->filterArr[$family] = '';
+                $tid = $row->tid;
+                $sciName = Sanitizer::cleanOutStr($row->sciname);
+                $taxonTokens = explode(' ',$sciName);
+                if($taxonTokens){
+                    if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
+                        if(in_array('x',$taxonTokens, true)) {
+                            $index = array_search('x', $taxonTokens, true);
+                            if(is_string($index) || is_int($index)){
+                                unset($taxonTokens[$index]);
+                            }
+                        }
+                        if(in_array('X',$taxonTokens, true)) {
+                            $index = array_search('X', $taxonTokens, true);
+                            if(is_string($index) || is_int($index)){
+                                unset($taxonTokens[$index]);
+                            }
+                        }
+                        $newArr = array();
+                        foreach($taxonTokens as $v){
+                            $newArr[] = $v;
+                        }
+                        $taxonTokens = $newArr;
+                    }
+                    if(!$retLimit || ($this->taxaCount >= (($pageNumber-1)*$retLimit) && $this->taxaCount <= ($pageNumber)*$retLimit)){
+                        if(count($taxonTokens) === 1) {
+                            $sciName .= ' sp.';
+                        }
+                        if($this->showVouchers){
+                            $clStr = '';
+                            if($row->habitat) {
+                                $clStr = ', ' . $row->habitat;
+                            }
+                            if($row->abundance) {
+                                $clStr .= ', ' . $row->abundance;
+                            }
+                            if($row->notes) {
+                                $clStr .= ', ' . $row->notes;
+                            }
+                            if($row->source) {
+                                $clStr .= ', <u>source</u>: ' . $row->source;
+                            }
+                            if($clStr) {
+                                $this->taxaList[$tid]['notes'] = substr($clStr, 2);
+                            }
+                        }
+                        $this->taxaList[$tid]['sciname'] = $sciName;
+                        $this->taxaList[$tid]['family'] = $family;
+                        $tidReturn[] = $tid;
+                        if($this->showAuthors){
+                            $this->taxaList[$tid]['author'] = Sanitizer::cleanOutStr($row->author);
+                        }
+                    }
+                    if(!in_array($family, $familyCntArr, true)){
+                        $familyCntArr[] = $family;
+                    }
+                    if(!in_array($taxonTokens[0], $genusCntArr, true)){
+                        $genusCntArr[] = $taxonTokens[0];
+                    }
+                    $this->filterArr[$taxonTokens[0]] = '';
+                    if(count($taxonTokens) > 1 && $taxonTokens[0]. ' ' .$taxonTokens[1] !== $speciesPrev){
+                        $this->speciesCount++;
+                        $speciesPrev = $taxonTokens[0]. ' ' .$taxonTokens[1];
+                    }
+                    if(!$taxonPrev || $sciName !== $taxonPrev){
+                        $this->taxaCount++;
+                    }
+                    $taxonPrev = implode(' ',$taxonTokens);
+                }
+            }
+            $this->familyCount = count($familyCntArr);
+            $this->genusCount = count($genusCntArr);
+            $this->filterArr = array_keys($this->filterArr);
+            sort($this->filterArr);
+            $result->free();
+            if($this->taxaCount < (($pageNumber-1)*$retLimit)){
+                $this->taxaCount = 0; $this->genusCount = 0; $this->familyCount = 0;
+                unset($this->filterArr);
+                return $this->getTaxaList(1,$retLimit);
+            }
+            if($this->taxaList){
+                if($this->showVouchers){
+                    $clidStr = $this->clid;
+                    if($this->childClidArr){
+                        $clidStr .= ','.implode(',',$this->childClidArr);
+                    }
+                    $vSql = 'SELECT DISTINCT v.tid, v.occid, c.institutioncode, v.notes, '.
+                        'o.catalognumber, o.recordedby, o.recordnumber, o.eventdate '.
+                        'FROM fmvouchers v INNER JOIN omoccurrences o ON v.occid = o.occid '.
+                        'INNER JOIN omcollections c ON o.collid = c.collid '.
+                        'WHERE (v.clid IN ('.$clidStr.')) AND v.tid IN('.implode(',',array_keys($this->taxaList)).')';
+                    //echo $vSql; exit;
+                    $vResult = $this->conn->query($vSql);
+                    while ($row = $vResult->fetch_object()){
+                        $collector = ($row->recordedby?:$row->catalognumber);
+                        if(strlen($collector) > 25){
+                            $strPos = strpos($collector,';');
+                            if(!$strPos) {
+                                $strPos = strpos($collector, ',');
+                            }
+                            if(!$strPos) {
+                                $strPos = strpos($collector, ' ', 10);
+                            }
+                            if($strPos) {
+                                $collector = substr($collector, 0, $strPos) . '...';
+                            }
+                        }
+                        if($row->recordnumber) {
+                            $collector .= ' ' . $row->recordnumber;
+                        }
+                        else {
+                            $collector .= ' ' . $row->eventdate;
+                        }
+                        $collector .= ' ['.$row->institutioncode.']';
+                        $this->voucherArr[$row->tid][$row->occid] = $collector;
+                    }
+                    $vResult->close();
+                }
+                if($this->showImages) {
+                    $this->setImages($tidReturn);
+                }
+                if($this->showCommon) {
+                    $this->setVernaculars($tidReturn);
+                }
+            }
+            return $this->taxaList;
 		}
-		$this->familyCount = count($familyCntArr);
-        $this->genusCount = count($genusCntArr);
-		$this->filterArr = array_keys($this->filterArr);
-		sort($this->filterArr);
-		$result->free();
-		if($this->taxaCount < (($pageNumber-1)*$retLimit)){
-			$this->taxaCount = 0; $this->genusCount = 0; $this->familyCount = 0;
-			unset($this->filterArr);
-			return $this->getTaxaList(1,$retLimit);
-		}
-		if($this->taxaList){
-			if($this->showVouchers){
-				$clidStr = $this->clid;
-				if($this->childClidArr){
-					$clidStr .= ','.implode(',',$this->childClidArr);
-				}
-				$vSql = 'SELECT DISTINCT v.tid, v.occid, c.institutioncode, v.notes, '.
-					'o.catalognumber, o.recordedby, o.recordnumber, o.eventdate '.
-					'FROM fmvouchers v INNER JOIN omoccurrences o ON v.occid = o.occid '.
-					'INNER JOIN omcollections c ON o.collid = c.collid '.
-					'WHERE (v.clid IN ('.$clidStr.')) AND v.tid IN('.implode(',',array_keys($this->taxaList)).')';
-				//echo $vSql; exit;
-		 		$vResult = $this->conn->query($vSql);
-				while ($row = $vResult->fetch_object()){
-					$collector = ($row->recordedby?:$row->catalognumber);
-					if(strlen($collector) > 25){
-						$strPos = strpos($collector,';');
-						if(!$strPos) {
-							$strPos = strpos($collector, ',');
-						}
-						if(!$strPos) {
-							$strPos = strpos($collector, ' ', 10);
-						}
-						if($strPos) {
-							$collector = substr($collector, 0, $strPos) . '...';
-						}
-					}
-					if($row->recordnumber) {
-						$collector .= ' ' . $row->recordnumber;
-					}
-					else {
-						$collector .= ' ' . $row->eventdate;
-					}
-					$collector .= ' ['.$row->institutioncode.']';
-					$this->voucherArr[$row->tid][$row->occid] = $collector;
-				}
-				$vResult->close();
-			}
-			if($this->showImages) {
-				$this->setImages($tidReturn);
-			}
-			if($this->showCommon) {
-				$this->setVernaculars($tidReturn);
-			}
-		}
-		return $this->taxaList;
-	}
+    }
 
 	private function setImages($tidReturn): void
 	{
@@ -346,14 +346,14 @@ class ChecklistManager {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->vernacularname) {
-					$this->taxaList[$r->tid]['vern'] = $this->cleanOutStr($r->vernacularname);
+					$this->taxaList[$r->tid]['vern'] = Sanitizer::cleanOutStr($r->vernacularname);
 				}
 			}
 			$rs->free();
 		}
 	}
 
-	public function getCoordinates($tid = 0,$abbreviated=false): array
+	public function getCoordinates($tid = null, $abbreviated = null): array
 	{
 		$retArr = array();
 		if(!$this->basicSql) {
@@ -366,20 +366,20 @@ class ChecklistManager {
 			}
 
 			$retCnt = 0;
+            if($tid){
+                $sql1 = 'SELECT DISTINCT cc.tid, t.sciname, cc.decimallatitude, cc.decimallongitude, cc.notes '.
+                    'FROM fmchklstcoordinates cc INNER JOIN taxa t ON cc.tid = t.tid '.
+                    'WHERE cc.tid = '.$tid.' AND cc.clid IN ('.$clidStr.') AND cc.decimallatitude IS NOT NULL AND cc.decimallongitude IS NOT NULL ';
+            }
+            else{
+                $sql1 = 'SELECT DISTINCT cc.tid, t.sciname, cc.decimallatitude, cc.decimallongitude, cc.notes '.
+                    'FROM fmchklstcoordinates cc INNER JOIN ('.$this->basicSql.') t ON cc.tid = t.tid '.
+                    'WHERE cc.clid IN ('.$clidStr.') AND cc.decimallatitude IS NOT NULL AND cc.decimallongitude IS NOT NULL ';
+            }
+            if($abbreviated){
+                $sql1 .= 'ORDER BY RAND() LIMIT 50';
+            }
 			try{
-				if($tid){
-					$sql1 = 'SELECT DISTINCT cc.tid, t.sciname, cc.decimallatitude, cc.decimallongitude, cc.notes '.
-						'FROM fmchklstcoordinates cc INNER JOIN taxa t ON cc.tid = t.tid '.
-						'WHERE cc.tid = '.$tid.' AND cc.clid IN ('.$clidStr.') AND cc.decimallatitude IS NOT NULL AND cc.decimallongitude IS NOT NULL ';
-				}
-				else{
-					$sql1 = 'SELECT DISTINCT cc.tid, t.sciname, cc.decimallatitude, cc.decimallongitude, cc.notes '.
-						'FROM fmchklstcoordinates cc INNER JOIN ('.$this->basicSql.') t ON cc.tid = t.tid '.
-						'WHERE cc.clid IN ('.$clidStr.') AND cc.decimallatitude IS NOT NULL AND cc.decimallongitude IS NOT NULL ';
-				}
-				if($abbreviated){
-					$sql1 .= 'ORDER BY RAND() LIMIT 50';
-				}
 				//echo $sql1;
 				$rs1 = $this->conn->query($sql1);
 				if($rs1){
@@ -388,7 +388,7 @@ class ChecklistManager {
 							$retArr[] = $r1->decimallatitude.','.$r1->decimallongitude;
 						}
 						else{
-							$retArr[$r1->tid][] = array('ll'=>$r1->decimallatitude.','.$r1->decimallongitude,'sciname'=>$this->cleanOutStr($r1->sciname),'notes'=>$this->cleanOutStr($r1->notes));
+							$retArr[$r1->tid][] = array('ll'=>$r1->decimallatitude.','.$r1->decimallongitude,'sciname'=>Sanitizer::cleanOutStr($r1->sciname),'notes'=>Sanitizer::cleanOutStr($r1->notes));
 						}
 						$retCnt++;
 					}
@@ -400,25 +400,25 @@ class ChecklistManager {
 			}
 
 			if(!$abbreviated || $retCnt < 50){
-				try{
-					if($tid){
-						$sql2 = 'SELECT DISTINCT v.tid, o.occid, o.decimallatitude, o.decimallongitude, '.
-							'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,o.eventdate),")") as notes '.
-							'FROM omoccurrences o INNER JOIN fmvouchers v ON o.occid = v.occid '.
-							'WHERE v.tid = '.$tid.' AND v.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL '.
-							'AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
-					}
-					else{
-						$sql2 = 'SELECT DISTINCT v.tid, o.occid, o.decimallatitude, o.decimallongitude, '.
-							'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,o.eventdate),")") as notes '.
-							'FROM omoccurrences o INNER JOIN fmvouchers v ON o.occid = v.occid '.
-							'INNER JOIN ('.$this->basicSql.') t ON v.tid = t.tid '.
-							'WHERE v.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL '.
-							'AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
-					}
-					if($abbreviated){
-						$sql2 .= 'ORDER BY RAND() LIMIT 50';
-					}
+                if($tid){
+                    $sql2 = 'SELECT DISTINCT v.tid, o.occid, o.decimallatitude, o.decimallongitude, '.
+                        'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,o.eventdate),")") as notes '.
+                        'FROM omoccurrences o INNER JOIN fmvouchers v ON o.occid = v.occid '.
+                        'WHERE v.tid = '.$tid.' AND v.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL '.
+                        'AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+                }
+                else{
+                    $sql2 = 'SELECT DISTINCT v.tid, o.occid, o.decimallatitude, o.decimallongitude, '.
+                        'CONCAT(o.recordedby," (",IFNULL(o.recordnumber,o.eventdate),")") as notes '.
+                        'FROM omoccurrences o INNER JOIN fmvouchers v ON o.occid = v.occid '.
+                        'INNER JOIN ('.$this->basicSql.') t ON v.tid = t.tid '.
+                        'WHERE v.clid IN ('.$clidStr.') AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL '.
+                        'AND (o.localitysecurity = 0 OR o.localitysecurity IS NULL) ';
+                }
+                if($abbreviated){
+                    $sql2 .= 'ORDER BY RAND() LIMIT 50';
+                }
+			    try{
 					//echo $sql2;
 					$rs2 = $this->conn->query($sql2);
 					if($rs2){
@@ -427,13 +427,15 @@ class ChecklistManager {
 								$retArr[] = $r2->decimallatitude.','.$r2->decimallongitude;
 							}
 							else{
-								$retArr[$r2->tid][] = array('ll'=>$r2->decimallatitude.','.$r2->decimallongitude,'notes'=>$this->cleanOutStr($r2->notes),'occid'=>$r2->occid);
+								$retArr[$r2->tid][] = array('ll'=>$r2->decimallatitude.','.$r2->decimallongitude,'notes'=>Sanitizer::cleanOutStr($r2->notes),'occid'=>$r2->occid);
 							}
 						}
 						$rs2->free();
 					}
 				}
-				catch(Exception $e){}
+				catch(Exception $e){
+                    echo 'Caught exception getting general coordinates: ',  $e->getMessage(), "\n";
+                }
 			}
 		}
 		return $retArr;
@@ -574,8 +576,8 @@ class ChecklistManager {
                 $projCoordArr[] = $coordArr;
                 $retArr[$pid]['coords'] = json_encode($projCoordArr);
             }
-			$retArr[$pid]['name'] = $this->cleanOutStr($projName);
-			$retArr[$pid]['clid'][$row->clid] = $this->cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
+			$retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
+			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}
 		$rs->free();
 		if(isset($retArr[0])){
@@ -598,42 +600,42 @@ class ChecklistManager {
 
 	public function setTaxonFilter($tFilter): void
 	{
-		$this->taxonFilter = $this->cleanInStr(strtolower($tFilter));
+		$this->taxonFilter = Sanitizer::cleanInStr(strtolower($tFilter));
 	}
 
-	public function setShowAuthors($value = 1): void
+	public function setShowAuthors(): void
 	{
-		$this->showAuthors = $value;
+		$this->showAuthors = 1;
 	}
 
-	public function setShowCommon($value = 1): void
+	public function setShowCommon(): void
 	{
-		$this->showCommon = $value;
+		$this->showCommon = 1;
 	}
 
-	public function setShowImages($value = 1): void
+	public function setShowImages(): void
 	{
-		$this->showImages = $value;
+		$this->showImages = 1;
 	}
 
-	public function setShowVouchers($value = 1): void
+	public function setShowVouchers(): void
 	{
-		$this->showVouchers = $value;
+		$this->showVouchers = 1;
 	}
 
-	public function setShowAlphaTaxa($value = 1): void
+	public function setShowAlphaTaxa(): void
 	{
-		$this->showAlphaTaxa = $value;
+		$this->showAlphaTaxa = 1;
 	}
 
-	public function setSearchCommon($value = 1): void
+	public function setSearchCommon(): void
 	{
-		$this->searchCommon = $value;
+		$this->searchCommon = 1;
 	}
 
-	public function setSearchSynonyms($value = 1): void
+	public function setSearchSynonyms(): void
 	{
-		$this->searchSynonyms = $value;
+		$this->searchSynonyms = 1;
 	}
 
 	public function getClid(){
@@ -656,13 +658,13 @@ class ChecklistManager {
 			$sql .= 'WHERE (pid = '.$pValue.')';
 		}
 		else{
-			$sql .= 'WHERE (projname = "'.$this->cleanInStr($pValue).'")';
+			$sql .= 'WHERE (projname = "'.Sanitizer::cleanInStr($pValue).'")';
 		}
 		$rs = $this->conn->query($sql);
 		if($rs){
 			if($r = $rs->fetch_object()){
 				$this->pid = $r->pid;
-				$this->projName = $this->cleanOutStr($r->projname);
+				$this->projName = Sanitizer::cleanOutStr($r->projname);
 			}
 			$rs->free();
 		}
@@ -710,17 +712,5 @@ class ChecklistManager {
 	public function getSpeciesCount(): int
 	{
 		return $this->speciesCount;
-	}
-
-	private function cleanOutStr($str){
-		$str = str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-		return $str;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

@@ -7,16 +7,16 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/reports/accessstatsreview.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $display = array_key_exists('display',$_REQUEST)?$_REQUEST['display']:'summary';
 $duration = array_key_exists('duration',$_REQUEST)?$_REQUEST['duration']:'day';
 $startDate = array_key_exists('startdate',$_REQUEST)?$_REQUEST['startdate']:'';
 $endDate = array_key_exists('enddate',$_REQUEST)?$_REQUEST['enddate']:'';
 $ip = array_key_exists('ip',$_REQUEST)?$_REQUEST['ip']:'';
 $accessType = array_key_exists('accesstype',$_REQUEST)?$_REQUEST['accesstype']:'';
-$occid = array_key_exists('occid',$_REQUEST)?$_REQUEST['occid']:'';
-$pageNum = array_key_exists('pagenum',$_REQUEST)?$_REQUEST['pagenum']:'0';
-$limitCnt = array_key_exists('limitcnt',$_REQUEST)?$_REQUEST['limitcnt']:'1000';
+$occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
+$pageNum = array_key_exists('pagenum',$_REQUEST)?(int)$_REQUEST['pagenum']:0;
+$limitCnt = array_key_exists('limitcnt',$_REQUEST)?(int)$_REQUEST['limitcnt']:1000;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $statManager = new OccurrenceAccessStats();

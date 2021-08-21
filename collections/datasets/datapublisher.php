@@ -4,11 +4,10 @@ include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$emode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$emode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 $cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'';
-$schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']:1;
 
 $dwcaManager = new DwcArchiverPublisher();
 $collManager = new OccurrenceCollectionProfile();
@@ -72,6 +71,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 }
 
 $collArr = array();
+$dwcUri = '';
+
 if($collId){
 	$dwcaManager->setCollArr($collId);
 	$collArr = $dwcaManager->getCollArr($collId);
@@ -304,7 +305,7 @@ include(__DIR__ . '/../../header.php');
 				}
 				if($collArr['dwcaurl']){
 					$serverName = $_SERVER['HTTP_HOST'];
-					if(strpos($serverName, 'www.') === 0) {
+					if(strncmp($serverName, 'www.', 4) === 0) {
                         $serverName = substr($serverName, 4);
                     }
 					if(!strpos($collArr['dwcaurl'],$serverName)){
@@ -320,7 +321,7 @@ include(__DIR__ . '/../../header.php');
 			if($recFlagArr['nullBasisRec']){
 				echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec'].' records missing basisOfRecord and will not be published. Please go to <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_eventdate=&q_catalognumber=&q_othercatalognumbers=&q_observeruid=&q_recordenteredby=&q_dateentered=&q_datelastmodified=&q_processingstatus=&q_customfield1=basisOfRecord&q_customtype1=NULL&q_customvalue1=Something&q_customfield2=&q_customtype2=EQUALS&q_customvalue2=&q_customfield3=&q_customtype3=EQUALS&q_customvalue3=&collid='.$collId.'&csmode=0&occid=&occindex=0&orderby=&orderbydir=ASC">Edit Existing Occurrence Records</a> to correct this.</div>';
 			}
-			if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO) && $dwcUri){
+			if($dwcUri && isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO)){
 				if($publishGBIF && !$datasetKey) {
 					?>
 					<div style="margin:10px;">

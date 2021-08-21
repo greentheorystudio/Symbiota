@@ -4,17 +4,20 @@ include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 1200);
 
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
+    $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$years = array_key_exists('years',$_REQUEST)?$_REQUEST['years']:1;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$years = array_key_exists('years',$_REQUEST)?(int)$_REQUEST['years']:1;
 
 $days = 365 * $years;
 $months = 12 * $years;
 
 $collManager = new OccurrenceCollectionProfile();
+
+$dateArr = array();
+$statArr = array();
 
 if($collId){
 	$dateArr = $collManager->getYearStatsHeaderArr($months);

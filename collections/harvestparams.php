@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 
 if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     include(__DIR__ . '/../config/includes/searchVarCustom.php');

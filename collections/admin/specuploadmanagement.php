@@ -8,8 +8,8 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$uspid = array_key_exists('uspid',$_REQUEST)?(int)$_REQUEST['uspid']:0;
 
 if(!is_numeric($collid)) {
     $collid = 0;

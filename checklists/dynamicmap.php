@@ -3,8 +3,8 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once($GLOBALS['SERVER_ROOT'].'/classes/DynamicChecklistManager.php');
 header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
-$taxa = array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:'';
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
+$taxa = array_key_exists('taxa',$_REQUEST)?htmlspecialchars($_REQUEST['taxa']):'';
 $interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?htmlspecialchars($_REQUEST['interface']):'checklist';
 
 $dynClManager = new DynamicChecklistManager();

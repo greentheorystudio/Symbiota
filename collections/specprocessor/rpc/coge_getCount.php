@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = $_REQUEST['collid'];
+$collid = (int)$_REQUEST['collid'];
 $cntStr = '';
 if($collid && is_numeric($collid)){
 	$isEditor = false;

@@ -47,29 +47,34 @@ class OccurrenceEditReview extends Manager{
 		return $collName;
 	}
 
-	public function getEditCnt(){
-		if ($this->display === 1) {
-			return $this->getOccurEditCnt();
+	public function getEditCnt(): ?int
+    {
+		$retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->getOccurEditCnt();
 		}
 
 		if($this->display === 2) {
-			return $this->getRevisionCnt();
+            $retVal = $this->getRevisionCnt();
 		}
-		return 0;
+		return $retVal;
 	}
 	
-	public function getEditArr(){
-		if ($this->display === 1) {
-			return $this->getOccurEditArr();
+	public function getEditArr(): ?array
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->getOccurEditArr();
 		}
 
 		if($this->display === 2) {
-			return $this->getRevisionArr();
+            $retVal = $this->getRevisionArr();
 		}
-		return null;
+		return $retVal;
 	}
 	
-	private function getOccurEditCnt(){
+	private function getOccurEditCnt(): int
+    {
 		$recCnt = 0;
 		$sql = 'SELECT COUNT(e.ocedid) AS fullcnt '.$this->getEditSqlBase();
 		//echo $sql; exit;
@@ -134,7 +139,8 @@ class OccurrenceEditReview extends Manager{
 		return $sqlBase;
 	}
 	
-	private function getRevisionCnt(){
+	private function getRevisionCnt(): int
+    {
 		$recCnt = 0;
 		$sql = 'SELECT COUNT(r.orid) AS fullcnt '.$this->getRevisionSqlBase();
 		//echo $sql; exit;
@@ -220,15 +226,17 @@ class OccurrenceEditReview extends Manager{
 		return $sqlBase;
 	}
 	
-	public function updateRecords($postArr){
-		if ($this->display === 1) {
-			return $this->updateOccurEditRecords($postArr);
+	public function updateRecords($postArr): ?bool
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->updateOccurEditRecords($postArr);
 		}
 
 		if($this->display === 2) {
-			return $this->updateRevisionRecords($postArr);
+            $retVal = $this->updateRevisionRecords($postArr);
 		}
-		return null;
+		return $retVal;
 	}
 
 	private function updateOccurEditRecords($postArr): bool
@@ -314,15 +322,17 @@ class OccurrenceEditReview extends Manager{
 		return $status;
 	}
 
-	public function deleteEdits($idStr){
-		if ($this->display === 1) {
-			return $this->deleteOccurEdits($idStr);
+	public function deleteEdits($idStr): ?bool
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->deleteOccurEdits($idStr);
 		}
 
 		if($this->display === 2) {
-			return $this->deleteRevisionsEdits($idStr);
+            $retVal = $this->deleteRevisionsEdits($idStr);
 		}
-		return null;
+		return $retVal;
 	}
 
 	private function deleteOccurEdits($idStr): bool
@@ -356,7 +366,7 @@ class OccurrenceEditReview extends Manager{
 		return $status;
 	}
 	
-	public function exportCsvFile($idStr, $exportAll = false): bool
+	public function exportCsvFile($idStr, $exportAll = null): bool
 	{
 		$status = true;
 		if($this->display === 1) {

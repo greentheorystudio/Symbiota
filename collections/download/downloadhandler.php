@@ -8,7 +8,7 @@ ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']: 'symbiota';
 $cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
-$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?$_POST['taxonFilterCode']:0;
+$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?(int)$_POST['taxonFilterCode']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
@@ -114,8 +114,8 @@ else{
 		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
-		$dlManager->addCondition('decimalLatitude','NOTNULL','');
-		$dlManager->addCondition('decimalLongitude','NOTNULL','');
+		$dlManager->addCondition('decimalLatitude','NOTNULL');
+		$dlManager->addCondition('decimalLongitude','NOTNULL');
 		if(array_key_exists('targetcollid',$_POST) && $_POST['targetcollid']){
 			$dlManager->addCondition('collid','EQUALS',$_POST['targetcollid']);
 		}

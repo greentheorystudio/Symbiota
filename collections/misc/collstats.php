@@ -4,15 +4,15 @@ include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 1200);
 
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
+    $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
-$days = array_key_exists('days',$_REQUEST)?$_REQUEST['days']:365;
-$months = array_key_exists('months',$_REQUEST)?$_REQUEST['months']:12;
+$days = array_key_exists('days',$_REQUEST)?(int)$_REQUEST['days']:365;
+$months = array_key_exists('months',$_REQUEST)?(int)$_REQUEST['months']:12;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $collManager = new OccurrenceCollectionProfile();
@@ -27,6 +27,7 @@ $familyArr = array();
 $countryArr = array();
 $results = array();
 $collStr = '';
+$resultsTemp = array();
 if($collId){
 	$collIdArr = explode(',',$collId);
 	if($action === 'Run Statistics' && (!$cPartentTaxon && !$cCountry)){

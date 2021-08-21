@@ -12,7 +12,7 @@ $autoClean = array_key_exists('autoclean',$_POST)?(int)$_POST['autoclean']:0;
 $targetKingdom = array_key_exists('targetkingdom',$_POST)?(int)$_POST['targetkingdom']:0;
 $taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:'';
 $startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
-$limit = array_key_exists('limit',$_POST)?$_POST['limit']:20;
+$limit = array_key_exists('limit',$_POST)?(int)$_POST['limit']:20;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $cleanManager = new TaxonomyCleaner();

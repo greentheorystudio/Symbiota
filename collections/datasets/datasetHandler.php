@@ -5,10 +5,10 @@ include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
-$datasetID = array_key_exists('targetdatasetid',$_POST)?$_POST['targetdatasetid']:0;
+$datasetID = array_key_exists('targetdatasetid',$_POST)?$_POST['targetdatasetid']:'';
 $stArrJson = array_key_exists('dsstarrjson',$_POST)?$_POST['dsstarrjson']:'';
 $sourcePage = array_key_exists('sourcepage',$_POST)?$_POST['sourcepage']:'datasetmanager';
-$occid = array_key_exists('occid',$_POST)?$_POST['occid']:0;
+$occid = array_key_exists('occid',$_POST)?(int)$_POST['occid']:0;
 $occArrJson = array_key_exists('occarrjson',$_POST)?$_POST['occarrjson']:'';
 
 if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {

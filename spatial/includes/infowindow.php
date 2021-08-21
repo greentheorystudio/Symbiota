@@ -1,6 +1,8 @@
 <?php
 /** @var array $inputWindowModeTools */
 /** @var string $windowType */
+
+$instructionText = '';
 ?>
 <div id="infopopup" data-role="popup" class="well" style="width:400px;height:400px;">
     <a class="boxclose infopopup_close" id="boxclose"></a>
@@ -8,11 +10,11 @@
     if(!in_array('point', $inputWindowModeTools, true)){
         $instructionText = 'Select a feature type in the Draw drop-down menu and then click on the map to draw a new feature. ';
         $instructionText .= 'Click on any drawn feature on the map to select and deselect. ';
-        if(strpos($windowType, '-') === false){
-            $instructionText .= 'Once all of the features you would like to submit have been selected, click the Submit Coordinates button to submit. ';
-        }
-        else{
+        if(strpos($windowType, '-') !== false) {
             $instructionText .= 'When the feature you would like to submit is selected, and it is the only selected feature, you can click the Submit Coordinates button to submit. ';
+        }
+        else {
+            $instructionText .= 'Once all of the features you would like to submit have been selected, click the Submit Coordinates button to submit. ';
         }
     }
     elseif(in_array('point', $inputWindowModeTools, true)){

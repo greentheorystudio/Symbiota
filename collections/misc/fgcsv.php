@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
 ini_set('max_execution_time', 180);
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$resultId = array_key_exists('resid',$_REQUEST)?$_REQUEST['resid']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$resultId = array_key_exists('resid',$_REQUEST)?(int)$_REQUEST['resid']:0;
 $viewMode = array_key_exists('viewmode',$_REQUEST)?$_REQUEST['viewmode']:'full';
 
 $apiManager = new FieldGuideManager();
@@ -15,6 +15,13 @@ $fileName = '';
 $outputArr = array();
 $start = 0;
 $limit = 0;
+$fgidarr = array();
+$currID = '';
+$instCode = '';
+$collCode = '';
+$family = '';
+$imgurl = '';
+$fgStatus = '';
 
 $apiManager->setCollID($collId);
 if($resultId){

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class KeyCharAdmin{
 
@@ -29,7 +30,7 @@ class KeyCharAdmin{
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
 				$hid = ($r->hid?:0);
-				$retArr[$hid][$r->cid] = $this->cleanOutStr($r->charname);
+				$retArr[$hid][$r->cid] = Sanitizer::cleanOutStr($r->charname);
 			}
 			$rs->free();
 		}
@@ -46,14 +47,14 @@ class KeyCharAdmin{
 				'WHERE cid = '.$this->cid;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
-					$retArr['charname'] = $this->cleanOutStr($r->charname);
+					$retArr['charname'] = Sanitizer::cleanOutStr($r->charname);
 					$retArr['chartype'] = $r->chartype;
-					$retArr['defaultlang'] = $this->cleanOutStr($r->defaultlang);
+					$retArr['defaultlang'] = Sanitizer::cleanOutStr($r->defaultlang);
 					$retArr['difficultyrank'] = $r->difficultyrank;
 					$retArr['hid'] = $r->hid;
-					$retArr['units'] = $this->cleanOutStr($r->units);
-					$retArr['description'] = $this->cleanOutStr($r->description);
-					$retArr['notes'] = $this->cleanOutStr($r->notes);
+					$retArr['units'] = Sanitizer::cleanOutStr($r->units);
+					$retArr['description'] = Sanitizer::cleanOutStr($r->description);
+					$retArr['notes'] = Sanitizer::cleanOutStr($r->notes);
 					$retArr['helpurl'] = $r->helpurl;
 					$retArr['enteredby'] = $r->enteredby;
 					$retArr['sortsequence'] = $r->sortsequence;
@@ -67,16 +68,16 @@ class KeyCharAdmin{
 	public function createCharacter($pArr,$un): string
 	{
 		$statusStr = 'SUCCESS: character added to database';
-		$dRank = $this->cleanInStr($pArr['difficultyrank']);
+		$dRank = Sanitizer::cleanInStr($pArr['difficultyrank']);
 		if(!$dRank) {
 			$dRank = 1;
 		}
-		$hid = $this->cleanInStr($pArr['hid']);
+		$hid = Sanitizer::cleanInStr($pArr['hid']);
 		if(!$hid) {
 			$hid = 'NULL';
 		}
 		$sql = 'INSERT INTO kmcharacters(charname,chartype,difficultyrank,hid,enteredby,sortsequence) '.
-			'VALUES("'.$this->cleanInStr($pArr['charname']).'","'.$this->cleanInStr($pArr['chartype']).'",'.
+			'VALUES("'.Sanitizer::cleanInStr($pArr['charname']).'","'.Sanitizer::cleanInStr($pArr['chartype']).'",'.
 			$dRank.','.$hid.',"'.$un.'",'.(is_numeric($pArr['sortsequence'])?$pArr['sortsequence']:1000).') ';
 		//echo $sql;
 		if($this->conn->query($sql)){
@@ -108,7 +109,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcharacters SET '.substr($sql,1).' WHERE (cid = '.$this->cid.')';
@@ -162,12 +163,12 @@ class KeyCharAdmin{
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					if(is_numeric($r->cs)){
-						$retArr[$r->cs]['charstatename'] = $this->cleanOutStr($r->charstatename);
+						$retArr[$r->cs]['charstatename'] = Sanitizer::cleanOutStr($r->charstatename);
 						$retArr[$r->cs]['implicit'] = $r->implicit;
-						$retArr[$r->cs]['notes'] = $this->cleanOutStr($r->notes);
-						$retArr[$r->cs]['description'] = $this->cleanOutStr($r->description);
+						$retArr[$r->cs]['notes'] = Sanitizer::cleanOutStr($r->notes);
+						$retArr[$r->cs]['description'] = Sanitizer::cleanOutStr($r->description);
 						$retArr[$r->cs]['illustrationurl'] = $r->illustrationurl;
-						$retArr[$r->cs]['sortsequence'] = $this->cleanOutStr($r->sortsequence);
+						$retArr[$r->cs]['sortsequence'] = Sanitizer::cleanOutStr($r->sortsequence);
 						$retArr[$r->cs]['enteredby'] = $r->enteredby;
 					}
 				}
@@ -202,12 +203,12 @@ class KeyCharAdmin{
 				}
 				$rs->free();
 			}
-			$illustrationUrl = $this->cleanInStr($illUrl);
-			$description = $this->cleanInStr($desc);
-			$notes = $this->cleanInStr($n);
-			$sortSequence = $this->cleanInStr($sort);
+			$illustrationUrl = Sanitizer::cleanInStr($illUrl);
+			$description = Sanitizer::cleanInStr($desc);
+			$notes = Sanitizer::cleanInStr($n);
+			$sortSequence = Sanitizer::cleanInStr($sort);
 			$sql = 'INSERT INTO kmcs(cid,cs,charstatename,implicit,illustrationurl,description,notes,sortsequence,enteredby) '.
-				'VALUES('.$this->cid.',"'.$csValue.'","'.$this->cleanInStr($csName).'",1,'.
+				'VALUES('.$this->cid.',"'.$csValue.'","'.Sanitizer::cleanInStr($csName).'",1,'.
 				($illustrationUrl?'"'.$illustrationUrl.'"':'NULL').','.
 				($description?'"'.$description.'"':'NULL').','.
 				($notes?'"'.$notes.'"':'NULL').','.
@@ -227,7 +228,7 @@ class KeyCharAdmin{
 		$sql = '';
 		foreach($pArr as $k => $v){
 			if(in_array($k, $targetArr, true)){
-				$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+				$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 			}
 		}
 		$sql = 'UPDATE kmcs SET '.substr($sql,1).' WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
@@ -289,34 +290,36 @@ class KeyCharAdmin{
 			if(file_exists($GLOBALS['IMAGE_ROOT_PATH'])){
 				$GLOBALS['IMAGE_ROOT_PATH'] .= 'csimgs/';
 				if(!file_exists($GLOBALS['IMAGE_ROOT_PATH']) && !mkdir($GLOBALS['IMAGE_ROOT_PATH']) && !is_dir($GLOBALS['IMAGE_ROOT_PATH'])) {
-					return 'ERROR, unable to create upload directory: '.$GLOBALS['IMAGE_ROOT_PATH'];
-				}
-				if(substr($GLOBALS['IMAGE_ROOT_URL'],-1) !== '/') {
-					$GLOBALS['IMAGE_ROOT_URL'] .= '/';
-				}
-				$GLOBALS['IMAGE_ROOT_URL'] .= 'ident/csimgs/';
-				
-				$fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$GLOBALS['IMAGE_ROOT_URL']);
-				$imagePath = $GLOBALS['IMAGE_ROOT_PATH'].str_replace('.','_temp.',$fileName);
-				if(is_writable($GLOBALS['IMAGE_ROOT_PATH'])){
-                    move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
-                }
-				if(file_exists($imagePath)){
-					if($this->createNewCsImage($imagePath)){
-						$notes = $this->cleanInStr($formArr['notes']);
-						$sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
-							'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$GLOBALS['IMAGE_ROOT_URL'].$fileName.'",'.
-							($notes?'"'.$notes.'"':'NULL').','.
-							(is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$GLOBALS['PARAMS_ARR']['un'].'")';
-						if(!$this->conn->query($sql)){
-							$statusStr = 'ERROR loading char state image: '.$this->conn->error;
-						}
-						unlink($imagePath);
-					}
+                    $statusStr = 'ERROR, unable to create upload directory: '.$GLOBALS['IMAGE_ROOT_PATH'];
 				}
 				else{
-					return 'ERROR uploading file, file does not exist: '.$imagePath;
-				}
+                    if(substr($GLOBALS['IMAGE_ROOT_URL'],-1) !== '/') {
+                        $GLOBALS['IMAGE_ROOT_URL'] .= '/';
+                    }
+                    $GLOBALS['IMAGE_ROOT_URL'] .= 'ident/csimgs/';
+
+                    $fileName = $this->cleanFileName(basename($_FILES['urlupload']['name']),$GLOBALS['IMAGE_ROOT_URL']);
+                    $imagePath = $GLOBALS['IMAGE_ROOT_PATH'].str_replace('.','_temp.',$fileName);
+                    if(is_writable($GLOBALS['IMAGE_ROOT_PATH'])){
+                        move_uploaded_file($_FILES['urlupload']['tmp_name'], $imagePath);
+                    }
+                    if(file_exists($imagePath)){
+                        if($this->createNewCsImage($imagePath)){
+                            $notes = Sanitizer::cleanInStr($formArr['notes']);
+                            $sql = 'INSERT INTO kmcsimages(cid, cs, url, notes, sortsequence, username) '.
+                                'VALUES('.$formArr['cid'].','.$formArr['cs'].',"'.$GLOBALS['IMAGE_ROOT_URL'].$fileName.'",'.
+                                ($notes?'"'.$notes.'"':'NULL').','.
+                                (is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$GLOBALS['PARAMS_ARR']['un'].'")';
+                            if(!$this->conn->query($sql)){
+                                $statusStr = 'ERROR loading char state image: '.$this->conn->error;
+                            }
+                            unlink($imagePath);
+                        }
+                    }
+                    else{
+                        $statusStr = 'ERROR uploading file, file does not exist: '.$imagePath;
+                    }
+                }
 			}
 		}
 		else{
@@ -418,7 +421,7 @@ class KeyCharAdmin{
 		$statusStr = '';
 		if($this->cid && is_numeric($tid)){
 			$sql = 'INSERT INTO kmchartaxalink(cid,tid,relation,notes) '.
-				'VALUES('.$this->cid.','.$tid.',"'.$this->cleanInStr($rel).'","'.$this->cleanInStr($notes).'")';
+				'VALUES('.$this->cid.','.$tid.',"'.Sanitizer::cleanInStr($rel).'","'.Sanitizer::cleanInStr($notes).'")';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add Taxon Relevance; '.$this->conn->error;
@@ -454,8 +457,8 @@ class KeyCharAdmin{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->hid]['name'] = $this->cleanOutStr($r->headingname);
-			$retArr[$r->hid]['notes'] = $this->cleanOutStr($r->notes);
+			$retArr[$r->hid]['name'] = Sanitizer::cleanOutStr($r->headingname);
+			$retArr[$r->hid]['notes'] = Sanitizer::cleanOutStr($r->notes);
 			$retArr[$r->hid]['sortsequence'] = $r->sortsequence;
 		}
 		$rs->free();
@@ -515,7 +518,7 @@ class KeyCharAdmin{
 		$this->lang = $l;
 	}
 
-	public function setLangId($lang=''): void
+	public function setLangId($lang=null): void
 	{
 		if(!$lang){
 			if($GLOBALS['DEFAULT_LANG']){
@@ -530,23 +533,12 @@ class KeyCharAdmin{
 		}
 		else{
 			$sql = 'SELECT langid FROM adminlanguages '.
-				'WHERE langname = "'.$lang.'" OR iso639_1 = "'.$lang.'" OR iso639_2 = "'.$lang.'" ';
+				'WHERE langname = "'.Sanitizer::cleanInStr($lang).'" OR iso639_1 = "'.Sanitizer::cleanInStr($lang).'" OR iso639_2 = "'.Sanitizer::cleanInStr($lang).'" ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$this->langId = $r->langid;
 			}
 			$rs->free();
 		}
-	}
-
-	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-	
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

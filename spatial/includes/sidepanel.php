@@ -7,7 +7,10 @@
 <div id="spatialpanel">
     <div id="accordion">
         <?php
-        if(!$inputWindowMode){
+        if($inputWindowMode) {
+            include_once(__DIR__ . '/vectortoolstab.php');
+        }
+        else {
             ?>
             <h3 class="tabtitle">Search Criteria</h3>
             <div id="criteriatab">
@@ -345,9 +348,6 @@
                 </div>
             </div>
             <?php
-        }
-        else{
-            include_once(__DIR__ . '/vectortoolstab.php');
         }
         ?>
     </div>

@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceDuplicate {
 
@@ -16,7 +17,7 @@ class OccurrenceDuplicate {
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -65,7 +66,7 @@ class OccurrenceDuplicate {
         return $retArr;
     }
 
-    public function linkDuplicates($occid1,$occidStr,$dupTitle=''): bool
+    public function linkDuplicates($occid1, $occidStr, $dupTitle = null): bool
     {
         $status = true;
         if($occid1 && $occidStr){
@@ -100,7 +101,7 @@ class OccurrenceDuplicate {
         return $status;
     }
 
-    private function createCluster($occid,$title=''){
+    private function createCluster($occid, $title = null){
         $retId = 0;
         if(!$title){
             $sqlTitle = 'SELECT recordedby, recordnumber, eventdate '.
@@ -115,7 +116,7 @@ class OccurrenceDuplicate {
                 $title = 'Undefined Collector';
             }
         }
-        $sql1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.$this->cleanInStr($title).'",1)';
+        $sql1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.Sanitizer::cleanInStr($title).'",1)';
         if($this->conn->query($sql1)){
             $retId = $this->conn->insert_id;
         }
@@ -146,9 +147,9 @@ class OccurrenceDuplicate {
     public function editCluster($dupId, $title, $description, $notes): bool
     {
         $status = true;
-        $sql = 'UPDATE omoccurduplicates SET title = '.($title?'"'.$this->cleanInStr($title).'"':'NULL').', '.
-            'description = '.($description?'"'.$this->cleanInStr($description).'"':'NULL').', '.
-            'notes = '.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').' '.
+        $sql = 'UPDATE omoccurduplicates SET title = '.($title?'"'.Sanitizer::cleanInStr($title).'"':'NULL').', '.
+            'description = '.($description?'"'.Sanitizer::cleanInStr($description).'"':'NULL').', '.
+            'notes = '.($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').' '.
             'WHERE (duplicateid = '.$dupId.')';
         //echo $sql;
         if(!$this->conn->query($sql)){
@@ -193,10 +194,10 @@ class OccurrenceDuplicate {
     public function getDupes($collName, $collNum, $collDate, $ometid, $exsNumber, $currentOccid): string
     {
         $retStr = '';
-        $collName = $this->cleanInStr($collName);
-        $collNum = $this->cleanInStr($collNum);
-        $collDate = $this->cleanInStr($collDate);
-        $exsNumber = $this->cleanInStr($exsNumber);
+        $collName = Sanitizer::cleanInStr($collName);
+        $collNum = Sanitizer::cleanInStr($collNum);
+        $collDate = Sanitizer::cleanInStr($collDate);
+        $exsNumber = Sanitizer::cleanInStr($exsNumber);
         if(!is_numeric($currentOccid)) {
             $currentOccid = 0;
         }
@@ -266,7 +267,7 @@ class OccurrenceDuplicate {
     {
         $retArr = array();
         if(is_numeric($collid) && is_numeric($skipOccid) && $catNum){
-            $catNumber = $this->cleanInStr($catNum);
+            $catNumber = Sanitizer::cleanInStr($catNum);
             $sql = 'SELECT occid FROM omoccurrences '.
                 'WHERE (catalognumber = "'.$catNumber.'") AND (collid = '.$collid.') AND (occid != '.$skipOccid.') ';
             //echo $sql;
@@ -284,7 +285,7 @@ class OccurrenceDuplicate {
         $retArr = array();
         if(is_numeric($collid) && is_numeric($skipOccid) && $otherCatNum){
             $sql = 'SELECT occid FROM omoccurrences '.
-                'WHERE (othercatalognumbers = "'.$this->cleanInStr($otherCatNum).'") AND (collid = '.$collid.') AND (occid != '.$skipOccid.') ';
+                'WHERE (othercatalognumbers = "'.Sanitizer::cleanInStr($otherCatNum).'") AND (collid = '.$collid.') AND (occid != '.$skipOccid.') ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -423,7 +424,7 @@ class OccurrenceDuplicate {
         }
 
         $queryTerms = array();
-        $recordedBy = $this->cleanInStr($recordedBy);
+        $recordedBy = Sanitizer::cleanInStr($recordedBy);
         if($recordedBy){
             if(strlen($recordedBy) < 4 || strtolower($recordedBy) === 'best'){
                 $queryTerms[] = '(o.recordedby LIKE "%'.$recordedBy.'%")';
@@ -433,13 +434,13 @@ class OccurrenceDuplicate {
             }
         }
         if($recordNumber) {
-            $queryTerms[] = 'o.recordnumber = "' . $this->cleanInStr($recordNumber) . '"';
+            $queryTerms[] = 'o.recordnumber = "' . Sanitizer::cleanInStr($recordNumber) . '"';
         }
         if($eventDate) {
-            $queryTerms[] = 'o.eventdate = "' . $this->cleanInStr($eventDate) . '"';
+            $queryTerms[] = 'o.eventdate = "' . Sanitizer::cleanInStr($eventDate) . '"';
         }
         if($catNum) {
-            $queryTerms[] = 'o.catalognumber = "' . $this->cleanInStr($catNum) . '"';
+            $queryTerms[] = 'o.catalognumber = "' . Sanitizer::cleanInStr($catNum) . '"';
         }
         if(is_numeric($occid)) {
             $queryTerms[] = 'o.occid = ' . $occid;
@@ -480,7 +481,7 @@ class OccurrenceDuplicate {
                 'decimallatitude','decimallongitude','verbatimcoordinates','coordinateuncertaintyinmeters','geodeticdatum','minimumelevationinmeters',
                 'maximumelevationinmeters','verbatimelevation','verbatimcoordinates','georeferencedby','georeferenceprotocol','georeferencesources',
                 'georeferenceverificationstatus','georeferenceremarks','habitat','substrate','associatedtaxa');
-            $collStr = $this->cleanInStr($recordedBy);
+            $collStr = Sanitizer::cleanInStr($recordedBy);
             $sql = 'SELECT DISTINCT o.'.implode(',o.',$locArr).' FROM omoccurrences o ';
             if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
                 $sql .= 'WHERE (o.recordedby LIKE "%'.$collStr.'%") ';
@@ -488,7 +489,7 @@ class OccurrenceDuplicate {
             else{
                 $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid WHERE (MATCH(f.recordedby) AGAINST("'.$collStr.'")) ';
             }
-            $sql .= 'AND (o.eventdate = "'.$this->cleanInStr($collDate).'") AND (o.locality LIKE "'.$this->cleanInStr($localFrag).'%") ';
+            $sql .= 'AND (o.eventdate = "'.Sanitizer::cleanInStr($collDate).'") AND (o.locality LIKE "'.Sanitizer::cleanInStr($localFrag).'%") ';
 
             //echo $sql;
             $rs = $this->conn->query($sql);
@@ -610,13 +611,11 @@ class OccurrenceDuplicate {
         return $retArr;
     }
 
-    public function batchLinkDuplicates($collid = 0, $verbose = true): void
+    public function batchLinkDuplicates($collid = null): void
     {
         ini_set('max_execution_time', 1800);
         $startDate = '1700-00-00';
-        if($verbose) {
-            echo '<li>Starting to search for duplicates ' . date('Y-m-d H:i:s') . '</li>';
-        }
+        echo '<li>Starting to search for duplicates ' . date('Y-m-d H:i:s') . '</li>';
         flush();
         do{
             $sql = 'SELECT DISTINCT o.eventdate '.
@@ -631,9 +630,7 @@ class OccurrenceDuplicate {
             $sql .= 'ORDER BY o.eventdate LIMIT 500';
             $rs = $this->conn->query($sql);
             $recCnt = $rs->num_rows;
-            if($verbose) {
-                echo '<li>Start date ' . $startDate . ' with ' . $recCnt . ' dates to be evaluated</li>';
-            }
+            echo '<li>Start date ' . $startDate . ' with ' . $recCnt . ' dates to be evaluated</li>';
             flush();
             while($r = $rs->fetch_object()){
                 $startDate = $r->eventdate;
@@ -650,7 +647,7 @@ class OccurrenceDuplicate {
                         if(strpos($lastName,'.')) {
                             $lastName = $r2->recordedby;
                         }
-                        if(isset($lastName) && $lastName && !preg_match('#\d#',$lastName) && (is_string($recNum) || is_numeric($recNum))){
+                        if(isset($lastName) && (is_string($recNum) || is_numeric($recNum)) && $lastName && !preg_match('#\d#',$lastName)){
                             $rArr[$recNum][$lastName][$r2->dupid][] = $r2->occid;
                             if($r2->collid === $collid && ($this->obsUid || $r2->observeruid === $this->obsUid)) {
                                 $keepArr[$recNum][$lastName] = 1;
@@ -675,29 +672,21 @@ class OccurrenceDuplicate {
                         unset($mArr[0]);
                         if(($unlinkedArr && $mArr) || count($unlinkedArr) > 1){
                             $dupIdStr = $lastnameStr.' '.$numStr.' '.$r->eventdate;
-                            if($verbose) {
-                                echo '<li>Duplicates located: ' . $dupIdStr . '</li>';
-                            }
+                            echo '<li>Duplicates located: ' . $dupIdStr . '</li>';
                             flush();
                             $dupId = 0;
                             if($mArr) {
                                 $dupId = key($mArr);
                             }
                             if(!$dupId){
-                                $sqlI1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.$this->cleanInStr($dupIdStr).'",1)';
+                                $sqlI1 = 'INSERT INTO omoccurduplicates(title,dupetype) VALUES("'.Sanitizer::cleanInStr($dupIdStr).'",1)';
                                 if($this->conn->query($sqlI1)){
                                     $dupId = $this->conn->insert_id;
-                                    if($verbose) {
-                                        echo '<li style="margin-left:10px;">New duplicate project created: #' . $dupId . '</li>';
-                                    }
+                                    echo '<li style="margin-left:10px;">New duplicate project created: #' . $dupId . '</li>';
                                 }
                                 else{
-                                    if($verbose) {
-                                        echo '<li style="margin-left:10px;">ERROR creating dupe project: ' . $this->conn->error . '</li>';
-                                    }
-                                    if($verbose) {
-                                        echo '<li style="margin-left:10px;">sql: ' . $sqlI1 . '</li>';
-                                    }
+                                    echo '<li style="margin-left:10px;">ERROR creating dupe project: ' . $this->conn->error . '</li>';
+                                    echo '<li style="margin-left:10px;">sql: ' . $sqlI1 . '</li>';
                                 }
                                 flush();
                             }
@@ -709,20 +698,16 @@ class OccurrenceDuplicate {
                                     $outLink .= ' <a href="../individual/index.php?occid='.$v.'" target="_blank">'.$v.'</a>,';
                                 }
                                 if($this->conn->query(trim($sqlI2,','))){
-                                    if($verbose) {
-                                        echo '<li style="margin-left:10px;">' . count($unlinkedArr) . ' duplicates linked (' . trim($outLink, ' ,') . ')</li>';
-                                    }
+                                    echo '<li style="margin-left:10px;">' . count($unlinkedArr) . ' duplicates linked (' . trim($outLink, ' ,') . ')</li>';
                                 }
-                                else if($verbose) {
+                                else{
                                     echo '<li style="margin-left:10px;">ERROR linking dupes: ' . $this->conn->error . '</li>';
                                 }
                                 flush();
                             }
                         }
                         if(count($mArr) > 1){
-                            if($verbose) {
-                                echo '<li style="margin-left:10px;">Two matching duplicate projects located</li>';
-                            }
+                            echo '<li style="margin-left:10px;">Two matching duplicate projects located</li>';
                             flush();
 
                         }
@@ -732,13 +717,12 @@ class OccurrenceDuplicate {
             $rs->close();
         }
         while($recCnt);
-        if($verbose) {
-            echo '<li>Finished linking duplicates ' . date('Y-m-d H:i:s') . '</li>';
-        }
+        echo '<li>Finished linking duplicates ' . date('Y-m-d H:i:s') . '</li>';
     }
 
     public function parseLastName($collName){
         $lastNameArr = array();
+        $lastName = '';
         $collName = trim($collName);
         if(!$collName) {
             return '';
@@ -798,12 +782,5 @@ class OccurrenceDuplicate {
             $rs->close();
         }
         return $returnArr;
-    }
-
-    private function cleanInStr($str){
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $this->conn->real_escape_string($newStr);
-        return $newStr;
     }
 }

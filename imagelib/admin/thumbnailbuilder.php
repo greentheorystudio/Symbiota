@@ -8,8 +8,8 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']: '';
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){

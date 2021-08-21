@@ -4,11 +4,9 @@ include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occidQuery = array_key_exists('occidquery',$_REQUEST)?$_REQUEST['occidquery']:'';
-$curOccid = (array_key_exists('curoccid',$_GET)?$_REQUEST['curoccid']:0);
-$collId = (array_key_exists('collid',$_GET)?$_GET['collid']:0);
-$cNum = (array_key_exists('cnum',$_GET)?$_GET['cnum']:'');
-
-$occIdMerge = (array_key_exists('occidmerge',$_GET)?$_GET['occidmerge']:'');
+$curOccid = (array_key_exists('curoccid',$_GET)?(int)$_REQUEST['curoccid']:0);
+$collId = (array_key_exists('collid',$_GET)?(int)$_GET['collid']:0);
+$occIdMerge = (array_key_exists('occidmerge',$_GET)?(int)$_GET['occidmerge']:0);
 $submitAction = (array_key_exists('submitaction',$_GET)?$_GET['submitaction']:'');
 
 $dupeManager = new OccurrenceDuplicate();
@@ -110,10 +108,10 @@ if(!$GLOBALS['IS_ADMIN']){
             }
             opener.document.queryform.submit();
             <?php
-            if($statusStr === true){
-            ?>
-            window.close();
-            <?php
+            if($statusStr){
+                ?>
+                window.close();
+                <?php
             }
             ?>
         }
@@ -183,8 +181,8 @@ if(!$GLOBALS['IS_ADMIN']){
                         </td>
                         <td>
                             <?php
-                            if($collId === $oArr['collid']){
-                                echo '<a href="occurrenceeditor.php?occid='.$occId.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
+                            if($collId === (int)$oArr['collid']){
+                                echo '<a href="occurrenceeditor.php?occid='.$id.'"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
                             }
                             ?>
                         </td>

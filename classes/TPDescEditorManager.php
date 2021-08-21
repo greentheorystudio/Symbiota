@@ -3,7 +3,11 @@ include_once(__DIR__ . '/TPEditorManager.php');
 
 class TPDescEditorManager extends TPEditorManager{
 
-	public function getDescriptions($editor = false): array
+    public function __construct(){
+        parent::__construct();
+    }
+
+    public function getDescriptions($editor = null): array
 	{
 		$descrArr = array();
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
@@ -47,7 +51,7 @@ class TPDescEditorManager extends TPEditorManager{
 				$rs2->free();
 			}
 			else{
-				trigger_error('Unable to get statements; '.$this->conn->error);
+				trigger_error('Unable to get statements; '.$this->taxonCon->error);
 			}
 		}
 		return $descrArr;
@@ -129,7 +133,7 @@ class TPDescEditorManager extends TPEditorManager{
 	{
 		$status = '';
 		$stmtStr = $this->cleanInStr($stArr['statement']);
-		if(strpos($stmtStr, '<p>') === 0 && substr($stmtStr,-4) === '</p>'){
+		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdbid'] && is_numeric($stArr['tdbid'])){
@@ -149,7 +153,7 @@ class TPDescEditorManager extends TPEditorManager{
 	{
 		$status = '';
 		$stmtStr = $this->cleanInStr($stArr['statement']);
-		if(strpos($stmtStr, '<p>') === 0 && substr($stmtStr,-4) === '</p>'){
+		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdsid'] && is_numeric($stArr['tdsid'])){

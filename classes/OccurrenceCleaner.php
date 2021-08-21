@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceCleaner extends Manager{
 
@@ -12,7 +13,7 @@ class OccurrenceCleaner extends Manager{
 		parent::__construct();
 	}
 
-	public function getDuplicateCatalogNumber($type,$start,$limit = 500): array
+	public function getDuplicateCatalogNumber($type, $start, $limit): array
 	{
 		$dupArr = array();
 		$catArr = array();
@@ -235,7 +236,8 @@ class OccurrenceCleaner extends Manager{
 		$this->conn->query($sqlEmpty);
 	}
 
-	public function getBadCountryCount(){
+	public function getBadCountryCount(): int
+    {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT o.country) AS cnt '.
 			'FROM omoccurrences o LEFT JOIN lkupcountry l ON o.country = l.countryname '.
@@ -265,7 +267,7 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getGoodCountryArr($includeStates = false): array
+	public function getGoodCountryArr($includeStates = null): array
 	{
 		$retArr = array();
 		if($includeStates){
@@ -290,7 +292,8 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getNullCountryNotStateCount(){
+	public function getNullCountryNotStateCount(): int
+    {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT stateprovince) AS cnt '.
 			'FROM omoccurrences '.
@@ -320,11 +323,12 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getBadStateCount($country = ''){
+	public function getBadStateCount($country = null): array
+    {
 		$retCnt = array();
 		$sql = 'SELECT COUNT(DISTINCT o.stateprovince) as cnt '.$this->getBadStateSqlBase();
 		if($country) {
-			$sql .= 'AND o.country = "' . $this->cleanInStr($country) . '" ';
+			$sql .= 'AND o.country = "' . Sanitizer::cleanInStr($country) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -377,7 +381,7 @@ class OccurrenceCleaner extends Manager{
 		return $retStr;
 	}
 
-	public function getGoodStateArr($includeCounties = false): array
+	public function getGoodStateArr($includeCounties = null): array
 	{
 		$retArr = array();
 		if($includeCounties){
@@ -404,7 +408,8 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getNullStateNotCountyCount(){
+	public function getNullStateNotCountyCount(): int
+    {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT county) AS cnt '.$this->getNullStateNotCountySqlFrag();
 		$rs = $this->conn->query($sql);
@@ -437,11 +442,12 @@ class OccurrenceCleaner extends Manager{
 			'WHERE (collid = '.$this->collid.') AND (stateprovince IS NULL) AND (county IS NOT NULL) AND (country IS NOT NULL) ';
 	}
 
-	public function getBadCountyCount($state = ''){
+	public function getBadCountyCount($state = null): array
+    {
 		$retCnt = array();
 		$sql = 'SELECT COUNT(DISTINCT o.county) as cnt '.$this->getBadCountySqlFrag();
 		if($state) {
-			$sql .= 'AND o.stateprovince = "' . $this->cleanInStr($state) . '" ';
+			$sql .= 'AND o.stateprovince = "' . Sanitizer::cleanInStr($state) . '" ';
 		}
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
@@ -501,7 +507,8 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	public function getNullCountyNotLocalityCount(){
+	public function getNullCountyNotLocalityCount(): int
+    {
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(DISTINCT locality) AS cnt '.$this->getNullCountyNotLocalitySqlFrag();
 		$rs = $this->conn->query($sql);
@@ -693,23 +700,21 @@ class OccurrenceCleaner extends Manager{
 
 	private function countryUnitsEqual($countryOSM,$countryDb): bool
 	{
+        $status = false;
+		if(!$this->unitsEqual($countryOSM,$countryDb)) {
+            $countryOSM = strtolower(trim($countryOSM));
+            $countryDb = strtolower(trim($countryDb));
 
-		if($this->unitsEqual($countryOSM,$countryDb)) {
-			return true;
+            $synonymArr = array();
+            $synonymArr[] = array('united states','usa','united states of america','u.s.a.');
+
+            foreach($synonymArr as $synArr){
+                if(in_array($countryOSM, $synArr, true) && in_array($countryDb, $synArr, true)) {
+                    $status = true;
+                }
+            }
 		}
-
-        $countryOSM = strtolower(trim($countryOSM));
-		$countryDb = strtolower(trim($countryDb));
-
-		$synonymArr = array();
-		$synonymArr[] = array('united states','usa','united states of america','u.s.a.');
-
-		foreach($synonymArr as $synArr){
-			if(in_array($countryOSM, $synArr, true) && in_array($countryDb, $synArr, true)) {
-				return true;
-			}
-		}
-		return false;
+        return $status;
 	}
 
 	private function countyUnitsEqual($countyOSM,$countyDb): bool
@@ -721,7 +726,7 @@ class OccurrenceCleaner extends Manager{
 		return strpos($countyDb, $countyOSM) !== false;
 	}
 
-	private function setVerification($occid, $category, $ranking, $protocol = '', $source = '', $notes = ''): void
+	private function setVerification($occid, $category, $ranking, $protocol = null, $source = null, $notes = null): void
 	{
 		$sql = 'INSERT INTO omoccurverification(occid, category, ranking, protocol, source, notes, uid) '.
 			'VALUES('.$occid.',"'.$category.'",'.$ranking.','.
@@ -738,7 +743,7 @@ class OccurrenceCleaner extends Manager{
 	public function getRankingStats($category): array
 	{
 		$retArr = array();
-		$category = $this->cleanInStr($category);
+		$category = Sanitizer::cleanInStr($category);
 		$sql = 'SELECT v.category, v.ranking, v.protocol, COUNT(v.occid) as cnt '.
 			'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 			'WHERE (o.collid = '.$this->collid.') AND v.category = "'.$category.'" '.
@@ -768,7 +773,7 @@ class OccurrenceCleaner extends Manager{
 			$sql = 'SELECT DISTINCT v.occid, l.username, v.initialtimestamp '.
 				'FROM omoccurverification v INNER JOIN omoccurrences o ON v.occid = o.occid '.
 				'INNER JOIN users l ON v.uid = l.uid '.
-				'WHERE (o.collid = '.$this->collid.') AND (v.category = "'.$this->cleanInStr($category).'") AND (ranking = '.$ranking.')';
+				'WHERE (o.collid = '.$this->collid.') AND (v.category = "'.Sanitizer::cleanInStr($category).'") AND (ranking = '.$ranking.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->occid]['username'] = $r->username;

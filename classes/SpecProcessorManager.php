@@ -38,7 +38,7 @@ class SpecProcessorManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -250,7 +250,7 @@ class SpecProcessorManager {
 		return $projArr;
 	}
 
-	public function getSpecWithImage($procStatus = ''): int
+	public function getSpecWithImage($procStatus = null): int
 	{
 		$cnt = 0;
 		if($this->collid){
@@ -274,7 +274,7 @@ class SpecProcessorManager {
 		return $cnt;
 	}
 
-	public function getSpecNoOcr($procStatus = ''): int
+	public function getSpecNoOcr($procStatus = null): int
 	{
 		$cnt = 0;
 		if($this->collid){

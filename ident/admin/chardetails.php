@@ -8,8 +8,8 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
-$cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$cid = array_key_exists('cid',$_REQUEST)?(int)$_REQUEST['cid']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
 
 $keyManager = new KeyCharAdmin();
@@ -245,7 +245,7 @@ $headingAdminUrl = 'headingadmin.php';
 			if($statusStr){
 				?>
 				<hr/>
-				<div style="margin:15px;color:<?php echo (strpos($statusStr,'SUCCESS')===0?'green':'red'); ?>;">
+				<div style="margin:15px;color:<?php echo (strncmp($statusStr, 'SUCCESS', 7) ===0?'green':'red'); ?>;">
 					<?php echo $statusStr; ?>
 				</div>
 				<hr/>

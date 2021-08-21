@@ -4,29 +4,17 @@ include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$occid = array_key_exists('occid',$_REQUEST)?trim($_REQUEST['occid']):0;
-$collid = array_key_exists('collid',$_REQUEST)?trim($_REQUEST['collid']):0;
+$occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $pk = array_key_exists('pk',$_REQUEST)?trim($_REQUEST['pk']): '';
 $guid = array_key_exists('guid',$_REQUEST)?trim($_REQUEST['guid']): '';
 $submit = array_key_exists('formsubmit',$_REQUEST)?trim($_REQUEST['formsubmit']):'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$clid = array_key_exists('clid',$_REQUEST)?trim($_REQUEST['clid']):0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $format = $_GET['format'] ?? '';
 
-if(!is_numeric($occid)) {
-    $occid = 0;
-}
 if($guid && !preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $guid)) {
     $guid = '';
-}
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($tabIndex)) {
-    $tabIndex = 0;
-}
-if(!is_numeric($clid)) {
-    $clid = 0;
 }
 if($pk && !preg_match('/^[a-zA-Z0-9\s_]+$/',$pk)) {
     $pk = '';
@@ -347,7 +335,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                     <?php
                     if($collMetadata['icon']){
                         ?>
-                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strpos($collMetadata['icon'], 'images') === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
+                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strncmp($collMetadata['icon'], 'images', 6) === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
                         <?php
                     }
                     echo $collMetadata['institutioncode'];
@@ -855,7 +843,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                         if(isset($GLOBALS['RIGHTS_TERMS'])) {
                             $rightsHeading = array_search($rightsStr, $GLOBALS['RIGHTS_TERMS'], true);
                         }
-                        if(strpos($collMetadata['rights'], 'http') === 0){
+                        if(strncmp($collMetadata['rights'], 'http', 4) === 0){
                             $rightsStr = '<a href="'.$rightsStr.'" target="_blank">'.($rightsHeading?:$rightsStr).'</a>';
                         }
                         $rightsStr = '<div style="margin-top:2px;"><b>Usage Rights:</b> '.$rightsStr.'</div>';
@@ -885,7 +873,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
                             <b>Occurrence ID (GUID):</b>
                             <?php
                             $resolvableGuid = false;
-                            if(strpos($occArr['occurrenceid'], 'http') === 0) {
+                            if(strncmp($occArr['occurrenceid'], 'http', 4) === 0) {
                                 $resolvableGuid = true;
                             }
                             if($resolvableGuid) {
@@ -1025,10 +1013,10 @@ $commentArr = $indManager->getCommentArr($isEditor);
                                             $tnUrl = $url;
                                         }
                                         if($GLOBALS['IMAGE_DOMAIN']){
-                                            if(strpos($url, '/') === 0) {
+                                            if(strncmp($url, '/', 1) === 0) {
                                                 $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                             }
-                                            if(strpos($tnUrl, '/') === 0) {
+                                            if(strncmp($tnUrl, '/', 1) === 0) {
                                                 $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                                             }
                                         }

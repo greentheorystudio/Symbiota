@@ -8,10 +8,9 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-
-$tid = $_REQUEST['tid'];
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?$_REQUEST['taxauthid']:1;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$tid = (int)$_REQUEST['tid'];
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
@@ -206,7 +205,7 @@ if($editable){
                                 <?php
                                 $rankArr = $taxonEditorObj->getRankArr();
                                 foreach($rankArr as $rankId => $rName){
-                                    echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId() == $rankId?'SELECTED':'').'>'.$rName.'</option>';
+                                    echo '<option value="'.$rankId.'" '.($taxonEditorObj->getRankId() === (int)$rankId?'SELECTED':'').'>'.$rName.'</option>';
                                 }
                                 ?>
                             </select>
@@ -251,8 +250,8 @@ if($editable){
                             <select id="securitystatus" name="securitystatus">
                                 <option value="0">select a locality setting</option>
                                 <option value="0">---------------------------------</option>
-                                <option value="0" <?php echo (($taxonEditorObj->getSecurityStatus() == 0)?'SELECTED':''); ?>>show all locality data</option>
-                                <option value="1" <?php echo (($taxonEditorObj->getSecurityStatus() == 1)?'SELECTED':''); ?>>hide locality data</option>
+                                <option value="0" <?php echo (($taxonEditorObj->getSecurityStatus() === 0)?'SELECTED':''); ?>>show all locality data</option>
+                                <option value="1" <?php echo (($taxonEditorObj->getSecurityStatus() === 1)?'SELECTED':''); ?>>hide locality data</option>
                             </select>
                             <input type='hidden' name='securitystatusstart' value='<?php echo $taxonEditorObj->getSecurityStatus(); ?>' />
                         </div>
@@ -277,7 +276,7 @@ if($editable){
                                 <?php
                                     $ttIdArr = $taxonEditorObj->getTaxonomicThesaurusIds();
                                     foreach($ttIdArr as $ttID => $ttName){
-                                        echo '<option value='.$ttID.' '.($taxAuthId == $ttID?'SELECTED':'').'>'.$ttName.'</option>';
+                                        echo '<option value='.$ttID.' '.($taxAuthId === (int)$ttID?'SELECTED':'').'>'.$ttName.'</option>';
                                     }
                                 ?>
                             </select>
@@ -344,7 +343,7 @@ if($editable){
                                     $aArr = $taxonEditorObj->getAcceptedArr();
                                     $aStr = key($aArr);
                                 ?>
-                                <input type="hidden" name="tidaccepted" value="<?php echo ($taxonEditorObj->getIsAccepted() == 1?$taxonEditorObj->getTid():$aStr); ?>" />
+                                <input type="hidden" name="tidaccepted" value="<?php echo ($taxonEditorObj->getIsAccepted() === 1?$taxonEditorObj->getTid():$aStr); ?>" />
                                 <input type="hidden" name="tabindex" value="1" />
                                 <input type="hidden" name="submitaction" value="updatetaxstatus" />
                                 <input type='button' name='taxstatuseditsubmit' value='Submit Upper Taxonomy Edits' onclick="submitTaxStatusForm(this.form)" />
@@ -584,17 +583,15 @@ if($editable){
         </div>
     <?php
     }
-    else if(!$tid){
-        if($statusStr !== 'SUCCESS: taxon deleted!'){
-            echo '<div>Target Taxon missing</div>';
-        }
-    }
-    else{
+    else if($tid) {
         ?>
         <div style="margin:30px;font-weight:bold;font-size:120%;">
             You are not authorized to access this page
         </div>
         <?php
+    }
+    else if($statusStr !== 'SUCCESS: taxon deleted!'){
+        echo '<div>Target Taxon missing</div>';
     }
     ?>
 </div>

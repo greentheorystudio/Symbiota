@@ -10,7 +10,7 @@ class TaxonomyUtilities {
 		$this->conn = $connection->getConnection();
 	}
 
-	public function parseScientificName($inStr, $rankId = 0): array
+	public function parseScientificName($inStr, $rankId = null): array
 	{
 		$retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
 		if($inStr && is_string($inStr)){
@@ -166,8 +166,11 @@ class TaxonomyUtilities {
 		}
 	}
 
-	public function buildHierarchyEnumTree($taxAuthId = 1){
-		$status = true;
+	public function buildHierarchyEnumTree($taxAuthId = null){
+		if(!$taxAuthId){
+            $taxAuthId = 1;
+        }
+	    $status = true;
         $complete = false;
         $sql = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
             'SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid '.

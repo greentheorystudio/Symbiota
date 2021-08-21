@@ -4,18 +4,15 @@ include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
-$target = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
+$target = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']):'';
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 
-if(!is_numeric($catId)) {
-    $catId = 0;
-}
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
+    $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
 
 $imgLibManager = new ImageLibraryManager();

@@ -4,11 +4,11 @@ include_once(__DIR__ . '/../../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:1;
-$index = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$recLimit = array_key_exists('rows',$_REQUEST)?$_REQUEST['rows']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']: '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:1;
+$index = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
+$recLimit = array_key_exists('rows',$_REQUEST)?(int)$_REQUEST['rows']:0;
 $photogJson = array_key_exists('photogArr',$_REQUEST)?$_REQUEST['photogArr']:'';
 $photoNum = array_key_exists('photoNum',$_REQUEST)?$_REQUEST['photoNum']:0;
 

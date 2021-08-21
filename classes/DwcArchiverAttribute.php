@@ -2,7 +2,8 @@
 
 class DwcArchiverAttribute{
 
-	public static function getFieldArr(){
+	public static function getFieldArr(): array
+    {
 		$fieldArr['coreid'] = 'o.occid';
 		$termArr['measurementType'] = 'http://rs.tdwg.org/dwc/terms/measurementType';
 		$fieldArr['measurementType'] = 'm.traitname';

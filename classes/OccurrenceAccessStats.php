@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceAccessStats {
 
@@ -21,7 +22,7 @@ class OccurrenceAccessStats {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -42,8 +43,8 @@ class OccurrenceAccessStats {
 		$status = false;
 		if(is_numeric($occid)){
 			$sql = 'INSERT INTO omoccuraccessstats '.
-				'SET occid='.$occid.', accessdate="'.date('Y-m-d').'", ipaddress="'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", '.
-				'cnt=1, accesstype="'.$this->cleanInStr($accessType).'" ON DUPLICATE KEY UPDATE cnt=cnt+1';
+				'SET occid='.$occid.', accessdate="'.date('Y-m-d').'", ipaddress="'.Sanitizer::cleanInStr($_SERVER['REMOTE_ADDR']).'", '.
+				'cnt=1, accesstype="'.Sanitizer::cleanInStr($accessType).'" ON DUPLICATE KEY UPDATE cnt=cnt+1';
 			//echo $sql.'<br/>';
 			if($this->conn->query($sql)){
 				$status = true;
@@ -130,7 +131,7 @@ class OccurrenceAccessStats {
     {
         $status = true;
         $sql = 'INSERT INTO omoccuraccessstats(occid,accessdate,ipaddress,cnt,accesstype) '.
-            'SELECT o.occid, "'.date('Y-m-d').'", "'.$this->cleanInStr($_SERVER['REMOTE_ADDR']).'", 1, "'.$this->cleanInStr($accessType).'" ';
+            'SELECT o.occid, "'.date('Y-m-d').'", "'.Sanitizer::cleanInStr($_SERVER['REMOTE_ADDR']).'", 1, "'.Sanitizer::cleanInStr($accessType).'" ';
         $sql .= $sqlFrag;
         $sql .= 'ON DUPLICATE KEY UPDATE cnt = cnt+1';
         if(!$this->conn->query($sql)){
@@ -293,29 +294,15 @@ class OccurrenceAccessStats {
 
 	public function setPageNum($num): void
 	{
-		if(is_numeric($num)) {
-			$this->pageNum = $num;
-		}
+        $this->pageNum = $num;
 	}
 
 	public function setLimit($l): void
 	{
-		if(is_numeric($l)) {
-			$this->limit = $l;
-		}
+        $this->limit = $l;
 	}
 
 	public function getErrorStr(){
 		return $this->errorMessage;
-	}
-
-	private function cleanInStr($str): string
-    {
-		$newStr = trim($str);
-		if($newStr){
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
-		}
-		return $newStr;
 	}
 }

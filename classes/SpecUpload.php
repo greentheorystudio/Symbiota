@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecUpload{
 
@@ -70,30 +71,30 @@ class SpecUpload{
 			//echo $sql;
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$uploadType = $row->uploadtype;
+				$uploadType = (int)$row->uploadtype;
 				$uploadStr = '';
-				if($uploadType == $this->DIRECTUPLOAD){
+				if($uploadType === $this->DIRECTUPLOAD){
 					$uploadStr = 'Direct Upload';
 				}
-				elseif($uploadType == $this->DIGIRUPLOAD){
+				elseif($uploadType === $this->DIGIRUPLOAD){
 					$uploadStr = 'DiGIR Provider Upload';
 				}
-				elseif($uploadType == $this->FILEUPLOAD){
+				elseif($uploadType === $this->FILEUPLOAD){
 					$uploadStr = 'File Upload';
 				}
-				elseif($uploadType == $this->SKELETAL){
+				elseif($uploadType === $this->SKELETAL){
 					$uploadStr = 'Skeletal File Upload';
 				}
-				elseif($uploadType == $this->NFNUPLOAD){
+				elseif($uploadType === $this->NFNUPLOAD){
 					$uploadStr = 'NfN File Upload';
 				}
-				elseif($uploadType == $this->STOREDPROCEDURE){
+				elseif($uploadType === $this->STOREDPROCEDURE){
 					$uploadStr = 'Stored Procedure';
 				}
-				elseif($uploadType == $this->DWCAUPLOAD){
+				elseif($uploadType === $this->DWCAUPLOAD){
 					$uploadStr = 'Darwin Core Archive Upload';
 				}
-				elseif($uploadType == $this->IPTUPLOAD){
+				elseif($uploadType === $this->IPTUPLOAD){
 					$uploadStr = 'IPT Resource';
 				}
 				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
@@ -128,7 +129,7 @@ class SpecUpload{
 		}
 	}
 	
-	public function getCollInfo($fieldStr = ''){
+	public function getCollInfo($fieldStr = null){
 		if(!$this->collMetadataArr) {
 			$this->setCollInfo();
 		}
@@ -160,7 +161,7 @@ class SpecUpload{
 		elseif(!isset($this->collMetadataArr['securitykey'])){
 			$this->setCollInfo();
 		}
-		return $k == $this->collMetadataArr['securitykey'];
+		return $k === $this->collMetadataArr['securitykey'];
 	}
 
 	public function exportPendingImport($searchVariables): array
@@ -198,7 +199,7 @@ class SpecUpload{
 		return $retArr;
 	}
 
-	public function getPendingImportData($start, $limit, $searchVariables = ''): array
+	public function getPendingImportData($start, $limit, $searchVariables = null): array
 	{
 		$retArr = array();
 		if($this->collId){
@@ -321,7 +322,7 @@ class SpecUpload{
 
     public function editUploadProfile($profileArr): bool
 	{
-    	$sql = 'UPDATE uploadspecparameters SET title = "'.$this->cleanInStr($profileArr['title']).'"'.
+    	$sql = 'UPDATE uploadspecparameters SET title = "'.Sanitizer::cleanInStr($profileArr['title']).'"'.
 			', platform = '.($profileArr['platform']?'"'.$profileArr['platform'].'"':'NULL').
 			', server = '.($profileArr['server']?'"'.$profileArr['server'].'"':'NULL').
 			', port = '.($profileArr['port']?:'NULL').
@@ -331,8 +332,8 @@ class SpecUpload{
 			', code = '.($profileArr['code']?'"'.$profileArr['code'].'"':'NULL').
 			', path = '.($profileArr['path']?'"'.$profileArr['path'].'"':'NULL').
 			', pkfield = '.($profileArr['pkfield']?'"'.$profileArr['pkfield'].'"':'NULL').
-			', querystr = '.($profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').
-            ', existingrecords = '.($profileArr['existingrecords']?'"'.$this->cleanInStr($profileArr['existingrecords']).'"':'"update"').
+			', querystr = '.($profileArr['querystr']?'"'.Sanitizer::cleanInStr($profileArr['querystr']).'"':'NULL').
+            ', existingrecords = '.($profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($profileArr['existingrecords']).'"':'"update"').
 			', cleanupsp = '.($profileArr['cleanupsp']?'"'.$profileArr['cleanupsp'].'"':'NULL').' '.
 			'WHERE (uspid = '.$this->uspid.')';
 		//echo $sql;
@@ -346,19 +347,19 @@ class SpecUpload{
     public function createUploadProfile($profileArr){
 		$sql = 'INSERT INTO uploadspecparameters(collid, uploadtype, title, platform, server, port, code, path, '.
 			'pkfield, username, password, schemaname, cleanupsp, existingrecords, querystr) VALUES ('.$this->collId.','.
-			$profileArr['uploadtype'].',"'.$this->cleanInStr($profileArr['title']).'",'.
-			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.$this->cleanInStr($profileArr['platform']).'"':'NULL').','.
-			(isset($profileArr['server'])&&$profileArr['platform']?'"'.$this->cleanInStr($profileArr['server']).'"':'NULL').','.
+			$profileArr['uploadtype'].',"'.Sanitizer::cleanInStr($profileArr['title']).'",'.
+			(isset($profileArr['platform'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($profileArr['platform']).'"':'NULL').','.
+			(isset($profileArr['server'])&&$profileArr['platform']?'"'.Sanitizer::cleanInStr($profileArr['server']).'"':'NULL').','.
 			(isset($profileArr['port'])&&is_numeric($profileArr['port'])?$profileArr['port']:'NULL').','.
-			(isset($profileArr['code'])&&$profileArr['code']?'"'.$this->cleanInStr($profileArr['code']).'"':'NULL').','.
-			(isset($profileArr['path'])&&$profileArr['path']?'"'.$this->cleanInStr($profileArr['path']).'"':'NULL').','.
-			(isset($profileArr['pkfield'])&&$profileArr['pkfield']?'"'.$this->cleanInStr($profileArr['pkfield']).'"':'NULL').','.
-			(isset($profileArr['username'])&&$profileArr['username']?'"'.$this->cleanInStr($profileArr['username']).'"':'NULL').','.
-			(isset($profileArr['password'])&&$profileArr['password']?'"'.$this->cleanInStr($profileArr['password']).'"':'NULL').','.
-			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.$this->cleanInStr($profileArr['schemaname']).'"':'NULL').','.
-			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.$this->cleanInStr($profileArr['cleanupsp']).'"':'NULL').','.
-            (isset($profileArr['existingrecords'])&&$profileArr['existingrecords']?'"'.$this->cleanInStr($profileArr['existingrecords']).'"':'"update"').','.
-			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.$this->cleanInStr($profileArr['querystr']).'"':'NULL').')';
+			(isset($profileArr['code'])&&$profileArr['code']?'"'.Sanitizer::cleanInStr($profileArr['code']).'"':'NULL').','.
+			(isset($profileArr['path'])&&$profileArr['path']?'"'.Sanitizer::cleanInStr($profileArr['path']).'"':'NULL').','.
+			(isset($profileArr['pkfield'])&&$profileArr['pkfield']?'"'.Sanitizer::cleanInStr($profileArr['pkfield']).'"':'NULL').','.
+			(isset($profileArr['username'])&&$profileArr['username']?'"'.Sanitizer::cleanInStr($profileArr['username']).'"':'NULL').','.
+			(isset($profileArr['password'])&&$profileArr['password']?'"'.Sanitizer::cleanInStr($profileArr['password']).'"':'NULL').','.
+			(isset($profileArr['schemaname'])&&$profileArr['schemaname']?'"'.Sanitizer::cleanInStr($profileArr['schemaname']).'"':'NULL').','.
+			(isset($profileArr['cleanupsp'])&&$profileArr['cleanupsp']?'"'.Sanitizer::cleanInStr($profileArr['cleanupsp']).'"':'NULL').','.
+            (isset($profileArr['existingrecords'])&&$profileArr['existingrecords']?'"'.Sanitizer::cleanInStr($profileArr['existingrecords']).'"':'"update"').','.
+			(isset($profileArr['querystr'])&&$profileArr['querystr']?'"'.Sanitizer::cleanInStr($profileArr['querystr']).'"':'NULL').')';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			return $this->conn->insert_id;
@@ -455,11 +456,11 @@ class SpecUpload{
 		return $this->errorStr;
 	}
 	
-	public function setVerboseMode($vMode, $logTitle = ''): void
+	public function setVerboseMode($vMode, $logTitle = null): void
 	{
 		if(is_numeric($vMode)){
 			$this->verboseMode = $vMode;
-			if(($this->verboseMode == 2) && $GLOBALS['SERVER_ROOT']) {
+			if(($this->verboseMode === 2) && $GLOBALS['SERVER_ROOT']) {
 				$GLOBALS['LOG_PATH'] = $GLOBALS['SERVER_ROOT'];
 				if(substr($GLOBALS['SERVER_ROOT'],-1) !== '/' && substr($GLOBALS['SERVER_ROOT'],-1) !== '\\') {
                     $GLOBALS['LOG_PATH'] .= '/';
@@ -478,24 +479,16 @@ class SpecUpload{
 		}
 	}
 
-	protected function outputMsg($str, $indent = 0): void
+	protected function outputMsg($str, $indent = null): void
 	{
-		if($this->verboseMode == 1){
+		if($this->verboseMode === 1){
 			echo $str;
 			flush();
 		}
-		elseif($this->verboseMode == 2){
+		elseif($this->verboseMode === 2){
 			if($this->logFH) {
 				fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 			}
 		}
-	}
-	
-	protected function cleanInStr($inStr){
-		$retStr = trim($inStr);
-		$retStr = str_replace(array(chr(10), chr(11), chr(13), chr(20), chr(30)), ' ', $retStr);
-		$retStr = preg_replace('/\s\s+/', ' ',$retStr);
-		$retStr = $this->conn->real_escape_string($retStr);
-		return $retStr;
 	}
 }

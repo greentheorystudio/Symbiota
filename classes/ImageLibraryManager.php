@@ -1,5 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/OccurrenceManager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageLibraryManager{
 
@@ -20,7 +22,7 @@ class ImageLibraryManager{
     }
 
     public function __destruct(){
-        if(!($this->conn === false)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -41,12 +43,12 @@ class ImageLibraryManager{
         return $returnArray;
     }
 
-    public function getGenusList($inTaxon = ''): array
+    public function getGenusList($inTaxon = null): array
     {
         $sql = 'SELECT DISTINCT t.UnitName1 ';
         $sql .= $this->getImageSql();
         if($inTaxon){
-            $taxon = $this->cleanInStr($inTaxon);
+            $taxon = Sanitizer::cleanInStr($inTaxon);
             $sql .= "AND (ts.Family = '".$taxon."') ";
         }
         $result = $this->conn->query($sql);
@@ -58,15 +60,15 @@ class ImageLibraryManager{
         return $returnArray;
     }
 
-    public function getSpeciesList($inTaxon = ''): array
+    public function getSpeciesList($inTaxon = null): array
     {
         $retArr = array();
         $tidArr = array();
         $taxon = '';
         if($inTaxon){
-            $taxon = $this->cleanInStr($inTaxon);
+            $taxon = Sanitizer::cleanInStr($inTaxon);
             if(strpos($taxon, ' ')) {
-                $tidArr = array_keys($this->getSynonyms($taxon));
+                $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
             }
         }
         $sql = 'SELECT DISTINCT t.tid, t.SciName ';
@@ -174,7 +176,7 @@ class ImageLibraryManager{
         $sql = 'SELECT DISTINCT i.imgid, o.tidinterpreted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, '.
             'u.uid, u.lastname, u.firstname, i.caption, '.
             'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
-        $sql .= $this->getSqlBase();
+        $sql .= $this->getSqlBase(true);
         $sql .= $this->sqlWhere;
         if(array_key_exists('imagecount',$this->searchTermsArr)&&$this->searchTermsArr['imagecount']){
             if($this->searchTermsArr['imagecount'] === 'taxon'){
@@ -233,7 +235,7 @@ class ImageLibraryManager{
             else{
                 $sql = 'SELECT COUNT(i.imgid) AS cnt ';
             }
-            $sql .= $this->getSqlBase(false);
+            $sql .= $this->getSqlBase();
             $sql .= $this->sqlWhere;
             //echo "<div>Count sql: ".$sql."</div>";
             $result = $this->conn->query($sql);
@@ -244,7 +246,7 @@ class ImageLibraryManager{
         }
     }
 
-    private function getSqlBase($full = true): string
+    private function getSqlBase($full = null): string
     {
         $sql = 'FROM images i ';
         if(isset($this->searchTermsArr['taxa']) && $this->searchTermsArr['taxa']){
@@ -312,12 +314,5 @@ class ImageLibraryManager{
     public function getRecordCnt(): int
     {
         return $this->recordCount;
-    }
-
-    private function cleanInStr($str){
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $this->conn->real_escape_string($newStr);
-        return $newStr;
     }
 }

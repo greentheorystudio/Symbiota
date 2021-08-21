@@ -32,9 +32,12 @@ class Manager  {
 		$this->logFH = fopen($path, 'ab');
 	}
 
-	protected function logOrEcho($str, $indexLevel=0, $tag = 'li'): void
+	protected function logOrEcho($str, $indexLevel = null, $tag = null): void
 	{
-		if($this->verboseMode){
+		if(!$tag){
+            $tag = 'li';
+        }
+	    if($this->verboseMode){
 			if($this->verboseMode === 3 || $this->verboseMode === 1){
 				if($this->logFH){
 					fwrite($this->logFH,$str);
@@ -73,28 +76,4 @@ class Manager  {
     {
         return $this->warningArr;
     }
-
-	protected function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	protected function cleanInStr($str): string
-    {
-		$newStr = trim($str);
-		if($newStr){
-			$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-			$newStr = $this->conn->real_escape_string($newStr);
-		}
-		return $newStr;
-	}
-
-    protected function cleanInArray($arr): array
-    {
-        $newArray = array();
-        foreach($arr as $key => $value){
-            $newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
-        }
-        return $newArray;
-    }
-
 }

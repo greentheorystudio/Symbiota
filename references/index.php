@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
+$refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $refManager = new ReferenceManager();
@@ -24,7 +24,7 @@ if($formSubmit){
 		}
 	}
 }
-if(!$formSubmit || $formSubmit !== 'Search References'){
+if($formSubmit !== 'Search References'){
 	$refArr = $refManager->getRefList('','');
 	foreach($refArr as $refName => $valueArr){
 		if($valueArr['title']){
@@ -148,7 +148,7 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 					}
 					echo '</ul></div>';
 				}
-				elseif(($formSubmit && $formSubmit === 'Search References') && !$refExist){
+				elseif(($formSubmit === 'Search References') && !$refExist){
 					echo '<div style="margin-top:10px;"><div style="font-weight:bold;font-size:120%;">There were no references matching your criteria.</div></div>';
 				}
 				else{
@@ -158,11 +158,11 @@ if(!$formSubmit || $formSubmit !== 'Search References'){
 			</div>
 			<?php 
 		}
-		else if(!$GLOBALS['SYMB_UID']){
-            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
-        }
-        else{
+		else if($GLOBALS['SYMB_UID']) {
             echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
+        else {
+            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
         }
 		?>
 	</div>

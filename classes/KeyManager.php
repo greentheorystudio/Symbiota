@@ -13,12 +13,12 @@ class KeyManager{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
 
-	protected function deleteDescr($tidStr, $charStr = '', $csStr = ''): void
+	protected function deleteDescr($tidStr, $charStr = null, $csStr = null): void
 	{
 		if($tidStr){
 			$sqlWhere = '(TID In ('.$tidStr.')) ';
@@ -154,12 +154,5 @@ class KeyManager{
 			}
 		}
 		$this->language = $lang;
-	}
-
-	protected function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }
