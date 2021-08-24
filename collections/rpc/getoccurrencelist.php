@@ -16,22 +16,26 @@ $collManager = null;
 $occurArr = array();
 $isEditor = false;
 
-if(strlen($stArrJson) <= 1800){
-    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
-    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
-    $copyURL = $urlPrefix.$urlArgs;
-}
-
 if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
-    $collManager->setSearchTermsArr($stArr);
-    $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
-    $occurArr = $collManager->translateSOLRRecList($solrArr);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+        $occurArr = $collManager->translateSOLRRecList($solrArr);
+    }
 }
 else{
     $collManager = new OccurrenceListManager();
-    $collManager->setSearchTermsArr($stArr);
-    $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    }
+}
+
+if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
+    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $copyURL = $urlPrefix.$urlArgs;
 }
 
 $htmlStr = '<div style="float:right;">';

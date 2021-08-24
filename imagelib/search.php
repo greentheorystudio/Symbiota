@@ -25,6 +25,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 
 $imageArr = array();
 $taxaList = array();
+$stArr = array();
+$validStArr = false;
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -104,8 +112,8 @@ $taxaList = array();
 
             initializeSearchStorage(<?php echo $queryId; ?>);
             <?php
-            if($queryId || $stArrJson){
-                if($stArrJson){
+            if($queryId || $validStArr){
+                if($validStArr){
                     ?>
                     initializeSearchStorage(<?php echo $queryId; ?>);
                     loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');

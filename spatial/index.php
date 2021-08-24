@@ -15,6 +15,8 @@ $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
+$stArr = array();
+$validStArr = false;
 
 if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
@@ -53,6 +55,13 @@ if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
 
 $occManager = new OccurrenceManager();
 $spatialManager = new SpatialModuleManager();
+
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($occManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 
 $collList = $occManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
@@ -244,8 +253,8 @@ $dbArr = array();
             if($inputWindowMode){
                 echo 'loadInputParentParams();';
             }
-            if($queryId || $stArrJson){
-                if($stArrJson){
+            if($queryId || $validStArr){
+                if($validStArr){
                     ?>
                     initializeSearchStorage(<?php echo $queryId; ?>);
                     loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');

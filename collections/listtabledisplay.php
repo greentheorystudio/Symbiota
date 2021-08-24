@@ -14,9 +14,16 @@ $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
 $collManager = new OccurrenceListManager();
 $resetOccIndex = false;
 $navStr = '';
-
 $sortFields = array('Catalog Number','Collection','Collector','Country','County','Elevation','Event Date',
     'Family','Individual Count','Life Stage','Number','Scientific Name','Sex','State/Province');
+$stArr = array();
+$validStArr = false;
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -59,11 +66,11 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
                 scrolllock: true
             });
             <?php
-            if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
+            if($validStArr){
+                ?>
+                initializeSearchStorage(<?php echo $queryId; ?>);
+                loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                <?php
             }
             ?>
             stArr = getSearchTermsArr();
