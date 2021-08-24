@@ -77,7 +77,7 @@ $resetPageNum = false;
             const url = "rpc/getoccurrencelist.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
-            console.log(url+'?'+params);
+            //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
