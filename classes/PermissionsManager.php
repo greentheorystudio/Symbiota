@@ -180,7 +180,7 @@ class PermissionsManager{
 					'VALUES('.$uid.',"'.$role.'",'.($tablePk?:'NULL').','.
 					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
 				if(!$this->conn->query($sql1)){
-					$statusStr = 'ERROR adding user permission: '.$this->conn->error;
+					$statusStr = 'ERROR adding user permission.';
 				}
 			}
 			$rs->free();

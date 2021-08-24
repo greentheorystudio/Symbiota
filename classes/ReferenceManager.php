@@ -135,8 +135,7 @@ class ReferenceManager{
 			$this->refId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new reference failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new reference failed.';
 		}
 		return $statusStr;
 	}
@@ -334,8 +333,7 @@ class ReferenceManager{
 			$statusStr = 'Success!';
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new reference author failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new reference author failed.';
 		}
 		return $statusStr;
 	}
@@ -349,8 +347,7 @@ class ReferenceManager{
 			$statusStr = 'Reference author deleted.';
 		}
 		else{
-			$statusStr = 'ERROR: Deletion of reference author failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Deletion of reference author failed.';
 		}
 		return $statusStr;
 	}
@@ -370,8 +367,7 @@ class ReferenceManager{
 			}
 		}
 		else{
-			$statusStr = 'ERROR: Deletion of reference failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Deletion of reference failed.';
 		}
 		return $statusStr;
 	}
@@ -385,8 +381,7 @@ class ReferenceManager{
 			$statusStr = 'Author deleted.';
 		}
 		else{
-			$statusStr = 'ERROR: Deletion of author failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Deletion of author failed.';
 		}
 		return $statusStr;
 	}
@@ -400,8 +395,7 @@ class ReferenceManager{
 			$statusStr = 'Success!';
 		}
 		else{
-			$statusStr = 'ERROR: Deletion of reference link failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Deletion of reference link failed.';
 		}
 		return $statusStr;
 	}
@@ -416,8 +410,7 @@ class ReferenceManager{
 			$this->refAuthId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new author failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new author failed.';
 		}
 		return $statusStr;
 	}
@@ -475,8 +468,7 @@ class ReferenceManager{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of reference failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of reference failed.';
 			}
 		}
 		return $statusStr;
@@ -551,8 +543,7 @@ class ReferenceManager{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of author failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of author failed.';
 			}
 		}
 		return $statusStr;

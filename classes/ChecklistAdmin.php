@@ -157,12 +157,12 @@ class ChecklistAdmin{
                     'WHERE (cl.clid = '.$this->clid.') AND (o.stateprovince = "'.$postArr['locality'].'") AND (o.localitySecurityReason IS NULL) '.
                     'AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'Error updating rare state species: '.$this->conn->error;
+                    $statusStr = 'Error updating rare state species.';
                 }
             }
 		}
 		else{
-			$statusStr = 'Error: unable to update checklist metadata. SQL: '.$this->conn->error;
+			$statusStr = 'Error: unable to update checklist metadata.';
 		}
 		return $statusStr;
 	}
@@ -183,15 +183,15 @@ class ChecklistAdmin{
 						$this->conn->query($sql5);
 					}
 					else{
-						$statusStr = 'ERROR attempting to delete checklist: '.$this->conn->error;
+						$statusStr = 'ERROR attempting to delete checklist.';
 					}
 				}
 				else{
-					$statusStr = 'ERROR attempting to delete checklist taxa links: '.$this->conn->error;
+					$statusStr = 'ERROR attempting to delete checklist taxa links.';
 				}
 			}
 			else{
-				$statusStr = 'ERROR attempting to delete checklist vouchers: '.$this->conn->error;
+				$statusStr = 'ERROR attempting to delete checklist vouchers.';
 			}
 		}
 		else{
@@ -221,7 +221,7 @@ class ChecklistAdmin{
 		if($this->clid){
 			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($polygonStr).'"':'NULL').' WHERE (clid = '.$this->clid.')';
 			if(!$this->conn->query($sql)){
-				echo 'ERROR saving polygon to checklist: '.$this->conn->error;
+				echo 'ERROR saving polygon to checklist.';
 				$status = false;
 			}
 		}
@@ -358,7 +358,7 @@ class ChecklistAdmin{
 			}
 		}
 		else{
-			$insertStatus = 'ERROR: unable to add species ('.$this->conn->error;
+			$insertStatus = 'ERROR: unable to add species.';
 		}
 		return $insertStatus;
 	}
@@ -370,7 +370,7 @@ class ChecklistAdmin{
 			$sql = 'INSERT INTO fmchklstcoordinates(clid,tid,decimallatitude,decimallongitude,notes) '.
 				'VALUES('.$this->clid.','.$tid.','.$lat.','.$lng.',"'.Sanitizer::cleanInStr($notes).'")';
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to add point. '.$this->conn->error;
+				$statusStr = 'ERROR: unable to add point.';
 			}
 		}
 		return $statusStr;
@@ -403,7 +403,7 @@ class ChecklistAdmin{
 			$sql = 'INSERT INTO userroles(uid,role,tablename,tablepk) '.
 				'VALUES('.$u.',"ClAdmin","fmchecklists",'.$this->clid.')';
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to add editor; SQL: '.$this->conn->error;
+				$statusStr = 'ERROR: unable to add editor.';
 			}
 		}
 		return $statusStr;
@@ -415,7 +415,7 @@ class ChecklistAdmin{
 		$sql = 'DELETE FROM userroles '.
 			'WHERE (uid = '.$u.') AND (role = "ClAdmin") AND (tablename = "fmchecklists") AND (tablepk = '.$this->clid.') ';
 		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR: unable to remove editor; SQL: '.$this->conn->error;
+			$statusStr = 'ERROR: unable to remove editor.';
 		}
 		return $statusStr;
 	}

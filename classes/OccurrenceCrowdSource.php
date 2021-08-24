@@ -54,7 +54,7 @@ class OccurrenceCrowdSource {
 				'SET instructions = '.($instr?'"'.Sanitizer::cleanInStr($instr).'"':'NULL').',trainingurl = '.($url?'"'.Sanitizer::cleanInStr($url).'"':'NULL').
 				' WHERE omcsid = '.$omcsid;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR editing project: '.$this->conn->error;
+				$statusStr = 'ERROR editing project.';
 			}
             $this->conn->close();
 		}
@@ -252,7 +252,7 @@ class OccurrenceCrowdSource {
                 $sql = 'INSERT INTO omcrowdsourcequeue(occid, omcsid) '.
                     'SELECT DISTINCT o.occid, '.$omcsid.' AS csid '.$sqlFrag;
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR adding to queue: '.$this->conn->error;
+                    $statusStr = 'ERROR adding to queue.';
                     $statusStr .= '; SQL: '.$sql;
                 }
                 $this->conn->close();
@@ -275,8 +275,7 @@ class OccurrenceCrowdSource {
                 $sql = 'DELETE FROM omcrowdsourcequeue '.
                     'WHERE omcsid = '.$this->omcsid.' AND uidprocessor IS NULL and reviewstatus = 0 ';
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR removing specimens from queue: '.$this->conn->error;
-                    $statusStr .= '; SQL: '.$sql;
+                    $statusStr = 'ERROR removing specimens from queue.';
                 }
                 $this->conn->close();
             }
@@ -395,7 +394,7 @@ class OccurrenceCrowdSource {
 					$successArr[] = $occid;
 				}
 				else{
-					$statusStr = 'ERROR submitting reviews; '.$this->conn->error.'<br/>SQL = '.$sql;
+					$statusStr = 'ERROR submitting reviews.';
 				}
 			}
 			if($successArr && isset($postArr['updateProcessingStatus']) && $postArr['updateProcessingStatus']){

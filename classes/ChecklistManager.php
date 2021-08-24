@@ -61,9 +61,6 @@ class ChecklistManager {
 				}
 				$rs->free();
 			}
-			else{
-				trigger_error('ERROR setting checklist ID, SQL: '.$sql, E_USER_ERROR);
-			}
 		}
 		$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
 		$sqlChild = $sqlChildBase.$this->clid.')';
@@ -127,9 +124,6 @@ class ChecklistManager {
 					}
 		    	}
 		    	$result->free();
-			}
-			else{
-				trigger_error('ERROR: unable to set checklist metadata => '.$sql, E_USER_ERROR);
 			}
 		}
 		return $retArr;
@@ -667,9 +661,6 @@ class ChecklistManager {
 				$this->projName = Sanitizer::cleanOutStr($r->projname);
 			}
 			$rs->free();
-		}
-		else{
-			trigger_error('ERROR: Unable to project => SQL: '.$sql, E_USER_WARNING);
 		}
 		return $this->pid;
 	}

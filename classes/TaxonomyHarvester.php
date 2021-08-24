@@ -691,7 +691,7 @@ class TaxonomyHarvester extends Manager{
                         $newTid = (int)$this->conn->insert_id;
                     }
                     else{
-                        echo '<li style="margin-left:15px;">ERROR inserting '.$taxonArr['sciname'].': '.$this->conn->error.'</li>';
+                        echo '<li style="margin-left:15px;">ERROR inserting '.$taxonArr['sciname'].'.</li>';
                     }
                 }
                 if($newTid){
@@ -720,19 +720,19 @@ class TaxonomyHarvester extends Manager{
                             $sqlHier = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
                                 'VALUES('.$newTid.','.$parentTid.','.$this->taxAuthId.')';
                             if(!$this->conn->query($sqlHier)){
-                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 1): '.$this->conn->error.'</li>';
+                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 1).</li>';
                             }
                             $sqlHier2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) '.
                                 'SELECT '.$newTid.' AS tid, parenttid, taxauthid FROM taxaenumtree WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$parentTid.')';
                             if(!$this->conn->query($sqlHier2)){
-                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 2): '.$this->conn->error.'</li>';
+                                echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 2).</li>';
                             }
                             $sqlKing = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
                                 'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
                                 'SET t.kingdomname = t2.sciname '.
                                 'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t.tid = '.$newTid.') AND (t2.rankid = 10)';
                             if(!$this->conn->query($sqlKing)){
-                                echo '<li style="margin-left:15px;">ERROR updating kingdom string: '.$this->conn->error.'</li>';
+                                echo '<li style="margin-left:15px;">ERROR updating kingdom string.</li>';
                             }
                             $taxonDisplay = $taxonArr['sciname'];
                             if(isset($GLOBALS['USER_RIGHTS']['Taxonomy'])){
@@ -788,7 +788,7 @@ class TaxonomyHarvester extends Manager{
                         $sqlVern = 'INSERT INTO taxavernaculars(tid,vernacularname,language) '.
                             'VALUES('.$newTid.',"'.$vernArr['vernacularName'].'","'.$vernArr['language'].'")';
                         if(!$this->conn->query($sqlVern)){
-                            echo '<li style="margin-left:15px;">ERROR loading vernacular '.$taxonArr['sciname'].': '.$this->conn->error.'</li>';
+                            echo '<li style="margin-left:15px;">ERROR loading vernacular '.$taxonArr['sciname'].'.</li>';
                         }
                     }
                 }

@@ -81,7 +81,7 @@ class OccurrenceSupport {
 				elseif($reviewStatus === 3) {
 					$statusStr = 'Reviewed';
 				}
-				$this->errorMessage = 'ERROR changing comment status to '.$statusStr.': '.$this->conn->error;
+				$this->errorMessage = 'ERROR changing comment status to '.$statusStr.'.';
 				$status = false;
 			}
 		}
@@ -95,7 +95,7 @@ class OccurrenceSupport {
 			$sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comid;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorMessage = 'ERROR deleting comment: '.$this->conn->error;
+				$this->errorMessage = 'ERROR deleting comment.';
 			}
 		}
 		return $status;

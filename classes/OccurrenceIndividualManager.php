@@ -29,9 +29,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->metadataArr = $rs->fetch_assoc();
                 $rs->free();
             }
-            else{
-                trigger_error('Unable to set collection metadata; '.$this->conn->error,E_USER_ERROR);
-            }
         }
     }
 
@@ -115,9 +112,7 @@ class OccurrenceIndividualManager extends Manager{
         elseif($this->collid && $this->dbpk){
             $sql .= 'WHERE (o.collid = '.$this->collid.') AND (o.dbpk = "'.$this->dbpk.'")';
         }
-        else{
-            trigger_error('Specimen identifier is null or invalid; '.$this->conn->error,E_USER_ERROR);
-        }
+
         if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
             $sql .= ' AND (oas.relationship = "host" OR (ISNULL(oas.relationship) AND ISNULL(oas.verbatimsciname))) ';
         }
@@ -169,9 +164,6 @@ class OccurrenceIndividualManager extends Manager{
             $statsManager = new OccurrenceAccessStats();
             $statsManager->recordAccessEvent($this->occid, $accessType);
         }
-        else{
-            trigger_error('Unable to set occurrence array; '.$this->conn->error,E_USER_ERROR);
-        }
     }
 
     private function loadImages(): void
@@ -206,9 +198,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to set images; '.$this->conn->error,E_USER_WARNING);
-        }
     }
 
     private function loadDeterminations(): void
@@ -232,9 +221,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to loadDeterminations; '.$this->conn->error,E_USER_NOTICE);
-        }
     }
 
     private function loadLoan(): void
@@ -250,9 +236,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['loan']['code'] = $row->institutioncode;
             }
             $result->free();
-        }
-        else{
-            trigger_error('Unable to load loan info; '.$this->conn->error,E_USER_WARNING);
         }
     }
 
@@ -270,9 +253,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['exs']['exsnumber'] = $r->exsnumber;
             }
             $rs->free();
-        }
-        else{
-            trigger_error('Unable to set exsiccati info; '.$this->conn->error,E_USER_WARNING);
         }
     }
 
@@ -307,9 +287,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to set comments; '.$this->conn->error,E_USER_WARNING);
-        }
         return $retArr;
     }
 
@@ -325,7 +302,7 @@ class OccurrenceIndividualManager extends Manager{
             }
             else{
                 $status = false;
-                $this->errorMessage = 'ERROR adding comment: '.$this->conn->error;
+                $this->errorMessage = 'ERROR adding comment.';
             }
             $this->conn->close();
         }
@@ -339,7 +316,7 @@ class OccurrenceIndividualManager extends Manager{
             $sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comId;
             if(!$this->conn->query($sql)){
                 $status = false;
-                $this->errorMessage = 'ERROR deleting comment: '.$this->conn->error;
+                $this->errorMessage = 'ERROR deleting comment.';
             }
         }
         $this->conn->close();
@@ -355,7 +332,7 @@ class OccurrenceIndividualManager extends Manager{
             }
             if(isset($GLOBALS['ADMIN_EMAIL'])){
                 if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
-                    $this->errorMessage = 'ERROR changing comment status to needing review, Err msg: '.$this->conn->error;
+                    $this->errorMessage = 'ERROR changing comment status to needing review.';
                     $status = false;
                 }
                 $this->conn->close();
@@ -390,7 +367,7 @@ class OccurrenceIndividualManager extends Manager{
             return false;
         }
         if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 1 WHERE comid = '.$comId)){
-            $this->errorMessage = 'ERROR making comment public, err msg: '.$this->conn->error;
+            $this->errorMessage = 'ERROR making comment public.';
             $status = false;
         }
         $this->conn->close();
@@ -414,9 +391,6 @@ class OccurrenceIndividualManager extends Manager{
                     $retArr[$r->idoccurgenetic]['notes'] = $r->notes;
                 }
                 $result->free();
-            }
-            else{
-                trigger_error('Unable to get genetic data; '.$this->conn->error,E_USER_WARNING);
             }
         }
         return $retArr;
@@ -447,9 +421,6 @@ class OccurrenceIndividualManager extends Manager{
                 }
             }
             $result->free();
-        }
-        else{
-            trigger_error('Unable to get edits; '.$this->conn->error,E_USER_WARNING);
         }
         return $retArr;
     }
@@ -525,9 +496,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to get checklist data; '.$this->conn->error,E_USER_WARNING);
-        }
         return $returnArr;
     }
 
@@ -540,7 +508,7 @@ class OccurrenceIndividualManager extends Manager{
                 ($postArr['vnotes']?'"'.Sanitizer::cleanInStr($postArr['vnotes']).'"':'NULL').','.
                 ($postArr['veditnotes']?'"'.Sanitizer::cleanInStr($postArr['veditnotes']).'"':'NULL').')';
             if(!$this->conn->query($sql)){
-                $this->errorMessage = 'ERROR linking voucher to checklist, err msg: '.$this->conn->error;
+                $this->errorMessage = 'ERROR linking voucher to checklist.';
                 $status = false;
             }
             $this->conn->close();
@@ -554,7 +522,7 @@ class OccurrenceIndividualManager extends Manager{
         if(is_numeric($occid) && is_numeric($clid)){
             $sql = 'DELETE FROM fmvouchers WHERE (occid = '.$occid.') AND (clid = '.$clid.') ';
             if(!$this->conn->query($sql)){
-                $this->errorMessage = 'ERROR loading '.$this->conn->error;
+                $this->errorMessage = 'ERROR deleting voucher.';
                 $status = false;
             }
             if(!($this->conn === null)) {
@@ -601,7 +569,7 @@ class OccurrenceIndividualManager extends Manager{
             $rs2->free();
         }
         else {
-            $this->errorMessage = 'ERROR: Unable to set datasets for user: ' . $this->conn->error;
+            $this->errorMessage = 'ERROR: Unable to set datasets for user.';
         }
 
         $sql3 = 'SELECT datasetid, notes FROM omoccurdatasetlink WHERE occid = '.$this->occid;
@@ -618,7 +586,7 @@ class OccurrenceIndividualManager extends Manager{
             $rs3->free();
         }
         else {
-            $this->errorMessage = 'Unable to get related datasets: ' . $this->conn->error;
+            $this->errorMessage = 'Unable to get related datasets.';
         }
         return $retArr;
     }
@@ -637,7 +605,7 @@ class OccurrenceIndividualManager extends Manager{
                     $dsid = $this->conn->insert_id;
                 }
                 else{
-                    $this->errorMessage = 'ERROR creating new dataset, err msg: '.$this->conn->error;
+                    $this->errorMessage = 'ERROR creating new dataset.';
                     $status = false;
                 }
             }
@@ -645,7 +613,7 @@ class OccurrenceIndividualManager extends Manager{
                 $sql2 = 'INSERT INTO omoccurdatasetlink(datasetid,occid,notes) '.
                     'VALUES('.$dsid.','.$this->occid.',"'.Sanitizer::cleanInStr($notes).'")';
                 if(!$this->conn->query($sql2)){
-                    $this->errorMessage = 'ERROR linking to dataset, err msg: '.$this->conn->error;
+                    $this->errorMessage = 'ERROR linking to dataset.';
                     $status = false;
                 }
             }
@@ -672,9 +640,6 @@ class OccurrenceIndividualManager extends Manager{
                 }
                 $result->free();
             }
-            else{
-                trigger_error('Unable to get checklist data; '.$this->conn->error,E_USER_WARNING);
-            }
         }
         return $returnArr;
     }
@@ -693,9 +658,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $rs->free();
         }
-        else{
-            trigger_error('ERROR checking archive: '.$this->conn->error,E_USER_WARNING);
-        }
         if(!$retArr){
             $sql = 'SELECT archiveobj, notes '.
                 'FROM guidoccurrences '.
@@ -707,9 +669,6 @@ class OccurrenceIndividualManager extends Manager{
                     $retArr['notes'] = $r->notes;
                 }
                 $rs->free();
-            }
-            else{
-                trigger_error('ERROR checking archive (step2): '.$this->conn->error,E_USER_WARNING);
             }
         }
         return $retArr;

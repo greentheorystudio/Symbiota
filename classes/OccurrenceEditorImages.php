@@ -44,7 +44,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                     $sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) '.
                         'VALUES('.$this->activeImgId.',"'.Sanitizer::cleanInStr($rawStr).'","'.Sanitizer::cleanInStr($ocrSource).'")';
                     if(!$this->conn->query($sql)){
-                        $this->errorStr = 'ERROR loading OCR text block: '.$this->conn->error;
+                        $this->errorStr = 'ERROR loading OCR text block.';
                     }
                 }
             }
@@ -165,7 +165,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                    }
             }
         } else { 
-			$status .= 'ERROR: image not changed, ' .$this->conn->error. 'SQL: ' .$sql;
+			$status .= 'ERROR: image not changed.';
 		}
 		return $status;
 	}
@@ -196,14 +196,14 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 				$this->conn->query($imgSql);
 			}
 			else{
-				$this->errorArr[] = 'ERROR: Unalbe to remap image to another occurrence record. Error msg: '.$this->conn->error;
+				$this->errorArr[] = 'ERROR: Unalbe to remap image to another occurrence record.';
 				$status = false;
 			}
 		}
 		else{
 			$sql = 'UPDATE images SET occid = NULL WHERE (imgid = '.$imgId.')';
 			if(!$this->conn->query($sql)){
-				$this->errorArr[] = 'ERROR: Unalbe to disassociate from occurrence record. Error msg: '.$this->conn->error;
+				$this->errorArr[] = 'ERROR: Unalbe to disassociate from occurrence record.';
 				$status = false;
 			}
 		}

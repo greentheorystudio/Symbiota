@@ -88,7 +88,7 @@ class InventoryProjectManager {
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR deleting inventory project: '.$this->conn->error;
+				$this->errorStr = 'ERROR deleting inventory project.';
 			}
 		}
 		return $status;
@@ -106,7 +106,7 @@ class InventoryProjectManager {
 			$this->pid = $this->conn->insert_id;
 		}
 		else{
-			$this->errorStr = 'ERROR creating new project: '.$this->conn->error;
+			$this->errorStr = 'ERROR creating new project.';
 		}
 		return $this->pid;
 	}
@@ -170,7 +170,7 @@ class InventoryProjectManager {
 			$sql = 'INSERT INTO userroles(role,tablename,tablepk,uid) '.
 				'VALUES("ProjAdmin","fmprojects",'.$this->pid.','.$uid.') ';
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR adding manager: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding manager.';
 			}
 		}
 		return $status;
@@ -183,7 +183,7 @@ class InventoryProjectManager {
 			$sql = 'DELETE FROM userroles WHERE (role = "ProjAdmin") AND (tablepk = '.$this->pid.') AND (uid = '.$uid.') ';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR removing manager: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing manager.';
 			}
 		}
 		return $status;
@@ -207,7 +207,7 @@ class InventoryProjectManager {
 		if(is_numeric($clid)) {
             $sql = 'INSERT INTO fmchklstprojlink(pid,clid) VALUES('.$this->pid.','.$clid.') ';
             if(!$this->conn->query($sql)){
-                return 'ERROR adding checklist to project: '.$this->conn->error;
+                return 'ERROR adding checklist to project.';
             }
 		}
 		return true;

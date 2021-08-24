@@ -48,8 +48,7 @@ class ImageExplorer{
 					$rs2->free();
 				}
 				else{
-					echo 'ERROR populating assigned tid and sciname for image: '.$this->conn->error.'<br/>';
-					echo 'SQL: '.$sql2;
+					echo 'ERROR populating assigned tid and sciname for image.';
 				}
 			
 				$cntSql = 'SELECT count(DISTINCT i.imgid) AS cnt '.substr($sql,strpos($sql,' FROM '));
@@ -67,8 +66,7 @@ class ImageExplorer{
             }
 		}
 		else{
-			echo 'ERROR returning image recordset: '.$this->conn->error.'<br/>';
-			echo 'SQL: '.$sql;
+			echo 'ERROR returning image recordset.';
 		}
 		return $retArr;
 	}

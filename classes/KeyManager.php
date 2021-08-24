@@ -72,7 +72,7 @@ class KeyManager{
 				'AND (d1.cid IN('.$cidStr.')) AND (t2.tid IN('.$childrenStr.')) AND (d2.CID Is Null) AND (t2.RankId <= 220)';
 			//echo $sql.'<br/><br/>';
 			if(!$this->conn->query($sql)){
-				echo 'ERROR setting inheritance: '.$this->conn->error;
+				echo 'ERROR setting inheritance.';
 			}
 			$cnt++;
 		}

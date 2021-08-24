@@ -113,8 +113,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 			$this->conn->query('DELETE FROM fmdynamicchecklists WHERE expiration < now()');
 		}
 		else{
-			echo 'ERROR: ' .$this->conn->error;
-			echo 'insertSql: ' .$sqlCreateCl;
+			echo 'ERROR: Building checklist.';
 		}
 		if($this->conn) {
 			$this->conn->close();
