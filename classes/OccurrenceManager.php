@@ -1199,5 +1199,43 @@ class OccurrenceManager{
         $newStr = strip_tags($newStr);
         return $newStr;
     }
+
+    public function validateSearchTermsArr($stArr): bool
+    {
+        $valid = false;
+        if(
+            array_key_exists('db',$stArr) ||
+            array_key_exists('clid',$stArr) ||
+            array_key_exists('taxa',$stArr) ||
+            array_key_exists('country',$stArr) ||
+            array_key_exists('state',$stArr) ||
+            array_key_exists('county',$stArr) ||
+            array_key_exists('local',$stArr) ||
+            array_key_exists('elevlow',$stArr) ||
+            array_key_exists('elevhigh',$stArr) ||
+            array_key_exists('collector',$stArr) ||
+            array_key_exists('collnum',$stArr) ||
+            array_key_exists('eventdate1',$stArr) ||
+            array_key_exists('eventdate2',$stArr) ||
+            array_key_exists('occurrenceRemarks',$stArr) ||
+            array_key_exists('catnum',$stArr) ||
+            array_key_exists('othercatnum',$stArr) ||
+            array_key_exists('typestatus',$stArr) ||
+            array_key_exists('hasimages',$stArr) ||
+            array_key_exists('hasgenetic',$stArr) ||
+            array_key_exists('upperlat',$stArr) ||
+            array_key_exists('pointlat',$stArr) ||
+            array_key_exists('circleArr',$stArr) ||
+            array_key_exists('phuid',$stArr) ||
+            array_key_exists('imagetag',$stArr) ||
+            array_key_exists('imagekeyword',$stArr) ||
+            array_key_exists('uploaddate1',$stArr) ||
+            array_key_exists('uploaddate2',$stArr) ||
+            array_key_exists('polyArr',$stArr)
+        ){
+            $valid = true;
+        }
+        return $valid;
+    }
 }
 ?>
