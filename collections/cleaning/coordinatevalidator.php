@@ -3,22 +3,16 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$obsUid = array_key_exists('obsuid',$_REQUEST)?(int)$_REQUEST['obsuid']:0;
 $queryCountry = array_key_exists('q_country',$_REQUEST)?$_REQUEST['q_country']:'';
-$ranking = array_key_exists('ranking',$_REQUEST)?$_REQUEST['ranking']:'';
-$action = array_key_exists('action',$_POST)?$_POST['action']:'';
+$ranking = array_key_exists('ranking',$_REQUEST)?(int)$_REQUEST['ranking']:0;
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/coordinatevalidator.php?' . $_SERVER['QUERY_STRING']);
 }
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($obsUid)) {
-    $obsUid = 0;
-}
 if($action && !preg_match('/^[a-zA-Z\s]+$/',$action)) {
     $action = '';
 }
@@ -150,7 +144,7 @@ if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
 								<?php
 								$rankList = $cleanManager->getRankList();
 								foreach($rankList as $rankId){
-									echo '<option value="'.$rankId.'" '.($ranking === $rankId?'SELECTED':'').'>'.$rankId.'</option>';
+									echo '<option value="'.$rankId.'" '.($ranking === (int)$rankId?'SELECTED':'').'>'.$rankId.'</option>';
 								}
 								?>
 							</select>

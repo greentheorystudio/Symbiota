@@ -7,13 +7,13 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/misc/commentlist.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = $_REQUEST['collid'];
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:100;
+$collid = (int)$_REQUEST['collid'];
+$start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
+$limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:100;
 $tsStart = array_key_exists('tsstart',$_POST)?$_POST['tsstart']:'';
 $tsEnd = array_key_exists('tsend',$_POST)?$_POST['tsend']:'';
-$uid = array_key_exists('uid',$_POST)?$_POST['uid']:0;
-$rs = array_key_exists('rs',$_POST)?$_POST['rs']:1;
+$uid = array_key_exists('uid',$_POST)?(int)$_POST['uid']:0;
+$rs = array_key_exists('rs',$_POST)?(int)$_POST['rs']:1;
 
 $commentManager = new OccurrenceSupport();
 

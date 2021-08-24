@@ -3,15 +3,15 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'];
-$targetTid = $_REQUEST['targettid'];
-$occIndex = $_REQUEST['occindex'];
+$targetTid = (int)$_REQUEST['targettid'];
+$occIndex = (int)$_REQUEST['occindex'];
 $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 $copyURL = '';
 
 if($GLOBALS['SOLR_MODE']){

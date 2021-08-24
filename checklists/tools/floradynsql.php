@@ -1,30 +1,30 @@
 <?php
-	include_once(__DIR__ . '/../../config/symbini.php');
-	include_once(__DIR__ . '/../../classes/InventoryDynSqlManager.php');
-	header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../classes/InventoryDynSqlManager.php');
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-	$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-	$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-	$sqlFrag = array_key_exists('sqlfrag',$_REQUEST)?$_REQUEST['sqlfrag']: '';
-	
-	$dynSqlManager = new InventoryDynSqlManager($clid);
-	$isEditable = false;
-	$statusStr = '';
-	if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid(), $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
-		$isEditable = true;
-		
-		if($action === 'Save SQL Fragment'){
-	 		$dynSqlManager->saveSql($sqlFrag);
-	 	}
-	 	elseif($action === 'Test SQL Fragment'){
-	 		if($dynSqlManager->testSql($sqlFrag)){
-	 			$statusStr = 'SQL fragment valid';
-	 		}
-	 		else{
-	 			$statusStr = 'ERROR: SQL fragment failed';
-	 		}
-	 	}
-	}
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$sqlFrag = array_key_exists('sqlfrag',$_REQUEST)?$_REQUEST['sqlfrag']: '';
+
+$dynSqlManager = new InventoryDynSqlManager($clid);
+$isEditable = false;
+$statusStr = '';
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
+    $isEditable = true;
+
+    if($action === 'Save SQL Fragment'){
+        $dynSqlManager->saveSql($sqlFrag);
+    }
+    elseif($action === 'Test SQL Fragment'){
+        if($dynSqlManager->testSql($sqlFrag)){
+            $statusStr = 'SQL fragment valid';
+        }
+        else{
+            $statusStr = 'ERROR: SQL fragment failed';
+        }
+    }
+}
 ?>
 
 <html lang="en">

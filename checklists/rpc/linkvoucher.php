@@ -4,11 +4,11 @@ include_once(__DIR__ . '/../../classes/ChecklistVoucherAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $sciname = $_POST['sciname'];
-$occid = $_POST['occid'];
-$clid = $_POST['clid'];
+$occid = (int)$_POST['occid'];
+$clid = (int)$_POST['clid'];
 
 $status = 0;
-if($sciname && is_numeric($occid) && is_numeric($clid)){
+if($sciname && $occid && $clid){
 	$clManager = new ChecklistVoucherAdmin();
 	$clManager->setClid($clid);
 	$status = $clManager->linkVoucher($sciname,$occid);

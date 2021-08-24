@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TaxonomyAPIManager{
 
@@ -19,7 +20,7 @@ class TaxonomyAPIManager{
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -32,7 +33,7 @@ class TaxonomyAPIManager{
         if($this->taxAuthId){
             $sql .= 'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
         }
-        $sql .= 'WHERE t.SciName LIKE "'.$this->cleanInStr($queryString).'%" ';
+        $sql .= 'WHERE t.SciName LIKE "'.Sanitizer::cleanInStr($queryString).'%" ';
         if($this->rankLimit){
             $sql .= 'AND t.RankId = '.$this->rankLimit.' ';
         }
@@ -69,7 +70,7 @@ class TaxonomyAPIManager{
         $retArr = array();
         $sql = 'SELECT DISTINCT t.TID, v.VernacularName, t.SciName '.
             'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID ';
-        $sql .= 'WHERE v.VernacularName LIKE "%'.$this->cleanInStr($queryString).'%" ';
+        $sql .= 'WHERE v.VernacularName LIKE "%'.Sanitizer::cleanInStr($queryString).'%" ';
         if($this->limit){
             $sql .= 'LIMIT '.$this->limit.' ';
         }
@@ -85,27 +86,27 @@ class TaxonomyAPIManager{
 
     public function setTaxAuthId($val): void
     {
-        $this->taxAuthId = $this->cleanInStr($val);
+        $this->taxAuthId = Sanitizer::cleanInStr($val);
     }
 
     public function setRankLimit($val): void
     {
-        $this->rankLimit = $this->cleanInStr($val);
+        $this->rankLimit = Sanitizer::cleanInStr($val);
     }
 
     public function setRankLow($val): void
     {
-        $this->rankLow = $this->cleanInStr($val);
+        $this->rankLow = Sanitizer::cleanInStr($val);
     }
 
     public function setRankHigh($val): void
     {
-        $this->rankHigh = $this->cleanInStr($val);
+        $this->rankHigh = Sanitizer::cleanInStr($val);
     }
 
     public function setLimit($val): void
     {
-        $this->limit = $this->cleanInStr($val);
+        $this->limit = Sanitizer::cleanInStr($val);
     }
 
     public function setHideAuth($val): void
@@ -120,13 +121,6 @@ class TaxonomyAPIManager{
 
     public function setHideProtected($val): void
     {
-        $this->hideProtected = $this->cleanInStr($val);
-    }
-
-    protected function cleanInStr($str){
-        $newStr = trim($str);
-        $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-        $newStr = $this->conn->real_escape_string($newStr);
-        return $newStr;
+        $this->hideProtected = Sanitizer::cleanInStr($val);
     }
 }

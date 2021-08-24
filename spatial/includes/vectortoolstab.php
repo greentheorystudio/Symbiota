@@ -22,19 +22,19 @@
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
+            <button data-role="none" onclick="createBuffers();" >Buffer</button> Creates a buffer polygon of <input data-role="none" type="text" id="bufferSize" style="width:50px;" /> km around selected features.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyDifference();" >Difference</button> Returns a new polygon with the area of the polygon or circle selected first, exluding the area of the polygon or circle selected second.
+            <button data-role="none" onclick="createPolyDifference();" >Difference</button> Returns a new polygon with the area of the polygon, box, or circle selected first, excluding the area of the polygon, box, or circle selected second.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the area overlapping of both selected polygons or circles.
+            <button data-role="none" onclick="createPolyIntersect();" >Intersect</button> Returns a new polygon with the overlapping area of two selected polygons, boxes, or circles.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
         <div style="margin-top:10px;">
-            <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons or circles. *Note new polygon will replace all selected shapes.
+            <button data-role="none" onclick="createPolyUnion();" >Union</button> Returns a new polygon with the combined area of two or more selected polygons, boxes, or circles. *Note the new polygon will replace all selected shapes.
         </div>
         <div style="margin:5px 0 5px 0;"><hr /></div>
     </div>

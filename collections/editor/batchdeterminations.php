@@ -8,14 +8,12 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = $_REQUEST['collid'];
-$tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$collid = (int)$_REQUEST['collid'];
+$tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $occManager = new OccurrenceEditorDeterminations();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 
 $occManager->setCollId($collid);
 $occManager->getCollMap();
@@ -37,7 +35,7 @@ if($isEditor){
 		$occidArr = $_REQUEST['occid'];
 		$occStr = implode(',',$occidArr);
 		$catArr = $occManager->getCatNumArr($occStr);
-		$jsonCatArr = json_encode($catArr);
+		$jsonCatArr = json_encode($catArr, JSON_THROW_ON_ERROR);
 		foreach($occidArr as $k){
 			$occManager->setOccId($k);
 			$occManager->addDetermination($_REQUEST,$isEditor);

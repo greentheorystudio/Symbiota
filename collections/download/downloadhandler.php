@@ -6,9 +6,9 @@ include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
-$schema = array_key_exists('schema',$_REQUEST)?$_REQUEST['schema']: 'symbiota';
-$cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
-$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?$_POST['taxonFilterCode']:0;
+$schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'symbiota';
+$cSet = array_key_exists('cset',$_POST)?htmlspecialchars($_POST['cset']):'';
+$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?(int)$_POST['taxonFilterCode']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
@@ -19,38 +19,40 @@ $solrManager = new SOLRManager();
 $occWhereStr = '';
 
 if($stArrJson){
-	$stArr = json_decode($stArrJson, true);
-	$occurManager->setSearchTermsArr($stArr);
+	$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+	if($stArr){
+        $occurManager->setSearchTermsArr($stArr);
 
-    if($GLOBALS['SOLR_MODE']){
-    	$solrManager->setSearchTermsArr($stArr);
-        if($schema === 'checklist'){
-            if($taxonFilterCode){
-                $solrArr = $solrManager->getTaxaArr();
-                $tidArr = $solrManager->getSOLRTidList($solrArr);
-                $dlManager->setTidArr($tidArr);
+        if($GLOBALS['SOLR_MODE']){
+            $solrManager->setSearchTermsArr($stArr);
+            if($schema === 'checklist'){
+                if($taxonFilterCode){
+                    $solrArr = $solrManager->getTaxaArr();
+                    $tidArr = $solrManager->getSOLRTidList($solrArr);
+                    $dlManager->setTidArr($tidArr);
+                }
+                else{
+                    $occArr = $solrManager->getOccArr();
+                    $dlManager->setOccArr($occArr);
+                }
             }
-            else{
-                $occArr = $solrManager->getOccArr();
+            elseif($schema === 'georef'){
+                $occArr = $solrManager->getOccArr(true);
                 $dlManager->setOccArr($occArr);
             }
-        }
-        elseif($schema === 'georef'){
-            $occArr = $solrManager->getOccArr(true);
-            $dlManager->setOccArr($occArr);
-        }
-        elseif(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
-            $occArr = $solrManager->getOccArr();
-            if($occArr){
-                $occWhereStr = 'WHERE o.occid IN('.implode(',',$occArr).') ';
+            elseif(array_key_exists('publicsearch',$_POST) && $_POST['publicsearch']){
+                $occArr = $solrManager->getOccArr();
+                if($occArr){
+                    $occWhereStr = 'WHERE o.occid IN('.implode(',',$occArr).') ';
+                }
             }
         }
     }
 }
 
 if($schema === 'backup'){
-    $collid = $_POST['collid'];
-	if($collid && is_numeric($collid)){
+    $collid = (int)$_POST['collid'];
+	if($collid){
 		if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 			$dwcaHandler->setSchemaType('backup');
 			$dwcaHandler->setCharSetOut($cSet);
@@ -82,9 +84,9 @@ if($schema === 'backup'){
 	}
 }
 else{
-	$zip = (array_key_exists('zip',$_POST)?$_POST['zip']:0);
-	$format = (array_key_exists('format',$_POST)?$_POST['format']:'csv');
-	$extended = (array_key_exists('extended',$_POST)?$_POST['extended']:0);
+	$zip = (array_key_exists('zip',$_POST)?(int)$_POST['zip']:0);
+	$format = (array_key_exists('format',$_POST)?htmlspecialchars($_POST['format']):'csv');
+	$extended = (array_key_exists('extended',$_POST)?(int)$_POST['extended']:0);
 
 	$redactLocalities = 1;
 	$rareReaderArr = array();
@@ -114,8 +116,8 @@ else{
 		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
-		$dlManager->addCondition('decimalLatitude','NOTNULL','');
-		$dlManager->addCondition('decimalLongitude','NOTNULL','');
+		$dlManager->addCondition('decimalLatitude','NOTNULL');
+		$dlManager->addCondition('decimalLongitude','NOTNULL');
 		if(array_key_exists('targetcollid',$_POST) && $_POST['targetcollid']){
 			$dlManager->addCondition('collid','EQUALS',$_POST['targetcollid']);
 		}

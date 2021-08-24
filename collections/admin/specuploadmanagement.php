@@ -7,16 +7,10 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:0;
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']):'';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$uspid = array_key_exists('uspid',$_REQUEST)?(int)$_REQUEST['uspid']:0;
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($uspid)) {
-    $uspid = 0;
-}
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }

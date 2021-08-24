@@ -5,13 +5,13 @@ include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
-$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
-$ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-$reset = array_key_exists('reset',$_REQUEST)?$_REQUEST['reset']:false;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;
+$occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:0;
+$ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
+$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
+$reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
 $solrManager = new SOLRManager();
@@ -49,6 +49,7 @@ $headMap = array();
 
 $qryCnt = 0;
 $statusStr = '';
+$navStr = '';
 
 if($GLOBALS['SYMB_UID']){
 	$occManager->setCollId($collId);
@@ -96,7 +97,7 @@ if($GLOBALS['SYMB_UID']){
 		$occManager->setSqlWhere(0,$recLimit);
 		$qryCnt = $occManager->getQueryRecordCount();
 	}
-	elseif($occIndex !== false){
+	elseif($occIndex !== 0){
 		if(!$reset) {
             $occManager->setQueryVariables();
         }

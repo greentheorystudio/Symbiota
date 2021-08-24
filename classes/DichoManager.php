@@ -61,8 +61,7 @@ class DichoManager{
             'WHERE stmtid = ' .$dataArr['stmtid'];
         //echo $sql;
         if(!$con->query($sql)){
-            echo '<div>ERROR Updating Statement: ' .$con->error. '</div>';
-            echo '<div>SQL: ' .$sql. '</div>';
+            echo '<div>ERROR Updating Statement</div>';
         }
         $con->close();
     }
@@ -106,14 +105,12 @@ class DichoManager{
         $sql = 'INSERT INTO dichotomouskey (nodeid,statement,parentstmtid,tid,notes) '.
             'VALUES('.$newNodeId.',"'.$this->cleanString($dataArr['statement']).'",'.$dataArr['parentstmtid'].','.($dataArr['tid']?:"\N").',"'.$this->cleanString($dataArr['notes']).'") "';
         if(!$con->query($sql)){
-            echo '<div>ERROR Loading Statement1: ' .$con->error. '</div>';
-            echo '<div>SQL: ' .$sql. '</div>';
+            echo '<div>ERROR Loading Statement1</div>';
         }
         $sql = 'INSERT INTO dichotomouskey (nodeid,statement,parentstmtid,tid,notes) '.
             'VALUES('.$newNodeId.',"'.$this->cleanString($dataArr['statement2']).'",'.$dataArr['parentstmtid'].','.($dataArr['tid2']?:"\N").',"'.$this->cleanString($dataArr['notes2']).'") "';
         if(!$con->query($sql)){
-            echo '<div>ERROR Loading Statement1: ' .$con->error. '</div>';
-            echo '<div>SQL: ' .$sql. '</div>';
+            echo '<div>ERROR Loading Statement2</div>';
         }
 
         $con->close();

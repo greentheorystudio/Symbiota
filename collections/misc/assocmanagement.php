@@ -7,8 +7,8 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/misc/assocmanagement.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 if(!is_numeric($collid)) {
     $collid = 0;

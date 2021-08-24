@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceCollectionProfile {
 
@@ -20,7 +21,7 @@ class OccurrenceCollectionProfile {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -190,7 +191,7 @@ class OccurrenceCollectionProfile {
 		if($collArr['rights']){
 			$rights = $collArr['rights'];
 			$rightsUrl = '';
-            if(strpos($rights, 'http') === 0){
+            if(strncmp($rights, 'http', 4) === 0){
                 $rightsUrl = $rights;
                 if($GLOBALS['RIGHTS_TERMS']) {
                     foreach($GLOBALS['RIGHTS_TERMS'] as $name => $url){
@@ -248,27 +249,27 @@ class OccurrenceCollectionProfile {
     {
         $status = 'Edits saved';
 		if($this->collid){
-			$instCode = $this->cleanInStr($postArr['institutioncode']);
-			$collCode = $this->cleanInStr($postArr['collectioncode']);
-			$coleName = $this->cleanInStr($postArr['collectionname']);
-			$fullDesc = $this->cleanInStr($postArr['fulldescription']);
-			$homepage = $this->cleanInStr($postArr['homepage']);
-			$contact = $this->cleanInStr($postArr['contact']);
-			$email = $this->cleanInStr($postArr['email']);
+			$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
+			$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
+			$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
+			$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
+			$homepage = Sanitizer::cleanInStr($postArr['homepage']);
+			$contact = Sanitizer::cleanInStr($postArr['contact']);
+			$email = Sanitizer::cleanInStr($postArr['email']);
 			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
 			$guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
-			$rights = $this->cleanInStr($postArr['rights']);
-			$rightsHolder = $this->cleanInStr($postArr['rightsholder']);
-			$accessRights = $this->cleanInStr($postArr['accessrights']);
+			$rights = Sanitizer::cleanInStr($postArr['rights']);
+			$rightsHolder = Sanitizer::cleanInStr($postArr['rightsholder']);
+			$accessRights = Sanitizer::cleanInStr($postArr['accessrights']);
 			if($_FILES['iconfile']['name']){
 				$icon = $this->addIconImageFile();
 			}
 			else{
-				$icon = $this->cleanInStr($postArr['iconurl']);
+				$icon = Sanitizer::cleanInStr($postArr['iconurl']);
 			}
-			$indUrl = $this->cleanInStr($postArr['individualurl']);
+			$indUrl = Sanitizer::cleanInStr($postArr['individualurl']);
 
 			$sql = 'UPDATE omcollections '.
 				'SET institutioncode = "'.$instCode.'",'.
@@ -300,42 +301,40 @@ class OccurrenceCollectionProfile {
 			}
 			$sql .= 'WHERE (collid = '.$this->collid.')';
 			//echo $sql; exit;
-			if(!$this->conn->query($sql)){
-				$status = 'ERROR updating collection: '.$this->conn->error;
-				return $status;
-			}
-
-			if(isset($postArr['ccpk']) && $postArr['ccpk']){
-				$rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
-				if($r = $rs->fetch_object()){
-					if(($r->ccpk !== $postArr['ccpk']) && !$this->conn->query('UPDATE omcollcatlink SET ccpk = ' . $postArr['ccpk'] . ' WHERE ccpk = ' . $r->ccpk . ' AND collid = ' . $this->collid)) {
-						$status = 'ERROR updating collection category link: '.$this->conn->error;
-						return $status;
-					}
-				}
-				else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-                    $status = 'ERROR inserting collection category link(1): '.$this->conn->error;
-                    return $status;
+			if($this->conn->query($sql)){
+				if(isset($postArr['ccpk']) && $postArr['ccpk']){
+                    $rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
+                    if($r = $rs->fetch_object()){
+                        if(($r->ccpk !== $postArr['ccpk']) && !$this->conn->query('UPDATE omcollcatlink SET ccpk = ' . $postArr['ccpk'] . ' WHERE ccpk = ' . $r->ccpk . ' AND collid = ' . $this->collid)) {
+                            $status = 'ERROR updating collection category link.';
+                        }
+                    }
+                    else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
+                        $status = 'ERROR inserting collection category link(1).';
+                    }
+                }
+                else{
+                    $this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
                 }
 			}
 			else{
-				$this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
-			}
-		}
+                $status = 'ERROR updating collection.';
+            }
+        }
 		return $status;
 	}
 
     public function submitCollAdd($postArr){
-		$instCode = $this->cleanInStr($postArr['institutioncode']);
-		$collCode = $this->cleanInStr($postArr['collectioncode']);
-		$coleName = $this->cleanInStr($postArr['collectionname']);
-		$fullDesc = $this->cleanInStr($postArr['fulldescription']);
-		$homepage = $this->cleanInStr($postArr['homepage']);
-		$contact = $this->cleanInStr($postArr['contact']);
-		$email = $this->cleanInStr($postArr['email']);
-		$rights = $this->cleanInStr($postArr['rights']);
-		$rightsHolder = $this->cleanInStr($postArr['rightsholder']);
-		$accessRights = $this->cleanInStr($postArr['accessrights']);
+		$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
+		$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
+		$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
+		$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
+		$homepage = Sanitizer::cleanInStr($postArr['homepage']);
+		$contact = Sanitizer::cleanInStr($postArr['contact']);
+		$email = Sanitizer::cleanInStr($postArr['email']);
+		$rights = Sanitizer::cleanInStr($postArr['rights']);
+		$rightsHolder = Sanitizer::cleanInStr($postArr['rightsholder']);
+		$accessRights = Sanitizer::cleanInStr($postArr['accessrights']);
 		$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
         $gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
         $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
@@ -344,15 +343,15 @@ class OccurrenceCollectionProfile {
 			$icon = $this->addIconImageFile();
 		}
 		else{
-			$icon = array_key_exists('iconurl',$postArr)?$this->cleanInStr($postArr['iconurl']):'';
+			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($postArr['iconurl']):'';
 		}
-		$managementType = array_key_exists('managementtype',$postArr)?$this->cleanInStr($postArr['managementtype']):'';
-		$collType = array_key_exists('colltype',$postArr)?$this->cleanInStr($postArr['colltype']):'';
-		$guid = array_key_exists('collectionguid',$postArr)?$this->cleanInStr($postArr['collectionguid']):'';
+		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($postArr['managementtype']):'';
+		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($postArr['colltype']):'';
+		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($postArr['collectionguid']):'';
 		if(!$guid) {
 			$guid = UuidFactory::getUuidV4();
 		}
-		$indUrl = array_key_exists('individualurl',$postArr)?$this->cleanInStr($postArr['individualurl']):'';
+		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,homepage,'.
@@ -388,13 +387,13 @@ class OccurrenceCollectionProfile {
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
 				if(!$this->conn->query($sql)){
-					return 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
+					return 'ERROR inserting collection category link(2).';
 				}
 			}
 			$this->collid = $cid;
 		}
 		else{
-			$cid = 'ERROR inserting new collection: '.$this->conn->error;
+			$cid = 'ERROR inserting new collection.';
 		}
 		$this->conn->close();
 		return $cid;
@@ -475,7 +474,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR linking institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR linking institution address.';
 			}
 			$this->conn->close();
 		}
@@ -492,7 +491,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR removing institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing institution address.';
 			}
 			$this->conn->close();
 		}
@@ -527,7 +526,7 @@ class OccurrenceCollectionProfile {
             $publishGBIF = $row->publishToGbif;
             $gbifKeyArr = $row->aggKeysStr;
             if($publishGBIF && $gbifKeyArr){
-                $gbifKeyArr = json_decode($gbifKeyArr,true);
+                $gbifKeyArr = json_decode($gbifKeyArr, true, 512, JSON_THROW_ON_ERROR);
                 if($gbifKeyArr['endpointKey']){
                     $this->triggerGBIFCrawl($gbifKeyArr['datasetKey']);
                 }
@@ -538,7 +537,7 @@ class OccurrenceCollectionProfile {
 
     public function setAggKeys($aggKeyStr): void
 	{
-        $aggKeyArr = json_decode($aggKeyStr,true);
+        $aggKeyArr = json_decode($aggKeyStr, true, 512, JSON_THROW_ON_ERROR);
         if($aggKeyArr['organizationKey']){
             $this->organizationKey = $aggKeyArr['organizationKey'];
         }
@@ -564,13 +563,13 @@ class OccurrenceCollectionProfile {
         $aggKeyArr['datasetKey'] = $this->datasetKey;
         $aggKeyArr['endpointKey'] = $this->endpointKey;
         $aggKeyArr['idigbioKey'] = $this->idigbioKey;
-        $aggKeyStr = json_encode($aggKeyArr);
+        $aggKeyStr = json_encode($aggKeyArr, JSON_THROW_ON_ERROR);
         $sql = 'UPDATE omcollections '.
             "SET aggKeysStr = '".$aggKeyStr."' ".
             'WHERE (collid = '.$collId.')';
         //echo $sql; exit;
         if(!$this->conn->query($sql)){
-            $status = 'ERROR saving key: '.$this->conn->error;
+            $status = 'ERROR saving key.';
             return $status;
         }
 
@@ -626,7 +625,7 @@ class OccurrenceCollectionProfile {
         //echo $sql; exit;
         $rs = $this->conn->query($sql);
         while($row = $rs->fetch_object()){
-            $returnArr = json_decode($row->aggKeysStr,true);
+            $returnArr = json_decode($row->aggKeysStr, true, 512, JSON_THROW_ON_ERROR);
             if($returnArr['installationKey']){
                 return $returnArr['installationKey'];
             }
@@ -645,7 +644,7 @@ class OccurrenceCollectionProfile {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
-        $returnArr = json_decode($result,true);
+        $returnArr = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
 
         if(isset($returnArr['items'][0]['uuid'])){
             $this->idigbioKey = $returnArr['items'][0]['uuid'];
@@ -659,14 +658,14 @@ class OccurrenceCollectionProfile {
 		if($state){
 			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.$this->cleanInStr($country).'") ':'').
-				'AND (o.stateprovince = "'.$this->cleanInStr($state).'") AND (o.county IS NOT NULL) '.
+				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.Sanitizer::cleanInStr($country).'") ':'').
+				'AND (o.stateprovince = "'.Sanitizer::cleanInStr($state).'") AND (o.county IS NOT NULL) '.
 				'GROUP BY o.StateProvince, o.county';
 		}
 		elseif($country){
 			$sql = 'SELECT o.stateprovince as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.$this->cleanInStr($country).'") '.
+				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.Sanitizer::cleanInStr($country).'") '.
 				'GROUP BY o.StateProvince, o.country';
 		}
 		else{
@@ -736,7 +735,7 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function updateStatistics($verbose = false): void
+	public function updateStatistics($verbose = null): void
 	{
 		$occurMaintenance = new OccurrenceMaintenance();
 		if($verbose){
@@ -757,7 +756,7 @@ class OccurrenceCollectionProfile {
 		}
 	}
 
-	public function getStatCollectionList($catId = ''): array
+	public function getStatCollectionList($catId = null): array
 	{
 		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
 			'cat.category, cat.icon AS caticon, cat.acronym '.
@@ -1139,19 +1138,8 @@ class OccurrenceCollectionProfile {
     {
         if(is_array($arr)){
             foreach($arr as $k => $v){
-                $arr[$k] = $this->cleanOutStr($v);
+                $arr[$k] = Sanitizer::cleanOutStr($v);
             }
         }
     }
-
-	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
 }

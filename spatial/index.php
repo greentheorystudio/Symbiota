@@ -6,7 +6,7 @@ include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 $clusterPoints = !(array_key_exists('clusterpoints', $_REQUEST) && $_REQUEST['clusterpoints'] === 'false');
@@ -68,7 +68,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/bootstrap.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -253,10 +253,12 @@ $dbArr = array();
                 }
                 ?>
                 searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
+                if(validateSearchTermsArr(searchTermsArr)){
+                    setInputFormBySearchTermsArr();
+                    createShapesFromSearchTermsArr();
+                    setCollectionForms();
+                    loadPoints();
+                }
                 <?php
             }
             ?>
@@ -301,7 +303,7 @@ $dbArr = array();
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools, JSON_THROW_ON_ERROR); ?>');
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');

@@ -204,20 +204,22 @@ class Person{
         }
     }
 
-    public function getUserTaxonomy($cat = ''){
+    public function getUserTaxonomy($cat = null){
         if($cat){
             return $this->userTaxonomy[$cat] ?? null;
         }
         return $this->userTaxonomy;
     }
 
-    public function setUserTaxonomy($utArr){
+    public function setUserTaxonomy($utArr): void
+    {
         if(is_array($utArr)){
             $this->userTaxonomy = $utArr;
         }
     }
 
-    public function addUserTaxonomy( $category, $id, $utKey, $utValue){
+    public function addUserTaxonomy( $category, $id, $utKey, $utValue): void
+    {
         $this->userTaxonomy[$category][$id][$utKey] = $utValue;
         if($category === 'OccurrenceEditor'){
             $this->isTaxonomyEditor = true;

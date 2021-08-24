@@ -16,8 +16,6 @@ if($row = $result->fetch_object()){
 	$responseStr = $row->tid;
 }
 $result->close();
-if(!($con === false)) {
-	$con->close();
-}
+$con->close();
 
 echo $responseStr;

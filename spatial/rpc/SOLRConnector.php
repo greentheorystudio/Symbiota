@@ -6,12 +6,12 @@ $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $solrManager = new SOLRManager();
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 $qStr = '';
 $fqStr = '';
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
     $solrManager->setSearchTermsArr($stArr);
 }
 

@@ -4,8 +4,8 @@ include_once(__DIR__ . '/../../classes/TaxonomyDisplayManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']: '';
-$displayAuthor = array_key_exists('displayauthor',$_REQUEST)?$_REQUEST['displayauthor']:0;
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
+$displayAuthor = array_key_exists('displayauthor',$_REQUEST)?(int)$_REQUEST['displayauthor']:0;
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
@@ -177,7 +177,7 @@ include(__DIR__ . '/../../header.php');
                     }
                 }, "tree");
 
-                taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
+                taxonTree.set("path", <?php echo json_encode($treePath, JSON_THROW_ON_ERROR); ?>).then(
                     function(){
                         win.scrollIntoView(taxonTree.selectedNode.id);
                     }

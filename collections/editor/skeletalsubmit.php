@@ -7,10 +7,13 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/skeletalsubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid  = $_REQUEST['collid'];
-$action = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']: '';
+$collid  = (int)$_REQUEST['collid'];
+$action = array_key_exists('formaction',$_REQUEST)?htmlspecialchars($_REQUEST['formaction']): '';
 
 $skeletalManager = new OccurrenceSkeletal();
+
+$collMap = array();
+
 if($collid){
 	$skeletalManager->setCollid($collid);
 	$collMap = $skeletalManager->getCollectionMap();

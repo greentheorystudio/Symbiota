@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/DichoKeyManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 
 $dichoKeyManager = new DichoKeyManager();

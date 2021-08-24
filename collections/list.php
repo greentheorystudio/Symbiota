@@ -3,20 +3,13 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:1;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']:0;
-$targetTid = array_key_exists('targettid',$_REQUEST)?$_REQUEST['targettid']:0;
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
-
-if(!is_numeric($taxonFilter)) {
-    $taxonFilter = 0;
-}
-if(!is_numeric($cntPerPage)) {
-    $cntPerPage = 100;
-}
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:1;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:0;
+$targetTid = array_key_exists('targettid',$_REQUEST)?(int)$_REQUEST['targettid']:0;
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 
 $collManager = new OccurrenceListManager();
 $resetPageNum = false;
@@ -46,7 +39,7 @@ $resetPageNum = false;
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210420"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210824"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -73,7 +66,9 @@ $resetPageNum = false;
             ?>
 
             stArr = getSearchTermsArr();
-            setOccurrenceList(listPage);
+            if(validateSearchTermsArr(stArr)){
+                setOccurrenceList(listPage);
+            }
         });
 
         function setOccurrenceList(listPage){

@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageProcessor {
 
@@ -24,7 +25,7 @@ class ImageProcessor {
         else{
             $connection = new DbConnection();
             $this->conn = $connection->getConnection();
-            if($this->conn === false) {
+            if(!$this->conn) {
                 exit('ABORT: Image upload aborted: Unable to establish connection to database');
             }
         }
@@ -40,7 +41,7 @@ class ImageProcessor {
         }
     }
 
-    public function initProcessor($processorType = ''): void
+    public function initProcessor($processorType = null): void
     {
         if($this->logFH) {
             fclose($this->logFH);
@@ -69,6 +70,7 @@ class ImageProcessor {
 
     public function processIPlantImages($pmTerm, $postArr): bool
     {
+        $retVal = true;
         set_time_limit(1000);
         $lastRunDate = $postArr['startdate'];
         $iPlantSourcePath = (array_key_exists('sourcepath', $postArr)?$postArr['sourcepath']:'');
@@ -88,88 +90,91 @@ class ImageProcessor {
                 if(strpos($iPlantSourcePath, '--COLLECTION_CODE--')) {
                     $iPlantSourcePath = str_replace('--COLLECTION_CODE--', $this->collArr['collcode'], $iPlantSourcePath);
                 }
+                $this->initProcessor('iplant');
+                $collStr = $this->collArr['instcode'].($this->collArr['collcode']?'-'.$this->collArr['collcode']:'');
+                $this->logOrEcho('Starting image processing: '.$collStr.' ('.date('Y-m-d h:i:s A').')');
+                if($pmTerm) {
+                    if(strncmp($pmTerm, '/', 1) !== 0 || substr($pmTerm,-1) !== '/'){
+                        $this->logOrEcho('COLLECTION SKIPPED: Regular Expression term illegal due to missing forward slashes: ' .$pmTerm);
+                        $retVal = false;
+                    }
+                    else if(!strpos($pmTerm,'(') || !strpos($pmTerm,')')){
+                        $this->logOrEcho('COLLECTION SKIPPED: Regular Expression term illegal due to missing capture term: ' .$pmTerm);
+                        $retVal = false;
+                    }
+                    else{
+                        if(!$lastRunDate || !preg_match('/^\d{4}-\d{2}-\d{2}$/',$lastRunDate)) {
+                            $lastRunDate = '2015-04-01';
+                        }
+                        while(strtotime($lastRunDate) < time()){
+                            $url = $iPlantDataUrl.'image?value=*'.$iPlantSourcePath.'*&tag_query=upload_datetime:'.$lastRunDate.'*';
+                            $contents = @file_get_contents($url);
+                            if($http_response_header) {
+                                $result = $http_response_header;
+                                if(strpos($result[0],'200') !== false) {
+                                    try {
+                                        $xml = new SimpleXMLElement($contents);
+                                        if(count($xml->image)){
+                                            $this->logOrEcho('Starting to process '.count($xml->image).' images uploaded on '.$lastRunDate,1);
+                                            foreach($xml->image as $i){
+                                                $fileName = $i['name'];
+                                                if(preg_match($pmTerm,$fileName,$matchArr)){
+                                                    if(array_key_exists(1,$matchArr) && $matchArr[1]){
+                                                        $specPk = $matchArr[1];
+                                                        if($postArr['patternreplace']) {
+                                                            $specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
+                                                        }
+                                                        $guid = $i['resource_uniq'];
+                                                        if($occid = $this->getOccid($specPk,$guid,$fileName)){
+                                                            $baseUrl = $iPlantImageUrl.$guid;
+                                                            $webUrl = $baseUrl.'/resize:1250/format:jpeg';
+                                                            $tnUrl = $baseUrl.'/thumbnail:200,200';
+                                                            $lgUrl = $baseUrl.'/resize:4000/format:jpeg';
+
+                                                            $this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$guid.'; filename: '.$fileName);
+                                                        }
+                                                    }
+                                                    else{
+                                                        $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier (' .$iPlantDataUrl. ')',2);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            $this->logOrEcho('No images were loaded on this date: '.$lastRunDate,1);
+                                        }
+                                    }
+                                    catch (Exception $e) {
+                                        $this->logOrEcho('ABORTED: bad content received from iPlant: '.$contents);
+                                        $retVal = false;
+                                    }
+                                }
+                                else{
+                                    $this->logOrEcho("ERROR: bad response status code returned for $url (code: $result[0])",1);
+                                }
+                                $this->updateLastRunDate($lastRunDate);
+                                $lastRunDate = date('Y-m-d', strtotime($lastRunDate. ' + 1 days'));
+                            }
+                            else{
+                                $this->logOrEcho('ERROR: failed to obtain response from iPlant (' .$url. ')',1);
+                                $retVal = false;
+                            }
+                        }
+                        $this->cleanHouse(array($this->collid));
+                        $this->logOrEcho('Image upload process finished! (' .date('Y-m-d h:i:s A').") \n");
+                    }
+                }
+                else {
+                    $this->logOrEcho('COLLECTION SKIPPED: Pattern matching term is NULL');
+                    $retVal = false;
+                }
             }
             else{
                 echo '<div style="color:red">iPlant image import path (IPLANT_IMAGE_IMPORT_PATH) not set within symbini configuration file</div>';
-                return false;
+                $retVal = false;
             }
-            $this->initProcessor('iplant');
-            $collStr = $this->collArr['instcode'].($this->collArr['collcode']?'-'.$this->collArr['collcode']:'');
-            $this->logOrEcho('Starting image processing: '.$collStr.' ('.date('Y-m-d h:i:s A').')');
-
-            if(!$pmTerm){
-                $this->logOrEcho('COLLECTION SKIPPED: Pattern matching term is NULL');
-                return false;
-            }
-            if(strpos($pmTerm, '/') !== 0 || substr($pmTerm,-1) !== '/'){
-                $this->logOrEcho('COLLECTION SKIPPED: Regular Expression term illegal due to missing forward slashes: ' .$pmTerm);
-                return false;
-            }
-            if(!strpos($pmTerm,'(') || !strpos($pmTerm,')')){
-                $this->logOrEcho('COLLECTION SKIPPED: Regular Expression term illegal due to missing capture term: ' .$pmTerm);
-                return false;
-            }
-            if(!$lastRunDate || !preg_match('/^\d{4}-\d{2}-\d{2}$/',$lastRunDate)) {
-                $lastRunDate = '2015-04-01';
-            }
-            while(strtotime($lastRunDate) < time()){
-                $url = $iPlantDataUrl.'image?value=*'.$iPlantSourcePath.'*&tag_query=upload_datetime:'.$lastRunDate.'*';
-                $contents = @file_get_contents($url);
-                if($http_response_header) {
-                    $result = $http_response_header;
-                    if(strpos($result[0],'200') !== false) {
-                        try {
-                            $xml = new SimpleXMLElement($contents);
-                        }
-                        catch (Exception $e) {
-                            $this->logOrEcho('ABORTED: bad content received from iPlant: '.$contents);
-                            return false;
-                        }
-                        if(count($xml->image)){
-                            $this->logOrEcho('Starting to process '.count($xml->image).' images uploaded on '.$lastRunDate,1);
-                            foreach($xml->image as $i){
-                                $fileName = $i['name'];
-                                if(preg_match($pmTerm,$fileName,$matchArr)){
-                                    if(array_key_exists(1,$matchArr) && $matchArr[1]){
-                                        $specPk = $matchArr[1];
-                                        if($postArr['patternreplace']) {
-                                            $specPk = preg_replace($postArr['patternreplace'], $postArr['replacestr'], $specPk);
-                                        }
-                                        $guid = $i['resource_uniq'];
-                                        if($occid = $this->getOccid($specPk,$guid,$fileName)){
-                                            $baseUrl = $iPlantImageUrl.$guid;
-                                            $webUrl = $baseUrl.'/resize:1250/format:jpeg';
-                                            $tnUrl = $baseUrl.'/thumbnail:200,200';
-                                            $lgUrl = $baseUrl.'/resize:4000/format:jpeg';
-
-                                            $this->databaseImage($occid,$webUrl,$tnUrl,$lgUrl,$baseUrl,$this->collArr['collname'],$guid.'; filename: '.$fileName);
-                                        }
-                                    }
-                                    else{
-                                        $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier (' .$iPlantDataUrl. ')',2);
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            $this->logOrEcho('No images were loaded on this date: '.$lastRunDate,1);
-                        }
-                    }
-                    else{
-                        $this->logOrEcho("ERROR: bad response status code returned for $url (code: $result[0])",1);
-                    }
-                }
-                else{
-                    $this->logOrEcho('ERROR: failed to obtain response from iPlant (' .$url. ')',1);
-                    return false;
-                }
-                $this->updateLastRunDate($lastRunDate);
-                $lastRunDate = date('Y-m-d', strtotime($lastRunDate. ' + 1 days'));
-            }
-            $this->cleanHouse(array($this->collid));
-            $this->logOrEcho('Image upload process finished! (' .date('Y-m-d h:i:s A').") \n");
         }
-        return true;
+        return $retVal;
     }
 
     public function processiDigBioOutput($pmTerm,$postArr): string
@@ -269,7 +274,9 @@ class ImageProcessor {
         return $status;
     }
 
-    public function loadImageFile(){
+    public function loadImageFile(): string
+    {
+        $retStr = '';
         $inFileName = basename($_FILES['uploadfile']['name']);
         $ext = substr(strrchr($inFileName, '.'), 1);
         $fileName = 'imageMappingFile_'.time();
@@ -295,12 +302,11 @@ class ImageProcessor {
                 }
                 else{
                     echo 'failed, code:' . $res;
-                    return false;
                 }
             }
-            return $fileName.'.'.$ext;
+            $retStr = $fileName.'.'.$ext;
         }
-        return '';
+        return $retStr;
     }
 
     public function echoFileMapping($fileName): void
@@ -309,7 +315,7 @@ class ImageProcessor {
         if($fh = fopen($fullPath,'rb')){
             $translationMap = array('catalognumber' => 'catalognumber', 'url' => 'url', 'thumbnailurl' => 'thumbnailurl',
                 'originalurl' => 'originalurl', 'thumbnail' => 'thumbnailurl', 'large' => 'originalurl', 'web' => 'url');
-            $headerArr = fgetcsv($fh,0,',');
+            $headerArr = fgetcsv($fh);
             foreach($headerArr as $i => $sourceField){
                 if($sourceField !== 'collid'){
                     echo '<tr><td style="padding:2px;">';
@@ -340,13 +346,13 @@ class ImageProcessor {
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
                     if($recordArr){
-                        $catalogNumber = (isset($fieldMap['catalognumber'])?$this->cleanInStr($recordArr[$fieldMap['catalognumber']]):'');
-                        $originalUrl = (isset($fieldMap['originalurl'])?$this->cleanInStr($recordArr[$fieldMap['originalurl']]):'');
-                        $url = (isset($fieldMap['url'])?$this->cleanInStr($recordArr[$fieldMap['url']]):'');
+                        $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($recordArr[$fieldMap['catalognumber']]):'');
+                        $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($recordArr[$fieldMap['originalurl']]):'');
+                        $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($recordArr[$fieldMap['url']]):'');
                         if(!$url) {
                             $url = 'empty';
                         }
-                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?$this->cleanInStr($recordArr[$fieldMap['thumbnailurl']]):'');
+                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($recordArr[$fieldMap['thumbnailurl']]):'');
                         if($catalogNumber && $originalUrl){
                             echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
                             $occArr = array();
@@ -378,7 +384,7 @@ class ImageProcessor {
                                                 break;
                                             }
 
-                                            echo '<li style="margin-left:10px">ERROR updating existing image record: '.$this->conn->error.'</li>';
+                                            echo '<li style="margin-left:10px">ERROR updating existing image record.</li>';
                                         }
                                     }
                                     $rs1->free();
@@ -392,7 +398,7 @@ class ImageProcessor {
                                     echo '<li style="margin-left:10px">Unable to find record with matching catalogNumber; new occurrence record created</li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px">ERROR creating new occurrence record: '.$this->conn->error.'</li>';
+                                    echo '<li style="margin-left:10px">ERROR creating new occurrence record.</li>';
                                 }
                             }
                             foreach($occArr as $occid){
@@ -402,7 +408,7 @@ class ImageProcessor {
                                     echo '<li style="margin-left:10px">Image URLs linked to: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px">ERROR loading image: '.$this->conn->error.'</li>';
+                                    echo '<li style="margin-left:10px">ERROR loading image.</li>';
                                 }
                             }
                         }
@@ -416,7 +422,7 @@ class ImageProcessor {
 
     private function deleteImage($imgUrl): void
     {
-        if(stripos($imgUrl, 'http') === 0 || stripos($imgUrl, 'https') === 0){
+        if(strncasecmp($imgUrl, 'http', 4) === 0 || strncasecmp($imgUrl, 'https', 5) === 0){
             $imgUrl = parse_url($imgUrl, PHP_URL_PATH);
         }
         if($GLOBALS['IMAGE_ROOT_URL'] && strpos($imgUrl,$GLOBALS['IMAGE_ROOT_URL']) === 0){
@@ -425,12 +431,12 @@ class ImageProcessor {
         }
     }
 
-    private function getOccid($specPk,$sourceIdentifier,$fileName = ''){
+    private function getOccid($specPk,$sourceIdentifier,$fileName = null){
         $occid = 0;
         if($this->collid){
             if($this->matchCatalogNumber){
                 $sql = 'SELECT occid FROM omoccurrences WHERE (collid = '.$this->collid.') '.
-                    'AND (catalognumber IN("'.$specPk.'"'.(strpos($specPk, '0') === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) ';
+                    'AND (catalognumber IN("'.$specPk.'"'.(strncmp($specPk, '0', 1) === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) ';
                 $rs = $this->conn->query($sql);
                 if($row = $rs->fetch_object()){
                     $occid = $row->occid;
@@ -439,7 +445,7 @@ class ImageProcessor {
             }
             if(!$occid && $this->matchOtherCatalogNumbers){
                 $sql = 'SELECT occid FROM omoccurrences WHERE (collid = '.$this->collid.') '.
-                    'AND (othercatalognumbers IN("'.$specPk.'"'.(strpos($specPk, '0') === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) ';
+                    'AND (othercatalognumbers IN("'.$specPk.'"'.(strncmp($specPk, '0', 1) === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) ';
                 $rs = $this->conn->query($sql);
                 if($row = $rs->fetch_object()){
                     $occid = $row->occid;
@@ -512,7 +518,7 @@ class ImageProcessor {
                     $this->logOrEcho('Linked image to new "unprocessed" specimen record (#<a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>) ',2);
                 }
                 else{
-                    $this->logOrEcho('ERROR creating new occurrence record: ' .$this->conn->error,2);
+                    $this->logOrEcho('ERROR creating new occurrence record.',2);
                 }
             }
         }
@@ -525,14 +531,14 @@ class ImageProcessor {
             $format = 'image/jpeg';
             $sql = 'INSERT INTO images(occid,url,thumbnailurl,originalurl,archiveurl,owner,sourceIdentifier,format) '.
                 'VALUES ('.$occid.',"'.$webUrl.'",'.($tnUrl?'"'.$tnUrl.'"':'NULL').','.($lgUrl?'"'.$lgUrl.'"':'NULL').','.
-                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.$this->cleanInStr($ownerStr).'"':'NULL').','.
-                ($sourceIdentifier?'"'.$this->cleanInStr($sourceIdentifier).'"':'NULL').',"'.$format.'")';
+                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.Sanitizer::cleanInStr($ownerStr).'"':'NULL').','.
+                ($sourceIdentifier?'"'.Sanitizer::cleanInStr($sourceIdentifier).'"':'NULL').',"'.$format.'")';
             if($this->conn->query($sql)){
                 $status = true;
             }
             else{
                 $status = false;
-                $this->logOrEcho('ERROR: Unable to load image record into database: ' .$this->conn->error,3);
+                $this->logOrEcho('ERROR: Unable to load image record into database.',3);
             }
         }
         else{
@@ -572,7 +578,7 @@ class ImageProcessor {
         if($this->spprid){
             $sql = 'UPDATE specprocessorprojects SET source = "'.$date.'" WHERE spprid = '.$this->spprid;
             if(!$this->conn->query($sql)){
-                $this->logOrEcho('ERROR updating last run date: '.$this->conn->error);
+                $this->logOrEcho('ERROR updating last run date.');
             }
         }
     }
@@ -596,10 +602,8 @@ class ImageProcessor {
 
     public function setCollid($id): void
     {
-        if(is_numeric($id)){
-            $this->collid = $id;
-            $this->setCollArr();
-        }
+        $this->collid = $id;
+        $this->setCollArr();
     }
 
     public function setSpprid($spprid): void
@@ -614,14 +618,7 @@ class ImageProcessor {
         $this->logMode = $c;
     }
 
-    private function cleanInStr($inStr){
-        $retStr = trim($inStr);
-        $retStr = str_replace(array(chr(10), chr(11), chr(13), chr(20), chr(30)), ' ', $retStr);
-        $retStr = $this->conn->real_escape_string($retStr);
-        return $retStr;
-    }
-
-    private function logOrEcho($str,$indent = 0): void
+    private function logOrEcho($str, $indent = null): void
     {
         if(($this->logMode > 1) && $this->logFH) {
             if($indent) {
@@ -630,7 +627,7 @@ class ImageProcessor {
             fwrite($this->logFH,strip_tags($str)."\n");
         }
         if($this->logMode === 1 || $this->logMode === 3){
-            echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
+            echo '<li '.($indent?'style="margin-left:'.($indent?$indent*15:'0').'px"':'').'>'.$str."</li>\n";
             flush();
         }
     }

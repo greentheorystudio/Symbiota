@@ -124,7 +124,7 @@ class OccurrenceUtilities {
         return $retDate;
     }
 
-    public static function parseScientificName($inStr, $rankId = 0): array
+    public static function parseScientificName($inStr, $rankId = null): array
     {
         $taxonArr = (new TaxonomyUtilities)->parseScientificName($inStr, $rankId);
         if(array_key_exists('unitind1',$taxonArr)){
@@ -183,136 +183,84 @@ class OccurrenceUtilities {
         return $retArr;
     }
 
-    public static function parseVerbatimCoordinates($inStr,$target=''){
+    public static function parseVerbatimCoordinates($inStr,$target=null){
         $retArr = array();
-        if(strpos($inStr,' to ')) {
-            return $retArr;
-        }
-        if(strpos($inStr,' betw ')) {
-            return $retArr;
-        }
-        $search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
-        $replace = array("'","'",'"','"','*','-','-');
-        $inStr= str_replace($search, $replace, $inStr);
+        if(!strpos($inStr,' to ') && !strpos($inStr,' betw ')){
+            $search = array(chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151));
+            $replace = array("'","'",'"','"','*','-','-');
+            $inStr= str_replace($search, $replace, $inStr);
 
-        $latSec = 0;
-        $latNS = 'N';
-        $lngSec = 0;
-        $lngEW = 'W';
-        if(!$target || $target === 'LL'){
-            if(preg_match('/([\sNSns]?)(-?\d{1,2}\.\d+)\D?\s?([NSns]?)\D?([\sEWew])(-?\d{1,4}\.\d+)\D?\s?([EWew]?)\D*/',$inStr,$m)){
-                $retArr['lat'] = $m[2];
-                $retArr['lng'] = $m[5];
-                $latDir = $m[3];
-                if(!$latDir && $m[1]) {
-                    $latDir = trim($m[1]);
-                }
-                if($retArr['lat'] > 0 && $latDir && ($latDir === 'S' || $latDir === 's')) {
-                    $retArr['lat'] = -1 * $retArr['lat'];
-                }
-                $lngDir = $m[6];
-                if(!$lngDir && $m[4]) {
-                    $lngDir = trim($m[4]);
-                }
-                if($retArr['lng'] > 0 && $latDir && ($lngDir === 'W' || $lngDir === 'w')) {
-                    $retArr['lng'] = -1 * $retArr['lng'];
-                }
-            }
-            elseif(preg_match('/(\d{1,2})\D{1,3}\s{0,2}(\d{1,2}\.?\d*)[\'](.*)/',$inStr,$m)){
-                $latDeg = $m[1];
-                $latMin = $m[2];
-                $leftOver = str_replace("''",'"',trim($m[3]));
-                if(stripos($inStr,'N') === false && strpos($inStr,'S') !== false){
-                    $latNS = 'S';
-                }
-                if(stripos($inStr,'W') === false && stripos($inStr,'E') !== false){
-                    $lngEW = 'E';
-                }
-                if(preg_match('/^(\d{1,2}\.?\d*)["](.*)/',$leftOver,$m)){
-                    $latSec = $m[1];
-                    if(count($m)>2){
-                        $leftOver = trim($m[2]);
+            $latSec = 0;
+            $latNS = 'N';
+            $lngSec = 0;
+            $lngEW = 'W';
+            if(!$target || $target === 'LL'){
+                if(preg_match('/([\sNSns]?)(-?\d{1,2}\.\d+)\D?\s?([NSns]?)\D?([\sEWew])(-?\d{1,4}\.\d+)\D?\s?([EWew]?)\D*/',$inStr,$m)){
+                    $retArr['lat'] = $m[2];
+                    $retArr['lng'] = $m[5];
+                    $latDir = $m[3];
+                    if(!$latDir && $m[1]) {
+                        $latDir = trim($m[1]);
+                    }
+                    if($retArr['lat'] > 0 && ($latDir === 'S' || $latDir === 's')) {
+                        $retArr['lat'] = -1 * $retArr['lat'];
+                    }
+                    $lngDir = $m[6];
+                    if(!$lngDir && $m[4]) {
+                        $lngDir = trim($m[4]);
+                    }
+                    if($retArr['lng'] > 0 && $latDir && ($lngDir === 'W' || $lngDir === 'w')) {
+                        $retArr['lng'] = -1 * $retArr['lng'];
                     }
                 }
-                if(preg_match('/(\d{1,3})\D{1,3}\s{0,2}(\d{1,2}\.?\d*)[\'](.*)/',$leftOver,$m)){
-                    $lngDeg = $m[1];
-                    $lngMin = $m[2];
-                    $leftOver = trim($m[3]);
+                elseif(preg_match('/(\d{1,2})\D{1,3}\s{0,2}(\d{1,2}\.?\d*)[\'](.*)/',$inStr,$m)){
+                    $latDeg = $m[1];
+                    $latMin = $m[2];
+                    $leftOver = str_replace("''",'"',trim($m[3]));
+                    if(stripos($inStr,'N') === false && strpos($inStr,'S') !== false){
+                        $latNS = 'S';
+                    }
+                    if(stripos($inStr,'W') === false && stripos($inStr,'E') !== false){
+                        $lngEW = 'E';
+                    }
                     if(preg_match('/^(\d{1,2}\.?\d*)["](.*)/',$leftOver,$m)){
-                        $lngSec = $m[1];
-                    }
-                    if(is_numeric($latDeg) && is_numeric($latMin) && is_numeric($lngDeg) && is_numeric($lngMin) && $latDeg < 90 && $latMin < 60 && $lngDeg < 180 && $lngMin < 60) {
-                        $latDec = $latDeg + ($latMin/60) + ($latSec/3600);
-                        $lngDec = $lngDeg + ($lngMin/60) + ($lngSec/3600);
-                        if($latNS === 'S'){
-                            $latDec = -$latDec;
+                        $latSec = $m[1];
+                        if(count($m)>2){
+                            $leftOver = trim($m[2]);
                         }
-                        if($lngEW === 'W'){
-                            $lngDec = -$lngDec;
+                    }
+                    if(preg_match('/(\d{1,3})\D{1,3}\s{0,2}(\d{1,2}\.?\d*)[\'](.*)/',$leftOver,$m)){
+                        $lngDeg = $m[1];
+                        $lngMin = $m[2];
+                        $leftOver = trim($m[3]);
+                        if(preg_match('/^(\d{1,2}\.?\d*)["](.*)/',$leftOver,$m)){
+                            $lngSec = $m[1];
                         }
-                        $retArr['lat'] = round($latDec,6);
-                        $retArr['lng'] = round($lngDec,6);
+                        if(is_numeric($latDeg) && is_numeric($latMin) && is_numeric($lngDeg) && is_numeric($lngMin) && $latDeg < 90 && $latMin < 60 && $lngDeg < 180 && $lngMin < 60) {
+                            $latDec = $latDeg + ($latMin/60) + ($latSec/3600);
+                            $lngDec = $lngDeg + ($lngMin/60) + ($lngSec/3600);
+                            if($latNS === 'S'){
+                                $latDec = -$latDec;
+                            }
+                            if($lngEW === 'W'){
+                                $lngDec = -$lngDec;
+                            }
+                            $retArr['lat'] = round($latDec,6);
+                            $retArr['lng'] = round($lngDec,6);
+                        }
                     }
                 }
             }
-        }
-        if((!$target && !$retArr) || $target === 'UTM'){
-            $d = '';
-            if(preg_match('/NAD\s*27/i',$inStr)) {
-                $d = 'NAD27';
-            }
-            if(preg_match('/\D*(\d{1,2}\D?)\s+(\d{6,7})m?E\s+(\d{7})m?N/i',$inStr,$m)){
-                $z = $m[1];
-                $e = $m[2];
-                $n = $m[3];
-                if($n && $e && $z){
-                    $llArr = self::convertUtmToLL($e,$n,$z,$d);
-                    if(isset($llArr['lat'])) {
-                        $retArr['lat'] = $llArr['lat'];
-                    }
-                    if(isset($llArr['lng'])) {
-                        $retArr['lng'] = $llArr['lng'];
-                    }
+            if((!$target && !$retArr) || $target === 'UTM'){
+                $d = '';
+                if(preg_match('/NAD\s*27/i',$inStr)) {
+                    $d = 'NAD27';
                 }
-
-            }
-            elseif(false !== strpos($inStr, 'UTM') || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/',$inStr)){
-                $z = ''; $e = ''; $n = '';
-                if(preg_match('/^(\d{1,2}\D?)[\s\D]+/',$inStr,$m)) {
+                if(preg_match('/\D*(\d{1,2}\D?)\s+(\d{6,7})m?E\s+(\d{7})m?N/i',$inStr,$m)){
                     $z = $m[1];
-                }
-                if(!$z && preg_match('/[\s\D]+(\d{1,2}\D?)$/',$inStr,$m)) {
-                    $z = $m[1];
-                }
-                if(!$z && preg_match('/[\s\D]+(\d{1,2}\D?)[\s\D]+/',$inStr,$m)) {
-                    $z = $m[1];
-                }
-                if($z){
-                    if(preg_match('/(\d{6,7})m?E[\D\s]+(\d{7})m?N/i',$inStr,$m)){
-                        $e = $m[1];
-                        $n = $m[2];
-                    }
-                    elseif(preg_match('/m?E(\d{6,7})[\D\s]+m?N(\d{7})/i',$inStr,$m)){
-                        $e = $m[1];
-                        $n = $m[2];
-                    }
-                    elseif(preg_match('/(\d{7})m?N[\D\s]+(\d{6,7})m?E/i',$inStr,$m)){
-                        $e = $m[2];
-                        $n = $m[1];
-                    }
-                    elseif(preg_match('/m?N(\d{7})[\D\s]+m?E(\d{6,7})/i',$inStr,$m)){
-                        $e = $m[2];
-                        $n = $m[1];
-                    }
-                    elseif(preg_match('/(\d{6})[\D\s]+(\d{7})/',$inStr,$m)){
-                        $e = $m[1];
-                        $n = $m[2];
-                    }
-                    elseif(preg_match('/(\d{7})[\D\s]+(\d{6})/',$inStr,$m)){
-                        $e = $m[2];
-                        $n = $m[1];
-                    }
-                    if($e && $n){
+                    $e = $m[2];
+                    $n = $m[3];
+                    if($n && $e && $z){
                         $llArr = self::convertUtmToLL($e,$n,$z,$d);
                         if(isset($llArr['lat'])) {
                             $retArr['lat'] = $llArr['lat'];
@@ -321,15 +269,60 @@ class OccurrenceUtilities {
                             $retArr['lng'] = $llArr['lng'];
                         }
                     }
+
+                }
+                elseif(false !== strpos($inStr, 'UTM') || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/',$inStr)){
+                    $z = ''; $e = ''; $n = '';
+                    if(preg_match('/^(\d{1,2}\D?)[\s\D]+/',$inStr,$m)) {
+                        $z = $m[1];
+                    }
+                    if(!$z && preg_match('/[\s\D]+(\d{1,2}\D?)$/',$inStr,$m)) {
+                        $z = $m[1];
+                    }
+                    if(!$z && preg_match('/[\s\D]+(\d{1,2}\D?)[\s\D]+/',$inStr,$m)) {
+                        $z = $m[1];
+                    }
+                    if($z){
+                        if(preg_match('/(\d{6,7})m?E[\D\s]+(\d{7})m?N/i',$inStr,$m)){
+                            $e = $m[1];
+                            $n = $m[2];
+                        }
+                        elseif(preg_match('/m?E(\d{6,7})[\D\s]+m?N(\d{7})/i',$inStr,$m)){
+                            $e = $m[1];
+                            $n = $m[2];
+                        }
+                        elseif(preg_match('/(\d{7})m?N[\D\s]+(\d{6,7})m?E/i',$inStr,$m)){
+                            $e = $m[2];
+                            $n = $m[1];
+                        }
+                        elseif(preg_match('/m?N(\d{7})[\D\s]+m?E(\d{6,7})/i',$inStr,$m)){
+                            $e = $m[2];
+                            $n = $m[1];
+                        }
+                        elseif(preg_match('/(\d{6})[\D\s]+(\d{7})/',$inStr,$m)){
+                            $e = $m[1];
+                            $n = $m[2];
+                        }
+                        elseif(preg_match('/(\d{7})[\D\s]+(\d{6})/',$inStr,$m)){
+                            $e = $m[2];
+                            $n = $m[1];
+                        }
+                        if($e && $n){
+                            $llArr = self::convertUtmToLL($e,$n,$z,$d);
+                            if(isset($llArr['lat'])) {
+                                $retArr['lat'] = $llArr['lat'];
+                            }
+                            if(isset($llArr['lng'])) {
+                                $retArr['lng'] = $llArr['lng'];
+                            }
+                        }
+                    }
                 }
             }
-        }
-        if($retArr){
-            if($retArr['lat'] < -90 || $retArr['lat'] > 90) {
-                return false;
-            }
-            if($retArr['lng'] < -180 || $retArr['lng'] > 180) {
-                return false;
+            if($retArr){
+                if($retArr['lat'] < -90 || $retArr['lat'] > 90 || $retArr['lng'] < -180 || $retArr['lng'] > 180) {
+                    $retArr = array();
+                }
             }
         }
         return $retArr;
@@ -528,7 +521,7 @@ class OccurrenceUtilities {
                 if(isset($recMap['latsec']) && $recMap['latsec'] && is_numeric($recMap['latsec'])) {
                     $latDec += $recMap['latsec'] / 3600;
                 }
-                if($latDec > 0 && stripos($recMap['latns'],'s') === 0) {
+                if($latDec > 0 && strncasecmp($recMap['latns'], 's', 1) === 0) {
                     $latDec *= -1;
                 }
                 $lngDec = $recMap['lngdeg'];
@@ -538,7 +531,7 @@ class OccurrenceUtilities {
                 if(isset($recMap['lngsec']) && $recMap['lngsec'] && is_numeric($recMap['lngsec'])) {
                     $lngDec += $recMap['lngsec'] / 3600;
                 }
-                if($lngDec > 0 && stripos($recMap['lngew'],'w') === 0) {
+                if($lngDec > 0 && strncasecmp($recMap['lngew'], 'w', 1) === 0) {
                     $lngDec *= -1;
                 }
                 if(($lngDec > 0) && in_array(strtolower($recMap['country']), array('usa', 'united states', 'canada', 'mexico', 'panama'))) {
@@ -700,7 +693,7 @@ class OccurrenceUtilities {
             $recMap['sciname'] = str_replace(array(' ssp. ',' ssp '),' subsp. ',$recMap['sciname']);
             $recMap['sciname'] = str_replace(' var ',' var. ',$recMap['sciname']);
 
-            $pattern = '/\b(cf\.|cf|aff\.|aff)\s{1}/';
+            $pattern = '/\b(cf\.|cf|aff\.|aff)\s/';
             if(preg_match($pattern,$recMap['sciname'],$m)){
                 $recMap['identificationqualifier'] = $m[1];
                 $recMap['sciname'] = preg_replace($pattern,'',$recMap['sciname']);

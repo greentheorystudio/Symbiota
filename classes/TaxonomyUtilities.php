@@ -10,7 +10,7 @@ class TaxonomyUtilities {
 		$this->conn = $connection->getConnection();
 	}
 
-	public function parseScientificName($inStr, $rankId = 0): array
+	public function parseScientificName($inStr, $rankId = null): array
 	{
 		$retArr = array('unitname1'=>'','unitname2'=>'','unitind3'=>'','unitname3'=>'');
 		if($inStr && is_string($inStr)){
@@ -166,8 +166,11 @@ class TaxonomyUtilities {
 		}
 	}
 
-	public function buildHierarchyEnumTree($taxAuthId = 1){
-		$status = true;
+	public function buildHierarchyEnumTree($taxAuthId = null){
+		if(!$taxAuthId){
+            $taxAuthId = 1;
+        }
+	    $status = true;
         $complete = false;
         $sql = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
             'SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid '.
@@ -175,7 +178,7 @@ class TaxonomyUtilities {
             'WHERE (ts.taxauthid = '.$taxAuthId.') AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = '.$taxAuthId.')';
         //echo '<div>SQL1: '.$sql.'</div>';
         if(!$this->conn->query($sql)){
-            $status = 'ERROR seeding taxaenumtree: '.$this->conn->error;
+            $status = 'ERROR seeding taxaenumtree.';
         }
         if($status === true){
             $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
@@ -187,7 +190,7 @@ class TaxonomyUtilities {
             $cnt = 0;
             do{
                 if(!$this->conn->query($sql2)){
-                    $status = 'ERROR building taxaenumtree: '.$this->conn->error;
+                    $status = 'ERROR building taxaenumtree.';
                     $complete = true;
                 }
                 if(!$this->conn->affected_rows) {

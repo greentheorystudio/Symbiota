@@ -11,33 +11,18 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spprId = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
-$spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$spprId = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
+$spNlpId = array_key_exists('spnlpid',$_REQUEST)?(int)$_REQUEST['spnlpid']:0;
 $procStatus = array_key_exists('procstatus',$_REQUEST)?$_REQUEST['procstatus']:'unprocessed';
-$displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$displayMode = array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displaymode']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($spprId)) {
-    $spprId = 0;
-}
-if(!is_numeric($spNlpId)) {
-    $spNlpId = 0;
-}
 if($procStatus && !preg_match('/^[a-zA-Z]+$/',$procStatus)) {
     $procStatus = '';
-}
-if(!is_numeric($displayMode)) {
-    $displayMode = 0;
-}
-if(!is_numeric($tabIndex)) {
-    $tabIndex = 0;
 }
 
 $specManager = new SpecProcessorManager();

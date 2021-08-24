@@ -2,8 +2,8 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecLoans.php');
 
-$collId = $_REQUEST['collid'];
-$exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
+$collId = (int)$_REQUEST['collid'];
+$exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
 
 $loanManager = new SpecLoans();
 if($collId) {

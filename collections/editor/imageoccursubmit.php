@@ -8,13 +8,11 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid  = $_REQUEST['collid'];
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$collid  = (int)$_REQUEST['collid'];
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']): '';
 
 $occurManager = new OccurrenceEditorImages();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 $occurManager->setCollid($collid);
 $collMap = $occurManager->getCollMap();
 

@@ -29,7 +29,7 @@ class FieldGuideManager {
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -40,7 +40,7 @@ class FieldGuideManager {
         $jsonFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
         if(file_exists($jsonFile)){
             $jsonStr = file_get_contents($jsonFile);
-            $retArr = json_decode($jsonStr,true);
+            $retArr = json_decode($jsonStr, true, 512, JSON_THROW_ON_ERROR);
         }
         return $retArr;
     }
@@ -69,7 +69,7 @@ class FieldGuideManager {
             $result = curl_exec($ch);
             curl_close($ch);
             if($result){
-                $statArr = json_decode($result, true);
+                $statArr = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
                 $jobs[$job]['status'] = ($statArr['status']?:'');
                 $jobs[$job]['progress'] = ($statArr['progress']?:'');
             }
@@ -103,7 +103,7 @@ class FieldGuideManager {
                 $processDataArr['dateinitiated'] = date('Y-m-d');
                 $processDataArr['images'] = $imgArr;
                 $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$jsonFileName, 'wb');
-                fwrite($fp, json_encode($processDataArr));
+                fwrite($fp, json_encode($processDataArr, JSON_THROW_ON_ERROR));
                 fclose($fp);
                 $dataFileUrl = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'temp/data/fieldguide/'.$jsonFileName;
                 $responseUrl = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/').'webservices/fieldguidebatch.php';
@@ -146,21 +146,21 @@ class FieldGuideManager {
         $jobID = $infoArr['job_id'];
         $fileArr = array();
         if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$this->collId.'-FGLog.json')){
-            $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$this->collId.'-FGLog.json'), true);
+            $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $this->collId . '-FGLog.json'), true, 512, JSON_THROW_ON_ERROR);
             unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$this->collId.'-FGLog.json');
         }
         $fileArr['jobs'][$jobID]['file'] = $jsonFileName;
         $fileArr['jobs'][$jobID]['taxon'] = $infoArr['parenttaxon'];
         $fileArr['jobs'][$jobID]['date'] = $infoArr['dateinitiated'];
         $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$this->collId.'-FGLog.json', 'wb');
-        fwrite($fp, json_encode($fileArr));
+        fwrite($fp, json_encode($fileArr, JSON_THROW_ON_ERROR));
         fclose($fp);
     }
 
     public function cancelFGBatchProcess($collid,$jobId): string
     {
         $resultsCnt = 0;
-        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
+        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $collid . '-FGLog.json'), true, 512, JSON_THROW_ON_ERROR);
         unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json');
         $fileName = $fileArr['jobs'][$jobId]['file'];
         unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$fileName);
@@ -171,7 +171,7 @@ class FieldGuideManager {
         }
         if(($jobsCnt + $resultsCnt) > 0){
             $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
-            fwrite($fp, json_encode($fileArr));
+            fwrite($fp, json_encode($fileArr, JSON_THROW_ON_ERROR));
             fclose($fp);
         }
         $pArr['job_id'] = $jobId;
@@ -228,7 +228,7 @@ class FieldGuideManager {
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(strpos($imgUrl, '/') === 0) {
+            if(strncmp($imgUrl, '/', 1) === 0) {
                 $imgUrl = $localDomain . $imgUrl;
             }
             $returnArr[$imgId]['occid'] = $row->occid;
@@ -279,7 +279,7 @@ class FieldGuideManager {
     {
         $valid = false;
         if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json')){
-            $dataArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json'),true);
+            $dataArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $collid . '-FGLog.json'), true, 512, JSON_THROW_ON_ERROR);
             if(isset($dataArr['jobs'][$jobId])) {
                 $valid = true;
             }
@@ -295,7 +295,7 @@ class FieldGuideManager {
         $jobArr = array();
         $processDataArr = array();
         $jobID = $collid.'_'.$token;
-        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
+        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $collid . '-FGLog.json'), true, 512, JSON_THROW_ON_ERROR);
         unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json');
         foreach($fileArr['jobs'] as $job => $jArr){
             if($job === $jobID){
@@ -311,7 +311,7 @@ class FieldGuideManager {
         if($fileName && $taxon && $startDate){
             unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$fileName);
             $fileArr['jobs'] = $jobArr;
-            $resArr = json_decode(file_get_contents($resultUrl), true);
+            $resArr = json_decode(file_get_contents($resultUrl), true, 512, JSON_THROW_ON_ERROR);
             $processDataArr['job_id'] = $jobID;
             $processDataArr['parenttaxon'] = $taxon;
             $processDataArr['dateinitiated'] = $startDate;
@@ -324,14 +324,14 @@ class FieldGuideManager {
         if($processDataArr){
             $jsonFileName = $collid.'-r-'.$token.'.json';
             $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$jsonFileName, 'wb');
-            fwrite($fp, json_encode($processDataArr));
+            fwrite($fp, json_encode($processDataArr, JSON_THROW_ON_ERROR));
             fclose($fp);
             $fileArr['results'][$jobID]['file'] = $jsonFileName;
             $fileArr['results'][$jobID]['taxon'] = $taxon;
             $fileArr['results'][$jobID]['inidate'] = $startDate;
             $fileArr['results'][$jobID]['recdate'] = $dateReceived;
             $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
-            fwrite($fp, json_encode($fileArr));
+            fwrite($fp, json_encode($fileArr, JSON_THROW_ON_ERROR));
             fclose($fp);
         }
     }
@@ -339,7 +339,7 @@ class FieldGuideManager {
     public function deleteFGBatchResults($collid,$jobId): string
     {
         $jobsCnt = 0;
-        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json'), true);
+        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $collid . '-FGLog.json'), true, 512, JSON_THROW_ON_ERROR);
         unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json');
         $fileName = $fileArr['results'][$jobId]['file'];
         unlink($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$fileName);
@@ -350,7 +350,7 @@ class FieldGuideManager {
         }
         if(($jobsCnt + $resultsCnt) > 0){
             $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$collid.'-FGLog.json', 'wb');
-            fwrite($fp, json_encode($fileArr));
+            fwrite($fp, json_encode($fileArr, JSON_THROW_ON_ERROR));
             fclose($fp);
         }
         return 'Batch results deleted';
@@ -359,7 +359,7 @@ class FieldGuideManager {
     public function primeFGResults(): void
     {
         $resultFilename = $this->collId.'-r-'.$this->token.'.json';
-        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/data/fieldguide/'.$resultFilename), true);
+        $fileArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/fieldguide/' . $resultFilename), true, 512, JSON_THROW_ON_ERROR);
         $this->taxon = $fileArr['parenttaxon'];
         $this->fgResultArr = $fileArr['images'];
         if(isset($fileArr['imagecnts'])) {
@@ -448,7 +448,7 @@ class FieldGuideManager {
             else{
                 $localDomain = $this->serverDomain;
             }
-            if(strpos($imgUrl, '/') === 0) {
+            if(strncmp($imgUrl, '/', 1) === 0) {
                 $imgUrl = $localDomain . $imgUrl;
             }
             $returnArr[$imgId]['occid'] = $row->occid;
@@ -490,7 +490,7 @@ class FieldGuideManager {
         $limitArr = $this->getReturnOccArr();
         $i = 1;
         $prevOccid = 0;
-        //echo json_encode($imgArr);
+        //echo json_encode($imgArr, JSON_THROW_ON_ERROR);
         foreach($this->fgResultArr as $occId => $oArr){
             if(($this->recLimit && $i > $this->recLimit)){
                 break;

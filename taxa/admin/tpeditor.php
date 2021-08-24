@@ -5,11 +5,11 @@ include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 $tImageEditor = new TPImageEditorManager();
 $tDescEditor = new TPDescEditorManager();
@@ -30,7 +30,7 @@ if($editable && $action){
 	if($action === 'Edit Synonym Sort Order'){
 		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && (strpos($sortKey, 'syn-') == 0)){
+			if($sortValue && (strncmp($sortKey, 'syn-', 4) === 0)){
 				$index = substr($sortKey,4);
                 if(is_string($index) || is_int($index)){
                     $synSortArr[$index] = $sortValue;
@@ -102,7 +102,7 @@ if($editable && $action){
 	elseif($action === 'Submit Image Sort Edits'){
 		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && strpos($sortKey, 'imgid-') == 0){
+			if($sortValue && strncmp($sortKey, 'imgid-', 6) === 0){
 				$index = substr($sortKey,6);
                 if(is_string($index) || is_int($index)){
                     $imgSortArr[$index]  = $sortValue;

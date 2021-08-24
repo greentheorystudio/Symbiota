@@ -3,6 +3,7 @@ include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/OccurrenceDuplicate.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
 include_once(__DIR__ . '/Mailer.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceIndividualManager extends Manager{
 
@@ -28,9 +29,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->metadataArr = $rs->fetch_assoc();
                 $rs->free();
             }
-            else{
-                trigger_error('Unable to set collection metadata; '.$this->conn->error,E_USER_ERROR);
-            }
         }
     }
 
@@ -40,7 +38,7 @@ class OccurrenceIndividualManager extends Manager{
     }
 
     public function setGuid($guid){
-        $guid = $this->cleanInStr($guid);
+        $guid = Sanitizer::cleanInStr($guid);
         if(!$this->occid){
             $sql = 'SELECT occid FROM guidoccurrences WHERE guid = "'.$guid.'"';
             $rs = $this->conn->query($sql);
@@ -80,7 +78,7 @@ class OccurrenceIndividualManager extends Manager{
         return $this->occid;
     }
 
-    public function getOccData($fieldKey = ''): ?array
+    public function getOccData($fieldKey = null): ?array
     {
         if($this->occid){
             if(!$this->occArr) {
@@ -114,9 +112,7 @@ class OccurrenceIndividualManager extends Manager{
         elseif($this->collid && $this->dbpk){
             $sql .= 'WHERE (o.collid = '.$this->collid.') AND (o.dbpk = "'.$this->dbpk.'")';
         }
-        else{
-            trigger_error('Specimen identifier is null or invalid; '.$this->conn->error,E_USER_ERROR);
-        }
+
         if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
             $sql .= ' AND (oas.relationship = "host" OR (ISNULL(oas.relationship) AND ISNULL(oas.verbatimsciname))) ';
         }
@@ -168,9 +164,6 @@ class OccurrenceIndividualManager extends Manager{
             $statsManager = new OccurrenceAccessStats();
             $statsManager->recordAccessEvent($this->occid, $accessType);
         }
-        else{
-            trigger_error('Unable to set occurrence array; '.$this->conn->error,E_USER_ERROR);
-        }
     }
 
     private function loadImages(): void
@@ -185,13 +178,13 @@ class OccurrenceIndividualManager extends Manager{
                 $tnUrl = $row->thumbnailurl;
                 $lgUrl = $row->originalurl;
                 if($GLOBALS['IMAGE_DOMAIN']){
-                    if(strpos($url, '/') === 0) {
+                    if(strncmp($url, '/', 1) === 0) {
                         $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                     }
-                    if($lgUrl && strpos($lgUrl, '/') === 0) {
+                    if($lgUrl && strncmp($lgUrl, '/', 1) === 0) {
                         $lgUrl = $GLOBALS['IMAGE_DOMAIN'] . $lgUrl;
                     }
-                    if($tnUrl && strpos($tnUrl, '/') === 0) {
+                    if($tnUrl && strncmp($tnUrl, '/', 1) === 0) {
                         $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                     }
                 }
@@ -204,9 +197,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['imgs'][$imgId]['caption'] = $row->caption;
             }
             $result->free();
-        }
-        else{
-            trigger_error('Unable to set images; '.$this->conn->error,E_USER_WARNING);
         }
     }
 
@@ -231,9 +221,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to loadDeterminations; '.$this->conn->error,E_USER_NOTICE);
-        }
     }
 
     private function loadLoan(): void
@@ -249,9 +236,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['loan']['code'] = $row->institutioncode;
             }
             $result->free();
-        }
-        else{
-            trigger_error('Unable to load loan info; '.$this->conn->error,E_USER_WARNING);
         }
     }
 
@@ -269,9 +253,6 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['exs']['exsnumber'] = $r->exsnumber;
             }
             $rs->free();
-        }
-        else{
-            trigger_error('Unable to set exsiccati info; '.$this->conn->error,E_USER_WARNING);
         }
     }
 
@@ -306,9 +287,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to set comments; '.$this->conn->error,E_USER_WARNING);
-        }
         return $retArr;
     }
 
@@ -317,14 +295,14 @@ class OccurrenceIndividualManager extends Manager{
         $status = false;
         if($GLOBALS['SYMB_UID']){
             $sql = 'INSERT INTO omoccurcomments(occid,comment,uid,reviewstatus) '.
-                'VALUES('.$this->occid.',"'.$this->cleanInStr($commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
+                'VALUES('.$this->occid.',"'.Sanitizer::cleanInStr($commentStr).'",'.$GLOBALS['SYMB_UID'].',1)';
             //echo 'sql: '.$sql;
             if($this->conn->query($sql)){
                 $status = true;
             }
             else{
                 $status = false;
-                $this->errorMessage = 'ERROR adding comment: '.$this->conn->error;
+                $this->errorMessage = 'ERROR adding comment.';
             }
             $this->conn->close();
         }
@@ -338,7 +316,7 @@ class OccurrenceIndividualManager extends Manager{
             $sql = 'DELETE FROM omoccurcomments WHERE comid = '.$comId;
             if(!$this->conn->query($sql)){
                 $status = false;
-                $this->errorMessage = 'ERROR deleting comment: '.$this->conn->error;
+                $this->errorMessage = 'ERROR deleting comment.';
             }
         }
         $this->conn->close();
@@ -354,7 +332,7 @@ class OccurrenceIndividualManager extends Manager{
             }
             if(isset($GLOBALS['ADMIN_EMAIL'])){
                 if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 2 WHERE comid = '.$repComId)){
-                    $this->errorMessage = 'ERROR changing comment status to needing review, Err msg: '.$this->conn->error;
+                    $this->errorMessage = 'ERROR changing comment status to needing review.';
                     $status = false;
                 }
                 $this->conn->close();
@@ -365,7 +343,7 @@ class OccurrenceIndividualManager extends Manager{
                 $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
                     '<a href="'.$comUrl.'">'.$comUrl.'</a>';
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                if(!$mailerResult === 'Sent'){
+                if($mailerResult !== 'Sent'){
                     $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
                     $status = false;
                 }
@@ -389,7 +367,7 @@ class OccurrenceIndividualManager extends Manager{
             return false;
         }
         if(!$this->conn->query('UPDATE omoccurcomments SET reviewstatus = 1 WHERE comid = '.$comId)){
-            $this->errorMessage = 'ERROR making comment public, err msg: '.$this->conn->error;
+            $this->errorMessage = 'ERROR making comment public.';
             $status = false;
         }
         $this->conn->close();
@@ -413,9 +391,6 @@ class OccurrenceIndividualManager extends Manager{
                     $retArr[$r->idoccurgenetic]['notes'] = $r->notes;
                 }
                 $result->free();
-            }
-            else{
-                trigger_error('Unable to get genetic data; '.$this->conn->error,E_USER_WARNING);
             }
         }
         return $retArr;
@@ -447,9 +422,6 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to get edits; '.$this->conn->error,E_USER_WARNING);
-        }
         return $retArr;
     }
 
@@ -472,8 +444,8 @@ class OccurrenceIndividualManager extends Manager{
             $retArr[$r->orid][$r->appliedstatus]['reviewstatus'] = $r->reviewstatus;
             $retArr[$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 
-            $oldValues = json_decode($r->oldvalues,true);
-            $newValues = json_decode($r->newvalues,true);
+            $oldValues = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+            $newValues = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
             foreach($oldValues as $fieldName => $value){
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['old'] = $value;
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['new'] = ($newValues[$fieldName] ?? 'ERROR');
@@ -524,33 +496,23 @@ class OccurrenceIndividualManager extends Manager{
             }
             $result->free();
         }
-        else{
-            trigger_error('Unable to get checklist data; '.$this->conn->error,E_USER_WARNING);
-        }
         return $returnArr;
     }
 
     public function linkVoucher($postArr): bool
     {
         $status = true;
-        if(!$this->occid) {
-            return false;
+        if($this->occid && $postArr['vtid'] && is_numeric($postArr['vclid']) && is_numeric($postArr['vtid'])){
+            $sql = 'INSERT INTO fmvouchers(occid,clid,tid,notes,editornotes) '.
+                'VALUES('.$this->occid.','.(int)$postArr['vclid'].','.($postArr['vtid']?(int)$postArr['vtid']:'NULL').','.
+                ($postArr['vnotes']?'"'.Sanitizer::cleanInStr($postArr['vnotes']).'"':'NULL').','.
+                ($postArr['veditnotes']?'"'.Sanitizer::cleanInStr($postArr['veditnotes']).'"':'NULL').')';
+            if(!$this->conn->query($sql)){
+                $this->errorMessage = 'ERROR linking voucher to checklist.';
+                $status = false;
+            }
+            $this->conn->close();
         }
-        if(!is_numeric($postArr['vclid'])) {
-            return false;
-        }
-        if($postArr['vtid'] && !is_numeric($postArr['vtid'])) {
-            return false;
-        }
-        $sql = 'INSERT INTO fmvouchers(occid,clid,tid,notes,editornotes) '.
-            'VALUES('.$this->occid.','.$postArr['vclid'].','.($postArr['vtid']?:'NULL').','.
-            ($postArr['vnotes']?'"'.$this->cleanInStr($postArr['vnotes']).'"':'NULL').','.
-            ($postArr['veditnotes']?'"'.$this->cleanInStr($postArr['veditnotes']).'"':'NULL').')';
-        if(!$this->conn->query($sql)){
-            $this->errorMessage = 'ERROR linking voucher to checklist, err msg: '.$this->conn->error;
-            $status = false;
-        }
-        $this->conn->close();
         return $status;
     }
 
@@ -560,7 +522,7 @@ class OccurrenceIndividualManager extends Manager{
         if(is_numeric($occid) && is_numeric($clid)){
             $sql = 'DELETE FROM fmvouchers WHERE (occid = '.$occid.') AND (clid = '.$clid.') ';
             if(!$this->conn->query($sql)){
-                $this->errorMessage = 'ERROR loading '.$this->conn->error;
+                $this->errorMessage = 'ERROR deleting voucher.';
                 $status = false;
             }
             if(!($this->conn === null)) {
@@ -594,7 +556,7 @@ class OccurrenceIndividualManager extends Manager{
             while($r2 = $rs2->fetch_object()){
                 $retArr[$r2->datasetid]['name'] = $r2->name;
                 $roleStr = '';
-                if(isset($GLOBALS['SYMB_UID']) && $GLOBALS['SYMB_UID'] == $r2->uid) {
+                if(isset($GLOBALS['SYMB_UID']) && (int)$GLOBALS['SYMB_UID'] === (int)$r2->uid) {
                     $roleStr = 'owner';
                 }
                 elseif(isset($roleArr[$r2->datasetid]) && $roleArr[$r2->datasetid]) {
@@ -607,7 +569,7 @@ class OccurrenceIndividualManager extends Manager{
             $rs2->free();
         }
         else {
-            $this->errorMessage = 'ERROR: Unable to set datasets for user: ' . $this->conn->error;
+            $this->errorMessage = 'ERROR: Unable to set datasets for user.';
         }
 
         $sql3 = 'SELECT datasetid, notes FROM omoccurdatasetlink WHERE occid = '.$this->occid;
@@ -624,7 +586,7 @@ class OccurrenceIndividualManager extends Manager{
             $rs3->free();
         }
         else {
-            $this->errorMessage = 'Unable to get related datasets: ' . $this->conn->error;
+            $this->errorMessage = 'Unable to get related datasets.';
         }
         return $retArr;
     }
@@ -632,42 +594,36 @@ class OccurrenceIndividualManager extends Manager{
     public function linkToDataset($dsid,$dsName,$notes): bool
     {
         $status = true;
-        if(!$this->occid) {
-            return false;
-        }
-        if($dsid && !is_numeric($dsid)) {
-            return false;
-        }
-        if(!$dsid && !$dsName) {
-            return false;
-        }
-        if(!$dsid && $dsName){
-            if(strlen($dsName) > 100) {
-                $dsName = substr($dsName, 0, 100);
+        if($this->occid){
+            if(!$dsid && $dsName){
+                if(strlen($dsName) > 100) {
+                    $dsName = substr($dsName, 0, 100);
+                }
+                $sql1 = 'INSERT INTO omoccurdatasets(name,uid,collid) '.
+                    'VALUES("'.Sanitizer::cleanInStr($dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
+                if($this->conn->query($sql1)){
+                    $dsid = $this->conn->insert_id;
+                }
+                else{
+                    $this->errorMessage = 'ERROR creating new dataset.';
+                    $status = false;
+                }
             }
-            $sql1 = 'INSERT INTO omoccurdatasets(name,uid,collid) '.
-                'VALUES("'.$this->cleanInStr($dsName).'",'.$GLOBALS['SYMB_UID'].','.$this->collid.')';
-            if($this->conn->query($sql1)){
-                $dsid = $this->conn->insert_id;
+            if($dsid && is_numeric($dsid)){
+                $sql2 = 'INSERT INTO omoccurdatasetlink(datasetid,occid,notes) '.
+                    'VALUES('.$dsid.','.$this->occid.',"'.Sanitizer::cleanInStr($notes).'")';
+                if(!$this->conn->query($sql2)){
+                    $this->errorMessage = 'ERROR linking to dataset.';
+                    $status = false;
+                }
             }
-            else{
-                $this->errorMessage = 'ERROR creating new dataset, err msg: '.$this->conn->error;
-                $status = false;
-            }
+            $this->conn->close();
         }
-        if($dsid){
-            $sql2 = 'INSERT INTO omoccurdatasetlink(datasetid,occid,notes) '.
-                'VALUES('.$dsid.','.$this->occid.',"'.$this->cleanInStr($notes).'")';
-            if(!$this->conn->query($sql2)){
-                $this->errorMessage = 'ERROR linking to dataset, err msg: '.$this->conn->error;
-                $status = false;
-            }
-        }
-        $this->conn->close();
         return $status;
     }
 
-    public function getChecklists($clidExcludeArr){
+    public function getChecklists($clidExcludeArr): ?array
+    {
         if(!array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])) {
             return null;
         }
@@ -684,9 +640,6 @@ class OccurrenceIndividualManager extends Manager{
                 }
                 $result->free();
             }
-            else{
-                trigger_error('Unable to get checklist data; '.$this->conn->error,E_USER_WARNING);
-            }
         }
         return $returnArr;
     }
@@ -700,13 +653,10 @@ class OccurrenceIndividualManager extends Manager{
         //echo $sql;
         if($rs = $this->conn->query($sql)){
             if($r = $rs->fetch_object()){
-                $retArr['obj'] = json_decode($r->archiveobj,true);
+                $retArr['obj'] = json_decode($r->archiveobj, true, 512, JSON_THROW_ON_ERROR);
                 $retArr['notes'] = $r->notes;
             }
             $rs->free();
-        }
-        else{
-            trigger_error('ERROR checking archive: '.$this->conn->error,E_USER_WARNING);
         }
         if(!$retArr){
             $sql = 'SELECT archiveobj, notes '.
@@ -715,13 +665,10 @@ class OccurrenceIndividualManager extends Manager{
             //echo $sql;
             if($rs = $this->conn->query($sql)){
                 if($r = $rs->fetch_object()){
-                    $retArr['obj'] = json_decode($r->archiveobj,true);
+                    $retArr['obj'] = json_decode($r->archiveobj, true, 512, JSON_THROW_ON_ERROR);
                     $retArr['notes'] = $r->notes;
                 }
                 $rs->free();
-            }
-            else{
-                trigger_error('ERROR checking archive (step2): '.$this->conn->error,E_USER_WARNING);
             }
         }
         return $retArr;
@@ -761,10 +708,10 @@ class OccurrenceIndividualManager extends Manager{
                     if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
                         $taxon = $tok[0];
                     }
-                    $sql .= 'AND (t.sciname = "'.$this->cleanInStr($taxon).'") ';
+                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($taxon).'") ';
                 }
                 elseif($this->occArr['family']){
-                    $sql .= 'AND (t.sciname = "'.$this->cleanInStr($this->occArr['family']).'") ';
+                    $sql .= 'AND (t.sciname = "'.Sanitizer::cleanInStr($this->occArr['family']).'") ';
                 }
             }
             if($sql){
@@ -783,9 +730,7 @@ class OccurrenceIndividualManager extends Manager{
 
     public function setOccid($occid): void
     {
-        if(is_numeric($occid)){
-            $this->occid = $occid;
-        }
+        $this->occid = $occid;
     }
 
     public function getOccid(){
@@ -794,9 +739,7 @@ class OccurrenceIndividualManager extends Manager{
 
     public function setCollid($id): void
     {
-        if(is_numeric($id)){
-            $this->collid = $id;
-        }
+        $this->collid = $id;
     }
 
     public function setDbpk($pk): void

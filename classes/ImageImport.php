@@ -75,7 +75,8 @@ class ImageImport{
 		return $this->targetArr;
 	}
 
-	public function getTranslation($inStr){
+	public function getTranslation($inStr): string
+    {
 		$retStr = '';
 		$inStr = strtolower($inStr);
 		if(array_key_exists($inStr,$this->translationMap)) {

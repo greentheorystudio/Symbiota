@@ -32,11 +32,11 @@ include_once(__DIR__ . '/../classes/TaxonomyAPIManager.php');
 $queryString = $_REQUEST['term'];
 $hideAuth = array_key_exists('hideauth',$_REQUEST)?$_REQUEST['hideauth']:false;
 $hideProtected = array_key_exists('hideprotected',$_REQUEST)?$_REQUEST['hideprotected']:false;
-$taxAuthId = array_key_exists('taid',$_REQUEST)?$_REQUEST['taid']:0;
-$rankLimit = array_key_exists('rlimit',$_REQUEST)?$_REQUEST['rlimit']:0;
-$rankLow = array_key_exists('rlow',$_REQUEST)?$_REQUEST['rlow']:0;
-$rankHigh = array_key_exists('rhigh',$_REQUEST)?$_REQUEST['rhigh']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:0;
+$taxAuthId = array_key_exists('taid',$_REQUEST)?(int)$_REQUEST['taid']:0;
+$rankLimit = array_key_exists('rlimit',$_REQUEST)?(int)$_REQUEST['rlimit']:0;
+$rankLow = array_key_exists('rlow',$_REQUEST)?(int)$_REQUEST['rlow']:0;
+$rankHigh = array_key_exists('rhigh',$_REQUEST)?(int)$_REQUEST['rhigh']:0;
+$limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:0;
 
 $qHandler = new TaxonomyAPIManager();
 $listArr = array();
@@ -51,5 +51,5 @@ if($queryString){
     $qHandler->setLimit($limit);
 
     $listArr = $qHandler->generateSciNameList($queryString);
-    echo json_encode($listArr);
+    echo json_encode($listArr, JSON_THROW_ON_ERROR);
 }

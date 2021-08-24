@@ -5,17 +5,11 @@ include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$userId = array_key_exists('userid',$_REQUEST)?$_REQUEST['userid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
-}
-if(!is_numeric($userId)) {
-    $userId = 0;
-}
-if(!is_numeric($tabIndex)) {
-    $tabIndex = 0;
 }
 
 $isSelf = 0;

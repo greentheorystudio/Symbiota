@@ -19,7 +19,7 @@ class TaxonomyDynamicListManager{
     }
 
     public function __destruct(){
-        if(!($this->conn === null)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }

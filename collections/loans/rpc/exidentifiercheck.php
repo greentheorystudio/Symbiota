@@ -6,9 +6,9 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $ident = $con->real_escape_string($_REQUEST['ident']);
-$collId = $con->real_escape_string($_REQUEST['collid']);
+$collId = (int)$_REQUEST['collid'];
 
-$responseStr = '';
+$returnArr = array();
 $sql = 'SELECT exchangeid ' .
 	'FROM omoccurexchange ' .
 	'WHERE identifier = "'.$ident.'" AND collid = '.$collId;
@@ -18,8 +18,8 @@ while ($row = $result->fetch_object()) {
 	$returnArr[] = $row->exchangeid;
 }
 $result->close();
-if(!($con === false)) {
+if($con) {
     $con->close();
 }
 
-echo json_encode($returnArr);
+echo json_encode($returnArr, JSON_THROW_ON_ERROR);

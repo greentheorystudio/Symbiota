@@ -3,12 +3,12 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/GamesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
 $submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 $oodID = array_key_exists('oodid',$_REQUEST)?(int)$_REQUEST['oodid']:1;
-$ootdGameChecklist = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
-$ootdGameTitle = array_key_exists('title',$_REQUEST)?$_REQUEST['title']:0;
-$ootdGameType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:0;
+$ootdGameChecklist = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$ootdGameTitle = array_key_exists('title',$_REQUEST)?$_REQUEST['title']:'';
+$ootdGameType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 
 $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
@@ -16,6 +16,9 @@ $clArr = $gameManager->getChecklistArr($pid);
 $gameInfo = $gameManager->setOOTD($oodID,$ootdGameChecklist);
 $imageArr = $gameInfo['images'];
 $cacheRefresh = date('Ydm');
+
+$genusAnswer = '';
+
 foreach($imageArr as $k => $imgValue){
 	$imageArr[$k] = $imgValue.'?ver='.$cacheRefresh;
 }
@@ -68,7 +71,7 @@ if($submitAction){
 		}
 
         let ImgNum = 0;
-        let NewImg = <?php echo json_encode($imageArr); ?>;
+        let NewImg = <?php echo json_encode($imageArr, JSON_THROW_ON_ERROR); ?>;
         const familyAnswer = document.getElementById('family_answer');
         const scinameAnswer = document.getElementById('sciname_answer');
         const delay = 3000;
@@ -186,7 +189,7 @@ if($submitAction){
 				</div>
 				<?php
 			}
-			elseif((strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) == strtolower($gameInfo['sciname']))){
+			elseif((strtolower($_POST['family_answer']) === strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) === strtolower($gameInfo['sciname']))){
 				?>
 				<div id="correct" style="">
 					<div style="width:700px;margin-top:20px;margin-left:auto;margin-right:auto;clear:both;text-align:center;display:table;">
@@ -237,7 +240,7 @@ if($submitAction){
 				<?php
 			}
 
-			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
+			elseif(($submitAction !== 'giveup') && ($genusAnswer !== strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) === strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
@@ -260,7 +263,7 @@ if($submitAction){
 				<?php
 			}
 
-			elseif(($submitAction !== 'giveup') && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) == strtolower($gameInfo['sciname']))){
+			elseif(($submitAction !== 'giveup') && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) === strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
@@ -283,7 +286,7 @@ if($submitAction){
 				<?php
 			}
 
-			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
+			elseif(($submitAction !== 'giveup') && ($genusAnswer === strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) !== strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
@@ -306,7 +309,7 @@ if($submitAction){
 				<?php
 			}
 
-			elseif(($submitAction !== 'giveup') && ($genusAnswer == strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) == strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
+			elseif(($submitAction !== 'giveup') && ($genusAnswer === strtolower($gameInfo['genus'])) && (strtolower($_POST['family_answer']) === strtolower($gameInfo['family'])) && (strtolower($_POST['sciname_answer']) !== strtolower($gameInfo['sciname']))){
 				?>
 				<div id="incorrect_sciname">
 					<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >

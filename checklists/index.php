@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']):'';
 
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);

@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$occId = $_GET['occid'];
-$occIndex = $_GET['occindex'];
-$crowdSourceMode = $_GET['csmode'];
+$occId = (int)$_GET['occid'];
+$occIndex = (int)$_GET['occindex'];
+$crowdSourceMode = (int)$_GET['csmode'];
 
 $occManager = new OccurrenceEditorImages();
 
@@ -136,13 +136,13 @@ $specImgArr = $occManager->getImageMap();
 							$origUrl = $imgArr['origurl'];
 							$tnUrl = $imgArr['tnurl'];
 							if($GLOBALS['IMAGE_DOMAIN']){
-								if(strpos($imgUrl, '/') === 0){
+								if(strncmp($imgUrl, '/', 1) === 0){
 									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}
-								if($origUrl && strpos($origUrl, '/') === 0){
+								if($origUrl && strncmp($origUrl, '/', 1) === 0){
 									$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
 								}
-								if($tnUrl && strpos($tnUrl, '/') === 0){
+								if($tnUrl && strncmp($tnUrl, '/', 1) === 0){
 									$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
 								}
 							}

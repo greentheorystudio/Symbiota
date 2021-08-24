@@ -3,11 +3,10 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$pid = $_REQUEST['pid'];
+$pid = (int)$_REQUEST['pid'];
 
 $projManager = new InventoryProjectManager();
 $projManager->setPid($pid);
-
 ?>
 <div id="managertab">
 	<div style="font-weight:bold;margin:10px 0;">Inventory Project Managers</div>

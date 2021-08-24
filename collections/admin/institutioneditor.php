@@ -6,13 +6,13 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$iid = array_key_exists('iid',$_REQUEST)?$_REQUEST['iid']:0;
-$targetCollid = array_key_exists('targetcollid',$_REQUEST)?$_REQUEST['targetcollid']:0;
-$eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
-$instCodeDefault = array_key_exists('instcode',$_REQUEST)?$_REQUEST['instcode']:'';
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']: '';
-$addCollId = array_key_exists('addcollid',$_POST)?$_POST['addcollid']: '';
-$removeCollId = array_key_exists('removecollid',$_REQUEST)?$_REQUEST['removecollid']:'';
+$iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;
+$targetCollid = array_key_exists('targetcollid',$_REQUEST)?(int)$_REQUEST['targetcollid']:0;
+$eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
+$instCodeDefault = array_key_exists('instcode',$_REQUEST)?htmlspecialchars($_REQUEST['instcode']):'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']): '';
+$addCollId = array_key_exists('addcollid',$_POST)?(int)$_POST['addcollid']:0;
+$removeCollId = array_key_exists('removecollid',$_REQUEST)?(int)$_REQUEST['removecollid']:0;
 
 $instManager = new InstitutionManager();
 $fullCollList = $instManager->getCollectionList();
@@ -156,7 +156,7 @@ include(__DIR__ . '/../../header.php');
 	if($statusStr){
 		?>
 		<hr />
-		<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green'); ?>;">
+		<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green'); ?>;">
 			<?php echo $statusStr; ?>
 		</div>
 		<hr />
@@ -556,7 +556,7 @@ include(__DIR__ . '/../../header.php');
                                 <?php
                                 foreach($fullCollList as $collid => $collArr){
                                     if($collArr['iid'] && ($GLOBALS['IS_ADMIN'] || ($GLOBALS['USER_RIGHTS']['CollAdmin'] && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)))){
-                                        echo '<option value="'.$collid.'"'.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
+                                        echo '<option value="'.$collid.'" '.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
                                     }
                                 }
                                 ?>

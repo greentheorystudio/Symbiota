@@ -40,7 +40,7 @@ class DichoKeyManager{
             else{
                 $parentArr[$row->tid] = $row->parenttid;
             }
-            $taxaArr[$row->family][$row->tid] = $row->sciname;
+            //$taxaArr[$row->family][$row->tid] = $row->sciname;
             $tempTaxa[] = $row->tid;
         }
         $result->close();
@@ -72,9 +72,9 @@ class DichoKeyManager{
                         $children[] = $key;
                     }
                 }
-                if(in_array($child, $tempTaxa, true)){
+                /*if(in_array($child, $tempTaxa, true)){
                     $stmtTaxaMap[$row->stmtid][] = $child;
-                }
+                }*/
             }
             while($child = array_shift($children));
         }

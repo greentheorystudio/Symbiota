@@ -11,13 +11,11 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/occurdataentry.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$action = array_key_exists('submitaction',$_POST)?htmlspecialchars($_POST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 
 $isEditor = 0;
 

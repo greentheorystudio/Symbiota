@@ -6,8 +6,8 @@ $connection = new DbConnection();
 $con = $connection->getConnection();
 $retArr = array();
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$refType = array_key_exists('reftype',$_REQUEST)?$_REQUEST['reftype']:0;
+$refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
+$refType = array_key_exists('reftype',$_REQUEST)?(int)$_REQUEST['reftype']:0;
 
 if($refId) {
 	$sql = 'SELECT o.refid, o.parentRefId, o.title, o.shorttitle, o.alternativetitle, o.numbervolumes, o.ReferenceTypeId, '.
@@ -62,4 +62,4 @@ if($refId) {
 		}
 	}
 }
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);

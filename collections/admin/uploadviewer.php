@@ -3,10 +3,10 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecUpload.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
-$pageIndex = array_key_exists('pageindex',$_REQUEST)?$_REQUEST['pageindex']:0;
-$searchVar = array_key_exists('searchvar',$_REQUEST)?$_REQUEST['searchvar']:'';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;
+$pageIndex = array_key_exists('pageindex',$_REQUEST)?(int)$_REQUEST['pageindex']:0;
+$searchVar = array_key_exists('searchvar',$_REQUEST)?htmlspecialchars($_REQUEST['searchvar']):'';
 
 $uploadManager = new SpecUpload();
 $uploadManager->setCollId($collid);
