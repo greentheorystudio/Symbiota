@@ -117,7 +117,7 @@ class TPEditorManager {
 				$sql = 'UPDATE taxstatus SET SortSequence = '.$editValue.' WHERE (tid = '.$editKey.') AND (TidAccepted = '.$this->tid.')';
 				//echo $sql."<br>";
 				if(!$this->taxonCon->query($sql)){
-					$status .= $this->taxonCon->error."\nSQL: ".$sql. ';<br/> ';
+					$status .= 'Error editing synonym.<br/> ';
 				}
 			}
 		}
@@ -164,7 +164,7 @@ class TPEditorManager {
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:editingVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:editingVernacular.';
 		}
 		return $status;
 	}
@@ -176,7 +176,7 @@ class TPEditorManager {
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:addingNewVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:addingNewVernacular.';
 		}
 		return $status;
 	}
@@ -191,7 +191,7 @@ class TPEditorManager {
 				$status = '';
 			}
 			else {
-				$status = 'Error:deleteVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
+				$status = 'Error:deleteVernacular.';
 			}
 		}
 		return $status;

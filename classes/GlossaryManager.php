@@ -331,7 +331,7 @@ class GlossaryManager{
 						'VALUES('.$glossGrpId.','.$this->glossId.',"'.$pArr['relation'].'") ';
 					//echo $sql1; exit;
 					if(!$this->conn->query($sql1)){
-						$this->errorStr = 'ERROR creating new term group link: '.$this->conn->error;
+						$this->errorStr = 'ERROR creating new term group link.';
 					}
 				}
 			}
@@ -353,13 +353,13 @@ class GlossaryManager{
 					$sql2 = 'INSERT INTO glossarytaxalink(glossid,tid) '.
 						'VALUES('.$glossGrpId.','.$tid.') ';
 					if(!$this->conn->query($sql2)){
-						$this->errorStr = 'ERROR creating new term taxa link: '.$this->conn->error;
+						$this->errorStr = 'ERROR creating new term taxa link.';
 					}
 				}
 			}
 		}
 		else{
-			$this->errorStr = 'ERROR creating new term: '.$this->conn->error;
+			$this->errorStr = 'ERROR creating new term.';
 			$status = false;
 		}
 		return $status;
@@ -388,7 +388,7 @@ class GlossaryManager{
 			' WHERE (glossid = '.$pArr['glossid'].')';
 		//echo $sql; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR editing term: '.$this->conn->error;
+			$this->errorStr = 'ERROR editing term.';
 			$status = false;
 		}
 		return $status;
@@ -405,7 +405,7 @@ class GlossaryManager{
                 $returnVal = true;
 			}
 			else{
-                $this->errorStr = 'ERROR inserting glossaryTaxaLink: '.$this->conn->error;
+                $this->errorStr = 'ERROR inserting glossaryTaxaLink.';
             }
 		}
 		return $returnVal;
@@ -415,7 +415,7 @@ class GlossaryManager{
 	{
 		$sql = 'DELETE FROM glossarytaxalink WHERE glossid IN('.$this->glossId.','.$this->glossGroupId.') AND tid IN('.$tidStr.') ';
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting glossarytaxalink record: '.$this->conn->error;
+			$this->errorStr = 'ERROR deleting glossarytaxalink record.';
 			return false;
 		}
 		return true;
@@ -471,7 +471,7 @@ class GlossaryManager{
 			$sql1 = 'DELETE FROM glossarytermlink WHERE gltlinkid = '.$gltLinkId;
 			//echo $sql1.'<br/>';
 			if(!$this->conn->query($sql1)){
-				$this->errorStr = 'ERROR removing term relationship: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing term relationship.';
 				$status = false;
 			}
 			if($status && $relGlossId && is_numeric($relGlossId)){
@@ -505,8 +505,7 @@ class GlossaryManager{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of image data failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of image data failed.';
 			}
 		}
 		return $statusStr;
@@ -518,7 +517,7 @@ class GlossaryManager{
 		$sql = 'DELETE FROM glossary WHERE (glossid = '.$this->glossId.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting term: '.$this->conn->error;
+			$this->errorStr = 'ERROR deleting term.';
 			$status = false;
 		}
 		return $status;
@@ -570,7 +569,7 @@ class GlossaryManager{
 				($translator?'"'.$translator.'"':'NULL').','.($sources?'"'.$sources.'"':'NULL').')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR adding source: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding source.';
 				$status = false;
 			}
 		}
@@ -591,7 +590,7 @@ class GlossaryManager{
 				'WHERE (tid = '.$pArr['tid'].')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR editing source: '.$this->conn->error;
+				$this->errorStr = 'ERROR editing source.';
 				$status = false;
 			}
 		}
@@ -605,7 +604,7 @@ class GlossaryManager{
 			$sql = 'DELETE FROM glossarysources WHERE (tid = '.$tid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting source: '.$this->conn->error;
+				$this->errorStr = 'ERROR deleting source.';
 				$status = false;
 			}
 		}
@@ -661,7 +660,7 @@ class GlossaryManager{
 			}
 		}
 		else{
-			$status = 'deleteImage: ' .$this->conn->error."\nSQL: ".$sql;
+			$status = 'ERROR: Deleting Image.';
 		}
 		return $status;
 	}
@@ -848,7 +847,7 @@ class GlossaryManager{
 			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.Sanitizer::cleanInStr($_REQUEST['structures']).'","'.Sanitizer::cleanInStr($_REQUEST['notes']).'","'.Sanitizer::cleanInStr($_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR Loading Data: ' .$this->conn->error. '<br/>SQL: ' .$sql;
+			$status = 'ERROR Loading Data.';
 		}
 		return $status;
 	}

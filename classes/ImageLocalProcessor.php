@@ -753,7 +753,7 @@ class ImageLocalProcessor {
 				$this->logOrEcho("Specimen record does not exist; new empty specimen record created and assigned an 'unprocessed' status (occid = ".$occId. ') ',1);
 			}
 			else{
-				$this->logOrEcho('ERROR creating new occurrence record: ' .$this->conn->error,1);
+				$this->logOrEcho('ERROR creating new occurrence record.',1);
 			}
 		}
 		if(!$occId){
@@ -784,15 +784,15 @@ class ImageLocalProcessor {
 			while($r = $rs->fetch_object()){
 				if(strcasecmp($r->url,$webUrl) === 0){
 					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs).',1);
 					}
 					if(!$this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs).',1);
 					}
 				}
 				elseif($this->imgExists === 2 && strcasecmp(basename($r->url),basename($webUrl)) === 0){
 					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename).',1);
 					}
 					if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$urlPath = parse_url($r->url, PHP_URL_PATH);
@@ -818,7 +818,7 @@ class ImageLocalProcessor {
 						}
 					}
 					else{
-						$this->logOrEcho('ERROR: Unable to delete image record #'.$r->imgid.' (equal basename): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR: Unable to delete image record #'.$r->imgid.' (equal basename).',1);
 					}
 				}
 			}
@@ -843,7 +843,7 @@ class ImageLocalProcessor {
 				}
 				else{
 					$status = false;
-					$this->logOrEcho('ERROR: Unable to load image record into database: ' .$this->conn->error. '; SQL: ' .$sql,1);
+					$this->logOrEcho('ERROR: Unable to load image record into database.',1);
 				}
 				if($imgId){
 					$this->logOrEcho("WARNING: Existing image record replaced; occid: $occId ",1);
@@ -1218,13 +1218,13 @@ class ImageLocalProcessor {
 									$occid = $this->conn->insert_id;
 								}
 								else{
-									$this->logOrEcho('ERROR trying to load new skeletal record: '.$this->conn->error);
+									$this->logOrEcho('ERROR trying to load new skeletal record.');
 								}
 							}
 							if(isset($recMap['omenid']) && $occid){
 								$sqlExs ='INSERT INTO omexsiccatiocclink(omenid,occid) VALUES('.$recMap['omenid'].','.$occid.')';
 								if(!$this->conn->query($sqlExs)){
-									$this->logOrEcho('ERROR linking record to exsiccati ('.$recMap['omenid'].'-'.$occid.'): '.$this->conn->error);
+									$this->logOrEcho('ERROR linking record to exsiccati ('.$recMap['omenid'].'-'.$occid.').');
 								}
 							}
 						}
@@ -1369,8 +1369,8 @@ class ImageLocalProcessor {
 						$rs->free();
 					}
 					else{
-						$this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata: '.$this->conn->error);
-						exit('ABORT: unable run SQL to obtain additional collection metadata'.$this->conn->error);
+						$this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata.');
+						exit('ABORT: unable run SQL to obtain additional collection metadata');
 					}
 				}
 			}

@@ -477,8 +477,7 @@ class DwcArchiverCore extends Manager{
             $rs->free();
         }
         else{
-            $this->logOrEcho('ERROR creating occurrence file: ' .$this->conn->error."\n");
-            $this->logOrEcho("\tSQL: ".$sql."\n");
+            $this->logOrEcho('ERROR creating occurrence file.');
         }
         return $result;
     }
@@ -1382,14 +1381,13 @@ class DwcArchiverCore extends Manager{
                 $rs->free();
             }
             else{
-                $this->logOrEcho('ERROR creating occurrence file: ' .$this->conn->error."\n");
-                $this->logOrEcho("\tSQL: ".$sql."\n");
+                $this->logOrEcho('ERROR creating occurrence file.');
             }
 
             fclose($fh);
             if(!$hasRecords){
                 $filePath = false;
-                $this->logOrEcho("No records returned. Modify query variables to be more inclusive. \n");
+                $this->logOrEcho('No records returned. Modify query variables to be more inclusive.');
             }
         }
         else{
@@ -1432,8 +1430,7 @@ class DwcArchiverCore extends Manager{
             $rs->free();
         }
         else{
-            $this->logOrEcho('ERROR creating identification file: ' .$this->conn->error."\n");
-            $this->logOrEcho("\tSQL: ".$sql."\n");
+            $this->logOrEcho('ERROR creating identification file.');
         }
 
         fclose($fh);
@@ -1538,8 +1535,7 @@ class DwcArchiverCore extends Manager{
             $rs->free();
         }
         else{
-            $this->logOrEcho('ERROR creating image file: ' .$this->conn->error."\n");
-            $this->logOrEcho("\tSQL: ".$sql."\n");
+            $this->logOrEcho('ERROR creating image file.');
         }
 
         fclose($fh);
@@ -1575,8 +1571,7 @@ class DwcArchiverCore extends Manager{
             $rs->free();
         }
         else{
-            $this->logOrEcho('ERROR creating attribute (MeasurementOrFact file: ' .$this->conn->error."\n");
-            $this->logOrEcho("\tSQL: ".$sql."\n");
+            $this->logOrEcho('ERROR creating attribute.');
         }
 
         fclose($fh);
@@ -1637,7 +1632,7 @@ class DwcArchiverCore extends Manager{
                     $status = true;
                 }
                 else{
-                    $this->logOrEcho('ERROR nullifying dwcaUrl while removing DWCA instance: '.$this->conn->error);
+                    $this->logOrEcho('ERROR nullifying dwcaUrl while removing DWCA instance.');
                 }
             }
         }

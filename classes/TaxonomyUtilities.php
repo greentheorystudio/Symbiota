@@ -178,7 +178,7 @@ class TaxonomyUtilities {
             'WHERE (ts.taxauthid = '.$taxAuthId.') AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = '.$taxAuthId.')';
         //echo '<div>SQL1: '.$sql.'</div>';
         if(!$this->conn->query($sql)){
-            $status = 'ERROR seeding taxaenumtree: '.$this->conn->error;
+            $status = 'ERROR seeding taxaenumtree.';
         }
         if($status === true){
             $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
@@ -190,7 +190,7 @@ class TaxonomyUtilities {
             $cnt = 0;
             do{
                 if(!$this->conn->query($sql2)){
-                    $status = 'ERROR building taxaenumtree: '.$this->conn->error;
+                    $status = 'ERROR building taxaenumtree.';
                     $complete = true;
                 }
                 if(!$this->conn->affected_rows) {

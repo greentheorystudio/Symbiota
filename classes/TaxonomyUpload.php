@@ -189,7 +189,7 @@ class TaxonomyUpload{
                                     }
                                 }
                                 else{
-                                    $this->outputMsg('ERROR loading taxon: '.$this->conn->error);
+                                    $this->outputMsg('ERROR loading taxon.');
                                 }
                             }
                             unset($inputArr);
@@ -202,7 +202,7 @@ class TaxonomyUpload{
 					$sql = 'INSERT IGNORE INTO uploadtaxa(scinameinput,sciname,rankid,parentstr,family,acceptance) '.
 						'VALUES ("'.trim($taxon).'","'.trim($taxon).'",'.$tArr['r'].',"'.trim($tArr['p']).'",'.(array_key_exists('f',$tArr)?'"'.trim($tArr['f']).'"':'NULL').',1)';
 					if(!$this->conn->query($sql)){
-						$this->outputMsg('ERROR loading taxonunit: '.$this->conn->error);
+						$this->outputMsg('ERROR loading taxonunit.');
 					}
 				}
 				$this->outputMsg($recordCnt.' taxon records pre-processed');
@@ -236,44 +236,44 @@ class TaxonomyUpload{
             'SET RankName = "Superphylum" '.
             'WHERE RankName = "Superdivision"';
         if(!$this->conn->query($sql)){
-            $this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 1.',1);
         }
         $sql = 'UPDATE uploadtaxa '.
             'SET RankName = "Phylum" '.
             'WHERE RankName = "Division"';
         if(!$this->conn->query($sql)){
-            $this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 2.',1);
         }
         $sql = 'UPDATE uploadtaxa '.
             'SET RankName = "Subphylum" '.
             'WHERE RankName = "Subdivision"';
         if(!$this->conn->query($sql)){
-            $this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 3.',1);
         }
         $sql = 'UPDATE uploadtaxa '.
             'SET RankName = "Infraphylum" '.
             'WHERE RankName = "Infradivision"';
         if(!$this->conn->query($sql)){
-            $this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 4.',1);
         }
         $sql = 'UPDATE uploadtaxa '.
             'SET RankName = "Parvphylum" '.
             'WHERE RankName = "Parvdivision"';
         if(!$this->conn->query($sql)){
-            $this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 5.',1);
         }
 
 		$sql = 'UPDATE uploadtaxa u INNER JOIN uploadtaxa u2 ON u.sourceParentId = u2.sourceId '.
 			'SET u.parentstr = u2.sciname '.
 			'WHERE ISNULL(u.parentstr) AND u.sourceParentId IS NOT NULL AND u2.sourceId IS NOT NULL';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 6.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u INNER JOIN uploadtaxa u2 ON u.sourceAcceptedId = u2.sourceId '.
 			'SET u.acceptedstr = u2.sciname '.
 			'WHERE ISNULL(u.acceptedstr) AND u.sourceAcceptedId IS NOT NULL AND u2.sourceId IS NOT NULL';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 7.',1);
 		}
 
 		$sql = 'DELETE FROM uploadtaxa WHERE ISNULL(sciname)';
@@ -282,19 +282,19 @@ class TaxonomyUpload{
 		$this->outputMsg('Linking names already in thesaurus... ');
 		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.sciname = t.sciname SET u.tid = t.tid WHERE ISNULL(u.tid)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 8.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.acceptedstr = u2.scinameinput '.
 			'SET u1.tidaccepted = u2.tid '.
 			'WHERE ISNULL(u1.tidaccepted) AND u2.tid IS NOT NULL';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 9.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u INNER JOIN taxa t ON u.acceptedstr = t.sciname '.
 			'SET u.tidaccepted = t.tid '.
 			'WHERE ISNULL(u.tidaccepted)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 10.',1);
 		}
 
 		$this->outputMsg('Populating null family values... ');
@@ -303,25 +303,25 @@ class TaxonomyUpload{
 			'SET ut.family = ts.family '.
 			'WHERE ts.taxauthid = '.$this->taxAuthId.' AND (ut.rankid > 140) AND (t.rankid = 180) AND (ts.family IS NOT NULL) AND ISNULL(ut.family)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 11.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.sourceParentId = u2.sourceId '.
 			'SET u1.family = u2.sciname '.
 			'WHERE u2.sourceId IS NOT NULL AND u1.sourceParentId IS NOT NULL AND u2.rankid = 140 AND ISNULL(u1.family) ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 12.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.unitname1 = u2.sciname '.
 			'SET u1.family = u2.family '.
 			'WHERE ISNULL(u1.family) AND u2.family IS NOT NULL ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 13.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.sourceAcceptedId = u2.sourceId '.
 			'SET u1.family = u2.family '.
 			'WHERE u1.sourceAcceptedId IS NOT NULL AND  u2.sourceId IS NOT NULL AND ISNULL(u1.family) AND u2.family IS NOT NULL ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 14.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.unitname1 = u2.sciname '.
 			'INNER JOIN uploadtaxa u3 ON u2.sourceParentId = u3.sourceId '.
@@ -329,24 +329,24 @@ class TaxonomyUpload{
 			'WHERE u2.sourceParentId IS NOT NULL AND u3.sourceId IS NOT NULL '.
 			'AND ISNULL(u1.family) AND u1.rankid > 140 AND u2.rankid = 180 AND u3.rankid = 140';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 15.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u0 INNER JOIN uploadtaxa u1 ON u0.sourceAcceptedId = u1.sourceid '.
 			'SET u0.family = u1.family '.
 			'WHERE u0.sourceParentId IS NOT NULL AND u1.sourceId IS NOT NULL '.
 			'AND ISNULL(u0.family) AND u0.rankid > 140 AND u1.family IS NOT NULL';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 16.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u0 INNER JOIN uploadtaxa u1 ON u0.scinameinput = u1.acceptedstr '.
 			'SET u0.family = u1.family '.
 			'WHERE ISNULL(u0.family) AND u0.rankid > 140 AND u1.family IS NOT NULL';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 17.',1);
 		}
 		$sql = 'UPDATE uploadtaxa SET family = NULL WHERE family = ""';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 18.',1);
 		}
 
 		$this->outputMsg('Loading vernaculars... ');
@@ -357,17 +357,17 @@ class TaxonomyUpload{
 			'SET author = TRIM(SUBSTRING(scinameinput,LENGTH(sciname)+1)) '.
 			'WHERE ISNULL(author) AND (rankid <= 220)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 19.',1);
 		}
 		$sql = 'UPDATE uploadtaxa '.
 			'SET author = TRIM(SUBSTRING(scinameinput,LOCATE(unitind3,scinameinput)+LENGTH(CONCAT_WS(" ",unitind3,unitname3)))) '.
 			'WHERE ISNULL(author) AND rankid > 220';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 20.',1);
 		}
 		$sql = 'UPDATE uploadtaxa SET author = NULL WHERE author = ""';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 21.',1);
 		}
 
 		$this->outputMsg('Populating and mapping parent taxon... ');
@@ -375,34 +375,34 @@ class TaxonomyUpload{
 			'SET parentstr = CONCAT_WS(" ", unitname1, unitname2) '.
 			'WHERE (ISNULL(parentstr) OR (parentstr LIKE "PENDING:%")) AND (rankid > 220)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 22.',1);
 		}
 		$sql = 'UPDATE uploadtaxa SET parentstr = unitname1 '.
 			'WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid = 220)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 23.',1);
 		}
 		$sql = 'UPDATE uploadtaxa SET parentstr = family '.
 			'WHERE ((parentstr IS NULL) OR (parentstr LIKE "PENDING:%")) AND (rankid = 180)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 24.',1);
 		}
 		$sql = 'UPDATE uploadtaxa SET parentstr = SUBSTRING(parentstr,9) '.
 			'WHERE (parentstr LIKE "PENDING:%")';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 25.',1);
 		}
 		$sql = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.sourceAcceptedID = u2.sourceId '.
 			'SET u1.sourceParentId = u2.sourceParentId, u1.parentStr = u2.parentStr '.
 			'WHERE ISNULL(u1.sourceParentId) AND (u1.sourceAcceptedID IS NOT NULL) AND (u2.sourceParentId IS NOT NULL) AND (u1.rankid < 220) ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 26.',1);
 		}
 
 		$sql = 'UPDATE uploadtaxa up INNER JOIN taxa t ON up.parentstr = t.sciname '.
 			'SET parenttid = t.tid WHERE ISNULL(parenttid)';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Cleaning upload step 27.',1);
 		}
 
 		$this->outputMsg('Add parents that are not yet in uploadtaxa table... ');
@@ -475,34 +475,34 @@ class TaxonomyUpload{
 
 		$sql4 = 'UPDATE uploadtaxa SET ErrorStatus = "FAILED: Unable to parse input scientific name" WHERE ISNULL(sciname)';
 		if(!$this->conn->query($sql4)){
-			$this->outputMsg('ERROR tagging non-parsed names: '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging non-parsed names.',1);
 		}
 
 		$sql5 = 'UPDATE uploadtaxa u1 LEFT JOIN uploadtaxa u2 ON u1.acceptedStr = u2.sciname '.
 			'SET u1.ErrorStatus = "FAILED: Non-accepted taxa linked to non-existent taxon" '.
 			'WHERE (u1.acceptance = 0) AND ISNULL(u1.tidAccepted) AND ISNULL(u2.sciname)';
 		if(!$this->conn->query($sql5)){
-			$this->outputMsg('ERROR tagging non-accepted taxon linked to non-existent taxon: '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging non-accepted taxon linked to non-existent taxon.',1);
 		}
 
 		$sql6a = 'UPDATE uploadtaxa u1 INNER JOIN uploadtaxa u2 ON u1.acceptedStr = u2.sciname '.
 			'SET u1.ErrorStatus = "FAILED: Non-accepted linked to another non-accepted taxon" '.
 			'WHERE (u1.acceptance = 0) AND (u2.acceptance = 0)';
 		if(!$this->conn->query($sql6a)){
-			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#1): '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#1).',1);
 		}
 		$sql6b = 'UPDATE uploadtaxa u INNER JOIN taxstatus ts ON u.tidaccepted = ts.tid '.
 			'SET u.ErrorStatus = "FAILED: Non-accepted linked to another non-accepted taxon already within database" '.
 			'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (u.acceptance = 0) AND (ts.tid <> ts.tidaccepted)';
 		if(!$this->conn->query($sql6b)){
-			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#2): '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#2).',1);
 		}
 
 		$sql6 = 'UPDATE uploadtaxa u1 LEFT JOIN uploadtaxa u2 ON u1.parentStr = u2.sciname '.
 			'SET u1.ErrorStatus = "FAILED: Taxa with non-existent parent taxon" '.
 			'WHERE (u1.RankId > 10) AND ISNULL(u1.tid) AND ISNULL(u1.parentTid) AND ISNULL(u2.sciname) ';
 		if(!$this->conn->query($sql6)){
-			$this->outputMsg('ERROR tagging taxa with non-existent parent taxon: '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging taxa with non-existent parent taxon.',1);
 		}
 
 		$loopCnt = 0;
@@ -511,7 +511,7 @@ class TaxonomyUpload{
 				'SET u1.ErrorStatus = "FAILED: Taxa linked to a FAILED parent" '.
 				'WHERE (u2.ErrorStatus LIKE "FAILED%") AND (ISNULL(u1.ErrorStatus) OR (u1.ErrorStatus NOT LIKE "FAILED%"))';
 			if(!$this->conn->query($sql8)){
-				$this->outputMsg('ERROR tagging taxa with FAILED parents: '.$this->conn->error,1);
+				$this->outputMsg('ERROR tagging taxa with FAILED parents.',1);
 				break;
 			}
 			$loopCnt++;
@@ -525,7 +525,7 @@ class TaxonomyUpload{
 			'SET u1.ErrorStatus = "FAILED: Non-accepted taxa linked to a FAILED name" '.
 			'WHERE (u1.acceptance = 0) AND (u1.ErrorStatus NOT LIKE "FAILED%") AND (u2.ErrorStatus LIKE "FAILED%")';
 		if(!$this->conn->query($sql9)){
-			$this->outputMsg('ERROR tagging non-accepeted linked to FAILED name: '.$this->conn->error,1);
+			$this->outputMsg('ERROR tagging non-accepeted linked to FAILED name.',1);
 		}
 
 		$sql = 'SELECT errorstatus, count(*) as cnt FROM uploadtaxa WHERE ErrorStatus LIKE "FAILED%" GROUP BY ErrorStatus';
@@ -551,11 +551,11 @@ class TaxonomyUpload{
 				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
 				'WHERE (t.rankid = 10) AND ISNULL(ts.tid)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Transferring upload 1.',1);
 			}
 		}
 		else{
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+            $this->outputMsg('ERROR: Transferring upload 2.',1);
 		}
 
 		$loopCnt = 0;
@@ -568,13 +568,13 @@ class TaxonomyUpload{
 				'WHERE ISNULL(tid) AND (parenttid IS NOT NULL) AND (rankid IS NOT NULL) AND ISNULL(ErrorStatus) '.
 				'ORDER BY RankId ASC ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR loading taxa: '.$this->conn->error,1);
+				$this->outputMsg('ERROR loading taxa.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.sciname = t.sciname '.
 				'SET ut.tid = t.tid WHERE ISNULL(ut.tid)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR populating TIDs: '.$this->conn->error,1);
+				$this->outputMsg('ERROR populating TIDs.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa ut1 INNER JOIN uploadtaxa ut2 ON ut1.sourceacceptedid = ut2.sourceid '.
@@ -582,20 +582,20 @@ class TaxonomyUpload{
 				'SET ut1.tidaccepted = t.tid '.
 				'WHERE (ut1.acceptance = 0) AND ISNULL(ut1.tidaccepted) AND (ut1.sourceacceptedid IS NOT NULL) AND (ut2.sourceid IS NOT NULL)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+                $this->outputMsg('ERROR: Transferring upload 3.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.acceptedstr = t.sciname '.
 				'SET ut.tidaccepted = t.tid '.
 				'WHERE (ut.acceptance = 0) AND ISNULL(ut.tidaccepted) AND (ut.acceptedstr IS NOT NULL)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+                $this->outputMsg('ERROR: Transferring upload 4.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa SET tidaccepted = tid '.
 				'WHERE (acceptance = 1) AND ISNULL(tidaccepted) AND (tid IS NOT NULL)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+                $this->outputMsg('ERROR: Transferring upload 5.',1);
 			}
 
 			$this->outputMsg('Create parent and accepted links... ',1);
@@ -604,7 +604,7 @@ class TaxonomyUpload{
 				'FROM uploadtaxa '.
 				'WHERE (tid IS NOT NULL) AND (TidAccepted IS NOT NULL) AND (parenttid IS NOT NULL)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR creating taxstatus links: '.$this->conn->error,1);
+				$this->outputMsg('ERROR creating taxstatus links.',1);
 			}
 
 			$this->outputMsg('Transferring vernaculars for new taxa... ',1);
@@ -622,14 +622,14 @@ class TaxonomyUpload{
 				'SET ut1.parenttid = t.tid '.
 				'WHERE ISNULL(ut1.parenttid) AND (ut1.sourceparentid IS NOT NULL) AND (ut2.sourceid IS NOT NULL)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR populating parent TIDs based on sourceIDs: '.$this->conn->error,1);
+				$this->outputMsg('ERROR populating parent TIDs based on sourceIDs.',1);
 			}
 
 			$sql = 'UPDATE uploadtaxa up INNER JOIN taxa t ON up.parentstr = t.sciname '.
 				'SET up.parenttid = t.tid '.
 				'WHERE ISNULL(up.parenttid)';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR populating parent TIDs: '.$this->conn->error,1);
+				$this->outputMsg('ERROR populating parent TIDs.',1);
 			}
 			$loopCnt++;
 		}
@@ -686,7 +686,7 @@ class TaxonomyUpload{
 					$sqlInsert = 'INSERT INTO taxavernaculars(tid, VernacularName, Language, Source) '.
 						'VALUES('.$r->tid.',"'.$vStr.'","'.$langStr.'",'.($r->source?'"'.$r->source.'"':'NULL').')';
 					if(!$this->conn->query($sqlInsert) && strncmp($this->conn->error, 'Duplicate', 9) !== 0) {
-						$this->outputMsg('ERROR: ' . $this->conn->error, 1);
+						$this->outputMsg('ERROR: Transferring vernacular names.', 1);
 					}
 				}
 			}

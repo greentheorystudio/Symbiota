@@ -50,7 +50,7 @@ class OccurrenceAccessStats {
 				$status = true;
 			}
 			else{
-				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR recording access event: '.$this->conn->error;
+				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR recording access event.';
 				$this->logError($sql);
 			}
 		}
@@ -135,7 +135,7 @@ class OccurrenceAccessStats {
         $sql .= $sqlFrag;
         $sql .= 'ON DUPLICATE KEY UPDATE cnt = cnt+1';
         if(!$this->conn->query($sql)){
-            $this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access event by SQL: '.$this->conn->error;
+            $this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access event.';
             $this->logError($sql);
         }
         return $status;

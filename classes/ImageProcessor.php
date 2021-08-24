@@ -384,7 +384,7 @@ class ImageProcessor {
                                                 break;
                                             }
 
-                                            echo '<li style="margin-left:10px">ERROR updating existing image record: '.$this->conn->error.'</li>';
+                                            echo '<li style="margin-left:10px">ERROR updating existing image record.</li>';
                                         }
                                     }
                                     $rs1->free();
@@ -398,7 +398,7 @@ class ImageProcessor {
                                     echo '<li style="margin-left:10px">Unable to find record with matching catalogNumber; new occurrence record created</li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px">ERROR creating new occurrence record: '.$this->conn->error.'</li>';
+                                    echo '<li style="margin-left:10px">ERROR creating new occurrence record.</li>';
                                 }
                             }
                             foreach($occArr as $occid){
@@ -408,7 +408,7 @@ class ImageProcessor {
                                     echo '<li style="margin-left:10px">Image URLs linked to: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px">ERROR loading image: '.$this->conn->error.'</li>';
+                                    echo '<li style="margin-left:10px">ERROR loading image.</li>';
                                 }
                             }
                         }
@@ -518,7 +518,7 @@ class ImageProcessor {
                     $this->logOrEcho('Linked image to new "unprocessed" specimen record (#<a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>) ',2);
                 }
                 else{
-                    $this->logOrEcho('ERROR creating new occurrence record: ' .$this->conn->error,2);
+                    $this->logOrEcho('ERROR creating new occurrence record.',2);
                 }
             }
         }
@@ -538,7 +538,7 @@ class ImageProcessor {
             }
             else{
                 $status = false;
-                $this->logOrEcho('ERROR: Unable to load image record into database: ' .$this->conn->error,3);
+                $this->logOrEcho('ERROR: Unable to load image record into database.',3);
             }
         }
         else{
@@ -578,7 +578,7 @@ class ImageProcessor {
         if($this->spprid){
             $sql = 'UPDATE specprocessorprojects SET source = "'.$date.'" WHERE spprid = '.$this->spprid;
             if(!$this->conn->query($sql)){
-                $this->logOrEcho('ERROR updating last run date: '.$this->conn->error);
+                $this->logOrEcho('ERROR updating last run date.');
             }
         }
     }

@@ -306,11 +306,11 @@ class OccurrenceCollectionProfile {
                     $rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
                     if($r = $rs->fetch_object()){
                         if(($r->ccpk !== $postArr['ccpk']) && !$this->conn->query('UPDATE omcollcatlink SET ccpk = ' . $postArr['ccpk'] . ' WHERE ccpk = ' . $r->ccpk . ' AND collid = ' . $this->collid)) {
-                            $status = 'ERROR updating collection category link: '.$this->conn->error;
+                            $status = 'ERROR updating collection category link.';
                         }
                     }
                     else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-                        $status = 'ERROR inserting collection category link(1): '.$this->conn->error;
+                        $status = 'ERROR inserting collection category link(1).';
                     }
                 }
                 else{
@@ -318,7 +318,7 @@ class OccurrenceCollectionProfile {
                 }
 			}
 			else{
-                $status = 'ERROR updating collection: '.$this->conn->error;
+                $status = 'ERROR updating collection.';
             }
         }
 		return $status;
@@ -387,13 +387,13 @@ class OccurrenceCollectionProfile {
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
 				if(!$this->conn->query($sql)){
-					return 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
+					return 'ERROR inserting collection category link(2).';
 				}
 			}
 			$this->collid = $cid;
 		}
 		else{
-			$cid = 'ERROR inserting new collection: '.$this->conn->error;
+			$cid = 'ERROR inserting new collection.';
 		}
 		$this->conn->close();
 		return $cid;
@@ -474,7 +474,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR linking institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR linking institution address.';
 			}
 			$this->conn->close();
 		}
@@ -491,7 +491,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR removing institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing institution address.';
 			}
 			$this->conn->close();
 		}
@@ -569,7 +569,7 @@ class OccurrenceCollectionProfile {
             'WHERE (collid = '.$collId.')';
         //echo $sql; exit;
         if(!$this->conn->query($sql)){
-            $status = 'ERROR saving key: '.$this->conn->error;
+            $status = 'ERROR saving key.';
             return $status;
         }
 

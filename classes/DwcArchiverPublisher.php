@@ -152,7 +152,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
-				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error);
+				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance.');
 			}
 		}
 

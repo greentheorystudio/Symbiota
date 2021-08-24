@@ -324,14 +324,14 @@ class ExsiccatiManager {
 				'WHERE o.omenid IS NULL AND n.ometid = '.$ometid;
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$retStr = 'ERROR deleting omexsiccatinumbers: '.$this->conn->error;
+				$retStr = 'ERROR deleting omexsiccatinumbers.';
 			}
 
 			$sql = 'DELETE FROM omexsiccatititles '.
 				'WHERE ometid = '.$ometid;
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$retStr = 'ERROR deleting omexsiccatititles: '.$this->conn->error;
+				$retStr = 'ERROR deleting omexsiccatititles.';
 			}
 
             $this->conn->close();
@@ -347,7 +347,7 @@ class ExsiccatiManager {
 			($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$retStr = 'ERROR adding exsiccati number: '.$this->conn->error;
+			$retStr = 'ERROR adding exsiccati number.';
 		}
         $this->conn->close();
 		return $retStr;
@@ -362,7 +362,7 @@ class ExsiccatiManager {
 				'notes = '.($pArr['notes']?'"'.Sanitizer::cleanInStr($pArr['notes']).'"':'NULL').' '.
 				'WHERE (omenid = '.$pArr['omenid'].')';
 			if(!$this->conn->query($sql)){
-				$retStr = 'ERROR editing exsiccati number: '.$this->conn->error;
+				$retStr = 'ERROR editing exsiccati number.';
 			}
             $this->conn->close();
 		}
@@ -402,7 +402,7 @@ class ExsiccatiManager {
 					'WHERE o.omenid IS NULL AND n.omenid = '.$omenid;
 				//echo $sql;
 				if(!$this->conn->query($sql2)){
-					$retStr = 'ERROR deleting omexsiccatinumber: '.$this->conn->error;
+					$retStr = 'ERROR deleting omexsiccatinumber.';
 				}
 			}
 			else{
@@ -411,7 +411,7 @@ class ExsiccatiManager {
 					'WHERE omenid = '.$omenid;
 				//echo $sql;
 				if(!$this->conn->query($sql1)){
-					$retStr = 'ERROR transferring omexsiccatinumber: '.$this->conn->error;
+					$retStr = 'ERROR transferring omexsiccatinumber.';
 				}
 			}
 
@@ -530,7 +530,7 @@ class ExsiccatiManager {
 			if($targetOmenid){
 				$sql2 = 'UPDATE omexsiccatiocclink SET omenid = '.$targetOmenid.' WHERE occid = '.$occid.' AND omenid = '.$omenid;
 				if(!$this->conn->query($sql2)){
-					$statusStr = 'ERROR tranferring occurrence: '.$this->conn->error;
+					$statusStr = 'ERROR tranferring occurrence.';
 				}
 			}
 			else{
@@ -554,7 +554,7 @@ class ExsiccatiManager {
 					$datasetId = $this->conn->insert_id;
 				}
 				else{
-					$statusStr = 'ERROR creating dataset, '.$this->conn->error;
+					$statusStr = 'ERROR creating dataset.';
 				}
 			}
 			$occidArr = $postArr['occid[]'];
@@ -570,18 +570,18 @@ class ExsiccatiManager {
 							$sql2 = 'INSERT INTO omexsiccatiocclink(omenid,occid) '.
 								'SELECT omenid, occid FROM omexsiccatiocclink WHERE occid = '.$newOccid;
 							if(!$this->conn->query($sql2)){
-								$statusStr = 'ERROR linking new record to exsiccati: '.$this->conn->error;
+								$statusStr = 'ERROR linking new record to exsiccati.';
 							}
 						}
 						if($datasetId){
 							$sql3 = 'INSERT INTO omoccurdatasetlink(occid,datasetid) VALUES('.$newOccid.','.$datasetId.') ';
 							if(!$this->conn->query($sql3)){
-								$statusStr = 'ERROR add new record to dataset: '.$this->conn->error;
+								$statusStr = 'ERROR add new record to dataset.';
 							}
 						}
 					}
 					else{
-						$statusStr .= 'ERROR transferring record #'.$occid.': '.$this->conn->error;
+						$statusStr .= 'ERROR transferring record #'.$occid.'.';
 					}
 				}
 			}

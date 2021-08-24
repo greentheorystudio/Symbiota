@@ -353,12 +353,12 @@ class EOLManager {
 					(isset($resourceArr['notes'])?'"'.$resourceArr['notes'].'"':'NULL').
 					',"field image",40)';
 					if($this->conn->query($sql)){
-						echo '<li style="margin-left:10px;">Image mapped successfully</li>'."\n";
+						echo '<li style="margin-left:10px;">Image mapped successfully</li>';
 						flush();
 						$status = true;
 					}
 					else{
-						echo '<li style="color:red;margin-left:10px">ERROR: unable to map image: '.$this->conn->error."</li>\n";
+						echo '<li style="color:red;margin-left:10px">ERROR: unable to map image.</li>';
 					}
 				}
 				$this->imgManager->reset();

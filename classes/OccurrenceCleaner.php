@@ -735,7 +735,7 @@ class OccurrenceCleaner extends Manager{
 			($notes?'"'.$notes.'"':'NULL').','.
 			$GLOBALS['SYMB_UID'].')';
 		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR thrown setting occurrence verification: '.$this->conn->error;
+			$this->errorMessage = 'ERROR thrown setting occurrence verification';
 			echo '<li style="margin-left:15px;">'.$this->errorMessage.'</li>';
 		}
 	}

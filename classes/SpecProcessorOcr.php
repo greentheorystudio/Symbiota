@@ -145,8 +145,7 @@ class SpecProcessorOcr{
                 $retVal = true;
 			}
 			else{
-                $this->logMsg('ERROR: Unable to load fragment into database: ' .$this->conn->error,1);
-                $this->logMsg('SQL: ' .$sql,2);
+                $this->logMsg('ERROR: Unable to load fragment into database.',1);
             }
         }
 		return $retVal;
