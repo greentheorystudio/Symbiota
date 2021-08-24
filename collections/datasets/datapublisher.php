@@ -6,8 +6,8 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $emode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
-$action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
-$cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'';
+$action = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['formsubmit']):'';
+$cSet = array_key_exists('cset',$_REQUEST)?htmlspecialchars($_REQUEST['cset']):'';
 
 $dwcaManager = new DwcArchiverPublisher();
 $collManager = new OccurrenceCollectionProfile();

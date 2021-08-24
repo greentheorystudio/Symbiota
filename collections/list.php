@@ -39,7 +39,7 @@ $resetPageNum = false;
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210810"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210824"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -66,7 +66,9 @@ $resetPageNum = false;
             ?>
 
             stArr = getSearchTermsArr();
-            setOccurrenceList(listPage);
+            if(validateSearchTermsArr(stArr)){
+                setOccurrenceList(listPage);
+            }
         });
 
         function setOccurrenceList(listPage){
@@ -75,7 +77,7 @@ $resetPageNum = false;
             const url = "rpc/getoccurrencelist.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&targettid=<?php echo $targetTid; ?>&queryId='+queryid+'&page='+listPage;
-            //console.log(url+'?'+params);
+            console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {

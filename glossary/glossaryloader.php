@@ -44,9 +44,9 @@ if($isEditor){
                 $fieldMap[$sourceFields[$x]] = $targetFields[$x];
             }
 		}
-		$languageArr = json_decode($_REQUEST['ullanguages'],true);
+		$languageArr = json_decode($_REQUEST['ullanguages'], true, 512, JSON_THROW_ON_ERROR);
 		$tidStr = $_REQUEST['ultids'];
-		$ulSource = (array_key_exists('ulsources',$_REQUEST)? json_decode($_REQUEST['ulsources'], true) :'');
+		$ulSource = (array_key_exists('ulsources',$_REQUEST)? json_decode($_REQUEST['ulsources'], true, 512, JSON_THROW_ON_ERROR) :'');
 	}
 	if($action === 'downloadcsv'){
 		$loaderManager->exportUploadTerms();
@@ -198,7 +198,7 @@ if($isEditor){
 						<div style="margin:10px;">
 							<input type="submit" name="action" value="Upload Terms" />
 							<input type="hidden" name="ultids" value='<?php echo $batchTaxaStr;?>' />
-							<input type="hidden" name="ulsources" value='<?php echo json_encode($batchSource);?>' />
+							<input type="hidden" name="ulsources" value='<?php echo json_encode($batchSource, JSON_THROW_ON_ERROR);?>' />
 							<input type="hidden" name="ullanguages" value='<?php echo $fArr['languages'];?>' />
 							<input type="hidden" name="ulfilename" value="<?php echo $loaderManager->getFileName();?>" />
 						</div>

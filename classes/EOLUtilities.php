@@ -21,7 +21,7 @@ class EOLUtilities {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$pingArr = json_decode($content, true);
+			$pingArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 			if(($resObj = $pingArr->response) && $resObj->message && $resObj->message === 'Success') {
 				return true;
 			}
@@ -43,7 +43,7 @@ class EOLUtilities {
 					$content .= trim($line);
 				}
 				fclose($fh);
-				$searchObj = json_decode($content, true);
+				$searchObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 				if($searchObj->totalResults){
 					$resultObj = $searchObj->results;
 					foreach($resultObj as $index => $result){
@@ -67,18 +67,18 @@ class EOLUtilities {
 		return $retArr;
 	}
 
-	public function getPage($id, $includeSynonyms = true, $includeCommonNames = false, $contentLimit = 1): array
+	public function getPage($id, $includeSynonyms = null): array
 	{
 		$taxonArr = array();
 		$url = 'http://eol.org/api/pages/1.0/'.$id.'.json?images=0&videos=0&sounds=0&maps=0&text=0&iucn=false&subjects=overview&licenses=all&details=true';
-		$url .= '&common_names='.($includeCommonNames?'true':'false').'&synonyms='.($includeSynonyms?'true':'false').'&references=false&vetted=0&cache_ttl=';
+		$url .= '&common_names=false&synonyms='.($includeSynonyms?'true':'false').'&references=false&vetted=0&cache_ttl=';
 		if($fh = fopen($url, 'rb')){
 			$content = '';
 			while($line = fread($fh, 1024)){
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$eolObj = json_decode($content, true);
+			$eolObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 			$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 			if($eolObj->scientificName) {
 				$taxonArr['scientificName'] = $eolObj->scientificName;
@@ -91,7 +91,7 @@ class EOLUtilities {
 						$taxonArr['taxonRank'] = $tcObj->taxonRank;
 					}
 					$cnt++;
-					if($cnt > $contentLimit) {
+					if($cnt > 1) {
 						break;
 					}
 				}
@@ -124,13 +124,13 @@ class EOLUtilities {
 					}
 				}
 			}
-			if($includeCommonNames && isset($eolObj->vernacularNames)){
+			/*if($includeCommonNames && isset($eolObj->vernacularNames)){
 				foreach($eolObj->vernacularNames as $vernObj){
 					if(in_array($vernObj->language, $this->targetLanguages, true)){
 						$taxonArr['verns'] = array('language' => $vernObj->language, 'vernacularName' => $vernObj->vernacularName);
 					}
 				}
-			}
+			}*/
 		}
 		else{
 			$this->errorStr = 'ERROR opening EOL page url: '.$url;
@@ -150,7 +150,7 @@ class EOLUtilities {
 				}
 				fclose($fh);
 
-				$eolObj = json_decode($content, true);
+				$eolObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 				if($eolObj->scientificName){
 					$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 					$taxonArr['scientificName'] = $eolObj->scientificName;

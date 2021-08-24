@@ -9,10 +9,6 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/index.php?' . $_SERVER['QUERY_STRING']);
 }
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-
 $cleanManager = new OccurrenceCleaner();
 if($collid) {
     $cleanManager->setCollId($collid);

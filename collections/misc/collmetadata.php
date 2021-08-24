@@ -7,7 +7,7 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
 $statusStr = '';

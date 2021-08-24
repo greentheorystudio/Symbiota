@@ -10,8 +10,8 @@ $recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:10
 $occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:0;
 $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
-$reset = array_key_exists('reset',$_REQUEST)?$_REQUEST['reset']:false;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
 $solrManager = new SOLRManager();

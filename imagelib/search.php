@@ -37,7 +37,7 @@ $taxaList = array();
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/symb/images.index.js?ver=20210810" type="text/javascript"></script>
-    <script src="../js/symb/search.term.manager.js?ver=20210810" type="text/javascript"></script>
+    <script src="../js/symb/search.term.manager.js?ver=20210824" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();
@@ -115,7 +115,9 @@ $taxaList = array();
                 stArr = getSearchTermsArr();
                 setParamsForm();
                 setCollectionForms();
-                changeImagePage("",stArr['imagedisplay'],1);
+                if(validateSearchTermsArr(stArr)){
+                    changeImagePage("",stArr['imagedisplay'],1);
+                }
                 <?php
             }
             ?>

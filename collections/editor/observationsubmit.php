@@ -8,7 +8,7 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?' . $_SERVER['QUERY_STRING']);
 }
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $collId  = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $clid  = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $recordedBy = array_key_exists('recordedby',$_REQUEST)?(int)$_REQUEST['recordedby']:0;

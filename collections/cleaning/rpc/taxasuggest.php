@@ -7,4 +7,4 @@ $term = $_REQUEST['term'];
 $searchManager = new TaxonomyCleaner();
 $nameArr = $searchManager->getTaxaSuggest($_REQUEST['term']);
 
-echo json_encode($nameArr);
+echo json_encode($nameArr, JSON_THROW_ON_ERROR);

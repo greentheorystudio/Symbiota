@@ -15,7 +15,7 @@ $GLOBALS['PARAMS_ARR'] = array();
 $GLOBALS['USER_RIGHTS'] = array();
 if(!isset($_SESSION['userparams'])){
     if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true, 512, JSON_THROW_ON_ERROR);
         if($tokenArr){
             $pHandler = new ProfileManager();
             if($pHandler->setUserName($tokenArr[0])){
@@ -31,7 +31,7 @@ if(!isset($_SESSION['userparams'])){
     }
 
     if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true, 512, JSON_THROW_ON_ERROR);
         if($tokenArr){
             $pHandler = new ProfileManager();
             $uid = $pHandler->getUid($tokenArr[0]);

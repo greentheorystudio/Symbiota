@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']):'';
 $start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:200;
 
@@ -13,17 +13,11 @@ if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/duplicatesearch.php?' . $_SERVER['QUERY_STRING']);
 }
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if(!is_numeric($start)) {
-    $start = 0;
-}
-if(!is_numeric($limit)) {
-    $limit = 0;
+if(!$limit) {
+    $limit = 200;
 }
 
 $cleanManager = new OccurrenceCleaner();

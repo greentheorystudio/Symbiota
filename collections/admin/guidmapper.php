@@ -9,7 +9,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$action = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$action = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $isEditor = 0;
 if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){

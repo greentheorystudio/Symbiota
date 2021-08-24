@@ -253,10 +253,12 @@ $dbArr = array();
                 }
                 ?>
                 searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
+                if(validateSearchTermsArr(searchTermsArr)){
+                    setInputFormBySearchTermsArr();
+                    createShapesFromSearchTermsArr();
+                    setCollectionForms();
+                    loadPoints();
+                }
                 <?php
             }
             ?>
@@ -301,7 +303,7 @@ $dbArr = array();
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools, JSON_THROW_ON_ERROR); ?>');
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');

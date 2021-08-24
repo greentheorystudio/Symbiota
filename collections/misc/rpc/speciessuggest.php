@@ -17,4 +17,4 @@ while ($row = $rs->fetch_object()) {
 }
 $rs->free();
 $con->close();
-echo json_encode($returnArr);
+echo json_encode($returnArr, JSON_THROW_ON_ERROR);

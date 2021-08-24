@@ -430,7 +430,7 @@ if($GLOBALS['SYMB_UID']){
 				$spidPerc = 0;
 				$imgPerc = 0;
 				if($statsArr['dynamicProperties']){
-					$extrastatsArr = json_decode($statsArr['dynamicProperties'],true);
+					$extrastatsArr = json_decode($statsArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
 					if(is_array($extrastatsArr)){
 						if($extrastatsArr['SpecimensCountID']){
 							$spidPerc = (100*($extrastatsArr['SpecimensCountID']/$statsArr['recordcnt']));

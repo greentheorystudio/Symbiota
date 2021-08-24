@@ -3,11 +3,11 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$occidQuery = array_key_exists('occidquery',$_REQUEST)?$_REQUEST['occidquery']:'';
+$occidQuery = array_key_exists('occidquery',$_REQUEST)?htmlspecialchars($_REQUEST['occidquery']):'';
 $curOccid = (array_key_exists('curoccid',$_GET)?(int)$_REQUEST['curoccid']:0);
 $collId = (array_key_exists('collid',$_GET)?(int)$_GET['collid']:0);
 $occIdMerge = (array_key_exists('occidmerge',$_GET)?(int)$_GET['occidmerge']:0);
-$submitAction = (array_key_exists('submitaction',$_GET)?$_GET['submitaction']:'');
+$submitAction = (array_key_exists('submitaction',$_GET)?htmlspecialchars($_GET['submitaction']):'');
 
 $dupeManager = new OccurrenceDuplicate();
 

@@ -7,11 +7,10 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 $displayMode = (array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displaymode']:0);
 
 $clManager = new ChecklistVoucherAdmin();

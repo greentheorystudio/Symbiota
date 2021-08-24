@@ -8,7 +8,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid  = (int)$_REQUEST['collid'];
-$action = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']: '';
+$action = array_key_exists('formaction',$_REQUEST)?htmlspecialchars($_REQUEST['formaction']): '';
 
 $skeletalManager = new OccurrenceSkeletal();
 

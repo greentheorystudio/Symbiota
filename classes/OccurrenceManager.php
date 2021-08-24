@@ -313,7 +313,7 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
                 if(!is_array($objArr)){
-                    $objArr = json_decode($objArr, true);
+                    $objArr = json_decode($objArr, true, 512, JSON_THROW_ON_ERROR);
                 }
                 if($objArr){
                     foreach($objArr as $obj => $oArr){
@@ -329,7 +329,7 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
                 if(!is_array($geomArr)){
-                    $geomArr = json_decode($geomArr, true);
+                    $geomArr = json_decode($geomArr, true, 512, JSON_THROW_ON_ERROR);
                 }
                 if($geomArr){
                     foreach($geomArr as $geom){

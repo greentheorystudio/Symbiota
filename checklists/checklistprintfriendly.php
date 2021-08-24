@@ -3,13 +3,13 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
-$proj = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']: '';
+$proj = array_key_exists('proj',$_REQUEST)?htmlspecialchars($_REQUEST['proj']): '';
 $thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']: '';
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
 $showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;

@@ -85,4 +85,4 @@ if($queryString && $type){
     }
 }
 $con->close();
-echo json_encode($returnArr);
+echo json_encode($returnArr, JSON_THROW_ON_ERROR);

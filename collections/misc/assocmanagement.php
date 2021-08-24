@@ -8,7 +8,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 if(!is_numeric($collid)) {
     $collid = 0;

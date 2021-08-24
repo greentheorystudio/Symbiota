@@ -24,11 +24,11 @@ $spatialManager = new SpatialModuleManager();
 $occManager = new OccurrenceManager();
 
 if($selArrJson){
-    $selections = json_decode($selArrJson, true);
+    $selections = json_decode($selArrJson, true, 512, JSON_THROW_ON_ERROR);
 }
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
     if(strlen($stArrJson) <= 1800){
         $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/spatial/index.php';
         $urlArgs = '?starr='.$stArrJson;

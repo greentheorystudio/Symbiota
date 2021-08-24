@@ -244,7 +244,7 @@ class OccurrenceAttributes extends Manager {
 	{
 		$controlType = 'checkbox';
 		if($this->traitArr[$traitID]['props']){
-			$propArr = json_decode($this->traitArr[$traitID]['props'],true);
+			$propArr = json_decode($this->traitArr[$traitID]['props'], true, 512, JSON_THROW_ON_ERROR);
 			if(isset($propArr[0]['controlType'])) {
 				$controlType = $propArr[0]['controlType'];
 			}
@@ -307,7 +307,7 @@ class OccurrenceAttributes extends Manager {
 			}
 			$rs->free();
 		}
-		return json_encode($retArr);
+		return json_encode($retArr, JSON_THROW_ON_ERROR);
 	}
 
 	public function getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start): array

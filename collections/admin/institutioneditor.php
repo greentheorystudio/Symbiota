@@ -9,10 +9,10 @@ if(!$GLOBALS['SYMB_UID']) {
 $iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;
 $targetCollid = array_key_exists('targetcollid',$_REQUEST)?(int)$_REQUEST['targetcollid']:0;
 $eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
-$instCodeDefault = array_key_exists('instcode',$_REQUEST)?$_REQUEST['instcode']:'';
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']: '';
-$addCollId = array_key_exists('addcollid',$_POST)?$_POST['addcollid']: '';
-$removeCollId = array_key_exists('removecollid',$_REQUEST)?$_REQUEST['removecollid']:'';
+$instCodeDefault = array_key_exists('instcode',$_REQUEST)?htmlspecialchars($_REQUEST['instcode']):'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']): '';
+$addCollId = array_key_exists('addcollid',$_POST)?(int)$_POST['addcollid']:0;
+$removeCollId = array_key_exists('removecollid',$_REQUEST)?(int)$_REQUEST['removecollid']:0;
 
 $instManager = new InstitutionManager();
 $fullCollList = $instManager->getCollectionList();

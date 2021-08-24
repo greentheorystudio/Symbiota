@@ -12,61 +12,28 @@ if(!$GLOBALS['SYMB_UID']) {
 
 $collid = (int)$_REQUEST['collid'];
 $uploadType = (int)$_REQUEST['uploadtype'];
-$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:'';
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$uspid = array_key_exists('uspid',$_REQUEST)?htmlspecialchars($_REQUEST['uspid']):'';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $autoMap = array_key_exists('automap',$_POST);
-$ulPath = array_key_exists('ulpath',$_REQUEST)?$_REQUEST['ulpath']: '';
+$ulPath = array_key_exists('ulpath',$_REQUEST)?htmlspecialchars($_REQUEST['ulpath']): '';
 $importIdent = array_key_exists('importident',$_REQUEST);
 $importImage = array_key_exists('importimage',$_REQUEST);
 $matchCatNum = array_key_exists('matchcatnum',$_REQUEST);
 $matchOtherCatNum = array_key_exists('matchothercatnum',$_REQUEST);
 $verifyImages = (array_key_exists('verifyimages', $_REQUEST) && $_REQUEST['verifyimages']);
-$processingStatus = array_key_exists('processingstatus',$_REQUEST)?$_REQUEST['processingstatus']:'';
+$processingStatus = array_key_exists('processingstatus',$_REQUEST)?htmlspecialchars($_REQUEST['processingstatus']):'';
 $finalTransfer = array_key_exists('finaltransfer',$_REQUEST)?(int)$_REQUEST['finaltransfer']:0;
-$dbpk = array_key_exists('dbpk',$_REQUEST)?$_REQUEST['dbpk']:'';
+$dbpk = array_key_exists('dbpk',$_REQUEST)?htmlspecialchars($_REQUEST['dbpk']):'';
 $recStart = array_key_exists('recstart',$_REQUEST)?(int)$_REQUEST['recstart']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($uploadType)) {
-    $uploadType = 0;
-}
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
-}
-if($autoMap !== true) {
-    $autoMap = false;
-}
-if($importIdent !== true) {
-    $importIdent = false;
-}
-if($matchCatNum !== true) {
-    $matchCatNum = false;
-}
-if($matchOtherCatNum !== true) {
-    $matchOtherCatNum = false;
-}
-if($verifyImages !== true) {
-    $verifyImages = false;
 }
 if(!preg_match('/^[a-zA-Z0-9\s_-]+$/',$processingStatus)) {
     $processingStatus = '';
 }
-if($autoMap !== true) {
-    $autoMap = false;
-}
-if(!is_numeric($finalTransfer)) {
-    $finalTransfer = 0;
-}
-if($dbpk) {
-    $dbpk = htmlspecialchars($dbpk);
-}
-if(!is_numeric($recStart)) {
-    $recStart = 0;
-}
-if(!is_numeric($recLimit)) {
+if(!$recLimit) {
     $recLimit = 1000;
 }
 

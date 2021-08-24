@@ -11,7 +11,7 @@ $view = $_REQUEST['view'] ?? 'thumbnail';
 $cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
 $pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 $copyURL = '';
 $imageArr = array();
 $taxaList = array();

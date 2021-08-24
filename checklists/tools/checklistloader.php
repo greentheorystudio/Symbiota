@@ -9,7 +9,7 @@ if(!$GLOBALS['SYMB_UID']) {
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']: '';
 $thesId = array_key_exists('thes',$_REQUEST)?(int)$_REQUEST['thes']:0;
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 
 $clLoaderManager = new ChecklistLoaderManager();
 $clLoaderManager->setClid($clid);

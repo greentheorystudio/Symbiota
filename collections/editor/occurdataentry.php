@@ -12,7 +12,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$action = array_key_exists('submitaction',$_POST)?htmlspecialchars($_POST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
 $solrManager = new SOLRManager();

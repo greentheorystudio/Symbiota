@@ -4,21 +4,15 @@ include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
-$target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']:'geolocal';
-$mode = array_key_exists('mode',$_REQUEST)?$_REQUEST['mode']:'';
-$action = array_key_exists('action',$_POST)?$_POST['action']:'';
+$obsUid = array_key_exists('obsuid',$_REQUEST)?(int)$_REQUEST['obsuid']:0;
+$target = array_key_exists('target',$_REQUEST)?htmlspecialchars($_REQUEST['target']):'geolocal';
+$mode = array_key_exists('mode',$_REQUEST)?htmlspecialchars($_REQUEST['mode']):'';
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=../collections/cleaning/politicalunits.php?' . $_SERVER['QUERY_STRING']);
 }
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($obsUid)) {
-    $obsUid = 0;
-}
 if($target && !preg_match('/^[a-z]+$/',$target)) {
     $target = '';
 }

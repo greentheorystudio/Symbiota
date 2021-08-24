@@ -532,7 +532,9 @@ class TaxonomyEditorManager{
 	}
 
 	public function loadNewName($dataArr){
-		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
+		$retStr = '';
+        $tid = 0;
+	    $sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.Sanitizer::cleanInStr($dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.Sanitizer::cleanInStr($dataArr['author']).'"':'NULL').','.
@@ -581,56 +583,58 @@ class TaxonomyEditorManager{
 					'VALUES ('.$tid.','.$tidAccepted.','.$this->taxAuthId.','.($family?'"'.Sanitizer::cleanInStr($family).'"':'NULL').','.
 					$parTid.','.($dataArr['unacceptabilityreason']?'"'.Sanitizer::cleanInStr($dataArr['unacceptabilityreason']).'"':'NULL').') ';
 				//echo "sqlTaxStatus: ".$sqlTaxStatus;
-				if(!$this->conn->query($sqlTaxStatus)){
-					return 'ERROR: Taxon loaded into taxa, but failed to load taxstatus.';
-				}
-				
-				$sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-					'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
-				if($this->conn->query($sqlEnumTree)){
-					$sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-						'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
-					if(!$this->conn->query($sqlEnumTree2)){
-						echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2).';
-					}
-				}
-				else{
-					echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree.';
+				if($this->conn->query($sqlTaxStatus)) {
+                    $sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
+                        'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
+                    if($this->conn->query($sqlEnumTree)){
+                        $sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
+                            'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
+                        if(!$this->conn->query($sqlEnumTree2)){
+                            echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2).';
+                        }
+                    }
+                    else{
+                        echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree.';
+                    }
+
+                    $sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
+                    if($dataArr['securitystatus'] === 1) {
+                        $sql1 .= ',o.localitysecurity = 1 ';
+                    }
+                    $sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($dataArr['sciname']).'") ';
+                    if(!$this->conn->query($sql1)){
+                        echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
+                    }
+
+                    $sql2 = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+                        'SET i.tid = o.tidinterpreted '.
+                        'WHERE i.tid IS NULL AND o.tidinterpreted IS NOT NULL';
+                    $this->conn->query($sql2);
+                    if(!$this->conn->query($sql2)){
+                        echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
+                    }
+
+                    $sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
+                        'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,3), round(o.decimallongitude,3) '.
+                        'FROM omoccurrences o '.
+                        'WHERE (o.tidinterpreted = '.$tid.') AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus <> 1) AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL';
+                    $this->conn->query($sql3);
+                }
+				else {
+                    $retStr = 'ERROR: Taxon loaded into taxa, but failed to load taxstatus.';
 				}
 			}
 			else{
-				return 'ERROR loading taxon due to missing parentTid';
+                $retStr = 'ERROR loading taxon due to missing parentTid';
 			}
-		 	
-			$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
-			if($dataArr['securitystatus'] === 1) {
-				$sql1 .= ',o.localitysecurity = 1 ';
-			}
-			$sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($dataArr['sciname']).'") ';
-			if(!$this->conn->query($sql1)){
-				echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
-			}
-
-			$sql2 = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'SET i.tid = o.tidinterpreted '.
-				'WHERE i.tid IS NULL AND o.tidinterpreted IS NOT NULL';
-			$this->conn->query($sql2);
-			if(!$this->conn->query($sql2)){
-				echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
-			}
-			
-			$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-				'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,3), round(o.decimallongitude,3) '.
-				'FROM omoccurrences o '.
-				'WHERE (o.tidinterpreted = '.$tid.') AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus <> 1) AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL';
-			$this->conn->query($sql3);
 		}
 		else{
-			$this->errorStr = 'ERROR inserting new taxon.';
-			//$this->errorStr .= '; SQL = '.$sqlTaxa;
-			return $this->errorStr;
+            $retStr = 'ERROR inserting new taxon.';
 		}
-		return $tid;
+		if($tid){
+            $retStr = $tid;
+        }
+		return $retStr;
 	}
 
 	public function verifyDeleteTaxon(): array

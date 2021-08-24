@@ -7,10 +7,10 @@ ini_set('max_execution_time', 180);
 $collId = (int)$_REQUEST['collid'];
 $loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:'';
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
 $displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 

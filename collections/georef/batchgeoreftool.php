@@ -9,7 +9,7 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$submitAction = array_key_exists('submitaction',$_POST)?htmlspecialchars($_POST['submitaction']):'';
 
 $qCountry = array_key_exists('qcountry',$_POST)?$_POST['qcountry']:'';
 $qState = array_key_exists('qstate',$_POST)?$_POST['qstate']:'';

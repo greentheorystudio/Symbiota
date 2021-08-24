@@ -35,7 +35,7 @@ if($un && $pw){
     $pHandler->setUserName($un);
     if($pHandler->authenticate($pw)){
         $tokenPacket = $pHandler->generateTokenPacket();
-        echo json_encode($tokenPacket);
+        echo json_encode($tokenPacket, JSON_THROW_ON_ERROR);
     }
     else{
         echo 'Incorrect username/password.';
