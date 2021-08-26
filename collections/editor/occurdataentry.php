@@ -8,7 +8,7 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/editor/occurdataentry.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/editor/occurdataentry.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;

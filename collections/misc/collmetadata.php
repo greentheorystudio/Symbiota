@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';

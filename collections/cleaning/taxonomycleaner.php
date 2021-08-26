@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):0;

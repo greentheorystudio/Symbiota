@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/reports/annotationmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+    header('Location: ../../profile/index.php?refurl=../collections/reports/annotationmanager.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid = (int)$_REQUEST['collid'];

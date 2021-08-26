@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/KeyMassUpdate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../ident/tools/massupdate.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../ident/tools/massupdate.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $clid = (int)$_REQUEST['clid'];

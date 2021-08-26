@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/KeyEditorManager.php');
 header('Cache-control: private; Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../ident/tools/editor.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../ident/tools/editor.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';

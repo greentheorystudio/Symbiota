@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../ident/admin/headingadmin.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../ident/admin/headingadmin.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $hid = array_key_exists('hid',$_POST)?(int)$_POST['hid']:0;

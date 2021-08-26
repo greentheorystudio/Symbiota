@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/EOLManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../taxa/admin/eolmapper.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';

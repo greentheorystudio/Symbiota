@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 3600);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;

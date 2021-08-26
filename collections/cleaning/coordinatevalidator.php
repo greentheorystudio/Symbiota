@@ -10,7 +10,7 @@ $ranking = array_key_exists('ranking',$_REQUEST)?(int)$_REQUEST['ranking']:0;
 $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/coordinatevalidator.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/coordinatevalidator.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 if($action && !preg_match('/^[a-zA-Z\s]+$/',$action)) {
