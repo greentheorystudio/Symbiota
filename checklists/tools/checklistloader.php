@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistLoaderManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';

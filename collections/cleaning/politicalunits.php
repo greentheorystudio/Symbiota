@@ -10,7 +10,7 @@ $mode = array_key_exists('mode',$_REQUEST)?htmlspecialchars($_REQUEST['mode']):'
 $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/politicalunits.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/cleaning/politicalunits.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 if($target && !preg_match('/^[a-z]+$/',$target)) {

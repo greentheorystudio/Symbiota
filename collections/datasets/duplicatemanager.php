@@ -11,7 +11,7 @@ $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['actio
 $formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 if(!$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=../collections/datasets/duplicatemanager.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=../collections/datasets/duplicatemanager.php?'.str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $dupManager = new OccurrenceDuplicate();

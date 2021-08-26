@@ -10,7 +10,7 @@ $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['actio
 $eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 
 if($eMode && !$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collManager = new OccurrenceCollectionProfile();

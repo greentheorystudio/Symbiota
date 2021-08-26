@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/InstitutionManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;
