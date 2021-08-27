@@ -1,3 +1,6 @@
+<?php
+include_once(__DIR__ . '/classes/Sanitizer.php');
+?>
 <div id="mainContainer">
     <div id="bannerContainer">
         <h1 class="title">Your New Symbiota Portal</h1>
@@ -65,7 +68,7 @@
             }
             else{
                 ?>
-                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .$_SERVER['PHP_SELF']. '?' .str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)); ?>">Log In</a></span>
+                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">Log In</a></span>
                 <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">New Account</a></span>
                 <?php
             }
