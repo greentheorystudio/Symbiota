@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
@@ -319,7 +320,7 @@ if($GLOBALS['SYMB_UID']){
     elseif($occIndex !== 0){
         $occManager->setQueryVariables();
         if($action === 'Delete Occurrence'){
-            $qryCnt = $occManager->getQueryRecordCount();		//Value won't be returned unless set in cookies in previous query
+            $qryCnt = $occManager->getQueryRecordCount();
             if($qryCnt > 1){
                 if(($occIndex + 1) >= $qryCnt) {
                     $occIndex = $qryCnt - 2;
@@ -442,7 +443,7 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 else{
-    header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

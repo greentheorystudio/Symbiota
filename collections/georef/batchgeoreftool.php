@@ -2,10 +2,11 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
+    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
