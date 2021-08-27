@@ -36,4 +36,4 @@ if($collid && is_numeric($collid)){
 
 	}
 }
-echo json_encode($cntStr);
+echo json_encode($cntStr, JSON_THROW_ON_ERROR);

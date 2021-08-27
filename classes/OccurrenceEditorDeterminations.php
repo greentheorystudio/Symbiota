@@ -211,7 +211,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					$detArr[$k] = $this->encodeStr($v);
 				}
 			}
-			$detObj = json_encode($detArr);
+			$detObj = json_encode($detArr, JSON_THROW_ON_ERROR);
 			$sqlArchive = 'UPDATE guidoccurdeterminations '.
 			'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($detObj).'" '.
 			'WHERE (detid = '.$detId.')';

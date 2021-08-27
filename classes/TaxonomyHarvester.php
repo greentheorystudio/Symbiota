@@ -90,7 +90,7 @@ class TaxonomyHarvester extends Manager{
             //echo $url.'<br/>';
             $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
-            $resultArr = json_decode($content,true);
+            $resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
             $numResults = (int)$resultArr['number_of_results_returned'];
             if($numResults > 0){
                 foreach($resultArr['result'] as $k => $tArr){
@@ -129,7 +129,7 @@ class TaxonomyHarvester extends Manager{
             //echo $url.'<br/>';
             $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
-            $resultArr = json_decode($content,true);
+            $resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
             if(isset($resultArr['result'][0])){
                 $retArr = $resultArr['result'][0];
             }
@@ -145,7 +145,7 @@ class TaxonomyHarvester extends Manager{
             //echo $url.'<br/>';
             $retArr = (new Utilities)->getContentString($url);
             $content = $retArr['str'];
-            $resultArr = json_decode($content,true);
+            $resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
             if(isset($resultArr['result'][0])){
                 $baseArr = $resultArr['result'][0];
                 $tid = $this->addColTaxonByResult($baseArr);
@@ -332,7 +332,7 @@ class TaxonomyHarvester extends Manager{
 		$acceptedTid = 0;
 		$url = 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$id;
 		if($resultStr = $this->getWormsReturnStr((new Utilities)->getContentString($url),$url)){
-			$taxonArr= $this->getWormsNode(json_decode($resultStr,true));
+			$taxonArr= $this->getWormsNode(json_decode($resultStr, true, 512, JSON_THROW_ON_ERROR));
 			if($taxonArr['acceptance'] === 'unaccepted' && isset($taxonArr['validID'])){
 				$acceptedTid = $this->addWormsTaxonByID($taxonArr['validID']);
 			}
@@ -342,7 +342,7 @@ class TaxonomyHarvester extends Manager{
 			else{
 				$url = 'http://www.marinespecies.org/rest/AphiaClassificationByAphiaID/'.$id;
 				if($parentStr = $this->getWormsReturnStr((new Utilities)->getContentString($url),$url)){
-					$parentArr = json_decode($parentStr,true);
+					$parentArr = json_decode($parentStr, true, 512, JSON_THROW_ON_ERROR);
 					if(($parentID = $this->getWormParentID($parentArr, $id)) && $parentTid = $this->addWormsTaxonByID($parentID)) {
 						$taxonArr['parent'] = array('tid' => $parentTid);
 					}
@@ -434,7 +434,7 @@ class TaxonomyHarvester extends Manager{
                     $content .= trim($line);
                 }
                 fclose($fh);
-                $resultArr = json_decode($content,true);
+                $resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
                 $id = 0;
                 foreach($resultArr as $k => $arr){
                     if(array_key_exists('Error', $arr)){
@@ -473,7 +473,7 @@ class TaxonomyHarvester extends Manager{
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$resultArr = json_decode($content,true);
+			$resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 			$taxonArr = $this->getTropicosNode($resultArr);
 
 			if($taxonArr['rankid'] === 10){
@@ -487,7 +487,7 @@ class TaxonomyHarvester extends Manager{
 						$content .= trim($line);
 					}
 					fclose($fh);
-					$parentArr = json_decode($content,true);
+					$parentArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 					$parentNode = $this->getTropicosNode(array_pop($parentArr));
 					if(isset($parentNode['sciname']) && $parentNode['sciname']){
 						$parentTid = $this->getTid($parentNode);
@@ -509,7 +509,7 @@ class TaxonomyHarvester extends Manager{
 						$content .= trim($line);
 					}
 					fclose($fh);
-					$resultArr = json_decode($content,true);
+					$resultArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 					if(isset($resultArr['Synonyms']['Synonym']['AcceptedName'])){
 						$acceptedNode = $this->getTropicosNode($resultArr['Synonyms']['Synonym']['AcceptedName']);
                         $acceptedNode = $this->buildTaxonArr($acceptedNode);
@@ -609,7 +609,7 @@ class TaxonomyHarvester extends Manager{
         $taxonArr = array();
 	    $eolManager = new EOLUtilities();
 		if($eolManager->pingEOL()){
-			$taxonArr = $eolManager->getPage($eolTaxonId, false);
+			$taxonArr = $eolManager->getPage($eolTaxonId);
 			if($searchSyns && isset($taxonArr['syns'])){
 				foreach($taxonArr['syns']as $k => $synArr){
 					if(strpos($synArr['scientificName'],$term) !== 0) {

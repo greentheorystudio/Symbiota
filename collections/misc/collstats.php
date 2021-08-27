@@ -8,12 +8,12 @@ $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$collId = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):'';
 $cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
 $cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
 $days = array_key_exists('days',$_REQUEST)?(int)$_REQUEST['days']:365;
 $months = array_key_exists('months',$_REQUEST)?(int)$_REQUEST['months']:12;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $collManager = new OccurrenceCollectionProfile();
 
@@ -70,7 +70,7 @@ if($collId){
                 }
 
                 if($collArr['dynamicProperties']){
-                    $dynPropTempArr = json_decode($collArr['dynamicProperties'],true);
+                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
                     if(is_array($dynPropTempArr)){
                         $resultsTemp[$i]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
                         $resultsTemp[$i]['types'] = $dynPropTempArr['TypeCount'];
@@ -232,7 +232,7 @@ if($action !== 'Update Statistics'){
             <script src="../../js/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/jquery.js"></script>
 			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210810"></script>
+			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210824"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});

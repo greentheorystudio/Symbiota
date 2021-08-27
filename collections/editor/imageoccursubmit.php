@@ -5,11 +5,11 @@ include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid  = (int)$_REQUEST['collid'];
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']): '';
 
 $occurManager = new OccurrenceEditorImages();
 $solrManager = new SOLRManager();

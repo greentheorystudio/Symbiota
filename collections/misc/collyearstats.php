@@ -8,7 +8,7 @@ $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$collId = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):'';
 $years = array_key_exists('years',$_REQUEST)?(int)$_REQUEST['years']:1;
 
 $days = 365 * $years;
@@ -41,7 +41,7 @@ if($collIdArr){
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210810"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210824"></script>
 	</head>
 	<body>
 		<?php

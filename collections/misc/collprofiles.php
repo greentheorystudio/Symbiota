@@ -10,7 +10,7 @@ $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['actio
 $eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 
 if($eMode && !$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collManager = new OccurrenceCollectionProfile();
@@ -430,7 +430,7 @@ if($GLOBALS['SYMB_UID']){
 				$spidPerc = 0;
 				$imgPerc = 0;
 				if($statsArr['dynamicProperties']){
-					$extrastatsArr = json_decode($statsArr['dynamicProperties'],true);
+					$extrastatsArr = json_decode($statsArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
 					if(is_array($extrastatsArr)){
 						if($extrastatsArr['SpecimensCountID']){
 							$spidPerc = (100*($extrastatsArr['SpecimensCountID']/$statsArr['recordcnt']));

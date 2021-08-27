@@ -13,6 +13,14 @@ $pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 
 $collManager = new OccurrenceListManager();
 $resetPageNum = false;
+$stArr = array();
+$validStArr = false;
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -39,7 +47,7 @@ $resetPageNum = false;
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../js/symb/collections.search.js?ver=20210621"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210810"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210824"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -57,7 +65,7 @@ $resetPageNum = false;
                 }
             });
             <?php
-            if($stArrJson){
+            if($validStArr){
                 ?>
                 initializeSearchStorage(<?php echo $queryId; ?>);
                 loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
@@ -66,7 +74,9 @@ $resetPageNum = false;
             ?>
 
             stArr = getSearchTermsArr();
-            setOccurrenceList(listPage);
+            if(validateSearchTermsArr(stArr)){
+                setOccurrenceList(listPage);
+            }
         });
 
         function setOccurrenceList(listPage){

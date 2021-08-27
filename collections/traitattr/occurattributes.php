@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid = (int)$_REQUEST['collid'];

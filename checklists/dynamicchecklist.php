@@ -6,10 +6,10 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $lat = (float)$_POST['lat'];
 $lng = (float)$_POST['lng'];
 $radius = (float)$_POST['radius'];
-$radiusunits = $_POST['radiusunits'];
+$radiusunits = htmlspecialchars($_POST['radiusunits']);
 $dynamicRadius = ($GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 5);
 $tid = (int)$_POST['tid'];
-$interface = $_POST['interface'];
+$interface = htmlspecialchars($_POST['interface']);
 
 $dynClManager = new DynamicChecklistManager();
 

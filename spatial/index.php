@@ -15,6 +15,8 @@ $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
+$stArr = array();
+$validStArr = false;
 
 if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
@@ -53,6 +55,13 @@ if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
 
 $occManager = new OccurrenceManager();
 $spatialManager = new SpatialModuleManager();
+
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($occManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 
 $collList = $occManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
@@ -244,8 +253,8 @@ $dbArr = array();
             if($inputWindowMode){
                 echo 'loadInputParentParams();';
             }
-            if($queryId || $stArrJson){
-                if($stArrJson){
+            if($queryId || $validStArr){
+                if($validStArr){
                     ?>
                     initializeSearchStorage(<?php echo $queryId; ?>);
                     loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
@@ -253,10 +262,12 @@ $dbArr = array();
                 }
                 ?>
                 searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
+                if(validateSearchTermsArr(searchTermsArr)){
+                    setInputFormBySearchTermsArr();
+                    createShapesFromSearchTermsArr();
+                    setCollectionForms();
+                    loadPoints();
+                }
                 <?php
             }
             ?>
@@ -301,7 +312,7 @@ $dbArr = array();
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
+    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools, JSON_THROW_ON_ERROR); ?>');
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');

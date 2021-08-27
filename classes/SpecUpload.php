@@ -130,16 +130,19 @@ class SpecUpload{
 	}
 	
 	public function getCollInfo($fieldStr = null){
-		if(!$this->collMetadataArr) {
+		$retVal = '';
+	    if(!$this->collMetadataArr) {
 			$this->setCollInfo();
 		}
 		if($fieldStr){
 			if(array_key_exists($fieldStr,$this->collMetadataArr)){
-				return $this->collMetadataArr[$fieldStr];
+                $retVal = $this->collMetadataArr[$fieldStr];
 			}
-			return '';			
 		}
-		return $this->collMetadataArr;
+		else{
+            $retVal = $this->collMetadataArr;
+        }
+		return $retVal;
 	}
 
 	public function validateSecurityKey($k): bool

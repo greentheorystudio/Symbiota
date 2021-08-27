@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 @include('Image/Barcode2.php');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $collid = (int)$_REQUEST['collid'];

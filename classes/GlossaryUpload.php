@@ -439,7 +439,7 @@ class GlossaryUpload{
 				break;
 			}
 		}
-		$fieldArr['languages'] = json_encode($languageArr);
+		$fieldArr['languages'] = json_encode($languageArr, JSON_THROW_ON_ERROR);
 		foreach($languageArr as $lang){
 			$fieldArr['target'][] = $lang.'_synonym';
 			foreach($targetFieldArr as $target){

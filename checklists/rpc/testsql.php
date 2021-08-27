@@ -20,7 +20,5 @@ if($sqlFrag && $clid && ($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GL
 		$result->close();
 	}
 }
-if(!($con === false)) {
-	$con->close();
-}
+$con->close();
 echo $responseStr;

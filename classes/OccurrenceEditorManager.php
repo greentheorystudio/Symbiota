@@ -216,7 +216,7 @@ class OccurrenceEditorManager {
             unset($_SESSION['editorquery']);
         }
         elseif(isset($_SESSION['editorquery'])){
-            $this->qryArr = json_decode($_SESSION['editorquery'],true);
+            $this->qryArr = json_decode($_SESSION['editorquery'], true, 512, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -674,7 +674,7 @@ class OccurrenceEditorManager {
             }
             $rs->free();
             $this->qryArr['rc'] = $recCnt;
-            $_SESSION['editorquery'] = json_encode($this->qryArr);
+            $_SESSION['editorquery'] = json_encode($this->qryArr, JSON_THROW_ON_ERROR);
         }
         return $recCnt;
     }
@@ -1186,7 +1186,7 @@ class OccurrenceEditorManager {
                             $detArr[$detId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                         }
                     }
-                    $detObj = json_encode($detArr[$detId]);
+                    $detObj = json_encode($detArr[$detId], JSON_THROW_ON_ERROR);
                     $sqlArchive = 'UPDATE guidoccurdeterminations '.
                         'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->encodeStrTargeted($detObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                         'WHERE (detid = '.$detId.')';
@@ -1205,7 +1205,7 @@ class OccurrenceEditorManager {
                             $imgArr[$imgId][$k] = $this->encodeStrTargeted($v, $GLOBALS['CHARSET'], 'utf8');
                         }
                     }
-                    $imgObj = json_encode($imgArr[$imgId]);
+                    $imgObj = json_encode($imgArr[$imgId], JSON_THROW_ON_ERROR);
                     $sqlArchive = 'UPDATE guidimages '.
                         'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->encodeStrTargeted($imgObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                         'WHERE (imgid = '.$imgId.')';
@@ -1244,7 +1244,7 @@ class OccurrenceEditorManager {
                 $archiveArr['exsiccati'] = $exsArr;
 
                 $archiveArr['dateDeleted'] = date('r').' by '.$GLOBALS['USER_DISPLAY_NAME'];
-                $archiveObj = json_encode($archiveArr);
+                $archiveObj = json_encode($archiveArr, JSON_THROW_ON_ERROR);
                 $sqlArchive = 'UPDATE guidoccurrences '.
                     'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($this->encodeStrTargeted($archiveObj,'utf8',$GLOBALS['CHARSET'])).'" '.
                     'WHERE (occid = '.$delOccid.')';
@@ -1895,8 +1895,8 @@ class OccurrenceEditorManager {
             $retArr[$r->orid][$r->appliedstatus]['reviewstatus'] = $r->reviewstatus;
             $retArr[$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 
-            $oldValues = json_decode($r->oldvalues,true);
-            $newValues = json_decode($r->newvalues,true);
+            $oldValues = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+            $newValues = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
             foreach($oldValues as $fieldName => $value){
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['old'] = $value;
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['new'] = ($newValues[$fieldName] ?? 'ERROR');
@@ -1929,7 +1929,7 @@ class OccurrenceEditorManager {
         if(array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS'])){
             foreach($GLOBALS['USER_RIGHTS']['CollTaxon'] as $vStr){
                 $tok = explode(':',$vStr);
-                if($tok && $tok[0] === $this->collId){
+                if($tok && (int)$tok[0] === $this->collId){
                     $udIdArr[] = $tok[1];
                 }
             }

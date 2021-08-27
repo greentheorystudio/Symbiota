@@ -4,8 +4,8 @@
 /** @var int $crowdSourceMode */
 /** @var int $isGenObs */
 /** @var string $collId */
-if(!$displayQuery && array_key_exists('displayquery',$_REQUEST)) {
-    $displayQuery = $_REQUEST['displayquery'];
+if(!$displayQuery && array_key_exists('displayquery',$_REQUEST) && $_REQUEST['displayquery']) {
+    $displayQuery = true;
 }
 
 $qCatalogNumber='';
@@ -24,11 +24,35 @@ $qImgOnly='';
 $qWithoutImg='';
 $qExsiccatiId='';
 $qOcrFrag = '';
-$qCustomOpenParen1='';$qCustomField1='';$qCustomType1='';$qCustomValue1='';$qCustomCloseParen1='';
-$qCustomAndOr2='';$qCustomOpenParen2='';$qCustomField2='';$qCustomType2='';$qCustomValue2='';$qCustomCloseParen2='';
-$qCustomAndOr3='';$qCustomOpenParen3='';$qCustomField3='';$qCustomType3='';$qCustomValue3='';$qCustomCloseParen3='';
-$qCustomAndOr4='';$qCustomOpenParen4='';$qCustomField4='';$qCustomType4='';$qCustomValue4='';$qCustomCloseParen4='';
-$qCustomAndOr5='';$qCustomOpenParen5='';$qCustomField5='';$qCustomType5='';$qCustomValue5='';$qCustomCloseParen5='';
+$qCustomOpenParen1='';
+$qCustomField1='';
+$qCustomType1='';
+$qCustomValue1='';
+$qCustomCloseParen1='';
+$qCustomAndOr2='';
+$qCustomOpenParen2='';
+$qCustomField2='';
+$qCustomType2='';
+$qCustomValue2='';
+$qCustomCloseParen2='';
+$qCustomAndOr3='';
+$qCustomOpenParen3='';
+$qCustomField3='';
+$qCustomType3='';
+$qCustomValue3='';
+$qCustomCloseParen3='';
+$qCustomAndOr4='';
+$qCustomOpenParen4='';
+$qCustomField4='';
+$qCustomType4='';
+$qCustomValue4='';
+$qCustomCloseParen4='';
+$qCustomAndOr5='';
+$qCustomOpenParen5='';
+$qCustomField5='';
+$qCustomType5='';
+$qCustomValue5='';
+$qCustomCloseParen5='';
 $qryArr = $occManager->getQueryVariables();
 if($qryArr){
 	$qCatalogNumber = (array_key_exists('cn',$qryArr)?$qryArr['cn']:'');

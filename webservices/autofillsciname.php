@@ -51,5 +51,5 @@ if($queryString){
     $qHandler->setLimit($limit);
 
     $listArr = $qHandler->generateSciNameList($queryString);
-    echo json_encode($listArr);
+    echo json_encode($listArr, JSON_THROW_ON_ERROR);
 }

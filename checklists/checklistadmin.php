@@ -3,13 +3,13 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 
 $clManager = new ChecklistAdmin();
 if(!$clid && isset($_POST['delclid'])) {
@@ -59,7 +59,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
 if($clArray['defaultsettings']){
-	$defaultArr = json_decode($clArray['defaultsettings'], true);
+	$defaultArr = json_decode($clArray['defaultsettings'], true, 512, JSON_THROW_ON_ERROR);
 }
 
 $voucherProjects = $clManager->getVoucherProjects();

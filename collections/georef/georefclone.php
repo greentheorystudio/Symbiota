@@ -44,7 +44,7 @@ $clones = $geoManager->getGeorefClones($locality, $country, $state, $county, $se
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210817" type="text/javascript"></script>
 		<script type="text/javascript">
             $(document).ready(function() {
-                const cloneArr = JSON.parse('<?php echo json_encode($clones); ?>');
+                const cloneArr = JSON.parse('<?php echo json_encode($clones, JSON_THROW_ON_ERROR); ?>');
                 for(let id in cloneArr){
                     if(cloneArr.hasOwnProperty(id)){
                         const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([

@@ -11,10 +11,10 @@ $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
+$occIndex = array_key_exists('occindex',$_REQUEST) && $_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
 $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 if(!$action && array_key_exists('carryloc',$_REQUEST)){
     $goToMode = 2;
 }
@@ -442,7 +442,7 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 else{
-    header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.$_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

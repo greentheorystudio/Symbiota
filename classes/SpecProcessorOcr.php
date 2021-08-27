@@ -32,7 +32,7 @@ class SpecProcessorOcr{
 		if($this->logFH) {
 			fclose($this->logFH);
 		}
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}

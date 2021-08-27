@@ -102,7 +102,7 @@ class EOLManager {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$retArr = json_decode($content, true);
+			$retArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 			if(is_array($retArr) && $retArr['totalResults'] > 0){
 				$identifier = $retArr['results'][0]['id'];
 				$link = $retArr['results'][0]['link'];
@@ -212,7 +212,7 @@ class EOLManager {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$retArr = json_decode($content, true);
+			$retArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 			if(is_array($retArr) && array_key_exists('dataObjects',$retArr)){
 				$dataObjArr = $retArr['dataObjects'];
 				$imgCnt = 0;
@@ -303,14 +303,7 @@ class EOLManager {
 	private function loadImage($tid,$imageUrl,$resourceArr): bool
 	{
 		$status = false;
-		if($tid && $imageUrl && $resourceArr){
-			if(isset($resourceArr['title']) && strpos($resourceArr['title'],'Discover Life') !== false) {
-				return false;
-			}
-			if(in_array('MBG', $resourceArr, true) && stripos($resourceArr['source'],'tropicos') !== false) {
-				return false;
-			}
-
+		if($tid && $imageUrl && $resourceArr && !(isset($resourceArr['title']) && strpos($resourceArr['title'],'Discover Life') !== false) && !(in_array('MBG', $resourceArr, true) && stripos($resourceArr['source'],'tropicos') !== false)){
 			$this->imgManager->setTargetPath('eol/'.date('Ym').'/');
 			if($this->imgManager->parseUrl($imageUrl)){
 				$webFullUrl = ''; $imgTnUrl = ''; $lgFullUrl = '';

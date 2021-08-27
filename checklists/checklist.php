@@ -7,13 +7,13 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']) {
 }
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']: '';
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
 $showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;
@@ -50,7 +50,7 @@ if($clValue || $dynClid){
 $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
 if($clValue && $clArray['defaultSettings']){
-    $defaultArr = json_decode($clArray['defaultSettings'], true);
+    $defaultArr = json_decode($clArray['defaultSettings'], true, 512, JSON_THROW_ON_ERROR);
     $showDetails = $defaultArr['ddetails'];
     if(!$defaultOverride){
         if(array_key_exists('dcommon',$defaultArr)){

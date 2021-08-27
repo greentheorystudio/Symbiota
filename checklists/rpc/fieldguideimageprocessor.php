@@ -11,7 +11,7 @@ $fgManager = new ChecklistFGExportManager();
 $returnStr = '';
 
 if($imgID){
-    $imgIDArr = json_decode($imgID,true);
+    $imgIDArr = json_decode($imgID, true, 512, JSON_THROW_ON_ERROR);
     foreach($imgIDArr as $imId){
         $tempStr = '';
         $url = $fgManager->getImageUrl($imId);

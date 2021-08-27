@@ -177,7 +177,7 @@ include(__DIR__ . '/../../header.php');
                     }
                 }, "tree");
 
-                taxonTree.set("path", <?php echo json_encode($treePath); ?>).then(
+                taxonTree.set("path", <?php echo json_encode($treePath, JSON_THROW_ON_ERROR); ?>).then(
                     function(){
                         win.scrollIntoView(taxonTree.selectedNode.id);
                     }
