@@ -4,10 +4,11 @@ include_once(__DIR__ . '/../../classes/SpecUploadDirect.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDigir.php');
 include_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 3600);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/admin/specuploadmanagement.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];

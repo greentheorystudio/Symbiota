@@ -1,9 +1,10 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/InstitutionManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/admin/institutioneditor.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;

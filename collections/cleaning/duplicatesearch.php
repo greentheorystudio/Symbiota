@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -10,7 +11,7 @@ $start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:200;
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/duplicatesearch.php?' . str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'], ENT_NOQUOTES)));
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
