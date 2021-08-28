@@ -2,9 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-if($GLOBALS['CHECKLIST_FG_EXPORT']) {
-    include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
-}
+include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
