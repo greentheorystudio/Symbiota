@@ -19,12 +19,14 @@ if($userId !== $GLOBALS['SYMB_UID']) {
 $listArr = $clManager->getManagementLists($userId);
 ?>
 <script type="text/javascript">
-    tinyMCE.init({
-        mode : "textareas",
-        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-        theme_advanced_buttons2 : "",
-        theme_advanced_buttons3 : ""
-    });
+    ClassicEditor
+        .create( document.querySelector( '#biographyblock' ), {
+            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
 </script>
 <div style="padding:15px;">
 	<div>
@@ -193,7 +195,7 @@ $listArr = $clManager->getManagementLists($userId);
 				        <td><b>Biography:</b></td>
 				        <td>
 							<div>
-								<textarea name="biography" rows="4" cols="40"><?php echo $person->getBiography();?></textarea>
+								<textarea name="biography" id="biographyblock" rows="4" cols="40"><?php echo $person->getBiography();?></textarea>
 							</div>
 						</td>
 				    </tr>
