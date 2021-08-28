@@ -1,3 +1,6 @@
+<?php
+include_once(__DIR__ . '/classes/Sanitizer.php');
+?>
 <div>
     <a class="login-link" href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/contact.php'>Contact Us</a>
 </div>
@@ -18,7 +21,7 @@ if($GLOBALS['USER_DISPLAY_NAME']){
 else{
     ?>
     <div>
-        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']."/profile/index.php?refurl=".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']; ?>">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">
             Log In
         </a>
     </div>
