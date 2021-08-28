@@ -1,3 +1,6 @@
+<?php
+include_once(__DIR__ . '/classes/Sanitizer.php');
+?>
 <table id="maintable" style="border-spacing:0;">
 	<tr>
 		<td class="header" colspan="3">
@@ -39,7 +42,7 @@
 					else{
 					?>
 						<span style="">
-							<a href="<?php echo $CLIENT_ROOT."/profile/index.php?refurl=".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']; ?>">
+							<a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">
 								Log In
 							</a>
 						</span>
