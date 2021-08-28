@@ -40,7 +40,7 @@ class Sanitizer {
         else{
             $requestPath = htmlspecialchars($fullRequestPath);
         }
-        if(substr($requestPath,-4) !== '.php'){
+        if(substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
             $fixedPath = '/index.php';
             if(strpos($requestPath, '.php') !== false){
                 $requestPathParts = explode('.php', $requestPath);
