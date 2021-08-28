@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__ . '/../classes/Encryption.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
+Sanitizer::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
 session_start();
 
