@@ -24,13 +24,14 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS
 if($editable){
 	?>
 	<script type="text/javascript">
-		tinyMCE.init({
-			mode : "textareas",
-			theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-            valid_elements: "*[*]"
-		});
+		ClassicEditor
+            .create( document.querySelector( '#newstatement' ), {
+                toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                    "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
 	</script>
 	<div style="float:right;" onclick="toggle('adddescrblock');" title="Add a New Description">
 		<i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
@@ -152,7 +153,7 @@ if($editable){
 										<input name='displayheader' type='checkbox' value='1' CHECKED /> Display Heading
 									</div>
 									<div style='margin:3px;'>
-										<textarea name='statement' style="width:99%;height:200px;"></textarea>
+										<textarea name='statement' id="newstatement" style="width:99%;height:200px;"></textarea>
 									</div>
 									<div style='margin:3px;'>
 										Sort Sequence: 
@@ -185,7 +186,7 @@ if($editable){
 												<input name='displayheader' type='checkbox' value='1' <?php echo ($stmtArr['displayheader']? 'CHECKED' : '');?> /> Display Header
 											</div>
 											<div>
-												<textarea name='statement'  style="width:99%;height:200px;margin:3px;"><?php echo $stmtArr['statement'];?></textarea>
+												<textarea name='statement' id="statement-<?php echo $tdsid;?>" style="width:99%;height:200px;margin:3px;"><?php echo $stmtArr['statement'];?></textarea>
 											</div>
 											<div>
 												<b>Sort Sequence:</b> 
@@ -211,6 +212,16 @@ if($editable){
 										</form>
 									</div>
 								</div>
+                                <script type="text/javascript">
+                                    ClassicEditor
+                                        .create( document.querySelector( '#statement-<?php echo $tdsid;?>' ), {
+                                            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                                                "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
+                                        } )
+                                        .catch( error => {
+                                            console.error( error );
+                                        } );
+                                </script>
 								<?php
 							}
 						}
