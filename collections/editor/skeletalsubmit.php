@@ -1,14 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/editor/skeletalsubmit.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collid  = (int)$_REQUEST['collid'];
-$action = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']: '';
+$action = array_key_exists('formaction',$_REQUEST)?htmlspecialchars($_REQUEST['formaction']): '';
 
 $skeletalManager = new OccurrenceSkeletal();
 

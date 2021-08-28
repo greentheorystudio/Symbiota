@@ -25,6 +25,14 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 
 $imageArr = array();
 $taxaList = array();
+$stArr = array();
+$validStArr = false;
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -37,7 +45,7 @@ $taxaList = array();
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/symb/images.index.js?ver=20210810" type="text/javascript"></script>
-    <script src="../js/symb/search.term.manager.js?ver=20210810" type="text/javascript"></script>
+    <script src="../js/symb/search.term.manager.js?ver=20210824" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();
@@ -104,8 +112,8 @@ $taxaList = array();
 
             initializeSearchStorage(<?php echo $queryId; ?>);
             <?php
-            if($queryId || $stArrJson){
-                if($stArrJson){
+            if($queryId || $validStArr){
+                if($validStArr){
                     ?>
                     initializeSearchStorage(<?php echo $queryId; ?>);
                     loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
@@ -115,7 +123,9 @@ $taxaList = array();
                 stArr = getSearchTermsArr();
                 setParamsForm();
                 setCollectionForms();
-                changeImagePage("",stArr['imagedisplay'],1);
+                if(validateSearchTermsArr(stArr)){
+                    changeImagePage("",stArr['imagedisplay'],1);
+                }
                 <?php
             }
             ?>

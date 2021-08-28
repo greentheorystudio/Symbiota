@@ -1,10 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/addterm.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $relatedGlossId = array_key_exists('relglossid',$_REQUEST)?(int)$_REQUEST['relglossid']:0;

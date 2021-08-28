@@ -343,7 +343,7 @@ class OccurrenceIndividualManager extends Manager{
                 $bodyStr = 'The following comment has been reported as inappropriate:<br/> '.
                     '<a href="'.$comUrl.'">'.$comUrl.'</a>';
                 $mailerResult = (new Mailer)->sendEmail($emailAddr,$subject,$bodyStr);
-                if(!$mailerResult === 'Sent'){
+                if($mailerResult !== 'Sent'){
                     $this->errorMessage = 'ERROR sending email to portal manager, error unknown';
                     $status = false;
                 }
@@ -444,8 +444,8 @@ class OccurrenceIndividualManager extends Manager{
             $retArr[$r->orid][$r->appliedstatus]['reviewstatus'] = $r->reviewstatus;
             $retArr[$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 
-            $oldValues = json_decode($r->oldvalues,true);
-            $newValues = json_decode($r->newvalues,true);
+            $oldValues = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+            $newValues = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
             foreach($oldValues as $fieldName => $value){
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['old'] = $value;
                 $retArr[$r->orid][$r->appliedstatus]['edits'][$fieldName]['new'] = ($newValues[$fieldName] ?? 'ERROR');
@@ -653,7 +653,7 @@ class OccurrenceIndividualManager extends Manager{
         //echo $sql;
         if($rs = $this->conn->query($sql)){
             if($r = $rs->fetch_object()){
-                $retArr['obj'] = json_decode($r->archiveobj,true);
+                $retArr['obj'] = json_decode($r->archiveobj, true, 512, JSON_THROW_ON_ERROR);
                 $retArr['notes'] = $r->notes;
             }
             $rs->free();
@@ -665,7 +665,7 @@ class OccurrenceIndividualManager extends Manager{
             //echo $sql;
             if($rs = $this->conn->query($sql)){
                 if($r = $rs->fetch_object()){
-                    $retArr['obj'] = json_decode($r->archiveobj,true);
+                    $retArr['obj'] = json_decode($r->archiveobj, true, 512, JSON_THROW_ON_ERROR);
                     $retArr['notes'] = $r->notes;
                 }
                 $rs->free();

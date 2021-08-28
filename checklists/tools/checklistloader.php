@@ -1,15 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ChecklistLoaderManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../checklists/tools/checklistloader.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']: '';
 $thesId = array_key_exists('thes',$_REQUEST)?(int)$_REQUEST['thes']:0;
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 
 $clLoaderManager = new ChecklistLoaderManager();
 $clLoaderManager->setClid($clid);

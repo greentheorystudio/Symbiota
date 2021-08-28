@@ -8,7 +8,7 @@ $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
+$collId = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):'';
 $totalCnt = array_key_exists('totalcnt',$_REQUEST)?(int)$_REQUEST['totalcnt']:0;
 
 $collManager = new OccurrenceCollectionProfile();
@@ -38,7 +38,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
         <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210810"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210824"></script>
 	</head>
 	<body>
 		<?php

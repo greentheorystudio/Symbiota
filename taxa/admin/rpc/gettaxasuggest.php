@@ -44,4 +44,4 @@ while ($row = $result->fetch_object()) {
 }
 $result->free();
 $con->close();
-echo json_encode($returnArr);
+echo json_encode($returnArr, JSON_THROW_ON_ERROR);

@@ -2,26 +2,20 @@
 /** @var array $dupArr */
 include_once(__DIR__ . '/../../config/symbini.php'); 
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$obsUid = array_key_exists('obsuid',$_REQUEST)?$_REQUEST['obsuid']:'';
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
+$obsUid = array_key_exists('obsuid',$_REQUEST)?(int)$_REQUEST['obsuid']:0;
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/fieldstandardization.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($obsUid)) {
-    $obsUid = 0;
-}
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-
 
 $cleanManager = new OccurrenceCleaner();
 if($collid) {
