@@ -309,7 +309,7 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
 		else{
-			$this->logOrEcho('ERROR updating kingdoms: '.$this->conn->error);
+			$this->logOrEcho('ERROR updating kingdoms.');
 		}
 		flush();
 
@@ -323,7 +323,7 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
 		else{
-			$this->logOrEcho('ERROR family tags: '.$this->conn->error);
+			$this->logOrEcho('ERROR family tags.');
 		}
 		flush();
 
@@ -338,7 +338,7 @@ class TaxonomyCleaner extends Manager{
 			$this->logOrEcho($this->conn->affected_rows.' occurrence records mapped',1);
 		}
 		else{
-			$this->logOrEcho('ERROR linking new data to occurrences: '.$this->conn->error);
+			$this->logOrEcho('ERROR linking new data to occurrences.');
 		}
 		flush();
 	}
@@ -378,7 +378,7 @@ class TaxonomyCleaner extends Manager{
 						'SELECT occid, "scientificNameAuthorship" AS fieldname, "'.$newAuthor.'", IFNULL(scientificNameAuthorship,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere.'AND (scientificNameAuthorship != "'.$newAuthor.'")';
 					if(!$this->conn->query($sql2)){
-						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (author): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (author).',1);
 					}
 				}
 				if($idQualifier){
@@ -387,7 +387,7 @@ class TaxonomyCleaner extends Manager{
 						'IFNULL(identificationQualifier,""), '.$GLOBALS['SYMB_UID'].', 1, 1 '.($hasEditType?',1 ':'').
 						'FROM omoccurrences '.$sqlWhere;
 					if(!$this->conn->query($sql3)){
-						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (idQual): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (idQual).',1);
 					}
 				}
 				$sqlFinal = 'UPDATE omoccurrences '.
@@ -403,11 +403,11 @@ class TaxonomyCleaner extends Manager{
 					$affectedRows = $this->conn->affected_rows;
 				}
 				else{
-					$this->logOrEcho('ERROR thrown remapping occurrence taxon: '.$this->conn->error,1);
+					$this->logOrEcho('ERROR thrown remapping occurrence taxon.',1);
 				}
 			}
 			else{
-				$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (E1): '.$this->conn->error,1);
+				$this->logOrEcho('ERROR thrown versioning of remapping of occurrence taxon (E1).',1);
 			}
 		}
 		return $affectedRows;

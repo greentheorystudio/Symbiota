@@ -30,7 +30,7 @@ class SpecUploadDirect extends SpecUploadBase {
 				$rs->close();
 			}
 			else{
-				echo '<div style="font-weight:bold;margin:15px;">ERROR: '.$sourceConn->error.'</div>';
+				echo '<div style="font-weight:bold;margin:15px;">ERROR</div>';
 			}
 			$sourceConn->close();
 		}
@@ -68,7 +68,7 @@ class SpecUploadDirect extends SpecUploadBase {
 			}
 			else{
 				echo "<hr /><div style='color:red;'>Unable to create a Resultset with the Source Connection. Check connection parameters, source sql statement, and firewall restriction</div>";
-				echo "<div style='color:red;'>ERROR: ".$sourceConn->error. '</div><hr />';
+				echo '<div style="color:red;">ERROR</div><hr />';
 			}
 			$sourceConn->close();
 		}

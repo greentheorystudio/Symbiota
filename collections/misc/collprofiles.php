@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
@@ -10,7 +11,7 @@ $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['actio
 $eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 
 if($eMode && !$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=../collections/misc/collprofiles.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collManager = new OccurrenceCollectionProfile();
@@ -430,7 +431,7 @@ if($GLOBALS['SYMB_UID']){
 				$spidPerc = 0;
 				$imgPerc = 0;
 				if($statsArr['dynamicProperties']){
-					$extrastatsArr = json_decode($statsArr['dynamicProperties'],true);
+					$extrastatsArr = json_decode($statsArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
 					if(is_array($extrastatsArr)){
 						if($extrastatsArr['SpecimensCountID']){
 							$spidPerc = (100*($extrastatsArr['SpecimensCountID']/$statsArr['recordcnt']));

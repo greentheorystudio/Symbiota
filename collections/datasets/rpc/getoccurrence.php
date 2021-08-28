@@ -20,4 +20,4 @@ if($occid){
 	$rs->free();
 	$con->close();
 }
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);

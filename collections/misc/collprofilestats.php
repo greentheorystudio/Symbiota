@@ -2,7 +2,7 @@
 /** @var OccurrenceCollectionProfile $collManager */
 /** @var int $collid */
 
-$statDisplay = array_key_exists('stat',$_REQUEST)?$_REQUEST['stat']:'';
+$statDisplay = array_key_exists('stat',$_REQUEST)?htmlspecialchars($_REQUEST['stat']):'';
 
 if($statDisplay === 'geography'){
 	$countryDist = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';

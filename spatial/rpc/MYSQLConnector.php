@@ -15,7 +15,7 @@ $occManager = new OccurrenceManager();
 
 $retArr = array();
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 
 $occManager->setSearchTermsArr($stArr);
 $spatialManager->setSearchTermsArr($stArr);

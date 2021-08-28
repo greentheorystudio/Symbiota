@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
@@ -11,10 +12,10 @@ $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST)&&$_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
+$occIndex = array_key_exists('occindex',$_REQUEST) && $_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
 $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 if(!$action && array_key_exists('carryloc',$_REQUEST)){
     $goToMode = 2;
 }
@@ -319,7 +320,7 @@ if($GLOBALS['SYMB_UID']){
     elseif($occIndex !== 0){
         $occManager->setQueryVariables();
         if($action === 'Delete Occurrence'){
-            $qryCnt = $occManager->getQueryRecordCount();		//Value won't be returned unless set in cookies in previous query
+            $qryCnt = $occManager->getQueryRecordCount();
             if($qryCnt > 1){
                 if(($occIndex + 1) >= $qryCnt) {
                     $occIndex = $qryCnt - 2;
@@ -442,7 +443,7 @@ if($GLOBALS['SYMB_UID']){
     }
 }
 else{
-    header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.$_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

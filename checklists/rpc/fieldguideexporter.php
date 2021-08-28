@@ -36,4 +36,4 @@ if($clValue || $dynClid){
     $fgManager->primeImages();
     $dataArr = $fgManager->getDataArr();
 }
-echo json_encode($dataArr);
+echo json_encode($dataArr, JSON_THROW_ON_ERROR);

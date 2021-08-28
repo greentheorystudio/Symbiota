@@ -36,7 +36,7 @@ class OccurrenceDuplicate {
             $rs1->close();
         }
         else{
-            $this->errorStr = 'ERROR getting list of duplicate records [1]: '.$this->conn->error;
+            $this->errorStr = 'ERROR getting list of duplicate records [1].';
             $retArr = false;
         }
 
@@ -59,7 +59,7 @@ class OccurrenceDuplicate {
                 $rs->free();
             }
             else{
-                $this->errorStr = 'ERROR getting list of duplicate records [2]: '.$this->conn->error;
+                $this->errorStr = 'ERROR getting list of duplicate records [2].';
                 $retArr = false;
             }
         }
@@ -91,7 +91,7 @@ class OccurrenceDuplicate {
                     'VALUES('.$targetDupID.','.$occid1.'),('.$targetDupID.','.$occidStr.')';
                 if(!$this->conn->query($sql2)){
                     $status = false;
-                    $this->errorStr = 'ERROR linking occurrences to duplicate cluster: '.$this->conn->error;
+                    $this->errorStr = 'ERROR linking occurrences to duplicate cluster.';
                 }
             }
             else{
@@ -121,7 +121,7 @@ class OccurrenceDuplicate {
             $retId = $this->conn->insert_id;
         }
         else{
-            $this->errorStr = 'ERROR creating new dupliate cluster: '.$this->conn->error;
+            $this->errorStr = 'ERROR creating new dupliate cluster.';
         }
         return $retId;
     }
@@ -134,11 +134,11 @@ class OccurrenceDuplicate {
             $sql = 'UPDATE omoccurduplicatelink SET duplicateid = '.$targetId.' WHERE duplicateid IN('.$dupArr.')';
             if($this->conn->query($sql)){
                 if(!$this->conn->query('DELETE FROM omoccurduplicates WHERE duplicateid IN('.$dupArr.')')){
-                    $this->errorStr = 'ERROR merging duplicate clusters: '.$this->conn->error;
+                    $this->errorStr = 'ERROR merging duplicate clusters.';
                 }
             }
             else{
-                $this->errorStr = 'ERROR removing extract duplicate cluster: '.$this->conn->error;
+                $this->errorStr = 'ERROR removing extract duplicate cluster.';
             }
         }
         return $targetId;
@@ -153,7 +153,7 @@ class OccurrenceDuplicate {
             'WHERE (duplicateid = '.$dupId.')';
         //echo $sql;
         if(!$this->conn->query($sql)){
-            $this->errorStr = 'ERROR editing duplicate cluster: '.$this->conn->error;
+            $this->errorStr = 'ERROR editing duplicate cluster.';
             $status = false;
         }
         return $status;
@@ -166,14 +166,14 @@ class OccurrenceDuplicate {
         if($rs->num_rows === 2){
             $sql = 'DELETE FROM omoccurduplicates WHERE (duplicateid = '.$dupId.')';
             if(!$this->conn->query($sql)){
-                $this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
+                $this->errorStr = 'ERROR deleting duplicate cluster.';
                 $status = false;
             }
         }
         else{
             $sql = 'DELETE FROM omoccurduplicatelink WHERE (duplicateid = '.$dupId.') AND (occid = '.$occid.')';
             if(!$this->conn->query($sql)){
-                $this->errorStr = 'ERROR deleting occurrence from duplicate cluster: '.$this->conn->error;
+                $this->errorStr = 'ERROR deleting occurrence from duplicate cluster.';
                 $status = false;
             }
         }
@@ -185,7 +185,7 @@ class OccurrenceDuplicate {
         $status = true;
         $sql = 'DELETE FROM omoccurduplicates WHERE duplicateid = '.$dupId;
         if(!$this->conn->query($sql)){
-            $this->errorStr = 'ERROR deleting duplicate cluster: '.$this->conn->error;
+            $this->errorStr = 'ERROR deleting duplicate cluster.';
             $status = false;
         }
         return $status;
@@ -685,8 +685,7 @@ class OccurrenceDuplicate {
                                     echo '<li style="margin-left:10px;">New duplicate project created: #' . $dupId . '</li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px;">ERROR creating dupe project: ' . $this->conn->error . '</li>';
-                                    echo '<li style="margin-left:10px;">sql: ' . $sqlI1 . '</li>';
+                                    echo '<li style="margin-left:10px;">ERROR creating dupe project.</li>';
                                 }
                                 flush();
                             }
@@ -701,7 +700,7 @@ class OccurrenceDuplicate {
                                     echo '<li style="margin-left:10px;">' . count($unlinkedArr) . ' duplicates linked (' . trim($outLink, ' ,') . ')</li>';
                                 }
                                 else{
-                                    echo '<li style="margin-left:10px;">ERROR linking dupes: ' . $this->conn->error . '</li>';
+                                    echo '<li style="margin-left:10px;">ERROR linking dupes.</li>';
                                 }
                                 flush();
                             }

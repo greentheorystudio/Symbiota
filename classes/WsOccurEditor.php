@@ -99,7 +99,7 @@ class WsOccurEditor extends WebServiceBase{
 				$rsTest->free();
 			}
 
-			$newValueJson = json_encode($vettedNewValues);
+			$newValueJson = json_encode($vettedNewValues, JSON_THROW_ON_ERROR);
 			$abort = false;
 			$sql2 = 'SELECT newvalues,externalsource,externaleditor '.
 				'FROM omoccurrevisions WHERE occid = '.$occid;
@@ -117,7 +117,7 @@ class WsOccurEditor extends WebServiceBase{
 			}
 			
 			$sql3 = 'INSERT INTO omoccurrevisions(occid,oldValues,newValues,externalSource,externalEditor,reviewStatus,appliedStatus,externalTimestamp) '.
-				'VALUES('.$occid.',"'.Sanitizer::cleanInStr(json_encode($vettedOldValues)).'","'.Sanitizer::cleanInStr($newValueJson).'",'.
+				'VALUES('.$occid.',"'.Sanitizer::cleanInStr(json_encode($vettedOldValues, JSON_THROW_ON_ERROR)).'","'.Sanitizer::cleanInStr($newValueJson).'",'.
 				($this->source?'"'.Sanitizer::cleanInStr($this->source).'"':'NULL').','.($this->editor?'"'.Sanitizer::cleanInStr($this->editor).'"':'NULL').
 				',1,'.$appliedStatus.','.($this->origTimestamp?'"'.Sanitizer::cleanInStr($this->origTimestamp).'"':'NULL').')';
 			//echo $sql2; exit;
@@ -130,9 +130,7 @@ class WsOccurEditor extends WebServiceBase{
 					$sql4 = 'UPDATE omoccurrences SET'.substr($sqlIns, 1).'WHERE occid = '.$occid;
 					//echo $sql3; exit;
 					if(!$this->conn->query($sql4)){
-						$this->logOrEcho('ERROR activating edit within occurrence table (occid: '.$occid.'): '.$this->conn->error);
-						//return '{"Result":[{"Status":"FAILURE","Error":"ERROR activating edit within occurrence table: '.addslashes($this->conn->error).'"}]}';
-						$this->warningArr[$occid] = 'ERROR activating edit: '.addslashes($this->conn->error);
+						$this->logOrEcho('ERROR activating edit within occurrence table (occid: '.$occid.').');
 						continue;
 					}
 				}
@@ -140,9 +138,7 @@ class WsOccurEditor extends WebServiceBase{
 				$successArr[$occid] = 'Edits submitted '.($appliedStatus?'and activated':'but NOT activated');
 			}
 			else{
-				$this->logOrEcho('ERROR updating occurrence revisions table (occid: '.$occid.'): '.$this->conn->error);
-				//return '{"Result":[{"Status":"FAILURE","Error":"ERROR updating occurrence revisions table: '.addslashes($this->conn->error).'"}]}';
-				$this->warningArr[$occid] = 'ERROR revisioning edit: '.addslashes($this->conn->error);
+				$this->logOrEcho('ERROR updating occurrence revisions table (occid: '.$occid.').');
 			}
 		}
 		//Build and return result string
@@ -195,7 +191,7 @@ class WsOccurEditor extends WebServiceBase{
 
 	public function setDwcArr($dwcObj): bool
 	{
-		$recArr = json_decode($dwcObj,true);
+		$recArr = json_decode($dwcObj, true, 512, JSON_THROW_ON_ERROR);
 		if($recArr){
 			$recArr = array_change_key_case($recArr);
 			foreach($this->fieldTranslation as $otherName => $symbName){

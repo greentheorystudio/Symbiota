@@ -11,26 +11,30 @@ $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 $copyURL = '';
 
 if($GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
-    $collManager->setSearchTermsArr($stArr);
-    $collManager->setSorting($sortField1,$sortField2,$sortOrder);
-    $solrArr = $collManager->getRecordArr($occIndex,1000);
-    $recArr = $collManager->translateSOLRRecList($solrArr);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $collManager->setSorting($sortField1,$sortField2,$sortOrder);
+        $solrArr = $collManager->getRecordArr($occIndex,1000);
+        $recArr = $collManager->translateSOLRRecList($solrArr);
+    }
 }
 else{
     $collManager = new OccurrenceListManager();
-    $collManager->setSearchTermsArr($stArr);
-    $collManager->setSorting($sortField1,$sortField2,$sortOrder);
-    $recArr = $collManager->getRecordArr($occIndex,1000);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $collManager->setSorting($sortField1,$sortField2,$sortOrder);
+        $recArr = $collManager->getRecordArr($occIndex,1000);
+    }
 }
 
 $targetClid = $collManager->getSearchTerm('targetclid');
 
-if(strlen($stArrJson) <= 1800){
+if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/listtabledisplay.php';
     $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
     $copyURL = $urlPrefix.$urlArgs;

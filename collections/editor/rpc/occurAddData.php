@@ -47,4 +47,4 @@ if($collid){
 		}
 	}
 }
-echo json_encode($responseArr);
+echo json_encode($responseArr, JSON_THROW_ON_ERROR);

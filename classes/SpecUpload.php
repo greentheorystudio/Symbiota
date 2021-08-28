@@ -130,16 +130,19 @@ class SpecUpload{
 	}
 	
 	public function getCollInfo($fieldStr = null){
-		if(!$this->collMetadataArr) {
+		$retVal = '';
+	    if(!$this->collMetadataArr) {
 			$this->setCollInfo();
 		}
 		if($fieldStr){
 			if(array_key_exists($fieldStr,$this->collMetadataArr)){
-				return $this->collMetadataArr[$fieldStr];
+                $retVal = $this->collMetadataArr[$fieldStr];
 			}
-			return '';			
 		}
-		return $this->collMetadataArr;
+		else{
+            $retVal = $this->collMetadataArr;
+        }
+		return $retVal;
 	}
 
 	public function validateSecurityKey($k): bool
@@ -338,7 +341,7 @@ class SpecUpload{
 			'WHERE (uspid = '.$this->uspid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = '<div>Error Editing Upload Parameters: ' .$this->conn->error."</div><div>$sql</div>";
+			$this->errorStr = '<div>Error Editing Upload Parameters.</div>';
 			return false;
 		}
 		return true;
@@ -365,7 +368,7 @@ class SpecUpload{
 			return $this->conn->insert_id;
 		}
 
-		$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div style="margin-left:10px;">SQL: '.$sql.'</div>';
+		$this->errorStr = '<div>Error Adding Upload Parameters.</div>';
 		return false;
 	}
 
@@ -373,7 +376,7 @@ class SpecUpload{
 	{
 		$sql = 'DELETE FROM uploadspecparameters WHERE (uspid = '.$uspid.')';
 		if(!$this->conn->query($sql)){
-			$this->errorStr = '<div>Error Adding Upload Parameters: '.$this->conn->error.'</div><div>'.$sql.'</div>';
+			$this->errorStr = '<div>Error Adding Upload Parameters.</div>';
 			return false;
 		}
 		return true;

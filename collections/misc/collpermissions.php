@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/PermissionsManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
 $permManager = new PermissionsManager();

@@ -2,15 +2,16 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $occManager = new OccurrenceEditorDeterminations();
 $solrManager = new SOLRManager();
@@ -35,7 +36,7 @@ if($isEditor){
 		$occidArr = $_REQUEST['occid'];
 		$occStr = implode(',',$occidArr);
 		$catArr = $occManager->getCatNumArr($occStr);
-		$jsonCatArr = json_encode($catArr);
+		$jsonCatArr = json_encode($catArr, JSON_THROW_ON_ERROR);
 		foreach($occidArr as $k){
 			$occManager->setOccId($k);
 			$occManager->addDetermination($_REQUEST,$isEditor);

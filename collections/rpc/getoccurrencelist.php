@@ -9,29 +9,33 @@ $targetTid = (int)$_REQUEST['targettid'];
 $pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr = json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 $copyURL = '';
 
 $collManager = null;
 $occurArr = array();
 $isEditor = false;
 
-if(strlen($stArrJson) <= 1800){
-    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
-    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
-    $copyURL = $urlPrefix.$urlArgs;
-}
-
 if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
-    $collManager->setSearchTermsArr($stArr);
-    $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
-    $occurArr = $collManager->translateSOLRRecList($solrArr);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+        $occurArr = $collManager->translateSOLRRecList($solrArr);
+    }
 }
 else{
     $collManager = new OccurrenceListManager();
-    $collManager->setSearchTermsArr($stArr);
-    $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    }
+}
+
+if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
+    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $copyURL = $urlPrefix.$urlArgs;
 }
 
 $htmlStr = '<div style="float:right;">';
@@ -228,7 +232,7 @@ if($occurArr){
         $htmlStr .= '<b><a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">Full Record Details</a></b>';
         $htmlStr .= '</div></td></tr><tr><td colspan="2"><hr/></td></tr>';
     }
-    $specOccJson = json_encode($specOccArr);
+    $specOccJson = json_encode($specOccArr, JSON_THROW_ON_ERROR);
     $htmlStr .= "<input id='specoccjson' type='hidden' value='".$specOccJson."' />";
     $htmlStr .= '</table>';
     $htmlStr .= '</form>';

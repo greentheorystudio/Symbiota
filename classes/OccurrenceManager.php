@@ -59,7 +59,6 @@ class OccurrenceManager{
             $sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' ';
             $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($mapWhere).$mapWhere;
             if(!$this->conn->query($sql)){
-                //$this->errorMessage = 'ERROR adding records to dataset(#'.$datasetID.'): '.$this->conn->error;
                 return false;
             }
         }
@@ -314,7 +313,7 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
                 if(!is_array($objArr)){
-                    $objArr = json_decode($objArr, true);
+                    $objArr = json_decode($objArr, true, 512, JSON_THROW_ON_ERROR);
                 }
                 if($objArr){
                     foreach($objArr as $obj => $oArr){
@@ -330,11 +329,11 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
                 if(!is_array($geomArr)){
-                    $geomArr = json_decode($geomArr, true);
+                    $geomArr = json_decode($geomArr, true, 512, JSON_THROW_ON_ERROR);
                 }
                 if($geomArr){
                     foreach($geomArr as $geom){
-                        $sqlFragArr[] = "(ST_Within(p.point,GeomFromText('".$geom." '))) ";
+                        $sqlFragArr[] = "(ST_Within(p.point,ST_GeomFromText('".$geom." '))) ";
                     }
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
@@ -1199,6 +1198,44 @@ class OccurrenceManager{
         $newStr = str_replace(array('"', "'"), array('', '%apos;'), $str);
         $newStr = strip_tags($newStr);
         return $newStr;
+    }
+
+    public function validateSearchTermsArr($stArr): bool
+    {
+        $valid = false;
+        if(
+            array_key_exists('db',$stArr) ||
+            array_key_exists('clid',$stArr) ||
+            array_key_exists('taxa',$stArr) ||
+            array_key_exists('country',$stArr) ||
+            array_key_exists('state',$stArr) ||
+            array_key_exists('county',$stArr) ||
+            array_key_exists('local',$stArr) ||
+            array_key_exists('elevlow',$stArr) ||
+            array_key_exists('elevhigh',$stArr) ||
+            array_key_exists('collector',$stArr) ||
+            array_key_exists('collnum',$stArr) ||
+            array_key_exists('eventdate1',$stArr) ||
+            array_key_exists('eventdate2',$stArr) ||
+            array_key_exists('occurrenceRemarks',$stArr) ||
+            array_key_exists('catnum',$stArr) ||
+            array_key_exists('othercatnum',$stArr) ||
+            array_key_exists('typestatus',$stArr) ||
+            array_key_exists('hasimages',$stArr) ||
+            array_key_exists('hasgenetic',$stArr) ||
+            array_key_exists('upperlat',$stArr) ||
+            array_key_exists('pointlat',$stArr) ||
+            array_key_exists('circleArr',$stArr) ||
+            array_key_exists('phuid',$stArr) ||
+            array_key_exists('imagetag',$stArr) ||
+            array_key_exists('imagekeyword',$stArr) ||
+            array_key_exists('uploaddate1',$stArr) ||
+            array_key_exists('uploaddate2',$stArr) ||
+            array_key_exists('polyArr',$stArr)
+        ){
+            $valid = true;
+        }
+        return $valid;
     }
 }
 ?>

@@ -6,12 +6,12 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$pk = array_key_exists('pk',$_REQUEST)?trim($_REQUEST['pk']): '';
-$guid = array_key_exists('guid',$_REQUEST)?trim($_REQUEST['guid']): '';
-$submit = array_key_exists('formsubmit',$_REQUEST)?trim($_REQUEST['formsubmit']):'';
+$pk = array_key_exists('pk',$_REQUEST)?htmlspecialchars($_REQUEST['pk']): '';
+$guid = array_key_exists('guid',$_REQUEST)?htmlspecialchars($_REQUEST['guid']): '';
+$submit = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['formsubmit']):'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
-$format = $_GET['format'] ?? '';
+$format = htmlspecialchars($_GET['format']) ?? '';
 
 if($guid && !preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $guid)) {
     $guid = '';

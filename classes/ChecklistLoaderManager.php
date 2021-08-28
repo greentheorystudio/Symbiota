@@ -121,7 +121,7 @@ class ChecklistLoaderManager {
                                     $successCnt++;
                                 }
                                 else{
-                                    $this->errorArr[] = $sciNameStr." (TID = $tid) failed to load<br />Error msg: ".$this->conn->error;
+                                    $this->errorArr[] = $sciNameStr. ' failed to load.';
                                     //echo $sql."<br />";
                                 }
                             }

@@ -177,8 +177,8 @@ class OccurrenceEditReview extends Manager{
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['extstamp'] = $r->externaltimestamp;
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 				
-			$oldValues = json_decode($r->oldvalues,true);
-			$newValues = json_decode($r->newvalues,true);
+			$oldValues = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+			$newValues = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
 			foreach($oldValues as $fieldName => $value){
 				if($fieldName !== 'georeferencesources' && $fieldName !== 'georeferencedby'){
 					$retArr[$r->occid][$r->orid][$r->appliedstatus]['f'][$fieldName]['old'] = $value;
@@ -269,7 +269,7 @@ class OccurrenceEditReview extends Manager{
 					'WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>';
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits.';
 					$status = false;
 				}
 			}
@@ -299,7 +299,7 @@ class OccurrenceEditReview extends Manager{
 				'WHERE appliedstatus = '.($applyTask === 'apply'?'0':'1').' AND (orid IN('.$idStr.')) ORDER BY initialtimestamp';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$dwcArr = json_decode(($applyTask === 'apply') ? $r->newvalues : $r->oldvalues, true);
+				$dwcArr = json_decode(($applyTask === 'apply') ? $r->newvalues : $r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
 				$sqlFrag = '';
 				foreach($dwcArr as $fieldName => $fieldValue){
 					$sqlFrag .= ','.$fieldName.' = '.($fieldValue?'"'.$fieldValue.'"':'NULL').' ';
@@ -307,7 +307,7 @@ class OccurrenceEditReview extends Manager{
 				$uSql = 'UPDATE omoccurrences SET '.trim($sqlFrag,', ').' WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>'; exit;
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions.';
 					$status = false;
 				}
 			}
@@ -346,7 +346,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccuredits WHERE (ocedid IN('.$ocedidStr.'))';
 		//echo '<div>'.$sql.'</div>'; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting edits: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting edits.';
 			$status = false;
 		}
 		return $status;
@@ -361,7 +361,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccurrevisions WHERE (orid IN('.$idStr.'))';
 		//echo '<div>'.$sql.'</div>';
 		if($this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting revisions: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting revisions.';
 			$status = false;
 		}
 		return $status;
@@ -447,8 +447,8 @@ class OccurrenceEditReview extends Manager{
 					}
 					else{
 						$outArr[7] = $r->initialtimestamp.($r->externaltimestamp?' ('.$r->externaltimestamp.')':'');
-						$oldValueArr = json_decode($r->oldvalues,true);
-						$newValueArr = json_decode($r->newvalues,true);
+						$oldValueArr = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+						$newValueArr = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
 						foreach($oldValueArr as $fieldName => $oldValue){
 							$outArr[8] = $fieldName;
 							$outArr[9] = $oldValue;

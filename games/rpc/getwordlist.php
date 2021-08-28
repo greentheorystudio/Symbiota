@@ -15,4 +15,4 @@ elseif($dynClid) {
 
 $wordList = $gameManager->getNameGameWordList();
 
-echo json_encode($wordList);
+echo json_encode($wordList, JSON_THROW_ON_ERROR);

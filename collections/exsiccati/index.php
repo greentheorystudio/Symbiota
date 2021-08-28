@@ -10,8 +10,8 @@ $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
 $specimenOnly = array_key_exists('specimenonly',$_REQUEST)?(int)$_REQUEST['specimenonly']:0;
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $imagesOnly = array_key_exists('imagesonly',$_REQUEST)?(int)$_REQUEST['imagesonly']:0;
-$sortBy = array_key_exists('sortby',$_REQUEST)?$_REQUEST['sortby']:0;
-$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+$sortBy = array_key_exists('sortby',$_REQUEST)?(int)$_REQUEST['sortby']:0;
+$formSubmit = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['formsubmit']):'';
 
 $statusStr = '';
 $isEditor = 0;

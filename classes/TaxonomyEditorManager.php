@@ -245,7 +245,7 @@ class TaxonomyEditorManager{
 			'WHERE (tid = '.$this->tid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR editing taxon: '.$this->conn->error;
+			$statusStr = 'ERROR editing taxon.';
 		}
 		
 		if(($postArr['securitystatus'] !== $_REQUEST['securitystatusstart']) && is_numeric($postArr['securitystatus'])) {
@@ -282,7 +282,7 @@ class TaxonomyEditorManager{
 				' WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$targetTid.') AND (tidaccepted = '.$tidAccepted.')';
 			//echo $sql; exit();
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR submitting synonym edits: '.$this->conn->error;
+				$statusStr = 'ERROR submitting synonym edits.';
 			}
 		}
 		return $statusStr;
@@ -313,7 +313,7 @@ class TaxonomyEditorManager{
 				$parentTid.') ';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR adding accepted link: '.$this->conn->error;
+				$statusStr = 'ERROR adding accepted link.';
 			}
 		}
 		return $statusStr;
@@ -325,7 +325,7 @@ class TaxonomyEditorManager{
 		if(is_numeric($tidAccepted)){
 			$sql = 'DELETE FROM taxstatus WHERE (tid = '.$this->tid.') AND (tidaccepted = '.$tidAccepted.') AND (taxauthid = '.$this->taxAuthId.')';
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR removing tidAccepted link: '.$this->conn->error;
+				$statusStr = 'ERROR removing tidAccepted link.';
 			}
 		}
 		return $statusStr;
@@ -343,7 +343,7 @@ class TaxonomyEditorManager{
 				$sqlSwitch = 'UPDATE taxstatus SET tidaccepted = '.$tid.
 					' WHERE (tidaccepted = '.$tidAccepted.') AND (taxauthid = '.$this->taxAuthId.')';
 				if(!$this->conn->query($sqlSwitch)){
-					$statusStr = 'ERROR changing to accepted: '.$this->conn->error;
+					$statusStr = 'ERROR changing to accepted.';
 				}
 				
 				$this->updateDependentData($tidAccepted,$tid);
@@ -364,14 +364,13 @@ class TaxonomyEditorManager{
 			if($this->conn->query($sql)) {
 				$sqlSyns = 'UPDATE taxstatus SET tidaccepted = '.$tidAccepted.' WHERE (tidaccepted = '.$tid.') AND (taxauthid = '.$this->taxAuthId.')';
 				if(!$this->conn->query($sqlSyns)){
-					$status = 'ERROR: unable to transfer linked synonyms to accepted taxon; '.$this->conn->error;
+					$status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
 				}
 				
 				$this->updateDependentData($tid,$tidAccepted);
 			}
 			else {
-				$status = 'ERROR: unable to switch acceptance; '.$this->conn->error;
-				$status .= '<br/>SQL: '.$sql;
+				$status = 'ERROR: unable to switch acceptance.';
 			}
 		}
 		return $status;
@@ -533,7 +532,9 @@ class TaxonomyEditorManager{
 	}
 
 	public function loadNewName($dataArr){
-		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
+		$retStr = '';
+        $tid = 0;
+	    $sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
 			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
 			'VALUES ("'.Sanitizer::cleanInStr($dataArr['sciname']).'",'.
 			($dataArr['author']?'"'.Sanitizer::cleanInStr($dataArr['author']).'"':'NULL').','.
@@ -582,56 +583,58 @@ class TaxonomyEditorManager{
 					'VALUES ('.$tid.','.$tidAccepted.','.$this->taxAuthId.','.($family?'"'.Sanitizer::cleanInStr($family).'"':'NULL').','.
 					$parTid.','.($dataArr['unacceptabilityreason']?'"'.Sanitizer::cleanInStr($dataArr['unacceptabilityreason']).'"':'NULL').') ';
 				//echo "sqlTaxStatus: ".$sqlTaxStatus;
-				if(!$this->conn->query($sqlTaxStatus)){
-					return 'ERROR: Taxon loaded into taxa, but failed to load taxstatus: ' .$this->conn->error.'; '.$sqlTaxStatus;
-				}
-				
-				$sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-					'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
-				if($this->conn->query($sqlEnumTree)){
-					$sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-						'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
-					if(!$this->conn->query($sqlEnumTree2)){
-						echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2): '.$this->conn->error;
-					}
-				}
-				else{
-					echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree: '.$this->conn->error;
+				if($this->conn->query($sqlTaxStatus)) {
+                    $sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
+                        'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
+                    if($this->conn->query($sqlEnumTree)){
+                        $sqlEnumTree2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
+                            'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
+                        if(!$this->conn->query($sqlEnumTree2)){
+                            echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2).';
+                        }
+                    }
+                    else{
+                        echo 'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree.';
+                    }
+
+                    $sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
+                    if($dataArr['securitystatus'] === 1) {
+                        $sql1 .= ',o.localitysecurity = 1 ';
+                    }
+                    $sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($dataArr['sciname']).'") ';
+                    if(!$this->conn->query($sql1)){
+                        echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name.';
+                    }
+
+                    $sql2 = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+                        'SET i.tid = o.tidinterpreted '.
+                        'WHERE i.tid IS NULL AND o.tidinterpreted IS NOT NULL';
+                    $this->conn->query($sql2);
+                    if(!$this->conn->query($sql2)){
+                        echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name.';
+                    }
+
+                    $sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
+                        'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,3), round(o.decimallongitude,3) '.
+                        'FROM omoccurrences o '.
+                        'WHERE (o.tidinterpreted = '.$tid.') AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus <> 1) AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL';
+                    $this->conn->query($sql3);
+                }
+				else {
+                    $retStr = 'ERROR: Taxon loaded into taxa, but failed to load taxstatus.';
 				}
 			}
 			else{
-				return 'ERROR loading taxon due to missing parentTid';
+                $retStr = 'ERROR loading taxon due to missing parentTid';
 			}
-		 	
-			$sql1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid ';
-			if($dataArr['securitystatus'] === 1) {
-				$sql1 .= ',o.localitysecurity = 1 ';
-			}
-			$sql1 .= 'WHERE (o.sciname = "'.Sanitizer::cleanInStr($dataArr['sciname']).'") ';
-			if(!$this->conn->query($sql1)){
-				echo 'WARNING: Taxon loaded into taxa, but update occurrences with matching name: '.$this->conn->error;
-			}
-
-			$sql2 = 'UPDATE omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-				'SET i.tid = o.tidinterpreted '.
-				'WHERE i.tid IS NULL AND o.tidinterpreted IS NOT NULL';
-			$this->conn->query($sql2);
-			if(!$this->conn->query($sql2)){
-				echo 'WARNING: Taxon loaded into taxa, but update occurrence images with matching name: '.$this->conn->error;
-			}
-			
-			$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude) '.
-				'SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,3), round(o.decimallongitude,3) '.
-				'FROM omoccurrences o '.
-				'WHERE (o.tidinterpreted = '.$tid.') AND (ISNULL(o.cultivationStatus) OR o.cultivationStatus <> 1) AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL';
-			$this->conn->query($sql3);
 		}
 		else{
-			$this->errorStr = 'ERROR inserting new taxon: '.$this->conn->error;
-			//$this->errorStr .= '; SQL = '.$sqlTaxa;
-			return $this->errorStr;
+            $retStr = 'ERROR inserting new taxon.';
 		}
-		return $tid;
+		if($tid){
+            $retStr = $tid;
+        }
+		return $retStr;
 	}
 
 	public function verifyDeleteTaxon(): array
@@ -724,53 +727,53 @@ class TaxonomyEditorManager{
 		if(is_numeric($targetTid)){
 			$sql ='UPDATE omoccurrences SET tidinterpreted = '.$targetTid.' WHERE tidinterpreted = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring occurrence records ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring occurrence records<br/>';
 			}
 			$sql ='UPDATE omoccurdeterminations SET tidinterpreted = '.$targetTid.' WHERE tidinterpreted = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring occurrence determination records ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring occurrence determination records<br/>';
 			}
 
 			$sql ='UPDATE IGNORE images SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring image links ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring image links<br/>';
 			}
 			
 			$sql ='UPDATE IGNORE taxavernaculars SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring vernaculars ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring vernaculars<br/>';
 			}
 			
 			$sql ='UPDATE IGNORE taxadescrblock SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring taxadescblocks ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring taxadescblocks<br/>';
 			}
 			
 			$sql ='UPDATE IGNORE fmchklsttaxalink SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring checklist links ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring checklist links<br/>';
 			}
 			$sql ='UPDATE IGNORE fmvouchers SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring vouchers ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring vouchers<br/>';
 			}
 			$sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR deleting leftover vouchers ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR deleting leftover vouchers<br/>';
 			}
 			$sql ='DELETE FROM fmchklsttaxalink WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR deleting leftover checklist links ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR deleting leftover checklist links<br/>';
 			}
 				
 			$sql ='UPDATE IGNORE kmdescr SET tid = '.$targetTid.' WHERE inherited IS NULL AND tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring morphology for ID key ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring morphology for ID key<br/>';
 			}
 			
 			$sql ='UPDATE IGNORE taxalinks SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)){
-				$statusStr .= 'ERROR transferring taxa links ('.$this->conn->error.')<br/>';
+				$statusStr .= 'ERROR transferring taxa links<br/>';
 			}
 
 			$delStatusStr = $this->deleteTaxon(); 
@@ -786,46 +789,46 @@ class TaxonomyEditorManager{
 		$statusStr = '';
 		$sql ='UPDATE images SET tid = NULL WHERE occid IS NOT NULL AND tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR setting tid to NULL for occurrence images in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR setting tid to NULL for occurrence images in deleteTaxon method<br/>';
 		}
 		$sql ='DELETE FROM images WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting remaining links in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting remaining links in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM taxavernaculars WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting vernaculars in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting vernaculars in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM taxadescrblock WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting taxa description blocks in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting taxa description blocks in deleteTaxon method<br/>';
 		}
 
 		$sql = 'UPDATE omoccurrences SET tidinterpreted = NULL WHERE tidinterpreted = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR setting tidinterpreted to NULL in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR setting tidinterpreted to NULL in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting voucher links in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting voucher links in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM fmchklsttaxalink WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting checklist links in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting checklist links in deleteTaxon method<br/>';
 		}
 		
 		$sql ='DELETE FROM kmdescr WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method<br/>';
 		}
 
 		$sql ='DELETE FROM taxalinks WHERE tid = '.$this->tid;
 		if(!$this->conn->query($sql)){
-			$statusStr .= 'ERROR deleting taxa links in deleteTaxon method ('.$this->conn->error.')<br/>';
+			$statusStr .= 'ERROR deleting taxa links in deleteTaxon method<br/>';
 		}
 
 		$taxStatusArr = array();
@@ -847,7 +850,7 @@ class TaxonomyEditorManager{
 		if($this->conn->query($sql)){
 			$sql ='DELETE FROM taxa WHERE (tid = '.$this->tid.')';
 			if(!$this->conn->query($sql)){
-				$statusStrFinal = 'ERROR attempting to delete taxon: '.$this->conn->error.'<br/>';
+				$statusStrFinal = 'ERROR attempting to delete taxon.<br/>';
 				$tsNewSql = 'INSERT INTO taxstatus(tid,taxauthid,tidaccepted, parenttid, family, unacceptabilityreason, notes, sortsequence) '.
 					'VALUES('.$this->tid.','.$this->taxAuthId.','.$taxStatusArr[0]['tidaccepted'].','.$taxStatusArr[0]['parenttid'].',"'.
 					$taxStatusArr[0]['family'].'","'.$taxStatusArr[0]['unacceptabilityreason'].'","'.
@@ -856,7 +859,7 @@ class TaxonomyEditorManager{
 			}
 		}
 		else{
-			$statusStrFinal = 'ERROR attempting to delete taxon status: '.$this->conn->error.'<br/>';
+			$statusStrFinal = 'ERROR attempting to delete taxon status<br/>';
 		}
 
 		if($statusStr){

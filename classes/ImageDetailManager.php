@@ -152,7 +152,7 @@ class ImageDetailManager {
 			' WHERE (imgid = '.$this->imgId.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'Error:editImage: ' .$this->conn->error."\nSQL: ".$sql;
+			$status = 'Error: Editing mage.';
 		}
 		return $status;
 	}

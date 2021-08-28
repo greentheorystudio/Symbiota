@@ -306,11 +306,11 @@ class OccurrenceCollectionProfile {
                     $rs = $this->conn->query('SELECT ccpk FROM omcollcatlink WHERE collid = '.$this->collid);
                     if($r = $rs->fetch_object()){
                         if(($r->ccpk !== $postArr['ccpk']) && !$this->conn->query('UPDATE omcollcatlink SET ccpk = ' . $postArr['ccpk'] . ' WHERE ccpk = ' . $r->ccpk . ' AND collid = ' . $this->collid)) {
-                            $status = 'ERROR updating collection category link: '.$this->conn->error;
+                            $status = 'ERROR updating collection category link.';
                         }
                     }
                     else if(!$this->conn->query('INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$this->collid.')')){
-                        $status = 'ERROR inserting collection category link(1): '.$this->conn->error;
+                        $status = 'ERROR inserting collection category link(1).';
                     }
                 }
                 else{
@@ -318,7 +318,7 @@ class OccurrenceCollectionProfile {
                 }
 			}
 			else{
-                $status = 'ERROR updating collection: '.$this->conn->error;
+                $status = 'ERROR updating collection.';
             }
         }
 		return $status;
@@ -387,13 +387,13 @@ class OccurrenceCollectionProfile {
 			if(isset($postArr['ccpk']) && $postArr['ccpk']){
 				$sql = 'INSERT INTO omcollcatlink (ccpk,collid) VALUES('.$postArr['ccpk'].','.$cid.')';
 				if(!$this->conn->query($sql)){
-					return 'ERROR inserting collection category link(2): '.$this->conn->error.'; SQL: '.$sql;
+					return 'ERROR inserting collection category link(2).';
 				}
 			}
 			$this->collid = $cid;
 		}
 		else{
-			$cid = 'ERROR inserting new collection: '.$this->conn->error;
+			$cid = 'ERROR inserting new collection.';
 		}
 		$this->conn->close();
 		return $cid;
@@ -474,7 +474,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR linking institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR linking institution address.';
 			}
 			$this->conn->close();
 		}
@@ -491,7 +491,7 @@ class OccurrenceCollectionProfile {
 				$status = true;
 			}
 			else{
-				$this->errorStr = 'ERROR removing institution address: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing institution address.';
 			}
 			$this->conn->close();
 		}
@@ -526,7 +526,7 @@ class OccurrenceCollectionProfile {
             $publishGBIF = $row->publishToGbif;
             $gbifKeyArr = $row->aggKeysStr;
             if($publishGBIF && $gbifKeyArr){
-                $gbifKeyArr = json_decode($gbifKeyArr,true);
+                $gbifKeyArr = json_decode($gbifKeyArr, true, 512, JSON_THROW_ON_ERROR);
                 if($gbifKeyArr['endpointKey']){
                     $this->triggerGBIFCrawl($gbifKeyArr['datasetKey']);
                 }
@@ -537,7 +537,7 @@ class OccurrenceCollectionProfile {
 
     public function setAggKeys($aggKeyStr): void
 	{
-        $aggKeyArr = json_decode($aggKeyStr,true);
+        $aggKeyArr = json_decode($aggKeyStr, true, 512, JSON_THROW_ON_ERROR);
         if($aggKeyArr['organizationKey']){
             $this->organizationKey = $aggKeyArr['organizationKey'];
         }
@@ -563,13 +563,13 @@ class OccurrenceCollectionProfile {
         $aggKeyArr['datasetKey'] = $this->datasetKey;
         $aggKeyArr['endpointKey'] = $this->endpointKey;
         $aggKeyArr['idigbioKey'] = $this->idigbioKey;
-        $aggKeyStr = json_encode($aggKeyArr);
+        $aggKeyStr = json_encode($aggKeyArr, JSON_THROW_ON_ERROR);
         $sql = 'UPDATE omcollections '.
             "SET aggKeysStr = '".$aggKeyStr."' ".
             'WHERE (collid = '.$collId.')';
         //echo $sql; exit;
         if(!$this->conn->query($sql)){
-            $status = 'ERROR saving key: '.$this->conn->error;
+            $status = 'ERROR saving key.';
             return $status;
         }
 
@@ -625,7 +625,7 @@ class OccurrenceCollectionProfile {
         //echo $sql; exit;
         $rs = $this->conn->query($sql);
         while($row = $rs->fetch_object()){
-            $returnArr = json_decode($row->aggKeysStr,true);
+            $returnArr = json_decode($row->aggKeysStr, true, 512, JSON_THROW_ON_ERROR);
             if($returnArr['installationKey']){
                 return $returnArr['installationKey'];
             }
@@ -644,7 +644,7 @@ class OccurrenceCollectionProfile {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
-        $returnArr = json_decode($result,true);
+        $returnArr = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
 
         if(isset($returnArr['items'][0]['uuid'])){
             $this->idigbioKey = $returnArr['items'][0]['uuid'];

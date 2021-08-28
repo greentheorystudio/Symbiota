@@ -61,7 +61,7 @@ class InstitutionManager {
 			//echo "<div>$sql</div>"; exit;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR editing institution: '.$this->conn->error;
+				$this->errorStr = 'ERROR editing institution.';
 			}
 		}
 		return $status;
@@ -94,7 +94,7 @@ class InstitutionManager {
 			}
 		}
 		else{
-			$this->errorStr = 'ERROR creating institution: '.$this->conn->error;
+			$this->errorStr = 'ERROR creating institution.';
 		}
 		return $newIID;
 	}
@@ -135,7 +135,7 @@ class InstitutionManager {
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR deleting institution: '.$this->conn->error;
+				$this->errorStr = 'ERROR deleting institution.';
 			}
 		}
 		return $status;
@@ -148,7 +148,7 @@ class InstitutionManager {
 		//echo $sql; exit;
 		if(!$this->conn->query($sql)){
 			$status = false;
-			$this->errorStr = 'ERROR removing collection from institution: '.$this->conn->error;
+			$this->errorStr = 'ERROR removing collection from institution.';
 		}
 		return $status;
 	}
@@ -161,7 +161,7 @@ class InstitutionManager {
 			//echo $sql; exit;
 			if(!$this->conn->query($sql)){
 				$status = false;
-				$this->errorStr = 'ERROR adding collection to institution: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding collection to institution.';
 			}
 		}
 		return $status;
