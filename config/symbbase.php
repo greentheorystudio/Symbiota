@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
 Sanitizer::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
+ini_set('session.cookie_secure',1);
 session_start();
 
 if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){

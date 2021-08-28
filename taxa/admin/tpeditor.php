@@ -131,16 +131,8 @@ if($editable && $action){
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/tiny_mce/tiny_mce.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 	<script type="text/javascript">
-		tinyMCE.init({
-			mode : "textareas",
-			theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-            valid_elements: "*[*]"
-		});
-
 		$(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
