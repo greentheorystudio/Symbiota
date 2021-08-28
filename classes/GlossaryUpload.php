@@ -164,7 +164,7 @@ class GlossaryUpload{
                                 }
                             }
                             else{
-                                $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                                $this->outputMsg('ERROR loading term.');
                             }
                             if($synonym){
                                 $sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
@@ -184,7 +184,7 @@ class GlossaryUpload{
                                     }
                                 }
                                 else{
-                                    $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                                    $this->outputMsg('ERROR loading term.');
                                 }
                             }
                         }
@@ -213,13 +213,13 @@ class GlossaryUpload{
 			'SET ug.currentGroupId = gt.glossgrpid, ug.term = NULL '.
 			'WHERE gx.tid IN('.$tidStr.') ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking term.',1);
 		}
 		$sql = 'UPDATE uploadglossary AS u1 LEFT JOIN uploadglossary AS u2 ON u1.newGroupId = u2.newGroupId '.
 			'SET u2.currentGroupId = u1.currentGroupId '. 
 			'WHERE u1.currentGroupId IS NOT NULL AND ISNULL(u1.term) AND u2.term IS NOT NULL ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking term.',1);
 		}
 		
 	}
@@ -273,7 +273,7 @@ class GlossaryUpload{
 				'FROM uploadglossary '.
 				'WHERE term IS NOT NULL AND currentGroupId IS NOT NULL ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Transferring terms.',1);
 			}
 			
 			$this->outputMsg('Linking translations to existing terms... ');
@@ -283,7 +283,7 @@ class GlossaryUpload{
 				'LEFT JOIN glossarytaxalink AS gx ON ug.currentGroupId = gx.glossid '.
 				'WHERE ug.term IS NOT NULL AND ug.currentGroupId IS NOT NULL AND gx.tid IN('.$tidStr.') ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Transferring terms.',1);
 			}
 		}
 		
@@ -302,7 +302,7 @@ class GlossaryUpload{
 			'FROM uploadglossary '.
 			'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$primaryLanguage.'" ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Adding new terms.',1);
 		}
 		
 		$this->outputMsg('Adding new '.$primaryLanguage.' term links... ');
@@ -312,7 +312,7 @@ class GlossaryUpload{
 			'WHERE ug.term IS NOT NULL AND ISNULL(ug.currentGroupId) AND ug.`language` = "'.$primaryLanguage.'" '.
 			'AND g.glossid NOT IN(SELECT glossid FROM glossarytermlink) ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Adding new terms.',1);
 		}
 		
 		$this->outputMsg('Linking synonyms to new '.$primaryLanguage.' terms... ');
@@ -327,7 +327,7 @@ class GlossaryUpload{
 			'AND ug2.`language` = "'.$primaryLanguage.'" AND ISNULL(ug2.synonym) '.
 			'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ug1.synonym = 1 ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking synonyms.',1);
 		}
 		$sql = 'INSERT INTO glossarytermlink(glossgrpid,glossid,relationshipType) '.
 			'SELECT DISTINCT gt.glossgrpid, g1.glossid, "synonym" '.
@@ -340,7 +340,7 @@ class GlossaryUpload{
 			'AND ug2.`language` = "'.$primaryLanguage.'" AND ISNULL(ug2.synonym) '.
 			'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ug2.synonym = 1 ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking synonyms.',1);
 		}
 		
 		$this->outputMsg('Linking taxa to new '.$primaryLanguage.' terms... ');
@@ -352,7 +352,7 @@ class GlossaryUpload{
 				'WHERE ug.term IS NOT NULL AND ISNULL(ug.currentGroupId) AND ug.`language` = "'.$primaryLanguage.'" '.
 				'AND gt.glossgrpid NOT IN(SELECT glossid FROM glossarytaxalink WHERE tid = '.$tId.') ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Linking taxa.',1);
 			}
 		}
 		
@@ -364,7 +364,7 @@ class GlossaryUpload{
 					'FROM uploadglossary '.
 					'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$lang.'" ';
 				if(!$this->conn->query($sql)){
-					$this->outputMsg('ERROR: '.$this->conn->error,1);
+					$this->outputMsg('ERROR: Adding new terms.',1);
 				}
 				
 				$this->outputMsg('Linking new '.$lang.' translations to new '.$primaryLanguage.' terms... ');
@@ -379,7 +379,7 @@ class GlossaryUpload{
 					'AND ug2.`language` = "'.$primaryLanguage.'" AND gx.tid IN('.$tidStr.') '.
 					'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ISNULL(ug2.synonym) ';
 				if(!$this->conn->query($sql)){
-					$this->outputMsg('ERROR: '.$this->conn->error,1);
+					$this->outputMsg('ERROR: Linking new translations.',1);
 				}
 			}
 		}
@@ -439,7 +439,7 @@ class GlossaryUpload{
 				break;
 			}
 		}
-		$fieldArr['languages'] = json_encode($languageArr);
+		$fieldArr['languages'] = json_encode($languageArr, JSON_THROW_ON_ERROR);
 		foreach($languageArr as $lang){
 			$fieldArr['target'][] = $lang.'_synonym';
 			foreach($targetFieldArr as $target){

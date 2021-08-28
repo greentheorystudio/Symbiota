@@ -39,7 +39,7 @@ class OccurrenceAttributes extends Manager {
 			if(is_numeric($stateId)){
 				$sql = 'INSERT INTO tmattributes(stateid,occid,notes,createduid) VALUES('.$stateId.','.$this->targetOccid.',"'.Sanitizer::cleanInStr($notes).'",'.$uid.') ';
 				if(!$this->conn->query($sql)){
-					$this->errorMessage .= 'ERROR saving occurrence attribute: '.$this->conn->error.'; ';
+					$this->errorMessage .= 'ERROR saving occurrence attribute.';
 					$status = false;
 				}
 			}
@@ -244,7 +244,7 @@ class OccurrenceAttributes extends Manager {
 	{
 		$controlType = 'checkbox';
 		if($this->traitArr[$traitID]['props']){
-			$propArr = json_decode($this->traitArr[$traitID]['props'],true);
+			$propArr = json_decode($this->traitArr[$traitID]['props'], true, 512, JSON_THROW_ON_ERROR);
 			if(isset($propArr[0]['controlType'])) {
 				$controlType = $propArr[0]['controlType'];
 			}
@@ -307,7 +307,7 @@ class OccurrenceAttributes extends Manager {
 			}
 			$rs->free();
 		}
-		return json_encode($retArr);
+		return json_encode($retArr, JSON_THROW_ON_ERROR);
 	}
 
 	public function getReviewUrls($traitID, $reviewUid, $reviewDate, $reviewStatus, $start): array
@@ -403,7 +403,7 @@ class OccurrenceAttributes extends Manager {
 						$sql = 'INSERT INTO tmattributes(stateid,occid,createduid) VALUES('.$id.','.$this->targetOccid.','.$GLOBALS['SYMB_UID'].') ';
 						//echo $sql.'<br/>';
 						if(!$this->conn->query($sql)){
-							$this->errorMessage = 'ERROR addin occurrence attribute: '.$this->conn->error;
+							$this->errorMessage = 'ERROR addin occurrence attribute.';
 							$status = false;
 						}
 					}
@@ -415,7 +415,7 @@ class OccurrenceAttributes extends Manager {
 						$sql = 'DELETE FROM tmattributes WHERE stateid = '.$id.' AND occid = '.$this->targetOccid;
 						//echo $sql.'<br/>';
 						if(!$this->conn->query($sql)){
-							$this->errorMessage = 'ERROR removing occurrence attribute: '.$this->conn->error;
+							$this->errorMessage = 'ERROR removing occurrence attribute.';
 							$status = false;
 						}
 					}
@@ -426,7 +426,7 @@ class OccurrenceAttributes extends Manager {
 				'SET a.statuscode = '.$setStatus.', a.notes = "'.Sanitizer::cleanInStr($postArr['notes']).'" '.
 				'WHERE a.occid = '.$this->targetOccid.' AND s.traitid IN('.implode(',',array_keys($this->traitArr)).')';
 			if(!$this->conn->query($sql)){
-				$this->errorMessage = 'ERROR updating occurrence attribute review status: '.$this->conn->error;
+				$this->errorMessage = 'ERROR updating occurrence attribute review status.';
 				$status = false;
 			}
 		}
@@ -515,7 +515,7 @@ class OccurrenceAttributes extends Manager {
 						if($sql){
 							$sql = 'INSERT INTO tmattributes(stateid,occid) VALUES'.substr($sql,1);
 							if(!$this->conn->query($sql)){
-								$this->errorMessage .= 'ERROR saving batch occurrence attributes: '.$this->conn->error.'; ';
+								$this->errorMessage .= 'ERROR saving batch occurrence attributes.';
 								$status = false;
 							}
 						}
@@ -534,7 +534,7 @@ class OccurrenceAttributes extends Manager {
 				}
 				$sqlUpdate .= ' WHERE stateid IN('.implode(',',$stateIDArr).') AND occid IN('.implode(',',$oArr).')';
 				if(!$this->conn->query($sqlUpdate)){
-					$this->errorMessage .= 'ERROR saving batch occurrence attributes(2): '.$this->conn->error.'; ';
+					$this->errorMessage .= 'ERROR saving batch occurrence attributes(2).';
 					$status = false;
 				}
 			}

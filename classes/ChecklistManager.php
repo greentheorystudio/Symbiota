@@ -61,9 +61,6 @@ class ChecklistManager {
 				}
 				$rs->free();
 			}
-			else{
-				trigger_error('ERROR setting checklist ID, SQL: '.$sql, E_USER_ERROR);
-			}
 		}
 		$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
 		$sqlChild = $sqlChildBase.$this->clid.')';
@@ -127,9 +124,6 @@ class ChecklistManager {
 					}
 		    	}
 		    	$result->free();
-			}
-			else{
-				trigger_error('ERROR: unable to set checklist metadata => '.$sql, E_USER_ERROR);
 			}
 		}
 		return $retArr;
@@ -568,13 +562,13 @@ class ChecklistManager {
 				$projName = 'Undefinded Inventory Project';
 			}
             if(array_key_exists($pid,$retArr) && array_key_exists('coords',$retArr[$pid])){
-                $projCoordArr = json_decode($retArr[$pid]['coords'], true);
+                $projCoordArr = json_decode($retArr[$pid]['coords'], true, 512, JSON_THROW_ON_ERROR);
             }
             if($row->LatCentroid && $row->LongCentroid){
                 $coordArr[] = (float)$row->LatCentroid;
                 $coordArr[] = (float)$row->LongCentroid;
                 $projCoordArr[] = $coordArr;
-                $retArr[$pid]['coords'] = json_encode($projCoordArr);
+                $retArr[$pid]['coords'] = json_encode($projCoordArr, JSON_THROW_ON_ERROR);
             }
 			$retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
@@ -667,9 +661,6 @@ class ChecklistManager {
 				$this->projName = Sanitizer::cleanOutStr($r->projname);
 			}
 			$rs->free();
-		}
-		else{
-			trigger_error('ERROR: Unable to project => SQL: '.$sql, E_USER_WARNING);
 		}
 		return $this->pid;
 	}

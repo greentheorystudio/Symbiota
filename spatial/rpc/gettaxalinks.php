@@ -16,7 +16,7 @@ $tempTaxaArr = array();
 $taxaArr = array();
 
 if($taxaArrJson){
-    $tempTaxaArr = json_decode($taxaArrJson, true);
+    $tempTaxaArr = json_decode($taxaArrJson, true, 512, JSON_THROW_ON_ERROR);
 }
 
 if($tempTaxaArr){
@@ -119,4 +119,4 @@ if($tempTaxaArr){
     }
     $con->close();
 }
-echo json_encode($taxaArr);
+echo json_encode($taxaArr, JSON_THROW_ON_ERROR);

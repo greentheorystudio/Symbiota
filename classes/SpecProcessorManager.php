@@ -97,7 +97,7 @@ class SpecProcessorManager {
 			}
 			$sql = 'UPDATE specprocessorprojects SET '.trim($sqlFrag,' ,').' WHERE (spprid = '.$editArr['spprid'].')';
 			if(!$this->conn->query($sql)){
-				echo 'ERROR saving project: '.$this->conn->error;
+				echo 'ERROR saving project.';
 			}
 		}
 	}
@@ -152,7 +152,7 @@ class SpecProcessorManager {
 				$this->cleanInStr($addArr['speckeypattern']).'")';
 		}
 		if($sql && !$this->conn->query($sql)) {
-			echo 'ERROR saving project: '.$this->conn->error;
+			echo 'ERROR saving project.';
 		}
 	}
 

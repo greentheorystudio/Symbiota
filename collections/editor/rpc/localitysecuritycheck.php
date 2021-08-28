@@ -27,7 +27,7 @@ if(is_numeric($tid) && $state){
 $con->close();
 
 if($retStr){
-	echo json_encode($retStr);
+	echo json_encode($retStr, JSON_THROW_ON_ERROR);
 }
 else{
 	echo 0;

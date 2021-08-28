@@ -42,7 +42,7 @@ class UuidFactory {
 				$insSql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" '.
 					'WHERE collectionguid IS NULL AND collid = '.$r->collid;
 				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: '.$this->conn->error);
+					$this->echoStr('ERROR: Populating GUID.');
 				}
 				$recCnt++;
 			}
@@ -65,7 +65,7 @@ class UuidFactory {
 				$insSql = 'INSERT INTO guidoccurrences(guid,occid) '.
 					'VALUES("'.$guid.'",'.$r->occid.')';
 				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: occur guids'.$this->conn->error);
+					$this->echoStr('ERROR: Populating guids.');
 				}
 				$recCnt++;
 				if($recCnt%1000 === 0) {
@@ -93,7 +93,7 @@ class UuidFactory {
 				$insSql = 'INSERT INTO guidoccurdeterminations(guid,detid) '.
 					'VALUES("'.$guid.'",'.$r->detid.')';
 				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: det guids '.$this->conn->error);
+					$this->echoStr('ERROR: Populating determination guids.');
 				}
 				$recCnt++;
 				if($recCnt%1000 === 0) {
@@ -121,7 +121,7 @@ class UuidFactory {
 				$insSql = 'INSERT INTO guidimages(guid,imgid) '.
 					'VALUES("'.$guid.'",'.$r->imgid.')';
 				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: image guids; '.$this->conn->error);
+					$this->echoStr('ERROR: Populating image guids.');
 				}
 				$recCnt++;
 				if($recCnt%1000 === 0) {

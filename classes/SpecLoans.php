@@ -281,8 +281,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of loan failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of loan failed.';
 			}
 		}
 		return $statusStr;
@@ -328,8 +327,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of loan failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of loan failed.';
 			}
 		}
 		return $statusStr;
@@ -354,8 +352,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of exchange failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of exchange failed.';
 			}
 			
 			$sql = 'SELECT invoicebalance FROM omoccurexchange '.
@@ -406,8 +403,7 @@ class SpecLoans{
 			$this->loanId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new loan failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new loan failed.';
 		}
 		return $statusStr;
 	}
@@ -423,8 +419,7 @@ class SpecLoans{
 			$this->loanId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new loan failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new loan failed.';
 		}
 		return $statusStr;
 	}
@@ -440,8 +435,7 @@ class SpecLoans{
 			$this->exchangeId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new exchange failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new exchange failed.';
 		}
 		return $statusStr;
 	}

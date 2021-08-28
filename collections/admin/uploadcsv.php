@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/SpecUpload.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
-$searchVar = array_key_exists('searchvar',$_REQUEST)?$_REQUEST['searchvar']:'';
+$searchVar = array_key_exists('searchvar',$_REQUEST)?htmlspecialchars($_REQUEST['searchvar']):'';
 
 $uploadManager = new SpecUpload();
 $uploadManager->setCollId($collid);

@@ -27,7 +27,7 @@ if(array_key_exists('refurl',$_REQUEST)){
 			}
 		}
 	}
-	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl']));
+	$refUrl = str_replace('&amp;', '&',htmlspecialchars($_REQUEST['refurl'], ENT_NOQUOTES));
 	if(substr($refUrl,-4) === '.php'){
 		$refUrl .= '?' .substr($refGetStr,1);
 	}

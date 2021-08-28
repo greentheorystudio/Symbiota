@@ -53,7 +53,7 @@ class GamesManager {
 			$replace = 0;
             $randTaxa = 0;
 			if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json')){
-				$oldArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
+				$oldArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_info.json'), true, 512, JSON_THROW_ON_ERROR);
 				$lastDate = $oldArr['lastDate'];
 				$lastCLID = (int)$oldArr['clid'];
 				if(($currentDate > $lastDate) || ((int)$clid !== $lastCLID)){
@@ -67,7 +67,7 @@ class GamesManager {
 			if($replace === 1){
 				$previous = array();
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json')){
-					$previous = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json'), true);
+					$previous = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_previous.json'), true, 512, JSON_THROW_ON_ERROR);
 					unlink($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json');
 				}
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json')){
@@ -168,16 +168,16 @@ class GamesManager {
 
 					if(array_diff($tidArr,$previous)){
 						$fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json', 'wb');
-						fwrite($fp, json_encode($previous));
+						fwrite($fp, json_encode($previous, JSON_THROW_ON_ERROR));
 						fclose($fp);
 					}
 					$fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json', 'wb');
-					fwrite($fp, json_encode($ootdInfo));
+					fwrite($fp, json_encode($ootdInfo, JSON_THROW_ON_ERROR));
 					fclose($fp);
 				}
 			}
 
-			$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
+			$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_info.json'), true, 512, JSON_THROW_ON_ERROR);
 		}
 		return $infoArr;
 	}

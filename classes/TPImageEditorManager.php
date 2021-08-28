@@ -83,7 +83,7 @@ class TPImageEditorManager extends TPEditorManager{
                 $sql = 'UPDATE images SET sortsequence = '.$editValue.' WHERE imgid = '.$editKey;
                 //echo $sql;
                 if(!$this->taxonCon->query($sql)){
-                    $status .= $this->taxonCon->error."\nSQL: ".$sql. '; ';
+                    $status .= 'Error editing image.<br />';
                 }
             }
         }

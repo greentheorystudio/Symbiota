@@ -3,10 +3,10 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 ini_set('max_execution_time', 300);
 
-$schema = array_key_exists('schema',$_POST)?$_POST['schema']: 'symbiota';
-$cSet = array_key_exists('cset',$_POST)?$_POST['cset']:'';
-$zip = (array_key_exists('zip',$_POST)?$_POST['zip']:0);
-$format = $_POST['format'];
+$schema = array_key_exists('schema',$_POST)?htmlspecialchars($_POST['schema']): 'symbiota';
+$cSet = array_key_exists('cset',$_POST)?htmlspecialchars($_POST['cset']):'';
+$zip = array_key_exists('zip',$_POST)?(int)$_POST['zip']:0;
+$format = htmlspecialchars($_POST['format']);
 $clid = (int)$_POST['clid'];
 
 $dwcaHandler = new DwcArchiverCore();

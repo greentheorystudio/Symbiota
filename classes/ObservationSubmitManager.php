@@ -135,7 +135,7 @@ class ObservationSubmitManager {
 				}
 			}
 			else{
-				$this->errArr[] = 'ERROR: Failed to load observation record.<br/> Err Descr: '.$this->conn->error;
+				$this->errArr[] = 'ERROR: Failed to load observation record.';
 			}
 		}
 		return $newOccId;

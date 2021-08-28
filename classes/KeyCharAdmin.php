@@ -91,14 +91,12 @@ class KeyCharAdmin{
 					'('.$this->cid.',"Mean","Mean (= average)"),'.
 					'('.$this->cid.',"Min","Minimum value")';
 				if(!$this->conn->query($sql2)){
-					trigger_error('unable to load numeric character set values; '.$this->conn->error);
-					$statusStr = 'unable to load numeric character set values; '.$this->conn->error;
+					$statusStr = 'unable to load numeric character set values.';
 				}
 			}
 		}
 		else{
-			trigger_error('Creation of new character failed; '.$this->conn->error);
-			$statusStr = 'ERROR: Creation of new character failed: '.$this->conn->error.'<br/>SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new character failed.';
 		}
 		return $statusStr;
 	}
@@ -117,8 +115,7 @@ class KeyCharAdmin{
 			$statusStr = 'SUCCESS: information saved';
 		}
 		else{
-			$statusStr = 'ERROR: Editing of character failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Editing of character failed.<br/>';
 		}
 		return $statusStr;
 	}
@@ -129,24 +126,24 @@ class KeyCharAdmin{
 		$sql = 'DELETE FROM kmchartaxalink WHERE (cid = '.$this->cid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character taxa links: '.$this->conn->error.', '.$sql;
+			$status = 'ERROR deleting character taxa links.';
 		}
 
 		$sql = 'DELETE FROM kmchardependence WHERE (cid = '.$this->cid.') OR (ciddependance = '.$this->cid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character dependance links: '.$this->conn->error.', '.$sql;
+			$status = 'ERROR deleting character dependance links.';
 		}
 
 		$sql = 'DELETE FROM kmcharacterlang WHERE (cid = '.$this->cid.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting character languages: '.$this->conn->error.', '.$sql;
+			$status = 'ERROR deleting character languages.';
 		}
 
 		$sql = 'DELETE FROM kmcharacters WHERE (cid = '.$this->cid.')';
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR deleting descriptions linked to character: '.$this->conn->error.', '.$sql;
+			$status = 'ERROR deleting descriptions linked to character.';
 		}
 
 		return $status;
@@ -174,9 +171,7 @@ class KeyCharAdmin{
 				}
 				$rs->free();
 			}
-			else{
-				trigger_error('unable to return character state array; '.$this->conn->error);
-			}
+
 			if($retArr){
 				$sql2 = 'SELECT cs, url, csimgid FROM kmcsimages '.
 					'WHERE cid = '.$this->cid.' AND cs IN ('.implode(',',array_keys($retArr)).')';
@@ -214,9 +209,7 @@ class KeyCharAdmin{
 				($notes?'"'.$notes.'"':'NULL').','.
 				($sortSequence?:100).',"'.$un.'") ';
 			//echo $sql;
-			if(!$this->conn->query($sql)){
-				trigger_error('ERROR: Creation of new character failed: '.$this->conn->error);
-			}
+            $this->conn->query($sql);
 		}
 		return $csValue;
 	}
@@ -237,8 +230,7 @@ class KeyCharAdmin{
 			$statusStr = 'SUCCESS: information saved';
 		}
 		else{
-			$statusStr = 'ERROR: Editing of character state failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Editing of character state failed.';
 		}
 		return $statusStr;
 	}
@@ -250,31 +242,31 @@ class KeyCharAdmin{
 			$sql = 'DELETE FROM kmcsimages WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$status = 'ERROR deleting character state images: '.$this->conn->error.', '.$sql;
+				$status = 'ERROR deleting character state images.';
 			}
 	
 			$sql = 'DELETE FROM kmcslang WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$status = 'ERROR deleting character state languages: '.$this->conn->error.', '.$sql;
+				$status = 'ERROR deleting character state languages.';
 			}
 	
 			$sql = 'DELETE FROM kmchardependence WHERE (ciddependance = '.$this->cid.') AND (csdependance = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$status = 'ERROR deleting character dependance linked to character state: '.$this->conn->error.', '.$sql;
+				$status = 'ERROR deleting character dependance linked to character state.';
 			}
 	
 			$sql = 'DELETE FROM kmdescr WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$status = 'ERROR deleting descriptions linked to character state: '.$this->conn->error.', '.$sql;
+				$status = 'ERROR deleting descriptions linked to character state.';
 			}
 	
 			$sql = 'DELETE FROM kmcs WHERE (cid = '.$this->cid.') AND (cs = '.$cs.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$status = 'ERROR deleting character state: '.$this->conn->error.', '.$sql;
+				$status = 'ERROR deleting character state.';
 			}
 		}
 		return $status;
@@ -311,7 +303,7 @@ class KeyCharAdmin{
                                 ($notes?'"'.$notes.'"':'NULL').','.
                                 (is_numeric($formArr['sortsequence'])?$formArr['sortsequence']:'50').',"'.$GLOBALS['PARAMS_ARR']['un'].'")';
                             if(!$this->conn->query($sql)){
-                                $statusStr = 'ERROR loading char state image: '.$this->conn->error;
+                                $statusStr = 'ERROR loading char state image.';
                             }
                             unlink($imagePath);
                         }
@@ -389,7 +381,7 @@ class KeyCharAdmin{
 		$rs->free();
 		$sqlDel = 'DELETE FROM kmcsimages WHERE csimgid = '.$csImgId;
 		if(!$this->conn->query($sqlDel)){
-			$statusStr = 'ERROR: unable to delete image; '.$this->conn->error;
+			$statusStr = 'ERROR: unable to delete image.';
 		}
 		return $statusStr;
 	}
@@ -409,9 +401,6 @@ class KeyCharAdmin{
 				}
 				$rs->free();
 			}
-			else{
-				trigger_error('unable to get Taxon Links; '.$this->conn->error);
-			}
 		}
 		return $retArr;
 	}
@@ -424,7 +413,7 @@ class KeyCharAdmin{
 				'VALUES('.$this->cid.','.$tid.',"'.Sanitizer::cleanInStr($rel).'","'.Sanitizer::cleanInStr($notes).'")';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to add Taxon Relevance; '.$this->conn->error;
+				$statusStr = 'ERROR: unable to add Taxon Relevance.';
 			}
 		}
 		return $statusStr;
@@ -438,8 +427,7 @@ class KeyCharAdmin{
 				'WHERE cid = '.$this->cid.' AND tid = '.$tid;
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR: unable to delete Taxon Relevance; '.$this->conn->error;
-				trigger_error('ERROR: unable to delete Taxon Relevance; '.$this->conn->error);
+				$statusStr = 'ERROR: unable to delete Taxon Relevance.';
 			}
 		}
 		return $statusStr;
@@ -472,7 +460,7 @@ class KeyCharAdmin{
 			'VALUES ("'.$name.'",'.($notes?'"'.$notes.'"':'NULL').','.$this->langId.','.
 			(is_numeric($sortSeq)?$sortSeq:'NULL').')';
 		if(!$this->conn->query($sql)){
-			$statusStr = 'Error adding heading: '.$this->conn->error;
+			$statusStr = 'Error adding heading.';
 		}
 		return $statusStr;
 	}
@@ -486,7 +474,7 @@ class KeyCharAdmin{
 			'sortsequence = '.(is_numeric($sortSeq)?$sortSeq:'NULL').
 			' WHERE hid = '.$hid;
 		if(!$this->conn->query($sql)){
-			$statusStr = 'Error editing heading: '.$this->conn->error;
+			$statusStr = 'Error editing heading.';
 		}
 		return $statusStr;
 	}
@@ -496,7 +484,7 @@ class KeyCharAdmin{
 		$statusStr = '';
 		$sql = 'DELETE FROM kmcharheading WHERE hid = '.$hid;
 		if(!$this->conn->query($sql)){ 
-			$statusStr = 'Error deleting heading: '.$this->conn->error;
+			$statusStr = 'Error deleting heading.';
 		}
 		return $statusStr;
 	}

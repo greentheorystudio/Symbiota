@@ -14,9 +14,16 @@ $sortOrder = array_key_exists('sortorder',$_REQUEST)?$_REQUEST['sortorder']:'';
 $collManager = new OccurrenceListManager();
 $resetOccIndex = false;
 $navStr = '';
-
 $sortFields = array('Catalog Number','Collection','Collector','Country','County','Elevation','Event Date',
     'Family','Individual Count','Life Stage','Number','Scientific Name','Sex','State/Province');
+$stArr = array();
+$validStArr = false;
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -43,7 +50,7 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
     <script src="../js/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.popupoverlay.js"></script>
     <script src="../js/symb/collections.search.js?ver=20210621" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210810"></script>
+    <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20210824"></script>
     <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         let stArr = {};
@@ -59,15 +66,17 @@ $sortFields = array('Catalog Number','Collection','Collector','Country','County'
                 scrolllock: true
             });
             <?php
-            if($stArrJson){
-            ?>
-            initializeSearchStorage(<?php echo $queryId; ?>);
-            loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
-            <?php
+            if($validStArr){
+                ?>
+                initializeSearchStorage(<?php echo $queryId; ?>);
+                loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
+                <?php
             }
             ?>
             stArr = getSearchTermsArr();
-            changeTablePage(tableIndex);
+            if(validateSearchTermsArr(stArr)){
+                changeTablePage(tableIndex);
+            }
         });
 
         function changeTablePage(index){

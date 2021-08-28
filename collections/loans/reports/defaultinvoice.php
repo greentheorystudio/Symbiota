@@ -8,15 +8,15 @@ use PhpOffice\PhpWord\PhpWord;
 $loanManager = new SpecLoans();
 
 $collId = (int)$_REQUEST['collid'];
-$printMode = $_POST['print'];
-$languageDef = $_POST['languagedef'];
+$printMode = htmlspecialchars($_POST['print']);
+$languageDef = (int)$_POST['languagedef'];
 $loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
 $exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:'';
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
 $international = array_key_exists('international',$_POST)?(int)$_POST['international']:0;
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
 $displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $export = false;
 $exportEngine = '';

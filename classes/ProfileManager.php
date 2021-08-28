@@ -101,7 +101,7 @@ class ProfileManager extends Manager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
+            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr, JSON_THROW_ON_ERROR)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 
@@ -505,7 +505,7 @@ class ProfileManager extends Manager{
                         }
                     }
                     else{
-                        $this->errorStr = 'ERROR saving new login: '.$editCon->error;
+                        $this->errorStr = 'ERROR saving new login.';
                         $status = false;
                     }
                     $editCon->close();
@@ -646,7 +646,7 @@ class ProfileManager extends Manager{
                 }
             }
             else{
-                $statusStr = 'ERROR deleting taxonomic relationship: '.$editCon->error;
+                $statusStr = 'ERROR deleting taxonomic relationship.';
             }
             $editCon->close();
         }
@@ -682,7 +682,7 @@ class ProfileManager extends Manager{
                 }
             }
             else{
-                $statusStr = 'ERROR adding taxonomic relationship: '.$editCon->error;
+                $statusStr = 'ERROR adding taxonomic relationship.';
             }
             $editCon->close();
         }
@@ -1075,7 +1075,7 @@ class ProfileManager extends Manager{
             $statusStr = 'Access token cleared!';
         }
         else{
-            $statusStr = 'ERROR clearing access token: '.$editCon->error;
+            $statusStr = 'ERROR clearing access token.';
         }
         $editCon->close();
         return $statusStr;
@@ -1091,7 +1091,7 @@ class ProfileManager extends Manager{
             $statusStr = 'Access tokens cleared!';
         }
         else{
-            $statusStr = 'ERROR clearing access tokens: '.$editCon->error;
+            $statusStr = 'ERROR clearing access tokens.';
         }
         $editCon->close();
         return $statusStr;

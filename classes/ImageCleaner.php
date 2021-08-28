@@ -227,7 +227,7 @@ class ImageCleaner extends Manager{
 				$sql .= 'WHERE ti.imgid = ' .$imgId;
 				//echo $sql;
 				if(!$this->conn->query($sql)){
-					$this->errorMessage = 'ERROR: thumbnail created but failed to update database: '.$this->conn->error;
+					$this->errorMessage = 'ERROR: thumbnail created but failed to update database.';
 					$this->logOrEcho($this->errorMessage,1);
 				}
 			}

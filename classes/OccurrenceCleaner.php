@@ -608,7 +608,7 @@ class OccurrenceCleaner extends Manager{
 		echo '<li>Starting coordinate crawl...</li>';
 		$sql = 'SELECT occid, country, stateprovince, county, decimallatitude, decimallongitude '.
 			'FROM omoccurrences '.
-			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (country = "'.$queryCountry.'") '.
+			'WHERE (collid = '.$this->collid.') AND (decimallatitude IS NOT NULL) AND (decimallongitude IS NOT NULL) AND (country = "'.Sanitizer::cleanInStr($queryCountry).'") '.
 			'AND (occid NOT IN(SELECT occid FROM omoccurverification WHERE category = "coordinate")) '.
 			'LIMIT 500';
 		$rs = $this->conn->query($sql);
@@ -674,7 +674,7 @@ class OccurrenceCleaner extends Manager{
 		curl_setopt($curl, CURLOPT_URL, $url);
         $data = curl_exec($curl);
 		curl_close($curl);
-        $dataObj = json_decode($data, true);
+        $dataObj = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
 		if(array_key_exists('address',$dataObj)){
 			$addressArr = $dataObj['address'];
 			$retArr['country'] = $addressArr['country'];
@@ -735,7 +735,7 @@ class OccurrenceCleaner extends Manager{
 			($notes?'"'.$notes.'"':'NULL').','.
 			$GLOBALS['SYMB_UID'].')';
 		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR thrown setting occurrence verification: '.$this->conn->error;
+			$this->errorMessage = 'ERROR thrown setting occurrence verification';
 			echo '<li style="margin-left:15px;">'.$this->errorMessage.'</li>';
 		}
 	}

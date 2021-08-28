@@ -202,7 +202,7 @@ class OccurrenceUtilities {
                     if(!$latDir && $m[1]) {
                         $latDir = trim($m[1]);
                     }
-                    if($retArr['lat'] > 0 && $latDir && ($latDir === 'S' || $latDir === 's')) {
+                    if($retArr['lat'] > 0 && ($latDir === 'S' || $latDir === 's')) {
                         $retArr['lat'] = -1 * $retArr['lat'];
                     }
                     $lngDir = $m[6];
