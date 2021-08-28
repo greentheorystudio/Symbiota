@@ -18,12 +18,14 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 }
 ?>
 <script type="text/javascript">
-    tinyMCE.init({
-        mode : "textareas",
-        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-        theme_advanced_buttons2 : "",
-        theme_advanced_buttons3 : ""
-    });
+    ClassicEditor
+        .create( document.querySelector( '#abstractblock' ), {
+            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
 
     function validateChecklistForm(f){
 		if(f.name.value === ""){
@@ -138,7 +140,7 @@ if(!$clid){
 			</div>
 			<div>
 				<b>Abstract:</b><br/>
-				<textarea name="abstract" style="width:95%" rows="3"><?php echo ($clArray?$clArray['abstract']:''); ?></textarea>
+				<textarea name="abstract" id="abstractblock" style="width:95%" rows="3"><?php echo ($clArray?$clArray['abstract']:''); ?></textarea>
 			</div>
 			<div>
 				<b>Notes</b><br/>
