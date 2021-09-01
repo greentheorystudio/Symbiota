@@ -41,11 +41,11 @@ class Sanitizer {
             $requestPath = htmlspecialchars($fullRequestPath);
         }
         if(substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
-            $fixedPath = '/index.php';
+            $fixedPath = $GLOBALS['CLIENT_ROOT'] . '/index.php';
             if(strpos($requestPath, '.php') !== false){
                 $requestPathParts = explode('.php', $requestPath);
                 if($requestPathParts){
-                    $fixedPath = $requestPathParts[0] . '.php';
+                    $fixedPath = $GLOBALS['CLIENT_ROOT'] . $requestPathParts[0] . '.php';
                 }
 
             }
