@@ -1,14 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = $_REQUEST['collid'];
-$menu = array_key_exists('menu',$_REQUEST)&&$_REQUEST['menu']?$_REQUEST['menu']:0;
-$formAction = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']:0;
+$collid = (int)$_REQUEST['collid'];
+$menu = array_key_exists('menu',$_REQUEST)&&$_REQUEST['menu']?(int)$_REQUEST['menu']:0;
+$formAction = array_key_exists('formaction',$_REQUEST)?$_REQUEST['formaction']:'';
 
 $procManager = new SpecProcessorManager();
 $procManager->setCollId($collid);
@@ -192,7 +193,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							Processing Status set to:
 							<select name="processingstatus">
 								<option value="0">Ignore Processing Status</option>
-								<option value="all" <?php echo ($processingStatus && $processingStatus === 'all'?'SELECTED':''); ?>>Any Processing Status</option>
+								<option value="all" <?php echo ($processingStatus === 'all' ?'SELECTED':''); ?>>Any Processing Status</option>
 								<option value="0">-----------------------</option>
 								<?php
 								$psArr = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Duplicate','Pending Review-NfN','Pending Review','Expert Required','Reviewed','Closed');
@@ -218,7 +219,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 					</form>
 				</fieldset>
 				<?php
-				if($formAction && $formAction === 'displayReport'){
+				if($formAction === 'displayReport'){
 					echo '<table class="styledtable" style="width:500px;font-size:12px;">';
 					echo '<tr><th>Time Period</th>';
 					echo '<th>User</th>';

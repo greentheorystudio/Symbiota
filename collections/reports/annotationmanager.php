@@ -1,13 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/reports/annotationmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = $_REQUEST["collid"];
+$collid = (int)$_REQUEST['collid'];
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $datasetManager = new OccurrenceLabel();
@@ -15,10 +17,10 @@ $datasetManager->setCollid($collid);
 
 $isEditor = 0;
 $annoArr = array();
-if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']["CollAdmin"], true))){
+if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
     $isEditor = 1;
 }
-elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']["CollEditor"], true)){
+elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
     $isEditor = 1;
 }
 if($isEditor){
@@ -98,7 +100,7 @@ include(__DIR__ . '/../../header.php');
 <div class='navpath'>
     <a href='../../index.php'>Home</a> &gt;&gt;
     <?php
-    if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), "observation") !== false){
+    if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), 'observation') !== false){
         echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
     }
     else{

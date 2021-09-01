@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $taxon = array_key_exists('taxon',$_REQUEST)?trim($_REQUEST['taxon']): '';
 $target = array_key_exists('target',$_REQUEST)?trim($_REQUEST['target']): '';

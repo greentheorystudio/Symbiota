@@ -2,9 +2,10 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
@@ -14,16 +15,18 @@ $isEditor = 0;
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
 if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
-	$defaultArr = json_decode($clArray['defaultsettings'], true);
+	$defaultArr = json_decode($clArray['defaultsettings'], true, 512, JSON_THROW_ON_ERROR);
 }
 ?>
 <script type="text/javascript">
-    tinyMCE.init({
-        mode : "textareas",
-        theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-        theme_advanced_buttons2 : "",
-        theme_advanced_buttons3 : ""
-    });
+    ClassicEditor
+        .create( document.querySelector( '#abstractblock' ), {
+            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
 
     function validateChecklistForm(f){
 		if(f.name.value === ""){
@@ -138,7 +141,7 @@ if(!$clid){
 			</div>
 			<div>
 				<b>Abstract:</b><br/>
-				<textarea name="abstract" style="width:95%" rows="3"><?php echo ($clArray?$clArray['abstract']:''); ?></textarea>
+				<textarea name="abstract" id="abstractblock" style="width:95%" rows="3"><?php echo ($clArray?$clArray['abstract']:''); ?></textarea>
 			</div>
 			<div>
 				<b>Notes</b><br/>

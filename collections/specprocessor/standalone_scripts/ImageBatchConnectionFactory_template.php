@@ -18,7 +18,7 @@ class ImageBatchConnectionFactory {
             throw new RuntimeException('Could not connect to any databases! Please try again later.');
         }
         if(isset(self::$SERVER['charset']) && self::$SERVER['charset'] && !$connection->set_charset(self::$SERVER['charset'])) {
-            throw new RuntimeException('Error loading character set '.self::$SERVER['charset'].': '.$connection->error);
+            throw new RuntimeException('Error loading character set '.self::$SERVER['charset'].'.');
         }
         return $connection;
     }

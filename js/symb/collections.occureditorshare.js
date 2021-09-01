@@ -20,6 +20,7 @@ function verifyLeaveForm(){
 
 function submitQueryEditor(f){
 	f.action = "occurrenceeditor.php";
+	f.submitaction.value = "Display Editor";
 	if(verifyQueryForm()) {
 		f.submit();
 	}
@@ -28,6 +29,7 @@ function submitQueryEditor(f){
 
 function submitQueryTable(f){
 	f.action = "occurrencetabledisplay.php";
+	f.submitaction.value = "Display Table";
 	if(verifyQueryForm()) {
 		f.submit();
 	}

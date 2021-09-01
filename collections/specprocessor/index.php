@@ -4,40 +4,27 @@ include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCrowdSource.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorOcr.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spprId = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
-$spNlpId = array_key_exists('spnlpid',$_REQUEST)?$_REQUEST['spnlpid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$spprId = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
+$spNlpId = array_key_exists('spnlpid',$_REQUEST)?(int)$_REQUEST['spnlpid']:0;
 $procStatus = array_key_exists('procstatus',$_REQUEST)?$_REQUEST['procstatus']:'unprocessed';
-$displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$displayMode = array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displaymode']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
 }
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($spprId)) {
-    $spprId = 0;
-}
-if(!is_numeric($spNlpId)) {
-    $spNlpId = 0;
-}
 if($procStatus && !preg_match('/^[a-zA-Z]+$/',$procStatus)) {
     $procStatus = '';
-}
-if(!is_numeric($displayMode)) {
-    $displayMode = 0;
-}
-if(!is_numeric($tabIndex)) {
-    $tabIndex = 0;
 }
 
 $specManager = new SpecProcessorManager();
@@ -141,7 +128,7 @@ if($isEditor){
 				        <li><a href="imageprocessor.php?collid=<?php echo $collid.'&spprid='.$spprId.'&submitaction='.$action.'&filename='.$fileName; ?>">Image Loading</a></li>
 				        <li><a href="crowdsource/controlpanel.php?collid=<?php echo $collid; ?>">Crowdsourcing</a></li>
 				        <li><a href="ocrprocessor.php?collid=<?php echo $collid.'&procstatus='.$procStatus.'&spprid='.$spprId; ?>">OCR</a></li>
-				        <li><a href="reports.php?<?php echo $_SERVER['QUERY_STRING']; ?>">Reports</a></li>
+				        <li><a href="reports.php?<?php echo str_replace('&amp;', '&',htmlspecialchars($_SERVER['QUERY_STRING'])); ?>">Reports</a></li>
 				        <li><a href="exporter.php?collid=<?php echo $collid.'&displaymode='.$displayMode; ?>">Exporter</a></li>
 				        <?php 
 				        if($GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT']){

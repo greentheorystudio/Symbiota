@@ -8,7 +8,7 @@ class OccurrenceAssociations extends Manager {
 		parent::__construct();
  	}
 
-	public function parseAssociatedTaxa($collid = 0): void
+	public function parseAssociatedTaxa($collid = null): void
 	{
 		if(!is_numeric($collid)){
 			echo '<div><b>FAIL ERROR: abort process</b></div>';
@@ -50,7 +50,7 @@ class OccurrenceAssociations extends Manager {
 				'WHERE a.tid IS NULL';
 		}
 		if(!$this->conn->query($sql2)){
-			echo '<li style="margin-left:20px;">Unable to populate tid field using taxa table: '.$this->conn->error.'</li>';
+			echo '<li style="margin-left:20px;">Unable to populate tid field using taxa table.</li>';
 		}
 
 		echo '<li>Populate tid field using taxavernaculars table... </li>';
@@ -67,7 +67,7 @@ class OccurrenceAssociations extends Manager {
 				'WHERE a.tid IS NULL ';
 		}
 		if(!$this->conn->query($sql3)){
-			echo '<li style="margin-left:20px;">Unable to populate tid field using taxavernaculars table: '.$this->conn->error.'</li>';
+			echo '<li style="margin-left:20px;">Unable to populate tid field using taxavernaculars table.</li>';
 		}
 		
 		echo '<li>Populate tid field by linking back to omoccurassociations table... </li>';
@@ -84,7 +84,7 @@ class OccurrenceAssociations extends Manager {
 				'WHERE a.tid IS NULL AND a2.tid IS NOT NULL ';
 		}
 		if(!$this->conn->query($sql4)){
-			echo '<li style="margin-left:20px;">Unable to populate tid field relinking back to omoccurassociations table: '.$this->conn->error.'</li>';
+			echo '<li style="margin-left:20px;">Unable to populate tid field relinking back to omoccurassociations table.</li>';
 		}
 		
 		echo '<li>Mining database for the more difficult matches... </li>';
@@ -108,7 +108,7 @@ class OccurrenceAssociations extends Manager {
 					'SET tid = '.$tid.' '.
 					'WHERE tid IS NULL AND verbatimsciname = "'.$verbStr.'"';
 				if(!$this->conn->query($sql5b)){
-					echo '<li style="margin-left:20px;">Unable to populate NULL tid field: '.$this->conn->error.'</li>';
+					echo '<li style="margin-left:20px;">Unable to populate NULL tid field.</li>';
 				}
 			}
 		}
@@ -119,7 +119,8 @@ class OccurrenceAssociations extends Manager {
 		flush();
 	}
 
-	private function mineAssocSpeciesMatch($verbStr){
+	private function mineAssocSpeciesMatch($verbStr): int
+    {
 		$retTid = 0;
 		if(preg_match('/^([A-Z])\.?\s([a-z]*)$/',$verbStr,$m)){
 			$sql = 'SELECT tid, sciname '.

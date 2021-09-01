@@ -2,15 +2,18 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$authId = array_key_exists('authid',$_REQUEST)?$_REQUEST['authid']:0;
-$addAuth = array_key_exists('addauth',$_REQUEST)?$_REQUEST['addauth']:0;
+$refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
+$authId = array_key_exists('authid',$_REQUEST)?(int)$_REQUEST['authid']:0;
+$addAuth = array_key_exists('addauth',$_REQUEST)?(int)$_REQUEST['addauth']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $refManager = new ReferenceManager();
 $authArr = '';
 $authExist = false;
+$authPubArr = array();
+$authInfoArr = array();
 
 $statusStr = '';
 if($formSubmit){
@@ -90,7 +93,84 @@ if(!$addAuth){
 					</div>
 					<?php
 				}
-				if(!$authId){
+				if($authId) {
+					?>
+					<div id="tabs" style="margin:0;">
+						<ul>
+							<li><a href="#authdetaildiv">Author Details</a></li>
+							<li><a href="#authlinksdiv">Publications</a></li>
+							<li><a href="#authadmindiv">Admin</a></li>
+						</ul>
+
+						<div id="authdetaildiv" style="">
+							<div id="authdetails" style="overflow:auto;">
+								<form name="authoreditform" id="authoreditform" action="authoreditor.php" method="post" onsubmit="return verifyNewAuthForm();">
+									<div style="clear:both;padding-top:4px;float:left;">
+										<div style="">
+											<b>First Name: </b> <input type="text" name="firstname" id="firstname" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['firstname']; ?>" title="" />
+										</div>
+									</div>
+									<div style="clear:both;padding-top:4px;float:left;">
+										<div style="">
+											<b>Middle Name: </b> <input type="text" name="middlename" id="middlename" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['middlename']; ?>" title="" />
+										</div>
+									</div>
+									<div style="clear:both;padding-top:4px;float:left;">
+										<div style="">
+											<b>Last Name: </b> <input type="text" name="lastname" id="lastname" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['lastname']; ?>" title="" />
+										</div>
+									</div>
+									<div style="clear:both;padding-top:8px;float:right;">
+										<input name="authid" type="hidden" value="<?php echo $authId; ?>" />
+										<button name="formsubmit" type="submit" value="Edit Author">Save Edits</button>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<div id="authlinksdiv" style="">
+							<div style="width:600px;">
+								<?php
+								if($authPubArr){
+									echo '<div style="font-weight:bold;font-size:120%;">Publications</div>';
+									echo '<div><ul>';
+									foreach($authPubArr as $refId => $recArr){
+										echo '<li>';
+										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr['title'].'</b></a>';
+										echo ($recArr['secondarytitle']?', '.$recArr['secondarytitle'].'.':'');
+										echo ($recArr['shorttitle']?', '.$recArr['shorttitle'].'.':'');
+										echo ($recArr['pubdate']?$recArr['pubdate'].'.':'');
+										echo '</li>';
+									}
+									echo '</ul></div>';
+								}
+								else{
+									echo '<h2>There are no publications linked with this author</h2>';
+								}
+								?>
+							</div>
+						</div>
+
+						<div id="authadmindiv" style="">
+							<form name="delauthform" action="authoreditor.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this author?')">
+								<fieldset style="width:350px;margin:20px;padding:20px;">
+									<legend><b>Delete Author</b></legend>
+									<?php
+									if($authPubArr){
+										echo '<div style="font-weight:bold;margin-bottom:15px;">';
+										echo 'Author cannot be deleted until all linked publications are removed';
+										echo '</div>';
+									}
+									?>
+									<input name="formsubmit" type="submit" value="Delete Author" <?php echo ($authPubArr?'DISABLED':''); ?> />
+									<input name="authid" type="hidden" value="<?php echo $authId; ?>" />
+								</fieldset>
+							</form>
+						</div>
+					</div>
+					<?php
+				}
+				else {
 					?>
 					<div id="newauthordiv" style="<?php echo ($addAuth?'display:block;width:400px;':'display:none;') ?>">
 						<form name="newauthorform" action="<?php echo ($addAuth?'':'authoreditor.php') ?>" method="post" onsubmit="return verifyNewAuthForm();">
@@ -134,92 +214,15 @@ if(!$addAuth){
 						}
 					}
 				}
-				else{
-					?>
-					<div id="tabs" style="margin:0;">
-						<ul>
-							<li><a href="#authdetaildiv">Author Details</a></li>
-							<li><a href="#authlinksdiv">Publications</a></li>
-							<li><a href="#authadmindiv">Admin</a></li>
-						</ul>
-						
-						<div id="authdetaildiv" style="">
-							<div id="authdetails" style="overflow:auto;">
-								<form name="authoreditform" id="authoreditform" action="authoreditor.php" method="post" onsubmit="return verifyNewAuthForm();">
-									<div style="clear:both;padding-top:4px;float:left;">
-										<div style="">
-											<b>First Name: </b> <input type="text" name="firstname" id="firstname" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['firstname']; ?>" title="" />
-										</div>
-									</div>
-									<div style="clear:both;padding-top:4px;float:left;">
-										<div style="">
-											<b>Middle Name: </b> <input type="text" name="middlename" id="middlename" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['middlename']; ?>" title="" />
-										</div>
-									</div>
-									<div style="clear:both;padding-top:4px;float:left;">
-										<div style="">
-											<b>Last Name: </b> <input type="text" name="lastname" id="lastname" maxlength="32" style="width:200px;" value="<?php echo $authInfoArr['lastname']; ?>" title="" />
-										</div>
-									</div>
-									<div style="clear:both;padding-top:8px;float:right;">
-										<input name="authid" type="hidden" value="<?php echo $authId; ?>" />
-										<button name="formsubmit" type="submit" value="Edit Author">Save Edits</button>
-									</div>
-								</form>
-							</div>
-						</div>
-						
-						<div id="authlinksdiv" style="">
-							<div style="width:600px;">
-								<?php
-								if($authPubArr){
-									echo '<div style="font-weight:bold;font-size:120%;">Publications</div>';
-									echo '<div><ul>';
-									foreach($authPubArr as $refId => $recArr){
-										echo '<li>';
-										echo '<a href="refdetails.php?refid='.$refId.'" target="_blank"><b>'.$recArr['title'].'</b></a>';
-										echo ($recArr['secondarytitle']?', '.$recArr['secondarytitle'].'.':'');
-										echo ($recArr['shorttitle']?', '.$recArr['shorttitle'].'.':'');
-										echo ($recArr['pubdate']?$recArr['pubdate'].'.':'');
-										echo '</li>';
-									}
-									echo '</ul></div>';
-								}
-								else{
-									echo '<h2>There are no publications linked with this author</h2>';
-								}
-								?>
-							</div>
-						</div>
-						
-						<div id="authadmindiv" style="">
-							<form name="delauthform" action="authoreditor.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this author?')">
-								<fieldset style="width:350px;margin:20px;padding:20px;">
-									<legend><b>Delete Author</b></legend>
-									<?php 
-									if($authPubArr){
-										echo '<div style="font-weight:bold;margin-bottom:15px;">';
-										echo 'Author cannot be deleted until all linked publications are removed';
-										echo '</div>';
-									}
-									?>
-									<input name="formsubmit" type="submit" value="Delete Author" <?php echo ($authPubArr?'DISABLED':''); ?> />
-									<input name="authid" type="hidden" value="<?php echo $authId; ?>" />
-								</fieldset>
-							</form>
-						</div>
-					</div>
-					<?php
-				}
 				?>
 			</div>
 			<?php 
 		}
-		else if(!$GLOBALS['SYMB_UID']){
-            echo 'Please <a href="../profile/index.php?refurl=../references/authoreditor.php">login</a>';
-        }
-        else{
+		else if($GLOBALS['SYMB_UID']) {
             echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
+        else {
+            echo 'Please <a href="../profile/index.php?refurl=../references/authoreditor.php">login</a>';
         }
 		?>
 	</div>

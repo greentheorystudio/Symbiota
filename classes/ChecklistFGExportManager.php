@@ -27,7 +27,7 @@ class ChecklistFGExportManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
             $this->conn->close();
         }
 	}
@@ -50,9 +50,6 @@ class ChecklistFGExportManager {
 					$retStr = '<h1>ERROR: invalid checklist identifier supplied ('.$clValue.')</h1>';
 				}
 				$rs->free();
-			}
-			else{
-				trigger_error('ERROR setting checklist ID, SQL: '.$sql, E_USER_ERROR);
 			}
 		}
 		$sqlChildBase = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(';
@@ -317,7 +314,7 @@ class ChecklistFGExportManager {
 
     public function setPhotogJson($json): void
     {
-        $photogArr = json_decode($json,true);
+        $photogArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         if(is_array($photogArr)){
             foreach($photogArr as $str){
                 $parts = explode('---',$str);

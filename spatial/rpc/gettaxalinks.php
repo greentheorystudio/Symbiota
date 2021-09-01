@@ -9,14 +9,14 @@ $con = $connection->getConnection();
 $spatialManager = new SpatialModuleManager();
 
 $taxaArrJson = array_key_exists('taxajson',$_REQUEST)?$_REQUEST['taxajson']:'';
-$taxonType = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:0;
-$useThes = array_key_exists('thes',$_REQUEST)?$_REQUEST['thes']:false;
+$taxonType = array_key_exists('type',$_REQUEST)?(int)$_REQUEST['type']:0;
+$useThes = array_key_exists('thes',$_REQUEST)?(int)$_REQUEST['thes']:0;
 
 $tempTaxaArr = array();
 $taxaArr = array();
 
 if($taxaArrJson){
-    $tempTaxaArr = json_decode($taxaArrJson, true);
+    $tempTaxaArr = json_decode($taxaArrJson, true, 512, JSON_THROW_ON_ERROR);
 }
 
 if($tempTaxaArr){
@@ -119,4 +119,4 @@ if($tempTaxaArr){
     }
     $con->close();
 }
-echo json_encode($taxaArr);
+echo json_encode($taxaArr, JSON_THROW_ON_ERROR);

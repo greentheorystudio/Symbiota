@@ -4,12 +4,13 @@ include_once(__DIR__ . '/../../classes/TPEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPDescEditorManager.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 $tImageEditor = new TPImageEditorManager();
 $tDescEditor = new TPDescEditorManager();
@@ -30,7 +31,7 @@ if($editable && $action){
 	if($action === 'Edit Synonym Sort Order'){
 		$synSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && (strpos($sortKey, 'syn-') == 0)){
+			if($sortValue && (strncmp($sortKey, 'syn-', 4) === 0)){
 				$index = substr($sortKey,4);
                 if(is_string($index) || is_int($index)){
                     $synSortArr[$index] = $sortValue;
@@ -102,7 +103,7 @@ if($editable && $action){
 	elseif($action === 'Submit Image Sort Edits'){
 		$imgSortArr = array();
 		foreach($_REQUEST as $sortKey => $sortValue){
-			if($sortValue && strpos($sortKey, 'imgid-') == 0){
+			if($sortValue && strncmp($sortKey, 'imgid-', 6) === 0){
 				$index = substr($sortKey,6);
                 if(is_string($index) || is_int($index)){
                     $imgSortArr[$index]  = $sortValue;
@@ -131,16 +132,8 @@ if($editable && $action){
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/tiny_mce/tiny_mce.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 	<script type="text/javascript">
-		tinyMCE.init({
-			mode : "textareas",
-			theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-            valid_elements: "*[*]"
-		});
-
 		$(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {

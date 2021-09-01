@@ -5,8 +5,8 @@ include_once(__DIR__ . '/../../../classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $retArr = array();
-$occid = $_POST['occid'];
-if(is_numeric($occid)){
+$occid = (int)$_POST['occid'];
+if($occid){
 	$sql = 'SELECT recordedby, recordnumber, eventdate ' .
         'FROM omoccurrences ' .
         'WHERE occid = ' .$occid;
@@ -20,4 +20,4 @@ if(is_numeric($occid)){
 	$rs->free();
 	$con->close();
 }
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);

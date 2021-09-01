@@ -2,16 +2,17 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$ometId = array_key_exists('ometid',$_REQUEST)?$_REQUEST['ometid']:0;
-$omenId = array_key_exists('omenid',$_REQUEST)?$_REQUEST['omenid']:0;
-$occidToAdd = array_key_exists('occidtoadd',$_REQUEST)?$_REQUEST['occidtoadd']:0;
+$ometId = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
+$omenId = array_key_exists('omenid',$_REQUEST)?(int)$_REQUEST['omenid']:0;
+$occidToAdd = array_key_exists('occidtoadd',$_REQUEST)?(int)$_REQUEST['occidtoadd']:0;
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
-$specimenOnly = array_key_exists('specimenonly',$_REQUEST)?$_REQUEST['specimenonly']:0;
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$imagesOnly = array_key_exists('imagesonly',$_REQUEST)?$_REQUEST['imagesonly']:0;
-$sortBy = array_key_exists('sortby',$_REQUEST)?$_REQUEST['sortby']:0;
-$formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
+$specimenOnly = array_key_exists('specimenonly',$_REQUEST)?(int)$_REQUEST['specimenonly']:0;
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$imagesOnly = array_key_exists('imagesonly',$_REQUEST)?(int)$_REQUEST['imagesonly']:0;
+$sortBy = array_key_exists('sortby',$_REQUEST)?(int)$_REQUEST['sortby']:0;
+$formSubmit = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['formsubmit']):'';
 
 $statusStr = '';
 $isEditor = 0;

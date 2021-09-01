@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
- 
+header('X-Frame-Options: SAMEORIGIN');
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>

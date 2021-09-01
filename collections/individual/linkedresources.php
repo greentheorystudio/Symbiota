@@ -2,24 +2,12 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$occid = $_GET['occid'];
-$tid = $_GET['tid'];
-$collId = $_GET['collid'];
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-
-if(!is_numeric($occid)) {
-    $occid = 0;
-}
-if(!is_numeric($tid)) {
-    $tid = 0;
-}
-if(!is_numeric($collId)) {
-    $collId = 0;
-}
-if(!is_numeric($clid)) {
-    $clid = 0;
-}
+$occid = (int)$_GET['occid'];
+$tid = (int)$_GET['tid'];
+$collId = (int)$_GET['collid'];
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 
 $indManager = new OccurrenceIndividualManager();
 $indManager->setOccid($occid);

@@ -7,10 +7,6 @@ $checklistManager = new OccurrenceChecklistManager();
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
-if(!is_numeric($taxonFilter)) {
-    $taxonFilter = 0;
-}
-
 $checklistArr = array();
 $taxaCnt = 0;
 
@@ -18,25 +14,26 @@ $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
-
-    if($GLOBALS['SOLR_MODE']){
-        $solrManager->setSearchTermsArr($stArr);
-        $solrArr = $solrManager->getTaxaArr();
-        if($taxonFilter && is_numeric($taxonFilter)){
-            $tidArr = $solrManager->getSOLRTidList($solrArr);
-            $checklistArr = $checklistManager->getTidChecklist($tidArr,$taxonFilter);
-            $taxaCnt = $checklistManager->getChecklistTaxaCnt();
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($checklistManager->validateSearchTermsArr($stArr)){
+        if($GLOBALS['SOLR_MODE']){
+            $solrManager->setSearchTermsArr($stArr);
+            $solrArr = $solrManager->getTaxaArr();
+            if($taxonFilter && is_numeric($taxonFilter)){
+                $tidArr = $solrManager->getSOLRTidList($solrArr);
+                $checklistArr = $checklistManager->getTidChecklist($tidArr,$taxonFilter);
+                $taxaCnt = $checklistManager->getChecklistTaxaCnt();
+            }
+            else{
+                $checklistArr = $solrManager->translateSOLRTaxaList($solrArr);
+                $taxaCnt = $solrManager->getChecklistTaxaCnt();
+            }
         }
         else{
-            $checklistArr = $solrManager->translateSOLRTaxaList($solrArr);
-            $taxaCnt = $solrManager->getChecklistTaxaCnt();
+            $checklistManager->setSearchTermsArr($stArr);
+            $checklistArr = $checklistManager->getChecklist($taxonFilter);
+            $taxaCnt = $checklistManager->getChecklistTaxaCnt();
         }
-    }
-    else{
-        $checklistManager->setSearchTermsArr($stArr);
-        $checklistArr = $checklistManager->getChecklist($taxonFilter);
-        $taxaCnt = $checklistManager->getChecklistTaxaCnt();
     }
 }
 ?>

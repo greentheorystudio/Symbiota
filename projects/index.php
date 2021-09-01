@@ -2,12 +2,13 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
-$editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
+$editMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 $newProj = array_key_exists('newproj',$_REQUEST)?1:0;
 $projSubmit = array_key_exists('projsubmit',$_REQUEST)?$_REQUEST['projsubmit']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $statusStr = '';
 
 if(!$pid && array_key_exists('proj',$_GET) && is_numeric($_GET['proj'])) {

@@ -33,7 +33,6 @@ class SpecUploadFile extends SpecUploadBase{
                         echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
                         echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
                         echo '</div>';
-                        return false;
                     }
                 }
                 else{
@@ -48,10 +47,10 @@ class SpecUploadFile extends SpecUploadBase{
                 if($res === TRUE) {
                     for($i = 0; $i < $zip->numFiles; $i++) {
                         $fileName = $zip->getNameIndex($i);
-                        if(strpos($fileName, '._') !== 0){
+                        if(strncmp($fileName, '._', 2) !== 0){
                             $ext = strtolower(substr(strrchr($fileName, '.'), 1));
                             if($ext === 'csv' || $ext === 'txt'){
-                                if($this->uploadType != $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
+                                if($this->uploadType !== $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
                                     $this->ulFileName = $fileName;
                                     $zip->extractTo($this->uploadTargetPath,$fileName);
                                     $zip->close();
@@ -64,7 +63,6 @@ class SpecUploadFile extends SpecUploadBase{
                 }
                 else{
                     echo 'failed, code:' . $res;
-                    return false;
                 }
             }
         }
@@ -73,7 +71,7 @@ class SpecUploadFile extends SpecUploadBase{
 
     public function analyzeUpload(): bool
     {
-        if(strpos($this->ulFileName, 'http') === 0){
+        if(strncmp($this->ulFileName, 'http', 4) === 0){
             $fullPath = $this->ulFileName;
         }
         else{
@@ -113,7 +111,7 @@ class SpecUploadFile extends SpecUploadBase{
                 foreach($indexArr as $symbField => $index){
                     if(array_key_exists((int)$index, $recordArr) && $recordArr && (is_string($index) || is_int($index))) {
                         $valueStr = $recordArr[$index];
-                        if(strpos($valueStr, '"') === 0 && substr($valueStr,-1) === '"'){
+                        if(strncmp($valueStr, '"', 1) === 0 && substr($valueStr,-1) === '"'){
                             $valueStr = substr($valueStr,1, -1);
                         }
                         $recMap[$symbField] = $valueStr;
@@ -145,7 +143,7 @@ class SpecUploadFile extends SpecUploadBase{
                     if(strlen($testRow->tempfield02) === 45 || strlen($testRow->tempfield02) === 36) {
                         $this->nfnIdentifier = 'uuid';
                     }
-                    if(!$this->nfnIdentifier === 'uuid' && !$testRow->tempfield02){
+                    if($this->nfnIdentifier !== 'uuid' && !$testRow->tempfield02){
                         $this->outputMsg('<li>ERROR: identifier fields appear to NULL (recordID GUID and subject_references fields)</li>');
                     }
                 }
@@ -159,13 +157,13 @@ class SpecUploadFile extends SpecUploadBase{
                         'SET u.occid = g.occid '.
                         'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL)';
                     if(!$this->conn->query($sqlB)){
-                        $this->outputMsg('<li>ERROR populating occid from recordID GUID (stage1): '.$this->conn->error.'</li>');
+                        $this->outputMsg('<li>ERROR populating occid from recordID GUID (stage1).</li>');
                     }
                     $sqlC = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON u.tempfield02 = o.occurrenceid '.
                         'SET u.occid = o.occid '.
                         'WHERE (u.collid IN('.$this->collId.')) AND (o.collid IN('.$this->collId.')) AND (u.occid IS NULL)';
                     if(!$this->conn->query($sqlC)){
-                        $this->outputMsg('<li>ERROR populating occid from recordID GUID (stage2): '.$this->conn->error.'</li>');
+                        $this->outputMsg('<li>ERROR populating occid from recordID GUID (stage2).</li>');
                     }
                 }
                 else{

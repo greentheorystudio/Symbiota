@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -123,7 +124,7 @@ class OccurrenceListManager extends OccurrenceManager{
             while($r = $rs->fetch_object()){
                 if($r->occid !== $previousOccid){
                     $tnUrl = $r->thumbnailurl;
-                    if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strpos($tnUrl, '/') === 0) {
+                    if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
                         $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                     }
                     $returnArr[$r->occid]['img'] = $tnUrl;
@@ -166,7 +167,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = $this->cleanInStr($name);
+        $searchName = Sanitizer::cleanInStr($name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

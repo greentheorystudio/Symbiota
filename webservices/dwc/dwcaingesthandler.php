@@ -5,9 +5,9 @@ require_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 require_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
 
 
-$uploadType = preg_replace('/\D/', '',$_REQUEST['uploadtype']);
+$uploadType = array_key_exists('uploadtype',$_REQUEST)?(int)$_REQUEST['uploadtype']:0;
 $securityKey = preg_replace("/[^A-Za-z0-9\-]/", '',$_REQUEST['key']);
-$filePath = array_key_exists('filepath',$_REQUEST)?$_REQUEST['filepath']:false;
+$filePath = array_key_exists('filepath',$_REQUEST)?$_REQUEST['filepath']:'';
 $importIdent = array_key_exists('importident',$_REQUEST)?$_REQUEST['importident']:false;
 $importImage = array_key_exists('importimage',$_REQUEST)?$_REQUEST['importimage']:false;
 $sourceType = array_key_exists('sourcetype',$_REQUEST)?$_REQUEST['sourcetype']:'';
@@ -22,10 +22,10 @@ if(!$uploadType){
 
 $FILEUPLOAD = 3;
 $DWCAUPLOAD = 6;
-if($uploadType == $FILEUPLOAD){
+if($uploadType === $FILEUPLOAD){
 	$duManager = new SpecUploadFile();
 }
-elseif($uploadType == $DWCAUPLOAD){
+elseif($uploadType === $DWCAUPLOAD){
 	$duManager = new SpecUploadDwca();
 	$duManager->setIncludeIdentificationHistory($importIdent);
 	$duManager->setIncludeImages($importImage);

@@ -1,27 +1,22 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/attributemining.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:'';
 $selectAll = array_key_exists('selectall',$_POST)?$_POST['selectall']:'';
 $taxonFilter = array_key_exists('taxonfilter',$_POST)?$_POST['taxonfilter']:'';
 $stringFilter = array_key_exists('stringfilter',$_POST)?$_POST['stringfilter']:'';
-$tidFilter = array_key_exists('tidfilter',$_POST)?$_POST['tidfilter']:'';
+$tidFilter = array_key_exists('tidfilter',$_POST)?(int)$_POST['tidfilter']:0;
 $fieldName = array_key_exists('fieldname',$_POST)?$_POST['fieldname']:'';
-$traitID = array_key_exists('traitid',$_POST)?$_POST['traitid']:'';
+$traitID = array_key_exists('traitid',$_POST)?(int)$_POST['traitid']:0;
 $submitForm = array_key_exists('submitform',$_POST)?$_POST['submitform']:'';
-
-if(!is_numeric($tidFilter)) {
-    $tidFilter = 0;
-}
-if(!is_numeric($traitID)) {
-    $traitID = 0;
-}
 
 $collRights = array();
 if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
@@ -70,7 +65,7 @@ if($isEditor && $submitForm === 'Batch Assign State(s)' && $collid && $fieldName
     }
     $stateIDArr = array();
     foreach($_POST as $postKey => $postValue){
-        if(strpos($postKey, 'stateid-') === 0){
+        if(strncmp($postKey, 'stateid-', 8) === 0){
             if(is_array($postValue)){
                 foreach($postValue as $post){
                     $stateIDArr[] = $post;
@@ -287,7 +282,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 								</div>
 								<div>
 									<?php 
-									$traitArr = $attrManager->getTraitArr($traitID,false);
+									$traitArr = $attrManager->getTraitArr($traitID);
 									$attrManager->echoFormTraits($traitID);
 									?>
 								</div>

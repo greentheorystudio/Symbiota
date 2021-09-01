@@ -7,16 +7,16 @@ use PhpOffice\PhpWord\PhpWord;
 
 $loanManager = new SpecLoans();
 
-$collId = $_REQUEST['collid'];
-$printMode = $_POST['print'];
-$language = $_POST['languagedef'];
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
-$international = array_key_exists('international',$_POST)?$_POST['international']:0;
+$collId = (int)$_REQUEST['collid'];
+$printMode = htmlspecialchars($_POST['print']);
+$language = htmlspecialchars($_POST['languagedef']);
+$loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
+$exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
+$international = array_key_exists('international',$_POST)?(int)$_POST['international']:0;
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
-$displayAll = array_key_exists('displayall',$_POST)?$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $export = false;
 $exportEngine = '';
@@ -67,14 +67,14 @@ if($export){
 	
 	$textrun = $section->addTextRun('header');
 	$textrun->addText(htmlspecialchars('List of specimens loaned to: '.$invoiceArr['institutioncode']),'headerFont');
-	$section->addTextBreak(1);
+	$section->addTextBreak();
 	$textrun = $section->addTextRun('info');
 	$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Loan ID: '.$invoiceArr['loanidentifierown']),'infoFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	$textrun->addText(htmlspecialchars('Date sent: '.$invoiceArr['datesent']),'infoFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	$textrun->addText(htmlspecialchars('Total specimens: '.($specTotal?$specTotal['speccount']:0)),'infoFont');
-	$section->addTextBreak(1);
+	$section->addTextBreak();
 	$table = $section->addTable('headerTable');
 	$table->addRow();
 	$table->addCell(2250,$cellStyle)->addText(htmlspecialchars('Catalog #'),'colHeaderFont','colHeadSpace');

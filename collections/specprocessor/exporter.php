@@ -2,16 +2,10 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$displayMode = array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0;
-
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($displayMode)) {
-    $displayMode = 0;
-}
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$displayMode = array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displaymode']:0;
 
 $customField = array();
 $customType = array();

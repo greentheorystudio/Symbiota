@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
-$taxId = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:0;
-$displayAuthor = array_key_exists('authors',$_REQUEST)?$_REQUEST['authors']:0;
-$targetId = array_key_exists('targetid',$_REQUEST)?$_REQUEST['targetid']:0;
+$taxId = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:'';
+$displayAuthor = array_key_exists('authors',$_REQUEST)?(int)$_REQUEST['authors']:0;
+$targetId = array_key_exists('targetid',$_REQUEST)?(int)$_REQUEST['targetid']:0;
 
 $editable = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
@@ -58,7 +58,7 @@ if($taxId === 'root'){
 			$rankName = 'Unknown';
 		}
 		$label = '2-'.$row1->rankid.'-'.$rankName.'-'.$row1->sciname;
-		if($row1->tid == $targetId){
+		if((int)$row1->tid === $targetId){
 			$sciName = '<b>'.$row1->sciname.'</b>';
 		}
 		else{
@@ -120,11 +120,11 @@ else{
 		else{
 			$sciName = $row2->sciname;
 		}
-		if($row2->tid == $targetId){
+		if((int)$row2->tid === $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = "<span style='font-size:75%;'>".$rankName.'</span> '.$sciName.($displayAuthor?' '.$row2->author:'');
-		if($row2->tid == $taxId){
+		if((int)$row2->tid === $taxId){
 			$retArr['id'] = $row2->tid;
 			$retArr['label'] = $label;
 			$retArr['name'] = $sciName;
@@ -190,7 +190,7 @@ else{
 		else{
 			$sciName = $row->sciname;
 		}
-		if($row->tid == $targetId){
+		if((int)$row->tid === $targetId){
 			$sciName = '<b>'.$sciName.'</b>';
 		}
 		$sciName = '['.$sciName.']';
@@ -217,4 +217,4 @@ usort($childArr,'cmp');
 
 $retArr['children'] = $childArr;
 	
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);
