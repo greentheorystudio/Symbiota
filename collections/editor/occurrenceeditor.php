@@ -6,13 +6,14 @@ include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST) && $_REQUEST['occindex'] !== '' ?(int)$_REQUEST['occindex']:0;
+$occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:null;
 $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
@@ -317,7 +318,7 @@ if($GLOBALS['SYMB_UID']){
     if($ouid){
         $occManager->setQueryVariables(array('ouid' => $ouid));
     }
-    elseif($occIndex !== 0){
+    elseif($occIndex !== null){
         $occManager->setQueryVariables();
         if($action === 'Delete Occurrence'){
             $qryCnt = $occManager->getQueryRecordCount();
@@ -330,7 +331,7 @@ if($GLOBALS['SYMB_UID']){
             }
             else{
                 unset($_SESSION['editorquery']);
-                $occIndex = false;
+                $occIndex = null;
             }
         }
         elseif($action === 'Save Edits'){
@@ -512,7 +513,7 @@ else{
     <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
 </head>
 <body>
 <div id="innertext">
@@ -1458,7 +1459,7 @@ else{
                                                         ?>
                                                     </select>
                                                     <?php
-                                                    if($occIndex !== false){
+                                                    if($occIndex !== null){
                                                         ?>
                                                         <input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
                                                         <?php

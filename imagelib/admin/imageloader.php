@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageImport.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_POST)?$_POST['ulfilename']: '';

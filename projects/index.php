@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
 $editMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;

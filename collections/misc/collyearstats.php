@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
@@ -30,6 +31,9 @@ elseif(strpos($collId, ',') !== false){
 if($collIdArr){
 	$dateArr = $collManager->getYearStatsHeaderArr($months);
 	$statArr = $collManager->getYearStatsDataArr(implode(',',$collIdArr),$days);
+}
+else{
+    $collId = '';
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

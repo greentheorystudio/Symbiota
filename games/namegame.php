@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $clName = (array_key_exists('listname',$_REQUEST)?$_REQUEST['listname']: '');
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
