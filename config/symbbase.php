@@ -1,7 +1,13 @@
 <?php
 include_once(__DIR__ . '/../classes/Encryption.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
+Sanitizer::validateRequestPath();
 ini_set('session.gc_maxlifetime',3600);
+ini_set('session.cookie_httponly',1);
+if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)){
+    ini_set('session.cookie_secure',1);
+}
 session_start();
 
 if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
@@ -15,7 +21,7 @@ $GLOBALS['PARAMS_ARR'] = array();
 $GLOBALS['USER_RIGHTS'] = array();
 if(!isset($_SESSION['userparams'])){
     if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true, 512, JSON_THROW_ON_ERROR);
         if($tokenArr){
             $pHandler = new ProfileManager();
             if($pHandler->setUserName($tokenArr[0])){
@@ -31,7 +37,7 @@ if(!isset($_SESSION['userparams'])){
     }
 
     if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true, 512, JSON_THROW_ON_ERROR);
         if($tokenArr){
             $pHandler = new ProfileManager();
             $uid = $pHandler->getUid($tokenArr[0]);

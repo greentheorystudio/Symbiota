@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $hPrefix = $_POST['lhprefix'];
 $hMid = (int)$_POST['lhmid'];
 $hSuffix = $_POST['lhsuffix'];
@@ -12,9 +13,9 @@ $occIdArr = $_POST['occid'];
 $rowsPerPage = (int)$_POST['rpp'];
 $speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
 $showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
-$useBarcode = array_key_exists('bc',$_POST)?$_POST['bc']:0;
-$useSymbBarcode = array_key_exists('symbbc',$_POST)?$_POST['symbbc']:0;
-$barcodeOnly = array_key_exists('bconly',$_POST)?$_POST['bconly']:0;
+$useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
+$useSymbBarcode = array_key_exists('symbbc',$_POST)?(int)$_POST['symbbc']:0;
+$barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $labelManager = new OccurrenceLabel();

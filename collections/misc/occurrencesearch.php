@@ -2,14 +2,15 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$targetId = $_REQUEST['targetid'];
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$action = array_key_exists('action',$_POST)?$_POST['action']:'';
-$catalogNumber = array_key_exists('catalognumber',$_POST)?$_POST['catalognumber']:'';
-$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST)?$_POST['othercatalognumbers']:'';
-$recordedBy = array_key_exists('recordedby',$_POST)?$_POST['recordedby']:'';
-$recordNumber = array_key_exists('recordnumber',$_POST)?$_POST['recordnumber']:'';
+$targetId = (int)$_REQUEST['targetid'];
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
+$catalogNumber = array_key_exists('catalognumber',$_POST)?htmlspecialchars($_POST['catalognumber']):'';
+$otherCatalogNumbers = array_key_exists('othercatalognumbers',$_POST)?htmlspecialchars($_POST['othercatalognumbers']):'';
+$recordedBy = array_key_exists('recordedby',$_POST)?htmlspecialchars($_POST['recordedby']):'';
+$recordNumber = array_key_exists('recordnumber',$_POST)?htmlspecialchars($_POST['recordnumber']):'';
 
 $collEditorArr = array();
 if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){

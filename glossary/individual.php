@@ -2,9 +2,10 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
-$glimgId = array_key_exists('glimgid',$_REQUEST)?$_REQUEST['glimgid']:0;
+$glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
+$glimgId = array_key_exists('glimgid',$_REQUEST)?(int)$_REQUEST['glimgid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $isEditor = false;
@@ -16,6 +17,8 @@ $glosManager = new GlossaryManager();
 $termArr = array();
 $termImgArr = array();
 $redirectStr = '';
+$synonymArr = array();
+
 if($glossId){
 	$glosManager->setGlossId($glossId);
 	$termArr = $glosManager->getTermArr();
@@ -157,7 +160,7 @@ if($glossId){
 							}
 							if($termArr['resourceurl']){
 								$resource = '';
-								if(strpos($termArr['resourceurl'], 'http') === 0 || strpos($termArr['resourceurl'], 'www.') === 0){
+								if(strncmp($termArr['resourceurl'], 'http', 4) === 0 || strncmp($termArr['resourceurl'], 'www.', 4) === 0){
 									$resource = "<a href='".$termArr['resourceurl']."' target='_blank'>".wordwrap($termArr['resourceurl'],($termImgArr?37:70),'<br />\n',true). '</a>';
 								}
 								else{
@@ -200,7 +203,7 @@ if($glossId){
 						<?php
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
-							if(strpos($imgUrl, '/') === 0){
+							if(strncmp($imgUrl, '/', 1) === 0){
 								if($GLOBALS['IMAGE_DOMAIN']){
 									$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
 								}

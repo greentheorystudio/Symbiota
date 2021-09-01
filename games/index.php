@@ -2,13 +2,13 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GamesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
 
 $gameManager = new GamesManager();
 $clArr = $gameManager->getChecklistArr($pid);
-
- ?>
+?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Games</title>

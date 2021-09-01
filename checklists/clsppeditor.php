@@ -2,11 +2,12 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/VoucherManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']: '';
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
-$tabIndex = array_key_exists('tabindex',$_POST)?$_POST['tabindex']:0;
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']: '';
+$tabIndex = array_key_exists('tabindex',$_POST)?(int)$_POST['tabindex']:0;
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']): '';
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) && in_array($clid, $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){

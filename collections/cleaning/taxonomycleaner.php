@@ -1,19 +1,21 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/cleaning/taxonomycleaner.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):0;
 $autoClean = array_key_exists('autoclean',$_POST)?(int)$_POST['autoclean']:0;
 $targetKingdom = array_key_exists('targetkingdom',$_POST)?(int)$_POST['targetkingdom']:0;
-$taxResource = array_key_exists('taxresource',$_POST)?$_POST['taxresource']:'';
+$taxResource = array_key_exists('taxresource',$_POST)?htmlspecialchars($_POST['taxresource']):'';
 $startIndex = array_key_exists('startindex',$_POST)?$_POST['startindex']:'';
-$limit = array_key_exists('limit',$_POST)?$_POST['limit']:20;
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$limit = array_key_exists('limit',$_POST)?(int)$_POST['limit']:20;
+$action = array_key_exists('submitaction',$_POST)?htmlspecialchars($_POST['submitaction']):'';
 
 $cleanManager = new TaxonomyCleaner();
 if(is_array($collid)) {

@@ -2,14 +2,15 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $recordedBy = array_key_exists('recordedby',$_REQUEST)?trim(urldecode($_REQUEST['recordedby'])):'';
 $recordNumber = array_key_exists('recordnumber',$_REQUEST)?trim($_REQUEST['recordnumber']):'';
 $eventDate = array_key_exists('eventdate',$_REQUEST)?trim($_REQUEST['eventdate']):'';
 $catNum = array_key_exists('catnum',$_POST)?trim($_POST['catnum']):'';
-$queryOccid = array_key_exists('occid',$_POST)?$_POST['occid']:'';
-$currentOccid = array_key_exists('curoccid',$_REQUEST)?$_REQUEST['curoccid']:'';
-$dupeOccid = array_key_exists('dupeoccid',$_POST)?$_POST['dupeoccid']:'';
+$queryOccid = array_key_exists('occid',$_POST)?(int)$_POST['occid']:0;
+$currentOccid = array_key_exists('curoccid',$_REQUEST)?(int)$_REQUEST['curoccid']:0;
+$dupeOccid = array_key_exists('dupeoccid',$_POST)?(int)$_POST['dupeoccid']:0;
 $dupeTitle = array_key_exists('dupetitle',$_POST)?$_POST['dupetitle']:'';
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 

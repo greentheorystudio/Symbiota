@@ -1,17 +1,18 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyEditorManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Cache-control: private; Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../ident/tools/editor.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
 $charValue = array_key_exists('char',$_REQUEST)?$_REQUEST['char']: '';
 $childrenStr = array_key_exists('children',$_REQUEST)?$_REQUEST['children']: '';
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 
 $editorManager = new KeyEditorManager();
 
@@ -28,7 +29,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS'])
 	$isEditor = true;
 }
 
-if($isEditor && $action && $action === 'Submit Changes') {
+if($isEditor && $action === 'Submit Changes') {
     $addArr = $_POST['add'] ?? null;
     $removeArr = $_POST['remove'] ?? null;
     $editorManager->processTaxa($addArr,$removeArr);

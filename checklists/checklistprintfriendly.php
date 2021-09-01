@@ -2,22 +2,26 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
-$proj = array_key_exists('proj',$_REQUEST)?$_REQUEST['proj']: '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']: '';
-$showAuthors = array_key_exists('showauthors',$_REQUEST)?$_REQUEST['showauthors']:0;
-$showCommon = array_key_exists('showcommon',$_REQUEST)?$_REQUEST['showcommon']:0;
-$showImages = array_key_exists('showimages',$_REQUEST)?$_REQUEST['showimages']:0;
-$showVouchers = array_key_exists('showvouchers',$_REQUEST)?$_REQUEST['showvouchers']:0;
-$searchCommon = array_key_exists('searchcommon',$_REQUEST)?$_REQUEST['searchcommon']:0;
-$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?$_REQUEST['searchsynonyms']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
+$proj = array_key_exists('proj',$_REQUEST)?htmlspecialchars($_REQUEST['proj']): '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
+$showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
+$showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
+$showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;
+$showVouchers = array_key_exists('showvouchers',$_REQUEST)?(int)$_REQUEST['showvouchers']:0;
+$searchCommon = array_key_exists('searchcommon',$_REQUEST)?(int)$_REQUEST['searchcommon']:0;
+$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?(int)$_REQUEST['searchsynonyms']:0;
 
 $clManager = new ChecklistManager();
+
+$taxaArray = array();
+
 if($clValue){
     $clManager->setClValue($clValue);
 }
@@ -127,7 +131,7 @@ if($clValue || $dynClid){
 								echo "<div class='tnimg' style='".($imgSrc? '' : 'border:1px solid black;')."'>";
 								$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clManager->getClid();
 								if($imgSrc){
-									$imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgSrc, 'http') !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+									$imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
 									echo "<img src='".$imgSrc."' style='height:100%;' />";
 								}
 								else{

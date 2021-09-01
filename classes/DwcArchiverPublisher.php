@@ -110,10 +110,10 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$itemTitleElem = $newDoc->createElement('title');
 			$itemTitleElem->appendChild($newDoc->createTextNode($title));
 			$itemElem->appendChild($itemTitleElem);
-			if(strpos($cArr['icon'], 'images/collicons/') === 0){
+			if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
 				$imgLink = $urlPathPrefix.$cArr['icon'];
 			}
-			elseif(strpos($cArr['icon'], '/') === 0){
+			elseif(strncmp($cArr['icon'], '/', 1) === 0){
 				$imgLink = $localDomain.$cArr['icon'];
 			}
 			else{
@@ -152,7 +152,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
-				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance: '.$this->conn->error);
+				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance.');
 			}
 		}
 
@@ -179,7 +179,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$this->logOrEcho("Done!!\n");
 	}
 
-	public function getDwcaItems($collid = 0): array
+	public function getDwcaItems($collid = null): array
 	{
 		$retArr = array();
 		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
@@ -249,7 +249,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		while($r = $rs->fetch_object()){
 			$domainName = parse_url($r->portalDomain, PHP_URL_HOST);
 			if($domainName){
-                if(strpos($domainName, 'www.') === 0) {
+                if(strncmp($domainName, 'www.', 4) === 0) {
                     $domainName = substr($domainName, 4);
                 }
                 if(is_string($domainName) || is_int($domainName)){
@@ -269,7 +269,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		return $retArr;
 	}
 
-	public function getCategoryName($catID){
+	public function getCategoryName($catID): string
+    {
 		$retStr = '';
 		if($catID){
 			$sql = 'SELECT ccpk, category FROM omcollcategories WHERE (ccpk = '.$catID.')';
@@ -299,7 +300,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 
 	public function humanFileSize($filePath): string
 	{
-		if(strpos($filePath, 'http') === 0) {
+		if(strncmp($filePath, 'http', 4) === 0) {
 			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
 			if($x){
                 if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {

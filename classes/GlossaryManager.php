@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class GlossaryManager{
 
@@ -60,19 +61,19 @@ class GlossaryManager{
 		}
 	}
 	
-	public function getTermSearch($keyword,$language,$tid,$deepSearch = 1): array
+	public function getTermSearch($keyword,$language,$tid,$deepSearch): array
 	{
 		$retArr = array();
 		$sqlWhere = '';
 		if($keyword){
-			$sqlWhere .= 'AND (g.term LIKE "'.$this->cleanInStr($keyword).'%" OR g.term LIKE "% '.$this->cleanInStr($keyword).'%" ';
+			$sqlWhere .= 'AND (g.term LIKE "'.Sanitizer::cleanInStr($keyword).'%" OR g.term LIKE "% '.Sanitizer::cleanInStr($keyword).'%" ';
 			if($deepSearch) {
-				$sqlWhere .= 'OR g.definition LIKE "%' . $this->cleanInStr($keyword) . '%"';
+				$sqlWhere .= 'OR g.definition LIKE "%' . Sanitizer::cleanInStr($keyword) . '%"';
 			}
 			$sqlWhere .= ') ';
 		}
 		if($language){
-			$sqlWhere .= 'AND (g.`language` = "'.$this->cleanInStr($language).'") ';
+			$sqlWhere .= 'AND (g.`language` = "'.Sanitizer::cleanInStr($language).'") ';
 		}
 		if(is_numeric($tid)){
 			$sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.' OR (t.tid IS NULL AND t2.tid IS NULL)) ';
@@ -302,14 +303,14 @@ class GlossaryManager{
 	public function createTerm($pArr): bool
 	{
 		$status = true;
-		$term = $this->cleanInStr($pArr['term']);
-		$def = $this->cleanInStr($pArr['definition']);
-		$lang = $this->cleanInStr($pArr['language']);
-		$source = $this->cleanInStr($pArr['source']);
-		$author = $this->cleanInStr($pArr['author']);
-		$translator = $this->cleanInStr($pArr['translator']);
-		$notes = $this->cleanInStr($pArr['notes']);
-		$resourceUrl = $this->cleanInStr($pArr['resourceurl']);
+		$term = Sanitizer::cleanInStr($pArr['term']);
+		$def = Sanitizer::cleanInStr($pArr['definition']);
+		$lang = Sanitizer::cleanInStr($pArr['language']);
+		$source = Sanitizer::cleanInStr($pArr['source']);
+		$author = Sanitizer::cleanInStr($pArr['author']);
+		$translator = Sanitizer::cleanInStr($pArr['translator']);
+		$notes = Sanitizer::cleanInStr($pArr['notes']);
+		$resourceUrl = Sanitizer::cleanInStr($pArr['resourceurl']);
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,author,translator,notes,resourceurl,uid) '.
 			'VALUES("'.$term.'",'.($def?'"'.$def.'"':'NULL').','.($lang?'"'.$lang.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.($author?'"'.$author.'"':'NULL').','.($translator?'"'.$translator.'"':'NULL').','.
@@ -330,14 +331,14 @@ class GlossaryManager{
 						'VALUES('.$glossGrpId.','.$this->glossId.',"'.$pArr['relation'].'") ';
 					//echo $sql1; exit;
 					if(!$this->conn->query($sql1)){
-						$this->errorStr = 'ERROR creating new term group link: '.$this->conn->error;
+						$this->errorStr = 'ERROR creating new term group link.';
 					}
 				}
 			}
 			if((isset($pArr['tid']) && $pArr['tid']) || (isset($pArr['taxagroup']) && $pArr['taxagroup'])){
 				$tid = $pArr['tid'];
 				if($tid){
-					$taxon = $this->cleanInStr($pArr['taxagroup']);
+					$taxon = Sanitizer::cleanInStr($pArr['taxagroup']);
 					if(preg_match('/^(\D+)\s\(/', $taxon, $m)){
 						$taxon = $m[1];
 					}
@@ -352,13 +353,13 @@ class GlossaryManager{
 					$sql2 = 'INSERT INTO glossarytaxalink(glossid,tid) '.
 						'VALUES('.$glossGrpId.','.$tid.') ';
 					if(!$this->conn->query($sql2)){
-						$this->errorStr = 'ERROR creating new term taxa link: '.$this->conn->error;
+						$this->errorStr = 'ERROR creating new term taxa link.';
 					}
 				}
 			}
 		}
 		else{
-			$this->errorStr = 'ERROR creating new term: '.$this->conn->error;
+			$this->errorStr = 'ERROR creating new term.';
 			$status = false;
 		}
 		return $status;
@@ -370,14 +371,14 @@ class GlossaryManager{
 		if(!is_numeric($pArr['glossid'])) {
 			return false;
 		}
-		$term = $this->cleanInStr($pArr['term']);
-		$lang = $this->cleanInStr($pArr['language']);
-		$def = $this->cleanInStr($pArr['definition']);
-		$source = $this->cleanInStr($pArr['source']);
-		$translator = $this->cleanInStr($pArr['translator']);
-		$author = $this->cleanInStr($pArr['author']);
-		$notes = $this->cleanInStr($pArr['notes']);
-		$resourceUrl = $this->cleanInStr($pArr['resourceurl']);
+		$term = Sanitizer::cleanInStr($pArr['term']);
+		$lang = Sanitizer::cleanInStr($pArr['language']);
+		$def = Sanitizer::cleanInStr($pArr['definition']);
+		$source = Sanitizer::cleanInStr($pArr['source']);
+		$translator = Sanitizer::cleanInStr($pArr['translator']);
+		$author = Sanitizer::cleanInStr($pArr['author']);
+		$notes = Sanitizer::cleanInStr($pArr['notes']);
+		$resourceUrl = Sanitizer::cleanInStr($pArr['resourceurl']);
 		$sql = 'UPDATE glossary SET term = "'.$term.'",language = "'.$lang.'",definition = '.($def?'"'.$def.'"':'NULL').
 			',source = '.($source?'"'.$source.'"':'NULL').
 			',translator = '.($translator?'"'.$translator.'"':'NULL').
@@ -387,7 +388,7 @@ class GlossaryManager{
 			' WHERE (glossid = '.$pArr['glossid'].')';
 		//echo $sql; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR editing term: '.$this->conn->error;
+			$this->errorStr = 'ERROR editing term.';
 			$status = false;
 		}
 		return $status;
@@ -395,24 +396,26 @@ class GlossaryManager{
 
 	public function addGroupTaxaLink($tid): bool
 	{
-		if(is_numeric($tid)){
+		$returnVal = false;
+	    if(is_numeric($tid)){
 			$sql = 'INSERT INTO glossarytaxalink(glossid,tid) '.
 				'VALUES('.$this->glossGroupId.','.$tid.') ';
 			//echo $sql; exit;
-			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR inserting glossaryTaxaLink: '.$this->conn->error;
-				return false;
+			if($this->conn->query($sql)){
+                $returnVal = true;
 			}
-			return true;
+			else{
+                $this->errorStr = 'ERROR inserting glossaryTaxaLink.';
+            }
 		}
-		return false;
+		return $returnVal;
 	}
 
 	public function deleteGroupTaxaLink($tidStr): bool
 	{
 		$sql = 'DELETE FROM glossarytaxalink WHERE glossid IN('.$this->glossId.','.$this->glossGroupId.') AND tid IN('.$tidStr.') ';
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting glossarytaxalink record: '.$this->conn->error;
+			$this->errorStr = 'ERROR deleting glossarytaxalink record.';
 			return false;
 		}
 		return true;
@@ -461,14 +464,14 @@ class GlossaryManager{
 		return $status;
 	}
 
-	public function removeRelation($gltLinkId, $relGlossId = ''): bool
+	public function removeRelation($gltLinkId, $relGlossId = null): bool
 	{
 		if(is_numeric($gltLinkId)){
 			$status = true;
 			$sql1 = 'DELETE FROM glossarytermlink WHERE gltlinkid = '.$gltLinkId;
 			//echo $sql1.'<br/>';
 			if(!$this->conn->query($sql1)){
-				$this->errorStr = 'ERROR removing term relationship: '.$this->conn->error;
+				$this->errorStr = 'ERROR removing term relationship.';
 				$status = false;
 			}
 			if($status && $relGlossId && is_numeric($relGlossId)){
@@ -493,7 +496,7 @@ class GlossaryManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'glossid' && $k !== 'glimgid' && $k !== 'glossgrpid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE glossaryimages SET '.substr($sql,1).' WHERE (glimgid = '.$glimgId.')';
@@ -502,8 +505,7 @@ class GlossaryManager{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of image data failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of image data failed.';
 			}
 		}
 		return $statusStr;
@@ -515,13 +517,13 @@ class GlossaryManager{
 		$sql = 'DELETE FROM glossary WHERE (glossid = '.$this->glossId.')';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$this->errorStr = 'ERROR deleting term: '.$this->conn->error;
+			$this->errorStr = 'ERROR deleting term.';
 			$status = false;
 		}
 		return $status;
 	}
 
-	public function getTaxonSources($tidStr = ''): array
+	public function getTaxonSources($tidStr = null): array
 	{
 		$retArr = array();
 		if($tidStr && preg_match('/[^,\d]+/', $tidStr)) {
@@ -558,16 +560,16 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = $this->cleanInStr($_REQUEST['contributorTerm']);
-			$images = $this->cleanInStr($_REQUEST['contributorImage']);
-			$translator = $this->cleanInStr($_REQUEST['translator']);
-			$sources = $this->cleanInStr($_REQUEST['additionalSources']);
+			$terms = Sanitizer::cleanInStr($_REQUEST['contributorTerm']);
+			$images = Sanitizer::cleanInStr($_REQUEST['contributorImage']);
+			$translator = Sanitizer::cleanInStr($_REQUEST['translator']);
+			$sources = Sanitizer::cleanInStr($_REQUEST['additionalSources']);
 			$sql = 'INSERT INTO glossarysources(tid,contributorTerm,contributorImage,translator,additionalSources) '.
 				'VALUES('.$pArr['tid'].','.($terms?'"'.$terms.'"':'NULL').','.($images?'"'.$images.'"':'NULL').','.
 				($translator?'"'.$translator.'"':'NULL').','.($sources?'"'.$sources.'"':'NULL').')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR adding source: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding source.';
 				$status = false;
 			}
 		}
@@ -578,17 +580,17 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = $this->cleanInStr($_REQUEST['contributorTerm']);
-			$images = $this->cleanInStr($_REQUEST['contributorImage']);
-			$translator = $this->cleanInStr($_REQUEST['translator']);
-			$sources = $this->cleanInStr($_REQUEST['additionalSources']);
+			$terms = Sanitizer::cleanInStr($_REQUEST['contributorTerm']);
+			$images = Sanitizer::cleanInStr($_REQUEST['contributorImage']);
+			$translator = Sanitizer::cleanInStr($_REQUEST['translator']);
+			$sources = Sanitizer::cleanInStr($_REQUEST['additionalSources']);
 			$sql = 'UPDATE glossarysources '.
 				'SET contributorTerm = '.($terms?'"'.$terms.'"':'NULL').', contributorImage = '.($images?'"'.$images.'"':'NULL').', '.
 				'translator = '.($translator?'"'.$translator.'"':'NULL').', additionalSources = '.($sources?'"'.$sources.'"':'NULL').' '.
 				'WHERE (tid = '.$pArr['tid'].')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR editing source: '.$this->conn->error;
+				$this->errorStr = 'ERROR editing source.';
 				$status = false;
 			}
 		}
@@ -602,7 +604,7 @@ class GlossaryManager{
 			$sql = 'DELETE FROM glossarysources WHERE (tid = '.$tid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$this->errorStr = 'ERROR deleting source: '.$this->conn->error;
+				$this->errorStr = 'ERROR deleting source.';
 				$status = false;
 			}
 		}
@@ -627,11 +629,11 @@ class GlossaryManager{
 		if($this->conn->query($sql)){
 			$imgUrl2 = '';
 			$domain = $this->getServerDomain();
-			if(stripos($imgUrl,$domain) == 0){
+			if(stripos($imgUrl,$domain) === 0){
 				$imgUrl2 = $imgUrl;
 				$imgUrl = substr($imgUrl,strlen($domain));
 			}
-			elseif(stripos($imgUrl,$this->imageRootUrl) == 0){
+			elseif(stripos($imgUrl,$this->imageRootUrl) === 0){
 				$imgUrl2 = $domain.$imgUrl;
 			}
 			
@@ -642,23 +644,23 @@ class GlossaryManager{
 			$rs = $this->conn->query($sql);
 			if(!$rs->num_rows){
 				$imgDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgUrl);
-				if((strpos($imgDelPath, 'http') !== 0) && !unlink($imgDelPath)) {
+				if((strncmp($imgDelPath, 'http', 4) !== 0) && !unlink($imgDelPath)) {
 					$this->errArr[] = 'WARNING: Deleted records from database successfully but FAILED to delete image from server (path: '.$imgDelPath.')';
 				}
 				
 				if($imgTnUrl){
-					if(stripos($imgTnUrl,$domain) == 0){
+					if(stripos($imgTnUrl,$domain) === 0){
 						$imgTnUrl = substr($imgTnUrl,strlen($domain));
 					}				
 					$imgTnDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgTnUrl);
-					if(file_exists($imgTnDelPath) && strpos($imgTnDelPath, 'http') !== 0) {
+					if(file_exists($imgTnDelPath) && strncmp($imgTnDelPath, 'http', 4) !== 0) {
 						unlink($imgTnDelPath);
 					}
 				}
 			}
 		}
 		else{
-			$status = 'deleteImage: ' .$this->conn->error."\nSQL: ".$sql;
+			$status = 'ERROR: Deleting Image.';
 		}
 		return $status;
 	}
@@ -668,16 +670,11 @@ class GlossaryManager{
 		ini_set('max_input_time',120);
 		$this->setTargetPath();
 		
-		if($_REQUEST['imgurl']){
-			if(!$this->copyImageFromUrl($_REQUEST['imgurl'])) {
-				return false;
-			}
-		}
-		else if(!$this->loadImage()) {
-			return false;
-		}
+		if($_REQUEST['imgurl'] && $this->copyImageFromUrl($_REQUEST['imgurl']) && $this->loadImage()) {
+            return $this->processImage();
+        }
 
-		return $this->processImage();
+		return false;
 	}
 	
 	public function processImage(){
@@ -698,7 +695,7 @@ class GlossaryManager{
 		$imgLgUrl = '';
 		if($this->mapLargeImg){
 			if($this->sourceWidth > ($this->webPixWidth*1.2) || $fileSize > $this->webFileSizeLimit){
-				if(strpos($this->sourcePath, 'http://') == 0 || strpos($this->sourcePath, 'https://') == 0) {
+				if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
 				else if($this->sourceWidth < ($this->lgPixWidth*1.2)){
@@ -714,7 +711,7 @@ class GlossaryManager{
 
 		$imgWebUrl = '';
 		if($this->sourceWidth < ($this->webPixWidth*1.2) && $fileSize < $this->webFileSizeLimit){
-			if(stripos($this->sourcePath, 'http://') == 0 || stripos($this->sourcePath, 'https://') == 0){
+			if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
 				if(copy($this->sourcePath, $this->targetPath.$this->imgName.$this->imgExt)){
 					$imgWebUrl = $this->imgName.$this->imgExt;
 				}
@@ -737,36 +734,43 @@ class GlossaryManager{
 	
 	public function copyImageFromUrl($sourceUri): bool
 	{
-		if(!$sourceUri){
+		$returnVal = false;
+	    if($sourceUri) {
+            if($this->uriExists($sourceUri)) {
+                if($this->targetPath) {
+                    if(file_exists($this->targetPath)) {
+                        $fileName = $this->cleanFileName($sourceUri);
+                        if(copy($sourceUri, $this->targetPath.$fileName.$this->imgExt)){
+                            $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
+                            $this->imgName = $fileName;
+                            $returnVal = true;
+                        }
+                        else{
+                            $this->errArr[] = 'ERROR: Unable to copy image to target ('.$this->targetPath.$fileName.$this->imgExt.')';
+                        }
+                    }
+                    else {
+                        $this->errArr[] = 'ERROR: Image target file ('.$this->targetPath.') does not exist in copyImageFromUrl method';
+                    }
+                }
+                else {
+                    $this->errArr[] = 'ERROR: Image target url NULL in copyImageFromUrl method';
+                }
+            }
+            else {
+                $this->errArr[] = 'ERROR: Image source file ('.$sourceUri.') does not exist in copyImageFromUrl method';
+            }
+        }
+	    else {
 			$this->errArr[] = 'ERROR: Image source uri NULL in copyImageFromUrl method';
-			return false;
-		}
-		if(!$this->uriExists($sourceUri)){
-			$this->errArr[] = 'ERROR: Image source file ('.$sourceUri.') does not exist in copyImageFromUrl method';
-			return false;
-		}
-		if(!$this->targetPath){
-			$this->errArr[] = 'ERROR: Image target url NULL in copyImageFromUrl method';
-			return false;
-		}
-		if(!file_exists($this->targetPath)){
-			$this->errArr[] = 'ERROR: Image target file ('.$this->targetPath.') does not exist in copyImageFromUrl method';
-			return false;
-		}
-		$fileName = $this->cleanFileName($sourceUri);
-		if(copy($sourceUri, $this->targetPath.$fileName.$this->imgExt)){
-			$this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
-			$this->imgName = $fileName;
-			return true;
-		}
-		$this->errArr[] = 'ERROR: Unable to copy image to target ('.$this->targetPath.$fileName.$this->imgExt.')';
-		return false;
+        }
+	    return $returnVal;
 	}
 	
 	public function cleanFileName($fPath){
 		$fName = $fPath;
 		$imgInfo = null;
-		if(stripos($fPath, 'http://') == 0 || stripos($fPath, 'https://') == 0){
+		if(strncasecmp($fPath, 'http://', 7) === 0 || strncasecmp($fPath, 'https://', 8) === 0){
 			$imgInfo = getimagesize(str_replace(' ', '%20', $fPath));
 			[$this->sourceWidth, $this->sourceHeight] = $imgInfo;
 		
@@ -831,19 +835,19 @@ class GlossaryManager{
 			return 'ERROR: web url is null ';
 		}
 		$urlBase = $this->getUrlBase();
-		if(stripos($imgWebUrl, 'http://') !== 0 && stripos($imgWebUrl, 'https://') !== 0){
+		if(strncasecmp($imgWebUrl, 'http://', 7) !== 0 && strncasecmp($imgWebUrl, 'https://', 8) !== 0){
 			$imgWebUrl = $urlBase.$imgWebUrl;
 		}
-		if($imgTnUrl && stripos($imgTnUrl, 'http://') !== 0 && stripos($imgTnUrl, 'https://') !== 0){
+		if($imgTnUrl && strncasecmp($imgTnUrl, 'http://', 7) !== 0 && strncasecmp($imgTnUrl, 'https://', 8) !== 0){
 			$imgTnUrl = $urlBase.$imgTnUrl;
 		}
 		$glossId = $_REQUEST['glossid'];
 		$status = 'File added successfully!';
 		$sql = 'INSERT INTO glossaryimages(glossid,url,thumbnailurl,structures,notes,createdBy,uid) '.
-			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.$this->cleanInStr($_REQUEST['structures']).'","'.$this->cleanInStr($_REQUEST['notes']).'","'.$this->cleanInStr($_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
+			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.Sanitizer::cleanInStr($_REQUEST['structures']).'","'.Sanitizer::cleanInStr($_REQUEST['notes']).'","'.Sanitizer::cleanInStr($_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
-			$status = 'ERROR Loading Data: ' .$this->conn->error. '<br/>SQL: ' .$sql;
+			$status = 'ERROR Loading Data.';
 		}
 		return $status;
 	}
@@ -851,11 +855,11 @@ class GlossaryManager{
 	public function uriExists($url){
 		$exists = false;
 		$localUrl = '';
-		if(strpos($url, '/') == 0){
+		if(strncmp($url, '/', 1) === 0){
 			if($GLOBALS['IMAGE_DOMAIN']){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
-			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) == 0){
+			elseif($GLOBALS['IMAGE_ROOT_URL'] && strpos($url,$GLOBALS['IMAGE_ROOT_URL']) === 0){
 				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
@@ -889,7 +893,7 @@ class GlossaryManager{
 	    return $exists;
 	}
 	
-	public function createNewImage($subExt, $targetWidth, $qualityRating = 0): bool
+	public function createNewImage($subExt, $targetWidth, $qualityRating = null): bool
 	{
 		$status = false;
 		if($this->sourcePath && $this->uriExists($this->sourcePath)){
@@ -910,7 +914,7 @@ class GlossaryManager{
 		return $status;
 	}
 	
-	private function createNewImageImagick($subExt,$newWidth,$qualityRating = 0): bool
+	private function createNewImageImagick($subExt,$newWidth,$qualityRating = null): bool
 	{
 		$targetPath = $this->targetPath.$this->imgName.$subExt.$this->imgExt;
 		if($newWidth < 300){
@@ -925,7 +929,7 @@ class GlossaryManager{
 		return false;
 	}
 
-	private function createNewImageGD($subExt, $newWidth, $qualityRating = 0): bool
+	private function createNewImageGD($subExt, $newWidth, $qualityRating = null): bool
 	{
 		$status = false;
 		ini_set('memory_limit','512M');
@@ -986,7 +990,7 @@ class GlossaryManager{
 	public function getSourceFileSize(){
 		$fileSize = 0;
 		if($this->sourcePath){
-			if(stripos($this->sourcePath, 'http://') == 0 || stripos($this->sourcePath, 'https://') == 0){
+			if(strncasecmp($this->sourcePath, 'http://', 7) === 0 || strncasecmp($this->sourcePath, 'https://', 8) === 0){
 				$x = array_change_key_case(get_headers($this->sourcePath, 1),CASE_LOWER); 
 				if($x){
                     if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
@@ -1020,7 +1024,7 @@ class GlossaryManager{
 		$this->urlBase = $url;
 	}
 
-	public function getExportArr($language,$taxon,$images,$translations='',$definitions=''): array
+	public function getExportArr($language,$taxon,$images,$translations=null,$definitions=null): array
 	{
 		$retArr = array();
 		$referencesArr = array();
@@ -1045,7 +1049,7 @@ class GlossaryManager{
 				$contributorsArr[] = $r->author;
 			}
 			$retArr[$r->glossid]['term'] = $r->term;
-			if(!$definitions || $definitions !== 'nodef') {
+			if($definitions !== 'nodef') {
 				$retArr[$r->glossid]['definition'] = $r->definition;
 			}
 			if($r->glossgrpid && $r->glossgrpid !== $r->glossid) {
@@ -1208,7 +1212,7 @@ class GlossaryManager{
 		return $retArr;
 	}
 
-	public function getLanguageArr($returnTag = ''){
+	public function getLanguageArr($returnTag = null){
 		$allArr = array();
 		$byTid = array();
 		$sql = 'SELECT DISTINCT g.`language`, IFNULL(t.tid, t2.tid) as tid, l.iso639_1 as code '.
@@ -1408,12 +1412,5 @@ class GlossaryManager{
 			$domain .= ':' . $_SERVER['SERVER_PORT'];
 		}
 		return $domain;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

@@ -14,7 +14,9 @@
                     echo '<option value="'.$datasetID.'">'.$datasetName.'</option>';
                 }
             }
-            else echo '<option value="">no existing datasets available</option>';
+            else{
+                echo '<option value="">no existing datasets available</option>';
+            }
             ?>
             <option value="">----------------------------------</option>
             <option value="--newDataset">Create New Dataset</option>

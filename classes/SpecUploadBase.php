@@ -3,6 +3,7 @@ include_once(__DIR__ . '/SpecUpload.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -59,7 +60,7 @@ class SpecUploadBase extends SpecUpload{
         return $dbpk;
     }
 
-    public function loadFieldMap($autoBuildFieldMap = false): void
+    public function loadFieldMap($autoBuildFieldMap = null): void
     {
         if($this->uploadType === $this->DIGIRUPLOAD) {
             $autoBuildFieldMap = true;
@@ -72,13 +73,13 @@ class SpecUploadBase extends SpecUpload{
                 while($row = $rs->fetch_object()){
                     $sourceField = $row->sourcefield;
                     $symbField = $row->symbspecfield;
-                    if(strpos($symbField, 'ID-') === 0){
+                    if(strncmp($symbField, 'ID-', 3) === 0){
                         $index = substr($symbField,3);
                         if(is_string($index) || is_int($index)){
                             $this->identFieldMap[$index]['field'] = $sourceField;
                         }
                     }
-                    elseif(strpos($symbField, 'IM-') === 0){
+                    elseif(strncmp($symbField, 'IM-', 3) === 0){
                         $index = substr($symbField,3);
                         if(is_string($index) || is_int($index)){
                             $this->imageFieldMap[$index]['field'] = $sourceField;
@@ -257,7 +258,7 @@ class SpecUploadBase extends SpecUpload{
                 echo '<input type="hidden" name="tf[]" value="'.$translationMap[$fieldName].'" />';
             }
             else{
-                if($this->uploadType === $this->NFNUPLOAD && strpos($fieldName, 'subject_') === 0) {
+                if($this->uploadType === $this->NFNUPLOAD && strncmp($fieldName, 'subject_', 8) === 0) {
                     continue;
                 }
                 $isAutoMapped = false;
@@ -280,7 +281,7 @@ class SpecUploadBase extends SpecUpload{
                 echo "<td>\n";
                 echo "<select name='".$prefix."tf[]' style='background:".(!array_key_exists($fieldName,$sourceSymbArr)&&!$isAutoMapped? 'yellow' : '')."'>";
                 echo "<option value=''>Select Target Field</option>\n";
-                echo "<option value='unmapped'".(isset($sourceSymbArr[$fieldName]) && strpos($sourceSymbArr[$fieldName], 'unmapped') === 0 ? 'SELECTED' : '').">Leave Field Unmapped</option>\n";
+                echo "<option value='unmapped'".(isset($sourceSymbArr[$fieldName]) && strncmp($sourceSymbArr[$fieldName], 'unmapped', 8) === 0 ? 'SELECTED' : '').">Leave Field Unmapped</option>\n";
                 echo "<option value=''>-------------------------</option>\n";
                 if(array_key_exists($fieldName,$sourceSymbArr)){
                     foreach($symbFields as $sField){
@@ -304,7 +305,7 @@ class SpecUploadBase extends SpecUpload{
         echo '</table>';
     }
 
-    public function saveFieldMap($newTitle = ''): string
+    public function saveFieldMap($newTitle = null): string
     {
         $statusStr = '';
         if(!$this->uspid && $newTitle){
@@ -319,14 +320,14 @@ class SpecUploadBase extends SpecUpload{
                 $sourceField = $v['field'];
                 $sql = $sqlInsert.$sqlValues.",'".$k."','".$sourceField."')";
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR saving field map: '.$this->conn->error;
+                    $statusStr = 'ERROR saving field map.';
                 }
             }
             foreach($this->identFieldMap as $k => $v){
                 $sourceField = $v['field'];
                 $sql = $sqlInsert.$sqlValues.",'ID-".$k."','".$sourceField."')";
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR saving identification field map: '.$this->conn->error;
+                    $statusStr = 'ERROR saving identification field map.';
                 }
             }
 
@@ -335,7 +336,7 @@ class SpecUploadBase extends SpecUpload{
                 $sql = $sqlInsert.$sqlValues.",'IM-".$k."','".$sourceField."')";
                 //echo "<div>".$sql."</div>";
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR saving image field map: '.$this->conn->error;
+                    $statusStr = 'ERROR saving image field map.';
                 }
             }
 
@@ -350,7 +351,7 @@ class SpecUploadBase extends SpecUpload{
             $sql = 'DELETE FROM uploadspecmap WHERE (uspid = '.$this->uspid.') ';
             //echo "<div>$sql</div>";
             if(!$this->conn->query($sql)){
-                $statusStr = 'ERROR deleting field map: '.$this->conn->error;
+                $statusStr = 'ERROR deleting field map.';
             }
         }
         return $statusStr;
@@ -428,7 +429,7 @@ class SpecUploadBase extends SpecUpload{
                 }
             }
             else{
-                $this->outputMsg('<li style="margin-left:10px;"><span style="color:red;">ERROR: Stored Procedure failed ('.$this->storedProcedure.'): '.$this->conn->error.'</span></li>');
+                $this->outputMsg('<li style="margin-left:10px;"><span style="color:red;">ERROR: Stored Procedure failed ('.$this->storedProcedure.').</span></li>');
             }
         }
 
@@ -440,7 +441,7 @@ class SpecUploadBase extends SpecUpload{
                     'SET u.occid = o.occid '.
                     'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber IS NOT NULL) AND (o.catalogNumber IS NOT NULL) ';
                 if(!$this->conn->query($sql)){
-                    $this->outputMsg('<li><span style="color:red;">Warning: unable to match on catalog number: '.$this->conn->error.'</span></li>');
+                    $this->outputMsg('<li><span style="color:red;">Warning: unable to match on catalog number.</span></li>');
                 }
             }
             if($this->matchOtherCatalogNumbers){
@@ -448,7 +449,7 @@ class SpecUploadBase extends SpecUpload{
                     'SET u.occid = o.occid '.
                     'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.othercatalogNumbers IS NOT NULL) AND (o.othercatalogNumbers IS NOT NULL) ';
                 if(!$this->conn->query($sql2)){
-                    $this->outputMsg('<li><span style="color:red;">Warning: unable to match on other catalog numbers: '.$this->conn->error.'</span></li>');
+                    $this->outputMsg('<li><span style="color:red;">Warning: unable to match on other catalog numbers.</span></li>');
                 }
             }
         }
@@ -672,7 +673,7 @@ class SpecUploadBase extends SpecUpload{
         if($this->uploadType === $this->NFNUPLOAD){
             $sql = 'DELETE FROM uploadspectemp WHERE (occid IS NULL) AND (collid IN('.$this->collId.'))';
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li style="margin-left:10px"><span style="color:red;">ERROR</span> deleting occurrences ('.$this->conn->error.')</li>');
+                $this->outputMsg('<li style="margin-left:10px"><span style="color:red;">ERROR</span> deleting occurrences.</li>');
             }
         }
         else{
@@ -695,7 +696,7 @@ class SpecUploadBase extends SpecUpload{
                     'GROUP BY dbpk, collid HAVING Count(*)>1 AND collid IN('.$this->collId.')) t2 ON u.dbpk = t2.dbpk '.
                     'WHERE collid IN('.$this->collId.')';
                 if(!$this->conn->query($sql)){
-                    $this->outputMsg('<li style="margin-left:10px"><span style="color:red;">ERROR</span> ('.$this->conn->error.')</li>');
+                    $this->outputMsg('<li style="margin-left:10px"><span style="color:red;">ERROR</span>.</li>');
                 }
             }
         }
@@ -738,7 +739,7 @@ class SpecUploadBase extends SpecUpload{
             'SET '.implode(',',$sqlFragArr).' WHERE (u.collid IN('.$this->collId.'))';
         //echo '<div>'.$sql.'</div>'; exit;
         if(!$this->conn->query($sql)){
-            $this->outputMsg('<li style="margin-left:10px">FAILED! ERROR: '.$this->conn->error.'</li> ');
+            $this->outputMsg('<li style="margin-left:10px">FAILED! ERROR</li> ');
         }
 
         if($this->uploadType !== $this->NFNUPLOAD){
@@ -748,7 +749,7 @@ class SpecUploadBase extends SpecUpload{
                 'WHERE u.occid IS NULL AND u.collid IN('.$this->collId.')';
             //echo '<div>'.$sql.'</div>'; exit;
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li>FAILED! ERROR</li> ');
             }
 
             $this->outputMsg('<li>Linking records in prep for loading determination history and associatedmedia...</li>');
@@ -756,13 +757,13 @@ class SpecUploadBase extends SpecUpload{
                 'SET u.occid = o.occid '.
                 'WHERE (u.occid IS NULL) AND (u.dbpk IS NOT NULL) AND (o.dbpk IS NOT NULL) AND (u.collid IN('.$this->collId.'))';
             if(!$this->conn->query($sqlOcc1)){
-                $this->outputMsg('<li>ERROR updating occid after occurrence insert: '.$this->conn->error.'</li>');
+                $this->outputMsg('<li>ERROR updating occid after occurrence insert</li>');
             }
             $sqlOcc2 = 'UPDATE uploadspectemp u INNER JOIN omoccurrences o ON (u.catalogNumber = o.catalogNumber) AND (u.collid = o.collid) '.
                 'SET u.occid = o.occid '.
                 'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NULL) AND (u.catalogNumber IS NOT NULL) AND (o.catalogNumber IS NOT NULL) ';
             if(!$this->conn->query($sqlOcc2)){
-                $this->outputMsg('<li>ERROR updating occid (2nd step) after occurrence insert: '.$this->conn->error.'</li>');
+                $this->outputMsg('<li>ERROR updating occid (2nd step) after occurrence insert</li>');
             }
 
             $rsTest = $this->conn->query('SHOW COLUMNS FROM uploadspectemp WHERE field = "exsiccatiIdentifier"');
@@ -773,7 +774,7 @@ class SpecUploadBase extends SpecUpload{
                     'WHERE (u.collid IN('.$this->collId.')) AND (u.occid IS NOT NULL) '.
                     'AND (u.exsiccatiIdentifier IS NOT NULL) AND (u.exsiccatinumber IS NOT NULL) AND (e.exsnumber IS NULL)';
                 if(!$this->conn->query($sqlExs2)){
-                    $this->outputMsg('<li>ERROR adding new exsiccati numbers: '.$this->conn->error.'</li>');
+                    $this->outputMsg('<li>ERROR adding new exsiccati numbers</li>');
                 }
                 $sqlExs3 = 'INSERT IGNORE INTO omexsiccatiocclink(omenid,occid) '.
                     'SELECT e.omenid, u.occid '.
@@ -783,7 +784,7 @@ class SpecUploadBase extends SpecUpload{
                     $this->outputMsg('<li>Specimens linked to exsiccati index </li>');
                 }
                 else{
-                    $this->outputMsg('<li>ERROR adding new exsiccati numbers: '.$this->conn->error.'</li>');
+                    $this->outputMsg('<li>ERROR adding new exsiccati numbers</li>');
                 }
             }
             $rsTest->free();
@@ -826,9 +827,9 @@ class SpecUploadBase extends SpecUpload{
             }
             foreach($editArr as $appliedStatus => $eArr){
                 $sql = 'INSERT INTO omoccurrevisions(occid, oldValues, newValues, externalSource, reviewStatus, appliedStatus) '.
-                    'VALUES('.$r['occid'].',"'.$this->cleanInStr(json_encode($eArr['old'])).'","'.$this->cleanInStr(json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
+                    'VALUES('.$r['occid'].',"'.Sanitizer::cleanInStr(json_encode($eArr['old'], JSON_THROW_ON_ERROR)).'","'.Sanitizer::cleanInStr(json_encode($eArr['new'], JSON_THROW_ON_ERROR)).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
                 if(!$this->conn->query($sql)){
-                    $this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision ('.$this->conn->error.')</li>');
+                    $this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision</li>');
                 }
             }
         }
@@ -846,7 +847,7 @@ class SpecUploadBase extends SpecUpload{
                 'SET ud.occid = u.occid '.
                 'WHERE (ud.occid IS NULL) AND (u.occid IS NOT NULL) AND (ud.collid IN('.$this->collId.'))';
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploaddetermtemp: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploaddetermtemp</li> ');
             }
 
             $sqlDel = 'DELETE u.* '.
@@ -868,7 +869,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->conn->query($sqlDel);
             }
             else{
-                $this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li>FAILED! ERROR</li> ');
             }
         }
         $rs->free();
@@ -908,7 +909,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">step 1 of 4... </li>');
             }
             else{
-                $this->outputMsg('<li style="margin-left:20px;">WARNING removing non-jpgs from uploadimagetemp: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING removing non-jpgs from uploadimagetemp</li> ');
             }
 
             $sql = 'UPDATE uploadimagetemp ui INNER JOIN uploadspectemp u ON ui.collid = u.collid AND ui.dbpk = u.dbpk '.
@@ -918,7 +919,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">step 2 of 4... </li>');
             }
             else{
-                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploadimagetemp: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploadimagetemp</li> ');
             }
 
             $sql = 'DELETE ui.* '.
@@ -928,7 +929,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">step 3 of 4... </li>');
             }
             else{
-                $this->outputMsg('<li style="margin-left:20px;">WARNING deleting orphaned uploadimagetemp records: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING deleting orphaned uploadimagetemp records</li> ');
             }
 
             $sql = 'DELETE u.* FROM uploadimagetemp u INNER JOIN images i ON u.occid = i.occid '.
@@ -937,12 +938,12 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">step 4 of 4... </li>');
             }
             else{
-                $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls</li> ');
             }
             $sql = 'DELETE u.* FROM uploadimagetemp u INNER JOIN images i ON u.occid = i.occid '.
                 'WHERE (u.collid = '.$this->collId.') AND (u.url = i.url) AND (i.url != "") AND (i.url != "empty")';
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">ERROR deleting uploadimagetemp records with matching originalurls</li> ');
             }
 
             $this->setImageTransferCount();
@@ -962,7 +963,7 @@ class SpecUploadBase extends SpecUpload{
                 'WHERE (ui.occid IS NULL) AND (u.occid IS NOT NULL) AND (ui.collid = '.$this->collId.')';
             //echo $sql.'<br/>';
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploadimagetemp: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING updating occids within uploadimagetemp</li> ');
             }
 
             $this->setImageTransferCount();
@@ -975,7 +976,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">'.$this->imageTransferCount.' images transferred</li> ');
             }
             else{
-                $this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li>FAILED! ERROR</li> ');
             }
         }
         $rs->free();
@@ -992,7 +993,7 @@ class SpecUploadBase extends SpecUpload{
                 'WHERE a.occid IS NOT NULL AND s.`host` IS NOT NULL AND a.relationship = "host" ';
             //echo $sql.'<br/>';
             if(!$this->conn->query($sql)){
-                $this->outputMsg('<li style="margin-left:20px;">WARNING updating host associations within omoccurassociations: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">WARNING updating host associations within omoccurassociations</li> ');
             }
 
             $sql = 'INSERT INTO omoccurassociations(occid,relationship,verbatimsciname) '.
@@ -1003,7 +1004,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->outputMsg('<li style="margin-left:10px;">Host associations updated</li> ');
             }
             else{
-                $this->outputMsg('<li>FAILED! ERROR: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li>FAILED! ERROR</li> ');
             }
         }
         $rs->free();
@@ -1112,8 +1113,7 @@ class SpecUploadBase extends SpecUpload{
             }
             else{
                 $this->outputMsg('<li>FAILED adding record #' .$this->transferCount. '</li>');
-                $this->outputMsg("<li style='margin-left:10px;'>Error: ".$this->conn->error. '</li>');
-                $this->outputMsg("<li style='margin:0 0 10px 10px;'>SQL: $sql</li>");
+                $this->outputMsg('<li style="margin-left:10px;">Error</li>');
             }
         }
     }
@@ -1172,8 +1172,7 @@ class SpecUploadBase extends SpecUpload{
                     }
                     else{
                         $outStr = '<li>FAILED adding identification history record #'.$this->identTransferCount.'</li>';
-                        $outStr .= '<li style="margin-left:10px;">Error: '.$this->conn->error.'</li>';
-                        $outStr .= '<li style="margin:0 0 10px 10px;">SQL: '.$sql.'</li>';
+                        $outStr .= '<li style="margin-left:10px;">Error</li>';
                         $this->outputMsg($outStr);
                     }
                 }
@@ -1183,6 +1182,7 @@ class SpecUploadBase extends SpecUpload{
 
     protected function loadImageRecord($recMap): ?bool
     {
+        $testUrl = '';
         if($recMap){
             if(isset($recMap['originalurl']) && $recMap['originalurl']){
                 $testUrl = $recMap['originalurl'];
@@ -1190,93 +1190,80 @@ class SpecUploadBase extends SpecUpload{
             elseif(isset($recMap['url']) && $recMap['url']){
                 $testUrl = $recMap['url'];
             }
-            else{
-                return false;
-            }
-            if(stripos($testUrl,'.dng') || stripos($testUrl,'.tif')){
-                return false;
-            }
-            $skipFormats = array('image/tiff','image/dng','image/bmp','text/html','application/xml','application/pdf','tif','tiff','dng','html','pdf');
-            $allowedFormats = array('image/jpeg','image/gif','image/png');
-            $imgFormat = '';
-            if(isset($recMap['format']) && $recMap['format']){
-                $imgFormat = strtolower($recMap['format']);
-                if(in_array($imgFormat, $skipFormats, true)) {
-                    return false;
-                }
-            }
-            else{
-                $ext = strtolower(substr(strrchr($testUrl, '.'), 1));
-                if(strpos($testUrl,'?')) {
-                    $ext = substr($ext, 0, strpos($ext, '?'));
-                }
-                if($ext === 'gif') {
-                    $imgFormat = 'image/gif';
-                }
-                if($ext === 'png') {
-                    $imgFormat = 'image/png';
-                }
-                if($ext === 'jpg') {
-                    $imgFormat = 'image/jpeg';
-                }
-                elseif($ext === 'jpeg') {
-                    $imgFormat = 'image/jpeg';
-                }
-                if(!$imgFormat){
-                    $imgFormat = $this->getMimeType($testUrl);
-                    if(!in_array(strtolower($imgFormat), $allowedFormats, true)) {
-                        return false;
-                    }
-                }
-            }
-            if($imgFormat) {
-                $recMap['format'] = $imgFormat;
-            }
-
-            if($this->verifyImageUrls && !$this->urlExists($testUrl)) {
-                $this->outputMsg('<li style="margin-left:20px;">Bad url: '.$testUrl.'</li>');
-                return false;
-            }
-
-            if(strpos($testUrl,'inaturalist.org')){
-                if(strpos($testUrl,'/original.')){
-                    $recMap['originalurl'] = $testUrl;
-                    $recMap['url'] = str_replace('/original.', '/medium.', $testUrl);
-                    $recMap['thumbnailurl'] = str_replace('/original.', '/small.', $testUrl);
-                }
-                elseif(strpos($testUrl,'/medium.')){
-                    $recMap['url'] = $testUrl;
-                    $recMap['thumbnailurl'] = str_replace('/medium.', '/small.', $testUrl);
-                    $recMap['originalurl'] = str_replace('/medium.', '/original.', $testUrl);
-                }
-            }
-
-            if(!isset($recMap['url'])) {
-                $recMap['url'] = 'empty';
-            }
-
-            $sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);
-            if($sqlFragments){
-                $sql = 'INSERT INTO uploadimagetemp(collid'.$sqlFragments['fieldstr'].') '.
-                    'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
-                if($this->conn->query($sql)){
-                    $this->imageTransferCount++;
-                    $repInt = 1000;
-                    if($this->verifyImageUrls) {
-                        $repInt = 100;
-                    }
-                    if($this->imageTransferCount%$repInt === 0) {
-                        $this->outputMsg('<li style="margin-left:10px;">' . $this->imageTransferCount . ' images processed</li>');
-                    }
+            if($testUrl && !stripos($testUrl,'.dng') && !stripos($testUrl,'.tif')){
+                $skipFormats = array('image/tiff','image/dng','image/bmp','text/html','application/xml','application/pdf','tif','tiff','dng','html','pdf');
+                $allowedFormats = array('image/jpeg','image/gif','image/png');
+                $imgFormat = '';
+                if(isset($recMap['format']) && $recMap['format']){
+                    $imgFormat = strtolower($recMap['format']);
                 }
                 else{
-                    $this->outputMsg('<li>FAILED adding image record #' .$this->imageTransferCount. '</li>');
-                    $this->outputMsg("<li style='margin-left:10px;'>Error: ".$this->conn->error. '</li>');
-                    $this->outputMsg("<li style='margin:0 0 10px 10px;'>SQL: $sql</li>");
+                    $ext = strtolower(substr(strrchr($testUrl, '.'), 1));
+                    if(strpos($testUrl,'?')) {
+                        $ext = substr($ext, 0, strpos($ext, '?'));
+                    }
+                    if($ext === 'gif') {
+                        $imgFormat = 'image/gif';
+                    }
+                    if($ext === 'png') {
+                        $imgFormat = 'image/png';
+                    }
+                    if($ext === 'jpg') {
+                        $imgFormat = 'image/jpeg';
+                    }
+                    elseif($ext === 'jpeg') {
+                        $imgFormat = 'image/jpeg';
+                    }
+                    if(!$imgFormat){
+                        $imgFormat = $this->getMimeType($testUrl);
+                    }
+                }
+                if($imgFormat && !in_array($imgFormat, $skipFormats, true) && in_array(strtolower($imgFormat), $allowedFormats, true)) {
+                    $recMap['format'] = $imgFormat;
+                    if($this->verifyImageUrls && !$this->urlExists($testUrl)) {
+                        $this->outputMsg('<li style="margin-left:20px;">Bad url: '.$testUrl.'</li>');
+                    }
+                    else{
+                        if(strpos($testUrl,'inaturalist.org')){
+                            if(strpos($testUrl,'/original.')){
+                                $recMap['originalurl'] = $testUrl;
+                                $recMap['url'] = str_replace('/original.', '/medium.', $testUrl);
+                                $recMap['thumbnailurl'] = str_replace('/original.', '/small.', $testUrl);
+                            }
+                            elseif(strpos($testUrl,'/medium.')){
+                                $recMap['url'] = $testUrl;
+                                $recMap['thumbnailurl'] = str_replace('/medium.', '/small.', $testUrl);
+                                $recMap['originalurl'] = str_replace('/medium.', '/original.', $testUrl);
+                            }
+                        }
+
+                        if(!isset($recMap['url'])) {
+                            $recMap['url'] = 'empty';
+                        }
+
+                        $sqlFragments = $this->getSqlFragments($recMap,$this->imageFieldMap);
+                        if($sqlFragments){
+                            $sql = 'INSERT INTO uploadimagetemp(collid'.$sqlFragments['fieldstr'].') '.
+                                'VALUES('.$this->collId.$sqlFragments['valuestr'].')';
+                            if($this->conn->query($sql)){
+                                $this->imageTransferCount++;
+                                $repInt = 1000;
+                                if($this->verifyImageUrls) {
+                                    $repInt = 100;
+                                }
+                                if($this->imageTransferCount%$repInt === 0) {
+                                    $this->outputMsg('<li style="margin-left:10px;">' . $this->imageTransferCount . ' images processed</li>');
+                                }
+                            }
+                            else{
+                                $this->outputMsg('<li>FAILED adding image record #' .$this->imageTransferCount. '</li>');
+                                $this->outputMsg('<li style="margin-left:10px;">Error</li>');
+                            }
+                        }
+                    }
                 }
             }
         }
-        return true;
     }
 
     private function getSqlFragments($recMap,$fieldMap){
@@ -1284,10 +1271,10 @@ class SpecUploadBase extends SpecUpload{
         $sqlFields = '';
         $sqlValues = '';
         foreach($recMap as $symbField => $valueStr){
-            if(strpos($symbField, 'unmapped') !== 0){
+            if(strncmp($symbField, 'unmapped', 8) !== 0){
                 $sqlFields .= ','.$symbField;
                 $valueStr = $this->encodeString($valueStr);
-                $valueStr = $this->cleanInStr($valueStr);
+                $valueStr = Sanitizer::cleanInStr($valueStr);
                 if($valueStr) {
                     $hasValue = true;
                 }
@@ -1444,7 +1431,7 @@ class SpecUploadBase extends SpecUpload{
                 $this->imageTransferCount = $r->cnt;
             }
             else{
-                $this->outputMsg('<li style="margin-left:20px;">ERROR setting image upload count: '.$this->conn->error.'</li> ');
+                $this->outputMsg('<li style="margin-left:20px;">ERROR setting image upload count</li> ');
             }
             $rs->free();
         }
@@ -1524,7 +1511,7 @@ class SpecUploadBase extends SpecUpload{
         }
         if(function_exists('curl_init')){
             $handle   = curl_init($url);
-            if (false === $handle){
+            if($handle === false){
                 $exists = false;
             }
             curl_setopt($handle, CURLOPT_HEADER, false);
@@ -1546,7 +1533,8 @@ class SpecUploadBase extends SpecUpload{
         return $exists;
     }
 
-    protected function encodeString($inStr){
+    protected function encodeString($inStr): string
+    {
         $retStr = $inStr;
 
         $badwordchars=array("\xe2\x80\x98",

@@ -2,10 +2,12 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyHarvester.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../taxa/admin/taxonomymaintenance.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
@@ -14,6 +16,8 @@ $harvesterManager = new TaxonomyHarvester();
 $utilitiesManager = new TaxonomyUtilities();
  
 $isEditor = false;
+$statusStr = '';
+
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
 	$isEditor = true;
 }

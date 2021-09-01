@@ -1,15 +1,17 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageCleaner.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../imagelib/admin/thumbnailbuilder.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']: '';
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$tid = array_key_exists('tid',$_REQUEST)?(int)$_REQUEST['tid']:0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN']){

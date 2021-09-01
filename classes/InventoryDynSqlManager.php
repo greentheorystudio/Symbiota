@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
  
 class InventoryDynSqlManager {
 
@@ -16,7 +17,7 @@ class InventoryDynSqlManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -38,7 +39,7 @@ class InventoryDynSqlManager {
 	
 	public function testSql($strFrag): bool
 	{
-		$sql = 'SELECT * FROM omoccurrences o WHERE '.$strFrag;
+		$sql = 'SELECT * FROM omoccurrences o WHERE '.Sanitizer::cleanInStr($strFrag);
 		if($this->conn->query($sql)){
 			return true;
 		}
@@ -47,7 +48,7 @@ class InventoryDynSqlManager {
 	
 	public function saveSql($sqlFrag): void
 	{
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.trim($sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.Sanitizer::cleanInStr($sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
 		$this->conn->query($sql);
 	}
 

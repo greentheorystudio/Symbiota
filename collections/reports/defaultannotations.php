@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];

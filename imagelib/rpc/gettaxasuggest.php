@@ -18,4 +18,4 @@ while ($r = $result->fetch_object()) {
         'label' => $r->sciname . ' ('. $r->ct . ')');
 }
 $con->close();
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);
