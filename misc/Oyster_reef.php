@@ -127,7 +127,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
         <div id="reef-formation-section" class="cd-section">
             <h4>Reef Formation</h4>
             <p>
-                Oyster reefs are built primarily by the eastern oyster, Crassostrea virginica, through successive reproduction
+                Oyster reefs are built primarily by the eastern oyster, <i>Crassostrea virginica</i>, through successive reproduction
                 and settlement of larvae onto existing reef structure. Oysters in Florida spawn from late spring through
                 the fall. Oysters’ planktonic, free-swimming larvae require a hard surface to settle upon in order to complete
                 development to the juvenile stage, with a strong preference for oyster shells over other materials.

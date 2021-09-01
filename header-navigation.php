@@ -74,10 +74,13 @@
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/index.php" >Checklists</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" >Map Occurrence Saerch</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" >Map Occurrence Search</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Text Occurrence Saerch</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Spatial_Module_Tutorial.pdf" target="_blank" >Map Search Tutorial</a>
+                </li>
+                <li>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Text Occurrence Search</a>
                 </li>
             </ul>
         </li>
@@ -85,7 +88,7 @@
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Protect-IRL.php" >Stewardship</a>
         </li>
         <li>
-            <a href="#" >Take a Tour</a>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/tour.php" >Take a Tour</a>
         </li>
     </ul>
 </div>

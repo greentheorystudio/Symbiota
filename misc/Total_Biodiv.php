@@ -124,7 +124,7 @@ header("Content-Type: text/html; charset=" . $GLOBALS['CHARSET']);
                     <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/17EbaughT1.jpg" />
                     <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Caretta_caretta_Sabrina_Bethurum.jpg" />
                     <figcaption style="width:800px;">
-                        River otters, pileated woodpeckers and loggerhead turtles all rely on the IRL’s diversity of Habitats
+                        River otters, pileated woodpeckers and loggerhead turtles all rely on the IRL’s diversity of habitats
                         for their life cycles. <i>Credit: C. Miller, T. Ebaugh, S. Bethurum </i>
                     </figcaption>
                 </figure>

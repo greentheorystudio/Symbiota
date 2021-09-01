@@ -358,13 +358,6 @@ h5{
 	line-height: normal;
 }
 
-.photo-credit-container{
-	font-family: 'Fira Sans';
-	font-size: 12px;
-	line-height: normal;
-	color: white;
-}
-
 .intro-text {
 	font-family: 'Fira Sans';
 	font-size: 16px;
@@ -514,7 +507,7 @@ h5{
 	background-color: rgba(16, 114, 127, 0.75);
 	border: 0;
 	color: #FFF;
-	margin-left: 105px;
+	margin-left: 15px;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
@@ -844,7 +837,7 @@ ol.report-caterories li p.heading {
 
 .quicksearch-container {
 	position: absolute;
-	top: 375px;
+	top: 520px;
 	left: 0;
 	width: 100%;
 	display: flex;
@@ -897,6 +890,10 @@ ol.report-caterories li p.heading {
 	right: 5px;
 	padding: 4px;
 	background-color: rgba(226, 232, 236, 0.58);
+	font-family: 'Fira Sans';
+	font-size: 12px;
+	line-height: normal;
+	color: black;
 }
 
 .top-text-container {
