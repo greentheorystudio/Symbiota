@@ -7,6 +7,7 @@ include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -59,7 +60,7 @@ if($GLOBALS['SYMB_UID']){
     </script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");

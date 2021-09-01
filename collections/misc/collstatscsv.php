@@ -6,8 +6,8 @@ ini_set('max_execution_time', 1200);
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']):'';
 $collId = array_key_exists('collids',$_REQUEST)?htmlspecialchars($_REQUEST['collids']):'';
-$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
-$cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
+$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon']):'';
+$cCountry = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';
 $years = array_key_exists('years',$_REQUEST)?(int)$_REQUEST['years']:1;
 
 $famArr = $_SESSION['statsFamilyArr'] ?? Array();

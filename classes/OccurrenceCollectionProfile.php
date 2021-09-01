@@ -1133,13 +1133,4 @@ class OccurrenceCollectionProfile {
     public function getErrorStr(){
 		return $this->errorStr;
 	}
-
-    public function cleanOutArr($arr): void
-    {
-        if(is_array($arr)){
-            foreach($arr as $k => $v){
-                $arr[$k] = Sanitizer::cleanOutStr($v);
-            }
-        }
-    }
 }

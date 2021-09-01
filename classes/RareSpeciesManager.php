@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class RareSpeciesManager {
     
@@ -42,7 +43,7 @@ class RareSpeciesManager {
 	public function addSpecies($tid): void
 	{
 		if(is_numeric($tid)){
-	 		$sql = 'UPDATE taxa t SET t.SecurityStatus = 1 WHERE (t.tid = '.$tid.')';
+	 		$sql = 'UPDATE taxa t SET t.SecurityStatus = 1 WHERE (t.tid = '.Sanitizer::cleanInStr($tid).')';
 	 		//echo $sql;
 			$this->conn->query($sql);
 			$occurMain = new OccurrenceMaintenance($this->conn);
@@ -53,7 +54,7 @@ class RareSpeciesManager {
 	public function deleteSpecies($tid): void
 	{
 		if(is_numeric($tid)){
-			$sql = 'UPDATE taxa t SET t.SecurityStatus = 0 WHERE (t.tid = '.$tid.')';
+			$sql = 'UPDATE taxa t SET t.SecurityStatus = 0 WHERE (t.tid = '.Sanitizer::cleanInStr($tid).')';
 	 		//echo $sql;
 			$this->conn->query($sql);
 			$sql2 = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
@@ -95,7 +96,7 @@ class RareSpeciesManager {
 	{
 		$sql = 'SELECT ts.tidaccepted '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE t.sciname = "'.$searchTaxon.'" AND ts.taxauthid = 1';
+			'WHERE t.sciname = "'.Sanitizer::cleanInStr($searchTaxon).'" AND ts.taxauthid = 1';
 		$rs = $this->conn->query($sql);
 		if($rs) {
 			while($r = $rs->fetch_object()){

@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;

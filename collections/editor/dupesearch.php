@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $occidQuery = array_key_exists('occidquery',$_REQUEST)?htmlspecialchars($_REQUEST['occidquery']):'';
 $curOccid = (array_key_exists('curoccid',$_GET)?(int)$_REQUEST['curoccid']:0);
