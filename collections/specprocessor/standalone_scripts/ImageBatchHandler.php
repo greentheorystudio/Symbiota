@@ -33,6 +33,8 @@ else{
 
 $imageProcessor = new ImageBatchProcessor();
 
+$logMode = 0;
+
 if(isset($silent) && $silent) {
 	$logMode = 2;
 }

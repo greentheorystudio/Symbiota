@@ -1,14 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$datasetId = array_key_exists('datasetid',$_REQUEST)?$_REQUEST['datasetid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$datasetId = array_key_exists('datasetid',$_REQUEST)?(int)$_REQUEST['datasetid']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $datasetManager = new OccurrenceDataset();
@@ -49,12 +51,8 @@ elseif(isset($mdArr['roles'])){
 
 $statusStr = '';
 if($isEditor){
-    if($isEditor < 3){
-        if($action === 'Remove Selected Occurrences'){
-            if(!$datasetManager->removeSelectedOccurrences($datasetId,$_POST['occid'])){
-                $statusStr = implode(',',$datasetManager->getErrorArr());
-            }
-        }
+    if(($isEditor < 3) && ($action === 'Remove Selected Occurrences') && !$datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
+        $statusStr = implode(',',$datasetManager->getErrorArr());
     }
     if($isEditor === 1){
         if($action === 'Save Edits'){
@@ -133,7 +131,7 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
     <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
-    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210420"></script>
+    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210824"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {

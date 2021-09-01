@@ -3,15 +3,17 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
-$occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
-$ouid = array_key_exists('ouid',$_REQUEST)?$_REQUEST['ouid']:0;
-$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-$reset = array_key_exists('reset',$_REQUEST)?$_REQUEST['reset']:false;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;
+$occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:null;
+$ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
+$crowdSourceMode = array_key_exists('csmode',$_REQUEST)?(int)$_REQUEST['csmode']:0;
+$reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
 $solrManager = new SOLRManager();
@@ -49,6 +51,7 @@ $headMap = array();
 
 $qryCnt = 0;
 $statusStr = '';
+$navStr = '';
 
 if($GLOBALS['SYMB_UID']){
 	$occManager->setCollId($collId);
@@ -60,21 +63,8 @@ if($GLOBALS['SYMB_UID']){
 	if($collMap && $collMap['colltype'] === 'General Observations') {
         $isGenObs = 1;
     }
-	if(!$isEditor){
-		if($isGenObs){
-			if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-				$isEditor = 2;
-			}
-			elseif($action){
-				 $isEditor = 2;
-			}
-			elseif($occManager->getObserverUid() === $GLOBALS['SYMB_UID']){
-				$isEditor = 2;
-			}
-		}
-		elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-			$isEditor = 2;
-		}
+	if(!$isEditor && ((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) || ($isGenObs && ($action || $occManager->getObserverUid() === $GLOBALS['SYMB_UID'])))){
+        $isEditor = 2;
 	}
 
 	if(array_key_exists('bufieldname',$_POST)){
@@ -96,7 +86,7 @@ if($GLOBALS['SYMB_UID']){
 		$occManager->setSqlWhere(0,$recLimit);
 		$qryCnt = $occManager->getQueryRecordCount();
 	}
-	elseif($occIndex !== false){
+	elseif($occIndex !== null){
 		if(!$reset) {
             $occManager->setQueryVariables();
         }
@@ -121,7 +111,7 @@ if($GLOBALS['SYMB_UID']){
 	$navStr .= '</div>';
 }
 else{
-	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrencetabledisplay.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -137,7 +127,7 @@ else{
     <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210403"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div id="">

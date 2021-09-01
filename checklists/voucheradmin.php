@@ -1,18 +1,19 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=../checklists/voucheradmin.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $startPos = (array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0);
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-
-$displayMode = (array_key_exists('displaymode',$_REQUEST)?$_REQUEST['displaymode']:0);
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
+$displayMode = (array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displaymode']:0);
 
 $clManager = new ChecklistVoucherAdmin();
 $clManager->setClid($clid);
@@ -146,9 +147,9 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = $termArr['collid'] ?? '';
+									$selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
 									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid == $id?'SELECTED':'').'>'.$name.'</option>';
+										echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
 									}
 									?>
 								</select>
@@ -229,7 +230,7 @@ if($clid && $isEditor){
 		<div id="tabs" style="margin-top:25px;">
 			<ul>
 				<li><a href="#nonVoucheredDiv"><span>New Vouchers</span></a></li>
-				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex == 1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
+				<li><a href="vamissingtaxa.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos.'&displaymode='.($tabIndex === 1?$displayMode:0); ?>"><span>Missing Taxa</span></a></li>
 				<li><a href="vaconflicts.php?clid=<?php echo $clid.'&pid='.$pid.'&start='.$startPos; ?>"><span>Voucher Conflicts</span></a></li>
 				<li><a href="#reportDiv"><span>Reports</span></a></li>
 			</ul>
@@ -243,8 +244,8 @@ if($clid && $isEditor){
 							<b>Display Mode:</b>
 							<select name="displaymode" onchange="this.form.submit()">
 								<option value="0">Non-vouchered taxa list</option>
-								<option value="1" <?php echo ($displayMode == 1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
-								<option value="2" <?php echo ($displayMode == 2?'SELECTED':''); ?>>New occurrences for all taxa</option>
+								<option value="1" <?php echo ($displayMode === 1?'SELECTED':''); ?>>Occurrences for non-vouchered taxa</option>
+								<option value="2" <?php echo ($displayMode === 2?'SELECTED':''); ?>>New occurrences for all taxa</option>
 							</select>
 							<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
 							<input name="pid" type="hidden" value="<?php echo $pid; ?>" />
@@ -252,7 +253,7 @@ if($clid && $isEditor){
 						</form>
 					</div>
 					<?php
-					if(!$displayMode || $displayMode == 1 || $displayMode == 2){
+					if(!$displayMode || $displayMode === 1 || $displayMode === 2){
 						?>
 						<div style='float:left;margin-top:3px;height:30px;'>
 							<b>Taxa without Vouchers: <?php echo $nonVoucherCnt; ?></b>
@@ -404,11 +405,11 @@ if($clid && $isEditor){
 	<?php
 	}
 }
-else if(!$clid){
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>Checklist identifier not set</div>';
-}
-else{
+elseif($clid) {
     echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>You do not have administrative permission for this checklist</div>';
+}
+else {
+    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span>Checklist identifier not set</div>';
 }
 ?>
 </div>

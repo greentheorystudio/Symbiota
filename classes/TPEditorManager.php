@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class TPEditorManager {
 
@@ -116,7 +117,7 @@ class TPEditorManager {
 				$sql = 'UPDATE taxstatus SET SortSequence = '.$editValue.' WHERE (tid = '.$editKey.') AND (TidAccepted = '.$this->tid.')';
 				//echo $sql."<br>";
 				if(!$this->taxonCon->query($sql)){
-					$status .= $this->taxonCon->error."\nSQL: ".$sql. ';<br/> ';
+					$status .= 'Error editing synonym.<br/> ';
 				}
 			}
 		}
@@ -152,7 +153,7 @@ class TPEditorManager {
 	
 	public function editVernacular($inArray): string
 	{
-		$editArr = $this->cleanInArray($inArray);
+		$editArr = Sanitizer::cleanInArray($inArray);
 		$vid = $editArr['vid'];
 		unset($editArr['vid']);
 		$setFrag = '';
@@ -163,19 +164,19 @@ class TPEditorManager {
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:editingVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:editingVernacular.';
 		}
 		return $status;
 	}
 	
 	public function addVernacular($inArray): string
 	{
-		$newVerns = $this->cleanInArray($inArray);
+		$newVerns = Sanitizer::cleanInArray($inArray);
 		$sql = 'INSERT INTO taxavernaculars (tid,'.implode(',',array_keys($newVerns)).') VALUES ('.$this->getTid().',"'.implode('","',$newVerns).'")';
 		//echo $sql;
 		$status = '';
 		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:addingNewVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
+			$status = 'Error:addingNewVernacular.';
 		}
 		return $status;
 	}
@@ -186,11 +187,11 @@ class TPEditorManager {
 		if(is_numeric($delVid)){
 			$sql = 'DELETE FROM taxavernaculars WHERE (VID = '.$delVid.')';
 			//echo $sql;
-			if(!$this->taxonCon->query($sql)){
-				$status = 'Error:deleteVernacular: ' .$this->taxonCon->error."\nSQL: ".$sql;
-			}
-			else{
+			if($this->taxonCon->query($sql)) {
 				$status = '';
+			}
+			else {
+				$status = 'Error:deleteVernacular.';
 			}
 		}
 		return $status;
@@ -221,20 +222,4 @@ class TPEditorManager {
 	{
  		return $this->errorStr;
  	}
- 	
- 	protected function cleanInArray($arr): array
-	{
- 		$newArray = array();
- 		foreach($arr as $key => $value){
- 			$newArray[$this->cleanInStr($key)] = $this->cleanInStr($value);
- 		}
- 		return $newArray;
- 	}
-	
-	protected function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->taxonCon->real_escape_string($newStr);
-		return $newStr;
-	}
 }

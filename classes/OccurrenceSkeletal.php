@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceSkeletal {
 
@@ -31,7 +32,7 @@ class OccurrenceSkeletal {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -51,7 +52,7 @@ class OccurrenceSkeletal {
 						$sql2 .= ','.$v;
 					}
 					else{
-						$sql2 .= ',"'.$this->cleanInStr($v).'"';
+						$sql2 .= ',"'.Sanitizer::cleanInStr($v).'"';
 					}
 				}
 				else{
@@ -72,7 +73,7 @@ class OccurrenceSkeletal {
 			}
 			else{
 				$status = false;
-				$this->errorStr = 'ERROR adding occurrence record: '.$this->conn->error;
+				$this->errorStr = 'ERROR adding occurrence record.';
 			}
 		}
 		return $status;
@@ -92,7 +93,7 @@ class OccurrenceSkeletal {
 						$sqlA .= $v;
 					}
 					else{
-						$sqlA .= '"'.$this->cleanInStr($v).'"';
+						$sqlA .= '"'.Sanitizer::cleanInStr($v).'"';
 					}
 					$sqlA .= ')';
 				}
@@ -104,7 +105,7 @@ class OccurrenceSkeletal {
 					$status = true;
 				}
 				else{
-					$this->errorStr = 'ERROR updating occurrence record: '.$this->conn->error;
+					$this->errorStr = 'ERROR updating occurrence record.';
 				}
 			}
 		}
@@ -126,7 +127,7 @@ class OccurrenceSkeletal {
 		$status = false;
 		if($this->collid){
 			$sql = 'SELECT occid FROM omoccurrences '.
-				'WHERE (catalognumber = "'.$this->cleanInStr($catNum).'") AND (collid = '.$this->collid.')';
+				'WHERE (catalognumber = "'.Sanitizer::cleanInStr($catNum).'") AND (collid = '.$this->collid.')';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
@@ -159,7 +160,8 @@ class OccurrenceSkeletal {
 		return $countryStr;
 	}
 
-	private function translateStateAbbreviation($abbr){
+	private function translateStateAbbreviation($abbr): string
+    {
 		$stateStr = '';
 		if(array_key_exists($abbr,$this->stateList)){
 			$stateStr = $this->stateList[$abbr];
@@ -219,12 +221,5 @@ class OccurrenceSkeletal {
 	public function getErrorStr(): string
 	{
 		return $this->errorStr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

@@ -3,16 +3,16 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ReferenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$uid = array_key_exists('uid',$_REQUEST)?$_REQUEST['uid']:'';
+$uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
-$refAuthId = array_key_exists('refauthid',$_REQUEST)?$_REQUEST['refauthid']:0;
+$refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
+$refAuthId = array_key_exists('refauthid',$_REQUEST)?(int)$_REQUEST['refauthid']:0;
 $firstName = array_key_exists('firstname',$_REQUEST)?$_REQUEST['firstname']:'';
 $middleName = array_key_exists('midname',$_REQUEST)?$_REQUEST['midname']:'';
 $lastName = array_key_exists('lastname',$_REQUEST)?$_REQUEST['lastname']:'';
 $table = array_key_exists('table',$_REQUEST)?$_REQUEST['table']:'';
 $field = array_key_exists('field',$_REQUEST)?$_REQUEST['field']:'';
-$id = array_key_exists('id',$_REQUEST)?$_REQUEST['id']:'';
+$id = array_key_exists('id',$_REQUEST)?(int)$_REQUEST['id']:0;
 $type = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 
 $refManager = new ReferenceManager();

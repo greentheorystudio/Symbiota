@@ -7,17 +7,17 @@ use PhpOffice\PhpWord\PhpWord;
 
 $loanManager = new SpecLoans();
 
-$collId = $_REQUEST['collid'];
-$printMode = $_POST['print'];
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
-$institution = array_key_exists('institution',$_POST)?$_POST['institution']:0;
-$international = array_key_exists('international',$_POST)?$_POST['international']:0;
-$accountNum = array_key_exists('mailaccnum',$_POST)?$_POST['mailaccnum']:0;
+$collId = (int)$_REQUEST['collid'];
+$printMode = htmlspecialchars($_POST['print']);
+$loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
+$exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
+$institution = array_key_exists('institution',$_POST)?(int)$_POST['institution']:0;
+$international = array_key_exists('international',$_POST)?(int)$_POST['international']:0;
+$accountNum = array_key_exists('mailaccnum',$_POST)?(int)$_POST['mailaccnum']:0;
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
-$displayAll = array_key_exists('displayall',$_POST)?$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $export = false;
 $exportEngine = '';
@@ -59,49 +59,49 @@ if($export){
 	
 	$textrun = $section->addTextRun('fromAddress');
 	$textrun->addText(htmlspecialchars($addressArr['institutionname'].' ('.$addressArr['institutioncode'].')'),'fromAddressFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($addressArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($addressArr['institutionname2']),'fromAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($addressArr['address1']){
 		$textrun->addText(htmlspecialchars($addressArr['address1']),'fromAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($addressArr['address2']){
 		$textrun->addText(htmlspecialchars($addressArr['address2']),'fromAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	$textrun->addText(htmlspecialchars($addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode']),'fromAddressFont');
 	if($international){
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 		$textrun->addText(htmlspecialchars($addressArr['country']),'fromAddressFont');
 	}
 	if($accountNum){
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 		$textrun->addText(htmlspecialchars('(Acct. #'.$accountNum.')'),'fromAddressFont');
 	}
 	$section->addTextBreak(2);
 	$textrun = $section->addTextRun('toAddress');
 	$textrun->addText(htmlspecialchars($invoiceArr['contact']),'toAddressFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	$textrun->addText(htmlspecialchars($invoiceArr['institutionname'].' ('.$invoiceArr['institutioncode'].')'),'toAddressFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($invoiceArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($invoiceArr['institutionname2']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($invoiceArr['address1']){
 		$textrun->addText(htmlspecialchars($invoiceArr['address1']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($invoiceArr['address2']){
 		$textrun->addText(htmlspecialchars($invoiceArr['address2']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	$textrun->addText(htmlspecialchars($invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
 	if($international){
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	}
 	

@@ -38,7 +38,7 @@ class GPoint
     private $utmEasting;
     private $utmZone;
 
-    public function __construct($datum='WGS 84')
+    public function __construct($datum)
 	{
 		$this->setDatum($datum);
 	}
@@ -67,7 +67,7 @@ class GPoint
 	    return $this->long;
 	}
 
-    public function setUTM($easting, $northing, $zone=''): void
+    public function setUTM($easting, $northing, $zone = null): void
     {
 		$this->utmNorthing = $northing;
 		$this->utmEasting = $easting;

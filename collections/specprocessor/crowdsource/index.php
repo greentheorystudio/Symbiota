@@ -2,12 +2,12 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
-$catid = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:'';
+$catid = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 
-if(isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] && $catid === '') {
-    $catid = $GLOBALS['DEFAULTCATID'];
+if(isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID'] && $catid === 0) {
+    $catid = (int)$GLOBALS['DEFAULTCATID'];
 }
 
 $csManager = new OccurrenceCrowdSource();

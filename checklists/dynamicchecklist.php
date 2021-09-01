@@ -3,13 +3,13 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/DynamicChecklistManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
  
-$lat = $_POST['lat'];
-$lng = $_POST['lng'];
-$radius = $_POST['radius'];
-$radiusunits = $_POST['radiusunits'];
+$lat = (float)$_POST['lat'];
+$lng = (float)$_POST['lng'];
+$radius = (float)$_POST['radius'];
+$radiusunits = htmlspecialchars($_POST['radiusunits']);
 $dynamicRadius = ($GLOBALS['DYN_CHECKLIST_RADIUS'] ?? 5);
-$tid = $_POST['tid'];
-$interface = $_POST['interface'];
+$tid = (int)$_POST['tid'];
+$interface = htmlspecialchars($_POST['interface']);
 
 $dynClManager = new DynamicChecklistManager();
 

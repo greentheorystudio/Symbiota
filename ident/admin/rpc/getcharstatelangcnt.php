@@ -2,11 +2,11 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/DbConnection.php');
 
-$cid = $_POST['cidinput'];
-$cs = $_POST['csinput'];
+$cid = (int)$_POST['cidinput'];
+$cs = (int)$_POST['csinput'];
 
 $retCnt = 0;
-if(is_numeric($cid) && is_numeric($cs)){
+if($cid && $cs){
     $connection = new DbConnection();
     $con = $connection->getConnection();
 	$sql = 'SELECT count(*) AS cnt FROM kmcslang WHERE cid = '.$cid.' AND cs = '.$cs;

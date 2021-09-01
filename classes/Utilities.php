@@ -1,16 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
 
 class Utilities {
 
-	private $conn;
-
-	public function __construct() {
-		$connection = new DbConnection();
-		$this->conn = $connection->getConnection();
-	}
-
-    public function getContentString($url): array
+	public function getContentString($url): array
     {
         $retArr = array();
         if($url && $fh = fopen($url, 'rb')) {
@@ -27,14 +19,5 @@ class Utilities {
             }
         }
         return $retArr;
-    }
-
-    public function cleanInStr($str){
-        $newStr = trim($str);
-        if($newStr){
-            $newStr = preg_replace('/\s\s+/', ' ',$newStr);
-            $newStr = $this->conn->real_escape_string($newStr);
-        }
-        return $newStr;
     }
 }

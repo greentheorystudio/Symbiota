@@ -7,7 +7,6 @@ $connection = new DbConnection();
 $con = $connection->getConnection();
 
 $sciName = $con->real_escape_string($_REQUEST['term']); 
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$con->real_escape_string($_REQUEST['taxauthid']):0;
 
 $responseStr = '';
 $sql = 'SELECT t.tid FROM taxa t WHERE (t.sciname = "'.$sciName.'") ';
@@ -17,8 +16,6 @@ if($row = $result->fetch_object()){
 	$responseStr = $row->tid;
 }
 $result->close();
-if(!($con === false)) {
-	$con->close();
-}
+$con->close();
 
 echo $responseStr;

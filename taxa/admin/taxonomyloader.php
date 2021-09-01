@@ -1,13 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyEditorManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../taxa/admin/taxonomyloader.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$tid = array_key_exists('tid',$_REQUEST)?$_REQUEST['tid']: '';
 $status = '';
 
 $loaderObj = new TaxonomyEditorManager();
@@ -70,7 +71,7 @@ if($isEditor && array_key_exists('sciname', $_POST)) {
 							<?php 
 							$tRankArr = $loaderObj->getRankArr();
 							foreach($tRankArr as $rankId => $rankName){
-								echo "<option value='".$rankId."' ".($rankId == 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
+								echo "<option value='".$rankId."' ".((int)$rankId === 220? ' SELECTED' : ''). '>' .$rankName."</option>\n";
 							}
 							?>
 						</select>

@@ -41,9 +41,9 @@ if($term && $language && ($tid || $relGlossId)) {
 }
 $con->close();
 
-if(!$returnArr) {
-    echo false;
+if($returnArr) {
+    echo true;
 }
 else {
-    echo true;
+    echo false;
 }

@@ -2,11 +2,12 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collId = $_REQUEST['collid'];
+$collId = (int)$_REQUEST['collid'];
 $action = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 $cSet = array_key_exists('cset',$_REQUEST)?$_REQUEST['cset']:'utf8';
-$zipFile = array_key_exists('zipfile',$_REQUEST)?$_REQUEST['zipfile']:0;
+$zipFile = array_key_exists('zipfile',$_REQUEST)?(int)$_REQUEST['zipfile']:0;
 
 $dlManager = new ProfileManager();
 $dlManager->setUid($GLOBALS['SYMB_UID']);

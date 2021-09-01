@@ -2,12 +2,20 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$refId = array_key_exists('refid',$_REQUEST)?$_REQUEST['refid']:0;
+$refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $refManager = new ReferenceManager();
-$refArr = '';
+$refArr = array();
+$authArr = array();
+$fieldArr = array();
+$refChecklistArr = array();
+$refCollArr = array();
+$refOccArr = array();
+$refTaxaArr = array();
+$childArr = array();
 
 $statusStr = '';
 if($formSubmit){
@@ -513,11 +521,11 @@ else{
 			</div>
 			<?php 
 		}
-		else if(!$GLOBALS['SYMB_UID']){
-            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
-        }
-        else{
+		else if($GLOBALS['SYMB_UID']) {
             echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
+        else {
+            echo 'Please <a href="../profile/index.php?refurl=../references/index.php">login</a>';
         }
 		?>
 	</div>

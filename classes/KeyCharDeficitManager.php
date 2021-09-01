@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class KeyCharDeficitManager{
 	
@@ -14,19 +15,19 @@ class KeyCharDeficitManager{
 	}
 	
 	public function __destruct(){
-		if(!($this->con === null)) {
+		if($this->con) {
 			$this->con->close();
 		}
 	}
 	
 	public function setLanguage($lang): void
 	{
-		$this->language = $lang;
+		$this->language = Sanitizer::cleanInStr($lang);
 	}
 	
 	public function setProject($proj): void
 	{
-		$this->project = $proj;
+		$this->project = Sanitizer::cleanInStr($proj);
 	}
 	
 	public function getClQueryList(): array

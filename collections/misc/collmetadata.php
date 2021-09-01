@@ -1,14 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/misc/collmetadata.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
+$action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 
 $statusStr = '';
 
@@ -21,6 +23,7 @@ $isEditor = 0;
 $collPubArr = array();
 $publishGBIF = false;
 $publishIDIGBIO = false;
+$collData = array();
 
 if($GLOBALS['IS_ADMIN']){
 	$isEditor = 1;
@@ -72,8 +75,7 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 }
 if($collid){
     $collDataFull = $collManager->getCollectionMetadata();
-    $collData = $collDataFull[$collid];
-    $collManager->cleanOutArr($collData);
+    $collData = Sanitizer::cleanOutArray($collDataFull[$collid]);
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

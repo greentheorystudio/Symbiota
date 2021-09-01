@@ -7,20 +7,21 @@ use PhpOffice\PhpWord\PhpWord;
 
 $loanManager = new SpecLoans();
 
-$collId = $_REQUEST['collid'];
-$printMode = $_POST['print'];
-$languageDef = $_POST['languagedef'];
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
-$international = array_key_exists('international',$_POST)?$_POST['international']:0;
+$collId = (int)$_REQUEST['collid'];
+$printMode = htmlspecialchars($_POST['print']);
+$languageDef = (int)$_POST['languagedef'];
+$loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
+$exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
+$international = array_key_exists('international',$_POST)?(int)$_POST['international']:0;
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
-$displayAll = array_key_exists('displayall',$_POST)?$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $export = false;
 $exportEngine = '';
 $exportExtension = '';
+$transType = '';
 if($printMode === 'doc'){
 	$export = true;
 	$exportEngine = 'Word2007';
@@ -51,7 +52,6 @@ $exchangeValue = $loanManager->getExchangeValue($exchangeId);
 $exchangeTotal = $loanManager->getExchangeTotal($exchangeId);
 
 if($loanType === 'exchange'){
-	$transType = 0;
 	if(($invoiceArr['totalexunmounted'] || $invoiceArr['totalexmounted']) && (!$invoiceArr['totalgift'] && !$invoiceArr['totalgiftdet'])){
 		$transType = 'ex';
 	}
@@ -67,7 +67,7 @@ $numSpecimens = 0;
 if($loanType === 'exchange'){
     $numSpecimens = $exchangeTotal;
 }
-else if($specList){
+elseif($specList){
     if(count($specList) === 1){
         $numSpecimens = 1;
     }
@@ -75,11 +75,8 @@ else if($specList){
         $numSpecimens = count($specList);
     }
 }
-else if($invoiceArr['numspecimens'] === 1){
-    $numSpecimens = 1;
-}
 else{
-    $numSpecimens = $invoiceArr['numspecimens'];
+    $numSpecimens = (int)$invoiceArr['numspecimens'];
 }
 
 $numBoxes = 0;
@@ -124,54 +121,54 @@ if($export){
 	
 	$textrun = $section->addTextRun('header');
 	$textrun->addText(htmlspecialchars($addressArr['institutionname'].' ('.$addressArr['institutioncode'].')'),'headerFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($addressArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($addressArr['institutionname2']),'headerFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($addressArr['address1']){
 		$textrun->addText(htmlspecialchars($addressArr['address1']),'headerFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($addressArr['address2']){
 		$textrun->addText(htmlspecialchars($addressArr['address2']),'headerFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	$textrun->addText(htmlspecialchars($addressArr['city'].', '.$addressArr['stateprovince'].' '.$addressArr['postalcode'].($international?' '.$addressArr['country']:'')),'headerFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	$textrun->addText(htmlspecialchars($addressArr['phone']),'headerFont');
 	$textrun->addTextBreak(2);
 	$textrun->addText(htmlspecialchars(($english?'SHIPPING INVOICE':'').($engspan?' / ':'').($spanish?'FACTURA DE REMESA':'')),'headerFont');
-	$section->addTextBreak(1);
+	$section->addTextBreak();
 	$table = $section->addTable('headTable');
 	$table->addRow();
 	$cell = $table->addCell(5000,$cellStyle);
 	$textrun = $cell->addTextRun('toAddress');
 	$textrun->addText(htmlspecialchars($invoiceArr['contact']),'toAddressFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	$textrun->addText(htmlspecialchars($invoiceArr['institutionname'].' ('.$invoiceArr['institutioncode'].')'),'toAddressFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($invoiceArr['institutionname2']){
 		$textrun->addText(htmlspecialchars($invoiceArr['institutionname2']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($invoiceArr['address1']){
 		$textrun->addText(htmlspecialchars($invoiceArr['address1']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	if($invoiceArr['address2']){
 		$textrun->addText(htmlspecialchars($invoiceArr['address2']),'toAddressFont');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 	}
 	$textrun->addText(htmlspecialchars($invoiceArr['city'].', '.$invoiceArr['stateprovince'].' '.$invoiceArr['postalcode']),'toAddressFont');
 	if($international){
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 		$textrun->addText(htmlspecialchars($invoiceArr['country']),'toAddressFont');
 	}
 	$cell = $table->addCell(5000,$cellStyle);
 	$textrun = $cell->addTextRun('identifier');
 	$textrun->addText(htmlspecialchars(date('l').', '.date('F').' '.date('j').', '.date('Y')),'identifierFont');
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($loanType === 'out'){
 		$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Loan ID: '.$invoiceArr['loanidentifierown']),'identifierFont');
 	}
@@ -181,7 +178,7 @@ if($export){
 	elseif($loanType === 'exchange'){
 		$textrun->addText(htmlspecialchars($addressArr['institutioncode'].' Transaction ID: '.$invoiceArr['identifier']),'identifierFont');
 	}
-	$section->addTextBreak(1);
+	$section->addTextBreak();
 	$textrun = $section->addTextRun('sendwhom');
 	if($english){
 		$textrun->addText(htmlspecialchars('We are sending you '.($numBoxes === 1?'1 box ':$numBoxes.' boxes ')),'sendwhomFont');
@@ -216,7 +213,7 @@ if($export){
 			$textrun->addText(htmlspecialchars('Esta remesa es un PRESTAMO para el estudio de '.$invoiceArr['forwhom']),'sendwhomFont');
 		}
 		$textrun = $section->addTextRun('returnamtdue');
-		$textrun->addTextBreak(1);
+		$textrun->addTextBreak();
 		if($english){
 			$textrun->addText(htmlspecialchars('Loans are made for a period of 2 years. This loan will be due '.$invoiceArr['datedue'].'.'),'returnamtdueFont');
 		}
@@ -243,7 +240,7 @@ if($export){
 		}
 	}
 	elseif($loanType === 'in'){
-		$section->addTextBreak(1);
+		$section->addTextBreak();
 		$textrun = $section->addTextRun('returnamtdue');
 		if($english){
 			$textrun->addText(htmlspecialchars('This shipment is a return of '.$invoiceArr['institutioncode'].' '),'returnamtdueFont');
@@ -259,7 +256,7 @@ if($export){
 	}
 	elseif($loanType === 'exchange'){
 		if($transType === 'ex' || $transType === 'both'){
-			$section->addTextBreak(1);
+			$section->addTextBreak();
 			$textrun = $section->addTextRun('returnamtdue');
 			if($english){
 				$textrun->addText(htmlspecialchars('This shipment is an EXCHANGE, consisting of '.($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' unmounted ':'')),'returnamtdueFont');
@@ -326,7 +323,7 @@ if($export){
 			}
 		}
 		elseif($transType === 'gift'){
-			$section->addTextBreak(1);
+			$section->addTextBreak();
 			$textrun = $section->addTextRun('returnamtdue');
 			if($english){
 				$textrun->addText(htmlspecialchars('This shipment is a '),'returnamtdueFont');
@@ -357,7 +354,7 @@ if($export){
 			}
 		}
 	}
-	$section->addTextBreak(1);
+	$section->addTextBreak();
 	$textrun = $section->addTextRun('returnamtdue');
 	$textrun->addText(htmlspecialchars(($english?'DESCRIPTION OF THE SPECIMENS':'').($engspan?' / ':'').($spanish?'DESCRIPCIÓN DE LOS EJEMPLARES':'').':'),'returnamtdueFont');
 	$textrun->addTextBreak(2);
@@ -379,7 +376,7 @@ if($export){
 	$footer = $section->addFooter();
 	$textrun = $footer->addTextRun('other');
 	$textrun->addLine(array('weight'=>1,'width'=>670,'height'=>0,'dash'=>'dash'));
-	$textrun->addTextBreak(1);
+	$textrun->addTextBreak();
 	if($english){
 		$textrun->addText(htmlspecialchars('PLEASE SIGN AND RETURN ONE COPY UPON RECEIPT OF THIS SHIPMENT.'),'otherFont');
 	}

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceCrowdSource {
 
@@ -18,7 +19,7 @@ class OccurrenceCrowdSource {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === false)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -50,10 +51,10 @@ class OccurrenceCrowdSource {
 		$statusStr = '';
 		if(is_numeric($omcsid)){
 			$sql = 'UPDATE omcrowdsourcecentral '.
-				'SET instructions = '.($instr?'"'.$this->cleanInStr($instr).'"':'NULL').',trainingurl = '.($url?'"'.$this->cleanInStr($url).'"':'NULL').
+				'SET instructions = '.($instr?'"'.Sanitizer::cleanInStr($instr).'"':'NULL').',trainingurl = '.($url?'"'.Sanitizer::cleanInStr($url).'"':'NULL').
 				' WHERE omcsid = '.$omcsid;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR editing project: '.$this->conn->error;
+				$statusStr = 'ERROR editing project.';
 			}
             $this->conn->close();
 		}
@@ -219,65 +220,72 @@ class OccurrenceCrowdSource {
 	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit): string
 	{
 		$statusStr = 'SUCCESS: specimens added to queue';
-		if(!$this->omcsid) {
-			return 'ERROR adding to queue, omcsid is null';
+		if($this->omcsid) {
+            if($this->collid) {
+                $sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
+                    'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
+                    'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
+                if($family){
+                    $sqlFrag .= 'AND (o.family = "'.Sanitizer::cleanInStr($family).'") ';
+                }
+                if($taxon){
+                    $sqlFrag .= 'AND (o.sciname LIKE "'.Sanitizer::cleanInStr($taxon).'%") ';
+                }
+                if($country){
+                    $sqlFrag .= 'AND (o.country = "'.Sanitizer::cleanInStr($country).'") ';
+                }
+                if($stateProvince){
+                    $sqlFrag .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($stateProvince).'") ';
+                }
+                $sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
+                $rs = $this->conn->query($sqlCnt);
+                if($r = $rs->fetch_object()){
+                    $statusStr = $r->cnt;
+                    if($statusStr > $limit) {
+                        $statusStr = $limit;
+                    }
+                }
+                $rs->free();
+                if($limit){
+                    $sqlFrag .= 'LIMIT '.$limit;
+                }
+                $sql = 'INSERT INTO omcrowdsourcequeue(occid, omcsid) '.
+                    'SELECT DISTINCT o.occid, '.$omcsid.' AS csid '.$sqlFrag;
+                if(!$this->conn->query($sql)){
+                    $statusStr = 'ERROR adding to queue.';
+                    $statusStr .= '; SQL: '.$sql;
+                }
+                $this->conn->close();
+            }
+            else {
+                $statusStr = 'ERROR adding to queue, collid is null';
+            }
+        }
+		else {
+            $statusStr = 'ERROR adding to queue, omcsid is null';
 		}
-		if(!$this->collid) {
-			return 'ERROR adding to queue, collid is null';
-		}
-		$sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
-			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
-			'WHERE o.collid = '.$this->collid.' AND q.occid IS NULL AND (o.processingstatus = "unprocessed") ';
-		if($family){
-			$sqlFrag .= 'AND (o.family = "'.$this->cleanInStr($family).'") ';
-		}
-		if($taxon){
-			$sqlFrag .= 'AND (o.sciname LIKE "'.$this->cleanInStr($taxon).'%") ';
-		}
-		if($country){
-			$sqlFrag .= 'AND (o.country = "'.$this->cleanInStr($country).'") ';
-		}
-		if($stateProvince){
-			$sqlFrag .= 'AND (o.stateprovince = "'.$this->cleanInStr($stateProvince).'") ';
-		}
-		$sqlCnt = 'SELECT COUNT(DISTINCT o.occid) AS cnt '.$sqlFrag;
-		$rs = $this->conn->query($sqlCnt);
-		if($r = $rs->fetch_object()){
-			$statusStr = $r->cnt;
-			if($statusStr > $limit) {
-				$statusStr = $limit;
-			}
-		}
-		$rs->free();
-		if($limit){
-			$sqlFrag .= 'LIMIT '.$limit;
-		}
-		$sql = 'INSERT INTO omcrowdsourcequeue(occid, omcsid) '.
-			'SELECT DISTINCT o.occid, '.$omcsid.' AS csid '.$sqlFrag;
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR adding to queue: '.$this->conn->error;
-			$statusStr .= '; SQL: '.$sql;
-		}
-        $this->conn->close();
 		return $statusStr;
 	}
 
 	public function deleteQueue(): string
 	{
 		$statusStr = 'SUCCESS: all specimens removed from queue';
-		if(!$this->omcsid) {
-			return 'ERROR adding to queue, omcsid is null';
+		if($this->omcsid) {
+            if($this->collid) {
+                $sql = 'DELETE FROM omcrowdsourcequeue '.
+                    'WHERE omcsid = '.$this->omcsid.' AND uidprocessor IS NULL and reviewstatus = 0 ';
+                if(!$this->conn->query($sql)){
+                    $statusStr = 'ERROR removing specimens from queue.';
+                }
+                $this->conn->close();
+            }
+            else {
+                $statusStr = 'ERROR adding to queue, collid is null';
+            }
+        }
+		else {
+            $statusStr = 'ERROR adding to queue, omcsid is null';
 		}
-		if(!$this->collid) {
-			return 'ERROR adding to queue, collid is null';
-		}
-		$sql = 'DELETE FROM omcrowdsourcequeue '.
-			'WHERE omcsid = '.$this->omcsid.' AND uidprocessor IS NULL and reviewstatus = 0 ';
-		if(!$this->conn->query($sql)){
-			$statusStr = 'ERROR removing specimens from queue: '.$this->conn->error;
-			$statusStr .= '; SQL: '.$sql;
-		}
-        $this->conn->close();
 		return $statusStr;
 	}
 
@@ -378,7 +386,7 @@ class OccurrenceCrowdSource {
 			$successArr = array();
 			foreach($occidArr as $occid){
 				$points = $postArr['p-'.$occid];
-				$comments = $this->cleanInStr($postArr['c-'.$occid]);
+				$comments = Sanitizer::cleanInStr($postArr['c-'.$occid]);
 				$sql = 'UPDATE omcrowdsourcequeue '.
 					'SET points = '.$points.',notes = '.($comments?'"'.$comments.'"':'NULL').',reviewstatus = 10 '.
 					'WHERE occid = '.$occid;
@@ -386,7 +394,7 @@ class OccurrenceCrowdSource {
 					$successArr[] = $occid;
 				}
 				else{
-					$statusStr = 'ERROR submitting reviews; '.$this->conn->error.'<br/>SQL = '.$sql;
+					$statusStr = 'ERROR submitting reviews.';
 				}
 			}
 			if($successArr && isset($postArr['updateProcessingStatus']) && $postArr['updateProcessingStatus']){
@@ -438,13 +446,6 @@ class OccurrenceCrowdSource {
 			$rs->free();
 		}
 		return $retArr;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 
 	public function getHeaderArr(): array
