@@ -500,8 +500,9 @@ else{
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 				<input type="hidden" name="occid" value="" />
 				<input type="hidden" name="occindex" value="0" />
-				<input type="button" name="submitaction" value="Display Editor" onclick="submitQueryEditor(this.form)" />
-				<input type="button" name="submitaction" value="Display Table" onclick="submitQueryTable(this.form)" />
+                <input type="hidden" name="submitaction" value="" />
+				<input type="button" value="Display Editor" onclick="submitQueryEditor(this.form)" />
+				<input type="button" value="Display Table" onclick="submitQueryTable(this.form)" />
 				<span style="margin-left:10px;">
 					<input type="button" name="reset" value="Reset Form" onclick="resetQueryForm()" />
 				</span>

@@ -75,8 +75,7 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 }
 if($collid){
     $collDataFull = $collManager->getCollectionMetadata();
-    $collData = $collDataFull[$collid];
-    $collManager->cleanOutArr($collData);
+    $collData = Sanitizer::cleanOutArray($collDataFull[$collid]);
 }
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

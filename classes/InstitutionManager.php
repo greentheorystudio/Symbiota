@@ -31,7 +31,7 @@ class InstitutionManager {
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_assoc()){
-				$retArr = $this->cleanOutArr($row);
+				$retArr = Sanitizer::cleanOutArray($row);
 			}
 			$rs->free();
 		}
@@ -193,7 +193,7 @@ class InstitutionManager {
 				$retArr[$r->iid]['collid'] = $collStr;
 			}
 			else{
-				$retArr[$r->iid] = $this->cleanOutArr($r);
+				$retArr[$r->iid] = Sanitizer::cleanOutArray($r);
 			}
 		}
 		$rs->free();
@@ -214,14 +214,5 @@ class InstitutionManager {
 		}
 		$rs->free();
 		return $retArr;
-	}
-
-	private function cleanOutArr($inArr): array
-	{
-		$outArr = array();
-		foreach($inArr as $k => $v){
-			$outArr[$k] = Sanitizer::cleanOutStr($v);
-		}
-		return $outArr;
 	}
 }
