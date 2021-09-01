@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
 $decimalLatitude = array_key_exists('decimallatitude',$_REQUEST)?(float)$_REQUEST['decimallatitude']:null;

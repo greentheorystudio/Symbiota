@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/PermissionsManager.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $loginAs = array_key_exists('loginas',$_REQUEST)?trim($_REQUEST['loginas']): '';
 $searchTerm = array_key_exists('searchterm',$_REQUEST)?trim($_REQUEST['searchterm']): '';
