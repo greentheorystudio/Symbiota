@@ -3,12 +3,13 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/FieldGuideManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']): '';
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $resultId = array_key_exists('resid',$_REQUEST)?(int)$_REQUEST['resid']:0;
-$viewMode = array_key_exists('viewmode',$_REQUEST)?$_REQUEST['viewmode']:'full';
+$viewMode = array_key_exists('viewmode',$_REQUEST)?htmlspecialchars($_REQUEST['viewmode']):'full';
 $start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:100;
 

@@ -17,7 +17,12 @@ class Sanitizer {
     {
         $newArray = array();
         foreach($arr as $key => $value){
-            $newArray[self::cleanInStr($key)] = self::cleanInStr($value);
+            if(is_array($value)){
+                $newArray[self::cleanInStr($key)] = self::cleanInArray($value);
+            }
+            else{
+                $newArray[self::cleanInStr($key)] = self::cleanInStr($value);
+            }
         }
         return $newArray;
     }
@@ -25,6 +30,20 @@ class Sanitizer {
     public static function cleanOutStr($str): string
     {
         return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
+    }
+
+    public static function cleanOutArray($arr): array
+    {
+        $newArray = array();
+        foreach($arr as $key => $value){
+            if(is_array($value)){
+                $newArray[$key] = self::cleanOutArray($value);
+            }
+            else{
+                $newArray[$key] = self::cleanOutStr($value);
+            }
+        }
+        return $newArray;
     }
 
     public static function validateRequestPath(): void

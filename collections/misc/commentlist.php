@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -11,8 +12,8 @@ if(!$GLOBALS['SYMB_UID']) {
 $collid = (int)$_REQUEST['collid'];
 $start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:100;
-$tsStart = array_key_exists('tsstart',$_POST)?$_POST['tsstart']:'';
-$tsEnd = array_key_exists('tsend',$_POST)?$_POST['tsend']:'';
+$tsStart = array_key_exists('tsstart',$_POST)?htmlspecialchars($_POST['tsstart']):'';
+$tsEnd = array_key_exists('tsend',$_POST)?htmlspecialchars($_POST['tsend']):'';
 $uid = array_key_exists('uid',$_POST)?(int)$_POST['uid']:0;
 $rs = array_key_exists('rs',$_POST)?(int)$_POST['rs']:1;
 

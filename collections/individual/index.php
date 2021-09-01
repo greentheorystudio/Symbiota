@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;

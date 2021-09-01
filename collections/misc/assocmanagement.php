@@ -3,6 +3,7 @@ require_once(__DIR__ . '/../../config/symbini.php');
 require_once(__DIR__ . '/../../classes/OccurrenceAssociations.php');
 require_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
