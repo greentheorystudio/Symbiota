@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $tid = (int)$_REQUEST['tid'];
 $category = array_key_exists('cat',$_REQUEST)?$_REQUEST['cat']: '';

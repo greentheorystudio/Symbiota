@@ -712,7 +712,7 @@ class OccurrenceEditorManager {
             $sql .= 'LIMIT '.($this->occIndex>0?$this->occIndex.',':'').$this->recLimit;
         }
         if($sql){
-            //echo "<div>".$sql."</div>";
+            //echo '<div>' .$sql. '</div>';
             $occid = 0;
             $rs = $this->conn->query($sql);
             while($row = $rs->fetch_assoc()){
@@ -736,7 +736,7 @@ class OccurrenceEditorManager {
                     $retArr[$occid]['ownerinstitutioncode'] = $this->collMap['institutioncode'];
                 }
             }
-            $this->occurrenceMap = $this->cleanOutArr($retArr);
+            $this->occurrenceMap = Sanitizer::cleanOutArray($retArr);
             if($this->occid){
                 $this->setLoanData();
                 if($this->exsiccatiMode) {
@@ -1559,7 +1559,7 @@ class OccurrenceEditorManager {
             'minimumelevationinmeters','maximumelevationinmeters','verbatimelevation','minimumdepthinmeters','maximumdepthinmeters','verbatimdepth',
             'habitat','substrate','lifestage', 'sex', 'individualcount', 'samplingprotocol', 'preparations',
             'associatedtaxa','basisofrecord','language','labelproject');
-        return $this->cleanOutArr(array_intersect_key($fArr,array_flip($locArr)));
+        return Sanitizer::cleanOutArray(array_intersect_key($fArr,array_flip($locArr)));
     }
 
     public function getIdentificationRanking(): array
@@ -2125,15 +2125,6 @@ class OccurrenceEditorManager {
             }
         }
         return $retStr;
-    }
-
-    protected function cleanOutArr($inArr): array
-    {
-        $outArr = array();
-        foreach($inArr as $k => $v){
-            $outArr[$k] = Sanitizer::cleanOutStr($v);
-        }
-        return $outArr;
     }
 
     private function cleanRawFragment($str): string
