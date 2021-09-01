@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $locality = $_REQUEST['locality'];
 $country = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';

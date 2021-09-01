@@ -142,7 +142,7 @@ class ChecklistManager {
 	}
 
 	public function getTaxaList($pageNumber, $retLimit){
-		if($this->clid && $this->dynClid) {
+		if($this->clid || $this->dynClid) {
             $speciesPrev = '';
             $taxonPrev = '';
             $tidReturn = array();

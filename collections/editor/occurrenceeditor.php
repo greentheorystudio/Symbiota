@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;

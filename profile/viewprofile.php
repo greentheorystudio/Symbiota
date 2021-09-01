@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;

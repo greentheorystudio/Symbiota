@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
 $glimgId = array_key_exists('glimgid',$_REQUEST)?(int)$_REQUEST['glimgid']:0;

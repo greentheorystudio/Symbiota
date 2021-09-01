@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharDeficitManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
  
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $langValue = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';

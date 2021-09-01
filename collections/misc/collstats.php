@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 ini_set('max_execution_time', 1200);
 
 $catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
@@ -9,8 +10,8 @@ if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
     $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
 $collId = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):'';
-$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
-$cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
+$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon']):'';
+$cCountry = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';
 $days = array_key_exists('days',$_REQUEST)?(int)$_REQUEST['days']:365;
 $months = array_key_exists('months',$_REQUEST)?(int)$_REQUEST['months']:12;
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
@@ -218,6 +219,9 @@ if($collId){
         }
         $_SESSION['statsFamilyArr'] = $familyArr;
         $_SESSION['statsCountryArr'] = $countryArr;
+    }
+    else{
+        $collId = '';
     }
 }
 if($action !== 'Update Statistics'){

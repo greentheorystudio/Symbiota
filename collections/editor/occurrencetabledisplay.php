@@ -5,6 +5,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?(int)$_REQUEST['reclimit']:1000;

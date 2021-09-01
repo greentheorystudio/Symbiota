@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ReferenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $refId = array_key_exists('refid',$_REQUEST)?(int)$_REQUEST['refid']:0;
 $authId = array_key_exists('authid',$_REQUEST)?(int)$_REQUEST['authid']:0;
