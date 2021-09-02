@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 require_once(__DIR__ . '/../../classes/SpecUploadBase.php');
 require_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
 
-$uspid = array_key_exists('uspid',$_REQUEST)?$_REQUEST['uspid']:0;
+$uspid = array_key_exists('uspid',$_REQUEST)?(int)$_REQUEST['uspid']:0;
 
 $importIdent = true;
 $importImage = true;

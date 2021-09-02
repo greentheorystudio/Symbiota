@@ -7,17 +7,18 @@ header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 $solrManager = new SOLRManager();
 $checklistManager = new OccurrenceChecklistManager();
 
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)&&$_REQUEST['taxonfilter']?$_REQUEST['taxonfilter']:1;
-$interface = array_key_exists('interface',$_REQUEST)&&$_REQUEST['interface']?$_REQUEST['interface']: 'checklist';
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:1;
+$interface = array_key_exists('interface',$_REQUEST)?$_REQUEST['interface']: 'checklist';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 if(!is_numeric($taxonFilter)) {
 	$taxonFilter = 1;
 }
 $tidArr = array();
+$stArr = array();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 	$checklistManager->setSearchTermsArr($stArr);
 }
 

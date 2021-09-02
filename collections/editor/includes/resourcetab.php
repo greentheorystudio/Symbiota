@@ -3,10 +3,11 @@ include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$occid = $_GET['occid'];
-$occIndex = $_GET['occindex'];
-$crowdSourceMode = $_GET['csmode'];
+$occid = (int)$_GET['occid'];
+$occIndex = (int)$_GET['occindex'];
+$crowdSourceMode = (int)$_GET['csmode'];
 
 $occManager = new OccurrenceEditorManager();
 $occManager->setOccId($occid);
@@ -206,10 +207,10 @@ if($userChecklists || $checklistArr){
                                         $tnUrl = $url;
                                     }
 									if($GLOBALS['IMAGE_DOMAIN']){
-										if(strpos($url, '/') === 0) {
+										if(strncmp($url, '/', 1) === 0) {
                                             $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
                                         }
-										if(strpos($tnUrl, '/') === 0) {
+										if(strncmp($tnUrl, '/', 1) === 0) {
                                             $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                                         }
 									}
@@ -228,11 +229,11 @@ if($userChecklists || $checklistArr){
 					echo '</div>';
 				}
 			}
-			else if($dupClusterArr === false){
-                echo $dupManager->getErrorStr();
-            }
-            else{
+			elseif($dupClusterArr !== false) {
                 echo '<div style="font-weight:bold;font-size:120%;margin:15px 0;">No Linked Duplicate Records</div>';
+            }
+            else {
+                echo $dupManager->getErrorStr();
             }
 			?>
 		</div>

@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/SpecProcessorOcr.php');
 include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceEditorImages extends OccurrenceEditorManager {
 
@@ -41,9 +42,9 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                         $ocrSource .= ': ' . date('Y-m-d');
                     }
                     $sql = 'INSERT INTO specprocessorrawlabels(imgid, rawstr, source) '.
-                        'VALUES('.$this->activeImgId.',"'.$this->cleanInStr($rawStr).'","'.$this->cleanInStr($ocrSource).'")';
+                        'VALUES('.$this->activeImgId.',"'.Sanitizer::cleanInStr($rawStr).'","'.Sanitizer::cleanInStr($ocrSource).'")';
                     if(!$this->conn->query($sql)){
-                        $this->errorStr = 'ERROR loading OCR text block: '.$this->conn->error;
+                        $this->errorStr = 'ERROR loading OCR text block.';
                     }
                 }
             }
@@ -109,22 +110,22 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 	 		}
 		}
 		$occId = $_REQUEST['occid'];
-		$caption = $this->cleanInStr($_REQUEST['caption']);
-		$photographer = $this->cleanInStr($_REQUEST['photographer']);
+		$caption = Sanitizer::cleanInStr($_REQUEST['caption']);
+		$photographer = Sanitizer::cleanInStr($_REQUEST['photographer']);
 		$photographerUid = (array_key_exists('photographeruid',$_REQUEST)?$_REQUEST['photographeruid']:'');
-		$notes = $this->cleanInStr($_REQUEST['notes']);
-		$copyRight = $this->cleanInStr($_REQUEST['copyright']);
+		$notes = Sanitizer::cleanInStr($_REQUEST['notes']);
+		$copyRight = Sanitizer::cleanInStr($_REQUEST['copyright']);
 		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
-		$sourceUrl = $this->cleanInStr($_REQUEST['sourceurl']);
+		$sourceUrl = Sanitizer::cleanInStr($_REQUEST['sourceurl']);
 
 		if($GLOBALS['IMAGE_DOMAIN']){
-    		if(strpos($url, '/') === 0){
+    		if(strncmp($url, '/', 1) === 0){
 	    		$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
     		}
-    		if($tnUrl && strpos($tnUrl, '/') === 0){
+    		if($tnUrl && strncmp($tnUrl, '/', 1) === 0){
 	    		$tnUrl = 'http://'.$_SERVER['HTTP_HOST'].$tnUrl;
     		}
-    		if($origUrl && strpos($origUrl, '/') === 0){
+    		if($origUrl && strncmp($origUrl, '/', 1) === 0){
 	    		$origUrl = 'http://'.$_SERVER['HTTP_HOST'].$origUrl;
     		}
     	}
@@ -164,7 +165,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                    }
             }
         } else { 
-			$status .= 'ERROR: image not changed, ' .$this->conn->error. 'SQL: ' .$sql;
+			$status .= 'ERROR: image not changed.';
 		}
 		return $status;
 	}
@@ -180,7 +181,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $status;
 	}
 
-	public function remapImage($imgId, $targetOccid = 0): bool
+	public function remapImage($imgId, $targetOccid = null): bool
     {
 		$status = true;
 		if(!is_numeric($imgId) || !is_numeric($targetOccid)){
@@ -195,14 +196,14 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 				$this->conn->query($imgSql);
 			}
 			else{
-				$this->errorArr[] = 'ERROR: Unalbe to remap image to another occurrence record. Error msg: '.$this->conn->error;
+				$this->errorArr[] = 'ERROR: Unalbe to remap image to another occurrence record.';
 				$status = false;
 			}
 		}
 		else{
 			$sql = 'UPDATE images SET occid = NULL WHERE (imgid = '.$imgId.')';
 			if(!$this->conn->query($sql)){
-				$this->errorArr[] = 'ERROR: Unalbe to disassociate from occurrence record. Error msg: '.$this->conn->error;
+				$this->errorArr[] = 'ERROR: Unalbe to disassociate from occurrence record.';
 				$status = false;
 			}
 		}
@@ -314,7 +315,7 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
                 'FROM users u ORDER BY u.lastname, u.firstname ';
 			$result = $this->conn->query($sql);
 			while($row = $result->fetch_object()){
-				$this->photographerArr[$row->uid] = $this->cleanOutStr($row->fullname);
+				$this->photographerArr[$row->uid] = Sanitizer::cleanOutStr($row->fullname);
 			}
 			$result->close();
 		}

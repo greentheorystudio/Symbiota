@@ -11,9 +11,9 @@ $fileName = array_key_exists('dh-filename',$_REQUEST)?$_REQUEST['dh-filename']:'
 $contentType = array_key_exists('dh-contentType',$_REQUEST)?$_REQUEST['dh-contentType']:'';
 $selections = array_key_exists('dh-selections',$_REQUEST)?$_REQUEST['dh-selections']:'';
 $schema = array_key_exists('schemacsv',$_REQUEST)?$_REQUEST['schemacsv']:'';
-$identifications = array_key_exists('identificationscsv',$_REQUEST)?$_REQUEST['identificationscsv']:0;
-$images = array_key_exists('imagescsv',$_REQUEST)?$_REQUEST['imagescsv']:0;
-$rows = array_key_exists('dh-rows',$_REQUEST)?$_REQUEST['dh-rows']:0;
+$identifications = array_key_exists('identificationscsv',$_REQUEST)?(int)$_REQUEST['identificationscsv']:0;
+$images = array_key_exists('imagescsv',$_REQUEST)?(int)$_REQUEST['imagescsv']:0;
+$rows = array_key_exists('dh-rows',$_REQUEST)?(int)$_REQUEST['dh-rows']:0;
 $format = array_key_exists('formatcsv',$_REQUEST)?$_REQUEST['formatcsv']:'';
 $zip = array_key_exists('zipcsv',$_REQUEST)?$_REQUEST['zipcsv']:'';
 $cset = array_key_exists('csetcsv',$_REQUEST)?$_REQUEST['csetcsv']:'';
@@ -30,13 +30,14 @@ $jsonContent = '';
 $spatial = false;
 $stArr = array();
 $pArr = array();
+$mapWhere = '';
 
 if($fileType === 'geojson' || $fileType === 'kml' || $fileType === 'gpx') {
     $spatial = true;
 }
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
 }
 
 if($GLOBALS['SOLR_MODE'] && $stArr){
@@ -118,68 +119,66 @@ if($fileType !== 'zip' && $fileType !== 'csv'){
     header('Content-Length: '.strlen($fileContent));
     echo $fileContent;
 }
+else if($schema === 'checklist'){
+    $occManager->setSearchTermsArr($stArr);
+    $dlManager->setSqlWhere($occManager->getSqlWhere());
+    $dlManager->setSchemaType($schema);
+    $dlManager->setCharSetOut($cset);
+    $dlManager->setDelimiter($fileType);
+    $dlManager->setZipFile($zip);
+    $dlManager->setTaxonFilter($taxonFilter);
+    $dlManager->downloadData();
+}
 else{
-    if($schema === 'checklist'){
-        $occManager->setSearchTermsArr($stArr);
-        $dlManager->setSqlWhere($occManager->getSqlWhere());
-        $dlManager->setSchemaType($schema);
-        $dlManager->setCharSetOut($cset);
-        $dlManager->setDelimiter($fileType);
-        $dlManager->setZipFile($zip);
-        $dlManager->setTaxonFilter($taxonFilter);
-        $dlManager->downloadData();
+    $occStr = '';
+    if($GLOBALS['SOLR_MODE']){
+        if($selections){
+            $occStr = $selections;
+        }
+        else{
+            $occStr = $spatialManager->getOccStrFromGeoJSON($jsonContent);
+        }
+        $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
+    }
+    $dwcaHandler->setCharSetOut($cset);
+    $dwcaHandler->setSchemaType($schema);
+    $dwcaHandler->setDelimiter($format);
+    $dwcaHandler->setVerboseMode(0);
+    $dwcaHandler->setRedactLocalities(0);
+    $dwcaHandler->setCustomWhereSql($mapWhere);
+    $dwcaHandler->setIsPublicDownload();
+
+    $outputFile = null;
+    if($fileType === 'zip'){
+        $dwcaHandler->setIncludeDets($identifications);
+        $dwcaHandler->setIncludeImgs($images);
+        $outputFile = $dwcaHandler->createDwcArchive('webreq');
     }
     else{
-        $occStr = '';
-        if($GLOBALS['SOLR_MODE']){
-            if($selections){
-                $occStr = $selections;
-            }
-            else{
-                $occStr = $spatialManager->getOccStrFromGeoJSON($jsonContent);
-            }
-            $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
-        }
-        $dwcaHandler->setCharSetOut($cset);
-        $dwcaHandler->setSchemaType($schema);
-        $dwcaHandler->setDelimiter($format);
-        $dwcaHandler->setVerboseMode(0);
-        $dwcaHandler->setRedactLocalities(0);
-        $dwcaHandler->setCustomWhereSql($mapWhere);
-        $dwcaHandler->setIsPublicDownload();
-
-        $outputFile = null;
-        if($fileType === 'zip'){
-            $dwcaHandler->setIncludeDets($identifications);
-            $dwcaHandler->setIncludeImgs($images);
-            $outputFile = $dwcaHandler->createDwcArchive('webreq');
-        }
-        else{
-            $outputFile = $dwcaHandler->getOccurrenceFile();
-        }
-
-        $contentDesc = '';
-        if($schema === 'dwc'){
-            $contentDesc = 'Darwin Core ';
-        }
-        else{
-            $contentDesc = 'Symbiota ';
-        }
-        $contentDesc .= 'Occurrence ';
-        if($zip){
-            $contentDesc .= 'Archive ';
-        }
-        $contentDesc .= 'File';
-        header('Content-Description: '.$contentDesc);
-        header('Content-Type: '.$contentType);
-        header('Content-Disposition: attachment; filename='.basename($outputFile));
-        header('Content-Transfer-Encoding: binary');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($outputFile));
-        flush();
-        readfile($outputFile);
-        unlink($outputFile);
+        $outputFile = $dwcaHandler->getOccurrenceFile();
     }
+
+    $contentDesc = '';
+    if($schema === 'dwc'){
+        $contentDesc = 'Darwin Core ';
+    }
+    else{
+        $contentDesc = 'Symbiota ';
+    }
+    $contentDesc .= 'Occurrence ';
+    if($zip){
+        $contentDesc .= 'Archive ';
+    }
+    $contentDesc .= 'File';
+    header('Content-Description: '.$contentDesc);
+    header('Content-Type: '.$contentType);
+    header('Content-Disposition: attachment; filename='.basename($outputFile));
+    header('Content-Transfer-Encoding: binary');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($outputFile));
+    flush();
+    readfile($outputFile);
+    unlink($outputFile);
 }

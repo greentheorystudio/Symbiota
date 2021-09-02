@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpatialModuleManager{
 
@@ -15,7 +16,7 @@ class SpatialModuleManager{
     }
 
     public function __destruct(){
-        if(!($this->conn === false)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -61,7 +62,7 @@ class SpatialModuleManager{
 
     public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
-        $jsonArr = json_decode($json, true);
+        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $occArr[] = $data['properties']['occid'];
@@ -69,7 +70,7 @@ class SpatialModuleManager{
         return implode(',',$occArr);
     }
 
-    public function getSynonyms($searchTarget,$taxAuthId = 1): array{
+    public function getSynonyms($searchTarget): array{
         $synArr = array();
         $targetTidArr = array();
         $searchStr = '';
@@ -88,7 +89,7 @@ class SpatialModuleManager{
             $searchStr = $searchTarget;
         }
         if($searchStr){
-            $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.$searchStr.'")';
+            $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.Sanitizer::cleanInStr($searchStr).'")';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $targetTidArr[] = $r1->tid;
@@ -101,7 +102,7 @@ class SpatialModuleManager{
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
                 'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.TidAccepted '.
-                'WHERE (ts.taxauthid = '.$taxAuthId.') AND (ts.tid IN('.implode(',',$targetTidArr).')) ';
+                'WHERE (ts.taxauthid = 1) AND (ts.tid IN('.implode(',',$targetTidArr).')) ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
                 $accArr[] = $r2->tid;
@@ -113,7 +114,7 @@ class SpatialModuleManager{
             if($accArr){
                 $sql3 = 'SELECT DISTINCT t.tid, t.sciname ' .
                     'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                    'WHERE (ts.taxauthid = ' . $taxAuthId . ') AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
+                    'WHERE (ts.taxauthid = 1) AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
                 $rs3 = $this->conn->query($sql3);
                 while ($r3 = $rs3->fetch_object()) {
                     $synArr[$r3->tid] = $r3->sciname;
@@ -123,7 +124,7 @@ class SpatialModuleManager{
                 if ($rankId === 220) {
                     $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
                         'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = ' . $taxAuthId . ') ' .
+                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = 1) ' .
                         'AND (ts.TidAccepted = ts.tid)';
                     $rs4 = $this->conn->query($sql4);
                     while ($r4 = $rs4->fetch_object()) {
@@ -139,7 +140,7 @@ class SpatialModuleManager{
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
-        $jsonArr = json_decode($json, true);
+        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $coordArr = $data['geometry']['coordinates'];
@@ -153,7 +154,7 @@ class SpatialModuleManager{
     public function writeKMLFromGeoJSON($json): string{
         $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
-        $jsonArr = json_decode($json, true);
+        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $featureArr = $jsonArr['features'];
         $returnStr .= '<Document>';
         foreach($featureArr as $f => $data){
@@ -199,7 +200,7 @@ class SpatialModuleManager{
         if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
             $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
-        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
+        if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
         $sql .= $this->sqlWhere;
@@ -245,7 +246,7 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr);
+        return json_encode($geomArr, JSON_THROW_ON_ERROR);
     }
 
     public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
@@ -270,7 +271,7 @@ class SpatialModuleManager{
         if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
             $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
-        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
+        if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
         $sql .= $this->sqlWhere;
@@ -346,7 +347,7 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr);
+        return json_encode($geomArr, JSON_THROW_ON_ERROR);
     }
 
     public function setRecordCnt(): void
@@ -415,15 +416,15 @@ class SpatialModuleManager{
         while($r = $result->fetch_object()){
             $occId = $r->occid;
             $collId = $r->collid;
-            $retArr[$occId]['i'] = $this->cleanOutStr($r->institutioncode);
-            $retArr[$occId]['cat'] = $this->cleanOutStr($r->catalognumber);
-            $retArr[$occId]['c'] = $this->cleanOutStr($r->collector);
-            $retArr[$occId]['e'] = $this->cleanOutStr($r->eventdate);
-            $retArr[$occId]['f'] = $this->cleanOutStr($r->family);
-            $retArr[$occId]['s'] = $this->cleanOutStr($r->sciname);
-            $retArr[$occId]['l'] = $this->cleanOutStr($r->locality);
-            $retArr[$occId]['lat'] = $this->cleanOutStr($r->DecimalLatitude);
-            $retArr[$occId]['lon'] = $this->cleanOutStr($r->DecimalLongitude);
+            $retArr[$occId]['i'] = Sanitizer::cleanOutStr($r->institutioncode);
+            $retArr[$occId]['cat'] = Sanitizer::cleanOutStr($r->catalognumber);
+            $retArr[$occId]['c'] = Sanitizer::cleanOutStr($r->collector);
+            $retArr[$occId]['e'] = Sanitizer::cleanOutStr($r->eventdate);
+            $retArr[$occId]['f'] = Sanitizer::cleanOutStr($r->family);
+            $retArr[$occId]['s'] = Sanitizer::cleanOutStr($r->sciname);
+            $retArr[$occId]['l'] = Sanitizer::cleanOutStr($r->locality);
+            $retArr[$occId]['lat'] = Sanitizer::cleanOutStr($r->DecimalLatitude);
+            $retArr[$occId]['lon'] = Sanitizer::cleanOutStr($r->DecimalLongitude);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
@@ -575,11 +576,11 @@ class SpatialModuleManager{
 
     public function setSqlWhere($whereStr): void
     {
-        if(!$whereStr){
-            $whereStr = 'WHERE ';
-        }
-        else{
+        if($whereStr) {
             $whereStr .= 'AND ';
+        }
+        else {
+            $whereStr = 'WHERE ';
         }
         $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
@@ -587,9 +588,5 @@ class SpatialModuleManager{
     public function getRecordCnt(): int
     {
         return $this->recordCount;
-    }
-
-    protected function cleanOutStr($str){
-        return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
     }
 }

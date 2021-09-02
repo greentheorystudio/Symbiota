@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceDownload{
 
@@ -40,7 +41,7 @@ class OccurrenceDownload{
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -163,10 +164,10 @@ class OccurrenceDownload{
 		return $recCnt;
 	}
 
-	public function getDataEntryActivity($format='rss',$days=0, $limit=0){
+	public function getDataEntryActivity($format, $days, $limit){
 		if($format === 'json'){
 			$xml = simplexml_load_string($this->getDataEntryXML($days,$limit));
-			return json_encode($xml);
+			return json_encode($xml, JSON_THROW_ON_ERROR);
 		}
 
 		return $this->getDataEntryXML($days,$limit);
@@ -264,7 +265,7 @@ class OccurrenceDownload{
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
-			if(strpos($tnUrl, '/') === 0){
+			if(strncmp($tnUrl, '/', 1) === 0){
 				if($GLOBALS['IMAGE_DOMAIN']){
 					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
 				}
@@ -302,14 +303,14 @@ class OccurrenceDownload{
 		$this->sqlWhere = $sqlStr;
 	}
 
-	public function addCondition($field, $cond, $value = ''): void
+	public function addCondition($field, $cond, $value = null): void
 	{
 		if($field){
 			if(!trim($cond)) {
 				$cond = 'EQUALS';
 			}
 			if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
-				$this->conditionArr[$field][$cond][] = $this->cleanInStr($value);
+				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($value);
 			}
 		}
 	}
@@ -361,10 +362,10 @@ class OccurrenceDownload{
 			$this->sqlWhere .= $sqlFrag;
 		}
 		if($this->sqlWhere){
-			if(strpos($this->sqlWhere, 'AND ') === 0){
+			if(strncmp($this->sqlWhere, 'AND ', 4) === 0){
 				$this->sqlWhere = 'WHERE'.substr($this->sqlWhere,3);
 			}
-			elseif(strpos($this->sqlWhere, 'WHERE ') !== 0){
+			elseif(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
 				$this->sqlWhere = 'WHERE '.$this->sqlWhere;
 			}
 		}
@@ -505,7 +506,7 @@ class OccurrenceDownload{
 	{
 		$retStr = '';
 		$fileName = str_replace(Array('.', ':'), '',$GLOBALS['DEFAULT_TITLE']);
-		if(stripos($fileName,'the ') === 0) {
+		if(strncasecmp($fileName, 'the ', 4) === 0) {
 			$fileName = substr($fileName, 4);
 		}
 		if(strlen($fileName) > 15){
@@ -516,7 +517,7 @@ class OccurrenceDownload{
 				$nameArr = explode(' ',trim($fileName));
 				$fileName = '';
 				foreach($nameArr as $v){
-					$fileName .= substr($v,0,1);
+					$fileName .= $v[0];
 				}
 			}
 			else{
@@ -567,7 +568,7 @@ class OccurrenceDownload{
 		return $retArr;
 	}
 
-	public function getProcessingStatusList($collid = 0): array
+	public function getProcessingStatusList($collid = null): array
 	{
 		$psArr = array();
 		$sql = 'SELECT DISTINCT processingstatus FROM omoccurrences ';
@@ -585,7 +586,7 @@ class OccurrenceDownload{
 		return array_merge(array_intersect($templateArr,$psArr),array_diff($psArr,$templateArr));
 	}
 
-	public function getAttributeTraits($collid = ''): array
+	public function getAttributeTraits($collid = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename '.
@@ -629,15 +630,16 @@ class OccurrenceDownload{
 
 	private function getContentType(): ?string
 	{
-		if ($this->zipFile) {
-			return 'application/zip; charset='.$this->charSetOut;
+		$retStr = 'text/html; charset='.$this->charSetOut;
+	    if ($this->zipFile) {
+            $retStr = 'application/zip; charset='.$this->charSetOut;
 		}
 
 		if($this->delimiter === 'comma' || $this->delimiter === ',') {
-			return 'text/csv; charset='.$this->charSetOut;
+            $retStr = 'text/csv; charset='.$this->charSetOut;
 		}
 
-		return 'text/html; charset='.$this->charSetOut;
+		return $retStr;
 	}
 
 	public function setCharSetOut($cs): void
@@ -715,13 +717,6 @@ class OccurrenceDownload{
 				}
 			}
 		}
-		return $retStr;
-	}
-
-	private function cleanInStr($inStr){
-		$retStr = trim($inStr);
-		$retStr = preg_replace('/\s\s+/', ' ',$retStr);
-		$retStr = $this->conn->real_escape_string($retStr);
 		return $retStr;
 	}
 }

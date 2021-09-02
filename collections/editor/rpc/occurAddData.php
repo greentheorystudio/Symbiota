@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceSkeletal.php');
 
-$collid = array_key_exists('collid',$_REQUEST);
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $responseArr = array();
 $isEditor = 0;
 if($collid){
@@ -20,12 +20,12 @@ if($collid){
 		$skelHandler->setCollid($_REQUEST['collid']);
 		if(array_key_exists('catalognumber',$_REQUEST) && $skelHandler->catalogNumberExists($_REQUEST['catalognumber'])){
 			$responseArr['occid'] = implode(',', $skelHandler->getOccidArr());
-			if($_REQUEST['addaction'] == '1'){
+			if((int)$_REQUEST['addaction'] === 1){
 				$responseArr['action'] = 'none';
 				$responseArr['status'] = 'false';
 				$responseArr['error'] = 'dupeCatalogNumber';
 			}
-			elseif($_REQUEST['addaction'] == '2'){
+			elseif((int)$_REQUEST['addaction'] === 2){
 				$responseArr['action'] = 'update';
 				$responseArr['status'] = 'true';
 				if(!$skelHandler->updateOccurrence($_REQUEST)){
@@ -47,4 +47,4 @@ if($collid){
 		}
 	}
 }
-echo json_encode($responseArr);
+echo json_encode($responseArr, JSON_THROW_ON_ERROR);

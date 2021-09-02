@@ -2,8 +2,8 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/GamesManager.php');
 
-$clid = array_key_exists('clid',$_POST)?$_POST['clid']: '';
-$dynClid = array_key_exists('dynclid',$_POST)?$_POST['dynclid']: '';
+$clid = array_key_exists('clid',$_POST)?(int)$_POST['clid']: '';
+$dynClid = array_key_exists('dynclid',$_POST)?(int)$_POST['dynclid']: '';
 
 $gameManager = new GamesManager();
 if($clid) {
@@ -15,4 +15,4 @@ elseif($dynClid) {
 
 $wordList = $gameManager->getNameGameWordList();
 
-echo json_encode($wordList);
+echo json_encode($wordList, JSON_THROW_ON_ERROR);

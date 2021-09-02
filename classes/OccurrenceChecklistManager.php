@@ -5,11 +5,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 	
 	private $checklistTaxaCnt = 0;
 
- 	public function __construct(){
- 		parent::__construct();
-	}
-
-	public function getChecklistTaxaCnt(): int
+    public function getChecklistTaxaCnt(): int
 	{
 		return $this->checklistTaxaCnt;
 	}
@@ -73,7 +69,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         return $returnVec;
     }
 
-	public function buildSymbiotaChecklist($taxonAuthorityId,$tidArr = ''){
+	public function buildSymbiotaChecklist($taxonAuthorityId,$tidArr){
 		$expirationTime = date('Y-m-d H:i:s',time()+259200);
 		$tidStr = '';
 		if($tidArr){
@@ -117,10 +113,9 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 			$this->conn->query('DELETE FROM fmdynamicchecklists WHERE expiration < now()');
 		}
 		else{
-			echo 'ERROR: ' .$this->conn->error;
-			echo 'insertSql: ' .$sqlCreateCl;
+			echo 'ERROR: Building checklist.';
 		}
-		if($this->conn !== false) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 		return $dynClid;

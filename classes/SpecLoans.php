@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecLoans{
 
@@ -272,7 +273,7 @@ class SpecLoans{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'loanid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE omoccurloans SET '.substr($sql,1).' WHERE (loanid = '.$loanId.')';
@@ -280,8 +281,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of loan failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of loan failed.';
 			}
 		}
 		return $statusStr;
@@ -319,7 +319,7 @@ class SpecLoans{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'loanid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE omoccurloans SET '.substr($sql,1).' WHERE (loanid = '.$loanId.')';
@@ -327,8 +327,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of loan failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of loan failed.';
 			}
 		}
 		return $statusStr;
@@ -345,7 +344,7 @@ class SpecLoans{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'exchangeid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.$this->cleanInStr($v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE omoccurexchange SET '.substr($sql,1).' WHERE (exchangeid = '.$exchangeId.')';
@@ -353,8 +352,7 @@ class SpecLoans{
 				$statusStr = 'SUCCESS: information saved';
 			}
 			else{
-				$statusStr = 'ERROR: Editing of exchange failed: '.$this->conn->error.'<br/>';
-				$statusStr .= 'SQL: '.$sql;
+				$statusStr = 'ERROR: Editing of exchange failed.';
 			}
 			
 			$sql = 'SELECT invoicebalance FROM omoccurexchange '.
@@ -398,15 +396,14 @@ class SpecLoans{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurloans(collidown,loanidentifierown,iidowner,iidborrower,createdbyown) '.
-			'VALUES('.$this->collId.',"'.$this->cleanInStr($pArr['loanidentifierown']).'",(SELECT iid FROM omcollections WHERE collid = '.$this->collId.'), '.
-			'"'.$this->cleanInStr($pArr['reqinstitution']).'","'.$this->cleanInStr($pArr['createdbyown']).'") ';
+			'VALUES('.$this->collId.',"'.Sanitizer::cleanInStr($pArr['loanidentifierown']).'",(SELECT iid FROM omcollections WHERE collid = '.$this->collId.'), '.
+			'"'.Sanitizer::cleanInStr($pArr['reqinstitution']).'","'.Sanitizer::cleanInStr($pArr['createdbyown']).'") ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->loanId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new loan failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new loan failed.';
 		}
 		return $statusStr;
 	}
@@ -415,15 +412,14 @@ class SpecLoans{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurloans(collidborr,loanidentifierown,loanidentifierborr,iidowner,createdbyborr) '.
-			'VALUES('.$this->collId.',"","'.$this->cleanInStr($pArr['loanidentifierborr']).'","'.$this->cleanInStr($pArr['iidowner']).'",'.
-			'"'.$this->cleanInStr($pArr['createdbyborr']).'")';
+			'VALUES('.$this->collId.',"","'.Sanitizer::cleanInStr($pArr['loanidentifierborr']).'","'.Sanitizer::cleanInStr($pArr['iidowner']).'",'.
+			'"'.Sanitizer::cleanInStr($pArr['createdbyborr']).'")';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->loanId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new loan failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new loan failed.';
 		}
 		return $statusStr;
 	}
@@ -432,15 +428,14 @@ class SpecLoans{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurexchange(identifier,collid,iid,transactiontype,createdby) '.
-			'VALUES("'.$this->cleanInStr($pArr['identifier']).'",'.$this->collId.',"'.$this->cleanInStr($pArr['iid']).'",'.
-			'"'.$this->cleanInStr($pArr['transactiontype']).'","'.$this->cleanInStr($pArr['createdby']).'")';
+			'VALUES("'.Sanitizer::cleanInStr($pArr['identifier']).'",'.$this->collId.',"'.Sanitizer::cleanInStr($pArr['iid']).'",'.
+			'"'.Sanitizer::cleanInStr($pArr['transactiontype']).'","'.Sanitizer::cleanInStr($pArr['createdby']).'")';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->exchangeId = $this->conn->insert_id;
 		}
 		else{
-			$statusStr = 'ERROR: Creation of new exchange failed: '.$this->conn->error.'<br/>';
-			$statusStr .= 'SQL: '.$sql;
+			$statusStr = 'ERROR: Creation of new exchange failed.';
 		}
 		return $statusStr;
 	}
@@ -486,7 +481,8 @@ class SpecLoans{
 
 	public function addSpecimen($loanId,$collId,$catNum): ?int
 	{
-		$occArr = array();
+		$retVal = 0;
+	    $occArr = array();
 		if(is_numeric($collId) && is_numeric($loanId)){
 			$sql = 'SELECT occid FROM omoccurrences WHERE (collid = '.$collId.') AND (catalognumber = "'.trim($catNum).'") ';
 			//echo $sql;
@@ -501,24 +497,24 @@ class SpecLoans{
 					$occArr[] = $row->occid;
 				}
 			}
-			if (count($occArr) === 0) {
-				return 0;
-			}
-
-			if(count($occArr) > 1) {
-				return 2;
-			}
-
-			$sql = 'INSERT INTO omoccurloanslink(loanid,occid) '.
-				'VALUES ('.$loanId.','.$occArr[0].') ';
-			//echo $sql;
-			if($this->conn->query($sql)){
-				return 1;
-			}
-
-			return 3;
+			if(count($occArr) !== 0) {
+                if(count($occArr) > 1) {
+                    $retVal = 2;
+                }
+                else{
+                    $sql = 'INSERT INTO omoccurloanslink(loanid,occid) '.
+                        'VALUES ('.$loanId.','.$occArr[0].') ';
+                    //echo $sql;
+                    if($this->conn->query($sql)){
+                        $retVal = 1;
+                    }
+                    else{
+                        $retVal = 3;
+                    }
+                }
+            }
 		}
-		return 0;
+		return $retVal;
 	}
 	
 	public function editSpecimen($reqArr): void
@@ -702,12 +698,5 @@ class SpecLoans{
 	
 	public function getExchangeId(){
 		return $this->exchangeId;
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 }

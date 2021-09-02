@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../../classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
 $retArr = array();
-$occId = $con->real_escape_string($_REQUEST['occid']);
+$occId = (int)$_REQUEST['occid'];
 
 $sql = 'SELECT cl.clid, cl.name '.
     'FROM fmvouchers v INNER JOIN fmchecklists cl ON v.clid = cl.clid '.
@@ -17,4 +17,4 @@ while($row = $result->fetch_object()) {
 }
 $result->close();
 $con->close();
-echo json_encode($retArr);
+echo json_encode($retArr, JSON_THROW_ON_ERROR);

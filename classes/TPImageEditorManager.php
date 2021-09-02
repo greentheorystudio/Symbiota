@@ -64,7 +64,7 @@ class TPImageEditorManager extends TPEditorManager{
         return $imageArr;
     }
 
-    public function echoPhotographerSelect($userId = 0): void
+    public function echoPhotographerSelect($userId = null): void
     {
         $sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
             'FROM users u ORDER BY u.lastname, u.firstname ';
@@ -83,7 +83,7 @@ class TPImageEditorManager extends TPEditorManager{
                 $sql = 'UPDATE images SET sortsequence = '.$editValue.' WHERE imgid = '.$editKey;
                 //echo $sql;
                 if(!$this->taxonCon->query($sql)){
-                    $status .= $this->taxonCon->error."\nSQL: ".$sql. '; ';
+                    $status .= 'Error editing image.<br />';
                 }
             }
         }

@@ -2,18 +2,19 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 ini_set('max_execution_time', 1200);
 
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
+    $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']:'';
-$cCountry = array_key_exists('country',$_REQUEST)?$_REQUEST['country']:'';
-$days = array_key_exists('days',$_REQUEST)?$_REQUEST['days']:365;
-$months = array_key_exists('months',$_REQUEST)?$_REQUEST['months']:12;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+$collId = array_key_exists('collid',$_REQUEST)?htmlspecialchars($_REQUEST['collid']):'';
+$cPartentTaxon = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon']):'';
+$cCountry = array_key_exists('country',$_REQUEST)?htmlspecialchars($_REQUEST['country']):'';
+$days = array_key_exists('days',$_REQUEST)?(int)$_REQUEST['days']:365;
+$months = array_key_exists('months',$_REQUEST)?(int)$_REQUEST['months']:12;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $collManager = new OccurrenceCollectionProfile();
 
@@ -27,189 +28,201 @@ $familyArr = array();
 $countryArr = array();
 $results = array();
 $collStr = '';
+$resultsTemp = array();
+
 if($collId){
-	$collIdArr = explode(',',$collId);
-	if($action === 'Run Statistics' && (!$cPartentTaxon && !$cCountry)){
-		$resultsTemp = $collManager->runStatistics($collId);
-		$results['FamilyCount'] = $resultsTemp['familycnt'];
-		$results['GeneraCount'] = $resultsTemp['genuscnt'];
-		$results['SpeciesCount'] = $resultsTemp['speciescnt'];
-		$results['TotalTaxaCount'] = $resultsTemp['TotalTaxaCount'];
-		$results['TotalImageCount'] = $resultsTemp['TotalImageCount'];
-        unset($resultsTemp['familycnt'], $resultsTemp['genuscnt'], $resultsTemp['speciescnt'], $resultsTemp['TotalTaxaCount'], $resultsTemp['TotalImageCount']);
-        ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
-		$c = 0;
-		foreach($resultsTemp as $i => $collArr){
-			$dynPropTempArr = array();
-			$familyTempArr = array();
-			$countryTempArr = array();
-			if($c>0) {
-                $collStr .= ', ';
-            }
-			$collStr .= $collArr['CollectionName'];
-			if(array_key_exists('SpecimenCount',$results)){
-				$results['SpecimenCount'] += $collArr['recordcnt'];
-			}
-			else{
-				$results['SpecimenCount'] = $collArr['recordcnt'];
-			}
-
-			if(array_key_exists('GeorefCount',$results)){
-				$results['GeorefCount'] += $collArr['georefcnt'];
-			}
-			else{
-				$results['GeorefCount'] = $collArr['georefcnt'];
-			}
-
-			if($collArr['dynamicProperties']){
-				$dynPropTempArr = json_decode($collArr['dynamicProperties'],true);
-                if(is_array($dynPropTempArr)){
-					$resultsTemp[$i]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
-					$resultsTemp[$i]['types'] = $dynPropTempArr['TypeCount'];
-
-					if(array_key_exists('SpecimensCountID',$results)){
-						$results['SpecimensCountID'] += $dynPropTempArr['SpecimensCountID'];
-					}
-					else{
-						$results['SpecimensCountID'] = $dynPropTempArr['SpecimensCountID'];
-					}
-
-					if(array_key_exists('TypeCount',$results)){
-						$results['TypeCount'] += $dynPropTempArr['TypeCount'];
-					}
-					else{
-						$results['TypeCount'] = $dynPropTempArr['TypeCount'];
-					}
-
-					if(array_key_exists('families',$dynPropTempArr)){
-						$familyTempArr = $dynPropTempArr['families'];
-						foreach($familyTempArr as $k => $famArr){
-							if(array_key_exists($k,$familyArr)){
-								$familyArr[$k]['SpecimensPerFamily'] += $famArr['SpecimensPerFamily'];
-								$familyArr[$k]['GeorefSpecimensPerFamily'] += $famArr['GeorefSpecimensPerFamily'];
-								$familyArr[$k]['IDSpecimensPerFamily'] += $famArr['IDSpecimensPerFamily'];
-								$familyArr[$k]['IDGeorefSpecimensPerFamily'] += $famArr['IDGeorefSpecimensPerFamily'];
-							}
-							else{
-								$familyArr[$k]['SpecimensPerFamily'] = $famArr['SpecimensPerFamily'];
-								$familyArr[$k]['GeorefSpecimensPerFamily'] = $famArr['GeorefSpecimensPerFamily'];
-								$familyArr[$k]['IDSpecimensPerFamily'] = $famArr['IDSpecimensPerFamily'];
-								$familyArr[$k]['IDGeorefSpecimensPerFamily'] = $famArr['IDGeorefSpecimensPerFamily'];
-							}
-						}
-						ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
-					}
-
-					if(array_key_exists('countries',$dynPropTempArr)){
-						$countryTempArr = $dynPropTempArr['countries'];
-						foreach($countryTempArr as $k => $countArr){
-							if(array_key_exists($k,$countryArr)){
-								$countryArr[$k]['CountryCount'] += $countArr['CountryCount'];
-								$countryArr[$k]['GeorefSpecimensPerCountry'] += $countArr['GeorefSpecimensPerCountry'];
-								$countryArr[$k]['IDSpecimensPerCountry'] += $countArr['IDSpecimensPerCountry'];
-								$countryArr[$k]['IDGeorefSpecimensPerCountry'] += $countArr['IDGeorefSpecimensPerCountry'];
-							}
-							else{
-								$countryArr[$k]['CountryCount'] = $countArr['CountryCount'];
-								$countryArr[$k]['GeorefSpecimensPerCountry'] = $countArr['GeorefSpecimensPerCountry'];
-								$countryArr[$k]['IDSpecimensPerCountry'] = $countArr['IDSpecimensPerCountry'];
-								$countryArr[$k]['IDGeorefSpecimensPerCountry'] = $countArr['IDGeorefSpecimensPerCountry'];
-							}
-						}
-						ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
-					}
-				}
-			}
-			$c++;
-		}
-		$results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
-	}
-    elseif($action === 'Run Statistics' && ($cPartentTaxon || $cCountry)){
-        $resultsTemp = $collManager->runStatisticsQuery($collId,$cPartentTaxon,$cCountry);
-        $familyArr = $resultsTemp['families'];
-        ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
-        $countryArr = $resultsTemp['countries'];
-        ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
-        unset($resultsTemp['families'], $resultsTemp['countries']);
-        ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
-        $c = 0;
-        foreach($resultsTemp as $k => $collArr){
-            if($c>0) {
-                $collStr .= ', ';
-            }
-            $collStr .= $collArr['CollectionName'];
-            if(array_key_exists('SpecimenCount',$results)){
-                $results['SpecimenCount'] += $collArr['recordcnt'];
-            }
-            else{
-                $results['SpecimenCount'] = $collArr['recordcnt'];
-            }
-
-            if(array_key_exists('GeorefCount',$results)){
-                $results['GeorefCount'] += $collArr['georefcnt'];
-            }
-            else{
-                $results['GeorefCount'] = $collArr['georefcnt'];
-            }
-
-            if(array_key_exists('FamilyCount',$results)){
-                $results['FamilyCount'] += $collArr['familycnt'];
-            }
-            else{
-                $results['FamilyCount'] = $collArr['familycnt'];
-            }
-
-            if(array_key_exists('GeneraCount',$results)){
-                $results['GeneraCount'] += $collArr['genuscnt'];
-            }
-            else{
-                $results['GeneraCount'] = $collArr['genuscnt'];
-            }
-
-            if(array_key_exists('SpeciesCount',$results)){
-                $results['SpeciesCount'] += $collArr['speciescnt'];
-            }
-            else{
-                $results['SpeciesCount'] = $collArr['speciescnt'];
-            }
-
-            if(array_key_exists('TotalTaxaCount',$results)){
-                $results['TotalTaxaCount'] += $collArr['TotalTaxaCount'];
-            }
-            else{
-                $results['TotalTaxaCount'] = $collArr['TotalTaxaCount'];
-            }
-
-            if(array_key_exists('TotalImageCount',$results)){
-                $results['TotalImageCount'] += $collArr['OccurrenceImageCount'];
-            }
-            else{
-                $results['TotalImageCount'] = $collArr['OccurrenceImageCount'];
-            }
-
-            if(array_key_exists('SpecimensCountID',$results)){
-                $results['SpecimensCountID'] += $collArr['speciesID'];
-            }
-            else{
-                $results['SpecimensCountID'] = $collArr['speciesID'];
-            }
-
-            if(array_key_exists('TypeCount',$results)){
-                $results['TypeCount'] += $collArr['types'];
-            }
-            else{
-                $results['TypeCount'] = $collArr['types'];
-            }
-            $c++;
-        }
-        $results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
+	if(is_numeric($collId)){
+        $collIdArr[] = (int)$collId;
     }
-	if($action === 'Update Statistics'){
-		$collManager->batchUpdateStatistics($collId);
-		echo '<script type="text/javascript">window.location="collstats.php?collid='.$collId.'"</script>';
-	}
-    $_SESSION['statsFamilyArr'] = $familyArr;
-    $_SESSION['statsCountryArr'] = $countryArr;
+	elseif(strpos($collId, ',') !== false){
+        $collIdArr = explode(',',$collId);
+    }
+    if($collIdArr){
+        if($action === 'Run Statistics' && (!$cPartentTaxon && !$cCountry)){
+            $resultsTemp = $collManager->runStatistics($collId);
+            $results['FamilyCount'] = $resultsTemp['familycnt'];
+            $results['GeneraCount'] = $resultsTemp['genuscnt'];
+            $results['SpeciesCount'] = $resultsTemp['speciescnt'];
+            $results['TotalTaxaCount'] = $resultsTemp['TotalTaxaCount'];
+            $results['TotalImageCount'] = $resultsTemp['TotalImageCount'];
+            unset($resultsTemp['familycnt'], $resultsTemp['genuscnt'], $resultsTemp['speciescnt'], $resultsTemp['TotalTaxaCount'], $resultsTemp['TotalImageCount']);
+            ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
+            $c = 0;
+            foreach($resultsTemp as $i => $collArr){
+                $dynPropTempArr = array();
+                $familyTempArr = array();
+                $countryTempArr = array();
+                if($c>0) {
+                    $collStr .= ', ';
+                }
+                $collStr .= $collArr['CollectionName'];
+                if(array_key_exists('SpecimenCount',$results)){
+                    $results['SpecimenCount'] += $collArr['recordcnt'];
+                }
+                else{
+                    $results['SpecimenCount'] = $collArr['recordcnt'];
+                }
+
+                if(array_key_exists('GeorefCount',$results)){
+                    $results['GeorefCount'] += $collArr['georefcnt'];
+                }
+                else{
+                    $results['GeorefCount'] = $collArr['georefcnt'];
+                }
+
+                if($collArr['dynamicProperties']){
+                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
+                    if(is_array($dynPropTempArr)){
+                        $resultsTemp[$i]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
+                        $resultsTemp[$i]['types'] = $dynPropTempArr['TypeCount'];
+
+                        if(array_key_exists('SpecimensCountID',$results)){
+                            $results['SpecimensCountID'] += $dynPropTempArr['SpecimensCountID'];
+                        }
+                        else{
+                            $results['SpecimensCountID'] = $dynPropTempArr['SpecimensCountID'];
+                        }
+
+                        if(array_key_exists('TypeCount',$results)){
+                            $results['TypeCount'] += $dynPropTempArr['TypeCount'];
+                        }
+                        else{
+                            $results['TypeCount'] = $dynPropTempArr['TypeCount'];
+                        }
+
+                        if(array_key_exists('families',$dynPropTempArr)){
+                            $familyTempArr = $dynPropTempArr['families'];
+                            foreach($familyTempArr as $k => $famArr){
+                                if(array_key_exists($k,$familyArr)){
+                                    $familyArr[$k]['SpecimensPerFamily'] += $famArr['SpecimensPerFamily'];
+                                    $familyArr[$k]['GeorefSpecimensPerFamily'] += $famArr['GeorefSpecimensPerFamily'];
+                                    $familyArr[$k]['IDSpecimensPerFamily'] += $famArr['IDSpecimensPerFamily'];
+                                    $familyArr[$k]['IDGeorefSpecimensPerFamily'] += $famArr['IDGeorefSpecimensPerFamily'];
+                                }
+                                else{
+                                    $familyArr[$k]['SpecimensPerFamily'] = $famArr['SpecimensPerFamily'];
+                                    $familyArr[$k]['GeorefSpecimensPerFamily'] = $famArr['GeorefSpecimensPerFamily'];
+                                    $familyArr[$k]['IDSpecimensPerFamily'] = $famArr['IDSpecimensPerFamily'];
+                                    $familyArr[$k]['IDGeorefSpecimensPerFamily'] = $famArr['IDGeorefSpecimensPerFamily'];
+                                }
+                            }
+                            ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
+                        }
+
+                        if(array_key_exists('countries',$dynPropTempArr)){
+                            $countryTempArr = $dynPropTempArr['countries'];
+                            foreach($countryTempArr as $k => $countArr){
+                                if(array_key_exists($k,$countryArr)){
+                                    $countryArr[$k]['CountryCount'] += $countArr['CountryCount'];
+                                    $countryArr[$k]['GeorefSpecimensPerCountry'] += $countArr['GeorefSpecimensPerCountry'];
+                                    $countryArr[$k]['IDSpecimensPerCountry'] += $countArr['IDSpecimensPerCountry'];
+                                    $countryArr[$k]['IDGeorefSpecimensPerCountry'] += $countArr['IDGeorefSpecimensPerCountry'];
+                                }
+                                else{
+                                    $countryArr[$k]['CountryCount'] = $countArr['CountryCount'];
+                                    $countryArr[$k]['GeorefSpecimensPerCountry'] = $countArr['GeorefSpecimensPerCountry'];
+                                    $countryArr[$k]['IDSpecimensPerCountry'] = $countArr['IDSpecimensPerCountry'];
+                                    $countryArr[$k]['IDGeorefSpecimensPerCountry'] = $countArr['IDGeorefSpecimensPerCountry'];
+                                }
+                            }
+                            ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
+                        }
+                    }
+                }
+                $c++;
+            }
+            $results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
+        }
+        elseif($action === 'Run Statistics' && ($cPartentTaxon || $cCountry)){
+            $resultsTemp = $collManager->runStatisticsQuery($collId,$cPartentTaxon,$cCountry);
+            $familyArr = $resultsTemp['families'];
+            ksort($familyArr, SORT_STRING | SORT_FLAG_CASE);
+            $countryArr = $resultsTemp['countries'];
+            ksort($countryArr, SORT_STRING | SORT_FLAG_CASE);
+            unset($resultsTemp['families'], $resultsTemp['countries']);
+            ksort($resultsTemp, SORT_STRING | SORT_FLAG_CASE);
+            $c = 0;
+            foreach($resultsTemp as $k => $collArr){
+                if($c>0) {
+                    $collStr .= ', ';
+                }
+                $collStr .= $collArr['CollectionName'];
+                if(array_key_exists('SpecimenCount',$results)){
+                    $results['SpecimenCount'] += $collArr['recordcnt'];
+                }
+                else{
+                    $results['SpecimenCount'] = $collArr['recordcnt'];
+                }
+
+                if(array_key_exists('GeorefCount',$results)){
+                    $results['GeorefCount'] += $collArr['georefcnt'];
+                }
+                else{
+                    $results['GeorefCount'] = $collArr['georefcnt'];
+                }
+
+                if(array_key_exists('FamilyCount',$results)){
+                    $results['FamilyCount'] += $collArr['familycnt'];
+                }
+                else{
+                    $results['FamilyCount'] = $collArr['familycnt'];
+                }
+
+                if(array_key_exists('GeneraCount',$results)){
+                    $results['GeneraCount'] += $collArr['genuscnt'];
+                }
+                else{
+                    $results['GeneraCount'] = $collArr['genuscnt'];
+                }
+
+                if(array_key_exists('SpeciesCount',$results)){
+                    $results['SpeciesCount'] += $collArr['speciescnt'];
+                }
+                else{
+                    $results['SpeciesCount'] = $collArr['speciescnt'];
+                }
+
+                if(array_key_exists('TotalTaxaCount',$results)){
+                    $results['TotalTaxaCount'] += $collArr['TotalTaxaCount'];
+                }
+                else{
+                    $results['TotalTaxaCount'] = $collArr['TotalTaxaCount'];
+                }
+
+                if(array_key_exists('TotalImageCount',$results)){
+                    $results['TotalImageCount'] += $collArr['OccurrenceImageCount'];
+                }
+                else{
+                    $results['TotalImageCount'] = $collArr['OccurrenceImageCount'];
+                }
+
+                if(array_key_exists('SpecimensCountID',$results)){
+                    $results['SpecimensCountID'] += $collArr['speciesID'];
+                }
+                else{
+                    $results['SpecimensCountID'] = $collArr['speciesID'];
+                }
+
+                if(array_key_exists('TypeCount',$results)){
+                    $results['TypeCount'] += $collArr['types'];
+                }
+                else{
+                    $results['TypeCount'] = $collArr['types'];
+                }
+                $c++;
+            }
+            $results['SpecimensNullLatitude'] = $results['SpecimenCount'] - $results['GeorefCount'];
+        }
+        if($action === 'Update Statistics'){
+            $collManager->batchUpdateStatistics($collId);
+            echo '<script type="text/javascript">window.location="collstats.php?collid='.$collId.'"</script>';
+        }
+        $_SESSION['statsFamilyArr'] = $familyArr;
+        $_SESSION['statsCountryArr'] = $countryArr;
+    }
+    else{
+        $collId = '';
+    }
 }
 if($action !== 'Update Statistics'){
 	?>
@@ -223,7 +236,7 @@ if($action !== 'Update Statistics'){
             <script src="../../js/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/jquery.js"></script>
 			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210420"></script>
+			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210824"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});

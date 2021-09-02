@@ -5,29 +5,39 @@ include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
-$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?$_REQUEST['cntperpage']:100;
-$pageNumber = array_key_exists('page',$_REQUEST)?$_REQUEST['page']:1;
+$cntPerPage = array_key_exists('cntperpage',$_REQUEST)?(int)$_REQUEST['cntperpage']:100;
+$pageNumber = array_key_exists('page',$_REQUEST)?(int)$_REQUEST['page']:1;
 $selArrJson = array_key_exists('selected',$_REQUEST)?$_REQUEST['selected']:'';
 $q = array_key_exists('q',$_REQUEST)?$_REQUEST['q']:'';
 $fq = array_key_exists('fq',$_REQUEST)?$_REQUEST['fq']:'';
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
-$recordCnt = array_key_exists('rows',$_REQUEST)?$_REQUEST['rows']:0;
+$recordCnt = array_key_exists('rows',$_REQUEST)?(int)$_REQUEST['rows']:0;
 
 $selections = array();
 $allSelected = false;
 $occArr = array();
 $copyURL = '';
+$paginationStr = '';
+$stArr = array();
+$validStArr = false;
 
 $solrManager = new SOLRManager();
 $spatialManager = new SpatialModuleManager();
 $occManager = new OccurrenceManager();
 
-if($selArrJson){
-    $selections = json_decode($selArrJson, true);
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    if($occManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
 }
 
-if($stArrJson){
-    $stArr = json_decode($stArrJson, true);
+if($selArrJson){
+    $selections = json_decode($selArrJson, true, 512, JSON_THROW_ON_ERROR);
+}
+
+if($validStArr){
+    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
     if(strlen($stArrJson) <= 1800){
         $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/spatial/index.php';
         $urlArgs = '?starr='.$stArrJson;

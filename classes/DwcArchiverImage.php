@@ -2,7 +2,8 @@
 
 class DwcArchiverImage{
 
-	public static function getImageArr($schemaType){
+	public static function getImageArr($schemaType): array
+    {
 		$fieldArr['coreid'] = 'o.occid';
 		$termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
 		$fieldArr['identifier'] = 'IFNULL(i.originalurl,i.url) as identifier';

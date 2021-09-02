@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpecUploadDigir extends SpecUploadBase {
 
@@ -24,7 +25,7 @@ class SpecUploadDigir extends SpecUploadBase {
 		$this->prepUploadData();
 		
 		if($this->schemaName){
-			if(strpos($this->schemaName, 'http') !== 0){
+			if(strncmp($this->schemaName, 'http', 4) !== 0){
 				$this->schemaName = 'http://' .$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'],0,strrpos($_SERVER['PHP_SELF'], '/')). '/' .$this->schemaName;
 			}
 		}
@@ -81,10 +82,7 @@ class SpecUploadDigir extends SpecUploadBase {
 				'</search></request>');
 			//echo "\n".$url."\n";
 			$fp = fopen($url, 'rb');
-			if(!$fp){
-				echo "<div style='margin-left:10px;font-weight:bold;color:red;'>ERROR: Unable to retrieve data</div>\n";
-				echo "<div style='margin-left:10px;font-weight:bold;color:red;'>SQL: ".$url."</div>\n";
-			} else {
+			if($fp) {
 			    $contentPassed = false;
 				$diagnosticStr = '';
 				$xml_parser = xml_parser_create();
@@ -110,13 +108,13 @@ class SpecUploadDigir extends SpecUploadBase {
 					}
 			    }
 			    xml_parser_free($xml_parser);
-			    
+
 				$diagnosticStr = substr($diagnosticStr,0,strpos($diagnosticStr, '</response>'));
 				if($diagnosticStr){
 					$xmlStr = $diagnosticStr;
 					$xml = new SimpleXMLElement($xmlStr);
 					foreach ($xml->diagnostic as $diag) {
-						switch((string) $diag['code']) { 
+						switch((string) $diag['code']) {
 							case 'MATCH_COUNT':
 								$matchCount = (int)$diag;
 								break;
@@ -130,6 +128,10 @@ class SpecUploadDigir extends SpecUploadBase {
 					}
 				}
 			    fclose($fp);
+			}
+			else {
+				echo "<div style='margin-left:10px;font-weight:bold;color:red;'>ERROR: Unable to retrieve data</div>\n";
+				echo "<div style='margin-left:10px;font-weight:bold;color:red;'>SQL: ".$url."</div>\n";
 			}
 			echo "<li style='font-weight:bold;'>Records Returned: ".$this->transferCount. ' of ' .$matchCount. ' (' .($this->recCount-$this->transferCount). ' failed)</li>';
 			$this->searchStart += $this->searchLimit;
@@ -279,7 +281,7 @@ class SpecUploadDigir extends SpecUploadBase {
 
 	private function characterData($parser, $data): void
 	{
-		$value = $this->cleanInStr($this->encodeString($data));
+		$value = Sanitizer::cleanInStr($this->encodeString($data));
 		if($this->withinRecordElement && $value !== ''){
 			$this->activeFieldValue .= $value;
 		}

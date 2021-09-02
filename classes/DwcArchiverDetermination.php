@@ -2,7 +2,8 @@
 
 class DwcArchiverDetermination{
 
-	public static function getDeterminationArr($schemaType,$extended){
+	public static function getDeterminationArr($schemaType,$extended): array
+    {
 		$fieldArr['coreid'] = 'o.occid';
 		$termArr['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
 		$fieldArr['identifiedBy'] = 'd.identifiedBy';

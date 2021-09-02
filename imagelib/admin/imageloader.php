@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ImageImport.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_POST)?$_POST['ulfilename']: '';
@@ -66,23 +67,7 @@ include(__DIR__ . '/../../header.php');
 				</div>
 				<input type="hidden" name="ulfilename" value="<?php echo $importManager->getUploadFileName();?>" />
 				<?php 
-				if(!$importManager->getUploadFileName()){ 
-					?>
-					<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
-					<div>
-						<div>
-							<b>Upload File:</b>
-							<div style="margin:10px;">
-								<input name="uploadfile" type="file" size="40" />
-							</div>
-						</div>
-						<div style="margin:10px;">
-							<input type="submit" name="action" value="Analyze Input File" />
-						</div>
-					</div>
-					<?php 
-				}
-				else{ 
+				if($importManager->getUploadFileName()) {
 					?>
 					<div id="mdiv" style="margin:15px;">
 						<table style="border:1px solid black;border-spacing: 2px;">
@@ -107,7 +92,7 @@ include(__DIR__ . '/../../header.php');
 									<td>
 										<select name="tf[]" style="background:<?php echo (array_key_exists(strtolower($sField),$fieldMap)?'':'yellow');?>">
 											<option value="">Select Target</option>
-											<?php 
+											<?php
 											$sField = strtolower($sField);
 											$symbIndex = '';
 											if(array_key_exists($sField,$fieldMap)){
@@ -140,7 +125,7 @@ include(__DIR__ . '/../../header.php');
 										</select>
 									</td>
 								</tr>
-								<?php 
+								<?php
 							}
 							?>
 						</table>
@@ -157,6 +142,22 @@ include(__DIR__ . '/../../header.php');
 							</fieldset>
 							Base Path: <input name="basepath" type="text" value="" /><br/>
 							<input name="action" type="submit" value="Upload Images" />
+						</div>
+					</div>
+					<?php 
+				}
+				else {
+					?>
+					<input type='hidden' name='MAX_FILE_SIZE' value='10000000' />
+					<div>
+						<div>
+							<b>Upload File:</b>
+							<div style="margin:10px;">
+								<input name="uploadfile" type="file" size="40" />
+							</div>
+						</div>
+						<div style="margin:10px;">
+							<input type="submit" name="action" value="Analyze Input File" />
 						</div>
 					</div>
 					<?php 

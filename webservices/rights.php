@@ -35,7 +35,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';
-$uId = array_key_exists('uid',$_POST)?$_POST['uid']:'';
+$uId = array_key_exists('uid',$_POST)?(int)$_POST['uid']:0;
 $token = array_key_exists('token',$_POST)?$_POST['token']:'';
 
 $pHandler = new ProfileManager();
@@ -51,6 +51,6 @@ if($un && $token && $pHandler->setUserName($un)) {
     $pHandler->setTokenAuthSql();
     if($pHandler->authenticate()){
         $accessPacket = $pHandler->generateAccessPacket();
-        echo json_encode($accessPacket);
+        echo json_encode($accessPacket, JSON_THROW_ON_ERROR);
     }
 }

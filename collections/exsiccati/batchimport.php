@@ -1,17 +1,19 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=../collections/exsiccati/batchimport.php?'.$_SERVER['QUERY_STRING']);
+	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$ometid = array_key_exists('ometid',$_REQUEST)?$_REQUEST['ometid']:0;
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$source1 = array_key_exists('source1',$_POST)?$_POST['source1']:0;
-$source2 = array_key_exists('source2',$_POST)?$_POST['source2']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
+$ometid = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$source1 = array_key_exists('source1',$_POST)?(int)$_POST['source1']:0;
+$source2 = array_key_exists('source2',$_POST)?(int)$_POST['source2']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $statusStr = '';
 $isEditor = 0;

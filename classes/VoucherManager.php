@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
  
 class VoucherManager {
 
@@ -15,16 +16,14 @@ class VoucherManager {
  	}
 	
  	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
 
  	public function setTid($t): void
 	{
-		if(is_numeric($t)){
-			$this->tid = $this->conn->real_escape_string($t);
-		}
+        $this->tid = $t;
  	}
 	
 	public function getTid(){
@@ -63,19 +62,19 @@ class VoucherManager {
 			'WHERE ((cllink.TID = ' .$this->tid. ') AND (cllink.CLID = ' .$this->clid. '))';
  		$result = $this->conn->query($sql);
 		if($row = $result->fetch_object()){
-			$checklistData['habitat'] = $this->cleanOutStr($row->Habitat);
-			$checklistData['abundance'] = $this->cleanOutStr($row->Abundance);
-			$checklistData['notes'] = $this->cleanOutStr($row->Notes);
-			$checklistData['internalnotes'] = $this->cleanOutStr($row->internalnotes);
-			$checklistData['source'] = $this->cleanOutStr($row->source);
-			$checklistData['familyoverride'] = $this->cleanOutStr($row->familyoverride);
+			$checklistData['habitat'] = Sanitizer::cleanOutStr($row->Habitat);
+			$checklistData['abundance'] = Sanitizer::cleanOutStr($row->Abundance);
+			$checklistData['notes'] = Sanitizer::cleanOutStr($row->Notes);
+			$checklistData['internalnotes'] = Sanitizer::cleanOutStr($row->internalnotes);
+			$checklistData['source'] = Sanitizer::cleanOutStr($row->source);
+			$checklistData['familyoverride'] = Sanitizer::cleanOutStr($row->familyoverride);
 			$checklistData['cltype'] = $row->type;
 			$checklistData['locality'] = $row->locality;
 			if(!$this->clName) {
-				$this->clName = $this->cleanOutStr($row->Name);
+				$this->clName = Sanitizer::cleanOutStr($row->Name);
 			}
 			if(!$this->taxonName) {
-				$this->taxonName = $this->cleanOutStr($row->SciName);
+				$this->taxonName = Sanitizer::cleanOutStr($row->SciName);
 			}
 		}
 		$result->close();
@@ -88,17 +87,17 @@ class VoucherManager {
 		$innerSql = '';
 		foreach($eArr as $k => $v){
 			$valStr = trim($v);
-			$innerSql .= ',' .$k. '=' .($valStr?'"'.$this->cleanInStr($valStr).'" ':'NULL');
+			$innerSql .= ',' .$k. '=' .($valStr?'"'.Sanitizer::cleanInStr($valStr).'" ':'NULL');
 		}
 		$sqlClUpdate = 'UPDATE fmchklsttaxalink SET '.substr($innerSql,1).
 			' WHERE (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
 		if(!$this->conn->query($sqlClUpdate)){
-			$retStr = 'ERROR editing details: ' .$this->conn->error. '<br/>SQL: ' .$sqlClUpdate. ';<br/> ';
+			$retStr = 'ERROR editing details.';
 		}
 		return $retStr;
 	}
 
-	public function renameTaxon($newTaxon,$rareLocality = ''): string
+	public function renameTaxon($newTaxon, $rareLocality = null): string
 	{
 		$statusStr = '';
         $habitatSource = '';
@@ -120,34 +119,34 @@ class VoucherManager {
 					'FROM fmchklsttaxalink cllink WHERE (TID = ' .$nTaxon. ') AND (CLID = ' .$this->clid.')';
 				$rsTarget = $this->conn->query($sqlTarget);
 				if($row = $rsTarget->fetch_object()){
-					$habitatTarget = $this->cleanInStr($row->Habitat);
-					$abundTarget = $this->cleanInStr($row->Abundance);
-					$notesTarget = $this->cleanInStr($row->Notes);
-					$internalNotesTarget = $this->cleanInStr($row->internalnotes);
-					$sourceTarget = $this->cleanInStr($row->source);
-					$nativeTarget = $this->cleanInStr($row->Nativity);
+					$habitatTarget = Sanitizer::cleanInStr($row->Habitat);
+					$abundTarget = Sanitizer::cleanInStr($row->Abundance);
+					$notesTarget = Sanitizer::cleanInStr($row->Notes);
+					$internalNotesTarget = Sanitizer::cleanInStr($row->internalnotes);
+					$sourceTarget = Sanitizer::cleanInStr($row->source);
+					$nativeTarget = Sanitizer::cleanInStr($row->Nativity);
 				
 					$sqlVouch = 'UPDATE IGNORE fmvouchers SET TID = '.$nTaxon.' '.
 						'WHERE (TID = '.$this->tid.') AND (CLID = '.$this->clid.')';
 					if(!$this->conn->query($sqlVouch)){
-						$statusStr = 'ERROR transferring vouchers during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR transferring vouchers during taxon transfer.';
 					}
 					$sqlVouchDel = 'DELETE FROM fmvouchers v '.
 						'WHERE (v.CLID = '.$this->clid.') AND (v.TID = '.$this->tid.')';
 					if(!$this->conn->query($sqlVouchDel)){
-						$statusStr = 'ERROR removing vouchers during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR removing vouchers during taxon transfer.';
 					}
 					
 					$sqlSourceCl = 'SELECT ctl.Habitat, ctl.Abundance, ctl.Notes, ctl.internalnotes, ctl.source, ctl.Nativity ' .
 						'FROM fmchklsttaxalink ctl WHERE (ctl.TID = ' .$this->tid. ') AND (ctl.CLID = ' .$this->clid.')';
 					$rsSourceCl =  $this->conn->query($sqlSourceCl);
 					if($row = $rsSourceCl->fetch_object()){
-						$habitatSource = $this->cleanInStr($row->Habitat);
-						$abundSource = $this->cleanInStr($row->Abundance);
-						$notesSource = $this->cleanInStr($row->Notes);
-						$internalNotesSource = $this->cleanInStr($row->internalnotes);
-						$sourceSource = $this->cleanInStr($row->source);
-						$nativeSource = $this->cleanInStr($row->Nativity);
+						$habitatSource = Sanitizer::cleanInStr($row->Habitat);
+						$abundSource = Sanitizer::cleanInStr($row->Abundance);
+						$notesSource = Sanitizer::cleanInStr($row->Notes);
+						$internalNotesSource = Sanitizer::cleanInStr($row->internalnotes);
+						$sourceSource = Sanitizer::cleanInStr($row->source);
+						$nativeSource = Sanitizer::cleanInStr($row->Nativity);
 					}
 					$rsSourceCl->close();
 					$habitatStr = $habitatTarget.(($habitatTarget && $habitatSource)? '; ' : '').$habitatSource;
@@ -156,10 +155,10 @@ class VoucherManager {
 					$internalNotesStr = $internalNotesTarget.(($internalNotesTarget && $internalNotesSource)? '; ' : '').$internalNotesSource;
 					$sourceStr = $sourceTarget.(($sourceTarget && $sourceSource)? '; ' : '').$sourceSource;
 					$nativeStr = $nativeTarget.(($nativeTarget && $nativeSource)? '; ' : '').$nativeSource;
-					$sqlCl = 'UPDATE fmchklsttaxalink SET Habitat = "'.$this->cleanInStr($habitatStr).'", '. 
-						'Abundance = "'.$this->cleanInStr($abundStr).'", Notes = "'.$this->cleanInStr($notesStr).
-						'", internalnotes = "'.$this->cleanInStr($internalNotesStr).'", source = "'.
-						$this->cleanInStr($sourceStr).'", Nativity = "'.$this->cleanInStr($nativeStr).'" '.
+					$sqlCl = 'UPDATE fmchklsttaxalink SET Habitat = "'.Sanitizer::cleanInStr($habitatStr).'", '. 
+						'Abundance = "'.Sanitizer::cleanInStr($abundStr).'", Notes = "'.Sanitizer::cleanInStr($notesStr).
+						'", internalnotes = "'.Sanitizer::cleanInStr($internalNotesStr).'", source = "'.
+						Sanitizer::cleanInStr($sourceStr).'", Nativity = "'.Sanitizer::cleanInStr($nativeStr).'" '.
 						'WHERE (TID = '.$nTaxon.') AND (CLID = '.$this->clid.')';
 					if($this->conn->query($sqlCl)){
 						$sqlDel = 'DELETE FROM fmchklsttaxalink WHERE (CLID = '.$this->clid.') AND (TID = '.$this->tid.')';
@@ -168,11 +167,11 @@ class VoucherManager {
 							$this->taxonName = '';
 						}
 						else{
-							$statusStr = 'ERROR removing taxon during taxon transfer: ' .$this->conn->error;
+							$statusStr = 'ERROR removing taxon during taxon transfer.';
 						}
 					}
 					else{
-						$statusStr = 'ERROR updating new taxon during taxon transfer: ' .$this->conn->error;
+						$statusStr = 'ERROR updating new taxon during taxon transfer.';
 					}
 				}
 				$rsTarget->close();
@@ -184,7 +183,7 @@ class VoucherManager {
 		return $statusStr;
 	}
 	
-	public function deleteTaxon($rareLocality = ''): string
+	public function deleteTaxon($rareLocality = null): string
 	{
 		$statusStr = '';
 		$vSql = 'DELETE v.* FROM fmvouchers v WHERE (v.tid = '.$this->tid.') AND (v.clid = '.$this->clid.')';
@@ -196,7 +195,7 @@ class VoucherManager {
 			}
 		}
 		else{
-			$statusStr = 'ERROR deleting taxon from checklist: ' .$this->conn->error;
+			$statusStr = 'ERROR deleting taxon from checklist.';
 		}
 		return $statusStr;
 	}
@@ -214,7 +213,7 @@ class VoucherManager {
 				'AND o.stateprovince = "'.$rareLocality.'" AND ts2.tid = '.$this->tid;
 			//echo $sqlRare; exit;
 			if(!$this->conn->query($sqlRare)){
-				$statusStr = 'ERROR resetting locality security during taxon delete: ' .$this->conn->error;
+				$statusStr = 'ERROR resetting locality security during taxon delete.';
 			}
 		}
 		$rs->free();
@@ -249,12 +248,12 @@ class VoucherManager {
 		$statusStr = '';
 		if($this->tid && $this->clid && is_numeric($occid)){
 			$sql = 'UPDATE fmvouchers SET '.
-				'notes = '.($notes?'"'.$this->cleanInStr($notes).'"':'NULL').
-				',editornotes = '.($editorNotes?'"'.$this->cleanInStr($editorNotes).'"':'NULL').
+				'notes = '.($notes?'"'.Sanitizer::cleanInStr($notes).'"':'NULL').
+				',editornotes = '.($editorNotes?'"'.Sanitizer::cleanInStr($editorNotes).'"':'NULL').
 				' WHERE (occid = '.$occid.') AND (tid = '.$this->tid.') AND (clid = '.$this->clid.')';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
-				$statusStr = 'ERROR editing voucher: '.$this->conn->error;
+				$statusStr = 'ERROR editing voucher.';
 			}
 		}
 		return $statusStr;
@@ -263,8 +262,8 @@ class VoucherManager {
 	public function addVoucher($vOccId, $vNotes, $vEditNotes): ?string
 	{
 		$returnStr = '';
-	    $vNotes = $this->cleanInStr($vNotes);
-		$vEditNotes = $this->cleanInStr($vEditNotes);
+	    $vNotes = Sanitizer::cleanInStr($vNotes);
+		$vEditNotes = Sanitizer::cleanInStr($vEditNotes);
 		if(is_numeric($vOccId) && $vOccId && $this->clid) {
             $status = $this->addVoucherRecord($vOccId, $vNotes, $vEditNotes);
             if($status){
@@ -282,7 +281,8 @@ class VoucherManager {
 
 	private function addVoucherRecord($vOccId, $vNotes, $vEditNotes): string
 	{
-		$sql = 'SELECT DISTINCT o.occid, ctl.tid, ctl.clid, o.recordedby, o.recordnumber, '.
+		$returnStr = 'ERROR: Neither the target taxon nor a sysnonym is present in this checklists. Taxon needs to be added.';
+	    $sql = 'SELECT DISTINCT o.occid, ctl.tid, ctl.clid, o.recordedby, o.recordnumber, '.
 			'"'.$vNotes.'" AS Notes, "'.$vEditNotes.'" AS editnotes '.
 			'FROM ((omoccurrences o INNER JOIN taxstatus ts1 ON o.TidInterpreted = ts1.tid) '.
 			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted) '.
@@ -294,8 +294,8 @@ class VoucherManager {
 		$rs = $this->conn->query($sql);
 		if($row = $rs->fetch_object()){
 			$occId = $row->occid;
-			$notes = $this->cleanInStr($row->Notes);
-			$editNotes = $this->cleanInStr($row->editnotes);
+			$notes = Sanitizer::cleanInStr($row->Notes);
+			$editNotes = Sanitizer::cleanInStr($row->editnotes);
 			
 			$sqlInsert = 'INSERT INTO fmvouchers ( occid, TID, CLID, Notes, editornotes ) '.
 				'VALUES ('.$occId.','.$row->tid.','.$row->clid.',"'.
@@ -303,14 +303,14 @@ class VoucherManager {
 			//echo "<div>".$sqlInsert."</div>";
 			if(!$this->conn->query($sqlInsert)){
 				$rs->close();
-				return 'ERROR - Voucher insert failed: ' .$this->conn->error;
+                $returnStr = 'ERROR - Voucher insert failed.';
 			}
 
 			$this->tid = $row->tid;
 			$rs->close();
-			return '';
+            $returnStr = '';
 		}
-		return 'ERROR: Neither the target taxon nor a sysnonym is present in this checklists. Taxon needs to be added.';
+		return $returnStr;
 	}
 
 	public function removeVoucher($delOid): string
@@ -319,20 +319,9 @@ class VoucherManager {
 		if(is_numeric($delOid)){
 			$sqlDel = 'DELETE FROM fmvouchers WHERE occid = '.$delOid.' AND (TID = '.$this->tid.') AND (CLID = '.$this->clid.')';
 			if(!$this->conn->query($sqlDel)){
-				$statusStr = 'ERROR deleting voucher: '.$this->conn->error;
+				$statusStr = 'ERROR deleting voucher.';
 			}
 		}
 		return $statusStr;
 	}
-
-	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
- }
+}
