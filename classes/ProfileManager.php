@@ -766,7 +766,7 @@ class ProfileManager extends Manager{
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
-                $userrights[$r->role][] = $r->tablepk;
+                $userrights[$r->role][] = (int)$r->tablepk;
             }
             $rs->free();
             $_SESSION['userrights'] = $userrights;

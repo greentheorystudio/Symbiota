@@ -54,10 +54,10 @@ if($GLOBALS['SYMB_UID']){
         $editCode = 3;
     }
     else if($collid){
-        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
             $editCode = 2;
         }
-        elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((string)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+        elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
             $editCode = 1;
         }
     }
