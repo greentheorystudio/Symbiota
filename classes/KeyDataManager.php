@@ -376,7 +376,7 @@ class KeyDataManager extends Manager{
                                 if($cLanguage === $this->lang){
                                     $sliderMax = count($sliderArr) - 1;
                                     $returnArray[] = '<script type="text/javascript">';
-                                    $returnArray[] = 'var sliderValues' .$cid." = JSON.parse('". json_encode($sliderArr, JSON_THROW_ON_ERROR) ."');";
+                                    $returnArray[] = 'var sliderValues' .$cid." = JSON.parse('". json_encode($sliderArr) ."');";
                                     $returnArray[] = '$( function() {';
                                     $returnArray[] = '$( "#slider'.$cid.'" ).slider({';
                                     $returnArray[] = 'value: '.$cSelected.',';

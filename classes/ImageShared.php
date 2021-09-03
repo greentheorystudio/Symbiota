@@ -561,7 +561,7 @@ class ImageShared{
 				}
 				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($v).'",';
 			}
-			$imgObj = json_encode($imgArr, JSON_THROW_ON_ERROR);
+			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
 			"SET archivestatus = 1, archiveobj = '{".trim($imgObj,',')."}' ".
 			'WHERE (imgid = '.$imgIdDel.')';

@@ -177,8 +177,8 @@ class OccurrenceEditReview extends Manager{
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['extstamp'] = $r->externaltimestamp;
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 				
-			$oldValues = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
-			$newValues = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
+			$oldValues = json_decode($r->oldvalues, true);
+			$newValues = json_decode($r->newvalues, true);
 			foreach($oldValues as $fieldName => $value){
 				if($fieldName !== 'georeferencesources' && $fieldName !== 'georeferencedby'){
 					$retArr[$r->occid][$r->orid][$r->appliedstatus]['f'][$fieldName]['old'] = $value;
@@ -299,7 +299,7 @@ class OccurrenceEditReview extends Manager{
 				'WHERE appliedstatus = '.($applyTask === 'apply'?'0':'1').' AND (orid IN('.$idStr.')) ORDER BY initialtimestamp';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$dwcArr = json_decode(($applyTask === 'apply') ? $r->newvalues : $r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
+				$dwcArr = json_decode(($applyTask === 'apply') ? $r->newvalues : $r->oldvalues, true);
 				$sqlFrag = '';
 				foreach($dwcArr as $fieldName => $fieldValue){
 					$sqlFrag .= ','.$fieldName.' = '.($fieldValue?'"'.$fieldValue.'"':'NULL').' ';
@@ -447,8 +447,8 @@ class OccurrenceEditReview extends Manager{
 					}
 					else{
 						$outArr[7] = $r->initialtimestamp.($r->externaltimestamp?' ('.$r->externaltimestamp.')':'');
-						$oldValueArr = json_decode($r->oldvalues, true, 512, JSON_THROW_ON_ERROR);
-						$newValueArr = json_decode($r->newvalues, true, 512, JSON_THROW_ON_ERROR);
+						$oldValueArr = json_decode($r->oldvalues, true);
+						$newValueArr = json_decode($r->newvalues, true);
 						foreach($oldValueArr as $fieldName => $oldValue){
 							$outArr[8] = $fieldName;
 							$outArr[9] = $oldValue;

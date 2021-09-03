@@ -22,4 +22,4 @@ if(is_numeric($clid)){
 	}
 	$conn->close();
 }
-echo json_encode($returnArr, JSON_THROW_ON_ERROR);
+echo json_encode($returnArr);
