@@ -526,7 +526,7 @@ class OccurrenceCollectionProfile {
             $publishGBIF = $row->publishToGbif;
             $gbifKeyArr = $row->aggKeysStr;
             if($publishGBIF && $gbifKeyArr){
-                $gbifKeyArr = json_decode($gbifKeyArr, true, 512, JSON_THROW_ON_ERROR);
+                $gbifKeyArr = json_decode($gbifKeyArr, true);
                 if($gbifKeyArr['endpointKey']){
                     $this->triggerGBIFCrawl($gbifKeyArr['datasetKey']);
                 }
@@ -537,7 +537,7 @@ class OccurrenceCollectionProfile {
 
     public function setAggKeys($aggKeyStr): void
 	{
-        $aggKeyArr = json_decode($aggKeyStr, true, 512, JSON_THROW_ON_ERROR);
+        $aggKeyArr = json_decode($aggKeyStr, true);
         if($aggKeyArr['organizationKey']){
             $this->organizationKey = $aggKeyArr['organizationKey'];
         }
@@ -563,7 +563,7 @@ class OccurrenceCollectionProfile {
         $aggKeyArr['datasetKey'] = $this->datasetKey;
         $aggKeyArr['endpointKey'] = $this->endpointKey;
         $aggKeyArr['idigbioKey'] = $this->idigbioKey;
-        $aggKeyStr = json_encode($aggKeyArr, JSON_THROW_ON_ERROR);
+        $aggKeyStr = json_encode($aggKeyArr);
         $sql = 'UPDATE omcollections '.
             "SET aggKeysStr = '".$aggKeyStr."' ".
             'WHERE (collid = '.$collId.')';
@@ -625,7 +625,7 @@ class OccurrenceCollectionProfile {
         //echo $sql; exit;
         $rs = $this->conn->query($sql);
         while($row = $rs->fetch_object()){
-            $returnArr = json_decode($row->aggKeysStr, true, 512, JSON_THROW_ON_ERROR);
+            $returnArr = json_decode($row->aggKeysStr, true);
             if($returnArr['installationKey']){
                 return $returnArr['installationKey'];
             }
@@ -644,7 +644,7 @@ class OccurrenceCollectionProfile {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
-        $returnArr = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
+        $returnArr = json_decode($result, true);
 
         if(isset($returnArr['items'][0]['uuid'])){
             $this->idigbioKey = $returnArr['items'][0]['uuid'];

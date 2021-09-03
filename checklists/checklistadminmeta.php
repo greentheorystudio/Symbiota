@@ -15,7 +15,7 @@ $isEditor = 0;
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
 if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
-	$defaultArr = json_decode($clArray['defaultsettings'], true, 512, JSON_THROW_ON_ERROR);
+	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
 ?>
 <script type="text/javascript">

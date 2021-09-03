@@ -26,18 +26,18 @@ $spatialManager = new SpatialModuleManager();
 $occManager = new OccurrenceManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $stArr = json_decode($stArrJson, true);
     if($occManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
 }
 
 if($selArrJson){
-    $selections = json_decode($selArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $selections = json_decode($selArrJson, true);
 }
 
 if($validStArr){
-    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $stArr = json_decode($stArrJson, true);
     if(strlen($stArrJson) <= 1800){
         $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/spatial/index.php';
         $urlArgs = '?starr='.$stArrJson;

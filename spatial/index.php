@@ -58,7 +58,7 @@ $occManager = new OccurrenceManager();
 $spatialManager = new SpatialModuleManager();
 
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $stArr = json_decode($stArrJson, true);
     if($occManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -313,7 +313,7 @@ $dbArr = array();
     const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
     const WINDOWMODE = '<?php echo $windowType; ?>';
     const INPUTWINDOWMODE = '<?php echo ($inputWindowMode?1:false); ?>';
-    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools, JSON_THROW_ON_ERROR); ?>');
+    const INPUTTOOLSARR = JSON.parse('<?php echo json_encode($inputWindowModeTools); ?>');
 
     const popupcontainer = document.getElementById('popup');
     const popupcontent = document.getElementById('popup-content');

@@ -103,7 +103,7 @@ if($collIdArr){
                 $outputArr[$i]['georefcnt'] = $collArr['georefcnt'];
                 $outputArr[$i]['OccurrenceImageCount'] = $collArr['OccurrenceImageCount'];
                 if($collArr['dynamicProperties']){
-                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
+                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true);
                     if(is_array($dynPropTempArr)){
                         $outputArr[$i]['SpecimensCountID'] = $dynPropTempArr['SpecimensCountID'];
                     }
