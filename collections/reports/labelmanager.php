@@ -360,7 +360,7 @@ if($isEditor){
 														<?php echo $recArr['c']; ?>
 													</a>
 													<?php
-													if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+													if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 														if(!$isGeneralObservation || $recArr['uid'] === $GLOBALS['SYMB_UID']){
 															?>
 															<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
