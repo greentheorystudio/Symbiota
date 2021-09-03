@@ -140,16 +140,6 @@
                             </li>
                         </ul>
                     </li>
-                    <?php
-                    if($GLOBALS['IS_ADMIN']){
-                        ?>
-                        <li>
-                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/specifyupdater.php" >Specify Updater</a>
-                        </li>
-                        <?php
-                    }
-                    ?>
-
                 </ul>
             </div>
         </td>
