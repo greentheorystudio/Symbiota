@@ -71,7 +71,7 @@ if($collId){
                 }
 
                 if($collArr['dynamicProperties']){
-                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
+                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true);
                     if(is_array($dynPropTempArr)){
                         $resultsTemp[$i]['speciesID'] = $dynPropTempArr['SpecimensCountID'];
                         $resultsTemp[$i]['types'] = $dynPropTempArr['TypeCount'];

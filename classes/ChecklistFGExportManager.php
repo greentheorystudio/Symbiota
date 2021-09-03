@@ -314,7 +314,7 @@ class ChecklistFGExportManager {
 
     public function setPhotogJson($json): void
     {
-        $photogArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $photogArr = json_decode($json, true);
         if(is_array($photogArr)){
             foreach($photogArr as $str){
                 $parts = explode('---',$str);

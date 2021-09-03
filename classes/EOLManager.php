@@ -102,7 +102,7 @@ class EOLManager {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$retArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+			$retArr = json_decode($content, true);
 			if(is_array($retArr) && $retArr['totalResults'] > 0){
 				$identifier = $retArr['results'][0]['id'];
 				$link = $retArr['results'][0]['link'];
@@ -212,7 +212,7 @@ class EOLManager {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$retArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+			$retArr = json_decode($content, true);
 			if(is_array($retArr) && array_key_exists('dataObjects',$retArr)){
 				$dataObjArr = $retArr['dataObjects'];
 				$imgCnt = 0;

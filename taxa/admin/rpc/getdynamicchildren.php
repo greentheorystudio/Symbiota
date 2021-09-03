@@ -217,4 +217,4 @@ usort($childArr,'cmp');
 
 $retArr['children'] = $childArr;
 	
-echo json_encode($retArr, JSON_THROW_ON_ERROR);
+echo json_encode($retArr);

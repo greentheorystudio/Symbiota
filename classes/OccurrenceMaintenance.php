@@ -384,7 +384,7 @@ class OccurrenceMaintenance {
 			}
 			$rs->free();
 
-			$returnArrJson = json_encode($statsArr, JSON_THROW_ON_ERROR);
+			$returnArrJson = json_encode($statsArr);
 			$sql = 'UPDATE omcollectionstats '.
 				"SET dynamicProperties = '".Sanitizer::cleanInStr($returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
