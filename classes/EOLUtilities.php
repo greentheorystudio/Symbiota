@@ -21,7 +21,7 @@ class EOLUtilities {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$pingArr = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+			$pingArr = json_decode($content, true);
 			if(($resObj = $pingArr->response) && $resObj->message && $resObj->message === 'Success') {
 				return true;
 			}
@@ -43,7 +43,7 @@ class EOLUtilities {
 					$content .= trim($line);
 				}
 				fclose($fh);
-				$searchObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+				$searchObj = json_decode($content, true);
 				if($searchObj->totalResults){
 					$resultObj = $searchObj->results;
 					foreach($resultObj as $index => $result){
@@ -78,7 +78,7 @@ class EOLUtilities {
 				$content .= trim($line);
 			}
 			fclose($fh);
-			$eolObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+			$eolObj = json_decode($content, true);
 			$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 			if($eolObj->scientificName) {
 				$taxonArr['scientificName'] = $eolObj->scientificName;
@@ -150,7 +150,7 @@ class EOLUtilities {
 				}
 				fclose($fh);
 
-				$eolObj = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+				$eolObj = json_decode($content, true);
 				if($eolObj->scientificName){
 					$taxonArr = (new TaxonomyUtilities)->parseScientificName($eolObj->scientificName);
 					$taxonArr['scientificName'] = $eolObj->scientificName;

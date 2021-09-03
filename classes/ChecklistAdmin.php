@@ -65,7 +65,7 @@ class ChecklistAdmin{
 		$defaultViewArr['dalpha'] = array_key_exists('dalpha',$postArr)?1:0;
 		$defaultViewArr['activatekey'] = array_key_exists('activatekey',$postArr)?1:0;
 		if($defaultViewArr) {
-            $postArr['defaultsettings'] = json_encode($defaultViewArr, JSON_THROW_ON_ERROR);
+            $postArr['defaultsettings'] = json_encode($defaultViewArr);
         }
 
 		$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
@@ -120,7 +120,7 @@ class ChecklistAdmin{
 		$defaultViewArr['dalpha'] = array_key_exists('dalpha',$postArr)?1:0;
 		$defaultViewArr['activatekey'] = array_key_exists('activatekey',$postArr)?1:0;
 		if($defaultViewArr) {
-            $postArr['defaultsettings'] = json_encode($defaultViewArr, JSON_THROW_ON_ERROR);
+            $postArr['defaultsettings'] = json_encode($defaultViewArr);
         }
 
 		$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',

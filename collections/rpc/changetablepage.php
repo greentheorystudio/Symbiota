@@ -11,7 +11,7 @@ $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 if($GLOBALS['SOLR_MODE']){

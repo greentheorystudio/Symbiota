@@ -19,7 +19,7 @@ $solrManager = new SOLRManager();
 $occWhereStr = '';
 
 if($stArrJson){
-	$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+	$stArr = json_decode($stArrJson, true);
 	if($stArr){
         $occurManager->setSearchTermsArr($stArr);
 

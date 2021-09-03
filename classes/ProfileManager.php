@@ -101,7 +101,7 @@ class ProfileManager extends Manager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr, JSON_THROW_ON_ERROR)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
+            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 

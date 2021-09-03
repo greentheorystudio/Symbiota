@@ -562,13 +562,13 @@ class ChecklistManager {
 				$projName = 'Undefinded Inventory Project';
 			}
             if(array_key_exists($pid,$retArr) && array_key_exists('coords',$retArr[$pid])){
-                $projCoordArr = json_decode($retArr[$pid]['coords'], true, 512, JSON_THROW_ON_ERROR);
+                $projCoordArr = json_decode($retArr[$pid]['coords'], true);
             }
             if($row->LatCentroid && $row->LongCentroid){
                 $coordArr[] = (float)$row->LatCentroid;
                 $coordArr[] = (float)$row->LongCentroid;
                 $projCoordArr[] = $coordArr;
-                $retArr[$pid]['coords'] = json_encode($projCoordArr, JSON_THROW_ON_ERROR);
+                $retArr[$pid]['coords'] = json_encode($projCoordArr);
             }
 			$retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');

@@ -17,7 +17,7 @@ $taxaList = array();
 $paginationStr = '';
 $recordListHtml = '';
 
-$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+$stArr = json_decode($stArrJson, true);
 
 $imgLibManager = new ImageLibraryManager();
 $collManager = new OccurrenceManager();
