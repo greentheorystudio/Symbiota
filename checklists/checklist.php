@@ -49,7 +49,7 @@ if($clValue || $dynClid){
 $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
 if($clValue && $clArray['defaultSettings']){
-    $defaultArr = json_decode($clArray['defaultSettings'], true, 512, JSON_THROW_ON_ERROR);
+    $defaultArr = json_decode($clArray['defaultSettings'], true);
     $showDetails = $defaultArr['ddetails'];
     if(!$defaultOverride){
         if(array_key_exists('dcommon',$defaultArr)){

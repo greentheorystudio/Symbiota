@@ -62,7 +62,7 @@ class SpatialModuleManager{
 
     public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $occArr[] = $data['properties']['occid'];
@@ -140,7 +140,7 @@ class SpatialModuleManager{
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $coordArr = $data['geometry']['coordinates'];
@@ -154,7 +154,7 @@ class SpatialModuleManager{
     public function writeKMLFromGeoJSON($json): string{
         $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         $returnStr .= '<Document>';
         foreach($featureArr as $f => $data){
@@ -246,7 +246,7 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr, JSON_THROW_ON_ERROR);
+        return json_encode($geomArr);
     }
 
     public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
@@ -347,7 +347,7 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr, JSON_THROW_ON_ERROR);
+        return json_encode($geomArr);
     }
 
     public function setRecordCnt(): void
