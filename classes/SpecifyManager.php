@@ -359,7 +359,7 @@ class SpecifyManager {
                     (isset($idarr['scientificname'])?'"'.$this->conn->real_escape_string($idarr['scientificname']).'"':'NULL').','.
                     (isset($idarr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($idarr['scientificnameauthorship']).'"':'NULL').','.
                     (isset($idarr['identifiedby'])?'"'.$this->conn->real_escape_string($idarr['identifiedby']).'"':'NULL').','.
-                    (isset($idarr['dateIdentified'])?'"'.$this->conn->real_escape_string($idarr['dateIdentified']).'"':'NULL').','.
+                    (isset($idarr['dateidentified'])?'"'.$this->conn->real_escape_string($idarr['dateidentified']).'"':'NULL').','.
                     (isset($idarr['identificationremarks'])?'"'.$this->conn->real_escape_string($idarr['identificationremarks']).'"':'NULL').','.
                     (isset($idarr['identificationqualifier'])?'"'.$this->conn->real_escape_string($idarr['identificationqualifier']).'"':'NULL').','.
                     (isset($idarr['typestatus'])?'"'.$this->conn->real_escape_string($idarr['typestatus']).'"':'NULL').','.
