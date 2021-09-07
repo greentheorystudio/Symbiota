@@ -108,13 +108,23 @@ class SpecifyManager {
                 while($colEvR = $colEvRs->fetch_object()){
                     $id = (int)$colEvR->CollectingEventID;
                     $objidarr = $collectionEventIDArr[$id];
+                    $habitatStr = '';
+                    if($colEvR->VerbatimLocality){
+                        $habitatStr = $colEvR->VerbatimLocality;
+                    }
+                    if($colEvR->Remarks && $colEvR->Remarks !== ''){
+                        $habitatStr .= ' ' . $colEvR->Remarks;
+                    }
                     foreach($objidarr as $oid){
                         $localityIDArr[(int)$colEvR->LocalityID][] = $oid;
-                        $occurrenceArr[$oid]['eventdate'] = (($colEvR->StartDate && $colEvR->StartDate !== '')?$colEvR->StartDate:'0000-00-00');
-                        $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
-                        $occurrenceArr[$oid]['habitat'] = $colEvR->VerbatimLocality;
-                        if($colEvR->Remarks && $colEvR->Remarks !== ''){
-                            $occurrenceArr[$oid]['habitat'] .= ' ' . $colEvR->Remarks;
+                        if($colEvR->StartDate){
+                            $occurrenceArr[$oid]['eventdate'] = $colEvR->StartDate;
+                        }
+                        if($colEvR->StartDateVerbatim){
+                            $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
+                        }
+                        if($habitatStr){
+                            $occurrenceArr[$oid]['habitat'] = $habitatStr;
                         }
                     }
                 }
@@ -153,7 +163,7 @@ class SpecifyManager {
                         if($locR->NamedPlace && $locR->NamedPlace !== ''){
                             $occurrenceArr[$oid]['locality'] = $locR->NamedPlace . '. ';
                         }
-                        if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a'){
+                        if($locR->LocalityName && $locR->LocalityName !== '' && $locR->LocalityName !== 'n/a' && $locR->LocalityName !== 'N/A'){
                             $occurrenceArr[$oid]['locality'] = ($occurrenceArr[$oid]['locality'] ?? '') . $locR->LocalityName;
                         }
                         $occurrenceArr[$oid]['locationremarks'] = $locR->Remarks;
@@ -243,7 +253,9 @@ class SpecifyManager {
             while($detR = $detRs->fetch_object()){
                 $qualifier = '';
                 $id = (int)$detR->CollectionObjectID;
-                $detDate = (($detR->DeterminedDate && trim($detR->DeterminedDate) !== '')?$detR->DeterminedDate:'N/A');
+                $detDateDate = $detR->DeterminedDate ?: '';
+                $detDateText = $detR->Text2 ?: '';
+                $detDate = $detDateText ?: $detDateDate;
                 $isCurrent = (int)$detR->IsCurrent;
                 $determiner = $detR->MiddleInitial;
                 if($detR->FirstName){
@@ -251,9 +263,6 @@ class SpecifyManager {
                 }
                 if($detR->LastName){
                     $determiner = $detR->LastName . ($determiner ? ', ' . $determiner : '');
-                }
-                if(!$determiner || trim($determiner) === ''){
-                    $determiner = 'N/A';
                 }
                 if($detR->Qualifier){
                     $qualifier = $detR->Qualifier;
@@ -269,33 +278,48 @@ class SpecifyManager {
                 }
                 if($isCurrent === 1){
                     $occurrenceArr[$id]['scientificname'] = $detR->FullName;
-                    $occurrenceArr[$id]['scientificnameauthorship'] = $detR->Author;
-                    $occurrenceArr[$id]['identifiedby'] = $determiner;
-                    $occurrenceArr[$id]['dateidentified'] = $detDate;
-                    $occurrenceArr[$id]['identificationremarks'] = $detR->Remarks;
-                    $occurrenceArr[$id]['identificationqualifier'] = $qualifier;
-                }
-                $determinationArr[$id][$detDate][$determiner]['scientificname'] = $detR->FullName;
-                $determinationArr[$id][$detDate][$determiner]['scientificnameauthorship'] = $detR->Author;
-                if($determiner){
-                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $determiner;
-                }
-                elseif(isset($occurrenceArr[$id]['recordedby'])){
-                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $occurrenceArr[$id]['recordedby'];
-                }
-                else{
-                    $determinationArr[$id][$detDate][$determiner]['identifiedby'] = 'N/A';
-                }
-                if($detR->Text2 && trim($detR->Text2) !== ''){
-                    $determinationArr[$id][$detDate][$determiner]['dateidentified'] = $detR->Text2;
+                    if($detR->Author){
+                        $occurrenceArr[$id]['scientificnameauthorship'] = $detR->Author;
+                    }
+                    if($determiner){
+                        $occurrenceArr[$id]['identifiedby'] = $determiner;
+                    }
+                    if($detDate){
+                        $occurrenceArr[$id]['dateidentified'] = $detDate;
+                    }
+                    if($detR->Remarks){
+                        $occurrenceArr[$id]['identificationremarks'] = $detR->Remarks;
+                    }
+                    if($qualifier){
+                        $occurrenceArr[$id]['identificationqualifier'] = $qualifier;
+                    }
                 }
                 else{
-                    $determinationArr[$id][$detDate][$determiner]['dateidentified'] = $detDate;
+                    $determinationArr[$id][$detDate][$determiner]['scientificname'] = $detR->FullName;
+                    if($detR->Author){
+                        $determinationArr[$id][$detDate][$determiner]['scientificnameauthorship'] = $detR->Author;
+                    }
+                    if($determiner){
+                        $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $determiner;
+                    }
+                    elseif(isset($occurrenceArr[$id]['recordedby'])){
+                        $determinationArr[$id][$detDate][$determiner]['identifiedby'] = $occurrenceArr[$id]['recordedby'];
+                    }
+                    else{
+                        $determinationArr[$id][$detDate][$determiner]['identifiedby'] = 'N/A';
+                    }
+                    $determinationArr[$id][$detDate][$determiner]['dateidentified'] = $detDate ?: 'N/A';
+                    if($detDateDate){
+                        $determinationArr[$id][$detDate][$determiner]['dateidentifiedinterpreted'] = $detDateDate;
+                    }
+                    if($detR->Remarks){
+                        $determinationArr[$id][$detDate][$determiner]['identificationremarks'] = $detR->Remarks;
+                    }
+                    if($qualifier){
+                        $determinationArr[$id][$detDate][$determiner]['identificationqualifier'] = $qualifier;
+                    }
+                    $determinationArr[$id][$detDate][$determiner]['identificationiscurrent'] = $isCurrent;
                 }
-                $determinationArr[$id][$detDate][$determiner]['dateidentifiedinterpreted'] = $detR->DeterminedDate;
-                $determinationArr[$id][$detDate][$determiner]['identificationremarks'] = $detR->Remarks;
-                $determinationArr[$id][$detDate][$determiner]['identificationqualifier'] = $qualifier;
-                $determinationArr[$id][$detDate][$determiner]['identificationiscurrent'] = $isCurrent;
             }
             $detRs->close();
             //echo json_encode($determinationArr);
