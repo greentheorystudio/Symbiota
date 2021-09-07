@@ -11,7 +11,7 @@ $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
-$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 if($GLOBALS['SOLR_MODE']){
@@ -152,8 +152,8 @@ if($recArr){
     foreach($recArr as $id => $occArr){
         $isEditor = false;
         if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN']
-                || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
-                || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
+                || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$occArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+                || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
             $isEditor = true;
         }
         $collection = $occArr['institutioncode'];

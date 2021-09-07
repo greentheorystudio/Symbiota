@@ -7,4 +7,4 @@ $layersArr = array();
 if(isset($GLOBALS['GEOSERVER_URL'], $GLOBALS['GEOSERVER_LAYER_WORKSPACE']) && $GLOBALS['GEOSERVER_URL'] && $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
     $layersArr = $spatialManager->getLayersArr();
 }
-echo json_encode($layersArr, JSON_THROW_ON_ERROR);
+echo json_encode($layersArr);

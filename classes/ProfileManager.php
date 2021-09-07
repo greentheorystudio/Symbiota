@@ -101,7 +101,7 @@ class ProfileManager extends Manager{
             if ($domainName === 'localhost') {
                 $domainName = false;
             }
-            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr, JSON_THROW_ON_ERROR)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
+            setcookie('SymbiotaCrumb', Encryption::encrypt(json_encode($tokenArr)), $cookieExpire, ($GLOBALS['CLIENT_ROOT'] ?: '/'), $domainName, false, true);
         }
     }
 
@@ -766,7 +766,7 @@ class ProfileManager extends Manager{
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
-                $userrights[$r->role][] = $r->tablepk;
+                $userrights[$r->role][] = (int)$r->tablepk;
             }
             $rs->free();
             $_SESSION['userrights'] = $userrights;

@@ -674,7 +674,7 @@ class OccurrenceCleaner extends Manager{
 		curl_setopt($curl, CURLOPT_URL, $url);
         $data = curl_exec($curl);
 		curl_close($curl);
-        $dataObj = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        $dataObj = json_decode($data, true);
 		if(array_key_exists('address',$dataObj)){
 			$addressArr = $dataObj['address'];
 			$retArr['country'] = $addressArr['country'];

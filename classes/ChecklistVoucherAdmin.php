@@ -42,7 +42,7 @@ class ChecklistVoucherAdmin {
 			if($row = $result->fetch_object()){
 				$this->clName = Sanitizer::cleanOutStr($row->name);
 				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag, true, 512, JSON_THROW_ON_ERROR);
+				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() !== JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);
@@ -82,7 +82,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr, JSON_THROW_ON_ERROR)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
