@@ -100,13 +100,14 @@ class SpecifyManager {
                 $colRs->close();
 
                 echo '<li>Gathering Specify collection events...</li>';
-                $colEvSql = 'SELECT ce.CollectingEventID, ce.LocalityID, ce.StartDate, ce.StartDateVerbatim, ce.VerbatimLocality, ce.Remarks '.
+                $colEvSql = 'SELECT ce.CollectingEventID, ce.LocalityID, ce.StartDate, ce.StartDatePrecision, ce.StartDateVerbatim, ce.VerbatimLocality, ce.Remarks '.
                     'FROM collectingevent AS ce '.
                     'WHERE ce.CollectingEventID IN('.$collectionEventIDStr.') ';
                 //echo $colEvSql;
                 $colEvRs = $this->conn->query($colEvSql);
                 while($colEvR = $colEvRs->fetch_object()){
                     $id = (int)$colEvR->CollectingEventID;
+                    $precision = (int)$colEvR->StartDatePrecision;
                     $objidarr = $collectionEventIDArr[$id];
                     $habitatStr = '';
                     if($colEvR->VerbatimLocality){
@@ -118,7 +119,20 @@ class SpecifyManager {
                     foreach($objidarr as $oid){
                         $localityIDArr[(int)$colEvR->LocalityID][] = $oid;
                         if($colEvR->StartDate){
-                            $occurrenceArr[$oid]['eventdate'] = $colEvR->StartDate;
+                            if($precision === 1){
+                                $occurrenceArr[$oid]['eventdate'] = $colEvR->StartDate;
+                            }
+                            else{
+                                $dateArr = explode('-', $colEvR->StartDate);
+                                if($precision === 2){
+                                    $dateStr = $dateArr[0] . '-' . $dateArr[1] . '-00';
+                                }
+                                if($precision === 3){
+                                    $dateStr = $dateArr[0] . '-00-00';
+                                }
+                                $occurrenceArr[$oid]['eventdate'] = $dateStr;
+                                $occurrenceArr[$oid]['verbatimeventdate'] = $dateStr;
+                            }
                         }
                         if($colEvR->StartDateVerbatim){
                             $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
@@ -183,9 +197,13 @@ class SpecifyManager {
                             $verbatimLong = $locR->Long1Text . ($locR->Long2Text ? ' - ' . $locR->Long2Text : '');
                             $occurrenceArr[$oid]['verbatimcoordinates'] = $verbatimLat . ', ' . $verbatimLong;
                         }
-                        if(!$locR->Latitude2){
+                        if(!$locR->Latitude2 && $locR->Latitude1 && $locR->Longitude1){
                             $occurrenceArr[$oid]['decimallatitude'] = $locR->Latitude1;
                             $occurrenceArr[$oid]['decimallongitude'] = $locR->Longitude1;
+                            $occurrenceArr[$oid]['processingstatus'] = 'stage 3';
+                        }
+                        else{
+                            $occurrenceArr[$oid]['processingstatus'] = 'stage 2';
                         }
                         if((int)$locR->geo1RankId === 200){
                             $occurrenceArr[$oid]['country'] = $locR->geo1Name;
@@ -347,7 +365,7 @@ class SpecifyManager {
                 'identifiedBy,dateIdentified,identificationRemarks,identificationQualifier,typeStatus,recordedBy,recordNumber,associatedCollectors,'.
                 'eventDate,verbatimEventDate,habitat,occurrenceRemarks,country,stateProvince,county,locality,decimalLatitude,'.
                 'decimalLongitude,geodeticDatum,coordinateUncertaintyInMeters,locationRemarks,verbatimCoordinates,georeferenceProtocol,'.
-                'georeferenceSources,georeferenceRemarks,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
+                'georeferenceSources,georeferenceRemarks,processingstatus,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
                 'VALUES ';
             $occinsertsql = '';
             $rep = 0;
@@ -383,6 +401,7 @@ class SpecifyManager {
                     (isset($idarr['georeferenceprotocol'])?'"'.$this->conn->real_escape_string($idarr['georeferenceprotocol']).'"':'NULL').','.
                     (isset($idarr['georeferencesources'])?'"'.$this->conn->real_escape_string($idarr['georeferencesources']).'"':'NULL').','.
                     (isset($idarr['georeferenceremarks'])?'"'.$this->conn->real_escape_string($idarr['georeferenceremarks']).'"':'NULL').','.
+                    (isset($idarr['processingstatus'])?'"'.$this->conn->real_escape_string($idarr['processingstatus']).'"':'NULL').','.
                     (isset($idarr['minimumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['minimumelevationinmeters']).'"':'NULL').','.
                     (isset($idarr['maximumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['maximumelevationinmeters']).'"':'NULL').','.
                     (isset($idarr['verbatimelevation'])?'"'.$this->conn->real_escape_string($idarr['verbatimelevation']).'"':'NULL').
