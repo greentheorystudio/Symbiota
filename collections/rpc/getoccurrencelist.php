@@ -195,6 +195,11 @@ if($occurArr){
             $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
             $htmlStr .= '<img src="'.$fieldArr['img'].'" style="height:70px" /></a></div>';
         }
+        elseif(isset($fieldArr['hasimage'])){
+            $htmlStr .= '<div style="float:right;margin:5px 25px;">';
+            $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
+            $htmlStr .= '<i style="width:20px;height:20px;" class="fas fa-camera"></i></a></div>';
+        }
         $htmlStr .= '<div style="margin:4px;">';
         $htmlStr .= '<a target="_blank" href="../taxa/index.php?taxon='.$fieldArr['sciname'].'">';
         $htmlStr .= '<span style="font-style:italic;">'.$fieldArr['sciname'].'</span></a> '.$fieldArr['author'].'</div>';
