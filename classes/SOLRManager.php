@@ -205,6 +205,9 @@ class SOLRManager extends OccurrenceManager{
                 }
                 $returnArr[$occId]['img'] = $tnUrl;
             }
+            if(isset($k['imgid'])){
+                $returnArr[$occId]['hasimage'] = true;
+            }
         }
 
         return $returnArr;
