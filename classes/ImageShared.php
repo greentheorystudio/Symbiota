@@ -963,7 +963,7 @@ class ImageShared{
 					$i += 4;
 					if($new_block[$i+2] === "\x4A" && $new_block[$i+3] === "\x46" && $new_block[$i+4] === "\x49" && $new_block[$i+5] === "\x46" && $new_block[$i+6] === "\x00") {
 						$block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
-						if(is_array($block_size)){
+						if($block_size){
                             $block_size = hexdec($block_size[1]);
                             while(!feof($handle)) {
                                 $i += $block_size;
@@ -973,14 +973,18 @@ class ImageShared{
                                     if(in_array($new_block[$i + 1], $sof_marker, true)) {
                                         $size_data = $new_block[$i+2] . $new_block[$i+3] . $new_block[$i+4] . $new_block[$i+5] . $new_block[$i+6] . $new_block[$i+7] . $new_block[$i+8];
                                         $unpacked = unpack('H*', $size_data);
-                                        $unpacked = $unpacked[1];
-                                        $height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
-                                        $width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
-                                        return array($width, $height);
+                                        if($unpacked){
+                                            $unpacked = $unpacked[1];
+                                            $height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
+                                            $width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
+                                            return array($width, $height);
+                                        }
                                     }
                                     $i += 2;
                                     $block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
-                                    $block_size = hexdec($block_size[1]);
+                                    if($block_size){
+                                        $block_size = hexdec($block_size[1]);
+                                    }
                                 }
                             }
                         }
