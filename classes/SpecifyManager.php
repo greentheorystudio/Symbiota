@@ -119,20 +119,25 @@ class SpecifyManager {
                     foreach($objidarr as $oid){
                         $localityIDArr[(int)$colEvR->LocalityID][] = $oid;
                         if($colEvR->StartDate){
+                            $dateArr = explode('-', $colEvR->StartDate);
                             if($precision === 1){
                                 $occurrenceArr[$oid]['eventdate'] = $colEvR->StartDate;
+                                $occurrenceArr[$oid]['day'] = $dateArr[2];
+                                $occurrenceArr[$oid]['month'] = $dateArr[1];
+                                $occurrenceArr[$oid]['year'] = $dateArr[0];
                             }
-                            else{
-                                $dateArr = explode('-', $colEvR->StartDate);
-                                if($precision === 2){
-                                    $dateStr = $dateArr[0] . '-' . $dateArr[1] . '-00';
-                                }
-                                if($precision === 3){
-                                    $dateStr = $dateArr[0] . '-00-00';
-                                }
-                                $occurrenceArr[$oid]['eventdate'] = $dateStr;
-                                $occurrenceArr[$oid]['verbatimeventdate'] = $dateStr;
+                            elseif($precision === 2){
+                                $dateStr = $dateArr[0] . '-' . $dateArr[1] . '-00';
+                                $occurrenceArr[$oid]['verbatimeventdate'] = $dateArr[0] . '-' . $dateArr[1];
+                                $occurrenceArr[$oid]['month'] = $dateArr[1];
+                                $occurrenceArr[$oid]['year'] = $dateArr[0];
                             }
+                            elseif($precision === 3){
+                                $dateStr = $dateArr[0] . '-00-00';
+                                $occurrenceArr[$oid]['verbatimeventdate'] = $dateArr[0];
+                                $occurrenceArr[$oid]['year'] = $dateArr[0];
+                            }
+                            $occurrenceArr[$oid]['eventdate'] = $dateStr;
                         }
                         if($colEvR->StartDateVerbatim){
                             $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
@@ -363,7 +368,7 @@ class SpecifyManager {
             echo '<li>Inserting occurrences...</li>';
             $occinsertsqlprefix = 'INSERT INTO omoccurrences(collid,dbpk,basisOfRecord,occurrenceID,catalogNumber,sciname,scientificNameAuthorship,'.
                 'identifiedBy,dateIdentified,identificationRemarks,identificationQualifier,typeStatus,recordedBy,recordNumber,associatedCollectors,'.
-                'eventDate,verbatimEventDate,habitat,occurrenceRemarks,country,stateProvince,county,locality,decimalLatitude,'.
+                'eventDate,verbatimEventDate,habitat,occurrenceRemarks,country,stateProvince,county,locality,decimalLatitude,`day`,`month`,`year`,'.
                 'decimalLongitude,geodeticDatum,coordinateUncertaintyInMeters,locationRemarks,verbatimCoordinates,georeferenceProtocol,'.
                 'georeferenceSources,georeferenceRemarks,processingstatus,minimumElevationInMeters,maximumElevationInMeters,verbatimElevation) '.
                 'VALUES ';
@@ -393,6 +398,9 @@ class SpecifyManager {
                     (isset($idarr['county'])?'"'.$this->conn->real_escape_string($idarr['county']).'"':'NULL').','.
                     (isset($idarr['locality'])?'"'.$this->conn->real_escape_string($idarr['locality']).'"':'NULL').','.
                     (isset($idarr['decimallatitude'])?'"'.$this->conn->real_escape_string($idarr['decimallatitude']).'"':'NULL').','.
+                    (isset($idarr['day'])?'"'.$this->conn->real_escape_string($idarr['day']).'"':'NULL').','.
+                    (isset($idarr['month'])?'"'.$this->conn->real_escape_string($idarr['month']).'"':'NULL').','.
+                    (isset($idarr['year'])?'"'.$this->conn->real_escape_string($idarr['year']).'"':'NULL').','.
                     (isset($idarr['decimallongitude'])?'"'.$this->conn->real_escape_string($idarr['decimallongitude']).'"':'NULL').','.
                     (isset($idarr['geodeticdatum'])?'"'.$this->conn->real_escape_string($idarr['geodeticdatum']).'"':'NULL').','.
                     (isset($idarr['coordinateuncertaintyinmeters'])?'"'.$this->conn->real_escape_string($idarr['coordinateuncertaintyinmeters']).'"':'NULL').','.
