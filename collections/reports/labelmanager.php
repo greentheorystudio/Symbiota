@@ -4,8 +4,6 @@ include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
-@include('Image/Barcode.php');
-@include('Image/Barcode2.php');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
@@ -410,24 +408,18 @@ if($isEditor){
 											<input type="checkbox" name="catalognumbers" value="1" onclick="checkBarcodeCheck(this.form);" />
 											<b>Print Catalog Numbers</b> 
 										</div>
-										<?php
-										if(class_exists('Image_Barcode2') || class_exists('Image_Barcode')){
-											?>
-											<div style="margin:4px;">
-												<input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
-												<b>Include barcode of Catalog Number</b> 
-											</div>
-											<div style="margin:4px;">
-												<input type="checkbox" name="symbbc" value="1" onclick="checkBarcodeCheck(this.form);" />
-												<b>Include barcode of Symbiota Identifier</b> 
-											</div>
-											<div style="margin:4px;">
-												<input type="checkbox" name="bconly" value="1" onclick="checkPrintOnlyCheck(this.form);" />
-												<b>Print only Barcode</b> 
-											</div>
-											<?php
-										}
-										?>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
+                                            <b>Include barcode of Catalog Number</b>
+                                        </div>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="symbbc" value="1" onclick="checkBarcodeCheck(this.form);" />
+                                            <b>Include barcode of Symbiota Identifier</b>
+                                        </div>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="bconly" value="1" onclick="checkPrintOnlyCheck(this.form);" />
+                                            <b>Print only Barcode</b>
+                                        </div>
 										<fieldset style="float:left;margin:10px;width:150px;">
 											<legend><b>Rows Per Page</b></legend>
 											<input type="radio" name="rpp" value="1" /> 1<br/>

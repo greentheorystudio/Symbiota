@@ -176,7 +176,7 @@ class ImageLibraryManager{
         $sql = 'SELECT DISTINCT i.imgid, o.tidinterpreted, t.tid, t.sciname, i.url, i.thumbnailurl, i.originalurl, '.
             'u.uid, u.lastname, u.firstname, i.caption, '.
             'o.occid, o.stateprovince, o.catalognumber, CONCAT_WS("-",c.institutioncode, c.collectioncode) as instcode ';
-        $sql .= $this->getSqlBase(true);
+        $sql .= $this->getSqlBase();
         $sql .= $this->sqlWhere;
         if(array_key_exists('imagecount',$this->searchTermsArr)&&$this->searchTermsArr['imagecount']){
             if($this->searchTermsArr['imagecount'] === 'taxon'){
@@ -194,7 +194,7 @@ class ImageLibraryManager{
             $sql .= 'ORDER BY t.sciname ';
         }
         $sql .= 'LIMIT ' .$bottomLimit. ',' .$cntPerPage;
-        //echo "<div>Spec sql: ".$sql."</div>";
+        //echo '<div>Image sql: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
         while($r = $result->fetch_object()){
             $imgId = $r->imgid;
@@ -246,38 +246,30 @@ class ImageLibraryManager{
         }
     }
 
-    private function getSqlBase($full = null): string
+    private function getSqlBase(): string
     {
-        $sql = 'FROM images i ';
-        if(isset($this->searchTermsArr['taxa']) && $this->searchTermsArr['taxa']){
-            $sql .= 'INNER JOIN taxa t ON i.tid = t.tid ';
+        $sql = 'FROM images AS i ';
+        $sql .= 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid ';
+        $sql .= 'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
+        $sql .= 'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
+        $sql .= 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
+        if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
+            $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
-        else{
-            $sql .= 'LEFT JOIN taxa t ON i.tid = t.tid ';
+        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
+            $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
-        if($full){
-            if(isset($this->searchTermsArr['phuid']) && $this->searchTermsArr['phuid']){
-                $sql .= 'INNER JOIN users u ON i.photographeruid = u.uid ';
-            }
-            else{
-                $sql .= 'LEFT JOIN users u ON i.photographeruid = u.uid ';
-            }
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
-        if($this->searchTermsArr['imagetype'] === 'specimenonly' || $this->searchTermsArr['imagetype'] === 'observationonly'){
-            $sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid '.
-                'INNER JOIN omcollections c ON o.collid = c.collid ';
+        if(array_key_exists('assochost',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
-        else{
-            $sql .= 'LEFT JOIN omoccurrences o ON i.occid = o.occid ';
-            if($full) {
-                $sql .= 'LEFT JOIN omcollections c ON o.collid = c.collid ';
-            }
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(array_key_exists('tags',$this->searchTermsArr)&&$this->searchTermsArr['tags']){
-            $sql .= 'INNER JOIN imagetag it ON i.imgid = it.imgid ';
-        }
-        if(array_key_exists('keywords',$this->searchTermsArr)&&$this->searchTermsArr['keywords']){
-            $sql .= 'INNER JOIN imagekeywords ik ON i.imgid = ik.imgid ';
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
+            $sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         return $sql;
     }

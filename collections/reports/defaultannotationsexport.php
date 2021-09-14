@@ -237,18 +237,19 @@ foreach($labelArr as $occid => $occArr){
 			$textrun = $cell->addTextRun('other');
 			$textrun->addText(htmlspecialchars($occArr['identificationreferences']).' ','identifiedFont');
 		}
-		if($occArr['identifiedby'] || $occArr['dateidentified']){
-			$textrun = $cell->addTextRun('other');
-			if($occArr['identifiedby']){
-				$textrun->addText('Determiner: '.htmlspecialchars($occArr['identifiedby']),'identifiedFont');
-				if($occArr['dateidentified']){
-					$textrun->addTextBreak();
-				}
-			}
-			if($occArr['dateidentified']){
-				$textrun->addText('Date: '.htmlspecialchars($occArr['dateidentified']).' ','identifiedFont');
-			}
-		}
+		if($occArr['identifiedby']){
+            $textrun = $cell->addTextRun('other');
+            $textrun->addText('Determiner: '.htmlspecialchars($occArr['identifiedby']),'identifiedFont');
+        }
+        if($occArr['dateidentified']){
+            if($occArr['identifiedby']) {
+                $textrun->addTextBreak();
+            }
+            else {
+                $textrun = $cell->addTextRun('other');
+            }
+            $textrun->addText('Date: '.htmlspecialchars($occArr['dateidentified']).' ','identifiedFont');
+        }
 		if($footerStr){
 			$textrun = $cell->addTextRun('footer');
 			$textrun->addText(htmlspecialchars($footerStr),'headerfooterFont');
