@@ -37,7 +37,7 @@ if($isEditor){
 		$occidArr = $_REQUEST['occid'];
 		$occStr = implode(',',$occidArr);
 		$catArr = $occManager->getCatNumArr($occStr);
-		$jsonCatArr = json_encode($catArr, JSON_THROW_ON_ERROR);
+		$jsonCatArr = json_encode($catArr);
 		foreach($occidArr as $k){
 			$occManager->setOccId($k);
 			$occManager->addDetermination($_REQUEST,$isEditor);

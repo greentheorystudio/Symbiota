@@ -26,4 +26,4 @@ while ($r = $result->fetch_object()) {
 $result->free();
 $con->close();
 
-echo json_encode($retArr, JSON_THROW_ON_ERROR);
+echo json_encode($retArr);

@@ -49,7 +49,7 @@ if($clValue || $dynClid){
 $activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
 $showDetails = 0;
 if($clValue && $clArray['defaultSettings']){
-    $defaultArr = json_decode($clArray['defaultSettings'], true, 512, JSON_THROW_ON_ERROR);
+    $defaultArr = json_decode($clArray['defaultSettings'], true);
     $showDetails = $defaultArr['ddetails'];
     if(!$defaultOverride){
         if(array_key_exists('dcommon',$defaultArr)){
@@ -405,9 +405,7 @@ if(!$printMode){
                 if($clValue && $clArray['abstract']){
                     echo "<div><span style='font-weight:bold;'>Abstract: </span>".$clArray['abstract']. '</div>';
                 }
-                if($clValue && $clArray['notes']){
-                    echo "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>';
-                }
+                echo ($clValue && $clArray['notes']) ? "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>' : '';
                 ?>
             </div>
             <?php

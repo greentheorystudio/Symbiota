@@ -42,7 +42,7 @@ class ChecklistVoucherAdmin {
 			if($row = $result->fetch_object()){
 				$this->clName = Sanitizer::cleanOutStr($row->name);
 				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag, true, 512, JSON_THROW_ON_ERROR);
+				$varArr = json_decode($sqlFrag, true);
 				if(json_last_error() !== JSON_ERROR_NONE){
 					$varArr = $this->parseSqlFrag($sqlFrag);
 					$this->saveQueryVariables($varArr);
@@ -82,7 +82,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr, JSON_THROW_ON_ERROR)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr(json_encode($jsonArr)).'"':'NULL').' WHERE (c.clid = '.$this->clid.')';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -288,13 +288,8 @@ class ChecklistVoucherAdmin {
 					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
-				if($includeAll === 1){
-					$sql .= 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
-				}
-				elseif($includeAll === 2){
-					$sql .= 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
-				}
-				$sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
+				$sql .= $includeAll === 1 ? 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ' : 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
+                $sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
 				//echo '<div>'.$sql.'</div>';
 				$rs = $this->conn->query($sql);
 				while($r = $rs->fetch_object()){

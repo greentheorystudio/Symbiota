@@ -58,7 +58,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		if(!array_key_exists('printqueue',$detArr)) {
 			$detArr['printqueue'] = 0;
 		}
-		if($detArr['makecurrent'] === 1 && $isEditor < 3){
+		if((int)$detArr['makecurrent'] === 1 && (int)$isEditor < 3){
 			$isCurrent = 1;
 		}
 		if($isEditor === 3){
@@ -211,7 +211,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 					$detArr[$k] = $this->encodeStr($v);
 				}
 			}
-			$detObj = json_encode($detArr, JSON_THROW_ON_ERROR);
+			$detObj = json_encode($detArr);
 			$sqlArchive = 'UPDATE guidoccurdeterminations '.
 			'SET archivestatus = 1, archiveobj = "'.Sanitizer::cleanInStr($detObj).'" '.
 			'WHERE (detid = '.$detId.')';

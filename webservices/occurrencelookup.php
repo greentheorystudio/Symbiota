@@ -79,5 +79,5 @@ if($collid){
 
     $qHandler->setOccLookupSQLWhere();
     $occArr = $qHandler->getOccLookupArr();
-    echo json_encode($occArr, JSON_THROW_ON_ERROR);
+    echo json_encode($occArr);
 }

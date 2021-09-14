@@ -132,13 +132,13 @@ class InventoryProjectManager {
                 $projCoordArr = array();
                 $retArr[$row->clid] = $row->name.($row->access === 'private'?' <span title="Viewable only to editors">(private)</span>':'');
                 if($this->researchCoord){
-                    $projCoordArr = json_decode($this->researchCoord, true, 512, JSON_THROW_ON_ERROR);
+                    $projCoordArr = json_decode($this->researchCoord, true);
                 }
                 if($row->latcentroid && $row->longcentroid){
                     $coordArr[] = (float)$row->latcentroid;
                     $coordArr[] = (float)$row->longcentroid;
                     $projCoordArr[] = $coordArr;
-                    $this->researchCoord = json_encode($projCoordArr, JSON_THROW_ON_ERROR);
+                    $this->researchCoord = json_encode($projCoordArr);
                 }
 			}
 			$rs->free();

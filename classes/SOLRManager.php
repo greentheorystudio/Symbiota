@@ -27,7 +27,7 @@ class SOLRManager extends OccurrenceManager{
         $solrURL .= '&rows=1&start=1&wt=json';
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         return $solrArr['response']['numFound'];
     }
 
@@ -40,7 +40,7 @@ class SOLRManager extends OccurrenceManager{
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         return $solrArr['grouped']['familyscinamecode']['groups'];
     }
 
@@ -53,7 +53,7 @@ class SOLRManager extends OccurrenceManager{
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         $recArr = $solrArr['response']['docs'];
         foreach($recArr as $k){
             $returnArr[] = $k['occid'];
@@ -100,7 +100,7 @@ class SOLRManager extends OccurrenceManager{
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         $this->recordCount = $solrArr['response']['numFound'];
         return $solrArr['response']['docs'];
     }
@@ -118,7 +118,7 @@ class SOLRManager extends OccurrenceManager{
         $solrURL = $solrURLpre.($solrWhere?'q='.$solrWhere:'').$solrURLsuf;
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         $this->recordCount = $solrArr['response']['numFound'];
         return $solrArr['response']['docs'];
     }
@@ -204,6 +204,9 @@ class SOLRManager extends OccurrenceManager{
                     $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
                 }
                 $returnArr[$occId]['img'] = $tnUrl;
+            }
+            if(isset($k['imgid'])){
+                $returnArr[$occId]['hasimage'] = true;
             }
         }
 
@@ -530,12 +533,12 @@ class SOLRManager extends OccurrenceManager{
         $solrURL .= '&rows=1&start=1&wt=json';
         //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
-        $solrArr = json_decode($solrArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrArr = json_decode($solrArrJson, true);
         $cnt = $solrArr['response']['numFound'];
         $occURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
         //echo str_replace(' ','%20',$occURL);
         $solrOccArrJson = file_get_contents(str_replace(' ','%20',$occURL));
-        $solrOccArr = json_decode($solrOccArrJson, true, 512, JSON_THROW_ON_ERROR);
+        $solrOccArr = json_decode($solrOccArrJson, true);
         $recArr = $solrOccArr['response']['docs'];
         foreach($recArr as $k){
             $SOLROccArr[] = $k['occid'];
@@ -559,7 +562,7 @@ class SOLRManager extends OccurrenceManager{
         $needsUpdate = false;
 
         if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json')){
-            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/solr.json'), true, 512, JSON_THROW_ON_ERROR);
+            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/solr.json'), true);
             $lastDate = ($infoArr['lastFullImport'] ?? '');
             if($lastDate){
                 try {
@@ -592,13 +595,13 @@ class SOLRManager extends OccurrenceManager{
         $infoArr = array();
 
         if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json')){
-            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/solr.json'), true, 512, JSON_THROW_ON_ERROR);
+            $infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/data/solr.json'), true);
             unlink($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json');
         }
         $infoArr['lastFullImport'] = $now;
 
         $fp = fopen($GLOBALS['SERVER_ROOT'].'/temp/data/solr.json', 'wb');
-        fwrite($fp, json_encode($infoArr, JSON_THROW_ON_ERROR));
+        fwrite($fp, json_encode($infoArr));
         fclose($fp);
     }
 
@@ -989,7 +992,7 @@ class SOLRManager extends OccurrenceManager{
             if(array_key_exists('circleArr',$this->searchTermsArr) && $this->searchTermsArr['circleArr']){
                 $objArr = $this->searchTermsArr['circleArr'];
                 if(!is_array($objArr)){
-                    $objArr = json_decode($objArr, true, 512, JSON_THROW_ON_ERROR);
+                    $objArr = json_decode($objArr, true);
                 }
                 if($objArr){
                     $tempArr = array();
@@ -1004,7 +1007,7 @@ class SOLRManager extends OccurrenceManager{
             if(array_key_exists('polyArr',$this->searchTermsArr) && $this->searchTermsArr['polyArr']){
                 $geomArr = $this->searchTermsArr['polyArr'];
                 if(!is_array($geomArr)){
-                    $geomArr = json_decode($geomArr, true, 512, JSON_THROW_ON_ERROR);
+                    $geomArr = json_decode($geomArr, true);
                 }
                 if($geomArr){
                     foreach($geomArr as $geom){

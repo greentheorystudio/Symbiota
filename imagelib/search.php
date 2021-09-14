@@ -29,7 +29,7 @@ $taxaList = array();
 $stArr = array();
 $validStArr = false;
 if($stArrJson){
-    $stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $stArr = json_decode($stArrJson, true);
     if($collManager->validateSearchTermsArr($stArr)){
         $validStArr = true;
     }
@@ -41,12 +41,13 @@ if($stArrJson){
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <script src="../js/all.min.js" type="text/javascript"></script>
 	<script src="../js/jquery.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
 	<script src="../js/symb/images.index.js?ver=20210810" type="text/javascript"></script>
-    <script src="../js/symb/search.term.manager.js?ver=20210824" type="text/javascript"></script>
+    <script src="../js/symb/search.term.manager.js?ver=20210913" type="text/javascript"></script>
 	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
 	<script type="text/javascript">
         $('html').hide();
@@ -268,12 +269,12 @@ if($stArrJson){
             if(stArr['taxa']){
                 document.getElementById('taxa').value = stArr['taxa'];
                 const qtaxaArr = document.getElementById('taxa').value.split(";");
-                if(Nuber(document.getElementById("taxontype").value) === 1){
+                if(Number(document.getElementById("taxontype").value) === 1){
                     for(let i = 0; i < qtaxaArr.length; i++){
                         $('#taxainput').manifest('add',qtaxaArr[i]);
                     }
                 }
-                if(Nuber(document.getElementById("taxontype").value) === 5){
+                if(Number(document.getElementById("taxontype").value) === 5){
                     for(let i = 0; i < qtaxaArr.length; i++){
                         $('#commoninput').manifest('add',qtaxaArr[i]);
                     }
@@ -312,10 +313,18 @@ if($stArrJson){
             if(stArr['imagecount']){
                 document.getElementById("imagecount").value = stArr['imagecount'];
             }
-            document.getElementById("imagetypeall").checked = stArr['imagetypeall'];
-            document.getElementById("imagetypespecimenonly").checked = stArr['imagetypespecimenonly'];
-            document.getElementById("imagetypeobservationonly").checked = stArr['imagetypeobservationonly'];
-            document.getElementById("imagetypefieldonly").checked = stArr['imagetypefieldonly'];
+            if(stArr['imagetype'] && stArr['imagetype'] === 'specimenonly'){
+                document.getElementById("imagetypespecimenonly").checked = true;
+            }
+            else if(stArr['imagetype'] && stArr['imagetype'] === 'observationonly'){
+                document.getElementById("imagetypeobservationonly").checked = true;
+            }
+            else if(stArr['imagetype'] && stArr['imagetype'] === 'fieldonly'){
+                document.getElementById("imagetypefieldonly").checked = true;
+            }
+            else{
+                document.getElementById("imagetypeall").checked = true;
+            }
         }
 
         function processTaxonTypeChange(){
@@ -450,7 +459,7 @@ if($stArrJson){
 							Image Keywords: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
-							<input type="text" id="keywordsinput" style="width:350px;" title="Separate multiple keywords w/ commas" />
+							<input type="text" id="keywordsinput" style="width:350px;" onchange="processTextParamChange();" title="Separate multiple keywords w/ commas" />
 						</div>
 					</div>
                     <div style="clear:both;margin-top:5px;">
