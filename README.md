@@ -28,9 +28,6 @@ In addition, the following PHP extensions need to be installed and enabled:
 - php-xmlrpc
 - php-zip
 
-The optional [PHP Pear](https://pear.php.net/) package [Image_Barcode](https://pear.php.net/package/Image_Barcode) can also
-be installed to enable barcode generation on specimen labels.
-
 ## Recommended server configurations
 These configurations are recommended for the php and MySQL/MariaDB installations on the server in addition to the defaults.
 

@@ -33,7 +33,7 @@ elseif(strpos($collId, ',') !== false){
     $collIdArr = explode(',',$collId);
 }
 
-if($action === 'Download Family Dist' || $action === 'Download Geo Dist' || $action === 'Download Order Dist'){
+if(in_array($action, array('Download Family Dist', 'Download Geo Dist', 'Download Order Dist'))){
 	$header = array('Names','SpecimenCount','GeorefCount','IDCount','IDGeorefCount','GeorefPercent','IDPercent','IDGeorefPercent');
 	if($action === 'Download Family Dist'){
 		$fileName = 'stats_family.csv';

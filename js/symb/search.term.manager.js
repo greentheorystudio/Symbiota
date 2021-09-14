@@ -240,14 +240,20 @@ function processTextParamChange(){
     let phuidval = document.getElementById("phuid")?document.getElementById("phuid").value:null;
     let phjsonval = document.getElementById("phjson")?document.getElementById("phjson").value:null;
     let imagetagval = document.getElementById("imagetag")?document.getElementById("imagetag").value:null;
-    let imagekeywordval = document.getElementById("imagekeyword")?document.getElementById("imagekeyword").value:null;
+    let imagekeywordval = document.getElementById("keywordsinput")?document.getElementById("keywordsinput").value:null;
     let uploaddate1val = document.getElementById("uploaddate1")?document.getElementById("uploaddate1").value:null;
     let uploaddate2val = document.getElementById("uploaddate2")?document.getElementById("uploaddate2").value:null;
     let imagecountval = document.getElementById("imagecount")?document.getElementById("imagecount").value:'all';
-    const imagetypeall = document.getElementById("imagetypeall")?!!document.getElementById("imagetypeall").checked:true;
-    const imagetypespecimenonly = document.getElementById("imagetypespecimenonly")?!!document.getElementById("imagetypespecimenonly").checked:false;
-    const imagetypeobservationonly = document.getElementById("imagetypeobservationonly")?!!document.getElementById("imagetypeobservationonly").checked:false;
-    const imagetypefieldonly = document.getElementById("imagetypefieldonly")?!!document.getElementById("imagetypefieldonly").checked:false;
+    let imagetypeval = 'all';
+    if(document.getElementById("imagetypespecimenonly") && document.getElementById("imagetypespecimenonly").checked){
+        imagetypeval = 'specimenonly';
+    }
+    if(document.getElementById("imagetypeobservationonly") && document.getElementById("imagetypeobservationonly").checked){
+        imagetypeval = 'observationonly';
+    }
+    if(document.getElementById("imagetypefieldonly") && document.getElementById("imagetypefieldonly").checked){
+        imagetypeval = 'fieldonly';
+    }
 
     if(countryval){
         countryval = countryval.replaceAll(",", ";");
@@ -412,10 +418,8 @@ function processTextParamChange(){
         clearSearchTermsArrKey('uploaddate2');
     }
     setSearchTermsArrKeyValue('imagecount',imagecountval);
-    setSearchTermsArrKeyValue('imagetypeall',imagetypeall);
-    setSearchTermsArrKeyValue('imagetypespecimenonly',imagetypespecimenonly);
-    setSearchTermsArrKeyValue('imagetypeobservationonly',imagetypeobservationonly);
-    setSearchTermsArrKeyValue('imagetypefieldonly',imagetypefieldonly);
+    setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    setSearchTermsArrKeyValue('imagetype',imagetypeval);
 }
 
 function redirectWithQueryId(url){

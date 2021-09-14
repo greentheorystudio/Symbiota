@@ -405,9 +405,7 @@ if(!$printMode){
                 if($clValue && $clArray['abstract']){
                     echo "<div><span style='font-weight:bold;'>Abstract: </span>".$clArray['abstract']. '</div>';
                 }
-                if($clValue && $clArray['notes']){
-                    echo "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>';
-                }
+                echo ($clValue && $clArray['notes']) ? "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>' : '';
                 ?>
             </div>
             <?php
