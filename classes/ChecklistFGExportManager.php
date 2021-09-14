@@ -245,7 +245,7 @@ class ChecklistFGExportManager {
         $type = pathinfo($url, PATHINFO_EXTENSION);
         $dataType = '';
         $base64 = '';
-        if(strtolower($type) === 'jpg' || strtolower($type) === 'jpeg') {
+        if(in_array(strtolower($type), array('jpg', 'jpeg'))) {
             $dataType = 'jpg';
         }
         if(strtolower($type) === 'png') {

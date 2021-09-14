@@ -95,24 +95,20 @@ if($GLOBALS['SYMB_UID']){
                                 <div class="identificationreferences"><?php echo $occArr['identificationreferences']; ?></div>
                                 <?php
                             }
-                            if($occArr['identifiedby'] || $occArr['dateidentified']){
-                                if($occArr['identifiedby']){
-                                    ?>
-                                    <div class="identifiedbydiv">
-                                        Determiner: <?php echo $occArr['identifiedby']; ?>
-                                    </div>
-                                    <?php
-                                    if($occArr['dateidentified']){
-                                        echo '<br />';
-                                    }
-                                }
-                                if($occArr['dateidentified']){
-                                    ?>
-                                    <div class="dateidentifieddiv">
-                                        Date: <?php echo $occArr['dateidentified']; ?>
-                                    </div>
-                                    <?php
-                                }
+                            if($occArr['identifiedby']){
+                                ?>
+                                <div class="identifiedbydiv">
+                                    Determiner: <?php echo $occArr['identifiedby']; ?>
+                                </div>
+                                <?php
+                            }
+                            if($occArr['dateidentified']){
+                                ?>
+                                <br />
+                                <div class="dateidentifieddiv">
+                                    Date: <?php echo $occArr['dateidentified']; ?>
+                                </div>
+                                <?php
                             }
                             if($footerStr){
                                 ?>
