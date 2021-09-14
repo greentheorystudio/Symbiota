@@ -322,12 +322,13 @@ class ImageLocalProcessor {
 
 	private function processHtml($pathFrag = null): ?bool
 	{
-		set_time_limit(3600);
+        $codeArr = array();
+	    set_time_limit(3600);
 		$headerArr = get_headers($this->sourcePathBase.$pathFrag);
 		if($headerArr){
             preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
         }
-		if($codeArr[1] === 200){
+		if($codeArr && $codeArr[1] === 200){
 			$dom = new DOMDocument();
 			$dom->loadHTMLFile($this->sourcePathBase.$pathFrag);
 			$aNodes= $dom->getElementsByTagName('a');

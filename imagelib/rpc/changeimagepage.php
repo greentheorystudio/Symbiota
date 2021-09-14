@@ -101,10 +101,7 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $imgUrl = $imgArr['url'];
                 $imgTn = $imgArr['thumbnailurl'];
                 if($imgTn){
-                    $imgUrl = $imgTn;
-                    if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgTn, '/', 1) === 0){
-                        $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
-                    }
+                    $imgUrl = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
                 }
                 elseif($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
