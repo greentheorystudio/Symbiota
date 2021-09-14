@@ -7,7 +7,10 @@
 <div id="spatialpanel">
     <div id="accordion">
         <?php
-        if(!$inputWindowMode){
+        if($inputWindowMode) {
+            include_once(__DIR__ . '/vectortoolstab.php');
+        }
+        else {
             ?>
             <h3 class="tabtitle">Search Criteria</h3>
             <div id="criteriatab">
@@ -164,7 +167,7 @@
                                     <g>
                                         <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                                     </g>
-                                </svg> = General Observation
+                                </svg> = Observation
                             </div>
                         </div>
                         <div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
@@ -209,6 +212,7 @@
                             ?>
                             <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/list.php');"><button data-role="none" class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>
                             <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../collections/listtabledisplay.php');"><button data-role="none" class="icon-button" title="Table Display"><i style="height:15px;width:15px;" class="fas fa-table"></i></button></a></div>
+                            <div><a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId('../imagelib/search.php');"><button data-role="none" class="icon-button" title="Image Search"><i style="height:15px;width:15px;" class="fas fa-camera"></i></button></a></div>
                             <div id="copySearchUrlDiv" style="display:block;"><button data-role="none" class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>
                         </div>
                     </div>
@@ -229,7 +233,7 @@
                                     <g>
                                         <path stroke="#000000" d="m6.70496,0.23296l-6.70496,13.48356l13.88754,0.12255l-7.18258,-13.60611z" stroke-width="1px" fill="white"/>
                                     </g>
-                                </svg> = General Observation
+                                </svg> = Observation
                             </div>
                         </div>
                         <div id="symbolizeResetButt" style='float:right;margin-bottom:5px;' >
@@ -345,9 +349,6 @@
                 </div>
             </div>
             <?php
-        }
-        else{
-            include_once(__DIR__ . '/vectortoolstab.php');
         }
         ?>
     </div>

@@ -2,13 +2,14 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$glossId = array_key_exists('glossid',$_REQUEST)?$_REQUEST['glossid']:0;
-$glossgrpId = array_key_exists('glossgrpid',$_REQUEST)?$_REQUEST['glossgrpid']:0;
+$glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
+$glossgrpId = array_key_exists('glossgrpid',$_REQUEST)?(int)$_REQUEST['glossgrpid']:0;
 $language = array_key_exists('searchlanguage',$_REQUEST)?$_REQUEST['searchlanguage']:'';
 $tid = array_key_exists('searchtaxa',$_REQUEST)?$_REQUEST['searchtaxa']:'';
 $searchTerm = array_key_exists('searchterm',$_REQUEST)?$_REQUEST['searchterm']:'';
-$deepSearch = array_key_exists('deepsearch',$_POST)?$_POST['deepsearch']:0;
+$deepSearch = array_key_exists('deepsearch',$_POST)?(int)$_POST['deepsearch']:0;
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 if(!$language) {
@@ -160,7 +161,7 @@ $indTermUrl = 'individual.php';
 		}
 		if(isset($GLOSSARY_BANNER) && $GLOSSARY_BANNER){
 			$bannerUrl = $GLOSSARY_BANNER;
-			if(strpos($bannerUrl, 'http') !== 0 && strpos($bannerUrl, '/') !== 0){
+			if(strncmp($bannerUrl, 'http', 4) !== 0 && strncmp($bannerUrl, '/', 1) !== 0){
 				$bannerUrl = '../images/layout/'.$bannerUrl;
 			}
 			echo '<div id="glossaryBannerDiv"><img src="'.$bannerUrl.'" /></div>';

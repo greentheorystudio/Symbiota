@@ -1,19 +1,21 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
+include_once(__DIR__ . '/../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=../checklists/checklistadmin.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$clid = array_key_exists('clid',$_REQUEST)?$_REQUEST['clid']:0;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
+$clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
 
 $clManager = new ChecklistAdmin();
 if(!$clid && isset($_POST['delclid'])) {
-    $clid = $_POST['delclid'];
+    $clid = (int)$_POST['delclid'];
 }
 $clManager->setClid($clid);
 
@@ -73,7 +75,7 @@ $voucherProjects = $clManager->getVoucherProjects();
     <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 	<script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
@@ -241,11 +243,11 @@ if($clid && $isEditor){
 	</div>
 <?php
 }
-else if(!$clid){
-    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> Checklist identifier not set</div>';
-}
-else{
+elseif($clid) {
     echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> You do not have administrative permission for this checklist</div>';
+}
+else {
+    echo '<div><span style="font-weight:bold;font-size:110%;">Error:</span> Checklist identifier not set</div>';
 }
 ?>
 </div>

@@ -3,34 +3,39 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'];
-$targetTid = $_REQUEST['targettid'];
-$occIndex = $_REQUEST['occindex'];
+$targetTid = (int)$_REQUEST['targettid'];
+$occIndex = (int)$_REQUEST['occindex'];
 $sortField1 = $_REQUEST['sortfield1'];
 $sortField2 = $_REQUEST['sortfield2'];
 $sortOrder = $_REQUEST['sortorder'];
 
 $stArr = json_decode($stArrJson, true);
 $copyURL = '';
+$recArr = array();
 
 if($GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
-    $collManager->setSearchTermsArr($stArr);
-    $collManager->setSorting($sortField1,$sortField2,$sortOrder);
-    $solrArr = $collManager->getRecordArr($occIndex,1000);
-    $recArr = $collManager->translateSOLRRecList($solrArr);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $collManager->setSorting($sortField1,$sortField2,$sortOrder);
+        $solrArr = $collManager->getRecordArr($occIndex,1000);
+        $recArr = $collManager->translateSOLRRecList($solrArr);
+    }
 }
 else{
     $collManager = new OccurrenceListManager();
-    $collManager->setSearchTermsArr($stArr);
-    $collManager->setSorting($sortField1,$sortField2,$sortOrder);
-    $recArr = $collManager->getRecordArr($occIndex,1000);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $collManager->setSorting($sortField1,$sortField2,$sortOrder);
+        $recArr = $collManager->getRecordArr($occIndex,1000);
+    }
 }
 
 $targetClid = $collManager->getSearchTerm('targetclid');
 
-if(strlen($stArrJson) <= 1800){
+if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
     $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/listtabledisplay.php';
     $urlArgs = '?starr='.$stArrJson.'&occindex='.$occIndex.'&sortfield1='.$sortField1.'&sortfield2='.$sortField2.'&sortorder='.$sortOrder;
     $copyURL = $urlPrefix.$urlArgs;
@@ -74,6 +79,7 @@ if($recArr){
     }
     $recordListHtml .= '<div><a href="list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
     $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="height:15px;width:15px;" class="fas fa-globe"></i></button></a></div>';
+    $recordListHtml .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Search"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
     if(strlen($stArrJson) <= 1800){
         $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="height:15px;width:15px;" class="fas fa-link"></i></button></div>';
     }
@@ -148,8 +154,8 @@ if($recArr){
     foreach($recArr as $id => $occArr){
         $isEditor = false;
         if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN']
-                || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
-                || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
+                || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$occArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))
+                || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$occArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
             $isEditor = true;
         }
         $collection = $occArr['institutioncode'];

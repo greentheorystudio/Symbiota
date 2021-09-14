@@ -2,21 +2,23 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=../collections/georef/batchgeoreftool.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$submitAction = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$submitAction = array_key_exists('submitaction',$_POST)?htmlspecialchars($_POST['submitaction']):'';
 
 $qCountry = array_key_exists('qcountry',$_POST)?$_POST['qcountry']:'';
 $qState = array_key_exists('qstate',$_POST)?$_POST['qstate']:'';
 $qCounty = array_key_exists('qcounty',$_POST)?$_POST['qcounty']:'';
 $qMunicipality = array_key_exists('qmunicipality',$_POST)?$_POST['qmunicipality']:'';
 $qLocality = array_key_exists('qlocality',$_POST)?$_POST['qlocality']:'';
-$qDisplayAll = array_key_exists('qdisplayall',$_POST)?$_POST['qdisplayall']:0;
+$qDisplayAll = array_key_exists('qdisplayall',$_POST)?(int)$_POST['qdisplayall']:0;
 $qVStatus = array_key_exists('qvstatus',$_POST)?$_POST['qvstatus']:'';
 $qSciname = array_key_exists('qsciname',$_POST)?$_POST['qsciname']:'';
 $qProcessingStatus = array_key_exists('qprocessingstatus',$_POST)?$_POST['qprocessingstatus']:'';
@@ -52,9 +54,7 @@ if(!$georeferenceVerificationStatus) {
 }
 
 $geoManager = new OccurrenceGeorefTools();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 $geoManager->setCollId($collId);
 
 $editor = false;

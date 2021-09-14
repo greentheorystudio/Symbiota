@@ -17,12 +17,12 @@ class GamesManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
 
-	public function getChecklistArr($projId = 0): array
+	public function getChecklistArr($projId = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT DISTINCT c.clid, c.name '.
@@ -51,8 +51,9 @@ class GamesManager {
 		if(is_numeric($oodID)){
 			$currentDate = date('Y-m-d');
 			$replace = 0;
+            $randTaxa = 0;
 			if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json')){
-				$oldArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
+				$oldArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_info.json'), true);
 				$lastDate = $oldArr['lastDate'];
 				$lastCLID = (int)$oldArr['clid'];
 				if(($currentDate > $lastDate) || ((int)$clid !== $lastCLID)){
@@ -66,7 +67,7 @@ class GamesManager {
 			if($replace === 1){
 				$previous = array();
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json')){
-					$previous = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json'), true);
+					$previous = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_previous.json'), true);
 					unlink($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_previous.json');
 				}
 				if(file_exists($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json')){
@@ -176,7 +177,7 @@ class GamesManager {
 				}
 			}
 
-			$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/temp/ootd/'.$oodID.'_info.json'), true);
+			$infoArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'] . '/temp/ootd/' . $oodID . '_info.json'), true);
 		}
 		return $infoArr;
 	}

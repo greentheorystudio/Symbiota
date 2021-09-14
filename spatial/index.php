@@ -4,9 +4,10 @@ include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 180);
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $windowType = array_key_exists('windowtype',$_REQUEST)?$_REQUEST['windowtype']:'analysis';
 $clusterPoints = !(array_key_exists('clusterpoints', $_REQUEST) && $_REQUEST['clusterpoints'] === 'false');
@@ -15,6 +16,8 @@ $inputWindowMode = false;
 $inputWindowModeTools = array();
 $inputWindowSubmitText = '';
 $displayWindowMode = false;
+$stArr = array();
+$validStArr = false;
 
 if(strncmp($windowType, 'input', 5) === 0){
     $inputWindowMode = true;
@@ -54,6 +57,13 @@ if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
 $occManager = new OccurrenceManager();
 $spatialManager = new SpatialModuleManager();
 
+if($stArrJson){
+    $stArr = json_decode($stArrJson, true);
+    if($occManager->validateSearchTermsArr($stArr)){
+        $validStArr = true;
+    }
+}
+
 $collList = $occManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
@@ -68,7 +78,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/bootstrap.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.mobile-1.4.0.min.css" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -244,8 +254,8 @@ $dbArr = array();
             if($inputWindowMode){
                 echo 'loadInputParentParams();';
             }
-            if($queryId || $stArrJson){
-                if($stArrJson){
+            if($queryId || $validStArr){
+                if($validStArr){
                     ?>
                     initializeSearchStorage(<?php echo $queryId; ?>);
                     loadSearchTermsArrFromJson('<?php echo $stArrJson; ?>');
@@ -253,10 +263,12 @@ $dbArr = array();
                 }
                 ?>
                 searchTermsArr = getSearchTermsArr();
-                setInputFormBySearchTermsArr();
-                createShapesFromSearchTermsArr();
-                setCollectionForms();
-                loadPoints();
+                if(validateSearchTermsArr(searchTermsArr)){
+                    setInputFormBySearchTermsArr();
+                    createShapesFromSearchTermsArr();
+                    setCollectionForms();
+                    loadPoints();
+                }
                 <?php
             }
             ?>

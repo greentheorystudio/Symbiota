@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class SpatialModuleManager{
 
@@ -15,7 +16,7 @@ class SpatialModuleManager{
     }
 
     public function __destruct(){
-        if(!($this->conn === false)) {
+        if($this->conn) {
             $this->conn->close();
         }
     }
@@ -69,7 +70,7 @@ class SpatialModuleManager{
         return implode(',',$occArr);
     }
 
-    public function getSynonyms($searchTarget,$taxAuthId = 1): array{
+    public function getSynonyms($searchTarget): array{
         $synArr = array();
         $targetTidArr = array();
         $searchStr = '';
@@ -88,7 +89,7 @@ class SpatialModuleManager{
             $searchStr = $searchTarget;
         }
         if($searchStr){
-            $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.$searchStr.'")';
+            $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.Sanitizer::cleanInStr($searchStr).'")';
             $rs1 = $this->conn->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $targetTidArr[] = $r1->tid;
@@ -101,7 +102,7 @@ class SpatialModuleManager{
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
                 'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.TidAccepted '.
-                'WHERE (ts.taxauthid = '.$taxAuthId.') AND (ts.tid IN('.implode(',',$targetTidArr).')) ';
+                'WHERE (ts.taxauthid = 1) AND (ts.tid IN('.implode(',',$targetTidArr).')) ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
                 $accArr[] = $r2->tid;
@@ -113,7 +114,7 @@ class SpatialModuleManager{
             if($accArr){
                 $sql3 = 'SELECT DISTINCT t.tid, t.sciname ' .
                     'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                    'WHERE (ts.taxauthid = ' . $taxAuthId . ') AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
+                    'WHERE (ts.taxauthid = 1) AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
                 $rs3 = $this->conn->query($sql3);
                 while ($r3 = $rs3->fetch_object()) {
                     $synArr[$r3->tid] = $r3->sciname;
@@ -123,7 +124,7 @@ class SpatialModuleManager{
                 if ($rankId === 220) {
                     $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
                         'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = ' . $taxAuthId . ') ' .
+                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = 1) ' .
                         'AND (ts.TidAccepted = ts.tid)';
                     $rs4 = $this->conn->query($sql4);
                     while ($r4 = $rs4->fetch_object()) {
@@ -190,16 +191,8 @@ class SpatialModuleManager{
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
-        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
+        $sql .= $this->setTableJoins();
+        if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
         $sql .= $this->sqlWhere;
@@ -261,16 +254,8 @@ class SpatialModuleManager{
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
-        if(strpos($this->sqlWhere, 'WHERE ') !== 0){
+        $sql .= $this->setTableJoins();
+        if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
         $sql .= $this->sqlWhere;
@@ -352,15 +337,7 @@ class SpatialModuleManager{
     public function setRecordCnt(): void
     {
         $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
             if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
@@ -385,15 +362,7 @@ class SpatialModuleManager{
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
             if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
@@ -415,15 +384,15 @@ class SpatialModuleManager{
         while($r = $result->fetch_object()){
             $occId = $r->occid;
             $collId = $r->collid;
-            $retArr[$occId]['i'] = $this->cleanOutStr($r->institutioncode);
-            $retArr[$occId]['cat'] = $this->cleanOutStr($r->catalognumber);
-            $retArr[$occId]['c'] = $this->cleanOutStr($r->collector);
-            $retArr[$occId]['e'] = $this->cleanOutStr($r->eventdate);
-            $retArr[$occId]['f'] = $this->cleanOutStr($r->family);
-            $retArr[$occId]['s'] = $this->cleanOutStr($r->sciname);
-            $retArr[$occId]['l'] = $this->cleanOutStr($r->locality);
-            $retArr[$occId]['lat'] = $this->cleanOutStr($r->DecimalLatitude);
-            $retArr[$occId]['lon'] = $this->cleanOutStr($r->DecimalLongitude);
+            $retArr[$occId]['i'] = Sanitizer::cleanOutStr($r->institutioncode);
+            $retArr[$occId]['cat'] = Sanitizer::cleanOutStr($r->catalognumber);
+            $retArr[$occId]['c'] = Sanitizer::cleanOutStr($r->collector);
+            $retArr[$occId]['e'] = Sanitizer::cleanOutStr($r->eventdate);
+            $retArr[$occId]['f'] = Sanitizer::cleanOutStr($r->family);
+            $retArr[$occId]['s'] = Sanitizer::cleanOutStr($r->sciname);
+            $retArr[$occId]['l'] = Sanitizer::cleanOutStr($r->locality);
+            $retArr[$occId]['lat'] = Sanitizer::cleanOutStr($r->DecimalLatitude);
+            $retArr[$occId]['lon'] = Sanitizer::cleanOutStr($r->DecimalLongitude);
             $localitySecurity = $r->LocalitySecurity;
             if(!$localitySecurity || $canReadRareSpp
                 || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true))
@@ -568,6 +537,30 @@ class SpatialModuleManager{
         $result->close();
     }
 
+    protected function setTableJoins(): string
+    {
+        $sqlJoin = '';
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(array_key_exists('assochost',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
+        }
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
+            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+            $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
+            $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
+            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
+        }
+        return $sqlJoin;
+    }
+
     public function setSearchTermsArr($stArr): void
     {
         $this->searchTermsArr = $stArr;
@@ -575,11 +568,11 @@ class SpatialModuleManager{
 
     public function setSqlWhere($whereStr): void
     {
-        if(!$whereStr){
-            $whereStr = 'WHERE ';
-        }
-        else{
+        if($whereStr) {
             $whereStr .= 'AND ';
+        }
+        else {
+            $whereStr = 'WHERE ';
         }
         $this->sqlWhere = $whereStr . '(o.sciname IS NOT NULL AND o.DecimalLatitude IS NOT NULL AND o.DecimalLongitude IS NOT NULL) ';
     }
@@ -587,9 +580,5 @@ class SpatialModuleManager{
     public function getRecordCnt(): int
     {
         return $this->recordCount;
-    }
-
-    protected function cleanOutStr($str){
-        return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
     }
 }

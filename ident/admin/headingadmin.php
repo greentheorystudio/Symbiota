@@ -1,13 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../ident/admin/headingadmin.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$hid = array_key_exists('hid',$_POST)?$_POST['hid']:0;
+$hid = array_key_exists('hid',$_POST)?(int)$_POST['hid']:0;
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
 $action = array_key_exists('action',$_POST)?$_POST['action']:'';
 
@@ -56,7 +58,7 @@ $headingArr = $charManager->getHeadingArr();
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:15px;color:<?php echo (strpos($statusStr,'SUCCESS')===0?'green':'red'); ?>;">
+			<div style="margin:15px;color:<?php echo (strncmp($statusStr, 'SUCCESS', 7) ===0?'green':'red'); ?>;">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>

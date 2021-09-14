@@ -1,16 +1,16 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-@include('Image/Barcode.php');
-@include('Image/Barcode2.php');
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/reports/labelmanager.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = $_REQUEST['collid'];
-$tabTarget = array_key_exists('tabtarget',$_REQUEST)?$_REQUEST['tabtarget']:0;
+$collid = (int)$_REQUEST['collid'];
+$tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $datasetManager = new OccurrenceLabel();
@@ -358,7 +358,7 @@ if($isEditor){
 														<?php echo $recArr['c']; ?>
 													</a>
 													<?php
-													if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+													if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
 														if(!$isGeneralObservation || $recArr['uid'] === $GLOBALS['SYMB_UID']){
 															?>
 															<a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
@@ -408,24 +408,18 @@ if($isEditor){
 											<input type="checkbox" name="catalognumbers" value="1" onclick="checkBarcodeCheck(this.form);" />
 											<b>Print Catalog Numbers</b> 
 										</div>
-										<?php
-										if(class_exists('Image_Barcode2') || class_exists('Image_Barcode')){
-											?>
-											<div style="margin:4px;">
-												<input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
-												<b>Include barcode of Catalog Number</b> 
-											</div>
-											<div style="margin:4px;">
-												<input type="checkbox" name="symbbc" value="1" onclick="checkBarcodeCheck(this.form);" />
-												<b>Include barcode of Symbiota Identifier</b> 
-											</div>
-											<div style="margin:4px;">
-												<input type="checkbox" name="bconly" value="1" onclick="checkPrintOnlyCheck(this.form);" />
-												<b>Print only Barcode</b> 
-											</div>
-											<?php
-										}
-										?>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
+                                            <b>Include barcode of Catalog Number</b>
+                                        </div>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="symbbc" value="1" onclick="checkBarcodeCheck(this.form);" />
+                                            <b>Include barcode of Symbiota Identifier</b>
+                                        </div>
+                                        <div style="margin:4px;">
+                                            <input type="checkbox" name="bconly" value="1" onclick="checkPrintOnlyCheck(this.form);" />
+                                            <b>Print only Barcode</b>
+                                        </div>
 										<fieldset style="float:left;margin:10px;width:150px;">
 											<legend><b>Rows Per Page</b></legend>
 											<input type="radio" name="rpp" value="1" /> 1<br/>

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceEditReview extends Manager{
 
@@ -47,29 +48,34 @@ class OccurrenceEditReview extends Manager{
 		return $collName;
 	}
 
-	public function getEditCnt(){
-		if ($this->display === 1) {
-			return $this->getOccurEditCnt();
+	public function getEditCnt(): ?int
+    {
+		$retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->getOccurEditCnt();
 		}
 
 		if($this->display === 2) {
-			return $this->getRevisionCnt();
+            $retVal = $this->getRevisionCnt();
 		}
-		return 0;
+		return $retVal;
 	}
 	
-	public function getEditArr(){
-		if ($this->display === 1) {
-			return $this->getOccurEditArr();
+	public function getEditArr(): ?array
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->getOccurEditArr();
 		}
 
 		if($this->display === 2) {
-			return $this->getRevisionArr();
+            $retVal = $this->getRevisionArr();
 		}
-		return null;
+		return $retVal;
 	}
 	
-	private function getOccurEditCnt(){
+	private function getOccurEditCnt(): int
+    {
 		$recCnt = 0;
 		$sql = 'SELECT COUNT(e.ocedid) AS fullcnt '.$this->getEditSqlBase();
 		//echo $sql; exit;
@@ -134,7 +140,8 @@ class OccurrenceEditReview extends Manager{
 		return $sqlBase;
 	}
 	
-	private function getRevisionCnt(){
+	private function getRevisionCnt(): int
+    {
 		$recCnt = 0;
 		$sql = 'SELECT COUNT(r.orid) AS fullcnt '.$this->getRevisionSqlBase();
 		//echo $sql; exit;
@@ -170,8 +177,8 @@ class OccurrenceEditReview extends Manager{
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['extstamp'] = $r->externaltimestamp;
 			$retArr[$r->occid][$r->orid][$r->appliedstatus]['ts'] = $r->initialtimestamp;
 				
-			$oldValues = json_decode($r->oldvalues,true);
-			$newValues = json_decode($r->newvalues,true);
+			$oldValues = json_decode($r->oldvalues, true);
+			$newValues = json_decode($r->newvalues, true);
 			foreach($oldValues as $fieldName => $value){
 				if($fieldName !== 'georeferencesources' && $fieldName !== 'georeferencedby'){
 					$retArr[$r->occid][$r->orid][$r->appliedstatus]['f'][$fieldName]['old'] = $value;
@@ -220,15 +227,17 @@ class OccurrenceEditReview extends Manager{
 		return $sqlBase;
 	}
 	
-	public function updateRecords($postArr){
-		if ($this->display === 1) {
-			return $this->updateOccurEditRecords($postArr);
+	public function updateRecords($postArr): ?bool
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->updateOccurEditRecords($postArr);
 		}
 
 		if($this->display === 2) {
-			return $this->updateRevisionRecords($postArr);
+            $retVal = $this->updateRevisionRecords($postArr);
 		}
-		return null;
+		return $retVal;
 	}
 
 	private function updateOccurEditRecords($postArr): bool
@@ -260,7 +269,7 @@ class OccurrenceEditReview extends Manager{
 					'WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>';
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' edits.';
 					$status = false;
 				}
 			}
@@ -298,7 +307,7 @@ class OccurrenceEditReview extends Manager{
 				$uSql = 'UPDATE omoccurrences SET '.trim($sqlFrag,', ').' WHERE (occid = '.$r->occid.')';
 				//echo '<div>'.$uSql.'</div>'; exit;
 				if(!$this->conn->query($uSql)){
-					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions: '.$this->conn->error;
+					$this->warningArr[] = 'ERROR '.($applyTask === 'apply'?'applying':'reverting').' revisions.';
 					$status = false;
 				}
 			}
@@ -314,15 +323,17 @@ class OccurrenceEditReview extends Manager{
 		return $status;
 	}
 
-	public function deleteEdits($idStr){
-		if ($this->display === 1) {
-			return $this->deleteOccurEdits($idStr);
+	public function deleteEdits($idStr): ?bool
+    {
+        $retVal = null;
+	    if ($this->display === 1) {
+            $retVal = $this->deleteOccurEdits($idStr);
 		}
 
 		if($this->display === 2) {
-			return $this->deleteRevisionsEdits($idStr);
+            $retVal = $this->deleteRevisionsEdits($idStr);
 		}
-		return null;
+		return $retVal;
 	}
 
 	private function deleteOccurEdits($idStr): bool
@@ -335,7 +346,7 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccuredits WHERE (ocedid IN('.$ocedidStr.'))';
 		//echo '<div>'.$sql.'</div>'; exit;
 		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting edits: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting edits.';
 			$status = false;
 		}
 		return $status;
@@ -350,13 +361,13 @@ class OccurrenceEditReview extends Manager{
 		$sql = 'DELETE FROM omoccurrevisions WHERE (orid IN('.$idStr.'))';
 		//echo '<div>'.$sql.'</div>';
 		if($this->conn->query($sql)){
-			$this->errorMessage = 'ERROR deleting revisions: '.$this->conn->error;
+			$this->errorMessage = 'ERROR deleting revisions.';
 			$status = false;
 		}
 		return $status;
 	}
 	
-	public function exportCsvFile($idStr, $exportAll = false): bool
+	public function exportCsvFile($idStr, $exportAll = null): bool
 	{
 		$status = true;
 		if($this->display === 1) {
@@ -436,8 +447,8 @@ class OccurrenceEditReview extends Manager{
 					}
 					else{
 						$outArr[7] = $r->initialtimestamp.($r->externaltimestamp?' ('.$r->externaltimestamp.')':'');
-						$oldValueArr = json_decode($r->oldvalues,true);
-						$newValueArr = json_decode($r->newvalues,true);
+						$oldValueArr = json_decode($r->oldvalues, true);
+						$newValueArr = json_decode($r->newvalues, true);
 						foreach($oldValueArr as $fieldName => $oldValue){
 							$outArr[8] = $fieldName;
 							$outArr[9] = $oldValue;
@@ -496,7 +507,7 @@ class OccurrenceEditReview extends Manager{
 
 	public function setEditorFilter($f): void
     {
-		$this->editorFilter = $this->cleanInStr($f);
+		$this->editorFilter = Sanitizer::cleanInStr($f);
 	}
 	
 	public function setQueryOccidFilter($num): void

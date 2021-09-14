@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ImageLocalProcessor {
 
@@ -83,7 +84,7 @@ class ImageLocalProcessor {
 	}
 
 	public function __destruct(){
-		if($this->dbMetadata && !($this->conn === false)) {
+		if($this->dbMetadata && $this->conn) {
 			$this->conn->close();
 		}
 
@@ -92,7 +93,7 @@ class ImageLocalProcessor {
 		}
 	}
 
-	public function initProcessor($logTitle = ''): void
+	public function initProcessor($logTitle = null): void
 	{
 		if($this->logPath && $this->logMode > 1){
 			if(!file_exists($this->logPath) && !mkdir($concurrentDirectory = $this->logPath, 0, true) && !is_dir($concurrentDirectory)) {
@@ -115,7 +116,7 @@ class ImageLocalProcessor {
 
 	public function batchLoadImages(): void
 	{
-		if(strpos($this->sourcePathBase, 'http') === 0){
+		if(strncmp($this->sourcePathBase, 'http', 4) === 0){
 			$headerArr = get_headers($this->sourcePathBase);
 			if(!$headerArr){
 				$this->logOrEcho('ABORT: sourcePathBase returned bad headers ('.$this->sourcePathBase.')');
@@ -152,7 +153,7 @@ class ImageLocalProcessor {
 		if(!$this->imgUrlBase){
 			$this->imgUrlBase = $GLOBALS['IMAGE_ROOT_URL'];
 		}
-		if($GLOBALS['IMAGE_DOMAIN'] && strpos($this->imgUrlBase, 'http://') !== 0 && strpos($this->imgUrlBase, 'https://') !== 0) {
+		if($GLOBALS['IMAGE_DOMAIN'] && strncmp($this->imgUrlBase, 'http://', 7) !== 0 && strncmp($this->imgUrlBase, 'https://', 8) !== 0) {
 			$urlPrefix = 'http://';
 			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
 				$urlPrefix = 'https://';
@@ -225,7 +226,7 @@ class ImageLocalProcessor {
 			}
 
 			$this->logOrEcho('Starting image processing: '.$sourcePathFrag);
-			if(strpos($this->sourcePathBase, 'http') === 0){
+			if(strncmp($this->sourcePathBase, 'http', 4) === 0){
 				$this->processHtml($sourcePathFrag);
 			}
 			else if($this->errorMessage === 'abort' && !$this->processFolder($sourcePathFrag)) {
@@ -252,7 +253,7 @@ class ImageLocalProcessor {
 		}
 	}
 
-	private function processFolder($pathFrag = ''): ?bool
+	private function processFolder($pathFrag = null): ?bool
 	{
 		set_time_limit(3600);
 		if(file_exists($this->sourcePathBase.$pathFrag)){
@@ -319,14 +320,15 @@ class ImageLocalProcessor {
 		return true;
 	}
 
-	private function processHtml($pathFrag = ''): ?bool
+	private function processHtml($pathFrag = null): ?bool
 	{
-		set_time_limit(3600);
+        $codeArr = array();
+	    set_time_limit(3600);
 		$headerArr = get_headers($this->sourcePathBase.$pathFrag);
 		if($headerArr){
             preg_match('/http.+\s(\d{3})\s/i',$headerArr[0],$codeArr);
         }
-		if($codeArr[1] === 200){
+		if($codeArr && $codeArr[1] === 200){
 			$dom = new DOMDocument();
 			$dom->loadHTMLFile($this->sourcePathBase.$pathFrag);
 			$aNodes= $dom->getElementsByTagName('a');
@@ -388,9 +390,11 @@ class ImageLocalProcessor {
 		return true;
 	}
 
-	private function processImageFile($fileName,$sourcePathFrag = ''): bool
+	private function processImageFile($fileName,$sourcePathFrag = null): bool
 	{
 		flush();
+        $fileSize = 0;
+        $retVal = true;
 		if($specPk = $this->getPrimaryKey($fileName)){
 			$occId = 0;
 			if($this->dbMetadata){
@@ -456,7 +460,7 @@ class ImageLocalProcessor {
 						}
 						else{
 							$this->logOrEcho('NOTICE: image import skipped because image file already exists ',1);
-							return false;
+                            $retVal = false;
 						}
 					}
 				}
@@ -474,16 +478,16 @@ class ImageLocalProcessor {
 						$rs->free();
 						if($recExists){
 							$this->logOrEcho('NOTICE: image import skipped because specimen record already exists ',1);
-							return false;
+                            $retVal = false;
 						}
 					}
 				}
 				[$width, $height] = getimagesize($sourcePath . $fileName);
 				if($width && $height){
-					if(strpos($sourcePath, 'http://') === 0 || strpos($sourcePath, 'https://') === 0) {
+					if(strncmp($sourcePath, 'http://', 7) === 0 || strncmp($sourcePath, 'https://', 8) === 0) {
 						$x = array_change_key_case(get_headers($sourcePath.$fileName, 1),CASE_LOWER); 
 						if($x){
-                            if ( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
+                            if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
                                 $fileSize = $x['content-length'][1];
                             }
                             else {
@@ -553,7 +557,7 @@ class ImageLocalProcessor {
 							$lgSourceFileName = $fileNameBase.$this->lgSourceSuffix.$fileNameExt;
 							if($this->uriExists($sourcePath.$lgSourceFileName)){
 								if(copy($sourcePath.$lgSourceFileName,$targetPath.$lgTargetFileName)){
-									if(strpos($sourcePath, 'http') !== 0) {
+									if(strncmp($sourcePath, 'http', 4) !== 0) {
 										unlink($sourcePath . $lgSourceFileName);
 									}
 									$lgUrlFrag = $this->imgUrlBase.$targetFrag.$lgTargetFileName;
@@ -623,16 +627,16 @@ class ImageLocalProcessor {
 				}
 				else{
 					$this->logOrEcho('File skipped (' .$sourcePath.$fileName. '), unable to obtain dimensions of original image',1);
-					return false;
+                    $retVal = false;
 				}
 			}
 		}
 		else{
 			$this->logOrEcho('File skipped (' .$sourcePathFrag.$fileName. '), unable to extract specimen identifier',1);
-			return false;
+            $retVal = false;
 		}
 		flush();
-		return true;
+		return $retVal;
 	}
 
 	private function createNewImage($sourcePathBase, $targetPath, $newWidth, $newHeight, $sourceWidth, $sourceHeight): bool
@@ -697,27 +701,25 @@ class ImageLocalProcessor {
 		$specPk = '';
 		if(isset($this->collArr[$this->activeCollid]['pmterm'])){
 			$pmTerm = $this->collArr[$this->activeCollid]['pmterm'];
-			if(strpos($pmTerm, '/') !== 0 || strpos(substr($pmTerm,-3),'/') === false){
+			if(strncmp($pmTerm, '/', 1) !== 0 || strpos(substr($pmTerm,-3),'/') === false){
 				$this->logOrEcho('PROCESS ABORTED: Regular Expression term illegal due to missing forward slashes delimiting the term: ' .$pmTerm,1);
 				$this->errorMessage = 'abort';
-				return false;
 			}
-			if(!strpos($pmTerm,'(') || !strpos($pmTerm,')')){
-				$this->logOrEcho('PROCESS ABORTED: Regular Expression term illegal due to missing capture term: ' .$pmTerm,1);
-				$this->errorMessage = 'abort';
-				return false;
-			}
-			if(preg_match($pmTerm,$str,$matchArr)){
-				if(array_key_exists(1,$matchArr) && $matchArr[1]){
-					$specPk = $matchArr[1];
-				}
-				if (isset($this->collArr[$this->activeCollid]['prpatt'])) { 				
-					$specPk = preg_replace($this->collArr[$this->activeCollid]['prpatt'],$this->collArr[$this->activeCollid]['prrepl'],$specPk);
-				}
-				if(isset($matchArr[2])){
-					$this->webSourceSuffix = $matchArr[2];
-				}
-			}
+			else if(!strpos($pmTerm,'(') || !strpos($pmTerm,')')){
+                $this->logOrEcho('PROCESS ABORTED: Regular Expression term illegal due to missing capture term: ' .$pmTerm,1);
+                $this->errorMessage = 'abort';
+            }
+            else if(preg_match($pmTerm,$str,$matchArr)){
+                if(array_key_exists(1,$matchArr) && $matchArr[1]){
+                    $specPk = $matchArr[1];
+                }
+                if (isset($this->collArr[$this->activeCollid]['prpatt'])) {
+                    $specPk = preg_replace($this->collArr[$this->activeCollid]['prpatt'],$this->collArr[$this->activeCollid]['prrepl'],$specPk);
+                }
+                if(isset($matchArr[2])){
+                    $this->webSourceSuffix = $matchArr[2];
+                }
+            }
 		}
 		return $specPk;
 	}
@@ -726,7 +728,7 @@ class ImageLocalProcessor {
 		$occId = 0;
 		if($this->matchCatalogNumber){
 			$sql = 'SELECT occid FROM omoccurrences '.
-				'WHERE (catalognumber IN("'.$specPk.'"'.(strpos($specPk, '0') === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) '.
+				'WHERE (catalognumber IN("'.$specPk.'"'.(strncmp($specPk, '0', 1) === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) '.
 				'AND (collid = '.$this->activeCollid.')';
 			$rs = $this->conn->query($sql);
 			if($row = $rs->fetch_object()){
@@ -736,7 +738,7 @@ class ImageLocalProcessor {
 		}
 		if($this->matchOtherCatalogNumbers){
 			$sql = 'SELECT occid FROM omoccurrences '.
-				'WHERE (othercatalognumbers IN("'.$specPk.'"'.(strpos($specPk, 0) === '0' ?',"'.ltrim($specPk,'0 ').'"':'').')) '.
+				'WHERE (othercatalognumbers IN("'.$specPk.'"'.(strpos($specPk, 0) === 0 ?',"'.ltrim($specPk,'0 ').'"':'').')) '.
 				'AND (collid = '.$this->activeCollid.')';
 			$rs = $this->conn->query($sql);
 			if($row = $rs->fetch_object()){
@@ -752,7 +754,7 @@ class ImageLocalProcessor {
 				$this->logOrEcho("Specimen record does not exist; new empty specimen record created and assigned an 'unprocessed' status (occid = ".$occId. ') ',1);
 			}
 			else{
-				$this->logOrEcho('ERROR creating new occurrence record: ' .$this->conn->error,1);
+				$this->logOrEcho('ERROR creating new occurrence record.',1);
 			}
 		}
 		if(!$occId){
@@ -783,15 +785,15 @@ class ImageLocalProcessor {
 			while($r = $rs->fetch_object()){
 				if(strcasecmp($r->url,$webUrl) === 0){
 					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal URLs).',1);
 					}
 					if(!$this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting image record #'.$r->imgid.' (equal URLs).',1);
 					}
 				}
 				elseif($this->imgExists === 2 && strcasecmp(basename($r->url),basename($webUrl)) === 0){
 					if(!$this->conn->query('DELETE FROM specprocessorrawlabels WHERE imgid = '.$r->imgid)){
-						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR deleting OCR for image record #'.$r->imgid.' (equal basename).',1);
 					}
 					if($this->conn->query('DELETE FROM images WHERE imgid = '.$r->imgid)){
 						$urlPath = parse_url($r->url, PHP_URL_PATH);
@@ -817,7 +819,7 @@ class ImageLocalProcessor {
 						}
 					}
 					else{
-						$this->logOrEcho('ERROR: Unable to delete image record #'.$r->imgid.' (equal basename): '.$this->conn->error,1);
+						$this->logOrEcho('ERROR: Unable to delete image record #'.$r->imgid.' (equal basename).',1);
 					}
 				}
 			}
@@ -842,7 +844,7 @@ class ImageLocalProcessor {
 				}
 				else{
 					$status = false;
-					$this->logOrEcho('ERROR: Unable to load image record into database: ' .$this->conn->error. '; SQL: ' .$sql,1);
+					$this->logOrEcho('ERROR: Unable to load image record into database.',1);
 				}
 				if($imgId){
 					$this->logOrEcho("WARNING: Existing image record replaced; occid: $occId ",1);
@@ -872,6 +874,8 @@ class ImageLocalProcessor {
 	{
 		$this->logOrEcho('Preparing to load Skeletal file into database',1);
 		$fh = fopen($filePath, 'rb');
+        $hArr = array();
+        $delimiter = '';
 		if($fh){
 			$fileExt = substr($filePath,-4);
 			if($fileExt === '.csv'){
@@ -900,12 +904,10 @@ class ImageLocalProcessor {
 				}
 				else{
 					$this->logOrEcho('ERROR: Unable to identify delimiter for metadata file ',1);
-					return false;
 				}
 			}
 			else{
 				$this->logOrEcho('ERROR: Skeletal file skipped: unable to determine file type ',1);
-				return false;
 			}
 			if($hArr){
 				$headerArr = array();
@@ -967,7 +969,7 @@ class ImageLocalProcessor {
                                         $valueStr = $recordArr[$k];
                                     }
                                     if($valueStr){
-                                        if(strpos($valueStr, '"') === 0 && substr($valueStr,-1) === '"'){
+                                        if(strncmp($valueStr, '"', 1) === 0 && substr($valueStr,-1) === '"'){
                                             $valueStr = substr($valueStr,1, -1);
                                         }
                                         $valueStr = trim($valueStr);
@@ -1099,10 +1101,10 @@ class ImageLocalProcessor {
 							
 							$termArr = array();
 							if($this->matchCatalogNumber) {
-								$termArr[] = '(catalognumber IN("' . $catNum . '"' . (strpos($catNum, '0') === 0 ? ',"' . ltrim($catNum, '0 ') . '"' : '') . '))';
+								$termArr[] = '(catalognumber IN("' . $catNum . '"' . (strncmp($catNum, '0', 1) === 0 ? ',"' . ltrim($catNum, '0 ') . '"' : '') . '))';
 							}
 							if($this->matchOtherCatalogNumbers) {
-								$termArr[] = '(othercatalognumbers IN("' . $catNum . '"' . (strpos($catNum, '0') === 0 ? ',"' . ltrim($catNum, '0 ') . '"' : '') . '))';
+								$termArr[] = '(othercatalognumbers IN("' . $catNum . '"' . (strncmp($catNum, '0', 1) === 0 ? ',"' . ltrim($catNum, '0 ') . '"' : '') . '))';
 							}
 							if($termArr){
 								$sql = 'SELECT occid'.(!array_key_exists('occurrenceremarks',$recMap)?',occurrenceremarks':'').
@@ -1117,7 +1119,7 @@ class ImageLocalProcessor {
 										$updateValueArr = array();
 										$occRemarkArr = array();
 										foreach($activeFields as $activeField){
-											$activeValue = $this->cleanString($recMap[$activeField]);
+											$activeValue = Sanitizer::cleanInStr($recMap[$activeField]);
 											if(!trim($r[$activeField])){
 												$type = (array_key_exists('type',$symbMap[$activeField])?$symbMap[$activeField]['type']:'string');
 												$size = (array_key_exists('size',$symbMap[$activeField])?$symbMap[$activeField]['size']:0);
@@ -1175,7 +1177,7 @@ class ImageLocalProcessor {
 								$sqlIns2 = 'VALUES ('.$this->activeCollid.',"'.$catNum.'","unprocessed","'.date('Y-m-d H:i:s').'"';
 								foreach($activeFields as $aField){
 									$sqlIns1 .= ','.$aField;
-									$value = $this->cleanString($recMap[$aField]);
+									$value = Sanitizer::cleanInStr($recMap[$aField]);
 									$type = (array_key_exists('type',$symbMap[$aField])?$symbMap[$aField]['type']:'string');
 									$size = (array_key_exists('size',$symbMap[$aField])?$symbMap[$aField]['size']:0);
 									if($type === 'numeric'){
@@ -1217,13 +1219,13 @@ class ImageLocalProcessor {
 									$occid = $this->conn->insert_id;
 								}
 								else{
-									$this->logOrEcho('ERROR trying to load new skeletal record: '.$this->conn->error);
+									$this->logOrEcho('ERROR trying to load new skeletal record.');
 								}
 							}
 							if(isset($recMap['omenid']) && $occid){
 								$sqlExs ='INSERT INTO omexsiccatiocclink(omenid,occid) VALUES('.$recMap['omenid'].','.$occid.')';
 								if(!$this->conn->query($sqlExs)){
-									$this->logOrEcho('ERROR linking record to exsiccati ('.$recMap['omenid'].'-'.$occid.'): '.$this->conn->error);
+									$this->logOrEcho('ERROR linking record to exsiccati ('.$recMap['omenid'].'-'.$occid.').');
 								}
 							}
 						}
@@ -1368,8 +1370,8 @@ class ImageLocalProcessor {
 						$rs->free();
 					}
 					else{
-						$this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata: '.$this->conn->error);
-						exit('ABORT: unable run SQL to obtain additional collection metadata'.$this->conn->error);
+						$this->logOrEcho('ABORT: unable run SQL to obtain additional collection metadata.');
+						exit('ABORT: unable run SQL to obtain additional collection metadata');
 					}
 				}
 			}
@@ -1681,7 +1683,7 @@ class ImageLocalProcessor {
 	private function uriExists($url) {
 		$exists = false;
 		$localUrl = '';
-		if(strpos($url, '/') === 0){
+		if(strncmp($url, '/', 1) === 0){
 			if($GLOBALS['IMAGE_DOMAIN']){
 				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
 			}
@@ -1750,14 +1752,7 @@ class ImageLocalProcessor {
 		return $retStr;
 	}
 
-	private function cleanString($inStr){
-		$retStr = trim($inStr);
-		$retStr = str_replace(array(chr(10), chr(11), chr(13), chr(20), chr(30)), ' ', $retStr);
-		$retStr = $this->conn->real_escape_string($retStr);
-		return $retStr;
-	}
-
-	protected function logOrEcho($str,$indent = 0): void
+	protected function logOrEcho($str,$indent = null): void
 	{
 		if(($this->logMode > 1) && $this->logFH) {
 			if($indent) {
@@ -1766,7 +1761,7 @@ class ImageLocalProcessor {
 			fwrite($this->logFH,$str."\n");
 		}
 		if($this->logMode === 1 || $this->logMode === 3){
-			echo '<li '.($indent?'style="margin-left:'.($indent*15).'px"':'').'>'.$str."</li>\n";
+			echo '<li '.($indent?'style="margin-left:'.($indent?$indent*15:'0').'px"':'').'>'.$str."</li>\n";
 			@flush();
 		}
 	}

@@ -2,9 +2,10 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/RareSpeciesManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$searchTaxon = array_key_exists('searchtaxon',$_POST)?$_POST['searchtaxon']:'';
+$submitAction = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
+$searchTaxon = array_key_exists('searchtaxon',$_POST)?htmlspecialchars($_POST['searchtaxon']):'';
 
 $isEditor = 0;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){

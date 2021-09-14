@@ -2,11 +2,12 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $login = array_key_exists('login',$_REQUEST)?$_REQUEST['login']:'';
 $remMe = array_key_exists('remember',$_POST)?$_POST['remember']:'';
 $emailAddr = array_key_exists('emailaddr',$_POST)?$_POST['emailaddr']:'';
-$resetPwd = ((array_key_exists('resetpwd',$_REQUEST) && is_numeric($_REQUEST['resetpwd']))?$_REQUEST['resetpwd']:0);
+$resetPwd = array_key_exists('resetpwd',$_REQUEST)?(int)$_REQUEST['resetpwd']:0;
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
 if(!$action && array_key_exists('submit',$_REQUEST)) {
     $action = $_REQUEST['submit'];
@@ -27,7 +28,7 @@ if(array_key_exists('refurl',$_REQUEST)){
 			}
 		}
 	}
-	$refUrl = str_replace('&amp;','&',htmlspecialchars($_REQUEST['refurl']));
+	$refUrl = str_replace('&amp;', '&',htmlspecialchars($_REQUEST['refurl'], ENT_NOQUOTES));
 	if(substr($refUrl,-4) === '.php'){
 		$refUrl .= '?' .substr($refGetStr,1);
 	}
@@ -65,7 +66,7 @@ if($action === 'logout'){
 }
 elseif($action === 'Login'){
 	if($pHandler->authenticate($_POST['password'])){
-		if(!$refUrl || (stripos($refUrl, 'http') === 0) || strpos($refUrl,'newprofile.php')){
+		if(!$refUrl || (strncasecmp($refUrl, 'http', 4) === 0) || strpos($refUrl,'newprofile.php')){
 			header('Location: ../index.php');
 		}
 		else{

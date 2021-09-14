@@ -3,19 +3,14 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$userId = array_key_exists('userid',$_REQUEST)?$_REQUEST['userid']:0;
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
+$userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
     $action = '';
-}
-if(!is_numeric($userId)) {
-    $userId = 0;
-}
-if(!is_numeric($tabIndex)) {
-    $tabIndex = 0;
 }
 
 $isSelf = 0;
@@ -153,7 +148,7 @@ if($isEditor){
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>

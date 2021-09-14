@@ -1,45 +1,27 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=../collections/traitattr/occurattributes.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ' . $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = $_REQUEST['collid'];
+$collid = (int)$_REQUEST['collid'];
 $submitForm = array_key_exists('submitform',$_POST)?$_POST['submitform']:'';
 $mode = array_key_exists('mode',$_REQUEST)?$_REQUEST['mode']:1;
-$traitID = array_key_exists('traitid',$_REQUEST)?$_REQUEST['traitid']:'';
+$traitID = array_key_exists('traitid',$_REQUEST)?(int)$_REQUEST['traitid']:0;
 $taxonFilter = array_key_exists('taxonfilter',$_POST)?$_POST['taxonfilter']:'';
-$tidFilter = array_key_exists('tidfilter',$_POST)?$_POST['tidfilter']:'';
-$paneX = array_key_exists('panex',$_POST)?$_POST['panex']:'575';
-$paneY = array_key_exists('paney',$_POST)?$_POST['paney']:'550';
+$tidFilter = array_key_exists('tidfilter',$_POST)?(int)$_POST['tidfilter']:0;
+$paneX = array_key_exists('panex',$_POST)?(int)$_POST['panex']:575;
+$paneY = array_key_exists('paney',$_POST)?(int)$_POST['paney']:550;
 $imgRes = array_key_exists('imgres',$_POST)?$_POST['imgres']:'med';
-
-$reviewUid = array_key_exists('reviewuid',$_POST)?$_POST['reviewuid']:0;
+$reviewUid = array_key_exists('reviewuid',$_POST)?(int)$_POST['reviewuid']:0;
 $reviewDate = array_key_exists('reviewdate',$_POST)?$_POST['reviewdate']:'';
-$reviewStatus = array_key_exists('reviewstatus',$_POST)?$_POST['reviewstatus']:0;
-$start = array_key_exists('start',$_POST)?$_POST['start']:0;
-
-if(!is_numeric($collid)) {
-    $collid = 0;
-}
-if(!is_numeric($traitID)) {
-    $traitID = '';
-}
-if(!is_numeric($tidFilter)) {
-    $tidFilter = '';
-}
-if(!is_numeric($paneX)) {
-    $paneX = '';
-}
-if(!is_numeric($paneY)) {
-    $paneY = '';
-}
-if(!is_numeric($start)) {
-    $start = 0;
-}
+$reviewStatus = array_key_exists('reviewstatus',$_POST)?(int)$_POST['reviewstatus']:0;
+$start = array_key_exists('start',$_POST)?(int)$_POST['start']:0;
 
 $isEditor = 0; 
 if($GLOBALS['SYMB_UID']){
@@ -130,13 +112,13 @@ if($traitID){
 			}
 			foreach($imgArr as $cnt => $iArr){
 				$url = $iArr['web'];
-				if(strpos($url, '/') === 0) {
+				if(strncmp($url, '/', 1) === 0) {
                     $url = $imgDomain . $url;
                 }
 				echo 'imgArr['.$cnt.'] = "'.$url.'";'."\n";
 				$lgUrl = $iArr['lg'];
 				if($lgUrl){
-					if(strpos($lgUrl, '/') === 0) {
+					if(strncmp($lgUrl, '/', 1) === 0) {
                         $lgUrl = $imgDomain . $lgUrl;
                     }
 					echo 'imgLgArr['.$cnt.'] = "'.$lgUrl.'";'."\n";
@@ -506,7 +488,7 @@ if($traitID){
 					<div>
 						<?php
 						$url = $imgArr[1]['web'];
-						if(strpos($url, '/') === 0) {
+						if(strncmp($url, '/', 1) === 0) {
                             $url = $imgDomain . $url;
                         }
 						echo '<img id="specimg" src="'.$url.'" />';

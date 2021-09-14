@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 /*
 SuperAdmin			Edit all data and assign new permissions
@@ -29,7 +30,7 @@ class PermissionsManager{
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -76,7 +77,7 @@ class PermissionsManager{
 			while($row = $result->fetch_object()){
 				$assignedBy = 'assigned by: '.($row->assignedby?$row->assignedby.' ('.$row->initialtimestamp.')':'unknown');
 				if($row->tablepk){
-					$perArr[$row->role][$row->tablepk]['aby'] = $assignedBy;
+					$perArr[$row->role][(int)$row->tablepk]['aby'] = $assignedBy;
 				}
 				else{
 					$perArr[$row->role]['aby'] = $assignedBy;
@@ -91,7 +92,7 @@ class PermissionsManager{
 					'ORDER BY c.collectionname';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()){
-					$perArr['CollAdmin'][$row->collid]['name'] = $row->collectionname;
+					$perArr['CollAdmin'][(int)$row->collid]['name'] = $row->collectionname;
 				}
 				uasort($perArr['CollAdmin'], array($this,'sortByName'));
 				$result->free();
@@ -102,7 +103,7 @@ class PermissionsManager{
 					'ORDER BY c.collectionname';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()){
-					$perArr['CollEditor'][$row->collid]['name'] = $row->collectionname;
+					$perArr['CollEditor'][(int)$row->collid]['name'] = $row->collectionname;
 				}
 				uasort($perArr['CollEditor'], array($this,'sortByName'));
 				$result->free();
@@ -113,7 +114,7 @@ class PermissionsManager{
 					'ORDER BY c.collectionname';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()){
-					$perArr['RareSppReader'][$row->collid]['name'] = $row->collectionname;
+					$perArr['RareSppReader'][(int)$row->collid]['name'] = $row->collectionname;
 				}
 				uasort($perArr['RareSppReader'], array($this,'sortByName'));
 				$result->free();
@@ -125,7 +126,7 @@ class PermissionsManager{
 					'ORDER BY cl.name';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()){
-					$perArr['ClAdmin'][$row->clid]['name'] = $row->name;
+					$perArr['ClAdmin'][(int)$row->clid]['name'] = $row->name;
 				}
 				uasort($perArr['ClAdmin'], array($this,'sortByName'));
 				$result->free();
@@ -137,7 +138,7 @@ class PermissionsManager{
 					'ORDER BY projname';
 				$result = $this->conn->query($sql);
 				while($row = $result->fetch_object()){
-					$perArr['ProjAdmin'][$row->pid]['name'] = $row->projname;
+					$perArr['ProjAdmin'][(int)$row->pid]['name'] = $row->projname;
 				}
 				uasort($perArr['ProjAdmin'], array($this,'sortByName'));
 				$result->free();
@@ -146,7 +147,7 @@ class PermissionsManager{
 		return $perArr;
 	}
 
-	public function deletePermission($id, $role, $tablePk, $secondaryVariable = ''): string
+	public function deletePermission($id, $role, $tablePk, $secondaryVariable = null): string
 	{
 		$statusStr = '';
 		if(is_numeric($id)){
@@ -161,7 +162,7 @@ class PermissionsManager{
 		return $statusStr;
 	}
 
-	public function addPermission($uid,$role,$tablePk,$secondaryVariable = ''): string
+	public function addPermission($uid,$role,$tablePk,$secondaryVariable = null): string
 	{
 		$statusStr = '';
 		if(is_numeric($uid)){
@@ -179,7 +180,7 @@ class PermissionsManager{
 					'VALUES('.$uid.',"'.$role.'",'.($tablePk?:'NULL').','.
 					($secondaryVariable?'"'.$secondaryVariable.'"':'NULL').','.$GLOBALS['SYMB_UID'].')';
 				if(!$this->conn->query($sql1)){
-					$statusStr = 'ERROR adding user permission: '.$this->conn->error;
+					$statusStr = 'ERROR adding user permission.';
 				}
 			}
 			$rs->free();
@@ -187,7 +188,7 @@ class PermissionsManager{
 		return $statusStr;
 	}
 
-	public function getTaxonEditorArr($collid, $limitByColl = 0): array
+	public function getTaxonEditorArr($collid, $limitByColl = null): array
 	{
 		$pArr = array();
 		$sql2 = 'SELECT uid, role, tablepk, secondaryvariable '.
@@ -237,7 +238,7 @@ class PermissionsManager{
 		return $retArr;
 	}
 
-	public function getCollectionMetadata($targetCollid = 0, $collTypeLimit = ''): array
+	public function getCollectionMetadata($targetCollid = null, $collTypeLimit = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT collid, collectionname, institutioncode, collectioncode, colltype '.
@@ -259,7 +260,7 @@ class PermissionsManager{
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->collid]['collectionname'] = $this->cleanOutStr($r->collectionname);
+			$retArr[$r->collid]['collectionname'] = Sanitizer::cleanOutStr($r->collectionname);
 			$retArr[$r->collid]['institutioncode'] = $r->institutioncode;
 			$retArr[$r->collid]['collectioncode'] = $r->collectioncode;
 			$retArr[$r->collid]['colltype'] = $r->colltype;
@@ -288,7 +289,7 @@ class PermissionsManager{
 				elseif($r->role === 'CollEditor') {
 					$pGroup = 'editor';
 				}
-				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.$this->cleanOutStr($r->uname).'</span>';
+				$outStr = '<span title="assigned by: '.($r->assignedby?$r->assignedby.' ('.$r->initialtimestamp.')':'unknown').'">'.Sanitizer::cleanOutStr($r->uname).'</span>';
 				$returnArr[$pGroup][$r->uid] = $outStr;
 			}
 			$rs->free();
@@ -296,13 +297,13 @@ class PermissionsManager{
 		return $returnArr;
 	}
 
-	public function getUsers($searchTermIn = ''): array
+	public function getUsers($searchTermIn = null): array
 	{
 		$retArr = array();
 		$sql = 'SELECT u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS uname, u.username '.
 			'FROM users u ';
 		if($searchTermIn){
-			$searchTerm = $this->cleanInStr($searchTermIn);
+			$searchTerm = Sanitizer::cleanInStr($searchTermIn);
 			$sql .= 'WHERE (u.lastname LIKE "'.$searchTerm.'%") ';
 			if(strlen($searchTerm) > 1) {
 				$sql .= "OR (l.username LIKE '" . $searchTerm . "%') ";
@@ -312,7 +313,7 @@ class PermissionsManager{
 		//echo "<div>".$sql."</div>";
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
-			$retArr[$r->uid] = $this->cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
+			$retArr[$r->uid] = Sanitizer::cleanOutStr($r->uname.($r->username?' ('.$r->username.')':''));
 		}
 		$rs->free();
 		return $retArr;
@@ -352,24 +353,18 @@ class PermissionsManager{
 		return $returnArr;
 	}
 
-	private function sortByName($a, $b) {
-		if(!isset($a['name'])) {
-			return -1;
-		}
-		if(!isset($b['name'])) {
-			return 1;
-		}
-		return strcmp($a['name'], $b['name']);
-	}
-
-	private function cleanOutStr($str){
-		return str_replace(array('"', "'"), array('&quot;', '&apos;'), $str);
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
+    private function sortByName($a, $b): int
+    {
+        $retVal = null;
+	    if(!isset($a['name'])) {
+            $retVal = -1;
+        }
+        elseif(isset($b['name'])) {
+            $retVal = strcmp($a['name'], $b['name']);
+        }
+	    else{
+            $retVal = 1;
+        }
+        return $retVal;
+    }
 }

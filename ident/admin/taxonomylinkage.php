@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$cid = array_key_exists('cid',$_REQUEST)?$_REQUEST['cid']:0;
+$cid = array_key_exists('cid',$_REQUEST)?(int)$_REQUEST['cid']:0;
 $langId = array_key_exists('langid',$_REQUEST)?$_REQUEST['langid']:'';
 
 $keyManager = new KeyCharAdmin();

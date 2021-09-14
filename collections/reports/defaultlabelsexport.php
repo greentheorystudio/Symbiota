@@ -2,21 +2,13 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
-@include('Image/Barcode.php');
-@include('Image/Barcode2.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
 use PhpOffice\PhpWord\PhpWord;
 
 $ses_id = session_id();
-
-if(class_exists('Image_Barcode2')){
-	$bcObj = new Image_Barcode2;
-}
-elseif(class_exists('Image_Barcode')){
-	$bcObj = new Image_Barcode;
-}
+$lineWidth = 0;
 
 $labelManager = new OccurrenceLabel();
 
@@ -36,6 +28,7 @@ $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $exportEngine = '';
 $exportExtension = '';
+$labelArr = array();
 if($action === 'Export to DOCX'){
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
@@ -100,7 +93,7 @@ foreach($labelArr as $occid => $occArr){
 	if($barcodeOnly){
 		if($occArr['catalognumber']){
 			$textrun = $section->addTextRun('cnbarcode');
-			$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
+			$bc = $labelManager->getBarcodePng(strtoupper($occArr['catalognumber']), 40, 'code39');
 			imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
 			$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
 			imagedestroy($bc);
@@ -368,11 +361,11 @@ foreach($labelArr as $occid => $occArr){
 			}
 			if($useBarcode && $occArr['catalognumber']){
 				$textrun = $section->addTextRun('cnbarcode');
-				$bc = $bcObj->draw(strtoupper($occArr['catalognumber']), 'Code39', 'png',false,40);
+				$bc = $labelManager->getBarcodePng(strtoupper($occArr['catalognumber']), 40, 'code39');
 				imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
 				$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
 				if($occArr['othercatalognumbers']){
-					$textrun->addTextBreak(1);
+					$textrun->addTextBreak();
 					$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
 				}
 				imagedestroy($bc);
@@ -384,7 +377,7 @@ foreach($labelArr as $occid => $occArr){
 				}
 				if($occArr['othercatalognumbers']){
 					if($occArr['catalognumber']){
-						$textrun->addTextBreak(1);
+						$textrun->addTextBreak();
 					}
 					$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
 				}
@@ -394,14 +387,14 @@ foreach($labelArr as $occid => $occArr){
 			}
 			if($useSymbBarcode){
 				$textrun = $section->addTextRun('cnbarcode');
-				$textrun->addTextBreak(1);
+				$textrun->addTextBreak();
 				$textrun->addLine(array('weight'=>2,'width'=>$lineWidth,'height'=>0,'dash'=>'dash'));
-				$textrun->addTextBreak(1);
-				$bc = $bcObj->draw(strtoupper($occid), 'Code39', 'png',false,40);
+				$textrun->addTextBreak();
+				$bc = $labelManager->getBarcodePng(strtoupper($occid), 40, 'code39');
 				imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
 				$textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png', array('align'=>'center','marginTop'=>0.104166667));
 				if($occArr['catalognumber']){
-					$textrun->addTextBreak(1);
+					$textrun->addTextBreak();
 					$textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
 				}
 				imagedestroy($bc);

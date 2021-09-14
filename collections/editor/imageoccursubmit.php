@@ -2,19 +2,19 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorImages.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=../collections/editor/imageoccursubmit.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid  = $_REQUEST['collid'];
-$action = array_key_exists('action',$_POST)?$_POST['action']: '';
+$collid  = (int)$_REQUEST['collid'];
+$action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']): '';
 
 $occurManager = new OccurrenceEditorImages();
-if($GLOBALS['SOLR_MODE']) {
-    $solrManager = new SOLRManager();
-}
+$solrManager = new SOLRManager();
 $occurManager->setCollid($collid);
 $collMap = $occurManager->getCollMap();
 

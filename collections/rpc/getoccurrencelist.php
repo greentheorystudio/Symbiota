@@ -3,34 +3,39 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
 $stArrJson = $_REQUEST['starr'] ?? '';
-$targetTid = $_REQUEST['targettid'];
-$pageNumber = $_REQUEST['page'];
+$targetTid = (int)$_REQUEST['targettid'];
+$pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr= json_decode($stArrJson, true);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 $collManager = null;
 $occurArr = array();
-
-if(strlen($stArrJson) <= 1800){
-    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
-    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
-    $copyURL = $urlPrefix.$urlArgs;
-}
+$isEditor = false;
 
 if(isset($GLOBALS['SOLR_MODE']) && $GLOBALS['SOLR_MODE']){
     $collManager = new SOLRManager();
-    $collManager->setSearchTermsArr($stArr);
-    $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
-    $occurArr = $collManager->translateSOLRRecList($solrArr);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $solrArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+        $occurArr = $collManager->translateSOLRRecList($solrArr);
+    }
 }
 else{
     $collManager = new OccurrenceListManager();
-    $collManager->setSearchTermsArr($stArr);
-    $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    if($collManager->validateSearchTermsArr($stArr)){
+        $collManager->setSearchTermsArr($stArr);
+        $occurArr = $collManager->getRecordArr($pageNumber,$cntPerPage);
+    }
+}
+
+if($collManager->validateSearchTermsArr($stArr) && strlen($stArrJson) <= 1800){
+    $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/list.php';
+    $urlArgs = '?starr='.$stArrJson.'&page='.$pageNumber;
+    $copyURL = $urlPrefix.$urlArgs;
 }
 
 $htmlStr = '<div style="float:right;">';
@@ -65,16 +70,19 @@ $htmlStr .= '<div>';
 $htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><i style="width:15px;height:15px;" class="fas fa-download"></i></button>';
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
+
 $htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
 if($GLOBALS['SYMB_UID']){
     $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><i style="width:15px;height:15px;" class="fas fa-layer-group"></i></button></div>';
 }
 $htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
 $htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
+$htmlStr .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Search"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
 if(strlen($stArrJson) <= 1800){
     $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
 }
 $htmlStr .= '</div>';
+
 $htmlStr .= '</div>';
 
 $htmlStr .= '<div style="clear:both;"></div>';
@@ -152,7 +160,6 @@ if($occurArr){
         $specOccArr[] = $occid;
         if($collId !== $prevCollid){
             $prevCollid = $collId;
-            $isEditor = false;
             if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
                 $isEditor = true;
             }
@@ -167,7 +174,7 @@ if($occurArr){
         $htmlStr .= '<tr><td style="width:60px;vertical-align:top;text-align:center;">';
         $htmlStr .= '<a href="misc/collprofiles.php?collid='.$collId.'&acronym='.$fieldArr['institutioncode'].'">';
         if($fieldArr['collicon']){
-            $icon = (strpos($fieldArr['collicon'], 'images') === 0 ?'../':'').$fieldArr['collicon'];
+            $icon = (strncmp($fieldArr['collicon'], 'images', 6) === 0 ?'../':'').$fieldArr['collicon'];
             $htmlStr .= '<img align="bottom" src="'.$icon.'" style="width:35px;border:0px;" />';
         }
         $htmlStr .= '</a>';
@@ -190,6 +197,11 @@ if($occurArr){
             $htmlStr .= '<div style="float:right;margin:5px 25px;">';
             $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
             $htmlStr .= '<img src="'.$fieldArr['img'].'" style="height:70px" /></a></div>';
+        }
+        elseif(isset($fieldArr['hasimage'])){
+            $htmlStr .= '<div style="float:right;margin:5px 25px;">';
+            $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
+            $htmlStr .= '<i style="width:20px;height:20px;" class="fas fa-camera"></i></a></div>';
         }
         $htmlStr .= '<div style="margin:4px;">';
         $htmlStr .= '<a target="_blank" href="../taxa/index.php?taxon='.$fieldArr['sciname'].'">';

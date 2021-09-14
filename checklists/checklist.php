@@ -2,29 +2,27 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-if($GLOBALS['CHECKLIST_FG_EXPORT']) {
-    include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
-}
+include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']: '';
-$clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
-$dynClid = array_key_exists('dynclid',$_REQUEST)?$_REQUEST['dynclid']:0;
-$pageNumber = array_key_exists('pagenumber',$_REQUEST)?$_REQUEST['pagenumber']:1;
-$pid = array_key_exists('pid',$_REQUEST)?$_REQUEST['pid']: '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?$_REQUEST['thesfilter']:0;
-$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?$_REQUEST['taxonfilter']: '';
-$showAuthors = array_key_exists('showauthors',$_REQUEST)?$_REQUEST['showauthors']:0;
-$showCommon = array_key_exists('showcommon',$_REQUEST)?$_REQUEST['showcommon']:0;
-$showImages = array_key_exists('showimages',$_REQUEST)?$_REQUEST['showimages']:0;
-$showVouchers = array_key_exists('showvouchers',$_REQUEST)?$_REQUEST['showvouchers']:0;
-$showAlphaTaxa = array_key_exists('showalphataxa',$_REQUEST)?$_REQUEST['showalphataxa']:0;
-$searchCommon = array_key_exists('searchcommon',$_REQUEST)?$_REQUEST['searchcommon']:0;
-$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?$_REQUEST['searchsynonyms']:0;
-$defaultOverride = array_key_exists('defaultoverride',$_REQUEST)?$_REQUEST['defaultoverride']:0;
-$editMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
-$printMode = array_key_exists('printmode',$_REQUEST)?$_REQUEST['printmode']:0;
-$exportDoc = array_key_exists('exportdoc',$_REQUEST)?$_REQUEST['exportdoc']:0;
+$action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
+$clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
+$pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
+$pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
+$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
+$taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
+$showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
+$showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
+$showImages = array_key_exists('showimages',$_REQUEST)?(int)$_REQUEST['showimages']:0;
+$showVouchers = array_key_exists('showvouchers',$_REQUEST)?(int)$_REQUEST['showvouchers']:0;
+$showAlphaTaxa = array_key_exists('showalphataxa',$_REQUEST)?(int)$_REQUEST['showalphataxa']:0;
+$searchCommon = array_key_exists('searchcommon',$_REQUEST)?(int)$_REQUEST['searchcommon']:0;
+$searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?(int)$_REQUEST['searchsynonyms']:0;
+$defaultOverride = array_key_exists('defaultoverride',$_REQUEST)?(int)$_REQUEST['defaultoverride']:0;
+$editMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
+$printMode = array_key_exists('printmode',$_REQUEST)?(int)$_REQUEST['printmode']:0;
 
 $statusStr='';
 $locStr = '';
@@ -37,6 +35,7 @@ if($action === 'Rebuild List') {
 }
 
 $clManager = new ChecklistManager();
+$fgManager = new ChecklistFGExportManager();
 if($clValue){
     $statusStr = $clManager->setClValue($clValue);
 }
@@ -157,7 +156,6 @@ $taxaArray = array();
 if($clValue || $dynClid){
     $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
-        $fgManager = new ChecklistFGExportManager();
         if($clValue){
             $fgManager->setClValue($clValue);
         }
@@ -388,7 +386,7 @@ if(!$printMode){
             <?php
             if($clArray['publication']){
                 $pubStr = $clArray['publication'];
-                if(strpos($pubStr, 'http') == 0 && !strpos($pubStr,' ')) {
+                if(strncmp($pubStr, 'http', 4) === 0 && !strpos($pubStr,' ')) {
                     $pubStr = '<a href="' . $pubStr . '" target="_blank">' . $pubStr . '</a>';
                 }
                 echo "<div><span style='font-weight:bold;'>Citation:</span> ".$pubStr. '</div>';
@@ -407,9 +405,7 @@ if(!$printMode){
                 if($clValue && $clArray['abstract']){
                     echo "<div><span style='font-weight:bold;'>Abstract: </span>".$clArray['abstract']. '</div>';
                 }
-                if($clValue && $clArray['notes']){
-                    echo "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>';
-                }
+                echo ($clValue && $clArray['notes']) ? "<div><span style='font-weight:bold;'>Notes: </span>".$clArray['notes']. '</div>' : '';
                 ?>
             </div>
             <?php
@@ -643,18 +639,18 @@ if(!$printMode){
                     $argStr .= ($showAlphaTaxa? '&showalphataxa=' .$showAlphaTaxa: '');
                     $argStr .= ($defaultOverride? '&defaultoverride=' .$defaultOverride: '');
                     echo '<hr /><div>Page<b>' .($pageNumber)."</b> of <b>$pageCount</b>: ";
-                    for($x=1;$x<=$pageCount;$x++){
+                    for($x=1; $x <= $pageCount; $x++){
                         if($x>1) {
                             echo ' | ';
                         }
-                        if(($pageNumber) == $x){
+                        if($pageNumber === $x){
                             echo '<b>';
                         }
                         else{
                             echo "<a href='checklist.php?pagenumber=".$x.$argStr."'>";
                         }
                         echo ($x);
-                        if(($pageNumber) == $x){
+                        if($pageNumber === $x){
                             echo '</b>';
                         }
                         else{
@@ -677,7 +673,7 @@ if(!$printMode){
                                 <?php
                                 $spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
                                 if($imgSrc){
-                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgSrc, 'http') !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
+                                    $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
                                         echo "<a href='" . $spUrl . "' target='_blank'>";
                                     }
@@ -777,7 +773,7 @@ if(!$printMode){
                                 $voucCnt = 0;
                                 foreach($voucherArr[$tid] as $occid => $collName){
                                     $voucStr .= ', ';
-                                    if($voucCnt == 4 && !$printMode){
+                                    if($voucCnt === 4 && !$printMode){
                                         $voucStr .= '<a href="#" id="morevouch-'.$tid.'" onclick="return toggleVoucherDiv('.$tid. ')">more...</a>' .
                                             '<span id="voucdiv-'.$tid.'" style="display:none;">';
                                     }
@@ -881,7 +877,7 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
                     foreach($photogList as $name => $id){
                         if($name){
                             $value = $id.'---'.$name;
-                            if((($i % 3) == 1)) {
+                            if((($i % 3) === 1)) {
                                 $innerHtml .= '</tr><tr>';
                             }
                             $innerHtml .= '<td style="width:190px;">';

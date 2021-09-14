@@ -2,9 +2,10 @@
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid= array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$omcsid= array_key_exists('omcsid',$_REQUEST)?$_REQUEST['omcsid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$omcsid = array_key_exists('omcsid',$_REQUEST)?(int)$_REQUEST['omcsid']:0;
 
 $csManager = new OccurrenceCrowdSource();
 $csManager->setCollid($collid);
@@ -30,7 +31,7 @@ $projArr = $csManager->getProjectDetails();
 	if($statusStr){
 		?>
 		<hr/>
-		<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+		<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 			<?php echo $statusStr; ?>
 		</div>
 		<hr/>

@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
@@ -94,24 +95,20 @@ if($GLOBALS['SYMB_UID']){
                                 <div class="identificationreferences"><?php echo $occArr['identificationreferences']; ?></div>
                                 <?php
                             }
-                            if($occArr['identifiedby'] || $occArr['dateidentified']){
-                                if($occArr['identifiedby']){
-                                    ?>
-                                    <div class="identifiedbydiv">
-                                        Determiner: <?php echo $occArr['identifiedby']; ?>
-                                    </div>
-                                    <?php
-                                    if($occArr['dateidentified']){
-                                        echo '<br />';
-                                    }
-                                }
-                                if($occArr['dateidentified']){
-                                    ?>
-                                    <div class="dateidentifieddiv">
-                                        Date: <?php echo $occArr['dateidentified']; ?>
-                                    </div>
-                                    <?php
-                                }
+                            if($occArr['identifiedby']){
+                                ?>
+                                <div class="identifiedbydiv">
+                                    Determiner: <?php echo $occArr['identifiedby']; ?>
+                                </div>
+                                <?php
+                            }
+                            if($occArr['dateidentified']){
+                                ?>
+                                <br />
+                                <div class="dateidentifieddiv">
+                                    Date: <?php echo $occArr['dateidentified']; ?>
+                                </div>
+                                <?php
                             }
                             if($footerStr){
                                 ?>

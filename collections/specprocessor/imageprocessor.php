@@ -2,14 +2,15 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/ImageProcessor.php');
+include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/collections/specprocessor/index.php?' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$spprid = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
 $fileName = array_key_exists('filename',$_REQUEST)?$_REQUEST['filename']:'';
 
 $specManager = new SpecProcessorManager();

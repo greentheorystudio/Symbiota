@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/GlossaryUpload.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/glossary/glossaryloader.php');
@@ -24,6 +25,10 @@ $glosManager = new GlossaryManager();
 
 $status = '';
 $fieldMap = array();
+$languageArr = array();
+$tidStr = '';
+$ulSource = '';
+
 if($isEditor){
 	if($ulFileName){
 		$loaderManager->setFileName($ulFileName);
@@ -40,7 +45,7 @@ if($isEditor){
                 $fieldMap[$sourceFields[$x]] = $targetFields[$x];
             }
 		}
-		$languageArr = json_decode($_REQUEST['ullanguages'],true);
+		$languageArr = json_decode($_REQUEST['ullanguages'], true);
 		$tidStr = $_REQUEST['ultids'];
 		$ulSource = (array_key_exists('ulsources',$_REQUEST)? json_decode($_REQUEST['ulsources'], true) :'');
 	}

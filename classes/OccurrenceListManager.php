@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -114,7 +115,7 @@ class OccurrenceListManager extends OccurrenceManager{
         }
         $result->free();
         if($imageSearchArr){
-            $sql = 'SELECT o.collid, o.occid, i.thumbnailurl '.
+            $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url '.
                 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
                 'WHERE o.occid IN('.implode(',',$imageSearchArr).') '.
                 'ORDER BY o.occid, i.sortsequence';
@@ -123,10 +124,15 @@ class OccurrenceListManager extends OccurrenceManager{
             while($r = $rs->fetch_object()){
                 if($r->occid !== $previousOccid){
                     $tnUrl = $r->thumbnailurl;
-                    if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strpos($tnUrl, '/') === 0) {
-                        $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
+                    if($tnUrl){
+                        if($GLOBALS['IMAGE_DOMAIN'] && $tnUrl && strncmp($tnUrl, '/', 1) === 0) {
+                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
+                        }
+                        $returnArr[$r->occid]['img'] = $tnUrl;
                     }
-                    $returnArr[$r->occid]['img'] = $tnUrl;
+                    if($r->url){
+                        $returnArr[$r->occid]['hasimage'] = true;
+                    }
                 }
                 $previousOccid = $r->occid;
             }
@@ -141,7 +147,7 @@ class OccurrenceListManager extends OccurrenceManager{
 
     private function setRecordCnt($sqlWhere): void
     {
-        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences o '.$this->setTableJoins($sqlWhere).$sqlWhere;
+        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences AS o '.$this->setTableJoins($sqlWhere).$sqlWhere;
         //echo "<div>Count sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
@@ -166,7 +172,7 @@ class OccurrenceListManager extends OccurrenceManager{
     public function getCloseTaxaMatch($name): array
     {
         $retArr = array();
-        $searchName = $this->cleanInStr($name);
+        $searchName = Sanitizer::cleanInStr($name);
         $sql = 'SELECT tid, sciname FROM taxa WHERE soundex(sciname) = soundex(?)';
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $searchName);

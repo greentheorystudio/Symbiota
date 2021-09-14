@@ -2,17 +2,18 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecLoans.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 ini_set('max_execution_time', 180);
 
-$collId = $_REQUEST['collid'];
-$loanId = array_key_exists('loanid',$_REQUEST)?$_REQUEST['loanid']:0;
-$exchangeId = array_key_exists('exchangeid',$_REQUEST)?$_REQUEST['exchangeid']:0;
-$loanType = array_key_exists('loantype',$_REQUEST)?$_REQUEST['loantype']:0;
+$collId = (int)$_REQUEST['collid'];
+$loanId = array_key_exists('loanid',$_REQUEST)?(int)$_REQUEST['loanid']:0;
+$exchangeId = array_key_exists('exchangeid',$_REQUEST)?(int)$_REQUEST['exchangeid']:0;
+$loanType = array_key_exists('loantype',$_REQUEST)?htmlspecialchars($_REQUEST['loantype']):'';
 $searchTerm = array_key_exists('searchterm',$_POST)?$_POST['searchterm']:'';
-$displayAll = array_key_exists('displayall',$_POST)?$_POST['displayall']:0;
-$formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?$_REQUEST['tabindex']:0;
-$eMode = array_key_exists('emode',$_REQUEST)?$_REQUEST['emode']:0;
+$displayAll = array_key_exists('displayall',$_POST)?(int)$_POST['displayall']:0;
+$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
+$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
+$eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
 
 $isEditor = 0;
 if($GLOBALS['SYMB_UID'] && $collId){
@@ -383,11 +384,11 @@ $loanInList = $loanManager->getLoanInList($searchTerm,$displayAll);
 		else if(!$GLOBALS['SYMB_UID']){
             echo 'Please <a href="../../profile/index.php?refurl=../collections/loans/index.php?collid='.$collId.'">login</a>';
         }
-        elseif(!$isEditor){
-            echo '<h2>You are not authorized to add occurrence records</h2>';
-        }
-        else{
+        elseif($isEditor) {
             echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+        }
+        else {
+            echo '<h2>You are not authorized to add occurrence records</h2>';
         }
 		?>
 	</div>

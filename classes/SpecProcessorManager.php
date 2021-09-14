@@ -38,7 +38,7 @@ class SpecProcessorManager {
 	}
 
 	public function __destruct(){
- 		if(!($this->conn === false)) {
+ 		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -97,7 +97,7 @@ class SpecProcessorManager {
 			}
 			$sql = 'UPDATE specprocessorprojects SET '.trim($sqlFrag,' ,').' WHERE (spprid = '.$editArr['spprid'].')';
 			if(!$this->conn->query($sql)){
-				echo 'ERROR saving project: '.$this->conn->error;
+				echo 'ERROR saving project.';
 			}
 		}
 	}
@@ -152,7 +152,7 @@ class SpecProcessorManager {
 				$this->cleanInStr($addArr['speckeypattern']).'")';
 		}
 		if($sql && !$this->conn->query($sql)) {
-			echo 'ERROR saving project: '.$this->conn->error;
+			echo 'ERROR saving project.';
 		}
 	}
 
@@ -250,7 +250,7 @@ class SpecProcessorManager {
 		return $projArr;
 	}
 
-	public function getSpecWithImage($procStatus = ''): int
+	public function getSpecWithImage($procStatus = null): int
 	{
 		$cnt = 0;
 		if($this->collid){
@@ -274,7 +274,7 @@ class SpecProcessorManager {
 		return $cnt;
 	}
 
-	public function getSpecNoOcr($procStatus = ''): int
+	public function getSpecNoOcr($procStatus = null): int
 	{
 		$cnt = 0;
 		if($this->collid){

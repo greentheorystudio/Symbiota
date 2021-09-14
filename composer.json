@@ -4,7 +4,7 @@
   "license": "proprietary",
   "require": {
     "phpoffice/phpword": "^0.17.0",
-    "phpoffice/phpspreadsheet": "^1.10.1",
+    "phpoffice/phpspreadsheet": "1.10.1",
     "ext-calendar": "*",
     "ext-ctype": "*",
     "ext-curl": "*",
@@ -20,9 +20,6 @@
     "ext-xml": "*",
     "ext-zip": "*",
     "phpmailer/phpmailer": "^6.2"
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-master"
   },
   "scripts": {
     "pre-update-cmd": [
@@ -68,7 +65,6 @@
       "chmod -R 777 ./temp/images",
       "chmod -R 777 ./temp/ootd",
       "chmod -R 777 ./temp/report",
-      "chmod -R 777 ./temp/slideshow",
       "chmod -R 777 ./temp/symbocr",
       "chmod -R 777 ./webservices/dwc/rss.xml"
     ],

@@ -2,15 +2,13 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 
-$queryId = array_key_exists('queryId',$_REQUEST)?$_REQUEST['queryId']:0;
-$catId = array_key_exists('catid',$_REQUEST)?$_REQUEST['catid']:0;
+$queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
+$catId = array_key_exists('catid',$_REQUEST)?(int)$_REQUEST['catid']:0;
 
-if(!is_numeric($catId)) {
-    $catId = 0;
-}
 if(!$catId && isset($GLOBALS['DEFAULTCATID']) && $GLOBALS['DEFAULTCATID']) {
-    $catId = $GLOBALS['DEFAULTCATID'];
+    $catId = (int)$GLOBALS['DEFAULTCATID'];
 }
 
 $collManager = new OccurrenceManager();
@@ -18,7 +16,6 @@ $collManager = new OccurrenceManager();
 $collList = $collManager->getFullCollectionList($catId);
 $specArr = ($collList['spec'] ?? null);
 $obsArr = ($collList['obs'] ?? null);
-
 $otherCatArr = $collManager->getOccurVoucherProjects();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -30,7 +27,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<script src="../js/jquery.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
 		<script src="../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
-        <script src="../js/symb/search.term.manager.js?ver=20210420" type="text/javascript"></script>
+        <script src="../js/symb/search.term.manager.js?ver=20210913" type="text/javascript"></script>
         <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
         <script type="text/javascript">
             const SOLRMODE = '<?php echo $GLOBALS['SOLR_MODE']; ?>';
@@ -137,9 +134,9 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
                             Select/Deselect All
 						</div>
 						<?php 
-						$collManager->outputFullCollArr($specArr);
+						$collManager->outputFullCollArr($specArr, true);
                         echo '<hr style="clear:both;margin:20px 0;"/>';
-						$collManager->outputFullCollArr($obsArr);
+						$collManager->outputFullCollArr($obsArr, true);
 						?>
 						<div style="clear:both;">&nbsp;</div>
                         <input type="hidden" name="queryId" value='' />
@@ -156,7 +153,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
                             Select/Deselect All
 						</div>
 						<?php
-						$collManager->outputFullCollArr($specArr);
+						$collManager->outputFullCollArr($specArr, true);
 						?>
 						<div style="clear:both;">&nbsp;</div>
                         <input type="hidden" name="queryId" value='' />
@@ -173,7 +170,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
                             Select/Deselect All
 						</div>
 						<?php
-						$collManager->outputFullCollArr($obsArr);
+						$collManager->outputFullCollArr($obsArr, true);
 						?>
 						<div style="clear:both;">&nbsp;</div>
                         <input type="hidden" name="queryId" value='' />

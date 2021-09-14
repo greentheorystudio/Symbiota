@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$tid = $_REQUEST['tid'];
+$tid = (int)$_REQUEST['tid'];
 $category = array_key_exists('cat',$_REQUEST)?$_REQUEST['cat']: '';
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 
@@ -36,10 +37,10 @@ if($tid){
 									$webUrl = $imgArr['url'];
 									$tnUrl = $imgArr['thumbnailurl'];
 									if($GLOBALS['IMAGE_DOMAIN']){
-										if(strpos($imgArr['url'], '/') == 0) {
+										if(strncmp($imgArr['url'], '/', 1) === 0) {
                                             $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
                                         }
-										if(strpos($imgArr['thumbnailurl'], '/') == 0) {
+										if(strncmp($imgArr['thumbnailurl'], '/', 1) === 0) {
                                             $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
                                         }
 									}
@@ -229,10 +230,10 @@ if($tid){
                                 $webUrl = $imgArr['url'];
                                 $tnUrl = $imgArr['thumbnailurl'];
                                 if($GLOBALS['IMAGE_DOMAIN']){
-                                    if(strpos($imgArr['url'], '/') === 0) {
+                                    if(strncmp($imgArr['url'], '/', 1) === 0) {
                                         $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
                                     }
-                                    if(strpos($imgArr['thumbnailurl'], '/') === 0) {
+                                    if(strncmp($imgArr['thumbnailurl'], '/', 1) === 0) {
                                         $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
                                     }
                                 }
@@ -245,7 +246,7 @@ if($tid){
                                 </a>
                                 <?php
                                 if($imgArr['originalurl']){
-                                    $origUrl = ($GLOBALS['IMAGE_DOMAIN'] && strpos($imgArr['originalurl'], '/') === 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgArr['originalurl'];
+                                    $origUrl = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgArr['originalurl'], '/', 1) === 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgArr['originalurl'];
                                     ?>
                                     <br /><a href="<?php echo $origUrl;?>">Open Large Image</a>
                                     <?php

@@ -11,7 +11,7 @@ $ses_id = session_id();
 
 $labelManager = new OccurrenceLabel();
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $lHeader = $_POST['lheading'];
 $lFooter = $_POST['lfooter'];
 $detIdArr = $_POST['detid'];
@@ -22,6 +22,7 @@ $rowsPerPage = 3;
 
 $exportEngine = '';
 $exportExtension = '';
+$labelArr = array();
 if($action === 'Export to DOCX'){
 	$exportEngine = 'Word2007';
 	$exportExtension = 'docx';
@@ -236,18 +237,19 @@ foreach($labelArr as $occid => $occArr){
 			$textrun = $cell->addTextRun('other');
 			$textrun->addText(htmlspecialchars($occArr['identificationreferences']).' ','identifiedFont');
 		}
-		if($occArr['identifiedby'] || $occArr['dateidentified']){
-			$textrun = $cell->addTextRun('other');
-			if($occArr['identifiedby']){
-				$textrun->addText('Determiner: '.htmlspecialchars($occArr['identifiedby']),'identifiedFont');
-				if($occArr['dateidentified']){
-					$textrun->addTextBreak(1);
-				}
-			}
-			if($occArr['dateidentified']){
-				$textrun->addText('Date: '.htmlspecialchars($occArr['dateidentified']).' ','identifiedFont');
-			}
-		}
+		if($occArr['identifiedby']){
+            $textrun = $cell->addTextRun('other');
+            $textrun->addText('Determiner: '.htmlspecialchars($occArr['identifiedby']),'identifiedFont');
+        }
+        if($occArr['dateidentified']){
+            if($occArr['identifiedby']) {
+                $textrun->addTextBreak();
+            }
+            else {
+                $textrun = $cell->addTextRun('other');
+            }
+            $textrun->addText('Date: '.htmlspecialchars($occArr['dateidentified']).' ','identifiedFont');
+        }
 		if($footerStr){
 			$textrun = $cell->addTextRun('footer');
 			$textrun->addText(htmlspecialchars($footerStr),'headerfooterFont');

@@ -1,17 +1,19 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceCrowdSource.php');
+include_once(__DIR__ . '/../../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../../profile/index.php?refurl=../collections/specprocessor/index.php?tabindex=2&' . $_SERVER['QUERY_STRING']);
+    header('Location: ../../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
 }
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$uid = array_key_exists('uid',$_REQUEST)?$_REQUEST['uid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
 $rStatus = array_key_exists('rstatus',$_REQUEST)?$_REQUEST['rstatus']:'5,10';
-$start = array_key_exists('start',$_REQUEST)?$_REQUEST['start']:0;
-$limit = array_key_exists('limit',$_REQUEST)?$_REQUEST['limit']:500;
+$start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
+$limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:500;
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 
 $csManager = new OccurrenceCrowdSource();
@@ -85,7 +87,7 @@ $projArr = $csManager->getProjectDetails();
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:20px;color:<?php echo (strpos($statusStr, 'ERROR') === 0 ?'red':'green');?>">
+			<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green');?>">
 				<?php echo $statusStr; ?>
 			</div>
 			<hr/>

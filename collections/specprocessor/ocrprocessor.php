@@ -2,9 +2,10 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
-$spprid = array_key_exists('spprid',$_REQUEST)?$_REQUEST['spprid']:0;
+$collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
+$spprid = array_key_exists('spprid',$_REQUEST)?(int)$_REQUEST['spprid']:0;
 $procStatus = array_key_exists('procstatus',$_REQUEST)?$_REQUEST['procstatus']:'unprocessed';
 
 $procManager = new SpecProcessorManager();

@@ -2,8 +2,9 @@
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: SAMEORIGIN');
 
-$collid = $_POST['collid'];
+$collid = (int)$_POST['collid'];
 $hPrefix = $_POST['lhprefix'];
 $hMid = (int)$_POST['lhmid'];
 $hSuffix = $_POST['lhsuffix'];
@@ -12,9 +13,9 @@ $occIdArr = $_POST['occid'];
 $rowsPerPage = (int)$_POST['rpp'];
 $speciesAuthors = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
 $showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
-$useBarcode = array_key_exists('bc',$_POST)?$_POST['bc']:0;
-$useSymbBarcode = array_key_exists('symbbc',$_POST)?$_POST['symbbc']:0;
-$barcodeOnly = array_key_exists('bconly',$_POST)?$_POST['bconly']:0;
+$useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
+$useSymbBarcode = array_key_exists('symbbc',$_POST)?(int)$_POST['symbbc']:0;
+$barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
 $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 
 $labelManager = new OccurrenceLabel();
@@ -191,7 +192,8 @@ else{
                                         </span>
                                     </div>
                                     <?php
-                                    if($occArr['decimallatitude'] || $occArr['verbatimcoordinates']){
+                                    $coords = ($occArr['decimallatitude'] || $occArr['verbatimcoordinates']);
+                                    if($coords){
                                         ?>
                                         <div class="loc2div">
                                             <?php
@@ -305,32 +307,27 @@ else{
                                         ?>
                                     </div>
                                     <?php
-                                    if($useBarcode && $occArr['catalognumber']){
-                                        ?>
-                                        <div class="cnbarcode" style="clear:both;padding-top:15px;">
-                                            <img src="getBarcode.php?bcheight=40&bctext=<?php echo $occArr['catalognumber']; ?>" />
-                                        </div>
-                                        <?php
-                                        if($occArr['othercatalognumbers']){
+                                    $catNum = $occArr['catalognumber'] ?: '';
+                                    $otherCatNum = $occArr['othercatalognumbers'] ?: '';
+                                    if($catNum || $otherCatNum){
+                                        if($useBarcode){
                                             ?>
-                                            <div class="othercatalognumbers" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['othercatalognumbers']; ?>
+                                            <div class="cnbarcode" style="clear:both;padding-top:15px;">
+                                                <img src="getBarcode.php?bcheight=40&bctext=<?php echo $catNum; ?>" />
                                             </div>
                                             <?php
                                         }
-                                    }
-                                    elseif($showcatalognumbers){
-                                        if($occArr['catalognumber']){
+                                        elseif($showcatalognumbers && $occArr['catalognumber']){
                                             ?>
                                             <div class="catalognumber" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['catalognumber']; ?>
+                                                <?php echo $catNum; ?>
                                             </div>
                                             <?php
                                         }
                                         if($occArr['othercatalognumbers']){
                                             ?>
                                             <div class="othercatalognumbers" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['othercatalognumbers']; ?>
+                                                <?php echo $otherCatNum; ?>
                                             </div>
                                             <?php
                                         }

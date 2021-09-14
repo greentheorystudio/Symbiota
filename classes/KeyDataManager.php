@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class KeyDataManager extends Manager{
 
@@ -28,7 +29,7 @@ class KeyDataManager extends Manager{
 			$this->pid = $projValue;
 		}
 		else{
-			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".$projValue."')";
+			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".Sanitizer::cleanInStr($projValue)."')";
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->pid = $row->pid;
@@ -42,7 +43,7 @@ class KeyDataManager extends Manager{
 	{
         $this->lang = $l;
         $this->langArr[] = $l;
-        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".$l."' ";
+        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".Sanitizer::cleanInStr($l)."' ";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->langArr[] = $row->iso639_1;
@@ -98,7 +99,7 @@ class KeyDataManager extends Manager{
 
 	public function setTaxonFilter($t): void
 	{
-		$this->taxonFilter = $t;
+		$this->taxonFilter = Sanitizer::cleanInStr($t);
 	}
 
 	public function setClValue($clv){
@@ -185,7 +186,8 @@ class KeyDataManager extends Manager{
 		return $this->relevanceValue;
 	}
 
- 	public function getData(){
+ 	public function getData(): array
+    {
  		$charArray = array();
 		$taxaArray = array();
 		if(($this->clid && $this->taxonFilter) || $this->dynClid){
@@ -198,7 +200,8 @@ class KeyDataManager extends Manager{
 		return $returnArray;
 	}
 
-	public function getCharList(){
+	public function getCharList(): ?array
+    {
 		$returnArray = array();
 		$charList = array();
 		$countMin = $this->taxaCount * $this->relevanceValue;
@@ -373,7 +376,7 @@ class KeyDataManager extends Manager{
                                 if($cLanguage === $this->lang){
                                     $sliderMax = count($sliderArr) - 1;
                                     $returnArray[] = '<script type="text/javascript">';
-                                    $returnArray[] = 'var sliderValues' .$cid." = JSON.parse('".json_encode($sliderArr)."');";
+                                    $returnArray[] = 'var sliderValues' .$cid." = JSON.parse('". json_encode($sliderArr) ."');";
                                     $returnArray[] = '$( function() {';
                                     $returnArray[] = '$( "#slider'.$cid.'" ).slider({';
                                     $returnArray[] = 'value: '.$cSelected.',';

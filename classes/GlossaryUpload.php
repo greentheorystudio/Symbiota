@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class GlossaryUpload{
 	
@@ -22,7 +23,7 @@ class GlossaryUpload{
 	}
 
 	public function __destruct(){
-		if(!($this->conn === false)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
@@ -30,7 +31,7 @@ class GlossaryUpload{
         }
 	}
 	
-	public function setUploadFile($ulFileName = ''): void
+	public function setUploadFile($ulFileName = null): void
 	{
 		if($ulFileName){
 			if(file_exists($ulFileName)){
@@ -61,8 +62,8 @@ class GlossaryUpload{
 
 	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources): void
 	{
-		$batchSources = $this->cleanInStr($this->encodeString($batchSources));
-		$this->outputMsg('Starting Upload',0);
+		$batchSources = Sanitizer::cleanInStr($this->encodeString($batchSources));
+		$this->outputMsg('Starting Upload');
 		$this->conn->query('TRUNCATE TABLE uploadglossary');
 		$this->conn->query('OPTIMIZE TABLE uploadglossary');
 		$fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb') or die("Can't open file");
@@ -95,13 +96,13 @@ class GlossaryUpload{
                             if($field === $lang.'_term'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $term = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $term = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_definition'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $definition = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $definition = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                                 if(strlen($definition) > 2000){
                                     $definition = '';
@@ -111,37 +112,37 @@ class GlossaryUpload{
                             if($field === $lang.'_source'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $source = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $source = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_author'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $author = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $author = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_translator'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $translator = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $translator = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_notes'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $notes = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $notes = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_resourceurl'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $resourceUrl = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $resourceUrl = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_synonym'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $synonym = $this->cleanInStr($this->encodeString($recordArr[$index]));
+                                    $synonym = Sanitizer::cleanInStr($this->encodeString($recordArr[$index]));
                                 }
                             }
                         }
@@ -163,7 +164,7 @@ class GlossaryUpload{
                                 }
                             }
                             else{
-                                $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                                $this->outputMsg('ERROR loading term.');
                             }
                             if($synonym){
                                 $sql = 'INSERT INTO uploadglossary(term,definition,`language`,source,author,translator,notes,resourceurl,tidStr,synonym,newGroupId) ';
@@ -183,7 +184,7 @@ class GlossaryUpload{
                                     }
                                 }
                                 else{
-                                    $this->outputMsg('ERROR loading term: '.$this->conn->error);
+                                    $this->outputMsg('ERROR loading term.');
                                 }
                             }
                         }
@@ -212,13 +213,13 @@ class GlossaryUpload{
 			'SET ug.currentGroupId = gt.glossgrpid, ug.term = NULL '.
 			'WHERE gx.tid IN('.$tidStr.') ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking term.',1);
 		}
 		$sql = 'UPDATE uploadglossary AS u1 LEFT JOIN uploadglossary AS u2 ON u1.newGroupId = u2.newGroupId '.
 			'SET u2.currentGroupId = u1.currentGroupId '. 
 			'WHERE u1.currentGroupId IS NOT NULL AND ISNULL(u1.term) AND u2.term IS NOT NULL ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking term.',1);
 		}
 		
 	}
@@ -272,7 +273,7 @@ class GlossaryUpload{
 				'FROM uploadglossary '.
 				'WHERE term IS NOT NULL AND currentGroupId IS NOT NULL ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Transferring terms.',1);
 			}
 			
 			$this->outputMsg('Linking translations to existing terms... ');
@@ -282,7 +283,7 @@ class GlossaryUpload{
 				'LEFT JOIN glossarytaxalink AS gx ON ug.currentGroupId = gx.glossid '.
 				'WHERE ug.term IS NOT NULL AND ug.currentGroupId IS NOT NULL AND gx.tid IN('.$tidStr.') ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Transferring terms.',1);
 			}
 		}
 		
@@ -301,7 +302,7 @@ class GlossaryUpload{
 			'FROM uploadglossary '.
 			'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$primaryLanguage.'" ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Adding new terms.',1);
 		}
 		
 		$this->outputMsg('Adding new '.$primaryLanguage.' term links... ');
@@ -311,7 +312,7 @@ class GlossaryUpload{
 			'WHERE ug.term IS NOT NULL AND ISNULL(ug.currentGroupId) AND ug.`language` = "'.$primaryLanguage.'" '.
 			'AND g.glossid NOT IN(SELECT glossid FROM glossarytermlink) ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Adding new terms.',1);
 		}
 		
 		$this->outputMsg('Linking synonyms to new '.$primaryLanguage.' terms... ');
@@ -326,7 +327,7 @@ class GlossaryUpload{
 			'AND ug2.`language` = "'.$primaryLanguage.'" AND ISNULL(ug2.synonym) '.
 			'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ug1.synonym = 1 ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking synonyms.',1);
 		}
 		$sql = 'INSERT INTO glossarytermlink(glossgrpid,glossid,relationshipType) '.
 			'SELECT DISTINCT gt.glossgrpid, g1.glossid, "synonym" '.
@@ -339,7 +340,7 @@ class GlossaryUpload{
 			'AND ug2.`language` = "'.$primaryLanguage.'" AND ISNULL(ug2.synonym) '.
 			'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ug2.synonym = 1 ';
 		if(!$this->conn->query($sql)){
-			$this->outputMsg('ERROR: '.$this->conn->error,1);
+			$this->outputMsg('ERROR: Linking synonyms.',1);
 		}
 		
 		$this->outputMsg('Linking taxa to new '.$primaryLanguage.' terms... ');
@@ -351,7 +352,7 @@ class GlossaryUpload{
 				'WHERE ug.term IS NOT NULL AND ISNULL(ug.currentGroupId) AND ug.`language` = "'.$primaryLanguage.'" '.
 				'AND gt.glossgrpid NOT IN(SELECT glossid FROM glossarytaxalink WHERE tid = '.$tId.') ';
 			if(!$this->conn->query($sql)){
-				$this->outputMsg('ERROR: '.$this->conn->error,1);
+				$this->outputMsg('ERROR: Linking taxa.',1);
 			}
 		}
 		
@@ -363,7 +364,7 @@ class GlossaryUpload{
 					'FROM uploadglossary '.
 					'WHERE term IS NOT NULL AND ISNULL(currentGroupId) AND `language` = "'.$lang.'" ';
 				if(!$this->conn->query($sql)){
-					$this->outputMsg('ERROR: '.$this->conn->error,1);
+					$this->outputMsg('ERROR: Adding new terms.',1);
 				}
 				
 				$this->outputMsg('Linking new '.$lang.' translations to new '.$primaryLanguage.' terms... ');
@@ -378,7 +379,7 @@ class GlossaryUpload{
 					'AND ug2.`language` = "'.$primaryLanguage.'" AND gx.tid IN('.$tidStr.') '.
 					'AND g1.glossid NOT IN(SELECT glossid FROM glossarytermlink) AND ISNULL(ug2.synonym) ';
 				if(!$this->conn->query($sql)){
-					$this->outputMsg('ERROR: '.$this->conn->error,1);
+					$this->outputMsg('ERROR: Linking new translations.',1);
 				}
 			}
 		}
@@ -519,22 +520,15 @@ class GlossaryUpload{
 		}
 	}
 
-	private function outputMsg($str, $indent = 0): void
+	private function outputMsg($str, $indent = null): void
 	{
-		if($this->verboseMode > 0 || strpos($str, 'ERROR') === 0){
-			echo '<li style="margin-left:'.(10*$indent).'px;'.(strpos($str, 'ERROR') === 0 ?'color:red':'').'">'.$str.'</li>';
+		if($this->verboseMode > 0 || strncmp($str, 'ERROR', 5) === 0){
+			echo '<li style="margin-left:'.(10*$indent).'px;'.(strncmp($str, 'ERROR', 5) === 0 ?'color:red':'').'">'.$str.'</li>';
 			flush();
 		}
 		if(($this->verboseMode === 2) && $this->logFH) {
 			fwrite($this->logFH, ($indent ? str_repeat("\t", $indent) : '') . strip_tags($str) . "\n");
 		}
-	}
-
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
 	}
 
 	private function encodeString($inStr): string

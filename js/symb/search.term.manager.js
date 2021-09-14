@@ -76,16 +76,24 @@ function initializeSearchStorage(queryId){
 function getSearchTermsArr(){
     const dateId = getDatestringIdentifier();
     const queryId = document.getElementById('queryId').value;
-    const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
-    return ((searchTermsArr.hasOwnProperty(dateId) && searchTermsArr[dateId].hasOwnProperty(queryId))?searchTermsArr[dateId][queryId]:{});
+    try{
+        const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+        return ((searchTermsArr.hasOwnProperty(dateId) && searchTermsArr[dateId].hasOwnProperty(queryId))?searchTermsArr[dateId][queryId]:{});
+    }catch (e){
+        return {};
+    }
 }
 
 function loadSearchTermsArrFromJson(stArrJson){
     const dateId = getDatestringIdentifier();
     const queryId = document.getElementById('queryId').value;
-    const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
-    searchTermsArr[dateId][queryId] = JSON.parse(stArrJson);
-    localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
+    try{
+        const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+        searchTermsArr[dateId][queryId] = JSON.parse(stArrJson);
+        localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
+    }catch (e){
+        return false;
+    }
 }
 
 function getSearchTermsArrKeyValue(key){
@@ -127,6 +135,11 @@ function validateSearchTermsArr(stArr){
         stArr.hasOwnProperty('upperlat') ||
         stArr.hasOwnProperty('pointlat') ||
         stArr.hasOwnProperty('circleArr') ||
+        stArr.hasOwnProperty('phuid') ||
+        stArr.hasOwnProperty('imagetag') ||
+        stArr.hasOwnProperty('imagekeyword') ||
+        stArr.hasOwnProperty('uploaddate1') ||
+        stArr.hasOwnProperty('uploaddate2') ||
         stArr.hasOwnProperty('polyArr')
     ){
         populated = true;
@@ -190,9 +203,9 @@ function processCollectionParamChange(f){
 }
 
 function processTaxaParamChange(){
-    let taxaval = document.getElementById("taxa").value.trim();
-    const taxontype = document.getElementById("taxontype").value;
-    const thes = !!document.getElementById("thes").checked;
+    let taxaval = document.getElementById("taxa")?document.getElementById("taxa").value.trim():null;
+    const taxontype = document.getElementById("taxontype")?document.getElementById("taxontype").value:null;
+    const thes = document.getElementById("thes")?!!document.getElementById("thes").checked:true;
     taxaval = taxaval.replaceAll(",", ";");
     if(taxaval){
         setSearchTermsArrKeyValue('usethes',thes);
@@ -207,22 +220,40 @@ function processTaxaParamChange(){
 }
 
 function processTextParamChange(){
-    let countryval = document.getElementById("country").value.trim();
-    let stateval = document.getElementById("state").value.trim();
-    let countyval = document.getElementById("county").value.trim();
-    let localityval = document.getElementById("locality").value.trim();
-    let elevlowval = document.getElementById("elevlow").value.trim();
-    let elevhighval = document.getElementById("elevhigh").value.trim();
-    let collectorval = document.getElementById("collector").value.trim();
-    let collnumval = document.getElementById("collnum").value.trim();
-    let colldate1 = document.getElementById("eventdate1").value.trim();
-    let colldate2 = document.getElementById("eventdate2").value.trim();
-    let occurrenceremarksval = document.getElementById("occurrenceRemarks").value.trim();
-    let catnumval = document.getElementById("catnum").value.trim();
-    let othercatnumval = document.getElementById("othercatnum").checked;
-    const typestatus = document.getElementById("typestatus").checked;
-    const hasimages = document.getElementById("hasimages").checked;
-    const hasgenetic = document.getElementById("hasgenetic").checked;
+    let countryval = document.getElementById("country")?document.getElementById("country").value.trim():null;
+    let stateval = document.getElementById("state")?document.getElementById("state").value.trim():null;
+    let countyval = document.getElementById("county")?document.getElementById("county").value.trim():null;
+    let localityval = document.getElementById("locality")?document.getElementById("locality").value.trim():null;
+    let elevlowval = document.getElementById("elevlow")?document.getElementById("elevlow").value.trim():null;
+    let elevhighval = document.getElementById("elevhigh")?document.getElementById("elevhigh").value.trim():null;
+    let collectorval = document.getElementById("collector")?document.getElementById("collector").value.trim():null;
+    let collnumval = document.getElementById("collnum")?document.getElementById("collnum").value.trim():null;
+    let colldate1 = document.getElementById("eventdate1")?document.getElementById("eventdate1").value.trim():null;
+    let colldate2 = document.getElementById("eventdate2")?document.getElementById("eventdate2").value.trim():null;
+    let occurrenceremarksval = document.getElementById("occurrenceRemarks")?document.getElementById("occurrenceRemarks").value.trim():null;
+    let catnumval = document.getElementById("catnum")?document.getElementById("catnum").value.trim():null;
+    let othercatnumval = document.getElementById("othercatnum")?document.getElementById("othercatnum").checked:null;
+    const typestatus = document.getElementById("typestatus")?document.getElementById("typestatus").checked:null;
+    const hasimages = document.getElementById("hasimages")?document.getElementById("hasimages").checked:null;
+    const hasgenetic = document.getElementById("hasgenetic")?document.getElementById("hasgenetic").checked:null;
+    let imagedisplayval = document.getElementById("imagedisplay")?document.getElementById("imagedisplay").value:'thumbnail';
+    let phuidval = document.getElementById("phuid")?document.getElementById("phuid").value:null;
+    let phjsonval = document.getElementById("phjson")?document.getElementById("phjson").value:null;
+    let imagetagval = document.getElementById("imagetag")?document.getElementById("imagetag").value:null;
+    let imagekeywordval = document.getElementById("keywordsinput")?document.getElementById("keywordsinput").value:null;
+    let uploaddate1val = document.getElementById("uploaddate1")?document.getElementById("uploaddate1").value:null;
+    let uploaddate2val = document.getElementById("uploaddate2")?document.getElementById("uploaddate2").value:null;
+    let imagecountval = document.getElementById("imagecount")?document.getElementById("imagecount").value:'all';
+    let imagetypeval = 'all';
+    if(document.getElementById("imagetypespecimenonly") && document.getElementById("imagetypespecimenonly").checked){
+        imagetypeval = 'specimenonly';
+    }
+    if(document.getElementById("imagetypeobservationonly") && document.getElementById("imagetypeobservationonly").checked){
+        imagetypeval = 'observationonly';
+    }
+    if(document.getElementById("imagetypefieldonly") && document.getElementById("imagetypefieldonly").checked){
+        imagetypeval = 'fieldonly';
+    }
 
     if(countryval){
         countryval = countryval.replaceAll(",", ";");
@@ -347,6 +378,48 @@ function processTextParamChange(){
     else{
         clearSearchTermsArrKey('hasgenetic');
     }
+    setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    if(phuidval){
+        phuidval = phuidval.replaceAll(",", ";");
+        setSearchTermsArrKeyValue('phuid',phuidval);
+    }
+    else{
+        clearSearchTermsArrKey('phuid');
+    }
+    if(phjsonval){
+        setSearchTermsArrKeyValue('phjson',phjsonval);
+    }
+    else{
+        clearSearchTermsArrKey('phjson');
+    }
+    if(imagetagval){
+        setSearchTermsArrKeyValue('imagetag',imagetagval);
+    }
+    else{
+        clearSearchTermsArrKey('imagetag');
+    }
+    if(imagekeywordval){
+        imagekeywordval = imagekeywordval.replaceAll(",", ";");
+        setSearchTermsArrKeyValue('imagekeyword',imagekeywordval);
+    }
+    else{
+        clearSearchTermsArrKey('imagekeyword');
+    }
+    if(uploaddate1val){
+        setSearchTermsArrKeyValue('uploaddate1',uploaddate1val);
+    }
+    else{
+        clearSearchTermsArrKey('uploaddate1');
+    }
+    if(uploaddate2val){
+        setSearchTermsArrKeyValue('uploaddate2',uploaddate2val);
+    }
+    else{
+        clearSearchTermsArrKey('uploaddate2');
+    }
+    setSearchTermsArrKeyValue('imagecount',imagecountval);
+    setSearchTermsArrKeyValue('imagedisplay',imagedisplayval);
+    setSearchTermsArrKeyValue('imagetype',imagetypeval);
 }
 
 function redirectWithQueryId(url){

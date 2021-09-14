@@ -1,6 +1,6 @@
 <div id="addLayers" data-role="popup" class="well" style="width:700px;height:90%;">
     <a class="boxclose addLayers_close" id="boxclose"></a>
-    <h2>Layer Controller</h2>
+    <h2>Layers</h2>
     <div style="height:90%;overflow-y: scroll;padding-left:30px;padding-right:30px;">
         <table id='layercontroltable' class="styledtable" style="font-family:Arial,serif;font-size:12px;margin-left:-15px;width:630px;">
             <tbody id="layerselecttbody"></tbody>

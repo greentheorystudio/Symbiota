@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
+include_once(__DIR__ . '/Sanitizer.php');
 
 class ChecklistLoaderManager {
 
@@ -18,7 +19,7 @@ class ChecklistLoaderManager {
 	}
 
 	public function __destruct(){
-		if(!($this->conn === null)) {
+		if($this->conn) {
 			$this->conn->close();
 		}
 	}
@@ -49,7 +50,7 @@ class ChecklistLoaderManager {
 			flush();
 			while($valueArr = fgetcsv($fh)){
 				if($valueArr){
-                    $sciNameStr = $this->cleanInStr($valueArr[$headerArr['sciname']]);
+                    $sciNameStr = Sanitizer::cleanInStr($valueArr[$headerArr['sciname']]);
                     if($sciNameStr){
                         $tid = 0;
                         $rankId = 0;
@@ -87,31 +88,31 @@ class ChecklistLoaderManager {
                                 $sqlInsert = '';
                                 $sqlValues = '';
                                 if(array_key_exists('family',$headerArr) && $valueArr[$headerArr['family']]){
-                                    $famValue = $this->cleanInStr($valueArr[$headerArr['family']]);
+                                    $famValue = Sanitizer::cleanInStr($valueArr[$headerArr['family']]);
                                     if(strcasecmp($family, $famValue)){
                                         $sqlInsert .= ',familyoverride';
-                                        $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['family']]).'"';
+                                        $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['family']]).'"';
                                     }
                                 }
                                 if(array_key_exists('habitat',$headerArr) && $valueArr[$headerArr['habitat']]){
                                     $sqlInsert .= ',habitat';
-                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['habitat']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['habitat']]).'"';
                                 }
                                 if(array_key_exists('abundance',$headerArr) && $valueArr[$headerArr['abundance']]){
                                     $sqlInsert .= ',abundance';
-                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['abundance']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['abundance']]).'"';
                                 }
                                 if(array_key_exists('notes',$headerArr) && $valueArr[$headerArr['notes']]){
                                     $sqlInsert .= ',notes';
-                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['notes']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['notes']]).'"';
                                 }
                                 if(array_key_exists('internalnotes',$headerArr) && $valueArr[$headerArr['internalnotes']]){
                                     $sqlInsert .= ',internalnotes';
-                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['internalnotes']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['internalnotes']]).'"';
                                 }
                                 if(array_key_exists('source',$headerArr) && $valueArr[$headerArr['source']]){
                                     $sqlInsert .= ',source';
-                                    $sqlValues .= ',"'.$this->cleanInStr($valueArr[$headerArr['source']]).'"';
+                                    $sqlValues .= ',"'.Sanitizer::cleanInStr($valueArr[$headerArr['source']]).'"';
                                 }
 
                                 $sql = 'INSERT INTO fmchklsttaxalink (tid,clid'.$sqlInsert.') VALUES ('.$tid.', '.$this->clid.$sqlValues.')';
@@ -120,7 +121,7 @@ class ChecklistLoaderManager {
                                     $successCnt++;
                                 }
                                 else{
-                                    $this->errorArr[] = $sciNameStr." (TID = $tid) failed to load<br />Error msg: ".$this->conn->error;
+                                    $this->errorArr[] = $sciNameStr. ' failed to load.';
                                     //echo $sql."<br />";
                                 }
                             }
@@ -226,13 +227,6 @@ class ChecklistLoaderManager {
 		return $retArr;
 	}
 
-	private function cleanInStr($str){
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ',$newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
-	}
-
 	private function encodeString($inStr): string
 	{
 		$retStr = $inStr;
@@ -241,7 +235,7 @@ class ChecklistLoaderManager {
 		$inStr= str_replace($search, $replace, $inStr);
 
 		if($inStr){
-			if(strtolower($GLOBALS['CHARSET']) === 'utf-8' || strtolower($GLOBALS['CHARSET']) === 'utf8'){
+			if(in_array(strtolower($GLOBALS['CHARSET']), array('utf-8', 'utf8'))){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
 				}

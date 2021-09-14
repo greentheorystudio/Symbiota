@@ -7,7 +7,7 @@ $connection = new DbConnection();
 $con = $connection->getConnection();
 
 $retStr = 0;
-$tid = trim($con->real_escape_string($_REQUEST['tid']));
+$tid = (int)$_REQUEST['tid'];
 $state = trim($con->real_escape_string($_REQUEST['state']));
 
 if(is_numeric($tid) && $state){

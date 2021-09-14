@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('X-Frame-Options: DENY');
 if(!$GLOBALS['SYMB_UID']) {
     header('Location: ../../profile/index.php?refurl=' . $GLOBALS['CLIENT_ROOT'] . '/taxa/admin/batchloader.php');
 }
@@ -11,7 +12,7 @@ ini_set('max_execution_time', 7200);
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';
 $ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']: '';
-$taxAuthId = (array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1);
+$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
@@ -137,10 +138,10 @@ if($isEditor){
 											}
 											foreach($tArr as $k => $tField){
 												if($selStr !== 0 && (
-												        ($mappedTarget && $mappedTarget == $tField) ||
-                                                        ($tField == $sField && $tField !== 'sciname') ||
-                                                        ($tField === 'scinameinput' && (strtolower($sField) === 'sciname' || strtolower($sField) === 'scientific name'))
-                                                    )){
+                                                    ($mappedTarget && $mappedTarget === $tField) ||
+                                                    ($tField === $sField && $tField !== 'sciname') ||
+                                                    ($tField === 'scinameinput' && (strtolower($sField) === 'sciname' || strtolower($sField) === 'scientific name'))
+                                                )){
 													$selStr = 'SELECTED';
 												}
 												echo '<option value="'.$k.'" '.($selStr?:'').'>'.$tField."</option>\n";
@@ -169,7 +170,7 @@ if($isEditor){
 				</form>
 				<?php
 			}
-			elseif($action === 'Analyze Taxa' || strpos($action, 'Upload') === 0){
+			elseif($action === 'Analyze Taxa' || strncmp($action, 'Upload', 6) === 0){
 				echo '<ul>';
 				if($action === 'Upload Taxa'){
 					$loaderManager->loadFile($fieldMap);
@@ -277,7 +278,7 @@ if($isEditor){
 										<?php
 										$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 										foreach($taxonAuthArr as $k => $v){
-											echo '<option value="'.$k.'" '.($k == $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+											echo '<option value="'.$k.'" '.((int)$k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 										}
 										?>
 									</select>
@@ -306,7 +307,7 @@ if($isEditor){
 									<?php
 									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
 									foreach($taxonAuthArr as $k => $v){
-										echo '<option value="'.$k.'" '.($k == $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
+										echo '<option value="'.$k.'" '.((int)$k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
 									}
 									?>
 								</select>
