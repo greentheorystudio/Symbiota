@@ -235,7 +235,7 @@ class ChecklistLoaderManager {
 		$inStr= str_replace($search, $replace, $inStr);
 
 		if($inStr){
-			if(strtolower($GLOBALS['CHARSET']) === 'utf-8' || strtolower($GLOBALS['CHARSET']) === 'utf8'){
+			if(in_array(strtolower($GLOBALS['CHARSET']), array('utf-8', 'utf8'))){
 				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
 					$retStr = utf8_encode($inStr);
 				}

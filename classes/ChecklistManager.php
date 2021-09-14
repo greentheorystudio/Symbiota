@@ -166,17 +166,9 @@ class ChecklistManager {
                 $taxonTokens = explode(' ',$sciName);
                 if($taxonTokens){
                     if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
-                        if(in_array('x',$taxonTokens, true)) {
-                            $index = array_search('x', $taxonTokens, true);
-                            if(is_string($index) || is_int($index)){
-                                unset($taxonTokens[$index]);
-                            }
-                        }
-                        if(in_array('X',$taxonTokens, true)) {
-                            $index = array_search('X', $taxonTokens, true);
-                            if(is_string($index) || is_int($index)){
-                                unset($taxonTokens[$index]);
-                            }
+                        $index = in_array('x', $taxonTokens, true) ? array_search('x', $taxonTokens, true) : array_search('X', $taxonTokens, true);
+                        if(is_string($index) || is_int($index)){
+                            unset($taxonTokens[$index]);
                         }
                         $newArr = array();
                         foreach($taxonTokens as $v){

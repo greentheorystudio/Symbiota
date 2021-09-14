@@ -27,6 +27,7 @@ $searchSynonyms = array_key_exists('searchsynonyms',$_REQUEST)?(int)$_REQUEST['s
 
 $exportEngine = '';
 $exportExtension = '';
+$locStr = '';
 $exportEngine = 'Word2007';
 $exportExtension = 'docx';
 
@@ -110,7 +111,7 @@ $title = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clManager->get
 $textrun = $section->addTextRun('defaultPara');
 $textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
 $textrun->addTextBreak();
-if($clValue){
+if($clArray){
 	if($clArray['type'] === 'rarespp'){
 		$locality = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['locality']);
 		$textrun->addText(htmlspecialchars('Sensitive species checklist for: '),'topicFont');
@@ -127,29 +128,29 @@ if($clValue){
 		$textrun->addText(htmlspecialchars($publication),'textFont');
 		$textrun->addTextBreak();
 	}
-}
-if(($clArray['locality'] || ($clValue && ($clArray['latcentroid'] || $clArray['abstract'])) || $clArray['notes'])){
-	$locStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['locality']);
-	if($clValue && $clArray['latcentroid']) {
-		$locStr .= ' (' . $clArray['latcentroid'] . ', ' . $clArray['longcentroid'] . ')';
-	}
-	if($locStr){
-		$textrun->addText(htmlspecialchars('Locality: '),'topicFont');
-		$textrun->addText(htmlspecialchars($locStr),'textFont');
-		$textrun->addTextBreak();
-	}
-	if($clValue && $clArray['abstract']){
-		$abstract = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['abstract']));
-		$textrun->addText(htmlspecialchars('Abstract: '),'topicFont');
-		$textrun->addText(htmlspecialchars($abstract),'textFont');
-		$textrun->addTextBreak();
-	}
-	if($clValue && $clArray['notes']){
-		$notes = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['notes']));
-		$textrun->addText(htmlspecialchars('Notes: '),'topicFont');
-		$textrun->addText(htmlspecialchars($notes),'textFont');
-		$textrun->addTextBreak();
-	}
+    if($clArray['locality']){
+        $locStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clArray['locality']);
+    }
+    if($clArray['latcentroid']) {
+        $locStr .= ' (' . $clArray['latcentroid'] . ', ' . $clArray['longcentroid'] . ')';
+    }
+    if($locStr){
+        $textrun->addText(htmlspecialchars('Locality: '),'topicFont');
+        $textrun->addText(htmlspecialchars($locStr),'textFont');
+        $textrun->addTextBreak();
+    }
+    if($clArray['abstract']){
+        $abstract = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['abstract']));
+        $textrun->addText(htmlspecialchars('Abstract: '),'topicFont');
+        $textrun->addText(htmlspecialchars($abstract),'textFont');
+        $textrun->addTextBreak();
+    }
+    if($clValue && $clArray['notes']){
+        $notes = str_replace(array('&quot;', '&apos;'), array('"', "'"), preg_replace('/\s+/', ' ', $clArray['notes']));
+        $textrun->addText(htmlspecialchars('Notes: '),'topicFont');
+        $textrun->addText(htmlspecialchars($notes),'textFont');
+        $textrun->addTextBreak();
+    }
 }
 $textrun = $section->addTextRun('linePara');
 $textrun->addLine(array('weight'=>1,'width'=>670,'height'=>0));
