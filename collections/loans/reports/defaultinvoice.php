@@ -55,11 +55,13 @@ if($loanType === 'exchange'){
 	if(($invoiceArr['totalexunmounted'] || $invoiceArr['totalexmounted']) && (!$invoiceArr['totalgift'] && !$invoiceArr['totalgiftdet'])){
 		$transType = 'ex';
 	}
-	elseif(($invoiceArr['totalexunmounted'] || $invoiceArr['totalexmounted']) && ($invoiceArr['totalgift'] || $invoiceArr['totalgiftdet'])){
-		$transType = 'both';
-	}
-	elseif((!$invoiceArr['totalexunmounted'] || !$invoiceArr['totalexmounted']) && ($invoiceArr['totalgift'] || $invoiceArr['totalgiftdet'])){
-		$transType = 'gift';
+	elseif($invoiceArr['totalgift'] || $invoiceArr['totalgiftdet']){
+        if($invoiceArr['totalexunmounted'] || $invoiceArr['totalexmounted']){
+            $transType = 'both';
+        }
+        elseif(!$invoiceArr['totalexunmounted'] || !$invoiceArr['totalexmounted']){
+            $transType = 'gift';
+        }
 	}
 }
 
@@ -255,7 +257,7 @@ if($export){
 		}
 	}
 	elseif($loanType === 'exchange'){
-		if($transType === 'ex' || $transType === 'both'){
+		if(in_array($transType, array('ex', 'both'))){
 			$section->addTextBreak();
 			$textrun = $section->addTextRun('returnamtdue');
 			if($english){
@@ -573,7 +575,7 @@ else{
 								<?php } ?>
 							<?php }
 							elseif($loanType === 'exchange'){
-								if($transType === 'ex' || $transType === 'both'){
+                                if(in_array($transType, array('ex', 'both'))){
 									if($english){ ?>
 										<div class="exchangeamts">This shipment is an EXCHANGE, consisting of <?php echo ($invoiceArr['totalexunmounted']?$invoiceArr['totalexunmounted'].' unmounted ':''); ?>
 											<?php echo (($invoiceArr['totalexunmounted'] && $invoiceArr['totalexmounted'])?'and ':''); ?><?php echo ($invoiceArr['totalexmounted']?$invoiceArr['totalexmounted'].' mounted ':''); ?>

@@ -72,7 +72,7 @@ if($submitAction){
 		}
 
         let ImgNum = 0;
-        let NewImg = <?php echo json_encode($imageArr, JSON_THROW_ON_ERROR); ?>;
+        let NewImg = <?php echo json_encode($imageArr); ?>;
         const familyAnswer = document.getElementById('family_answer');
         const scinameAnswer = document.getElementById('sciname_answer');
         const delay = 3000;

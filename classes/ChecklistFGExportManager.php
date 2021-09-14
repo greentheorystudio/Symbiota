@@ -245,7 +245,7 @@ class ChecklistFGExportManager {
         $type = pathinfo($url, PATHINFO_EXTENSION);
         $dataType = '';
         $base64 = '';
-        if(strtolower($type) === 'jpg' || strtolower($type) === 'jpeg') {
+        if(in_array(strtolower($type), array('jpg', 'jpeg'))) {
             $dataType = 'jpg';
         }
         if(strtolower($type) === 'png') {
@@ -314,7 +314,7 @@ class ChecklistFGExportManager {
 
     public function setPhotogJson($json): void
     {
-        $photogArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $photogArr = json_decode($json, true);
         if(is_array($photogArr)){
             foreach($photogArr as $str){
                 $parts = explode('---',$str);

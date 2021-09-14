@@ -166,17 +166,9 @@ class ChecklistManager {
                 $taxonTokens = explode(' ',$sciName);
                 if($taxonTokens){
                     if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
-                        if(in_array('x',$taxonTokens, true)) {
-                            $index = array_search('x', $taxonTokens, true);
-                            if(is_string($index) || is_int($index)){
-                                unset($taxonTokens[$index]);
-                            }
-                        }
-                        if(in_array('X',$taxonTokens, true)) {
-                            $index = array_search('X', $taxonTokens, true);
-                            if(is_string($index) || is_int($index)){
-                                unset($taxonTokens[$index]);
-                            }
+                        $index = in_array('x', $taxonTokens, true) ? array_search('x', $taxonTokens, true) : array_search('X', $taxonTokens, true);
+                        if(is_string($index) || is_int($index)){
+                            unset($taxonTokens[$index]);
                         }
                         $newArr = array();
                         foreach($taxonTokens as $v){
@@ -562,13 +554,13 @@ class ChecklistManager {
 				$projName = 'Undefinded Inventory Project';
 			}
             if(array_key_exists($pid,$retArr) && array_key_exists('coords',$retArr[$pid])){
-                $projCoordArr = json_decode($retArr[$pid]['coords'], true, 512, JSON_THROW_ON_ERROR);
+                $projCoordArr = json_decode($retArr[$pid]['coords'], true);
             }
             if($row->LatCentroid && $row->LongCentroid){
                 $coordArr[] = (float)$row->LatCentroid;
                 $coordArr[] = (float)$row->LongCentroid;
                 $projCoordArr[] = $coordArr;
-                $retArr[$pid]['coords'] = json_encode($projCoordArr, JSON_THROW_ON_ERROR);
+                $retArr[$pid]['coords'] = json_encode($projCoordArr);
             }
 			$retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
 			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');

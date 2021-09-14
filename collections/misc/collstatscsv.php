@@ -33,7 +33,7 @@ elseif(strpos($collId, ',') !== false){
     $collIdArr = explode(',',$collId);
 }
 
-if($action === 'Download Family Dist' || $action === 'Download Geo Dist' || $action === 'Download Order Dist'){
+if(in_array($action, array('Download Family Dist', 'Download Geo Dist', 'Download Order Dist'))){
 	$header = array('Names','SpecimenCount','GeorefCount','IDCount','IDGeorefCount','GeorefPercent','IDPercent','IDGeorefPercent');
 	if($action === 'Download Family Dist'){
 		$fileName = 'stats_family.csv';
@@ -103,7 +103,7 @@ if($collIdArr){
                 $outputArr[$i]['georefcnt'] = $collArr['georefcnt'];
                 $outputArr[$i]['OccurrenceImageCount'] = $collArr['OccurrenceImageCount'];
                 if($collArr['dynamicProperties']){
-                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true, 512, JSON_THROW_ON_ERROR);
+                    $dynPropTempArr = json_decode($collArr['dynamicProperties'], true);
                     if(is_array($dynPropTempArr)){
                         $outputArr[$i]['SpecimensCountID'] = $dynPropTempArr['SpecimensCountID'];
                     }
