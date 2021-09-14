@@ -17,10 +17,10 @@ if(!is_numeric($datasetID) && $datasetID !== '--newDataset') {
 
 $stArr= array();
 if($stArrJson){
-    $stArr= json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $stArr= json_decode($stArrJson, true);
 }
 if($occArrJson){
-    $occid= json_decode($occArrJson, true, 512, JSON_THROW_ON_ERROR);
+    $occid= json_decode($occArrJson, true);
 }
 
 if($GLOBALS['SYMB_UID'] && $action){

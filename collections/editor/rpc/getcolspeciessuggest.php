@@ -21,7 +21,7 @@ if($retColArr){
 		$retArr[$vArr['name']]['value'] = $vArr['name'];
 	}
 	ksort($retArr);
-	echo json_encode($retArr, JSON_THROW_ON_ERROR);
+	echo json_encode($retArr);
 }
 else{
 	echo 'null';

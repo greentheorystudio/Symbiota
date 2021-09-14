@@ -25,7 +25,7 @@ if($term){
 
 if($retArr){
 	if($GLOBALS['CHARSET'] === 'UTF-8'){
-		echo json_encode($retArr, JSON_THROW_ON_ERROR);
+		echo json_encode($retArr);
 	}
 	else{
 		echo '{"tid":"'.$retArr['tid'].'","family":"'.$retArr['family'].'","author":"'.str_replace('"',"''",$retArr['author']).'","status":"'.$retArr['status'].'"}';

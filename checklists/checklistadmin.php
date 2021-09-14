@@ -61,7 +61,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 $clArray = $clManager->getMetaData();
 $defaultArr = array();
 if($clArray['defaultsettings']){
-	$defaultArr = json_decode($clArray['defaultsettings'], true, 512, JSON_THROW_ON_ERROR);
+	$defaultArr = json_decode($clArray['defaultsettings'], true);
 }
 
 $voucherProjects = $clManager->getVoucherProjects();
