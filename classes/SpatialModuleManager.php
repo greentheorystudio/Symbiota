@@ -62,7 +62,7 @@ class SpatialModuleManager{
 
     public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $occArr[] = $data['properties']['occid'];
@@ -140,7 +140,7 @@ class SpatialModuleManager{
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         foreach($featureArr as $f => $data){
             $coordArr = $data['geometry']['coordinates'];
@@ -154,7 +154,7 @@ class SpatialModuleManager{
     public function writeKMLFromGeoJSON($json): string{
         $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">';
-        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $jsonArr = json_decode($json, true);
         $featureArr = $jsonArr['features'];
         $returnStr .= '<Document>';
         foreach($featureArr as $f => $data){
@@ -191,15 +191,7 @@ class SpatialModuleManager{
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
@@ -246,7 +238,7 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr, JSON_THROW_ON_ERROR);
+        return json_encode($geomArr);
     }
 
     public function getOccPointDownloadGeoJson($pageRequest,$cntPerPage){
@@ -262,15 +254,7 @@ class SpatialModuleManager{
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
         }
@@ -347,21 +331,13 @@ class SpatialModuleManager{
         $geomArr['start'] = 0;
         $geomArr['features'] = $featuresArr;
 
-        return json_encode($geomArr, JSON_THROW_ON_ERROR);
+        return json_encode($geomArr);
     }
 
     public function setRecordCnt(): void
     {
         $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
             if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
@@ -386,15 +362,7 @@ class SpatialModuleManager{
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
-        if(array_key_exists('polyArr',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')) {
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
+        $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
             if(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS'])){
@@ -567,6 +535,30 @@ class SpatialModuleManager{
             $this->taxaArr['no records']['scinames'][] = 'no records';
         }
         $result->close();
+    }
+
+    protected function setTableJoins(): string
+    {
+        $sqlJoin = '';
+        if(array_key_exists('clid',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+        }
+        if(array_key_exists('assochost',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
+        }
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
+        }
+        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
+            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+            $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
+            $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
+            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
+        }
+        return $sqlJoin;
     }
 
     public function setSearchTermsArr($stArr): void

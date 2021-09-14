@@ -17,7 +17,7 @@ $taxaList = array();
 $paginationStr = '';
 $recordListHtml = '';
 
-$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+$stArr = json_decode($stArrJson, true);
 
 $imgLibManager = new ImageLibraryManager();
 $collManager = new OccurrenceManager();
@@ -30,6 +30,17 @@ if($collManager->validateSearchTermsArr($stArr)){
     }
 
     $collManager->setSearchTermsArr($stArr);
+    $imgLibManager->setSearchTermsArr($stArr);
+    $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
+    $recordListHtml .= '<div style="height:20px;width:100%;display:flex;justify-content:flex-end;align-items:center;">';
+    $recordListHtml .= '<div><a href="../collections/list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
+    $recordListHtml .= '<div><a href="../collections/listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
+    $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
+    if(strlen($stArrJson) <= 1800){
+        $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
+    }
+    $recordListHtml .= '</div>';
+    $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
     if($view === 'thumbnail'){
         $collManager->setTaxon($taxon);
         $sqlWhere = $collManager->getSqlWhere(true);
@@ -68,7 +79,16 @@ if($collManager->validateSearchTermsArr($stArr)){
             }
             $pageBar .= 'Page ' .$pageNumber. ', records ' .$beginNum. '-' .$endNum. ' of ' .$recordCnt. '</div>';
             $paginationStr = $pageBar;
-
+            $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
+            $recordListHtml .= '<div style="height:20px;width:100%;display:flex;justify-content:flex-end;align-items:center;">';
+            $recordListHtml .= '<div><a href="../collections/list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
+            $recordListHtml .= '<div><a href="../collections/listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
+            $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
+            if(strlen($stArrJson) <= 1800){
+                $recordListHtml .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
+            }
+            $recordListHtml .= '</div>';
+            $recordListHtml .= '<div style="clear:both;margin:5px 0 5px 0;"><hr /></div>';
             $recordListHtml .= '<div style="width:100%;">';
             $recordListHtml .= $paginationStr;
             $recordListHtml .= '</div>';
@@ -81,10 +101,7 @@ if($collManager->validateSearchTermsArr($stArr)){
                 $imgUrl = $imgArr['url'];
                 $imgTn = $imgArr['thumbnailurl'];
                 if($imgTn){
-                    $imgUrl = $imgTn;
-                    if($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgTn, '/', 1) === 0){
-                        $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgTn;
-                    }
+                    $imgUrl = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0) ? $GLOBALS['IMAGE_DOMAIN'].$imgTn : $imgTn;
                 }
                 elseif($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgUrl, '/', 1) === 0){
                     $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;

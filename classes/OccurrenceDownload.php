@@ -167,7 +167,7 @@ class OccurrenceDownload{
 	public function getDataEntryActivity($format, $days, $limit){
 		if($format === 'json'){
 			$xml = simplexml_load_string($this->getDataEntryXML($days,$limit));
-			return json_encode($xml, JSON_THROW_ON_ERROR);
+			return json_encode($xml);
 		}
 
 		return $this->getDataEntryXML($days,$limit);

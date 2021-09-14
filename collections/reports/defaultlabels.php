@@ -192,7 +192,8 @@ else{
                                         </span>
                                     </div>
                                     <?php
-                                    if($occArr['decimallatitude'] || $occArr['verbatimcoordinates']){
+                                    $coords = ($occArr['decimallatitude'] || $occArr['verbatimcoordinates']);
+                                    if($coords){
                                         ?>
                                         <div class="loc2div">
                                             <?php
@@ -306,32 +307,27 @@ else{
                                         ?>
                                     </div>
                                     <?php
-                                    if($useBarcode && $occArr['catalognumber']){
-                                        ?>
-                                        <div class="cnbarcode" style="clear:both;padding-top:15px;">
-                                            <img src="getBarcode.php?bcheight=40&bctext=<?php echo $occArr['catalognumber']; ?>" />
-                                        </div>
-                                        <?php
-                                        if($occArr['othercatalognumbers']){
+                                    $catNum = $occArr['catalognumber'] ?: '';
+                                    $otherCatNum = $occArr['othercatalognumbers'] ?: '';
+                                    if($catNum || $otherCatNum){
+                                        if($useBarcode){
                                             ?>
-                                            <div class="othercatalognumbers" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['othercatalognumbers']; ?>
+                                            <div class="cnbarcode" style="clear:both;padding-top:15px;">
+                                                <img src="getBarcode.php?bcheight=40&bctext=<?php echo $catNum; ?>" />
                                             </div>
                                             <?php
                                         }
-                                    }
-                                    elseif($showcatalognumbers){
-                                        if($occArr['catalognumber']){
+                                        elseif($showcatalognumbers && $occArr['catalognumber']){
                                             ?>
                                             <div class="catalognumber" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['catalognumber']; ?>
+                                                <?php echo $catNum; ?>
                                             </div>
                                             <?php
                                         }
                                         if($occArr['othercatalognumbers']){
                                             ?>
                                             <div class="othercatalognumbers" style="clear:both;text-align:center;">
-                                                <?php echo $occArr['othercatalognumbers']; ?>
+                                                <?php echo $otherCatNum; ?>
                                             </div>
                                             <?php
                                         }

@@ -313,7 +313,7 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $objArr = $this->searchTermsArr['circleArr'];
                 if(!is_array($objArr)){
-                    $objArr = json_decode($objArr, true, 512, JSON_THROW_ON_ERROR);
+                    $objArr = json_decode($objArr, true);
                 }
                 if($objArr){
                     foreach($objArr as $obj => $oArr){
@@ -329,7 +329,7 @@ class OccurrenceManager{
                 $sqlFragArr = array();
                 $geomArr = $this->searchTermsArr['polyArr'];
                 if(!is_array($geomArr)){
-                    $geomArr = json_decode($geomArr, true, 512, JSON_THROW_ON_ERROR);
+                    $geomArr = json_decode($geomArr, true);
                 }
                 if($geomArr){
                     foreach($geomArr as $geom){
@@ -542,14 +542,14 @@ class OccurrenceManager{
                 $this->localSearchArr[] = $voucherManager->getQueryVariableStr();
             }
         }
-        if(array_key_exists('phuid',$this->searchTermsArr)&&$this->searchTermsArr['phuid']){
+        if(array_key_exists('phuid',$this->searchTermsArr) && $this->searchTermsArr['phuid']){
             $sqlWhere .= 'AND (i.photographeruid IN(' .Sanitizer::cleanInStr($this->searchTermsArr['phuid']). ')) ';
         }
-        if(array_key_exists('tags',$this->searchTermsArr)&&$this->searchTermsArr['tags']){
-            $sqlWhere .= 'AND (it.keyvalue = "'.Sanitizer::cleanInStr($this->searchTermsArr['tags']).'") ';
+        if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
+            $sqlWhere .= 'AND (it.keyvalue = "'.Sanitizer::cleanInStr($this->searchTermsArr['imagetag']).'") ';
         }
-        if(array_key_exists('keywords',$this->searchTermsArr)&&$this->searchTermsArr['keywords']){
-            $keywordArr = explode(';',$this->searchTermsArr['keywords']);
+        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
+            $keywordArr = explode(';',$this->searchTermsArr['imagekeyword']);
             $tempArr = array();
             foreach($keywordArr as $value){
                 $tempArr[] = "(ik.keyword LIKE '%".trim(Sanitizer::cleanInStr($value))."%')";
@@ -626,16 +626,22 @@ class OccurrenceManager{
     {
         $sqlJoin = '';
         if(array_key_exists('clid',$this->searchTermsArr)) {
-            $sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid ';
+            $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
         if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sqlJoin .= 'INNER JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
+            $sqlJoin .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
-        if(array_key_exists('polyArr',$this->searchTermsArr) || array_key_exists('circleArr',$this->searchTermsArr) || array_key_exists('pointlat',$this->searchTermsArr) || array_key_exists('upperlat',$this->searchTermsArr)) {
+        if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
         if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-            $sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
+            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
+        }
+        if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
+            $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
+            $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
+            $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
+            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
         }
         return $sqlJoin;
     }

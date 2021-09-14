@@ -12,7 +12,7 @@ $retArr = $dupManager->getDupeLocality($recordedBy, $eventDate, $locality);
 
 if($retArr){
 	if($GLOBALS['CHARSET'] === 'UTF-8'){
-		echo json_encode($retArr, JSON_THROW_ON_ERROR);
+		echo json_encode($retArr);
 	}
 	else{
 		$str = '[';

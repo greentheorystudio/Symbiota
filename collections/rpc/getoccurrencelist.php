@@ -9,7 +9,7 @@ $targetTid = (int)$_REQUEST['targettid'];
 $pageNumber = (int)$_REQUEST['page'];
 $cntPerPage = 100;
 
-$stArr = json_decode($stArrJson, true, 512, JSON_THROW_ON_ERROR);
+$stArr = json_decode($stArrJson, true);
 $copyURL = '';
 
 $collManager = null;
@@ -70,16 +70,19 @@ $htmlStr .= '<div>';
 $htmlStr .= '<button class="icon-button" title="Download" onclick="processDownloadRequest(false,'.$collManager->getRecordCnt().');"><i style="width:15px;height:15px;" class="fas fa-download"></i></button>';
 $htmlStr .= '</div>';
 $htmlStr .= '</div>';
+
 $htmlStr .= '<div style="height:20px;width:400px;display:flex;justify-content:flex-end;align-items:center;">';
 if($GLOBALS['SYMB_UID']){
     $htmlStr .= '<div><button class="icon-button" title="Dataset Management" onclick="displayDatasetTools();"><i style="width:15px;height:15px;" class="fas fa-layer-group"></i></button></div>';
 }
 $htmlStr .= '<div><a href="listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
 $htmlStr .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
+$htmlStr .= '<div><a href="../imagelib/search.php?queryId='.$queryId.'"><button class="icon-button" title="Image Search"><i style="width:15px;height:15px;" class="fas fa-camera"></i></button></a></div>';
 if(strlen($stArrJson) <= 1800){
     $htmlStr .= '<div><button class="icon-button" title="Copy URL to Clipboard" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';
 }
 $htmlStr .= '</div>';
+
 $htmlStr .= '</div>';
 
 $htmlStr .= '<div style="clear:both;"></div>';
@@ -195,6 +198,11 @@ if($occurArr){
             $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
             $htmlStr .= '<img src="'.$fieldArr['img'].'" style="height:70px" /></a></div>';
         }
+        elseif(isset($fieldArr['hasimage'])){
+            $htmlStr .= '<div style="float:right;margin:5px 25px;">';
+            $htmlStr .= '<a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">';
+            $htmlStr .= '<i style="width:20px;height:20px;" class="fas fa-camera"></i></a></div>';
+        }
         $htmlStr .= '<div style="margin:4px;">';
         $htmlStr .= '<a target="_blank" href="../taxa/index.php?taxon='.$fieldArr['sciname'].'">';
         $htmlStr .= '<span style="font-style:italic;">'.$fieldArr['sciname'].'</span></a> '.$fieldArr['author'].'</div>';
@@ -232,7 +240,7 @@ if($occurArr){
         $htmlStr .= '<b><a href="#" onclick="return openIndPU('.$occid.','.($targetClid?: '0').');">Full Record Details</a></b>';
         $htmlStr .= '</div></td></tr><tr><td colspan="2"><hr/></td></tr>';
     }
-    $specOccJson = json_encode($specOccArr, JSON_THROW_ON_ERROR);
+    $specOccJson = json_encode($specOccArr);
     $htmlStr .= "<input id='specoccjson' type='hidden' value='".$specOccJson."' />";
     $htmlStr .= '</table>';
     $htmlStr .= '</form>';
