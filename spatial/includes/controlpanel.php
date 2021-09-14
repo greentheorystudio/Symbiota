@@ -88,13 +88,7 @@
         <div style="clear:both;"></div>
         <?php
         if(in_array('uncertainty', $inputWindowModeTools, true) || in_array('radius', $inputWindowModeTools, true)){
-            $labelText = '';
-            if(in_array('uncertainty', $inputWindowModeTools, true)){
-                $labelText = 'Coordinate uncertainty';
-            }
-            elseif(in_array('radius', $inputWindowModeTools, true)){
-                $labelText = 'Radius';
-            }
+            $labelText = in_array('uncertainty', $inputWindowModeTools, true) ? 'Coordinate uncertainty' : 'Radius';
             ?>
             <div style="margin-top:8px;clear:both;color:white;">
                 <span class="maptext"><?php echo $labelText; ?> in meters: </span>

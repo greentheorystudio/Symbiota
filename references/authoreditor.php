@@ -218,10 +218,7 @@ if(!$addAuth){
 			</div>
 			<?php 
 		}
-		else if($GLOBALS['SYMB_UID']) {
-            echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
-        }
-        else {
+		else {
             echo 'Please <a href="../profile/index.php?refurl=../references/authoreditor.php">login</a>';
         }
 		?>
