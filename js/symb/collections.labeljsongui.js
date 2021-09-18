@@ -436,16 +436,16 @@ function translateJson(source) {
     for (i = 0; i < lineCount - 1; i++) {
         addLine();
     }
-    console.log(srcLines);
     let lbBlocks = labelMid.querySelectorAll('.field-block');
     srcLines.forEach((srcLine, i) => {
+        console.log(i);
         let lbBlock = lbBlocks[i];
-        srcLine.delimiter !== undefined
+        /*srcLine.delimiter !== undefined
             ? (lbBlock.dataset.delimiter = srcLine.delimiter)
             : '';
         srcLine.className !== undefined
             ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
-            : '';
+            : '';*/
         let fieldsArr = srcLine.fields;
         if (fieldsArr !== undefined) {
             let propsArr = [];
@@ -459,19 +459,16 @@ function translateJson(source) {
             preview.innerText = 'Error';
         }
         let createdLis = lbBlocks[i].querySelectorAll('.draggable');
-        console.log(createdLis);
         createdLis.forEach((li, j) => {
             let srcFieldsArr = srcLines[i].fields;
             let srcPropsArr = srcFieldsArr[j];
-            console.log(srcPropsArr);
             let fieldId = srcPropsArr.field;
-            /*let prefix = srcPropsArr.prefix;
-            let suffix = srcPropsArr.suffix;
+            let prefix = srcPropsArr.fieldPrefix;
+            let suffix = srcPropsArr.fieldSuffix;
             if (li.id === fieldId) {
-                classes !== undefined ? (li.className = 'draggable ' + classes) : '';
-                prefix !== undefined ? (li.dataset.prefix = prefix) : '';
-                suffix !== undefined ? (li.dataset.suffix = suffix) : '';
-            }*/
+                prefix !== undefined ? (li.dataset.fieldPrefix = prefix) : '';
+                suffix !== undefined ? (li.dataset.fieldSuffix = suffix) : '';
+            }
         });
     });
     refreshAvailFields();

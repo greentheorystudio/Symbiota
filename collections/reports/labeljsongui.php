@@ -77,25 +77,25 @@ header('X-Frame-Options: DENY');
                 </div>
             </div>
             <div id="field-block-options" style="display:none;">
-                <h4>Line Options</h4>
+                <h4>Block Options</h4>
                 <div>
                     <label for="line-height">Line Height (px):</label>
-                    <input type="text" id="line-height" class="control" data-group="field-block" disabled>
+                    <input type="text" id="blockLineHeight" class="control" data-group="field-block" disabled>
                 </div>
                 <div>
                     <label for="space-before">Space Before (px):</label>
-                    <input type="text" id="space-before" class="control" data-group="field-block" disabled>
+                    <input type="text" id="blockSpaceBefore" class="control" data-group="field-block" disabled>
                 </div>
                 <div>
                     <label for="space-after">Space After (px):</label>
-                    <input type="text" id="space-after" class="control" data-group="field-block" disabled>
+                    <input type="text" id="blockSpaceAfter" class="control" data-group="field-block" disabled>
                 </div>
             </div>
         </div>
     </div>
 </main>
 </body>
-<script src="../../js/symb/collections.labeljsongui.js?ver=4"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=10"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
 
