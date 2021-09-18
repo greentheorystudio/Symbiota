@@ -117,7 +117,7 @@ if($GLOBALS['SYMB_UID']){
     </head>
 	<body style="background-color:#ffffff;">
 		<?php
-		echo '<div class="body'.(isset($targetLabelFormatArr['pageSize'])?' '.$targetLabelFormatArr['pageSize']:'').'">'  ;
+		echo '<div class="body">'  ;
 		if($targetLabelFormatArr && $isEditor){
             $labelArr = $labelManager->getLabelArray($_POST['occid'], $includeSpeciesAuthor);
 			$labelCnt = 0;

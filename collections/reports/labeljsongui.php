@@ -52,8 +52,8 @@ header('X-Frame-Options: DENY');
             <h4>Label preview</h4>
             <p style="font-size:0.7em;line-height:1.4em">content automatically displayed below</p>
             <div id="preview-label"></div>
-            <button class="btn" onclick="saveJson()">Save format & Close</button>
-            <button class="btn" onclick="cancelWindow()">Cancel & Close</button>
+            <button class="btn" onclick="saveJson()">Set JSON</button>
+            <button class="btn" onclick="cancelWindow()">Cancel</button>
             <textarea id="dummy" style="display: none; height: 300px; width: 100%;" data-format-id=""></textarea>
         </div>
     </div>
@@ -64,38 +64,38 @@ header('X-Frame-Options: DENY');
                 <div>
                     <div>
                         <label for="prefix">Prefix:</label>
-                        <input type="text" name="prefix" id="prefix" class="control" data-group="field" disabled>
+                        <input type="text" id="fieldPrefix" class="control" data-group="field" disabled>
                     </div>
                     <div>
                         <label for="suffix">Suffix:</label>
-                        <input type="text" name="suffix" id="suffix" class="control" data-group="field" disabled>
+                        <input type="text" id="fieldSuffix" class="control" data-group="field" disabled>
                     </div>
                     <div>
                         <label for="font-size">Font Size (px):</label>
-                        <input type="text" name="font-size" id="font-size" class="control" data-group="field" disabled>
+                        <input type="text" id="fieldFontSize" class="control" data-group="field" disabled>
                     </div>
                 </div>
             </div>
             <div id="field-block-options" style="display:none;">
                 <h4>Line Options</h4>
                 <div>
-                    <label for="line-height">Line Height (eg. 1.0, 1.5, etc.):</label>
-                    <input type="text" name="line-height" id="line-height" class="control" data-group="field-block" disabled>
+                    <label for="line-height">Line Height (px):</label>
+                    <input type="text" id="line-height" class="control" data-group="field-block" disabled>
                 </div>
                 <div>
                     <label for="space-before">Space Before (px):</label>
-                    <input type="text" name="space-before" id="space-before" class="control" data-group="field-block" disabled>
+                    <input type="text" id="space-before" class="control" data-group="field-block" disabled>
                 </div>
                 <div>
                     <label for="space-after">Space After (px):</label>
-                    <input type="text" name="space-after" id="space-after" class="control" data-group="field-block" disabled>
+                    <input type="text" id="space-after" class="control" data-group="field-block" disabled>
                 </div>
             </div>
         </div>
     </div>
 </main>
 </body>
-<script src="../../js/symb/collections.labeljsongui.js?ver=3"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=4"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
 
@@ -108,7 +108,6 @@ header('X-Frame-Options: DENY');
         let slct = document.createElement('select');
         slct.dataset.group = dropObj.group;
         slct.classList.add('control');
-        slct.name = dropObj.name;
         slct.id = dropObj.id;
         slct.disabled = true;
         dropObj.options.forEach((choice) => {
@@ -200,7 +199,7 @@ header('X-Frame-Options: DENY');
                 e.target.classList.add('selected');
             }
             let selectedItems = build.querySelectorAll('.selected');
-            if (selectedItems.length == 1) {
+            if(selectedItems.length == 1){
                 let itemType = '';
                 let item = build.querySelector('.selected');
                 if (item.matches('.draggable')) {

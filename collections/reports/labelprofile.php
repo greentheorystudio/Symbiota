@@ -179,12 +179,11 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 				if($isEditor === 3 || $group === 'u' || ($group === 'c' && $isEditor > 1)) {
                     echo '<div style="float:right;" title="Create a new label profile"><i style="height:15px;width:15px;color:green;" class="fas fa-plus" onclick="$(\'#edit-' . $group . '\').toggle()"></i></div>';
                 }
-				$index = '';
+				$index = null;
 				$formatArr = array();
 				do{
 					$midText = '';
 					$labelType = 2;
-					$pageSize = '';
 					if($formatArr){
 						if($index) {
                             echo '<hr/>';
@@ -201,10 +200,10 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 								?>
 							</div>
 							<?php
-							if(isset($formatArr['labelHeader']['midText'])) {
-                                $midText = $formatArr['labelHeader']['midText'];
+							if(isset($formatArr['headerMidText'])) {
+                                $midText = $formatArr['headerMidText'];
                             }
-							$headerStr = $formatArr['labelHeader']['prefix'].' ';
+							$headerStr = $formatArr['headerPrefix'].' ';
 							if((int)$midText === 1) {
                                 $headerStr .= '[COUNTRY];';
                             }
@@ -217,7 +216,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 							elseif((int)$midText === 4) {
                                 $headerStr .= '[FAMILY]';
                             }
-							$headerStr .= ' '.$formatArr['labelHeader']['suffix'];
+							$headerStr .= ' '.$formatArr['headerSuffix'];
 							if(trim($headerStr)){
 								?>
 								<div class="field-block">
@@ -226,11 +225,11 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 								</div>
 								<?php
 							}
-							if($formatArr['labelFooter']['textValue']){
+							if($formatArr['footerText']){
 								?>
 								<div class="field-block">
 									<span class="label">Footer: </span>
-									<span class="field-value"><?php echo htmlspecialchars($formatArr['labelFooter']['textValue']); ?></span>
+									<span class="field-value"><?php echo htmlspecialchars($formatArr['footerText']); ?></span>
 								</div>
 								<?php
 							}
@@ -243,15 +242,6 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 								</div>
 								<?php
 							}
-							if($formatArr['pageSize']){
-								$pageSize = $formatArr['pageSize'];
-								?>
-								<div class="field-block">
-									<span class="label">Page size: </span>
-									<span class="field-value"><?php echo $pageSize; ?></span>
-								</div>
-								<?php
-							}
 							?>
 						</div>
 						<?php
@@ -261,70 +251,191 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 						<div id="edit-<?php echo $group.(is_numeric($index)?'-'.$index:''); ?>" style="display:none">
 							<div class="field-block">
 								<span class="label">Title:</span>
-								<span class="field-elem"><input name="title" type="text" value="<?php echo ($formatArr?htmlspecialchars($formatArr['title']):''); ?>" required /> </span>
+								<span class="field-elem"><input id="title" type="text" value="<?php echo ($formatArr?$formatArr['title']:''); ?>" required /> </span>
 								<?php
 								if($formatArr) {
                                     echo '<span title="Edit label profile"><i style="width:15px;height:15px;" class="far fa-edit"  onclick="toggleEditDiv(\'' . $group . '-' . $index . '\')"></i></span>';
                                 }
 								?>
 							</div>
-							<fieldset class="fieldset-block">
+                            <fieldset class="fieldset-block">
 								<legend>Label Header</legend>
 								<div class="field-block">
 									<span class="label">Prefix:</span>
 									<span class="field-elem">
-										<input name="hPrefix" type="text" value="<?php echo (isset($formatArr['labelHeader']['prefix'])?htmlspecialchars($formatArr['labelHeader']['prefix']):''); ?>" />
+										<input id="headerPrefix" type="text" value="<?php echo ($formatArr['headerPrefix'] ?? ''); ?>" />
 									</span>
 								</div>
 								<div class="field-block">
 									<div class="field-elem">
 										<span class="field-inline">
-											<input name="hMidText" type="radio" value="1" <?php echo ((int)$midText === 1?'checked':''); ?> />
+											<input name="headerMidText" type="radio" value="1" <?php echo ((int)$midText === 1?'checked':''); ?> />
 											<span class="label-inline">Country</span>
 										</span>
 										<span class="field-inline">
-											<input name="hMidText" type="radio" value="2" <?php echo ((int)$midText === 2?'checked':''); ?> />
+											<input name="headerMidText" type="radio" value="2" <?php echo ((int)$midText === 2?'checked':''); ?> />
 											<span class="label-inline">State</span>
 										</span>
 										<span class="field-inline">
-											<input name="hMidText" type="radio" value="3" <?php echo ((int)$midText === 3?'checked':''); ?> />
+											<input name="headerMidText" type="radio" value="3" <?php echo ((int)$midText === 3?'checked':''); ?> />
 											<span class="label-inline">County</span>
 										</span>
 										<span class="field-inline">
-											<input name="hMidText" type="radio" value="4" <?php echo ((int)$midText === 4?'checked':''); ?> />
+											<input name="headerMidText" type="radio" value="4" <?php echo ((int)$midText === 4?'checked':''); ?> />
 											<span class="label-inline">Family</span>
 										</span>
 										<span class="field-inline">
-											<input name="hMidText" type="radio" value="0" <?php echo (!$midText?'checked':''); ?> />
+											<input name="headerMidText" type="radio" value="0" <?php echo (!$midText?'checked':''); ?> />
 											<span class="label-inline">Blank</span>
 										</span>
 									</div>
 								</div>
 								<div class="field-block">
 									<span class="label">Suffix:</span>
-									<span class="field-elem"><input name="hSuffix" type="text" value="<?php echo ($formatArr?htmlspecialchars($formatArr['labelHeader']['suffix']):''); ?>" /></span>
+									<span class="field-elem"><input id="headerSuffix" type="text" value="<?php echo ($formatArr['headerSuffix'] ?? ''); ?>" /></span>
 								</div>
+                                <div class="field-block">
+                                    <div class="field-elem">
+										<span class="field-inline">
+											<input id="headerBold" type="checkbox" value="1" <?php echo (isset($formatArr['headerBold']) && $formatArr['headerBold']?'checked':''); ?> />
+									        <span class="label-inline">Bold</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="headerItalic" type="checkbox" value="1" <?php echo (isset($formatArr['headerItalic']) && $formatArr['headerItalic']?'checked':''); ?> />
+									        <span class="label-inline">Italic</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="headerUnderline" type="checkbox" value="1" <?php echo (isset($formatArr['headerUnderline']) && $formatArr['headerUnderline']?'checked':''); ?> />
+									        <span class="label-inline">Underline</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="headerUppercase" type="checkbox" value="1" <?php echo (isset($formatArr['headerUppercase']) && $formatArr['headerUppercase']?'checked':''); ?> />
+									        <span class="label-inline">Uppercase</span>
+										</span>
+                                    </div>
+                                </div>
+                                <div class="field-block">
+                                    <div class="field-elem">
+										<span class="field-inline">
+											<span class="label-inline">Text Alignment:</span>
+                                            <select id="headerTextAlign">
+                                                <option value="left" <?php echo (isset($formatArr['headerTextAlign']) && $formatArr['headerTextAlign'] === 'left'?'selected':''); ?>>Left</option>
+                                                <option value="center" <?php echo (isset($formatArr['headerTextAlign']) && $formatArr['headerTextAlign'] === 'center'?'selected':''); ?>>Center</option>
+                                                <option value="right" <?php echo (isset($formatArr['headerTextAlign']) && $formatArr['headerTextAlign'] === 'right'?'selected':''); ?>>Right</option>
+                                            </select>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label">Margin Below (px):</span>
+									        <span class="field-elem"><input id="headerBottomMargin" type="text" style="width:40px;" value="<?php echo ($formatArr['headerBottomMargin'] ?? ''); ?>" /></span>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label-inline">Font:</span>
+                                            <select id="headerFont">
+                                                <option value="Arial" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Arial'?'selected':''); ?>>Arial (sans-serif)</option>
+                                                <option value="Brush Script MT" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Brush Script MT'?'selected':''); ?>>Brush Script MT (cursive)</option>
+                                                <option value="Courier New" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Courier New'?'selected':''); ?>>Courier New (monospace)</option>
+                                                <option value="Garamond" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Garamond'?'selected':''); ?>>Garamond (serif)</option>
+                                                <option value="Georgia" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Georgia'?'selected':''); ?>>Georgia (serif)</option>
+                                                <option value="Helvetica" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Helvetica'?'selected':''); ?>>Helvetica (sans-serif)</option>
+                                                <option value="Tahoma" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Tahoma'?'selected':''); ?>>Tahoma (sans-serif)</option>
+                                                <option value="Times New Roman" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Times New Roman'?'selected':''); ?>>Times New Roman (serif)</option>
+                                                <option value="Trebuchet" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Trebuchet'?'selected':''); ?>>Trebuchet (sans-serif)</option>
+                                                <option value="Verdana" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Verdana'?'selected':''); ?>>Verdana (sans-serif)</option>
+                                            </select>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label">Font Size (px):</span>
+									        <span class="field-elem"><input id="headerFontSize" type="text" style="width:40px;" value="<?php echo ($formatArr['headerFontSize'] ?? ''); ?>" /></span>
+										</span>
+                                    </div>
+                                </div>
 							</fieldset>
-							<fieldset  class="fieldset-block">
+							<fieldset class="fieldset-block">
 								<legend>Label Footer</legend>
 								<div class="field-block">
 									<span class="label-inline">Footer text:</span>
-									<input name="fTextValue" type="text" value="<?php echo (isset($formatArr['labelFooter']['textValue'])?htmlspecialchars($formatArr['labelFooter']['textValue']):''); ?>" />
+									<input id="footerText" type="text" value="<?php echo ($formatArr['footerText'] ?? ''); ?>" />
 								</div>
-								<div class="field-block">
-									<span class="label-inline">Class names:</span>
-									<input name="fClassName" type="text" value="<?php echo ($formatArr['labelFooter']['className'] ?? ''); ?>" />
-								</div>
-								<div class="field-block">
-									<span class="label-inline">Style:</span>
-									<input name="fStyle" type="text" value="<?php echo ($formatArr['labelFooter']['style'] ?? ''); ?>" />
-								</div>
+                                <div class="field-block">
+                                    <div class="field-elem">
+										<span class="field-inline">
+											<input id="footerBold" type="checkbox" value="1" <?php echo (isset($formatArr['footerBold'])&&$formatArr['footerBold']?'checked':''); ?> />
+									        <span class="label-inline">Bold</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="footerItalic" type="checkbox" value="1" <?php echo (isset($formatArr['footerItalic'])&&$formatArr['footerItalic']?'checked':''); ?> />
+									        <span class="label-inline">Italic</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="footerUnderline" type="checkbox" value="1" <?php echo (isset($formatArr['footerUnderline'])&&$formatArr['footerUnderline']?'checked':''); ?> />
+									        <span class="label-inline">Underline</span>
+										</span>
+                                        <span class="field-inline">
+											<input id="footerUppercase" type="checkbox" value="1" <?php echo (isset($formatArr['footerUppercase'])&&$formatArr['footerUppercase']?'checked':''); ?> />
+									        <span class="label-inline">Uppercase</span>
+										</span>
+                                    </div>
+                                </div>
+                                <div class="field-block">
+                                    <div class="field-elem">
+										<span class="field-inline">
+											<span class="label-inline">Text Alignment:</span>
+                                            <select id="footerTextAlign">
+                                                <option value="left" <?php echo (isset($formatArr['footerTextAlign']) && $formatArr['footerTextAlign'] === 'left'?'selected':''); ?>>Left</option>
+                                                <option value="center" <?php echo (isset($formatArr['footerTextAlign']) && $formatArr['footerTextAlign'] === 'center'?'selected':''); ?>>Center</option>
+                                                <option value="right" <?php echo (isset($formatArr['footerTextAlign']) && $formatArr['footerTextAlign'] === 'right'?'selected':''); ?>>Right</option>
+                                            </select>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label">Margin Above (px):</span>
+									        <span class="field-elem"><input id="footerTopMargin" type="text" style="width:40px;" value="<?php echo ($formatArr['footerTopMargin'] ?? ''); ?>" /></span>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label-inline">Font:</span>
+                                            <select id="footerFont">
+                                                <option value="Arial" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Arial'?'selected':''); ?>>Arial (sans-serif)</option>
+                                                <option value="Brush Script MT" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Brush Script MT'?'selected':''); ?>>Brush Script MT (cursive)</option>
+                                                <option value="Courier New" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Courier New'?'selected':''); ?>>Courier New (monospace)</option>
+                                                <option value="Garamond" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Garamond'?'selected':''); ?>>Garamond (serif)</option>
+                                                <option value="Georgia" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Georgia'?'selected':''); ?>>Georgia (serif)</option>
+                                                <option value="Helvetica" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Helvetica'?'selected':''); ?>>Helvetica (sans-serif)</option>
+                                                <option value="Tahoma" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Tahoma'?'selected':''); ?>>Tahoma (sans-serif)</option>
+                                                <option value="Times New Roman" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Times New Roman'?'selected':''); ?>>Times New Roman (serif)</option>
+                                                <option value="Trebuchet" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Trebuchet'?'selected':''); ?>>Trebuchet (sans-serif)</option>
+                                                <option value="Verdana" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Verdana'?'selected':''); ?>>Verdana (sans-serif)</option>
+                                            </select>
+										</span>
+                                        <span class="field-inline" style="margin-left:5px;">
+											<span class="label">Font Size (px):</span>
+									        <span class="field-elem"><input id="footerFontSize" type="text" style="width:40px;" value="<?php echo ($formatArr['footerFontSize'] ?? ''); ?>" /></span>
+										</span>
+                                    </div>
+                                </div>
 							</fieldset>
 							<fieldset class="fieldset-block">
-								<legend>Options</legend>
-								<div class="field-block">
+								<legend>Label Settings</legend>
+                                <div class="field-block">
+                                    <span class="label-inline">Default Font:</span>
+                                    <select id="defaultFont">
+                                        <option value="Arial" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Arial'?'selected':''); ?>>Arial (sans-serif)</option>
+                                        <option value="Brush Script MT" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Brush Script MT'?'selected':''); ?>>Brush Script MT (cursive)</option>
+                                        <option value="Courier New" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Courier New'?'selected':''); ?>>Courier New (monospace)</option>
+                                        <option value="Garamond" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Garamond'?'selected':''); ?>>Garamond (serif)</option>
+                                        <option value="Georgia" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Georgia'?'selected':''); ?>>Georgia (serif)</option>
+                                        <option value="Helvetica" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Helvetica'?'selected':''); ?>>Helvetica (sans-serif)</option>
+                                        <option value="Tahoma" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Tahoma'?'selected':''); ?>>Tahoma (sans-serif)</option>
+                                        <option value="Times New Roman" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Times New Roman'?'selected':''); ?>>Times New Roman (serif)</option>
+                                        <option value="Trebuchet" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Trebuchet'?'selected':''); ?>>Trebuchet (sans-serif)</option>
+                                        <option value="Verdana" <?php echo (isset($formatArr['defaultFont']) && $formatArr['defaultFont'] === 'Verdana'?'selected':''); ?>>Verdana (sans-serif)</option>
+                                    </select>
+                                </div>
+                                <div class="field-block">
+                                    <span class="label">Default Font Size (px):</span>
+                                    <span class="field-elem"><input id="defaultFontSize" type="text" style="width:40px;" value="<?php echo ($formatArr['defaultFontSize'] ?? ''); ?>" /></span>
+                                </div>
+                                <div class="field-block">
 									<span class="label-inline">Label type:</span>
-									<select name="labelType">
+									<select id="labelType">
 										<option value="1" <?php echo ((int)$labelType === 1?'selected':''); ?>>1 columns per page</option>
 										<option value="2" <?php echo ((int)$labelType === 2?'selected':''); ?>>2 columns per page</option>
 										<option value="3" <?php echo ((int)$labelType === 3?'selected':''); ?>>3 columns per page</option>
@@ -336,20 +447,11 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 									</select>
 								</div>
 								<div class="field-block">
-									<span class="label-inline">Page size:</span>
-									<select name="pageSize">
-										<option value="letter">Letter</option>
-										<option value="a4" <?php echo ($pageSize === 'a4'?'SELECTED':''); ?>>A4</option>
-										<option value="legal" <?php echo ($pageSize === 'legal'?'SELECTED':''); ?>>Legal</option>
-										<option value="tabloid" <?php echo ($pageSize === 'tabloid'?'SELECTED':''); ?>>Ledger/Tabloid</option>
-									</select>
-								</div>
-								<div class="field-block">
-									<input name="displaySpeciesAuthor" type="checkbox" value="1" <?php echo (isset($formatArr['displaySpeciesAuthor'])&&$formatArr['displaySpeciesAuthor']?'checked':''); ?> />
+									<input id="displaySpeciesAuthor" type="checkbox" value="1" <?php echo (isset($formatArr['displaySpeciesAuthor']) && $formatArr['displaySpeciesAuthor']?'checked':''); ?> />
 									<span class="label-inline">Display species for infraspecific taxa</span>
 								</div>
 								<div class="field-block">
-									<input name="displayBarcode" type="checkbox" value=1" <?php echo (isset($formatArr['displayBarcode'])&&$formatArr['displayBarcode']?'checked':''); ?> />
+									<input id="displayBarcode" type="checkbox" value=1" <?php echo (isset($formatArr['displayBarcode']) && $formatArr['displayBarcode']?'checked':''); ?> />
 									<span class="label-inline">Display barcode</span>
 								</div>
 							</fieldset>
@@ -384,7 +486,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                             ?>
 						</div>
 						<?php
-						if(is_numeric($index)){
+						if(is_numeric($index) && $group !== 'g'){
 							?>
 							<div style="margin:5px;">
 								<span style="margin-left:15px"><button name="submitaction" type="submit" value="cloneProfile" onclick="return verifyClone(this.form)">Clone Profile</button></span> to

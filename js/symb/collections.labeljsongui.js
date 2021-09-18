@@ -2,7 +2,7 @@ const fieldProps = [
     {
         block: 'labelBlock',
         name: 'Occurrence ID',
-        id: 'occid',
+        id: 'occurrenceid',
         group: 'specimen',
     },
     {
@@ -26,7 +26,7 @@ const fieldProps = [
     {
         block: 'labelBlock',
         name: 'Scientific Name',
-        id: 'scientificname',
+        id: 'sciname',
         group: 'taxon',
     },
     {
@@ -358,7 +358,7 @@ const fieldProps = [
 const formatsArr = [
     {
         group: 'field',
-        func: 'font-bold',
+        func: 'bold',
         icon: 'format_bold',
         title: 'Bold'
     },
@@ -371,13 +371,13 @@ const formatsArr = [
     {
         group: 'field',
         func: 'underline',
-        icon: 'format_underlined',
+        icon: 'format_underline',
         title: 'Underline',
     },
     {
         group: 'field',
         func: 'uppercase',
-        icon: 'format_size',
+        icon: 'format_uppercase',
         title: 'Uppercase',
     }
 ];
@@ -388,17 +388,16 @@ const dropdownsArr = [
         name: 'font-family',
         group: 'field',
         options: [
-            {value: '', text: 'Font Family'},
-            {value: 'font-family-arial', text: 'Arial (sans-serif)'},
-            {value: 'font-family-verdana', text: 'Verdana (sans-serif)'},
-            {value: 'font-family-helvetica', text: 'Helvetica (sans-serif)'},
-            {value: 'font-family-tahoma', text: 'Tahoma (sans-serif)'},
-            {value: 'font-family-trebuchet', text: 'Trebuchet (sans-serif)'},
-            {value: 'font-family-times', text: 'Times New Roman (serif)'},
-            {value: 'font-family-georgia', text: 'Georgia (serif)'},
-            {value: 'font-family-garamond', text: 'Garamond (serif)'},
-            {value: 'font-family-courier', text: 'Courier New (monospace)'},
-            {value: 'font-family-brush', text: 'Brush Script MT (cursive)'},
+            {value: 'Arial', text: 'Arial (sans-serif)'},
+            {value: 'Brush Script MT', text: 'Brush Script MT (cursive)'},
+            {value: 'Courier New', text: 'Courier New (monospace)'},
+            {value: 'Garamond', text: 'Garamond (serif)'},
+            {value: 'Georgia', text: 'Georgia (serif)'},
+            {value: 'Helvetica', text: 'Helvetica (sans-serif)'},
+            {value: 'Tahoma', text: 'Tahoma (sans-serif)'},
+            {value: 'Times New Roman', text: 'Times New Roman (serif)'},
+            {value: 'Trebuchet', text: 'Trebuchet (sans-serif)'},
+            {value: 'Verdana', text: 'Verdana (sans-serif)'},
         ],
     },
     {
@@ -406,10 +405,9 @@ const dropdownsArr = [
         name: 'text-align',
         group: 'field-block',
         options: [
-            {value: '', text: 'Text Alignment'},
-            {value: 'text-align-left', text: 'Left'},
-            {value: 'text-align-center', text: 'Center'},
-            {value: 'text-align-right', text: 'Right'},
+            {value: 'left', text: 'Left'},
+            {value: 'center', text: 'Center'},
+            {value: 'right', text: 'Right'},
         ],
     }
 ];
@@ -430,14 +428,15 @@ const overlay = document.getElementById('instructions');
 let dragSrcEl = null;
 
 function translateJson(source) {
-    let srcLines = source[0].divBlock.blocks;
+    let srcLines = source;
     if(!srcLines){
-        preview.innerText = '<h1>ERROR</h1><p>Your label format is not translatable at this time. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.</p>';
+        preview.innerText = 'ERROR: Your label format is not translatable. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.';
     }
     let lineCount = srcLines.length;
     for (i = 0; i < lineCount - 1; i++) {
         addLine();
     }
+    console.log(srcLines);
     let lbBlocks = labelMid.querySelectorAll('.field-block');
     srcLines.forEach((srcLine, i) => {
         let lbBlock = lbBlocks[i];
@@ -447,7 +446,7 @@ function translateJson(source) {
         srcLine.className !== undefined
             ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
             : '';
-        let fieldsArr = srcLine.fieldBlock;
+        let fieldsArr = srcLine.fields;
         if (fieldsArr !== undefined) {
             let propsArr = [];
             fieldsArr.forEach(({field, className}) => {
@@ -460,18 +459,19 @@ function translateJson(source) {
             preview.innerText = 'Error';
         }
         let createdLis = lbBlocks[i].querySelectorAll('.draggable');
+        console.log(createdLis);
         createdLis.forEach((li, j) => {
-            let srcFieldsArr = srcLines[i].fieldBlock;
+            let srcFieldsArr = srcLines[i].fields;
             let srcPropsArr = srcFieldsArr[j];
+            console.log(srcPropsArr);
             let fieldId = srcPropsArr.field;
-            let classes = srcPropsArr.className;
-            let prefix = srcPropsArr.prefix;
+            /*let prefix = srcPropsArr.prefix;
             let suffix = srcPropsArr.suffix;
             if (li.id === fieldId) {
                 classes !== undefined ? (li.className = 'draggable ' + classes) : '';
                 prefix !== undefined ? (li.dataset.prefix = prefix) : '';
                 suffix !== undefined ? (li.dataset.suffix = suffix) : '';
-            }
+            }*/
         });
     });
     refreshAvailFields();
@@ -692,15 +692,9 @@ function isPrintStyle(className) {
 }
 
 function generateJson(list) {
-    let wrapper = [
-        {
-            divBlock: {
-                className: 'label-blocks',
-                style: '',
-                blocks: [],
-            },
-        },
-    ];
+    let wrapper = {
+        labelBlocks: []
+    };
     let labelBlocks = [];
     Object.keys(list).forEach((index) => {
         let fieldBlockObj = {};
@@ -721,32 +715,16 @@ function generateJson(list) {
             : delete fieldBlockObj.className;
         labelBlocks.push(fieldBlockObj);
     });
-    wrapper[0].divBlock.blocks = labelBlocks;
+    wrapper.labelBlocks = labelBlocks;
     let json = JSON.stringify(wrapper, null, 2);
     return json;
 }
 
-function printJson() {
-    let list = refreshPreview();
-    let copyBtn = document.getElementById('copyBtn');
-    let isEmpty = list[0].length == 0;
-    let message = '';
-    if (isEmpty) {
-        copyBtn.style.display = 'none';
-        alert('Label format is empty! Please drag some items to the build area before trying again');
-    }
-    else {
-        let json = generateJson(refreshPreview());
-        copyBtn.style.display = 'inline-block';
-        dummy.value = json;
-    }
-}
-
-function loadJson() {
+function loadJson(){
     let currBlocks = labelMid.querySelectorAll('.field-block');
     let numBlocks = currBlocks.length;
-    if (numBlocks > 1) {
-        for (i = 1; i < numBlocks; i++) {
+    if(numBlocks > 1){
+        for(i = 1; i < numBlocks; i++){
             removeLine(currBlocks[i]);
         }
     }
@@ -757,28 +735,22 @@ function loadJson() {
     });
     let sourceStr = dummy.value.replace(/'/g, '"');
     sourceJson = false;
-    try {
+    try{
         sourceJson = JSON.parse(sourceStr);
-    } catch (error) {
+    }catch(error){
         //console.log(error);
         window.alert(
             'There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.'
         );
     }
-    if (sourceJson) {
+    console.log(sourceJson);
+    if(sourceJson){
         translateJson(sourceJson);
         refreshLineState();
     }
-    else {
+    else{
         preview.innerText = '';
     }
-}
-
-function copyJson() {
-    dummy.select();
-    dummy.setSelectionRange(0, 99999); /* For mobile devices */
-    document.execCommand('copy');
-    alert('Copied JSON to clipboard');
 }
 
 function toggleSelect(element) {
@@ -933,7 +905,7 @@ function handleDragEnd(e) {
     return false;
 }
 
-function saveJson() {
+function saveJson(){
     let formatId = dummy.dataset.formatId;
     let formatTextArea = window.opener.document.querySelector(formatId);
     let list = refreshPreview();
