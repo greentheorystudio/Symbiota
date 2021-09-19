@@ -24,37 +24,49 @@
           ]
         },
         {
+          "blockLineHeight": 16
+        },
+        {
           "fields": [
             {
               "field": "identificationqualifier",
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             },
             {
               "field": "sciname",
               "fieldBold": true,
               "fieldItalic": true,
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             },
             {
               "field": "parentauthor",
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             },
             {
               "field": "taxonrank",
               "fieldBold": true,
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             },
             {
               "field": "infraspecificepithet",
               "fieldBold": true,
               "fieldItalic": true,
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             },
             {
               "field": "scientificnameauthorship",
-              "fieldSuffix": " "
+              "fieldSuffix": " ",
+              "fieldFontSize": 12
             }
           ]
+        },
+        {
+          "blockLineHeight": 16
         },
         {
           "fields": [
@@ -89,27 +101,35 @@
           ]
         },
         {
+          "blockLineHeight": 10
+        },
+        {
           "fields": [
             {
               "field": "country",
               "fieldBold": true,
-              "fieldSuffix": ", "
+              "fieldSuffix": ", ",
+              "fieldFontSize": 12
             },
             {
               "field": "stateprovince",
               "fieldBold": true,
-              "fieldSuffix": ", "
+              "fieldSuffix": ", ",
+              "fieldFontSize": 12
             },
             {
               "field": "county",
-              "fieldSuffix": ", "
+              "fieldSuffix": ", ",
+              "fieldFontSize": 12
             },
             {
               "field": "municipality",
-              "fieldSuffix": ", "
+              "fieldSuffix": ", ",
+              "fieldFontSize": 12
             },
             {
-              "field": "locality"
+              "field": "locality",
+              "fieldFontSize": 12
             }
           ]
         },
@@ -204,6 +224,9 @@
           ]
         },
         {
+          "blockLineHeight": 10
+        },
+        {
           "blockTextAlign": "right",
           "fields": [
             {
@@ -246,6 +269,9 @@
               "field": "family"
             }
           ]
+        },
+        {
+          "blockLineHeight": 2
         },
         {
           "fields": [
@@ -312,6 +338,9 @@
           ]
         },
         {
+          "blockLineHeight": 5
+        },
+        {
           "fields": [
             {
               "field": "catalognumber",
@@ -319,6 +348,9 @@
               "fieldFontSize": 14
             }
           ]
+        },
+        {
+          "blockLineHeight": 11
         },
         {
           "fields": [
@@ -364,11 +396,15 @@
           ]
         },
         {
+          "blockLineHeight": 10
+        },
+        {
           "fields": [
             {
               "field": "recordedby",
               "fieldPrefix": "Coll.: ",
-              "prefixStyle": "font-weight:bold"
+              "prefixStyle": "font-weight:bold",
+              "fieldFontSize": 6
             }
           ]
         },
@@ -377,7 +413,8 @@
             {
               "field": "recordnumber",
               "fieldPrefix": "Coll. No: ",
-              "prefixStyle": "font-weight:bold"
+              "prefixStyle": "font-weight:bold",
+              "fieldFontSize": 6
             }
           ]
         },
@@ -386,7 +423,8 @@
           "fields": [
             {
               "field": "preparations",
-              "fieldPrefix": "Prep.: "
+              "fieldPrefix": "Prep.: ",
+              "fieldFontSize": 6
             }
           ]
         },
@@ -395,7 +433,8 @@
           "fields": [
             {
               "field": "eventdate",
-              "fieldPrefix": "Date: "
+              "fieldPrefix": "Date: ",
+              "fieldFontSize": 6
             }
           ]
         }
