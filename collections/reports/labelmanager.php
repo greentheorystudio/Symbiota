@@ -249,21 +249,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						document.getElementById("hmid"+midIndex).checked = true;
 						f.hsuffix.value = labelFormatObj[catStr][labelIndex].labelHeader.suffix;
 						f.lfooter.value = labelFormatObj[catStr][labelIndex].labelFooter.textValue;
-						if(labelFormatObj[catStr][labelIndex].displaySpeciesAuthor == 1) {
-                            f.speciesauthors.checked = true;
-                        }
-						else {
-                            f.speciesauthors.checked = false;
-                        }
-						if(f.bc){
-							if(labelFormatObj[catStr][labelIndex].displayBarcode == 1) {
-                                f.bc.checked = true;
-                            }
-							else {
-                                f.bc.checked = false;
-                            }
-						}
-						f.labeltype.value = labelFormatObj[catStr][labelIndex].labelType;
+						f.labeltype.value = labelFormatObj[catStr][labelIndex].pageLayout;
 					}
 				}
 			}

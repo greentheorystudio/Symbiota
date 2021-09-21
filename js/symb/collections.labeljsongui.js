@@ -713,7 +713,7 @@ function generateJson(list) {
         labelBlocks.push(fieldBlockObj);
     });
     wrapper.labelBlocks = labelBlocks;
-    let json = JSON.stringify(wrapper, null, 2);
+    let json = JSON.stringify(wrapper, null, 4);
     return json;
 }
 

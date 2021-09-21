@@ -2,9 +2,7 @@
   "labelFormats": [
     {
       "title": "Generic Herbarium Label",
-      "displaySpeciesAuthor": 1,
-      "displayBarcode": 0,
-      "labelType": "2",
+      "pageLayout": "2",
       "headerPrefix": "Flora of ",
       "headerMidText": 3,
       "headerSuffix": " county",
@@ -258,9 +256,7 @@
     },
     {
       "title": "Generic Vertebrate Label",
-      "displaySpeciesAuthor": 0,
-      "displayBarcode": 0,
-      "labelType": "3",
+      "pageLayout": "3",
       "defaultFontSize": 10,
       "labelBlocks": [
         {
