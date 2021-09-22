@@ -1,444 +1,85 @@
 const fieldProps = [
-    {
-        block: 'labelBlock',
-        name: 'Occurrence ID',
-        id: 'occurrenceid',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Catalog Number',
-        id: 'catalognumber',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Other Catalog Numbers',
-        id: 'othercatalognumbers',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Family',
-        id: 'family',
-        group: 'taxon'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Scientific Name',
-        id: 'sciname',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Taxon Rank',
-        id: 'taxonrank',
-        group: 'taxon'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Infraspecific Epithet',
-        id: 'infraspecificepithet',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Scientific Name Authorship',
-        id: 'scientificnameauthorship',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Parent Author',
-        id: 'parentauthor',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identified By',
-        id: 'identifiedby',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Date Identified',
-        id: 'dateidentified',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification References',
-        id: 'identificationreferences',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification Remarks',
-        id: 'identificationremarks',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Taxon Remarks',
-        id: 'taxonremarks',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification Qualifier',
-        id: 'identificationqualifier',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Type Status',
-        id: 'typestatus',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Recorded By',
-        id: 'recordedby',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Record Number',
-        id: 'recordnumber',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Associated Collectors',
-        id: 'associatedcollectors',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Event Date',
-        id: 'eventdate',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Year',
-        id: 'year',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Month',
-        id: 'month',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Month Name',
-        id: 'monthname',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Day',
-        id: 'day',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Event Date',
-        id: 'verbatimeventdate',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Habitat',
-        id: 'habitat',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Substrate',
-        id: 'substrate',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Occurrence Remarks',
-        id: 'occurrenceremarks',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Associated Taxa',
-        id: 'associatedtaxa',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Dynamic Properties',
-        id: 'dynamicproperties',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Attributes',
-        id: 'verbatimattributes',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Behavior',
-        id: 'behavior',
-        group: 'specimen'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Reproductive Condition',
-        id: 'reproductivecondition',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Cultivation Status',
-        id: 'cultivationstatus',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Establishment Means',
-        id: 'establishmentmeans',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Life Stage',
-        id: 'lifeStage',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Sex',
-        id: 'sex',
-        group: 'specimen'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Individual Count',
-        id: 'individualcount',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Sampling Protocol',
-        id: 'samplingprotocol',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Preparations',
-        id: 'preparations',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Country',
-        id: 'country',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'State/Province',
-        id: 'stateprovince',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'County',
-        id: 'county',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Municipality',
-        id: 'municipality',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Locality',
-        id: 'locality',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Decimal Latitude',
-        id: 'decimallatitude',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Decimal Longitude',
-        id: 'decimallongitude',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Geodetic Datum',
-        id: 'geodeticdatum',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Coordinate Uncertainty In Meters',
-        id: 'coordinateuncertaintyinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Coordinates',
-        id: 'verbatimcoordinates',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Elevation In Meters',
-        id: 'elevationinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Elevation',
-        id: 'verbatimelevation',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Minimum Depth In Meters',
-        id: 'minimumdepthinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Maximum Depth In Meters',
-        id: 'maximumdepthinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Depth',
-        id: 'verbatimdepth',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Disposition',
-        id: 'disposition',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Storage Location',
-        id: 'storagelocation',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Duplicate Quantity',
-        id: 'duplicatequantity',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Date Last Modified',
-        id: 'datelastmodified',
-        group: 'event',
-    },
+    {name: 'Dynamic Properties', id: 'dynamicproperties', group: 'record-level'},
+    {name: 'Associated Collectors', id: 'associatedcollectors', group: 'occurrence'},
+    {name: 'Associated Taxa', id: 'associatedtaxa', group: 'occurrence'},
+    {name: 'Behavior', id: 'behavior', group: 'occurrence'},
+    {name: 'Catalog Number', id: 'catalognumber', group: 'occurrence'},
+    {name: 'Cultivation Status', id: 'cultivationstatus', group: 'occurrence'},
+    {name: 'Disposition', id: 'disposition', group: 'occurrence'},
+    {name: 'Duplicate Quantity', id: 'duplicatequantity', group: 'occurrence'},
+    {name: 'Establishment Means', id: 'establishmentmeans', group: 'occurrence'},
+    {name: 'Individual Count', id: 'individualcount', group: 'occurrence'},
+    {name: 'Life Stage', id: 'lifeStage', group: 'occurrence'},
+    {name: 'Occurrence ID', id: 'occurrenceid', group: 'occurrence'},
+    {name: 'Occurrence Remarks', id: 'occurrenceremarks', group: 'occurrence'},
+    {name: 'Other Catalog Numbers', id: 'othercatalognumbers', group: 'occurrence'},
+    {name: 'Preparations', id: 'preparations', group: 'occurrence'},
+    {name: 'Record Number', id: 'recordnumber', group: 'occurrence'},
+    {name: 'Recorded By', id: 'recordedby', group: 'occurrence'},
+    {name: 'Reproductive Condition', id: 'reproductivecondition', group: 'occurrence'},
+    {name: 'Sex', id: 'sex', group: 'occurrence'},
+    {name: 'Storage Location', id: 'storagelocation', group: 'occurrence'},
+    {name: 'Substrate', id: 'substrate', group: 'occurrence'},
+    {name: 'Verbatim Attributes', id: 'verbatimattributes', group: 'occurrence'},
+    {name: 'Day', id: 'day', group: 'event'},
+    {name: 'Event Date', id: 'eventdate', group: 'event'},
+    {name: 'Habitat', id: 'habitat', group: 'event'},
+    {name: 'Month', id: 'month', group: 'event'},
+    {name: 'Month Name', id: 'monthname', group: 'event'},
+    {name: 'Sampling Protocol', id: 'samplingprotocol', group: 'event'},
+    {name: 'Verbatim Event Date', id: 'verbatimeventdate', group: 'event'},
+    {name: 'Year', id: 'year', group: 'event'},
+    {name: 'Coordinate Uncertainty In Meters', id: 'coordinateuncertaintyinmeters', group: 'location'},
+    {name: 'Country', id: 'country', group: 'location'},
+    {name: 'County', id: 'county', group: 'location'},
+    {name: 'Decimal Latitude', id: 'decimallatitude', group: 'location'},
+    {name: 'Decimal Longitude', id: 'decimallongitude', group: 'location'},
+    {name: 'Geodetic Datum', id: 'geodeticdatum', group: 'location'},
+    {name: 'Locality', id: 'locality', group: 'location'},
+    {name: 'Maximum Depth In Meters', id: 'maximumdepthinmeters', group: 'location'},
+    {name: 'Minimum Depth In Meters', id: 'minimumdepthinmeters', group: 'location'},
+    {name: 'Minimum Elevation In Meters', id: 'minimumelevationinmeters', group: 'location'},
+    {name: 'Municipality', id: 'municipality', group: 'location'},
+    {name: 'State/Province', id: 'stateprovince', group: 'location'},
+    {name: 'Verbatim Coordinates', id: 'verbatimcoordinates', group: 'location'},
+    {name: 'Verbatim Depth', id: 'verbatimdepth', group: 'location'},
+    {name: 'Verbatim Elevation', id: 'verbatimelevation', group: 'location'},
+    {name: 'Date Identified', id: 'dateidentified', group: 'identification'},
+    {name: 'Identification Qualifier', id: 'identificationqualifier', group: 'identification'},
+    {name: 'Identification References', id: 'identificationreferences', group: 'identification'},
+    {name: 'Identification Remarks', id: 'identificationremarks', group: 'identification'},
+    {name: 'Identified By', id: 'identifiedby', group: 'identification'},
+    {name: 'Type Status', id: 'typestatus', group: 'identification'},
+    {name: 'Family', id: 'family', group: 'taxon'},
+    {name: 'Infraspecific Epithet', id: 'infraspecificepithet', group: 'taxon'},
+    {name: 'Parent Author', id: 'parentauthor', group: 'taxon'},
+    {name: 'Scientific Name', id: 'sciname', group: 'taxon'},
+    {name: 'Scientific Name Authorship', id: 'scientificnameauthorship', group: 'taxon'},
+    {name: 'Taxon Rank', id: 'taxonrank', group: 'taxon'},
+    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'}
 ];
 
-const formatsArr = [
-    {
-        group: 'field',
-        func: 'bold',
-        icon: 'format_bold',
-        title: 'Bold'
-    },
-    {
-        group: 'field',
-        func: 'italic',
-        icon: 'format_italic',
-        title: 'Italic'
-    },
-    {
-        group: 'field',
-        func: 'underline',
-        icon: 'format_underline',
-        title: 'Underline',
-    },
-    {
-        group: 'field',
-        func: 'uppercase',
-        icon: 'format_uppercase',
-        title: 'Uppercase',
-    }
-];
-
-const dropdownsArr = [
-    {
-        id: 'font-family',
-        name: 'font-family',
-        group: 'field',
-        options: [
-            {value: 'Arial', text: 'Arial (sans-serif)'},
-            {value: 'Brush Script MT', text: 'Brush Script MT (cursive)'},
-            {value: 'Courier New', text: 'Courier New (monospace)'},
-            {value: 'Garamond', text: 'Garamond (serif)'},
-            {value: 'Georgia', text: 'Georgia (serif)'},
-            {value: 'Helvetica', text: 'Helvetica (sans-serif)'},
-            {value: 'Tahoma', text: 'Tahoma (sans-serif)'},
-            {value: 'Times New Roman', text: 'Times New Roman (serif)'},
-            {value: 'Trebuchet', text: 'Trebuchet (sans-serif)'},
-            {value: 'Verdana', text: 'Verdana (sans-serif)'},
-        ],
-    },
-    {
-        id: 'text-align',
-        name: 'text-align',
-        group: 'field-block',
-        options: [
-            {value: 'left', text: 'Left'},
-            {value: 'center', text: 'Center'},
-            {value: 'right', text: 'Right'},
-        ],
-    }
-];
-
-const dummy = document.getElementById('dummy');
-const fieldDiv = document.getElementById('fields');
-const fieldListDiv = document.getElementById('fields-list');
-const controlDiv = document.getElementById('controls');
-const fieldsFilter = document.getElementById('fields-filter');
+const fieldListDiv = document.getElementById('field-list');
 const labelMid = document.getElementById('label-middle');
 const containers = document.querySelectorAll('.container');
-const draggables = document.querySelectorAll('.draggable');
-const build = document.getElementById('build-label');
 const preview = document.getElementById('preview-label');
-const controls = document.querySelectorAll('.control');
-const inputs = document.querySelectorAll('input');
-const overlay = document.getElementById('instructions');
+let jsonArr = null;
 let dragSrcEl = null;
+let blockID = 0;
+let fieldID = 0;
 
 function translateJson(source) {
-    let srcLines = source;
+    let srcLines = source['labelBlocks'];
     if(!srcLines){
         preview.innerText = 'ERROR: Your label format is not translatable. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.';
     }
     let lineCount = srcLines.length;
-    for (i = 0; i < lineCount - 1; i++) {
+    for(i = 0; i < lineCount - 1; i++){
         addLine();
     }
     let lbBlocks = labelMid.querySelectorAll('.field-block');
     srcLines.forEach((srcLine, i) => {
-        console.log(i);
+        //console.log(i);
         let lbBlock = lbBlocks[i];
         /*srcLine.delimiter !== undefined
             ? (lbBlock.dataset.delimiter = srcLine.delimiter)
@@ -447,10 +88,10 @@ function translateJson(source) {
             ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
             : '';*/
         let fieldsArr = srcLine.fields;
-        if (fieldsArr !== undefined) {
+        if(fieldsArr !== undefined){
             let propsArr = [];
             fieldsArr.forEach(({field, className}) => {
-                let props = fieldProps.find((obj) => obj.id === field);
+                let props = fieldProps.find((obj) => obj.title === field);
                 propsArr.push(props);
             });
             createFields(propsArr, lbBlocks[i]);
@@ -473,14 +114,6 @@ function translateJson(source) {
     });
     refreshAvailFields();
     refreshPreview();
-}
-
-function openOverlay() {
-    overlay.classList.remove('hidden');
-}
-
-function closeOverlay() {
-    overlay.classList.add('hidden');
 }
 
 function filterObject(arr, criteria) {
@@ -522,70 +155,111 @@ function filterFields(value) {
 function refreshAvailFields() {
     let available = getCurrFields();
     fieldListDiv.innerHTML = '';
-    let selectedFilter = fieldsFilter.value;
-    selectedFilter != 'all'
-        ? filterFields(selectedFilter)
-        : createFields(available, fieldListDiv);
+    let selectedFilter = document.getElementById('fields-filter').value;
+    if(selectedFilter === 'all'){
+        createFields(available, fieldListDiv);
+    }
+    else{
+        filterFields(selectedFilter);
+    }
 }
 
 function createFields(arr, target) {
     arr.forEach((field) => {
+        const idStr = 'field-' + fieldID;
         let li = document.createElement('li');
         li.innerHTML = field.name;
-        li.id = field.id;
-        if (field.block === 'labelBlock') {
-            let closeBtn = document.createElement('span');
-            closeBtn.classList.add('material-icons');
-            closeBtn.innerText = 'cancel';
-            closeBtn.addEventListener('click', removeField, false);
-            li.appendChild(closeBtn);
-            li.draggable = 'true';
-            li.classList.add('draggable');
-            li.dataset.category = field.group;
-            li.addEventListener('dragstart', handleDragStart, false);
-            li.addEventListener('dragover', handleDragOver, false);
-            li.addEventListener('drop', handleDrop, false);
-            li.addEventListener('dragend', handleDragEnd, false);
-            target.appendChild(li);
-        }
+        li.title = field.id;
+        li.id = idStr;
+        let closeBtn = document.createElement('span');
+        closeBtn.classList.add('block-icons');
+        let closeIcon = document.createElement('i');
+        closeIcon.setAttribute("style","width:15px;height:15px;");
+        closeIcon.setAttribute("class","fas fa-times");
+        closeIcon.setAttribute('onclick', 'removeField("'+idStr+'");');
+        closeBtn.appendChild(closeIcon);
+        li.appendChild(closeBtn);
+        li.draggable = 'true';
+        li.classList.add('draggable');
+        li.dataset.category = field.group;
+        li.addEventListener('dragstart', handleDragStart, false);
+        li.addEventListener('dragover', handleDragOver, false);
+        li.addEventListener('drop', handleDrop, false);
+        li.addEventListener('dragend', handleDragEnd, false);
+        li.addEventListener('click', (e) => {
+            if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                openFieldOptions(idStr);
+            }
+        });
+        target.appendChild(li);
+        fieldID++;
     });
 }
 
 function addLine() {
+    const idStr = 'block-' + blockID;
     let line = document.createElement('div');
+    line.setAttribute("id", idStr);
     line.classList.add('field-block', 'container');
     let midBlocks = document.querySelectorAll('#label-middle > .field-block');
     let close = document.createElement('span');
-    close.classList.add('material-icons');
-    close.innerText = 'close';
+    close.classList.add('block-icons');
+    let closeIcon = document.createElement('i');
+    closeIcon.setAttribute("style","width:20px;height:20px;");
+    closeIcon.setAttribute("class","fas fa-times");
+    closeIcon.setAttribute('onclick', 'handleBlockClose("'+idStr+'");');
+    close.appendChild(closeIcon);
     line.appendChild(close);
     let up = document.createElement('span');
-    up.classList.add('material-icons');
-    up.innerText = 'keyboard_arrow_up';
+    up.classList.add('block-icons');
+    let upIcon = document.createElement('i');
+    upIcon.setAttribute("style","width:20px;height:20px;");
+    upIcon.setAttribute("class","fas fa-chevron-up");
+    upIcon.setAttribute('onclick', 'handleBlockUp("'+idStr+'");');
+    up.appendChild(upIcon);
     line.appendChild(up);
     let down = document.createElement('span');
-    down.classList.add('material-icons');
-    down.innerText = 'keyboard_arrow_down';
+    down.classList.add('block-icons');
+    let downIcon = document.createElement('i');
+    downIcon.setAttribute("style","width:20px;height:20px;");
+    downIcon.setAttribute("class","fas fa-chevron-down");
+    downIcon.setAttribute('onclick', 'handleBlockDown("'+idStr+'");');
+    down.appendChild(downIcon);
     line.appendChild(down);
-    let lastBlock = midBlocks[midBlocks.length - 1];
-    lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
+    if(midBlocks.length > 0){
+        let lastBlock = midBlocks[midBlocks.length - 1];
+        lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
+    }
+    else{
+        document.getElementById("label-middle").appendChild(line);
+    }
+    line.addEventListener('click', (e) => {
+        if(e.target.id && e.target.id === idStr){
+            openBlockOptions(idStr);
+        }
+    });
     line.addEventListener('dragover', (e) => {
         e.preventDefault();
         const dragging = document.querySelector('.dragging');
-        dragging !== null ? line.appendChild(dragging) : '';
+        if(dragging){
+            line.appendChild(dragging);
+        }
     });
     refreshLineState();
+    blockID++;
 }
 
 function refreshLineState() {
     let lines = labelMid.querySelectorAll('.field-block');
-    let icons = lines[0].querySelectorAll('.material-icons');
-    let isSingleLine = lines.length == 1;
-    icons.forEach((icon) => {
-        isSingleLine
-            ? icon.classList.add('disabled')
-            : icon.classList.remove('disabled');
-    });
+    if(lines.length > 0){
+        let icons = lines[0].querySelectorAll('.block-icons');
+        let isSingleLine = lines.length == 1;
+        icons.forEach((icon) => {
+            isSingleLine
+                ? icon.classList.add('disabled')
+                : icon.classList.remove('disabled');
+        });
+    }
 }
 
 function removeLine(line) {
@@ -595,8 +269,8 @@ function removeLine(line) {
     refreshAvailFields();
 }
 
-function removeField(field) {
-    field.target.parentNode.remove();
+function removeField(fieldId) {
+    document.getElementById(fieldId).remove();
     refreshAvailFields();
 }
 
@@ -609,7 +283,7 @@ function refreshPreview() {
         items.forEach((item) => {
             let itemObj = {};
             let className = Array.from(item.classList).filter(isPrintStyle);
-            itemObj.field = item.id;
+            itemObj.field = item.title;
             itemObj.className = className;
             itemObj.prefix = item.dataset.prefix;
             itemObj.suffix = item.dataset.suffix;
@@ -618,10 +292,6 @@ function refreshPreview() {
         labelList.push(itemsArr);
         let fieldBlockStyles = Array.from(block.classList).filter(isPrintStyle);
         fieldBlockStyles ? (itemsArr.className = fieldBlockStyles) : '';
-        let fieldBlockDelim = block.dataset.delimiter;
-        fieldBlockDelim == undefined
-            ? (itemsArr.delimiter = ' ')
-            : (itemsArr.delimiter = fieldBlockDelim);
     });
     preview.innerHTML = '';
     labelList.forEach((labelItem, blockIdx) => {
@@ -669,15 +339,6 @@ function createPreviewEl(element, parent) {
     }
 }
 
-function isFormattable(element) {
-    if(element.classList.contains('field-block') || element.classList.contains('draggable')){
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
 function isPrintStyle(className) {
     const functionalStyles = [
         'draggable',
@@ -689,9 +350,6 @@ function isPrintStyle(className) {
 }
 
 function generateJson(list) {
-    let wrapper = {
-        labelBlocks: []
-    };
     let labelBlocks = [];
     Object.keys(list).forEach((index) => {
         let fieldBlockObj = {};
@@ -701,7 +359,7 @@ function generateJson(list) {
                 ? (prop.className = prop.className.join(' '))
                 : delete prop.className;
         });
-        fieldBlockObj.fieldBlock = fieldItem;
+        fieldBlockObj.fields = fieldItem;
         let fieldBlockDelim = fieldItem.delimiter;
         fieldBlockDelim !== undefined
             ? (fieldBlockObj.delimiter = fieldBlockDelim)
@@ -712,8 +370,8 @@ function generateJson(list) {
             : delete fieldBlockObj.className;
         labelBlocks.push(fieldBlockObj);
     });
-    wrapper.labelBlocks = labelBlocks;
-    let json = JSON.stringify(wrapper, null, 4);
+    jsonArr.labelBlocks = labelBlocks;
+    let json = JSON.stringify(jsonArr, null, 4);
     return json;
 }
 
@@ -730,146 +388,21 @@ function loadJson(){
     currFields.forEach((currField) => {
         currField.remove();
     });
-    let sourceStr = dummy.value.replace(/'/g, '"');
-    sourceJson = false;
+    let sourceStr = document.getElementById("guijson").value;
+    jsonArr = null;
     try{
-        sourceJson = JSON.parse(sourceStr);
+        jsonArr = JSON.parse(sourceStr);
     }catch(error){
         //console.log(error);
-        window.alert(
-            'There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.'
-        );
+        alert('There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.');
     }
-    console.log(sourceJson);
-    if(sourceJson){
-        translateJson(sourceJson);
+    if(jsonArr){
+        translateJson(jsonArr);
         refreshLineState();
     }
     else{
         preview.innerText = '';
     }
-}
-
-function toggleSelect(element) {
-    element.classList.toggle('selected');
-    let isSelected = element.classList.contains('selected');
-    return isSelected;
-}
-
-function activateControls(filter, bool) {
-    let filtered = document.querySelectorAll(`[data-group=${filter}]`);
-    filtered.forEach((control) => {
-        bool ? (control.disabled = false) : (control.disabled = true);
-    });
-}
-
-function deactivateControls() {
-    controls.forEach((control) => {
-        control.disabled = true;
-    });
-}
-
-function getState(item) {
-    let delimiter = item.dataset.delimiter;
-    if (delimiter) {
-        let delimiterInput = document.getElementById('delimiter');
-        delimiterInput.value = delimiter;
-    }
-    let formatList = Array.from(item.classList);
-    printableList = formatList.filter(isPrintStyle);
-    if (printableList.length > 0) {
-        printableList.forEach((formatItem) => {
-            let strArr = formatItem.split('-');
-            let str = '';
-            if(strArr.length == 3){
-                str = strArr[0] + '-' + strArr[1];
-            }
-            else{
-                str = strArr[0];
-            }
-            dropdownsArr.forEach((dropdown) => {
-                let isDropdownStyle = str === dropdown.id;
-                if (isDropdownStyle) {
-                    let selDropdown = document.getElementById(str);
-                    selDropdown.value = formatItem;
-                }
-            });
-            controls.forEach((control) => {
-                if (formatItem === control.dataset.func) {
-                    control.classList.add('selected');
-                }
-            });
-        });
-    }
-
-    let hasPrefix = item.dataset.prefix != null;
-    let prefixInput = document.getElementById('prefix');
-    hasPrefix ? (prefixInput.value = item.dataset.prefix) : '';
-    let hasSuffix = item.dataset.suffix != null;
-    let suffixInput = document.getElementById('suffix');
-    hasSuffix ? (suffixInput.value = item.dataset.suffix) : '';
-}
-
-function toggleStyle(control, selectedItems, bool) {
-    selectedItems.forEach((item) => {
-        if (item.classList.contains('selected')) {
-            if(bool){
-                item.classList.add(control.dataset.func);
-            }
-            else{
-                item.classList.remove(control.dataset.func);
-            }
-        }
-        else {
-            return false;
-        }
-        refreshPreview();
-    });
-}
-
-function addReplaceStyle(dropdown, selectedItems) {
-    dropdown.addEventListener('input', function () {
-        selectedItems.forEach((item) => {
-            let option = dropdown.value;
-            if (option !== '') {
-                let group = new RegExp(`${dropdown.id}-*`);
-                let hasGroup = item.className.split(' ').some(function (c) {
-                    return group.test(c);
-                });
-                if (item.classList.contains('selected')) {
-                    if (!hasGroup) {
-                        item.classList.add(option);
-                        console.log(`added ${option} to ${item.id}`);
-                    }
-                    else {
-                        item.classList.forEach((className) => {
-                            if (className.startsWith(dropdown.id)) {
-                                item.classList.remove(className);
-                            }
-                        });
-                        item.classList.add(option);
-                    }
-                }
-            }
-        });
-    });
-    refreshPreview();
-}
-
-function resetControls() {
-    controls.forEach((control) => {
-        let isDropdown = control.tagName === 'SELECT';
-        isDropdown ? (control.value = '') : '';
-        control.classList.remove('selected');
-        let isInput = control.tagName === 'INPUT';
-        isInput ? (control.value = '') : '';
-    });
-}
-
-function updateFieldContent(content, item) {
-    let option = content.id;
-    item.setAttribute('data-' + option, content.value);
-    console.log(content, item);
 }
 
 function handleDragStart(e) {
@@ -879,18 +412,12 @@ function handleDragStart(e) {
 }
 
 function handleDragOver(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
     e.dataTransfer.dropEffect = 'move';
     return false;
 }
 
 function handleDrop(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    }
-    if (dragSrcEl != this) {
+    if(dragSrcEl != this){
         this.parentNode.insertBefore(dragSrcEl, this);
     }
     return false;
@@ -902,20 +429,53 @@ function handleDragEnd(e) {
     return false;
 }
 
+function openBlockOptions(blockId) {
+    document.getElementById(blockId).classList.add('selected');
+    $('#blockoptions').popup('show');
+}
+
+function openFieldOptions(fieldId) {
+    document.getElementById(fieldId).classList.add('selected');
+    $('#fieldoptions').popup('show');
+}
+
+function handleBlockClose(blockId) {
+    const line = document.getElementById(blockId);
+    removeLine(line);
+    refreshPreview();
+}
+
+function handleBlockUp(blockId) {
+    const first = labelMid.getElementsByClassName('field-block')[0];
+    const curr = document.getElementById(blockId);
+    if(curr !== first){
+        const prev = curr.previousSibling;
+        prev.replaceWith(curr);
+        curr.parentNode.insertBefore(prev, curr.nextSibling);
+    }
+    refreshPreview();
+}
+
+function handleBlockDown(blockId) {
+    const curr = document.getElementById(blockId);
+    const next = curr.nextSibling;
+    if(next){
+        curr.replaceWith(next);
+        next.parentNode.insertBefore(curr, next.nextSibling);
+    }
+    refreshPreview();
+}
+
 function saveJson(){
-    let formatId = dummy.dataset.formatId;
-    let formatTextArea = window.opener.document.querySelector(formatId);
+    let formId = document.getElementById('formid').value;
     let list = refreshPreview();
-    let isEmpty = list[0].length == 0;
-    let message = '';
-    if(isEmpty){
-        alert(
-            'Label format is empty! Please drag some items to the build area before trying again'
-        );
-    } else {
-        let json = generateJson(refreshPreview());
-        dummy.value = json;
-        formatTextArea.value = json;
+    if(list[0].length === 0){
+        alert('Label format is empty! Please drag some items to the build area before trying again');
+    }
+    else {
+        const f = window.opener.document.getElementById(formId);
+        //const json = generateJson(refreshPreview());
+        f.json.value = JSON.stringify(jsonArr, null, 4);
         window.close();
     }
 }

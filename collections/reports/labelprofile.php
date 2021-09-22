@@ -53,8 +53,7 @@ if($isEditor && $action){
 }
 $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General Observations');
 ?>
-<!DOCTYPE HTML>
-<html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Label Manager</title>
         <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
@@ -373,18 +372,16 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                 return false;
             }
 
-            function openJsonEditorPopup(classTag){
-                let editorWindow = window.open('labeljsongui.php','scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
+            function openJsonEditorPopup(formId){
+                const f = document.getElementById(formId);
+                let editorWindow = window.open('labeljsongui.php');
                 if(editorWindow.opener == null){
                     editorWindow.opener = self;
                 }
-                let formatId = "#json-"+classTag;
-                let currJson = $("#json-"+classTag).val();
                 editorWindow.focus();
                 editorWindow.onload = function(){
-                    let dummy = editorWindow.document.getElementById("dummy");
-                    dummy.value = currJson;
-                    dummy.dataset.formatId = formatId;
+                    editorWindow.document.getElementById("formid").value = formId;
+                    editorWindow.document.getElementById("guijson").value = f.json.value;
                     editorWindow.loadJson();
                 }
             }
@@ -716,7 +713,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                                 <input type="hidden" name="scope" value="<?php echo $scope; ?>" />
                                 <input type="hidden" name="index" value="<?php echo $index; ?>" />
                                 <span><a href="#" onclick="toggleJsonDiv('<?php echo $scope.(is_numeric($index)?'-'.$index:''); ?>');return false"><button class="icon-button" title="Edit raw JSON"><i style="width:15px;height:15px;" class="fas fa-code"></i></button></a></span>
-                                <span style="margin-left:5px;"><a href="#" onclick="openJsonEditorPopup('<?php echo $scope.(is_numeric($index)?'-'.(string)$index:''); ?>');return false"><button class="icon-button" title="Open JSON builder"><i style="width:15px;height:15px;" class="fas fa-tools"></i></button></a></span>
+                                <span style="margin-left:5px;"><a href="#" onclick="openJsonEditorPopup('<?php echo $formId; ?>');return false"><button class="icon-button" title="Open JSON builder"><i style="width:15px;height:15px;" class="fas fa-tools"></i></button></a></span>
                                 <?php
                                 if($isEditor === 3 || $scope === 'u' || ($scope === 'c' && $isEditor > 1)) {
                                     echo '<span style="margin-left:25px"><button name="submitaction" type="submit" value="saveProfile">' . (is_numeric($index) ? 'Save Label Profile' : 'Create New Label Profile') . '</button></span>';
@@ -812,37 +809,37 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                             </div>
                             <div class="field-block">
                                 <div class="field-elem">
-										<span class="field-inline">
-											<span class="label-inline">Text Alignment:</span>
-                                            <select name="headerTextAlign" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
-                                                <option value="left">Left</option>
-                                                <option value="center">Center</option>
-                                                <option value="right">Right</option>
-                                            </select>
-										</span>
+                                    <span class="field-inline">
+                                        <span class="label-inline">Text Alignment:</span>
+                                        <select name="headerTextAlign" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                                            <option value="left">Left</option>
+                                            <option value="center">Center</option>
+                                            <option value="right">Right</option>
+                                        </select>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label">Margin Below (px):</span>
-									        <span class="field-elem"><input name="headerBottomMargin" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
-										</span>
+                                        <span class="label">Margin Below (px):</span>
+                                        <span class="field-elem"><input name="headerBottomMargin" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label-inline">Font:</span>
-                                            <select name="headerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
-                                                <option value="Arial">Arial (sans-serif)</option>
-                                                <option value="Brush Script MT">Brush Script MT (cursive)</option>
-                                                <option value="Courier New">Courier New (monospace)</option>
-                                                <option value="Garamond">Garamond (serif)</option>
-                                                <option value="Georgia">Georgia (serif)</option>
-                                                <option value="Helvetica">Helvetica (sans-serif)</option>
-                                                <option value="Tahoma">Tahoma (sans-serif)</option>
-                                                <option value="Times New Roman">Times New Roman (serif)</option>
-                                                <option value="Trebuchet">Trebuchet (sans-serif)</option>
-                                                <option value="Verdana">Verdana (sans-serif)</option>
-                                            </select>
-										</span>
+                                        <span class="label-inline">Font:</span>
+                                        <select name="headerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                                            <option value="Arial">Arial (sans-serif)</option>
+                                            <option value="Brush Script MT">Brush Script MT (cursive)</option>
+                                            <option value="Courier New">Courier New (monospace)</option>
+                                            <option value="Garamond">Garamond (serif)</option>
+                                            <option value="Georgia">Georgia (serif)</option>
+                                            <option value="Helvetica">Helvetica (sans-serif)</option>
+                                            <option value="Tahoma">Tahoma (sans-serif)</option>
+                                            <option value="Times New Roman">Times New Roman (serif)</option>
+                                            <option value="Trebuchet">Trebuchet (sans-serif)</option>
+                                            <option value="Verdana">Verdana (sans-serif)</option>
+                                        </select>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label">Font Size (px):</span>
-									        <span class="field-elem"><input name="headerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
-										</span>
+                                        <span class="label">Font Size (px):</span>
+                                        <span class="field-elem"><input name="headerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                                    </span>
                                 </div>
                             </div>
                         </fieldset>
@@ -874,37 +871,37 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                             </div>
                             <div class="field-block">
                                 <div class="field-elem">
-										<span class="field-inline">
-											<span class="label-inline">Text Alignment:</span>
-                                            <select name="footerTextAlign" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
-                                                <option value="left">Left</option>
-                                                <option value="center">Center</option>
-                                                <option value="right">Right</option>
-                                            </select>
-										</span>
+                                    <span class="field-inline">
+                                        <span class="label-inline">Text Alignment:</span>
+                                        <select name="footerTextAlign" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                                            <option value="left">Left</option>
+                                            <option value="center">Center</option>
+                                            <option value="right">Right</option>
+                                        </select>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label">Margin Above (px):</span>
-									        <span class="field-elem"><input name="footerTopMargin" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
-										</span>
+                                        <span class="label">Margin Above (px):</span>
+                                        <span class="field-elem"><input name="footerTopMargin" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label-inline">Font:</span>
-                                            <select name="footerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
-                                                <option value="Arial">Arial (sans-serif)</option>
-                                                <option value="Brush Script MT">Brush Script MT (cursive)</option>
-                                                <option value="Courier New">Courier New (monospace)</option>
-                                                <option value="Garamond">Garamond (serif)</option>
-                                                <option value="Georgia">Georgia (serif)</option>
-                                                <option value="Helvetica">Helvetica (sans-serif)</option>
-                                                <option value="Tahoma">Tahoma (sans-serif)</option>
-                                                <option value="Times New Roman">Times New Roman (serif)</option>
-                                                <option value="Trebuchet">Trebuchet (sans-serif)</option>
-                                                <option value="Verdana">Verdana (sans-serif)</option>
-                                            </select>
-										</span>
+                                        <span class="label-inline">Font:</span>
+                                        <select name="footerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                                            <option value="Arial">Arial (sans-serif)</option>
+                                            <option value="Brush Script MT">Brush Script MT (cursive)</option>
+                                            <option value="Courier New">Courier New (monospace)</option>
+                                            <option value="Garamond">Garamond (serif)</option>
+                                            <option value="Georgia">Georgia (serif)</option>
+                                            <option value="Helvetica">Helvetica (sans-serif)</option>
+                                            <option value="Tahoma">Tahoma (sans-serif)</option>
+                                            <option value="Times New Roman">Times New Roman (serif)</option>
+                                            <option value="Trebuchet">Trebuchet (sans-serif)</option>
+                                            <option value="Verdana">Verdana (sans-serif)</option>
+                                        </select>
+                                    </span>
                                     <span class="field-inline" style="margin-left:5px;">
-											<span class="label">Font Size (px):</span>
-									        <span class="field-elem"><input name="footerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
-										</span>
+                                        <span class="label">Font Size (px):</span>
+                                        <span class="field-elem"><input name="footerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                                    </span>
                                 </div>
                             </div>
                         </fieldset>
@@ -953,7 +950,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                             <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
                             <input type="hidden" name="scope" value="<?php echo $scope; ?>" />
                             <span><a href="#" onclick="toggleJsonDiv('New<?php echo $scope; ?>');return false"><button class="icon-button" title="Edit raw JSON"><i style="width:15px;height:15px;" class="fas fa-code"></i></button></a></span>
-                            <span style="margin-left:5px;"><a href="#" onclick="openJsonEditorPopup('New<?php echo $scope; ?>');return false"><button class="icon-button" title="Open JSON builder"><i style="width:15px;height:15px;" class="fas fa-tools"></i></button></a></span>
+                            <span style="margin-left:5px;"><a href="#" onclick="openJsonEditorPopup('labelprofilenew-<?php echo $scope; ?>');return false"><button class="icon-button" title="Open JSON builder"><i style="width:15px;height:15px;" class="fas fa-tools"></i></button></a></span>
                             <?php
                             if($isEditor === 3 || $scope === 'u' || ($scope === 'c' && $isEditor > 1)) {
                                 echo '<span style="margin-left:25px"><button name="submitaction" type="submit" value="createProfile">Create New Label Profile</button></span>';
