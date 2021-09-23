@@ -364,32 +364,6 @@ function isPrintStyle(className) {
     return !functionalStyles.includes(className);
 }
 
-function generateJson(list) {
-    let labelBlocks = [];
-    Object.keys(list).forEach((index) => {
-        let fieldBlockObj = {};
-        let fieldItem = list[index];
-        fieldItem.map((prop) => {
-            prop.className.length > 0
-                ? (prop.className = prop.className.join(' '))
-                : delete prop.className;
-        });
-        fieldBlockObj.fields = fieldItem;
-        let fieldBlockDelim = fieldItem.delimiter;
-        fieldBlockDelim !== undefined
-            ? (fieldBlockObj.delimiter = fieldBlockDelim)
-            : '';
-        let fieldBlockStyles = fieldItem.className;
-        fieldBlockStyles.length > 0
-            ? (fieldBlockObj.className = fieldItem.className.join(' '))
-            : delete fieldBlockObj.className;
-        labelBlocks.push(fieldBlockObj);
-    });
-    jsonArr.labelBlocks = labelBlocks;
-    let json = JSON.stringify(jsonArr, null, 4);
-    return json;
-}
-
 function loadJson(){
     let currBlocks = labelMid.querySelectorAll('.field-block');
     document.getElementById("label-middle").innerHTML = '';
