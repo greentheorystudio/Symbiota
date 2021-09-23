@@ -154,9 +154,12 @@ function getCurrFields() {
 
 function filterFields(value) {
     let filteredFields = '';
-    value === 'all'
-        ? (filteredFields = getCurrFields())
-        : (filteredFields = filterObject(getCurrFields(), {group: value}));
+    if(value === 'all'){
+        filteredFields = getCurrFields();
+    }
+    else{
+        filteredFields = filterObject(getCurrFields(), {group: value});
+    }
     fieldListDiv.innerHTML = '';
     createFields(filteredFields, fieldListDiv);
 }
@@ -264,9 +267,12 @@ function refreshLineState() {
         let icons = lines[0].querySelectorAll('.block-icons');
         let isSingleLine = lines.length == 1;
         icons.forEach((icon) => {
-            isSingleLine
-                ? icon.classList.add('disabled')
-                : icon.classList.remove('disabled');
+            if(isSingleLine){
+                icon.classList.add('disabled');
+            }
+            else{
+                icon.classList.remove('disabled');
+            }
         });
     }
 }
@@ -678,8 +684,44 @@ function saveJson(){
         alert('Label format is empty! Please drag some items to the build area before trying again');
     }
     else {
+        const newBlockArr = [];
+        let fieldBlocks = document.querySelectorAll('.field-block');
+        fieldBlocks.forEach((block) => {
+            const newBlockObj = {};
+            const newFieldsArr = [];
+            const blockId = block.id;
+            if(settingArr.hasOwnProperty(blockId)){
+                const keys = Object.keys(settingArr[blockId]);
+                for(let k in keys){
+                    if(keys.hasOwnProperty(k)){
+                        newBlockObj[keys[k]] = settingArr[blockId][keys[k]];
+                    }
+                }
+            }
+
+            let items = block.querySelectorAll('li');
+            items.forEach((item) => {
+                const newItemObj = {};
+                const field = item.title;
+                const fieldId = item.id;
+                if(settingArr.hasOwnProperty(fieldId)){
+                    const keys = Object.keys(settingArr[fieldId]);
+                    for(let k in keys){
+                        if(keys.hasOwnProperty(k)){
+                            newItemObj[keys[k]] = settingArr[fieldId][keys[k]];
+                        }
+                    }
+                }
+                newItemObj['field'] = field;
+                newFieldsArr.push(newItemObj);
+            });
+            if(newFieldsArr.length > 0){
+                newBlockObj['fields'] = newFieldsArr;
+            }
+            newBlockArr.push(newBlockObj);
+        });
+        jsonArr['labelBlocks'] = newBlockArr;
         const f = window.opener.document.getElementById(formId);
-        //const json = generateJson(refreshPreview());
         f.json.value = JSON.stringify(jsonArr, null, 4);
         window.close();
     }

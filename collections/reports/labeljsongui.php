@@ -443,7 +443,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('blockoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=19"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=20"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();
