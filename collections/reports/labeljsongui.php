@@ -421,7 +421,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Line Height (px):</span>
+                    <span class="label">Text Line Height (px):</span>
                     <span class="field-elem"><input id="blockLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -429,12 +429,39 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block" style="margin-top:5px;">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label">Space Before (px):</span>
+                    <span class="label">Margin Before (px):</span>
                     <span class="field-elem"><input id="blockSpaceBefore" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Space After (px):</span>
+                    <span class="label">Margin After (px):</span>
                     <span class="field-elem"><input id="blockSpaceAfter" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="fieldset-block" id="blockLineOptions" style="display:none;">
+        <legend>Line</legend>
+        <div class="field-block">
+            <div class="field-elem">
+                <span class="field-inline">
+                    <input id="blockDisplayLine" type="checkbox" value="1" onchange="setBlockLineDisplay();processBlockOptionsFormChange();" />
+                    <span class="label-inline">Display Horizontal Line <b>(Note: Fields cannot be added to blocks set to this display)</b></span>
+                </span>
+            </div>
+        </div>
+        <div class="field-block" style="margin-top:5px;">
+            <div class="field-elem">
+                <span class="field-inline">
+                    <span class="label-inline">Line Style:</span>
+                    <select id="blockDisplayLineStyle" onchange="processBlockOptionsFormChange();">
+                        <option value="solid">Solid</option>
+                        <option value="dash">Dashed</option>
+                        <option value="dot">Dotted</option>
+                    </select>
+                </span>
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">Line Height (px):</span>
+                    <span class="field-elem"><input id="blockDisplayLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -443,7 +470,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('blockoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=22"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=23"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();

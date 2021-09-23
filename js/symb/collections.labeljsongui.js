@@ -2,6 +2,9 @@ const fieldProps = [
     {name: 'Dynamic Properties', id: 'dynamicproperties', group: 'record-level'},
     {name: 'Associated Collectors', id: 'associatedcollectors', group: 'occurrence'},
     {name: 'Associated Taxa', id: 'associatedtaxa', group: 'occurrence'},
+    {name: 'BARCODE [Catalog Number]', id: 'barcode-catalognumber', group: 'occurrence'},
+    {name: 'BARCODE [Occurrence ID]', id: 'barcode-occurrenceid', group: 'occurrence'},
+    {name: 'BARCODE [Other Catalog Numbers]', id: 'barcode-othercatalognumbers', group: 'occurrence'},
     {name: 'Behavior', id: 'behavior', group: 'occurrence'},
     {name: 'Catalog Number', id: 'catalognumber', group: 'occurrence'},
     {name: 'Cultivation Status', id: 'cultivationstatus', group: 'occurrence'},
@@ -9,11 +12,13 @@ const fieldProps = [
     {name: 'Duplicate Quantity', id: 'duplicatequantity', group: 'occurrence'},
     {name: 'Establishment Means', id: 'establishmentmeans', group: 'occurrence'},
     {name: 'Individual Count', id: 'individualcount', group: 'occurrence'},
+    {name: 'Label Project', id: 'labelproject', group: 'occurrence'},
     {name: 'Life Stage', id: 'lifeStage', group: 'occurrence'},
     {name: 'Occurrence ID', id: 'occurrenceid', group: 'occurrence'},
     {name: 'Occurrence Remarks', id: 'occurrenceremarks', group: 'occurrence'},
     {name: 'Other Catalog Numbers', id: 'othercatalognumbers', group: 'occurrence'},
     {name: 'Preparations', id: 'preparations', group: 'occurrence'},
+    {name: 'QR CODE', id: 'qr-code', group: 'occurrence'},
     {name: 'Record Number', id: 'recordnumber', group: 'occurrence'},
     {name: 'Recorded By', id: 'recordedby', group: 'occurrence'},
     {name: 'Reproductive Condition', id: 'reproductivecondition', group: 'occurrence'},
@@ -23,9 +28,12 @@ const fieldProps = [
     {name: 'Verbatim Attributes', id: 'verbatimattributes', group: 'occurrence'},
     {name: 'Day', id: 'day', group: 'event'},
     {name: 'Event Date', id: 'eventdate', group: 'event'},
+    {name: 'Field Notes', id: 'fieldnotes', group: 'event'},
+    {name: 'Field Number', id: 'fieldnumber', group: 'event'},
     {name: 'Habitat', id: 'habitat', group: 'event'},
     {name: 'Month', id: 'month', group: 'event'},
     {name: 'Month Name', id: 'monthname', group: 'event'},
+    {name: 'Sampling Effort', id: 'samplingeffort', group: 'event'},
     {name: 'Sampling Protocol', id: 'samplingprotocol', group: 'event'},
     {name: 'Verbatim Event Date', id: 'verbatimeventdate', group: 'event'},
     {name: 'Year', id: 'year', group: 'event'},
@@ -35,15 +43,23 @@ const fieldProps = [
     {name: 'Decimal Latitude', id: 'decimallatitude', group: 'location'},
     {name: 'Decimal Longitude', id: 'decimallongitude', group: 'location'},
     {name: 'Geodetic Datum', id: 'geodeticdatum', group: 'location'},
+    {name: 'Georeference Protocol', id: 'georeferenceprotocol', group: 'location'},
+    {name: 'Georeference Remarks', id: 'georeferenceremarks', group: 'location'},
+    {name: 'Georeference Sources', id: 'georeferencesources', group: 'location'},
+    {name: 'Georeferenced By', id: 'georeferencedby', group: 'location'},
     {name: 'Locality', id: 'locality', group: 'location'},
+    {name: 'Location ID', id: 'locationid', group: 'location'},
+    {name: 'Location Remarks', id: 'locationremarks', group: 'location'},
     {name: 'Maximum Depth In Meters', id: 'maximumdepthinmeters', group: 'location'},
     {name: 'Minimum Depth In Meters', id: 'minimumdepthinmeters', group: 'location'},
+    {name: 'Maximum Elevation In Meters', id: 'maximumelevationinmeters', group: 'location'},
     {name: 'Minimum Elevation In Meters', id: 'minimumelevationinmeters', group: 'location'},
     {name: 'Municipality', id: 'municipality', group: 'location'},
     {name: 'State/Province', id: 'stateprovince', group: 'location'},
     {name: 'Verbatim Coordinates', id: 'verbatimcoordinates', group: 'location'},
     {name: 'Verbatim Depth', id: 'verbatimdepth', group: 'location'},
     {name: 'Verbatim Elevation', id: 'verbatimelevation', group: 'location'},
+    {name: 'Water Body', id: 'waterbody', group: 'location'},
     {name: 'Date Identified', id: 'dateidentified', group: 'identification'},
     {name: 'Identification Qualifier', id: 'identificationqualifier', group: 'identification'},
     {name: 'Identification References', id: 'identificationreferences', group: 'identification'},
@@ -51,12 +67,16 @@ const fieldProps = [
     {name: 'Identified By', id: 'identifiedby', group: 'identification'},
     {name: 'Type Status', id: 'typestatus', group: 'identification'},
     {name: 'Family', id: 'family', group: 'taxon'},
+    {name: 'Genus', id: 'genus', group: 'taxon'},
     {name: 'Infraspecific Epithet', id: 'infraspecificepithet', group: 'taxon'},
+    {name: 'Infraspecific Epithet Authorship', id: 'infraspecificepithetauthorship', group: 'taxon'},
     {name: 'Parent Author', id: 'parentauthor', group: 'taxon'},
     {name: 'Scientific Name', id: 'sciname', group: 'taxon'},
     {name: 'Scientific Name Authorship', id: 'scientificnameauthorship', group: 'taxon'},
+    {name: 'Specific Epithet', id: 'specificepithet', group: 'taxon'},
     {name: 'Taxon Rank', id: 'taxonrank', group: 'taxon'},
-    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'}
+    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'},
+    {name: 'Terminal Scientific Name Authorship', id: 'terminalscientificnameauthorship', group: 'taxon'}
 ];
 
 const fieldListDiv = document.getElementById('field-list');
@@ -79,8 +99,12 @@ function translateJson(source) {
         for(i = 0; i < lineCount; i++){
             const keys = Object.keys(srcLines[i]);
             const idStr = 'block-' + blockID;
+            let displayLine = false;
             for(let k in keys){
                 if(keys.hasOwnProperty(k)){
+                    if(keys[k] === 'blockDisplayLine'){
+                        displayLine = true;
+                    }
                     if(keys[k] !== 'fields'){
                         if(!settingArr.hasOwnProperty(idStr)){
                             settingArr[idStr] = {};
@@ -89,7 +113,7 @@ function translateJson(source) {
                     }
                 }
             }
-            addLine();
+            addLine(displayLine);
         }
     }
     let lbBlocks = labelMid.querySelectorAll('.field-block');
@@ -210,11 +234,14 @@ function createFields(arr, target) {
     });
 }
 
-function addLine() {
+function addLine(displayLine = false) {
     const idStr = 'block-' + blockID;
     let line = document.createElement('div');
     line.setAttribute("id", idStr);
-    line.classList.add('field-block', 'container');
+    line.classList.add('field-block');
+    if(!displayLine){
+        line.classList.add('container');
+    }
     let midBlocks = document.querySelectorAll('#label-middle > .field-block');
     let close = document.createElement('span');
     close.classList.add('block-icons');
@@ -240,6 +267,13 @@ function addLine() {
     downIcon.setAttribute('onclick', 'handleBlockDown("'+idStr+'");');
     down.appendChild(downIcon);
     line.appendChild(down);
+    if(displayLine){
+        const hrId = 'block' + idStr + 'hr';
+        const hrElement = document.createElement('hr');
+        hrElement.setAttribute("style","width:80%;float:right;");
+        hrElement.setAttribute("id",hrId);
+        line.appendChild(hrElement);
+    }
     if(midBlocks.length > 0){
         let lastBlock = midBlocks[midBlocks.length - 1];
         lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
@@ -253,10 +287,12 @@ function addLine() {
         }
     });
     line.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        if(dragging){
-            line.appendChild(dragging);
+        if(line.classList.contains('container')){
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if(dragging){
+                line.appendChild(dragging);
+            }
         }
     });
     refreshLineState();
@@ -418,9 +454,36 @@ function handleDragEnd(e) {
 
 function openBlockOptions(blockId) {
     currentEditId = blockId;
+    if(!blockFieldCheck(blockId)){
+        document.getElementById('blockoptions').style.height = '320px';
+        document.getElementById('blockLineOptions').style.display = 'block';
+    }
     document.getElementById(blockId).classList.add('selected');
     setBlockOptionsForm(blockId);
     $('#blockoptions').popup('show');
+}
+
+function setBlockLineDisplay() {
+    const blockId = currentEditId;
+    const displayLine = document.getElementById('blockDisplayLine').checked;
+    const hrId = 'block' + blockId + 'hr';
+    if(displayLine){
+        document.getElementById(blockId).classList.remove('container');
+        const hrElement = document.createElement('hr');
+        hrElement.setAttribute("style","width:80%;float:right;");
+        hrElement.setAttribute("id",hrId);
+        document.getElementById(blockId).appendChild(hrElement);
+    }
+    else{
+        document.getElementById(blockId).classList.add('container');
+        const hrElement = document.getElementById(hrId);
+        hrElement.parentNode.removeChild(hrElement);
+    }
+}
+
+function blockFieldCheck(blockId) {
+    let items = document.getElementById(blockId).querySelectorAll('li');
+    return items.length > 0;
 }
 
 function setBlockOptionsForm(blockId) {
@@ -437,6 +500,15 @@ function setBlockOptionsForm(blockId) {
         }
         if(settings.hasOwnProperty('blockSpaceAfter')){
             document.getElementById('blockSpaceAfter').value = settings['blockSpaceAfter'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLine')){
+            document.getElementById('blockDisplayLine').checked = settings['blockDisplayLine'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLineStyle')){
+            document.getElementById('blockDisplayLineStyle').value = settings['blockDisplayLineStyle'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLineHeight')){
+            document.getElementById('blockDisplayLineHeight').value = settings['blockDisplayLineHeight'];
         }
     }
 }
@@ -455,6 +527,15 @@ function processBlockOptionsFormChange() {
     if(document.getElementById('blockSpaceAfter').value){
         newSettings['blockSpaceAfter'] = document.getElementById('blockSpaceAfter').value;
     }
+    if(document.getElementById('blockDisplayLine').checked === true){
+        newSettings['blockDisplayLine'] = true;
+        if(document.getElementById('blockDisplayLineStyle').value){
+            newSettings['blockDisplayLineStyle'] = document.getElementById('blockDisplayLineStyle').value;
+        }
+        if(document.getElementById('blockDisplayLineHeight').value){
+            newSettings['blockDisplayLineHeight'] = document.getElementById('blockDisplayLineHeight').value;
+        }
+    }
     settingArr[currentEditId] = newSettings;
 }
 
@@ -463,6 +544,11 @@ function clearBlockOptionsForm() {
     document.getElementById('blockLineHeight').value = '';
     document.getElementById('blockSpaceBefore').value = '';
     document.getElementById('blockSpaceAfter').value = '';
+    document.getElementById('blockDisplayLine').checked = false;
+    document.getElementById('blockDisplayLineStyle').value = 'solid';
+    document.getElementById('blockDisplayLineHeight').value = '';
+    document.getElementById('blockoptions').style.height = '250px';
+    document.getElementById('blockLineOptions').style.display = 'none';
 }
 
 function openFieldOptions(fieldId) {
@@ -662,7 +748,6 @@ function saveJson(){
     else {
         const newBlockArr = [];
         let fieldBlocks = labelMid.querySelectorAll('.field-block');
-        console.log(fieldBlocks.length);
         fieldBlocks.forEach((block) => {
             const newBlockObj = {};
             const newFieldsArr = [];
@@ -675,7 +760,6 @@ function saveJson(){
                     }
                 }
             }
-
             let items = block.querySelectorAll('li');
             items.forEach((item) => {
                 const newItemObj = {};
