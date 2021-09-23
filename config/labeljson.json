@@ -162,7 +162,7 @@
         {
           "fields": [
             {
-              "field": "elevationinmeters",
+              "field": "minimumelevationinmeters",
               "fieldPrefix": "Elev: ",
               "fieldSuffix": "m. "
             },
@@ -385,7 +385,7 @@
               "fieldSuffix": " meters"
             },
             {
-              "field": "elevationinmeters",
+              "field": "minimumelevationinmeters",
               "fieldPrefix": ", ",
               "fieldSuffix": "m."
             }

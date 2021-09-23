@@ -199,6 +199,9 @@ header('X-Frame-Options: DENY');
             fields.forEach((field) => {
                 field.classList.remove('selected');
             });
+            currentEditId = null;
+            clearBlockOptionsForm();
+            clearFieldOptionsForm();
             $('#'+ id).popup('hide');
         }
     </script>
@@ -224,7 +227,7 @@ include(__DIR__ . '/../../header.php');
                     <option value="taxon">Taxon</option>
                 </select>
             </div>
-            <div id="field-list" class="container"></div>
+            <div id="field-list"></div>
         </div>
         <div id="build-label" style="width:48%;">
             <h2>Label Content Blocks</h2>
@@ -257,25 +260,25 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <span class="label">Prefix:</span>
             <span class="field-elem">
-                <input name="headerPrefix" type="text" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                <input id="fieldPrefix" type="text" value="" onchange="processFieldOptionsFormChange()" />
             </span>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline">
-                    <input name="headerBold" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldPrefixBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Bold</span>
                 </span>
                 <span class="field-inline">
-                    <input name="headerItalic" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldPrefixItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Italic</span>
                 </span>
                 <span class="field-inline">
-                    <input name="headerUnderline" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldPrefixUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Underline</span>
                 </span>
                 <span class="field-inline">
-                    <input name="headerUppercase" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldPrefixUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Uppercase</span>
                 </span>
             </div>
@@ -284,7 +287,7 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
-                    <select name="headerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                    <select id="fieldPrefixFont" onchange="processFieldOptionsFormChange()">
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -299,7 +302,7 @@ include(__DIR__ . '/../../header.php');
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Font Size (px):</span>
-                    <span class="field-elem"><input name="headerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="fieldPrefixFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -308,24 +311,24 @@ include(__DIR__ . '/../../header.php');
         <legend>Suffix</legend>
         <div class="field-block">
             <span class="label">Suffix:</span>
-            <span class="field-elem"><input name="headerSuffix" type="text" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+            <span class="field-elem"><input id="fieldSuffix" type="text" value="" onchange="processFieldOptionsFormChange()" /></span>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline">
-                    <input name="footerBold" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldSuffixBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Bold</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerItalic" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldSuffixItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Italic</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerUnderline" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldSuffixUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Underline</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerUppercase" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldSuffixUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Uppercase</span>
                 </span>
             </div>
@@ -334,7 +337,7 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
-                    <select name="footerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                    <select id="fieldSuffixFont" onchange="processFieldOptionsFormChange()">
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -349,7 +352,7 @@ include(__DIR__ . '/../../header.php');
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Font Size (px):</span>
-                    <span class="field-elem"><input name="footerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="fieldSuffixFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -359,19 +362,19 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline">
-                    <input name="footerBold" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Bold</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerItalic" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Italic</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerUnderline" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Underline</span>
                 </span>
                 <span class="field-inline">
-                    <input name="footerUppercase" type="checkbox" value="1" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" />
+                    <input id="fieldUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
                     <span class="label-inline">Uppercase</span>
                 </span>
             </div>
@@ -380,7 +383,7 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
-                    <select name="footerFont" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                    <select id="fieldFont" onchange="processFieldOptionsFormChange()">
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -395,7 +398,7 @@ include(__DIR__ . '/../../header.php');
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Font Size (px):</span>
-                    <span class="field-elem"><input name="footerFontSize" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="fieldFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -411,7 +414,7 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline">
                     <span class="label-inline">Text Alignment:</span>
-                    <select name="footerTextAlign" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')">
+                    <select id="blockTextAlign" onchange="processBlockOptionsFormChange()">
                         <option value="left">Left</option>
                         <option value="center">Center</option>
                         <option value="right">Right</option>
@@ -419,7 +422,7 @@ include(__DIR__ . '/../../header.php');
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Line Height (px):</span>
-                    <span class="field-elem"><input id="blockLineHeight" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="blockLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -427,11 +430,11 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline">
                     <span class="label">Space Before (px):</span>
-                    <span class="field-elem"><input id="blockSpaceBefore" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="blockSpaceBefore" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Space After (px):</span>
-                    <span class="field-elem"><input id="blockSpaceAfter" type="text" style="width:40px;" value="" onchange="processLabelFormChange('labelprofilenew-<?php echo $scope; ?>')" /></span>
+                    <span class="field-elem"><input id="blockSpaceAfter" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -440,10 +443,9 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('blockoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=18"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=19"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
-
     refreshLineState();
 </script>
 <?php

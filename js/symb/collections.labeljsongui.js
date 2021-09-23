@@ -61,10 +61,11 @@ const fieldProps = [
 
 const fieldListDiv = document.getElementById('field-list');
 const labelMid = document.getElementById('label-middle');
-const containers = document.querySelectorAll('.container');
 const preview = document.getElementById('preview-label');
+let settingArr = {};
 let jsonArr = null;
 let dragSrcEl = null;
+let currentEditId = null;
 let blockID = 0;
 let fieldID = 0;
 
@@ -73,44 +74,52 @@ function translateJson(source) {
     if(!srcLines){
         preview.innerText = 'ERROR: Your label format is not translatable. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.';
     }
-    let lineCount = srcLines.length;
-    for(i = 0; i < lineCount - 1; i++){
-        addLine();
+    if(srcLines.length > 0){
+        let lineCount = srcLines.length;
+        for(i = 0; i < lineCount - 1; i++){
+            const keys = Object.keys(srcLines[i]);
+            const idStr = 'block-' + blockID;
+            for(let k in keys){
+                if(keys.hasOwnProperty(k)){
+                    if(keys[k] !== 'fields'){
+                        if(!settingArr.hasOwnProperty(idStr)){
+                            settingArr[idStr] = {};
+                        }
+                        settingArr[idStr][keys[k]] = srcLines[i][keys[k]];
+                    }
+                }
+            }
+            addLine();
+        }
     }
     let lbBlocks = labelMid.querySelectorAll('.field-block');
     srcLines.forEach((srcLine, i) => {
         //console.log(i);
         let lbBlock = lbBlocks[i];
-        /*srcLine.delimiter !== undefined
-            ? (lbBlock.dataset.delimiter = srcLine.delimiter)
-            : '';
-        srcLine.className !== undefined
-            ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
-            : '';*/
         let fieldsArr = srcLine.fields;
         if(fieldsArr !== undefined){
             let propsArr = [];
-            fieldsArr.forEach(({field, className}) => {
-                let props = fieldProps.find((obj) => obj.title === field);
+            fieldsArr.forEach((item) => {
+                let props = fieldProps.find((obj) => obj.id === item.field);
                 propsArr.push(props);
             });
             createFields(propsArr, lbBlocks[i]);
+            let createdLis = lbBlocks[i].querySelectorAll('.draggable');
+            createdLis.forEach((li, j) => {
+                const settings = fieldsArr.find((obj) => obj.field === li.title);
+                const keys = Object.keys(settings);
+                for(let k in keys){
+                    if(keys.hasOwnProperty(k)){
+                        if(keys[k] !== 'field'){
+                            if(!settingArr.hasOwnProperty(li.id)){
+                                settingArr[li.id] = {};
+                            }
+                            settingArr[li.id][keys[k]] = settings[keys[k]];
+                        }
+                    }
+                }
+            });
         }
-        else {
-            preview.innerText = 'Error';
-        }
-        let createdLis = lbBlocks[i].querySelectorAll('.draggable');
-        createdLis.forEach((li, j) => {
-            let srcFieldsArr = srcLines[i].fields;
-            let srcPropsArr = srcFieldsArr[j];
-            let fieldId = srcPropsArr.field;
-            let prefix = srcPropsArr.fieldPrefix;
-            let suffix = srcPropsArr.fieldSuffix;
-            if (li.id === fieldId) {
-                prefix !== undefined ? (li.dataset.fieldPrefix = prefix) : '';
-                suffix !== undefined ? (li.dataset.fieldSuffix = suffix) : '';
-            }
-        });
     });
     refreshAvailFields();
     refreshPreview();
@@ -137,7 +146,7 @@ function getCurrFields() {
     let usedFields = document.querySelectorAll('#label-middle .draggable');
     if (usedFields.length > 0) {
         usedFields.forEach((usedField) => {
-            currFields = removeObject(currFields, {id: usedField.id});
+            currFields = removeObject(currFields, {id: usedField.title});
         });
     }
     return currFields;
@@ -377,12 +386,8 @@ function generateJson(list) {
 
 function loadJson(){
     let currBlocks = labelMid.querySelectorAll('.field-block');
-    let numBlocks = currBlocks.length;
-    if(numBlocks > 1){
-        for(i = 1; i < numBlocks; i++){
-            removeLine(currBlocks[i]);
-        }
-    }
+    document.getElementById("label-middle").innerHTML = '';
+    blockID = 0;
     let firstBlock = currBlocks[0];
     let currFields = firstBlock.querySelectorAll('.draggable');
     currFields.forEach((currField) => {
@@ -430,13 +435,213 @@ function handleDragEnd(e) {
 }
 
 function openBlockOptions(blockId) {
+    currentEditId = blockId;
     document.getElementById(blockId).classList.add('selected');
+    setBlockOptionsForm(blockId);
     $('#blockoptions').popup('show');
 }
 
+function setBlockOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('blockTextAlign')){
+            document.getElementById('blockTextAlign').value = settings['blockTextAlign'];
+        }
+        if(settings.hasOwnProperty('blockLineHeight')){
+            document.getElementById('blockLineHeight').value = settings['blockLineHeight'];
+        }
+        if(settings.hasOwnProperty('blockSpaceBefore')){
+            document.getElementById('blockSpaceBefore').value = settings['blockSpaceBefore'];
+        }
+        if(settings.hasOwnProperty('blockSpaceAfter')){
+            document.getElementById('blockSpaceAfter').value = settings['blockSpaceAfter'];
+        }
+    }
+}
+
+function processBlockOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('blockTextAlign').value){
+        newSettings['blockTextAlign'] = document.getElementById('blockTextAlign').value;
+    }
+    if(document.getElementById('blockLineHeight').value){
+        newSettings['blockLineHeight'] = document.getElementById('blockLineHeight').value;
+    }
+    if(document.getElementById('blockSpaceBefore').value){
+        newSettings['blockSpaceBefore'] = document.getElementById('blockSpaceBefore').value;
+    }
+    if(document.getElementById('blockSpaceAfter').value){
+        newSettings['blockSpaceAfter'] = document.getElementById('blockSpaceAfter').value;
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearBlockOptionsForm() {
+    document.getElementById('blockTextAlign').value = 'left';
+    document.getElementById('blockLineHeight').value = '';
+    document.getElementById('blockSpaceBefore').value = '';
+    document.getElementById('blockSpaceAfter').value = '';
+}
+
 function openFieldOptions(fieldId) {
+    currentEditId = fieldId;
     document.getElementById(fieldId).classList.add('selected');
+    setFieldOptionsForm(fieldId);
     $('#fieldoptions').popup('show');
+}
+
+function setFieldOptionsForm(fieldId) {
+    if(settingArr.hasOwnProperty(fieldId)){
+        const settings = settingArr[fieldId];
+        if(settings.hasOwnProperty('fieldPrefix')){
+            document.getElementById('fieldPrefix').value = settings['fieldPrefix'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixBold')){
+            document.getElementById('fieldPrefixBold').checked = settings['fieldPrefixBold'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixItalic')){
+            document.getElementById('fieldPrefixItalic').checked = settings['fieldPrefixItalic'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixUnderline')){
+            document.getElementById('fieldPrefixUnderline').checked = settings['fieldPrefixUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixUppercase')){
+            document.getElementById('fieldPrefixUppercase').checked = settings['fieldPrefixUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixFont')){
+            document.getElementById('fieldPrefixFont').value = settings['fieldPrefixFont'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixFontSize')){
+            document.getElementById('fieldPrefixFontSize').value = settings['fieldPrefixFontSize'];
+        }
+        if(settings.hasOwnProperty('fieldSuffix')){
+            document.getElementById('fieldSuffix').value = settings['fieldSuffix'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixBold')){
+            document.getElementById('fieldSuffixBold').checked = settings['fieldSuffixBold'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixItalic')){
+            document.getElementById('fieldSuffixItalic').checked = settings['fieldSuffixItalic'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixUnderline')){
+            document.getElementById('fieldSuffixUnderline').checked = settings['fieldSuffixUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixUppercase')){
+            document.getElementById('fieldSuffixUppercase').checked = settings['fieldSuffixUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixFont')){
+            document.getElementById('fieldSuffixFont').value = settings['fieldSuffixFont'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixFontSize')){
+            document.getElementById('fieldSuffixFontSize').value = settings['fieldSuffixFontSize'];
+        }
+        if(settings.hasOwnProperty('fieldBold')){
+            document.getElementById('fieldBold').checked = settings['fieldBold'];
+        }
+        if(settings.hasOwnProperty('fieldItalic')){
+            document.getElementById('fieldItalic').checked = settings['fieldItalic'];
+        }
+        if(settings.hasOwnProperty('fieldUnderline')){
+            document.getElementById('fieldUnderline').checked = settings['fieldUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldUppercase')){
+            document.getElementById('fieldUppercase').checked = settings['fieldUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldFont')){
+            document.getElementById('fieldFont').value = settings['fieldFont'];
+        }
+        if(settings.hasOwnProperty('fieldFontSize')){
+            document.getElementById('fieldFontSize').value = settings['fieldFontSize'];
+        }
+    }
+}
+
+function processFieldOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('fieldPrefix').value){
+        newSettings['fieldPrefix'] = document.getElementById('fieldPrefix').value;
+        if(document.getElementById('fieldPrefixBold').checked === true){
+            newSettings['fieldPrefixBold'] = true;
+        }
+        if(document.getElementById('fieldPrefixItalic').checked === true){
+            newSettings['fieldPrefixItalic'] = true;
+        }
+        if(document.getElementById('fieldPrefixUnderline').checked === true){
+            newSettings['fieldPrefixUnderline'] = true;
+        }
+        if(document.getElementById('fieldPrefixUppercase').checked === true){
+            newSettings['fieldPrefixUppercase'] = true;
+        }
+        if(document.getElementById('fieldPrefixFont').value) {
+            newSettings['fieldPrefixFont'] = document.getElementById('fieldPrefixFont').value;
+        }
+        if(document.getElementById('fieldPrefixFontSize').value) {
+            newSettings['fieldPrefixFontSize'] = document.getElementById('fieldPrefixFontSize').value;
+        }
+    }
+    if(document.getElementById('fieldSuffix').value) {
+        newSettings['fieldSuffix'] = document.getElementById('fieldSuffix').value;
+        if(document.getElementById('fieldSuffixBold').checked === true){
+            newSettings['fieldSuffixBold'] = true;
+        }
+        if(document.getElementById('fieldSuffixItalic').checked === true){
+            newSettings['fieldSuffixItalic'] = true;
+        }
+        if(document.getElementById('fieldSuffixUnderline').checked === true){
+            newSettings['fieldSuffixUnderline'] = true;
+        }
+        if(document.getElementById('fieldSuffixUppercase').checked === true){
+            newSettings['fieldSuffixUppercase'] = true;
+        }
+        if(document.getElementById('fieldSuffixFont').value) {
+            newSettings['fieldSuffixFont'] = document.getElementById('fieldSuffixFont').value;
+        }
+        if(document.getElementById('fieldSuffixFontSize').value) {
+            newSettings['fieldSuffixFontSize'] = document.getElementById('fieldSuffixFontSize').value;
+        }
+    }
+    if(document.getElementById('fieldBold').checked === true){
+        newSettings['fieldBold'] = true;
+    }
+    if(document.getElementById('fieldItalic').checked === true){
+        newSettings['fieldItalic'] = true;
+    }
+    if(document.getElementById('fieldUnderline').checked === true){
+        newSettings['fieldUnderline'] = true;
+    }
+    if(document.getElementById('fieldUppercase').checked === true){
+        newSettings['fieldUppercase'] = true;
+    }
+    if(document.getElementById('fieldFont').value) {
+        newSettings['fieldFont'] = document.getElementById('fieldFont').value;
+    }
+    if(document.getElementById('fieldFontSize').value) {
+        newSettings['fieldFontSize'] = document.getElementById('fieldFontSize').value;
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearFieldOptionsForm() {
+    document.getElementById('fieldPrefix').value = '';
+    document.getElementById('fieldPrefixBold').checked = false;
+    document.getElementById('fieldPrefixItalic').checked = false;
+    document.getElementById('fieldPrefixUnderline').checked = false;
+    document.getElementById('fieldPrefixUppercase').checked = false;
+    document.getElementById('fieldPrefixFont').value = 'Arial';
+    document.getElementById('fieldPrefixFontSize').value = '';
+    document.getElementById('fieldSuffix').value = '';
+    document.getElementById('fieldSuffixBold').checked = false;
+    document.getElementById('fieldSuffixItalic').checked = false;
+    document.getElementById('fieldSuffixUnderline').checked = false;
+    document.getElementById('fieldSuffixUppercase').checked = false;
+    document.getElementById('fieldSuffixFont').value = 'Arial';
+    document.getElementById('fieldSuffixFontSize').value = '';
+    document.getElementById('fieldBold').checked = false;
+    document.getElementById('fieldItalic').checked = false;
+    document.getElementById('fieldUnderline').checked = false;
+    document.getElementById('fieldUppercase').checked = false;
+    document.getElementById('fieldFont').value = 'Arial';
+    document.getElementById('fieldFontSize').value = '';
 }
 
 function handleBlockClose(blockId) {
