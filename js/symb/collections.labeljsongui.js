@@ -76,7 +76,7 @@ function translateJson(source) {
     }
     if(srcLines.length > 0){
         let lineCount = srcLines.length;
-        for(i = 0; i < lineCount - 1; i++){
+        for(i = 0; i < lineCount; i++){
             const keys = Object.keys(srcLines[i]);
             const idStr = 'block-' + blockID;
             for(let k in keys){
@@ -96,29 +96,31 @@ function translateJson(source) {
     srcLines.forEach((srcLine, i) => {
         //console.log(i);
         let lbBlock = lbBlocks[i];
-        let fieldsArr = srcLine.fields;
-        if(fieldsArr !== undefined){
-            let propsArr = [];
-            fieldsArr.forEach((item) => {
-                let props = fieldProps.find((obj) => obj.id === item.field);
-                propsArr.push(props);
-            });
-            createFields(propsArr, lbBlocks[i]);
-            let createdLis = lbBlocks[i].querySelectorAll('.draggable');
-            createdLis.forEach((li, j) => {
-                const settings = fieldsArr.find((obj) => obj.field === li.title);
-                const keys = Object.keys(settings);
-                for(let k in keys){
-                    if(keys.hasOwnProperty(k)){
-                        if(keys[k] !== 'field'){
-                            if(!settingArr.hasOwnProperty(li.id)){
-                                settingArr[li.id] = {};
+        if(lbBlocks.hasOwnProperty(i) && srcLine.hasOwnProperty('fields')){
+            let fieldsArr = srcLine.fields;
+            if(fieldsArr !== undefined){
+                let propsArr = [];
+                fieldsArr.forEach((item) => {
+                    let props = fieldProps.find((obj) => obj.id === item.field);
+                    propsArr.push(props);
+                });
+                createFields(propsArr, lbBlocks[i]);
+                let createdLis = lbBlocks[i].querySelectorAll('.draggable');
+                createdLis.forEach((li, j) => {
+                    const settings = fieldsArr.find((obj) => obj.field === li.title);
+                    const keys = Object.keys(settings);
+                    for(let k in keys){
+                        if(keys.hasOwnProperty(k)){
+                            if(keys[k] !== 'field'){
+                                if(!settingArr.hasOwnProperty(li.id)){
+                                    settingArr[li.id] = {};
+                                }
+                                settingArr[li.id][keys[k]] = settings[keys[k]];
                             }
-                            settingArr[li.id][keys[k]] = settings[keys[k]];
                         }
                     }
-                }
-            });
+                });
+            }
         }
     });
     refreshAvailFields();
@@ -144,7 +146,7 @@ function removeObject(arr, criteria) {
 function getCurrFields() {
     let currFields = fieldProps;
     let usedFields = document.querySelectorAll('#label-middle .draggable');
-    if (usedFields.length > 0) {
+    if(usedFields.length > 0){
         usedFields.forEach((usedField) => {
             currFields = removeObject(currFields, {id: usedField.title});
         });
@@ -659,7 +661,8 @@ function saveJson(){
     }
     else {
         const newBlockArr = [];
-        let fieldBlocks = document.querySelectorAll('.field-block');
+        let fieldBlocks = labelMid.querySelectorAll('.field-block');
+        console.log(fieldBlocks.length);
         fieldBlocks.forEach((block) => {
             const newBlockObj = {};
             const newFieldsArr = [];
