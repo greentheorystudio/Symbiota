@@ -77,7 +77,7 @@
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" >Map Occurrence Search</a>
                 </li>
                 <li>
-                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Spatial_Module_Tutorial.pdf" target="_blank" >Map Search Tutorial</a>
+                    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Map_Search_Tutorial.pdf" target="_blank" >Map Search Tutorial</a>
                 </li>
                 <li>
                     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Text Occurrence Search</a>
