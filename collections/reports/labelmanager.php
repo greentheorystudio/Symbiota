@@ -200,7 +200,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			}
 
             function changeFormExport(buttonElem, action, target){
-                const f = buttonElem.form;
+                const f = document.getElementById('selectform');
                 if(action == "labelsbrowser.php" && buttonElem.value == "Print in Browser"){
                     if(!f["labelformatindex"] || f["labelformatindex"].value == ""){
                         alert("Please select a Label Format Profile");
@@ -210,9 +210,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                 else if(action == "labelsword.php" && f.labeltype.valye == "packet"){
                     alert("Packet labels are not yet available as a Word document");
                     return false;
-                }
-                if(f.bconly && f.bconly.checked && action == "labelsbrowser.php") {
-                    action = "barcodes.php";
                 }
                 f.action = action;
                 f.target = target;
@@ -224,31 +221,12 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 				document.annoselectform.target = target;
 			}
 
-			function checkPrintOnlyCheck(f){
-				if(f.bconly.checked){
-					f.speciesauthors.checked = false;
-					f.catalognumbers.checked = false;
-					f.bc.checked = false;
-				}
-			}
-
-			function checkBarcodeCheck(f){
-				if(f.bc.checked || f.speciesauthors.checked || f.catalognumbers.checked){
-					f.bconly.checked = false;
-				}
-			}
-
 			function labelFormatChanged(selObj){
 				if(selObj && labelFormatObj){
 					const catStr = selObj.value.substring(0,1);
 					const labelIndex = selObj.value.substring(2);
 					const f = document.selectform;
 					if(catStr != ''){
-						f.hprefix.value = labelFormatObj[catStr][labelIndex].labelHeader.prefix;
-						const midIndex = labelFormatObj[catStr][labelIndex].labelHeader.midText;
-						document.getElementById("hmid"+midIndex).checked = true;
-						f.hsuffix.value = labelFormatObj[catStr][labelIndex].labelHeader.suffix;
-						f.lfooter.value = labelFormatObj[catStr][labelIndex].labelFooter.textValue;
 						f.labeltype.value = labelFormatObj[catStr][labelIndex].pageLayout;
 					}
 				}
@@ -484,7 +462,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                         <div style="margin-top:3px;clear:both;width:100%;display:flex;">
                                             <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
                                             <div>
-                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" <?php echo ($labelFormatArr?'':'DISABLED title="Browser based label printing has not been activated within the portal. Contact Portal Manager to activate this feature."'); ?> />
+                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" />
                                             </div>
                                             <div style="margin-left:10px">
                                                 <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_self');" value="Export to CSV" />

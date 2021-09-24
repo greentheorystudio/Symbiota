@@ -5,31 +5,53 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
-use PhpOffice\PhpWord\PhpWord;
-
-$ses_id = time();
-$lineWidth = 0;
-
-$labelManager = new OccurrenceLabel();
-
 $collid = (int)$_POST['collid'];
+$labelformatindex = htmlspecialchars($_POST['labelformatindex']);
+$columnCount = htmlspecialchars($_POST['labeltype']);
+
+$scope = $labelformatindex[0];
+$labelIndex = substr($labelformatindex,2);
+if(!is_numeric($labelIndex)) {
+    $labelIndex = '';
+}
+if(!is_numeric($columnCount) && $columnCount !== 'packet') {
+    $columnCount = 2;
+}
+
+use PhpOffice\PhpWord\PhpWord;
+$labelManager = new OccurrenceLabel();
+$phpWord = new PhpWord();
+$labelManager->setCollid($collid);
+$formatArr = $labelManager->getLabelFormatByID($scope,$labelIndex);
+
+$isEditor = 0;
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN']) {
+        $isEditor = 1;
+    }
+    elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
+        $isEditor = 1;
+    }
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) {
+        $isEditor = 1;
+    }
+}
+
 $hPrefix = $_POST['hprefix'];
 $hMid = (int)$_POST['hmid'];
 $hSuffix = $_POST['hsuffix'];
 $lFooter = $_POST['lfooter'];
-$columnCount = $_POST['labeltype'];
 $includeSpeciesAuthor = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
 $showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
 $useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
 $barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+
+$ses_id = time();
+$lineWidth = 0;
 
 $hPrefix = filter_var($hPrefix, FILTER_SANITIZE_STRING);
 $hSuffix = filter_var($hSuffix, FILTER_SANITIZE_STRING);
 $lFooter = filter_var($lFooter, FILTER_SANITIZE_STRING);
-if(!is_numeric($columnCount) && $columnCount !== 'packet') {
-    $columnCount = 2;
-}
 
 $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
 if((int)$columnCount === 1){
@@ -50,17 +72,7 @@ elseif((int)$columnCount === 3){
 /*elseif($columnCount === 'packet'){
 	$lineWidth = 540;
 }*/
-
-$labelManager->setCollid($collid);
-
-$isEditor = 0;
-if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
-		$isEditor = 1;
-	}
-}
-$phpWord = new PhpWord();
-if($isEditor && $action){
+if($isEditor){
     $phpWord->addParagraphStyle('foldMarks1', array('lineHeight'=>1.0,'spaceBefore'=>1200,'marginLeft'=>1200));
 	$phpWord->addParagraphStyle('foldMarks2', array('lineHeight'=>1.0,'spaceBefore'=>1200,'spaceAfter'=>200,'marginLeft'=>400,'marginRight'=>400));
 	$phpWord->addFontStyle('foldMarksFont', array('size'=>11));

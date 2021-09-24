@@ -3,22 +3,10 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 
 $collid = (int)$_POST['collid'];
-$hPrefix = $_POST['hprefix'];
-$hMid = (int)$_POST['hmid'];
-$hSuffix = $_POST['hsuffix'];
-$lFooter = $_POST['lfooter'];
-$columnCount = $_POST['labeltype'];
-$labelformatindex = ($_POST['labelformatindex'] ?? '');
-$showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
-$useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
-$barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
-$includeSpeciesAuthor = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-$outputType = array_key_exists('outputtype',$_POST)?$_POST['outputtype']:'html';
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$labelformatindex = htmlspecialchars($_POST['labelformatindex']);
+$columnCount = htmlspecialchars($_POST['labeltype']);
+$action = htmlspecialchars($_POST['submitaction']);
 
-$hPrefix = strip_tags($hPrefix, '<br><b><u><i>');
-$hSuffix = strip_tags($hSuffix, '<br><b><u><i>');
-$lFooter = strip_tags($lFooter, '<br><b><u><i>');
 $scope = $labelformatindex[0];
 $labelIndex = substr($labelformatindex,2);
 if(!is_numeric($labelIndex)) {
@@ -30,33 +18,39 @@ if(!is_numeric($columnCount) && $columnCount !== 'packet') {
 
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
+$formatArr = $labelManager->getLabelFormatByID($scope,$labelIndex);
 
-if($outputType === 'word'){
-	header('Content-Type: application/vnd.ms-word; charset=' .$GLOBALS['CHARSET']);
-	header('Expires: 0');
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	header('content-disposition: attachment;filename=labels.doc');
+$isEditor = 0;
+if($GLOBALS['SYMB_UID']){
+    if($GLOBALS['IS_ADMIN']) {
+        $isEditor = 1;
+    }
+    elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
+        $isEditor = 1;
+    }
+    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) {
+        $isEditor = 1;
+    }
 }
-elseif($action === 'Export to CSV'){
+
+$hPrefix = $_POST['hprefix'];
+$hMid = (int)$_POST['hmid'];
+$hSuffix = $_POST['hsuffix'];
+$lFooter = $_POST['lfooter'];
+$showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
+$useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
+$barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
+$includeSpeciesAuthor = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
+
+$hPrefix = strip_tags($hPrefix, '<br><b><u><i>');
+$hSuffix = strip_tags($hSuffix, '<br><b><u><i>');
+$lFooter = strip_tags($lFooter, '<br><b><u><i>');
+
+if($action === 'Export to CSV'){
 	$labelManager->exportLabelCsvFile($_POST);
 }
 else{
 	header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-}
-
-$targetLabelFormatArr = $labelManager->getLabelFormatByID($scope,$labelIndex);
-
-$isEditor = 0;
-if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN']) {
-        $isEditor = 1;
-    }
-	elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
-        $isEditor = 1;
-    }
-	elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) {
-        $isEditor = 1;
-    }
 }
 ?>
 <html>
@@ -106,7 +100,7 @@ if($GLOBALS['SYMB_UID']){
 	<body style="background-color:#ffffff;">
 		<?php
 		echo '<div class="body">'  ;
-		if($targetLabelFormatArr && $isEditor){
+		if($formatArr && $isEditor){
             $labelArr = $labelManager->getLabelArray($_POST['occid'], $includeSpeciesAuthor);
 			$labelCnt = 0;
 			$rowCnt = 0;
@@ -158,17 +152,17 @@ if($GLOBALS['SYMB_UID']){
 							echo '<div class="row">';
 							$rowCnt++;
 						}
-						echo '<div class="label'.(isset($targetLabelFormatArr['labelDiv']['className'])?' '.$targetLabelFormatArr['labelDiv']['className']:'').'">';
+						echo '<div class="label'.(isset($formatArr['labelDiv']['className'])?' '.$formatArr['labelDiv']['className']:'').'">';
 						$attrStr = 'class="label-header';
-						if(isset($targetLabelFormatArr['labelHeader']['className'])) {
-                            $attrStr .= ' ' . $targetLabelFormatArr['labelHeader']['className'];
+						if(isset($formatArr['labelHeader']['className'])) {
+                            $attrStr .= ' ' . $formatArr['labelHeader']['className'];
                         }
 						$attrStr .= '"';
-						if(isset($targetLabelFormatArr['labelHeader']['style']) && $targetLabelFormatArr['labelHeader']['style']) {
-                            $attrStr .= ' style="' . $targetLabelFormatArr['labelHeader']['style'] . '"';
+						if(isset($formatArr['labelHeader']['style']) && $formatArr['labelHeader']['style']) {
+                            $attrStr .= ' style="' . $formatArr['labelHeader']['style'] . '"';
                         }
 						echo '<div '.trim($attrStr).'>'.$headerStr.'</div>';
-						echo $labelManager->getLabelBlock($targetLabelFormatArr['labelBlocks'],$occArr);
+						echo $labelManager->getLabelBlock($formatArr['labelBlocks'],$occArr);
 						if($occArr['catalognumber']){
                             if($useBarcode){
                                 ?>
@@ -193,7 +187,7 @@ if($GLOBALS['SYMB_UID']){
                             <?php
                         }
 						if($lFooter) {
-                            echo '<div class="label-footer" ' . (isset($targetLabelFormatArr['labelFooter']['style']) ? 'style="' . $targetLabelFormatArr['labelFooter']['style'] . '"' : '') . '>' . $lFooter . '</div>';
+                            echo '<div class="label-footer" ' . (isset($formatArr['labelFooter']['style']) ? 'style="' . $formatArr['labelFooter']['style'] . '"' : '') . '>' . $lFooter . '</div>';
                         }
 						if($columnCount === 'packet'){
                           echo '</div>';
@@ -202,14 +196,14 @@ if($GLOBALS['SYMB_UID']){
 					}
 				}
 			}
-			echo '</div>'; //Closing row
+			echo '</div>';
 			if(!$labelCnt) {
                 echo '<div style="font-weight:bold;text-size: 120%">No records were retrieved. Perhaps the quantity values were all set to 0?</div>';
             }
 		}
 		else{
 			echo '<div style="font-weight:bold;text-size: 120%">';
-			if($targetLabelFormatArr) {
+			if($formatArr) {
                 echo 'ERROR: Unable to parse JSON that defines the label format profile ';
             }
 			echo '</div>';
