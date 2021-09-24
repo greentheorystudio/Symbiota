@@ -224,11 +224,27 @@ function createFields(arr, target) {
         li.addEventListener('dragover', handleDragOver, false);
         li.addEventListener('drop', handleDrop, false);
         li.addEventListener('dragend', handleDragEnd, false);
-        li.addEventListener('click', (e) => {
-            if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
-                openFieldOptions(idStr);
-            }
-        });
+        if(field.id.startsWith('barcode-')){
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openBarcodeOptions(idStr);
+                }
+            });
+        }
+        else if(field.id.startsWith('qr-')){
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openQRCodeOptions(idStr);
+                }
+            });
+        }
+        else{
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openFieldOptions(idStr);
+                }
+            });
+        }
         target.appendChild(li);
         fieldID++;
     });
@@ -270,7 +286,7 @@ function addLine(displayLine = false) {
     if(displayLine){
         const hrId = 'block' + idStr + 'hr';
         const hrElement = document.createElement('hr');
-        hrElement.setAttribute("style","width:80%;float:right;");
+        hrElement.setAttribute("style","width:80%;height:4px;float:right;");
         hrElement.setAttribute("id",hrId);
         line.appendChild(hrElement);
     }
@@ -470,7 +486,7 @@ function setBlockLineDisplay() {
     if(displayLine){
         document.getElementById(blockId).classList.remove('container');
         const hrElement = document.createElement('hr');
-        hrElement.setAttribute("style","width:80%;float:right;");
+        hrElement.setAttribute("style","width:80%;height:4px;float:right;");
         hrElement.setAttribute("id",hrId);
         document.getElementById(blockId).appendChild(hrElement);
     }
@@ -710,6 +726,83 @@ function clearFieldOptionsForm() {
     document.getElementById('fieldUppercase').checked = false;
     document.getElementById('fieldFont').value = 'Arial';
     document.getElementById('fieldFontSize').value = '';
+}
+
+function openBarcodeOptions(fieldId) {
+    currentEditId = fieldId;
+    document.getElementById(fieldId).classList.add('selected');
+    setBarcodeOptionsForm(fieldId);
+    $('#barcodeoptions').popup('show');
+}
+
+function setBarcodeOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('barcodeHeight')){
+            document.getElementById('barcodeHeight').value = settings['barcodeHeight'];
+        }
+        if(settings.hasOwnProperty('barcodeLabel')){
+            document.getElementById('barcodeLabel').checked = settings['barcodeLabel'];
+        }
+        if(settings.hasOwnProperty('barcodeLabelFont')){
+            document.getElementById('barcodeLabelFont').value = settings['barcodeLabelFont'];
+        }
+        if(settings.hasOwnProperty('barcodeLabelFontSize')){
+            document.getElementById('barcodeLabelFontSize').value = settings['barcodeLabelFontSize'];
+        }
+    }
+}
+
+function processBarcodeOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('barcodeHeight').value){
+        newSettings['barcodeHeight'] = document.getElementById('barcodeHeight').value;
+    }
+    if(document.getElementById('barcodeLabel').checked === true){
+        newSettings['barcodeLabel'] = true;
+        if(document.getElementById('barcodeLabelFont').value){
+            newSettings['barcodeLabelFont'] = document.getElementById('barcodeLabelFont').value;
+        }
+        if(document.getElementById('barcodeLabelFontSize').value){
+            newSettings['barcodeLabelFontSize'] = document.getElementById('barcodeLabelFontSize').value;
+        }
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearBarcodeOptionsForm() {
+    document.getElementById('barcodeHeight').value = '';
+    document.getElementById('barcodeLabel').checked = true;
+    document.getElementById('barcodeLabelFont').style.height = 'Arial';
+    document.getElementById('barcodeLabelFontSize').style.display = '';
+}
+
+function openQRCodeOptions(fieldId) {
+    currentEditId = fieldId;
+    document.getElementById(fieldId).classList.add('selected');
+    setQRCodeOptionsForm(fieldId);
+    $('#qrcodeoptions').popup('show');
+}
+
+function setQRCodeOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('qrcodeWidth')){
+            document.getElementById('qrcodeWidth').value = settings['qrcodeWidth'];
+        }
+    }
+}
+
+function processQRCodeOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('qrcodeWidth').value){
+        newSettings['qrcodeWidth'] = document.getElementById('qrcodeWidth').value;
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearQRCodeOptionsForm() {
+    document.getElementById('qrcodeWidth').style.display = '';
 }
 
 function handleBlockClose(blockId) {

@@ -187,6 +187,16 @@ header('X-Frame-Options: DENY');
                 scrolllock: true,
                 blur: false
             });
+            $('#barcodeoptions').popup({
+                transition: 'all 0.3s',
+                scrolllock: true,
+                blur: false
+            });
+            $('#qrcodeoptions').popup({
+                transition: 'all 0.3s',
+                scrolllock: true,
+                blur: false
+            });
             addLine();
         });
 
@@ -202,6 +212,8 @@ header('X-Frame-Options: DENY');
             currentEditId = null;
             clearBlockOptionsForm();
             clearFieldOptionsForm();
+            clearBarcodeOptionsForm();
+            clearQRCodeOptionsForm();
             $('#'+ id).popup('hide');
         }
     </script>
@@ -232,7 +244,7 @@ include(__DIR__ . '/../../header.php');
         <div id="build-label" style="width:48%;">
             <h2>Label Content Blocks</h2>
             <div>
-                Drag and drop the colored content components from above into the dashed-line content blocks below to add and arrange
+                Drag and drop the colored content components from the left into the dashed-line content blocks below to add and arrange
                 content within the label. Clicking on the Add Content Block button below will add content blocks to the label. Clicking
                 on the x within any content block will delete that block. Clicking on the arrows within any clock will move
                 that block up and down in the label arrangement. Click within any content block to customize that block. Click on any
@@ -468,6 +480,65 @@ include(__DIR__ . '/../../header.php');
     </fieldset>
     <div style="margin-top:15px;">
         <button onclick="closePopup('blockoptions');">Close</button>
+    </div>
+</div>
+<div id="barcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
+    <h2>Barcode Options</h2>
+    <fieldset class="fieldset-block">
+        <div class="field-block">
+            <div class="field-elem">
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">Barcode Height (px):</span>
+                    <span class="field-elem"><input id="barcodeHeight" type="text" style="width:40px;" value="" onchange="processBarcodeOptionsFormChange()" /></span>
+                </span>
+                <span class="field-inline">
+                    <input id="barcodeLabel" type="checkbox" value="1" onchange="processBarcodeOptionsFormChange()" checked/>
+                    <span class="label-inline">Display Label</span>
+                </span>
+            </div>
+        </div>
+        <div class="field-block" style="margin-top:5px;">
+            <div class="field-elem">
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label-inline">Label Font:</span>
+                    <select id="barcodeLabelFont" onchange="processBarcodeOptionsFormChange()">
+                        <option value="Arial">Arial (sans-serif)</option>
+                        <option value="Brush Script MT">Brush Script MT (cursive)</option>
+                        <option value="Courier New">Courier New (monospace)</option>
+                        <option value="Garamond">Garamond (serif)</option>
+                        <option value="Georgia">Georgia (serif)</option>
+                        <option value="Helvetica">Helvetica (sans-serif)</option>
+                        <option value="Tahoma">Tahoma (sans-serif)</option>
+                        <option value="Times New Roman">Times New Roman (serif)</option>
+                        <option value="Trebuchet">Trebuchet (sans-serif)</option>
+                        <option value="Verdana">Verdana (sans-serif)</option>
+                    </select>
+                </span>
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">Label Font Size (px):</span>
+                    <span class="field-elem"><input id="barcodeLabelFontSize" type="text" style="width:40px;" value="" onchange="processBarcodeOptionsFormChange()" /></span>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+    <div style="margin-top:15px;">
+        <button onclick="closePopup('barcodeoptions');">Close</button>
+    </div>
+</div>
+<div id="qrcodeoptions" data-role="popup" class="well" style="width:500px;height:250px;font-size:14px;">
+    <h2>QR Code Options</h2>
+    <fieldset class="fieldset-block">
+        <div class="field-block">
+            <div class="field-elem">
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">QR Code Width (px):</span>
+                    <span class="field-elem"><input id="qrcodeWidth" type="text" style="width:40px;" value="" onchange="processQRCodeOptionsFormChange()" /></span>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+    <div style="margin-top:15px;">
+        <button onclick="closePopup('qrcodeoptions');">Close</button>
     </div>
 </div>
 <script src="../../js/symb/collections.labeljsongui.js?ver=23"></script>
