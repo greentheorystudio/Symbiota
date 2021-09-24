@@ -249,21 +249,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						document.getElementById("hmid"+midIndex).checked = true;
 						f.hsuffix.value = labelFormatObj[catStr][labelIndex].labelHeader.suffix;
 						f.lfooter.value = labelFormatObj[catStr][labelIndex].labelFooter.textValue;
-						if(labelFormatObj[catStr][labelIndex].displaySpeciesAuthor == 1) {
-                            f.speciesauthors.checked = true;
-                        }
-						else {
-                            f.speciesauthors.checked = false;
-                        }
-						if(f.bc){
-							if(labelFormatObj[catStr][labelIndex].displayBarcode == 1) {
-                                f.bc.checked = true;
-                            }
-							else {
-                                f.bc.checked = false;
-                            }
-						}
-						f.labeltype.value = labelFormatObj[catStr][labelIndex].labelType;
+						f.labeltype.value = labelFormatObj[catStr][labelIndex].pageLayout;
 					}
 				}
 			}
@@ -479,50 +465,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                                 }
                                                 ?>
                                             </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <div><b>Heading Prefix:</b></div>
-                                            <div style="margin-left:5px;">
-                                                <input type="text" name="hprefix" value="" style="width:450px" /> (e.g. Plants of, Insects of, Vertebrates of)
-                                            </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <div><b>Heading Mid-Section:</b></div>
-                                            <div style="margin-left:5px;">
-                                                <input type="radio" id="hmid1" name="hmid" value="1" />Country
-                                                <input type="radio" id="hmid2" name="hmid" value="2" />State
-                                                <input type="radio" id="hmid3" name="hmid" value="3" />County
-                                                <input type="radio" id="hmid4" name="hmid" value="4" />Family
-                                                <input type="radio" id="hmid0" name="hmid" value="0" checked/>Blank
-                                            </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <div><b>Heading Suffix:</b></div>
-                                            <div style="margin-left:5px;">
-                                                <input type="text" name="hsuffix" value="" style="width:450px" />
-                                            </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <div><b>Label Footer:</b></div>
-                                            <div style="margin-left:5px;">
-                                                <input type="text" name="lfooter" value="" style="width:450px" />
-                                            </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <input type="checkbox" name="speciesauthors" value="1" onclick="checkBarcodeCheck(this.form);" />
-                                            <span class="checkboxLabel">Print species authors for infraspecific taxa</span>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <input type="checkbox" name="catalognumbers" value="1" onclick="checkBarcodeCheck(this.form);" />
-                                            <span class="checkboxLabel">Print Catalog Numbers</span>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <input type="checkbox" name="bc" value="1" onclick="checkBarcodeCheck(this.form);" />
-                                            <span class="checkboxLabel">Include barcode of Catalog Number</span>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <input type="checkbox" name="bconly" value="1" onclick="checkPrintOnlyCheck(this.form);" />
-                                            <span class="checkboxLabel">Print only Barcode</span>
                                         </div>
                                         <div style="margin-top:3px;clear:both;width:100%;display:flex;">
                                             <div><b>Label Type:</b></div>

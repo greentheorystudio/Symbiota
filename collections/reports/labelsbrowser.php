@@ -19,19 +19,7 @@ $action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
 $hPrefix = strip_tags($hPrefix, '<br><b><u><i>');
 $hSuffix = strip_tags($hSuffix, '<br><b><u><i>');
 $lFooter = strip_tags($lFooter, '<br><b><u><i>');
-$labelCat = $labelformatindex[0];
-if($labelCat === 'g') {
-    $labelCat = 'global';
-}
-elseif($labelCat === 'c') {
-    $labelCat = 'coll';
-}
-elseif($labelCat === 'u') {
-    $labelCat = 'user';
-}
-else {
-    $labelCat = '';
-}
+$scope = $labelformatindex[0];
 $labelIndex = substr($labelformatindex,2);
 if(!is_numeric($labelIndex)) {
     $labelIndex = '';
@@ -56,7 +44,7 @@ else{
 	header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 }
 
-$targetLabelFormatArr = $labelManager->getLabelFormatByID($labelCat,$labelIndex);
+$targetLabelFormatArr = $labelManager->getLabelFormatByID($scope,$labelIndex);
 
 $isEditor = 0;
 if($GLOBALS['SYMB_UID']){

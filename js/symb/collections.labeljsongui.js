@@ -1,486 +1,154 @@
 const fieldProps = [
-    {
-        block: 'labelBlock',
-        name: 'Occurrence ID',
-        id: 'occurrenceid',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Catalog Number',
-        id: 'catalognumber',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Other Catalog Numbers',
-        id: 'othercatalognumbers',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Family',
-        id: 'family',
-        group: 'taxon'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Scientific Name',
-        id: 'sciname',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Taxon Rank',
-        id: 'taxonrank',
-        group: 'taxon'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Infraspecific Epithet',
-        id: 'infraspecificepithet',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Scientific Name Authorship',
-        id: 'scientificnameauthorship',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Parent Author',
-        id: 'parentauthor',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identified By',
-        id: 'identifiedby',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Date Identified',
-        id: 'dateidentified',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification References',
-        id: 'identificationreferences',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification Remarks',
-        id: 'identificationremarks',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Taxon Remarks',
-        id: 'taxonremarks',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Identification Qualifier',
-        id: 'identificationqualifier',
-        group: 'determination',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Type Status',
-        id: 'typestatus',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Recorded By',
-        id: 'recordedby',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Record Number',
-        id: 'recordnumber',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Associated Collectors',
-        id: 'associatedcollectors',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Event Date',
-        id: 'eventdate',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Year',
-        id: 'year',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Month',
-        id: 'month',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Month Name',
-        id: 'monthname',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Day',
-        id: 'day',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Event Date',
-        id: 'verbatimeventdate',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Habitat',
-        id: 'habitat',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Substrate',
-        id: 'substrate',
-        group: 'event'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Occurrence Remarks',
-        id: 'occurrenceremarks',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Associated Taxa',
-        id: 'associatedtaxa',
-        group: 'taxon',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Dynamic Properties',
-        id: 'dynamicproperties',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Attributes',
-        id: 'verbatimattributes',
-        group: 'event',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Behavior',
-        id: 'behavior',
-        group: 'specimen'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Reproductive Condition',
-        id: 'reproductivecondition',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Cultivation Status',
-        id: 'cultivationstatus',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Establishment Means',
-        id: 'establishmentmeans',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Life Stage',
-        id: 'lifeStage',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Sex',
-        id: 'sex',
-        group: 'specimen'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Individual Count',
-        id: 'individualcount',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Sampling Protocol',
-        id: 'samplingprotocol',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Preparations',
-        id: 'preparations',
-        group: 'specimen',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Country',
-        id: 'country',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'State/Province',
-        id: 'stateprovince',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'County',
-        id: 'county',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Municipality',
-        id: 'municipality',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Locality',
-        id: 'locality',
-        group: 'locality'
-    },
-    {
-        block: 'labelBlock',
-        name: 'Decimal Latitude',
-        id: 'decimallatitude',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Decimal Longitude',
-        id: 'decimallongitude',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Geodetic Datum',
-        id: 'geodeticdatum',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Coordinate Uncertainty In Meters',
-        id: 'coordinateuncertaintyinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Coordinates',
-        id: 'verbatimcoordinates',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Elevation In Meters',
-        id: 'elevationinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Elevation',
-        id: 'verbatimelevation',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Minimum Depth In Meters',
-        id: 'minimumdepthinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Maximum Depth In Meters',
-        id: 'maximumdepthinmeters',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Verbatim Depth',
-        id: 'verbatimdepth',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Disposition',
-        id: 'disposition',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Storage Location',
-        id: 'storagelocation',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Duplicate Quantity',
-        id: 'duplicatequantity',
-        group: 'locality',
-    },
-    {
-        block: 'labelBlock',
-        name: 'Date Last Modified',
-        id: 'datelastmodified',
-        group: 'event',
-    },
+    {name: 'Dynamic Properties', id: 'dynamicproperties', group: 'record-level'},
+    {name: 'Associated Collectors', id: 'associatedcollectors', group: 'occurrence'},
+    {name: 'Associated Taxa', id: 'associatedtaxa', group: 'occurrence'},
+    {name: 'BARCODE [Catalog Number]', id: 'barcode-catalognumber', group: 'occurrence'},
+    {name: 'BARCODE [Occurrence ID]', id: 'barcode-occurrenceid', group: 'occurrence'},
+    {name: 'BARCODE [Other Catalog Numbers]', id: 'barcode-othercatalognumbers', group: 'occurrence'},
+    {name: 'Behavior', id: 'behavior', group: 'occurrence'},
+    {name: 'Catalog Number', id: 'catalognumber', group: 'occurrence'},
+    {name: 'Cultivation Status', id: 'cultivationstatus', group: 'occurrence'},
+    {name: 'Disposition', id: 'disposition', group: 'occurrence'},
+    {name: 'Duplicate Quantity', id: 'duplicatequantity', group: 'occurrence'},
+    {name: 'Establishment Means', id: 'establishmentmeans', group: 'occurrence'},
+    {name: 'Individual Count', id: 'individualcount', group: 'occurrence'},
+    {name: 'Label Project', id: 'labelproject', group: 'occurrence'},
+    {name: 'Life Stage', id: 'lifeStage', group: 'occurrence'},
+    {name: 'Occurrence ID', id: 'occurrenceid', group: 'occurrence'},
+    {name: 'Occurrence Remarks', id: 'occurrenceremarks', group: 'occurrence'},
+    {name: 'Other Catalog Numbers', id: 'othercatalognumbers', group: 'occurrence'},
+    {name: 'Preparations', id: 'preparations', group: 'occurrence'},
+    {name: 'QR CODE', id: 'qr-code', group: 'occurrence'},
+    {name: 'Record Number', id: 'recordnumber', group: 'occurrence'},
+    {name: 'Recorded By', id: 'recordedby', group: 'occurrence'},
+    {name: 'Reproductive Condition', id: 'reproductivecondition', group: 'occurrence'},
+    {name: 'Sex', id: 'sex', group: 'occurrence'},
+    {name: 'Storage Location', id: 'storagelocation', group: 'occurrence'},
+    {name: 'Substrate', id: 'substrate', group: 'occurrence'},
+    {name: 'Verbatim Attributes', id: 'verbatimattributes', group: 'occurrence'},
+    {name: 'Day', id: 'day', group: 'event'},
+    {name: 'Event Date', id: 'eventdate', group: 'event'},
+    {name: 'Field Notes', id: 'fieldnotes', group: 'event'},
+    {name: 'Field Number', id: 'fieldnumber', group: 'event'},
+    {name: 'Habitat', id: 'habitat', group: 'event'},
+    {name: 'Month', id: 'month', group: 'event'},
+    {name: 'Month Name', id: 'monthname', group: 'event'},
+    {name: 'Sampling Effort', id: 'samplingeffort', group: 'event'},
+    {name: 'Sampling Protocol', id: 'samplingprotocol', group: 'event'},
+    {name: 'Verbatim Event Date', id: 'verbatimeventdate', group: 'event'},
+    {name: 'Year', id: 'year', group: 'event'},
+    {name: 'Coordinate Uncertainty In Meters', id: 'coordinateuncertaintyinmeters', group: 'location'},
+    {name: 'Country', id: 'country', group: 'location'},
+    {name: 'County', id: 'county', group: 'location'},
+    {name: 'Decimal Latitude', id: 'decimallatitude', group: 'location'},
+    {name: 'Decimal Longitude', id: 'decimallongitude', group: 'location'},
+    {name: 'Geodetic Datum', id: 'geodeticdatum', group: 'location'},
+    {name: 'Georeference Protocol', id: 'georeferenceprotocol', group: 'location'},
+    {name: 'Georeference Remarks', id: 'georeferenceremarks', group: 'location'},
+    {name: 'Georeference Sources', id: 'georeferencesources', group: 'location'},
+    {name: 'Georeferenced By', id: 'georeferencedby', group: 'location'},
+    {name: 'Locality', id: 'locality', group: 'location'},
+    {name: 'Location ID', id: 'locationid', group: 'location'},
+    {name: 'Location Remarks', id: 'locationremarks', group: 'location'},
+    {name: 'Maximum Depth In Meters', id: 'maximumdepthinmeters', group: 'location'},
+    {name: 'Minimum Depth In Meters', id: 'minimumdepthinmeters', group: 'location'},
+    {name: 'Maximum Elevation In Meters', id: 'maximumelevationinmeters', group: 'location'},
+    {name: 'Minimum Elevation In Meters', id: 'minimumelevationinmeters', group: 'location'},
+    {name: 'Municipality', id: 'municipality', group: 'location'},
+    {name: 'State/Province', id: 'stateprovince', group: 'location'},
+    {name: 'Verbatim Coordinates', id: 'verbatimcoordinates', group: 'location'},
+    {name: 'Verbatim Depth', id: 'verbatimdepth', group: 'location'},
+    {name: 'Verbatim Elevation', id: 'verbatimelevation', group: 'location'},
+    {name: 'Water Body', id: 'waterbody', group: 'location'},
+    {name: 'Date Identified', id: 'dateidentified', group: 'identification'},
+    {name: 'Identification Qualifier', id: 'identificationqualifier', group: 'identification'},
+    {name: 'Identification References', id: 'identificationreferences', group: 'identification'},
+    {name: 'Identification Remarks', id: 'identificationremarks', group: 'identification'},
+    {name: 'Identified By', id: 'identifiedby', group: 'identification'},
+    {name: 'Type Status', id: 'typestatus', group: 'identification'},
+    {name: 'Family', id: 'family', group: 'taxon'},
+    {name: 'Genus', id: 'genus', group: 'taxon'},
+    {name: 'Infraspecific Epithet', id: 'infraspecificepithet', group: 'taxon'},
+    {name: 'Infraspecific Epithet Authorship', id: 'infraspecificepithetauthorship', group: 'taxon'},
+    {name: 'Parent Author', id: 'parentauthor', group: 'taxon'},
+    {name: 'Scientific Name', id: 'sciname', group: 'taxon'},
+    {name: 'Scientific Name Authorship', id: 'scientificnameauthorship', group: 'taxon'},
+    {name: 'Specific Epithet', id: 'specificepithet', group: 'taxon'},
+    {name: 'Taxon Rank', id: 'taxonrank', group: 'taxon'},
+    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'},
+    {name: 'Terminal Scientific Name Authorship', id: 'terminalscientificnameauthorship', group: 'taxon'}
 ];
 
-const formatsArr = [
-    {
-        group: 'field',
-        func: 'bold',
-        icon: 'format_bold',
-        title: 'Bold'
-    },
-    {
-        group: 'field',
-        func: 'italic',
-        icon: 'format_italic',
-        title: 'Italic'
-    },
-    {
-        group: 'field',
-        func: 'underline',
-        icon: 'format_underline',
-        title: 'Underline',
-    },
-    {
-        group: 'field',
-        func: 'uppercase',
-        icon: 'format_uppercase',
-        title: 'Uppercase',
-    }
-];
-
-const dropdownsArr = [
-    {
-        id: 'font-family',
-        name: 'font-family',
-        group: 'field',
-        options: [
-            {value: 'Arial', text: 'Arial (sans-serif)'},
-            {value: 'Brush Script MT', text: 'Brush Script MT (cursive)'},
-            {value: 'Courier New', text: 'Courier New (monospace)'},
-            {value: 'Garamond', text: 'Garamond (serif)'},
-            {value: 'Georgia', text: 'Georgia (serif)'},
-            {value: 'Helvetica', text: 'Helvetica (sans-serif)'},
-            {value: 'Tahoma', text: 'Tahoma (sans-serif)'},
-            {value: 'Times New Roman', text: 'Times New Roman (serif)'},
-            {value: 'Trebuchet', text: 'Trebuchet (sans-serif)'},
-            {value: 'Verdana', text: 'Verdana (sans-serif)'},
-        ],
-    },
-    {
-        id: 'text-align',
-        name: 'text-align',
-        group: 'field-block',
-        options: [
-            {value: 'left', text: 'Left'},
-            {value: 'center', text: 'Center'},
-            {value: 'right', text: 'Right'},
-        ],
-    }
-];
-
-const dummy = document.getElementById('dummy');
-const fieldDiv = document.getElementById('fields');
-const fieldListDiv = document.getElementById('fields-list');
-const controlDiv = document.getElementById('controls');
-const fieldsFilter = document.getElementById('fields-filter');
+const fieldListDiv = document.getElementById('field-list');
 const labelMid = document.getElementById('label-middle');
-const containers = document.querySelectorAll('.container');
-const draggables = document.querySelectorAll('.draggable');
-const build = document.getElementById('build-label');
 const preview = document.getElementById('preview-label');
-const controls = document.querySelectorAll('.control');
-const inputs = document.querySelectorAll('input');
-const overlay = document.getElementById('instructions');
+let settingArr = {};
+let jsonArr = null;
 let dragSrcEl = null;
+let currentEditId = null;
+let blockID = 0;
+let fieldID = 0;
 
 function translateJson(source) {
-    let srcLines = source;
+    let srcLines = source['labelBlocks'];
     if(!srcLines){
         preview.innerText = 'ERROR: Your label format is not translatable. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.';
     }
-    let lineCount = srcLines.length;
-    for (i = 0; i < lineCount - 1; i++) {
-        addLine();
+    if(srcLines.length > 0){
+        let lineCount = srcLines.length;
+        for(i = 0; i < lineCount; i++){
+            const keys = Object.keys(srcLines[i]);
+            const idStr = 'block-' + blockID;
+            let displayLine = false;
+            for(let k in keys){
+                if(keys.hasOwnProperty(k)){
+                    if(keys[k] === 'blockDisplayLine'){
+                        displayLine = true;
+                    }
+                    if(keys[k] !== 'fields'){
+                        if(!settingArr.hasOwnProperty(idStr)){
+                            settingArr[idStr] = {};
+                        }
+                        settingArr[idStr][keys[k]] = srcLines[i][keys[k]];
+                    }
+                }
+            }
+            addLine(displayLine);
+        }
     }
     let lbBlocks = labelMid.querySelectorAll('.field-block');
     srcLines.forEach((srcLine, i) => {
-        console.log(i);
+        //console.log(i);
         let lbBlock = lbBlocks[i];
-        /*srcLine.delimiter !== undefined
-            ? (lbBlock.dataset.delimiter = srcLine.delimiter)
-            : '';
-        srcLine.className !== undefined
-            ? (lbBlock.className = lbBlock.className + ' ' + srcLine.className)
-            : '';*/
-        let fieldsArr = srcLine.fields;
-        if (fieldsArr !== undefined) {
-            let propsArr = [];
-            fieldsArr.forEach(({field, className}) => {
-                let props = fieldProps.find((obj) => obj.id === field);
-                propsArr.push(props);
-            });
-            createFields(propsArr, lbBlocks[i]);
-        }
-        else {
-            preview.innerText = 'Error';
-        }
-        let createdLis = lbBlocks[i].querySelectorAll('.draggable');
-        createdLis.forEach((li, j) => {
-            let srcFieldsArr = srcLines[i].fields;
-            let srcPropsArr = srcFieldsArr[j];
-            let fieldId = srcPropsArr.field;
-            let prefix = srcPropsArr.fieldPrefix;
-            let suffix = srcPropsArr.fieldSuffix;
-            if (li.id === fieldId) {
-                prefix !== undefined ? (li.dataset.fieldPrefix = prefix) : '';
-                suffix !== undefined ? (li.dataset.fieldSuffix = suffix) : '';
+        if(lbBlocks.hasOwnProperty(i) && srcLine.hasOwnProperty('fields')){
+            let fieldsArr = srcLine.fields;
+            if(fieldsArr !== undefined){
+                let propsArr = [];
+                fieldsArr.forEach((item) => {
+                    let props = fieldProps.find((obj) => obj.id === item.field);
+                    propsArr.push(props);
+                });
+                createFields(propsArr, lbBlocks[i]);
+                let createdLis = lbBlocks[i].querySelectorAll('.draggable');
+                createdLis.forEach((li, j) => {
+                    const settings = fieldsArr.find((obj) => obj.field === li.title);
+                    const keys = Object.keys(settings);
+                    for(let k in keys){
+                        if(keys.hasOwnProperty(k)){
+                            if(keys[k] !== 'field'){
+                                if(!settingArr.hasOwnProperty(li.id)){
+                                    settingArr[li.id] = {};
+                                }
+                                settingArr[li.id][keys[k]] = settings[keys[k]];
+                            }
+                        }
+                    }
+                });
             }
-        });
+        }
     });
     refreshAvailFields();
     refreshPreview();
-}
-
-function openOverlay() {
-    overlay.classList.remove('hidden');
-}
-
-function closeOverlay() {
-    overlay.classList.add('hidden');
 }
 
 function filterObject(arr, criteria) {
@@ -502,9 +170,9 @@ function removeObject(arr, criteria) {
 function getCurrFields() {
     let currFields = fieldProps;
     let usedFields = document.querySelectorAll('#label-middle .draggable');
-    if (usedFields.length > 0) {
+    if(usedFields.length > 0){
         usedFields.forEach((usedField) => {
-            currFields = removeObject(currFields, {id: usedField.id});
+            currFields = removeObject(currFields, {id: usedField.title});
         });
     }
     return currFields;
@@ -512,9 +180,12 @@ function getCurrFields() {
 
 function filterFields(value) {
     let filteredFields = '';
-    value === 'all'
-        ? (filteredFields = getCurrFields())
-        : (filteredFields = filterObject(getCurrFields(), {group: value}));
+    if(value === 'all'){
+        filteredFields = getCurrFields();
+    }
+    else{
+        filteredFields = filterObject(getCurrFields(), {group: value});
+    }
     fieldListDiv.innerHTML = '';
     createFields(filteredFields, fieldListDiv);
 }
@@ -522,70 +193,142 @@ function filterFields(value) {
 function refreshAvailFields() {
     let available = getCurrFields();
     fieldListDiv.innerHTML = '';
-    let selectedFilter = fieldsFilter.value;
-    selectedFilter != 'all'
-        ? filterFields(selectedFilter)
-        : createFields(available, fieldListDiv);
+    let selectedFilter = document.getElementById('fields-filter').value;
+    if(selectedFilter === 'all'){
+        createFields(available, fieldListDiv);
+    }
+    else{
+        filterFields(selectedFilter);
+    }
 }
 
 function createFields(arr, target) {
     arr.forEach((field) => {
+        const idStr = 'field-' + fieldID;
         let li = document.createElement('li');
         li.innerHTML = field.name;
-        li.id = field.id;
-        if (field.block === 'labelBlock') {
-            let closeBtn = document.createElement('span');
-            closeBtn.classList.add('material-icons');
-            closeBtn.innerText = 'cancel';
-            closeBtn.addEventListener('click', removeField, false);
-            li.appendChild(closeBtn);
-            li.draggable = 'true';
-            li.classList.add('draggable');
-            li.dataset.category = field.group;
-            li.addEventListener('dragstart', handleDragStart, false);
-            li.addEventListener('dragover', handleDragOver, false);
-            li.addEventListener('drop', handleDrop, false);
-            li.addEventListener('dragend', handleDragEnd, false);
-            target.appendChild(li);
+        li.title = field.id;
+        li.id = idStr;
+        let closeBtn = document.createElement('span');
+        closeBtn.classList.add('block-icons');
+        let closeIcon = document.createElement('i');
+        closeIcon.setAttribute("style","width:15px;height:15px;");
+        closeIcon.setAttribute("class","fas fa-times");
+        closeIcon.setAttribute('onclick', 'removeField("'+idStr+'");');
+        closeBtn.appendChild(closeIcon);
+        li.appendChild(closeBtn);
+        li.draggable = 'true';
+        li.classList.add('draggable');
+        li.dataset.category = field.group;
+        li.addEventListener('dragstart', handleDragStart, false);
+        li.addEventListener('dragover', handleDragOver, false);
+        li.addEventListener('drop', handleDrop, false);
+        li.addEventListener('dragend', handleDragEnd, false);
+        if(field.id.startsWith('barcode-')){
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openBarcodeOptions(idStr);
+                }
+            });
         }
+        else if(field.id.startsWith('qr-')){
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openQRCodeOptions(idStr);
+                }
+            });
+        }
+        else{
+            li.addEventListener('click', (e) => {
+                if(e.target.id && e.target.id === idStr && e.target.parentNode.id !== 'field-list'){
+                    openFieldOptions(idStr);
+                }
+            });
+        }
+        target.appendChild(li);
+        fieldID++;
     });
 }
 
-function addLine() {
+function addLine(displayLine = false) {
+    const idStr = 'block-' + blockID;
     let line = document.createElement('div');
-    line.classList.add('field-block', 'container');
+    line.setAttribute("id", idStr);
+    line.classList.add('field-block');
+    if(!displayLine){
+        line.classList.add('container');
+    }
     let midBlocks = document.querySelectorAll('#label-middle > .field-block');
     let close = document.createElement('span');
-    close.classList.add('material-icons');
-    close.innerText = 'close';
+    close.classList.add('block-icons');
+    let closeIcon = document.createElement('i');
+    closeIcon.setAttribute("style","width:20px;height:20px;");
+    closeIcon.setAttribute("class","fas fa-times");
+    closeIcon.setAttribute('onclick', 'handleBlockClose("'+idStr+'");');
+    close.appendChild(closeIcon);
     line.appendChild(close);
     let up = document.createElement('span');
-    up.classList.add('material-icons');
-    up.innerText = 'keyboard_arrow_up';
+    up.classList.add('block-icons');
+    let upIcon = document.createElement('i');
+    upIcon.setAttribute("style","width:20px;height:20px;");
+    upIcon.setAttribute("class","fas fa-chevron-up");
+    upIcon.setAttribute('onclick', 'handleBlockUp("'+idStr+'");');
+    up.appendChild(upIcon);
     line.appendChild(up);
     let down = document.createElement('span');
-    down.classList.add('material-icons');
-    down.innerText = 'keyboard_arrow_down';
+    down.classList.add('block-icons');
+    let downIcon = document.createElement('i');
+    downIcon.setAttribute("style","width:20px;height:20px;");
+    downIcon.setAttribute("class","fas fa-chevron-down");
+    downIcon.setAttribute('onclick', 'handleBlockDown("'+idStr+'");');
+    down.appendChild(downIcon);
     line.appendChild(down);
-    let lastBlock = midBlocks[midBlocks.length - 1];
-    lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
+    if(displayLine){
+        const hrId = 'block' + idStr + 'hr';
+        const hrElement = document.createElement('hr');
+        hrElement.setAttribute("style","width:80%;height:4px;float:right;");
+        hrElement.setAttribute("id",hrId);
+        line.appendChild(hrElement);
+    }
+    if(midBlocks.length > 0){
+        let lastBlock = midBlocks[midBlocks.length - 1];
+        lastBlock.parentNode.insertBefore(line, lastBlock.nextSibling);
+    }
+    else{
+        document.getElementById("label-middle").appendChild(line);
+    }
+    line.addEventListener('click', (e) => {
+        if(e.target.id && e.target.id === idStr){
+            openBlockOptions(idStr);
+        }
+    });
     line.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        dragging !== null ? line.appendChild(dragging) : '';
+        if(line.classList.contains('container')){
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if(dragging){
+                line.appendChild(dragging);
+            }
+        }
     });
     refreshLineState();
+    blockID++;
 }
 
 function refreshLineState() {
     let lines = labelMid.querySelectorAll('.field-block');
-    let icons = lines[0].querySelectorAll('.material-icons');
-    let isSingleLine = lines.length == 1;
-    icons.forEach((icon) => {
-        isSingleLine
-            ? icon.classList.add('disabled')
-            : icon.classList.remove('disabled');
-    });
+    if(lines.length > 0){
+        let icons = lines[0].querySelectorAll('.block-icons');
+        let isSingleLine = lines.length == 1;
+        icons.forEach((icon) => {
+            if(isSingleLine){
+                icon.classList.add('disabled');
+            }
+            else{
+                icon.classList.remove('disabled');
+            }
+        });
+    }
 }
 
 function removeLine(line) {
@@ -595,8 +338,8 @@ function removeLine(line) {
     refreshAvailFields();
 }
 
-function removeField(field) {
-    field.target.parentNode.remove();
+function removeField(fieldId) {
+    document.getElementById(fieldId).remove();
     refreshAvailFields();
 }
 
@@ -609,7 +352,7 @@ function refreshPreview() {
         items.forEach((item) => {
             let itemObj = {};
             let className = Array.from(item.classList).filter(isPrintStyle);
-            itemObj.field = item.id;
+            itemObj.field = item.title;
             itemObj.className = className;
             itemObj.prefix = item.dataset.prefix;
             itemObj.suffix = item.dataset.suffix;
@@ -618,10 +361,6 @@ function refreshPreview() {
         labelList.push(itemsArr);
         let fieldBlockStyles = Array.from(block.classList).filter(isPrintStyle);
         fieldBlockStyles ? (itemsArr.className = fieldBlockStyles) : '';
-        let fieldBlockDelim = block.dataset.delimiter;
-        fieldBlockDelim == undefined
-            ? (itemsArr.delimiter = ' ')
-            : (itemsArr.delimiter = fieldBlockDelim);
     });
     preview.innerHTML = '';
     labelList.forEach((labelItem, blockIdx) => {
@@ -669,15 +408,6 @@ function createPreviewEl(element, parent) {
     }
 }
 
-function isFormattable(element) {
-    if(element.classList.contains('field-block') || element.classList.contains('draggable')){
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
 function isPrintStyle(className) {
     const functionalStyles = [
         'draggable',
@@ -688,188 +418,30 @@ function isPrintStyle(className) {
     return !functionalStyles.includes(className);
 }
 
-function generateJson(list) {
-    let wrapper = {
-        labelBlocks: []
-    };
-    let labelBlocks = [];
-    Object.keys(list).forEach((index) => {
-        let fieldBlockObj = {};
-        let fieldItem = list[index];
-        fieldItem.map((prop) => {
-            prop.className.length > 0
-                ? (prop.className = prop.className.join(' '))
-                : delete prop.className;
-        });
-        fieldBlockObj.fieldBlock = fieldItem;
-        let fieldBlockDelim = fieldItem.delimiter;
-        fieldBlockDelim !== undefined
-            ? (fieldBlockObj.delimiter = fieldBlockDelim)
-            : '';
-        let fieldBlockStyles = fieldItem.className;
-        fieldBlockStyles.length > 0
-            ? (fieldBlockObj.className = fieldItem.className.join(' '))
-            : delete fieldBlockObj.className;
-        labelBlocks.push(fieldBlockObj);
-    });
-    wrapper.labelBlocks = labelBlocks;
-    let json = JSON.stringify(wrapper, null, 2);
-    return json;
-}
-
 function loadJson(){
     let currBlocks = labelMid.querySelectorAll('.field-block');
-    let numBlocks = currBlocks.length;
-    if(numBlocks > 1){
-        for(i = 1; i < numBlocks; i++){
-            removeLine(currBlocks[i]);
-        }
-    }
+    document.getElementById("label-middle").innerHTML = '';
+    blockID = 0;
     let firstBlock = currBlocks[0];
     let currFields = firstBlock.querySelectorAll('.draggable');
     currFields.forEach((currField) => {
         currField.remove();
     });
-    let sourceStr = dummy.value.replace(/'/g, '"');
-    sourceJson = false;
+    let sourceStr = document.getElementById("guijson").value;
+    jsonArr = null;
     try{
-        sourceJson = JSON.parse(sourceStr);
+        jsonArr = JSON.parse(sourceStr);
     }catch(error){
         //console.log(error);
-        window.alert(
-            'There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.'
-        );
+        alert('There is an issue with your JSON format. If your label format is very customized, that could interfere with its correct display.');
     }
-    console.log(sourceJson);
-    if(sourceJson){
-        translateJson(sourceJson);
+    if(jsonArr){
+        translateJson(jsonArr);
         refreshLineState();
     }
     else{
         preview.innerText = '';
     }
-}
-
-function toggleSelect(element) {
-    element.classList.toggle('selected');
-    let isSelected = element.classList.contains('selected');
-    return isSelected;
-}
-
-function activateControls(filter, bool) {
-    let filtered = document.querySelectorAll(`[data-group=${filter}]`);
-    filtered.forEach((control) => {
-        bool ? (control.disabled = false) : (control.disabled = true);
-    });
-}
-
-function deactivateControls() {
-    controls.forEach((control) => {
-        control.disabled = true;
-    });
-}
-
-function getState(item) {
-    let delimiter = item.dataset.delimiter;
-    if (delimiter) {
-        let delimiterInput = document.getElementById('delimiter');
-        delimiterInput.value = delimiter;
-    }
-    let formatList = Array.from(item.classList);
-    printableList = formatList.filter(isPrintStyle);
-    if (printableList.length > 0) {
-        printableList.forEach((formatItem) => {
-            let strArr = formatItem.split('-');
-            let str = '';
-            if(strArr.length == 3){
-                str = strArr[0] + '-' + strArr[1];
-            }
-            else{
-                str = strArr[0];
-            }
-            dropdownsArr.forEach((dropdown) => {
-                let isDropdownStyle = str === dropdown.id;
-                if (isDropdownStyle) {
-                    let selDropdown = document.getElementById(str);
-                    selDropdown.value = formatItem;
-                }
-            });
-            controls.forEach((control) => {
-                if (formatItem === control.dataset.func) {
-                    control.classList.add('selected');
-                }
-            });
-        });
-    }
-
-    let hasPrefix = item.dataset.prefix != null;
-    let prefixInput = document.getElementById('prefix');
-    hasPrefix ? (prefixInput.value = item.dataset.prefix) : '';
-    let hasSuffix = item.dataset.suffix != null;
-    let suffixInput = document.getElementById('suffix');
-    hasSuffix ? (suffixInput.value = item.dataset.suffix) : '';
-}
-
-function toggleStyle(control, selectedItems, bool) {
-    selectedItems.forEach((item) => {
-        if (item.classList.contains('selected')) {
-            if(bool){
-                item.classList.add(control.dataset.func);
-            }
-            else{
-                item.classList.remove(control.dataset.func);
-            }
-        }
-        else {
-            return false;
-        }
-        refreshPreview();
-    });
-}
-
-function addReplaceStyle(dropdown, selectedItems) {
-    dropdown.addEventListener('input', function () {
-        selectedItems.forEach((item) => {
-            let option = dropdown.value;
-            if (option !== '') {
-                let group = new RegExp(`${dropdown.id}-*`);
-                let hasGroup = item.className.split(' ').some(function (c) {
-                    return group.test(c);
-                });
-                if (item.classList.contains('selected')) {
-                    if (!hasGroup) {
-                        item.classList.add(option);
-                        console.log(`added ${option} to ${item.id}`);
-                    }
-                    else {
-                        item.classList.forEach((className) => {
-                            if (className.startsWith(dropdown.id)) {
-                                item.classList.remove(className);
-                            }
-                        });
-                        item.classList.add(option);
-                    }
-                }
-            }
-        });
-    });
-    refreshPreview();
-}
-
-function resetControls() {
-    controls.forEach((control) => {
-        let isDropdown = control.tagName === 'SELECT';
-        isDropdown ? (control.value = '') : '';
-        control.classList.remove('selected');
-        let isInput = control.tagName === 'INPUT';
-        isInput ? (control.value = '') : '';
-    });
-}
-
-function updateFieldContent(content, item) {
-    let option = content.id;
-    item.setAttribute('data-' + option, content.value);
-    console.log(content, item);
 }
 
 function handleDragStart(e) {
@@ -879,18 +451,12 @@ function handleDragStart(e) {
 }
 
 function handleDragOver(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
     e.dataTransfer.dropEffect = 'move';
     return false;
 }
 
 function handleDrop(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    }
-    if (dragSrcEl != this) {
+    if(dragSrcEl != this){
         this.parentNode.insertBefore(dragSrcEl, this);
     }
     return false;
@@ -902,20 +468,415 @@ function handleDragEnd(e) {
     return false;
 }
 
+function openBlockOptions(blockId) {
+    currentEditId = blockId;
+    if(!blockFieldCheck(blockId)){
+        document.getElementById('blockoptions').style.height = '320px';
+        document.getElementById('blockLineOptions').style.display = 'block';
+    }
+    document.getElementById(blockId).classList.add('selected');
+    setBlockOptionsForm(blockId);
+    $('#blockoptions').popup('show');
+}
+
+function setBlockLineDisplay() {
+    const blockId = currentEditId;
+    const displayLine = document.getElementById('blockDisplayLine').checked;
+    const hrId = 'block' + blockId + 'hr';
+    if(displayLine){
+        document.getElementById(blockId).classList.remove('container');
+        const hrElement = document.createElement('hr');
+        hrElement.setAttribute("style","width:80%;height:4px;float:right;");
+        hrElement.setAttribute("id",hrId);
+        document.getElementById(blockId).appendChild(hrElement);
+    }
+    else{
+        document.getElementById(blockId).classList.add('container');
+        const hrElement = document.getElementById(hrId);
+        hrElement.parentNode.removeChild(hrElement);
+    }
+}
+
+function blockFieldCheck(blockId) {
+    let items = document.getElementById(blockId).querySelectorAll('li');
+    return items.length > 0;
+}
+
+function setBlockOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('blockTextAlign')){
+            document.getElementById('blockTextAlign').value = settings['blockTextAlign'];
+        }
+        if(settings.hasOwnProperty('blockLineHeight')){
+            document.getElementById('blockLineHeight').value = settings['blockLineHeight'];
+        }
+        if(settings.hasOwnProperty('blockSpaceBefore')){
+            document.getElementById('blockSpaceBefore').value = settings['blockSpaceBefore'];
+        }
+        if(settings.hasOwnProperty('blockSpaceAfter')){
+            document.getElementById('blockSpaceAfter').value = settings['blockSpaceAfter'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLine')){
+            document.getElementById('blockDisplayLine').checked = settings['blockDisplayLine'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLineStyle')){
+            document.getElementById('blockDisplayLineStyle').value = settings['blockDisplayLineStyle'];
+        }
+        if(settings.hasOwnProperty('blockDisplayLineHeight')){
+            document.getElementById('blockDisplayLineHeight').value = settings['blockDisplayLineHeight'];
+        }
+    }
+}
+
+function processBlockOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('blockTextAlign').value){
+        newSettings['blockTextAlign'] = document.getElementById('blockTextAlign').value;
+    }
+    if(document.getElementById('blockLineHeight').value){
+        newSettings['blockLineHeight'] = document.getElementById('blockLineHeight').value;
+    }
+    if(document.getElementById('blockSpaceBefore').value){
+        newSettings['blockSpaceBefore'] = document.getElementById('blockSpaceBefore').value;
+    }
+    if(document.getElementById('blockSpaceAfter').value){
+        newSettings['blockSpaceAfter'] = document.getElementById('blockSpaceAfter').value;
+    }
+    if(document.getElementById('blockDisplayLine').checked === true){
+        newSettings['blockDisplayLine'] = true;
+        if(document.getElementById('blockDisplayLineStyle').value){
+            newSettings['blockDisplayLineStyle'] = document.getElementById('blockDisplayLineStyle').value;
+        }
+        if(document.getElementById('blockDisplayLineHeight').value){
+            newSettings['blockDisplayLineHeight'] = document.getElementById('blockDisplayLineHeight').value;
+        }
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearBlockOptionsForm() {
+    document.getElementById('blockTextAlign').value = 'left';
+    document.getElementById('blockLineHeight').value = '';
+    document.getElementById('blockSpaceBefore').value = '';
+    document.getElementById('blockSpaceAfter').value = '';
+    document.getElementById('blockDisplayLine').checked = false;
+    document.getElementById('blockDisplayLineStyle').value = 'solid';
+    document.getElementById('blockDisplayLineHeight').value = '';
+    document.getElementById('blockoptions').style.height = '250px';
+    document.getElementById('blockLineOptions').style.display = 'none';
+}
+
+function openFieldOptions(fieldId) {
+    currentEditId = fieldId;
+    document.getElementById(fieldId).classList.add('selected');
+    setFieldOptionsForm(fieldId);
+    $('#fieldoptions').popup('show');
+}
+
+function setFieldOptionsForm(fieldId) {
+    if(settingArr.hasOwnProperty(fieldId)){
+        const settings = settingArr[fieldId];
+        if(settings.hasOwnProperty('fieldPrefix')){
+            document.getElementById('fieldPrefix').value = settings['fieldPrefix'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixBold')){
+            document.getElementById('fieldPrefixBold').checked = settings['fieldPrefixBold'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixItalic')){
+            document.getElementById('fieldPrefixItalic').checked = settings['fieldPrefixItalic'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixUnderline')){
+            document.getElementById('fieldPrefixUnderline').checked = settings['fieldPrefixUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixUppercase')){
+            document.getElementById('fieldPrefixUppercase').checked = settings['fieldPrefixUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixFont')){
+            document.getElementById('fieldPrefixFont').value = settings['fieldPrefixFont'];
+        }
+        if(settings.hasOwnProperty('fieldPrefixFontSize')){
+            document.getElementById('fieldPrefixFontSize').value = settings['fieldPrefixFontSize'];
+        }
+        if(settings.hasOwnProperty('fieldSuffix')){
+            document.getElementById('fieldSuffix').value = settings['fieldSuffix'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixBold')){
+            document.getElementById('fieldSuffixBold').checked = settings['fieldSuffixBold'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixItalic')){
+            document.getElementById('fieldSuffixItalic').checked = settings['fieldSuffixItalic'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixUnderline')){
+            document.getElementById('fieldSuffixUnderline').checked = settings['fieldSuffixUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixUppercase')){
+            document.getElementById('fieldSuffixUppercase').checked = settings['fieldSuffixUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixFont')){
+            document.getElementById('fieldSuffixFont').value = settings['fieldSuffixFont'];
+        }
+        if(settings.hasOwnProperty('fieldSuffixFontSize')){
+            document.getElementById('fieldSuffixFontSize').value = settings['fieldSuffixFontSize'];
+        }
+        if(settings.hasOwnProperty('fieldBold')){
+            document.getElementById('fieldBold').checked = settings['fieldBold'];
+        }
+        if(settings.hasOwnProperty('fieldItalic')){
+            document.getElementById('fieldItalic').checked = settings['fieldItalic'];
+        }
+        if(settings.hasOwnProperty('fieldUnderline')){
+            document.getElementById('fieldUnderline').checked = settings['fieldUnderline'];
+        }
+        if(settings.hasOwnProperty('fieldUppercase')){
+            document.getElementById('fieldUppercase').checked = settings['fieldUppercase'];
+        }
+        if(settings.hasOwnProperty('fieldFont')){
+            document.getElementById('fieldFont').value = settings['fieldFont'];
+        }
+        if(settings.hasOwnProperty('fieldFontSize')){
+            document.getElementById('fieldFontSize').value = settings['fieldFontSize'];
+        }
+    }
+}
+
+function processFieldOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('fieldPrefix').value){
+        newSettings['fieldPrefix'] = document.getElementById('fieldPrefix').value;
+        if(document.getElementById('fieldPrefixBold').checked === true){
+            newSettings['fieldPrefixBold'] = true;
+        }
+        if(document.getElementById('fieldPrefixItalic').checked === true){
+            newSettings['fieldPrefixItalic'] = true;
+        }
+        if(document.getElementById('fieldPrefixUnderline').checked === true){
+            newSettings['fieldPrefixUnderline'] = true;
+        }
+        if(document.getElementById('fieldPrefixUppercase').checked === true){
+            newSettings['fieldPrefixUppercase'] = true;
+        }
+        if(document.getElementById('fieldPrefixFont').value) {
+            newSettings['fieldPrefixFont'] = document.getElementById('fieldPrefixFont').value;
+        }
+        if(document.getElementById('fieldPrefixFontSize').value) {
+            newSettings['fieldPrefixFontSize'] = document.getElementById('fieldPrefixFontSize').value;
+        }
+    }
+    if(document.getElementById('fieldSuffix').value) {
+        newSettings['fieldSuffix'] = document.getElementById('fieldSuffix').value;
+        if(document.getElementById('fieldSuffixBold').checked === true){
+            newSettings['fieldSuffixBold'] = true;
+        }
+        if(document.getElementById('fieldSuffixItalic').checked === true){
+            newSettings['fieldSuffixItalic'] = true;
+        }
+        if(document.getElementById('fieldSuffixUnderline').checked === true){
+            newSettings['fieldSuffixUnderline'] = true;
+        }
+        if(document.getElementById('fieldSuffixUppercase').checked === true){
+            newSettings['fieldSuffixUppercase'] = true;
+        }
+        if(document.getElementById('fieldSuffixFont').value) {
+            newSettings['fieldSuffixFont'] = document.getElementById('fieldSuffixFont').value;
+        }
+        if(document.getElementById('fieldSuffixFontSize').value) {
+            newSettings['fieldSuffixFontSize'] = document.getElementById('fieldSuffixFontSize').value;
+        }
+    }
+    if(document.getElementById('fieldBold').checked === true){
+        newSettings['fieldBold'] = true;
+    }
+    if(document.getElementById('fieldItalic').checked === true){
+        newSettings['fieldItalic'] = true;
+    }
+    if(document.getElementById('fieldUnderline').checked === true){
+        newSettings['fieldUnderline'] = true;
+    }
+    if(document.getElementById('fieldUppercase').checked === true){
+        newSettings['fieldUppercase'] = true;
+    }
+    if(document.getElementById('fieldFont').value) {
+        newSettings['fieldFont'] = document.getElementById('fieldFont').value;
+    }
+    if(document.getElementById('fieldFontSize').value) {
+        newSettings['fieldFontSize'] = document.getElementById('fieldFontSize').value;
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearFieldOptionsForm() {
+    document.getElementById('fieldPrefix').value = '';
+    document.getElementById('fieldPrefixBold').checked = false;
+    document.getElementById('fieldPrefixItalic').checked = false;
+    document.getElementById('fieldPrefixUnderline').checked = false;
+    document.getElementById('fieldPrefixUppercase').checked = false;
+    document.getElementById('fieldPrefixFont').value = 'Arial';
+    document.getElementById('fieldPrefixFontSize').value = '';
+    document.getElementById('fieldSuffix').value = '';
+    document.getElementById('fieldSuffixBold').checked = false;
+    document.getElementById('fieldSuffixItalic').checked = false;
+    document.getElementById('fieldSuffixUnderline').checked = false;
+    document.getElementById('fieldSuffixUppercase').checked = false;
+    document.getElementById('fieldSuffixFont').value = 'Arial';
+    document.getElementById('fieldSuffixFontSize').value = '';
+    document.getElementById('fieldBold').checked = false;
+    document.getElementById('fieldItalic').checked = false;
+    document.getElementById('fieldUnderline').checked = false;
+    document.getElementById('fieldUppercase').checked = false;
+    document.getElementById('fieldFont').value = 'Arial';
+    document.getElementById('fieldFontSize').value = '';
+}
+
+function openBarcodeOptions(fieldId) {
+    currentEditId = fieldId;
+    document.getElementById(fieldId).classList.add('selected');
+    setBarcodeOptionsForm(fieldId);
+    $('#barcodeoptions').popup('show');
+}
+
+function setBarcodeOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('barcodeHeight')){
+            document.getElementById('barcodeHeight').value = settings['barcodeHeight'];
+        }
+        if(settings.hasOwnProperty('barcodeLabel')){
+            document.getElementById('barcodeLabel').checked = settings['barcodeLabel'];
+        }
+        if(settings.hasOwnProperty('barcodeLabelFont')){
+            document.getElementById('barcodeLabelFont').value = settings['barcodeLabelFont'];
+        }
+        if(settings.hasOwnProperty('barcodeLabelFontSize')){
+            document.getElementById('barcodeLabelFontSize').value = settings['barcodeLabelFontSize'];
+        }
+    }
+}
+
+function processBarcodeOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('barcodeHeight').value){
+        newSettings['barcodeHeight'] = document.getElementById('barcodeHeight').value;
+    }
+    if(document.getElementById('barcodeLabel').checked === true){
+        newSettings['barcodeLabel'] = true;
+        if(document.getElementById('barcodeLabelFont').value){
+            newSettings['barcodeLabelFont'] = document.getElementById('barcodeLabelFont').value;
+        }
+        if(document.getElementById('barcodeLabelFontSize').value){
+            newSettings['barcodeLabelFontSize'] = document.getElementById('barcodeLabelFontSize').value;
+        }
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearBarcodeOptionsForm() {
+    document.getElementById('barcodeHeight').value = '';
+    document.getElementById('barcodeLabel').checked = true;
+    document.getElementById('barcodeLabelFont').style.height = 'Arial';
+    document.getElementById('barcodeLabelFontSize').style.display = '';
+}
+
+function openQRCodeOptions(fieldId) {
+    currentEditId = fieldId;
+    document.getElementById(fieldId).classList.add('selected');
+    setQRCodeOptionsForm(fieldId);
+    $('#qrcodeoptions').popup('show');
+}
+
+function setQRCodeOptionsForm(blockId) {
+    if(settingArr.hasOwnProperty(blockId)){
+        const settings = settingArr[blockId];
+        if(settings.hasOwnProperty('qrcodeWidth')){
+            document.getElementById('qrcodeWidth').value = settings['qrcodeWidth'];
+        }
+    }
+}
+
+function processQRCodeOptionsFormChange() {
+    const newSettings = {};
+    if(document.getElementById('qrcodeWidth').value){
+        newSettings['qrcodeWidth'] = document.getElementById('qrcodeWidth').value;
+    }
+    settingArr[currentEditId] = newSettings;
+}
+
+function clearQRCodeOptionsForm() {
+    document.getElementById('qrcodeWidth').style.display = '';
+}
+
+function handleBlockClose(blockId) {
+    const line = document.getElementById(blockId);
+    removeLine(line);
+    refreshPreview();
+}
+
+function handleBlockUp(blockId) {
+    const first = labelMid.getElementsByClassName('field-block')[0];
+    const curr = document.getElementById(blockId);
+    if(curr !== first){
+        const prev = curr.previousSibling;
+        prev.replaceWith(curr);
+        curr.parentNode.insertBefore(prev, curr.nextSibling);
+    }
+    refreshPreview();
+}
+
+function handleBlockDown(blockId) {
+    const curr = document.getElementById(blockId);
+    const next = curr.nextSibling;
+    if(next){
+        curr.replaceWith(next);
+        next.parentNode.insertBefore(curr, next.nextSibling);
+    }
+    refreshPreview();
+}
+
 function saveJson(){
-    let formatId = dummy.dataset.formatId;
-    let formatTextArea = window.opener.document.querySelector(formatId);
+    let formId = document.getElementById('formid').value;
     let list = refreshPreview();
-    let isEmpty = list[0].length == 0;
-    let message = '';
-    if(isEmpty){
-        alert(
-            'Label format is empty! Please drag some items to the build area before trying again'
-        );
-    } else {
-        let json = generateJson(refreshPreview());
-        dummy.value = json;
-        formatTextArea.value = json;
+    if(list[0].length === 0){
+        alert('Label format is empty! Please drag some items to the build area before trying again');
+    }
+    else {
+        const newBlockArr = [];
+        let fieldBlocks = labelMid.querySelectorAll('.field-block');
+        fieldBlocks.forEach((block) => {
+            const newBlockObj = {};
+            const newFieldsArr = [];
+            const blockId = block.id;
+            if(settingArr.hasOwnProperty(blockId)){
+                const keys = Object.keys(settingArr[blockId]);
+                for(let k in keys){
+                    if(keys.hasOwnProperty(k)){
+                        newBlockObj[keys[k]] = settingArr[blockId][keys[k]];
+                    }
+                }
+            }
+            let items = block.querySelectorAll('li');
+            items.forEach((item) => {
+                const newItemObj = {};
+                const field = item.title;
+                const fieldId = item.id;
+                if(settingArr.hasOwnProperty(fieldId)){
+                    const keys = Object.keys(settingArr[fieldId]);
+                    for(let k in keys){
+                        if(keys.hasOwnProperty(k)){
+                            newItemObj[keys[k]] = settingArr[fieldId][keys[k]];
+                        }
+                    }
+                }
+                newItemObj['field'] = field;
+                newFieldsArr.push(newItemObj);
+            });
+            if(newFieldsArr.length > 0){
+                newBlockObj['fields'] = newFieldsArr;
+            }
+            newBlockArr.push(newBlockObj);
+        });
+        jsonArr['labelBlocks'] = newBlockArr;
+        const f = window.opener.document.getElementById(formId);
+        f.json.value = JSON.stringify(jsonArr, null, 4);
         window.close();
     }
 }
