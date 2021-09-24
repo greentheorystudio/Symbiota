@@ -21,7 +21,7 @@ if($GLOBALS['USER_DISPLAY_NAME']){
 else{
     ?>
     <div>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">
+        <a class="login-link" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">
             Log In
         </a>
     </div>
