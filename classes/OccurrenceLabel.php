@@ -726,7 +726,7 @@ class OccurrenceLabel{
         if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
             $urlStr .= ':' . $_SERVER['SERVER_PORT'];
         }
-        $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $occid;
+        $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?fullwindow=1&occid=' . $occid;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'http://chart.apis.google.com/chart');
         curl_setopt($ch, CURLOPT_POST, true);
