@@ -55,7 +55,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Label Manager</title>
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Label Format Manager</title>
         <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
         <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -281,7 +281,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                     f.headerFont.value = labelArr['headerFont'];
                 }
                 else{
-                    f.headerFont.value = 'Arial';
+                    f.headerFont.value = '';
                 }
                 if(labelArr.hasOwnProperty('headerFontSize')){
                     f.headerFontSize.value = labelArr['headerFontSize'];
@@ -335,7 +335,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                     f.footerFont.value = labelArr['footerFont'];
                 }
                 else{
-                    f.footerFont.value = 'Arial';
+                    f.footerFont.value = '';
                 }
                 if(labelArr.hasOwnProperty('footerFontSize')){
                     f.footerFontSize.value = labelArr['footerFontSize'];
@@ -401,8 +401,8 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
 			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
 		}
 		?>
-		<a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Label Manager</a> &gt;&gt;
-		<b>Label Profile Editor</b>
+		<a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Print Labels/Annotations</a> &gt;&gt;
+		<b>Label Format Manager</b>
 	</div>
 	<div id="innertext">
 		<?php
@@ -586,6 +586,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                                         <span class="field-inline" style="margin-left:5px;">
 											<span class="label-inline">Font:</span>
                                             <select name="headerFont" onchange="processLabelFormChange('<?php echo $formId; ?>')">
+                                                <option value="">Select a Font</option>
                                                 <option value="Arial" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Arial'?'selected':''); ?>>Arial (sans-serif)</option>
                                                 <option value="Brush Script MT" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Brush Script MT'?'selected':''); ?>>Brush Script MT (cursive)</option>
                                                 <option value="Courier New" <?php echo (isset($formatArr['headerFont']) && $formatArr['headerFont'] === 'Courier New'?'selected':''); ?>>Courier New (monospace)</option>
@@ -648,6 +649,7 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                                         <span class="field-inline" style="margin-left:5px;">
 											<span class="label-inline">Font:</span>
                                             <select name="footerFont" onchange="processLabelFormChange('<?php echo $formId; ?>')">
+                                                <option value="">Select a Font</option>
                                                 <option value="Arial" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Arial'?'selected':''); ?>>Arial (sans-serif)</option>
                                                 <option value="Brush Script MT" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Brush Script MT'?'selected':''); ?>>Brush Script MT (cursive)</option>
                                                 <option value="Courier New" <?php echo (isset($formatArr['footerFont']) && $formatArr['footerFont'] === 'Courier New'?'selected':''); ?>>Courier New (monospace)</option>
@@ -695,9 +697,6 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                                         <option value="2" <?php echo ((int)$pageLayout === 2?'selected':''); ?>>2 columns per page</option>
                                         <option value="3" <?php echo ((int)$pageLayout === 3?'selected':''); ?>>3 columns per page</option>
                                         <option value="4" <?php echo ((int)$pageLayout === 4?'selected':''); ?>>4 columns per page</option>
-                                        <option value="5" <?php echo ((int)$pageLayout === 5?'selected':''); ?>>5 columns per page</option>
-                                        <option value="6" <?php echo ((int)$pageLayout === 6?'selected':''); ?>>6 columns per page</option>
-                                        <option value="7" <?php echo ((int)$pageLayout === 7?'selected':''); ?>>7 columns per page</option>
                                         <option value="packet" <?php echo ($pageLayout === 'packet'?'selected':''); ?>>Packet labels</option>
                                     </select>
                                 </div>
@@ -933,9 +932,6 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
                                     <option value="2" selected>2 columns per page</option>
                                     <option value="3">3 columns per page</option>
                                     <option value="4">4 columns per page</option>
-                                    <option value="5">5 columns per page</option>
-                                    <option value="6">6 columns per page</option>
-                                    <option value="7">7 columns per page</option>
                                     <option value="packet">Packet labels</option>
                                 </select>
                             </div>

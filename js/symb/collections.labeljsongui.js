@@ -711,20 +711,20 @@ function clearFieldOptionsForm() {
     document.getElementById('fieldPrefixItalic').checked = false;
     document.getElementById('fieldPrefixUnderline').checked = false;
     document.getElementById('fieldPrefixUppercase').checked = false;
-    document.getElementById('fieldPrefixFont').value = 'Arial';
+    document.getElementById('fieldPrefixFont').value = '';
     document.getElementById('fieldPrefixFontSize').value = '';
     document.getElementById('fieldSuffix').value = '';
     document.getElementById('fieldSuffixBold').checked = false;
     document.getElementById('fieldSuffixItalic').checked = false;
     document.getElementById('fieldSuffixUnderline').checked = false;
     document.getElementById('fieldSuffixUppercase').checked = false;
-    document.getElementById('fieldSuffixFont').value = 'Arial';
+    document.getElementById('fieldSuffixFont').value = '';
     document.getElementById('fieldSuffixFontSize').value = '';
     document.getElementById('fieldBold').checked = false;
     document.getElementById('fieldItalic').checked = false;
     document.getElementById('fieldUnderline').checked = false;
     document.getElementById('fieldUppercase').checked = false;
-    document.getElementById('fieldFont').value = 'Arial';
+    document.getElementById('fieldFont').value = '';
     document.getElementById('fieldFontSize').value = '';
 }
 
@@ -741,15 +741,6 @@ function setBarcodeOptionsForm(blockId) {
         if(settings.hasOwnProperty('barcodeHeight')){
             document.getElementById('barcodeHeight').value = settings['barcodeHeight'];
         }
-        if(settings.hasOwnProperty('barcodeLabel')){
-            document.getElementById('barcodeLabel').checked = settings['barcodeLabel'];
-        }
-        if(settings.hasOwnProperty('barcodeLabelFont')){
-            document.getElementById('barcodeLabelFont').value = settings['barcodeLabelFont'];
-        }
-        if(settings.hasOwnProperty('barcodeLabelFontSize')){
-            document.getElementById('barcodeLabelFontSize').value = settings['barcodeLabelFontSize'];
-        }
     }
 }
 
@@ -758,23 +749,11 @@ function processBarcodeOptionsFormChange() {
     if(document.getElementById('barcodeHeight').value){
         newSettings['barcodeHeight'] = document.getElementById('barcodeHeight').value;
     }
-    if(document.getElementById('barcodeLabel').checked === true){
-        newSettings['barcodeLabel'] = true;
-        if(document.getElementById('barcodeLabelFont').value){
-            newSettings['barcodeLabelFont'] = document.getElementById('barcodeLabelFont').value;
-        }
-        if(document.getElementById('barcodeLabelFontSize').value){
-            newSettings['barcodeLabelFontSize'] = document.getElementById('barcodeLabelFontSize').value;
-        }
-    }
     settingArr[currentEditId] = newSettings;
 }
 
 function clearBarcodeOptionsForm() {
     document.getElementById('barcodeHeight').value = '';
-    document.getElementById('barcodeLabel').checked = true;
-    document.getElementById('barcodeLabelFont').style.height = 'Arial';
-    document.getElementById('barcodeLabelFontSize').style.display = '';
 }
 
 function openQRCodeOptions(fieldId) {
@@ -787,22 +766,22 @@ function openQRCodeOptions(fieldId) {
 function setQRCodeOptionsForm(blockId) {
     if(settingArr.hasOwnProperty(blockId)){
         const settings = settingArr[blockId];
-        if(settings.hasOwnProperty('qrcodeWidth')){
-            document.getElementById('qrcodeWidth').value = settings['qrcodeWidth'];
+        if(settings.hasOwnProperty('qrcodeSize')){
+            document.getElementById('qrcodeSize').value = settings['qrcodeSize'];
         }
     }
 }
 
 function processQRCodeOptionsFormChange() {
     const newSettings = {};
-    if(document.getElementById('qrcodeWidth').value){
-        newSettings['qrcodeWidth'] = document.getElementById('qrcodeWidth').value;
+    if(document.getElementById('qrcodeSize').value){
+        newSettings['qrcodeSize'] = document.getElementById('qrcodeSize').value;
     }
     settingArr[currentEditId] = newSettings;
 }
 
 function clearQRCodeOptionsForm() {
-    document.getElementById('qrcodeWidth').style.display = '';
+    document.getElementById('qrcodeSize').style.display = '';
 }
 
 function handleBlockClose(blockId) {

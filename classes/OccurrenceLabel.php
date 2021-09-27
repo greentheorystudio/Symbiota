@@ -177,7 +177,7 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 
-    public function getLabelArray($occidArr, $speciesAuthors): array
+    public function getLabelArray($occidArr): array
 	{
 		$retArr = array();
 		if($occidArr){
@@ -190,9 +190,7 @@ class OccurrenceLabel{
                     'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
                     'INNER JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
                     $sqlWhere.' AND t.rankid > 220 AND ts.taxauthid = 1 ';
-                if(!$speciesAuthors) {
-                    $sql1 .= 'AND t.unitname2 = t.unitname3 ';
-                }
+                $sql1 .= 'AND t.unitname2 = t.unitname3 ';
                 //echo $sql1; exit;
                 if($rs1 = $this->conn->query($sql1)){
                     while($row1 = $rs1->fetch_object()){
@@ -251,11 +249,7 @@ class OccurrenceLabel{
 		global $CHARSET;
 		$occidArr = $pArr['occid'];
 		if($occidArr){
-			$speciesAuthors = 0;
-			if(array_key_exists('speciesauthors',$pArr) && $pArr['speciesauthors']) {
-                $speciesAuthors = 1;
-            }
-			$labelArr = $this->getLabelArray($occidArr, $speciesAuthors);
+			$labelArr = $this->getLabelArray($occidArr);
 			if($labelArr){
 				$fileName = 'labeloutput_'.time(). '.csv';
 				header('Content-Description: Symbiota Label Output File');
@@ -720,6 +714,29 @@ class OccurrenceLabel{
             $location = $cur_size;
         }
         return $image;
+    }
+
+    public function getQRCodePng($occid, $size)
+    {
+        $urlStr = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $urlStr = 'https://';
+        }
+        $urlStr .= $_SERVER['HTTP_HOST'];
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+            $urlStr .= ':' . $_SERVER['SERVER_PORT'];
+        }
+        $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid=' . $occid;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'http://chart.apis.google.com/chart');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, 'chs='.$size.'x'.$size.'&cht=qr&chl=' . urlencode($urlStr));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        $returnStr = curl_exec($ch);
+        curl_close($ch);
+        return $returnStr;
     }
 
 	public function clearAnnoQueue($detidArr): string

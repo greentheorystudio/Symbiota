@@ -300,6 +300,7 @@ include(__DIR__ . '/../../header.php');
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
                     <select id="fieldPrefixFont" onchange="processFieldOptionsFormChange()">
+                        <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -350,6 +351,7 @@ include(__DIR__ . '/../../header.php');
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
                     <select id="fieldSuffixFont" onchange="processFieldOptionsFormChange()">
+                        <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -396,6 +398,7 @@ include(__DIR__ . '/../../header.php');
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label-inline">Font:</span>
                     <select id="fieldFont" onchange="processFieldOptionsFormChange()">
+                        <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
                         <option value="Brush Script MT">Brush Script MT (cursive)</option>
                         <option value="Courier New">Courier New (monospace)</option>
@@ -491,33 +494,6 @@ include(__DIR__ . '/../../header.php');
                     <span class="label">Barcode Height (px):</span>
                     <span class="field-elem"><input id="barcodeHeight" type="text" style="width:40px;" value="" onchange="processBarcodeOptionsFormChange()" /></span>
                 </span>
-                <span class="field-inline">
-                    <input id="barcodeLabel" type="checkbox" value="1" onchange="processBarcodeOptionsFormChange()" checked/>
-                    <span class="label-inline">Display Label</span>
-                </span>
-            </div>
-        </div>
-        <div class="field-block" style="margin-top:5px;">
-            <div class="field-elem">
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="label-inline">Label Font:</span>
-                    <select id="barcodeLabelFont" onchange="processBarcodeOptionsFormChange()">
-                        <option value="Arial">Arial (sans-serif)</option>
-                        <option value="Brush Script MT">Brush Script MT (cursive)</option>
-                        <option value="Courier New">Courier New (monospace)</option>
-                        <option value="Garamond">Garamond (serif)</option>
-                        <option value="Georgia">Georgia (serif)</option>
-                        <option value="Helvetica">Helvetica (sans-serif)</option>
-                        <option value="Tahoma">Tahoma (sans-serif)</option>
-                        <option value="Times New Roman">Times New Roman (serif)</option>
-                        <option value="Trebuchet">Trebuchet (sans-serif)</option>
-                        <option value="Verdana">Verdana (sans-serif)</option>
-                    </select>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Label Font Size (px):</span>
-                    <span class="field-elem"><input id="barcodeLabelFontSize" type="text" style="width:40px;" value="" onchange="processBarcodeOptionsFormChange()" /></span>
-                </span>
             </div>
         </div>
     </fieldset>
@@ -531,8 +507,8 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">QR Code Width (px):</span>
-                    <span class="field-elem"><input id="qrcodeWidth" type="text" style="width:40px;" value="" onchange="processQRCodeOptionsFormChange()" /></span>
+                    <span class="label">QR Code Size (px):</span>
+                    <span class="field-elem"><input id="qrcodeSize" type="text" style="width:40px;" value="" onchange="processQRCodeOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
