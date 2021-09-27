@@ -41,7 +41,7 @@
                         {
                             "fieldSuffix": " ",
                             "fieldFontSize": 12,
-                            "field": "parentauthor"
+                            "field": "specificepithetauthorship"
                         },
                         {
                             "fieldBold": true,
@@ -278,7 +278,7 @@
                         },
                         {
                             "fieldSuffix": " ",
-                            "field": "parentauthor"
+                            "field": "specificepithetauthorship"
                         },
                         {
                             "fieldBold": true,

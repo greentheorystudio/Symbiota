@@ -70,13 +70,12 @@ const fieldProps = [
     {name: 'Genus', id: 'genus', group: 'taxon'},
     {name: 'Infraspecific Epithet', id: 'infraspecificepithet', group: 'taxon'},
     {name: 'Infraspecific Epithet Authorship', id: 'infraspecificepithetauthorship', group: 'taxon'},
-    {name: 'Parent Author', id: 'parentauthor', group: 'taxon'},
     {name: 'Scientific Name', id: 'sciname', group: 'taxon'},
     {name: 'Scientific Name Authorship', id: 'scientificnameauthorship', group: 'taxon'},
     {name: 'Specific Epithet', id: 'specificepithet', group: 'taxon'},
+    {name: 'Specific Epithet Authorship', id: 'specificepithetauthorship', group: 'taxon'},
     {name: 'Taxon Rank', id: 'taxonrank', group: 'taxon'},
-    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'},
-    {name: 'Terminal Scientific Name Authorship', id: 'terminalscientificnameauthorship', group: 'taxon'}
+    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'}
 ];
 
 const fieldListDiv = document.getElementById('field-list');
