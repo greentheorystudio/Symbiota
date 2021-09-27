@@ -321,6 +321,53 @@ include(__DIR__ . '/../../header.php');
         </div>
     </fieldset>
     <fieldset class="fieldset-block">
+        <legend>Data</legend>
+        <div class="field-block">
+            <div class="field-elem">
+                <span class="field-inline">
+                    <input id="fieldBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
+                    <span class="label-inline">Bold</span>
+                </span>
+                <span class="field-inline">
+                    <input id="fieldItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
+                    <span class="label-inline">Italic</span>
+                </span>
+                <span class="field-inline">
+                    <input id="fieldUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
+                    <span class="label-inline">Underline</span>
+                </span>
+                <span class="field-inline">
+                    <input id="fieldUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
+                    <span class="label-inline">Uppercase</span>
+                </span>
+            </div>
+        </div>
+        <div class="field-block">
+            <div class="field-elem">
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label-inline">Font:</span>
+                    <select id="fieldFont" onchange="processFieldOptionsFormChange()">
+                        <option value="">Select a Font</option>
+                        <option value="Arial">Arial (sans-serif)</option>
+                        <option value="Brush Script MT">Brush Script MT (cursive)</option>
+                        <option value="Courier New">Courier New (monospace)</option>
+                        <option value="Garamond">Garamond (serif)</option>
+                        <option value="Georgia">Georgia (serif)</option>
+                        <option value="Helvetica">Helvetica (sans-serif)</option>
+                        <option value="Tahoma">Tahoma (sans-serif)</option>
+                        <option value="Times New Roman">Times New Roman (serif)</option>
+                        <option value="Trebuchet">Trebuchet (sans-serif)</option>
+                        <option value="Verdana">Verdana (sans-serif)</option>
+                    </select>
+                </span>
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">Font Size (px):</span>
+                    <span class="field-elem"><input id="fieldFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="fieldset-block">
         <legend>Suffix</legend>
         <div class="field-block">
             <span class="label">Suffix:</span>
@@ -367,53 +414,6 @@ include(__DIR__ . '/../../header.php');
                 <span class="field-inline" style="margin-left:5px;">
                     <span class="label">Font Size (px):</span>
                     <span class="field-elem"><input id="fieldSuffixFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
-                </span>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="fieldset-block">
-        <legend>Data</legend>
-        <div class="field-block">
-            <div class="field-elem">
-                <span class="field-inline">
-                    <input id="fieldBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Bold</span>
-                </span>
-                <span class="field-inline">
-                    <input id="fieldItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Italic</span>
-                </span>
-                <span class="field-inline">
-                    <input id="fieldUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Underline</span>
-                </span>
-                <span class="field-inline">
-                    <input id="fieldUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Uppercase</span>
-                </span>
-            </div>
-        </div>
-        <div class="field-block">
-            <div class="field-elem">
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="label-inline">Font:</span>
-                    <select id="fieldFont" onchange="processFieldOptionsFormChange()">
-                        <option value="">Select a Font</option>
-                        <option value="Arial">Arial (sans-serif)</option>
-                        <option value="Brush Script MT">Brush Script MT (cursive)</option>
-                        <option value="Courier New">Courier New (monospace)</option>
-                        <option value="Garamond">Garamond (serif)</option>
-                        <option value="Georgia">Georgia (serif)</option>
-                        <option value="Helvetica">Helvetica (sans-serif)</option>
-                        <option value="Tahoma">Tahoma (sans-serif)</option>
-                        <option value="Times New Roman">Times New Roman (serif)</option>
-                        <option value="Trebuchet">Trebuchet (sans-serif)</option>
-                        <option value="Verdana">Verdana (sans-serif)</option>
-                    </select>
-                </span>
-                <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Font Size (px):</span>
-                    <span class="field-elem"><input id="fieldFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>

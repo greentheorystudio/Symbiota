@@ -30,7 +30,6 @@ if(!is_numeric($labelIndex)) {
     $labelIndex = '';
 }
 
-use Endroid\QrCode\QrCode;
 $labelManager = new OccurrenceLabel();
 $labelManager->setCollid($collid);
 $formatArr = ($scope && is_numeric($labelIndex)) ? $labelManager->getLabelFormatByID($scope,$labelIndex) : array();
@@ -79,10 +78,6 @@ if($formatArr){
         </style>
     </head>
     <body style="background-color:white;">
-    <div style="width:816px;margin:0 auto;padding-bottom:15px;display:flex;justify-content:space-evenly;">
-        <button id="edit" style="font-weight:bold;" onclick="toggleEdits();">Edit Labels Content</button>
-        <button id="print" style="font-weight:bold;" onclick="window.print();;">Print/Save PDF</button>
-    </div>
     <?php
     echo '<div style="width:816px;margin: 25px auto;">';
     if($GLOBALS['SYMB_UID']){
@@ -135,41 +130,6 @@ if($formatArr){
                         echo '<div style=\''.$styleStr.'\'></div>';
                     }
                 }
-
-
-                /*echo $labelManager->getLabelBlock($formatArr['labelBlocks'],$occArr);
-                if($occArr['catalognumber']){
-                    if($useBarcode){
-                        ?>
-                        <div class="cn-barcode">
-                            <img src="getBarcode.php?bcheight=40&bctext=<?php echo $occArr['catalognumber']; ?>" />
-                        </div>
-                        <?php
-                    }
-                    elseif($showcatalognumbers){
-                        ?>
-                        <div class="catalog-number">
-                            <?php echo $occArr['catalognumber']; ?>
-                        </div>
-                        <?php
-                    }
-                }
-                if($occArr['othercatalognumbers']){
-                    ?>
-                    <div class="other-catalog-numbers">
-                        <?php echo $occArr['othercatalognumbers']; ?>
-                    </div>
-                    <?php
-                }
-                if($lFooter) {
-                    echo '<div class="label-footer" ' . (isset($formatArr['labelFooter']['style']) ? 'style="' . $formatArr['labelFooter']['style'] . '"' : '') . '>' . $lFooter . '</div>';
-                }*/
-
-
-
-
-
-
                 foreach($formatFields as $k => $labelFieldBlock){
                     $blockStyleStr = $labelWidth . 'clear:both;';
                     if(isset($labelFieldBlock['blockDisplayLine'])){
@@ -189,9 +149,9 @@ if($formatArr){
                     }
                     elseif(isset($labelFieldBlock['fields'])) {
                         $fieldsArr = $labelFieldBlock['fields'];
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'display:flex;justify-content:flex-start;' : '';
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'display:flex;justify-content:center;' : '';
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'display:flex;justify-content:flex-end;' : '';
+                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'display:flex;justify-content:flex-start;text-align:left;' : '';
+                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'display:flex;justify-content:center;text-align:center;' : '';
+                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'display:flex;justify-content:flex-end;text-align:right;' : '';
                         $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
                         $blockStyleStr .= isset($labelFieldBlock['blockSpaceBefore']) ? 'margin-left:'.$labelFieldBlock['blockSpaceBefore'].'px;' : '';
                         $blockStyleStr .= isset($labelFieldBlock['blockSpaceAfter']) ? 'margin-right:'.$labelFieldBlock['blockSpaceAfter'].'px;' : '';
@@ -220,8 +180,35 @@ if($formatArr){
                                     echo "<img src='data:image/png;base64,".$base64Str."' />";
                                 }
                             }
-                            else{
-
+                            else if(isset($occArr[$field]) && $occArr[$field]){
+                                if(isset($labelFieldBlock['fieldPrefix'])){
+                                    $prefixStyleStr = $labelWidth . 'clear:both;';
+                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixBold']) ? 'font-weight:bold;' : '';
+                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixItalic']) ? 'font-style:italic;' : '';
+                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixUnderline']) ? 'text-decoration:underline;' : '';
+                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
+                                    $prefixStyleStr .= 'font-family:'.(isset($labelFieldBlock['fieldPrefixFont']) ? $cssFontFamilies[$labelFieldBlock['fieldPrefixFont']] : $defaultFont).';';
+                                    $prefixStyleStr .= 'font-size:'.($labelFieldBlock['fieldPrefixFontSize'] ?? $defaultFontSize).';';
+                                    echo '<span style=\''.$prefixStyleStr.'\'>'.$labelFieldBlock['fieldPrefix'].'</span>';
+                                }
+                                $styleStr = $labelWidth . 'clear:both;';
+                                $styleStr .= isset($labelFieldBlock['fieldBold']) ? 'font-weight:bold;' : '';
+                                $styleStr .= isset($labelFieldBlock['fieldItalic']) ? 'font-style:italic;' : '';
+                                $styleStr .= isset($labelFieldBlock['fieldUnderline']) ? 'text-decoration:underline;' : '';
+                                $styleStr .= isset($labelFieldBlock['fieldUppercase']) ? 'text-transform:uppercase;' : '';
+                                $styleStr .= 'font-family:'.(isset($labelFieldBlock['fieldFont']) ? $cssFontFamilies[$labelFieldBlock['fieldFont']] : $defaultFont).';';
+                                $styleStr .= 'font-size:'.($labelFieldBlock['fieldFontSize'] ?? $defaultFontSize).';';
+                                echo '<span style=\''.$styleStr.'\'>'.$occArr[$field].'</span>';
+                                if(isset($labelFieldBlock['fieldSuffix'])){
+                                    $suffixStyleStr = $labelWidth . 'clear:both;';
+                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixBold']) ? 'font-weight:bold;' : '';
+                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixItalic']) ? 'font-style:italic;' : '';
+                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixUnderline']) ? 'text-decoration:underline;' : '';
+                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
+                                    $suffixStyleStr .= 'font-family:'.(isset($labelFieldBlock['fieldSuffixFont']) ? $cssFontFamilies[$labelFieldBlock['fieldSuffixFont']] : $defaultFont).';';
+                                    $suffixStyleStr .= 'font-size:'.($labelFieldBlock['fieldSuffixFontSize'] ?? $defaultFontSize).';';
+                                    echo '<span style=\''.$suffixStyleStr.'\'>'.$labelFieldBlock['fieldSuffix'].'</span>';
+                                }
                             }
                         }
                         echo '</div>';
@@ -257,25 +244,6 @@ if($formatArr){
     echo '</div>';
     ?>
     </body>
-    <script type="text/javascript">
-        let labelPage = document.querySelector('.body');
-
-        function toggleEdits() {
-            let isEditable = labelPage.contentEditable === 'true';
-            if(isEditable){
-                console.log(isEditable);
-                labelPage.contentEditable = 'false';
-                document.querySelector('#edit').innerText = 'Edit Labels Text';
-                labelPage.style.border = 'none';
-            }
-            else{
-                console.log(isEditable);
-                labelPage.contentEditable = 'true';
-                document.querySelector('#edit').innerText = 'Save';
-                labelPage.style.border = '2px solid #03fc88';
-            }
-        }
-    </script>
     </html>
     <?php
 }
