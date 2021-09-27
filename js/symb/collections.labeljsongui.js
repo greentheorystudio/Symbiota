@@ -511,11 +511,17 @@ function setBlockOptionsForm(blockId) {
         if(settings.hasOwnProperty('blockLineHeight')){
             document.getElementById('blockLineHeight').value = settings['blockLineHeight'];
         }
-        if(settings.hasOwnProperty('blockSpaceBefore')){
-            document.getElementById('blockSpaceBefore').value = settings['blockSpaceBefore'];
+        if(settings.hasOwnProperty('blockTopMargin')){
+            document.getElementById('blockTopMargin').value = settings['blockTopMargin'];
         }
-        if(settings.hasOwnProperty('blockSpaceAfter')){
-            document.getElementById('blockSpaceAfter').value = settings['blockSpaceAfter'];
+        if(settings.hasOwnProperty('blockBottomMargin')){
+            document.getElementById('blockBottomMargin').value = settings['blockBottomMargin'];
+        }
+        if(settings.hasOwnProperty('blockLeftMargin')){
+            document.getElementById('blockLeftMargin').value = settings['blockLeftMargin'];
+        }
+        if(settings.hasOwnProperty('blockRightMargin')){
+            document.getElementById('blockRightMargin').value = settings['blockRightMargin'];
         }
         if(settings.hasOwnProperty('blockDisplayLine')){
             document.getElementById('blockDisplayLine').checked = settings['blockDisplayLine'];
@@ -537,11 +543,17 @@ function processBlockOptionsFormChange() {
     if(document.getElementById('blockLineHeight').value){
         newSettings['blockLineHeight'] = document.getElementById('blockLineHeight').value;
     }
-    if(document.getElementById('blockSpaceBefore').value){
-        newSettings['blockSpaceBefore'] = document.getElementById('blockSpaceBefore').value;
+    if(document.getElementById('blockTopMargin').value){
+        newSettings['blockTopMargin'] = document.getElementById('blockTopMargin').value;
     }
-    if(document.getElementById('blockSpaceAfter').value){
-        newSettings['blockSpaceAfter'] = document.getElementById('blockSpaceAfter').value;
+    if(document.getElementById('blockBottomMargin').value){
+        newSettings['blockBottomMargin'] = document.getElementById('blockBottomMargin').value;
+    }
+    if(document.getElementById('blockLeftMargin').value){
+        newSettings['blockLeftMargin'] = document.getElementById('blockLeftMargin').value;
+    }
+    if(document.getElementById('blockRightMargin').value){
+        newSettings['blockRightMargin'] = document.getElementById('blockRightMargin').value;
     }
     if(document.getElementById('blockDisplayLine').checked === true){
         newSettings['blockDisplayLine'] = true;
@@ -558,8 +570,10 @@ function processBlockOptionsFormChange() {
 function clearBlockOptionsForm() {
     document.getElementById('blockTextAlign').value = 'left';
     document.getElementById('blockLineHeight').value = '';
-    document.getElementById('blockSpaceBefore').value = '';
-    document.getElementById('blockSpaceAfter').value = '';
+    document.getElementById('blockTopMargin').value = '';
+    document.getElementById('blockBottomMargin').value = '';
+    document.getElementById('blockLeftMargin').value = '';
+    document.getElementById('blockRightMargin').value = '';
     document.getElementById('blockDisplayLine').checked = false;
     document.getElementById('blockDisplayLineStyle').value = 'solid';
     document.getElementById('blockDisplayLineHeight').value = '';
@@ -811,7 +825,19 @@ function handleBlockDown(blockId) {
     refreshPreview();
 }
 
+function cleanContentBlocks(){
+    let fieldBlocks = labelMid.querySelectorAll('.field-block');
+    fieldBlocks.forEach((block) => {
+        const blockId = block.id;
+        let items = block.querySelectorAll('li');
+        if(items.length === 0 && (!settingArr.hasOwnProperty(blockId) || !settingArr[blockId].hasOwnProperty('blockDisplayLine'))){
+            handleBlockClose(blockId);
+        }
+    });
+}
+
 function saveJson(){
+    cleanContentBlocks();
     let formId = document.getElementById('formid').value;
     let list = refreshPreview();
     if(list[0].length === 0){

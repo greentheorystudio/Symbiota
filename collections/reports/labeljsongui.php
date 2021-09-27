@@ -259,8 +259,8 @@ include(__DIR__ . '/../../header.php');
         <div id="preview-label"></div>
     </div>
     <div style="margin-top:10px;">
-        <button class="btn" onclick="saveJson()">Set JSON</button>
-        <button class="btn" onclick="cancelWindow()">Cancel</button>
+        <button class="btn" onclick="saveJson();">Set JSON</button>
+        <button class="btn" onclick="cancelWindow();">Cancel</button>
         <textarea id="guijson" style="display:none;height:300px;width:100%;"></textarea>
         <input type="hidden" id="formid" value="" />
     </div>
@@ -444,12 +444,24 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block" style="margin-top:5px;">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label">Margin Before (px):</span>
-                    <span class="field-elem"><input id="blockSpaceBefore" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
+                    <span class="label">Top Margin (px):</span>
+                    <span class="field-elem"><input id="blockTopMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Margin After (px):</span>
-                    <span class="field-elem"><input id="blockSpaceAfter" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
+                    <span class="label">Bottom Margin (px):</span>
+                    <span class="field-elem"><input id="blockBottomMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
+                </span>
+            </div>
+        </div>
+        <div class="field-block" style="margin-top:5px;">
+            <div class="field-elem">
+                <span class="field-inline">
+                    <span class="label">Left Margin (px):</span>
+                    <span class="field-elem"><input id="blockLeftMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
+                </span>
+                <span class="field-inline" style="margin-left:5px;">
+                    <span class="label">Right Margin (px):</span>
+                    <span class="field-elem"><input id="blockRightMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
         </div>
@@ -517,7 +529,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('qrcodeoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=23"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=25"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();

@@ -70,7 +70,6 @@ if($formatArr){
                     $textrun->addTextBreak(1,array('size'=>355));
                     $textrun->addLine(array('weight'=>1,'width'=>500,'height'=>0,'dash'=>'rounddot'));
                 }
-
                 if(isset($formatArr['headerPrefix']) || isset($formatArr['headerMidText']) || isset($formatArr['headerSuffix'])){
                     $headerMidVal = isset($formatArr['headerMidText']) ? (int)$formatArr['headerMidText'] : 0;
                     $headerStr = '';
@@ -108,130 +107,148 @@ if($formatArr){
                     $textrun = $section->addTextRun($pStyleArr);
                     $textrun->addText(htmlspecialchars($headerStr),$fStyleArr);
                     if(isset($formatArr['headerBottomMargin'])){
-                        $textrun = $section->addTextRun();
-                        $textrun->addTextBreak(1,array('size'=>$formatArr['headerBottomMargin']));
+                        $pStyleArr['size'] = $formatArr['headerBottomMargin'];
+                        $textrun->addTextBreak(1, $pStyleArr);
                     }
                 }
                 foreach($formatFields as $k => $labelFieldBlock){
-                    $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
-                    if(isset($labelFieldBlock['blockTextAlign'])){
-                        $pStyleArr['align'] = $labelFieldBlock['blockTextAlign'];
-                    }
-                    if(isset($labelFieldBlock['blockLineHeight'])){
-                        $pStyleArr['size'] = $labelFieldBlock['blockLineHeight'];
-                    }
-                    if(isset($labelFieldBlock['blockSpaceBefore'])){
-                        $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockSpaceBefore'] * 15);
-                    }
-                    if(isset($labelFieldBlock['blockSpaceAfter'])){
-                        $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockSpaceAfter'] * 15);
-                    }
-                    $textrun = $section->addTextRun($pStyleArr);
+                    $addBlock = false;
+                    $fieldsArr = array();
                     if(isset($labelFieldBlock['blockDisplayLine'])){
-                        $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1);
-                        if(isset($labelFieldBlock['blockDisplayLineHeight'])){
-                            $lineStyleArr['weight'] = $labelFieldBlock['blockDisplayLineHeight'];
-                        }
-                        if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dash'){
-                            $lineStyleArr['dash'] = 'dash';
-                        }
-                        if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
-                            $lineStyleArr['dash'] = 'rounddot';
-                        }
-                        $textrun->addLine($lineStyleArr);
+                        $addBlock = true;
                     }
-                    elseif(isset($labelFieldBlock['fields'])) {
+                    else{
                         $fieldsArr = $labelFieldBlock['fields'];
                         foreach($fieldsArr as $f => $fArr){
                             $field = $fArr['field'];
                             if(strncmp($field, 'barcode-', 8) === 0){
-                                $idArr = explode('-', $field);
-                                if($idArr){
-                                    $bcField = $idArr[1];
-                                    if(isset($occArr[$bcField])){
-                                        ob_start();
-                                        $bc = $labelManager->getBarcodePng(strtoupper($occArr[$bcField]), ($labelFieldBlock['barcodeHeight'] ?? 40), 'code39');
-                                        imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-                                        $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-                                        imagedestroy($bc);
-                                    }
-                                }
+                                $addBlock = true;
                             }
                             elseif(strncmp($field, 'qr-', 3) === 0){
-                                $qr = $labelManager->getQRCodePng($occid, ($labelFieldBlock['qrcodeSize'] ?? 100));
-                                if($qr){
-                                    file_put_contents($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png', $qr);
-                                    $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
-                                }
+                                $addBlock = true;
                             }
                             elseif(isset($occArr[$field]) && $occArr[$field]){
-                                $textrun->addText(htmlspecialchars($field));
-                                if(isset($labelFieldBlock['fieldPrefix']) && $labelFieldBlock['fieldPrefix']){
-                                    $fPrefixStyleArr = array();
-                                    if(isset($labelFieldBlock['fieldPrefixBold'])){
-                                        $fPrefixStyleArr['bold'] = true;
-                                    }
-                                    if(isset($labelFieldBlock['fieldPrefixItalic'])){
-                                        $fPrefixStyleArr['italic'] = true;
-                                    }
-                                    if(isset($labelFieldBlock['fieldPrefixUnderline'])){
-                                        $fPrefixStyleArr['underline'] = 'single';
-                                    }
-                                    if(isset($labelFieldBlock['fieldPrefixUppercase'])){
-                                        $fPrefixStyleArr['allCaps'] = true;
-                                    }
-                                    $fPrefixStyleArr['name'] = $labelFieldBlock['fieldPrefixFont'] ?? $defaultFont;
-                                    $fPrefixStyleArr['size'] = $labelFieldBlock['fieldPrefixFontSize'] ?? $defaultFontSize;
-                                    $textrun->addText(htmlspecialchars($labelFieldBlock['fieldPrefix']),$fPrefixStyleArr);
-                                }
-                                $fStyleArr = array();
-                                if(isset($labelFieldBlock['fieldBold'])){
-                                    $fStyleArr['bold'] = true;
-                                }
-                                if(isset($labelFieldBlock['fieldItalic'])){
-                                    $fStyleArr['italic'] = true;
-                                }
-                                if(isset($labelFieldBlock['fieldUnderline'])){
-                                    $fStyleArr['underline'] = 'single';
-                                }
-                                if(isset($labelFieldBlock['fieldUppercase'])){
-                                    $fStyleArr['allCaps'] = true;
-                                }
-                                $fStyleArr['name'] = $labelFieldBlock['fieldFont'] ?? $defaultFont;
-                                $fStyleArr['size'] = $labelFieldBlock['fieldFontSize'] ?? $defaultFontSize;
-                                $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
-                                if(isset($labelFieldBlock['fieldSuffix']) && $labelFieldBlock['fieldSuffix']){
-                                    $fSuffixStyleArr = array();
-                                    if(isset($labelFieldBlock['fieldSuffixBold'])){
-                                        $fSuffixStyleArr['bold'] = true;
-                                    }
-                                    if(isset($labelFieldBlock['fieldSuffixItalic'])){
-                                        $fSuffixStyleArr['italic'] = true;
-                                    }
-                                    if(isset($labelFieldBlock['fieldSuffixUnderline'])){
-                                        $fSuffixStyleArr['underline'] = 'single';
-                                    }
-                                    if(isset($labelFieldBlock['fieldSuffixUppercase'])){
-                                        $fSuffixStyleArr['allCaps'] = true;
-                                    }
-                                    $fSuffixStyleArr['name'] = $labelFieldBlock['fieldSuffixFont'] ?? $defaultFont;
-                                    $fSuffixStyleArr['size'] = $labelFieldBlock['fieldSuffixFontSize'] ?? $defaultFontSize;
-                                    $textrun->addText(htmlspecialchars($labelFieldBlock['fieldSuffix']),$fSuffixStyleArr);
-                                }
+                                $addBlock = true;
                             }
                         }
                     }
-                    else {
-                        $pStyleArr['size'] = ($labelFieldBlock['blockLineHeight'] ?? $defaultFontSize);
+                    if($addBlock){
+                        $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
+                        if(isset($labelFieldBlock['blockTextAlign'])){
+                            $pStyleArr['align'] = $labelFieldBlock['blockTextAlign'];
+                        }
+                        if(isset($labelFieldBlock['blockLineHeight'])){
+                            $pStyleArr['size'] = $labelFieldBlock['blockLineHeight'];
+                        }
+                        if(isset($labelFieldBlock['blockLeftMargin'])){
+                            $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockLeftMargin'] * 15);
+                        }
+                        if(isset($labelFieldBlock['blockRightMargin'])){
+                            $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockRightMargin'] * 15);
+                        }
                         $textrun = $section->addTextRun($pStyleArr);
-                        $textrun->addTextBreak();
+                        if(isset($labelFieldBlock['blockTopMargin'])){
+                            $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
+                        }
+                        if(isset($labelFieldBlock['blockDisplayLine'])){
+                            $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1,'color'=>'black');
+                            if(isset($labelFieldBlock['blockDisplayLineHeight'])){
+                                $lineStyleArr['weight'] = $labelFieldBlock['blockDisplayLineHeight'];
+                            }
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dash'){
+                                $lineStyleArr['dash'] = 'dash';
+                            }
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
+                                $lineStyleArr['dash'] = 'rounddot';
+                            }
+                            $textrun->addLine($lineStyleArr);
+                        }
+                        else{
+                            foreach($fieldsArr as $f => $fArr){
+                                $field = $fArr['field'];
+                                if(strncmp($field, 'barcode-', 8) === 0){
+                                    $idArr = explode('-', $field);
+                                    if($idArr){
+                                        $bcField = $idArr[1];
+                                        if(isset($occArr[$bcField])){
+                                            ob_start();
+                                            $bc = $labelManager->getBarcodePng(strtoupper($occArr[$bcField]), ($fArr['barcodeHeight'] ?? 40), 'code39');
+                                            imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.strtoupper($occArr[$bcField]).'.png');
+                                            $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.strtoupper($occArr[$bcField]).'.png');
+                                            imagedestroy($bc);
+                                        }
+                                    }
+                                }
+                                elseif(strncmp($field, 'qr-', 3) === 0){
+                                    $qr = $labelManager->getQRCodePng($occid, ($fArr['qrcodeSize'] ?? 100));
+                                    if($qr){
+                                        file_put_contents($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png', $qr);
+                                        $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
+                                    }
+                                }
+                                elseif(isset($occArr[$field])){
+                                    if(isset($fArr['fieldPrefix'])){
+                                        $fPrefixStyleArr = array();
+                                        if(isset($fArr['fieldPrefixBold'])){
+                                            $fPrefixStyleArr['bold'] = true;
+                                        }
+                                        if(isset($fArr['fieldPrefixItalic'])){
+                                            $fPrefixStyleArr['italic'] = true;
+                                        }
+                                        if(isset($fArr['fieldPrefixUnderline'])){
+                                            $fPrefixStyleArr['underline'] = 'single';
+                                        }
+                                        if(isset($fArr['fieldPrefixUppercase'])){
+                                            $fPrefixStyleArr['allCaps'] = true;
+                                        }
+                                        $fPrefixStyleArr['name'] = $fArr['fieldPrefixFont'] ?? $defaultFont;
+                                        $fPrefixStyleArr['size'] = $fArr['fieldPrefixFontSize'] ?? $defaultFontSize;
+                                        $textrun->addText(htmlspecialchars($fArr['fieldPrefix']),$fPrefixStyleArr);
+                                    }
+                                    $fStyleArr = array();
+                                    if(isset($fArr['fieldBold'])){
+                                        $fStyleArr['bold'] = true;
+                                    }
+                                    if(isset($fArr['fieldItalic'])){
+                                        $fStyleArr['italic'] = true;
+                                    }
+                                    if(isset($fArr['fieldUnderline'])){
+                                        $fStyleArr['underline'] = 'single';
+                                    }
+                                    if(isset($fArr['fieldUppercase'])){
+                                        $fStyleArr['allCaps'] = true;
+                                    }
+                                    $fStyleArr['name'] = $fArr['fieldFont'] ?? $defaultFont;
+                                    $fStyleArr['size'] = $fArr['fieldFontSize'] ?? $defaultFontSize;
+                                    $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
+                                    if(isset($fArr['fieldSuffix'])){
+                                        $fSuffixStyleArr = array();
+                                        if(isset($fArr['fieldSuffixBold'])){
+                                            $fSuffixStyleArr['bold'] = true;
+                                        }
+                                        if(isset($fArr['fieldSuffixItalic'])){
+                                            $fSuffixStyleArr['italic'] = true;
+                                        }
+                                        if(isset($fArr['fieldSuffixUnderline'])){
+                                            $fSuffixStyleArr['underline'] = 'single';
+                                        }
+                                        if(isset($fArr['fieldSuffixUppercase'])){
+                                            $fSuffixStyleArr['allCaps'] = true;
+                                        }
+                                        $fSuffixStyleArr['name'] = $fArr['fieldSuffixFont'] ?? $defaultFont;
+                                        $fSuffixStyleArr['size'] = $fArr['fieldSuffixFontSize'] ?? $defaultFontSize;
+                                        $textrun->addText(htmlspecialchars($fArr['fieldSuffix']),$fSuffixStyleArr);
+                                    }
+                                }
+                            }
+                        }
+                        if(isset($labelFieldBlock['blockBottomMargin'])){
+                            $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
+                            $textrun->addTextBreak(1,$pStyleArr);
+                        }
                     }
                 }
                 if(isset($formatArr['footerText'])){
-                    if(isset($formatArr['footerTopMargin'])){
-                        $textrun = $section->addTextRun();
-                        $textrun->addTextBreak(1,array('size'=>$formatArr['footerTopMargin']));
-                    }
                     $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
                     $fStyleArr = array();
                     if(isset($formatArr['footerBold'])){
@@ -250,14 +267,16 @@ if($formatArr){
                     $fStyleArr['name'] = $formatArr['footerFont'] ?? $defaultFont;
                     $fStyleArr['size'] = $formatArr['footerFontSize'] ?? $defaultFontSize;
                     $textrun = $section->addTextRun($pStyleArr);
+                    if(isset($formatArr['footerTopMargin'])){
+                        $pStyleArr['size'] = $formatArr['footerTopMargin'];
+                        $textrun->addTextBreak(1, $pStyleArr);
+                    }
                     $textrun->addText(htmlspecialchars($formatArr['footerText']),$fStyleArr);
                 }
-                $textrun = $section->addTextRun();
-                $textrun->addTextBreak(1,array('size'=>450));
+                $section->addTextBreak(1,array('size'=>20));
             }
         }
     }
-
     $targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
     $phpWord->save($targetFile);
 

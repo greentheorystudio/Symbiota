@@ -57,8 +57,7 @@ if($formatArr){
         $labelWidth = 'width:64px;';
     }
     $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;';
-    $labelStyle = $labelWidth . 'margin:15px;page-break-before:auto;page-break-inside:avoid;';
-
+    $labelStyle = $labelWidth . 'margin:15px;page-break-inside: avoid;';
     if($action === 'Export to CSV'){
         $labelManager->exportLabelCsvFile($_POST);
     }
@@ -69,13 +68,6 @@ if($formatArr){
     <html>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Labels</title>
-        <style type="text/css">
-            .foldMarks1 { clear:both;padding-top:285px; }
-            .foldMarks1 span { margin-left:77px; margin-right:80px; }
-            .foldMarks2 { clear:both;padding-top:355px;padding-bottom:10px; }
-            .foldMarks2 span { margin-left:77px; margin-right:80px; }
-            @media print { .controls { display: none; } }
-        </style>
     </head>
     <body style="background-color:white;">
     <?php
@@ -88,11 +80,7 @@ if($formatArr){
             $dupCnt = $_POST['q-'.$occid];
             for($i = 0; $i < $dupCnt; $i++){
                 if($labelCnt === 0 || $labelCnt%$columnCount === 0){
-                    if($labelCnt > 0) {
-                        echo '</div>';
-                    }
                     echo '<div style="'.$columnStyle.'margin: 0 25px;">';
-                    $rowCnt++;
                 }
                 echo '<div style="'.$labelStyle.'">';
                 if($columnCount === 'packet'){
@@ -131,91 +119,118 @@ if($formatArr){
                     }
                 }
                 foreach($formatFields as $k => $labelFieldBlock){
-                    $blockStyleStr = $labelWidth . 'clear:both;';
+                    $addBlock = false;
+                    $fieldsArr = array();
                     if(isset($labelFieldBlock['blockDisplayLine'])){
-                        $borderTop = '';
-                        $borderTop .= isset($labelFieldBlock['blockDisplayLineHeight']) ? ' ' . $labelFieldBlock['blockDisplayLineHeight'] . 'px' : ' 1px';
-                        if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dash'){
-                            $borderTop .= ' dashed';
-                        }
-                        if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
-                            $borderTop .= ' dotted';
-                        }
-                        else{
-                            $borderTop .= ' solid';
-                        }
-                        $blockStyleStr = $labelWidth . 'border-top:'.$borderTop.' black;';
-                        echo '<hr style="'.$blockStyleStr.'" />';
+                        $addBlock = true;
                     }
-                    elseif(isset($labelFieldBlock['fields'])) {
+                    else{
                         $fieldsArr = $labelFieldBlock['fields'];
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'display:flex;justify-content:flex-start;text-align:left;' : '';
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'display:flex;justify-content:center;text-align:center;' : '';
-                        $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'display:flex;justify-content:flex-end;text-align:right;' : '';
-                        $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
-                        $blockStyleStr .= isset($labelFieldBlock['blockSpaceBefore']) ? 'margin-left:'.$labelFieldBlock['blockSpaceBefore'].'px;' : '';
-                        $blockStyleStr .= isset($labelFieldBlock['blockSpaceAfter']) ? 'margin-right:'.$labelFieldBlock['blockSpaceAfter'].'px;' : '';
-                        echo '<div style=\''.$blockStyleStr.'\'>';
                         foreach($fieldsArr as $f => $fArr){
                             $field = $fArr['field'];
                             if(strncmp($field, 'barcode-', 8) === 0){
-                                $idArr = explode('-', $field);
-                                if($idArr){
-                                    $bcField = $idArr[1];
-                                    if(isset($occArr[$bcField])){
-                                        ob_start();
-                                        $bc = $labelManager->getBarcodePng(strtoupper($occArr[$bcField]), ($labelFieldBlock['barcodeHeight'] ?? 40), 'code39');
-                                        imagepng($bc);
-                                        $rawImageBytes = ob_get_clean();
-                                        imagedestroy($bc);
-                                        $base64Str = base64_encode( $rawImageBytes );
+                                $addBlock = true;
+                            }
+                            elseif(strncmp($field, 'qr-', 3) === 0){
+                                $addBlock = true;
+                            }
+                            elseif(isset($occArr[$field]) && $occArr[$field]){
+                                $addBlock = true;
+                            }
+                        }
+                    }
+                    if($addBlock){
+                        $blockStyleStr = $labelWidth . 'clear:both;';
+                        if(isset($labelFieldBlock['blockTopMargin'])){
+                            $styleStr = $labelWidth . 'height:'.$labelFieldBlock['blockTopMargin'].'px;clear:both;';
+                            echo '<div style=\''.$styleStr.'\'></div>';
+                        }
+                        if(isset($labelFieldBlock['blockDisplayLine'])){
+                            $borderTop = '';
+                            $borderTop .= isset($labelFieldBlock['blockDisplayLineHeight']) ? ' ' . $labelFieldBlock['blockDisplayLineHeight'] . 'px' : ' 1px';
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dash'){
+                                $borderTop .= ' dashed';
+                            }
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
+                                $borderTop .= ' dotted';
+                            }
+                            else{
+                                $borderTop .= ' solid';
+                            }
+                            $lineStyleStr = $labelWidth . 'border-top:'.$borderTop.' black;';
+                            echo '<div style=\''.$blockStyleStr.'\'>';
+                            echo '<hr style="'.$lineStyleStr.'" />';
+                        }
+                        else{
+                            $blockStyleStr = 'display:flex;flex-wrap:wrap;';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'display:flex;justify-content:flex-start;text-align:left;' : '';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'display:flex;justify-content:center;text-align:center;' : '';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'display:flex;justify-content:flex-end;text-align:right;' : '';
+                            $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
+                            $blockStyleStr .= isset($labelFieldBlock['blockLeftMargin']) ? 'margin-left:'.$labelFieldBlock['blockLeftMargin'].'px;' : '';
+                            $blockStyleStr .= isset($labelFieldBlock['blockRightMargin']) ? 'margin-right:'.$labelFieldBlock['blockRightMargin'].'px;' : '';
+                            echo '<div style=\''.$blockStyleStr.'\'>';
+                            foreach($fieldsArr as $f => $fArr){
+                                $field = $fArr['field'];
+                                if(strncmp($field, 'barcode-', 8) === 0){
+                                    $idArr = explode('-', $field);
+                                    if($idArr){
+                                        $bcField = $idArr[1];
+                                        if(isset($occArr[$bcField])){
+                                            ob_start();
+                                            $bc = $labelManager->getBarcodePng(strtoupper($occArr[$bcField]), ($fArr['barcodeHeight'] ?? 40), 'code39');
+                                            imagepng($bc);
+                                            $rawImageBytes = ob_get_clean();
+                                            imagedestroy($bc);
+                                            $base64Str = base64_encode( $rawImageBytes );
+                                            echo "<img src='data:image/png;base64,".$base64Str."' />";
+                                        }
+                                    }
+                                }
+                                elseif(strncmp($field, 'qr-', 3) === 0){
+                                    $qr = $labelManager->getQRCodePng($occid, ($fArr['qrcodeSize'] ?? 100));
+                                    if($qr){
+                                        $base64Str = base64_encode($qr);
                                         echo "<img src='data:image/png;base64,".$base64Str."' />";
                                     }
                                 }
-                            }
-                            elseif(strncmp($field, 'qr-', 3) === 0){
-                                $qr = $labelManager->getQRCodePng($occid, ($labelFieldBlock['qrcodeSize'] ?? 100));
-                                if($qr){
-                                    $base64Str = base64_encode($qr);
-                                    echo "<img src='data:image/png;base64,".$base64Str."' />";
-                                }
-                            }
-                            else if(isset($occArr[$field]) && $occArr[$field]){
-                                if(isset($labelFieldBlock['fieldPrefix'])){
-                                    $prefixStyleStr = $labelWidth . 'clear:both;';
-                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixBold']) ? 'font-weight:bold;' : '';
-                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixItalic']) ? 'font-style:italic;' : '';
-                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixUnderline']) ? 'text-decoration:underline;' : '';
-                                    $prefixStyleStr .= isset($labelFieldBlock['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
-                                    $prefixStyleStr .= 'font-family:'.(isset($labelFieldBlock['fieldPrefixFont']) ? $cssFontFamilies[$labelFieldBlock['fieldPrefixFont']] : $defaultFont).';';
-                                    $prefixStyleStr .= 'font-size:'.($labelFieldBlock['fieldPrefixFontSize'] ?? $defaultFontSize).';';
-                                    echo '<span style=\''.$prefixStyleStr.'\'>'.$labelFieldBlock['fieldPrefix'].'</span>';
-                                }
-                                $styleStr = $labelWidth . 'clear:both;';
-                                $styleStr .= isset($labelFieldBlock['fieldBold']) ? 'font-weight:bold;' : '';
-                                $styleStr .= isset($labelFieldBlock['fieldItalic']) ? 'font-style:italic;' : '';
-                                $styleStr .= isset($labelFieldBlock['fieldUnderline']) ? 'text-decoration:underline;' : '';
-                                $styleStr .= isset($labelFieldBlock['fieldUppercase']) ? 'text-transform:uppercase;' : '';
-                                $styleStr .= 'font-family:'.(isset($labelFieldBlock['fieldFont']) ? $cssFontFamilies[$labelFieldBlock['fieldFont']] : $defaultFont).';';
-                                $styleStr .= 'font-size:'.($labelFieldBlock['fieldFontSize'] ?? $defaultFontSize).';';
-                                echo '<span style=\''.$styleStr.'\'>'.$occArr[$field].'</span>';
-                                if(isset($labelFieldBlock['fieldSuffix'])){
-                                    $suffixStyleStr = $labelWidth . 'clear:both;';
-                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixBold']) ? 'font-weight:bold;' : '';
-                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixItalic']) ? 'font-style:italic;' : '';
-                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixUnderline']) ? 'text-decoration:underline;' : '';
-                                    $suffixStyleStr .= isset($labelFieldBlock['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
-                                    $suffixStyleStr .= 'font-family:'.(isset($labelFieldBlock['fieldSuffixFont']) ? $cssFontFamilies[$labelFieldBlock['fieldSuffixFont']] : $defaultFont).';';
-                                    $suffixStyleStr .= 'font-size:'.($labelFieldBlock['fieldSuffixFontSize'] ?? $defaultFontSize).';';
-                                    echo '<span style=\''.$suffixStyleStr.'\'>'.$labelFieldBlock['fieldSuffix'].'</span>';
+                                elseif(isset($occArr[$field])){
+                                    if(isset($fArr['fieldPrefix'])){
+                                        $prefixStyleStr = '';
+                                        $prefixStyleStr .= isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
+                                        $prefixStyleStr .= isset($fArr['fieldPrefixItalic']) ? 'font-style:italic;' : '';
+                                        $prefixStyleStr .= isset($fArr['fieldPrefixUnderline']) ? 'text-decoration:underline;' : '';
+                                        $prefixStyleStr .= isset($fArr['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
+                                        $prefixStyleStr .= 'font-family:'.(isset($fArr['fieldPrefixFont']) ? $cssFontFamilies[$fArr['fieldPrefixFont']] : $defaultFont).';';
+                                        $prefixStyleStr .= 'font-size:'.($fArr['fieldPrefixFontSize'] ?? $defaultFontSize).';';
+                                        echo '<span style=\''.$prefixStyleStr.'\'>'.$fArr['fieldPrefix'].'</span>';
+                                    }
+                                    $styleStr = '';
+                                    $styleStr .= isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
+                                    $styleStr .= isset($fArr['fieldItalic']) ? 'font-style:italic;' : '';
+                                    $styleStr .= isset($fArr['fieldUnderline']) ? 'text-decoration:underline;' : '';
+                                    $styleStr .= isset($fArr['fieldUppercase']) ? 'text-transform:uppercase;' : '';
+                                    $styleStr .= 'font-family:'.(isset($fArr['fieldFont']) ? $cssFontFamilies[$fArr['fieldFont']] : $defaultFont).';';
+                                    $styleStr .= 'font-size:'.($fArr['fieldFontSize'] ?? $defaultFontSize).';';
+                                    echo '<span style=\''.$styleStr.'\'>'.$occArr[$field].'</span>';
+                                    if(isset($fArr['fieldSuffix'])){
+                                        $suffixStyleStr = '';
+                                        $suffixStyleStr .= isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
+                                        $suffixStyleStr .= isset($fArr['fieldSuffixItalic']) ? 'font-style:italic;' : '';
+                                        $suffixStyleStr .= isset($fArr['fieldSuffixUnderline']) ? 'text-decoration:underline;' : '';
+                                        $suffixStyleStr .= isset($fArr['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
+                                        $suffixStyleStr .= 'font-family:'.(isset($fArr['fieldSuffixFont']) ? $cssFontFamilies[$fArr['fieldSuffixFont']] : $defaultFont).';';
+                                        $suffixStyleStr .= 'font-size:'.($fArr['fieldSuffixFontSize'] ?? $defaultFontSize).';';
+                                        echo '<span style=\''.$suffixStyleStr.'\'>'.$fArr['fieldSuffix'].'</span>';
+                                    }
                                 }
                             }
                         }
                         echo '</div>';
-                    }
-                    else{
-                        $blockStyleStr .= 'height:' . isset($labelFieldBlock['blockLineHeight']) ? $labelFieldBlock['blockLineHeight'] : $defaultFontSize . 'px;';
-                        echo '<div style=\''.$blockStyleStr.'\'></div>';
+                        if(isset($labelFieldBlock['blockBottomMargin'])){
+                            $styleStr = $labelWidth . 'height:'.$labelFieldBlock['blockBottomMargin'].'px;clear:both;';
+                            echo '<div style=\''.$styleStr.'\'></div>';
+                        }
                     }
                 }
                 if(isset($formatArr['footerText'])){
@@ -235,7 +250,15 @@ if($formatArr){
                 }
                 echo '</div>';
                 $labelCnt++;
+                if($labelCnt%$columnCount === 0){
+                    echo '</div>';
+                    $rowCnt++;
+                }
             }
+        }
+        if($labelCnt%$columnCount !== 0){
+            echo '</div>';
+            $rowCnt++;
         }
         if(!$labelCnt) {
             echo '<div style="font-weight:bold;text-size: 120%">No records were retrieved. Perhaps the quantity values were all set to 0?</div>';
