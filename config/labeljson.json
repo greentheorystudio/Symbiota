@@ -28,6 +28,7 @@
                     "fields": [
                         {
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "identificationqualifier"
                         },
@@ -35,17 +36,20 @@
                             "fieldBold": true,
                             "fieldItalic": true,
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "sciname"
                         },
                         {
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "specificepithetauthorship"
                         },
                         {
                             "fieldBold": true,
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "taxonrank"
                         },
@@ -53,11 +57,13 @@
                             "fieldBold": true,
                             "fieldItalic": true,
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "infraspecificepithet"
                         },
                         {
                             "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "scientificnameauthorship"
                         }
@@ -102,22 +108,26 @@
                         {
                             "fieldBold": true,
                             "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "country"
                         },
                         {
                             "fieldBold": true,
                             "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "stateprovince"
                         },
                         {
                             "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "county"
                         },
                         {
                             "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
                             "fieldFontSize": 12,
                             "field": "municipality"
                         },

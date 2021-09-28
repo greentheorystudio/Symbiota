@@ -203,7 +203,7 @@ if($formatArr){
                                         $prefixStyleStr .= isset($fArr['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
                                         $prefixStyleStr .= 'font-family:'.(isset($fArr['fieldPrefixFont']) ? $cssFontFamilies[$fArr['fieldPrefixFont']] : $defaultFont).';';
                                         $prefixStyleStr .= 'font-size:'.($fArr['fieldPrefixFontSize'] ?? $defaultFontSize).';';
-                                        echo '<span style=\''.$prefixStyleStr.'\'>'.$fArr['fieldPrefix'].'</span>';
+                                        echo '<span style=\''.$prefixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldPrefix']).'</span>';
                                     }
                                     $styleStr = '';
                                     $styleStr .= isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
@@ -221,7 +221,7 @@ if($formatArr){
                                         $suffixStyleStr .= isset($fArr['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
                                         $suffixStyleStr .= 'font-family:'.(isset($fArr['fieldSuffixFont']) ? $cssFontFamilies[$fArr['fieldSuffixFont']] : $defaultFont).';';
                                         $suffixStyleStr .= 'font-size:'.($fArr['fieldSuffixFontSize'] ?? $defaultFontSize).';';
-                                        echo '<span style=\''.$suffixStyleStr.'\'>'.$fArr['fieldSuffix'].'</span>';
+                                        echo '<span style=\''.$suffixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldSuffix']).'</span>';
                                     }
                                 }
                             }
