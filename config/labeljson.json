@@ -250,7 +250,7 @@
                     ]
                 },
                 {
-                    "blockLeftMargin": 10,
+                    "blockTextAlign": "right",
                     "fields": [
                         {
                             "fieldPrefix": "with: ",

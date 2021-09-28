@@ -529,7 +529,7 @@ include(__DIR__ . '/../../header.php');
         <button onclick="closePopup('qrcodeoptions');">Close</button>
     </div>
 </div>
-<script src="../../js/symb/collections.labeljsongui.js?ver=25"></script>
+<script src="../../js/symb/collections.labeljsongui.js?ver=26"></script>
 <script type="text/javascript">
     createFields(fieldProps, fieldListDiv);
     refreshLineState();

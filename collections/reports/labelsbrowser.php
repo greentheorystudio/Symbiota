@@ -162,10 +162,10 @@ if($formatArr){
                             echo '<hr style="'.$lineStyleStr.'" />';
                         }
                         else{
-                            $blockStyleStr = 'display:flex;flex-wrap:wrap;';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'display:flex;justify-content:flex-start;text-align:left;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'display:flex;justify-content:center;text-align:center;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'display:flex;justify-content:flex-end;text-align:right;' : '';
+                            $blockStyleStr .= 'display:flex;flex-wrap:wrap;';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'justify-content:flex-start;text-align:left;' : '';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'justify-content:center;text-align:center;' : '';
+                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'justify-content:flex-end;text-align:right;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockLeftMargin']) ? 'margin-left:'.$labelFieldBlock['blockLeftMargin'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockRightMargin']) ? 'margin-right:'.$labelFieldBlock['blockRightMargin'].'px;' : '';
