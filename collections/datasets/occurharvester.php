@@ -35,7 +35,6 @@ if($isEditor && $action === 'Download Records') {
     exit;
 }
 ?>
-<!DOCTYPE HTML>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Occurrence Harvester</title>
