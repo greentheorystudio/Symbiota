@@ -454,14 +454,14 @@ if($stArrJson){
 						<?php
 					}
 					?>
-					<div style="margin-top:5px;">
+					<!-- <div style="margin-top:5px;">
 						<div style="float:left;margin-right:8px;padding-top:8px;">
 							Image Keywords: 
 						</div>
 						<div style="float:left;margin-bottom:10px;">
 							<input type="text" id="keywordsinput" style="width:350px;" onchange="processTextParamChange();" title="Separate multiple keywords w/ commas" />
 						</div>
-					</div>
+					</div> -->
                     <div style="clear:both;margin-top:5px;">
                         <div style="float:left;margin-right:8px;padding-top:8px;">
                             Date Uploaded:

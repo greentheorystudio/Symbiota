@@ -12,6 +12,7 @@ $guid = array_key_exists('guid',$_REQUEST)?htmlspecialchars($_REQUEST['guid']): 
 $submit = array_key_exists('formsubmit',$_REQUEST)?htmlspecialchars($_REQUEST['formsubmit']):'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
+$fullWindow = (array_key_exists('fullwindow', $_REQUEST) && $_REQUEST['fullwindow']);
 $format = htmlspecialchars($_GET['format']) ?? '';
 
 if($guid && !preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/', $guid)) {
@@ -260,8 +261,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         }
     </script>
 </head>
-
-<body style="border:0;">
+<body <?php echo ($fullWindow ? '' : 'style="border:0;"'); ?>>
 <div id="fb-root"></div>
 <script>
     (function(d, s, id) {
@@ -272,6 +272,11 @@ $commentArr = $indManager->getCommentArr($isEditor);
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 </script>
+<?php
+if($fullWindow){
+    include(__DIR__ . '/../../header.php');
+}
+?>
 <div id="innertext">
     <?php
     if($statusStr){
@@ -1313,5 +1318,10 @@ $commentArr = $indManager->getCommentArr($isEditor);
     }
     ?>
 </div>
+<?php
+if($fullWindow){
+    include(__DIR__ . '/../../footer.php');
+}
+?>
 </body>
 </html>
