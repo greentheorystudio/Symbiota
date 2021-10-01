@@ -47,17 +47,23 @@ $clManager->setProj($pid);
 				foreach($researchArr as $pid => $projArr){
 					?>
 					<div style='margin:3px 0 0 15px;'>
-						<h3><?php echo $projArr['name']; ?>
-							<?php
-                            if(array_key_exists('coords',$projArr)){
-                                ?>
-                                <a href="#" onclick="openSpatialViewerWindow('<?php echo $projArr['coords']; ?>');" title='Show checklists on map'>
-                                    <i style='width:15px;height:15px;' class="fas fa-globe"></i>
-                                </a>
-                                <?php
-                            }
+						<?php
+                        if(array_key_exists('name',$projArr)){
                             ?>
-                        </h3>
+                            <h3><?php echo $projArr['name']; ?>
+                                <?php
+                                if(array_key_exists('coords',$projArr)){
+                                    ?>
+                                    <a href="#" onclick="openSpatialViewerWindow('<?php echo $projArr['coords']; ?>');" title='Show checklists on map'>
+                                        <i style='width:15px;height:15px;' class="fas fa-globe"></i>
+                                    </a>
+                                    <?php
+                                }
+                                ?>
+                            </h3>
+                            <?php
+                        }
+                        ?>
 						<div>
 							<ul>
 								<?php 
