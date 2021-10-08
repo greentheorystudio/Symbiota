@@ -127,17 +127,16 @@ class SpecifyManager {
                                 $occurrenceArr[$oid]['year'] = $dateArr[0];
                             }
                             elseif($precision === 2){
-                                $dateStr = $dateArr[0] . '-' . $dateArr[1] . '-00';
+                                $occurrenceArr[$oid]['eventdate'] = $dateArr[0] . '-' . $dateArr[1] . '-00';
                                 $occurrenceArr[$oid]['verbatimeventdate'] = $dateArr[0] . '-' . $dateArr[1];
                                 $occurrenceArr[$oid]['month'] = $dateArr[1];
                                 $occurrenceArr[$oid]['year'] = $dateArr[0];
                             }
                             elseif($precision === 3){
-                                $dateStr = $dateArr[0] . '-00-00';
+                                $occurrenceArr[$oid]['eventdate'] = $dateArr[0] . '-00-00';
                                 $occurrenceArr[$oid]['verbatimeventdate'] = $dateArr[0];
                                 $occurrenceArr[$oid]['year'] = $dateArr[0];
                             }
-                            $occurrenceArr[$oid]['eventdate'] = $dateStr;
                         }
                         if($colEvR->StartDateVerbatim){
                             $occurrenceArr[$oid]['verbatimeventdate'] = $colEvR->StartDateVerbatim;
