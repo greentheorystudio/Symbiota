@@ -376,42 +376,42 @@ class SpecifyManager {
             foreach($occurrenceArr as $id => $idarr){
                 $idarr = OccurrenceUtilities::occurrenceArrayCleaning($idarr);
                 $occinsertsql .= '(1,'.$id.',"PreservedSpecimen",'.
-                    (isset($idarr['occurrenceid'])?'"'.$this->conn->real_escape_string($idarr['occurrenceid']).'"':'NULL').','.
-                    (isset($idarr['catalognumber'])?'"'.$this->conn->real_escape_string($idarr['catalognumber']).'"':'NULL').','.
-                    (isset($idarr['scientificname'])?'"'.$this->conn->real_escape_string($idarr['scientificname']).'"':'NULL').','.
-                    (isset($idarr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($idarr['scientificnameauthorship']).'"':'NULL').','.
-                    (isset($idarr['identifiedby'])?'"'.$this->conn->real_escape_string($idarr['identifiedby']).'"':'NULL').','.
-                    (isset($idarr['dateidentified'])?'"'.$this->conn->real_escape_string($idarr['dateidentified']).'"':'NULL').','.
-                    (isset($idarr['identificationremarks'])?'"'.$this->conn->real_escape_string($idarr['identificationremarks']).'"':'NULL').','.
-                    (isset($idarr['identificationqualifier'])?'"'.$this->conn->real_escape_string($idarr['identificationqualifier']).'"':'NULL').','.
-                    (isset($idarr['typestatus'])?'"'.$this->conn->real_escape_string($idarr['typestatus']).'"':'NULL').','.
-                    (isset($idarr['recordedby'])?'"'.$this->conn->real_escape_string($idarr['recordedby']).'"':'NULL').','.
-                    (isset($idarr['recordnumber'])?'"'.$this->conn->real_escape_string($idarr['recordnumber']).'"':'NULL').','.
-                    (isset($idarr['associatedcollectors'])?'"'.$this->conn->real_escape_string($idarr['associatedcollectors']).'"':'NULL').','.
-                    (isset($idarr['eventdate'])?'"'.$this->conn->real_escape_string($idarr['eventdate']).'"':'NULL').','.
-                    (isset($idarr['verbatimeventdate'])?'"'.$this->conn->real_escape_string($idarr['verbatimeventdate']).'"':'NULL').','.
-                    (isset($idarr['habitat'])?'"'.$this->conn->real_escape_string($idarr['habitat']).'"':'NULL').','.
-                    (isset($idarr['occurrenceremarks'])?'"'.$this->conn->real_escape_string($idarr['occurrenceremarks']).'"':'NULL').','.
-                    (isset($idarr['country'])?'"'.$this->conn->real_escape_string($idarr['country']).'"':'NULL').','.
-                    (isset($idarr['stateprovince'])?'"'.$this->conn->real_escape_string($idarr['stateprovince']).'"':'NULL').','.
-                    (isset($idarr['county'])?'"'.$this->conn->real_escape_string($idarr['county']).'"':'NULL').','.
-                    (isset($idarr['locality'])?'"'.$this->conn->real_escape_string($idarr['locality']).'"':'NULL').','.
-                    (isset($idarr['decimallatitude'])?'"'.$this->conn->real_escape_string($idarr['decimallatitude']).'"':'NULL').','.
-                    (isset($idarr['day'])?'"'.$this->conn->real_escape_string($idarr['day']).'"':'NULL').','.
-                    (isset($idarr['month'])?'"'.$this->conn->real_escape_string($idarr['month']).'"':'NULL').','.
-                    (isset($idarr['year'])?'"'.$this->conn->real_escape_string($idarr['year']).'"':'NULL').','.
-                    (isset($idarr['decimallongitude'])?'"'.$this->conn->real_escape_string($idarr['decimallongitude']).'"':'NULL').','.
-                    (isset($idarr['geodeticdatum'])?'"'.$this->conn->real_escape_string($idarr['geodeticdatum']).'"':'NULL').','.
-                    (isset($idarr['coordinateuncertaintyinmeters'])?'"'.$this->conn->real_escape_string($idarr['coordinateuncertaintyinmeters']).'"':'NULL').','.
-                    (isset($idarr['locationremarks'])?'"'.$this->conn->real_escape_string($idarr['locationremarks']).'"':'NULL').','.
-                    (isset($idarr['verbatimcoordinates'])?'"'.$this->conn->real_escape_string($idarr['verbatimcoordinates']).'"':'NULL').','.
-                    (isset($idarr['georeferenceprotocol'])?'"'.$this->conn->real_escape_string($idarr['georeferenceprotocol']).'"':'NULL').','.
-                    (isset($idarr['georeferencesources'])?'"'.$this->conn->real_escape_string($idarr['georeferencesources']).'"':'NULL').','.
-                    (isset($idarr['georeferenceremarks'])?'"'.$this->conn->real_escape_string($idarr['georeferenceremarks']).'"':'NULL').','.
-                    (isset($idarr['processingstatus'])?'"'.$this->conn->real_escape_string($idarr['processingstatus']).'"':'NULL').','.
-                    (isset($idarr['minimumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['minimumelevationinmeters']).'"':'NULL').','.
-                    (isset($idarr['maximumelevationinmeters'])?'"'.$this->conn->real_escape_string($idarr['maximumelevationinmeters']).'"':'NULL').','.
-                    (isset($idarr['verbatimelevation'])?'"'.$this->conn->real_escape_string($idarr['verbatimelevation']).'"':'NULL').
+                    (isset($idarr['occurrenceid']) && $idarr['occurrenceid']?'"'.$this->conn->real_escape_string($idarr['occurrenceid']).'"':'NULL').','.
+                    (isset($idarr['catalognumber']) && $idarr['catalognumber']?'"'.$this->conn->real_escape_string($idarr['catalognumber']).'"':'NULL').','.
+                    (isset($idarr['scientificname']) && $idarr['scientificname']?'"'.$this->conn->real_escape_string($idarr['scientificname']).'"':'NULL').','.
+                    (isset($idarr['scientificnameauthorship']) && $idarr['scientificnameauthorship']?'"'.$this->conn->real_escape_string($idarr['scientificnameauthorship']).'"':'NULL').','.
+                    (isset($idarr['identifiedby']) && $idarr['identifiedby']?'"'.$this->conn->real_escape_string($idarr['identifiedby']).'"':'NULL').','.
+                    (isset($idarr['dateidentified']) && $idarr['dateidentified']?'"'.$this->conn->real_escape_string($idarr['dateidentified']).'"':'NULL').','.
+                    (isset($idarr['identificationremarks']) && $idarr['identificationremarks']?'"'.$this->conn->real_escape_string($idarr['identificationremarks']).'"':'NULL').','.
+                    (isset($idarr['identificationqualifier']) && $idarr['identificationqualifier']?'"'.$this->conn->real_escape_string($idarr['identificationqualifier']).'"':'NULL').','.
+                    (isset($idarr['typestatus']) && $idarr['typestatus']?'"'.$this->conn->real_escape_string($idarr['typestatus']).'"':'NULL').','.
+                    (isset($idarr['recordedby']) && $idarr['recordedby']?'"'.$this->conn->real_escape_string($idarr['recordedby']).'"':'NULL').','.
+                    (isset($idarr['recordnumber']) && $idarr['recordnumber']?'"'.$this->conn->real_escape_string($idarr['recordnumber']).'"':'NULL').','.
+                    (isset($idarr['associatedcollectors']) && $idarr['associatedcollectors']?'"'.$this->conn->real_escape_string($idarr['associatedcollectors']).'"':'NULL').','.
+                    (isset($idarr['eventdate']) && $idarr['eventdate']?'"'.$this->conn->real_escape_string($idarr['eventdate']).'"':'NULL').','.
+                    (isset($idarr['verbatimeventdate']) && $idarr['verbatimeventdate']?'"'.$this->conn->real_escape_string($idarr['verbatimeventdate']).'"':'NULL').','.
+                    (isset($idarr['habitat']) && $idarr['habitat']?'"'.$this->conn->real_escape_string($idarr['habitat']).'"':'NULL').','.
+                    (isset($idarr['occurrenceremarks']) && $idarr['occurrenceremarks']?'"'.$this->conn->real_escape_string($idarr['occurrenceremarks']).'"':'NULL').','.
+                    (isset($idarr['country']) && $idarr['country']?'"'.$this->conn->real_escape_string($idarr['country']).'"':'NULL').','.
+                    (isset($idarr['stateprovince']) && $idarr['stateprovince']?'"'.$this->conn->real_escape_string($idarr['stateprovince']).'"':'NULL').','.
+                    (isset($idarr['county']) && $idarr['county']?'"'.$this->conn->real_escape_string($idarr['county']).'"':'NULL').','.
+                    (isset($idarr['locality']) && $idarr['locality']?'"'.$this->conn->real_escape_string($idarr['locality']).'"':'NULL').','.
+                    (isset($idarr['decimallatitude']) && $idarr['decimallatitude']?'"'.$this->conn->real_escape_string($idarr['decimallatitude']).'"':'NULL').','.
+                    (isset($idarr['day']) && $idarr['day']?'"'.$this->conn->real_escape_string($idarr['day']).'"':'NULL').','.
+                    (isset($idarr['month']) && $idarr['month']?'"'.$this->conn->real_escape_string($idarr['month']).'"':'NULL').','.
+                    (isset($idarr['year']) && $idarr['year']?'"'.$this->conn->real_escape_string($idarr['year']).'"':'NULL').','.
+                    (isset($idarr['decimallongitude']) && $idarr['decimallongitude']?'"'.$this->conn->real_escape_string($idarr['decimallongitude']).'"':'NULL').','.
+                    (isset($idarr['geodeticdatum']) && $idarr['geodeticdatum']?'"'.$this->conn->real_escape_string($idarr['geodeticdatum']).'"':'NULL').','.
+                    (isset($idarr['coordinateuncertaintyinmeters']) && $idarr['coordinateuncertaintyinmeters']?'"'.$this->conn->real_escape_string($idarr['coordinateuncertaintyinmeters']).'"':'NULL').','.
+                    (isset($idarr['locationremarks']) && $idarr['locationremarks']?'"'.$this->conn->real_escape_string($idarr['locationremarks']).'"':'NULL').','.
+                    (isset($idarr['verbatimcoordinates']) && $idarr['verbatimcoordinates']?'"'.$this->conn->real_escape_string($idarr['verbatimcoordinates']).'"':'NULL').','.
+                    (isset($idarr['georeferenceprotocol']) && $idarr['georeferenceprotocol']?'"'.$this->conn->real_escape_string($idarr['georeferenceprotocol']).'"':'NULL').','.
+                    (isset($idarr['georeferencesources']) && $idarr['georeferencesources']?'"'.$this->conn->real_escape_string($idarr['georeferencesources']).'"':'NULL').','.
+                    (isset($idarr['georeferenceremarks']) && $idarr['georeferenceremarks']?'"'.$this->conn->real_escape_string($idarr['georeferenceremarks']).'"':'NULL').','.
+                    (isset($idarr['processingstatus']) && $idarr['processingstatus']?'"'.$this->conn->real_escape_string($idarr['processingstatus']).'"':'NULL').','.
+                    (isset($idarr['minimumelevationinmeters']) && $idarr['minimumelevationinmeters']?'"'.$this->conn->real_escape_string($idarr['minimumelevationinmeters']).'"':'NULL').','.
+                    (isset($idarr['maximumelevationinmeters']) && $idarr['maximumelevationinmeters']?'"'.$this->conn->real_escape_string($idarr['maximumelevationinmeters']).'"':'NULL').','.
+                    (isset($idarr['verbatimelevation']) && $idarr['verbatimelevation']?'"'.$this->conn->real_escape_string($idarr['verbatimelevation']).'"':'NULL').
                     '),';
                 $rep++;
                 if($rep === 1000){
@@ -445,14 +445,14 @@ class SpecifyManager {
                         foreach($detarr as $detdate){
                             foreach($detdate as $determiner => $darr){
                                 $detinsertsql = '('.$occ.','.
-                                    (isset($darr['identifiedby'])?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
-                                    (isset($darr['dateidentified'])?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
-                                    (isset($darr['dateidentifiedinterpreted'])?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
-                                    (isset($darr['scientificname'])?'"'.$this->conn->real_escape_string($darr['scientificname']).'"':'NULL').','.
-                                    (isset($darr['scientificnameauthorship'])?'"'.$this->conn->real_escape_string($darr['scientificnameauthorship']).'"':'NULL').','.
-                                    (isset($darr['identificationqualifier'])?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
-                                    (isset($darr['identificationiscurrent'])?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
-                                    (isset($darr['identificationremarks'])?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
+                                    (isset($darr['identifiedby']) && $darr['identifiedby']?'"'.$this->conn->real_escape_string($darr['identifiedby']).'"':'NULL').','.
+                                    (isset($darr['dateidentified']) && $darr['dateidentified']?'"'.$this->conn->real_escape_string($darr['dateidentified']).'"':'NULL').','.
+                                    (isset($darr['dateidentifiedinterpreted']) && $darr['dateidentifiedinterpreted']?'"'.$this->conn->real_escape_string($darr['dateidentifiedinterpreted']).'"':'NULL').','.
+                                    (isset($darr['scientificname']) && $darr['scientificname']?'"'.$this->conn->real_escape_string($darr['scientificname']).'"':'NULL').','.
+                                    (isset($darr['scientificnameauthorship']) && $darr['scientificnameauthorship']?'"'.$this->conn->real_escape_string($darr['scientificnameauthorship']).'"':'NULL').','.
+                                    (isset($darr['identificationqualifier']) && $darr['identificationqualifier']?'"'.$this->conn->real_escape_string($darr['identificationqualifier']).'"':'NULL').','.
+                                    (isset($darr['identificationiscurrent']) && $darr['identificationiscurrent']?'"'.$this->conn->real_escape_string($darr['identificationiscurrent']).'"':'NULL').','.
+                                    (isset($darr['identificationremarks']) && $darr['identificationremarks']?'"'.$this->conn->real_escape_string($darr['identificationremarks']).'"':'NULL').
                                     ')';
                                 if(!$this->conn->query($detinsertsqlprefix . $detinsertsql)){
                                     echo '<li>det insert FAILED...SQL: '.$detinsertsqlprefix . $detinsertsql.'</li>';
@@ -472,11 +472,11 @@ class SpecifyManager {
                         $occ = $collectionObjectIDArr[$oid];
                         foreach($imgarr as $iid => $iarr){
                             $imginsertsql .= '('.$occ.','.
-                                (isset($iarr['accessuri'])?'"'.$iarr['accessuri'].'"':'NULL').','.
-                                (isset($iarr['owner'])?'"'.$iarr['owner'].'"':'NULL').','.
-                                (isset($iarr['usageterms'])?'"'.$iarr['usageterms'].'"':'NULL').','.
-                                (isset($iarr['comments'])?'"'.$iarr['comments'].'"':'NULL').','.
-                                (isset($iarr['format'])?'"'.$iarr['format'].'"':'NULL').
+                                (isset($iarr['accessuri']) && $iarr['accessuri']?'"'.$iarr['accessuri'].'"':'NULL').','.
+                                (isset($iarr['owner']) && $iarr['owner']?'"'.$iarr['owner'].'"':'NULL').','.
+                                (isset($iarr['usageterms']) && $iarr['usageterms']?'"'.$iarr['usageterms'].'"':'NULL').','.
+                                (isset($iarr['comments']) && $iarr['comments']?'"'.$iarr['comments'].'"':'NULL').','.
+                                (isset($iarr['format']) && $iarr['format']?'"'.$iarr['format'].'"':'NULL').
                                 '),';
                             $rep++;
                             if($rep === 1000){
