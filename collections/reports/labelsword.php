@@ -5,402 +5,291 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ini_set('max_execution_time', 180);
 
-use PhpOffice\PhpWord\PhpWord;
-
-$ses_id = time();
-$lineWidth = 0;
-
-$labelManager = new OccurrenceLabel();
-
 $collid = (int)$_POST['collid'];
-$hPrefix = $_POST['hprefix'];
-$hMid = (int)$_POST['hmid'];
-$hSuffix = $_POST['hsuffix'];
-$lFooter = $_POST['lfooter'];
-$columnCount = $_POST['labeltype'];
-$includeSpeciesAuthor = ((array_key_exists('speciesauthors',$_POST) && $_POST['speciesauthors'])?1:0);
-$showcatalognumbers = ((array_key_exists('catalognumbers',$_POST) && $_POST['catalognumbers'])?1:0);
-$useBarcode = array_key_exists('bc',$_POST)?(int)$_POST['bc']:0;
-$barcodeOnly = array_key_exists('bconly',$_POST)?(int)$_POST['bconly']:0;
-$action = array_key_exists('submitaction',$_POST)?$_POST['submitaction']:'';
+$labelformatindex = htmlspecialchars($_POST['labelformatindex']);
 
-$hPrefix = filter_var($hPrefix, FILTER_SANITIZE_STRING);
-$hSuffix = filter_var($hSuffix, FILTER_SANITIZE_STRING);
-$lFooter = filter_var($lFooter, FILTER_SANITIZE_STRING);
-if(!is_numeric($columnCount) && $columnCount !== 'packet') {
-    $columnCount = 2;
+$scope = $labelformatindex[0];
+$labelIndex = substr($labelformatindex,2);
+if(!is_numeric($labelIndex)) {
+    $labelIndex = '';
 }
 
-$sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0);
-if((int)$columnCount === 1){
-	$lineWidth = 740;
-}
-elseif((int)$columnCount === 2){
-	$lineWidth = 350;
-	$sectionStyle['colsNum'] = 2;
-	$sectionStyle['colsSpace'] = 690;
-	$sectionStyle['breakType'] = 'continuous';
-}
-elseif((int)$columnCount === 3){
-	$lineWidth = 220;
-	$sectionStyle['colsNum'] = 3;
-	$sectionStyle['colsSpace'] = 690;
-	$sectionStyle['breakType'] = 'continuous';
-}
-/*elseif($columnCount === 'packet'){
-	$lineWidth = 540;
-}*/
-
-$labelManager->setCollid($collid);
-
-$isEditor = 0;
-if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
-		$isEditor = 1;
-	}
-}
+use PhpOffice\PhpWord\PhpWord;
+$labelManager = new OccurrenceLabel();
 $phpWord = new PhpWord();
-if($isEditor && $action){
-    $phpWord->addParagraphStyle('foldMarks1', array('lineHeight'=>1.0,'spaceBefore'=>1200,'marginLeft'=>1200));
-	$phpWord->addParagraphStyle('foldMarks2', array('lineHeight'=>1.0,'spaceBefore'=>1200,'spaceAfter'=>200,'marginLeft'=>400,'marginRight'=>400));
-	$phpWord->addFontStyle('foldMarksFont', array('size'=>11));
-	$phpWord->addParagraphStyle('firstLine', array('lineHeight'=>.1,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addParagraphStyle('lastLine', array('spaceAfter'=>300,'lineHeight'=>.1));
-	$phpWord->addFontStyle('dividerFont', array('size'=>1));
-	$phpWord->addParagraphStyle('barcodeonly', array('alignment'=>'center','lineHeight'=>1.0,'spaceAfter'=>300,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addParagraphStyle('lheader', array('alignment'=>'center','lineHeight'=>1.0,'spaceAfter'=>150,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('lheaderFont', array('bold'=>true,'size'=>14,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('family', array('alignment'=>'right','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('familyFont', array('size'=>10,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('scientificname', array('alignment'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('scientificnameFont', array('bold'=>true,'italic'=>true,'size'=>11,'name'=>'Arial'));
-	$phpWord->addFontStyle('scientificnameinterFont', array('bold'=>true,'size'=>11,'name'=>'Arial'));
-	$phpWord->addFontStyle('scientificnameauthFont', array('size'=>11,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('identified', array('alignment'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'indent'=>0.3125,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('identifiedFont', array('size'=>10,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('loc1', array('spaceBefore'=>150,'lineHeight'=>1.0,'spaceAfter'=>0,'alignment'=>'left','keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('countrystateFont', array('size'=>11,'bold'=>true,'name'=>'Arial'));
-	$phpWord->addFontStyle('localityFont', array('size'=>11,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('other', array('alignment'=>'left','lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('otherFont', array('size'=>10,'name'=>'Arial'));
-	$phpWord->addFontStyle('associatedtaxaFont', array('size'=>10,'italic'=>true,'name'=>'Arial'));
-	$phpWord->addParagraphStyle('collector', array('spaceBefore'=>150,'lineHeight'=>1.0,'spaceAfter'=>0,'alignment'=>'left','keepNext'=>true,'keepLines'=>true));
-	$phpWord->addParagraphStyle('cnbarcode', array('alignment'=>'center','lineHeight'=>1.0,'spaceAfter'=>0,'spaceBefore'=>150,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addParagraphStyle('lfooter', array('alignment'=>'center','lineHeight'=>1.0,'spaceAfter'=>0,'spaceBefore'=>150,'keepNext'=>true,'keepLines'=>true));
-	$phpWord->addFontStyle('lfooterFont', array('bold'=>true,'size'=>12,'name'=>'Arial'));
+$ses_id = time();
+$labelManager->setCollid($collid);
+$formatArr = ($scope && is_numeric($labelIndex)) ? $labelManager->getLabelFormatByID($scope,$labelIndex) : array();
+if($formatArr){
+    $defaultFont = $formatArr['defaultFont'] ?? 'Arial';
+    $defaultFontSize = isset($formatArr['defaultFontSize']) ? (int)$formatArr['defaultFontSize'] : 12;
+    $formatFields = $formatArr['labelBlocks'];
+    $lineWidth = 0;
+    $columnCount = $formatArr['pageLayout'];
+    if(!in_array($columnCount, array('1', '2', '3', '4', 'packet'), true)) {
+        $columnCount = 2;
+    }
+    if($columnCount === 'packet'){
+        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>2370,'marginRight'=>2370,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
+        $sectionStyle['colsNum'] = 1;
+        $lineWidth = 500;
+    }
+    elseif((int)$columnCount === 1){
+        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
+        $sectionStyle['colsNum'] = 1;
+        $lineWidth = 700;
+    }
+    else{
+        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
+        if((int)$columnCount === 2){
+            $sectionStyle['colsNum'] = 2;
+            $lineWidth = 328;
+        }
+        if((int)$columnCount === 3){
+            $sectionStyle['colsNum'] = 3;
+            $lineWidth = 162;
+        }
+        if((int)$columnCount === 4){
+            $sectionStyle['colsNum'] = 4;
+            $lineWidth = 64;
+        }
+    }
+    $sectionStyle['colsSpace'] = 450;
+    $sectionStyle['breakType'] = 'continuous';
 
-	$section = $phpWord->addSection($sectionStyle);
-
-	$labelArr = $labelManager->getLabelArray($_POST['occid'], $includeSpeciesAuthor);
-
-	foreach($labelArr as $occid => $occArr){
-		if($columnCount === 'packet'){
-			$textrun = $section->addTextRun('foldMarks1');
-			$textrun->addText('++','foldMarksFont');
-			$textrun = $section->addTextRun('foldMarks2');
-			$textrun->addText('+','foldMarksFont');
-
-			$table = $section->addTable();
-			$table->addRow();
-			$table->addCell(1750)->addText('+');
-			$table->addCell(1750)->addText('+');
-		}
-
-		if($barcodeOnly){
-			if($occArr['catalognumber']){
-                $textrun = $section->addTextRun('cnbarcode');
-                $bc = $labelManager->getBarcodePng(strtoupper($occArr['catalognumber']), 40, 'code39');
-                imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-                $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center'));
-                $textrun->addTextBreak();
-                $textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
-                imagedestroy($bc);
-			}
-		}
-		else{
-			$midStr = '';
-			if($hMid === 1) {
-                $midStr = $occArr['country'];
-            }
-			elseif($hMid === 2) {
-                $midStr = $occArr['stateprovince'];
-            }
-			elseif($hMid === 3) {
-                $midStr = $occArr['county'];
-            }
-			elseif($hMid === 4) {
-                $midStr = $occArr['family'];
-            }
-			$headerStr = '';
-			if($hPrefix || $midStr || $hSuffix){
-				$headerStrArr = array();
-				$headerStrArr[] = trim($hPrefix);
-				$headerStrArr[] = trim($midStr);
-				$headerStrArr[] = trim($hSuffix);
-				$headerStr = implode(' ',$headerStrArr);
-			}
-			$dupCnt = $_POST['q-'.$occid];
-			for($i = 0;$i < $dupCnt;$i++){
-				$section->addText(htmlspecialchars(' '),'dividerFont','firstLine');
-				if($headerStr){
-					$section->addText(htmlspecialchars($headerStr),'lheaderFont','lheader');
-				}
-				if($hMid !== 4) {
-                    $section->addText(htmlspecialchars($occArr['family']), 'familyFont', 'family');
+    if($GLOBALS['SYMB_UID']){
+        $section = $phpWord->addSection($sectionStyle);
+        $labelArr = $labelManager->getLabelArray($_POST['occid']);
+        foreach($labelArr as $occid => $occArr){
+            $dupCnt = $_POST['q-'.$occid];
+            for($i = 0;$i < $dupCnt;$i++){
+                if($columnCount === 'packet'){
+                    $textrun = $section->addTextRun(array('keepLines'=>true,'keepNext'=>true));
+                    $textrun->addTextBreak(1,array('size'=>285));
+                    $textrun->addLine(array('weight'=>1,'width'=>500,'height'=>0,'dash'=>'rounddot'));
+                    $textrun->addTextBreak(1,array('size'=>355));
+                    $textrun->addLine(array('weight'=>1,'width'=>500,'height'=>0,'dash'=>'rounddot'));
                 }
-				$textrun = $section->addTextRun('scientificname');
-				if($occArr['identificationqualifier']) {
-                    $textrun->addText(htmlspecialchars($occArr['identificationqualifier']) . ' ', 'scientificnameauthFont');
+                if(isset($formatArr['headerPrefix']) || isset($formatArr['headerMidText']) || isset($formatArr['headerSuffix'])){
+                    $headerMidVal = isset($formatArr['headerMidText']) ? (int)$formatArr['headerMidText'] : 0;
+                    $headerStr = '';
+                    $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
+                    $fStyleArr = array();
+                    $headerStr .= $formatArr['headerPrefix'] ?? '';
+                    if($headerMidVal === 1){
+                        $headerStr .= $occArr['country'] ?? '';
+                    }
+                    if($headerMidVal === 2){
+                        $headerStr .= $occArr['stateprovince'] ?? '';
+                    }
+                    if($headerMidVal === 3){
+                        $headerStr .= $occArr['county'] ?? '';
+                    }
+                    if($headerMidVal === 4){
+                        $headerStr .= $occArr['family'] ?? '';
+                    }
+                    $headerStr .= $formatArr['headerSuffix'] ?? '';
+                    if(isset($formatArr['headerBold'])){
+                        $fStyleArr['bold'] = true;
+                    }
+                    if(isset($formatArr['headerItalic'])){
+                        $fStyleArr['italic'] = true;
+                    }
+                    if(isset($formatArr['headerUnderline'])){
+                        $fStyleArr['underline'] = 'single';
+                    }
+                    if(isset($formatArr['headerUppercase'])){
+                        $fStyleArr['allCaps'] = true;
+                    }
+                    $pStyleArr['align'] = $formatArr['headerTextAlign'];
+                    $fStyleArr['name'] = $formatArr['headerFont'] ?? $defaultFont;
+                    $fStyleArr['size'] = $formatArr['headerFontSize'] ?? $defaultFontSize;
+                    $textrun = $section->addTextRun($pStyleArr);
+                    $textrun->addText(htmlspecialchars($headerStr),$fStyleArr);
+                    if(isset($formatArr['headerBottomMargin'])){
+                        $pStyleArr['size'] = $formatArr['headerBottomMargin'];
+                        $textrun->addTextBreak(1, $pStyleArr);
+                    }
                 }
-				$scinameStr = $occArr['scientificname'];
-				$parentAuthor = (array_key_exists('parentauthor',$occArr)?' '.$occArr['parentauthor']:'');
-				if(strpos($scinameStr,' sp.') !== false){
-					$scinameArr = explode(' sp. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                foreach($formatFields as $k => $labelFieldBlock){
+                    $addBlock = false;
+                    $fieldsArr = array();
+                    if(isset($labelFieldBlock['blockDisplayLine'])){
+                        $addBlock = true;
+                    }
+                    else{
+                        $fieldsArr = $labelFieldBlock['fields'];
+                        foreach($fieldsArr as $f => $fArr){
+                            $field = $fArr['field'];
+                            if(strncmp($field, 'barcode-', 8) === 0){
+                                $addBlock = true;
+                            }
+                            elseif(strncmp($field, 'qr-', 3) === 0){
+                                $addBlock = true;
+                            }
+                            elseif(isset($occArr[$field]) && $occArr[$field]){
+                                $addBlock = true;
+                            }
                         }
-                        $textrun->addText('sp.','scientificnameinterFont');
                     }
-				}
-				elseif(strpos($scinameStr,'subsp.') !== false){
-					$scinameArr = explode(' subsp. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                    if($addBlock){
+                        $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
+                        if(isset($labelFieldBlock['blockTextAlign'])){
+                            $pStyleArr['align'] = $labelFieldBlock['blockTextAlign'];
                         }
-                        $textrun->addText('subsp. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'ssp.') !== false){
-					$scinameArr = explode(' ssp. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        if(isset($labelFieldBlock['blockLineHeight'])){
+                            $pStyleArr['size'] = $labelFieldBlock['blockLineHeight'];
                         }
-                        $textrun->addText('ssp. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'var.') !== false){
-					$scinameArr = explode(' var. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        if(isset($labelFieldBlock['blockLeftMargin'])){
+                            $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockLeftMargin'] * 15);
                         }
-                        $textrun->addText('var. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'variety') !== false){
-					$scinameArr = explode(' variety ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        if(isset($labelFieldBlock['blockRightMargin'])){
+                            $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockRightMargin'] * 15);
                         }
-                        $textrun->addText('var. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'Variety') !== false){
-					$scinameArr = explode(' Variety ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        $textrun = $section->addTextRun($pStyleArr);
+                        if(isset($labelFieldBlock['blockTopMargin'])){
+                            $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
                         }
-                        $textrun->addText('var. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'v.') !== false){
-					$scinameArr = explode(' v. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        if(isset($labelFieldBlock['blockDisplayLine'])){
+                            $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1,'color'=>'black');
+                            if(isset($labelFieldBlock['blockDisplayLineHeight'])){
+                                $lineStyleArr['weight'] = $labelFieldBlock['blockDisplayLineHeight'];
+                            }
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dash'){
+                                $lineStyleArr['dash'] = 'dash';
+                            }
+                            if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
+                                $lineStyleArr['dash'] = 'rounddot';
+                            }
+                            $textrun->addLine($lineStyleArr);
                         }
-                        $textrun->addText('var. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,' f.') !== false){
-					$scinameArr = explode(' f. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        else{
+                            foreach($fieldsArr as $f => $fArr){
+                                $field = $fArr['field'];
+                                if(strncmp($field, 'barcode-', 8) === 0){
+                                    $idArr = explode('-', $field);
+                                    if($idArr){
+                                        $bcField = $idArr[1];
+                                        if(isset($occArr[$bcField])){
+                                            ob_start();
+                                            $bc = $labelManager->getBarcodePng(strtoupper($occArr[$bcField]), ($fArr['barcodeHeight'] ?? 40), 'code39');
+                                            imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.strtoupper($occArr[$bcField]).'.png');
+                                            $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.strtoupper($occArr[$bcField]).'.png');
+                                            imagedestroy($bc);
+                                        }
+                                    }
+                                }
+                                elseif(strncmp($field, 'qr-', 3) === 0){
+                                    $qr = $labelManager->getQRCodePng($occid, ($fArr['qrcodeSize'] ?? 100));
+                                    if($qr){
+                                        file_put_contents($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png', $qr);
+                                        $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
+                                    }
+                                }
+                                elseif(isset($occArr[$field])){
+                                    if(isset($fArr['fieldPrefix'])){
+                                        $fPrefixStyleArr = array();
+                                        if(isset($fArr['fieldPrefixBold'])){
+                                            $fPrefixStyleArr['bold'] = true;
+                                        }
+                                        if(isset($fArr['fieldPrefixItalic'])){
+                                            $fPrefixStyleArr['italic'] = true;
+                                        }
+                                        if(isset($fArr['fieldPrefixUnderline'])){
+                                            $fPrefixStyleArr['underline'] = 'single';
+                                        }
+                                        if(isset($fArr['fieldPrefixUppercase'])){
+                                            $fPrefixStyleArr['allCaps'] = true;
+                                        }
+                                        $fPrefixStyleArr['name'] = $fArr['fieldPrefixFont'] ?? $defaultFont;
+                                        $fPrefixStyleArr['size'] = $fArr['fieldPrefixFontSize'] ?? $defaultFontSize;
+                                        $textrun->addText(htmlspecialchars($fArr['fieldPrefix']),$fPrefixStyleArr);
+                                    }
+                                    $fStyleArr = array();
+                                    if(isset($fArr['fieldBold'])){
+                                        $fStyleArr['bold'] = true;
+                                    }
+                                    if(isset($fArr['fieldItalic'])){
+                                        $fStyleArr['italic'] = true;
+                                    }
+                                    if(isset($fArr['fieldUnderline'])){
+                                        $fStyleArr['underline'] = 'single';
+                                    }
+                                    if(isset($fArr['fieldUppercase'])){
+                                        $fStyleArr['allCaps'] = true;
+                                    }
+                                    $fStyleArr['name'] = $fArr['fieldFont'] ?? $defaultFont;
+                                    $fStyleArr['size'] = $fArr['fieldFontSize'] ?? $defaultFontSize;
+                                    $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
+                                    if(isset($fArr['fieldSuffix'])){
+                                        $fSuffixStyleArr = array();
+                                        if(isset($fArr['fieldSuffixBold'])){
+                                            $fSuffixStyleArr['bold'] = true;
+                                        }
+                                        if(isset($fArr['fieldSuffixItalic'])){
+                                            $fSuffixStyleArr['italic'] = true;
+                                        }
+                                        if(isset($fArr['fieldSuffixUnderline'])){
+                                            $fSuffixStyleArr['underline'] = 'single';
+                                        }
+                                        if(isset($fArr['fieldSuffixUppercase'])){
+                                            $fSuffixStyleArr['allCaps'] = true;
+                                        }
+                                        $fSuffixStyleArr['name'] = $fArr['fieldSuffixFont'] ?? $defaultFont;
+                                        $fSuffixStyleArr['size'] = $fArr['fieldSuffixFontSize'] ?? $defaultFontSize;
+                                        $textrun->addText(htmlspecialchars($fArr['fieldSuffix']),$fSuffixStyleArr);
+                                    }
+                                }
+                            }
                         }
-                        $textrun->addText('f. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				elseif(strpos($scinameStr,'cf.') !== false){
-					$scinameArr = explode(' cf. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
+                        if(isset($labelFieldBlock['blockBottomMargin'])){
+                            $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
+                            $textrun->addTextBreak(1,$pStyleArr);
                         }
-                        $textrun->addText('cf. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
                     }
-				}
-				elseif(strpos($scinameStr,'aff.') !== false){
-					$scinameArr = explode(' aff. ',$scinameStr);
-					if($scinameArr){
-                        $textrun->addText(htmlspecialchars($scinameArr[0]).' ','scientificnameFont');
-                        if($parentAuthor) {
-                            $textrun->addText(htmlspecialchars($parentAuthor) . ' ', 'scientificnameauthFont');
-                        }
-                        $textrun->addText('aff. ','scientificnameinterFont');
-                        $textrun->addText(htmlspecialchars($scinameArr[1]).' ','scientificnameFont');
-                    }
-				}
-				else{
-					$textrun->addText(htmlspecialchars($scinameStr).' ','scientificnameFont');
-				}
-				$textrun->addText(htmlspecialchars($occArr['scientificnameauthorship']),'scientificnameauthFont');
-				if($occArr['identifiedby']){
-					$textrun = $section->addTextRun('identified');
-					$textrun->addText('Det by: '.htmlspecialchars($occArr['identifiedby']).' ','identifiedFont');
-					$textrun->addText(htmlspecialchars($occArr['dateidentified']),'identifiedFont');
-					if($occArr['identificationreferences'] || $occArr['identificationremarks'] || $occArr['taxonremarks']){
-						$section->addText(htmlspecialchars($occArr['identificationreferences']),'identifiedFont','identified');
-						$section->addText(htmlspecialchars($occArr['identificationremarks']),'identifiedFont','identified');
-						$section->addText(htmlspecialchars($occArr['taxonremarks']),'identifiedFont','identified');
-					}
-				}
-				$textrun = $section->addTextRun('loc1');
-				$textrun->addText(htmlspecialchars($occArr['country'].($occArr['country']?', ':'')),'countrystateFont');
-				$textrun->addText(htmlspecialchars($occArr['stateprovince'].($occArr['stateprovince']?', ':'')),'countrystateFont');
-				$countyStr = trim($occArr['county']);
-				if($countyStr){
-					if(!stripos($occArr['county'],' County') && !stripos($occArr['county'],' Parish')) {
-                        $countyStr .= ' County';
-                    }
-					$countyStr .= ', ';
-				}
-				$textrun->addText(htmlspecialchars($countyStr),'countrystateFont');
-				$textrun->addText(htmlspecialchars($occArr['municipality'].($occArr['municipality']?', ':'')),'localityFont');
-				$locStr = trim($occArr['locality']);
-				if(substr($locStr,-1) !== '.'){
-                    $locStr .= '.';
                 }
-				$textrun->addText(htmlspecialchars($locStr),'localityFont');
-				if($occArr['decimallatitude'] || $occArr['verbatimcoordinates']){
-					$textrun = $section->addTextRun('other');
-					if($occArr['verbatimcoordinates']){
-						$textrun->addText(htmlspecialchars($occArr['verbatimcoordinates']),'otherFont');
-					}
-					else{
-						$textrun->addText(htmlspecialchars($occArr['decimallatitude']).($occArr['decimallatitude']>0?'N, ':'S, '),'otherFont');
-						$textrun->addText(htmlspecialchars($occArr['decimallongitude']).($occArr['decimallongitude']>0?'E':'W'),'otherFont');
-					}
-					if($occArr['coordinateuncertaintyinmeters']) {
-                        $textrun->addText(htmlspecialchars(' +-' . $occArr['coordinateuncertaintyinmeters'] . ' meters'), 'otherFont');
+                if(isset($formatArr['footerText'])){
+                    $pStyleArr = array('keepLines'=>true,'keepNext'=>true);
+                    $fStyleArr = array();
+                    if(isset($formatArr['footerBold'])){
+                        $fStyleArr['bold'] = true;
                     }
-					if($occArr['geodeticdatum']) {
-                        $textrun->addText(htmlspecialchars(' ' . $occArr['geodeticdatum']), 'otherFont');
+                    if(isset($formatArr['footerItalic'])){
+                        $fStyleArr['italic'] = true;
                     }
-				}
-				if($occArr['elevationinmeters']){
-					$textrun = $section->addTextRun('other');
-					$textrun->addText(htmlspecialchars('Elev: '.$occArr['elevationinmeters'].'m. '),'otherFont');
-					if($occArr['verbatimelevation']) {
-                        $textrun->addText(htmlspecialchars(' (' . $occArr['verbatimelevation'] . ')'), 'otherFont');
+                    if(isset($formatArr['footerUnderline'])){
+                        $fStyleArr['underline'] = 'single';
                     }
-				}
-				if($occArr['habitat']){
-					$textrun = $section->addTextRun('other');
-					$habStr = trim($occArr['habitat']);
-					if(substr($habStr,-1) !== '.'){
-                        $habStr .= '.';
+                    if(isset($formatArr['footerUppercase'])){
+                        $fStyleArr['allCaps'] = true;
                     }
-					$textrun->addText(htmlspecialchars($habStr),'otherFont');
-				}
-				if($occArr['substrate']){
-					$textrun = $section->addTextRun('other');
-					$substrateStr = trim($occArr['substrate']);
-					if(substr($substrateStr,-1) !== '.'){
-                        $substrateStr .= '.';
+                    $pStyleArr['align'] = $formatArr['footerTextAlign'];
+                    $fStyleArr['name'] = $formatArr['footerFont'] ?? $defaultFont;
+                    $fStyleArr['size'] = $formatArr['footerFontSize'] ?? $defaultFontSize;
+                    $textrun = $section->addTextRun($pStyleArr);
+                    if(isset($formatArr['footerTopMargin'])){
+                        $pStyleArr['size'] = $formatArr['footerTopMargin'];
+                        $textrun->addTextBreak(1, $pStyleArr);
                     }
-					$textrun->addText(htmlspecialchars($substrateStr),'otherFont');
-				}
-				if($occArr['verbatimattributes'] || $occArr['establishmentmeans']){
-					$textrun = $section->addTextRun('other');
-					$textrun->addText(htmlspecialchars($occArr['verbatimattributes']),'otherFont');
-					if($occArr['verbatimattributes'] && $occArr['establishmentmeans']) {
-                        $textrun->addText(htmlspecialchars('; '), 'otherFont');
-                    }
-					$textrun->addText(htmlspecialchars($occArr['establishmentmeans']),'otherFont');
-				}
-				if($occArr['associatedtaxa']){
-					$textrun = $section->addTextRun('other');
-					$textrun->addText(htmlspecialchars('Associated species: '),'otherFont');
-					$textrun->addText(htmlspecialchars($occArr['associatedtaxa']),'associatedtaxaFont');
-				}
-				if($occArr['occurrenceremarks']){
-					$section->addText(htmlspecialchars($occArr['occurrenceremarks']),'otherFont','other');
-				}
-				if($occArr['typestatus']){
-					$section->addText(htmlspecialchars($occArr['typestatus']),'otherFont','other');
-				}
-				$textrun = $section->addTextRun('collector');
-				$textrun->addText(htmlspecialchars($occArr['recordedby']),'otherFont');
-				$textrun->addText(htmlspecialchars(' '.$occArr['recordnumber']),'otherFont');
-				$section->addText(htmlspecialchars($occArr['eventdate']),'otherFont','other');
-				if($occArr['associatedcollectors']){
-					$section->addText(htmlspecialchars('With: '.$occArr['associatedcollectors']),'otherFont','identified');
-				}
-				if($useBarcode && $occArr['catalognumber']){
-                    $textrun = $section->addTextRun('cnbarcode');
-                    $bc = $labelManager->getBarcodePng(strtoupper($occArr['catalognumber']), 40, 'code39');
-                    imagepng($bc,$GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png');
-                    $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occArr['catalognumber'].'.png', array('align'=>'center','marginTop'=>0.15625));
-                    $textrun->addTextBreak();
-                    $textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
-                    imagedestroy($bc);
-				}
-				elseif($showcatalognumbers){
-					$textrun = $section->addTextRun('cnbarcode');
-					if($occArr['catalognumber']){
-						$textrun->addText(htmlspecialchars($occArr['catalognumber']),'otherFont');
-					}
-					if($occArr['othercatalognumbers']){
-						if($occArr['catalognumber']){
-							$textrun->addTextBreak(1);
-						}
-						$textrun->addText(htmlspecialchars($occArr['othercatalognumbers']),'otherFont');
-					}
-				}
-				if($lFooter){
-					$section->addText(htmlspecialchars($lFooter),'lfooterFont','lfooter');
-				}
-				$section->addText(htmlspecialchars(' '),'dividerFont','lastLine');
-			}
-		}
-	}
-}
+                    $textrun->addText(htmlspecialchars($formatArr['footerText']),$fStyleArr);
+                }
+                $section->addTextBreak(1,array('size'=>20));
+            }
+        }
+    }
+    $targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
+    $phpWord->save($targetFile);
 
-$targetFile = $GLOBALS['SERVER_ROOT'].'/temp/report/'.$GLOBALS['PARAMS_ARR']['un'].'_'.date('Ymd').'_labels_'.$ses_id.'.docx';
-$phpWord->save($targetFile);
-
-header('Content-Description: File Transfer');
-header('Content-type: application/force-download');
-header('Content-Disposition: attachment; filename='.basename($targetFile));
-header('Content-Transfer-Encoding: binary');
-header('Content-Length: '.filesize($targetFile));
-readfile($targetFile);
-$files = glob($GLOBALS['SERVER_ROOT'].'/temp/report/*');
-foreach($files as $file){
-	if(is_file($file) && strpos($file, $ses_id) !== false) {
-        unlink($file);
+    header('Content-Description: File Transfer');
+    header('Content-type: application/force-download');
+    header('Content-Disposition: attachment; filename='.basename($targetFile));
+    header('Content-Transfer-Encoding: binary');
+    header('Content-Length: '.filesize($targetFile));
+    readfile($targetFile);
+    $files = glob($GLOBALS['SERVER_ROOT'].'/temp/report/*');
+    foreach($files as $file){
+        if(strpos($file, (string)$ses_id) !== false) {
+            unlink($file);
+        }
     }
 }

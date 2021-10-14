@@ -70,14 +70,25 @@ const fieldProps = [
     {name: 'Genus', id: 'genus', group: 'taxon'},
     {name: 'Infraspecific Epithet', id: 'infraspecificepithet', group: 'taxon'},
     {name: 'Infraspecific Epithet Authorship', id: 'infraspecificepithetauthorship', group: 'taxon'},
-    {name: 'Parent Author', id: 'parentauthor', group: 'taxon'},
     {name: 'Scientific Name', id: 'sciname', group: 'taxon'},
     {name: 'Scientific Name Authorship', id: 'scientificnameauthorship', group: 'taxon'},
     {name: 'Specific Epithet', id: 'specificepithet', group: 'taxon'},
+    {name: 'Specific Epithet Authorship', id: 'specificepithetauthorship', group: 'taxon'},
     {name: 'Taxon Rank', id: 'taxonrank', group: 'taxon'},
-    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'},
-    {name: 'Terminal Scientific Name Authorship', id: 'terminalscientificnameauthorship', group: 'taxon'}
+    {name: 'Taxon Remarks', id: 'taxonremarks', group: 'taxon'}
 ];
+
+const cssFontFamilies = {};
+cssFontFamilies['Arial'] = 'Arial, Helvetica, sans-serif';
+cssFontFamilies['Brush Script MT'] = '"Brush Script MT", cursive';
+cssFontFamilies['Courier New'] = '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace';
+cssFontFamilies['Garamond'] = 'Garamond, Baskerville, "Baskerville Old Face", "Hoefler Text", "Times New Roman", serif';
+cssFontFamilies['Georgia'] = 'Georgia, Times, "Times New Roman", serif';
+cssFontFamilies['Helvetica'] = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+cssFontFamilies['Tahoma'] = 'Tahoma, Verdana, Segoe, sans-serif';
+cssFontFamilies['Times New Roman'] = '"Times New Roman", Times, serif';
+cssFontFamilies['Trebuchet'] = '"Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif';
+cssFontFamilies['Verdana'] = 'Verdana, Geneva, sans-serif';
 
 const fieldListDiv = document.getElementById('field-list');
 const labelMid = document.getElementById('label-middle');
@@ -95,6 +106,7 @@ function translateJson(source) {
         preview.innerText = 'ERROR: Your label format is not translatable. Please adjust your JSON definition and try again, or create a new format from scratch using this visual builder.';
     }
     if(srcLines.length > 0){
+        document.getElementById("label-middle").innerHTML = '';
         let lineCount = srcLines.length;
         for(i = 0; i < lineCount; i++){
             const keys = Object.keys(srcLines[i]);
@@ -344,68 +356,192 @@ function removeField(fieldId) {
 }
 
 function refreshPreview() {
-    let labelList = [];
-    let fieldBlocks = document.querySelectorAll('#build-label .field-block');
-    fieldBlocks.forEach((block) => {
-        let itemsArr = [];
-        let items = block.querySelectorAll('li');
-        items.forEach((item) => {
-            let itemObj = {};
-            let className = Array.from(item.classList).filter(isPrintStyle);
-            itemObj.field = item.title;
-            itemObj.className = className;
-            itemObj.prefix = item.dataset.prefix;
-            itemObj.suffix = item.dataset.suffix;
-            itemsArr.push(itemObj);
-        });
-        labelList.push(itemsArr);
-        let fieldBlockStyles = Array.from(block.classList).filter(isPrintStyle);
-        fieldBlockStyles ? (itemsArr.className = fieldBlockStyles) : '';
-    });
     preview.innerHTML = '';
-    labelList.forEach((labelItem, blockIdx) => {
-        let blockLen = labelItem.length;
-        let fieldBlock = document.createElement('div');
-        fieldBlock.classList.add('field-block');
-        let labelItemStyles = labelItem.className;
-        labelItemStyles.forEach((style) => {
-            fieldBlock.classList.add(style);
-        });
-        preview.appendChild(fieldBlock);
-        labelItem.forEach((field, fieldIdx) => {
-            createPreviewEl(field, fieldBlock);
-            let isLast = fieldIdx == blockLen - 1;
-            if (!isLast) {
-                let preview = document.getElementsByClassName(field.field);
-                let delim = document.createElement('span');
-                delim.innerText = labelItem.delimiter;
-                preview[0].after(delim);
+    const layout = jsonArr['pageLayout'];
+    const defaultFont = jsonArr.hasOwnProperty('defaultFont') ? cssFontFamilies[jsonArr['defaultFont']] : 'Arial, Helvetica, sans-serif';
+    const defaultFontSize = jsonArr.hasOwnProperty('defaultFontSize') ? Number(jsonArr['defaultFontSize']) : 12;
+    let labelWidthText = '';
+    if(layout === 'packet'){
+        labelWidthText = 'width:520px;';
+    }
+    if(Number(layout) === 1){
+        labelWidthText = 'width:720px;';
+    }
+    if(Number(layout) === 2){
+        labelWidthText = 'width:348px;';
+    }
+    if(Number(layout) === 3){
+        labelWidthText = 'width:182px;';
+    }
+    if(Number(layout) === 4){
+        labelWidthText = 'width:84px;';
+    }
+    const labelDiv = document.createElement('div');
+    labelDiv.setAttribute("style",labelWidthText + "margin:15px auto;");
+    if(layout === 'packet'){
+        const packetFirstHr = document.createElement('hr');
+        packetFirstHr.setAttribute("style","border-top: 1px dotted black;margin-top:285px;width:500px;");
+        labelDiv.appendChild(packetFirstHr);
+        const packetSecondHr = document.createElement('hr');
+        packetSecondHr.setAttribute("style","border-top: 1px dotted black;margin-top:355px;margin-bottom:10px;width:500px;");
+        labelDiv.appendChild(packetSecondHr);
+    }
+    if(jsonArr.hasOwnProperty('headerPrefix') || jsonArr.hasOwnProperty('headerMidText') || jsonArr.hasOwnProperty('headerSuffix')){
+        let headerStr = '';
+        let headerStyleStr = labelWidthText + "clear:both;";
+        const headerMidTextVal = jsonArr.hasOwnProperty('headerMidText') ? Number(jsonArr['headerMidText']) : 0;
+        headerStr += jsonArr.hasOwnProperty('headerPrefix') ? jsonArr['headerPrefix'] : '';
+        if(headerMidTextVal === 1){
+            headerStr += '[Country]';
+        }
+        if(headerMidTextVal === 2){
+            headerStr += '[State/Province]';
+        }
+        if(headerMidTextVal === 3){
+            headerStr += '[County]';
+        }
+        if(headerMidTextVal === 4){
+            headerStr += '[Family]';
+        }
+        headerStr += jsonArr.hasOwnProperty('headerSuffix') ? jsonArr['headerSuffix'] : '';
+        headerStyleStr += jsonArr.hasOwnProperty('headerBold') ? 'font-weight:bold;' : '';
+        headerStyleStr += jsonArr.hasOwnProperty('headerItalic') ? 'font-style:italic;' : '';
+        headerStyleStr += jsonArr.hasOwnProperty('headerUnderline') ? 'text-decoration:underline;' : '';
+        headerStyleStr += jsonArr.hasOwnProperty('headerUppercase') ? 'text-transform:uppercase;' : '';
+        headerStyleStr += jsonArr.hasOwnProperty('headerTextAlign') ? 'text-align:' + jsonArr['headerTextAlign'] + ';' : '';
+        headerStyleStr += 'font-family:' + (jsonArr.hasOwnProperty('headerFont') ? cssFontFamilies[jsonArr['headerFont']] : defaultFont) + ';';
+        headerStyleStr += 'font-size:' + (jsonArr.hasOwnProperty('headerFontSize') ? jsonArr['headerFontSize'] : defaultFontSize) + ';';
+        const headerDiv = document.createElement('div');
+        headerDiv.setAttribute("style",headerStyleStr);
+        headerDiv.innerHTML = headerStr;
+        labelDiv.appendChild(headerDiv);
+        if(jsonArr.hasOwnProperty('headerBottomMargin')){
+            const headerBottomDiv = document.createElement('div');
+            headerBottomDiv.setAttribute("style",labelWidthText + "height:" + jsonArr['headerBottomMargin'] + 'px;clear:both;');
+            labelDiv.appendChild(headerBottomDiv);
+        }
+    }
+    let fieldBlocks = labelMid.querySelectorAll('.field-block');
+    fieldBlocks.forEach((block) => {
+        const blockId = block.id;
+        let items = block.querySelectorAll('li');
+        if((settingArr.hasOwnProperty(blockId) && settingArr[blockId].hasOwnProperty('blockDisplayLine')) || items.length > 0){
+            const blockSettings = settingArr.hasOwnProperty(blockId) ? settingArr[blockId] : {};
+            let blockStyleStr = labelWidthText + "clear:both;";
+            if(blockSettings.hasOwnProperty('blockTopMargin')){
+                const blockTopMarginDiv = document.createElement('div');
+                blockTopMarginDiv.setAttribute("style",labelWidthText + "height:" + blockSettings['blockTopMargin'] + 'px;clear:both;');
+                labelDiv.appendChild(blockTopMarginDiv);
             }
-        });
+            if(blockSettings.hasOwnProperty('blockDisplayLine')){
+                let topBorderStr = '';
+                topBorderStr += blockSettings.hasOwnProperty('blockDisplayLineHeight') ? ' ' + blockSettings['blockDisplayLineHeight'] + 'px' : ' 1px';
+                if(blockSettings.hasOwnProperty('blockDisplayLineStyle') && blockSettings['blockDisplayLineHeight'] === 'dash'){
+                    topBorderStr += ' dashed';
+                }
+                else if(blockSettings.hasOwnProperty('blockDisplayLineStyle') && blockSettings['blockDisplayLineHeight'] === 'dot'){
+                    topBorderStr += ' dotted';
+                }
+                else{
+                    topBorderStr += ' solid';
+                }
+                const lineStyleStr = labelWidthText + 'border-top:' + topBorderStr + ' black;';
+                const blockDiv = document.createElement('div');
+                blockDiv.setAttribute("style",blockStyleStr);
+                const hrElement = document.createElement('hr');
+                hrElement.setAttribute("style",lineStyleStr);
+                blockDiv.appendChild(hrElement);
+                labelDiv.appendChild(blockDiv);
+            }
+            else{
+                blockStyleStr += "display:flex;flex-wrap:wrap;";
+                blockStyleStr += blockSettings['blockTextAlign'] === 'left' ? 'justify-content:flex-start;text-align:left;' : '';
+                blockStyleStr += blockSettings['blockTextAlign'] === 'center' ? 'justify-content:center;text-align:center;' : '';
+                blockStyleStr += blockSettings['blockTextAlign'] === 'right' ? 'justify-content:flex-end;text-align:right;' : '';
+                blockStyleStr += blockSettings.hasOwnProperty('blockLineHeight') ? 'line-height:' + blockSettings['blockLineHeight'] + 'px;' : '';
+                blockStyleStr += blockSettings.hasOwnProperty('blockLeftMargin') ? 'margin-left:' + blockSettings['blockLeftMargin'] + 'px;' : '';
+                blockStyleStr += blockSettings.hasOwnProperty('blockRightMargin') ? 'margin-right:' + blockSettings['blockRightMargin'] + 'px;' : '';
+                const blockDiv = document.createElement('div');
+                blockDiv.setAttribute("style",blockStyleStr);
+                items.forEach((item) => {
+                    const field = item.title;
+                    const fieldId = item.id;
+                    const prop = fieldProps.find((obj) => obj.id === field);
+                    const fieldSettings = settingArr.hasOwnProperty(fieldId) ? settingArr[fieldId] : {};
+                    if(field.startsWith("barcode-") || field.startsWith("qr-")){
+                        const barcodeSpan = document.createElement('span');
+                        barcodeSpan.innerHTML = '[' + prop.name + ']';
+                        blockDiv.appendChild(barcodeSpan);
+                    }
+                    else{
+                        if(fieldSettings.hasOwnProperty('fieldPrefix')){
+                            let prefixStyleStr = '';
+                            prefixStyleStr += fieldSettings.hasOwnProperty('fieldPrefixBold') ? 'font-weight:bold;' : '';
+                            prefixStyleStr += fieldSettings.hasOwnProperty('fieldPrefixItalic') ? 'font-style:italic;' : '';
+                            prefixStyleStr += fieldSettings.hasOwnProperty('fieldPrefixUnderline') ? 'text-decoration:underline;' : '';
+                            prefixStyleStr += fieldSettings.hasOwnProperty('fieldPrefixUppercase') ? 'text-transform:uppercase;' : '';
+                            prefixStyleStr += 'font-family:' + (fieldSettings.hasOwnProperty('fieldPrefixFont') ? cssFontFamilies[fieldSettings['fieldPrefixFont']] : defaultFont) + ';';
+                            prefixStyleStr += 'font-size:' + (fieldSettings.hasOwnProperty('fieldPrefixFontSize') ? fieldSettings['fieldPrefixFontSize'] : defaultFontSize) + ';';
+                            const prefixSpan = document.createElement('span');
+                            prefixSpan.setAttribute("style",prefixStyleStr);
+                            prefixSpan.innerHTML = fieldSettings['fieldPrefix'].replace(" ", "&nbsp;");
+                            blockDiv.appendChild(prefixSpan);
+                        }
+                        let fieldStyleStr = '';
+                        fieldStyleStr += fieldSettings.hasOwnProperty('fieldBold') ? 'font-weight:bold;' : '';
+                        fieldStyleStr += fieldSettings.hasOwnProperty('fieldItalic') ? 'font-style:italic;' : '';
+                        fieldStyleStr += fieldSettings.hasOwnProperty('fieldUnderline') ? 'text-decoration:underline;' : '';
+                        fieldStyleStr += fieldSettings.hasOwnProperty('fieldUppercase') ? 'text-transform:uppercase;' : '';
+                        fieldStyleStr += 'font-family:' + (fieldSettings.hasOwnProperty('fieldFont') ? cssFontFamilies[fieldSettings['fieldFont']] : defaultFont) + ';';
+                        fieldStyleStr += 'font-size:' + (fieldSettings.hasOwnProperty('fieldFontSize') ? fieldSettings['fieldFontSize'] : defaultFontSize) + ';';
+                        const fieldSpan = document.createElement('span');
+                        fieldSpan.setAttribute("style",fieldStyleStr);
+                        fieldSpan.innerHTML = '[' + prop.name + ']';
+                        blockDiv.appendChild(fieldSpan);
+                        if(fieldSettings.hasOwnProperty('fieldSuffix')){
+                            let suffixStyleStr = '';
+                            suffixStyleStr += fieldSettings.hasOwnProperty('fieldSuffixBold') ? 'font-weight:bold;' : '';
+                            suffixStyleStr += fieldSettings.hasOwnProperty('fieldSuffixItalic') ? 'font-style:italic;' : '';
+                            suffixStyleStr += fieldSettings.hasOwnProperty('fieldSuffixUnderline') ? 'text-decoration:underline;' : '';
+                            suffixStyleStr += fieldSettings.hasOwnProperty('fieldSuffixUppercase') ? 'text-transform:uppercase;' : '';
+                            suffixStyleStr += 'font-family:' + (fieldSettings.hasOwnProperty('fieldSuffixFont') ? cssFontFamilies[fieldSettings['fieldSuffixFont']] : defaultFont) + ';';
+                            suffixStyleStr += 'font-size:' + (fieldSettings.hasOwnProperty('fieldSuffixFontSize') ? fieldSettings['fieldSuffixFontSize'] : defaultFontSize) + ';';
+                            const suffixSpan = document.createElement('span');
+                            suffixSpan.setAttribute("style",suffixStyleStr);
+                            suffixSpan.innerHTML = fieldSettings['fieldSuffix'].replace(" ", "&nbsp;");
+                            blockDiv.appendChild(suffixSpan);
+                        }
+                    }
+                });
+                labelDiv.appendChild(blockDiv);
+                if(blockSettings.hasOwnProperty('blockBottomMargin')){
+                    const blockBottomMarginDiv = document.createElement('div');
+                    blockBottomMarginDiv.setAttribute("style",labelWidthText + "height:" + blockSettings['blockBottomMargin'] + 'px;clear:both;');
+                    labelDiv.appendChild(blockBottomMarginDiv);
+                }
+            }
+        }
     });
-
-    return labelList;
-}
-
-function createPreviewEl(element, parent) {
-    let fieldInfo = fieldProps[fieldProps.findIndex((x) => x.id === element.field)];
-    let div = document.createElement('div');
-    div.innerHTML = fieldInfo.name.split(' ').join('');
-    div.classList.add(fieldInfo.id);
-    div.classList.add(...element.className);
-    parent.appendChild(div);
-    let hasPrefix = element.prefix != undefined;
-    let hasSuffix = element.suffix != undefined;
-    if (hasPrefix) {
-        let currText = div.innerText;
-        let prefSpan = `<span>${element.prefix}</span>`;
-        div.innerHTML = prefSpan + currText;
+    if(jsonArr.hasOwnProperty('footerText')){
+        if(jsonArr.hasOwnProperty('footerTopMargin')){
+            const footerTopDiv = document.createElement('div');
+            footerTopDiv.setAttribute("style",labelWidthText + "height:" + jsonArr['footerTopMargin'] + 'px;clear:both;');
+            labelDiv.appendChild(footerTopDiv);
+        }
+        let footerStyleStr = labelWidthText + "clear:both;";
+        footerStyleStr += jsonArr.hasOwnProperty('footerBold') ? 'font-weight:bold;' : '';
+        footerStyleStr += jsonArr.hasOwnProperty('footerItalic') ? 'font-style:italic;' : '';
+        footerStyleStr += jsonArr.hasOwnProperty('footerUnderline') ? 'text-decoration:underline;' : '';
+        footerStyleStr += jsonArr.hasOwnProperty('footerUppercase') ? 'text-transform:uppercase;' : '';
+        footerStyleStr += jsonArr.hasOwnProperty('footerTextAlign') ? 'text-align:' + jsonArr['headerTextAlign'] + ';' : '';
+        footerStyleStr += 'font-family:' + (jsonArr.hasOwnProperty('footerFont') ? cssFontFamilies[jsonArr['footerFont']] : defaultFont) + ';';
+        footerStyleStr += 'font-size:' + (jsonArr.hasOwnProperty('footerFontSize') ? jsonArr['footerFontSize'] : defaultFontSize) + ';';
+        const footerDiv = document.createElement('div');
+        footerDiv.setAttribute("style",footerStyleStr);
+        footerDiv.innerHTML = jsonArr['footerText'];
+        labelDiv.appendChild(footerDiv);
     }
-    if (hasSuffix) {
-        let sufSpan = document.createElement('span');
-        sufSpan.innerText = element.suffix;
-        div.appendChild(sufSpan);
-    }
+    preview.appendChild(labelDiv);
 }
 
 function isPrintStyle(className) {
@@ -420,7 +556,6 @@ function isPrintStyle(className) {
 
 function loadJson(){
     let currBlocks = labelMid.querySelectorAll('.field-block');
-    document.getElementById("label-middle").innerHTML = '';
     blockID = 0;
     let firstBlock = currBlocks[0];
     let currFields = firstBlock.querySelectorAll('.draggable');
@@ -452,20 +587,17 @@ function handleDragStart(e) {
 
 function handleDragOver(e) {
     e.dataTransfer.dropEffect = 'move';
-    return false;
 }
 
 function handleDrop(e) {
     if(dragSrcEl != this){
         this.parentNode.insertBefore(dragSrcEl, this);
     }
-    return false;
 }
 
 function handleDragEnd(e) {
     this.classList.remove('dragging');
     refreshPreview();
-    return false;
 }
 
 function openBlockOptions(blockId) {
@@ -511,11 +643,17 @@ function setBlockOptionsForm(blockId) {
         if(settings.hasOwnProperty('blockLineHeight')){
             document.getElementById('blockLineHeight').value = settings['blockLineHeight'];
         }
-        if(settings.hasOwnProperty('blockSpaceBefore')){
-            document.getElementById('blockSpaceBefore').value = settings['blockSpaceBefore'];
+        if(settings.hasOwnProperty('blockTopMargin')){
+            document.getElementById('blockTopMargin').value = settings['blockTopMargin'];
         }
-        if(settings.hasOwnProperty('blockSpaceAfter')){
-            document.getElementById('blockSpaceAfter').value = settings['blockSpaceAfter'];
+        if(settings.hasOwnProperty('blockBottomMargin')){
+            document.getElementById('blockBottomMargin').value = settings['blockBottomMargin'];
+        }
+        if(settings.hasOwnProperty('blockLeftMargin')){
+            document.getElementById('blockLeftMargin').value = settings['blockLeftMargin'];
+        }
+        if(settings.hasOwnProperty('blockRightMargin')){
+            document.getElementById('blockRightMargin').value = settings['blockRightMargin'];
         }
         if(settings.hasOwnProperty('blockDisplayLine')){
             document.getElementById('blockDisplayLine').checked = settings['blockDisplayLine'];
@@ -537,11 +675,17 @@ function processBlockOptionsFormChange() {
     if(document.getElementById('blockLineHeight').value){
         newSettings['blockLineHeight'] = document.getElementById('blockLineHeight').value;
     }
-    if(document.getElementById('blockSpaceBefore').value){
-        newSettings['blockSpaceBefore'] = document.getElementById('blockSpaceBefore').value;
+    if(document.getElementById('blockTopMargin').value){
+        newSettings['blockTopMargin'] = document.getElementById('blockTopMargin').value;
     }
-    if(document.getElementById('blockSpaceAfter').value){
-        newSettings['blockSpaceAfter'] = document.getElementById('blockSpaceAfter').value;
+    if(document.getElementById('blockBottomMargin').value){
+        newSettings['blockBottomMargin'] = document.getElementById('blockBottomMargin').value;
+    }
+    if(document.getElementById('blockLeftMargin').value){
+        newSettings['blockLeftMargin'] = document.getElementById('blockLeftMargin').value;
+    }
+    if(document.getElementById('blockRightMargin').value){
+        newSettings['blockRightMargin'] = document.getElementById('blockRightMargin').value;
     }
     if(document.getElementById('blockDisplayLine').checked === true){
         newSettings['blockDisplayLine'] = true;
@@ -553,13 +697,16 @@ function processBlockOptionsFormChange() {
         }
     }
     settingArr[currentEditId] = newSettings;
+    refreshPreview();
 }
 
 function clearBlockOptionsForm() {
     document.getElementById('blockTextAlign').value = 'left';
     document.getElementById('blockLineHeight').value = '';
-    document.getElementById('blockSpaceBefore').value = '';
-    document.getElementById('blockSpaceAfter').value = '';
+    document.getElementById('blockTopMargin').value = '';
+    document.getElementById('blockBottomMargin').value = '';
+    document.getElementById('blockLeftMargin').value = '';
+    document.getElementById('blockRightMargin').value = '';
     document.getElementById('blockDisplayLine').checked = false;
     document.getElementById('blockDisplayLineStyle').value = 'solid';
     document.getElementById('blockDisplayLineHeight').value = '';
@@ -703,6 +850,7 @@ function processFieldOptionsFormChange() {
         newSettings['fieldFontSize'] = document.getElementById('fieldFontSize').value;
     }
     settingArr[currentEditId] = newSettings;
+    refreshPreview();
 }
 
 function clearFieldOptionsForm() {
@@ -711,20 +859,20 @@ function clearFieldOptionsForm() {
     document.getElementById('fieldPrefixItalic').checked = false;
     document.getElementById('fieldPrefixUnderline').checked = false;
     document.getElementById('fieldPrefixUppercase').checked = false;
-    document.getElementById('fieldPrefixFont').value = 'Arial';
+    document.getElementById('fieldPrefixFont').value = '';
     document.getElementById('fieldPrefixFontSize').value = '';
     document.getElementById('fieldSuffix').value = '';
     document.getElementById('fieldSuffixBold').checked = false;
     document.getElementById('fieldSuffixItalic').checked = false;
     document.getElementById('fieldSuffixUnderline').checked = false;
     document.getElementById('fieldSuffixUppercase').checked = false;
-    document.getElementById('fieldSuffixFont').value = 'Arial';
+    document.getElementById('fieldSuffixFont').value = '';
     document.getElementById('fieldSuffixFontSize').value = '';
     document.getElementById('fieldBold').checked = false;
     document.getElementById('fieldItalic').checked = false;
     document.getElementById('fieldUnderline').checked = false;
     document.getElementById('fieldUppercase').checked = false;
-    document.getElementById('fieldFont').value = 'Arial';
+    document.getElementById('fieldFont').value = '';
     document.getElementById('fieldFontSize').value = '';
 }
 
@@ -741,15 +889,6 @@ function setBarcodeOptionsForm(blockId) {
         if(settings.hasOwnProperty('barcodeHeight')){
             document.getElementById('barcodeHeight').value = settings['barcodeHeight'];
         }
-        if(settings.hasOwnProperty('barcodeLabel')){
-            document.getElementById('barcodeLabel').checked = settings['barcodeLabel'];
-        }
-        if(settings.hasOwnProperty('barcodeLabelFont')){
-            document.getElementById('barcodeLabelFont').value = settings['barcodeLabelFont'];
-        }
-        if(settings.hasOwnProperty('barcodeLabelFontSize')){
-            document.getElementById('barcodeLabelFontSize').value = settings['barcodeLabelFontSize'];
-        }
     }
 }
 
@@ -758,23 +897,12 @@ function processBarcodeOptionsFormChange() {
     if(document.getElementById('barcodeHeight').value){
         newSettings['barcodeHeight'] = document.getElementById('barcodeHeight').value;
     }
-    if(document.getElementById('barcodeLabel').checked === true){
-        newSettings['barcodeLabel'] = true;
-        if(document.getElementById('barcodeLabelFont').value){
-            newSettings['barcodeLabelFont'] = document.getElementById('barcodeLabelFont').value;
-        }
-        if(document.getElementById('barcodeLabelFontSize').value){
-            newSettings['barcodeLabelFontSize'] = document.getElementById('barcodeLabelFontSize').value;
-        }
-    }
     settingArr[currentEditId] = newSettings;
+    refreshPreview();
 }
 
 function clearBarcodeOptionsForm() {
     document.getElementById('barcodeHeight').value = '';
-    document.getElementById('barcodeLabel').checked = true;
-    document.getElementById('barcodeLabelFont').style.height = 'Arial';
-    document.getElementById('barcodeLabelFontSize').style.display = '';
 }
 
 function openQRCodeOptions(fieldId) {
@@ -787,22 +915,23 @@ function openQRCodeOptions(fieldId) {
 function setQRCodeOptionsForm(blockId) {
     if(settingArr.hasOwnProperty(blockId)){
         const settings = settingArr[blockId];
-        if(settings.hasOwnProperty('qrcodeWidth')){
-            document.getElementById('qrcodeWidth').value = settings['qrcodeWidth'];
+        if(settings.hasOwnProperty('qrcodeSize')){
+            document.getElementById('qrcodeSize').value = settings['qrcodeSize'];
         }
     }
 }
 
 function processQRCodeOptionsFormChange() {
     const newSettings = {};
-    if(document.getElementById('qrcodeWidth').value){
-        newSettings['qrcodeWidth'] = document.getElementById('qrcodeWidth').value;
+    if(document.getElementById('qrcodeSize').value){
+        newSettings['qrcodeSize'] = document.getElementById('qrcodeSize').value;
     }
     settingArr[currentEditId] = newSettings;
+    refreshPreview();
 }
 
 function clearQRCodeOptionsForm() {
-    document.getElementById('qrcodeWidth').style.display = '';
+    document.getElementById('qrcodeSize').style.display = '';
 }
 
 function handleBlockClose(blockId) {
@@ -832,10 +961,22 @@ function handleBlockDown(blockId) {
     refreshPreview();
 }
 
+function cleanContentBlocks(){
+    let fieldBlocks = labelMid.querySelectorAll('.field-block');
+    fieldBlocks.forEach((block) => {
+        const blockId = block.id;
+        let items = block.querySelectorAll('li');
+        if(items.length === 0 && (!settingArr.hasOwnProperty(blockId) || !settingArr[blockId].hasOwnProperty('blockDisplayLine'))){
+            handleBlockClose(blockId);
+        }
+    });
+}
+
 function saveJson(){
+    cleanContentBlocks();
     let formId = document.getElementById('formid').value;
-    let list = refreshPreview();
-    if(list[0].length === 0){
+    let testList = labelMid.querySelectorAll('li');
+    if(testList.length === 0){
         alert('Label format is empty! Please drag some items to the build area before trying again');
     }
     else {

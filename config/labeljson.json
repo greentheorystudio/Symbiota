@@ -1,440 +1,450 @@
 {
-  "labelFormats": [
-    {
-      "title": "Generic Herbarium Label",
-      "pageLayout": "2",
-      "headerPrefix": "Flora of ",
-      "headerMidText": 3,
-      "headerSuffix": " county",
-      "headerBold": true,
-      "headerTextAlign": "center",
-      "headerFont": "Arial",
-      "headerFontSize": 16,
-      "headerBottomMargin": 10,
-      "defaultFontSize": 10,
-      "labelBlocks": [
+    "labelFormats": [
         {
-          "blockTextAlign": "right",
-          "fields": [
-            {
-              "field": "family"
-            }
-          ]
+            "title": "Generic Herbarium Label",
+            "pageLayout": "2",
+            "headerPrefix": "Flora of ",
+            "headerMidText": 3,
+            "headerSuffix": " county",
+            "headerBold": true,
+            "headerTextAlign": "center",
+            "headerFont": "Arial",
+            "headerFontSize": 16,
+            "headerBottomMargin": 10,
+            "defaultFontSize": 10,
+            "labelBlocks": [
+                {
+                    "blockTextAlign": "right",
+                    "blockBottomMargin": "16",
+                    "fields": [
+                        {
+                            "field": "family"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "16",
+                    "fields": [
+                        {
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "identificationqualifier"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldItalic": true,
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "sciname"
+                        },
+                        {
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "specificepithetauthorship"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "taxonrank"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldItalic": true,
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "infraspecificepithet"
+                        },
+                        {
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "scientificnameauthorship"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Det by: ",
+                            "field": "identifiedby"
+                        },
+                        {
+                            "field": "dateidentified"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "identificationreferences"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "identificationremarks"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "10",
+                    "fields": [
+                        {
+                            "field": "taxonremarks"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldBold": true,
+                            "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "country"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "stateprovince"
+                        },
+                        {
+                            "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "county"
+                        },
+                        {
+                            "fieldSuffix": ", ",
+                            "fieldSuffixFontSize": 12,
+                            "fieldFontSize": 12,
+                            "field": "municipality"
+                        },
+                        {
+                            "fieldFontSize": 12,
+                            "field": "locality"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldSuffix": ", ",
+                            "field": "decimallatitude"
+                        },
+                        {
+                            "field": "decimallongitude"
+                        },
+                        {
+                            "fieldPrefix": " +-",
+                            "fieldSuffix": " meters",
+                            "field": "coordinateuncertaintyinmeters"
+                        },
+                        {
+                            "fieldPrefix": " [",
+                            "fieldSuffix": "]",
+                            "field": "geodeticdatum"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "verbatimcoordinates"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Elev: ",
+                            "fieldSuffix": "m. ",
+                            "field": "minimumelevationinmeters"
+                        },
+                        {
+                            "field": "verbatimelevation"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldSuffix": ".",
+                            "field": "habitat"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldSuffix": ".",
+                            "field": "substrate"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldSuffix": " ",
+                            "field": "verbatimattributes"
+                        },
+                        {
+                            "field": "establishmentmeans"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Associated species: ",
+                            "fieldItalic": true,
+                            "field": "associatedtaxa"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "occurrenceremarks"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "10",
+                    "fields": [
+                        {
+                            "field": "typestatus"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "right",
+                    "fields": [
+                        {
+                            "field": "eventdate"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "right",
+                    "fields": [
+                        {
+                            "field": "recordedby"
+                        },
+                        {
+                            "fieldPrefix": "  ",
+                            "field": "recordnumber"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "right",
+                    "fields": [
+                        {
+                            "fieldPrefix": "with: ",
+                            "field": "associatedcollectors"
+                        }
+                    ]
+                }
+            ]
         },
         {
-          "blockLineHeight": 16
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationqualifier",
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "sciname",
-              "fieldBold": true,
-              "fieldItalic": true,
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "parentauthor",
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "taxonrank",
-              "fieldBold": true,
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "infraspecificepithet",
-              "fieldBold": true,
-              "fieldItalic": true,
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "scientificnameauthorship",
-              "fieldSuffix": " ",
-              "fieldFontSize": 12
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 16
-        },
-        {
-          "fields": [
-            {
-              "field": "identifiedby",
-              "fieldPrefix": "Det by: "
-            },
-            {
-              "field": "dateidentified"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationreferences"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationremarks"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "taxonremarks"
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 10
-        },
-        {
-          "fields": [
-            {
-              "field": "country",
-              "fieldBold": true,
-              "fieldSuffix": ", ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "stateprovince",
-              "fieldBold": true,
-              "fieldSuffix": ", ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "county",
-              "fieldSuffix": ", ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "municipality",
-              "fieldSuffix": ", ",
-              "fieldFontSize": 12
-            },
-            {
-              "field": "locality",
-              "fieldFontSize": 12
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "decimallatitude",
-              "fieldSuffix": ", "
-            },
-            {
-              "field": "decimallongitude"
-            },
-            {
-              "field": "coordinateuncertaintyinmeters",
-              "fieldPrefix": " +-",
-              "fieldSuffix": " meters"
-            },
-            {
-              "field": "geodeticdatum",
-              "fieldPrefix": " [",
-              "fieldSuffix": "]"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "verbatimcoordinates"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "minimumelevationinmeters",
-              "fieldPrefix": "Elev: ",
-              "fieldSuffix": "m. "
-            },
-            {
-              "field": "verbatimelevation"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "habitat",
-              "fieldSuffix": "."
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "substrate",
-              "fieldSuffix": "."
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "verbatimattributes",
-              "fieldSuffix": " "
-            },
-            {
-              "field": "establishmentmeans"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "associatedtaxa",
-              "fieldPrefix": "Associated species: ",
-              "fieldItalic": true
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "occurrenceremarks"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "typestatus"
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 10
-        },
-        {
-          "blockTextAlign": "right",
-          "fields": [
-            {
-              "field": "eventdate"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "recordedby"
-            },
-            {
-              "field": "recordnumber",
-              "fieldPrefix": "  "
-            }
-          ]
-        },
-        {
-          "blockSpaceBefore": 10,
-          "fields": [
-            {
-              "field": "associatedcollectors",
-              "fieldPrefix": "with: "
-            }
-          ]
+            "title": "Generic Vertebrate Label",
+            "pageLayout": "3",
+            "defaultFontSize": 10,
+            "labelBlocks": [
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "2",
+                    "fields": [
+                        {
+                            "field": "family"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldSuffix": " ",
+                            "field": "identificationqualifier"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldItalic": true,
+                            "fieldSuffix": " ",
+                            "field": "sciname"
+                        },
+                        {
+                            "fieldSuffix": " ",
+                            "field": "specificepithetauthorship"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldSuffix": " ",
+                            "field": "taxonrank"
+                        },
+                        {
+                            "fieldBold": true,
+                            "fieldItalic": true,
+                            "fieldSuffix": " ",
+                            "field": "infraspecificepithet"
+                        },
+                        {
+                            "field": "scientificnameauthorship"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Det by: ",
+                            "field": "identifiedby"
+                        },
+                        {
+                            "field": "dateidentified"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "identificationreferences"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "field": "identificationremarks"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "5",
+                    "fields": [
+                        {
+                            "field": "taxonremarks"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "11",
+                    "fields": [
+                        {
+                            "fieldBold": true,
+                            "fieldFontSize": 14,
+                            "field": "catalognumber"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockDisplayLine": true,
+                    "blockDisplayLineStyle": "solid",
+                    "blockDisplayLineHeight": "3"
+                },
+                {
+                    "blockTextAlign": "left",
+                    "blockBottomMargin": "10",
+                    "fields": [
+                        {
+                            "field": "country"
+                        },
+                        {
+                            "fieldPrefix": ", ",
+                            "field": "stateprovince"
+                        },
+                        {
+                            "fieldPrefix": ", ",
+                            "field": "county"
+                        },
+                        {
+                            "fieldPrefix": ", ",
+                            "field": "municipality"
+                        },
+                        {
+                            "fieldPrefix": ": ",
+                            "field": "locality"
+                        },
+                        {
+                            "fieldPrefix": ": ",
+                            "fieldSuffix": "\u00b0 N",
+                            "field": "decimallatitude"
+                        },
+                        {
+                            "fieldPrefix": " ",
+                            "fieldSuffix": "\u00b0 W",
+                            "field": "decimallongitude"
+                        },
+                        {
+                            "fieldPrefix": "  +-",
+                            "fieldSuffix": " meters",
+                            "field": "coordinateuncertaintyinmeters"
+                        },
+                        {
+                            "fieldPrefix": ", ",
+                            "fieldSuffix": "m.",
+                            "field": "minimumelevationinmeters"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Coll.: ",
+                            "fieldPrefixFontSize": "6",
+                            "fieldFontSize": "6",
+                            "field": "recordedby"
+                        }
+                    ]
+                },
+                {
+                    "fields": [
+                        {
+                            "fieldPrefix": "Coll. No: ",
+                            "fieldPrefixFontSize": "6",
+                            "fieldFontSize": "6",
+                            "field": "recordnumber"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "right",
+                    "fields": [
+                        {
+                            "fieldPrefix": "Prep.: ",
+                            "fieldPrefixFontSize": "6",
+                            "fieldFontSize": "6",
+                            "field": "preparations"
+                        }
+                    ]
+                },
+                {
+                    "blockTextAlign": "left",
+                    "fields": [
+                        {
+                            "fieldPrefix": "Date: ",
+                            "fieldPrefixFontSize": "6",
+                            "fieldFontSize": "6",
+                            "field": "eventdate"
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    },
-    {
-      "title": "Generic Vertebrate Label",
-      "pageLayout": "3",
-      "defaultFontSize": 10,
-      "labelBlocks": [
-        {
-          "fields": [
-            {
-              "field": "family"
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 2
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationqualifier",
-              "fieldSuffix": " "
-            },
-            {
-              "field": "sciname",
-              "fieldBold": true,
-              "fieldItalic": true,
-              "fieldSuffix": " "
-            },
-            {
-              "field": "parentauthor",
-              "fieldSuffix": " "
-            },
-            {
-              "field": "taxonrank",
-              "fieldBold": true,
-              "fieldSuffix": " "
-            },
-            {
-              "field": "infraspecificepithet",
-              "fieldBold": true,
-              "fieldItalic": true,
-              "fieldSuffix": " "
-            },
-            {
-              "field": "scientificnameauthorship"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "identifiedby",
-              "fieldPrefix": "Det by: "
-            },
-            {
-              "field": "dateidentified"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationreferences"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "identificationremarks"
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "taxonremarks"
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 5
-        },
-        {
-          "fields": [
-            {
-              "field": "catalognumber",
-              "fieldBold": true,
-              "fieldFontSize": 14
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 11
-        },
-        {
-          "fields": [
-            {
-              "field": "country"
-            },
-            {
-              "field": "stateprovince",
-              "fieldPrefix": ", "
-            },
-            {
-              "field": "county",
-              "fieldPrefix": ", "
-            },
-            {
-              "field": "municipality",
-              "fieldPrefix": ", "
-            },
-            {
-              "field": "locality",
-              "fieldPrefix": ": "
-            },
-            {
-              "field": "decimallatitude",
-              "fieldPrefix": ": ",
-              "fieldSuffix": "° N"
-            },
-            {
-              "field": "decimallongitude",
-              "fieldPrefix": " ",
-              "fieldSuffix": "° W"
-            },
-            {
-              "field": "coordinateuncertaintyinmeters",
-              "fieldPrefix": "  +-",
-              "fieldSuffix": " meters"
-            },
-            {
-              "field": "minimumelevationinmeters",
-              "fieldPrefix": ", ",
-              "fieldSuffix": "m."
-            }
-          ]
-        },
-        {
-          "blockLineHeight": 10
-        },
-        {
-          "fields": [
-            {
-              "field": "recordedby",
-              "fieldPrefix": "Coll.: ",
-              "prefixStyle": "font-weight:bold",
-              "fieldFontSize": 6
-            }
-          ]
-        },
-        {
-          "fields": [
-            {
-              "field": "recordnumber",
-              "fieldPrefix": "Coll. No: ",
-              "prefixStyle": "font-weight:bold",
-              "fieldFontSize": 6
-            }
-          ]
-        },
-        {
-          "blockTextAlign": "right",
-          "fields": [
-            {
-              "field": "preparations",
-              "fieldPrefix": "Prep.: ",
-              "fieldFontSize": 6
-            }
-          ]
-        },
-        {
-          "blockTextAlign": "right",
-          "fields": [
-            {
-              "field": "eventdate",
-              "fieldPrefix": "Date: ",
-              "fieldFontSize": 6
-            }
-          ]
-        }
-      ]
-    }
-  ]
+    ]
 }

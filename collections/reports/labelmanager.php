@@ -40,7 +40,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Label Manager</title>
+	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Labels/Annotations</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -54,12 +54,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
-            <?php
-            if($labelFormatArr) {
-                echo 'var labelFormatObj = ' . json_encode($labelFormatArr) . ';';
-            }
-            ?>
-
             $(document).ready(function() {
 				if(!navigator.cookieEnabled){
 					alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
@@ -152,15 +146,25 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			}
 
             function validateSelectForm(f){
-                var dbElements = document.getElementsByName("occid[]");
+                let checkvalid = false;
+                let formatvalid = false;
+                const dbElements = document.getElementsByName("occid[]");
                 for(i = 0; i < dbElements.length; i++){
                     var dbElement = dbElements[i];
                     if(dbElement.checked){
-                        var quantityObj = document.getElementsByName("q-"+dbElement.value);
-                        if(quantityObj && quantityObj[0].value > 0) return true;
+                        const quantityObj = document.getElementsByName("q-"+dbElement.value);
+                        if(quantityObj && quantityObj[0].value > 0) {
+                            checkvalid = true;
+                        }
                     }
                 }
-                alert("At least one specimen checkbox needs to be selected with a label quantity greater than 0");
+                if(document.getElementById('labelformatindex').value){
+                    formatvalid = true;
+                }
+                if(checkvalid && formatvalid){
+                    return true;
+                }
+                alert("Please select at least one occurrence record and a label format.");
                 return false;
             }
 
@@ -172,7 +176,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                         return true;
                     }
 				}
-			   	alert("Please select at least one occurrence!");
+			   	alert("Please select at least one occurrence");
 		      	return false;
 			}
 
@@ -200,19 +204,12 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			}
 
             function changeFormExport(buttonElem, action, target){
-                const f = buttonElem.form;
+                const f = document.getElementById('selectform');
                 if(action == "labelsbrowser.php" && buttonElem.value == "Print in Browser"){
                     if(!f["labelformatindex"] || f["labelformatindex"].value == ""){
-                        alert("Please select a Label Format Profile");
+                        alert("Please select a Label Format");
                         return false;
                     }
-                }
-                else if(action == "labelsword.php" && f.labeltype.valye == "packet"){
-                    alert("Packet labels are not yet available as a Word document");
-                    return false;
-                }
-                if(f.bconly && f.bconly.checked && action == "labelsbrowser.php") {
-                    action = "barcodes.php";
                 }
                 f.action = action;
                 f.target = target;
@@ -223,37 +220,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 				document.annoselectform.action = action;
 				document.annoselectform.target = target;
 			}
-
-			function checkPrintOnlyCheck(f){
-				if(f.bconly.checked){
-					f.speciesauthors.checked = false;
-					f.catalognumbers.checked = false;
-					f.bc.checked = false;
-				}
-			}
-
-			function checkBarcodeCheck(f){
-				if(f.bc.checked || f.speciesauthors.checked || f.catalognumbers.checked){
-					f.bconly.checked = false;
-				}
-			}
-
-			function labelFormatChanged(selObj){
-				if(selObj && labelFormatObj){
-					const catStr = selObj.value.substring(0,1);
-					const labelIndex = selObj.value.substring(2);
-					const f = document.selectform;
-					if(catStr != ''){
-						f.hprefix.value = labelFormatObj[catStr][labelIndex].labelHeader.prefix;
-						const midIndex = labelFormatObj[catStr][labelIndex].labelHeader.midText;
-						document.getElementById("hmid"+midIndex).checked = true;
-						f.hsuffix.value = labelFormatObj[catStr][labelIndex].labelHeader.suffix;
-						f.lfooter.value = labelFormatObj[catStr][labelIndex].labelFooter.textValue;
-						f.labeltype.value = labelFormatObj[catStr][labelIndex].pageLayout;
-					}
-				}
-			}
-		</script>
+        </script>
 	</head>
 	<body>
 	<?php
@@ -269,7 +236,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
             echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
         }
 		?>
-		<b>Label/Annotation Printing</b>
+		<b>Print Labels/Annotations</b>
 	</div>
 	<div id="innertext">
 		<?php 
@@ -293,7 +260,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                 <div id="labels">
                     <form name="datasetqueryform" action="labelmanager.php" method="post" onsubmit="return validateQueryForm(this)">
                         <fieldset>
-                            <legend><b>Define Specimen Recordset</b></legend>
+                            <legend><b>Define Occurrence Recordset</b></legend>
                             <div style="clear:both;width:100%;display:flex;">
                                 <div title="Scientific name as entered in database.">
                                     Scientific Name:
@@ -408,7 +375,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                                     <input type="checkbox" name="occid[]" value="<?php echo $occId; ?>" />
                                                 </td>
                                                 <td>
-                                                    <input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr['q']; ?>" style="width:20px;border:inset;" title="Label quantity" />
+                                                    <input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr['q']; ?>" style="width:35px;border:inset;" title="Label quantity" />
                                                 </td>
                                                 <td>
                                                     <a href="#" onclick="openIndPopup(<?php echo $occId; ?>); return false;">
@@ -441,14 +408,12 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                         <legend><b>Label Printing</b></legend>
                                         <div style="clear:both;width:100%;">
                                             <div>
-                                                <b>Label Profiles:</b>
+                                                <b>Label Format:</b>
                                                 <?php
-                                                echo '<span title="Open label profile manager"><a href="labelprofile.php?collid='.$collid.'"><i style="width:15px;height:15px;" class="far fa-edit"></i></a></span>';
+                                                echo '<span title="Open label format manager"><a href="labelprofile.php?collid='.$collid.'"><i style="width:15px;height:15px;" class="far fa-edit"></i></a></span>';
                                                 ?>
-                                            </div>
-                                            <div style="clear:both;margin-top:2px;">
-                                                <div>
-                                                    <select name="labelformatindex" onchange="labelFormatChanged(this)">
+                                                <span style="margin-left: 15px;">
+                                                    <select name="labelformatindex" id="labelformatindex">
                                                         <option value="">Select a Label Format</option>
                                                         <?php
                                                         foreach($labelFormatArr as $cat => $catArr){
@@ -458,33 +423,13 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                                         }
                                                         ?>
                                                     </select>
-                                                </div>
-                                                <?php
-                                                if(!$labelFormatArr) {
-                                                    echo '<b>label profiles have not yet been set within portal</b>';
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <div><b>Label Type:</b></div>
-                                            <div style="margin-left:5px;">
-                                                <select name="labeltype">
-                                                    <option value="1">1 columns per page</option>
-                                                    <option value="2" selected>2 columns per page</option>
-                                                    <option value="3">3 columns per page</option>
-                                                    <option value="4">4 columns per page</option>
-                                                    <option value="5">5 columns per page</option>
-                                                    <option value="6">6 columns per page</option>
-                                                    <option value="7">7 columns per page</option>
-                                                    <option value="packet">Packet labels</option>
-                                                </select>
+                                                </span>
                                             </div>
                                         </div>
                                         <div style="margin-top:3px;clear:both;width:100%;display:flex;">
                                             <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
                                             <div>
-                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" <?php echo ($labelFormatArr?'':'DISABLED title="Browser based label printing has not been activated within the portal. Contact Portal Manager to activate this feature."'); ?> />
+                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" />
                                             </div>
                                             <div style="margin-left:10px">
                                                 <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_self');" value="Export to CSV" />

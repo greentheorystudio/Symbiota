@@ -177,69 +177,54 @@ class OccurrenceLabel{
 		return $retArr;
 	}
 
-    public function getLabelArray($occidArr, $speciesAuthors): array
+    public function getLabelArray($occidArr): array
 	{
 		$retArr = array();
 		if($occidArr){
-			$authorArr = array();
 			$occidStr = implode(',',$occidArr);
 			if(preg_match('/^[,\d]+$/', $occidStr)) {
                 $sqlWhere = 'WHERE (o.occid IN('.$occidStr.')) ';
-                $sql1 = 'SELECT o.occid, t2.author '.
-                    'FROM taxa AS t INNER JOIN omoccurrences AS o ON t.tid = o.tidinterpreted '.
-                    'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-                    'INNER JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
-                    $sqlWhere.' AND t.rankid > 220 AND ts.taxauthid = 1 ';
-                if(!$speciesAuthors) {
-                    $sql1 .= 'AND t.unitname2 = t.unitname3 ';
-                }
+                $sql1 = 'SELECT o.occid, t.UnitName1, t.UnitName2, t.UnitInd3, '.
+                    't.UnitName3, t.RankId, ts.family, t.Author AS author, t2.Author AS parentauthor '.
+                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
+                    'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
+                    'LEFT JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
+                    $sqlWhere.' AND ts.taxauthid = 1 ';
                 //echo $sql1; exit;
                 if($rs1 = $this->conn->query($sql1)){
                     while($row1 = $rs1->fetch_object()){
-                        $authorArr[$row1->occid] = $row1->author;
+                        $rankId = (int)$row1->occid;
+                        $retArr[$row1->occid]['family'] = $row1->occid;
+                        $retArr[$row1->occid]['genus'] = $row1->UnitName1;
+                        $retArr[$row1->occid]['infraspecificepithet'] = $row1->UnitName1;
+                        if($rankId > 220){
+                            $retArr[$row1->occid]['infraspecificepithetauthorship'] = $row1->author;
+                            $retArr[$row1->occid]['specificepithetauthorship'] = $row1->parentauthor;
+                        }
+                        elseif($rankId === 220){
+                            $retArr[$row1->occid]['specificepithetauthorship'] = $row1->author;
+                        }
+                        $retArr[$row1->occid]['scientificnameauthorship'] = $row1->author;
+                        $retArr[$row1->occid]['specificepithet'] = $row1->UnitName2;
+                        $retArr[$row1->occid]['taxonrank'] = $row1->UnitInd3;
                     }
                     $rs1->free();
                 }
                 $this->setLabelFieldArr();
-                $sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.$sqlWhere;
+                $sql2 = 'SELECT '.implode(',',$this->labelFieldArr).' FROM omoccurrences AS o '.$sqlWhere;
                 //echo 'SQL: '.$sql2;
                 if($rs2 = $this->conn->query($sql2)){
-                    while($row2 = $rs2->fetch_assoc()){
-                        $row2 = array_change_key_case($row2);
-                        if(array_key_exists($row2['occid'],$authorArr)) {
-                            $row2['parentauthor'] = $authorArr[$row2['occid']];
+                    while($row2 = $rs2->fetch_object()){
+                        $fields = mysqli_fetch_fields($rs2);
+                        $occid = $row2->occid;
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($row2->$name){
+                                $retArr[$occid][$name] = $row2->$name;
+                            }
                         }
-                        $retArr[$row2['occid']] = $row2;
                     }
                     $rs2->free();
-                }
-                if($retArr){
-                    $sql = 'SELECT occid, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid IN('.implode(',',array_keys($retArr)).')';
-                    if($rs = $this->conn->query($sql)){
-                        $otherCatArr = array();
-                        $cnt = 0;
-                        while($r = $rs->fetch_object()){
-                            $otherCatArr[$r->occid][$cnt]['v'] = $r->identifiervalue;
-                            $otherCatArr[$r->occid][$cnt]['n'] = $r->identifiername;
-                            $cnt++;
-                        }
-                        $rs->free();
-                        foreach($otherCatArr as $occid => $ocnArr){
-                            $verbIdStr = $retArr[$occid]['othercatalognumbers'];
-                            $ocnStr = '';
-                            foreach($ocnArr as $idArr){
-                                $ocnStr .= '; '.($idArr['n']?$idArr['n'].': ':'').$idArr['v'];
-                                $verbIdStr = str_ireplace($idArr['n'],'',$verbIdStr);
-                                $verbIdStr = str_ireplace($idArr['v'],'',$verbIdStr);
-                            }
-                            $ocnStr = trim($ocnStr,';,: ');
-                            $verbIdStr = trim($verbIdStr,';,: ');
-                            if($verbIdStr) {
-                                $ocnStr .= '; ' . $verbIdStr;
-                            }
-                            $retArr[$occid]['othercatalognumbers'] = $ocnStr;
-                        }
-                    }
                 }
             }
 		}
@@ -251,11 +236,7 @@ class OccurrenceLabel{
 		global $CHARSET;
 		$occidArr = $pArr['occid'];
 		if($occidArr){
-			$speciesAuthors = 0;
-			if(array_key_exists('speciesauthors',$pArr) && $pArr['speciesauthors']) {
-                $speciesAuthors = 1;
-            }
-			$labelArr = $this->getLabelArray($occidArr, $speciesAuthors);
+			$labelArr = $this->getLabelArray($occidArr);
 			if($labelArr){
 				$fileName = 'labeloutput_'.time(). '.csv';
 				header('Content-Description: Symbiota Label Output File');
@@ -294,83 +275,22 @@ class OccurrenceLabel{
 	private function setLabelFieldArr(): void
     {
 		if(!$this->labelFieldArr){
-			$this->labelFieldArr = array('occid'=>'o.occid', 'collid'=>'o.collid', 'catalogNumber'=>'o.catalognumber', 'otherCatalogNumbers'=>'o.othercatalognumbers', 'family'=>'o.family',
-				'scientificName'=>'o.sciname AS scientificname', 'scientificName_with_author'=>'CONCAT_WS(" ",o.sciname,o.scientificnameauthorship) AS scientificname_with_author',
-				'speciesName'=>'TRIM(CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2)) AS speciesname', 'taxonRank'=>'t.unitind3 AS taxonrank',
-				'infraSpecificEpithet'=>'t.unitname3 AS infraspecificepithet', 'scientificNameAuthorship'=>'o.scientificnameauthorship', 'parentAuthor'=>'"" AS parentauthor','identifiedBy'=>'o.identifiedby',
-				'dateIdentified'=>'o.dateidentified', 'identificationReferences'=>'o.identificationreferences', 'identificationRemarks'=>'o.identificationremarks', 'taxonRemarks'=>'o.taxonremarks',
-				'identificationQualifier'=>'o.identificationqualifier', 'typeStatus'=>'o.typestatus', 'recordedBy'=>'o.recordedby', 'recordNumber'=>'o.recordnumber', 'associatedCollectors'=>'o.associatedcollectors',
-				'eventDate'=>'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate', 'year'=>'o.year', 'month'=>'o.month', 'day'=>'o.day', 'monthName'=>'DATE_FORMAT(o.eventdate,"%M") AS monthname',
-				'verbatimEventDate'=>'o.verbatimeventdate', 'habitat'=>'o.habitat', 'substrate'=>'o.substrate', 'occurrenceRemarks'=>'o.occurrenceremarks', 'associatedTaxa'=>'o.associatedtaxa',
-				'dynamicProperties'=>'o.dynamicproperties','verbatimAttributes'=>'o.verbatimattributes', 'behavior'=>'behavior', 'reproductiveCondition'=>'o.reproductivecondition', 'cultivationStatus'=>'o.cultivationstatus',
-				'establishmentMeans'=>'o.establishmentmeans','lifeStage'=>'lifestage','sex'=>'sex','individualCount'=>'individualcount','samplingProtocol'=>'samplingprotocol','preparations'=>'preparations',
-				'country'=>'o.country', 'stateProvince'=>'o.stateprovince', 'county'=>'o.county', 'municipality'=>'o.municipality', 'locality'=>'o.locality', 'decimalLatitude'=>'o.decimallatitude',
-				'decimalLongitude'=>'o.decimallongitude', 'geodeticDatum'=>'o.geodeticdatum', 'coordinateUncertaintyInMeters'=>'o.coordinateuncertaintyinmeters', 'verbatimCoordinates'=>'o.verbatimcoordinates',
-				'minimumElevationInMeters'=>'o.minimumelevationinmeters', 'maximumElevationInMeters'=>'o.maximumelevationinmeters',
-				'elevationInMeters'=>'CONCAT_WS(" - ",o.minimumElevationInMeters,o.maximumElevationInMeters) AS elevationinmeters', 'verbatimElevation'=>'o.verbatimelevation',
-				'minimumDepthInMeters'=>'minimumdepthinmeters', 'maximumDepthInMeters'=>'maximumdepthinmeters', 'verbatimDepth'=>'verbatimdepth',
-				'disposition'=>'o.disposition', 'storageLocation'=>'storagelocation', 'duplicateQuantity'=>'o.duplicatequantity', 'dateLastModified'=>'o.datelastmodified');
+			$this->labelFieldArr = array('occid'=>'o.occid', 'collid'=>'o.collid', 'catalognumber'=>'o.catalognumber', 'othercatalognumbers'=>'o.othercatalognumbers', 'family'=>'o.family',
+				'sciname'=>'o.sciname','genus'=>'o.genus','specificepithet'=>'o.specificepithet','taxonrank'=>'o.taxonrank',
+				'infraspecificepithet'=>'o.infraspecificepithet', 'scientificnameauthorship'=>'o.scientificnameauthorship', 'identifiedby'=>'o.identifiedby',
+				'dateidentified'=>'o.dateidentified', 'identificationreferences'=>'o.identificationreferences', 'identificationremarks'=>'o.identificationremarks', 'taxonremarks'=>'o.taxonremarks','locationid'=>'o.locationid',
+				'identificationqualifier'=>'o.identificationqualifier', 'typestatus'=>'o.typestatus', 'recordedby'=>'o.recordedby', 'recordnumber'=>'o.recordnumber', 'associatedcollectors'=>'o.associatedcollectors',
+				'eventdate'=>'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate', 'year'=>'o.year', 'month'=>'o.month', 'day'=>'o.day', 'monthname'=>'DATE_FORMAT(o.eventdate,"%M") AS monthname',
+				'verbatimeventdate'=>'o.verbatimeventdate', 'habitat'=>'o.habitat', 'substrate'=>'o.substrate', 'occurrenceremarks'=>'o.occurrenceremarks', 'associatedtaxa'=>'o.associatedtaxa','georeferencedby'=>'o.georeferencedby',
+				'dynamicproperties'=>'o.dynamicproperties','verbatimattributes'=>'o.verbatimattributes', 'behavior'=>'o.behavior', 'reproductivecondition'=>'o.reproductivecondition', 'cultivationstatus'=>'o.cultivationstatus',
+				'establishmentmeans'=>'o.establishmentmeans','lifeStage'=>'o.lifestage','sex'=>'o.sex','individualcount'=>'o.individualcount','samplingprotocol'=>'o.samplingprotocol','preparations'=>'o.preparations','locationremarks'=>'o.locationremarks',
+				'country'=>'o.country', 'stateprovince'=>'o.stateprovince', 'county'=>'o.county', 'municipality'=>'o.municipality', 'locality'=>'o.locality', 'decimallatitude'=>'o.decimallatitude','georeferencesources'=>'o.georeferencesources',
+				'decimallongitude'=>'o.decimallongitude', 'geodeticdatum'=>'o.geodeticdatum', 'coordinateuncertaintyinmeters'=>'o.coordinateuncertaintyinmeters', 'verbatimcoordinates'=>'o.verbatimcoordinates','georeferenceremarks'=>'o.georeferenceremarks',
+				'minimumelevationinmeters'=>'o.minimumelevationinmeters', 'maximumelevationinmeters'=>'o.maximumelevationinmeters','labelproject'=>'o.labelproject','fieldnotes'=>'o.fieldnotes','georeferenceprotocol'=>'o.georeferenceprotocol',
+				'elevationInMeters'=>'CONCAT_WS(" - ",o.minimumElevationInMeters,o.maximumElevationInMeters) AS elevationinmeters', 'verbatimelevation'=>'o.verbatimelevation','fieldnumber'=>'o.fieldnumber','waterbody'=>'o.waterbody',
+				'minimumdepthinmeters'=>'o.minimumdepthinmeters', 'maximumdepthinmeters'=>'o.maximumdepthinmeters', 'verbatimdepth'=>'o.verbatimdepth', 'occurrenceid'=>'o.occurrenceid', 'samplingeffort'=>'o.samplingeffort',
+				'disposition'=>'o.disposition', 'storagelocation'=>'o.storagelocation', 'duplicatequantity'=>'o.duplicatequantity', 'dateLastModified'=>'o.datelastmodified');
 		}
-	}
-
-	public function getLabelBlock($blockArr,$occArr): string
-    {
-		$outStr = '';
-		foreach($blockArr as $bArr){
-			if(array_key_exists('divBlock', $bArr)){
-				$outStr .= $this->getDivBlock($bArr['divBlock'],$occArr);
-			}
-			elseif(array_key_exists('fieldBlock', $bArr)){
-				$delimiter = ($bArr['delimiter'] ?? '');
-				$cnt = 0;
-				$fieldDivStr = '';
-				foreach($bArr['fieldBlock'] as $fieldArr){
-					$fieldName = strtolower($fieldArr['field']);
-					$fieldValue = trim($occArr[$fieldName]);
-					if($fieldValue){
-						if($delimiter && $cnt) {
-                            $fieldDivStr .= $delimiter;
-                        }
-						$fieldDivStr .= '<span class="'.$fieldName.(isset($fieldArr['className'])?' '.$fieldArr['className']:'').'" '.(isset($fieldArr['style'])?'style="'.$fieldArr['style'].'"':'').'>';
-						if(isset($fieldArr['prefix']) && $fieldArr['prefix']){
-							$fieldDivStr .= '<span class="'.$fieldName.'Prefix" '.(isset($fieldArr['prefixStyle'])?'style="'.$fieldArr['prefixStyle']:'').'">'.$fieldArr['prefix'].'</span>';
-						}
-						$fieldDivStr .= $fieldValue;
-						if(isset($fieldArr['suffix']) && $fieldArr['suffix']){
-							$fieldDivStr .= '<span class="'.$fieldName.'Suffix" '.(isset($fieldArr['suffixStyle'])?'style="'.$fieldArr['suffixStyle']:'').'">'.$fieldArr['suffix'].'</span>';
-						}
-						$fieldDivStr .= '</span>';
-						$cnt++;
-					}
-				}
-				if($fieldDivStr) {
-                    $outStr .= '<div class="field-block' . (isset($bArr['className']) ? ' ' . $bArr['className'] : '') . '" ' . (isset($bArr['style']) ? ' style="' . $bArr['style'] : '') . '">' . $fieldDivStr . '</div>';
-                }
-			}
-		}
-		return $outStr;
-	}
-
-	private function getDivBlock($divArr,$occArr): string
-    {
-		$contentStr = '';
-		if(array_key_exists('blocks', $divArr)) {
-            $contentStr = $this->getLabelBlock($divArr['blocks'], $occArr);
-        }
-		elseif(array_key_exists('content', $divArr)) {
-            $contentStr = $divArr['content'];
-        }
-		if($contentStr){
-			$attrStr = '';
-			if(isset($divArr['className'])) {
-                $attrStr .= 'class="' . $divArr['className'] . '"';
-            }
-			if(isset($divArr['style']) && $divArr['style']) {
-                $attrStr .= 'style="' . $divArr['style'] . '"';
-            }
-			return '<div '.trim($attrStr).'>'.$contentStr.'</div>'."\n";
-		}
-		return '';
 	}
 
 	public function getLabelFormatByID($scope, $labelIndex){
@@ -720,6 +640,29 @@ class OccurrenceLabel{
             $location = $cur_size;
         }
         return $image;
+    }
+
+    public function getQRCodePng($occid, $size)
+    {
+        $urlStr = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $urlStr = 'https://';
+        }
+        $urlStr .= $_SERVER['HTTP_HOST'];
+        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80) {
+            $urlStr .= ':' . $_SERVER['SERVER_PORT'];
+        }
+        $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?fullwindow=1&occid=' . $occid;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'http://chart.apis.google.com/chart');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, 'chs='.$size.'x'.$size.'&cht=qr&chl=' . urlencode($urlStr));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        $returnStr = curl_exec($ch);
+        curl_close($ch);
+        return $returnStr;
     }
 
 	public function clearAnnoQueue($detidArr): string
