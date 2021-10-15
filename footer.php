@@ -1,8 +1,4 @@
-    	</td>
-	</tr>
-	<tr>
-		<td class="footer">
-			
-		</td>
-	</tr>
-</table>
+<div class="footer">
+
+</div>
+</div>

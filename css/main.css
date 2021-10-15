@@ -1,4 +1,4 @@
-body {
+body{
 	margin: 0 auto 8px;
 	width: 80%;
 	min-width: 950px;
@@ -9,102 +9,30 @@ body {
 	line-height: 16px;
 }
 
-#maintable{
+.title {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+#mainContainer{
+	display: block;
 	width: 100%;
 	background-color:#FFFFFF;
 	border:1px solid #333333;
 }
 
-#maintable td{
-
+#bannerContainer{
+	clear: both;
+	padding: 40px;
+	height: 100px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	background-color:#026B6E;
+	color: white;
 }
 
-td.header{
-	color:#FFFFFF;
-	text-align:left;
-	padding: 0;
-}
-
-td.header a{
-
-}
-
-td.header a:hover{
-
-}
-
-td.middleleft{
-}
-
-td.middleleftnomenu{
-}
-
-td.middlecenter{
-	padding:0;
-}
-
-td.middleright{
-}
-
-td.footer{
-}
-
-/*Left menu components*/
-div.menu {
-	background-color:   white;
-	margin:				15px;
-	border:   			1px solid #CCCCFF;
-	padding-bottom:   	25px;
-	overflow:   		hidden;
-	width:   			150px;
-	border-radius:		0.5em 0.5em 1.5em 0.5em;
-	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
-}
-
-div.menuheader{
-	background-color:   #C0C0C0;
-	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size:   		13px;
-	color:   			white;
-	overflow:   		hidden;
-	text-align:   		center;
-	padding:   			3px;
-	margin:			   	0;
-}
-
-div.menuheader a{
-
-}
-
-div.menuheader a:hover {
-
-}
-
-div.menusubheader{
-
-}
-
-div.menusubheader a{
-
-}
-
-div.menusubheader a:hover {
-
-}
-
-div.menuitem {
-
-}
-
-div.menuitem a {
-	color: #669999;
-}
-
-div.menuitem a:hover {
-	color: 	#00008B;
-}
-
-#innertext {
+#innertext{
 	background-color: #ffffff;
 	min-height:400px;
 	margin: 0 auto;
@@ -114,14 +42,9 @@ div.menuitem a:hover {
 	line-height: 16px;
 }
 
-#innertext a {
-	font-family: Arial, Helvetica, sans-serif;
-	color: #2C405E;
-	text-decoration: none;
-}
-#innertext a:hover {
-	color: black;
-	text-decoration: underline;
+h1 {
+	color: #990000;
+	font-size: 18px;
 }
 
 div.navpath {
@@ -131,165 +54,106 @@ div.navpath {
 	margin-bottom: 0;
 }
 
-div.tndiv{
-
-}
-
-div.tnimg{
-
-}
-
-div.tnimg a{
-
-}
-
-div.tnimg img{
-
-}
-
-/*Misc general items*/
-table{
-
-}
-
-h1 {
-	color: #990000;
-	font-size: 18px;
-}
-
-h2 {
-	color: black;
-	font-size: 16px;
-}
-
-h3 {
-	color: black;
-	font-size: 14px;
-}
-
-hr {
-	color: #BDD3D1;
-}
-
-#top_navbar {
-	clear: both;
-	height: 33px;
-	background-image: url(images/menu_pri_background.jpg);
-	background-repeat: repeat-x;
-	background-position: top;
-	background-color: #c2c2c2;
-}
-
-#right_navbarlinks{
+#topNavigation {
 	clear:both;
-	font-size:12px;
-	float:right;
-	color:#000000;
-	margin-top:9px;
-}
-
-#hor_dropdown {
-	list-style: none;
-	float: left;
-	position: relative;
-	font-size: 12px;
-	width: auto;
-	height: 31px;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding-left: 0;
-	background-image: url(images/menu_pri_background.jpg);
-	background-repeat: repeat-x;
-	background-position: top;
-	background-color: #c2c2c2;
-}
-
-#hor_dropdown li {
-	float: left;
-	position: relative;
+	background-color:#c2c2c2;
 	padding: 0;
+	display: flex;
+	justify-content: space-between;
+}
+#rightNavigationLinks{
+	display: flex;
+	align-items: center;
+}
+
+#rightNavigationLinks span{
+	margin-right: 15px;
+}
+#horizontalDropDown{
+	list-style:none;
+	width:auto;
+	background-color:#c2c2c2;
 	margin: 0;
+	padding: 0;
 }
-
-#hor_dropdown a {
-	display: block;
-	color: #000000;
+#horizontalDropDown li{
+	float:left;
+	position:relative;
+	padding:0;
+	margin:0;
+}
+#horizontalDropDown a{
+	display:block;
+	color:#000000;
 	text-decoration: none;
-	padding: 8px 10px 10px;
-	background-image: url(images/menu-item_divider.jpg);
-	background-repeat: no-repeat;
-	background-position: right bottom;
+	padding: 20px 15px;
 }
-
-#hor_dropdown a:hover {
-	background-color: #999999;
-	color: #FFFFFF;
-	padding: 8px 10px 10px;
-	background-image: none;
+#horizontalDropDown a:hover{
+	background-color:#999999;
 }
-
 /* Submenu */
-#hor_dropdown ul {
-	list-style: none;
-	position: absolute;
-	left: -9999px;
-	top: -9999px;
-	background-color: #dcdcdc;
-	z-index: 1000;
+#horizontalDropDown ul {
+	list-style:none;
+	position:absolute;
+	left:0;
+	top: 53px;
+	padding:0;
+	z-index:1000;
+	background-color:#dcdcdc;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
 }
-
-#hor_dropdown ul li {
-	float: none;
+#horizontalDropDown ul li{
+	float:none;
 }
-
-#hor_dropdown ul a {
-	white-space: nowrap;
+#horizontalDropDown ul a{
+	white-space:nowrap;
+	padding: 10px 15px;
+	text-decoration:none;
+	text-indent:8px;
 }
-
-#hor_dropdown li:hover ul {
-	left: 0;
-	top: 33px;
-	padding: 0;
-	z-index: 1000;
+#horizontalDropDown li:hover ul {
+	visibility: visible;
+	opacity: 1;
 }
-
-#hor_dropdown li:hover ul a {
-	text-decoration: none;
-	text-indent: 8px;
-	padding: 5px 8px 5px 5px;
-	background-image: none;
-	background-color: #dcdcdc;
-	z-index: 1000;
+#horizontalDropDown li:hover ul a {
+	text-decoration:none;
+	text-indent:8px;
+	padding: 10px 15px;
+	background-color:#dcdcdc;
+	z-index:1000;
 }
-
-#hor_dropdown li:hover ul li a:hover {
-	background: #999999;
+#horizontalDropDown li:hover ul li a:hover {
+	background:#999999;
 }
-
 /* Submenu to right */
-#hor_dropdown li ul li ul {
-	display: none;
+#horizontalDropDown li ul li ul {
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
 }
-
-#hor_dropdown li ul li:hover ul {
-	left: 100%;
+#horizontalDropDown li ul li:hover ul {
+	left:100%;
 	top: 0;
-	display: block;
-	padding: 0;
-	z-index: 1000;
+	visibility: visible;
+	opacity: 1;
+	padding:0;
+	z-index:1000;
 }
-
-#hor_dropdown li ul li:hover ul a {
-	text-decoration: none;
-	text-indent: 8px;
-	padding: 5px 8px 5px 5px;
-	background-image: none;
-	background-color: #dcdcdc;
-	z-index: 1000;
+#horizontalDropDown li ul li:hover ul a {
+	text-decoration:none;
+	text-indent:8px;
+	padding: 10px 15px;
+	background-color:#dcdcdc;
+	z-index:1000;
 }
-
-#hor_dropdown li ul li:hover ul li a:hover {
-	background: #999999;
+#horizontalDropDown li ul li:hover ul li a:hover {
+	background:#999999;
 }
 
 /* Quick Search Plugin */
@@ -315,9 +179,61 @@ hr {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Slideshow Plugin */
-#slideshowcontainer{
-	border: 2px solid black;
-	border-radius:10px;
-	padding:10px;
+.quicksearchselectorcontainer {
+	height: 20px;
+	width: 300px;
+	font-size: 16px;
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"]:not(:checked),
+.quicksearchselectorcontainer input[type="checkbox"]:checked {
+	position: absolute;
+	opacity: 0;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"].switch + div {
+	width: 1.8em;	height: 1em;
+	border: 1px solid rgba(0,0,0,.3);
+	border-radius: 999px;
+	margin: 0 auto .8em;
+	background: #888 linear-gradient(rgba(0, 0, 0, .4), transparent);
+	background-origin: border-box;
+	background-clip: border-box;
+	box-shadow: 0 1px 1px hsla(0,0%,100%,.8);
+	overflow: hidden;
+	transition-duration: .4s;
+	transition-property: padding, width;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:checked + div {
+	padding-left: .8em;
+	width: 1em;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"].switch + div:before {
+	content: '';
+	display: block;
+	width: 1em; height: 1em;
+	margin: -1px;
+	border: 1px solid rgba(0,0,0,.7);
+	border-radius: inherit;
+	background: #c4c4c4 linear-gradient(hsla(0, 0%, 100%, .3), hsla(0, 0%, 100%, 0));
+	box-shadow: 0 0 .5em rgba(0,0,0,.5),
+	0 .2em hsla(0,0%,100%,.3) inset,
+	0 -.1em .3em hsla(0,0%,0%,.2) inset;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:active + div:before {
+	background-color: #aaa;
+}
+
+.quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
+	box-shadow: 0 0 .3em 1px red,
+	0 1px 1px hsla(0,0%,100%,.8);
+}
+
+.taxon-desc-tab-text {
+	font-size: 14px;
 }
