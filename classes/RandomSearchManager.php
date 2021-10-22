@@ -12,14 +12,7 @@ class RandomSearchManager extends ImageLibraryManager{
 	    $this->conn = $connection->getConnection();
 	}
 
-	public function __destruct(){
-        parent::__destruct();
-	    if(!($this->conn === false)) {
-            $this->conn->close();
-        }
-	}
-
-	public function getRandomTID(): array
+    public function getRandomTID(): array
 	{
 		$returnArray = Array();
 
