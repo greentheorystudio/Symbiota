@@ -289,20 +289,19 @@ if($editable){
                     <div style="font-size:120%;font-weight:bold;">Status:
                         <span style='color:red;'>
                         <?php
-                            switch($taxonEditorObj->getIsAccepted()){
-                                case -2:
-                                    echo 'In Conflict, needs to be resolved!';
-                                    break;
-                                case -1:
-                                    echo 'Taxonomy not yet defined for this taxon.';
-                                    break;
-                                case 0:
-                                    echo 'Not Accepted';
-                                    break;
-                                case 1:
-                                    echo 'Accepted';
-                                    break;
-                            }
+                        $acceptance = $taxonEditorObj->getIsAccepted();
+                        if($acceptance === -2){
+                            echo 'In Conflict, needs to be resolved!';
+                        }
+                        if($acceptance === -1){
+                            echo 'Taxonomy not yet defined for this taxon.';
+                        }
+                        if($acceptance === 0){
+                            echo 'Not Accepted';
+                        }
+                        if($acceptance === 1){
+                            echo 'Accepted';
+                        }
                         ?>
                         </span>
                     </div>
@@ -454,17 +453,15 @@ if($editable){
                                     echo '<a href="#" onclick="toggle(\'syn-'.$tidSyn.'\');">';
                                     echo '<i style="height:15px;width:15px;" class="far fa-edit"></i>';
                                     echo '</a>';
-                                    if($synArr['notes'] || $synArr['unacceptabilityreason']){
-                                        if($synArr['unacceptabilityreason']){
-                                            echo "<div style='margin-left:10px;'>";
-                                            echo '<u>Reason:</u> ' .$synArr['unacceptabilityreason'];
-                                            echo '</div>';
-                                        }
-                                        if($synArr['notes']){
-                                            echo "<div style='margin-left:10px;'>";
-                                            echo '<u>Notes:</u> ' .$synArr['notes'];
-                                            echo '</div>';
-                                        }
+                                    if($synArr['unacceptabilityreason']){
+                                        echo "<div style='margin-left:10px;'>";
+                                        echo '<u>Reason:</u> ' .$synArr['unacceptabilityreason'];
+                                        echo '</div>';
+                                    }
+                                    if($synArr['notes']){
+                                        echo "<div style='margin-left:10px;'>";
+                                        echo '<u>Notes:</u> ' .$synArr['notes'];
+                                        echo '</div>';
                                     }
                                     echo '</li>';
                                     ?>
