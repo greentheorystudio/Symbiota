@@ -99,7 +99,7 @@ div.navpath {
 }
 #horizontalDropDown ul a{
 	white-space:nowrap;
-	padding: 10px 15px;
+	padding: 5px 8px 5px 5px;
 	text-decoration:none;
 	text-indent:8px;
 }
@@ -136,7 +136,7 @@ div.navpath {
 #horizontalDropDown li ul li:hover ul a {
 	text-decoration:none;
 	text-indent:8px;
-	padding: 10px 15px;
+	padding: 5px 8px 5px 5px;
 	background-color:#dcdcdc;
 	z-index:1000;
 }
