@@ -1,11 +1,11 @@
-<link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/jquery-ui.min.css" type="text/css" >
-<link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/uw.css" type="text/css" >
-<link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/css/uw-ie.css" type="text/css">
-<link rel="stylesheet" type="text/css" href="<?php echo $CLIENT_ROOT; ?>/fonts/fonts.0.0.1.css">
-<link rel="stylesheet" href="<?php echo $CLIENT_ROOT; ?>/fonts/foundation-icons.css">
-<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.2.1.min.js" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
+<link rel="stylesheet" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.min.css" type="text/css" >
+<link rel="stylesheet" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/uw.css" type="text/css" >
+<link rel="stylesheet" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/uw-ie.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/fonts/fonts.0.0.1.css">
+<link rel="stylesheet" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/fonts/foundation-icons.css">
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 
 <!-- UW-Madison Top Header, Accessible -->
 <header>
@@ -21,7 +21,7 @@
         <div class="uw-header-container">
             <div class="uw-header-crest-title">
                 <div class="uw-header-crest">
-                    <!-- <a href="http://www.wisc.edu"><img class="uw-crest-svg" src="<?php //echo $CLIENT_ROOT.'/images/uw-crest.svg' ?>" alt="Link to University of Wisconsin-Madison home page"></a> -->
+                    <!-- <a href="http://www.wisc.edu"><img class="uw-crest-svg" src="<?php //echo $GLOBALS['CLIENT_ROOT'].'/images/uw-crest.svg' ?>" alt="Link to University of Wisconsin-Madison home page"></a> -->
                     <a href="http://www.wisc.edu">
                         <img class="uw-crest-svg" src="http://geoscience.wisc.edu/museum/wp-content/themes/madisonwp2015-1/images/hybrid_logo.svg" alt="Link to University of Wisconsin-Madison home page">
                     </a>
@@ -54,7 +54,7 @@
             <nav class="uw-nav-menu uw-nav-menu-reverse" aria-label="Main Menu">
                 <ul id="uw-main-nav">
                     <li class="current-menu-item">
-                        <a href="<?php echo $CLIENT_ROOT; ?>/index.php" aria-current="page">Home</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" aria-current="page">Home</a>
                     </li>
                     <li class="uw-dropdown">
                         <a href="fallback_url_for_no_js" role="button" aria-haspopup="true" aria-expanded="false">
@@ -71,10 +71,10 @@
                                 <a href="#">Quick Search</a>
                             </li>
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php">Advanced Search</a>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php">Advanced Search</a>
                             </li>
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/spatial-module-info.php">Spatial Module</a>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial-module-info.php">Spatial Module</a>
                             </li>
                             <li>
                                 <a href="#">Fun Searches</a>
@@ -96,11 +96,11 @@
                                 <a href="#">Biological and Non-biological trees</a>
                             </li>
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydisplay.php">Taxonomic Tree
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/taxonomy/taxonomydisplay.php">Taxonomic Tree
                                     Viewer</a>
                             </li>
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydynamicdisplay.php">Taxonomy
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/taxonomy/taxonomydynamicdisplay.php">Taxonomy
                                     Explorer</a>
                             </li>
                         </ul>
@@ -117,23 +117,23 @@
                         </a>
                         <ul aria-hidden="true" aria-label="Images submenu" class="uw-child-menu">
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php">Search Images</a>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php">Search Images</a>
                             </li>
                             <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php">Browse Images</a>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php">Browse Images</a>
                             </li>
                         </ul>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/digital-collections.php">Featured Specimens</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/digital-collections.php">Featured Specimens</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/museums.php">Museums</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/museums.php">Museums</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/about.php">About</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/about.php">About</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/help.php">Help</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/help.php">Help</a>
                     </li>
                 </ul>
             </nav>
@@ -177,34 +177,34 @@
     </div>
 
     <?php
-    if ($IS_ADMIN) {
+    if ($GLOBALS['IS_ADMIN']) {
         ?>
         <!-- BEGIN LOGIN BAR -->
         <div aria-label="Admin Menu" id="right_navbarlinks" class="uw-admin-nav">
             <nav class="uw-nav-menu uw-nav-menu-reverse">
                 <ul>
                     <?php
-                    if ($USER_DISPLAY_NAME) {
+                    if ($GLOBALS['USER_DISPLAY_NAME']) {
                         ?>
                         <li>
-                            Welcome <?php echo $USER_DISPLAY_NAME; ?>!
+                            Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!
                         </li>
                         <li>
-                            <a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My Profile</a>
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php">My Profile</a>
                         </li>
                         <li>
-                            <a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Logout</a>
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout">Logout</a>
                         </li>
                         <?php
                     } else {
                         ?>
                         <li>
-                            <a href="<?php echo $CLIENT_ROOT . "/profile/index.php?refurl=" . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING']; ?>">
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT'] . "/profile/index.php?refurl=" . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING']; ?>">
                                 Log In
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo $CLIENT_ROOT; ?>/profile/newprofile.php">
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">
                                 New Account
                             </a>
                         </li>
@@ -212,10 +212,10 @@
                     }
                     ?>
                     <li>
-                        <a href='<?php echo $CLIENT_ROOT; ?>/sitetools.php'>Site Tools</a>
+                        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitetools.php'>Site Tools</a>
                     </li>
                     <li>
-                        <a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'>Sitemap</a>
+                        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php'>Sitemap</a>
                     </li>
                 </ul>
             </nav>

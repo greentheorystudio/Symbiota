@@ -37,7 +37,7 @@
         </p>
         <p>© 2017 Board of Regents of the <a href="http://www.wisconsin.edu">University of Wisconsin System</a></p>
         <p>
-            <a href="<?php echo $CLIENT_ROOT . '/profile/index.php?refurl=' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']; ?>">Log
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT'] . '/profile/index.php?refurl=' . $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']; ?>">Log
                 In</p>
     </div>
 </footer>
@@ -200,4 +200,4 @@
         </symbol>
     </defs>
 </svg>
-<script type="text/javascript" src="<?php echo $CLIENT_ROOT; ?>/js/uw.min.js?version=2.0.5"></script>
+<script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/uw.min.js?version=2.0.5"></script>

@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
 include_once(__DIR__ . '/classes/RandomSearchManager.php');
 $taxon = array_key_exists("taxon",$_REQUEST)?trim($_REQUEST["taxon"]):"";
@@ -8,11 +8,11 @@ $imgLibManagerRand = new RandomSearchManager();
 
 $target = array_key_exists("target",$_REQUEST)?trim($_REQUEST["target"]):"";
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $DEFAULT_TITLE; ?> Home</title>
-    <link href="css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
+    <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
     <meta name='keywords' content='' />
     <script type="text/javascript">
@@ -52,7 +52,7 @@ include(__DIR__ . '/header.php');
                             <!-- Original Symbiota Quick Search -->
                             <div>
                                 <!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
-                                <form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
+                                <form name="quicksearch" id="quicksearch" action="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
                                     <input id="taxa" type="text" name="taxon" />
                                     <button name="formsubmit" class="uw-button" id="quicksearchbutton" type="submit" value="Search Terms">Search</button>
                                 </form>
@@ -77,10 +77,10 @@ include(__DIR__ . '/header.php');
                 <div class="uw-card">
                     <div class="uw-card-content">
                         <div class="uw-text-center">
-                            <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php"><i class="fi-zoom-in"></i></a>
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php"><i class="fi-zoom-in"></i></a>
                         </div>
                         <div class="uw-card-copy">
-                            <h2 class="uw-mini-bar"><a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php">Advanced Search</a></h2>
+                            <h2 class="uw-mini-bar"><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php">Advanced Search</a></h2>
                             <p>Search Collections for specimens, taxa or object categories using advanced criteria.</p>
                         </div>
                     </div>
@@ -89,10 +89,10 @@ include(__DIR__ . '/header.php');
                 <div class="uw-card">
                     <div class="uw-card-content">
                         <div class="uw-text-center">
-                            <a href="<?php echo $CLIENT_ROOT; ?>/spatial-module-info.php"><i class="fi-map"></i></a>
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial-module-info.php"><i class="fi-map"></i></a>
                         </div>
                         <div class="uw-card-copy">
-                            <h2 class="uw-mini-bar"><a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php">Spatial Module</a></h2>
+                            <h2 class="uw-mini-bar"><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php">Spatial Module</a></h2>
                             <p>Live search specimens in map.</p>
                             <p>Disclaimer: only specimens with full geographical coordinates are searchable.</p>
                         </div>
@@ -113,10 +113,10 @@ include(__DIR__ . '/header.php');
                 <div class="uw-card">
                     <div class="uw-card-content">
                         <div class="uw-text-center">
-                            <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php"><i class="fi-photo"></i></a>
+                            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php"><i class="fi-photo"></i></a>
                         </div>
                         <div class="uw-card-copy">
-                            <h2 class="uw-mini-bar"><a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php">Images</a></h2>
+                            <h2 class="uw-mini-bar"><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php">Images</a></h2>
                             <p>Browse images by taxa or object category.</p>
                         </div>
                     </div>
