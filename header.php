@@ -1,87 +1,66 @@
-<table id="maintable" style="border-spacing: 0;">
-    <tr>
-        <td class="header">
-            <div style="clear:both;background-color:#D9E636;height:175px;border-bottom:1px solid black;">
-                <div style="float:left;font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;color:black;font-size:40px;">
-                    <div style="height:175px;width:400px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-                        <div>Lomatium & Friends</div>
-                        <div>Online Monographs</div>
-                    </div>
-                </div>
-                <div style="float:right;">
-                    <img style="height:175px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/Banner3.JPG" />
-                </div>
+<?php
+include_once(__DIR__ . '/classes/Sanitizer.php');
+?>
+<div id="mainContainer">
+    <div id="bannerContainer" style="clear:both;background-color:#D9E636;height:175px;border-bottom:1px solid black;">
+        <div style="float:left;font-family: Chalkboard,Comic Sans MS,Comic Sans,cursive;color:black;font-size:40px;">
+            <div style="height:175px;width:400px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+                <div>Lomatium & Friends</div>
+                <div>Online Monographs</div>
             </div>
-            <div id="top_navbar">
-                <div id="right_navbarlinks">
-                    <?php
-                    if($USER_DISPLAY_NAME){
-                        ?>
-                        <span>
-							Welcome <?php echo $USER_DISPLAY_NAME; ?>!
-						</span>
-                        <span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My Profile</a>
-						</span>
-                        <span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Logout</a>
-						</span>
-                        <?php
-                    }
-                    else{
-                        ?>
-                        <span style="">
-							<a href="<?php echo $CLIENT_ROOT. '/profile/index.php?refurl=' .$_SERVER['PHP_SELF']. '?' .$_SERVER['QUERY_STRING']; ?>">
-								Log In
-							</a>
-						</span>
-                        <span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/newprofile.php">
-								New Account
-							</a>
-						</span>
-                        <?php
-                    }
-                    ?>
-                    <span style="margin-left:5px;margin-right:5px;">
-						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'>Sitemap</a>
-					</span>
-
-                </div>
-                <ul id="hor_dropdown">
+        </div>
+        <div style="float:right;">
+            <img style="height:175px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/Banner3.JPG" />
+        </div>
+    </div>
+    <div id="topNavigation">
+        <ul id="horizontalDropDown">
+            <li>
+                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
+            </li>
+            <li>
+                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/project.php" >The Project</a>
+            </li>
+            <li>
+                <a href="" >Trees</a>
+            </li>
+            <li>
+                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Specimen Search</a>
+            </li>
+            <li>
+                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php" >Image Search</a>
+            </li>
+            <li>
+                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank" >Map Search</a>
+            </li>
+            <li>
+                <a href="#" >Interactive Tools</a>
+                <ul>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
                     </li>
                     <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/misc/project.php" >The Project</a>
-                    </li>
-                    <li>
-                        <a href="" >Trees</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Specimen Search</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/imagelib/search.php" >Image Search</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank" >Map Search</a>
-                    </li>
-                    <li>
-                        <a href="#" >Interactive Tools</a>
-                        <ul>
-                            <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
-                            </li>
-                            <li>
-                                <a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
-                            </li>
-                        </ul>
+                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
                     </li>
                 </ul>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td class="middlecenter">
-
+            </li>
+        </ul>
+        <div id="rightNavigationLinks">
+            <?php
+            if($GLOBALS['USER_DISPLAY_NAME']){
+                ?>
+                <span>Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!</span>
+                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php">My Profile</a></span>
+                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout">Logout</a></span>
+                <?php
+            }
+            else{
+                ?>
+                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true); ?>">Log In</a></span>
+                <span><a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">New Account</a></span>
+                <?php
+            }
+            ?>
+            <span><a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php'>Sitemap</a></span>
+        </div>
+    </div>

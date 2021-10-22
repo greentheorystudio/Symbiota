@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
-<html lang="<?php echo $DEFAULT_LANG; ?>">
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
     <title>The Project</title>
-    <link href="../css/base.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/main.css?ver=<?php echo $CSS_VERSION; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
+    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <?php
@@ -42,7 +42,7 @@ include(__DIR__ . '/../header.php');
         </div>
         <div style="width:330px;">
             <div style="width:325px;">
-                <img style="width:325px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/DSC02667.JPG" />
+                <img style="width:325px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/DSC02667.JPG" />
             </div>
             <div style="width:310px;margin-top:5px;margin-left:auto;margin-right:auto;font-size:12px;">
                 Don Mansfield, Harold M. Tucker Herbarium, The College of Idaho
@@ -53,7 +53,7 @@ include(__DIR__ . '/../header.php');
     <div style="margin:15px;display:flex;justify-content:space-between;">
         <div style="width:230px;">
             <div style="width:225px;">
-                <img style="width:225px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/DSC02708.JPG" />
+                <img style="width:225px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/DSC02708.JPG" />
             </div>
             <div style="width:210px;margin-top:5px;margin-left:auto;margin-right:auto;font-size:12px;">
                 Jim Smith, Snake River Plains Herbarium, Boise State University
@@ -71,7 +71,7 @@ include(__DIR__ . '/../header.php');
             American Flora as well as the Biota that rely on that flora.
             <div style="width:560px;margin-top:20px;margin-left:auto;margin-right:auto">
                 <div style="width:555px;">
-                    <img style="width:555px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/DSC02997.JPG" />
+                    <img style="width:555px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/DSC02997.JPG" />
                 </div>
                 <div style="width:540px;margin-top:5px;margin-left:auto;margin-right:auto;font-size:12px;">
                     Mary Ann Feist, Wisconsin State Herbarium, University of Wisconsin-Madison
