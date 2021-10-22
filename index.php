@@ -19,7 +19,7 @@ $imgLibManager = new TaxonQuickSearchManager();
 <?php
 include(__DIR__ . '/header.php');
 ?>
-<div  id="innertext">
+<div id="innertext">
     <h1>Welcome to the Online Virtual Flora of Wisconsin</h1>
     <div style="float:right;width:380px;">
         <?php
