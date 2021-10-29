@@ -21,7 +21,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 <script type="text/javascript">
     ClassicEditor
         .create( document.querySelector( '#abstractblock' ), {
-            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+            toolbar: ["sourceEditing", "heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
                 "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
         } )
         .catch( error => {
@@ -196,7 +196,7 @@ if(!$clid){
 				<fieldset style="width:300px;">
 					<legend><b>Default Display Settings</b></legend>
 					<div>
-						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['ddetails'])? 'checked' : ''); ?> />
+						<input name='ddetails' id='ddetails' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['ddetails'])? 'checked' : ''); ?> />
                         Show Details
 					</div>
 					<div>
@@ -207,7 +207,7 @@ if(!$clid){
 						?>
 					</div>
 					<div>
-						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr&&$defaultArr['dimages'])? 'checked' : ''); ?> onclick="showImagesDefaultChecked(this.form);" />
+						<input name='dimages' id='dimages' type='checkbox' value='1' <?php echo (($defaultArr && $defaultArr['dimages'])? 'checked' : ''); ?> onclick="showImagesDefaultChecked(this.form);" />
                         Display as Images
 					</div>
                     <?php
@@ -228,7 +228,7 @@ if(!$clid){
                         Dislay Taxon Authors
 					</div>
 					<div>
-						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr && array_key_exists('dalpha', $defaultArr)? 'checked' : ''); ?> />
+						<input name='dalpha' id='dalpha' type='checkbox' value='1' <?php echo ($defaultArr && $defaultArr['dalpha']? 'checked' : ''); ?> />
                         Display Taxa Alphabetically
 					</div>
 					<div>
