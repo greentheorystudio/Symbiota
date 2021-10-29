@@ -126,25 +126,30 @@ class ChecklistAdmin{
 		$fieldArr = array('name'=>'s','authors'=>'s','type'=>'s','locality'=>'s','publication'=>'s','abstract'=>'s','notes'=>'s','latcentroid'=>'n',
 			'longcentroid'=>'n','pointradiusmeters'=>'n','parentclid'=>'n','access'=>'s','defaultsettings'=>'s');
 		foreach($fieldArr as $fieldName => $fieldType){
-			$v = Sanitizer::cleanInStr($postArr[$fieldName]);
-			if($fieldName !== 'abstract') {
-                $v = strip_tags($v, '<i><u><b><a>');
+			if($fieldName === 'defaultsettings'){
+                $setSql .= ', '.$fieldName." = '".strip_tags($postArr['defaultsettings'], '<i><u><b><a>')."'";
             }
+            else{
+                $v = Sanitizer::cleanInStr($postArr[$fieldName]);
+                if($fieldName !== 'abstract') {
+                    $v = strip_tags($v, '<i><u><b><a>');
+                }
 
-			if($v){
-				if($fieldType === 's'){
-					$setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
-				}
-				elseif($fieldType === 'n' && is_numeric($v)){
-					$setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
-				}
-				else{
-					$setSql .= ', '.$fieldName.' = NULL';
-				}
-			}
-			else{
-				$setSql .= ', '.$fieldName.' = NULL';
-			}
+                if($v){
+                    if($fieldType === 's'){
+                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
+                    }
+                    elseif($fieldType === 'n' && is_numeric($v)){
+                        $setSql .= ', '.$fieldName.' = "'.Sanitizer::cleanInStr($v).'"';
+                    }
+                    else{
+                        $setSql .= ', '.$fieldName.' = NULL';
+                    }
+                }
+                else{
+                    $setSql .= ', '.$fieldName.' = NULL';
+                }
+            }
 		}
 		$sql = 'UPDATE fmchecklists SET '.substr($setSql,2).' WHERE (clid = '.$this->clid.')';
 		//echo $sql; exit;
