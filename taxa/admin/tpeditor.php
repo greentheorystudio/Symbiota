@@ -132,9 +132,17 @@ if($editable && $action){
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+    <script type="text/javascript" src="../../js/tiny_mce/tiny_mce.js"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
+        tinyMCE.init({
+            mode : "textareas",
+            theme_advanced_buttons1 : "bold,italic,underline,charmap,hr,outdent,indent,link,unlink,code",
+            theme_advanced_buttons2 : "",
+            theme_advanced_buttons3 : "",
+            valid_elements: "*[*]"
+        });
+
+        $(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
 					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "taid": "1", "hideauth": 1 }, response );
@@ -189,7 +197,7 @@ if($editable && $action){
 			 	}
 				echo "<div style='font-size:16px;margin-top:15px;margin-left:10px;'><a href='../index.php?taxon=".$tEditor->getTid()."' style='color:#990000;text-decoration:none;'><b><i>".$tEditor->getSciName(). '</i></b></a> ' .$tEditor->getAuthor();
 				if($tEditor->getRankId() > 140) {
-                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><i style='height:15px;width:15px;' title='Go to Parent' class='far fa-level-up-alt'></i></a>";
+                    echo "&nbsp;<a href='tpeditor.php?tid=" . $tEditor->getParentTid() . "'><i style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
                 }
 				echo "</div>\n";
 				echo "<div id='family' style='margin-left:20px;margin-top:0.25em;'><b>Family:</b> ".$tEditor->getFamily()."</div>\n";
