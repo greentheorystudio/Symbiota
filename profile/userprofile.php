@@ -22,7 +22,7 @@ $listArr = $clManager->getManagementLists($userId);
 <script type="text/javascript">
     ClassicEditor
         .create( document.querySelector( '#biographyblock' ), {
-            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+            toolbar: ["sourceEditing", "heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
                 "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
         } )
         .catch( error => {

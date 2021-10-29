@@ -27,7 +27,7 @@ if($editable){
 	<script type="text/javascript">
 		ClassicEditor
             .create( document.querySelector( '#newstatement' ), {
-                toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                toolbar: ["sourceEditing", "heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
                     "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
             } )
             .catch( error => {
@@ -216,7 +216,7 @@ if($editable){
                                 <script type="text/javascript">
                                     ClassicEditor
                                         .create( document.querySelector( '#statement-<?php echo $tdsid;?>' ), {
-                                            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+                                            toolbar: ["sourceEditing", "heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
                                                 "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
                                         } )
                                         .catch( error => {
