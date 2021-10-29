@@ -132,7 +132,7 @@ if($editable && $action){
 	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
 	<script type="text/javascript" src="../../js/jquery.js"></script>
 	<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+    <script src="../../js/ckeditor/ckeditor.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#sninput").autocomplete({

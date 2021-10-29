@@ -21,7 +21,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 <script type="text/javascript">
     ClassicEditor
         .create( document.querySelector( '#abstractblock' ), {
-            toolbar: ["heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
+            toolbar: ["sourceEditing", "heading", "selectAll", "undo", "redo", "bold", "italic", "blockQuote", "link", "indent", "outdent",
                 "numberedList", "bulletedList", "insertTable", "tableColumn", "tableRow", "mergeTableCells"]
         } )
         .catch( error => {
