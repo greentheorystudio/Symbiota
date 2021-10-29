@@ -148,7 +148,7 @@ if($isEditor){
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script src="../js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
