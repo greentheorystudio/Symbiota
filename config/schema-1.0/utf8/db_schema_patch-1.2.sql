@@ -1,5 +1,4 @@
-INSERT
-IGNORE INTO schemaversion (versionnumber) values ("1.2");
+INSERT IGNORE INTO schemaversion (versionnumber) values ("1.2");
 
 ALTER TABLE `adminlanguages`
     ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
@@ -86,6 +85,9 @@ ALTER TABLE `lkupstateprovince`
     MODIFY COLUMN `abbrev` varchar (3) NULL DEFAULT NULL AFTER `stateName`;
 
 ALTER TABLE `media`
+    DROP FOREIGN KEY `FK_media_uid`;
+
+ALTER TABLE `media`
     DROP COLUMN `notes`,
     DROP COLUMN `mediaMD5`,
     CHANGE COLUMN `url` `accessuri` varchar(2048) NOT NULL AFTER `occid`,
@@ -102,6 +104,9 @@ ALTER TABLE `media`
     ADD COLUMN `bibliographiccitation` varchar(255) NULL AFTER `rights`,
     ADD COLUMN `publisher` varchar(255) NULL AFTER `bibliographiccitation`,
     ADD COLUMN `contributor` varchar(255) NULL AFTER `publisher`;
+
+ALTER TABLE `media`
+    ADD CONSTRAINT `FK_media_uid`  FOREIGN KEY (`creatoruid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `omcollcategories`
     ADD COLUMN `sortsequence` int(11) NULL AFTER `notes`;

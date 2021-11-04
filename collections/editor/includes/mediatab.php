@@ -232,55 +232,55 @@ $occMediaArr = $occManager->getMediaMap();
 							<div style="margin-top:30px">
 								<div>
 									<b>Title:</b>
-									<?php echo $medArr['title']; ?>
+									<?php echo wordwrap($medArr['title'],60,'<br />\n',true); ?>
 								</div>
 								<div>
 									<b>Creator:</b>
 									<?php
 									if($medArr['creator']){
-										echo $medArr['creator'];
-									}
+										echo wordwrap($medArr['creator'], 60, '<br />\n', true);
+                                    }
 									elseif($medArr['creatoruid']){
 										$pArr = $occManager->getPhotographerArr();
-										echo $pArr[$medArr['creatoruid']];
+										echo wordwrap($pArr[$medArr['creatoruid']], 60, '<br />\n', true);
 									} 
 									?>
 								</div>
 								<div>
 									<b>Description:</b>
-									<?php echo $medArr['description']; ?>
+									<?php echo wordwrap($medArr['description'],60,'<br />\n',true); ?>
 								</div>
 								<div>
 									<b>Locality:</b>
-									<?php echo $medArr['locationcreated']; ?>
+									<?php echo wordwrap($medArr['locationcreated'],60,'<br />\n',true); ?>
 								</div>
                                 <div>
                                     <b>Language:</b>
-                                    <?php echo $medArr['language']; ?>
+                                    <?php echo wordwrap($medArr['language'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Usage Terms:</b>
-                                    <?php echo $medArr['usageterms']; ?>
+                                    <?php echo wordwrap($medArr['usageterms'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Rights:</b>
-                                    <?php echo $medArr['rights']; ?>
+                                    <?php echo wordwrap($medArr['rights'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Owner:</b>
-                                    <?php echo $medArr['owner']; ?>
+                                    <?php echo wordwrap($medArr['owner'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Publisher:</b>
-                                    <?php echo $medArr['publisher']; ?>
+                                    <?php echo wordwrap($medArr['publisher'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Contributor:</b>
-                                    <?php echo $medArr['contributor']; ?>
+                                    <?php echo wordwrap($medArr['contributor'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
                                     <b>Bibliographic Citation:</b>
-                                    <?php echo $medArr['bibliographiccitation']; ?>
+                                    <?php echo wordwrap($medArr['bibliographiccitation'],60,'<br />\n',true); ?>
                                 </div>
                                 <div>
 									<b>Further Information URL:</b>
