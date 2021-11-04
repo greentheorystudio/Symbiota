@@ -8,6 +8,7 @@ include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
+ini_set('max_execution_time', 600);
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
