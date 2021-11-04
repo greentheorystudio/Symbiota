@@ -50,7 +50,7 @@ $specImgArr = $occManager->getImageMap();
 							</a>
 						</div>
 						<div>
-							<input type="checkbox" name="copytoserver" value="1" /> Copy large image to Server (if left unchecked, source URL will server as large version)
+							<input type="checkbox" name="copytoserver" value="1" /> Copy large image to Server (if left unchecked, source URL will serve as large version)
 						</div>
 					</div>
 					<div>
@@ -59,7 +59,7 @@ $specImgArr = $occManager->getImageMap();
 				</div>
 				<div style="clear:both;margin:20px 0 5px 10px;">
 					<b>Caption:</b> 
-					<input name="caption" type="text" size="40" value="" />
+					<textarea name="caption" rows="2" style="width:300px;resize:vertical;"></textarea>
 				</div>
 				<div style='margin:0 0 5px 10px;'>
 					<b>Photographer:</b> 
@@ -82,7 +82,7 @@ $specImgArr = $occManager->getImageMap();
 				<div id="imgaddoverride" style="margin:0 0 5px 10px;display:none;">
 					<b>Photographer (override):</b> 
 					<input name='photographer' type='text' style="width:300px;" maxlength='100'>
-					* Will override above selection
+					*Will override above selection
 				</div>
 				<div style="margin:0 0 5px 10px;">
 					<b>Notes:</b> 
@@ -275,7 +275,7 @@ $specImgArr = $occManager->getImageMap();
 										<legend><b>Edit Image Data</b></legend>
 										<div>
 											<b>Caption:</b><br/> 
-											<input name="caption" type="text" value="<?php echo $imgArr['caption']; ?>" style="width:300px;" />
+											<textarea name="caption" rows="2" style="width:300px;resize:vertical;"><?php echo $imgArr['caption']; ?></textarea>
 										</div>
 										<div>
 											<b>Photographer:</b><br/> 
@@ -394,7 +394,7 @@ $specImgArr = $occManager->getImageMap();
 								</form>
 								<form name="img<?php echo $imgId; ?>remapform" action="occurrenceeditor.php" method="post" onsubmit="return verifyImgRemapForm(this);">
 									<fieldset style="padding:15px">
-										<legend><b>Remap to Another Specimen</b></legend>
+										<legend><b>Remap to Another Occurrence Record</b></legend>
 										<div>
 											<b>Occurrence Record #:</b> 
 											<input id="imgoccid-<?php echo $imgId; ?>" name="targetoccid" type="text" value="" />
@@ -413,7 +413,7 @@ $specImgArr = $occManager->getImageMap();
 								</form>
 								<form action="occurrenceeditor.php" method="post">
 									<fieldset style="padding:15px">
-										<legend><b>Disassociate Image from all Specimen Records</b></legend>
+										<legend><b>Disassociate Image from all Occurrence Records</b></legend>
 										<div style="margin:10px 20px;">
 											<input name="occid" type="hidden" value="<?php echo $occId; ?>" />
 											<input name="imgid" type="hidden" value="<?php echo $imgId; ?>" />

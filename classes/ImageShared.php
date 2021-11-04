@@ -294,7 +294,7 @@ class ImageShared{
             }
             $path .= $subPath;
             $url .= $subPath;
-            if(file_exists($path) && mkdir($path, 0777, true) && is_dir($path)) {
+            if(file_exists($path) || (mkdir($path, 0777, true) && is_dir($path))) {
                 $this->targetPath = $path;
                 $this->urlBase = $url;
             }
