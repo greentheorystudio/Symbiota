@@ -101,7 +101,7 @@ else{
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
 		'WHERE (ts.taxauthid = 1) AND (ts.tid = ts.tidaccepted) '.
-		'AND ((ts.parenttid = '.$taxId.') OR (t.tid = '.$taxId.')) ';
+		'AND (ts.parenttid = '.$taxId.' AND t.rankid > 1) ';
 	//echo $sql2."<br>";
 	$rs2 = $con->query($sql2);
 	$i = 0;

@@ -134,7 +134,16 @@
                             <input data-role="none" type='checkbox' name='typestatus' id='typestatus' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['TYPE']; ?>
                         </div>
                         <div style="margin-top:5px;">
+                            <input data-role="none" type='checkbox' name='hasaudio' id='hasaudio' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['HAS_AUDIO']; ?>
+                        </div>
+                        <div style="margin-top:5px;">
                             <input data-role="none" type='checkbox' name='hasimages' id='hasimages' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['HAS_IMAGE']; ?>
+                        </div>
+                        <div style="margin-top:5px;">
+                            <input data-role="none" type='checkbox' name='hasvideo' id='hasvideo' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['HAS_VIDEO']; ?>
+                        </div>
+                        <div style="margin-top:5px;">
+                            <input data-role="none" type='checkbox' name='hasmedia' id='hasmedia' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['HAS_MEDIA']; ?>
                         </div>
                         <div id="searchGeneticCheckbox" style="margin-top:5px;">
                             <input data-role="none" type='checkbox' name='hasgenetic' id='hasgenetic' value='1' onchange="processTextParamChange();"> <?php echo $GLOBALS['SEARCHTEXT']['HAS_GENETIC']; ?>

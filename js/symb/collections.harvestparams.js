@@ -127,8 +127,17 @@ function setHarvestParamsForm(){
     if(stArr['typestatus']){
         document.harvestparams.typestatus.checked = true;
     }
+    if(stArr['hasaudio']){
+        document.harvestparams.hasaudio.checked = true;
+    }
     if(stArr['hasimages']){
         document.harvestparams.hasimages.checked = true;
+    }
+    if(stArr['hasvideo']){
+        document.harvestparams.hasvideo.checked = true;
+    }
+    if(stArr['hasmedia']){
+        document.harvestparams.hasmedia.checked = true;
     }
     if(stArr['hasgenetic']){
         document.harvestparams.hasgenetic.checked = true;
@@ -171,7 +180,10 @@ function resetHarvestParamsForm(f){
     f.catnum.value = '';
     f.othercatnum.checked = true;
     f.typestatus.checked = false;
+    f.hasaudio.checked = false;
     f.hasimages.checked = false;
+    f.hasvideo.checked = false;
+    f.hasmedia.checked = false;
     f.hasgenetic.checked = false;
     document.getElementById('showtable').checked = false;
     document.getElementById("spatialParamasNoCriteria").style.display = "block";

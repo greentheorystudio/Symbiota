@@ -3253,8 +3253,17 @@ function setInputFormBySearchTermsArr(){
     if(searchTermsArr.hasOwnProperty('typestatus')){
         document.getElementById("typestatus").checked = true;
     }
+    if(searchTermsArr.hasOwnProperty('hasaudio')){
+        document.getElementById("hasaudio").checked = true;
+    }
     if(searchTermsArr.hasOwnProperty('hasimages')){
         document.getElementById("hasimages").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('hasvideo')){
+        document.getElementById("hasvideo").checked = true;
+    }
+    if(searchTermsArr.hasOwnProperty('hasmedia')){
+        document.getElementById("hasmedia").checked = true;
     }
     if(searchTermsArr.hasOwnProperty('hasgenetic')){
         document.getElementById("hasgenetic").checked = true;
