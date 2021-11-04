@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/OccurrenceEditorImages.php');
+include_once(__DIR__ . '/OccurrenceEditorMedia.php');
 include_once(__DIR__ . '/OccurrenceDuplicate.php');
 include_once(__DIR__ . '/SOLRManager.php');
 include_once(__DIR__ . '/UuidFactory.php');
@@ -1845,6 +1846,41 @@ class OccurrenceEditorManager {
             $result->free();
         }
         return $imageMap;
+    }
+
+    public function getMediaMap(): array
+    {
+        $mediaMap = array();
+        if($this->occid){
+            $sql = 'SELECT mediaid, accessuri, title, creatoruid, creator, `type`, `format`, owner, furtherinformationurl, '.
+                'language, usageterms, rights, bibliographiccitation, publisher, contributor, locationcreated, description, sortsequence '.
+                'FROM media '.
+                'WHERE (occid = '.$this->occid.') ORDER BY sortsequence';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $medId = $row->mediaid;
+                $mediaMap[$medId]['accessuri'] = $row->accessuri;
+                $mediaMap[$medId]['title'] = Sanitizer::cleanOutStr($row->title);
+                $mediaMap[$medId]['creatoruid'] = $row->creatoruid;
+                $mediaMap[$medId]['creator'] = Sanitizer::cleanOutStr($row->creator);
+                $mediaMap[$medId]['type'] = $row->type;
+                $mediaMap[$medId]['format'] = $row->format;
+                $mediaMap[$medId]['owner'] = Sanitizer::cleanOutStr($row->owner);
+                $mediaMap[$medId]['furtherinformationurl'] = $row->furtherinformationurl;
+                $mediaMap[$medId]['language'] = Sanitizer::cleanOutStr($row->language);
+                $mediaMap[$medId]['usageterms'] = Sanitizer::cleanOutStr($row->usageterms);
+                $mediaMap[$medId]['rights'] = Sanitizer::cleanOutStr($row->rights);
+                $mediaMap[$medId]['bibliographiccitation'] = Sanitizer::cleanOutStr($row->bibliographiccitation);
+                $mediaMap[$medId]['publisher'] = Sanitizer::cleanOutStr($row->publisher);
+                $mediaMap[$medId]['contributor'] = Sanitizer::cleanOutStr($row->contributor);
+                $mediaMap[$medId]['locationcreated'] = Sanitizer::cleanOutStr($row->locationcreated);
+                $mediaMap[$medId]['description'] = Sanitizer::cleanOutStr($row->description);
+                $mediaMap[$medId]['sortsequence'] = $row->sortsequence;
+            }
+            $result->free();
+        }
+        return $mediaMap;
     }
 
     public function getEditArr(): array

@@ -130,7 +130,10 @@ function validateSearchTermsArr(stArr){
         stArr.hasOwnProperty('catnum') ||
         stArr.hasOwnProperty('othercatnum') ||
         stArr.hasOwnProperty('typestatus') ||
+        stArr.hasOwnProperty('hasaudio') ||
         stArr.hasOwnProperty('hasimages') ||
+        stArr.hasOwnProperty('hasvideo') ||
+        stArr.hasOwnProperty('hasmedia') ||
         stArr.hasOwnProperty('hasgenetic') ||
         stArr.hasOwnProperty('upperlat') ||
         stArr.hasOwnProperty('pointlat') ||
@@ -234,7 +237,10 @@ function processTextParamChange(){
     let catnumval = document.getElementById("catnum")?document.getElementById("catnum").value.trim():null;
     let othercatnumval = document.getElementById("othercatnum")?document.getElementById("othercatnum").checked:null;
     const typestatus = document.getElementById("typestatus")?document.getElementById("typestatus").checked:null;
+    const hasaudio = document.getElementById("hasaudio")?document.getElementById("hasaudio").checked:null;
     const hasimages = document.getElementById("hasimages")?document.getElementById("hasimages").checked:null;
+    const hasvideo = document.getElementById("hasvideo")?document.getElementById("hasvideo").checked:null;
+    const hasmedia = document.getElementById("hasmedia")?document.getElementById("hasmedia").checked:null;
     const hasgenetic = document.getElementById("hasgenetic")?document.getElementById("hasgenetic").checked:null;
     let imagedisplayval = document.getElementById("imagedisplay")?document.getElementById("imagedisplay").value:'thumbnail';
     let phuidval = document.getElementById("phuid")?document.getElementById("phuid").value:null;
@@ -366,11 +372,29 @@ function processTextParamChange(){
     else{
         clearSearchTermsArrKey('typestatus');
     }
+    if(hasaudio){
+        setSearchTermsArrKeyValue('hasaudio',true);
+    }
+    else{
+        clearSearchTermsArrKey('hasaudio');
+    }
     if(hasimages){
         setSearchTermsArrKeyValue('hasimages',true);
     }
     else{
         clearSearchTermsArrKey('hasimages');
+    }
+    if(hasvideo){
+        setSearchTermsArrKeyValue('hasvideo',true);
+    }
+    else{
+        clearSearchTermsArrKey('hasvideo');
+    }
+    if(hasmedia){
+        setSearchTermsArrKeyValue('hasmedia',true);
+    }
+    else{
+        clearSearchTermsArrKey('hasmedia');
     }
     if(hasgenetic){
         setSearchTermsArrKeyValue('hasgenetic',true);
