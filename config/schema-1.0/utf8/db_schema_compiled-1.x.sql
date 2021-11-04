@@ -3219,7 +3219,8 @@ ALTER TABLE `media`
     ADD COLUMN `rights` varchar(255) NULL AFTER `usageterms`,
     ADD COLUMN `bibliographiccitation` varchar(255) NULL AFTER `rights`,
     ADD COLUMN `publisher` varchar(255) NULL AFTER `bibliographiccitation`,
-    ADD COLUMN `contributor` varchar(255) NULL AFTER `publisher`;
+    ADD COLUMN `contributor` varchar(255) NULL AFTER `publisher`,
+    ADD INDEX `INDEX_format`(`format`);
 
 ALTER TABLE `media`
     ADD CONSTRAINT `FK_media_uid`  FOREIGN KEY (`creatoruid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL ON UPDATE CASCADE;

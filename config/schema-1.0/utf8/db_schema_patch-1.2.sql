@@ -66,8 +66,8 @@ CREATE TABLE `igsnverification`
 
 ALTER TABLE `images`
     ADD INDEX `Index_images_datelastmod` (`InitialTimeStamp` ASC),
-  MODIFY COLUMN `caption` varchar(750) NULL DEFAULT NULL AFTER `format`,
-  MODIFY COLUMN `url` varchar(255) NULL DEFAULT NULL AFTER `tid`;
+    MODIFY COLUMN `caption` varchar(750) NULL DEFAULT NULL AFTER `format`,
+    MODIFY COLUMN `url` varchar(255) NULL DEFAULT NULL AFTER `tid`;
 
 ALTER TABLE `institutions`
     CHANGE COLUMN `IntialTimeStamp` `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `modifiedTimeStamp`;
@@ -103,7 +103,8 @@ ALTER TABLE `media`
     ADD COLUMN `rights` varchar(255) NULL AFTER `usageterms`,
     ADD COLUMN `bibliographiccitation` varchar(255) NULL AFTER `rights`,
     ADD COLUMN `publisher` varchar(255) NULL AFTER `bibliographiccitation`,
-    ADD COLUMN `contributor` varchar(255) NULL AFTER `publisher`;
+    ADD COLUMN `contributor` varchar(255) NULL AFTER `publisher`,
+    ADD INDEX `INDEX_format`(`format`);
 
 ALTER TABLE `media`
     ADD CONSTRAINT `FK_media_uid`  FOREIGN KEY (`creatoruid`)  REFERENCES `users` (`uid`)  ON DELETE SET NULL ON UPDATE CASCADE;

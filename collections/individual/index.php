@@ -150,7 +150,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210817" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20211104" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -850,17 +850,17 @@ if($fullWindow){
                                                     }
                                                     if($imgArr['sourceurl']){
                                                         $urlDisplay = $imgArr['sourceurl'];
-                                                        if(strlen($urlDisplay) > 60) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -60);
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
                                                         }
-                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.wordwrap($urlDisplay, 50, '<br />\n', true).'</a></div>';
+                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
                                                     }
                                                     if($imgArr['referenceUrl']){
                                                         $urlDisplay = $imgArr['referenceUrl'];
-                                                        if(strlen($urlDisplay) > 60) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -60);
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
                                                         }
-                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.wordwrap($urlDisplay, 50, '<br />\n', true).'</a></div>';
+                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.$urlDisplay.'</a></div>';
                                                     }
                                                     if($imgArr['copyright']){
                                                         echo '<div><b>Copyright:</b> '.wordwrap($imgArr['copyright'], 50, '<br />\n', true).'</div>';
@@ -938,10 +938,10 @@ if($fullWindow){
                                                     }
                                                     if($medArr['furtherinformationurl']){
                                                         $urlDisplay = $medArr['furtherinformationurl'];
-                                                        if(strlen($urlDisplay) > 60) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -60);
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
                                                         }
-                                                        echo '<div><b>Further Information URL:</b> <a href="'.$medArr['furtherinformationurl'].'" target="_blank">'.wordwrap($urlDisplay, 50, '<br />\n', true).'</a></div>';
+                                                        echo '<div><b>Further Information URL:</b> <a href="'.$medArr['furtherinformationurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
                                                     }
                                                     if($medArr['owner']){
                                                         echo '<div><b>Owner:</b> '.wordwrap($medArr['owner'], 50, '<br />\n', true).'</div>';
