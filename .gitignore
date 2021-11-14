@@ -6,8 +6,6 @@
 .buildpath
 .idea
 
-/collections/editor/includes/config/occurVarDefault.php
-/collections/editor/includes/config/occurVarGenObsDefault.php
 /config/dbconnection.php
 /config/symbini.php
 /css/main.css
