@@ -21,8 +21,7 @@ class SpecifyManager {
     {
         $specifyCnt = 0;
         $sql = 'SELECT COUNT(DISTINCT CollectionObjectID) as cnt '.
-            'FROM collectionobject '.
-            'WHERE AltCatalogNumber LIKE "%MAD" OR (AltCatalogNumber LIKE "v%" AND AltCatalogNumber LIKE "%WIS") ';
+            'FROM collectionobject ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $specifyCnt = $r->cnt;
@@ -48,7 +47,6 @@ class SpecifyManager {
 		$sql = 'SELECT co.CollectionObjectID, co.GUID, co.AltCatalogNumber, co.FieldNumber, co.CollectingEventID, '.
             'CONCAT_WS(" ",co.Remarks,coa.Remarks) AS occurrenceRemarks '.
 			'FROM collectionobject AS co LEFT JOIN collectionobjectattribute AS coa ON co.CollectionObjectAttributeID = coa.CollectionObjectAttributeID '.
-            'WHERE co.AltCatalogNumber LIKE "%MAD" OR (co.AltCatalogNumber LIKE "v%" AND co.AltCatalogNumber LIKE "%WIS") '.
             'LIMIT ' . $limitBottom . ',' . $limit;
 		$rs = $this->conn->query($sql);
 		//echo $sql;
