@@ -220,7 +220,7 @@ class TaxonomyHarvester extends Manager{
                     }
                     else{
                         $parentArr = $this->getParentArr($taxonArr);
-                        if($parentArr && $parentArr['sciname'] !== $baseArr['name']){
+                        if($tidAccepted && $parentArr && $parentArr['sciname'] !== $baseArr['name']){
                             $parentId = $this->addColTaxon($parentArr['sciname'],true);
                             if(!$parentId){
                                 $taxonArr['family'] = $this->getColParent($baseArr,'Family');
