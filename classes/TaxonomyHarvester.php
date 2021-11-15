@@ -166,7 +166,7 @@ class TaxonomyHarvester extends Manager{
         $tidAccepted = 0;
         if($baseArr){
             $tidAccepted = 0;
-            if($baseArr['name_status'] === 'synonym' && isset($baseArr['accepted_name'])){
+            if($baseArr['name_status'] === 'synonym' && isset($baseArr['accepted_name']) && $baseArr['accepted_name']['name'] !== $baseArr['name']){
                 $tidAccepted = $this->getTid($this->getColNode($baseArr['accepted_name']));
                 if(!$tidAccepted){
                     $tidAccepted = $this->addColTaxon($baseArr['accepted_name']['name']);
