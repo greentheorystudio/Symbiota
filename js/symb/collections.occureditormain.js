@@ -1122,11 +1122,22 @@ function verifyImgAddForm(f){
     if(f.elements["imgfile"].value.replace(/\s/g, "") === ""){
 		const imgUrl = f.elements["imgurl"].value.replaceAll(/\s/g, "");
 		if(imgUrl === ""){
-        	alert("Select an image file or enter a URL to an existing image");
+        	alert("Select an image file or enter the URL to an existing image");
 			return false;
         }
     }
     return true;
+}
+
+function verifyMediaAddForm(f){
+	if(f.elements["medfile"].value.replace(/\s/g, "") === ""){
+		const medUrl = f.elements["imgurl"].value.replaceAll(/\s/g, "");
+		if(medUrl === ""){
+			alert("Select a media file or enter the URL to an existing media file");
+			return false;
+		}
+	}
+	return true;
 }
 
 function verifyImgEditForm(f){
@@ -1137,9 +1148,20 @@ function verifyImgEditForm(f){
 	return true;
 }
 
+function verifyMedEditForm(f){
+	if(f.accessuri.value === ""){
+		alert("URL field must have a value");
+		return false;
+	}
+	return true;
+}
+
 function verifyImgDelForm(){
 	return confirm('Are you sure you want to delete this image? Note that the physical image will be deleted from the server if checkbox is selected.');
+}
 
+function verifyMedDelForm(){
+	return confirm('Are you sure you want to delete this media? Note that the physical media file will be deleted from the server if checkbox is selected.');
 }
 
 function verifyImgRemapForm(f){
@@ -1151,7 +1173,7 @@ function verifyImgRemapForm(f){
 }
 
 function dwcDoc(dcTag){
-	let dwcWindow = open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
+	let dwcWindow = open("https://symbiota.org/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
 	if(dwcWindow.opener == null) {
 		dwcWindow.opener = self;
 	}

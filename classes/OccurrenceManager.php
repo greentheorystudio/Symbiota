@@ -522,9 +522,21 @@ class OccurrenceManager{
             $sqlWhere .= 'AND (o.typestatus IS NOT NULL) ';
             $this->localSearchArr[] = 'is type';
         }
+        if(array_key_exists('hasaudio',$this->searchTermsArr) && $this->searchTermsArr['hasaudio']){
+            $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media WHERE format LIKE "audio/%")) ';
+            $this->localSearchArr[] = 'has audio';
+        }
         if(array_key_exists('hasimages',$this->searchTermsArr) && $this->searchTermsArr['hasimages']){
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images)) ';
             $this->localSearchArr[] = 'has images';
+        }
+        if(array_key_exists('hasvideo',$this->searchTermsArr) && $this->searchTermsArr['hasvideo']){
+            $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM media WHERE format LIKE "video/%")) ';
+            $this->localSearchArr[] = 'has video';
+        }
+        if(array_key_exists('hasmedia',$this->searchTermsArr) && $this->searchTermsArr['hasmedia']){
+            $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM images) OR o.occid IN(SELECT occid FROM media)) ';
+            $this->localSearchArr[] = 'has images, audio, or video';
         }
         if(array_key_exists('hasgenetic',$this->searchTermsArr) && $this->searchTermsArr['hasgenetic']){
             $sqlWhere .= 'AND (o.occid IN(SELECT occid FROM omoccurgenetic)) ';
@@ -1227,7 +1239,10 @@ class OccurrenceManager{
             array_key_exists('catnum',$stArr) ||
             array_key_exists('othercatnum',$stArr) ||
             array_key_exists('typestatus',$stArr) ||
+            array_key_exists('hasaudio',$stArr) ||
             array_key_exists('hasimages',$stArr) ||
+            array_key_exists('hasvideo',$stArr) ||
+            array_key_exists('hasmedia',$stArr) ||
             array_key_exists('hasgenetic',$stArr) ||
             array_key_exists('upperlat',$stArr) ||
             array_key_exists('pointlat',$stArr) ||

@@ -150,7 +150,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20210817" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20211104" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -625,7 +625,7 @@ if($fullWindow){
                             </div>
                             <?php
                         }
-                        if($occArr['minimumelevationinmeters'] || $occArr['verbatimelevation']){
+                        if($occArr['minimumelevationinmeters']){
                             ?>
                             <div style="margin-left:10px;">
                                 <b>Elevation:</b>
@@ -637,20 +637,18 @@ if($fullWindow){
                                 ?>
                                 meters
                                 <?php
-                                if(!$occArr['verbatimelevation']){
-                                    echo '('.round($occArr['minimumelevationinmeters']*3.28).($occArr['maximumelevationinmeters']?'-'.round($occArr['maximumelevationinmeters']*3.28):'').'ft)';
-                                }
+                                echo (!$occArr['verbatimelevation'])?'('.round($occArr['minimumelevationinmeters']*3.28).($occArr['maximumelevationinmeters']?'-'.round($occArr['maximumelevationinmeters']*3.28):'').'ft)':'';
                                 ?>
                             </div>
                             <?php
-                            if($occArr['verbatimelevation']){
-                                ?>
-                                <div>
-                                    <b>Verbatim Elevation: </b>
-                                    <?php echo $occArr['verbatimelevation']; ?>
-                                </div>
-                                <?php
-                            }
+                        }
+                        if($occArr['verbatimelevation']){
+                            ?>
+                            <div>
+                                <b>Verbatim Elevation: </b>
+                                <?php echo $occArr['verbatimelevation']; ?>
+                            </div>
+                            <?php
                         }
                         if($occArr['habitat']){
                             ?>
@@ -795,32 +793,184 @@ if($fullWindow){
                     ?>
                     <div style="clear:both;padding:10px;">
                         <?php
-                        if($displayLocality && array_key_exists('imgs',$occArr)){
-                            $iArr = $occArr['imgs'];
-                            ?>
-                            <fieldset style="padding:10px;">
-                                <legend><b>Specimen Images</b></legend>
-                                <?php
-                                foreach($iArr as $imgId => $imgArr){
-                                    ?>
-                                    <div style="max-width:200px;float:left;text-align:center;padding:5px;">
-                                        <a href='<?php echo $imgArr['url']; ?>' target="_blank">
-                                            <img src="<?php echo ($imgArr['tnurl']?:$imgArr['url']); ?>" title="<?php echo $imgArr['caption']; ?>" style="border:1px solid black;<?php echo (!$imgArr['tnurl']?'width:200px;':'');?>" />
-                                        </a>
+                        if($displayLocality){
+                            if(array_key_exists('imgs',$occArr)){
+                                $iArr = $occArr['imgs'];
+                                ?>
+                                <fieldset style="padding:10px;width:80%;margin-left:auto;margin-right:auto;">
+                                    <legend><b>Images</b></legend>
+                                    <div style="display:flex;flex-direction:column;padding:5px;">
                                         <?php
-                                        if($imgArr['url'] !== $imgArr['lgurl']) {
-                                            echo '<div><a href="' . $imgArr['url'] . '" target="_blank">Open Medium Image</a></div>';
-                                        }
-                                        if($imgArr['lgurl']) {
-                                            echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">Open Large Image</a></div>';
+                                        foreach($iArr as $imgId => $imgArr){
+                                            ?>
+                                            <div style="display:flex;justify-content:space-evenly;padding:5px;">
+                                                <div style="max-width:250px;text-align:center;">
+                                                    <a href='<?php echo $imgArr['url']; ?>' target="_blank">
+                                                        <img src="<?php echo ($imgArr['tnurl']?:$imgArr['url']); ?>" title="<?php echo $imgArr['caption']; ?>" style="border:1px solid black;<?php echo (!$imgArr['tnurl']?'width:250px;':'');?>" />
+                                                    </a>
+                                                    <?php
+                                                    if($imgArr['url'] !== $imgArr['lgurl']) {
+                                                        echo '<div><a href="' . $imgArr['url'] . '" target="_blank">Open Medium Image</a></div>';
+                                                    }
+                                                    if($imgArr['lgurl']) {
+                                                        echo '<div><a href="' . $imgArr['lgurl'] . '" target="_blank">Open Large Image</a></div>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                                <div style="margin-left:25px;">
+                                                    <?php
+                                                    $photographer = '';
+                                                    if($imgArr['photographer']){
+                                                        $photographer = $imgArr['photographer'];
+                                                    }
+                                                    elseif($imgArr['photographeruid']){
+                                                        $pArr = $indManager->getPhotographerArr();
+                                                        $photographer = $pArr[$imgArr['photographeruid']];
+                                                    }
+                                                    if($photographer){
+                                                        echo '<div><b>Photographer:</b> '.wordwrap($photographer, 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['caption']){
+                                                        echo '<div><b>Caption:</b> '.wordwrap($imgArr['caption'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['locality']){
+                                                        echo '<div><b>Locality:</b> '.wordwrap($imgArr['locality'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['notes']){
+                                                        echo '<div><b>Notes:</b> '.wordwrap($imgArr['notes'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['anatomy']){
+                                                        echo '<div><b>Anatomy:</b> '.wordwrap($imgArr['anatomy'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['dynamicProperties']){
+                                                        echo '<div><b>Dynamic Properties:</b> '.wordwrap($imgArr['dynamicProperties'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['owner']){
+                                                        echo '<div><b>Owner:</b> '.wordwrap($imgArr['owner'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['sourceurl']){
+                                                        $urlDisplay = $imgArr['sourceurl'];
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
+                                                        }
+                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
+                                                    }
+                                                    if($imgArr['referenceUrl']){
+                                                        $urlDisplay = $imgArr['referenceUrl'];
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
+                                                        }
+                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.$urlDisplay.'</a></div>';
+                                                    }
+                                                    if($imgArr['copyright']){
+                                                        echo '<div><b>Copyright:</b> '.wordwrap($imgArr['copyright'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['rights']){
+                                                        echo '<div><b>Rights:</b> '.wordwrap($imgArr['rights'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($imgArr['accessrights']){
+                                                        echo '<div><b>Access Rights:</b> '.wordwrap($imgArr['accessrights'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <?php
                                         }
                                         ?>
                                     </div>
-                                    <?php
-                                }
+                                </fieldset>
+                                <?php
+                            }
+                            if(array_key_exists('media',$occArr)){
+                                $mArr = $occArr['media'];
                                 ?>
-                            </fieldset>
-                            <?php
+                                <fieldset style="padding:10px;width:80%;margin-left:auto;margin-right:auto;margin-top:15px;">
+                                    <legend><b>Media</b></legend>
+                                    <div style="display:flex;flex-direction:column;padding:5px;">
+                                        <?php
+                                        foreach($mArr as $medId => $medArr){
+                                            ?>
+                                            <div style="display:flex;justify-content:space-evenly;padding:5px;">
+                                                <div style="max-width:250px;text-align:center;">
+                                                    <?php
+                                                    $medUrl = $medArr['accessuri'];
+                                                    $medFormat = $medArr['format'];
+                                                    if($GLOBALS['IMAGE_DOMAIN'] && strncmp($medUrl, '/', 1) === 0) {
+                                                        $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
+                                                    }
+
+                                                    if(strncmp($medFormat, 'video/', 6) === 0){
+                                                        echo '<video width="250" controls>';
+                                                        echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
+                                                        echo '</video>';
+                                                    }
+                                                    elseif(strncmp($medFormat, 'audio/', 6) === 0){
+                                                        echo '<audio style="width:250px;" controls>';
+                                                        echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
+                                                        echo '</audio>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                                <div style="margin-left:25px;">
+                                                    <?php
+                                                    $creator = '';
+                                                    if($medArr['creator']){
+                                                        $creator = $medArr['creator'];
+                                                    }
+                                                    elseif($medArr['creatoruid']){
+                                                        $pArr = $indManager->getPhotographerArr();
+                                                        $creator = $pArr[$medArr['creatoruid']];
+                                                    }
+                                                    if($creator){
+                                                        echo '<div><b>Creator:</b> '.wordwrap($creator, 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['title']){
+                                                        echo '<div><b>Title:</b> '.wordwrap($medArr['title'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['description']){
+                                                        echo '<div><b>Description:</b> '.wordwrap($medArr['description'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['locationcreated']){
+                                                        echo '<div><b>Locality:</b> '.wordwrap($medArr['locationcreated'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['language']){
+                                                        echo '<div><b>Language:</b> '.wordwrap($medArr['language'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['furtherinformationurl']){
+                                                        $urlDisplay = $medArr['furtherinformationurl'];
+                                                        if(strlen($urlDisplay) > 57) {
+                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
+                                                        }
+                                                        echo '<div><b>Further Information URL:</b> <a href="'.$medArr['furtherinformationurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
+                                                    }
+                                                    if($medArr['owner']){
+                                                        echo '<div><b>Owner:</b> '.wordwrap($medArr['owner'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['publisher']){
+                                                        echo '<div><b>Publisher:</b> '.wordwrap($medArr['publisher'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['contributor']){
+                                                        echo '<div><b>Contributor:</b> '.wordwrap($medArr['contributor'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['usageterms']){
+                                                        echo '<div><b>Usage Terms:</b> '.wordwrap($medArr['usageterms'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['rights']){
+                                                        echo '<div><b>Rights:</b> '.wordwrap($medArr['rights'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    if($medArr['bibliographiccitation']){
+                                                        echo '<div><b>Bibliographic Citation:</b> '.wordwrap($medArr['bibliographiccitation'], 50, '<br />\n', true).'</div>';
+                                                    }
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        ?>
+                                    </div>
+                                </fieldset>
+                                <?php
+                            }
                         }
                         ?>
                     </div>
