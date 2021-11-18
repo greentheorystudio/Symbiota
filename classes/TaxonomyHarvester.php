@@ -232,11 +232,12 @@ class TaxonomyHarvester extends Manager{
                             }
                         }
                     }
-                    if($parentName){
+                    if($parentName && $parentId){
                         $taxonArr['parent']['sciname'] = $parentName;
-                    }
-                    if($parentId){
                         $taxonArr['parent']['tid'] = $parentId;
+                    }
+                    else{
+                        $taxonArr = array();
                     }
                 }
             }
@@ -727,9 +728,10 @@ class TaxonomyHarvester extends Manager{
                             if(!$this->conn->query($sqlHier2)){
                                 echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 2).</li>';
                             }
-                            $sqlKing = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-                                'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-                                'SET t.kingdomname = t2.sciname '.
+                            $sqlKing = 'UPDATE taxa AS t INNER JOIN taxaenumtree AS e ON t.tid = e.tid '.
+                                'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+                                'LEFT JOIN taxonkingdoms AS k ON t2.sciname = k.kingdom_name '.
+                                'SET t.kingdomname = k.kingdom_name, t.kingdomId = k.kingdom_id '.
                                 'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t.tid = '.$newTid.') AND (t2.rankid = 10)';
                             if(!$this->conn->query($sqlKing)){
                                 echo '<li style="margin-left:15px;">ERROR updating kingdom string.</li>';
