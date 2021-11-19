@@ -1180,7 +1180,7 @@ class SpecUploadBase extends SpecUpload{
         }
     }
 
-    protected function loadImageRecord($recMap): ?bool
+    protected function loadImageRecord($recMap)
     {
         $testUrl = '';
         if($recMap){
