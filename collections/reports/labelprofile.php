@@ -69,8 +69,6 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
         .fieldset-block{ width:800px }
         .field-block{ margin:3px 0px }
         .labelFormat{ font-weight: bold; }
-        .field-value{  }
-        .field-inline{  }
     </style>
     <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
