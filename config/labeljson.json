@@ -33,12 +33,20 @@
                             "field": "identificationqualifier"
                         },
                         {
+                            "fieldSuffix": " ",
+                            "fieldSuffixFontSize": "12",
                             "fieldBold": true,
                             "fieldItalic": true,
+                            "fieldFontSize": "12",
+                            "field": "genus"
+                        },
+                        {
                             "fieldSuffix": " ",
-                            "fieldSuffixFontSize": 12,
-                            "fieldFontSize": 12,
-                            "field": "sciname"
+                            "fieldSuffixFontSize": "12",
+                            "fieldBold": true,
+                            "fieldItalic": true,
+                            "fieldFontSize": "12",
+                            "field": "specificepithet"
                         },
                         {
                             "fieldSuffix": " ",
