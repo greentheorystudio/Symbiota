@@ -190,7 +190,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$cnt = 0;
 			foreach($items as $i ){
 				$id = $i->getAttribute('collid');
-				if(!$collid || $collid === $id){
+                if(!$collid || $collid === (int)$id){
 					$titles = $i->getElementsByTagName('title');
 					$retArr[$cnt]['title'] = $titles->item(0)->nodeValue;
 					$descriptions = $i->getElementsByTagName('description');
