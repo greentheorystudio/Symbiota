@@ -165,7 +165,14 @@ if($formatArr){
                         }
                         else{
                             foreach($fieldsArr as $f => $fArr){
+                                $value = '';
                                 $field = $fArr['field'];
+                                if($field === 'genus' && !isset($occArr[$field])){
+                                    $value = $occArr['sciname'];
+                                }
+                                elseif(isset($occArr[$field])){
+                                    $value = $occArr[$field];
+                                }
                                 if(strncmp($field, 'barcode-', 8) === 0){
                                     $idArr = explode('-', $field);
                                     if($idArr){
@@ -186,7 +193,7 @@ if($formatArr){
                                         $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
                                     }
                                 }
-                                elseif(isset($occArr[$field])){
+                                elseif($value){
                                     if(isset($fArr['fieldPrefix'])){
                                         $fPrefixStyleArr = array();
                                         if(isset($fArr['fieldPrefixBold'])){
@@ -220,7 +227,7 @@ if($formatArr){
                                     }
                                     $fStyleArr['name'] = $fArr['fieldFont'] ?? $defaultFont;
                                     $fStyleArr['size'] = $fArr['fieldFontSize'] ?? $defaultFontSize;
-                                    $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
+                                    $textrun->addText(htmlspecialchars($value),$fStyleArr);
                                     if(isset($fArr['fieldSuffix'])){
                                         $fSuffixStyleArr = array();
                                         if(isset($fArr['fieldSuffixBold'])){

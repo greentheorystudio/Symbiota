@@ -62,6 +62,9 @@ if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLO
 if(!isset($GLOBALS['EML_PROJECT_ADDITIONS'])) {
     $GLOBALS['EML_PROJECT_ADDITIONS'] = array();
 }
+if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE'])) {
+    $GLOBALS['MAX_UPLOAD_FILESIZE'] = 20000000;
+}
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
 $GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
 $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);
