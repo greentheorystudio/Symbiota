@@ -58,7 +58,7 @@ if($GLOBALS['SYMB_UID']){
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211118"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211227"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
     <script type="text/javascript">
