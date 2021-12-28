@@ -19,7 +19,7 @@ $smManager = new SiteMapManager();
 			return false;
 		}
 	</script>
-	<script type="text/javascript" src="js/symb/shared.js?ver=20210621"></script>
+	<script type="text/javascript" src="js/symb/shared.js?ver=20211227"></script>
 </head>
 <body>
 	<?php
