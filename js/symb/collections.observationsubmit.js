@@ -248,11 +248,7 @@ function parseDate(dateStr){
 			d = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 20) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 		} else if (validformat3.test(dateStr)) {
 			dateTokens = dateStr.split(" ");
@@ -260,11 +256,7 @@ function parseDate(dateStr){
 			mText = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 15) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();

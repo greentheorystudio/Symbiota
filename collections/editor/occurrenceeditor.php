@@ -554,7 +554,7 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211118"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211227"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
