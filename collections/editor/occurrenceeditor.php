@@ -1282,7 +1282,7 @@ else{
                                                     <input type="text" name="preparations" tabindex="97" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
                                                 </div>
                                                 <div id="reproductiveConditionDiv">
-                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
+                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Reproductive Condition'); ?>
                                                     <a href="#" onclick="return dwcDoc('reproductiveCondition')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a><br/>
                                                     <?php
                                                     if(isset($REPRODUCTIVE_CONDITION_TERMS)){
