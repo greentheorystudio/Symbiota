@@ -71,7 +71,7 @@ if($isEditor){
     <link rel="stylesheet" href="../../css/jquery-ui.css" type="text/css" />
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
     <script type="text/javascript">
         function validateForm(){
             const dbElements = document.getElementsByName("occid[]");

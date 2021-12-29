@@ -163,15 +163,27 @@ if($formatArr){
                         }
                         else{
                             $blockStyleStr .= 'display:flex;flex-wrap:wrap;';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'justify-content:flex-start;text-align:left;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'justify-content:center;text-align:center;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'justify-content:flex-end;text-align:right;' : '';
+                            if(isset($labelFieldBlock['blockTextAlign'])){
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'justify-content:flex-start;text-align:left;' : '';
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'justify-content:center;text-align:center;' : '';
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'justify-content:flex-end;text-align:right;' : '';
+                            }
+                            else{
+                                $blockStyleStr .= 'justify-content:flex-start;text-align:left;';
+                            }
                             $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockLeftMargin']) ? 'margin-left:'.$labelFieldBlock['blockLeftMargin'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockRightMargin']) ? 'margin-right:'.$labelFieldBlock['blockRightMargin'].'px;' : '';
                             echo '<div style=\''.$blockStyleStr.'\'>';
                             foreach($fieldsArr as $f => $fArr){
+                                $value = '';
                                 $field = $fArr['field'];
+                                if($field === 'genus' && !isset($occArr[$field])){
+                                    $value = $occArr['sciname'];
+                                }
+                                elseif(isset($occArr[$field])){
+                                    $value = $occArr[$field];
+                                }
                                 if(strncmp($field, 'barcode-', 8) === 0){
                                     $idArr = explode('-', $field);
                                     if($idArr){
@@ -194,7 +206,7 @@ if($formatArr){
                                         echo "<img src='data:image/png;base64,".$base64Str."' />";
                                     }
                                 }
-                                elseif(isset($occArr[$field])){
+                                elseif($value){
                                     if(isset($fArr['fieldPrefix'])){
                                         $prefixStyleStr = '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
@@ -212,7 +224,7 @@ if($formatArr){
                                     $styleStr .= isset($fArr['fieldUppercase']) ? 'text-transform:uppercase;' : '';
                                     $styleStr .= 'font-family:'.(isset($fArr['fieldFont']) ? $cssFontFamilies[$fArr['fieldFont']] : $defaultFont).';';
                                     $styleStr .= 'font-size:'.($fArr['fieldFontSize'] ?? $defaultFontSize).';';
-                                    echo '<span style=\''.$styleStr.'\'>'.$occArr[$field].'</span>';
+                                    echo '<span style=\''.$styleStr.'\'>'.$value.'</span>';
                                     if(isset($fArr['fieldSuffix'])){
                                         $suffixStyleStr = '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
