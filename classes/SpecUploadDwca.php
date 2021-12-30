@@ -69,7 +69,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         ),
                         'http' => array (
                             'method' => 'POST',
-                            'timeout' => 1200,
+                            'timeout' => 6000,
                             'header'=> "Content-type: application/x-www-form-urlencoded\r\n"
                                 . 'Content-Length: ' . strlen($data) . "\r\n",
                             'content' => $data
