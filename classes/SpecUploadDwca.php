@@ -38,7 +38,16 @@ class SpecUploadDwca extends SpecUploadBase{
                 }
             }
             if($this->uploadType === $this->SYMBIOTA){
-                $pathParts = explode('?searchvar=', $this->path);
+                $searchLabel = '';
+                $pathParts = array();
+                if(strpos($this->path, 'searchvar=') !== false){
+                    $searchLabel = 'searchvar';
+                    $pathParts = explode('?searchvar=', $this->path);
+                }
+                elseif(strpos($this->path, 'starr=') !== false){
+                    $searchLabel = 'starr';
+                    $pathParts = explode('?starr=', $this->path);
+                }
                 if($pathParts){
                     $data = array(
                         'schema' => 'dwc',
@@ -50,7 +59,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         'zip' => '1',
                         'publicsearch' => '1',
                         'sourcepage' => 'specimen',
-                        'searchvar' => $pathParts[1]
+                        $searchLabel => $pathParts[1]
                     );
                     $data = http_build_query($data);
                     $context_options = array (
