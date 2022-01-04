@@ -221,7 +221,7 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
 								<li>
 									<a href="collmetadata.php?collid=<?php echo $collid; ?>" >
-                                        Edit Metadata and Contact Information
+                                        Edit Metadata
 									</a>
 								</li>
 								<li>
@@ -267,10 +267,15 @@ if($GLOBALS['SYMB_UID']){
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
+                                        <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
+                                            Symbiota Portal Public Download
+                                        </a>
+                                    </li>
+                                    <li class="importItem" style="margin-left:10px;display:none;">
+                                        <a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
                                             Notes from Nature Import
-										</a>
-									</li>
+                                        </a>
+                                    </li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
                                             Saved Import Profiles
