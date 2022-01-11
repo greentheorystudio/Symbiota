@@ -794,7 +794,7 @@ function verifyAssocVouchers(occidIn){
 		data: { occid: occidIn }
 	}).done(function( vList ) {
 		document.getElementById("delvervouspan").style.display = "none";
-		if(vList !== ''){
+		if(!vList.hasOwnProperty('length')){
 			document.getElementById("delvoulistdiv").style.display = "block";
 			let strOut = "";
 			for(const key in vList){
