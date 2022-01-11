@@ -36,7 +36,7 @@ $statusStr = '';
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title>Specimen Processor Control Panel</title>
+		<title>Occurrence Processor Control Panel</title>
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	</head>

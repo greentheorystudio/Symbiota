@@ -80,8 +80,8 @@ $procManager->setProjVariables('OCR Harvest');
 	<fieldset style="padding:20px;">
 		<legend><b>Specimen Image Statistics</b></legend>
 		
-		<div><b>Total specimens with images:</b> <?php echo $cntTotal; ?></div> 
-		<div><b>&quot;<?php echo $procStatus; ?>&quot; specimens with images:</b> <?php echo $cntUnproc; ?></div> 
+		<div><b>Total records with images:</b> <?php echo $cntTotal; ?></div>
+		<div><b>&quot;<?php echo $procStatus; ?>&quot; records with images:</b> <?php echo $cntUnproc; ?></div>
 		<div style="margin-left:15px;">with OCR: <?php echo ($cntUnproc-$cntUnprocNoOcr); ?></div>
 		<div style="margin-left:15px;">without OCR: <?php echo $cntUnprocNoOcr; ?> </div>
 		
@@ -158,7 +158,7 @@ $procManager->setProjVariables('OCR Harvest');
 			<div style="margin:15px">
 				This interface will upload OCR text files generated outside of the portal environment. 
 				For instance, ABBYY FineReader has the ability to batch OCR specimen images and output the results as separate text files (.txt) named after the source image. 
-				OCR text files are linked to specimen records by matching catalog numbers extracted from the file name and comparing OCR and iamge file names.   
+				OCR text files are linked to records by matching catalog numbers extracted from the file name and comparing OCR and iamge file names.
 			</div>
 			<div style="margin:15px">
 				<b>Requirements:</b>
@@ -167,7 +167,7 @@ $procManager->setProjVariables('OCR Harvest');
 					<li>Compress multiple OCR text files into a single zip file to be uploaded into the portal</li>
 					<li>Files must be named using the Catalog Number. The regular expression below will be used to extract catalog number from file name. Click information symbol for more information.</li>
 					<li>Since OCR text needs to be linked to source image, images must have been previously uploaded into portal</li>
-					<li>If there are more than one image linked to a specimen, the full file name will be used to determine which image to link the OCR</li>
+					<li>If there is more than one image linked to a record, the full file name will be used to determine which image to link the OCR</li>
 				</ul> 
 			</div>
 			<div style="margin:15px">

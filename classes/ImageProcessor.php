@@ -135,7 +135,7 @@ class ImageProcessor {
                                                         }
                                                     }
                                                     else{
-                                                        $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier (' .$iPlantDataUrl. ')',2);
+                                                        $this->logOrEcho('NOTICE: File skipped, unable to extract occurrence identifier (' .$iPlantDataUrl. ')',2);
                                                     }
                                                 }
                                             }

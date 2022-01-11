@@ -163,7 +163,7 @@ function verifySpecEditForm(f){
 		}
 	}
 	if(!cbChecked){
-		alert("Please select specimens to which you wish to apply the action");
+		alert("Please select records to which you wish to apply the action");
 		return false;
 	}
 
@@ -176,7 +176,7 @@ function verifySpecEditForm(f){
 		}
 	}
 	if(applyTaskValue === "delete"){
-		return confirm("Are you sure you want to remove selected specimens from this loan?");
+		return confirm("Are you sure you want to remove selected records from this loan?");
 	}
 
 	return true;

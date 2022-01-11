@@ -65,7 +65,7 @@ else{
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">
-					Listed below are specimens identified to a species not found in the checklist. Use the form to add the
+					Listed below are occurrences identified to a species not found in the checklist. Use the form to add the
 					names and link the vouchers as a batch action.
 				</div>
 				<form name="batchmissingform" method="post" action="voucheradmin.php" onsubmit="return validateBatchMissingForm();">
@@ -123,7 +123,7 @@ else{
 			if($missingArr){
 				?>
 				<div style="clear:both;margin:10px;">
-					Listed below are species name obtained from specimens matching the above search term but
+					Listed below are species name obtained from occurrences matching the above search term but
 					are not found within the taxonomic thesaurus (possibly misspelled?). To add as a voucher,
 					type the correct name from the checklist, and then click the Link Voucher button.
 					The correct name must already be added to the checklist before voucher can be linked.
@@ -172,7 +172,7 @@ else{
             ?>
             <div style="margin:20px;clear:both;">
                 <div style="clear:both;margin:10px;">
-                    Listed below are species name not found in the checklist but are represented by one or more specimens
+                    Listed below are species name not found in the checklist but are represented by one or more occurrences
                     that have a locality matching the above search term.
                 </div>
                 <?php

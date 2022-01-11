@@ -470,10 +470,10 @@ if($traitID){
 						<?php 
 						if($occid){
 							if(!$catNum) {
-                                $catNum = 'Specimen Details';
+                                $catNum = 'Occurrence Details';
                             }
 							echo '<span style="margin-left:50px;">';
-							echo '<a href="../individual/index.php?occid='.$occid.'" target="_blank" title="Specimen Details">'.$catNum.'</a>';
+							echo '<a href="../individual/index.php?occid='.$occid.'" target="_blank" title="Occurrence Details">'.$catNum.'</a>';
 							echo '</span>';
 						}
 						$imgTotal = count($imgArr);
@@ -481,7 +481,7 @@ if($traitID){
                             echo '<span id="labelcnt" style="margin-left:60px;">1</span> of ' . $imgTotal . ' images ' . ($imgTotal > 1 ? '<a href="#" onclick="nextImage()">&gt;&gt; next</a>' : '');
                         }
 						if($occid && $mode !== 2) {
-                            echo '<span style="margin-left:80px" title="Skip Specimen"><a href="#" onclick="skipSpecimen()">SKIP &gt;&gt;</a></span>';
+                            echo '<span style="margin-left:80px" title="Skip Occurrence"><a href="#" onclick="skipSpecimen()">SKIP &gt;&gt;</a></span>';
                         }
 						?>
 					</div>

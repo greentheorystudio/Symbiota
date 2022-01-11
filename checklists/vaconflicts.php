@@ -44,8 +44,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 <div id="innertext" style="background-color:white;">
 	<h2>Possible Voucher Conflicts</h2>
 	<div style="margin-bottom:10px;">
-		List of specimen vouchers where the current identifications conflict with the checklist. 
-		Voucher conflicts are typically due to recent annotations of specimens located within collection.
+		List of vouchers where the current identifications conflict with the checklist.
+		Voucher conflicts are typically due to identification changes for records.
 		Click on Checklist ID to open the editing pane for that record. 
 	</div>
 	<?php 

@@ -71,7 +71,7 @@ $duManager->readUploadParameters();
 
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Upload Profile Manager</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Upload Profile Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
@@ -170,7 +170,7 @@ include(__DIR__ . '/../../header.php');
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
     <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
-    <b>Specimen Loader</b>
+    <b>Occurrence Loader</b>
 </div>
 <div id="innertext">
     <h1>Data Upload Management</h1>

@@ -446,9 +446,9 @@ include(__DIR__ . '/../footer.php');
     <div style="margin:15px;">
         Research checklists are pre-compiled by biologists.
         This is a very controlled method for building a species list, which allows for
-        specific specimens to be linked to the species names within the checklist and thus serve as vouchers.
+        specific occurrences to be linked to the species names within the checklist and thus serve as vouchers.
         Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
-        can inspect these specimens for verification or annotate the identification when necessary.
+        can inspect these occurrences for verification or annotate the identification when necessary.
     </div>
 </div>
 </body>

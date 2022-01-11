@@ -64,7 +64,7 @@ $clManager->setCollectionVariables();
             });
         }
     </script>
-	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=20210621"></script>
+	<script type="text/javascript" src="../js/symb/checklists.voucheradmin.js?ver=20220110"></script>
 	<style type="text/css">
 		li{margin:5px;}
 	</style>
@@ -345,7 +345,7 @@ if($clid && $isEditor){
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
 												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-													<i style='width:15px;height:15px;' title="Link Voucher Specimens" class="fas fa-link"></i>
+													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>
 										<?php
@@ -396,8 +396,8 @@ if($clid && $isEditor){
 						<li>Possible species additions based on occurrence vouchers</li>
 					</ul>
 					<ul style="margin:-10px 0 0 25px;list-style-type:circle">
-						<li><a href="reports/voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo $clid; ?>">Specimens of taxa missing from checklist (CSV)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo $clid; ?>">Specimens with misspelled, illegal, and problematic scientific names (CSV)</a></li>
+						<li><a href="reports/voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo $clid; ?>">Occurrences of taxa missing from checklist (CSV)</a></li>
+						<li><a href="reports/voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo $clid; ?>">Occurrences with misspelled, illegal, and problematic scientific names (CSV)</a></li>
 					</ul>
 				</div>
 			</div>
