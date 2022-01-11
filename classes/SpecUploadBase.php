@@ -778,7 +778,7 @@ class SpecUploadBase extends SpecUpload{
                     'FROM uploadspectemp u INNER JOIN omexsiccatinumbers e ON u.exsiccatiIdentifier = e.ometid AND u.exsiccatinumber = e.exsnumber '.
                     'WHERE (u.collid IN('.$this->collId.')) AND (e.omenid IS NOT NULL) AND (u.occid IS NOT NULL)';
                 if($this->conn->query($sqlExs3)){
-                    $this->outputMsg('<li>Specimens linked to exsiccati index </li>');
+                    $this->outputMsg('<li>Occurrences linked to exsiccati index </li>');
                 }
                 else{
                     $this->outputMsg('<li>ERROR adding new exsiccati numbers</li>');

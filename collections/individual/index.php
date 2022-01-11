@@ -1048,7 +1048,7 @@ if($fullWindow){
                         For additional information on this occurrence, please contact:
                         <?php
                         $emailSubject = $GLOBALS['DEFAULT_TITLE'].' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
-                        $emailBody = 'Specimen being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occArr['occid'];
+                        $emailBody = 'Occurrence being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occArr['occid'];
                         $emailRef = 'subject='.$emailSubject.'&cc='.$GLOBALS['ADMIN_EMAIL'].'&body='.$emailBody;
                         ?>
                         <a href="mailto:<?php echo $collMetadata['email'].'?'.$emailRef; ?>">

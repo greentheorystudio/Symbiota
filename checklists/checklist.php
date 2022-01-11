@@ -760,7 +760,7 @@ if(!$printMode){
                                 ?>
                                 <span class="editspp" style="display:none;">
 										<a href="#" onclick="return openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid. '&targetclid=' .$clid. '&targettid=' .$tid;?>','editorwindow');">
-											<i style='width:13px;height:13px;' title='Link Voucher Specimens' class="fas fa-link"></i>
+											<i style='width:13px;height:13px;' title='Link Voucher Occurrences' class="fas fa-link"></i>
 										</a>
 									</span>
                                 <?php

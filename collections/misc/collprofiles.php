@@ -191,7 +191,7 @@ if($GLOBALS['SYMB_UID']){
 							</li>
 							<li>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>">
-                                    Batch Georeference Specimens
+                                    Batch Georeference Occurrences
 								</a>
 							</li>
 							<?php
@@ -243,7 +243,7 @@ if($GLOBALS['SYMB_UID']){
 									?>
 									<li>
 										<a href="#" onclick="$('li.importItem').show(); return false;" >
-                                            Import/Update Specimen Records
+                                            Import/Update Occurrence Records
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">

@@ -36,7 +36,7 @@ class ImageCleaner extends Manager{
 			$name = $r->collectionname.' ('.$r->collcode.')';
 			if(!$id){
 				$id = 0;
-				$name = 'Field images (not linked to specimens)';
+				$name = 'Field images (not linked to occurrences)';
 			}
 			$retArr[$id]['name'] = $name;
 			$retArr[$id]['cnt'] = $r->cnt;

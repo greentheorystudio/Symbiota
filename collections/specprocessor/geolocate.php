@@ -59,8 +59,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 						<fieldset>
 							<legend><b>GeoLocate Community Toolkit</b></legend>
 							<div style="margin:15px;">
-								This module extracts specimen records that have text locality details but lack decimal coordinates.
-								These specimens are packaged and delivered directly into the GeoLocate Community Tools.
+								This module extracts occurrence records that have text locality details but lack decimal coordinates.
+								These records are packaged and delivered directly into the GeoLocate Community Tools.
 							</div>
 							<table>
 								<tr>
