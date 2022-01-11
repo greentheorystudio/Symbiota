@@ -169,7 +169,7 @@ $statusStr = '';
 				}
 			}
 			?>
-			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Specimen Processor</b></a></div>
+			<div style="font-weight:bold;font-size:120%;"><a href="index.php?collid=<?php echo $collid.'&tabindex='.$tabIndex; ?>"><b>Return to Occurrence Processor</b></a></div>
 		</div>
 		<?php
 			include(__DIR__ . '/../../footer.php');

@@ -232,7 +232,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					?>
 					<form name="expgeoform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExpGeoForm(this);">
 						<fieldset>
-							<legend><b>Export Specimens Lacking Georeferencing Data</b></legend>
+							<legend><b>Export Occurrences Lacking Georeferencing Data</b></legend>
 							<div style="margin:15px;">
 								This module extracts occurrences that lack decimal coordinates or have coordinates that needs to be verified.
 								This download will result in a Darwin Core Archive containing a UTF-8 encoded CSV file containing
@@ -327,7 +327,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					?>
 					<form name="downloadform" action="../download/downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
 						<fieldset>
-							<legend><b>Download Specimen Records</b></legend>
+							<legend><b>Download Occurrence Records</b></legend>
 							<table>
 								<tr>
 									<td>

@@ -41,7 +41,7 @@ else{
 		echo $vManager->getMissingTaxaCount();
 		?>
         <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><i style='width:15px;height:15px;' title="Refresh List" class="fas fa-redo-alt"></i></a>
-        <a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode === 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Specimen Records">
+        <a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode === 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Occurrence Records">
             <i style='width:15px;height:15px;' class="fas fa-download"></i>
         </a>
 	</div>
@@ -181,7 +181,7 @@ else{
                     <div>
                         <a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sn; ?></a>
                         <a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $tid.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
-                            <i style='width:15px;height:15px;' title="Link Voucher Specimens" class="fas fa-link"></i>
+                            <i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
                         </a>
                     </div>
                     <?php

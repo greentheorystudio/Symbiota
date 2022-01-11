@@ -238,7 +238,7 @@ class ImageProcessor {
                                             }
                                         }
                                         else{
-                                            $this->logOrEcho('NOTICE: File skipped, unable to extract specimen identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
+                                            $this->logOrEcho('NOTICE: File skipped, unable to extract occurrence identifier ('.$origFileName.', pmTerm: '.$pmTerm.')',2);
                                         }
                                     }
                                     else{
@@ -515,7 +515,7 @@ class ImageProcessor {
                     'VALUES('.$this->collid.',"'.$specPk.'","unprocessed","'.date('Y-m-d H:i:s').'")';
                 if($this->conn->query($sql2)){
                     $occid = $this->conn->insert_id;
-                    $this->logOrEcho('Linked image to new "unprocessed" specimen record (#<a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>) ',2);
+                    $this->logOrEcho('Linked image to new "unprocessed" occurrence record (#<a href="../individual/index.php?occid='.$occid.'" target="_blank">'.$occid.'</a>) ',2);
                 }
                 else{
                     $this->logOrEcho('ERROR creating new occurrence record.',2);

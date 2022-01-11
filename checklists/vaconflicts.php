@@ -57,8 +57,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 				<tr>
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b>Checklist ID</b></th>
-					<th><b>Voucher Specimen</b></th>
-					<th><b>Corrected Specimen ID</b></th>
+					<th><b>Voucher Occurrence</b></th>
+					<th><b>Corrected Occurrence ID</b></th>
 					<th><b>Identified By</b></th>
 				</tr>
 				<?php

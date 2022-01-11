@@ -313,7 +313,7 @@ if($traitID){
 							<div style="margin:10px">
 								<?php
                                 if($traitID) {
-                                    echo '<b>Target Specimens:</b> ' . $attrManager->getSpecimenCount();
+                                    echo '<b>Target Occurrences:</b> ' . $attrManager->getSpecimenCount();
                                 }
                                 ?>
 							</div>
