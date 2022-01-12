@@ -219,7 +219,7 @@ if($isEditor && $formSubmit){
 													<a href="#" onclick="openOccurPopup(<?php echo $occid; ?>); return false;"><b><?php echo $oArr['id']; ?></b></a> =&gt;
 													<?php echo $oArr['recby']; ?>
 												</div>
-												<div class="editdiv-<?php echo $dupId; ?>" style="display:none;float:left;" title="Delete Specimen from Cluster">
+												<div class="editdiv-<?php echo $dupId; ?>" style="display:none;float:left;" title="Delete Occurrence from Cluster">
 													<form name="dupdelform-<?php echo $dupId.'-'.$occid; ?>" method="post" action="duplicatemanager.php" onsubmit="return confirm('Are you sure you want to remove this occurrence record from this cluster?');" style="display:inline;">
 														<input name="dupid" type="hidden" value="<?php echo $dupId; ?>" />
 														<input name="occid" type="hidden" value="<?php echo $occid; ?>" />

@@ -347,10 +347,10 @@ if($isEditor){
 				<div id="batchdet">
 					<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm();">
 						<fieldset>
-							<legend><b>Define Specimen Recordset</b></legend>
+							<legend><b>Define Occurrence Recordset</b></legend>
 							<div style="margin:3px;">
 								<div style="clear:both;padding:8px 0 0 0;">
-									* Specimen list is limited to 400 records
+									*Occurrence list is limited to 400 records
 								</div>
 								<div style="clear:both;padding:15px 0 0 20px;">
 									<div style="float:right;">
@@ -368,7 +368,7 @@ if($isEditor){
 						<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm();">
 							<div style="margin-top: 15px; margin-left: 15px;">
 								<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
-								Select/Deselect all Specimens
+								Select/Deselect all Occurrences
 							</div>
 							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<thead>
@@ -447,7 +447,7 @@ if($isEditor){
 							<legend><b>Taxon To Be Adjusted</b></legend>
 							<div style="margin:3px;">
 								<div style="clear:both;padding:8px 0 0 0;">
-									* Specimen list is limited to 400 records
+									*Occurrence list is limited to 400 records
 								</div>
 								<div style="clear:both;padding:15px 0 0 20px;">
 									<div style="float:right;">
@@ -468,7 +468,7 @@ if($isEditor){
 						<form name="nomselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm();">
 							<div style="margin-top: 15px; margin-left: 15px;">
 								<input type="checkbox" name="nomselectall" value="" onclick="selectAll(this);" checked />
-								Select/Deselect all Specimens
+								Select/Deselect all Occurrences
 							</div>
 							<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 								<thead>

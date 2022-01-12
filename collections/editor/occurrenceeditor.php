@@ -503,7 +503,7 @@ else{
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=170604" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20220110" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -554,8 +554,8 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211227"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220111"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
 </head>
@@ -840,11 +840,7 @@ else{
                                                     <?php echo (defined('DAYOFYEARLABEL')?DAYOFYEARLABEL:'Day of Year'); ?>:
                                                     <a href="#" onclick="return dwcDoc('startDayOfYear')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <input type="text" name="startdayofyear" tabindex="24" value="<?php echo array_key_exists('startdayofyear',$occArr)?$occArr['startdayofyear']:''; ?>" onchange="inputIsNumeric(this, 'Start Day of Year');fieldChanged('startdayofyear');" title="Start Day of Year" /> -
-                                                    <input type="text" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
-                                                </div>
-                                                <div id="endDateDiv">
-                                                    <?php echo (defined('ENDDATELABEL')?ENDDATELABEL:'Calculate End Day of Year'); ?>:
-                                                    <input type="text" id="endDate" value="" onchange="endDateChanged();" />
+                                                    <input type="text" id="enddayofyear" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
                                                 </div>
                                             </div>
                                             <?php

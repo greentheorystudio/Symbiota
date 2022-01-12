@@ -257,7 +257,7 @@ $specList = $loanManager->getSpecList($loanId);
 				<?php 
 				if($specList){
 					echo '<div style="font-weight:bold;margin-bottom:15px;">';
-					echo 'Loan cannot be deleted until all linked specimens are removed';
+					echo 'Loan cannot be deleted until all linked records are removed';
 					echo '</div>';
 				}
 				?>

@@ -71,7 +71,7 @@ $clid = (int)$_REQUEST['clid'];
 			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm();">
 				<fieldset>
 					<?php
-					echo '<legend><b>Download Checklist Specimen Vouchers</b></legend>';
+					echo '<legend><b>Download Checklist Occurrence Vouchers</b></legend>';
 					?>
 					<table>
 						<tr>
