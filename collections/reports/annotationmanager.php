@@ -29,7 +29,7 @@ if($isEditor){
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Annotation Label Manager</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotations Labels</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -37,8 +37,11 @@ if($isEditor){
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script>
-        function selectAll(cb){
-            const boxesChecked = cb.checked;
+        function selectAllAnno(cb){
+            let boxesChecked = true;
+            if(!cb.checked){
+                boxesChecked = false;
+            }
             const dbElements = document.getElementsByName("detid[]");
             for(let i = 0; i < dbElements.length; i++){
                 const dbElement = dbElements[i];
@@ -46,7 +49,7 @@ if($isEditor){
             }
         }
 
-        function validateSelectForm(){
+        function validateAnnoSelectForm(){
             const dbElements = document.getElementsByName("detid[]");
             for(let i = 0; i < dbElements.length; i++){
                 const dbElement = dbElements[i];
@@ -54,7 +57,7 @@ if($isEditor){
                     return true;
                 }
             }
-            alert("Please select at least one annotation record!");
+            alert("Please select at least one occurrence");
             return false;
         }
 
@@ -68,28 +71,22 @@ if($isEditor){
 
         function openPopup(urlStr){
             let wWidth = 900;
-            if(document.body.offsetWidth) {
-                wWidth = document.body.offsetWidth * 0.9;
+            if(document.getElementById('innertext').offsetWidth){
+                wWidth = document.getElementById('innertext').offsetWidth*1.05;
             }
-            if(wWidth > 1200) {
-                wWidth = 1200;
+            else if(document.body.offsetWidth){
+                wWidth = document.body.offsetWidth*0.9;
             }
-            const newWindow = window.open(urlStr,'popup','scrollbars=1,toolbar=0,resizable=1,width='+(wWidth)+',height=600,left=20,top=20');
+            const newWindow = window.open(urlStr, 'popup', 'scrollbars=1,toolbar=1,resizable=1,width=' + (wWidth) + ',height=600,left=20,top=20');
             if (newWindow.opener == null) {
                 newWindow.opener = self;
             }
             return false;
         }
 
-        function changeAnnoFormTarget(f, target){
-            if(target === 'word'){
-                f.action = 'defaultannotationsword.php';
-                f.target = '_self';
-            }
-            else{
-                f.action = 'defaultannotations.php';
-                f.target = '_blank';
-            }
+        function changeAnnoFormExport(action,target){
+            document.annoselectform.action = action;
+            document.annoselectform.target = target;
         }
     </script>
 </head>
@@ -107,7 +104,7 @@ include(__DIR__ . '/../../header.php');
         echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
     }
     ?>
-    <b>Annotation Label Printing</b>
+    <b>Print Annotations Labels</b>
 </div>
 <div id="innertext">
     <?php
@@ -125,122 +122,100 @@ include(__DIR__ . '/../../header.php');
         }
         echo '<h2>'.$datasetManager->getCollName().'</h2>';
         ?>
-        <div>
-            <?php
-            if($annoArr){
-                ?>
-                <form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateSelectForm();">
-                    <table class="styledtable" style="width:800px;">
-                        <tr>
-                            <th title="Select/Deselect all Occurrences" style="width:30px;"><input type="checkbox" onclick="selectAll(this);" /></th>
-                            <th style="width:25px;text-align:center;">#</th>
-                            <th style="width:125px;text-align:center;">Collector</th>
-                            <th style="width:300px;text-align:center;">Scientific Name</th>
-                            <th style="width:400px;text-align:center;">Determination</th>
-                        </tr>
-                        <?php
-                        $trCnt = 0;
-                        foreach($annoArr as $detId => $recArr){
-                            $trCnt++;
-                            ?>
-                            <tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
-                                <td>
-                                    <input type="checkbox" name="detid[]" value="<?php echo $detId; ?>" />
-                                </td>
-                                <td>
-                                    <input type="text" name="q-<?php echo $detId; ?>" value="1" style="width:20px;border:inset;" />
-                                </td>
-                                <td>
-                                    <a href="#" onclick="openIndPopup(<?php echo $recArr['occid']; ?>); return false;">
-                                        <?php echo $recArr['collector']; ?>
-                                    </a>
-                                    <a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-                                        <i style="height:20px;width:20px;" class="far fa-edit"></i>
-                                    </a>
-                                </td>
-                                <td>
-                                    <?php echo $recArr['sciname']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $recArr['determination']; ?>
-                                </td>
+        <div id="annotations">
+            <div>
+                <?php
+                if($annoArr){
+                    ?>
+                    <form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateAnnoSelectForm();">
+                        <div style="margin-top: 15px; margin-left: 15px;">
+                            <input name="" value="" type="checkbox" onclick="selectAllAnno(this);" />
+                            Select/Deselect all Occurrences
+                        </div>
+                        <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
+                            <tr>
+                                <th style="width:25px;text-align:center;"></th>
+                                <th style="width:25px;text-align:center;">#</th>
+                                <th style="width:125px;text-align:center;">Collector</th>
+                                <th style="width:300px;text-align:center;">Scientific Name</th>
+                                <th style="width:400px;text-align:center;">Determination</th>
                             </tr>
                             <?php
-                        }
-                        ?>
-                    </table>
-                    <fieldset style="margin-top:15px;">
-                        <legend><b>Annotation Printing</b></legend>
-                        <div>
-                            <div style="margin:4px;">
-                                <b>Header:</b>
-                                <input type="text" name="lheading" style="width:450px" />
-                            </div>
-                            <div style="margin:4px;">
-                                <b>Footer:</b>
-                                <input type="text" name="lfooter" value="<?php echo $datasetManager->getAnnoCollName(); ?>" style="width:450px" />
-                            </div>
-                        </div>
-                        <div style="float:left">
-                            <div style="margin:4px;">
-                                <input type="checkbox" name="speciesauthors" value="1" />
-                                <b>Print species authors for infraspecific taxa</b>
-                            </div>
-                            <div style="margin:4px;">
-                                <input type="checkbox" name="printcatnum" value="1" />
-                                <b>Print Catalog Numbers</b>
-                            </div>
-                            <div style="margin:4px;">
-                                <input type="checkbox" name="clearqueue" value="1" />
-                                <b>Remove selected annotations from queue</b>
-                            </div>
-                        </div>
-                        <div style="float:left;margin-left:50px">
-                            <div style="">
-                                <b>Border Width:</b>
-                                <select name="borderwidth">
-                                    <option value="0">0</option>
-                                    <option value="1" selected>1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
-                            </div>
-                            <div style="margin-top:4px;">
-                                <b>Rows per page:</b>
-                                <select name="rowcount">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3" selected>3</option>
-                                </select>
-                            </div>
-                            <div style="margin-top:4px;">
-                                <b>Spacing between labels:</b>
-                                <input type="text" name="marginsize" value="5" style="width:25px" />
-                            </div>
-                        </div>
-                        <div style="float:left;margin-left:50px">
-                            <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-                            <input type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'browser');" value="Print in Browser" />
-                            <?php
-                            if($reportsWritable){
+                            $trCnt = 0;
+                            foreach($annoArr as $detId => $recArr){
+                                $trCnt++;
                                 ?>
-                                <div style="margin-top:5px"><input type="submit" name="submitaction" onclick="changeAnnoFormTarget(this.form, 'word');" value="Export to DOCX" /></div>
+                                <tr <?php echo (($trCnt%2)?'class="alt"':''); ?>>
+                                    <td>
+                                        <input type="checkbox" name="detid[]" value="<?php echo $detId; ?>" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="q-<?php echo $detId; ?>" value="1" style="width:20px;border:inset;" />
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="openIndPopup(<?php echo $recArr['occid']; ?>); return false;">
+                                            <?php echo $recArr['collector']; ?>
+                                        </a>
+                                        <a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
+                                            <i style="height:20px;width:20px;" class="far fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php echo $recArr['sciname']; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $recArr['determination']; ?>
+                                    </td>
+                                </tr>
                                 <?php
                             }
                             ?>
-                        </div>
-                    </fieldset>
-                </form>
-                <?php
-            }
-            else{
+                        </table>
+                        <fieldset style="margin-top:15px;">
+                            <legend><b>Annotation Printing</b></legend>
+                            <div style="float:left;">
+                                <div style="margin:4px;">
+                                    <b>Header:</b>
+                                    <input type="text" name="lheading" value="<?php echo $datasetManager->getAnnoCollName(); ?>" style="width:450px" />
+                                </div>
+                                <div style="margin:4px;">
+                                    <b>Footer:</b>
+                                    <input type="text" name="lfooter" value="" style="width:450px" />
+                                </div>
+                                <div style="margin:4px;">
+                                    <input type="checkbox" name="speciesauthors" value="1" onclick="" />
+                                    <b>Print species authors for infraspecific taxa</b>
+                                </div>
+                                <div style="margin:4px;">
+                                    <input type="checkbox" name="clearqueue" value="1" onclick="" />
+                                    <b>Remove selected annotations from queue</b>
+                                </div>
+                            </div>
+                            <div style="float:right;">
+                                <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
+                                <input type="submit" name="submitaction" onclick="changeAnnoFormExport('defaultannotations.php','_blank');" value="Print in Browser" />
+                                <?php
+                                if($reportsWritable){
+                                    ?>
+                                    <br/><br/>
+                                    <input type="submit" name="submitaction" onclick="changeAnnoFormExport('defaultannotationsexport.php','_self');" value="Export to DOCX" />
+                                    <?php
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+                    </form>
+                    <?php
+                }
+                else{
+                    ?>
+                    <div style="font-weight:bold;margin:20px;font-size:150%;">
+                        There are no annotations queued to be printed.
+                    </div>
+                    <?php
+                }
                 ?>
-                <div style="font-weight:bold;margin:20px;">
-                    There are no annotations queued to be printed.
-                </div>
-                <?php
-            }
-            ?>
+            </div>
         </div>
         <?php
     }
