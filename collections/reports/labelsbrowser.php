@@ -207,9 +207,9 @@ if($formatArr){
                                     }
                                 }
                                 elseif($value){
+                                    echo '<span>';
                                     if(isset($fArr['fieldPrefix'])){
-                                        $prefixStyleStr = '';
-                                        $prefixStyleStr .= isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
+                                        $prefixStyleStr = isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixItalic']) ? 'font-style:italic;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixUnderline']) ? 'text-decoration:underline;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
@@ -217,8 +217,7 @@ if($formatArr){
                                         $prefixStyleStr .= 'font-size:'.($fArr['fieldPrefixFontSize'] ?? $defaultFontSize).';';
                                         echo '<span style=\''.$prefixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldPrefix']).'</span>';
                                     }
-                                    $styleStr = '';
-                                    $styleStr .= isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
+                                    $styleStr = isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
                                     $styleStr .= isset($fArr['fieldItalic']) ? 'font-style:italic;' : '';
                                     $styleStr .= isset($fArr['fieldUnderline']) ? 'text-decoration:underline;' : '';
                                     $styleStr .= isset($fArr['fieldUppercase']) ? 'text-transform:uppercase;' : '';
@@ -226,8 +225,7 @@ if($formatArr){
                                     $styleStr .= 'font-size:'.($fArr['fieldFontSize'] ?? $defaultFontSize).';';
                                     echo '<span style=\''.$styleStr.'\'>'.$value.'</span>';
                                     if(isset($fArr['fieldSuffix'])){
-                                        $suffixStyleStr = '';
-                                        $suffixStyleStr .= isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
+                                        $suffixStyleStr = isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixItalic']) ? 'font-style:italic;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixUnderline']) ? 'text-decoration:underline;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
@@ -235,6 +233,7 @@ if($formatArr){
                                         $suffixStyleStr .= 'font-size:'.($fArr['fieldSuffixFontSize'] ?? $defaultFontSize).';';
                                         echo '<span style=\''.$suffixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldSuffix']).'</span>';
                                     }
+                                    echo '</span>';
                                 }
                             }
                         }
