@@ -10,7 +10,6 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid = (int)$_REQUEST['collid'];
-$tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $labelManager = new OccurrenceLabel();
@@ -40,7 +39,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Labels/Annotations</title>
+	    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Labels</title>
 		<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -61,10 +60,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 				function extractLast( term ) {
 					return split( term ).pop();
 				}
-
-				$("#tabs").tabs({
-					active: <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>
-				});
 
 				$( "#taxa" )
 				.bind( "keydown", function( event ) {
@@ -104,18 +99,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 					boxesChecked = false;
 				}
                 const dbElements = document.getElementsByName("occid[]");
-                for(let i = 0; i < dbElements.length; i++){
-                    const dbElement = dbElements[i];
-                    dbElement.checked = boxesChecked;
-				}
-			}
-
-			function selectAllAnno(cb){
-                let boxesChecked = true;
-                if(!cb.checked){
-					boxesChecked = false;
-				}
-                const dbElements = document.getElementsByName("detid[]");
                 for(let i = 0; i < dbElements.length; i++){
                     const dbElement = dbElements[i];
                     dbElement.checked = boxesChecked;
@@ -164,18 +147,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                 return false;
             }
 
-			function validateAnnoSelectForm(){
-                const dbElements = document.getElementsByName("detid[]");
-                for(let i = 0; i < dbElements.length; i++){
-                    const dbElement = dbElements[i];
-                    if(dbElement.checked) {
-                        return true;
-                    }
-				}
-			   	alert("Please select at least one occurrence");
-		      	return false;
-			}
-
 			function openIndPopup(occid){
 				openPopup('../individual/index.php?occid=' + occid);
 			}
@@ -211,11 +182,6 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                 f.target = target;
                 return true;
             }
-
-			function changeAnnoFormExport(action,target){
-				document.annoselectform.action = action;
-				document.annoselectform.target = target;
-			}
         </script>
 	</head>
 	<body>
@@ -232,7 +198,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
             echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
         }
 		?>
-		<b>Print Labels/Annotations</b>
+		<b>Print Labels</b>
 	</div>
 	<div id="innertext">
 		<?php 
@@ -247,69 +213,63 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 			$isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General Observations');
 			echo '<h2>'.$labelManager->getCollName().'</h2>';
 			?>
-			<div id="tabs" style="margin:0;">
-				<ul>
-					<li><a href="#labels">Labels</a></li>
-					<li><a href="#annotations">Annotations</a></li>
-				</ul>
-
-                <div id="labels">
-                    <form name="datasetqueryform" action="labelmanager.php" method="post" onsubmit="return validateQueryForm(this)">
-                        <fieldset>
-                            <legend><b>Define Occurrence Recordset</b></legend>
-                            <div style="clear:both;width:100%;display:flex;">
-                                <div title="Scientific name as entered in database.">
-                                    Scientific Name:
-                                    <input type="text" name="taxa" id="taxa" size="60" value="<?php echo (array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:''); ?>" />
-                                </div>
+            <div id="labels">
+                <form name="datasetqueryform" action="labelmanager.php" method="post" onsubmit="return validateQueryForm(this)">
+                    <fieldset>
+                        <legend><b>Define Occurrence Recordset</b></legend>
+                        <div style="clear:both;width:100%;display:flex;">
+                            <div title="Scientific name as entered in database.">
+                                Scientific Name:
+                                <input type="text" name="taxa" id="taxa" size="60" value="<?php echo (array_key_exists('taxa',$_REQUEST)?$_REQUEST['taxa']:''); ?>" />
                             </div>
-                            <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                <div title="Full or last name of collector as entered in database.">
-                                    Collector:
-                                    <input type="text" name="recordedby" style="width:150px;" value="<?php echo (array_key_exists('recordedby',$_REQUEST)?$_REQUEST['recordedby']:''); ?>" />
-                                </div>
-                                <div style="margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-                                    Record Number(s):
-                                    <input type="text" name="recordnumber" style="width:150px;" value="<?php echo (array_key_exists('recordnumber',$_REQUEST)?$_REQUEST['recordnumber']:''); ?>" />
-                                </div>
-                                <div style="margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
-                                    Catalog Number(s):
-                                    <input type="text" name="identifier" style="width:150px;" value="<?php echo (array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:''); ?>" />
-                                </div>
+                        </div>
+                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
+                            <div title="Full or last name of collector as entered in database.">
+                                Collector:
+                                <input type="text" name="recordedby" style="width:150px;" value="<?php echo (array_key_exists('recordedby',$_REQUEST)?$_REQUEST['recordedby']:''); ?>" />
                             </div>
-                            <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                <div>
-                                    Entered by:
-                                    <input type="text" name="recordenteredby" value="<?php echo (array_key_exists('recordenteredby',$_REQUEST)?$_REQUEST['recordenteredby']:''); ?>" style="width:100px;" title="login name of data entry person" />
-                                </div>
-                                <div style="margin-left:20px;">
-                                    Date range:
-                                    <input type="text" name="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> to
-                                    <input type="text" name="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
-                                    <select name="datetarget">
-                                        <option value="dateentered">Date Entered</option>
-                                        <option value="datelastmodified" <?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'datelastmodified'?'SELECTED':''); ?>>Date Modified</option>
-                                        <option value="eventdate"<?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'eventdate'?'SELECTED':''); ?>>Date Collected</option>
-                                    </select>
-                                </div>
+                            <div style="margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
+                                Record Number(s):
+                                <input type="text" name="recordnumber" style="width:150px;" value="<?php echo (array_key_exists('recordnumber',$_REQUEST)?$_REQUEST['recordnumber']:''); ?>" />
                             </div>
-                            <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                Label Projects:
-                                <select name="labelproject" >
-                                    <option value="">All Projects</option>
-                                    <option value="">-------------------------</option>
-                                    <?php
-                                    $lProj = '';
-                                    if(array_key_exists('labelproject',$_REQUEST)) {
-                                        $lProj = $_REQUEST['labelproject'];
-                                    }
-                                    $lProjArr = $labelManager->getLabelProjects();
-                                    foreach($lProjArr as $projStr){
-                                        echo '<option '.($lProj === $projStr?'SELECTED':'').'>'.$projStr.'</option>'."\n";
-                                    }
-                                    ?>
+                            <div style="margin-left:20px;" title="Separate multiple terms by comma and ranges by ' - ' (space before and after dash required), e.g.: 3542,3602,3700 - 3750">
+                                Catalog Number(s):
+                                <input type="text" name="identifier" style="width:150px;" value="<?php echo (array_key_exists('identifier',$_REQUEST)?$_REQUEST['identifier']:''); ?>" />
+                            </div>
+                        </div>
+                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
+                            <div>
+                                Entered by:
+                                <input type="text" name="recordenteredby" value="<?php echo (array_key_exists('recordenteredby',$_REQUEST)?$_REQUEST['recordenteredby']:''); ?>" style="width:100px;" title="login name of data entry person" />
+                            </div>
+                            <div style="margin-left:20px;">
+                                Date range:
+                                <input type="text" name="date1" style="width:100px;" value="<?php echo (array_key_exists('date1',$_REQUEST)?$_REQUEST['date1']:''); ?>" onchange="validateDateFields(this.form)" /> to
+                                <input type="text" name="date2" style="width:100px;" value="<?php echo (array_key_exists('date2',$_REQUEST)?$_REQUEST['date2']:''); ?>" onchange="validateDateFields(this.form)" />
+                                <select name="datetarget">
+                                    <option value="dateentered">Date Entered</option>
+                                    <option value="datelastmodified" <?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'datelastmodified'?'SELECTED':''); ?>>Date Modified</option>
+                                    <option value="eventdate"<?php echo (isset($_POST['datetarget']) && $_POST['datetarget'] === 'eventdate'?'SELECTED':''); ?>>Date Collected</option>
                                 </select>
-                                <!--
+                            </div>
+                        </div>
+                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
+                            Label Projects:
+                            <select name="labelproject" >
+                                <option value="">All Projects</option>
+                                <option value="">-------------------------</option>
+                                <?php
+                                $lProj = '';
+                                if(array_key_exists('labelproject',$_REQUEST)) {
+                                    $lProj = $_REQUEST['labelproject'];
+                                }
+                                $lProjArr = $labelManager->getLabelProjects();
+                                foreach($lProjArr as $projStr){
+                                    echo '<option '.($lProj === $projStr?'SELECTED':'').'>'.$projStr.'</option>'."\n";
+                                }
+                                ?>
+                            </select>
+                            <!--
                                 Dataset Projects:
                                 <select name="datasetproject" >
                                     <option value=""></option>
@@ -317,7 +277,9 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                     <?php
                                     /*
                                     $datasetProj = '';
-                                    if(array_key_exists('datasetproject',$_REQUEST)) $datasetProj = $_REQUEST['datasetproject'];
+                                    if(array_key_exists('datasetproject',$_REQUEST)) {
+                                        $datasetProj = $_REQUEST['datasetproject'];
+                                    }
                                     $dProjArr = $labelManager->getDatasetProjects();
                                     foreach($dProjArr as $dsid => $dsProjStr){
                                         echo '<option id="'.$dsid.'" '.($datasetProj==$dsProjStr?'SELECTED':'').'>'.$dsProjStr.'</option>'."\n";
@@ -325,90 +287,90 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                     */
                                     ?>
                                 </select>
-                                -->
-                                <?php
-                                echo '<span style="margin-left:15px;"><input name="extendedsearch" type="checkbox" value="1" '.(array_key_exists('extendedsearch', $_POST)?'checked':'').' /></span> ';
-                                if($isGeneralObservation) {
-                                    echo 'Search outside user profile';
-                                }
-                                else {
-                                    echo 'Search within all collections';
-                                }
-                                ?>
+                            -->
+                            <?php
+                            echo '<span style="margin-left:15px;"><input name="extendedsearch" type="checkbox" value="1" '.(array_key_exists('extendedsearch', $_POST)?'checked':'').' /></span> ';
+                            if($isGeneralObservation) {
+                                echo 'Search outside user profile';
+                            }
+                            else {
+                                echo 'Search within all collections';
+                            }
+                            ?>
+                        </div>
+                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
+                            <div>
+                                <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
+                                <input type="submit" name="submitaction" value="Filter Occurrence Records" />
                             </div>
-                            <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                <div>
-                                    <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-                                    <input type="submit" name="submitaction" value="Filter Occurrence Records" />
-                                </div>
-                                <div style="margin-left:20px;">
-                                    *Occurrence return is limited to 400 records
-                                </div>
+                            <div style="margin-left:20px;">
+                                *Occurrence return is limited to 400 records
                             </div>
-                        </fieldset>
-                    </form>
-                    <div style="clear:both;">
-                        <?php
-                        if($action === 'Filter Occurrence Records'){
-                            if($occArr){
-                                ?>
-                                <form name="selectform" id="selectform" action="labelsbrowser.php" method="post" onsubmit="return validateSelectForm(this);">
-                                    <table class="styledtable" style="font-family:Arial;font-size:12px;">
-                                        <tr>
-                                            <th title="Select/Deselect all Occurrences"><input type="checkbox" onclick="selectAll(this);" /></th>
-                                            <th title="Label quantity">Qty</th>
-                                            <th>Collector</th>
-                                            <th>Scientific Name</th>
-                                            <th>Locality</th>
+                        </div>
+                    </fieldset>
+                </form>
+                <div style="clear:both;">
+                    <?php
+                    if($action === 'Filter Occurrence Records'){
+                        if($occArr){
+                            ?>
+                            <form name="selectform" id="selectform" action="labelsbrowser.php" method="post" onsubmit="return validateSelectForm(this);">
+                                <table class="styledtable" style="font-family:Arial;font-size:12px;">
+                                    <tr>
+                                        <th title="Select/Deselect all Occurrences"><input type="checkbox" onclick="selectAll(this);" /></th>
+                                        <th title="Label quantity">Qty</th>
+                                        <th>Collector</th>
+                                        <th>Scientific Name</th>
+                                        <th>Locality</th>
+                                    </tr>
+                                    <?php
+                                    $trCnt = 0;
+                                    foreach($occArr as $occId => $recArr){
+                                        $trCnt++;
+                                        ?>
+                                        <tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
+                                            <td>
+                                                <input type="checkbox" name="occid[]" value="<?php echo $occId; ?>" />
+                                            </td>
+                                            <td>
+                                                <input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr['q']; ?>" style="width:35px;border:inset;" title="Label quantity" />
+                                            </td>
+                                            <td>
+                                                <a href="#" onclick="openIndPopup(<?php echo $occId; ?>); return false;">
+                                                    <?php echo $recArr['c']; ?>
+                                                </a>
+                                                <?php
+                                                if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+                                                    if(!$isGeneralObservation || (int)$recArr['uid'] === (int)$GLOBALS['SYMB_UID']){
+                                                        ?>
+                                                        <a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
+                                                            <i style="width:15px;height:15px;" class="far fa-edit"></i>
+                                                        </a>
+                                                        <?php
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $recArr['s']; ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $recArr['l']; ?>
+                                            </td>
                                         </tr>
                                         <?php
-                                        $trCnt = 0;
-                                        foreach($occArr as $occId => $recArr){
-                                            $trCnt++;
-                                            ?>
-                                            <tr <?php echo ($trCnt%2?'class="alt"':''); ?>>
-                                                <td>
-                                                    <input type="checkbox" name="occid[]" value="<?php echo $occId; ?>" />
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="q-<?php echo $occId; ?>" value="<?php echo $recArr['q']; ?>" style="width:35px;border:inset;" title="Label quantity" />
-                                                </td>
-                                                <td>
-                                                    <a href="#" onclick="openIndPopup(<?php echo $occId; ?>); return false;">
-                                                        <?php echo $recArr['c']; ?>
-                                                    </a>
-                                                    <?php
-                                                    if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($recArr['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
-                                                        if(!$isGeneralObservation || (int)$recArr['uid'] === (int)$GLOBALS['SYMB_UID']){
-                                                            ?>
-                                                            <a href="#" onclick="openEditorPopup(<?php echo $occId; ?>); return false;">
-                                                                <i style="width:15px;height:15px;" class="far fa-edit"></i>
-                                                            </a>
-                                                            <?php
-                                                        }
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $recArr['s']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $recArr['l']; ?>
-                                                </td>
-                                            </tr>
+                                    }
+                                    ?>
+                                </table>
+                                <fieldset style="margin-top:15px;">
+                                    <legend><b>Label Printing</b></legend>
+                                    <div style="clear:both;width:100%;">
+                                        <div>
+                                            <b>Label Format:</b>
                                             <?php
-                                        }
-                                        ?>
-                                    </table>
-                                    <fieldset style="margin-top:15px;">
-                                        <legend><b>Label Printing</b></legend>
-                                        <div style="clear:both;width:100%;">
-                                            <div>
-                                                <b>Label Format:</b>
-                                                <?php
-                                                echo '<span title="Open label format manager"><a href="labelprofile.php?collid='.$collid.'"><i style="width:15px;height:15px;" class="far fa-edit"></i></a></span>';
-                                                ?>
-                                                <span style="margin-left: 15px;">
+                                            echo '<span title="Open label format manager"><a href="labelprofile.php?collid='.$collid.'"><i style="width:15px;height:15px;" class="far fa-edit"></i></a></span>';
+                                            ?>
+                                            <span style="margin-left: 15px;">
                                                     <select name="labelformatindex" id="labelformatindex">
                                                         <option value="">Select a Label Format</option>
                                                         <?php
@@ -420,138 +382,41 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                                                         ?>
                                                     </select>
                                                 </span>
-                                            </div>
                                         </div>
-                                        <div style="margin-top:3px;clear:both;width:100%;display:flex;">
-                                            <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-                                            <div>
-                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" />
-                                            </div>
+                                    </div>
+                                    <div style="margin-top:3px;clear:both;width:100%;display:flex;">
+                                        <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
+                                        <div>
+                                            <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_blank');" value="Print in Browser" />
+                                        </div>
+                                        <div style="margin-left:10px">
+                                            <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_self');" value="Export to CSV" />
+                                        </div>
+                                        <?php
+                                        if($reportsWritable){
+                                            ?>
                                             <div style="margin-left:10px">
-                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsbrowser.php','_self');" value="Export to CSV" />
+                                                <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="Export to DOCX" />
                                             </div>
                                             <?php
-                                            if($reportsWritable){
-                                                ?>
-                                                <div style="margin-left:10px">
-                                                    <input type="submit" name="submitaction" onclick="return changeFormExport(this,'labelsword.php','_self');" value="Export to DOCX" />
-                                                </div>
-                                                <?php
-                                            }
-                                            ?>
-                                        </div>
-                                    </fieldset>
-                                </form>
-                                <?php
-                            }
-                            else{
-                                ?>
-                                <div style="font-weight:bold;margin:20px;font-size:150%;">
-                                    No records matched query parameters.
-                                </div>
-                                <?php
-                            }
+                                        }
+                                        ?>
+                                    </div>
+                                </fieldset>
+                            </form>
+                            <?php
                         }
-                        ?>
-                    </div>
+                        else{
+                            ?>
+                            <div style="font-weight:bold;margin:20px;font-size:150%;">
+                                No records matched query parameters.
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
                 </div>
-
-				<div id="annotations">
-					<div>
-						<?php 
-						if($annoArr){
-							?>
-							<form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateAnnoSelectForm();">
-								<div style="margin-top: 15px; margin-left: 15px;">
-									<input name="" value="" type="checkbox" onclick="selectAllAnno(this);" />
-									Select/Deselect all Occurrences
-								</div>
-								<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
-									<tr>
-										<th style="width:25px;text-align:center;"></th>
-										<th style="width:25px;text-align:center;">#</th>
-										<th style="width:125px;text-align:center;">Collector</th>
-										<th style="width:300px;text-align:center;">Scientific Name</th>
-										<th style="width:400px;text-align:center;">Determination</th>
-									</tr>
-									<?php 
-									$trCnt = 0;
-									foreach($annoArr as $detId => $recArr){
-										$trCnt++;
-										?>
-										<tr <?php echo (($trCnt%2)?'class="alt"':''); ?>>
-											<td>
-												<input type="checkbox" name="detid[]" value="<?php echo $detId; ?>" />
-											</td>
-											<td>
-												<input type="text" name="q-<?php echo $detId; ?>" value="1" style="width:20px;border:inset;" />
-											</td>
-											<td>
-												<a href="#" onclick="openIndPopup(<?php echo $recArr['occid']; ?>); return false;">
-													<?php echo $recArr['collector']; ?>
-												</a>
-												<a href="#" onclick="openEditorPopup(<?php echo $recArr['occid']; ?>); return false;">
-                                                    <i style="height:20px;width:20px;" class="far fa-edit"></i>
-												</a>
-											</td>
-											<td>
-												<?php echo $recArr['sciname']; ?>
-											</td>
-											<td>
-												<?php echo $recArr['determination']; ?>
-											</td>
-										</tr>
-										<?php 
-									}
-									?>
-								</table>
-								<fieldset style="margin-top:15px;">
-									<legend><b>Annotation Printing</b></legend>
-									<div style="float:left;">
-										<div style="margin:4px;">
-											<b>Header:</b>
-											<input type="text" name="lheading" value="<?php echo $labelManager->getAnnoCollName(); ?>" style="width:450px" />
-										</div>
-										<div style="margin:4px;">
-											<b>Footer:</b> 
-											<input type="text" name="lfooter" value="" style="width:450px" />
-										</div>
-										<div style="margin:4px;">
-											<input type="checkbox" name="speciesauthors" value="1" onclick="" />
-											<b>Print species authors for infraspecific taxa</b> 
-										</div>
-										<div style="margin:4px;">
-											<input type="checkbox" name="clearqueue" value="1" onclick="" />
-											<b>Remove selected annotations from queue</b> 
-										</div>
-									</div>
-									<div style="float:right;">
-										<input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-										<input type="submit" name="submitaction" onclick="changeAnnoFormExport('defaultannotations.php','_blank');" value="Print in Browser" />
-										<?php
-										if($reportsWritable){
-											?>
-											<br/><br/>
-											<input type="submit" name="submitaction" onclick="changeAnnoFormExport('defaultannotationsexport.php','_self');" value="Export to DOCX" />
-											<?php
-										}
-										?>
-									</div>
-								</fieldset>					
-							</form>
-							<?php 
-						}
-						else{
-							?>
-							<div style="font-weight:bold;margin:20px;font-size:150%;">
-								There are no annotations queued to be printed.
-							</div>
-							<?php 
-						}
-						?>
-					</div>
-				</div>
-			</div>
+            </div>
 			<?php
 		}
 		else{
