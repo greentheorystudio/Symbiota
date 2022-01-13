@@ -116,7 +116,7 @@ $specImgArr = $occManager->getImageMap();
 			if(!$detArr){
 				?>
 				<div style="font-weight:bold;margin:10px;font-size:120%;">
-					There are no historic annotations for this specimen
+					There are no historic annotations for this occurrence
 				</div>
 				<?php 
 			}
@@ -356,7 +356,7 @@ $specImgArr = $occManager->getImageMap();
 							}
 							?>
 							<div style="padding:15px;background-color:lightblue;width:155px;margin:15px;">
-								<form name="detdelform" action="occurrenceeditor.php" method="post" onsubmit="return window.confirm('Are you sure you want to delete this specimen determination?');">
+								<form name="detdelform" action="occurrenceeditor.php" method="post" onsubmit="return window.confirm('Are you sure you want to delete this occurrence determination?');">
 									<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 									<input type="hidden" name="detid" value="<?php echo $detId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />

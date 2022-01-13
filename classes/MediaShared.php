@@ -257,12 +257,12 @@ class MediaShared{
 		}
         $status = true;
 		if($medUrl){
-			$status = $this->databaseImage($medUrl);
+			$status = $this->databaseMedia($medUrl);
 		}
 		return $status;
 	}
 
-	private function databaseImage($medUrl): bool
+	private function databaseMedia($medUrl): bool
 	{
 		$status = true;
 		if($medUrl){

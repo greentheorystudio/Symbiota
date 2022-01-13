@@ -121,8 +121,13 @@ class OccurrenceCollectionProfile {
 
 	public function getMetadataHtml($collArr): string
 	{
-		$outStr = '<div>'.$collArr['fulldescription'].'</div>';
-		$outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr['contact'].($collArr['email']? ' (' .str_replace('@', '&#64;',$collArr['email']). ')' : '').'</div>';
+        $outStr = '';
+        if($collArr['fulldescription']){
+            $outStr .= '<div>'.$collArr['fulldescription'].'</div>';
+        }
+		if($collArr['contact'] || $collArr['email']){
+            $outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr['contact'].($collArr['email']? ' (' .str_replace('@', '&#64;',$collArr['email']). ')' : '').'</div>';
+        }
 		if($collArr['homepage']){
 			$outStr .= '<div style="margin-top:5px;"><b>Home Page:</b> ';
 			$outStr .= '<a href="'.$collArr['homepage'].'" target="_blank">'.$collArr['homepage'].'</a>';

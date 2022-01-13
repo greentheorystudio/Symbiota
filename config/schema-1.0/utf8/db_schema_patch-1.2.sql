@@ -540,24 +540,6 @@ END IF;
 END
 //
 
-CREATE TRIGGER `uploadspectemp_update`
-    AFTER UPDATE
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
-    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
-		IF EXISTS (SELECT `upspid` FROM uploadspectemppoints WHERE `upspid`=NEW.`upspid`) THEN
-    UPDATE uploadspectemppoints
-    SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
-    WHERE `upspid` = NEW.`upspid`;
-    ELSE
-			INSERT INTO uploadspectemppoints (`upspid`,`point`)
-			VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
-END IF;
-END IF;
-END
-//
-
 CREATE TRIGGER `uploadspectemp_delete`
     BEFORE DELETE
     ON `uploadspectemp`

@@ -86,13 +86,13 @@ $smManager = new SiteMapManager();
 					<a href="checklists/dynamicmap.php?interface=checklist">
                         Checklist
 					</a>
-                    - dynamically build a checklist using georeferenced specimen records
+                    - dynamically build a checklist using georeferenced occurrence records
 				</li>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=key">
                         Dynamic Key
 					</a>
-                    - dynamically build a key using georeferenced specimen records
+                    - dynamically build a key using georeferenced occurrence records
 				</li>
 			</ul>
 
@@ -186,7 +186,7 @@ $smManager = new SiteMapManager();
                         <a href="http://symbiota.org/docs/image-submission-2/">Image Submission</a>
                         for an overview of how images are managed within a Symbiota data portal. Field images without
                         detailed locality information can be uploaded using the Taxon Species Profile page.
-                        Specimen images are loaded through the Specimen Editing page or through a batch upload process
+                        Occurrence images are loaded through the Occurrence Editing page or through a batch upload process
                         established by a portal manager. Image Observations (Image Vouchers) with detailed locality information can be
                         uploaded using the link below. Note that you will need the necessary permission assignments to use this
                         feature.
@@ -332,7 +332,7 @@ $smManager = new SiteMapManager();
 					<div class="pmargin">
                         Tools for managing data specific to a particular collection are available through the collection&#39;s profile page.
                         Clicking on a collection name in the list below will take you to this page for that given collection.
-                        An additional method to reach this page is by clicking on the collection name within the specimen search engine.
+                        An additional method to reach this page is by clicking on the collection name within the occurrence search engine.
                         The editing symbol located in the upper right of Collection Profile page will open
                         the editing pane and display a list of editing options.
 					</div>
@@ -364,7 +364,7 @@ $smManager = new SiteMapManager();
                         1) Allows registered users to submit a image voucherd field observation.
                         2) Allows collectors to enter their own collection data for label printing and to make the data available
                         to the collections obtaining the physical specimens through donations or exchange. Visit the
-                        <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on specimen processing capabilities.
+                        <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on occurrence processing capabilities.
                         Note that observation projects are not activated on all Symbiota data portals.
                     </div>
 					<div class="pmargin">
@@ -410,7 +410,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<h4>Personal Specimen Management and Label Printing Features</h4>
+							<h4>Personal Occurrence Management and Label Printing Features</h4>
 							<ul>
 								<?php
 								foreach($genObsList as $k => $oArr){

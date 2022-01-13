@@ -142,7 +142,7 @@ if($isEditor){
 						<h1>Specimen Processor Control Panel</h1>
 						<div style="margin:10px">
 							This management module is designed to aid in establishing advanced processing workflows 
-							for unprocessed specimens using images of the specimen label. The central functions addressed in this page are:
+							for unprocessed records using images of the specimen label. The central functions addressed in this page are:
 							Batch loading images, Optical Character Resolution (OCR), Natural Language Processing (NLP), 
 							and crowdsourcing data entry. 
 							Use tabs above for access tools.     
@@ -152,8 +152,8 @@ if($isEditor){
 							<div style="margin:15px">
 								The batch image loading module is designed to batch process specimen images that are deposited in a 
 								drop folder. This module will produce web-ready images for a group of specimen images and 
-								map the new image derivative to specimen records. Images can be linked to already existing 
-								specimen records, or linked to a newly created skeletal specimen record for further digitization within the portal.
+								map the new image derivative to records. Images can be linked to already existing
+								specimen records, or linked to a newly created skeletal record for further digitization within the portal.
 								Field data from skeletal data files (.csv, .tab, .dat) placed in the image folders will  
 								augment new records by adding content to empty fields only. 
 								The column names of skeletal files must match Symbiota field names (e.g. Darwin Core) with catalogNumber as a 

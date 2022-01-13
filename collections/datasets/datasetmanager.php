@@ -332,7 +332,7 @@ include(__DIR__ . '/../../header.php');
                             </div>
                             <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
                                 <tr>
-                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all Specimens" /></th>
+                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all occurrences" /></th>
                                     <th>catalog #</th>
                                     <th>Collector</th>
                                     <th>Scientific Name</th>
