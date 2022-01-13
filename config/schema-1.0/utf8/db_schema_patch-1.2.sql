@@ -194,13 +194,14 @@ COLUMN `footprintpoly`;
 
 ALTER TABLE `omoccurrences`
     ADD INDEX `Index_occurrenceRemarks`(`occurrenceRemarks`(100)),
-  CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
-DROP INDEX `idx_occrecordedby`,
-  MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
-  ADD INDEX `Index_locationID`(`locationID`),
-  ADD INDEX `Index_eventID`(`eventID`),
-  ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
-  ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`);
+    CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
+    DROP INDEX `idx_occrecordedby`,
+    MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
+    ADD INDEX `Index_locationID`(`locationID`),
+    ADD INDEX `Index_eventID`(`eventID`),
+    ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
+    ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`),
+    ADD INDEX `Index_ labelProject`(`labelProject`);
 
 REPLACE
 omoccurrencesfulltext(occid,locality,recordedby)
@@ -514,7 +515,8 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
     ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`),
     ADD INDEX `Index_decimalLatitude`(`decimalLatitude`),
-    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`);
+    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`),
+    ADD INDEX `Index_ institutionCode`(`institutionCode`);
 
 CREATE TABLE `uploadspectemppoints`
 (
