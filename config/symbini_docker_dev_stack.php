@@ -39,7 +39,7 @@ $GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['FLORA_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
-$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for specimens
+$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for occurrences
 
 //Configurations for GeoServer integration
 $GLOBALS['GEOSERVER_URL'] = '';   // URL for Geoserver instance serving map data for this portal

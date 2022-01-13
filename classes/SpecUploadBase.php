@@ -62,13 +62,10 @@ class SpecUploadBase extends SpecUpload{
 
     public function loadFieldMap($autoBuildFieldMap = null): void
     {
-        if($this->uploadType === $this->DIGIRUPLOAD) {
-            $autoBuildFieldMap = true;
-        }
         if($this->uspid && !$this->fieldMap){
             if($this->uploadType === $this->FILEUPLOAD || $this->uploadType === $this->SKELETAL || $this->uploadType === $this->DWCAUPLOAD ||
-                $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD || $this->uploadType === $this->SCRIPTUPLOAD){
-                $sql = 'SELECT usm.sourcefield, usm.symbspecfield FROM uploadspecmap usm WHERE (usm.uspid = '.$this->uspid.')';
+                $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD || $this->uploadType === $this->SCRIPTUPLOAD || $this->uploadType === $this->SYMBIOTA){
+                $sql = 'SELECT usm.sourcefield, usm.symbspecfield FROM uploadspecmap AS usm WHERE (usm.uspid = '.$this->uspid.')';
                 $rs = $this->conn->query($sql);
                 while($row = $rs->fetch_object()){
                     $sourceField = $row->sourcefield;
@@ -134,7 +131,7 @@ class SpecUploadBase extends SpecUpload{
         $rs->free();
 
         if($this->uploadType === $this->FILEUPLOAD || $this->uploadType === $this->SKELETAL || $this->uploadType === $this->DWCAUPLOAD ||
-            $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD){
+            $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->DIRECTUPLOAD || $this->uploadType === $this->SYMBIOTA){
             $skipDetFields = array('detid','occid','tidinterpreted','idbyid','appliedstatus','sortsequence','sourceidentifier','initialtimestamp');
 
             $rs = $this->conn->query('SHOW COLUMNS FROM uploaddetermtemp');
@@ -561,7 +558,7 @@ class SpecUploadBase extends SpecUpload{
     {
         $reportArr = array();
         $reportArr['occur'] = $this->getTransferCount();
-        if($this->uploadType === $this->DWCAUPLOAD || $this->uploadType === $this->IPTUPLOAD){
+        if($this->uploadType === $this->DWCAUPLOAD || $this->uploadType === $this->IPTUPLOAD || $this->uploadType === $this->SYMBIOTA){
             if($this->includeIdentificationHistory) {
                 $reportArr['ident'] = $this->getIdentTransferCount();
             }
@@ -781,7 +778,7 @@ class SpecUploadBase extends SpecUpload{
                     'FROM uploadspectemp u INNER JOIN omexsiccatinumbers e ON u.exsiccatiIdentifier = e.ometid AND u.exsiccatinumber = e.exsnumber '.
                     'WHERE (u.collid IN('.$this->collId.')) AND (e.omenid IS NOT NULL) AND (u.occid IS NOT NULL)';
                 if($this->conn->query($sqlExs3)){
-                    $this->outputMsg('<li>Specimens linked to exsiccati index </li>');
+                    $this->outputMsg('<li>Occurrences linked to exsiccati index </li>');
                 }
                 else{
                     $this->outputMsg('<li>ERROR adding new exsiccati numbers</li>');

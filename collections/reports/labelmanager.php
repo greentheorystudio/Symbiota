@@ -32,7 +32,7 @@ elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($colli
 }
 if($isEditor){
 	$annoArr = $labelManager->getAnnoQueue();
-	if($action === 'Filter Specimen Records'){
+	if($action === 'Filter Occurrence Records'){
 		$occArr = $labelManager->queryOccurrences($_POST);
 	}
 }
@@ -343,23 +343,23 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
                             <div style="margin-top:3px;clear:both;width:100%;display:flex;">
                                 <div>
                                     <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
-                                    <input type="submit" name="submitaction" value="Filter Specimen Records" />
+                                    <input type="submit" name="submitaction" value="Filter Occurrence Records" />
                                 </div>
                                 <div style="margin-left:20px;">
-                                    * Specimen return is limited to 400 records
+                                    *Occurrence return is limited to 400 records
                                 </div>
                             </div>
                         </fieldset>
                     </form>
                     <div style="clear:both;">
                         <?php
-                        if($action === 'Filter Specimen Records'){
+                        if($action === 'Filter Occurrence Records'){
                             if($occArr){
                                 ?>
                                 <form name="selectform" id="selectform" action="labelsbrowser.php" method="post" onsubmit="return validateSelectForm(this);">
                                     <table class="styledtable" style="font-family:Arial;font-size:12px;">
                                         <tr>
-                                            <th title="Select/Deselect all Specimens"><input type="checkbox" onclick="selectAll(this);" /></th>
+                                            <th title="Select/Deselect all Occurrences"><input type="checkbox" onclick="selectAll(this);" /></th>
                                             <th title="Label quantity">Qty</th>
                                             <th>Collector</th>
                                             <th>Scientific Name</th>
@@ -468,7 +468,7 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 							<form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateAnnoSelectForm();">
 								<div style="margin-top: 15px; margin-left: 15px;">
 									<input name="" value="" type="checkbox" onclick="selectAllAnno(this);" />
-									Select/Deselect all Specimens
+									Select/Deselect all Occurrences
 								</div>
 								<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 									<tr>

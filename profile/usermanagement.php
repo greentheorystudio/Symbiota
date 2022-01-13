@@ -230,7 +230,7 @@ if($GLOBALS['IS_ADMIN']){
 								<li>
 									<b><?php 
 									echo '<span title="'.$userPermissions['RareSppReadAll']['aby'].'">';
-									echo str_replace('RareSppReadAll','View and Map Specimens of Rare Species from all Collections',$userPermissions['RareSppReadAll']['role']);
+									echo str_replace('RareSppReadAll','View and Map Occurrences of Rare Species from all Collections',$userPermissions['RareSppReadAll']['role']);
 									echo '</span>'; 
 									?></b>
 									<a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo $userId; ?>">
@@ -267,7 +267,7 @@ if($GLOBALS['IS_ADMIN']){
 							if(array_key_exists('RareSppReader',$userPermissions)){
 								?>
 								<li>
-									<b>View and Map Specimens of Rare Species from following Collections</b>
+									<b>View and Map Occurrences of Rare Species from following Collections</b>
 									<ul>
 									<?php 
 									$rsrArr = $userPermissions['RareSppReader'];

@@ -369,7 +369,7 @@ if($imgArr){
 								echo '<div><a href="../misc/usagepolicy.php">Copyright Details</a></div>';
 							}
 							if($imgArr['occid']) {
-                                echo '<div><a href="../collections/individual/index.php?occid=' . $imgArr['occid'] . '">Display Specimen Details</a></div>';
+                                echo '<div><a href="../collections/individual/index.php?occid=' . $imgArr['occid'] . '">Display Record Details</a></div>';
                             }
 							echo '<div><a href="'.$imgUrl.'">Open Medium Sized Image</a></div>';
 							if($origUrl) {

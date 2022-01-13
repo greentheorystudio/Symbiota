@@ -10,7 +10,7 @@
         general terms posted on the website.
     </div>
     <div style='margin:15px;width:100%;'>
-        <b>Download Specimen Records</b>
+        <b>Download Occurrence Records</b>
         <table>
             <tr>
                 <td style="vertical-align:top">

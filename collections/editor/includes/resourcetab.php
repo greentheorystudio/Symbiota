@@ -101,7 +101,7 @@ if($userChecklists || $checklistArr){
             if($userChecklists){
                 ?>
                 <div style="float:right;margin-right:15px;">
-                    <a href="#" onclick="toggle('voucheradddiv');return false;" title="Link Specimen to Checklist as Voucher" ><i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i></a>
+                    <a href="#" onclick="toggle('voucheradddiv');return false;" title="Link Occurrence to Checklist as Voucher" ><i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i></a>
                 </div>
                 <div id="voucheradddiv" style="display:<?php echo ($checklistArr?'none':'block'); ?>;">
                     <form name="voucherAddForm" method="post" target="occurrenceeditor.php" onsubmit="return validateVoucherAddForm(this)">
@@ -144,7 +144,7 @@ if($userChecklists || $checklistArr){
 ?>
 <div id="duplicatediv" style="margin-top:20px;width:795px;">
 	<fieldset>
-		<legend><b>Duplicate Specimens</b></legend>
+		<legend><b>Duplicate Occurrences</b></legend>
 		<div style="float:right;margin-right:15px;">
 			<button onclick="openDupeWindow();return false;">Search for Records to Link</button>
 		</div>
@@ -158,7 +158,7 @@ if($userChecklists || $checklistArr){
 				foreach($dupClusterArr as $dupid => $dupArr){
 					echo '<div id="dupediv-'.$occid.'">';
 					echo '<div style="padding:15px;"><b>Cluster Title:</b> '.$dupArr['title'];
-					echo '<div style="float:right" title="Unlink this occurrences from duplicate cluster but maintain other specimens as a valid duplicate cluster">';
+					echo '<div style="float:right" title="Unlink this occurrences from duplicate cluster but maintain other records as a valid duplicate cluster">';
 					echo '<button name="unlinkthisdupebutton" onclick="deleteDuplicateLink('.$dupid.','.$occid.')">Remove this Occurrence from Cluster</button>';
 					echo '</div>';
 					$note = trim($dupArr['description'].'; '.$dupArr['notes'],' ;');
