@@ -30,7 +30,6 @@ elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($colli
 	$isEditor = 1;
 }
 if($isEditor){
-	$annoArr = $labelManager->getAnnoQueue();
 	if($action === 'Filter Occurrence Records'){
 		$occArr = $labelManager->queryOccurrences($_POST);
 	}
