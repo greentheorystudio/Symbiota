@@ -472,7 +472,7 @@ class SpecProcessorOcr{
 					}
 				}
 				else{
-					$this->logMsg('ERROR: unable locate specimen image (catalog #: '.$catNumber.')',1);
+					$this->logMsg('ERROR: unable locate occurrence image (catalog #: '.$catNumber.')',1);
 				}
 			}
 			else{

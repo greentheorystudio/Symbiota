@@ -169,7 +169,7 @@ elseif($activeCollArr){
 			}
 			else{
 				?>
-				<a href="../../profile/viewprofile.php?tabindex=1">Specimen Management</a> &gt;&gt;
+				<a href="../../profile/viewprofile.php?tabindex=1">Occurrence Management</a> &gt;&gt;
 				<?php
 			}
 			?>
@@ -313,7 +313,7 @@ elseif($activeCollArr){
 									</div>
 									<div style="margin:10px">
 										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-										<button name="submitaction" type="submit" value="deepindex">Deep Index Specimen Taxa</button>
+										<button name="submitaction" type="submit" value="deepindex">Deep Index Occurrence Taxa</button>
 									</div>
 								</div>
 							</form>

@@ -105,7 +105,7 @@ function validateBatchNonVoucherForm(){
 			return true;
 		}
 	}
-   	alert("Please select at least one specimen to link as a voucher!");
+   	alert("Please select at least one record to link as a voucher!");
   	return false;
 }
 
@@ -117,7 +117,7 @@ function validateBatchMissingForm(){
 			return true;
 		}
 	}
-   	alert("Please select at least one specimen to link as a voucher!");
+   	alert("Please select at least one record to link as a voucher!");
   	return false;
 }
 

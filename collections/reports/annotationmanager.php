@@ -132,7 +132,7 @@ include(__DIR__ . '/../../header.php');
                 <form name="annoselectform" id="annoselectform" action="defaultannotations.php" method="post" onsubmit="return validateSelectForm();">
                     <table class="styledtable" style="width:800px;">
                         <tr>
-                            <th title="Select/Deselect all Specimens" style="width:30px;"><input type="checkbox" onclick="selectAll(this);" /></th>
+                            <th title="Select/Deselect all Occurrences" style="width:30px;"><input type="checkbox" onclick="selectAll(this);" /></th>
                             <th style="width:25px;text-align:center;">#</th>
                             <th style="width:125px;text-align:center;">Collector</th>
                             <th style="width:300px;text-align:center;">Scientific Name</th>

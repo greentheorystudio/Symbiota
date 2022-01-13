@@ -1,7 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDirect.php');
-include_once(__DIR__ . '/../../classes/SpecUploadDigir.php');
 include_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
@@ -40,7 +39,6 @@ if(!$recLimit) {
 }
 
 $DIRECTUPLOAD = 1;
-$DIGIRUPLOAD = 2;
 $FILEUPLOAD = 3;
 $STOREDPROCEDURE = 4;
 $SCRIPTUPLOAD = 5;
@@ -48,6 +46,7 @@ $DWCAUPLOAD = 6;
 $SKELETAL = 7;
 $IPTUPLOAD = 8;
 $NFNUPLOAD = 9;
+$SYMBIOTA = 10;
 
 if(strpos($uspid,'-')){
 	$tok = explode('-',$uspid);
@@ -61,11 +60,6 @@ $duManager = new SpecUploadBase();
 if($uploadType === $DIRECTUPLOAD){
 	$duManager = new SpecUploadDirect();
 }
-elseif($uploadType === $DIGIRUPLOAD){
-	$duManager = new SpecUploadDigir();
-	$duManager->setSearchStart($recStart);
-	$duManager->setSearchLimit($recLimit);
-}
 elseif($uploadType === $FILEUPLOAD || $uploadType === $NFNUPLOAD){
 	$duManager = new SpecUploadFile();
 	$duManager->setUploadFileName($ulPath);
@@ -75,7 +69,7 @@ elseif($uploadType === $SKELETAL){
 	$duManager->setUploadFileName($ulPath);
 	$matchCatNum = true;
 }
-elseif($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD){
+elseif($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD || $uploadType === $SYMBIOTA){
 	$duManager = new SpecUploadDwca();
 	$duManager->setBaseFolderName($ulPath);
 	$duManager->setIncludeIdentificationHistory($importIdent);
@@ -170,7 +164,7 @@ $duManager->loadFieldMap();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Uploader</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Uploader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -362,7 +356,7 @@ $duManager->loadFieldMap();
     <a href="../../index.php">Home</a> &gt;&gt;
     <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
     <a href="specuploadmanagement.php?collid=<?php echo $collid; ?>">List of Upload Profiles</a> &gt;&gt;
-    <b>Specimen Loader</b>
+    <b>Occurrence Loader</b>
 </div>
 <div id="innertext">
 	<h1>Data Upload Module</h1>
@@ -505,48 +499,7 @@ $duManager->loadFieldMap();
 			$duManager->finalTransfer();
 			echo '</ul>';
 		}
-		else if($uploadType === $DIGIRUPLOAD){
-            ?>
-            <form name="initform" action="specupload.php" method="post" onsubmit="">
-                <fieldset style="width:95%;">
-                    <legend><b><?php echo $duManager->getTitle();?></b></legend>
-                    <div>
-                        Record Start:
-                        <input type="text" name="recstart" size="5" value="<?php echo $duManager->getSearchStart(); ?>" />
-                    </div>
-                    <div>
-                        Record Limit:
-                        <input type="text" name="reclimit" size="5" value="<?php echo $duManager->getSearchLimit(); ?>" />
-                    </div>
-                    <?php
-                    if($isLiveData){
-                        ?>
-                        <div style="margin:10px 0;">
-                            <input name="matchcatnum" type="checkbox" value="1" checked />
-                            Match on Catalog Number
-                        </div>
-                        <div style="margin:10px 0;">
-                            <input name="matchothercatnum" type="checkbox" value="1" />
-                            Match on Other Catalog Numbers
-                        </div>
-                        <ul style="margin:10px 0;">
-                            <li><?php echo $recReplaceMsg; ?></li>
-                            <li>If both checkboxes are selected, matches will first be made on catalog numbers and secondarily on other catalog numbers</li>
-                        </ul>
-                        <?php
-                    }
-                    ?>
-                    <div style="margin:10px;">
-                        <input type="submit" name="action" value="Start Upload" />
-                        <input type="hidden" name="uspid" value="<?php echo $uspid;?>" />
-                        <input type="hidden" name="collid" value="<?php echo $collid;?>" />
-                        <input type="hidden" name="uploadtype" value="<?php echo $uploadType;?>" />
-                    </div>
-                </fieldset>
-            </form>
-            <?php
-        }
-        else{
+		else{
             $uploadTitle = $duManager->getTitle();
             if(!$uploadTitle){
                 if($uploadType === $DWCAUPLOAD) {
@@ -554,6 +507,9 @@ $duManager->loadFieldMap();
                 }
                 elseif($uploadType === $IPTUPLOAD) {
                     $uploadTitle = 'IPT/DwC-A Provider Import';
+                }
+                elseif($uploadType === $SYMBIOTA) {
+                    $uploadTitle = 'Symbiota Portal Public Download';
                 }
                 elseif($uploadType === $SKELETAL) {
                     $uploadTitle = 'Skeletal File Import';
@@ -565,7 +521,7 @@ $duManager->loadFieldMap();
                     $uploadTitle = 'Notes from Natural Import';
                 }
             }
-            if(!$ulPath && ($uploadType === $FILEUPLOAD || $uploadType === $SKELETAL || $uploadType === $NFNUPLOAD || $uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD)){
+            if(!$ulPath && ($uploadType === $FILEUPLOAD || $uploadType === $SKELETAL || $uploadType === $NFNUPLOAD || $uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD || $uploadType === $SYMBIOTA)){
                 $ulPath = $duManager->uploadFile();
                 if(!$ulPath){
                     ?>
@@ -575,9 +531,8 @@ $duManager->loadFieldMap();
                             <div>
                                 <div style="margin:10px">
                                     <?php
-                                    $pathLabel = 'IPT Resource URL';
-                                    if($uploadType !== $IPTUPLOAD){
-                                        $pathLabel = 'Resource Path or URL';
+                                    $pathLabel = 'URL';
+                                    if($uploadType !== $IPTUPLOAD && $uploadType !== $SYMBIOTA){
                                         ?>
                                         <div>
                                             <input name="uploadfile" type="file" size="50" onchange="verifyImageSize(this)" />
@@ -589,7 +544,7 @@ $duManager->loadFieldMap();
                                         <b><?php echo $pathLabel; ?>:</b>
                                         <input name="ulfnoverride" type="text" size="70" /><br/>
                                         <?php
-                                        if($uploadType !== $IPTUPLOAD){
+                                        if($uploadType !== $IPTUPLOAD && $uploadType !== $SYMBIOTA){
                                             echo '* This option is for pointing to a data file that was manually uploaded to a server. '.
                                                 'This option offers a workaround for importing files that are larger than what is allowed by '.
                                                 'server upload limitations (e.g. PHP configuration limits).';
@@ -597,7 +552,7 @@ $duManager->loadFieldMap();
                                         ?>
                                     </div>
                                     <?php
-                                    if($uploadType !== $IPTUPLOAD){
+                                    if($uploadType !== $IPTUPLOAD && $uploadType !== $SYMBIOTA){
                                         ?>
                                         <div class="ulfnoptions">
                                             <a href="#" onclick="toggle('ulfnoptions');return false;">Display Additional Options</a>
@@ -629,7 +584,7 @@ $duManager->loadFieldMap();
             $processingList = array('unprocessed' => 'Unprocessed', 'stage 1' => 'Stage 1', 'stage 2' => 'Stage 2', 'stage 3' => 'Stage 3',
                 'pending review' => 'Pending Review', 'expert required' => 'Expert Required', 'pending review-nfn' => 'Pending Review-NfN',
                 'reviewed' => 'Reviewed', 'closed' => 'Closed');
-            if($ulPath && ($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD)){
+            if($ulPath && ($uploadType === $DWCAUPLOAD || $uploadType === $IPTUPLOAD || $uploadType === $SYMBIOTA)){
                 if($duManager->analyzeUpload()){
                     $metaArr = $duManager->getMetaArr();
                     if(isset($metaArr['occur'])){

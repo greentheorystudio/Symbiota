@@ -1060,7 +1060,7 @@ class OccurrenceManager{
             $retStr = 'All Collections';
         }
         elseif($this->searchTermsArr['db'] === 'allspec'){
-            $retStr = 'All Specimen Collections';
+            $retStr = 'All Occurrence Collections';
         }
         elseif($this->searchTermsArr['db'] === 'allobs'){
             $retStr = 'All Observation Projects';
