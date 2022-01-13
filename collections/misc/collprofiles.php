@@ -155,28 +155,22 @@ if($GLOBALS['SYMB_UID']){
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
-                                    Add New Occurrence Record
+                                    Create New Record
 								</a>
 							</li>
-							<?php
-							if($collData['colltype'] === 'Preserved Specimens'){
-								?>
-								<li style="margin-left:10px">
-									<a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-                                        Create New Records Using Image
-									</a>
-								</li>
-								<li style="margin-left:10px">
-									<a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                        Add Skeletal Records
-									</a>
-								</li>
-								<?php
-							}
-							?>
+                            <li>
+                                <a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
+                                    Create New Record From Image
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
+                                    Create Skeletal Records
+                                </a>
+                            </li>
 							<li>
 								<a href="../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>">
-                                    Edit Existing Occurrence Records
+                                    Edit Existing Records
 								</a>
 							</li>
 							<li>
@@ -185,10 +179,15 @@ if($GLOBALS['SYMB_UID']){
 								</a>
 							</li>
 							<li>
-								<a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
-                                    Print Labels/Annotations
-								</a>
-							</li>
+                                <a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
+                                    Print Labels
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/annotationmanager.php?collid=<?php echo $collid; ?>">
+                                    Print Annotations Labels
+                                </a>
+                            </li>
 							<li>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>">
                                     Batch Georeference Occurrences
