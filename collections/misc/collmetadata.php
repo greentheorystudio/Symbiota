@@ -37,15 +37,11 @@ elseif($collid){
 if($isEditor){
 	if($action === 'Save Edits'){
 		$statusStr = $collManager->submitCollEdits($_POST);
-		if($statusStr === 'Edits saved'){
-			header('Location: collprofiles.php?collid='.$collid);
-		}
 	}
 	elseif($action === 'Create New Collection'){
 		if($GLOBALS['IS_ADMIN']){
 			$newCollid = $collManager->submitCollAdd($_POST);
 			if(is_numeric($newCollid)){
-				$statusStr = 'New collection added successfully! <br/>Click <a href="../admin/specuploadmanagement.php?collid='.$newCollid.'&action=addprofile">here</a> to upload occurrence records for this new collection.';
 				header('Location: collprofiles.php?collid='.$newCollid);
 			}
 			else{
@@ -670,12 +666,12 @@ if($collid){
                                     if($collid){
                                         ?>
                                         <input type="hidden" name="collid" value="<?php echo $collid;?>" />
-                                        <button type="submit" name="action" value="saveEdits">Save Edits</button>
+                                        <button type="submit" name="action" value="Save Edits">Save Edits</button>
                                         <?php
                                     }
                                     else{
                                         ?>
-                                        <button type="submit" name="action" value="newCollection">Create New Collection</button>
+                                        <button type="submit" name="action" value="Create New Collection">Create New Collection</button>
                                         <?php
                                     }
                                     ?>
