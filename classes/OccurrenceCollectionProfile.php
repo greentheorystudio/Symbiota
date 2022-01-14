@@ -257,6 +257,7 @@ class OccurrenceCollectionProfile {
 		if($this->collid){
 			$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
 			$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
+            $collGUID = Sanitizer::cleanInStr($postArr['collectionid']);
 			$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
 			$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
 			$homepage = Sanitizer::cleanInStr($postArr['homepage']);
@@ -280,6 +281,7 @@ class OccurrenceCollectionProfile {
 			$sql = 'UPDATE omcollections '.
 				'SET institutioncode = "'.$instCode.'",'.
 				'collectioncode = '.($collCode?'"'.$collCode.'"':'NULL').','.
+                'collectionid = '.($collGUID?'"'.$collGUID.'"':'NULL').','.
 				'collectionname = "'.$coleName.'",'.
 				'fulldescription = '.($fullDesc?'"'.$fullDesc.'"':'NULL').','.
 				'homepage = '.($homepage?'"'.$homepage.'"':'NULL').','.
@@ -333,6 +335,7 @@ class OccurrenceCollectionProfile {
     public function submitCollAdd($postArr){
 		$instCode = Sanitizer::cleanInStr($postArr['institutioncode']);
 		$collCode = Sanitizer::cleanInStr($postArr['collectioncode']);
+        $collGUID = Sanitizer::cleanInStr($postArr['collectionid']);
 		$coleName = Sanitizer::cleanInStr($postArr['collectionname']);
 		$fullDesc = Sanitizer::cleanInStr($postArr['fulldescription']);
 		$homepage = Sanitizer::cleanInStr($postArr['homepage']);
@@ -360,7 +363,7 @@ class OccurrenceCollectionProfile {
 		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($postArr['individualurl']):'';
 		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
 
-		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,homepage,'.
+		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
 			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
@@ -369,6 +372,7 @@ class OccurrenceCollectionProfile {
 			($collCode?'"'.$collCode.'"':'NULL').',"'.
 			$coleName.'",'.
 			($fullDesc?'"'.$fullDesc.'"':'NULL').','.
+            ($collGUID?'"'.$collGUID.'"':'NULL').','.
 			($homepage?'"'.$homepage.'"':'NULL').','.
 			($contact?'"'.$contact.'"':'NULL').','.
 			($email?'"'.$email.'"':'NULL').','.
