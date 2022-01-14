@@ -38,7 +38,7 @@ class OccurrenceCollectionProfile {
 	public function getCollectionMetadata(): array
 	{
 		$retArr = array();
-		$sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, '.
+        $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
 			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, '.
 			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, '.
 			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
@@ -56,6 +56,7 @@ class OccurrenceCollectionProfile {
 			$retArr[$row->collid]['institutioncode'] = $row->institutioncode;
 			$retArr[$row->collid]['collectioncode'] = $row->CollectionCode;
 			$retArr[$row->collid]['collectionname'] = $row->CollectionName;
+            $retArr[$row->collid]['collectionid'] = $row->collectionid;
 			$retArr[$row->collid]['fulldescription'] = $row->FullDescription;
 			$retArr[$row->collid]['homepage'] = $row->Homepage;
 			$retArr[$row->collid]['individualurl'] = $row->individualurl;
