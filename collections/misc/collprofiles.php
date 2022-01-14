@@ -169,7 +169,7 @@ if($GLOBALS['SYMB_UID']){
                                 </a>
                             </li>
 							<li>
-								<a href="../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>">
+								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
                                     Edit Existing Records
 								</a>
 							</li>
