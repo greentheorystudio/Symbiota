@@ -108,7 +108,7 @@ function validateImgOccurForm(f){
 }
 
 function dwcDoc(dcTag){
-	let dwcWindow = open("http://symbiota.org/docs/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
+	let dwcWindow = open("https://symbiota.org/symbiota-occurrence-data-fields-2/#" + dcTag, "dwcaid", "width=1250,height=300,left=20,top=20,scrollbars=1");
 	if(dwcWindow.opener == null) {
 		dwcWindow.opener = self;
 	}

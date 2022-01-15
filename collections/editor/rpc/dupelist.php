@@ -39,7 +39,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 <body>
 	<div id="innertext">
 		<fieldset style="padding:15px;">
-			<legend><b>Link New Specimen</b></legend>
+			<legend><b>Link New Occurrence</b></legend>
 			<form name="adddupform" method="post" action="dupelist.php">
 				<div style="margin:3px;">
 					<b>Last Name:</b>

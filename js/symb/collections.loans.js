@@ -1,10 +1,5 @@
 $(document).ready(function() {
-	if(!navigator.cookieEnabled){
-		alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
-	}
-
 	$('#tabs').tabs({ active: tabIndex });
-
 });
 
 function selectAll(cb){
@@ -163,7 +158,7 @@ function verifySpecEditForm(f){
 		}
 	}
 	if(!cbChecked){
-		alert("Please select specimens to which you wish to apply the action");
+		alert("Please select records to which you wish to apply the action");
 		return false;
 	}
 
@@ -176,7 +171,7 @@ function verifySpecEditForm(f){
 		}
 	}
 	if(applyTaskValue === "delete"){
-		return confirm("Are you sure you want to remove selected specimens from this loan?");
+		return confirm("Are you sure you want to remove selected records from this loan?");
 	}
 
 	return true;
@@ -402,11 +397,7 @@ function parseDate(dateStr){
 			d = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 20) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 		} else if (validformat3.test(dateStr)) {
 			dateTokens = dateStr.split(" ");
@@ -414,11 +405,7 @@ function parseDate(dateStr){
 			mText = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 15) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();

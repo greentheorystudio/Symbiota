@@ -108,7 +108,7 @@ if($collMap['colltype'] === 'General Observations'){
 				</fieldset>
 			</div>
 
-			<h3>Specimen Coordinates</h3>
+			<h3>Occurrence Coordinates</h3>
 			<div style="margin:0 0 40px 15px;">
 				<div>
                     This section is meant to aid collection managers in verifying, ranking, and managing coordinate information associated with occurrence records.

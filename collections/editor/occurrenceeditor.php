@@ -8,6 +8,7 @@ include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 header('Access-Control-Allow-Origin: http://www.catalogueoflife.org/col/webservice');
+ini_set('max_execution_time', 600);
 
 $occId = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
 $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']:0;
@@ -26,6 +27,9 @@ if(strpos($action,'Determination') || strpos($action,'Verification')){
 }
 elseif(strpos($action,'Image')){
     $occManager = new OccurrenceEditorImages();
+}
+elseif(strpos($action,'Media')){
+    $occManager = new OccurrenceEditorMedia();
 }
 else{
     $occManager = new OccurrenceEditorManager();
@@ -199,6 +203,10 @@ if($GLOBALS['SYMB_UID']){
                 }
                 $tabTarget = 2;
             }
+            elseif($action === 'Submit Media Edits'){
+                $statusStr = $occManager->editMedia();
+                $tabTarget = 3;
+            }
             elseif($action === 'Submit New Image'){
                 if($occManager->addImage($_POST)){
                     $statusStr = 'Image added successfully';
@@ -206,6 +214,15 @@ if($GLOBALS['SYMB_UID']){
                         $solrManager->updateSOLR();
                     }
                     $tabTarget = 2;
+                }
+                if($occManager->getErrorStr()){
+                    $statusStr .= $occManager->getErrorStr();
+                }
+            }
+            elseif($action === 'Submit New Media'){
+                if($occManager->addMedia($_POST)){
+                    $statusStr = 'Media added successfully';
+                    $tabTarget = 3;
                 }
                 if($occManager->getErrorStr()){
                     $statusStr .= $occManager->getErrorStr();
@@ -224,6 +241,16 @@ if($GLOBALS['SYMB_UID']){
                     $statusStr = $occManager->getErrorStr();
                 }
             }
+            elseif($action === 'Delete Media'){
+                $removeMed = (array_key_exists('removemed',$_POST)?$_POST['removemed']:0);
+                if($occManager->deleteMedia($_POST['medid'], $removeMed)){
+                    $statusStr = 'Media deleted successfully';
+                    $tabTarget = 3;
+                }
+                else{
+                    $statusStr = $occManager->getErrorStr();
+                }
+            }
             elseif($action === 'Remap Image'){
                 if($occManager->remapImage($_POST['imgid'], $_POST['targetoccid'])){
                     $statusStr = 'SUCCESS: Image remapped to record <a href="occurrenceeditor.php?occid='.$_POST['targetoccid'].'" target="_blank">'.$_POST['targetoccid'].'</a>';
@@ -235,6 +262,14 @@ if($GLOBALS['SYMB_UID']){
                     $statusStr = 'ERROR linking image to new occurrence: '.$occManager->getErrorStr();
                 }
             }
+            elseif($action === 'Remap Media'){
+                if($occManager->remapMedia($_POST['medid'], $_POST['targetoccid'])){
+                    $statusStr = 'SUCCESS: Media remapped to record <a href="occurrenceeditor.php?occid='.$_POST['targetoccid'].'" target="_blank">'.$_POST['targetoccid'].'</a>';
+                }
+                else{
+                    $statusStr = 'ERROR linking media to new occurrence: '.$occManager->getErrorStr();
+                }
+            }
             elseif($action === 'Disassociate Image'){
                 if($occManager->remapImage($_POST['imgid'])){
                     $statusStr = 'SUCCESS disassociating image <a href="../../imagelib/imgdetails.php?imgid='.$_POST['imgid'].'" target="_blank">#'.$_POST['imgid'].'</a>';
@@ -244,6 +279,15 @@ if($GLOBALS['SYMB_UID']){
                 }
                 else{
                     $statusStr = 'ERROR disassociating image: '.$occManager->getErrorStr();
+                }
+
+            }
+            elseif($action === 'Disassociate Media'){
+                if($occManager->remapMedia($_POST['medid'])){
+                    $statusStr = 'SUCCESS disassociating media';
+                }
+                else{
+                    $statusStr = 'ERROR disassociating media: '.$occManager->getErrorStr();
                 }
 
             }
@@ -459,7 +503,7 @@ else{
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=170604" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20220110" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -510,8 +554,8 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220112"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
 </head>
@@ -660,6 +704,10 @@ else{
                                                 <a href="includes/imagetab.php?<?php echo $anchorVars; ?>"
                                                    style="">Images</a>
                                             </li>
+                                            <li id="mediaTab">
+                                                <a href="includes/mediatab.php?<?php echo $anchorVars; ?>"
+                                                   style="">Media</a>
+                                            </li>
                                             <li id="resourceTab">
                                                 <a href="includes/resourcetab.php?<?php echo $anchorVars; ?>"
                                                    style="">Linked Resources</a>
@@ -792,11 +840,7 @@ else{
                                                     <?php echo (defined('DAYOFYEARLABEL')?DAYOFYEARLABEL:'Day of Year'); ?>:
                                                     <a href="#" onclick="return dwcDoc('startDayOfYear')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <input type="text" name="startdayofyear" tabindex="24" value="<?php echo array_key_exists('startdayofyear',$occArr)?$occArr['startdayofyear']:''; ?>" onchange="inputIsNumeric(this, 'Start Day of Year');fieldChanged('startdayofyear');" title="Start Day of Year" /> -
-                                                    <input type="text" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
-                                                </div>
-                                                <div id="endDateDiv">
-                                                    <?php echo (defined('ENDDATELABEL')?ENDDATELABEL:'Calculate End Day of Year'); ?>:
-                                                    <input type="text" id="endDate" value="" onchange="endDateChanged();" />
+                                                    <input type="text" id="enddayofyear" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
                                                 </div>
                                             </div>
                                             <?php
@@ -1234,7 +1278,7 @@ else{
                                                     <input type="text" name="preparations" tabindex="97" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
                                                 </div>
                                                 <div id="reproductiveConditionDiv">
-                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
+                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Reproductive Condition'); ?>
                                                     <a href="#" onclick="return dwcDoc('reproductiveCondition')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a><br/>
                                                     <?php
                                                     if(isset($REPRODUCTIVE_CONDITION_TERMS)){

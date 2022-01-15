@@ -181,7 +181,7 @@ $navStr .= '</div>';
                 }
 			}
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20210621" type="text/javascript" ></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20211227" type="text/javascript" ></script>
 	</head>
 	<body>
 		<?php
@@ -189,7 +189,7 @@ $navStr .= '</div>';
 		echo '<div class="navpath">';
 		echo '<a href="../../index.php">Home</a> &gt;&gt; ';
 		if($reviewManager->getObsUid()){
-			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Specimen Management</a> &gt;&gt; ';
+			echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
 		}
 		else{
 			echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';

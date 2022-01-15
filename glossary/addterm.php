@@ -115,7 +115,7 @@ if($isEditor && $formSubmit === 'Create Term') {
 		}
 
 	</script>
-	<script src="../js/symb/glossary.index.js?ver=20160720" type="text/javascript"></script>
+	<script src="../js/symb/glossary.index.js?ver=20220113" type="text/javascript"></script>
 </head>
 <body>
 	<div id="innertext">

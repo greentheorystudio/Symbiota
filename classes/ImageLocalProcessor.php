@@ -477,7 +477,7 @@ class ImageLocalProcessor {
 						}
 						$rs->free();
 						if($recExists){
-							$this->logOrEcho('NOTICE: image import skipped because specimen record already exists ',1);
+							$this->logOrEcho('NOTICE: image import skipped because occurrence record already exists ',1);
                             $retVal = false;
 						}
 					}
@@ -632,7 +632,7 @@ class ImageLocalProcessor {
 			}
 		}
 		else{
-			$this->logOrEcho('File skipped (' .$sourcePathFrag.$fileName. '), unable to extract specimen identifier',1);
+			$this->logOrEcho('File skipped (' .$sourcePathFrag.$fileName. '), unable to extract occurrence identifier',1);
             $retVal = false;
 		}
 		flush();
@@ -751,14 +751,14 @@ class ImageLocalProcessor {
 				'VALUES('.$this->activeCollid.',"'.$specPk.'","unprocessed","'.date('Y-m-d H:i:s').'")';
 			if($this->conn->query($sql2)){
 				$occId = $this->conn->insert_id;
-				$this->logOrEcho("Specimen record does not exist; new empty specimen record created and assigned an 'unprocessed' status (occid = ".$occId. ') ',1);
+				$this->logOrEcho("Specimen record does not exist; new empty occurrence record created and assigned an 'unprocessed' status (occid = ".$occId. ') ',1);
 			}
 			else{
 				$this->logOrEcho('ERROR creating new occurrence record.',1);
 			}
 		}
 		if(!$occId){
-			$this->logOrEcho('ERROR: File skipped, unable to locate specimen record ' .$specPk. ' (' .date('Y-m-d h:i:s A'). ') ',1);
+			$this->logOrEcho('ERROR: File skipped, unable to locate occurrence record ' .$specPk. ' (' .date('Y-m-d h:i:s A'). ') ',1);
 		}
 		return $occId;
 	}

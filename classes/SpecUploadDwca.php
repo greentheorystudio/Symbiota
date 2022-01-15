@@ -37,11 +37,65 @@ class SpecUploadDwca extends SpecUploadBase{
                     $this->path = str_replace('/resource','/archive.do',$this->path);
                 }
             }
-            if(copy($this->path,$fullPath)){
+            if($this->uploadType === $this->SYMBIOTA){
+                $searchLabel = '';
+                $pathParts = array();
+                if(strpos($this->path, 'searchvar=') !== false){
+                    $searchLabel = 'searchvar';
+                    $pathParts = explode('?searchvar=', $this->path);
+                }
+                elseif(strpos($this->path, 'starr=') !== false){
+                    $searchLabel = 'starr';
+                    $pathParts = explode('?starr=', $this->path);
+                }
+                if($pathParts){
+                    $data = array(
+                        'schema' => 'dwc',
+                        'identifications' => '1',
+                        'images' => '1',
+                        'attributes' => '1',
+                        'format' => 'csv',
+                        'cset' => 'utf-8',
+                        'zip' => '1',
+                        'publicsearch' => '1',
+                        'sourcepage' => 'specimen',
+                        $searchLabel => $pathParts[1]
+                    );
+                    $data = http_build_query($data);
+                    $context_options = array (
+                        'ssl' => array(
+                            'verify_peer' => false,
+                            'verify_peer_name' => false
+                        ),
+                        'http' => array (
+                            'method' => 'POST',
+                            'timeout' => 6000,
+                            'header'=> "Content-type: application/x-www-form-urlencoded\r\n"
+                                . 'Content-Length: ' . strlen($data) . "\r\n",
+                            'content' => $data
+                        )
+                    );
+
+                    $context = stream_context_create($context_options);
+                    $datafile = file_get_contents($pathParts[0], false, $context);
+                    if(file_put_contents($fullPath, $datafile)){
+                        $this->baseFolderName = $localFolder;
+                    }
+                    else {
+                        $this->outputMsg('<li>ERROR: unable to upload file (path: '.$fullPath.') </li>');
+                        $this->errorStr = 'ERROR: unable to upload file (path: '.$fullPath.')';
+                    }
+                }
+                else{
+                    $this->outputMsg('<li>ERROR: Symbiota URL not in correct format (path: '.$this->path.') </li>');
+                    $this->errorStr = 'ERROR: Symbiota URL not in correct format (path: '.$this->path.')';
+                }
+            }
+            elseif(copy($this->path,$fullPath)){
                 $this->baseFolderName = $localFolder;
             }
             else{
-                $fp = fopen ($fullPath, 'wb+');
+                $fp = fopen($fullPath, 'wb+');
                 $ch = curl_init(str_replace(' ','%20',$this->path));
                 curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
                 curl_setopt($ch, CURLOPT_FILE, $fp);
