@@ -58,8 +58,8 @@ if($GLOBALS['SYMB_UID']){
 	<script type="text/javascript">
         const collId = "<?php echo $collid; ?>";
     </script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20210313"></script>
-	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220112"></script>
+	<script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
 	<script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
@@ -496,7 +496,7 @@ if($GLOBALS['SYMB_UID']){
 									<input type="text" name="preparations" tabindex="97" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" />
 								</div>
 								<div id="reproductiveConditionDiv">
-									<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
+									<?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Reproductive Condition'); ?>
 									<a href="#" onclick="return dwcDoc('reproductiveCondition')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a><br/>
 									<?php
 									if(isset($REPRODUCTIVE_CONDITION_TERMS)){

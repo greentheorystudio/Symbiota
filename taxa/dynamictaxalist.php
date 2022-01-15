@@ -41,12 +41,12 @@ if($higherRankArr){
 }
 
 if($targetTid){
-    if(!$targetTaxon){
-        $listManager->setTid($targetTid);
-    }
     $listManager->setDescLimit($descLimit);
     $listManager->setSortField($sortSelect);
     $listManager->setPageIndex($index);
+    if(!$targetTaxon){
+        $listManager->setTid($targetTid);
+    }
     $tableArr = $listManager->getTableArr();
     $vernacularArr = $listManager->getVernacularArr();
     $qryCnt = (int)$listManager->getTaxaCnt();
@@ -288,21 +288,23 @@ include(__DIR__ . '/../header.php');
             $lastPage = ($qryCnt / 100) + 1;
             $startPage = ($index > 4?$index - 4:1);
             $endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-            if($startPage > 1){
-                $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.'0">First</a></span>';
-                $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.(($index - 10) < 1?0:$index - 10).'">&lt;&lt;</a></span>';
-            }
-            for($x = $startPage; $x <= $endPage; $x++){
-                if(($index + 1) !== $x){
-                    $navStr .= '<span class="pagination" style="margin-right:3px;"><a href="'.$navUrl.($x-1).'">'.$x. '</a></span>';
+            if($qryCnt > 100){
+                if($startPage > 1){
+                    $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.'0">First</a></span>';
+                    $navStr .= '<span class="pagination" style="margin-right:5px;"><a href="'.$navUrl.(($index - 10) < 1?0:$index - 10).'">&lt;&lt;</a></span>';
                 }
-                else{
-                    $navStr .= '<span class="pagination" style="margin-right:3px;font-weight:bold;">' .$x. '</span>';
+                for($x = $startPage; $x <= $endPage; $x++){
+                    if(($index + 1) !== $x){
+                        $navStr .= '<span class="pagination" style="margin-right:3px;"><a href="'.$navUrl.($x-1).'">'.$x. '</a></span>';
+                    }
+                    else{
+                        $navStr .= '<span class="pagination" style="margin-right:3px;font-weight:bold;">' .$x. '</span>';
+                    }
                 }
-            }
-            if(($lastPage - $startPage) >= 10){
-                $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.(($index + 10) > $lastPage?$lastPage:($index + 10)).'">&gt;&gt;</a></span>';
-                $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.$lastPage.'">Last</a></span>';
+                if(($lastPage - $startPage) >= 10){
+                    $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.(($index + 10) > $lastPage?$lastPage:($index + 10)).'">&gt;&gt;</a></span>';
+                    $navStr .= '<span class="pagination" style="margin-left:5px;"><a href="'.$navUrl.$lastPage.'">Last</a></span>';
+                }
             }
             $beginNum = ($index)*100 + 1;
             $endNum = $beginNum + 100 - 1;

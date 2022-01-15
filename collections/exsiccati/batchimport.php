@@ -227,7 +227,7 @@ if($isEditor && $formSubmit){
 				<?php 
 			}
 			else{
-				echo '<div style="font-weight:bold;">There are no specimen records linked to this exsiccati title</div>';
+				echo '<div style="font-weight:bold;">There are no occurrence records linked to this exsiccati title</div>';
 			}
 		}
 		else{

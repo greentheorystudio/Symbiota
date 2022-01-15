@@ -99,8 +99,6 @@ header('X-Frame-Options: DENY');
             list-style-type: none;
             display: inline-block;
             color: #fff;
-            font-weight: 600;
-            font-size: .8rem !important;
             border-radius: 2px;
             font: inherit;
             line-height: 1;
@@ -168,6 +166,11 @@ header('X-Frame-Options: DENY');
 
         .draggable.dragging {
             opacity: 1;
+        }
+
+        fieldset{
+            border:1px solid black;
+            padding: 5px;
         }
     </style>
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
@@ -270,7 +273,7 @@ include(__DIR__ . '/../../header.php');
     <fieldset class="fieldset-block">
         <legend>Prefix</legend>
         <div class="field-block">
-            <span class="label">Prefix:</span>
+            <span class="labelFormat">Prefix:</span>
             <span class="field-elem">
                 <input id="fieldPrefix" type="text" value="" onchange="processFieldOptionsFormChange()" />
             </span>
@@ -279,26 +282,26 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline">
                     <input id="fieldPrefixBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Bold</span>
+                    <span class="labelFormat">Bold</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldPrefixItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Italic</span>
+                    <span class="labelFormat">Italic</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldPrefixUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Underline</span>
+                    <span class="labelFormat">Underline</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldPrefixUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Uppercase</span>
+                    <span class="labelFormat">Uppercase</span>
                 </span>
             </div>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label-inline">Font:</span>
+                    <span class="labelFormat">Font:</span>
                     <select id="fieldPrefixFont" onchange="processFieldOptionsFormChange()">
                         <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
@@ -314,7 +317,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Font Size (px):</span>
+                    <span class="labelFormat">Font Size (px):</span>
                     <span class="field-elem"><input id="fieldPrefixFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -326,26 +329,26 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline">
                     <input id="fieldBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Bold</span>
+                    <span class="labelFormat">Bold</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Italic</span>
+                    <span class="labelFormat">Italic</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Underline</span>
+                    <span class="labelFormat">Underline</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Uppercase</span>
+                    <span class="labelFormat">Uppercase</span>
                 </span>
             </div>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label-inline">Font:</span>
+                    <span class="labelFormat">Font:</span>
                     <select id="fieldFont" onchange="processFieldOptionsFormChange()">
                         <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
@@ -361,7 +364,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Font Size (px):</span>
+                    <span class="labelFormat">Font Size (px):</span>
                     <span class="field-elem"><input id="fieldFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -370,33 +373,33 @@ include(__DIR__ . '/../../header.php');
     <fieldset class="fieldset-block">
         <legend>Suffix</legend>
         <div class="field-block">
-            <span class="label">Suffix:</span>
+            <span class="labelFormat">Suffix:</span>
             <span class="field-elem"><input id="fieldSuffix" type="text" value="" onchange="processFieldOptionsFormChange()" /></span>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline">
                     <input id="fieldSuffixBold" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Bold</span>
+                    <span class="labelFormat">Bold</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldSuffixItalic" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Italic</span>
+                    <span class="labelFormat">Italic</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldSuffixUnderline" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Underline</span>
+                    <span class="labelFormat">Underline</span>
                 </span>
                 <span class="field-inline">
                     <input id="fieldSuffixUppercase" type="checkbox" value="1" onchange="processFieldOptionsFormChange()" />
-                    <span class="label-inline">Uppercase</span>
+                    <span class="labelFormat">Uppercase</span>
                 </span>
             </div>
         </div>
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label-inline">Font:</span>
+                    <span class="labelFormat">Font:</span>
                     <select id="fieldSuffixFont" onchange="processFieldOptionsFormChange()">
                         <option value="">Select a Font</option>
                         <option value="Arial">Arial (sans-serif)</option>
@@ -412,7 +415,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Font Size (px):</span>
+                    <span class="labelFormat">Font Size (px):</span>
                     <span class="field-elem"><input id="fieldSuffixFontSize" type="text" style="width:40px;" value="" onchange="processFieldOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -428,7 +431,7 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label-inline">Text Alignment:</span>
+                    <span class="labelFormat">Text Alignment:</span>
                     <select id="blockTextAlign" onchange="processBlockOptionsFormChange()">
                         <option value="left">Left</option>
                         <option value="center">Center</option>
@@ -436,7 +439,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Text Line Height (px):</span>
+                    <span class="labelFormat">Text Line Height (px):</span>
                     <span class="field-elem"><input id="blockLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -444,11 +447,11 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block" style="margin-top:5px;">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label">Top Margin (px):</span>
+                    <span class="labelFormat">Top Margin (px):</span>
                     <span class="field-elem"><input id="blockTopMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Bottom Margin (px):</span>
+                    <span class="labelFormat">Bottom Margin (px):</span>
                     <span class="field-elem"><input id="blockBottomMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -456,11 +459,11 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block" style="margin-top:5px;">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label">Left Margin (px):</span>
+                    <span class="labelFormat">Left Margin (px):</span>
                     <span class="field-elem"><input id="blockLeftMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Right Margin (px):</span>
+                    <span class="labelFormat">Right Margin (px):</span>
                     <span class="field-elem"><input id="blockRightMargin" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -472,14 +475,14 @@ include(__DIR__ . '/../../header.php');
             <div class="field-elem">
                 <span class="field-inline">
                     <input id="blockDisplayLine" type="checkbox" value="1" onchange="setBlockLineDisplay();processBlockOptionsFormChange();" />
-                    <span class="label-inline">Display Horizontal Line <b>(Note: Fields cannot be added to blocks set to this display)</b></span>
+                    <span class="labelFormat">Display Horizontal Line <b>(Note: Fields cannot be added to blocks set to this display)</b></span>
                 </span>
             </div>
         </div>
         <div class="field-block" style="margin-top:5px;">
             <div class="field-elem">
                 <span class="field-inline">
-                    <span class="label-inline">Line Style:</span>
+                    <span class="labelFormat">Line Style:</span>
                     <select id="blockDisplayLineStyle" onchange="processBlockOptionsFormChange();">
                         <option value="solid">Solid</option>
                         <option value="dash">Dashed</option>
@@ -487,7 +490,7 @@ include(__DIR__ . '/../../header.php');
                     </select>
                 </span>
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Line Height (px):</span>
+                    <span class="labelFormat">Line Height (px):</span>
                     <span class="field-elem"><input id="blockDisplayLineHeight" type="text" style="width:40px;" value="" onchange="processBlockOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -503,7 +506,7 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">Barcode Height (px):</span>
+                    <span class="labelFormat">Barcode Height (px):</span>
                     <span class="field-elem"><input id="barcodeHeight" type="text" style="width:40px;" value="" onchange="processBarcodeOptionsFormChange()" /></span>
                 </span>
             </div>
@@ -519,7 +522,7 @@ include(__DIR__ . '/../../header.php');
         <div class="field-block">
             <div class="field-elem">
                 <span class="field-inline" style="margin-left:5px;">
-                    <span class="label">QR Code Size (px):</span>
+                    <span class="labelFormat">QR Code Size (px):</span>
                     <span class="field-elem"><input id="qrcodeSize" type="text" style="width:40px;" value="" onchange="processQRCodeOptionsFormChange()" /></span>
                 </span>
             </div>

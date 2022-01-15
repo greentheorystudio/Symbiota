@@ -149,7 +149,7 @@ body{
 }
 
 #ymdDiv input{
-	width:	35px;
+	width:	40px;
 }
 
 #dayOfYearDiv {
@@ -159,16 +159,6 @@ body{
 
 #dayOfYearDiv input{
 	width:	40px;
-}
-
-#endDateDiv {
-	float:	left;
-	margin-left: 25px;
-	font-weight: bold;
-}
-
-#endDateDiv input{
-	width:	90px;
 }
 
 #exsDiv {

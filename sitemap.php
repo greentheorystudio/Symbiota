@@ -11,15 +11,7 @@ $smManager = new SiteMapManager();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
-		function submitTaxaNoImgForm(f){
-			if(f.clid.value !== ""){
-				f.submit();
-			}
-			return false;
-		}
-	</script>
-	<script type="text/javascript" src="js/symb/shared.js?ver=20210621"></script>
+	<script type="text/javascript" src="js/symb/shared.js?ver=20211227"></script>
 </head>
 <body>
 	<?php
@@ -34,32 +26,41 @@ $smManager = new SiteMapManager();
 				<li><a href="collections/misc/collprofiles.php">Collections</a> - list of collection participating in project</li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>
 				<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
-				<li>Data Publishing
-                    <ul>
-                        <li><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
-                        <li><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
-                        <?php
-                        if(file_exists('webservices/dwc/rss.xml')){
-                            echo '<li><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
-                        }
-                        ?>
-                    </ul>
-                </li>
-				<li><a href="collections/misc/rarespecies.php">Rare Species</a> - list of taxa where locality information is hidden due to rare/threatened/endangered status</li>
+                <?php
+                if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
+                    echo '<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>';
+                }
+                ?>
+				<li>Data Publishing</li>
+                <li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
+                <li style="margin-left:15px"><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
+                <?php
+                if(file_exists('webservices/dwc/rss.xml')){
+                    echo '<li style="margin-left:15px"><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
+                }
+                ?>
+                <li><a href="collections/misc/protectedspecies.php">Protected Species</a> - list of taxa where locality and/or taxonomic information is protected due to rare/threatened/endangered status</li>
 
 			</ul>
 
 			<h3>Image Library</h3>
 			<ul>
 				<li><a href="imagelib/index.php">Image Library</a></li>
-				<li><a href="imagelib/search.php">Interactive Search Tool</a></li>
+				<li><a href="imagelib/search.php">Image Search</a></li>
 				<li><a href="imagelib/contributors.php">Image Contributors</a></li>
 				<li><a href="misc/usagepolicy.php">Usage Policy and Copyright Information</a></li>
 			</ul>
 
-            <h3>Taxonomy</h3>
+            <h3>Additional Resources</h3>
 			<ul>
-				<li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
+                <?php
+                if($smManager->hasGlossary()){
+                    ?>
+                    <li><a href="glossary/index.php">Glossary</a></li>
+                    <?php
+                }
+                ?>
+                <li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
 				<li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
 			</ul>
 
@@ -71,7 +72,7 @@ $smManager = new SiteMapManager();
 			}
 			$projList = $smManager->getProjectList();
 			if($projList){
-				echo '<h2>Biotic Inventory Projects</h2><ul>';
+				echo '<h3>Biotic Inventory Projects</h3><ul>';
 				foreach($projList as $pid => $pArr){
 					echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr['name']."</a></li>\n";
 					echo '<ul><li>Manager: ' .$pArr['managers']."</li></ul>\n";
@@ -80,19 +81,19 @@ $smManager = new SiteMapManager();
 			}
 			?>
 
-			<h3>Dynamic Species Lists</h3>
+            <h3>Dynamic Species Lists</h3>
 			<ul>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=checklist">
                         Checklist
 					</a>
-                    - dynamically build a checklist using georeferenced specimen records
+                    - dynamically build a checklist using georeferenced occurrence records
 				</li>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=key">
                         Dynamic Key
 					</a>
-                    - dynamically build a key using georeferenced specimen records
+                    - dynamically build a key using georeferenced occurrence records
 				</li>
 			</ul>
 
@@ -186,7 +187,7 @@ $smManager = new SiteMapManager();
                         <a href="http://symbiota.org/docs/image-submission-2/">Image Submission</a>
                         for an overview of how images are managed within a Symbiota data portal. Field images without
                         detailed locality information can be uploaded using the Taxon Species Profile page.
-                        Specimen images are loaded through the Specimen Editing page or through a batch upload process
+                        Occurrence images are loaded through the Occurrence Editing page or through a batch upload process
                         established by a portal manager. Image Observations (Image Vouchers) with detailed locality information can be
                         uploaded using the link below. Note that you will need the necessary permission assignments to use this
                         feature.
@@ -332,7 +333,7 @@ $smManager = new SiteMapManager();
 					<div class="pmargin">
                         Tools for managing data specific to a particular collection are available through the collection&#39;s profile page.
                         Clicking on a collection name in the list below will take you to this page for that given collection.
-                        An additional method to reach this page is by clicking on the collection name within the specimen search engine.
+                        An additional method to reach this page is by clicking on the collection name within the occurrence search engine.
                         The editing symbol located in the upper right of Collection Profile page will open
                         the editing pane and display a list of editing options.
 					</div>
@@ -364,7 +365,7 @@ $smManager = new SiteMapManager();
                         1) Allows registered users to submit a image voucherd field observation.
                         2) Allows collectors to enter their own collection data for label printing and to make the data available
                         to the collections obtaining the physical specimens through donations or exchange. Visit the
-                        <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on specimen processing capabilities.
+                        <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on occurrence processing capabilities.
                         Note that observation projects are not activated on all Symbiota data portals.
                     </div>
 					<div class="pmargin">
@@ -410,7 +411,7 @@ $smManager = new SiteMapManager();
 						<?php
 						if($genObsList){
 							?>
-							<h4>Personal Specimen Management and Label Printing Features</h4>
+							<h4>Personal Occurrence Management and Label Printing Features</h4>
 							<ul>
 								<?php
 								foreach($genObsList as $k => $oArr){
@@ -444,7 +445,7 @@ $smManager = new SiteMapManager();
 			?>
 			</fieldset>
 
-			<h2>About Symbiota</h2>
+			<h3>About Symbiota</h3>
 			<ul>
 				<li>
                     Schema Version <?php echo $smManager->getSchemaVersion(); ?>

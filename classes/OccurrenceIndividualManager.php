@@ -152,6 +152,7 @@ class OccurrenceIndividualManager extends Manager{
                     $rsSec->close();
                 }
                 $this->loadImages();
+                $this->loadMedia();
                 $this->loadDeterminations();
                 $this->loadLoan();
                 $this->loadExsiccati();
@@ -168,7 +169,9 @@ class OccurrenceIndividualManager extends Manager{
 
     private function loadImages(): void
     {
-        $sql = 'SELECT imgid, url, thumbnailurl, originalurl, notes, caption FROM images '.
+        $sql = 'SELECT imgid, url, thumbnailurl, originalurl, photographer, photographeruid, caption, owner, sourceurl, referenceUrl, copyright, '.
+            'rights, accessrights, locality, notes, anatomy, dynamicProperties '.
+            'FROM images '.
             'WHERE (occid = '.$this->occid.') ORDER BY sortsequence';
         $result = $this->conn->query($sql);
         if($result){
@@ -194,10 +197,69 @@ class OccurrenceIndividualManager extends Manager{
                 $this->occArr['imgs'][$imgId]['url'] = $url;
                 $this->occArr['imgs'][$imgId]['tnurl'] = $tnUrl;
                 $this->occArr['imgs'][$imgId]['lgurl'] = $lgUrl;
+                $this->occArr['imgs'][$imgId]['photographer'] = $row->photographer;
+                $this->occArr['imgs'][$imgId]['photographeruid'] = $row->photographeruid;
                 $this->occArr['imgs'][$imgId]['caption'] = $row->caption;
+                $this->occArr['imgs'][$imgId]['owner'] = $row->owner;
+                $this->occArr['imgs'][$imgId]['sourceurl'] = $row->sourceurl;
+                $this->occArr['imgs'][$imgId]['referenceUrl'] = $row->referenceUrl;
+                $this->occArr['imgs'][$imgId]['copyright'] = $row->copyright;
+                $this->occArr['imgs'][$imgId]['rights'] = $row->rights;
+                $this->occArr['imgs'][$imgId]['accessrights'] = $row->accessrights;
+                $this->occArr['imgs'][$imgId]['locality'] = $row->locality;
+                $this->occArr['imgs'][$imgId]['notes'] = $row->notes;
+                $this->occArr['imgs'][$imgId]['anatomy'] = $row->anatomy;
+                $this->occArr['imgs'][$imgId]['dynamicProperties'] = $row->dynamicProperties;
             }
             $result->free();
         }
+    }
+
+    private function loadMedia(): void
+    {
+        $sql = 'SELECT mediaid, accessuri, title, creatoruid, creator, format, owner, furtherinformationurl, language, usageterms, '.
+            'rights, bibliographiccitation, publisher, contributor, locationcreated, description '.
+            'FROM media '.
+            'WHERE (occid = '.$this->occid.') ORDER BY sortsequence';
+        $result = $this->conn->query($sql);
+        if($result){
+            while($row = $result->fetch_object()){
+                $medId = $row->mediaid;
+                $url = $row->accessuri;
+                if($GLOBALS['IMAGE_DOMAIN'] && strncmp($url, '/', 1) === 0) {
+                    $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
+                }
+                $this->occArr['media'][$medId]['accessuri'] = $url;
+                $this->occArr['media'][$medId]['title'] = $row->title;
+                $this->occArr['media'][$medId]['creatoruid'] = $row->creatoruid;
+                $this->occArr['media'][$medId]['creator'] = $row->creator;
+                $this->occArr['media'][$medId]['format'] = $row->format;
+                $this->occArr['media'][$medId]['owner'] = $row->owner;
+                $this->occArr['media'][$medId]['furtherinformationurl'] = $row->furtherinformationurl;
+                $this->occArr['media'][$medId]['language'] = $row->language;
+                $this->occArr['media'][$medId]['usageterms'] = $row->usageterms;
+                $this->occArr['media'][$medId]['rights'] = $row->rights;
+                $this->occArr['media'][$medId]['bibliographiccitation'] = $row->bibliographiccitation;
+                $this->occArr['media'][$medId]['publisher'] = $row->publisher;
+                $this->occArr['media'][$medId]['contributor'] = $row->contributor;
+                $this->occArr['media'][$medId]['locationcreated'] = $row->locationcreated;
+                $this->occArr['media'][$medId]['description'] = $row->description;
+            }
+            $result->free();
+        }
+    }
+
+    public function getPhotographerArr(): array
+    {
+        $retArr = array();
+        $sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
+            'FROM users u ORDER BY u.lastname, u.firstname ';
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $retArr[$row->uid] = Sanitizer::cleanOutStr($row->fullname);
+        }
+        $result->close();
+        return $retArr;
     }
 
     private function loadDeterminations(): void

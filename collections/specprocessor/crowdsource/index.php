@@ -64,7 +64,7 @@ $statusStr = '';
 				<?php
 				if($GLOBALS['SYMB_UID']){
 					?>
-					<b>Specimens processed as volunteer:</b> <?php echo number_format($userStats['totalcnt']); ?><br/>
+					<b>Occurrences processed as volunteer:</b> <?php echo number_format($userStats['totalcnt']); ?><br/>
 					<?php
 					if($userStats['nonvolcnt']) {
                         echo '&nbsp;&nbsp;&nbsp;(Additional as non-volunteer: ' . number_format($userStats['nonvolcnt']) . ')<br/>';
@@ -87,7 +87,7 @@ $statusStr = '';
 					<b>Total Possible Score:</b> <?php echo number_format($userStats['ppoints']+$userStats['apoints']); ?><br/>
 					<?php
 					if($userStats['nonvolcnt']) {
-                        echo '<div style="margin-top:10px">* Only specimens processed as a volunteer are eligible for points</div>';
+                        echo '<div style="margin-top:10px">* Only occurrences processed as a volunteer are eligible for points</div>';
                     }
 				}
 				else{
@@ -105,7 +105,7 @@ $statusStr = '';
 			<table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
 				<tr>
 					<th><b>Collection</b></th>
-					<th><b>Specimen<br/>Count</b></th>
+					<th><b>Occurrence<br/>Count</b></th>
 					<th><b>Pending<br/>Points</b></th>
 					<th><b>Approved<br/>Points</b></th>
 					<th><b>Open<br/>Records</b></th>
@@ -136,9 +136,9 @@ $statusStr = '';
 			?>
 			<div style="clear:both;margin:30px;">
 				<b>Note:</b> You have been identified as an official editor for one or more collections.
-				Your points will not be counted in the Top Score table for specimens
+				Your points will not be counted in the Top Score table for occurrences
 				that belong to collection to which you have edit rights.
-				Top scores are posted only for specimens entered on a volunteer basis.
+				Top scores are posted only for occurrences entered on a volunteer basis.
 			</div>
 			<?php
 		}

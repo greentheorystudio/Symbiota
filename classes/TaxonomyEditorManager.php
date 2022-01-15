@@ -78,66 +78,63 @@ class TaxonomyEditorManager{
 				'FROM taxstatus ts INNER JOIN taxa t ON ts.tidaccepted = t.tid ' .
 				'WHERE (ts.taxauthid = ' .$this->taxAuthId. ') AND (ts.tid = ' .$this->tid.')';
 			//echo $sqlTs;
-			$rsTs = $this->conn->query($sqlTs);
-			if($row = $rsTs->fetch_object()){
-				$this->parentTid = $row->parenttid;
-				$this->family = $row->family;
-				
-				do{
-					$tidAccepted = $row->tidaccepted;
-					if($this->tid === $tidAccepted){
-						if($this->isAccepted === -1 || $this->isAccepted === 1){
-							$this->isAccepted = 1;
-						}
-						else{
-							$this->isAccepted = -2;
-						}
-					}
-					else{
-						if($this->isAccepted === -1 || $this->isAccepted === 0){
-							$this->isAccepted = 0;
-						}
-						else{
-							$this->isAccepted = -2;
-						}
-						$this->acceptedArr[$tidAccepted]['unacceptabilityreason'] = $row->unacceptabilityreason;
-						$this->acceptedArr[$tidAccepted]['sciname'] = $row->sciname;
-						$this->acceptedArr[$tidAccepted]['author'] = $row->author;
-						$this->acceptedArr[$tidAccepted]['usagenotes'] = $row->notes;
-						$this->acceptedArr[$tidAccepted]['sortsequence'] = $row->sortsequence;
-					}
-				}
-				while($row = $rsTs->fetch_object());
-			}
-			else{
-				$sqlPar = 'SELECT t.tid, ts.family '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-					'WHERE ts.taxauthid = '.$this->taxAuthId.' AND ';
-				if($this->rankid > 220){
-					$sqlPar .= 't.rankid = 220 AND t.unitName1 = "'.$this->unitName1.'" AND t.unitName2 = "'.$this->unitName2.'" ';
-				}
-				elseif($this->rankid > 180){
-					$sqlPar .= 't.rankid = 180 AND t.unitName1 = "'.$this->unitName1.'" ';
-				}
-				elseif($this->kingdomName){
-					$sqlPar .= 't.rankid = 10 AND t.unitName1 = "'.$this->kingdomName.'"';
-				}
-				else{
-					$sqlPar .= 't.rankid = 1 ';
-				}
-				$rsPar = $this->conn->query($sqlPar);
-				if($rPar = $rsPar->fetch_object()){
-					$sqlIns = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid, family) '.
-						'VALUES('.$this->tid.','.$this->tid.','.$this->taxAuthId.','.$rPar->tid.','.
-						($rPar->family?'"'.$rPar->family.'"':'NULL').')';
-					if($this->conn->query($sqlIns)){
-						$this->parentTid = $rPar->tid;
-						$this->family = $rPar->family;
-						$this->isAccepted = 1;
-					}
-				}
-				$rsPar->free();
-			}
+			if($rsTs = $this->conn->query($sqlTs)){
+                while($row = $rsTs->fetch_object()){
+                    $this->parentTid = $row->parenttid;
+                    $this->family = $row->family;
+                    $tidAccepted = (int)$row->tidaccepted;
+                    if($this->tid === $tidAccepted){
+                        if($this->isAccepted === -1 || $this->isAccepted === 1){
+                            $this->isAccepted = 1;
+                        }
+                        else{
+                            $this->isAccepted = -2;
+                        }
+                    }
+                    else{
+                        if($this->isAccepted === -1 || $this->isAccepted === 0){
+                            $this->isAccepted = 0;
+                        }
+                        else{
+                            $this->isAccepted = -2;
+                        }
+                        $this->acceptedArr[$tidAccepted]['unacceptabilityreason'] = $row->unacceptabilityreason;
+                        $this->acceptedArr[$tidAccepted]['sciname'] = $row->sciname;
+                        $this->acceptedArr[$tidAccepted]['author'] = $row->author;
+                        $this->acceptedArr[$tidAccepted]['usagenotes'] = $row->notes;
+                        $this->acceptedArr[$tidAccepted]['sortsequence'] = $row->sortsequence;
+                    }
+                }
+            }
+            else{
+                $sqlPar = 'SELECT t.tid, ts.family '.
+                    'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+                    'WHERE ts.taxauthid = '.$this->taxAuthId.' AND ';
+                if($this->rankid > 220){
+                    $sqlPar .= 't.rankid = 220 AND t.unitName1 = "'.$this->unitName1.'" AND t.unitName2 = "'.$this->unitName2.'" ';
+                }
+                elseif($this->rankid > 180){
+                    $sqlPar .= 't.rankid = 180 AND t.unitName1 = "'.$this->unitName1.'" ';
+                }
+                elseif($this->kingdomName){
+                    $sqlPar .= 't.rankid = 10 AND t.unitName1 = "'.$this->kingdomName.'"';
+                }
+                else{
+                    $sqlPar .= 't.rankid = 1 ';
+                }
+                $rsPar = $this->conn->query($sqlPar);
+                if($rPar = $rsPar->fetch_object()){
+                    $sqlIns = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid, family) '.
+                        'VALUES('.$this->tid.','.$this->tid.','.$this->taxAuthId.','.$rPar->tid.','.
+                        ($rPar->family?'"'.$rPar->family.'"':'NULL').')';
+                    if($this->conn->query($sqlIns)){
+                        $this->parentTid = $rPar->tid;
+                        $this->family = $rPar->family;
+                        $this->isAccepted = 1;
+                    }
+                }
+                $rsPar->free();
+            }
 			$rsTs->free();
 
 			if($this->isAccepted === 1) {
