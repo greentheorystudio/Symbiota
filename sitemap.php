@@ -72,7 +72,7 @@ $smManager = new SiteMapManager();
 			}
 			$projList = $smManager->getProjectList();
 			if($projList){
-				echo '<h2>Biotic Inventory Projects</h2><ul>';
+				echo '<h3>Biotic Inventory Projects</h3><ul>';
 				foreach($projList as $pid => $pArr){
 					echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr['name']."</a></li>\n";
 					echo '<ul><li>Manager: ' .$pArr['managers']."</li></ul>\n";
@@ -445,7 +445,7 @@ $smManager = new SiteMapManager();
 			?>
 			</fieldset>
 
-			<h2>About Symbiota</h2>
+			<h3>About Symbiota</h3>
 			<ul>
 				<li>
                     Schema Version <?php echo $smManager->getSchemaVersion(); ?>
