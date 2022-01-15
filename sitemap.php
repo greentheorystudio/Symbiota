@@ -11,14 +11,6 @@ $smManager = new SiteMapManager();
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-	<script type="text/javascript">
-		function submitTaxaNoImgForm(f){
-			if(f.clid.value !== ""){
-				f.submit();
-			}
-			return false;
-		}
-	</script>
 	<script type="text/javascript" src="js/symb/shared.js?ver=20211227"></script>
 </head>
 <body>
@@ -34,32 +26,41 @@ $smManager = new SiteMapManager();
 				<li><a href="collections/misc/collprofiles.php">Collections</a> - list of collection participating in project</li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>
 				<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
-				<li>Data Publishing
-                    <ul>
-                        <li><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
-                        <li><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
-                        <?php
-                        if(file_exists('webservices/dwc/rss.xml')){
-                            echo '<li><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
-                        }
-                        ?>
-                    </ul>
-                </li>
-				<li><a href="collections/misc/rarespecies.php">Rare Species</a> - list of taxa where locality information is hidden due to rare/threatened/endangered status</li>
+                <?php
+                if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
+                    echo '<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>';
+                }
+                ?>
+				<li>Data Publishing</li>
+                <li style="margin-left:15px"><a href="collections/datasets/rsshandler.php" target="_blank">RSS Feed for Natural History Collections and Observation Projects</a></li>
+                <li style="margin-left:15px"><a href="collections/datasets/datapublisher.php">Darwin Core Archives (DwC-A)</a> - published datasets of selected collections</li>
+                <?php
+                if(file_exists('webservices/dwc/rss.xml')){
+                    echo '<li style="margin-left:15px"><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
+                }
+                ?>
+                <li><a href="collections/misc/protectedspecies.php">Protected Species</a> - list of taxa where locality and/or taxonomic information is protected due to rare/threatened/endangered status</li>
 
 			</ul>
 
 			<h3>Image Library</h3>
 			<ul>
 				<li><a href="imagelib/index.php">Image Library</a></li>
-				<li><a href="imagelib/search.php">Interactive Search Tool</a></li>
+				<li><a href="imagelib/search.php">Image Search</a></li>
 				<li><a href="imagelib/contributors.php">Image Contributors</a></li>
 				<li><a href="misc/usagepolicy.php">Usage Policy and Copyright Information</a></li>
 			</ul>
 
-            <h3>Taxonomy</h3>
+            <h3>Additional Resources</h3>
 			<ul>
-				<li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
+                <?php
+                if($smManager->hasGlossary()){
+                    ?>
+                    <li><a href="glossary/index.php">Glossary</a></li>
+                    <?php
+                }
+                ?>
+                <li><a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer</a></li>
 				<li><a href="taxa/admin/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
 			</ul>
 
@@ -80,7 +81,7 @@ $smManager = new SiteMapManager();
 			}
 			?>
 
-			<h3>Dynamic Species Lists</h3>
+            <h3>Dynamic Species Lists</h3>
 			<ul>
 				<li>
 					<a href="checklists/dynamicmap.php?interface=checklist">

@@ -229,16 +229,7 @@ if($GLOBALS['SYMB_UID']){
 									</a>
 								</li>
 								<?php
-                                if($GLOBALS['FIELDGUIDE_ACTIVE']){
-                                    ?>
-                                    <li>
-                                        <a href="fgbatch.php?collid=<?php echo $collid; ?>" >
-                                            Fieldguide Batch Image Processing
-                                        </a>
-                                    </li>
-                                    <?php
-                                }
-								if($collData['colltype'] !== 'General Observations'){
+                                if($collData['colltype'] !== 'General Observations'){
 									?>
 									<li>
 										<a href="#" onclick="$('li.importItem').show(); return false;" >
