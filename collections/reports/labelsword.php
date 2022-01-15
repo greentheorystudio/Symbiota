@@ -32,26 +32,26 @@ if($formatArr){
     if($columnCount === 'packet'){
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>2370,'marginRight'=>2370,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
-        $lineWidth = 500;
+        $lineWidth = 445;
     }
     elseif((int)$columnCount === 1){
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
-        $lineWidth = 700;
+        $lineWidth = 645;
     }
     else{
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         if((int)$columnCount === 2){
             $sectionStyle['colsNum'] = 2;
-            $lineWidth = 328;
+            $lineWidth = 273;
         }
         if((int)$columnCount === 3){
             $sectionStyle['colsNum'] = 3;
-            $lineWidth = 162;
+            $lineWidth = 107;
         }
         if((int)$columnCount === 4){
             $sectionStyle['colsNum'] = 4;
-            $lineWidth = 64;
+            $lineWidth = 9;
         }
     }
     $sectionStyle['colsSpace'] = 450;
@@ -165,7 +165,14 @@ if($formatArr){
                         }
                         else{
                             foreach($fieldsArr as $f => $fArr){
+                                $value = '';
                                 $field = $fArr['field'];
+                                if($field === 'genus' && !isset($occArr[$field])){
+                                    $value = $occArr['sciname'];
+                                }
+                                elseif(isset($occArr[$field])){
+                                    $value = $occArr[$field];
+                                }
                                 if(strncmp($field, 'barcode-', 8) === 0){
                                     $idArr = explode('-', $field);
                                     if($idArr){
@@ -186,7 +193,7 @@ if($formatArr){
                                         $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
                                     }
                                 }
-                                elseif(isset($occArr[$field])){
+                                elseif($value){
                                     if(isset($fArr['fieldPrefix'])){
                                         $fPrefixStyleArr = array();
                                         if(isset($fArr['fieldPrefixBold'])){
@@ -220,7 +227,7 @@ if($formatArr){
                                     }
                                     $fStyleArr['name'] = $fArr['fieldFont'] ?? $defaultFont;
                                     $fStyleArr['size'] = $fArr['fieldFontSize'] ?? $defaultFontSize;
-                                    $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
+                                    $textrun->addText(htmlspecialchars($value),$fStyleArr);
                                     if(isset($fArr['fieldSuffix'])){
                                         $fSuffixStyleArr = array();
                                         if(isset($fArr['fieldSuffixBold'])){

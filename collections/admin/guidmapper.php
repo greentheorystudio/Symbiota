@@ -22,7 +22,7 @@ $uuidManager = new UuidFactory();
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-	<title>UUID GUID Mapper</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> UUID GUID Mapper</title>
 	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
 	<script type="text/javascript">

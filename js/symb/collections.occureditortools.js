@@ -50,7 +50,7 @@ function toggleCsMode(modeId){
 		document.getElementById("shorttagspan").style.display = "none";
 	}
 	else{
-		document.getElementById("editorCssLink").href = "../../css/occureditor.css";
+		document.getElementById("editorCssLink").href = "../../css/occureditor.css?ver=20220110";
 		document.getElementById("longtagspan").style.display = "none";
 		document.getElementById("shorttagspan").style.display = "block";
 	}

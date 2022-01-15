@@ -10,7 +10,7 @@ if(!$clid){
 	echo 'ERROR: Checklist ID is null';
 }
 elseif(!$occArr){
-	echo 'ERROR: Specimen identifiers are missing';
+	echo 'ERROR: Occurrence identifiers are missing';
 }
 elseif(!$tid){
 	echo 'ERROR: Problem with taxon name (null tid), contact administrator';

@@ -130,8 +130,8 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
-    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210913"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
+    <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20211104"></script>
     <script type="text/javascript">
         let stArr = {};
         $(document).ready(function() {
@@ -332,7 +332,7 @@ include(__DIR__ . '/../../header.php');
                             </div>
                             <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
                                 <tr>
-                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all Specimens" /></th>
+                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all occurrences" /></th>
                                     <th>catalog #</th>
                                     <th>Collector</th>
                                     <th>Scientific Name</th>

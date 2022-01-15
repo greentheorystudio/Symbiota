@@ -238,7 +238,7 @@ if($action !== 'Update Statistics'){
             <script src="../../js/all.min.js" type="text/javascript"></script>
             <script type="text/javascript" src="../../js/jquery.js"></script>
 			<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210913"></script>
+			<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20211104"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -928,7 +928,7 @@ if($action !== 'Update Statistics'){
 										?>
 									</table>
 									<div style="margin-top:10px;">
-										<b>Total Specimens with Family:</b> <?php echo number_format($total); ?><br />
+										<b>Total Occurrences with Family:</b> <?php echo number_format($total); ?><br />
 										Specimens without Family: <?php echo number_format($results['SpecimenCount']-$total); ?><br />
 									</div>
 								</fieldset>
@@ -965,7 +965,7 @@ if($action !== 'Update Statistics'){
 										?>
 									</table>
 									<div style="margin-top:10px;">
-										<b>Total Specimens with Country:</b> <?php echo number_format($total); ?><br />
+										<b>Total Occurrences with Country:</b> <?php echo number_format($total); ?><br />
 										Specimens without Country or Georeferencing: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']); ?><br />
 									</div>
 								</fieldset>

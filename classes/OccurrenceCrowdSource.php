@@ -219,7 +219,7 @@ class OccurrenceCrowdSource {
 
 	public function addToQueue($omcsid,$family,$taxon,$country,$stateProvince,$limit): string
 	{
-		$statusStr = 'SUCCESS: specimens added to queue';
+		$statusStr = 'SUCCESS: occurrences added to queue';
 		if($this->omcsid) {
             if($this->collid) {
                 $sqlFrag = 'FROM omoccurrences o INNER JOIN images i ON o.occid = i.occid '.
@@ -269,13 +269,13 @@ class OccurrenceCrowdSource {
 
 	public function deleteQueue(): string
 	{
-		$statusStr = 'SUCCESS: all specimens removed from queue';
+		$statusStr = 'SUCCESS: all occurrences removed from queue';
 		if($this->omcsid) {
             if($this->collid) {
                 $sql = 'DELETE FROM omcrowdsourcequeue '.
                     'WHERE omcsid = '.$this->omcsid.' AND uidprocessor IS NULL and reviewstatus = 0 ';
                 if(!$this->conn->query($sql)){
-                    $statusStr = 'ERROR removing specimens from queue.';
+                    $statusStr = 'ERROR removing occurrences from queue.';
                 }
                 $this->conn->close();
             }

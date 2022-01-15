@@ -6,6 +6,7 @@ $GLOBALS['DEFAULT_TITLE'] = '';
 $GLOBALS['TID_FOCUS'] = '';
 $GLOBALS['ADMIN_EMAIL'] = '';
 $GLOBALS['CHARSET'] = 'UTF-8';					//ISO-8859-1 or UTF-8
+$GLOBALS['MAX_UPLOAD_FILESIZE'] = 20000000;
 $GLOBALS['PORTAL_GUID'] = '8453b446-8f84-4949-a587-3e8b9678dc0b';				//Typically a UUID
 $GLOBALS['SECURITY_KEY'] = '424a9fc6-9454-4bce-acba-e32656da8a63';				//Typically a UUID used to verify access to certain web service
 
@@ -38,7 +39,7 @@ $GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['FLORA_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
-$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for specimens
+$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for occurrences
 
 //Configurations for GeoServer integration
 $GLOBALS['GEOSERVER_URL'] = '';   // URL for Geoserver instance serving map data for this portal
@@ -67,8 +68,6 @@ $GLOBALS['DYN_CHECKLIST_RADIUS'] = 10;			//Controls size of concentric rings tha
 $GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profile page and checklists displays
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
-$GLOBALS['ACTIVATE_FIELDGUIDE'] = 0;	//Activates FieldGuide Batch Processing module
-$GLOBALS['FIELDGUIDE_API_KEY'] = '';	//API Key for FieldGuide Batch Processing module
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation
 $GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT'] = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 
