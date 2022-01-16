@@ -96,93 +96,52 @@ $smManager = new SiteMapManager();
                     - dynamically build a key using georeferenced occurrence records
 				</li>
 			</ul>
-
-			<fieldset class="sitemapDataManagementContainer">
-				<legend><b>Data Management Tools</b></legend>
-				<?php
-				if($GLOBALS['SYMB_UID']){
-					if($GLOBALS['IS_ADMIN']){
-						?>
-						<h3>Administrative Functions (Super Admins only)</h3>
-						<ul>
-							<li>
-								<a href="profile/usermanagement.php">User Permissions</a>
-							</li>
-							<li>
-								<a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a>
-							</li>
-							<li>
-								<a href="collections/cleaning/taxonomycleaner.php">Global Taxonomic Name Cleaner</a>
-							</li>
-							<li>
-								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collmetadata.php">
+            <?php
+            if($GLOBALS['SYMB_UID']){
+                ?>
+                <fieldset class="sitemapDataManagementContainer">
+                    <legend><b>Management Tools</b></legend>
+                    <?php
+                    if($GLOBALS['IS_ADMIN']){
+                        ?>
+                        <h3>Administrative Tools</h3>
+                        <ul>
+                            <li>
+                                <a href="profile/usermanagement.php">User Permissions</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collmetadata.php">
                                     Create a New Collection or Observation Profile
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/admin/thumbnailbuilder.php">
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/admin/thumbnailbuilder.php">
                                     Thumbnail Builder Tool
-								</a>
-							</li>
-							<li>
-								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/guidmapper.php">
-                                    Collection GUID Mapper
-								</a>
-							</li>
-						</ul>
-						<?php
-					}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/admin/guidmapper.php">
+                                    UUID/GUID Generator
+                                </a>
+                            </li>
+                        </ul>
+                        <?php
+                    }
 
-					if($GLOBALS['KEY_MOD_IS_ACTIVE'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
-						?>
-						<h3>Identification Keys</h3>
-						<?php
-						if(!$GLOBALS['KEY_MOD_IS_ACTIVE'] && array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
-							?>
-							<div class="indentedWarning">
-                                Note: The Identification Key module is deactivated within this portal. However, you can override by activating idividual keys within the checklist administration page.
-							</div>
-							<?php
-						}
-						?>
-						<ul>
-							<?php
-							if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
-								?>
-								<li>
-                                    You are authorized to access the <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/ident/admin/index.php">Characters and Character States Editor</a>
-								</li>
-								<?php
-							}
-							if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS']) || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
-								?>
-								<li>
-                                    You are authorized to edit Identification Keys.
-								</li>
-                                <?php
-                                if($clAdmin){
-                                    echo '<li>';
-                                    echo 'For coding characters in a table format, open the Mass-Update Editor for the following checklists. <br/>';
-                                    echo '<ul>';
-                                    foreach($clAdmin as $vClid => $name){
-                                        echo "<li><a href='".$GLOBALS['CLIENT_ROOT']. '/ident/tools/massupdate.php?clid=' .$vClid."'>".$name. '</a></li>';
-                                    }
-                                    echo '</ul>';
-                                    echo '</li>';
-                                }
-                            }
-							else{
-								?>
-								<li>You are not authorized to edit Identification Keys</li>
-								<?php
-							}
-							?>
-						</ul>
-						<?php
-					}
-					?>
-					<h3>Images</h3>
-					<div class="pmargin">
+                    if($GLOBALS['KEY_MOD_IS_ACTIVE'] || array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS'])){
+                        ?>
+                        <h3>Identification Keys</h3>
+                        <ul>
+                            <li>
+                                <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/ident/admin/index.php">Characters and Character States Editor</a>
+                            </li>
+                        </ul>
+                        <?php
+                    }
+                    ?>
+
+                    <h3>Images</h3>
+                    <div class="pmargin">
                         See the Symbiota documentation on
                         <a href="http://symbiota.org/docs/image-submission-2/">Image Submission</a>
                         for an overview of how images are managed within a Symbiota data portal. Field images without
@@ -192,266 +151,132 @@ $smManager = new SiteMapManager();
                         uploaded using the link below. Note that you will need the necessary permission assignments to use this
                         feature.
                     </div>
-					<ul>
-						<?php
-						if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
-							?>
-							<li>
-								<a href="taxa/admin/tpeditor.php?tabindex=1" target="_blank">
+                    <ul>
+                        <?php
+                        if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+                            ?>
+                            <li>
+                                <a href="taxa/admin/tpeditor.php?tabindex=1" target="_blank">
                                     Basic Field Image Submission
                                 </a>
-							</li>
-							<?php
-						}
-						if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
-							?>
-							<li>
-								<a href="collections/editor/observationsubmit.php">
+                            </li>
+                            <?php
+                        }
+                        if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+                            ?>
+                            <li>
+                                <a href="collections/editor/observationsubmit.php">
                                     Image Observation Submission Module
-								</a>
-							</li>
-							<?php
-						}
-						?>
-					</ul>
+                                </a>
+                            </li>
+                            <?php
+                        }
+                        ?>
+                    </ul>
+
+                    <h3>Glossary</h3>
+                    <ul>
+                        <li><a href="glossary/index.php">Manage Glossary</a></li>
+                    </ul>
 
                     <h3>References</h3>
                     <ul>
                         <li><a href="references/index.php">Manage References</a></li>
                     </ul>
 
-					<h3>Biotic Inventory Projects</h3>
-					<ul>
-						<?php
-						if($GLOBALS['IS_ADMIN']){
-							echo '<li><a href="projects/index.php?newproj=1">Add a New Project</a></li>';
-							if($projList){
-								echo '<li><b>List of Current Projects</b> (click to edit)</li>';
-								echo '<ul>';
-								foreach($projList as $pid => $pArr){
-									echo '<li><a href="'.$GLOBALS['CLIENT_ROOT'].'/projects/index.php?pid='.$pid.'&emode=1">'.$pArr['name'].'</a></li>';
-								}
-								echo '</ul>';
-							}
-							else{
-								echo '<li>There are no projects in the system</li>';
-							}
-						}
-						else{
-							echo '<li>You are not authorized to edit any of the Projects</li>';
-						}
-						?>
-					</ul>
+                    <h3>Datasets</h3>
+                    <ul>
+                        <li><a href="collections/datasets/index.php">Manage Datasets</a></li>
+                    </ul>
 
-					<h3>Taxon Profile Page</h3>
-					<?php
-					if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
-						?>
-						<div class="pmargin">
-                            The following Species Profile page editing features are also available to editors via an
-                            editing link located in the upper right of each Species Profile page.
-						</div>
-						<ul>
-							<li><a href="taxa/admin/tpeditor.php?taxon=">Synonyms / Common Names</a></li>
-							<li><a href="taxa/admin/tpeditor.php?taxon=&tabindex=4">Text Descriptions</a></li>
-							<li><a href="taxa/admin/tpeditor.php?taxon=&tabindex=1">Edit Images</a>
-                                <ul>
-                                    <li><a href="taxa/admin/tpeditor.php?taxon=&category=imagequicksort&tabindex=2">Edit Image Sorting Order</a></li>
-                                    <li><a href="taxa/admin/tpeditor.php?taxon=&category=imageadd&tabindex=3">Add a new image</a></li>
-                                </ul>
+                    <h3>Taxonomy</h3>
+                    <ul>
+                        <?php
+                        if($GLOBALS['IS_ADMIN']){
+                            ?>
+                            <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest User Permissions</a></li>
+                            <?php
+                        }
+                        if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
+                            ?>
+                            <li><a href="taxa/admin/taxonomydisplay.php">Edit Taxonomic Placement</a></li>
+                            <li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
+                            <li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
+                            <li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
+                            <?php
+                        }
+                        if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
+                            ?>
+                            <li>To edit the synonyms, common names, description, or images for a taxon, click on the editing link located in the upper right of each
+                                <a href="taxa/admin/tpeditor.php?taxon=">Taxon Profile page</a>
                             </li>
-						</ul>
-						<?php
-					}
-					else{
-						?>
-						<ul>
-							<li>You are not yet authorized to edit the Taxon Profile</li>
-						</ul>
-						<?php
-					}
-					?>
-					<h3>Taxonomy</h3>
-					<ul>
-						<?php
-						if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-							?>
-							<li>Edit Taxonomic Placement (use <a href="taxa/admin/taxonomydisplay.php">Taxonomic Tree Viewer)</a></li>
-							<li><a href="taxa/admin/taxonomyloader.php">Add New Taxonomic Name</a></li>
-							<li><a href="taxa/admin/batchloader.php">Batch Upload a Taxonomic Data File</a></li>
-							<?php
-							if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
-								?>
-								<li><a href="taxa/admin/eolmapper.php">Encyclopedia of Life Linkage Manager</a></li>
-								<?php
-							}
-						}
-						else{
-							echo '<li>You are not authorized to edit taxonomy</li>';
-						}
-						?>
-					</ul>
+                            <?php
+                        }
+                        ?>
+                    </ul>
 
-					<h3>Checklists</h3>
-					<div class="pmargin">
+                    <h3>Biotic Inventory Projects</h3>
+                    To view the biotic inventory projects that you currently have permission to edit, visit your
+                    <a href="profile/viewprofile.php">My Profile page</a>.
+                    <?php
+                    if($GLOBALS['IS_ADMIN']){
+                        echo '<ul>';
+                        echo '<li><a href="projects/index.php?newproj=1">Add a New Project</a></li>';
+                        echo '</ul>';
+                    }
+                    ?>
+
+                    <h3>Checklists</h3>
+                    <div class="pmargin">
                         Tools for managing Checklists are available from each checklist display page.
                         Editing symbols located in the upper right of the page will display
-                        editing options for that checklist.
-                        Below is a list of the checklists you are authorized to edit.
+                        editing options for that checklist. To view the checklists that you currently have
+                        permission to edit, visit your <a href="profile/viewprofile.php">My Profile page</a>.
                     </div>
-					<ul>
-						<?php
-						if($clAdmin){
-							foreach($clAdmin as $k => $v){
-								echo "<li><a href='".$GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?cl=' .$k."&emode=1'>$v</a></li>";
-							}
-						}
-						else{
-							echo '<li>You are not authorized to edit any of the Checklists</li>';
-						}
-						?>
-					</ul>
 
-					<?php
-					if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
-						?>
-						<h3>Exsiccati</h3>
-						<div class="pmargin">
+                    <?php
+                    if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
+                        ?>
+                        <h3>Exsiccati</h3>
+                        <div class="pmargin">
                             The Exsiccati module is activated for this portal.
                             The exsiccati index (listed below) can be browsed or searched by everyone.
                             However, to add or modify exsiccati titles or series,
                             the user must be an administrator for at least one collection.
                         </div>
-						<ul>
-							<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
-						</ul>
-						<?php
-					}
-					?>
+                        <ul>
+                            <li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
+                        </ul>
+                        <?php
+                    }
+                    ?>
 
-					<h3>Collections</h3>
-					<div class="pmargin">
+                    <h3>Collections</h3>
+                    <div class="pmargin">
                         Tools for managing data specific to a particular collection are available through the collection&#39;s profile page.
                         Clicking on a collection name in the list below will take you to this page for that given collection.
                         An additional method to reach this page is by clicking on the collection name within the occurrence search engine.
                         The editing symbol located in the upper right of Collection Profile page will open
-                        the editing pane and display a list of editing options.
-					</div>
-					<div class="pmargin">
-						<h4>List of collections you have permissions to edit</h4>
-						<ul>
-						<?php
-						$smManager->setCollectionList();
-						if($collList = $smManager->getCollArr()){
-							foreach($collList as $k => $cArr){
-								echo '<li>';
-								echo '<a href="'.$GLOBALS['CLIENT_ROOT'].'/collections/misc/collprofiles.php?collid='.$k.'&emode=1">';
-								echo $cArr['name'];
-								echo '</a>';
-								echo '</li>';
-							}
-						}
-						else{
-							echo '<li>You have no explicit editing permissions for a particular collections</li>';
-						}
-						?>
-						</ul>
-					</div>
+                        the editing pane and display a list of editing options. To view the collections that you currently have
+                        permission to edit, visit your <a href="profile/viewprofile.php?tabindex=1">My Profile page</a>.
+                    </div>
 
-					<h3>Observations</h3>
-					<div class="pmargin">
+                    <h3>Observations</h3>
+                    <div class="pmargin">
                         Data management for observation projects is handled in a similar manner to what is described in the Collections paragraph above.
                         One difference is the General Observation project. This project serves two central purposes:
                         1) Allows registered users to submit a image voucherd field observation.
                         2) Allows collectors to enter their own collection data for label printing and to make the data available
                         to the collections obtaining the physical specimens through donations or exchange. Visit the
                         <a href="http://symbiota.org/docs/specimen-data-management/" target="_blank">Symbiota Documentation</a> for more information on occurrence processing capabilities.
-                        Note that observation projects are not activated on all Symbiota data portals.
+                        Note that observation projects are not activated on all Symbiota data portals. To view the observation projects that you currently have
+                        permission to edit, visit your <a href="profile/viewprofile.php?tabindex=1">My Profile page</a>.
                     </div>
-					<div class="pmargin">
-						<?php
-						$obsList = $smManager->getObsArr();
-						$genObsList = $smManager->getGenObsArr();
-						$obsManagementStr = '';
-						?>
-						<h4>Observation Image Voucher Submission</h4>
-						<ul>
-							<?php
-							if($obsList){
-								foreach($genObsList as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?php echo $k; ?>">
-											<?php echo $oArr['name']; ?>
-										</a>
-									</li>
-									<?php
-									if($oArr['isadmin']) {
-                                        $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . $oArr['name'] . "</a></li>\n";
-                                    }
-								}
-								foreach($obsList as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/editor/observationsubmit.php?collid=<?php echo $k; ?>">
-											<?php echo $oArr['name']; ?>
-										</a>
-									</li>
-									<?php
-									if($oArr['isadmin']) {
-                                        $obsManagementStr .= '<li><a href="collections/misc/collprofiles.php?collid=' . $k . '&emode=1">' . $oArr['name'] . "</a></li>\n";
-                                    }
-								}
-							}
-							else{
-								echo '<li>There are no Observation Projects to which you have permissions</li>';
-							}
-							?>
-						</ul>
-						<?php
-						if($genObsList){
-							?>
-							<h4>Personal Occurrence Management and Label Printing Features</h4>
-							<ul>
-								<?php
-								foreach($genObsList as $k => $oArr){
-									?>
-									<li>
-										<a href="collections/misc/collprofiles.php?collid=<?php echo $k; ?>&emode=1">
-											<?php echo $oArr['name']; ?>
-										</a>
-									</li>
-									<?php
-								}
-								?>
-							</ul>
-							<?php
-						}
-						if($obsManagementStr){
-							?>
-							<h4>Observation Project Management</h4>
-							<ul>
-								<?php echo $obsManagementStr; ?>
-							</ul>
-						<?php
-						}
-					?>
-					</div>
-					<?php
-				}
-				else{
-					echo 'Please <a href="'.$GLOBALS['CLIENT_ROOT'].'/profile/index.php?refurl=../sitemap.php">login</a> to access editing tools.<br/>Contact a portal administrator for obtaining editing permissions.';
-				}
-			?>
-			</fieldset>
-
-			<h3>About Symbiota</h3>
-			<ul>
-				<li>
-                    Schema Version <?php echo $smManager->getSchemaVersion(); ?>
-				</li>
-			</ul>
-		</div>
+                </fieldset>
+                <?php
+            }
+            ?>
+        </div>
 	</div>
 	<?php
 		include(__DIR__ . '/footer.php');
