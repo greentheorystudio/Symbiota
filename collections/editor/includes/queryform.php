@@ -498,6 +498,7 @@ else{
 			<div style="margin:5px;">
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
+                <input type="hidden" name="displayquery" value="1" />
 				<input type="hidden" name="occid" value="" />
 				<input type="hidden" name="occindex" value="0" />
                 <input type="hidden" name="submitaction" value="" />
