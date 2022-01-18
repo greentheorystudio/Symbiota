@@ -509,7 +509,7 @@ $duManager->loadFieldMap();
                     $uploadTitle = 'IPT/DwC-A Provider Import';
                 }
                 elseif($uploadType === $SYMBIOTA) {
-                    $uploadTitle = 'Symbiota Portal Public Download';
+                    $uploadTitle = 'Symbiota Portal';
                 }
                 elseif($uploadType === $SKELETAL) {
                     $uploadTitle = 'Skeletal File Import';

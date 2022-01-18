@@ -258,7 +258,7 @@ if($GLOBALS['SYMB_UID']){
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
                                         <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
-                                            Symbiota Portal Public Download
+                                            Symbiota Portal
                                         </a>
                                     </li>
                                     <li class="importItem" style="margin-left:10px;display:none;">
