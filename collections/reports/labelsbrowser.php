@@ -57,7 +57,7 @@ if($formatArr){
         $labelWidth = 'width:64px;';
     }
     $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;';
-    $labelStyle = $labelWidth . 'margin:15px;page-break-inside: avoid;';
+    $labelStyle = $labelWidth . 'margin:15px;page-break-inside:avoid;';
     if($action === 'Export to CSV'){
         $labelManager->exportLabelCsvFile($_POST);
     }
