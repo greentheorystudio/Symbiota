@@ -87,15 +87,19 @@ if($GLOBALS['SYMB_UID']){
 		$qryCnt = $occManager->getQueryRecordCount();
 	}
 	elseif($occIndex !== null){
-		if(!$reset) {
+        if(!$reset) {
             $occManager->setQueryVariables();
         }
 		$occManager->setSqlWhere($occIndex,$recLimit);
 		$qryCnt = $occManager->getQueryRecordCount(1);
 	}
-	elseif(isset($_SESSION['editorquery'])){
-		unset($_SESSION['editorquery']);
-	}
+	else{
+        if(isset($_SESSION['editorquery'])){
+            unset($_SESSION['editorquery']);
+        }
+        $occManager->setSqlWhere(0,$recLimit);
+        $qryCnt = $occManager->getQueryRecordCount();
+    }
 
 	$recArr = $occManager->getOccurMap();
 	$navStr = '<div style="float:right;">';

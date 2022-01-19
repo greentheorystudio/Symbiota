@@ -121,6 +121,18 @@ class SiteMapManager{
 		}
 		return $returnArr;
 	}
+
+    public function hasGlossary(): bool
+    {
+        $bool = false;
+        if($rs = $this->conn->query('SELECT glossid FROM glossary LIMIT 1')){
+            if($rs->fetch_object()) {
+                $bool = true;
+            }
+            $rs->free();
+        }
+        return $bool;
+    }
 	
 	public function getSchemaVersion(): string
 	{

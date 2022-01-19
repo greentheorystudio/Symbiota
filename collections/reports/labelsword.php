@@ -32,26 +32,26 @@ if($formatArr){
     if($columnCount === 'packet'){
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>2370,'marginRight'=>2370,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
-        $lineWidth = 500;
+        $lineWidth = 445;
     }
     elseif((int)$columnCount === 1){
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
-        $lineWidth = 700;
+        $lineWidth = 645;
     }
     else{
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         if((int)$columnCount === 2){
             $sectionStyle['colsNum'] = 2;
-            $lineWidth = 328;
+            $lineWidth = 273;
         }
         if((int)$columnCount === 3){
             $sectionStyle['colsNum'] = 3;
-            $lineWidth = 162;
+            $lineWidth = 107;
         }
         if((int)$columnCount === 4){
             $sectionStyle['colsNum'] = 4;
-            $lineWidth = 64;
+            $lineWidth = 9;
         }
     }
     $sectionStyle['colsSpace'] = 450;
@@ -146,10 +146,6 @@ if($formatArr){
                         if(isset($labelFieldBlock['blockRightMargin'])){
                             $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockRightMargin'] * 15);
                         }
-                        $textrun = $section->addTextRun($pStyleArr);
-                        if(isset($labelFieldBlock['blockTopMargin'])){
-                            $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
-                        }
                         if(isset($labelFieldBlock['blockDisplayLine'])){
                             $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1,'color'=>'black');
                             if(isset($labelFieldBlock['blockDisplayLineHeight'])){
@@ -161,9 +157,13 @@ if($formatArr){
                             if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
                                 $lineStyleArr['dash'] = 'rounddot';
                             }
-                            $textrun->addLine($lineStyleArr);
+                            $section->addLine($lineStyleArr);
                         }
                         else{
+                            $textrun = $section->addTextRun($pStyleArr);
+                            if(isset($labelFieldBlock['blockTopMargin'])){
+                                $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
+                            }
                             foreach($fieldsArr as $f => $fArr){
                                 $value = '';
                                 $field = $fArr['field'];
@@ -248,10 +248,10 @@ if($formatArr){
                                     }
                                 }
                             }
-                        }
-                        if(isset($labelFieldBlock['blockBottomMargin'])){
-                            $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
-                            $textrun->addTextBreak(1,$pStyleArr);
+                            if(isset($labelFieldBlock['blockBottomMargin'])){
+                                $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
+                                $textrun->addTextBreak(1,$pStyleArr);
+                            }
                         }
                     }
                 }

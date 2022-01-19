@@ -101,10 +101,6 @@ else{
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
-		if(!navigator.cookieEnabled){
-			alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
-		}
-	
 		function resetPassword(){
 			if(document.getElementById("login").value === ""){
 				alert("Enter your login name in the Login field and leave the password blank");

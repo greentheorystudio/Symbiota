@@ -95,7 +95,7 @@ class SpecUpload{
 					$uploadStr = 'IPT Resource';
 				}
                 elseif($uploadType === $this->SYMBIOTA){
-                    $uploadStr = 'Symbiota Portal Public Download';
+                    $uploadStr = 'Symbiota Portal';
                 }
 				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
 				$returnArr[$row->uspid]['uploadtype'] = $row->uploadtype;

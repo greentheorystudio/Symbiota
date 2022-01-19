@@ -909,6 +909,9 @@ if($fullWindow){
                                                         echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
                                                         echo '</audio>';
                                                     }
+                                                    elseif(substr($medUrl, -3) === '.zc'){
+                                                        echo '<a href="'.$medUrl.'">Download File</a>';
+                                                    }
                                                     ?>
                                                 </div>
                                                 <div style="margin-left:25px;">
