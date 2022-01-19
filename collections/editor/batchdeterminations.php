@@ -73,9 +73,6 @@ if($isEditor){
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-				if(!navigator.cookieEnabled){
-					alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
-				}
 				$("#tabs").tabs({
 					active: <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>
 				});

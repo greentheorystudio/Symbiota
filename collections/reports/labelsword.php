@@ -146,10 +146,6 @@ if($formatArr){
                         if(isset($labelFieldBlock['blockRightMargin'])){
                             $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockRightMargin'] * 15);
                         }
-                        $textrun = $section->addTextRun($pStyleArr);
-                        if(isset($labelFieldBlock['blockTopMargin'])){
-                            $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
-                        }
                         if(isset($labelFieldBlock['blockDisplayLine'])){
                             $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1,'color'=>'black');
                             if(isset($labelFieldBlock['blockDisplayLineHeight'])){
@@ -161,9 +157,13 @@ if($formatArr){
                             if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
                                 $lineStyleArr['dash'] = 'rounddot';
                             }
-                            $textrun->addLine($lineStyleArr);
+                            $section->addLine($lineStyleArr);
                         }
                         else{
+                            $textrun = $section->addTextRun($pStyleArr);
+                            if(isset($labelFieldBlock['blockTopMargin'])){
+                                $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
+                            }
                             foreach($fieldsArr as $f => $fArr){
                                 $value = '';
                                 $field = $fArr['field'];
@@ -248,10 +248,10 @@ if($formatArr){
                                     }
                                 }
                             }
-                        }
-                        if(isset($labelFieldBlock['blockBottomMargin'])){
-                            $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
-                            $textrun->addTextBreak(1,$pStyleArr);
+                            if(isset($labelFieldBlock['blockBottomMargin'])){
+                                $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
+                                $textrun->addTextBreak(1,$pStyleArr);
+                            }
                         }
                     }
                 }

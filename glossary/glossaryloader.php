@@ -65,7 +65,7 @@ if($isEditor){
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
 	<script src="../js/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/jquery.marcopolo.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
+	<script type="text/javascript" src="../js/symb/glossary.index.js?ver=20220113"></script>
 	<script type="text/javascript">
         const taxArr = [];
 

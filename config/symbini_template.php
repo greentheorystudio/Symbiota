@@ -65,8 +65,6 @@ $GLOBALS['DYN_CHECKLIST_RADIUS'] = 10;			//Controls size of concentric rings tha
 $GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profile page and checklists displays
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
-$GLOBALS['ACTIVATE_FIELDGUIDE'] = 0;	//Activates FieldGuide Batch Processing module
-$GLOBALS['FIELDGUIDE_API_KEY'] = '';	//API Key for FieldGuide Batch Processing module
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation
 $GLOBALS['ACTIVATE_GEOLOCATE_TOOLKIT'] = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 
