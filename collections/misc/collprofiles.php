@@ -169,7 +169,7 @@ if($GLOBALS['SYMB_UID']){
                                 </a>
                             </li>
 							<li>
-								<a href="../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>">
+								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
                                     Edit Existing Records
 								</a>
 							</li>
@@ -229,16 +229,7 @@ if($GLOBALS['SYMB_UID']){
 									</a>
 								</li>
 								<?php
-                                if($GLOBALS['FIELDGUIDE_ACTIVE']){
-                                    ?>
-                                    <li>
-                                        <a href="fgbatch.php?collid=<?php echo $collid; ?>" >
-                                            Fieldguide Batch Image Processing
-                                        </a>
-                                    </li>
-                                    <?php
-                                }
-								if($collData['colltype'] !== 'General Observations'){
+                                if($collData['colltype'] !== 'General Observations'){
 									?>
 									<li>
 										<a href="#" onclick="$('li.importItem').show(); return false;" >
@@ -267,7 +258,7 @@ if($GLOBALS['SYMB_UID']){
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
                                         <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
-                                            Symbiota Portal Public Download
+                                            Symbiota Portal
                                         </a>
                                     </li>
                                     <li class="importItem" style="margin-left:10px;display:none;">
