@@ -52,7 +52,7 @@ if($glossId){
     <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/symb/glossary.index.js"></script>
+	<script type="text/javascript" src="../js/symb/glossary.index.js?ver=20220113"></script>
 </head>
 
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
