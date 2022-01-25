@@ -691,7 +691,6 @@ include(__DIR__ . '/../../header.php');
                                     <option value="2" <?php echo ((int)$pageLayout === 2?'selected':''); ?>>2 columns per page</option>
                                     <option value="3" <?php echo ((int)$pageLayout === 3?'selected':''); ?>>3 columns per page</option>
                                     <option value="4" <?php echo ((int)$pageLayout === 4?'selected':''); ?>>4 columns per page</option>
-                                    <option value="packet" <?php echo ($pageLayout === 'packet'?'selected':''); ?>>Packet labels</option>
                                 </select>
                             </div>
                         </fieldset>
@@ -926,7 +925,6 @@ include(__DIR__ . '/../../header.php');
                                 <option value="2" selected>2 columns per page</option>
                                 <option value="3">3 columns per page</option>
                                 <option value="4">4 columns per page</option>
-                                <option value="packet">Packet labels</option>
                             </select>
                         </div>
                     </fieldset>
