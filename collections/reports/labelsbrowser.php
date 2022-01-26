@@ -38,13 +38,10 @@ if($formatArr){
     $defaultFontSize = isset($formatArr['defaultFontSize']) ? (int)$formatArr['defaultFontSize'] : 12;
     $formatFields = $formatArr['labelBlocks'];
     $columnCount = $formatArr['pageLayout'];
-    if(!in_array($columnCount, array('1', '2', '3', '4', 'packet'), true)) {
+    if(!in_array($columnCount, array('1', '2', '3', '4'), true)) {
         $columnCount = 2;
     }
-    if($columnCount === 'packet'){
-        $labelWidth = 'width:500px;';
-    }
-    elseif((int)$columnCount === 1){
+    if((int)$columnCount === 1){
         $labelWidth = 'width:700px;';
     }
     elseif((int)$columnCount === 2){
@@ -56,8 +53,8 @@ if($formatArr){
     elseif((int)$columnCount === 4){
         $labelWidth = 'width:64px;';
     }
-    $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;';
-    $labelStyle = $labelWidth . 'margin:15px;page-break-inside: avoid;';
+    $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;justify-content:space-between;';
+    $labelStyle = $labelWidth . 'margin:18px 15px;page-break-inside:avoid;';
     if($action === 'Export to CSV'){
         $labelManager->exportLabelCsvFile($_POST);
     }
@@ -83,10 +80,6 @@ if($formatArr){
                     echo '<div style="'.$columnStyle.'margin: 0 25px;">';
                 }
                 echo '<div style="'.$labelStyle.'">';
-                if($columnCount === 'packet'){
-                    echo '<hr style="border-top: 1px dotted black;margin-top:285px;width:500px;" />';
-                    echo '<hr style="border-top: 1px dotted black;margin-top:355px;margin-bottom:10px;width:500px;" />';
-                }
                 if(isset($formatArr['headerPrefix']) || isset($formatArr['headerMidText']) || isset($formatArr['headerSuffix'])){
                     $headerMidVal = isset($formatArr['headerMidText']) ? (int)$formatArr['headerMidText'] : 0;
                     $headerStr = '';
@@ -163,15 +156,27 @@ if($formatArr){
                         }
                         else{
                             $blockStyleStr .= 'display:flex;flex-wrap:wrap;';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'justify-content:flex-start;text-align:left;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'justify-content:center;text-align:center;' : '';
-                            $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'justify-content:flex-end;text-align:right;' : '';
+                            if(isset($labelFieldBlock['blockTextAlign'])){
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'left') ? 'justify-content:flex-start;text-align:left;' : '';
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'center') ? 'justify-content:center;text-align:center;' : '';
+                                $blockStyleStr .= ($labelFieldBlock['blockTextAlign'] === 'right') ? 'justify-content:flex-end;text-align:right;' : '';
+                            }
+                            else{
+                                $blockStyleStr .= 'justify-content:flex-start;text-align:left;';
+                            }
                             $blockStyleStr .= isset($labelFieldBlock['blockLineHeight']) ? 'line-height:'.$labelFieldBlock['blockLineHeight'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockLeftMargin']) ? 'margin-left:'.$labelFieldBlock['blockLeftMargin'].'px;' : '';
                             $blockStyleStr .= isset($labelFieldBlock['blockRightMargin']) ? 'margin-right:'.$labelFieldBlock['blockRightMargin'].'px;' : '';
                             echo '<div style=\''.$blockStyleStr.'\'>';
                             foreach($fieldsArr as $f => $fArr){
+                                $value = '';
                                 $field = $fArr['field'];
+                                if($field === 'genus' && !isset($occArr[$field])){
+                                    $value = $occArr['sciname'];
+                                }
+                                elseif(isset($occArr[$field])){
+                                    $value = $occArr[$field];
+                                }
                                 if(strncmp($field, 'barcode-', 8) === 0){
                                     $idArr = explode('-', $field);
                                     if($idArr){
@@ -194,10 +199,10 @@ if($formatArr){
                                         echo "<img src='data:image/png;base64,".$base64Str."' />";
                                     }
                                 }
-                                elseif(isset($occArr[$field])){
+                                elseif($value){
+                                    echo '<span>';
                                     if(isset($fArr['fieldPrefix'])){
-                                        $prefixStyleStr = '';
-                                        $prefixStyleStr .= isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
+                                        $prefixStyleStr = isset($fArr['fieldPrefixBold']) ? 'font-weight:bold;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixItalic']) ? 'font-style:italic;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixUnderline']) ? 'text-decoration:underline;' : '';
                                         $prefixStyleStr .= isset($fArr['fieldPrefixUppercase']) ? 'text-transform:uppercase;' : '';
@@ -205,17 +210,15 @@ if($formatArr){
                                         $prefixStyleStr .= 'font-size:'.($fArr['fieldPrefixFontSize'] ?? $defaultFontSize).';';
                                         echo '<span style=\''.$prefixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldPrefix']).'</span>';
                                     }
-                                    $styleStr = '';
-                                    $styleStr .= isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
+                                    $styleStr = isset($fArr['fieldBold']) ? 'font-weight:bold;' : '';
                                     $styleStr .= isset($fArr['fieldItalic']) ? 'font-style:italic;' : '';
                                     $styleStr .= isset($fArr['fieldUnderline']) ? 'text-decoration:underline;' : '';
                                     $styleStr .= isset($fArr['fieldUppercase']) ? 'text-transform:uppercase;' : '';
                                     $styleStr .= 'font-family:'.(isset($fArr['fieldFont']) ? $cssFontFamilies[$fArr['fieldFont']] : $defaultFont).';';
                                     $styleStr .= 'font-size:'.($fArr['fieldFontSize'] ?? $defaultFontSize).';';
-                                    echo '<span style=\''.$styleStr.'\'>'.$occArr[$field].'</span>';
+                                    echo '<span style=\''.$styleStr.'\'>'.$value.'</span>';
                                     if(isset($fArr['fieldSuffix'])){
-                                        $suffixStyleStr = '';
-                                        $suffixStyleStr .= isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
+                                        $suffixStyleStr = isset($fArr['fieldSuffixBold']) ? 'font-weight:bold;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixItalic']) ? 'font-style:italic;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixUnderline']) ? 'text-decoration:underline;' : '';
                                         $suffixStyleStr .= isset($fArr['fieldSuffixUppercase']) ? 'text-transform:uppercase;' : '';
@@ -223,6 +226,7 @@ if($formatArr){
                                         $suffixStyleStr .= 'font-size:'.($fArr['fieldSuffixFontSize'] ?? $defaultFontSize).';';
                                         echo '<span style=\''.$suffixStyleStr.'\'>'.str_replace(' ', '&nbsp;', $fArr['fieldSuffix']).'</span>';
                                     }
+                                    echo '</span>';
                                 }
                             }
                         }

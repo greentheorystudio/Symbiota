@@ -42,7 +42,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
         <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="../../js/jquery.js"></script>
 		<script type="text/javascript" src="../../js/jquery-ui.js"></script>
-		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20210913"></script>
+		<script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20211104"></script>
 	</head>
 	<body>
 		<?php
@@ -82,7 +82,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 					?>
 				</table>
 				<div style="margin-top:10px;float:left;">
-					<b>Total Specimens with Order:</b> <?php echo number_format($total); ?><br />
+					<b>Total Occurrences with Order:</b> <?php echo number_format($total); ?><br />
 					Specimens without Order: <?php echo number_format($totalCnt-$total); ?><br />
 				</div>
 				<div style='float:left;margin-left:25px;margin-top:10px;width:16px;height:16px;padding:2px;' title="Save CSV">

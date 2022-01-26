@@ -26,35 +26,30 @@ if($formatArr){
     $formatFields = $formatArr['labelBlocks'];
     $lineWidth = 0;
     $columnCount = $formatArr['pageLayout'];
-    if(!in_array($columnCount, array('1', '2', '3', '4', 'packet'), true)) {
+    if(!in_array($columnCount, array('1', '2', '3', '4'), true)) {
         $columnCount = 2;
     }
-    if($columnCount === 'packet'){
-        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>2370,'marginRight'=>2370,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
-        $sectionStyle['colsNum'] = 1;
-        $lineWidth = 500;
-    }
-    elseif((int)$columnCount === 1){
+    if((int)$columnCount === 1){
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
-        $lineWidth = 700;
+        $lineWidth = 645;
     }
     else{
         $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         if((int)$columnCount === 2){
             $sectionStyle['colsNum'] = 2;
-            $lineWidth = 328;
+            $lineWidth = 273;
         }
         if((int)$columnCount === 3){
             $sectionStyle['colsNum'] = 3;
-            $lineWidth = 162;
+            $lineWidth = 107;
         }
         if((int)$columnCount === 4){
             $sectionStyle['colsNum'] = 4;
-            $lineWidth = 64;
+            $lineWidth = 9;
         }
     }
-    $sectionStyle['colsSpace'] = 450;
+    $sectionStyle['colsSpace'] = 900;
     $sectionStyle['breakType'] = 'continuous';
 
     if($GLOBALS['SYMB_UID']){
@@ -63,13 +58,6 @@ if($formatArr){
         foreach($labelArr as $occid => $occArr){
             $dupCnt = $_POST['q-'.$occid];
             for($i = 0;$i < $dupCnt;$i++){
-                if($columnCount === 'packet'){
-                    $textrun = $section->addTextRun(array('keepLines'=>true,'keepNext'=>true));
-                    $textrun->addTextBreak(1,array('size'=>285));
-                    $textrun->addLine(array('weight'=>1,'width'=>500,'height'=>0,'dash'=>'rounddot'));
-                    $textrun->addTextBreak(1,array('size'=>355));
-                    $textrun->addLine(array('weight'=>1,'width'=>500,'height'=>0,'dash'=>'rounddot'));
-                }
                 if(isset($formatArr['headerPrefix']) || isset($formatArr['headerMidText']) || isset($formatArr['headerSuffix'])){
                     $headerMidVal = isset($formatArr['headerMidText']) ? (int)$formatArr['headerMidText'] : 0;
                     $headerStr = '';
@@ -146,10 +134,6 @@ if($formatArr){
                         if(isset($labelFieldBlock['blockRightMargin'])){
                             $pStyleArr['spaceBefore'] = ($labelFieldBlock['blockRightMargin'] * 15);
                         }
-                        $textrun = $section->addTextRun($pStyleArr);
-                        if(isset($labelFieldBlock['blockTopMargin'])){
-                            $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
-                        }
                         if(isset($labelFieldBlock['blockDisplayLine'])){
                             $lineStyleArr = array('keepLines'=>true,'keepNext'=>true,'width'=>$lineWidth,'height'=>0,'weight'=>1,'color'=>'black');
                             if(isset($labelFieldBlock['blockDisplayLineHeight'])){
@@ -161,11 +145,22 @@ if($formatArr){
                             if(isset($labelFieldBlock['blockDisplayLineStyle']) && $labelFieldBlock['blockDisplayLineStyle'] === 'dot'){
                                 $lineStyleArr['dash'] = 'rounddot';
                             }
-                            $textrun->addLine($lineStyleArr);
+                            $section->addLine($lineStyleArr);
                         }
                         else{
+                            $textrun = $section->addTextRun($pStyleArr);
+                            if(isset($labelFieldBlock['blockTopMargin'])){
+                                $textrun->addTextBreak(1,array('keepLines'=>true,'keepNext'=>true,'size'=>$labelFieldBlock['blockTopMargin']));
+                            }
                             foreach($fieldsArr as $f => $fArr){
+                                $value = '';
                                 $field = $fArr['field'];
+                                if($field === 'genus' && !isset($occArr[$field])){
+                                    $value = $occArr['sciname'];
+                                }
+                                elseif(isset($occArr[$field])){
+                                    $value = $occArr[$field];
+                                }
                                 if(strncmp($field, 'barcode-', 8) === 0){
                                     $idArr = explode('-', $field);
                                     if($idArr){
@@ -186,7 +181,7 @@ if($formatArr){
                                         $textrun->addImage($GLOBALS['SERVER_ROOT'].'/temp/report/'.$ses_id.$occid.'.png');
                                     }
                                 }
-                                elseif(isset($occArr[$field])){
+                                elseif($value){
                                     if(isset($fArr['fieldPrefix'])){
                                         $fPrefixStyleArr = array();
                                         if(isset($fArr['fieldPrefixBold'])){
@@ -220,7 +215,7 @@ if($formatArr){
                                     }
                                     $fStyleArr['name'] = $fArr['fieldFont'] ?? $defaultFont;
                                     $fStyleArr['size'] = $fArr['fieldFontSize'] ?? $defaultFontSize;
-                                    $textrun->addText(htmlspecialchars($occArr[$field]),$fStyleArr);
+                                    $textrun->addText(htmlspecialchars($value),$fStyleArr);
                                     if(isset($fArr['fieldSuffix'])){
                                         $fSuffixStyleArr = array();
                                         if(isset($fArr['fieldSuffixBold'])){
@@ -241,10 +236,10 @@ if($formatArr){
                                     }
                                 }
                             }
-                        }
-                        if(isset($labelFieldBlock['blockBottomMargin'])){
-                            $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
-                            $textrun->addTextBreak(1,$pStyleArr);
+                            if(isset($labelFieldBlock['blockBottomMargin'])){
+                                $pStyleArr['size'] = $labelFieldBlock['blockBottomMargin'];
+                                $textrun->addTextBreak(1,$pStyleArr);
+                            }
                         }
                     }
                 }
@@ -273,7 +268,7 @@ if($formatArr){
                     }
                     $textrun->addText(htmlspecialchars($formatArr['footerText']),$fStyleArr);
                 }
-                $section->addTextBreak(1,array('size'=>20));
+                $section->addTextBreak(1,array('size'=>25));
             }
         }
     }

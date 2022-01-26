@@ -18,7 +18,6 @@ if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
 }
 
 $DIRECTUPLOAD = 1;
-$DIGIRUPLOAD = 2;
 $FILEUPLOAD = 3;
 $STOREDPROCEDURE = 4;
 $SCRIPTUPLOAD = 5;
@@ -26,6 +25,7 @@ $DWCAUPLOAD = 6;
 $SKELETAL = 7;
 $IPTUPLOAD = 8;
 $NFNUPLOAD = 9;
+$SYMBIOTA = 10;
 
 $duManager = new SpecUpload();
 
@@ -71,7 +71,7 @@ $duManager->readUploadParameters();
 
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Specimen Upload Profile Manager</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Upload Profile Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
@@ -156,7 +156,7 @@ $duManager->readUploadParameters();
             else if(selValue === 7){
                 document.getElementById("cleanupspDiv").style.display='block';
             }
-            else if(selValue === 8){
+            else if(selValue === 8 || selValue === 10){
                 document.getElementById("pathDiv").style.display='block';
                 document.getElementById("cleanupspDiv").style.display='block';
             }
@@ -170,7 +170,7 @@ include(__DIR__ . '/../../header.php');
 <div class="navpath">
     <a href="../../index.php">Home</a> &gt;&gt;
     <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management Panel</a> &gt;&gt;
-    <b>Specimen Loader</b>
+    <b>Occurrence Loader</b>
 </div>
 <div id="innertext">
     <h1>Data Upload Management</h1>
@@ -210,9 +210,9 @@ include(__DIR__ . '/../../header.php');
                                     echo '<option value="'.$IPTUPLOAD.'" '.($uploadType === $IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
                                     echo '<option value="'.$FILEUPLOAD.'" '.($uploadType === $FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
                                     echo '<option value="'.$SKELETAL.'" '.($uploadType === $SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
-                                    echo '<option value="'.$NFNUPLOAD.'" '.($uploadType === $NFNUPLOAD?'SELECTED':'').'>NfN File Upload</option>';
+                                    echo '<option value="'.$SYMBIOTA.'" '.($uploadType === $SYMBIOTA?'SELECTED':'').'>Symbiota Portal</option>';
+                                    echo '<option value="'.$NFNUPLOAD.'" '.($uploadType === $NFNUPLOAD?'SELECTED':'').'>Notes for Nature File Upload</option>';
                                     echo '<option value="">......................................</option>';
-                                    echo '<option value="'.$DIGIRUPLOAD.'" '.($uploadType === $DIGIRUPLOAD?'SELECTED':'').'>DiGIR Provider</option>';
                                     echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType === $DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';
                                     echo '<option value="'.$STOREDPROCEDURE.'" '.($uploadType === $STOREDPROCEDURE?'SELECTED':'').'>Stored Procedure</option>';
                                     echo '<option value="'.$SCRIPTUPLOAD.'" '.($uploadType === $SCRIPTUPLOAD?'SELECTED':'').'>Script Upload</option>';

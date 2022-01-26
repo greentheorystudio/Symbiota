@@ -14,7 +14,7 @@
 //Uncomment to turns otherCatalogNumbers duplicate search check on/off (off by default)
 //define('OTHERCATNUMDUPECHECK',false);
 
-//Uncomment to turn duplicate specimen search function on/off (on by default)
+//Uncomment to turn duplicate occurrence search function on/off (on by default)
 //define('DUPESEARCH',false);
 
 //Uncomment to turn locality event auto-lookup (locality field autocomplete) function on/off (on by default)

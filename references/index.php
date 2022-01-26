@@ -43,7 +43,7 @@ if($formSubmit !== 'Search References'){
     <script src="../js/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery-ui.js"></script>
-	<script type="text/javascript" src="../js/symb/references.index.js?ver=2"></script>
+	<script type="text/javascript" src="../js/symb/references.index.js?ver=20220113"></script>
 </head>
 <body>
 	<?php

@@ -155,28 +155,22 @@ if($GLOBALS['SYMB_UID']){
 							?>
 							<li>
 								<a href="../editor/occurrenceeditor.php?gotomode=1&collid=<?php echo $collid; ?>">
-                                    Add New Occurrence Record
+                                    Create New Record
 								</a>
 							</li>
-							<?php
-							if($collData['colltype'] === 'Preserved Specimens'){
-								?>
-								<li style="margin-left:10px">
-									<a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
-                                        Create New Records Using Image
-									</a>
-								</li>
-								<li style="margin-left:10px">
-									<a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
-                                        Add Skeletal Records
-									</a>
-								</li>
-								<?php
-							}
-							?>
+                            <li>
+                                <a href="../editor/imageoccursubmit.php?collid=<?php echo $collid; ?>">
+                                    Create New Record From Image
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../editor/skeletalsubmit.php?collid=<?php echo $collid; ?>">
+                                    Create Skeletal Records
+                                </a>
+                            </li>
 							<li>
-								<a href="../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>">
-                                    Edit Existing Occurrence Records
+								<a href="../editor/occurrencetabledisplay.php?displayquery=1&collid=<?php echo $collid; ?>">
+                                    Edit Existing Records
 								</a>
 							</li>
 							<li>
@@ -185,13 +179,18 @@ if($GLOBALS['SYMB_UID']){
 								</a>
 							</li>
 							<li>
-								<a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
-                                    Print Labels/Annotations
-								</a>
-							</li>
+                                <a href="../reports/labelmanager.php?collid=<?php echo $collid; ?>">
+                                    Print Labels
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/annotationmanager.php?collid=<?php echo $collid; ?>">
+                                    Print Annotations Labels
+                                </a>
+                            </li>
 							<li>
 								<a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>">
-                                    Batch Georeference Specimens
+                                    Batch Georeference Occurrences
 								</a>
 							</li>
 							<?php
@@ -221,7 +220,7 @@ if($GLOBALS['SYMB_UID']){
                                 </li>
 								<li>
 									<a href="collmetadata.php?collid=<?php echo $collid; ?>" >
-                                        Edit Metadata and Contact Information
+                                        Edit Metadata
 									</a>
 								</li>
 								<li>
@@ -230,20 +229,11 @@ if($GLOBALS['SYMB_UID']){
 									</a>
 								</li>
 								<?php
-                                if($GLOBALS['FIELDGUIDE_ACTIVE']){
-                                    ?>
-                                    <li>
-                                        <a href="fgbatch.php?collid=<?php echo $collid; ?>" >
-                                            Fieldguide Batch Image Processing
-                                        </a>
-                                    </li>
-                                    <?php
-                                }
-								if($collData['colltype'] !== 'General Observations'){
+                                if($collData['colltype'] !== 'General Observations'){
 									?>
 									<li>
 										<a href="#" onclick="$('li.importItem').show(); return false;" >
-                                            Import/Update Specimen Records
+                                            Import/Update Occurrence Records
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
@@ -267,10 +257,15 @@ if($GLOBALS['SYMB_UID']){
 										</a>
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
-										<a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
+                                        <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
+                                            Symbiota Portal
+                                        </a>
+                                    </li>
+                                    <li class="importItem" style="margin-left:10px;display:none;">
+                                        <a href="../admin/specupload.php?uploadtype=9&collid=<?php echo $collid; ?>">
                                             Notes from Nature Import
-										</a>
-									</li>
+                                        </a>
+                                    </li>
 									<li class="importItem" style="margin-left:10px;display:none;">
 										<a href="../admin/specuploadmanagement.php?collid=<?php echo $collid; ?>">
                                             Saved Import Profiles

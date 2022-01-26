@@ -109,7 +109,7 @@ $occManager->setOccId($occid);
 	if($collAdminList){
 		?>
 		<fieldset style="padding:15px;margin:10px 0;">
-			<legend><b>Transfer Specimen</b></legend>
+			<legend><b>Transfer Occurrence</b></legend>
 			<form name="transrecform" method="post" target="occurrenceeditor.php">
 				<div>
 					<b>Target Collection</b><br />
