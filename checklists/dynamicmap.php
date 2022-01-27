@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once($GLOBALS['SERVER_ROOT'].'/classes/DynamicChecklistManager.php');
 header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
 

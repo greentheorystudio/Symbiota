@@ -4,7 +4,7 @@
 /** @var array $rightColumnElements */
 /** @var array $bottomRowElements */
 /** @var array $footerRowElements */
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');

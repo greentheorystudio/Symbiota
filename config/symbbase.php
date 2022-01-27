@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/symbini.php');
 include_once(__DIR__ . '/../classes/Encryption.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');

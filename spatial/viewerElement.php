@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 $mapCenter = '[-110.90713, 32.21976]';
 if(isset($GLOBALS['SPATIAL_INITIAL_CENTER']) && $GLOBALS['SPATIAL_INITIAL_CENTER']) {
     $mapCenter = $GLOBALS['SPATIAL_INITIAL_CENTER'];

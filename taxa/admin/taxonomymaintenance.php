@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyHarvester.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 if(!isset($GLOBALS['GEOSERVER_LAYER_WORKSPACE'])){
     $GLOBALS['GEOSERVER_LAYER_WORKSPACE'] = '';
 }

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');

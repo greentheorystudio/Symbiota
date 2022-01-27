@@ -39,7 +39,7 @@ $GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['FLORA_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
-$REQUESTED_TRACKING_IS_ACTIVE = 0;   // Allow users to request actions such as requests for images to be made for occurrences
+$GLOBALS['REQUESTED_TRACKING_IS_ACTIVE'] = 0;   // Allow users to request actions such as requests for images to be made for occurrences
 
 //Configurations for GeoServer integration
 $GLOBALS['GEOSERVER_URL'] = '';   // URL for Geoserver instance serving map data for this portal
@@ -80,6 +80,4 @@ $GLOBALS['RIGHTS_TERMS'] = array(
 $GLOBALS['CSS_VERSION_LOCAL'] = '20170414';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
 
 //set terms for reproductiveCondition drop-down menu
-//$REPRODUCTIVE_CONDITION_TERMS = array("term1", "term2", "term3", "term4", "term5", "etc..");
-
-include_once(__DIR__ . '/symbbase.php');
+//$GLOBALS['REPRODUCTIVE_CONDITION_TERMS'] = array("term1", "term2", "term3", "term4", "term5", "etc..");
