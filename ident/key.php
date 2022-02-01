@@ -152,13 +152,9 @@ if($chars){
                             <tr><td colspan='2'>
                                 <h2>
                                     <?php
-                                    if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
-                                        echo '<a href="../checklists/checklist.php?cl='.$clid.'&dynclid='.$dynClid.'&proj='.$projValue.'" target="_blank">';
-                                    }
+                                    echo '<a href="../checklists/checklist.php?cl='.$clid.'&dynclid='.$dynClid.'&proj='.$projValue.'" target="_blank">';
                                     echo $dataManager->getClName(). ' ';
-                                    if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
-                                        echo '</a>';
-                                    }
+                                    echo '</a>';
                                     ?>
                                 </h2>
                                 <?php

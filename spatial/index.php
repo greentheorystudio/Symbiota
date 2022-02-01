@@ -132,10 +132,6 @@ $dbArr = array();
         });
 
         $(document).ready(function() {
-            if(document.getElementById("layercontroltable")){
-                setLayersTable();
-            }
-
             if(document.getElementById("taxa")){
                 $( "#taxa" )
                     .bind( "keydown", function( event ) {
@@ -675,34 +671,6 @@ $dbArr = array();
         }
     });
 
-    function editVectorLayers(c,title){
-        const layer = c.value;
-        if(c.checked === true){
-            const layerName = '<?php echo ($GLOBALS['GEOSERVER_LAYER_WORKSPACE'] ?? ''); ?>:'+layer;
-            const layerSourceName = layer + 'Source';
-            layersArr[layerSourceName] = new ol.source.ImageWMS({
-                url: 'rpc/GeoServerConnector.php',
-                params: {'LAYERS':layerName, 'datatype':'vector'},
-                serverType: 'geoserver',
-                crossOrigin: 'anonymous',
-                imageLoadFunction: function(image, src) {
-                    imagePostFunction(image, src);
-                }
-            });
-            layersArr[layer] = new ol.layer.Image({
-                source: layersArr[layerSourceName]
-            });
-            layersArr[layer].setOpacity(0.3);
-            map.addLayer(layersArr[layer]);
-            refreshLayerOrder();
-            addLayerToSelList(layer,title);
-        }
-        else{
-            map.removeLayer(layersArr[layer]);
-            removeLayerToSelList(layer);
-        }
-    }
-
     const mapView = new ol.View({
         zoom: <?php echo $mapZoom; ?>,
         projection: 'EPSG:3857',
@@ -1124,11 +1092,6 @@ $dbArr = array();
                         }
                     });
                 }
-                else{
-                    viewResolution = (mapView.getResolution());
-                    url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
-                    selectObjectFromID(url, activeLayer);
-                }
             }
         }
     });
@@ -1161,28 +1124,6 @@ $dbArr = array();
             transformInteraction.setCenter(evt.features.getArray()[0].getGeometry().getFirstCoordinate());
         }
     });
-
-    function selectObjectFromID(url,selectLayer){
-        $.ajax({
-            type: "GET",
-            url: url,
-            async: true
-        }).done(function(msg) {
-            if(msg){
-                const infoArr = JSON.parse(msg);
-                const objID = infoArr['features'][0]['id'];
-                const url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo ($GLOBALS['GEOSERVER_LAYER_WORKSPACE'] ?? ''); ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
-                $.get(url, function(data){
-                    const features = new ol.format.GeoJSON().readFeatures(data);
-                    if(features){
-                        selectsource.addFeatures(features);
-                        document.getElementById("selectlayerselect").value = 'select';
-                        setActiveLayer();
-                    }
-                });
-            }
-        });
-    }
 
     typeSelect.onchange = function() {
         map.removeInteraction(draw);

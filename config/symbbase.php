@@ -14,7 +14,7 @@ if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['
 session_start();
 
 $confManager = new ConfigurationManager();
-$confManager->setDatabaseConfigurations();
+$confManager->setGlobalArr();
 
 if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
     $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
@@ -61,7 +61,7 @@ if(isset($_SESSION['userrights'])){
     $GLOBALS['USER_RIGHTS'] = $_SESSION['userrights'];
 }
 
-$GLOBALS['CSS_VERSION'] = '20220110';
+$GLOBALS['CSS_VERSION'] = '20220201';
 if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLOBALS['CSS_VERSION'])) {
     $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
 }
@@ -77,7 +77,6 @@ $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS[
 $GLOBALS['IS_ADMIN'] = (array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])?1:0);
 $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
-$GLOBALS['FIELDGUIDE_ACTIVE'] = (isset($GLOBALS['ACTIVATE_FIELDGUIDE']) && $GLOBALS['ACTIVATE_FIELDGUIDE']);
 $GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
 
 $GLOBALS['RIGHTS_TERMS_DEFS'] = array(

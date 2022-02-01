@@ -1323,14 +1323,6 @@ class OccurrenceEditorManager {
                 $status = false;
             }
 
-            if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-                $sql = 'UPDATE omoccurassociations SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-                if(!$this->conn->query($sql)){
-                    $this->errorArr[] .= '; ERROR remapping associations.';
-                    $status = false;
-                }
-            }
-
             $sql = 'UPDATE omoccurcomments SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 $this->errorArr[] .= '; ERROR remapping comments.';

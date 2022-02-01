@@ -47,18 +47,14 @@ if($stArrJson){
             </form>
         <?php
         }
-        if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
         ?>
-            <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
-                <i style='width:15px;height:15px;' class="fas fa-list"></i>
-            </button>
-            <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-                <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
-                <input type="hidden" name="interface" value='checklist' />
-            </form>
-        <?php
-        }
-        ?>
+        <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
+            <i style='width:15px;height:15px;' class="fas fa-list"></i>
+        </button>
+        <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+            <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
+            <input type="hidden" name="interface" value='checklist' />
+        </form>
     </div>
 	<div style="clear:both;"><hr/></div>
 	<?php

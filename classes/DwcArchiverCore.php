@@ -295,9 +295,6 @@ class DwcArchiverCore extends Manager{
             if(stripos($this->conditionSql,'p.point')){
                 $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
             }
-            if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-                $sql .= 'LEFT JOIN omoccurassociations oas ON o.occid = oas.occid ';
-            }
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
                 $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
             }

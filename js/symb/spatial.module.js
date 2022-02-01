@@ -3274,32 +3274,6 @@ function setInputFormBySearchTermsArr(){
     }
 }
 
-function setLayersTable(){
-    const http = new XMLHttpRequest();
-    const url = "rpc/getlayersarr.php";
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            let layerArr;
-            const jsonReturn = false;
-            try{
-                layerArr = JSON.parse(http.responseText);
-            }catch(e){
-                return false;
-            }
-            for(let i in layerArr){
-                if(layerArr.hasOwnProperty(i) && String(layerArr[i])){
-                    buildLayerTableRow(layerArr[i],false);
-                }
-            }
-        }
-        toggleLayerTable();
-    };
-    http.send();
-}
-
 function setLoadingTimer(){
     loadingTimer = 20000;
     if(queryRecCnt < 200000) loadingTimer = 13000;

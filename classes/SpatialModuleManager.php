@@ -21,45 +21,6 @@ class SpatialModuleManager{
         }
     }
 
-    public function getLayersArr(): array{
-        $url = $GLOBALS['GEOSERVER_URL'].'/wms?service=wms&version=2.0.0&request=GetCapabilities';
-        $xml = simplexml_load_string(file_get_contents($url));
-        $layers = $xml->Capability->Layer->Layer;
-        $retArr = Array();
-        foreach ($layers as $l){
-            $nameArr = explode(':',(string)$l->Name);
-            if($nameArr){
-                $workspace = $nameArr[0];
-                $layername = $nameArr[1];
-                if($workspace === $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
-                    $i = strtolower((string)$l->Title);
-                    $retArr[$i]['Name'] = $layername;
-                    $retArr[$i]['Title'] = (string)$l->Title;
-                    $retArr[$i]['Abstract'] = (string)$l->Abstract;
-                    $crsArr = $l->CRS;
-                    foreach ($crsArr as $c){
-                        if(strpos($c, 'EPSG:') !== false) {
-                            $retArr[$i]['DefaultCRS'] = (string)$c;
-                        }
-                    }
-                    $keywordArr = $l->KeywordList->Keyword;
-                    foreach ($keywordArr as $k){
-                        if($k === 'features') {
-                            $retArr[$i]['layerType'] = 'vector';
-                        }
-                        elseif($k === 'GeoTIFF') {
-                            $retArr[$i]['layerType'] = 'raster';
-                        }
-                    }
-                    $retArr[$i]['legendUrl'] = (string)$l->Style->LegendURL->OnlineResource->attributes('xlink', TRUE)->href;
-                }
-            }
-        }
-        ksort($retArr);
-
-        return $retArr;
-    }
-
     public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
         $jsonArr = json_decode($json, true);

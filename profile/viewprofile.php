@@ -168,13 +168,7 @@ include(__DIR__ . '/../header.php');
         ?>
         <div id="tabs" style="margin:10px;">
             <ul>
-                <?php
-                if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
-                    ?>
-                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
-                    <?php
-                }
-                ?>
+                <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
                 <li><a href="occurrencemenu.php">Occurrence Management</a></li>
                 <li><a href="userprofile.php?userid=<?php echo $userId; ?>">User Profile</a></li>
             </ul>

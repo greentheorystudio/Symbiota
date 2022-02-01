@@ -442,11 +442,7 @@ class TaxonomyCleaner extends Manager{
 
 	public function getTaxonomicResourceList(): array
 	{
-		$taArr = array('col'=>'Catalog of Life','worms'=>'World Register of Marine Species','tropicos'=>'TROPICOS','eol'=>'Encyclopedia of Life');
-		if(!isset($GLOBALS['TAXONOMIC_AUTHORITIES'])) {
-			return array('col' => 'Catalog of Life', 'worms' => 'World Register of Marine Species');
-		}
-		return array_intersect_key($taArr,array_change_key_case($GLOBALS['TAXONOMIC_AUTHORITIES']));
+        return array('col' => 'Catalog of Life', 'worms' => 'World Register of Marine Species');
 	}
 
 	public function getTaxaSuggest($queryString): array

@@ -150,7 +150,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20211104" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220201" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -674,14 +674,6 @@ if($fullWindow){
                             </div>
                             <?php
                         }
-                    }
-                    if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE'] && $occArr['verbatimsciname']) {
-                        ?>
-                        <div style="clear:both;">
-                            <b>Host:</b>
-                            <?php echo $occArr['verbatimsciname']; ?>
-                        </div>
-                        <?php
                     }
                     if($occArr['verbatimattributes']){
                         ?>

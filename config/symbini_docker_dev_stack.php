@@ -35,15 +35,9 @@ $GLOBALS['IPLANT_IMAGE_IMPORT_PATH'] = '';		//Path used to map/import images upl
 //$GLOBALS['USE_IMAGE_MAGICK'] = 0;		//1 = ImageMagick resize images, given that it's installed (faster, less memory intensive)
 $GLOBALS['TESSERACT_PATH'] = ''; 			//Needed for OCR function in the occurrence editor page
 
-$GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] = 1;
-$GLOBALS['FLORA_MOD_IS_ACTIVE'] = 1;
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
 $GLOBALS['REQUESTED_TRACKING_IS_ACTIVE'] = 0;   // Allow users to request actions such as requests for images to be made for occurrences
-
-//Configurations for GeoServer integration
-$GLOBALS['GEOSERVER_URL'] = '';   // URL for Geoserver instance serving map data for this portal
-$GLOBALS['GEOSERVER_RECORD_LAYER'] = '';   // Name of Geoserver layer containing occurrence point data for this portal
 
 //Configurations for Apache SOLR integration
 $GLOBALS['SOLR_URL'] = 'http://172.28.1.2:8983/solr/symbiota';   // URL for SOLR instance indexing data for this portal
@@ -61,8 +55,6 @@ $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS'] = false;			//Allow Batch Georeferen
 $GLOBALS['GOOGLE_ANALYTICS_KEY'] = '';			//Needed for setting up Google Analytics
 $GLOBALS['GOOGLE_TAG_MANAGER_ID'] = '';			//Needed for setting up Google Tag Manager
 $GLOBALS['EOL_KEY'] = '';						//Not required, but good to add a key if you plan to do a lot of EOL mapping
-$GLOBALS['TAXONOMIC_AUTHORITIES'] = array('COL'=>'','WoRMS'=>'');		//List of taxonomic authority APIs to use in data cleaning and thesaurus building tools, concatenated with commas and order by preference; E.g.: array('COL'=>'','WoRMS'=>'','TROPICOS'=>'','EOL'=>'')
-$GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE'] = 0;   // Allows quick entry for host taxa in occurrence editor
 $GLOBALS['PORTAL_TAXA_DESC'] = '';				//Preferred taxa descriptions for the portal.
 $GLOBALS['DYN_CHECKLIST_RADIUS'] = 10;			//Controls size of concentric rings that are sampled when building Dynamic Checklist
 $GLOBALS['DISPLAY_COMMON_NAMES'] = 1;			//Display common names in species profile page and checklists displays
@@ -78,6 +70,3 @@ $GLOBALS['RIGHTS_TERMS'] = array(
     'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivatives 4.0 International)' => 'https://creativecommons.org/licenses/by-nc-nd/4.0/'
 );
 $GLOBALS['CSS_VERSION_LOCAL'] = '20170414';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
-
-//set terms for reproductiveCondition drop-down menu
-//$GLOBALS['REPRODUCTIVE_CONDITION_TERMS'] = array("term1", "term2", "term3", "term4", "term5", "etc..");

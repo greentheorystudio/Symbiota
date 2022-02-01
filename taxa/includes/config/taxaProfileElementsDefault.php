@@ -254,7 +254,7 @@ $descTabsDiv = ob_get_clean();
 ob_start();
 $url = '';
 $mAnchor = '';
-if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
+if($displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',true)";
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
