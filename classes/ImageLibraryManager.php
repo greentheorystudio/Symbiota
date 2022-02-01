@@ -8,9 +8,7 @@ class ImageLibraryManager{
     private $searchTermsArr = array();
     private $recordCount = 0;
     protected $conn;
-    private $taxaArr = array();
     private $tidFocus;
-    private $collArrIndex = 0;
     private $sqlWhere = '';
 
     public function __construct() {
@@ -90,16 +88,16 @@ class ImageLibraryManager{
 
     private function getImageSql(): string
     {
-        $sql = 'FROM images i INNER JOIN taxa t ON i.tid = t.tid '.
-            'INNER JOIN taxstatus ts ON t.tid = ts.tid ';
+        $sql = 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+            'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
         if(array_key_exists('tags',$this->searchTermsArr) && $this->searchTermsArr['tags']){
-            $sql .= 'INNER JOIN imagetag it ON i.imgid = it.imgid ';
+            $sql .= 'INNER JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
         if(array_key_exists('keywords',$this->searchTermsArr) && $this->searchTermsArr['keywords']){
-            $sql .= 'INNER JOIN imagekeywords ik ON i.imgid = ik.imgid ';
+            $sql .= 'INNER JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
         if($this->tidFocus) {
-            $sql .= 'INNER JOIN taxaenumtree e ON ts.tid = e.tid ';
+            $sql .= 'INNER JOIN taxaenumtree AS e ON ts.tid = e.tid ';
         }
         if($this->sqlWhere){
             $sql .= $this->sqlWhere.' AND ';
@@ -107,9 +105,9 @@ class ImageLibraryManager{
         else{
             $sql .= 'WHERE ';
         }
-        $sql .= '(i.sortsequence < 500) AND (ts.taxauthid = 1) AND (t.RankId > 219) ';
+        $sql .= '(i.sortsequence < 500) AND (t.RankId > 219) ';
         if($this->tidFocus) {
-            $sql .= 'AND (e.parenttid IN(' . $this->tidFocus . ')) AND (e.taxauthid = 1) ';
+            $sql .= 'AND (e.parenttid IN(' . $this->tidFocus . ')) ';
         }
         return $sql;
     }
@@ -128,7 +126,7 @@ class ImageLibraryManager{
             'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid ';
         if($this->tidFocus){
             $sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid '.
-                'WHERE (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
+                'WHERE (e.parenttid IN('.$this->tidFocus.')) ';
         }
         $sql .= 'GROUP BY o.collid ';
         $result = $this->conn->query($sql);
@@ -153,7 +151,7 @@ class ImageLibraryManager{
             'FROM users u INNER JOIN images ti ON u.uid = ti.photographeruid ';
         if($this->tidFocus){
             $sql .= 'INNER JOIN taxaenumtree e ON ti.tid = e.tid '.
-                'WHERE (e.parenttid IN('.$this->tidFocus.')) AND (e.taxauthid = 1) ';
+                'WHERE (e.parenttid IN('.$this->tidFocus.')) ';
         }
         $sql .= 'GROUP BY u.uid '.
             'ORDER BY u.lastname, u.firstname';
@@ -229,11 +227,11 @@ class ImageLibraryManager{
                     $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt ';
                 }
                 else{
-                    $sql = 'SELECT COUNT(i.imgid) AS cnt ';
+                    $sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
                 }
             }
             else{
-                $sql = 'SELECT COUNT(i.imgid) AS cnt ';
+                $sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
             }
             $sql .= $this->getSqlBase();
             $sql .= $this->sqlWhere;
@@ -253,6 +251,7 @@ class ImageLibraryManager{
         $sql .= 'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
         $sql .= 'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
         $sql .= 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
+        $sql .= 'LEFT JOIN taxstatus AS ts ON i.tid = ts.tid ';
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
