@@ -1,15 +1,20 @@
 <?php
-include_once(__DIR__ . '/symbini.php');
+//include_once(__DIR__ . '/symbini.php');
 include_once(__DIR__ . '/../classes/Encryption.php');
+include_once(__DIR__ . '/../classes/ConfigurationManager.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
 Sanitizer::validateRequestPath();
+echo json_encode($GLOBALS);
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
 if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)){
     ini_set('session.cookie_secure',1);
 }
 session_start();
+
+$confManager = new ConfigurationManager();
+$confManager->setDatabaseConfigurations();
 
 if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
     $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
@@ -74,26 +79,6 @@ $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
 $GLOBALS['FIELDGUIDE_ACTIVE'] = (isset($GLOBALS['ACTIVATE_FIELDGUIDE']) && $GLOBALS['ACTIVATE_FIELDGUIDE']);
 $GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
-
-$LANG_TAG = 'en';
-if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
-    $LANG_TAG = $_REQUEST['lang'];
-
-    $_SESSION['lang'] = $LANG_TAG;
-    setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30));
-}
-else if(isset($_SESSION['lang']) && $_SESSION['lang']){
-    $LANG_TAG = $_SESSION['lang'];
-}
-else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
-    $LANG_TAG = $_COOKIE['lang'];
-}
-else if(strlen($GLOBALS['DEFAULT_LANG']) === 2) {
-    $LANG_TAG = $GLOBALS['DEFAULT_LANG'];
-}
-if(!$LANG_TAG || strlen($LANG_TAG) !== 2) {
-    $LANG_TAG = 'en';
-}
 
 $GLOBALS['RIGHTS_TERMS_DEFS'] = array(
     'http://creativecommons.org/publicdomain/zero/1.0/' => array(
