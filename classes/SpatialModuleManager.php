@@ -101,8 +101,8 @@ class SpatialModuleManager{
             $accArr = array();
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
-                'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.TidAccepted '.
-                'WHERE (ts.taxauthid = 1) AND (ts.tid IN('.implode(',',$targetTidArr).')) ';
+                'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
+                'WHERE (ts.tid IN('.implode(',',$targetTidArr).')) ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
                 $accArr[] = $r2->tid;
@@ -113,8 +113,8 @@ class SpatialModuleManager{
 
             if($accArr){
                 $sql3 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                    'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                    'WHERE (ts.taxauthid = 1) AND (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
+                    'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid ' .
+                    'WHERE (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
                 $rs3 = $this->conn->query($sql3);
                 while ($r3 = $rs3->fetch_object()) {
                     $synArr[$r3->tid] = $r3->sciname;
@@ -123,9 +123,9 @@ class SpatialModuleManager{
 
                 if ($rankId === 220) {
                     $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                        'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ' .
-                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) AND (ts.taxauthid = 1) ' .
-                        'AND (ts.TidAccepted = ts.tid)';
+                        'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid ' .
+                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) ' .
+                        'AND (ts.tidaccepted = ts.tid)';
                     $rs4 = $this->conn->query($sql4);
                     while ($r4 = $rs4->fetch_object()) {
                         $synArr[$r4->tid] = $r4->sciname;
@@ -190,6 +190,7 @@ class SpatialModuleManager{
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
@@ -253,6 +254,7 @@ class SpatialModuleManager{
             'c.InstitutionCode, c.CollectionCode, c.CollectionName, IFNULL(ts.family,o.family) AS family, o.fieldnumber, '.
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
             'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
@@ -336,7 +338,8 @@ class SpatialModuleManager{
 
     public function setRecordCnt(): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences o ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -361,7 +364,9 @@ class SpatialModuleManager{
         $sql = 'SELECT DISTINCT o.occid, o.collid, c.institutioncode, o.catalognumber, CONCAT_WS(" ",o.recordedby,o.recordnumber) AS collector, '.
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
-            'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid ';
+            'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -508,13 +513,13 @@ class SpatialModuleManager{
     protected function setSciNamesByVerns(): void
     {
         $sql = 'SELECT DISTINCT v.VernacularName, t.tid, t.sciname, ts.family, t.rankid ' .
-            'FROM (taxstatus ts LEFT JOIN taxavernaculars v ON ts.TID = v.TID) ' .
-            'LEFT JOIN taxa t ON t.TID = ts.tidaccepted ';
+            'FROM taxstatus AS ts LEFT JOIN taxavernaculars AS v ON ts.TID = v.TID ' .
+            'LEFT JOIN taxa AS t ON t.TID = ts.tidaccepted ';
         $whereStr = '';
         foreach($this->taxaArr as $key => $value){
             $whereStr .= "OR v.VernacularName = '".$key."' ";
         }
-        $sql .= 'WHERE (ts.taxauthid = 1) AND (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
+        $sql .= 'WHERE (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
         //echo "<div>sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         if($result->num_rows){
