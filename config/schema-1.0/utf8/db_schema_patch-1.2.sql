@@ -596,3 +596,21 @@ ON u.uid = ul.uid
         u.lastlogindate = ul.lastlogindate;
 
 DROP TABLE IF EXISTS `userlogin`;
+
+DELETE te.* FROM taxaenumtree AS te LEFT JOIN taxauthority AS ta ON te.taxauthid = ta.taxauthid
+WHERE ta.isprimary <> 1;
+
+ALTER TABLE `taxaenumtree` DROP FOREIGN KEY `FK_tet_taxauth`;
+
+ALTER TABLE `taxaenumtree`
+    DROP COLUMN `taxauthid`,
+    DROP INDEX `FK_tet_taxauth`;
+
+DELETE ts.* FROM taxstatus AS ts LEFT JOIN taxauthority AS ta ON ts.taxauthid = ta.taxauthid
+WHERE ta.isprimary <> 1;
+
+ALTER TABLE `taxstatus` DROP FOREIGN KEY `FK_taxstatus_taid`;
+
+ALTER TABLE `taxstatus`
+    DROP COLUMN `taxauthid`,
+    DROP INDEX `FK_taxstatus_taid`;
