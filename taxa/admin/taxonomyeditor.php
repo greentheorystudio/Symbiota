@@ -12,11 +12,9 @@ if(!$GLOBALS['SYMB_UID']) {
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $tid = (int)$_REQUEST['tid'];
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 
 $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
-$taxonEditorObj->setTaxAuthId($taxAuthId);
 
 $editable = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
@@ -81,7 +79,7 @@ if($editable){
 		let tid = <?php echo $taxonEditorObj->getTid(); ?>;
 		let tabIndex = <?php echo $tabIndex; ?>;
 	</script>
-	<script src="../../js/symb/taxa.taxonomyeditor.js?ver=20200508"></script>
+	<script src="../../js/symb/taxa.taxonomyeditor.js?ver=20220201"></script>
 </head>
 <body>
 <?php
@@ -260,7 +258,6 @@ if($editable){
                     </div>
                     <div class="editfield" style="display:none;">
                         <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
-                        <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
                         <input type="submit" id="taxoneditsubmit" name="taxonedits" value="Submit Edits" />
                     </div>
                 </form>
@@ -270,22 +267,6 @@ if($editable){
             <div id="taxonstatusdiv" style="min-height:400px;">
                 <fieldset style="width:95%;">
                     <legend><b>Taxonomic Placement</b></legend>
-                    <div style="padding:3px 7px;margin:-12px -10px 5px 0;float:right;">
-                        <form name="taxauthidform" action="taxonomyeditor.php" method="post">
-                            <select name="taxauthid" onchange="this.form.submit()">
-                                <option value="1">Default Taxonomy</option>
-                                <option value="1">----------------------------</option>
-                                <?php
-                                    $ttIdArr = $taxonEditorObj->getTaxonomicThesaurusIds();
-                                    foreach($ttIdArr as $ttID => $ttName){
-                                        echo '<option value='.$ttID.' '.($taxAuthId === (int)$ttID?'SELECTED':'').'>'.$ttName.'</option>';
-                                    }
-                                ?>
-                            </select>
-                            <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
-                            <input type="hidden" name="tabindex" value="1" />
-                        </form>
-                    </div>
                     <div style="font-size:120%;font-weight:bold;">Status:
                         <span style='color:red;'>
                         <?php
@@ -339,7 +320,6 @@ if($editable){
                                     <a href="taxonomyloader.php" target="_blank">Click here to add a taxon to the thesaurus</a>
                                 </div>
                                 <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
-                                <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
                                 <?php
                                     $aArr = $taxonEditorObj->getAcceptedArr();
                                     $aStr = key($aArr);
@@ -365,9 +345,9 @@ if($editable){
                                 echo "<ul>\n";
                                 foreach($acceptedArr as $tidAccepted => $linkedTaxonArr){
                                     echo "<li id='acclink-".$tidAccepted."'>\n";
-                                    echo "<a href='taxonomyeditor.php?tid=".$tidAccepted. '&taxauthid=' .$taxAuthId."'><i>".$linkedTaxonArr['sciname']. '</i></a> ' .$linkedTaxonArr['author']."\n";
+                                    echo "<a href='taxonomyeditor.php?tid=".$tidAccepted."'><i>".$linkedTaxonArr['sciname']. '</i></a> ' .$linkedTaxonArr['author']."\n";
                                     if(count($acceptedArr)>1){
-                                        echo '<span class="acceptedits" style="display:none;"><a href="taxonomyeditor.php?tabindex=1&tid='.$tid.'&deltidaccepted='.$tidAccepted.'&taxauthid='.$taxAuthId.'">';
+                                        echo '<span class="acceptedits" style="display:none;"><a href="taxonomyeditor.php?tabindex=1&tid='.$tid.'&deltidaccepted='.$tidAccepted.'">';
                                         echo '<i style="height:15px;width:15px;" class="far fa-trash-alt"></i>';
                                         echo '</a></span>';
                                     }
@@ -402,7 +382,6 @@ if($editable){
                                         </div>
                                         <div>
                                             <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid();?>" />
-                                            <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
                                             <input type="hidden" name="tabindex" value="1" />
                                             <input type="hidden" name="submitaction" value="linktoaccepted" />
                                             <input type="submit" name="pseudosubmit" value="Add Link" />
@@ -420,7 +399,6 @@ if($editable){
                                             </div>
                                             <div>
                                                 <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid();?>" />
-                                                <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
                                                 <input type="hidden" name="tidaccepted" value="<?php echo $aStr; ?>" />
                                                 <input type="hidden" name="tabindex" value="1" />
                                                 <input type='submit' id='changetoacceptedsubmit' name='changetoaccepted' value='Change Status to Accepted' />
@@ -449,7 +427,7 @@ if($editable){
                             if($synonymArr){
                                 foreach($synonymArr as $tidSyn => $synArr){
                                     echo '<li> ';
-                                    echo '<a href="taxonomyeditor.php?tid='.$tidSyn.'&taxauthid='.$taxAuthId.'"><i>'.$synArr['sciname'].'</i></a> '.$synArr['author'].' ';
+                                    echo '<a href="taxonomyeditor.php?tid='.$tidSyn.'"><i>'.$synArr['sciname'].'</i></a> '.$synArr['author'].' ';
                                     echo '<a href="#" onclick="toggle(\'syn-'.$tidSyn.'\');">';
                                     echo '<i style="height:15px;width:15px;" class="far fa-edit"></i>';
                                     echo '</a>';
@@ -490,7 +468,6 @@ if($editable){
                                                 <div>
                                                     <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>" />
                                                     <input type="hidden" name="tidsyn" value="<?php echo $tidSyn; ?>" />
-                                                    <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
                                                     <input type="hidden" name="tabindex" value="1" />
                                                     <input type='submit' id='syneditsubmit' name='synonymedits' value='Submit Changes' />
                                                 </div>
@@ -529,7 +506,6 @@ if($editable){
                                         </div>
                                         <div style="margin:5px;">
                                             <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid();?>" />
-                                            <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
                                             <input type="hidden" name="tabindex" value="1" />
                                             <input type="hidden" name="submitaction" value="changetonotaccepted" />
                                             <input type='submit' name='pseudosubmit' value='Change Status to Not Accepted' />
@@ -552,7 +528,6 @@ if($editable){
                     <div style="float:right;" title="Rebuild Hierarchy">
                         <form name="updatehierarchyform" action="taxonomyeditor.php" method="post">
                             <input type="hidden" name="tid" value="<?php echo $taxonEditorObj->getTid(); ?>"/>
-                            <input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>">
                             <input type="hidden" name="submitaction" value="updatehierarchy" />
                             <input type="hidden" name="tabindex" value="2" />
                             <button type="submit" name="imagesubmit">

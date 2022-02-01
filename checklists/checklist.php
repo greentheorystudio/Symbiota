@@ -11,7 +11,6 @@ $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
@@ -77,9 +76,6 @@ if($pid) {
 }
 elseif(array_key_exists('proj',$_REQUEST)) {
     $pid = $clManager->setProj($_REQUEST['proj']);
-}
-if($thesFilter) {
-    $clManager->setThesFilter($thesFilter);
 }
 if($taxonFilter) {
     $clManager->setTaxonFilter($taxonFilter);
@@ -206,7 +202,7 @@ if($clArray['locality']){
             if(index > 0) startindex = (index*lazyLoadCnt) + 1;
             const http = new XMLHttpRequest();
             const url = "rpc/fieldguideexporter.php";
-            const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid . '&thesfilter=' . ($thesFilter ?: 1); ?>';
+            const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid; ?>';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -218,7 +214,7 @@ if($clArray['locality']){
             http.send(params);
         }
     </script>
-    <script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=20200806"></script>
+    <script type="text/javascript" src="../js/symb/checklists.checklist.js?ver=20220201"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -359,7 +355,7 @@ if(!$printMode){
                     <li>
 					    <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
                             <?php
-                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon.($clManager->getThesFilter()? '&thesfilter=' .$clManager->getThesFilter(): '');
+                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon;
                             ?>
                             <a href="../games/namegame.php<?php echo $varStr; ?>">Name Game</a>
                             <a href="../games/flashcards.php<?php echo $varStr; ?>">Flash Card Quiz</a>
@@ -446,18 +442,6 @@ if(!$printMode){
                                         <input data-role='none' type="checkbox" name="searchsynonyms" value="1"<?php echo ($searchSynonyms? 'checked' : '');?>/> Synonyms
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <b>Filter:</b><br/>
-                                <select data-role='none' name='thesfilter' id='thesfilter'>
-                                    <option value=''>Original Checklist</option>
-                                    <?php
-                                    $taxonAuthList = $clManager->getTaxonAuthorityList();
-                                    foreach($taxonAuthList as $taCode => $taValue){
-                                        echo "<option value='".$taCode."' " .((int)$taCode === $clManager->getThesFilter()? ' selected' : ''). ' >' .$taValue."</option>\n";
-                                    }
-                                    ?>
-                                </select>
                             </div>
                             <div>
                                 <?php
@@ -573,7 +557,6 @@ if(!$printMode){
                                         <input type='hidden' name='showcommon' value='<?php echo $showCommon; ?>' />
                                         <input type='hidden' name='showvouchers' value='<?php echo $showVouchers; ?>' />
                                         <input type='hidden' name='showauthors' value='<?php echo $showAuthors; ?>' />
-                                        <input type='hidden' name='thesfilter' value='<?php echo $clManager->getThesFilter(); ?>' />
                                         <input type='hidden' name='taxonfilter' value='<?php echo $taxonFilter; ?>' />
                                         <input type='hidden' name='searchcommon' value='<?php echo $searchCommon; ?>' />
                                         <input type="hidden" name="emode" value="1" />
@@ -633,7 +616,7 @@ if(!$printMode){
                         $pageNumber = 1;
                     }
                     $argStr .= '&cl=' .$clValue. '&dynclid=' .$dynClid.($showCommon? '&showcommon=' .$showCommon: '').($showVouchers? '&showvouchers=' .$showVouchers: '');
-                    $argStr .= ($showAuthors? '&showauthors=' .$showAuthors: '').($clManager->getThesFilter()? '&thesfilter=' .$clManager->getThesFilter(): '');
+                    $argStr .= ($showAuthors? '&showauthors=' .$showAuthors: '');
                     $argStr .= ($pid? '&pid=' .$pid: '').($showImages? '&showimages=' .$showImages: '').($taxonFilter? '&taxonfilter=' .$taxonFilter: '');
                     $argStr .= ($searchCommon? '&searchcommon=' .$searchCommon: '').($searchSynonyms? '&searchsynonyms=' .$searchSynonyms: '');
                     $argStr .= ($showAlphaTaxa? '&showalphataxa=' .$showAlphaTaxa: '');
@@ -671,7 +654,7 @@ if(!$printMode){
                         <div class="tndiv">
                             <div class="tnimg" style="<?php echo ($imgSrc? '' : 'border:1px solid black;'); ?>">
                                 <?php
-                                $spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
+                                $spUrl = "../taxa/index.php?taxon=$tid&cl=".$clid;
                                 if($imgSrc){
                                     $imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
                                     if(!$printMode) {
@@ -723,7 +706,7 @@ if(!$printMode){
                         if(!$showAlphaTaxa){
                             $family = $sppArr['family'];
                             if($family !== $prevfam){
-                                $famUrl = "../taxa/index.php?taxauthid=1&taxon=$family&cl=".$clid;
+                                $famUrl = "../taxa/index.php?taxon=$family&cl=".$clid;
                                 ?>
                                 <div class="familydiv" id="<?php echo $family;?>" style="margin:15px 0 5px 0;font-weight:bold;font-size:120%;">
                                     <a href="<?php echo $famUrl; ?>" target="_blank" style="color:black;"><?php echo $family;?></a>
@@ -732,7 +715,7 @@ if(!$printMode){
                                 $prevfam = $family;
                             }
                         }
-                        $spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clid;
+                        $spUrl = "../taxa/index.php?taxon=$tid&cl=".$clid;
                         echo "<div id='tid-$tid' style='margin:0 0 3px 10px;'>";
                         echo '<div style="clear:left">';
                         if(!$printMode && !preg_match('/\ssp\d/',$sppArr['sciname'])) {

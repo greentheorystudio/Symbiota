@@ -1067,17 +1067,6 @@ class OccurrenceManager{
         return implode('; ', $this->localSearchArr);
     }
 
-    public function getTaxonAuthorityList(): array
-    {
-        $taxonAuthorityList = array();
-        $sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $taxonAuthorityList[$row->taxauthid] = $row->name;
-        }
-        return $taxonAuthorityList;
-    }
-
     public function getSynonyms($searchTarget): array
     {
         $synArr = array();

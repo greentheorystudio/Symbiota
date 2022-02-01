@@ -10,7 +10,7 @@ $term = trim($con->real_escape_string($_REQUEST['term']));
 if($term){
 	$sql = 'SELECT DISTINCT t.tid, t.author, ts.family, t.securitystatus '.
 		'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-		'WHERE t.sciname = "'.$term.'" AND ts.taxauthid = 1 ';
+		'WHERE t.sciname = "'.$term.'" ';
 	//echo $sql;
 	$rs = $con->query($sql);
 	while ($r = $rs->fetch_object()) {

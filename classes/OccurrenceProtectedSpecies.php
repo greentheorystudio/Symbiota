@@ -17,7 +17,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 		if($this->taxaArr) {
             $sql .= 'INNER JOIN taxaenumtree e ON t.tid = e.tid ';
         }
-		$sql .= 'WHERE (ts.taxauthid = 1) AND (t.SecurityStatus > 0) ';
+		$sql .= 'WHERE (t.SecurityStatus > 0) ';
 		if($this->taxaArr) {
             $sql .= 'AND (e.parenttid IN(' . implode(',', $this->taxaArr) . ') OR t.tid IN(' . implode(',', $this->taxaArr) . ')) ';
         }
@@ -85,7 +85,7 @@ class OccurrenceProtectedSpecies extends OccurrenceMaintenance {
 
 	public function setTaxonFilter($searchTaxon): void
     {
-		$sql = 'SELECT ts.tidaccepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname LIKE "'.$searchTaxon.'%" AND ts.taxauthid = 1';
+		$sql = 'SELECT ts.tidaccepted FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE t.sciname LIKE "'.$searchTaxon.'%"';
 		$rs = $this->conn->query($sql);
 		if($rs) {
 			while($r = $rs->fetch_object()){

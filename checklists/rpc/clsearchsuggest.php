@@ -24,7 +24,7 @@ if(is_numeric($clid)){
 	
 	$sql = 'SELECT DISTINCT ts.family '. 
 		'FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid '.
-		'WHERE ts.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' AND ts.taxauthid = 1 ';
+		'WHERE ts.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' ';
 	//echo $sql;
 	$result = $conn->query($sql);
 	while ($r = $result->fetch_object()) {

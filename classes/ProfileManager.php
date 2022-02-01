@@ -670,8 +670,8 @@ class ProfileManager extends Manager{
         }
         $rs1->close();
         if($tid){
-            $sql2 = 'INSERT INTO usertaxonomy(uid, tid, taxauthid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) '.
-                'VALUES('.$this->uid.','.$tid.',1,"'.$editorStatus.'","'.$geographicScope.'","'.$notes.'",'.$GLOBALS['SYMB_UID'].',"'.$modDate.'") ';
+            $sql2 = 'INSERT INTO usertaxonomy(uid, tid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) '.
+                'VALUES('.$this->uid.','.$tid.',"'.$editorStatus.'","'.$geographicScope.'","'.$notes.'",'.$GLOBALS['SYMB_UID'].',"'.$modDate.'") ';
             //echo $sql;
             $connection = new DbConnection();
             $editCon = $connection->getConnection();

@@ -48,7 +48,7 @@ if($tempTaxaArr){
         foreach($taxaArr as $key => $value){
             $whereStr .= "OR v.VernacularName = '".$key."' ";
         }
-        $sql .= 'WHERE (ts.taxauthid = 1) AND (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
+        $sql .= 'WHERE (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
         //echo "<div>sql: ".$sql."</div>";
         $result = $con->query($sql);
         if($result->num_rows){
@@ -105,7 +105,7 @@ if($tempTaxaArr){
                 $tidArr = $valueArray['tid'];
                 $sql = 'SELECT DISTINCT t.sciname '.
                     'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-                    'WHERE t.rankid = 140 AND e.taxauthid = 1 AND e.parenttid IN('.implode(',',$tidArr).')';
+                    'WHERE t.rankid = 140 AND e.parenttid IN('.implode(',',$tidArr).')';
                 $rs = $con->query($sql);
                 while($r = $rs->fetch_object()){
                     $famArr[] = $r->family;

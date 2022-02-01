@@ -145,7 +145,7 @@ if($editable && $action){
         $(document).ready(function() {
 			$("#sninput").autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "taid": "1", "hideauth": 1 }, response );
+					$.getJSON( "rpc/gettaxasuggest.php", { "term": request.term, "hideauth": 1 }, response );
 				}
 			},{ minLength: 3, autoFocus: true }
 			);

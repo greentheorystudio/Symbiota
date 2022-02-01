@@ -758,12 +758,11 @@ class OccurrenceIndividualManager extends Manager{
                 $occTidArr[] = $this->occArr['tidinterpreted'];
                 $sql = 'SELECT parenttid '.
                     'FROM taxaenumtree '.
-                    'WHERE (taxauthid = 1) AND (tid = '.$this->occArr['tidinterpreted'].')';
+                    'WHERE (tid = '.$this->occArr['tidinterpreted'].')';
             }
             elseif($this->occArr['sciname'] || $this->occArr['family']){
                 $sql = 'SELECT e.parenttid '.
-                    'FROM taxaenumtree e INNER JOIN taxa t ON e.tid = t.tid '.
-                    'WHERE (e.taxauthid = 1) ';
+                    'FROM taxaenumtree e INNER JOIN taxa t ON e.tid = t.tid ';
                 if($this->occArr['sciname']){
                     $taxon = $this->occArr['sciname'];
                     $tok = explode(' ',$this->occArr['sciname']);

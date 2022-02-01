@@ -205,7 +205,6 @@ class SpatialModuleManager{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity)) ';
             }
         }
-        $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
         $sql .= 'LIMIT ' .($pageRequest ?: 0). ',' .$cntPerPage;
         //return '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
@@ -269,7 +268,6 @@ class SpatialModuleManager{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
             }
         }
-        $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
         if($pageRequest && $cntPerPage){
             $sql .= 'LIMIT ' .$pageRequest. ',' .$cntPerPage;
         }

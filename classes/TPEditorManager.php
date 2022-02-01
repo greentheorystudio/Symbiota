@@ -31,12 +31,12 @@ class TPEditorManager {
 		if(is_numeric($t)){
 			$sql = 'SELECT t.tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted '. 
 				'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID '.
-				'WHERE (ts.taxauthid = 1) AND (t.TID = '.$t.')';
+				'WHERE (t.TID = '.$t.')';
 		}
 		else{
 			$sql = 'SELECT t.tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted '. 
 				'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID '.
-				'WHERE (ts.taxauthid = 1) AND (t.sciname = "'.$this->taxonCon->real_escape_string($t).'")';
+				'WHERE (t.sciname = "'.$this->taxonCon->real_escape_string($t).'")';
 		}
 		if($sql){
 			$result = $this->taxonCon->query($sql);
@@ -55,7 +55,7 @@ class TPEditorManager {
 					$this->tid = $row->TidAccepted;
 					$sqlNew = 'SELECT ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus, ts.TidAccepted ' .
 						'FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.TID ' .
-						'WHERE (ts.taxauthid = 1) AND (t.TID = ' .$this->tid. ')';
+						'WHERE (t.TID = ' .$this->tid. ')';
 					$resultNew = $this->taxonCon->query($sqlNew);
 					if($rowNew = $resultNew->fetch_object()){
 						$this->sciName = $rowNew->SciName;
@@ -97,7 +97,7 @@ class TPEditorManager {
 		$sql = 'SELECT t2.tid, t2.SciName, ts.SortSequence ' .
 			'FROM (taxa t1 INNER JOIN taxstatus ts ON t1.tid = ts.tidaccepted) ' .
 			'INNER JOIN taxa t2 ON ts.tid = t2.tid ' .
-			'WHERE (ts.taxauthid = 1) AND (ts.tid <> ts.TidAccepted) AND (t1.tid = ' .$this->tid. ') ' .
+			'WHERE (ts.tid <> ts.TidAccepted) AND (t1.tid = ' .$this->tid. ') ' .
 			'ORDER BY ts.SortSequence, t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);

@@ -15,7 +15,7 @@ if(is_numeric($tid) && $state){
 		'FROM fmchecklists c INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid '.
 		'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
 		'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-		'WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+		'WHERE c.type = "rarespp" '.
 		'AND (ts2.tid = '.$tid.') AND (c.locality = "'.$state.'")';
 	//echo $sql;
 	$rs = $con->query($sql);

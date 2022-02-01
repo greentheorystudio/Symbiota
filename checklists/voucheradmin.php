@@ -343,7 +343,7 @@ if($clid && $isEditor){
 										foreach($tArr as $tid => $sciname){
 											?>
 											<div>
-												<a href="#" onclick="openPopup('../taxa/index.php?taxauthid=1&taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
+												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>','taxawindow');return false;"><?php echo $sciname; ?></a>
 												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>','editorwindow');return false;">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>

@@ -11,7 +11,7 @@ if($queryString) {
 	$sql = 'SELECT DISTINCT ts.tidaccepted, t.SciName, v.VernacularName '.
 		'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
 		'LEFT JOIN taxavernaculars AS v ON t.TID = v.TID '.
-		'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.VernacularName LIKE "'.$queryString.'%") AND t.RankId < 185 AND ts.taxauthid = 1 '.
+		'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.VernacularName LIKE "'.$queryString.'%") AND t.RankId < 185 '.
 		'LIMIT 10 ';
 	$result = $con->query($sql);
 	if($type === 'single'){

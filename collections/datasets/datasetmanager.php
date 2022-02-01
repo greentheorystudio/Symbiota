@@ -521,7 +521,6 @@ include(__DIR__ . '/../../header.php');
         <input id="dh-filename" name="dh-filename" type="hidden" />
         <input id="dh-contentType" name="dh-contentType" type="hidden" />
         <input id="dh-selections" name="dh-selections" type="hidden" />
-        <input id="dh-taxonFilterCode" name="dh-taxonFilterCode" type="hidden" />
         <input id="schemacsv" name="schemacsv" type="hidden" />
         <input id="identificationscsv" name="identificationscsv" type="hidden" />
         <input id="imagescsv" name="imagescsv" type="hidden" />

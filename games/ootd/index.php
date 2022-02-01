@@ -175,7 +175,7 @@ if($submitAction){
 										<input name="submitaction" type="submit" value="Submit" style="height:7em; width:10em;"/>
 									</div>
 									<div style="margin-top:20px;float:right;clear:right;" >
-										<button name="submitaction" type="submit" value="giveup" style="height:2em; width:8em;" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >I give up!</button>
+										<button name="submitaction" type="submit" value="giveup" style="height:2em; width:8em;" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >I give up!</button>
 									</div>
 								</div>
 								<div>
@@ -230,11 +230,11 @@ if($submitAction){
 							<?php echo $_POST['family_answer']; ?>.
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
-							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>');">Click Here to try again!</a>
+							<a href = "index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>');">Click Here to try again!</a>
 							<br /><br />
 							OR
 							<br /><br />
-							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
+							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
 						</div>
 					</div>
 				</div>
@@ -257,7 +257,7 @@ if($submitAction){
 							<br /><br />
 							OR
 							<br /><br />
-							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
+							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
 						</div>
 					</div>
 				</div>
@@ -280,7 +280,7 @@ if($submitAction){
 							<br /><br />
 							OR
 							<br /><br />
-							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
+							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
 						</div>
 					</div>
 				</div>
@@ -303,7 +303,7 @@ if($submitAction){
 							<br /><br />
 							OR
 							<br /><br />
-							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
+							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
 						</div>
 					</div>
 				</div>
@@ -326,7 +326,7 @@ if($submitAction){
 							<br /><br />
 							OR
 							<br /><br />
-							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
+							<a href = "index.php?submitaction=giveup?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here reveal what the <?php echo ($ootdGameType ?? 'organism'); ?> was-</a>
 						</div>
 					</div>
 				</div>
@@ -345,7 +345,7 @@ if($submitAction){
 							<i><?php echo $gameInfo['sciname']; ?></i>
 						</div>
 						<div style="margin-top:40px;font-size:16px;" >
-							<a href = "#" onClick="window.open('../../taxa/index.php?taxauthid=1&taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here to learn more about this <?php echo ($ootdGameType ?? 'organism'); ?>-</a>
+							<a href = "#" onClick="window.open('../../taxa/index.php?taxon=<?php echo $gameInfo['tid']; ?>','plantwindow','width=900,height=650')" >-Click here to learn more about this <?php echo ($ootdGameType ?? 'organism'); ?>-</a>
 							<br /><br />
 							Thank you for playing!
 							<br /><br />

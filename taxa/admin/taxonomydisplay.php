@@ -8,12 +8,10 @@ $target = array_key_exists('target',$_REQUEST)?$_REQUEST['target']: '';
 $displayAuthor = array_key_exists('displayauthor',$_REQUEST)?(int)$_REQUEST['displayauthor']:0;
 $displayFullTree = array_key_exists('displayfulltree',$_REQUEST)?(int)$_REQUEST['displayfulltree']:0;
 $displaySubGenera = array_key_exists('displaysubgenera',$_REQUEST)?(int)$_REQUEST['displaysubgenera']:0;
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 $statusStr = array_key_exists('statusstr',$_REQUEST)?$_REQUEST['statusstr']:'';
 
 $taxonDisplayObj = new TaxonomyDisplayManager();
 $taxonDisplayObj->setTargetStr($target);
-$taxonDisplayObj->setTaxAuthId($taxAuthId);
 $taxonDisplayObj->setDisplayAuthor($displayAuthor);
 $taxonDisplayObj->setDisplayFullTree($displayFullTree);
 $taxonDisplayObj->setDisplaySubGenera($displaySubGenera);
@@ -36,7 +34,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 		$(document).ready(function() {
             $("#taxontarget").autocomplete({
 				source: function( request, response ) {
-					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.tdform.taxauthid.value }, response );
+					$.getJSON( "rpc/gettaxasuggest.php", { term: request.term }, response );
 				}
 			},{ minLength: 3 }
 			);
@@ -83,7 +81,6 @@ include(__DIR__ . '/../../header.php');
 					</div>
 					<div style="float:right;margin:15px 80px 15px 15px;">
 						<input name="tdsubmit" type="submit" value="Display Taxon Tree"/>
-						<input name="taxauthid" type="hidden" value="<?php echo $taxAuthId; ?>" /> 
 					</div>
 					<div style="margin:15px 15px 0 60px;">
 						<input name="displayauthor" type="checkbox" value="1" <?php echo ($displayAuthor?'checked':''); ?> /> Display authors

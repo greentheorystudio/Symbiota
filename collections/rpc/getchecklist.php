@@ -19,68 +19,47 @@ if($stArrJson){
         if($GLOBALS['SOLR_MODE']){
             $solrManager->setSearchTermsArr($stArr);
             $solrArr = $solrManager->getTaxaArr();
-            if($taxonFilter && is_numeric($taxonFilter)){
-                $tidArr = $solrManager->getSOLRTidList($solrArr);
-                $checklistArr = $checklistManager->getTidChecklist($tidArr,$taxonFilter);
-                $taxaCnt = $checklistManager->getChecklistTaxaCnt();
-            }
-            else{
-                $checklistArr = $solrManager->translateSOLRTaxaList($solrArr);
-                $taxaCnt = $solrManager->getChecklistTaxaCnt();
-            }
+            $checklistArr = $solrManager->translateSOLRTaxaList($solrArr);
+            $taxaCnt = $solrManager->getChecklistTaxaCnt();
         }
         else{
             $checklistManager->setSearchTermsArr($stArr);
-            $checklistArr = $checklistManager->getChecklist($taxonFilter);
+            $checklistArr = $checklistManager->getChecklist();
             $taxaCnt = $checklistManager->getChecklistTaxaCnt();
         }
     }
 }
 ?>
 <div>
-    <div style="height:20px;float:right;width:400px;display:flex;justify-content:flex-end;align-items:center;">
-    <button class="icon-button" title="Download Checklist Data" onclick="processDownloadChecklist();">
-        <i style='width:15px;height:15px;' class="fas fa-download"></i>
-    </button>
-	<?php
-	if($GLOBALS['KEY_MOD_IS_ACTIVE']){
-	?>
-        <button class="icon-button" title='Open in Interactive Key Interface' onclick="submitInteractiveKeyFormTaxaList();">
-            <i style='width:15px;height:15px;' class="fas fa-key"></i>
+    <div style="height:40px;float:right;width:400px;display:flex;justify-content:flex-end;align-items:center;">
+        <button class="icon-button" title="Download Checklist Data" onclick="processDownloadChecklist();">
+            <i style='width:15px;height:15px;' class="fas fa-download"></i>
         </button>
-        <form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-            <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
-            <input type="hidden" id="interactiveKeyFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
-            <input type="hidden" name="interface" value='key' />
-        </form>
-	<?php
-	}
-	if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
-	?>
-        <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
-            <i style='width:15px;height:15px;' class="fas fa-list"></i>
-        </button>
-        <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
-            <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
-            <input type="hidden" id="checklistExplorerFormTaxonfilter" name="taxonfilter" value='<?php echo $taxonFilter; ?>' />
-            <input type="hidden" name="interface" value='checklist' />
-        </form>
-	<?php
-	}
-	?>
+        <?php
+        if($GLOBALS['KEY_MOD_IS_ACTIVE']){
+        ?>
+            <button class="icon-button" title='Open in Interactive Key Interface' onclick="submitInteractiveKeyFormTaxaList();">
+                <i style='width:15px;height:15px;' class="fas fa-key"></i>
+            </button>
+            <form id="interactiveKeyForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+                <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
+                <input type="hidden" name="interface" value='key' />
+            </form>
+        <?php
+        }
+        if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
+        ?>
+            <button class="icon-button" title='Open in Checklist Explorer Interface' onclick="submitChecklistExplorerFormTaxaList();">
+                <i style='width:15px;height:15px;' class="fas fa-list"></i>
+            </button>
+            <form id="checklistExplorerForm" style="display:inline;" action="checklistsymbiota.php" method="post">
+                <input type="hidden" name="starr" value='<?php echo $stArrJson; ?>' />
+                <input type="hidden" name="interface" value='checklist' />
+            </form>
+        <?php
+        }
+        ?>
     </div>
-	<div style='margin-bottom:10px;float:left;'>
-        Taxonomic Filter:
-        <select id="taxonfilter" name="taxonfilter" onchange="getTaxaList(this.value);">
-            <option value="">Raw Data</option>
-            <?php
-            $taxonAuthList = $checklistManager->getTaxonAuthorityList();
-            foreach($taxonAuthList as $taCode => $taValue){
-                echo "<option value='".$taCode."' ".((int)$taCode === $taxonFilter? 'SELECTED' : ''). '>' .$taValue. '</option>';
-            }
-            ?>
-        </select>
-	</div>
 	<div style="clear:both;"><hr/></div>
 	<?php
 		echo '<div style="font-weight:bold;font-size:125%;">Taxa Count: '.$taxaCnt.'</div>';

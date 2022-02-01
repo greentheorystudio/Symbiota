@@ -7,7 +7,6 @@ include_once(__DIR__ . '/Sanitizer.php');
 class TaxonomyCleaner extends Manager{
 
 	private $collid;
-	private $taxAuthId = 1;
 	private $targetKingdom;
 	private $autoClean = 0;
 	private $testValidity = 1;
@@ -304,7 +303,7 @@ class TaxonomyCleaner extends Manager{
 		$sql = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'SET t.kingdomname = t2.sciname '.
-			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 10) AND ISNULL(t.kingdomName)';
+			'WHERE (t2.rankid = 10) AND ISNULL(t.kingdomName)';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
@@ -318,7 +317,7 @@ class TaxonomyCleaner extends Manager{
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
 			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'SET ts.family = t2.sciname '.
-			'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (t2.rankid = 140) AND ISNULL(ts.family)';
+			'WHERE (t2.rankid = 140) AND ISNULL(ts.family)';
 		if($this->conn->query($sql)){
 			$this->logOrEcho($this->conn->affected_rows.' taxon records updated',1);
 		}
@@ -510,13 +509,6 @@ class TaxonomyCleaner extends Manager{
 		$rs->free();
 		asort($retArr);
 		return $retArr;
-	}
-
-	public function setTaxAuthId($id): void
-	{
-		if(is_numeric($id)) {
-			$this->taxAuthId = $id;
-		}
 	}
 
 	public function setTargetKingdom($k): void

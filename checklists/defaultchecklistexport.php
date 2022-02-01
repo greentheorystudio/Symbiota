@@ -15,7 +15,6 @@ $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $pageNumber = array_key_exists('pagenumber',$_REQUEST)?(int)$_REQUEST['pagenumber']:1;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
@@ -47,9 +46,6 @@ if($pid) {
 }
 elseif(array_key_exists('proj',$_REQUEST)) {
 	$pid = $clManager->setProj($_REQUEST['proj']);
-}
-if($thesFilter) {
-	$clManager->setThesFilter($thesFilter);
 }
 if($taxonFilter) {
 	$clManager->setTaxonFilter($taxonFilter);
@@ -186,7 +182,7 @@ if($showImages){
 			$textrun = $cell->addTextRun('imagePara');
 			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
 			$textrun->addTextBreak();
-			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
+			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
 			$textrun->addTextBreak();
 			if(array_key_exists('vern',$sppArr)){
 				$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
@@ -194,7 +190,7 @@ if($showImages){
 				$textrun->addTextBreak();
 			}
 			if(!$showAlphaTaxa && $family !== $prevfam) {
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
+				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
 				$prevfam = $family;
 			}
 		}
@@ -216,12 +212,12 @@ else{
 			$family = $sppArr['family'];
 			if($family !== $prevfam){
 				$textrun = $section->addTextRun('familyPara');
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
+				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
 				$prevfam = $family;
 			}
 		}
 		$textrun = $section->addTextRun('scinamePara');
-		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxauthid=1&taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
+		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
 		if(array_key_exists('author',$sppArr)){
 			$sciAuthor = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['author']);
 			$textrun->addText(htmlspecialchars(' '.$sciAuthor),'textFont');
