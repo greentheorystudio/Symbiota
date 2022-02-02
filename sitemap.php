@@ -107,7 +107,7 @@ $smManager = new SiteMapManager();
                         <h3>Administrative Tools</h3>
                         <ul>
                             <li>
-                                <a href="admin/configurationManager.php">Portal Configuration Manager</a>
+                                <a href="admin/portalConfigurationManager.php">Portal Configuration Manager</a>
                             </li>
                             <li>
                                 <a href="profile/usermanagement.php">User Permissions</a>

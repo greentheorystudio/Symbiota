@@ -95,10 +95,18 @@ class ConfigurationManager{
     public function getConfigurationsArr(): array
     {
         $retArr = array();
+        $retArr['core'] = array();
+        $retArr['additional'] = array();
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retArr[$r->configurationname] = $r->configurationvalue;
+            if(in_array($r->configurationname, $this->coreConfigurations, true)){
+                $retArr['core'][$r->configurationname] = $r->configurationvalue;
+            }
+            else{
+                $retArr['additional'][$r->configurationname] = $r->configurationvalue;
+            }
         }
         $rs->free();
         return $retArr;
@@ -142,6 +150,12 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SERVER_ROOT']) || $GLOBALS['SERVER_ROOT'] === ''){
             $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
         }
+        if(isset($GLOBALS['SERVER_ROOT']) && substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
+            $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
+        }
+        if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
+            $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
+        }
         if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
             $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         }
@@ -161,6 +175,18 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
             $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
         }
+        if((!isset($GLOBALS['SMTP_USERNAME']) || $GLOBALS['SMTP_USERNAME'] === '') && (!isset($GLOBALS['SMTP_PASSWORD']) || $GLOBALS['SMTP_PASSWORD'] === '')){
+            $GLOBALS['SMTP_HOST'] = '';
+            $GLOBALS['SMTP_PORT'] = '';
+            $GLOBALS['SMTP_ENCRYPTION'] = '';
+            $GLOBALS['SMTP_ENCRYPTION_MECHANISM'] = '';
+        }
+        if(!isset($GLOBALS['SPATIAL_INITIAL_CENTER']) || $GLOBALS['SPATIAL_INITIAL_CENTER'] === ''){
+            $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
+        }
+        if(!isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) || $GLOBALS['SPATIAL_INITIAL_ZOOM'] === ''){
+            $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
+        }
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
     }
 
@@ -178,6 +204,8 @@ class ConfigurationManager{
         $GLOBALS['PORTAL_GUID'] = $this->getGUID();
         $GLOBALS['SECURITY_KEY'] = $this->getGUID();
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
+        $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
+        $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
     }
 
     public function getCoreConfigurationsArr(): array

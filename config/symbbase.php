@@ -14,13 +14,6 @@ session_start();
 $confManager = new ConfigurationManager();
 $confManager->setGlobalArr();
 
-if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
-    $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
-}
-if(substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
-    $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
-}
-
 $GLOBALS['PARAMS_ARR'] = array();
 $GLOBALS['USER_RIGHTS'] = array();
 if(!isset($_SESSION['userparams'])){
