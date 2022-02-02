@@ -1,11 +1,9 @@
 <?php
-//include_once(__DIR__ . '/symbini.php');
 include_once(__DIR__ . '/../classes/Encryption.php');
 include_once(__DIR__ . '/../classes/ConfigurationManager.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
 Sanitizer::validateRequestPath();
-echo json_encode($GLOBALS);
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
 if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)){

@@ -614,3 +614,6 @@ ALTER TABLE `taxstatus` DROP FOREIGN KEY `FK_taxstatus_taid`;
 ALTER TABLE `taxstatus`
     DROP COLUMN `taxauthid`,
     DROP INDEX `FK_taxstatus_taid`;
+
+ALTER TABLE `configurations`
+    ADD UNIQUE INDEX `configurationname`(`configurationname`);
