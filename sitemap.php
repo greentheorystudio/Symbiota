@@ -25,8 +25,7 @@ $smManager = new SiteMapManager();
 				<li><a href="collections/index.php">Search Engine</a> - search collections</li>
 				<li><a href="collections/misc/collprofiles.php">Collections</a> - list of collection participating in project</li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>
-				<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>
-                <?php
+				<?php
                 if(isset($GLOBALS['ACTIVATE_EXSICCATI']) && $GLOBALS['ACTIVATE_EXSICCATI']){
                     echo '<li><a href="collections/exsiccati/index.php">Exsiccati Index</a></li>';
                 }
@@ -84,17 +83,13 @@ $smManager = new SiteMapManager();
             <h3>Dynamic Species Lists</h3>
 			<ul>
 				<li>
-					<a href="checklists/dynamicmap.php?interface=checklist">
-                        Checklist
-					</a>
-                    - dynamically build a checklist using georeferenced occurrence records
+					<a href="checklists/dynamicmap.php?interface=checklist">Checklist</a> - dynamically build a checklist using georeferenced occurrence records
 				</li>
-				<li>
-					<a href="checklists/dynamicmap.php?interface=key">
-                        Dynamic Key
-					</a>
-                    - dynamically build a key using georeferenced occurrence records
-				</li>
+				<?php
+                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
+                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a> - dynamically build a key using georeferenced occurrence records</li>';
+                }
+                ?>
 			</ul>
             <?php
             if($GLOBALS['SYMB_UID']){

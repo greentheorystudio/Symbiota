@@ -349,7 +349,7 @@ include(__DIR__ . '/../header.php');
         </div>
 
         <div id="additionalconfig">
-            <div style="display:flex;justify-content:right;margin:10px;" title="Add Configuration" onclick="toggle('addconfdiv')">
+            <div style="display:flex;justify-content:right;margin:10px;cursor:pointer;" title="Add Configuration" onclick="toggle('addconfdiv')">
                 <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
             </div>
             <div id="addconfdiv" style="display:none">

@@ -35,8 +35,6 @@ $GLOBALS['TESSERACT_PATH'] = ''; 			//Needed for OCR function in the occurrence 
 
 $GLOBALS['KEY_MOD_IS_ACTIVE'] = 1;
 
-$GLOBALS['REQUESTED_TRACKING_IS_ACTIVE'] = 0;   // Allow users to request actions such as requests for images to be made for occurrences
-
 //Configurations for Apache SOLR integration
 $GLOBALS['SOLR_URL'] = 'http://172.28.1.2:8983/solr/symbiota';   // URL for SOLR instance indexing data for this portal
 $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 72;   // Number of hours between full imports of SOLR index.
