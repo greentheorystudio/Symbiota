@@ -90,7 +90,7 @@ if($collid){
             font-size: 16px;
         }
         .field-block {
-            margin: 5px 0px;
+            margin: 5px 0;
         }
         .field-label {
             font-size: 16px;

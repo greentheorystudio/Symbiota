@@ -32,7 +32,7 @@ $coreConfNames = $confManager->getCoreConfigurationsArr();
             font-size: 16px;
         }
         .field-block {
-            margin: 5px 0px;
+            margin: 5px 0;
             display:flex;
             justify-content: space-between;
         }
@@ -49,6 +49,7 @@ $coreConfNames = $confManager->getCoreConfigurationsArr();
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js?ver=20130917"></script>
     <script type="text/javascript" src="../js/jquery-ui.js?ver=20130917"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#tabs').tabs({
@@ -61,12 +62,10 @@ $coreConfNames = $confManager->getCoreConfigurationsArr();
         function enableProtectedEditing(id){
             const disabled = document.getElementById(id).disabled;
             if(disabled){
-                document.getElementById(id).name = id;
                 document.getElementById(id).disabled = false;
             }
             else{
                 document.getElementById(id).disabled = true;
-                document.getElementById(id).removeAttribute('name');
             }
         }
 
@@ -158,13 +157,13 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Portal Title:</span>
                     <span class="field-elem">
-                        <input type="text" name="DEFAULT_TITLE" value="<?php echo (array_key_exists('DEFAULT_TITLE',$coreConfArr)?$coreConfArr['DEFAULT_TITLE']:''); ?>" style="width:600px;" />
+                        <input type="text" id="DEFAULT_TITLE" value="<?php echo (array_key_exists('DEFAULT_TITLE',$coreConfArr)?$coreConfArr['DEFAULT_TITLE']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Default Language:</span>
                     <span class="field-elem">
-                        <select name="DEFAULT_LANG" style="width:600px;">
+                        <select id="DEFAULT_LANG" style="width:600px;">
                             <option value="en">English</option>
                         </select>
                     </span>
@@ -172,19 +171,19 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Admin Email:</span>
                     <span class="field-elem">
-                        <input type="text" name="ADMIN_EMAIL" value="<?php echo (array_key_exists('ADMIN_EMAIL',$coreConfArr)?$coreConfArr['ADMIN_EMAIL']:''); ?>" style="width:600px;" />
+                        <input type="text" id="ADMIN_EMAIL" value="<?php echo (array_key_exists('ADMIN_EMAIL',$coreConfArr)?$coreConfArr['ADMIN_EMAIL']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Google Analytics Key:</span>
                     <span class="field-elem">
-                        <input type="text" name="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" />
+                        <input type="text" id="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Default Collection Category:</span>
                     <span class="field-elem">
-                        <select name="DEFAULTCATID" style="width:600px;">
+                        <select id="DEFAULTCATID" style="width:600px;">
                             <option value="">Select Collection Category</option>
                             <option value="">------------------------------------</option>
                             <?php
@@ -199,19 +198,19 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Display Common Names:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="DISPLAY_COMMON_NAMES" value="1" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Dynamic Checklist Radius:</span>
                     <span class="field-elem">
-                        <input type="text" name="DYN_CHECKLIST_RADIUS" value="<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>" style="width:600px;" />
+                        <input type="text" id="DYN_CHECKLIST_RADIUS" value="<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Portal CSS Version:  <button type="button">Update</button></span>
                     <span class="field-elem">
-                        <input type="text" name="CSS_VERSION_LOCAL" value="<?php echo (array_key_exists('CSS_VERSION_LOCAL',$coreConfArr)?$coreConfArr['CSS_VERSION_LOCAL']:''); ?>" style="width:600px;" disabled />
+                        <input type="text" id="CSS_VERSION_LOCAL" value="<?php echo (array_key_exists('CSS_VERSION_LOCAL',$coreConfArr)?$coreConfArr['CSS_VERSION_LOCAL']:''); ?>" style="width:600px;" disabled />
                     </span>
                 </div>
             </fieldset>
@@ -220,25 +219,25 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Host:</span>
                     <span class="field-elem">
-                        <input type="text" name="SMTP_HOST" value="<?php echo (array_key_exists('SMTP_HOST',$coreConfArr)?$coreConfArr['SMTP_HOST']:''); ?>" style="width:600px;" />
+                        <input type="text" id="SMTP_HOST" value="<?php echo (array_key_exists('SMTP_HOST',$coreConfArr)?$coreConfArr['SMTP_HOST']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Port:</span>
                     <span class="field-elem">
-                        <input type="text" name="SMTP_PORT" value="<?php echo (array_key_exists('SMTP_PORT',$coreConfArr)?$coreConfArr['SMTP_PORT']:''); ?>" style="width:600px;" />
+                        <input type="text" id="SMTP_PORT" value="<?php echo (array_key_exists('SMTP_PORT',$coreConfArr)?$coreConfArr['SMTP_PORT']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Enable Email Encryption:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="SMTP_ENCRYPTION" value="1" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="SMTP_ENCRYPTION" value="1" <?php echo (array_key_exists('SMTP_ENCRYPTION',$coreConfArr) && $coreConfArr['SMTP_ENCRYPTION']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Encryption Mechanism:</span>
                     <span class="field-elem">
-                        <select name="SMTP_ENCRYPTION_MECHANISM" style="width:600px;">
+                        <select id="SMTP_ENCRYPTION_MECHANISM" style="width:600px;">
                             <option value="STARTTLS" <?php echo (array_key_exists('SMTP_ENCRYPTION_MECHANISM',$coreConfArr)&&$coreConfArr['SMTP_ENCRYPTION_MECHANISM'] === 'STARTTLS'?'selected':''); ?>>STARTTLS</option>
                             <option value="SMTPS" <?php echo (array_key_exists('SMTP_ENCRYPTION_MECHANISM',$coreConfArr)&&$coreConfArr['SMTP_ENCRYPTION_MECHANISM'] === 'SMTPS'?'selected':''); ?>>SMTPS</option>
                         </select>
@@ -247,13 +246,13 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Username:</span>
                     <span class="field-elem">
-                        <input type="text" name="SMTP_USERNAME" value="<?php echo (array_key_exists('SMTP_USERNAME',$coreConfArr)?$coreConfArr['SMTP_USERNAME']:''); ?>" style="width:600px;" />
+                        <input type="text" id="SMTP_USERNAME" value="<?php echo (array_key_exists('SMTP_USERNAME',$coreConfArr)?$coreConfArr['SMTP_USERNAME']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Password:  <button type="button" onclick="showPassword('SMTP_PASSWORD');">Show</button></span>
                     <span class="field-elem">
-                        <input type="password" id="SMTP_PASSWORD" name="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" />
+                        <input type="password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
             </fieldset>
@@ -262,25 +261,25 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">External Media Domain:</span>
                     <span class="field-elem">
-                        <input type="text" name="IMAGE_DOMAIN" value="<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>" style="width:600px;" />
+                        <input type="text" id="IMAGE_DOMAIN" value="<?php echo (array_key_exists('IMAGE_DOMAIN',$coreConfArr)?$coreConfArr['IMAGE_DOMAIN']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Web Image Width (px):</span>
                     <span class="field-elem">
-                        <input type="text" name="IMG_WEB_WIDTH" value="<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>" style="width:600px;" />
+                        <input type="text" id="IMG_WEB_WIDTH" value="<?php echo (array_key_exists('IMG_WEB_WIDTH',$coreConfArr)?$coreConfArr['IMG_WEB_WIDTH']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Thumbnail Image Width (px):</span>
                     <span class="field-elem">
-                        <input type="text" name="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" />
+                        <input type="text" id="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Large Image Width (px):</span>
                     <span class="field-elem">
-                        <input type="text" name="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" />
+                        <input type="text" id="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
             </fieldset>
@@ -289,13 +288,13 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">SOLR URL:</span>
                     <span class="field-elem">
-                        <input type="text" name="SOLR_URL" value="<?php echo (array_key_exists('SOLR_URL',$coreConfArr)?$coreConfArr['SOLR_URL']:''); ?>" style="width:600px;" />
+                        <input type="text" id="SOLR_URL" value="<?php echo (array_key_exists('SOLR_URL',$coreConfArr)?$coreConfArr['SOLR_URL']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">SOLR Import Interval (hours):</span>
                     <span class="field-elem">
-                        <input type="text" name="SOLR_FULL_IMPORT_INTERVAL" value="<?php echo (array_key_exists('SOLR_FULL_IMPORT_INTERVAL',$coreConfArr)?$coreConfArr['SOLR_FULL_IMPORT_INTERVAL']:''); ?>" style="width:600px;" />
+                        <input type="text" id="SOLR_FULL_IMPORT_INTERVAL" value="<?php echo (array_key_exists('SOLR_FULL_IMPORT_INTERVAL',$coreConfArr)?$coreConfArr['SOLR_FULL_IMPORT_INTERVAL']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
             </fieldset>
@@ -304,19 +303,19 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Organization Key:</span>
                     <span class="field-elem">
-                        <input type="text" name="GBIF_ORG_KEY" value="<?php echo (array_key_exists('GBIF_ORG_KEY',$coreConfArr)?$coreConfArr['GBIF_ORG_KEY']:''); ?>" style="width:600px;" />
+                        <input type="text" id="GBIF_ORG_KEY" value="<?php echo (array_key_exists('GBIF_ORG_KEY',$coreConfArr)?$coreConfArr['GBIF_ORG_KEY']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Username:</span>
                     <span class="field-elem">
-                        <input type="text" name="GBIF_USERNAME" value="<?php echo (array_key_exists('GBIF_USERNAME',$coreConfArr)?$coreConfArr['GBIF_USERNAME']:''); ?>" style="width:600px;" />
+                        <input type="text" id="GBIF_USERNAME" value="<?php echo (array_key_exists('GBIF_USERNAME',$coreConfArr)?$coreConfArr['GBIF_USERNAME']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Password:  <button type="button" onclick="showPassword('GBIF_PASSWORD');">Show</button></span>
                     <span class="field-elem">
-                        <input type="password" id="GBIF_PASSWORD" name="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" />
+                        <input type="password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" />
                     </span>
                 </div>
             </fieldset>
@@ -325,32 +324,79 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Activate Key Module:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="KEY_MOD_IS_ACTIVE" value="1" <?php echo (array_key_exists('KEY_MOD_IS_ACTIVE',$coreConfArr) && $coreConfArr['KEY_MOD_IS_ACTIVE']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="KEY_MOD_IS_ACTIVE" value="1" <?php echo (array_key_exists('KEY_MOD_IS_ACTIVE',$coreConfArr) && $coreConfArr['KEY_MOD_IS_ACTIVE']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate Exsiccati Module:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="ACTIVATE_EXSICCATI" value="1" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_EXSICCATI" value="1" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate Checklist FieldGuide Export:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate GeoLocate Toolkit:</span>
                     <span class="field-elem">
-                        <input type="checkbox" name="ACTIVATE_GEOLOCATE_TOOLKIT" value="1" <?php echo (array_key_exists('ACTIVATE_GEOLOCATE_TOOLKIT',$coreConfArr) && $coreConfArr['ACTIVATE_GEOLOCATE_TOOLKIT']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_GEOLOCATE_TOOLKIT" value="1" <?php echo (array_key_exists('ACTIVATE_GEOLOCATE_TOOLKIT',$coreConfArr) && $coreConfArr['ACTIVATE_GEOLOCATE_TOOLKIT']?'CHECKED':''); ?> />
                     </span>
                 </div>
             </fieldset>
         </div>
 
         <div id="additionalconfig">
-
+            <div style="display:flex;justify-content:right;margin:10px;" title="Add Configuration" onclick="toggle('addconfdiv')">
+                <i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i>
+            </div>
+            <div id="addconfdiv" style="display:none">
+                <fieldset>
+                    <legend><b>Add Configuration</b></legend>
+                    <div class="field-block">
+                        <span class="field-label">New Configuration Name:</span>
+                        <span class="field-elem">
+                            <input type="text" id="newConfName" value="" style="width:600px;" />
+                        </span>
+                    </div>
+                    <div class="field-block">
+                        <span class="field-label">New Configuration Value:</span>
+                        <span class="field-elem">
+                            <input type="text" id="newConfValue" value="" style="width:600px;" />
+                        </span>
+                    </div>
+                    <div style="margin-top:12px;width:98%;display:flex;justify-content:right;">
+                        <button type="button">Add Configuration</button>
+                    </div>
+                </fieldset>
+            </div>
+            <fieldset style="margin: 10px 0;">
+                <legend><b>Additional Configurations</b></legend>
+                <?php
+                if($additionalConfArr){
+                    foreach($additionalConfArr as $confName => $confValue){
+                        ?>
+                        <div class="field-block">
+                            <span class="field-label"><?php echo $confName; ?>:  <button type="button" onclick="deleteConfiguration('<?php echo $confName; ?>');">Delete</button></span>
+                            <span class="field-elem">
+                                <input type="text" id="<?php echo $confName; ?>" value="<?php echo $confValue; ?>" style="width:600px;" onchange="saveConfigurationChange('<?php echo $confName; ?>');" />
+                            </span>
+                        </div>
+                        <?php
+                    }
+                }
+                else{
+                    ?>
+                    <div class="field-block">
+                        <span class="field-label">No additional configurations set</span>
+                        <span class="field-elem"></span>
+                    </div>
+                    <?php
+                }
+                ?>
+            </fieldset>
         </div>
     </div>
 </div>

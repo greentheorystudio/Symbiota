@@ -40,7 +40,7 @@ class ConfigurationManager{
         'SPATIAL_INITIAL_ZOOM',
         'GOOGLE_ANALYTICS_KEY',
         'RIGHTS_TERMS',
-        'CSS_VERSION',
+        'CSS_VERSION_LOCAL',
         'KEY_MOD_IS_ACTIVE',
         'DYN_CHECKLIST_RADIUS',
         'DISPLAY_COMMON_NAMES',
@@ -144,11 +144,13 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_LANG']) || $GLOBALS['DEFAULT_LANG'] !== 'en'){
             $GLOBALS['DEFAULT_LANG'] = 'en';
         }
-        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE']){
+        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > $this->getServerMaxFilesize()){
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
         }
         if(!isset($GLOBALS['SERVER_ROOT']) || $GLOBALS['SERVER_ROOT'] === ''){
             $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
+            $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+            $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         }
         if(isset($GLOBALS['SERVER_ROOT']) && substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
             $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
@@ -163,7 +165,7 @@ class ConfigurationManager{
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
             $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
         }
-        if(!isset($GLOBALS['IMG_FILE_SIZE_LIMIT']) || !(int)$GLOBALS['IMG_FILE_SIZE_LIMIT']){
+        if(!isset($GLOBALS['IMG_FILE_SIZE_LIMIT']) || !(int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] || (int)$GLOBALS['IMG_FILE_SIZE_LIMIT'] > $this->getServerMaxFilesize()){
             $GLOBALS['IMG_FILE_SIZE_LIMIT'] = $this->getServerMaxFilesize();
         }
         if(!isset($GLOBALS['PORTAL_GUID']) || $GLOBALS['PORTAL_GUID'] === ''){
