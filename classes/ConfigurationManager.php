@@ -267,6 +267,28 @@ class ConfigurationManager{
         return max($upload, $post);
     }
 
+    public function updateConfigurationValue($name, $value): bool
+    {
+        $sql = 'UPDATE configurations '.
+            'SET configurationvalue = "'.$value.'" '.
+            'WHERE configurationname = "'.$name.'" ';
+        return $this->conn->query($sql);
+    }
+
+    public function deleteConfiguration($name): bool
+    {
+        $sql = 'DELETE FROM configurations '.
+            'WHERE configurationname = "'.$name.'" ';
+        return $this->conn->query($sql);
+    }
+
+    public function addConfiguration($name, $value): bool
+    {
+        $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
+            'VALUES("'.$name.'","'.$value.'")';
+        return $this->conn->query($sql);
+    }
+
     public function getCssVersion(): int
     {
         $year = date('Y');

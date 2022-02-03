@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../classes/ConfigurationManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
-if(!isset($GLOBALS['IS_ADMIN']) || !$GLOBALS['IS_ADMIN']) {
+if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../index.php');
 }
 
@@ -20,7 +20,6 @@ $coreConfNames = $confManager->getCoreConfigurationsArr();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Portal Configuration Manager</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
         fieldset {
@@ -59,6 +58,41 @@ $coreConfNames = $confManager->getCoreConfigurationsArr();
             });
         });
 
+        function processAdditionalConfigurationChange(configname){
+            const configvalue = document.getElementById(configname).value;
+            if(configvalue !== ""){
+                sendAPIRequest("update",configname,configvalue);
+            }
+            else{
+                sendAPIRequest("delete",configname,configvalue);
+            }
+        }
+
+        function processCoreCheckConfigurationChange(configname){
+            const checked = document.getElementById(configname).checked;
+            if(checked){
+                sendAPIRequest("add",configname,1);
+            }
+            else{
+                sendAPIRequest("delete",configname,"");
+            }
+        }
+
+        function sendAPIRequest(action,configname,configvalue){
+            const http = new XMLHttpRequest();
+            const url = "rpc/configurationAPI.php";
+            const params = 'action='+action+'&name='+configname+'&value='+configvalue;
+            //console.log(url+'?'+params);
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function() {
+                if(http.readyState === 4 && http.status === 200) {
+                    location.reload();
+                }
+            };
+            http.send(params);
+        }
+
         function enableProtectedEditing(id){
             const disabled = document.getElementById(id).disabled;
             if(disabled){
@@ -91,7 +125,7 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Portal Character Set:  <button type="button" onclick="enableProtectedEditing('CHARSET');">Edit</button></span>
                     <span class="field-elem">
-                        <select id="CHARSET" style="width:600px;" disabled>
+                        <select id="CHARSET" style="width:600px;" onchange="sendAPIRequest('update','CHARSET',this.value);" disabled>
                             <option value="UTF-8" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'UTF-8'?'selected':''); ?>>UTF-8</option>
                             <option value="ISO-8859-1" <?php echo (array_key_exists('CHARSET',$coreConfArr)&&$coreConfArr['CHARSET'] === 'ISO-8859-1'?'selected':''); ?>>ISO-8859-1</option>
                         </select>
@@ -163,7 +197,7 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Default Language:</span>
                     <span class="field-elem">
-                        <select id="DEFAULT_LANG" style="width:600px;">
+                        <select id="DEFAULT_LANG" style="width:600px;" onchange="sendAPIRequest('update','DEFAULT_LANG',this.value);">
                             <option value="en">English</option>
                         </select>
                     </span>
@@ -198,7 +232,7 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Display Common Names:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" onchange="processCoreCheckConfigurationChange('DISPLAY_COMMON_NAMES');" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
@@ -324,25 +358,25 @@ include(__DIR__ . '/../header.php');
                 <div class="field-block">
                     <span class="field-label">Activate Key Module:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="KEY_MOD_IS_ACTIVE" value="1" <?php echo (array_key_exists('KEY_MOD_IS_ACTIVE',$coreConfArr) && $coreConfArr['KEY_MOD_IS_ACTIVE']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="KEY_MOD_IS_ACTIVE" value="1" onchange="processCoreCheckConfigurationChange('KEY_MOD_IS_ACTIVE');" <?php echo (array_key_exists('KEY_MOD_IS_ACTIVE',$coreConfArr) && $coreConfArr['KEY_MOD_IS_ACTIVE']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate Exsiccati Module:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="ACTIVATE_EXSICCATI" value="1" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_EXSICCATI" value="1" onchange="processCoreCheckConfigurationChange('ACTIVATE_EXSICCATI');" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate Checklist FieldGuide Export:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" onchange="processCoreCheckConfigurationChange('ACTIVATE_CHECKLIST_FG_EXPORT');" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
                     </span>
                 </div>
                 <div class="field-block">
                     <span class="field-label">Activate GeoLocate Toolkit:</span>
                     <span class="field-elem">
-                        <input type="checkbox" id="ACTIVATE_GEOLOCATE_TOOLKIT" value="1" <?php echo (array_key_exists('ACTIVATE_GEOLOCATE_TOOLKIT',$coreConfArr) && $coreConfArr['ACTIVATE_GEOLOCATE_TOOLKIT']?'CHECKED':''); ?> />
+                        <input type="checkbox" id="ACTIVATE_GEOLOCATE_TOOLKIT" value="1" onchange="processCoreCheckConfigurationChange('ACTIVATE_GEOLOCATE_TOOLKIT');" <?php echo (array_key_exists('ACTIVATE_GEOLOCATE_TOOLKIT',$coreConfArr) && $coreConfArr['ACTIVATE_GEOLOCATE_TOOLKIT']?'CHECKED':''); ?> />
                     </span>
                 </div>
             </fieldset>
@@ -379,9 +413,9 @@ include(__DIR__ . '/../header.php');
                     foreach($additionalConfArr as $confName => $confValue){
                         ?>
                         <div class="field-block">
-                            <span class="field-label"><?php echo $confName; ?>:  <button type="button" onclick="deleteConfiguration('<?php echo $confName; ?>');">Delete</button></span>
+                            <span class="field-label"><?php echo $confName; ?>:  <button type="button" onclick="sendAPIRequest('delete','<?php echo $confName; ?>','');">Delete</button></span>
                             <span class="field-elem">
-                                <input type="text" id="<?php echo $confName; ?>" value="<?php echo $confValue; ?>" style="width:600px;" onchange="saveConfigurationChange('<?php echo $confName; ?>');" />
+                                <input type="text" id="<?php echo $confName; ?>" value="<?php echo $confValue; ?>" style="width:600px;" onchange="processAdditionalConfigurationChange('<?php echo $confName; ?>');" />
                             </span>
                         </div>
                         <?php
