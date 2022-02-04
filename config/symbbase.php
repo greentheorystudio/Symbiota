@@ -13,55 +13,20 @@ session_start();
 
 $confManager = new ConfigurationManager();
 $confManager->setGlobalArr();
+$confManager->setGlobalCssVersion();
 
-$GLOBALS['PARAMS_ARR'] = array();
-$GLOBALS['USER_RIGHTS'] = array();
-if(!isset($_SESSION['userparams'])){
-    if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
-        if($tokenArr){
-            $pHandler = new ProfileManager();
-            if($pHandler->setUserName($tokenArr[0])){
-                $pHandler->setRememberMe(true);
-                $pHandler->setToken($tokenArr[1]);
-                $pHandler->setTokenAuthSql();
-                if(!$pHandler->authenticate()){
-                    $pHandler->reset();
-                }
-            }
-            $pHandler->__destruct();
-        }
-    }
-
-    if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
-        if($tokenArr){
-            $pHandler = new ProfileManager();
-            $uid = $pHandler->getUid($tokenArr[0]);
-            $pHandler->deleteToken($uid,$tokenArr[1]);
-            $pHandler->__destruct();
-        }
-    }
+if(!isset($_SESSION['PARAMS_ARR'])){
+    $confManager->readClientCookies();
 }
 
-if(isset($_SESSION['userparams'])){
-    $GLOBALS['PARAMS_ARR'] = $_SESSION['userparams'];
+if(isset($_SESSION['PARAMS_ARR'])){
+    $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
 }
 
-if(isset($_SESSION['userrights'])){
-    $GLOBALS['USER_RIGHTS'] = $_SESSION['userrights'];
+if(isset($_SESSION['USER_RIGHTS'])){
+    $GLOBALS['USER_RIGHTS'] = $_SESSION['USER_RIGHTS'];
 }
 
-$GLOBALS['CSS_VERSION'] = '20220201';
-if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLOBALS['CSS_VERSION'])) {
-    $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
-}
-if(!isset($GLOBALS['EML_PROJECT_ADDITIONS'])) {
-    $GLOBALS['EML_PROJECT_ADDITIONS'] = array();
-}
-if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE'])) {
-    $GLOBALS['MAX_UPLOAD_FILESIZE'] = 20000000;
-}
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
 $GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
 $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);

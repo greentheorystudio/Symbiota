@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__ . '/DbConnection.php');
 include_once(__DIR__ . '/UuidFactory.php');
+include_once(__DIR__ . '/Encryption.php');
+include_once(__DIR__ . '/ProfileManager.php');
 
 class ConfigurationManager{
 
@@ -93,6 +95,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
+        $GLOBALS['CSS_VERSION'] = '20220201';
+        $GLOBALS['PARAMS_ARR'] = array();
+        $GLOBALS['USER_RIGHTS'] = array();
     }
 
     public function getCollectionCategoryArr(): array
@@ -395,5 +400,47 @@ class ConfigurationManager{
         $month = date('m');
         $day = date('d');
         return $year . $month . $day;
+    }
+
+    public function setGlobalCssVersion(): void
+    {
+        if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
+            $versionParts = explode('-', $GLOBALS['CSS_VERSION_LOCAL']);
+            if($versionParts && (int)$versionParts[0] > (int)$GLOBALS['CSS_VERSION']){
+                $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
+            }
+        }
+        elseif((int)$GLOBALS['CSS_VERSION_LOCAL'] > (int)$GLOBALS['CSS_VERSION']){
+            $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
+        }
+    }
+
+    public function readClientCookies(): void
+    {
+        if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+            if($tokenArr){
+                $pHandler = new ProfileManager();
+                if($pHandler->setUserName($tokenArr[0])){
+                    $pHandler->setRememberMe(true);
+                    $pHandler->setToken($tokenArr[1]);
+                    $pHandler->setTokenAuthSql();
+                    if(!$pHandler->authenticate()){
+                        $pHandler->reset();
+                    }
+                }
+                $pHandler->__destruct();
+            }
+        }
+
+        if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
+            $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
+            if($tokenArr){
+                $pHandler = new ProfileManager();
+                $uid = $pHandler->getUid($tokenArr[0]);
+                $pHandler->deleteToken($uid,$tokenArr[1]);
+                $pHandler->__destruct();
+            }
+        }
     }
 }

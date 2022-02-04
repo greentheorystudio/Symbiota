@@ -37,13 +37,13 @@ class ProfileManager extends Manager{
         }
         setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'),$domainName,false,true);
         setcookie('SymbiotaCrumb', '', time() - 3600, ($GLOBALS['CLIENT_ROOT']?:'/'));
-        unset($_SESSION['userrights'], $_SESSION['userparams']);
+        unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
     }
 
     public function authenticate($pwdStr = null): bool
     {
         $authStatus = false;
-        unset($_SESSION['userrights'], $_SESSION['userparams']);
+        unset($_SESSION['USER_RIGHTS'], $_SESSION['PARAMS_ARR']);
         if($this->userName){
             if(!$this->authSql){
                 $this->authSql = 'SELECT u.uid, u.firstname, u.lastname '.
@@ -769,17 +769,17 @@ class ProfileManager extends Manager{
                 $userrights[$r->role][] = (int)$r->tablepk;
             }
             $rs->free();
-            $_SESSION['userrights'] = $userrights;
+            $_SESSION['USER_RIGHTS'] = $userrights;
             $GLOBALS['USER_RIGHTS'] = $userrights;
         }
     }
 
     private function setUserParams(): void
     {
-        $_SESSION['userparams']['un'] = $this->userName;
-        $_SESSION['userparams']['dn'] = $this->displayName;
-        $_SESSION['userparams']['uid'] = $this->uid;
-        $GLOBALS['PARAMS_ARR'] = $_SESSION['userparams'];
+        $_SESSION['PARAMS_ARR']['un'] = $this->userName;
+        $_SESSION['PARAMS_ARR']['dn'] = $this->displayName;
+        $_SESSION['PARAMS_ARR']['uid'] = $this->uid;
+        $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
         $GLOBALS['USERNAME'] = $this->userName;
     }
 

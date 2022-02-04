@@ -1001,21 +1001,6 @@ class DwcArchiverCore extends Manager{
             $datasetElem->appendChild($rightsElem);
         }
 
-        if($GLOBALS['EML_PROJECT_ADDITIONS']){
-            foreach($GLOBALS['EML_PROJECT_ADDITIONS'] as $k => $v){
-                if(is_array($v['collid']) && in_array($this->collID, $v['collid'], true)){
-                    $projID = $v['id'];
-                    $projTitle = $v['title'];
-                    $projectElem = $newDoc->createElement('project');
-                    $projectElem->setAttribute('id',$projID);
-                    $titleElem = $newDoc->createElement('title');
-                    $titleElem->appendChild($newDoc->createTextNode($projTitle));
-                    $projectElem->appendChild($titleElem);
-                    $datasetElem->appendChild($projectElem);
-                }
-            }
-        }
-
         $symbElem = $newDoc->createElement('symbiota');
         $dateElem = $newDoc->createElement('dateStamp');
         $dateElem->appendChild($newDoc->createTextNode(date('c')));
