@@ -60,6 +60,25 @@ class ConfigurationManager{
         'RIGHTS_TERMS_DEFS'
     );
 
+    public $baseDirectories = array(
+        'admin',
+        'checklists',
+        'classes',
+        'collections',
+        'config',
+        'games',
+        'glossary',
+        'ident',
+        'imagelib',
+        'misc',
+        'profile',
+        'projects',
+        'references',
+        'spatial',
+        'taxa',
+        'webservices'
+    );
+
     public function __construct(){
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
@@ -251,14 +270,60 @@ class ConfigurationManager{
 
     public function getServerRootPath(): string
     {
-        $currentRoot = getcwd();
-        return str_replace('/admin', '', $currentRoot);
+        $returnPath = '';
+        $serverPath = substr(getcwd(), 1);
+        $serverPathArr = explode('/', $serverPath);
+        if($serverPathArr){
+            $lastIndex = (count($serverPathArr)) - 1;
+            if($lastIndex > 0){
+                if(array_intersect($serverPathArr, $this->baseDirectories)){
+                    if(in_array($serverPathArr[$lastIndex], $this->baseDirectories, true)){
+                        --$lastIndex;
+                    }
+                    else{
+                        do {
+                            --$lastIndex;
+                        } while(!in_array($serverPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
+                    }
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $serverPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
+            }
+        }
+        return $returnPath;
     }
 
     public function getClientRootPath(): string
     {
-        $urlPathArr = explode('/admin', $_SERVER['REQUEST_URI']);
-        return ($urlPathArr?$urlPathArr[0]:'');
+        $returnPath = '';
+        $urlPath = substr($_SERVER['REQUEST_URI'], 1);
+        $urlPathArr = explode('/', $urlPath);
+        if($urlPathArr){
+            $lastIndex = (count($urlPathArr)) - 1;
+            if($lastIndex > 0){
+                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
+                    --$lastIndex;
+                }
+                if(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true)){
+                    do {
+                        --$lastIndex;
+                    } while(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $urlPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
+            }
+        }
+        return $returnPath;
     }
 
     public function getServerTempDirPath(): string
