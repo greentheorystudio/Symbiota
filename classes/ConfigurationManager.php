@@ -17,6 +17,7 @@ class ConfigurationManager{
         'SECURITY_KEY',
         'CLIENT_ROOT',
         'SERVER_ROOT',
+        'TEMP_DIR_ROOT',
         'LOG_PATH',
         'SMTP_HOST',
         'SMTP_PORT',
@@ -46,7 +47,15 @@ class ConfigurationManager{
         'DISPLAY_COMMON_NAMES',
         'ACTIVATE_EXSICCATI',
         'ACTIVATE_CHECKLIST_FG_EXPORT',
-        'ACTIVATE_GEOLOCATE_TOOLKIT'
+        'ACTIVATE_GEOLOCATE_TOOLKIT',
+        'PARAMS_ARR',
+        'USER_RIGHTS',
+        'CSS_VERSION',
+        'USER_DISPLAY_NAME',
+        'USERNAME',
+        'SYMB_UID',
+        'IS_ADMIN',
+        'RIGHTS_TERMS_DEFS'
     );
 
     public function __construct(){
@@ -78,6 +87,12 @@ class ConfigurationManager{
             $this->initializeImportConfigurations();
         }
         $rs->free();
+        if(!isset($GLOBALS['CLIENT_ROOT'])){
+            $GLOBALS['CLIENT_ROOT'] = '';
+        }
+        if(!isset($GLOBALS['DEFAULT_TITLE'])){
+            $GLOBALS['DEFAULT_TITLE'] = '';
+        }
     }
 
     public function getCollectionCategoryArr(): array
@@ -158,6 +173,9 @@ class ConfigurationManager{
         if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
             $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
         }
+        if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
+            $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
+        }
         if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
             $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         }
@@ -199,6 +217,7 @@ class ConfigurationManager{
         $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
         $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
         $GLOBALS['CLIENT_ROOT'] = $this->getClientRootPath();
+        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
         $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
         $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
         $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
@@ -235,6 +254,12 @@ class ConfigurationManager{
     {
         $urlPathArr = explode('/admin', $_SERVER['REQUEST_URI']);
         return ($urlPathArr?$urlPathArr[0]:'');
+    }
+
+    public function getServerTempDirPath(): string
+    {
+        $serverPath = $this->getServerRootPath();
+        return $serverPath . '/temp';
     }
 
     public function getServerLogFilePath(): string
@@ -286,6 +311,81 @@ class ConfigurationManager{
     {
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
             'VALUES("'.$name.'","'.$value.'")';
+        return $this->conn->query($sql);
+    }
+
+    public function validateNewConfNameCore($name): bool
+    {
+        return in_array($name, $this->coreConfigurations, true);
+    }
+
+    public function validateNewConfNameExisting($name): bool
+    {
+        $sql = 'SELECT id FROM configurations WHERE configurationname = "'.$name.'" ';
+        return $this->conn->query($sql)->num_rows;
+    }
+
+    public function validatePathIsWritable($path): bool
+    {
+        return is_writable($path);
+    }
+
+    public function validateServerPath($path): bool
+    {
+        $testPath = $path . '/sitemap.php';
+        return file_exists($testPath);
+    }
+
+    public function validateClientPath($path): bool
+    {
+        $testURL = 'http://';
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $testURL = 'https://';
+        }
+        $testURL .= $_SERVER['HTTP_HOST'];
+        if($_SERVER['SERVER_PORT'] && (int)$_SERVER['SERVER_PORT'] !== 80) {
+            $testURL .= ':' . $_SERVER['SERVER_PORT'];
+        }
+        $testURL .= $path . '/sitemap.php';
+        $headers = get_headers($testURL);
+        $firstHeader = ($headers ? $headers[0] : '');
+        return stripos($firstHeader, '200 OK');
+    }
+
+    public function updateCssVersion(): bool
+    {
+        $currentCssVersion = '';
+        $subVersion = 0;
+        $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $currentCssVersion = $r->configurationvalue;
+        }
+        $rs->free();
+        $newCssVersion = $this->getCssVersion();
+        if(strpos($currentCssVersion, '-') !== false){
+            $versionParts = explode('-', $currentCssVersion);
+            if($versionParts){
+                $subVersion = (int)$versionParts[1];
+            }
+        }
+        if($currentCssVersion === (string)$newCssVersion || $subVersion){
+            if(!$subVersion){
+                $subVersion = 1;
+            }
+            do {
+                $versionParts = explode('-', $newCssVersion);
+                if($versionParts){
+                    $newCssVersion = $versionParts[0] . '-' . $subVersion;
+                }
+                else{
+                    $newCssVersion .= '-' . $subVersion;
+                }
+                $subVersion++;
+            } while($currentCssVersion === $newCssVersion);
+        }
+        $sql = 'UPDATE configurations '.
+            'SET configurationvalue = "'.$newCssVersion.'" WHERE configurationname = "CSS_VERSION_LOCAL" ';
         return $this->conn->query($sql);
     }
 

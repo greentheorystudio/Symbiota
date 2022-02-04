@@ -13,10 +13,13 @@ if($GLOBALS['IS_ADMIN']){
     if($action === 'add'){
         $confManager->addConfiguration($name,$value);
     }
-    if($action === 'update'){
+    elseif($action === 'update'){
         $confManager->updateConfigurationValue($name,$value);
     }
     elseif($action === 'delete'){
         $confManager->deleteConfiguration($name);
+    }
+    elseif($action === 'updateCss'){
+        $confManager->updateCssVersion();
     }
 }
