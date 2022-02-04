@@ -352,7 +352,7 @@ class ConfigurationManager{
             $testURL .= ':' . $_SERVER['SERVER_PORT'];
         }
         $testURL .= $path . '/sitemap.php';
-        $headers = get_headers($testURL);
+        $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');
         return stripos($firstHeader, '200 OK');
     }

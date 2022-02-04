@@ -292,16 +292,21 @@ $additionalConfArr = $fullConfArr['additional'];
                 const http = new XMLHttpRequest();
                 const url = "rpc/configurationValidationController.php";
                 let params = 'action=validateClientPath&value='+configvalue;
-                //console.log(url+'?'+params);
+                console.log(url+'?'+params);
                 http.open("POST", url, true);
                 http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 http.onreadystatechange = function() {
                     if(http.readyState === 4 && http.status === 200) {
                         if(http.responseText){
-                            sendAPIRequest("update",configname,configvalue);
+                            if(oldValue){
+                                sendAPIRequest("update",configname,configvalue);
+                            }
+                            else{
+                                sendAPIRequest("add",configname,configvalue);
+                            }
                         }
                         else{
-                            alert('The path entered is not a valid path to a Symbiota installation.');
+                            alert('The path entered is not a valid URL path to a Symbiota portal.');
                             document.getElementById(configname).value = oldValue;
                         }
                     }
