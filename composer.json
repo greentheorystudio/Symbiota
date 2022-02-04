@@ -29,7 +29,6 @@
       "@php -r \"file_exists('index.php') || copy('index_template.php', 'index.php');\"",
       "@php -r \"file_exists('robots.txt') || copy('robots_template.txt', 'robots.txt');\"",
       "@php -r \"file_exists('./config/dbconnection.php') || copy('./config/dbconnection_template.php', './config/dbconnection.php');\"",
-      "@php -r \"file_exists('./config/symbini.php') || copy('./config/symbini_template.php', './config/symbbase.php');\"",
       "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\"",
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\"",
       "@php -r \"file_exists('./webservices/dwc/rss.xml') || copy('./webservices/dwc/rss.xml.dist', './webservices/dwc/rss.xml');\"",
