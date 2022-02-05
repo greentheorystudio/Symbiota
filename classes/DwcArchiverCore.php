@@ -1803,7 +1803,7 @@ class DwcArchiverCore extends Manager{
     {
         if($this->charSetSource && $this->charSetOut !== $this->charSetSource){
             foreach($inArr as $k => $v){
-                $inArr[$k] = $this->encodeStr($v);
+                $inArr[$k] = $v ? $this->encodeStr($v) : '';
             }
         }
     }
