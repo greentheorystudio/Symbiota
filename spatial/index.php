@@ -700,6 +700,8 @@ $dbArr = array();
         renderer: 'canvas'
     });
 
+    changeBaseMap();
+
     const scaleLineControl_us = new ol.control.ScaleLine({
         target: document.getElementById('mapscale_us'),
         units: 'us'

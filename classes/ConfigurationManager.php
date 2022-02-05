@@ -41,6 +41,7 @@ class ConfigurationManager{
         'GBIF_ORG_KEY',
         'SPATIAL_INITIAL_CENTER',
         'SPATIAL_INITIAL_ZOOM',
+        'SPATIAL_INITIAL_BASE_LAYER',
         'GOOGLE_ANALYTICS_KEY',
         'RIGHTS_TERMS',
         'CSS_VERSION_LOCAL',
@@ -231,6 +232,9 @@ class ConfigurationManager{
         if(!isset($GLOBALS['SPATIAL_INITIAL_ZOOM']) || $GLOBALS['SPATIAL_INITIAL_ZOOM'] === ''){
             $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
         }
+        if(!isset($GLOBALS['SPATIAL_INITIAL_BASE_LAYER']) || $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] === ''){
+            $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
+        }
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
     }
 
@@ -251,6 +255,7 @@ class ConfigurationManager{
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         $GLOBALS['SPATIAL_INITIAL_CENTER'] = '[-110.90713, 32.21976]';
         $GLOBALS['SPATIAL_INITIAL_ZOOM'] = '7';
+        $GLOBALS['SPATIAL_INITIAL_BASE_LAYER'] = 'googleterrain';
     }
 
     public function getCoreConfigurationsArr(): array

@@ -139,12 +139,7 @@ for (let z = 0; z < 16; ++z) {
     resolutions[z] = maxResolution / Math.pow(2, z);
 }
 
-const baselayer = new ol.layer.Tile({
-    source: new ol.source.XYZ({
-        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
-        crossOrigin: 'anonymous'
-    })
-});
+const baselayer = new ol.layer.Tile();
 
 function addLayerToSelList(layer,title){
     const origValue = document.getElementById("selectlayerselect").value;
