@@ -63,11 +63,16 @@ $additionalConfArr = $fullConfArr['additional'];
         function processTextConfigurationChange(configname,oldValue,required){
             const configvalue = document.getElementById(configname).value;
             if(configvalue !== ""){
-                if(oldValue){
-                    sendAPIRequest("update",configname,configvalue);
+                if(confirm("Do you want to save and activate this change?")){
+                    if(oldValue){
+                        sendAPIRequest("update",configname,configvalue);
+                    }
+                    else{
+                        sendAPIRequest("add",configname,configvalue);
+                    }
                 }
                 else{
-                    sendAPIRequest("add",configname,configvalue);
+                    document.getElementById(configname).value = oldValue;
                 }
             }
             else{
@@ -76,7 +81,12 @@ $additionalConfArr = $fullConfArr['additional'];
                     document.getElementById(configname).value = oldValue;
                 }
                 else{
-                    sendAPIRequest("delete",configname,configvalue);
+                    if(confirm("Do you want to remove this configuration?")){
+                        sendAPIRequest("delete",configname,configvalue);
+                    }
+                    else{
+                        document.getElementById(configname).value = oldValue;
+                    }
                 }
             }
         }
@@ -85,11 +95,16 @@ $additionalConfArr = $fullConfArr['additional'];
             const configvalue = Number(document.getElementById(configname).value);
             if(configvalue !== 0){
                 if(Number.isInteger(configvalue)){
-                    if(oldValue){
-                        sendAPIRequest("update",configname,configvalue);
+                    if(confirm("Do you want to save and activate this change?")){
+                        if(oldValue){
+                            sendAPIRequest("update",configname,configvalue);
+                        }
+                        else{
+                            sendAPIRequest("add",configname,configvalue);
+                        }
                     }
                     else{
-                        sendAPIRequest("add",configname,configvalue);
+                        document.getElementById(configname).value = oldValue;
                     }
                 }
                 else{
@@ -103,7 +118,12 @@ $additionalConfArr = $fullConfArr['additional'];
                     document.getElementById(configname).value = oldValue;
                 }
                 else{
-                    sendAPIRequest("delete",configname,configvalue);
+                    if(confirm("Do you want to remove this configuration?")){
+                        sendAPIRequest("delete",configname,configvalue);
+                    }
+                    else{
+                        document.getElementById(configname).value = oldValue;
+                    }
                 }
             }
         }
@@ -214,7 +234,12 @@ $additionalConfArr = $fullConfArr['additional'];
             const configvalue = Number(document.getElementById(configname).value);
             if(configvalue !== 0){
                 if(Number.isInteger(configvalue) && configvalue <= maxPostSize && configvalue <= maxUploadSize){
-                    sendAPIRequest("update",configname,configvalue);
+                    if(confirm("Do you want to save and activate this change?")){
+                        sendAPIRequest("update",configname,configvalue);
+                    }
+                    else{
+                        document.getElementById(configname).value = oldValue;
+                    }
                 }
                 else{
                     alert('Value can only be whole numbers and it must be less than or equal to the upload_max_filesize and post_max_size php settings on the server. The upload_max_filesize setting is currently set to '+maxUploadSize+'M, and the post_max_size setting is currently set to '+maxPostSize+'M on the server.');
@@ -240,7 +265,12 @@ $additionalConfArr = $fullConfArr['additional'];
                 http.onreadystatechange = function() {
                     if(http.readyState === 4 && http.status === 200) {
                         if(http.responseText){
-                            sendAPIRequest("update",configname,configvalue);
+                            if(confirm("Do you want to save and activate this change?")){
+                                sendAPIRequest("update",configname,configvalue);
+                            }
+                            else{
+                                document.getElementById(configname).value = oldValue;
+                            }
                         }
                         else{
                             alert('The path entered is not writable on the server.');
@@ -269,7 +299,12 @@ $additionalConfArr = $fullConfArr['additional'];
                 http.onreadystatechange = function() {
                     if(http.readyState === 4 && http.status === 200) {
                         if(http.responseText){
-                            sendAPIRequest("update",configname,configvalue);
+                            if(confirm("Do you want to save and activate this change?")){
+                                sendAPIRequest("update",configname,configvalue);
+                            }
+                            else{
+                                document.getElementById(configname).value = oldValue;
+                            }
                         }
                         else{
                             alert('The path entered is not a valid path to a Symbiota installation on the server.');
@@ -298,11 +333,16 @@ $additionalConfArr = $fullConfArr['additional'];
                 http.onreadystatechange = function() {
                     if(http.readyState === 4 && http.status === 200) {
                         if(http.responseText){
-                            if(oldValue){
-                                sendAPIRequest("update",configname,configvalue);
+                            if(confirm("Do you want to save and activate this change?")){
+                                if(oldValue){
+                                    sendAPIRequest("update",configname,configvalue);
+                                }
+                                else{
+                                    sendAPIRequest("add",configname,configvalue);
+                                }
                             }
                             else{
-                                sendAPIRequest("add",configname,configvalue);
+                                document.getElementById(configname).value = oldValue;
                             }
                         }
                         else{

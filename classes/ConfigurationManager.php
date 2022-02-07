@@ -169,8 +169,13 @@ class ConfigurationManager{
         $globalKeys = array_keys($GLOBALS);
         foreach($globalKeys as $key){
             if($GLOBALS[$key] && $key !== 'confManager' && $key !== 'DB_SERVER' && $key !== 'RIGHTS_TERMS' && $key !== 'GLOBALS' && $key[0] !== '_'){
-                $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
-                    'VALUES("'.$key.'","'.$GLOBALS[$key].'")';
+                $sql = 'INSERT INTO configurations(configurationname, configurationvalue) ';
+                if(is_array($GLOBALS[$key])){
+                    $sql .= "VALUES('".$key."','".json_encode($GLOBALS[$key])."')";
+                }
+                else{
+                    $sql .= 'VALUES("'.$key.'","'.$GLOBALS[$key].'")';
+                }
                 $this->conn->query($sql);
             }
         }
