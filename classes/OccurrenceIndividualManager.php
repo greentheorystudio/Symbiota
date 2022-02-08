@@ -102,15 +102,14 @@ class OccurrenceIndividualManager extends Manager{
             'o.decimallatitude, o.decimallongitude, o.geodeticdatum, o.coordinateuncertaintyinmeters, o.verbatimcoordinates, o.footprintwkt, '.
             'o.georeferenceremarks, o.verbatimattributes, o.locationremarks, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.preparations, '.
             'o.typestatus, o.dbpk, o.habitat, o.substrate, o.associatedtaxa, o.reproductivecondition, o.cultivationstatus, o.establishmentmeans, '.
-            'o.ownerinstitutioncode, o.othercatalognumbers, o.disposition, o.modified, o.observeruid, g.guid, o.recordenteredby, o.dateentered, o.datelastmodified';
-        $sql .= 'FROM omoccurrences o LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
+            'o.ownerinstitutioncode, o.othercatalognumbers, o.disposition, o.modified, o.observeruid, g.guid, o.recordenteredby, o.dateentered, o.datelastmodified ';
+        $sql .= 'FROM omoccurrences AS o LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ';
         if($this->occid){
             $sql .= 'WHERE (o.occid = '.$this->occid.')';
         }
         elseif($this->collid && $this->dbpk){
             $sql .= 'WHERE (o.collid = '.$this->collid.') AND (o.dbpk = "'.$this->dbpk.'")';
         }
-
         if($result = $this->conn->query($sql)){
             if($this->occArr = $result->fetch_assoc()){
                 if(!$this->occid) {
