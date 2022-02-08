@@ -45,7 +45,7 @@
  *
  */
 
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceAPIManager.php');
 

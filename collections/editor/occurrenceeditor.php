@@ -1,6 +1,6 @@
 <?php
 /** @var array $processingStatusArr */
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
@@ -1202,18 +1202,6 @@ else{
                                                 <br/>
                                                 <input type="text" name="substrate" tabindex="82" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
                                             </div>
-                                            <?php
-                                            if(isset($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) && $GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
-                                                $quickHostArr = $occManager->getQuickHost($occId);
-                                                ?>
-                                                <div id="hostDiv">
-                                                    <?php echo (defined('HOSTLABEL')?HOSTLABEL:'Host'); ?><br/>
-                                                    <input type="text" name="host" id="quickhost" tabindex="82" maxlength="500" value="<?php echo ($quickHostArr?$quickHostArr['verbatimsciname']:''); ?>" onchange="fieldChanged('host');" />
-                                                    <input type="hidden" name="hostassocid" value="<?php echo ($quickHostArr?$quickHostArr['associd']:''); ?>" />
-                                                </div>
-                                                <?php
-                                            }
-                                            ?>
                                             <div id="associatedTaxaDiv">
                                                 <?php echo (defined('ASSOCIATEDTAXALABEL')?ASSOCIATEDTAXALABEL:'Associated Taxa'); ?>
                                                 <a href="#" onclick="return dwcDoc('associatedTaxa')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>

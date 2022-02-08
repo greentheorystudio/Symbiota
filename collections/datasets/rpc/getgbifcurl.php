@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 
 $type = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 $url = array_key_exists('url',$_REQUEST)?$_REQUEST['url']:'';

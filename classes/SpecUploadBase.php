@@ -656,9 +656,6 @@ class SpecUploadBase extends SpecUpload{
         $this->prepareImages();
         $this->transferIdentificationHistory();
         $this->transferImages();
-        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-            $this->transferHostAssociations();
-        }
         $this->finalCleanup();
         $this->outputMsg('<li style="">Upload Procedure Complete ('.date('Y-m-d h:i:s A').')!</li>');
         $this->outputMsg(' ');
