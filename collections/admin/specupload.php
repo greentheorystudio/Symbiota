@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDirect.php');
 include_once(__DIR__ . '/../../classes/SpecUploadFile.php');
 include_once(__DIR__ . '/../../classes/SpecUploadDwca.php');
@@ -509,7 +509,7 @@ $duManager->loadFieldMap();
                     $uploadTitle = 'IPT/DwC-A Provider Import';
                 }
                 elseif($uploadType === $SYMBIOTA) {
-                    $uploadTitle = 'Symbiota Portal Public Download';
+                    $uploadTitle = 'Symbiota Portal';
                 }
                 elseif($uploadType === $SKELETAL) {
                     $uploadTitle = 'Skeletal File Import';

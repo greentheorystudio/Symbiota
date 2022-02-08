@@ -209,7 +209,7 @@ class VoucherManager {
 			$sqlRare = 'UPDATE omoccurrences o INNER JOIN taxstatus ts1 ON o.tidinterpreted = ts1.tid '.
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'SET o.localitysecurity = NULL '.
-				'WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) '.
+				'WHERE (o.localitysecurity = 1) AND (o.localitySecurityReason IS NULL) '.
 				'AND o.stateprovince = "'.$rareLocality.'" AND ts2.tid = '.$this->tid;
 			//echo $sqlRare; exit;
 			if(!$this->conn->query($sqlRare)){
@@ -288,7 +288,7 @@ class VoucherManager {
 			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted) '.
 			'INNER JOIN fmchklsttaxalink ctl ON ts2.tid = ctl.tid '.
 			'WHERE (ctl.clid = '.$this->clid.') AND (o.occid = '.
-			$vOccId.') AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+			$vOccId.') '.
 			'LIMIT 1';
 		//echo "addVoucherSql: ".$sql."<br/>";
 		$rs = $this->conn->query($sql);

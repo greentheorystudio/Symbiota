@@ -117,7 +117,7 @@ class GamesManager {
 
 					$sql2 = 'SELECT t.TID, t.SciName, t.UnitName1, s.family '.
 						'FROM taxa AS t INNER JOIN taxstatus AS s ON t.TID = s.tid '.
-						'WHERE s.taxauthid = 1 AND t.TID = '.$randTaxa.' ';
+						'WHERE t.TID = '.$randTaxa.' ';
 					//echo '<div>'.$sql2.'</div>';
 					$rs = $this->conn->query($sql2);
 					while($row = $rs->fetch_object()){
@@ -192,13 +192,13 @@ class GamesManager {
 			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts.tidaccepted '.
 				'FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ctl.clid IN('.$this->clidStr.')) AND (ts.taxauthid = 1) ';
+				'WHERE (ctl.clid IN('.$this->clidStr.')) ';
 		}
 		else{
 			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts.tidaccepted '.
 				'FROM taxa t INNER JOIN fmdyncltaxalink ctl ON t.tid = ctl.tid '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ctl.dynclid = '.$this->dynClid.') AND (ts.taxauthid = 1) ';
+				'WHERE (ctl.dynclid = '.$this->dynClid.') ';
 		}
 		if($this->taxonFilter) {
 			$sql .= 'AND (ts.Family = "' . $this->taxonFilter . '" OR t.sciname Like "' . $this->taxonFilter . '%") ';
@@ -292,13 +292,13 @@ class GamesManager {
 				$sqlFamily = 'SELECT DISTINCT IFNULL(ctl.familyoverride,ts.Family) AS family '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.TID '.
 					'INNER JOIN fmchklsttaxalink ctl ON t.TID = ctl.TID '.
-					'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$this->clidStr.')) ';
+					'WHERE (ctl.clid IN('.$this->clidStr.')) ';
 			}
 			else{
 				$sqlFamily = 'SELECT DISTINCT ts.Family AS family '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.TID = ts.TID '.
 					'INNER JOIN fmdyncltaxalink ctl ON t.TID = ctl.TID '.
-					'WHERE (ts.taxauthid = 1) AND (ctl.dynclid = '.$this->dynClid.') ';
+					'WHERE (ctl.dynclid = '.$this->dynClid.') ';
 			}
 			//echo $sqlFamily."<br>";
 			$rsFamily = $this->conn->query($sqlFamily);
@@ -344,13 +344,13 @@ class GamesManager {
 			$sql = 'SELECT DISTINCT IFNULL(cl.familyoverride,ts.family) AS family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
 				'FROM fmchklsttaxalink cl INNER JOIN taxa t ON cl.tid = t.tid '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE cl.clid IN('.$this->clidStr.') AND ts.taxauthid = 1 ORDER BY RAND() LIMIT 25';
+				'WHERE cl.clid IN('.$this->clidStr.') ORDER BY RAND() LIMIT 25';
 		}
 		elseif($this->dynClid){
 			$sql = 'SELECT DISTINCT ts.family, CONCAT_WS(" ",t.unitind1,t.unitname1,t.unitind2,t.unitname2) AS sciname '.
 				'FROM fmdyncltaxalink cl INNER JOIN taxa t ON cl.tid = t.tid '.
 				'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE cl.dynclid = '.$this->dynClid.' AND ts.taxauthid = 1 ORDER BY RAND() LIMIT 25';
+				'WHERE cl.dynclid = '.$this->dynClid.' ORDER BY RAND() LIMIT 25';
 		}
 		//echo $sql.'<br/><br/>';
 		if($sql){

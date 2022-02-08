@@ -1603,15 +1603,7 @@ class ImageLocalProcessor {
 		elseif(preg_match('/([1,2][0,5-9]\d{2})/',$dateStr,$match)){
 			$y = $match[1];
 		}
-		if($y){
-			if(strlen($y) === 2){
-				if($y < 20) {
-					$y = '20' . $y;
-				}
-				else {
-					$y = '19' . $y;
-				}
-			}
+		if($y && strlen($y) === 4){
 			if(strlen($m) === 1) {
 				$m = '0' . $m;
 			}

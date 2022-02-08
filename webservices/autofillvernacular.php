@@ -15,7 +15,7 @@
  *
  */
 
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyAPIManager.php');
 
 $queryString = $_REQUEST['term'];

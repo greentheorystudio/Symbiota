@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
@@ -51,7 +51,6 @@ if($action === 'listdupsothercatalog'){
 elseif($action === 'listdupsrecordedby'){
 	$dupArr = $cleanManager->getDuplicateCollectorNumber($start);
 }
-
 ?>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
@@ -135,6 +134,7 @@ elseif($action === 'listdupsrecordedby'){
 								<th><input type="checkbox" name="batchswitch" onclick="batchSwitchTargetSpecimens(this)" title="Batch switch target occurrences" /></th>
 								<th style="width:40px;">Catalog Number</th>
 								<th style="width:40px;">Other Catalog Numbers</th>
+                                <th>Source ID</th>
 								<th>Scientific Name</th>
 								<th>Collector</th>
 								<th>Collection Number</th>
@@ -159,6 +159,7 @@ elseif($action === 'listdupsrecordedby'){
 									echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
 									echo '<td>'.$occArr['catalognumber'].'</td>'."\n";
 									echo '<td>'.$occArr['othercatalognumbers'].'</td>'."\n";
+                                    echo '<td>'.$occArr['dbpk'].'</td>'."\n";
 									echo '<td>'.$occArr['sciname'].'</td>'."\n";
 									echo '<td>'.$occArr['recordedby'].'</td>'."\n";
 									echo '<td>'.$occArr['recordnumber'].'</td>'."\n";

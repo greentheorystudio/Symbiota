@@ -48,7 +48,7 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 
 		if($type === 'cat'){
-			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
+			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
 				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
 				'FROM omoccurrences o '.
@@ -56,7 +56,7 @@ class OccurrenceCleaner extends Manager{
 				'ORDER BY o.catalognumber';
 		}
 		else{
-			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
+			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
 				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
 				'FROM omoccurrences o '.
@@ -105,7 +105,7 @@ class OccurrenceCleaner extends Manager{
 				foreach($arr2 as $ln => $dupArr){
 					if(count($dupArr) > 1){
 						if($cnt >= $start){
-							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
+							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.dbpk, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
 								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified '.
 								'FROM omoccurrences o '.
 								'WHERE occid IN('.implode(',',$dupArr).') ';

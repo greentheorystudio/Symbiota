@@ -1,7 +1,6 @@
 let rankLimit;
 let rankLow;
 let rankHigh;
-let taxAuthId;
 
 $(document).ready(function() {
 
@@ -9,7 +8,7 @@ $(document).ready(function() {
 
 	$("#parentstr").autocomplete({
 		source: function( request, response ) {
-			$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, taid: document.taxauthidform.taxauthid.value, rhigh: document.taxoneditform.rankid.value }, response );
+			$.getJSON( "rpc/gettaxasuggest.php", { term: request.term, rhigh: document.taxoneditform.rankid.value }, response );
 		},
 		minLength: 3,
 		autoFocus: true

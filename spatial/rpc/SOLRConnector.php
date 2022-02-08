@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';

@@ -6,7 +6,6 @@ include_once(__DIR__ . '/Sanitizer.php');
 class TaxonomyAPIManager{
 
     private $conn;
-    private $taxAuthId = 0;
     private $rankLimit = 0;
     private $rankLow = 0;
     private $rankHigh = 0;
@@ -30,9 +29,6 @@ class TaxonomyAPIManager{
         $retArr = array();
         $sql = 'SELECT DISTINCT t.SciName, t.Author, t.TID '.
             'FROM taxa AS t ';
-        if($this->taxAuthId){
-            $sql .= 'INNER JOIN taxstatus AS ts ON t.tid = ts.tid ';
-        }
         $sql .= 'WHERE t.SciName LIKE "'.Sanitizer::cleanInStr($queryString).'%" ';
         if($this->rankLimit){
             $sql .= 'AND t.RankId = '.$this->rankLimit.' ';
@@ -44,9 +40,6 @@ class TaxonomyAPIManager{
             if($this->rankHigh){
                 $sql .= 'AND t.RankId <= '.$this->rankHigh.' ';
             }
-        }
-        if($this->taxAuthId){
-            $sql .= 'AND ts.taxauthid = '.$this->taxAuthId.' ';
         }
         if($this->hideProtected){
             $sql .= 'AND t.SecurityStatus <> 2 ';
@@ -82,11 +75,6 @@ class TaxonomyAPIManager{
         }
 
         return $retArr;
-    }
-
-    public function setTaxAuthId($val): void
-    {
-        $this->taxAuthId = Sanitizer::cleanInStr($val);
     }
 
     public function setRankLimit($val): void

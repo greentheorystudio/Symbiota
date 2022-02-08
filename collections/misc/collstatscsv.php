@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 ini_set('max_execution_time', 1200);

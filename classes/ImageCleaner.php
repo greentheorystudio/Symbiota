@@ -135,7 +135,7 @@ class ImageCleaner extends Manager{
 			$sql .= 'AND (i.occid IS NULL) ';
 		}
 		if($this->tidArr) {
-			$sql .= 'AND (e.taxauthid = 1) AND (i.tid IN(' . implode(',', $this->tidArr) . ') OR e.parenttid IN(' . implode(',', $this->tidArr) . ')) ';
+			$sql .= 'AND (i.tid IN(' . implode(',', $this->tidArr) . ') OR e.parenttid IN(' . implode(',', $this->tidArr) . ')) ';
 		}
 		return $sql;
 	}
@@ -409,7 +409,7 @@ class ImageCleaner extends Manager{
 			$this->tidArr[] = $id;
 			$sql = 'SELECT DISTINCT ts.tid '.
 				'FROM taxstatus ts INNER JOIN taxstatus ts2 ON ts.tidaccepted = ts2.tidaccepted '.
-				'WHERE (ts.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.tid = '.$id.')';
+				'WHERE (ts2.tid = '.$id.')';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->tid !== $id) {
