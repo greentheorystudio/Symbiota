@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/DbConnection.php');
 $connection = new DbConnection();
 $con = $connection->getConnection();
@@ -34,7 +34,6 @@ if($taxId === 'root'){
 	$lowestRank = '';
 	$sql = 'SELECT MIN(t.RankId) AS RankId '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
-		'WHERE (ts.taxauthid = 1) '.
 		'LIMIT 1 ';
 	//echo $sql."<br>";
 	$rs = $con->query($sql);
@@ -45,7 +44,7 @@ if($taxId === 'root'){
 	$sql1 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
-		'WHERE ts.taxauthid = 1 AND t.RankId = '.$lowestRank.' ';
+		'WHERE t.RankId = '.$lowestRank.' ';
 	//echo '<div>' .$sql1. '</div>';
 	$rs1 = $con->query($sql1);
 	$i = 0;
@@ -74,14 +73,14 @@ if($taxId === 'root'){
 		else{
 			$childArr[$i]['url'] = '../index.php?taxon='.$row1->tid;
 		}
-		$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid = '.$row1->tid.' LIMIT 1 ';
+		$sql3 = 'SELECT tid FROM taxaenumtree WHERE parenttid = '.$row1->tid.' LIMIT 1 ';
 		//echo "<div>".$sql3."</div>";
 		$rs3 = $con->query($sql3);
 		if($row3 = $rs3->fetch_object()){
 			$childArr[$i]['children'] = true;
 		}
 		else{
-			$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tidaccepted = '.$row1->tid.' ';
+			$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE tidaccepted = '.$row1->tid.' ';
 			//echo "<div>".$sql4."</div>";
 			$rs4 = $con->query($sql4);
 			while($row4 = $rs4->fetch_object()){
@@ -100,7 +99,7 @@ else{
 	$sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
-		'WHERE (ts.taxauthid = 1) AND (ts.tid = ts.tidaccepted) '.
+		'WHERE (ts.tid = ts.tidaccepted) '.
 		'AND (ts.parenttid = '.$taxId.' AND t.rankid > 1) ';
 	//echo $sql2."<br>";
 	$rs2 = $con->query($sql2);
@@ -146,14 +145,14 @@ else{
 			else{
 				$childArr[$i]['url'] = '../index.php?taxon='.$row2->tid;
 			}
-			$sql3 = 'SELECT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid = '.$row2->tid.' LIMIT 1 ';
+			$sql3 = 'SELECT tid FROM taxaenumtree WHERE parenttid = '.$row2->tid.' LIMIT 1 ';
 			//echo "<div>".$sql3."</div>";
 			$rs3 = $con->query($sql3);
 			if($row3 = $rs3->fetch_object()){
 				$childArr[$i]['children'] = true;
 			}
 			else{
-				$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tidaccepted = '.$row2->tid.' ';
+				$sql4 = 'SELECT DISTINCT tid, tidaccepted FROM taxstatus WHERE tidaccepted = '.$row2->tid.' ';
 				//echo "<div>".$sql4."</div>";
 				$rs4 = $con->query($sql4);
 				while($row4 = $rs4->fetch_object()){
@@ -172,7 +171,7 @@ else{
 	$sqlSyns = 'SELECT DISTINCT t.tid, t.sciname, t.author, t.rankid, tu.rankname '.
 		'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
 		'LEFT JOIN taxonunits AS tu ON (t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid) '.
-		'WHERE (ts.tid <> ts.tidaccepted) AND (ts.taxauthid = 1) AND (ts.tidaccepted = '.$taxId.')';
+		'WHERE (ts.tid <> ts.tidaccepted) AND (ts.tidaccepted = '.$taxId.')';
 	//echo $sqlSyns;
 	$rsSyns = $con->query($sqlSyns);
 	while($row = $rsSyns->fetch_object()){

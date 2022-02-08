@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 
 $collId = (int)$_REQUEST['collid'];

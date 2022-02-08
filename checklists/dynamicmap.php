@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once($GLOBALS['SERVER_ROOT'].'/classes/DynamicChecklistManager.php');
 header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
 
@@ -33,10 +33,8 @@ $dynClManager = new DynamicChecklistManager();
         }
     </style>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20211104" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220205" type="text/javascript"></script>
     <script type="text/javascript">
-        var submitCoord = false;
-
         $(document).ready(function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
@@ -75,17 +73,17 @@ include($GLOBALS['SERVER_ROOT'].'/header.php');
         <div style="width:95%;margin-left:auto;margin-right:auto;">
             Pan, zoom and click on map to capture coordinates, then submit coordinates to build a species list.
             <span id="moredetails" style="cursor:pointer;color:blue;font-size:80%;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='inline';document.getElementById('lessdetails').style.display='inline';">
-                        More Details
-                    </span>
+                More Details
+            </span>
             <span id="moreinfo" style="display:none;">
-                        If a radius is defined, species lists are generated using occurrence data collected within the defined area.
-                        If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to
-                        best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled.
-                        Setting the taxon filter will limit the return to species found within that taxonomic group.
-                    </span>
+                If a radius is defined, species lists are generated using occurrence data collected within the defined area.
+                If a radius is not supplied, the area is sampled in concentric rings until the sample size is determined to
+                best represent the local species diversity. In other words, poorly collected areas will have a larger radius sampled.
+                Setting the taxon filter will limit the return to species found within that taxonomic group.
+            </span>
             <span id="lessdetails" style="cursor:pointer;color:blue;font-size:80%;display:none;" onclick="this.style.display='none';document.getElementById('moreinfo').style.display='none';document.getElementById('moredetails').style.display='inline';">
-                        Less Details
-                    </span>
+                Less Details
+            </span>
         </div>
         <div style="width:95%;margin-left:auto;margin-right:auto;margin-top:5px;">
             <div style="float:left;width:300px;">

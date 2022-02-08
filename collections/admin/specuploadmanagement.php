@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecUpload.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -210,7 +210,7 @@ include(__DIR__ . '/../../header.php');
                                     echo '<option value="'.$IPTUPLOAD.'" '.($uploadType === $IPTUPLOAD?'SELECTED':'').'>IPT Resource / Darwin Core Archive Provider</option>';
                                     echo '<option value="'.$FILEUPLOAD.'" '.($uploadType === $FILEUPLOAD?'SELECTED':'').'>File Upload</option>';
                                     echo '<option value="'.$SKELETAL.'" '.($uploadType === $SKELETAL?'SELECTED':'').'>Skeletal File Upload</option>';
-                                    echo '<option value="'.$SYMBIOTA.'" '.($uploadType === $SYMBIOTA?'SELECTED':'').'>Symbiota Portal Public Download</option>';
+                                    echo '<option value="'.$SYMBIOTA.'" '.($uploadType === $SYMBIOTA?'SELECTED':'').'>Symbiota Portal</option>';
                                     echo '<option value="'.$NFNUPLOAD.'" '.($uploadType === $NFNUPLOAD?'SELECTED':'').'>Notes for Nature File Upload</option>';
                                     echo '<option value="">......................................</option>';
                                     echo '<option value="'.$DIRECTUPLOAD.'" '.($uploadType === $DIRECTUPLOAD?'SELECTED':'').'>Direct Database Mapping</option>';

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
@@ -17,7 +17,6 @@ $rows = array_key_exists('dh-rows',$_REQUEST)?(int)$_REQUEST['dh-rows']:0;
 $format = array_key_exists('formatcsv',$_REQUEST)?$_REQUEST['formatcsv']:'';
 $zip = array_key_exists('zipcsv',$_REQUEST)?$_REQUEST['zipcsv']:'';
 $cset = array_key_exists('csetcsv',$_REQUEST)?$_REQUEST['csetcsv']:'';
-$taxonFilter = array_key_exists('dh-taxonFilterCode',$_REQUEST)?$_REQUEST['dh-taxonFilterCode']:'';
 $stArrJson = array_key_exists('starrjson',$_REQUEST)?$_REQUEST['starrjson']:'';
 
 $spatialManager = new SpatialModuleManager();
@@ -126,7 +125,6 @@ else if($schema === 'checklist'){
     $dlManager->setCharSetOut($cset);
     $dlManager->setDelimiter($fileType);
     $dlManager->setZipFile($zip);
-    $dlManager->setTaxonFilter($taxonFilter);
     $dlManager->downloadData();
 }
 else{

@@ -8,7 +8,6 @@ class TaxonomyUpload{
 	private $conn;
 	private $uploadFileName;
 	private $uploadTargetPath;
-	private $taxAuthId = 1;
 	private $statArr = array();
 
 	private $verboseMode = 1;
@@ -301,7 +300,7 @@ class TaxonomyUpload{
 		$sql = 'UPDATE uploadtaxa ut INNER JOIN taxa t ON ut.unitname1 = t.sciname '.
 			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'SET ut.family = ts.family '.
-			'WHERE ts.taxauthid = '.$this->taxAuthId.' AND (ut.rankid > 140) AND (t.rankid = 180) AND (ts.family IS NOT NULL) AND ISNULL(ut.family)';
+			'WHERE (ut.rankid > 140) AND (t.rankid = 180) AND (ts.family IS NOT NULL) AND ISNULL(ut.family)';
 		if(!$this->conn->query($sql)){
             $this->outputMsg('ERROR: Cleaning upload step 11.',1);
 		}
@@ -493,7 +492,7 @@ class TaxonomyUpload{
 		}
 		$sql6b = 'UPDATE uploadtaxa u INNER JOIN taxstatus ts ON u.tidaccepted = ts.tid '.
 			'SET u.ErrorStatus = "FAILED: Non-accepted linked to another non-accepted taxon already within database" '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (u.acceptance = 0) AND (ts.tid <> ts.tidaccepted)';
+			'WHERE (u.acceptance = 0) AND (ts.tid <> ts.tidaccepted)';
 		if(!$this->conn->query($sql6b)){
 			$this->outputMsg('ERROR tagging non-accepted linked to non-accepted (#2).',1);
 		}
@@ -546,8 +545,8 @@ class TaxonomyUpload{
 			'FROM uploadtaxa '.
 			'WHERE ISNULL(TID) AND (rankid = 10)';
 		if($this->conn->query($sql)){
-			$sql = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid) '.
-				'SELECT DISTINCT t.tid, t.tid, '.$this->taxAuthId.', t.tid '.
+			$sql = 'INSERT INTO taxstatus(tid, tidaccepted, parenttid) '.
+				'SELECT DISTINCT t.tid, t.tid, t.tid '.
 				'FROM taxa t LEFT JOIN taxstatus ts ON t.tid = ts.tid '.
 				'WHERE (t.rankid = 10) AND ISNULL(ts.tid)';
 			if(!$this->conn->query($sql)){
@@ -599,8 +598,8 @@ class TaxonomyUpload{
 			}
 
 			$this->outputMsg('Create parent and accepted links... ',1);
-			$sql = 'INSERT IGNORE INTO taxstatus(TID, TidAccepted, taxauthid, ParentTid, Family, UnacceptabilityReason) '.
-				'SELECT DISTINCT TID, TidAccepted, '.$this->taxAuthId.', ParentTid, Family, UnacceptabilityReason '.
+			$sql = 'INSERT IGNORE INTO taxstatus(TID, TidAccepted, ParentTid, Family, UnacceptabilityReason) '.
+				'SELECT DISTINCT TID, TidAccepted, ParentTid, Family, UnacceptabilityReason '.
 				'FROM uploadtaxa '.
 				'WHERE (tid IS NOT NULL) AND (TidAccepted IS NOT NULL) AND (parenttid IS NOT NULL)';
 			if(!$this->conn->query($sql)){
@@ -810,19 +809,6 @@ class TaxonomyUpload{
 		return $sourceArr;
 	}
 
-	public function getTaxAuthorityArr(): array
-	{
-		$retArr = array();
-		$sql = 'SELECT taxauthid, name FROM taxauthority ';
-		if($rs = $this->conn->query($sql)){
-			while($r = $rs->fetch_object()){
-				$retArr[$r->taxauthid] = $r->name;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
 	private function setUploadTargetPath(): void
 	{
 		$tPath = '';
@@ -858,13 +844,6 @@ class TaxonomyUpload{
 
 	public function getFileName(){
 		return $this->uploadFileName;
-	}
-
-	public function setTaxaAuthId($id): void
-	{
-		if(is_numeric($id)){
-			$this->taxAuthId = $id;
-		}
 	}
 
 	public function getStatArr(): array

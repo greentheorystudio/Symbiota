@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
@@ -258,7 +258,7 @@ if($GLOBALS['SYMB_UID']){
 									</li>
 									<li class="importItem" style="margin-left:10px;display:none;">
                                         <a href="../admin/specupload.php?uploadtype=10&collid=<?php echo $collid; ?>">
-                                            Symbiota Portal Public Download
+                                            Symbiota Portal
                                         </a>
                                     </li>
                                     <li class="importItem" style="margin-left:10px;display:none;">

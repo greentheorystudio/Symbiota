@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -9,7 +9,6 @@ $tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $proj = array_key_exists('proj',$_REQUEST)?htmlspecialchars($_REQUEST['proj']): '';
-$thesFilter = array_key_exists('thesfilter',$_REQUEST)?(int)$_REQUEST['thesfilter']:0;
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?htmlspecialchars($_REQUEST['taxonfilter']): '';
 $showAuthors = array_key_exists('showauthors',$_REQUEST)?(int)$_REQUEST['showauthors']:0;
 $showCommon = array_key_exists('showcommon',$_REQUEST)?(int)$_REQUEST['showcommon']:0;
@@ -30,9 +29,6 @@ elseif($dynClid){
 }
 if($proj) {
     $clManager->setProj($proj);
-}
-if($thesFilter) {
-    $clManager->setThesFilter($thesFilter);
 }
 if($taxonFilter) {
     $clManager->setTaxonFilter($taxonFilter);
@@ -129,7 +125,7 @@ if($clValue || $dynClid){
 								echo "<div style='float:left;text-align:center;width:210px;height:".($showCommon? '260' : '240')."px;'>";
 								$imgSrc = (array_key_exists('tnurl',$sppArr)&&$sppArr['tnurl']?$sppArr['tnurl']:$sppArr['url']);
 								echo "<div class='tnimg' style='".($imgSrc? '' : 'border:1px solid black;')."'>";
-								$spUrl = "../taxa/index.php?taxauthid=1&taxon=$tid&cl=".$clManager->getClid();
+								$spUrl = "../taxa/index.php?taxon=$tid&cl=".$clManager->getClid();
 								if($imgSrc){
 									$imgSrc = ($GLOBALS['IMAGE_DOMAIN'] && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
 									echo "<img src='".$imgSrc."' style='height:100%;' />";
