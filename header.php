@@ -6,36 +6,36 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 		<td class="header" colspan="3">
 			<div style="clear:both;background-color:#000000;height:150px;">
 				<div style="float:left;">
-					<img style="" src="<?php echo $CLIENT_ROOT; ?>/images/layout/pla_logo.png" />
+					<img style="" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/pla_logo.png" />
 				</div>
 				<div style="float:right;margin-right:8px;">
 					<div style="float:left;margin: 23px 8px 23px 8px;border: 2px solid white;">
-						<img style="width:100px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/IMG_6681.JPG" />
+						<img style="width:100px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/IMG_6681.JPG" />
 					</div>
 					<div style="float:left;margin: 23px 8px 23px 8px;border: 2px solid white;">
-						<img style="width:100px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/IMG_6580.JPG" />
+						<img style="width:100px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/IMG_6580.JPG" />
 					</div>
 					<div style="float:left;margin: 23px 8px 23px 8px;border: 2px solid white;">
-						<img style="width:100px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/IMG_6672.jpg" />
+						<img style="width:100px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/IMG_6672.jpg" />
 					</div>
 					<div style="float:left;margin: 23px 8px 23px 8px;border: 2px solid white;">
-						<img style="width:100px;" src="<?php echo $CLIENT_ROOT; ?>/images/layout/IMG_6826.JPG" />
+						<img style="width:100px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/layout/IMG_6826.JPG" />
 					</div>
 				</div>
 			</div>
 			<div id="top_navbar">
 				<div id="right_navbarlinks">
 					<?php
-					if($USER_DISPLAY_NAME){
+					if($GLOBALS['USER_DISPLAY_NAME']){
 					?>
 						<span style="">
-							Welcome <?php echo $USER_DISPLAY_NAME; ?>!
+							Welcome <?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>!
 						</span>
 						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My Profile</a>
+							<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/viewprofile.php">My Profile</a>
 						</span>
 						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Logout</a>
+							<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/index.php?submit=logout">Logout</a>
 						</span>
 					<?php
 					}
@@ -47,7 +47,7 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 							</a>
 						</span>
 						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/newprofile.php">
+							<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/profile/newprofile.php">
 								New Account
 							</a>
 						</span>
@@ -55,56 +55,56 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
 					}
 					?>
 					<span style="margin-left:5px;margin-right:5px;">
-						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'>Sitemap</a>
+						<a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php'>Sitemap</a>
 					</span>
 
 				</div>
 				<ul id="hor_dropdown">
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/index.php" >Home</a>
+						<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" >Home</a>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search</a>
+						<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Search</a>
 						<ul>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/index.php" >Search Collections</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/index.php" >Search Collections</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/spatial/index.php" target="_blank">Spatial Module</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php" target="_blank">Spatial Module</a>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/imagelib/index.php" >Browse Images</a>
+						<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/index.php" >Browse Images</a>
 					</li>
 					<li>
 						<a href="#" >Agency Floras</a>
 						<ul>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/blmstates.php" >BLM</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/blmstates.php" >BLM</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/fwsregions.php" >FWS</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/fwsregions.php" >FWS</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/npsregions.php" >NPS</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/npsregions.php" >NPS</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/usfsregions.php" >USFS</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/usfsregions.php" >USFS</a>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" >Flora Projects</a>
+						<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/projects/index.php" >Flora Projects</a>
 					</li>
 					<li>
 						<a href="#" >Dynamic Floras</a>
 						<ul>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=checklist" >Dynamic Checklist</a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
+								<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/dynamicmap.php?interface=key" >Dynamic Key</a>
 							</li>
 						</ul>
 					</li>

@@ -1,10 +1,10 @@
 <?php
-include_once(__DIR__ . '/config/symbini.php');
-header('Content-Type: text/html; charset=' .$CHARSET);
+include_once(__DIR__ . '/config/symbbase.php');
+header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 ?>
 <html lang="en">
 <head>
-	<title><?php echo $DEFAULT_TITLE?> Home</title>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']?> Home</title>
 	<link href="css/base.css?v=201502" type="text/css" rel="stylesheet" />
 	<link href="css/main.css?v=201502" type="text/css" rel="stylesheet" />
 	<meta name='keywords' content='' />
@@ -44,11 +44,11 @@ header('Content-Type: text/html; charset=' .$CHARSET);
 					<div style="font-size:130%;font-weight:bold;">
 						<?php echo $ootdGameTitle; ?>
 					</div>
-					<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
-						<img src="<?php echo $CLIENT_ROOT; ?>/temp/ootd/<?php echo $oodID; ?>_organism300_1.jpg" style="width:350px;border:0;" />
+					<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
+						<img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/temp/ootd/<?php echo $oodID; ?>_organism300_1.jpg" style="width:350px;border:0;" />
 					</a><br/>
 					<b>What is this <?php echo $ootdGameType; ?>?</b><br/>
-					<a href="<?php echo $CLIENT_ROOT; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
+					<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
 						Click here to test your knowledge
 					</a>
 				</div>
