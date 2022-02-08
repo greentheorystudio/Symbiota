@@ -164,9 +164,6 @@ class ImageExplorer{
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
 			$sqlStr .= 'LEFT JOIN imagetag it ON i.imgid = it.imgid ';
 		}
-		if(isset($searchCriteria['countPerCategory']) && $searchCriteria['countPerCategory'] === 'taxon') {
-			$sqlWhere .= 'AND ts.taxauthid = 1 ';
-		}
 		if($sqlWhere) {
 			$sqlStr .= 'WHERE ' . substr($sqlWhere, 3);
 		}
@@ -190,7 +187,7 @@ class ImageExplorer{
 	private function getAcceptedTid($inTidArr): array
 	{
 		$retArr = array();
-		$sql = 'SELECT tidaccepted, tid FROM taxstatus WHERE taxauthid = 1 AND tid IN('. ltrim(implode(',', $inTidArr), ',') .') ';
+		$sql = 'SELECT tidaccepted, tid FROM taxstatus WHERE tid IN('. ltrim(implode(',', $inTidArr), ',') .') ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retArr[$r->tid] = $r->tidaccepted;
@@ -204,10 +201,10 @@ class ImageExplorer{
         $result = $inTid;
         $sqlInner = 'SELECT DISTINCT ts.tid '.
 			'FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-			'WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
+			'WHERE ts.tid = ts.tidaccepted '.
 			'AND (e.parenttid = '.$inTid.' OR ts.parenttid = '.$inTid.' ) ';
 		$sql = 'SELECT DISTINCT tid FROM taxstatus '. 
-			'WHERE (taxauthid = 1) AND (tidaccepted = '.$inTid.' OR tidaccepted IN('.$sqlInner.'))';
+			'WHERE (tidaccepted = '.$inTid.' OR tidaccepted IN('.$sqlInner.'))';
         $rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$tid = $r->tid;
@@ -223,7 +220,7 @@ class ImageExplorer{
 		foreach($inTidArr as $tid){
 			$sql = 'SELECT DISTINCT ts.tid '.
 				'FROM taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-				'WHERE ts.taxauthid = 1 AND e.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
+				'WHERE ts.tid = ts.tidaccepted '.
 				'AND (e.parenttid = '.$tid.' OR ts.parenttid = '.$tid.') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -240,7 +237,7 @@ class ImageExplorer{
 		$searchStr = implode(',',$inTidArr);
 		$sql = 'SELECT tid, tidaccepted '.
 			'FROM taxstatus '.
-			'WHERE taxauthid = 1 AND (tidaccepted IN('.$searchStr.'))';
+			'WHERE (tidaccepted IN('.$searchStr.'))';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$synArr[] = $r->tid;

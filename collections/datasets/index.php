@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -113,7 +113,7 @@ include(__DIR__ . '/../../header.php');
         </div>
         <h2>Occurrence Dataset Management</h2>
         <div>These tools will allow you to define and manage datasets profiles. Once a profile is created, you can link occurrence records via the occurrence search and display pages.</div>
-        <div id=adddiv style="display:none">
+        <div id="adddiv" style="display:none">
             <fieldset>
                 <legend><b>Create New Dataset</b></legend>
                 <form name="adminform" action="index.php" method="post" onsubmit="return validateEditForm(this)">

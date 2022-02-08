@@ -845,8 +845,8 @@ class OccurrenceEditorManager {
             if($editArr){
                 if($occArr['sciname'] && !$occArr['tidinterpreted'] && in_array('sciname', $editArr, true)){
                     $sql2 = 'SELECT t.tid, t.author, ts.family '.
-                        'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-                        'WHERE ts.taxauthid = 1 AND sciname = "'.$occArr['sciname'].'"';
+                        'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
+                        'WHERE t.sciname = "'.$occArr['sciname'].'"';
                     $rs2 = $this->conn->query($sql2);
                     while($r2 = $rs2->fetch_object()){
                         $occArr['tidinterpreted'] = $r2->tid;
@@ -1323,14 +1323,6 @@ class OccurrenceEditorManager {
                 $status = false;
             }
 
-            if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-                $sql = 'UPDATE omoccurassociations SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-                if(!$this->conn->query($sql)){
-                    $this->errorArr[] .= '; ERROR remapping associations.';
-                    $status = false;
-                }
-            }
-
             $sql = 'UPDATE omoccurcomments SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 $this->errorArr[] .= '; ERROR remapping comments.';
@@ -1618,7 +1610,7 @@ class OccurrenceEditorManager {
             $sqlCl = 'SELECT cl.tid '.
                 'FROM fmchklsttaxalink cl INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
                 'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-                'WHERE (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) AND (ts2.tid = '.$tid.') AND (cl.clid = '.$clid.')';
+                'WHERE (ts2.tid = '.$tid.') AND (cl.clid = '.$clid.')';
             $rsCl = $this->conn->query($sqlCl);
             //echo $sqlCl;
             if($rowCl = $rsCl->fetch_object()){
@@ -2009,7 +2001,7 @@ class OccurrenceEditorManager {
             }
             if($tid){
                 $occTidArr[] = $tid;
-                $rs2 = $this->conn->query('SELECT parenttid FROM taxaenumtree WHERE (taxauthid = 1) AND (tid = '.$tid.')');
+                $rs2 = $this->conn->query('SELECT parenttid FROM taxaenumtree WHERE (tid = '.$tid.')');
                 while($r2 = $rs2->fetch_object()){
                     $occTidArr[] = $r2->parenttid;
                 }
@@ -2031,7 +2023,7 @@ class OccurrenceEditorManager {
                 if($sqlWhere){
                     $sql2 = 'SELECT e.parenttid '.
                         'FROM taxaenumtree e INNER JOIN taxa t ON e.tid = t.tid '.
-                        'WHERE e.taxauthid = 1 AND ('.$sqlWhere.')';
+                        'WHERE ('.$sqlWhere.')';
                     //echo $sql2;
                     $rs2 = $this->conn->query($sql2);
                     while($r2 = $rs2->fetch_object()){

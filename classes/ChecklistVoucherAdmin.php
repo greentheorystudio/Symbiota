@@ -172,7 +172,7 @@ class ChecklistVoucherAdmin {
 			$tStr = Sanitizer::cleanInStr($this->queryVariablesArr['taxon']);
 			$tidPar = $this->getTid($tStr);
 			if($tidPar){
-				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid = '.$tidPar.')) ';
+				$sqlFrag .= 'AND (o.tidinterpreted IN (SELECT tid FROM taxaenumtree WHERE parenttid = '.$tidPar.')) ';
 			}
 		}
 		$llStr = '';
@@ -239,7 +239,7 @@ class ChecklistVoucherAdmin {
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
 			'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
-			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') AND ts.taxauthid = 1 ';
+			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') ';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
 			$uvCnt = $row->uvcnt;
@@ -255,7 +255,7 @@ class ChecklistVoucherAdmin {
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 			'INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
 			'LEFT JOIN fmvouchers v ON ctl.clid = v.clid AND ctl.tid = v.tid '.
-			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') AND ts.taxauthid = 1 '.
+			'WHERE v.clid IS NULL AND (ctl.clid = '.$this->clid.') '.
 			'ORDER BY ts.family, t.sciname '.
 			'LIMIT '.($startLimit?$startLimit.',':'').'100';
 		//echo '<div>'.$sql.'</div>';
@@ -287,7 +287,7 @@ class ChecklistVoucherAdmin {
 				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
 					$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 				}
-				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') AND (ts.taxauthid = 1) ';
+				$sql .= 'WHERE ('.$sqlFrag.') AND (cl.clid = '.$this->clid.') ';
 				$sql .= $includeAll === 1 ? 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ' : 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
                 $sql .= 'ORDER BY ts.family, o.sciname LIMIT '.$startLimit.', 500';
 				//echo '<div>'.$sql.'</div>';
@@ -404,7 +404,7 @@ class ChecklistVoucherAdmin {
 				'INNER JOIN taxstatus ts2 ON v.tid = ts2.tid '.
 				'INNER JOIN taxa t ON v.tid = t.tid '.
 				'INNER JOIN taxstatus ts3 ON ts1.tidaccepted = ts3.tid '.
-				'WHERE (v.clid IN('.$clidStr.')) AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND ts1.tidaccepted <> ts2.tidaccepted '.
+				'WHERE (v.clid IN('.$clidStr.')) AND ts1.tidaccepted <> ts2.tidaccepted '.
 				'AND ts1.parenttid <> ts2.tidaccepted AND v.tid <> o.tidinterpreted AND ts3.parenttid <> v.tid '.
 				'ORDER BY t.sciname ';
 		//echo $sql;
@@ -496,9 +496,9 @@ class ChecklistVoucherAdmin {
 			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 		}
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
-			'AND (t.rankid IN(220,230,240,260,230)) AND (ts.taxauthid = 1) '.
+			'AND (t.rankid IN(220,230,240,260,230)) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
-			'AND (ts.tidaccepted NOT IN(SELECT ts.tidaccepted FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid WHERE ts.taxauthid = 1 AND cl.clid IN('.$clidStr.'))) ';
+			'AND (ts.tidaccepted NOT IN(SELECT ts.tidaccepted FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid WHERE cl.clid IN('.$clidStr.'))) ';
 		return $retSql;
 	}
 
@@ -579,7 +579,7 @@ class ChecklistVoucherAdmin {
 			$sql = 'SELECT DISTINCT '.implode(',',$fieldArr).' '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 					'INNER JOIN fmchklsttaxalink ctl ON ctl.tid = t.tid '.
-					'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
+					'WHERE (ctl.clid IN('.$clidStr.')) ';
 			$this->exportCsv($fileName,$sql);
 		}
 	}
@@ -613,7 +613,7 @@ class ChecklistVoucherAdmin {
 				'LEFT JOIN omoccurrences o ON v.occid = o.occid '.
 				'LEFT JOIN omcollections c ON o.collid = c.collid '.
 				'LEFT JOIN guidoccurrences g ON o.occid = g.occid '.
-				'WHERE (ts.taxauthid = 1) AND (ctl.clid IN('.$clidStr.')) ';
+				'WHERE (ctl.clid IN('.$clidStr.')) ';
 			$this->exportCsv($fileName,$sql,$localitySecurityFields);
 		}
 	}
@@ -770,7 +770,7 @@ class ChecklistVoucherAdmin {
                 $occid = $vArr[0];
                 if(is_numeric($occid) && is_numeric($tid) && count($vArr) === 2){
                     if($useCurrentTaxon){
-                        $sql = 'SELECT tidaccepted FROM taxstatus WHERE taxauthid = 1 AND tid = '.$tid;
+                        $sql = 'SELECT tidaccepted FROM taxstatus WHERE tid = '.$tid;
                         $rs = $this->conn->query($sql);
                         if($r = $rs->fetch_object()){
                             $tid = $r->tidaccepted;

@@ -103,18 +103,12 @@ class OccurrenceIndividualManager extends Manager{
             'o.georeferenceremarks, o.verbatimattributes, o.locationremarks, o.lifestage, o.sex, o.individualcount, o.samplingprotocol, o.preparations, '.
             'o.typestatus, o.dbpk, o.habitat, o.substrate, o.associatedtaxa, o.reproductivecondition, o.cultivationstatus, o.establishmentmeans, '.
             'o.ownerinstitutioncode, o.othercatalognumbers, o.disposition, o.modified, o.observeruid, g.guid, o.recordenteredby, o.dateentered, o.datelastmodified';
-        $sql .= ($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']?', oas.verbatimsciname ':' ');
         $sql .= 'FROM omoccurrences o LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
-        $sql .= ($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']?'LEFT JOIN omoccurassociations oas ON o.occid = oas.occid ':'');
         if($this->occid){
             $sql .= 'WHERE (o.occid = '.$this->occid.')';
         }
         elseif($this->collid && $this->dbpk){
             $sql .= 'WHERE (o.collid = '.$this->collid.') AND (o.dbpk = "'.$this->dbpk.'")';
-        }
-
-        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
-            $sql .= ' AND (oas.relationship = "host" OR (ISNULL(oas.relationship) AND ISNULL(oas.verbatimsciname))) ';
         }
 
         if($result = $this->conn->query($sql)){
@@ -758,12 +752,11 @@ class OccurrenceIndividualManager extends Manager{
                 $occTidArr[] = $this->occArr['tidinterpreted'];
                 $sql = 'SELECT parenttid '.
                     'FROM taxaenumtree '.
-                    'WHERE (taxauthid = 1) AND (tid = '.$this->occArr['tidinterpreted'].')';
+                    'WHERE (tid = '.$this->occArr['tidinterpreted'].')';
             }
             elseif($this->occArr['sciname'] || $this->occArr['family']){
                 $sql = 'SELECT e.parenttid '.
-                    'FROM taxaenumtree e INNER JOIN taxa t ON e.tid = t.tid '.
-                    'WHERE (e.taxauthid = 1) ';
+                    'FROM taxaenumtree e INNER JOIN taxa t ON e.tid = t.tid ';
                 if($this->occArr['sciname']){
                     $taxon = $this->occArr['sciname'];
                     $tok = explode(' ',$this->occArr['sciname']);

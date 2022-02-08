@@ -16,7 +16,7 @@ class DichoKeyManager{
         $sql = 'SELECT t.tid, t.sciname, ts.family, ts.hierarchystr, ts.parenttid ' .
             'FROM (fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid) ' .
             'INNER JOIN taxa t ON ts.tid = t.tid ' .
-            "WHERE ts.taxauthid = 1 AND cl.clid = $clid ";
+            "WHERE cl.clid = $clid ";
         if($taxonFilter){
             $sql .= "AND (ts.family = '".$taxonFilter."' OR t.sciname LIKE '".$taxonFilter."%')";
         }

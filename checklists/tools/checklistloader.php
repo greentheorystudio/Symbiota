@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ChecklistLoaderManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -10,7 +10,6 @@ if(!$GLOBALS['SYMB_UID']) {
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']: '';
 $pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']: '';
-$thesId = array_key_exists('thes',$_REQUEST)?(int)$_REQUEST['thes']:0;
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
 
 $clLoaderManager = new ChecklistLoaderManager();
@@ -79,7 +78,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 						<ul>
 							<li>Loading checklist...</li>
 							<?php
-							$cnt = $clLoaderManager->uploadCsvList($thesId);
+							$cnt = $clLoaderManager->uploadCsvList();
 							$statusStr = $clLoaderManager->getErrorStr();
 							if(!$cnt && $statusStr){
 								echo '<div style="margin:20px;font-weight:bold;">';
@@ -134,19 +133,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 							<div style="font-weight:bold;">
 								Checklist File:
 								<input id="uploadfile" name="uploadfile" type="file" size="45" />
-							</div>
-							<div style="margin-top:10px;">
-								Taxonomic Resolution:
-								<select name="thes">
-									<option value="">Leave Taxonomy As Is</option>
-									<?php
-									$thesArr = $clLoaderManager->getThesauri();
-									foreach($thesArr as $k => $v){
-										echo "<option value='".$k."'>".$v. '</option>';
-									}
-									?>
-								</select>
-
 							</div>
 							<div style="margin-top:10px;">
 								<div>Must be a CSV text file with the first row containing the following columns. Note that Excel spreadsheets can be saved as a CSV file.</div>

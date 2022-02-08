@@ -129,7 +129,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 							'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
 							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 							'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
-							'WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+							'WHERE c.type = "rarespp" '.
 							'AND (ts2.tid = '.$tidToAdd.') AND (o.occid = '.$this->occid.')';
 						//echo $sql; exit;
 						$rsSs2 = $this->conn->query($sql2);
@@ -286,7 +286,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$sqlTid = 'SELECT t.tid, t.securitystatus, ts.family '.
 			'FROM omoccurdeterminations d INNER JOIN taxa t ON d.sciname = t.sciname '.
 			'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE (d.detid = '.$detId.') AND (taxauthid = 1)';
+			'WHERE (d.detid = '.$detId.')';
 		$rs = $this->conn->query($sqlTid);
 		if($r = $rs->fetch_object()){
 			$tid = $r->tid;
@@ -302,7 +302,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				'INNER JOIN taxstatus ts1 ON cl.tid = ts1.tid '.
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN omoccurrences o ON c.locality = o.stateprovince '.
-				'WHERE c.type = "rarespp" AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+				'WHERE c.type = "rarespp" '.
 				'AND (ts2.tid = '.$tid.') AND (o.occid = '.$this->occid.')';
 			//echo $sql; exit;
 			$rsSs2 = $this->conn->query($sql2);
