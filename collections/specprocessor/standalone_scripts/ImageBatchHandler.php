@@ -17,7 +17,7 @@
 date_default_timezone_set('America/Phoenix');
 
 require_once(__DIR__ . '/ImageBatchConf.php');
-if(file_exists('../../../config/symbini.php')){
+if(file_exists('../../../config/symbbase.php')){
 	include_once(__DIR__ . '/../../../config/symbbase.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
 }
