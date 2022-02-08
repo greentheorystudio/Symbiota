@@ -231,7 +231,6 @@ class OccurrenceLabel{
 
     public function exportLabelCsvFile($pArr): void
     {
-        global $CHARSET;
         $occidArr = $pArr['occid'];
         if($occidArr){
             $labelArr = $this->getLabelArray($occidArr);
@@ -240,7 +239,7 @@ class OccurrenceLabel{
                 header('Content-Description: Symbiota Label Output File');
                 header ('Content-Type: text/csv');
                 header ('Content-Disposition: attachment; filename="'.$fileName.'"');
-                header('Content-Transfer-Encoding: '.strtoupper($CHARSET));
+                header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Pragma: public');
