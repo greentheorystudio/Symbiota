@@ -166,26 +166,23 @@ class TaxonomyUtilities {
 		}
 	}
 
-	public function buildHierarchyEnumTree($taxAuthId = null){
-		if(!$taxAuthId){
-            $taxAuthId = 1;
-        }
-	    $status = true;
+	public function buildHierarchyEnumTree(){
+		$status = true;
         $complete = false;
-        $sql = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-            'SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid '.
+        $sql = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+            'SELECT DISTINCT ts.tid, ts.parenttid '.
             'FROM taxstatus ts '.
-            'WHERE (ts.taxauthid = '.$taxAuthId.') AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = '.$taxAuthId.')';
+            'WHERE ts.tid NOT IN(SELECT tid FROM taxaenumtree)';
         //echo '<div>SQL1: '.$sql.'</div>';
         if(!$this->conn->query($sql)){
             $status = 'ERROR seeding taxaenumtree.';
         }
         if($status === true){
-            $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-                'SELECT DISTINCT e.tid, ts.parenttid, ts.taxauthid '.
-                'FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid AND e.taxauthid = ts.taxauthid '.
-                'LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid AND e.taxauthid = e2.taxauthid '.
-                'WHERE (ts.taxauthid = '.$taxAuthId.') AND ISNULL(e2.tid)';
+            $sql2 = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                'SELECT DISTINCT e.tid, ts.parenttid '.
+                'FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid '.
+                'LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid '.
+                'WHERE ISNULL(e2.tid)';
             //echo '<div>SQL2: '.$sql2.'</div>';
             $cnt = 0;
             do{
@@ -204,10 +201,10 @@ class TaxonomyUtilities {
 		return $status;
 	}
 
-    public function getTidAccepted($tid,$taxAuthId): int
+    public function getTidAccepted($tid): int
     {
         $retTid = 0;
-        $sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$taxAuthId.') AND (tid = '.$tid.')';
+        $sql = 'SELECT tidaccepted FROM taxstatus WHERE (tid = '.$tid.')';
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retTid = (int)$r->tidaccepted;

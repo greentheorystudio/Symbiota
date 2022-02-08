@@ -16,7 +16,7 @@ class KeyEditorManager extends KeyManager{
 	{
         $this->tid = $t;
         $sql = 'SELECT t.SciName, ts.ParentTID, t.RankId ' .
-            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE ts.taxauthid = 1 AND (t.TID = ' .$this->tid.')';
+            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid WHERE (t.TID = ' .$this->tid.')';
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->taxonName = $row->SciName;

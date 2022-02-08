@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -38,13 +38,10 @@ if($formatArr){
     $defaultFontSize = isset($formatArr['defaultFontSize']) ? (int)$formatArr['defaultFontSize'] : 12;
     $formatFields = $formatArr['labelBlocks'];
     $columnCount = $formatArr['pageLayout'];
-    if(!in_array($columnCount, array('1', '2', '3', '4', 'packet'), true)) {
+    if(!in_array($columnCount, array('1', '2', '3', '4'), true)) {
         $columnCount = 2;
     }
-    if($columnCount === 'packet'){
-        $labelWidth = 'width:500px;';
-    }
-    elseif((int)$columnCount === 1){
+    if((int)$columnCount === 1){
         $labelWidth = 'width:700px;';
     }
     elseif((int)$columnCount === 2){
@@ -56,8 +53,8 @@ if($formatArr){
     elseif((int)$columnCount === 4){
         $labelWidth = 'width:64px;';
     }
-    $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;';
-    $labelStyle = $labelWidth . 'margin:15px;page-break-inside: avoid;';
+    $columnStyle = 'display:flex;flex-wrap:nowrap;clear:both;justify-content:space-between;';
+    $labelStyle = $labelWidth . 'margin:18px 15px;page-break-inside:avoid;';
     if($action === 'Export to CSV'){
         $labelManager->exportLabelCsvFile($_POST);
     }
@@ -83,10 +80,6 @@ if($formatArr){
                     echo '<div style="'.$columnStyle.'margin: 0 25px;">';
                 }
                 echo '<div style="'.$labelStyle.'">';
-                if($columnCount === 'packet'){
-                    echo '<hr style="border-top: 1px dotted black;margin-top:285px;width:500px;" />';
-                    echo '<hr style="border-top: 1px dotted black;margin-top:355px;margin-bottom:10px;width:500px;" />';
-                }
                 if(isset($formatArr['headerPrefix']) || isset($formatArr['headerMidText']) || isset($formatArr['headerSuffix'])){
                     $headerMidVal = isset($formatArr['headerMidText']) ? (int)$formatArr['headerMidText'] : 0;
                     $headerStr = '';

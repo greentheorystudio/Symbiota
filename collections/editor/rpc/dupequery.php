@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 
 $collName = array_key_exists('cname',$_POST)?trim($_POST['cname']):'';

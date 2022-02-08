@@ -14,7 +14,7 @@ class TPDescEditorManager extends TPEditorManager{
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
 			'FROM (taxstatus ts INNER JOIN taxadescrblock tdb ON ts.tid = tdb.tid) '.
 			'INNER JOIN taxa t ON ts.tid = t.tid '.
-			'WHERE (ts.TidAccepted = '.$this->tid.') AND (ts.taxauthid = 1) ';
+			'WHERE (ts.TidAccepted = '.$this->tid.') ';
 		if(!$editor){
 			$sql .= 'AND (tdb.Language = "'.$this->language.'") ';
 		}

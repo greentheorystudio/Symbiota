@@ -42,7 +42,7 @@ class DynamicChecklistManager {
 			if($tidFilter){
 				$sql2 .= 'INNER JOIN taxaenumtree e ON ts2.tid = e.tid ';
 			}
-			$sql2 .= 'WHERE (t.rankid IN(220,230,240,260)) AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) '.
+			$sql2 .= 'WHERE (t.rankid IN(220,230,240,260)) '.
 				'AND (o.DecimalLatitude BETWEEN '.$lat1.' AND '.$lat2.') AND (o.DecimalLongitude BETWEEN '.$lng1.' AND '.$lng2.') ';
 			if($tidFilter){
 				$sql2 .= 'and e.parentTid = '.$tidFilter;
@@ -98,7 +98,7 @@ class DynamicChecklistManager {
 			if($tidFilter){
 				$sql3 .= 'INNER JOIN taxaenumtree e ON ts2.tid = e.tid '; 
 			}
-			$sql3 .= 'WHERE (t.rankid >= 220) AND (ts.taxauthid = 1) AND (ts2.taxauthid = 1) '.
+			$sql3 .= 'WHERE (t.rankid >= 220) '.
 				'AND (o.DecimalLatitude BETWEEN '.$lat1.' AND '.$lat2.') AND (o.DecimalLongitude BETWEEN '.$lng1.' AND '.$lng2.')';
 			if($tidFilter){
 				$sql3 .= 'and e.parentTid = '.$tidFilter;

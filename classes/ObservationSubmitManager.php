@@ -105,7 +105,7 @@ class ObservationSubmitManager {
 						$sql = 'SELECT cltl.tid '.
 							'FROM fmchklsttaxalink cltl INNER JOIN taxstatus ts1 ON cltl.tid = ts1.tid '.
 							'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
-							'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND cltl.clid = '.$clid.' AND ts2.tid = '.$tid;
+							'WHERE cltl.clid = '.$clid.' AND ts2.tid = '.$tid;
 						$rs = $this->conn->query($sql);
 						while($r = $rs->fetch_object()){
 							$finalTid = $r->tid;

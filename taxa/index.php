@@ -4,13 +4,12 @@
 /** @var array $rightColumnElements */
 /** @var array $bottomRowElements */
 /** @var array $footerRowElements */
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
 
 $taxonValue = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 $clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
 $projValue = array_key_exists('proj',$_REQUEST)?(int)$_REQUEST['proj']:0;
 $lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']:$GLOBALS['DEFAULT_LANG'];
@@ -22,9 +21,6 @@ if(!$taxonValue && array_key_exists('quicksearchtaxon',$_REQUEST)){
 }
 
 $taxonManager = new TaxonProfileManager();
-if($taxAuthId || $taxAuthId === 0) {
-    $taxonManager->setTaxAuthId($taxAuthId);
-}
 if($clValue) {
     $taxonManager->setClName($clValue);
 }

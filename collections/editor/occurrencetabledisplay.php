@@ -1,6 +1,6 @@
 <?php
 /** @var string $qCustomField1 */
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
@@ -27,26 +27,30 @@ $displayQuery = 0;
 $isGenObs = 0;
 $collMap = array();
 $recArr = array();
-$headerMapBase = array('dbpk' => 'dbpk','institutioncode'=>'Institution Code (override)','collectioncode'=>'Collection Code (override)',
-	'ownerinstitutioncode'=>'Owner Code (override)','catalognumber' => 'Catalog Number',
-	'othercatalognumbers' => 'Other Catalog #','family' => 'Family','identificationqualifier' => 'ID Qualifier',
-	'sciname' => 'Scientific Name','scientificnameauthorship'=>'Author','recordedby' => 'Collector','recordnumber' => 'Number',
-	'associatedcollectors' => 'Associated Collectors','eventdate' => 'Event Date','verbatimeventdate' => 'Verbatim Date',
-	'identificationremarks' => 'Identification Remarks','taxonremarks' => 'Taxon Remarks','identifiedby' => 'Identified By',
-	'dateidentified' => 'Date Identified', 'identificationreferences' => 'Identification References',
-	'country' => 'Country','stateprovince' => 'State/Province','county' => 'County','municipality' => 'Municipality',
-	'locality' => 'Locality','decimallatitude' => 'Latitude', 'decimallongitude' => 'Longitude','verbatimcoordinates' => 'Verbatim Coordinates',
-    'minimumelevationinmeters' => 'Elev. Min. (m)','maximumelevationinmeters' => 'Elev. Max. (m)','verbatimelevation' => 'Verbatim Elev.',
-    'geodeticdatum' => 'Datum','coordinateuncertaintyinmeters' => 'Uncertainty In Meters',
-	'georeferencedby' => 'Georeferenced By','georeferenceprotocol' => 'Georeference Protocol','georeferencesources' => 'Georeference Sources',
-	'georeferenceverificationstatus' => 'Georef Verification Status','georeferenceremarks' => 'Georef Remarks',
-	'minimumdepthinmeters' => 'Depth. Min. (m)','maximumdepthinmeters' => 'Depth. Max. (m)','verbatimdepth' => 'Verbatim Depth',
-	'habitat' => 'Habitat','verbatimsciname' => 'Host','substrate' => 'Substrate','occurrenceremarks' => 'Notes (Occurrence Remarks)','associatedtaxa' => 'Associated Taxa',
-	'verbatimattributes' => 'Verbatim Attributes','lifestage' => 'Life Stage', 'sex' => 'Sex', 'individualcount' => 'Individual Count',
-	'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
-	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means',
-	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified',
-	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','basisofrecord' => 'Basis Of Record');
+$headerMapBase = array('associatedCollectors'=>'Associated Collectors','associatedOccurrences'=>'Associated Occurrences',
+    'associatedTaxa'=>'Associated Taxa','attributes'=>'Attributes','scientificNameAuthorship'=>'Author',
+    'basisOfRecord'=>'Basis Of Record','behavior'=>'Behavior','catalogNumber'=>'Catalog Number','collectionCode'=>'Collection Code (override)','recordNumber'=>'Collection Number',
+    'recordedBy'=>'Collector/Observer','coordinateUncertaintyInMeters'=>'Coordinate Uncertainty (m)','country'=>'Country',
+    'county'=>'County','cultivationStatus'=>'Cultivation Status','dataGeneralizations'=>'Data Generalizations','eventDate'=>'Date',
+    'dateEntered'=>'Date Entered','dateLastModified'=>'Date Last Modified','`day`'=>'Day','dbpk'=>'dbpk','decimalLatitude'=>'Decimal Latitude',
+    'decimalLongitude'=>'Decimal Longitude','maximumDepthInMeters'=>'Depth Maximum (m)','minimumDepthInMeters'=>'Depth Minimum (m)',
+    'verbatimAttributes'=>'Description','disposition'=>'Disposition','dynamicProperties'=>'Dynamic Properties',
+    'maximumElevationInMeters'=>'Elevation Maximum (m)','minimumElevationInMeters'=>'Elevation Minimum (m)',
+    'establishmentMeans'=>'Establishment Means','family'=>'Family','fieldNotes'=>'Field Notes','fieldnumber'=>'Field Number',
+    'genus'=>'Genus','geodeticDatum'=>'Geodetic Datum','georeferenceProtocol'=>'Georeference Protocol',
+    'georeferenceRemarks'=>'Georeference Remarks','georeferenceSources'=>'Georeference Sources',
+    'georeferenceVerificationStatus'=>'Georeference Verification Status','georeferencedBy'=>'Georeferenced By','habitat'=>'Habitat',
+    'identificationQualifier'=>'Identification Qualifier','identificationReferences'=>'Identification References',
+    'identificationRemarks'=>'Identification Remarks','identifiedBy'=>'Identified By','individualCount'=>'Individual Count',
+    'informationWithheld'=>'Information Withheld','institutionCode'=>'Institution Code (override)','labelProject'=>'Label Project',
+    'lifeStage'=>'Life Stage','locality'=>'Locality',
+    'localitySecurity'=>'Locality Security','localitySecurityReason'=>'Locality Security Reason','locationRemarks'=>'Location Remarks',
+    'username'=>'Modified By','`month`'=>'Month','municipality'=>'Municipality','occurrenceRemarks'=>'Notes (Occurrence Remarks)','ocrFragment'=>'OCR Fragment',
+    'otherCatalogNumbers'=>'Other Catalog Numbers','ownerInstitutionCode'=>'Owner Code','preparations'=>'Preparations',
+    'reproductiveCondition'=>'Reproductive Condition','samplingEffort'=>'Sampling Effort','samplingProtocol'=>'Sampling Protocol',
+    'sciname'=>'Scientific Name','sex'=>'Sex','specificEpithet'=>'Specific Epithet','stateProvince'=>'State/Province',
+    'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
+    'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation','`year`'=>'Year');
 $headMap = array();
 
 $qryCnt = 0;
