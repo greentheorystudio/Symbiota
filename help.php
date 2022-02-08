@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/config/symbini.php');
+include_once(__DIR__ . '/config/symbbase.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 ?>
 <html lang="<?php echo $DEFAULT_LANG; ?>">
