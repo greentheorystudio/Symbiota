@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -150,7 +150,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" type="text/css" rel="stylesheet" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20211104" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/spatial.module.js?ver=20220205" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -675,14 +675,6 @@ if($fullWindow){
                             <?php
                         }
                     }
-                    if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE'] && $occArr['verbatimsciname']) {
-                        ?>
-                        <div style="clear:both;">
-                            <b>Host:</b>
-                            <?php echo $occArr['verbatimsciname']; ?>
-                        </div>
-                        <?php
-                    }
                     if($occArr['verbatimattributes']){
                         ?>
                         <div style="clear:both;">
@@ -909,6 +901,9 @@ if($fullWindow){
                                                         echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
                                                         echo '</audio>';
                                                     }
+                                                    elseif(substr($medUrl, -3) === '.zc'){
+                                                        echo '<a href="'.$medUrl.'">Download File</a>';
+                                                    }
                                                     ?>
                                                 </div>
                                                 <div style="margin-left:25px;">
@@ -1048,7 +1043,7 @@ if($fullWindow){
                         For additional information on this occurrence, please contact:
                         <?php
                         $emailSubject = $GLOBALS['DEFAULT_TITLE'].' occurrence: '.$occArr['catalognumber'].' ('.$occArr['othercatalognumbers'].')';
-                        $emailBody = 'Specimen being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occArr['occid'];
+                        $emailBody = 'Occurrence being referenced: http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occArr['occid'];
                         $emailRef = 'subject='.$emailSubject.'&cc='.$GLOBALS['ADMIN_EMAIL'].'&body='.$emailBody;
                         ?>
                         <a href="mailto:<?php echo $collMetadata['email'].'?'.$emailRef; ?>">

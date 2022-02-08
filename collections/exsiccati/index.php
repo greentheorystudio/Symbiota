@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -53,16 +53,16 @@ if($isEditor && $formSubmit){
 	elseif($formSubmit === 'Transfer Number'){
 		$statusStr = $exsManager->transferNumber($omenId,trim($_POST['targetometid'],'k'));
 	}
-	elseif($formSubmit === 'Add Specimen Link'){
+	elseif($formSubmit === 'Add Occurrence Link'){
 		$statusStr = $exsManager->addOccLink($_POST);
 	}
-	elseif($formSubmit === 'Save Specimen Link Edit'){
+	elseif($formSubmit === 'Save Occurrence Link Edit'){
 		$exsManager->editOccLink($_POST);
 	}
-	elseif($formSubmit === 'Delete Link to Specimen'){
+	elseif($formSubmit === 'Delete Link to Occurrence'){
 		$exsManager->deleteOccLink($omenId,$_POST['occid']);
 	}
-	elseif($formSubmit === 'Transfer Specimen'){
+	elseif($formSubmit === 'Transfer Occurrence'){
 		$statusStr = $exsManager->transferOccurrence($omenId,$_POST['occid'],trim($_POST['targetometid'],'k'),$_POST['targetexsnumber']);
 	}
 }
@@ -77,7 +77,7 @@ if($formSubmit === 'dlexsiccati'){
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
+	<script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
 	<script type="text/javascript">
 		function toggleExsEditDiv(){
 			toggle('exseditdiv');
@@ -272,11 +272,11 @@ if($formSubmit === 'dlexsiccati'){
 				    		<b>Search:</b>
 							<input type="text" name="searchterm" value="<?php echo $searchTerm;?>" size="20" onchange="this.form.submit()" />
 						</div>
-						<div title="including without linked specimen records">
+						<div title="including without linked occurrence records">
 							<input type="checkbox" name="specimenonly" value="1" <?php echo ($specimenOnly? 'CHECKED' : '');?>onchange="specimenOnlyChanged(this)" />
-							Display only those w/ specimens
+							Display only those w/ occurrences
 						</div>
-						<div id="qryextradiv" style="margin-left:15px;display:<?php echo ($specimenOnly?'block':'none'); ?>;" title="including without linked specimen records">
+						<div id="qryextradiv" style="margin-left:15px;display:<?php echo ($specimenOnly?'block':'none'); ?>;" title="including without linked occurrence records">
 							<div>
 								Limit to:
 								<select name="collid" style="width:230px;" onchange="this.form.submit()">
@@ -635,7 +635,7 @@ if($formSubmit === 'dlexsiccati'){
 						</div>
 						<div style="margin:10px;">
 							<input name="omenid" type="hidden" value="<?php echo $omenId; ?>" />
-							<input name="formsubmit" type="submit" value="Add Specimen Link" />
+							<input name="formsubmit" type="submit" value="Add Occurrence Link" />
 						</div>
 					</fieldset>
 				</form>
@@ -724,7 +724,7 @@ if($formSubmit === 'dlexsiccati'){
 									<div id="occeditdiv-<?php echo $k; ?>" style="display:none;">
 										<form name="occeditform-<?php echo $k; ?>" action="index.php" method="post" onsubmit="return verifyOccEditForm(this)">
 											<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
-												<legend><b>Edit Specimen Link</b></legend>
+												<legend><b>Edit Occurrence Link</b></legend>
 												<div style="margin:2px;">
 													Ranking: <input name="ranking" type="text" value="<?php echo $occArr['ranking']; ?>" />
 												</div>
@@ -734,23 +734,23 @@ if($formSubmit === 'dlexsiccati'){
 												<div style="margin:10px;">
 													<input name="omenid" type="hidden" value="<?php echo $omenId; ?>" />
 													<input name="occid" type="hidden" value="<?php echo $k; ?>" />
-													<input name="formsubmit" type="submit" value="Save Specimen Link Edit" />
+													<input name="formsubmit" type="submit" value="Save Occurrence Link Edit" />
 												</div>
 											</fieldset>
 										</form>
-										<form name="occdeleteform-<?php echo $k; ?>" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete the link to this specimen?')">
+										<form name="occdeleteform-<?php echo $k; ?>" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete the link to this occurrence?')">
 											<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
-												<legend><b>Delete Specimen Link</b></legend>
+												<legend><b>Delete Occurrence Link</b></legend>
 												<div style="margin:10px;">
 													<input name="omenid" type="hidden" value="<?php echo $omenId; ?>" />
 													<input name="occid" type="hidden" value="<?php echo $k; ?>" />
-													<input name="formsubmit" type="submit" value="Delete Link to Specimen" />
+													<input name="formsubmit" type="submit" value="Delete Link to Occurrence" />
 												</div>
 											</fieldset>
 										</form>
 										<form name="occtransferform-<?php echo $k; ?>" action="index.php" method="post" onsubmit="return verifyOccTransferForm(this)">
 											<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
-												<legend><b>Transfer Specimen Link</b></legend>
+												<legend><b>Transfer Occurrence Link</b></legend>
 												<div style="margin:10px;">
 													Target Exsiccati Title<br/>
 													<select name="targetometid" style="width:650px;" onfocus="buildExsSelect(this)">
@@ -765,7 +765,7 @@ if($formSubmit === 'dlexsiccati'){
 												<div style="margin:10px;">
 													<input name="omenid" type="hidden" value="<?php echo $omenId; ?>" />
 													<input name="occid" type="hidden" value="<?php echo $k; ?>" />
-													<input name="formsubmit" type="submit" value="Transfer Specimen" />
+													<input name="formsubmit" type="submit" value="Transfer Occurrence" />
 												</div>
 											</fieldset>
 										</form>
@@ -782,7 +782,7 @@ if($formSubmit === 'dlexsiccati'){
 					<?php
 				}
 				else{
-					echo '<li>There are no specimens linked to this exsiccati number</li>';
+					echo '<li>There are no occurrences linked to this exsiccati number</li>';
 				}
 				?>
 			</div>

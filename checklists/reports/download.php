@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -71,7 +71,7 @@ $clid = (int)$_REQUEST['clid'];
 			<form name="downloadform" action="downloadhandler.php" method="post" onsubmit="return validateDownloadForm();">
 				<fieldset>
 					<?php
-					echo '<legend><b>Download Checklist Specimen Vouchers</b></legend>';
+					echo '<legend><b>Download Checklist Occurrence Vouchers</b></legend>';
 					?>
 					<table>
 						<tr>

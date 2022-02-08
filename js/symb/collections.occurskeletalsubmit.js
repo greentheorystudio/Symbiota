@@ -224,6 +224,7 @@ function eventDateChanged(eventDateInput){
 	const dateArr = parseDate(dateStr);
 	if(dateArr['y'] == 0){
 		alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
+		eventDateInput.value = "";
 		return false;
 	}
 	else{
@@ -232,6 +233,7 @@ function eventDateChanged(eventDateInput){
 			const today = new Date();
 			if(testDate > today){
 				alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
+				eventDateInput.value = "";
 				return false;
 			}
 		}
@@ -239,6 +241,7 @@ function eventDateChanged(eventDateInput){
 
 		if(dateArr['m'] > 12){
 			alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
+			eventDateInput.value = "";
 			return false;
 		}
 
@@ -247,6 +250,7 @@ function eventDateChanged(eventDateInput){
 				|| (dateArr['d'] == 30 && dateArr['m'] == 2)
 				|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 				alert("The Day (" + dateArr['d'] + ") is invalid for that month");
+				eventDateInput.value = "";
 				return false;
 			}
 		}
@@ -286,11 +290,7 @@ function parseDate(dateStr){
 			d = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 20) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 		} else if (validformat3.test(dateStr)) {
 			dateTokens = dateStr.split(" ");
@@ -298,11 +298,7 @@ function parseDate(dateStr){
 			mText = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 15) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();

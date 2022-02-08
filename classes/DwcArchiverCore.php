@@ -295,9 +295,6 @@ class DwcArchiverCore extends Manager{
             if(stripos($this->conditionSql,'p.point')){
                 $sql .= 'LEFT JOIN omoccurpoints p ON o.occid = p.occid ';
             }
-            if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-                $sql .= 'LEFT JOIN omoccurassociations oas ON o.occid = oas.occid ';
-            }
             if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
                 $sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
             }
@@ -1002,21 +999,6 @@ class DwcArchiverCore extends Manager{
             $paraElem->appendChild($newDoc->createTextNode((array_key_exists('def',$usageTermArr)?$usageTermArr['def']:'')));
             $rightsElem->appendChild($paraElem);
             $datasetElem->appendChild($rightsElem);
-        }
-
-        if($GLOBALS['EML_PROJECT_ADDITIONS']){
-            foreach($GLOBALS['EML_PROJECT_ADDITIONS'] as $k => $v){
-                if(is_array($v['collid']) && in_array($this->collID, $v['collid'], true)){
-                    $projID = $v['id'];
-                    $projTitle = $v['title'];
-                    $projectElem = $newDoc->createElement('project');
-                    $projectElem->setAttribute('id',$projID);
-                    $titleElem = $newDoc->createElement('title');
-                    $titleElem->appendChild($newDoc->createTextNode($projTitle));
-                    $projectElem->appendChild($titleElem);
-                    $datasetElem->appendChild($projectElem);
-                }
-            }
         }
 
         $symbElem = $newDoc->createElement('symbiota');
@@ -1821,7 +1803,7 @@ class DwcArchiverCore extends Manager{
     {
         if($this->charSetSource && $this->charSetOut !== $this->charSetSource){
             foreach($inArr as $k => $v){
-                $inArr[$k] = $this->encodeStr($v);
+                $inArr[$k] = $v ? $this->encodeStr($v) : '';
             }
         }
     }

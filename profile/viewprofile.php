@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Person.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -153,7 +153,7 @@ if($isEditor){
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
     <script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=20210313"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20210621"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
 </head>
 <body>
 <?php
@@ -168,13 +168,7 @@ include(__DIR__ . '/../header.php');
         ?>
         <div id="tabs" style="margin:10px;">
             <ul>
-                <?php
-                if($GLOBALS['FLORA_MOD_IS_ACTIVE']){
-                    ?>
-                    <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
-                    <?php
-                }
-                ?>
+                <li><a href="../checklists/checklistadminmeta.php?userid=<?php echo $userId; ?>">Species Checklists</a></li>
                 <li><a href="occurrencemenu.php">Occurrence Management</a></li>
                 <li><a href="userprofile.php?userid=<?php echo $userId; ?>">User Profile</a></li>
             </ul>

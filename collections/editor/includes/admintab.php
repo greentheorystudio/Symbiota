@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -109,7 +109,7 @@ $occManager->setOccId($occid);
 	if($collAdminList){
 		?>
 		<fieldset style="padding:15px;margin:10px 0;">
-			<legend><b>Transfer Specimen</b></legend>
+			<legend><b>Transfer Occurrence</b></legend>
 			<form name="transrecform" method="post" target="occurrenceeditor.php">
 				<div>
 					<b>Target Collection</b><br />

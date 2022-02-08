@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSkeletal.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -44,8 +44,8 @@ if($collid){
     <script src="../../js/all.min.js" type="text/javascript"></script>
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.occurskeletalsubmit.js?ver=20210621" type="text/javascript"></script>
-	<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+	<script src="../../js/symb/collections.occurskeletalsubmit.js?ver=20220112" type="text/javascript"></script>
+	<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 </head>
 <body>
 	<?php

@@ -19,7 +19,7 @@ class TPImageEditorManager extends TPEditorManager{
         if($this->rankId === 220){
             $sql1 = 'SELECT DISTINCT tid '.
                 'FROM taxstatus '.
-                'WHERE (taxauthid = 1) AND (tid = tidaccepted) AND (parenttid = '.$this->tid.')';
+                'WHERE (tid = tidaccepted) AND (parenttid = '.$this->tid.')';
             $rs1 = $this->taxonCon->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $tidArr[] = $r1->tid;
@@ -35,7 +35,7 @@ class TPImageEditorManager extends TPEditorManager{
             'FROM (images ti LEFT JOIN users u ON ti.photographeruid = u.uid) '.
             'INNER JOIN taxstatus ts ON ti.tid = ts.tid '.
             'INNER JOIN taxa t ON ti.tid = t.tid '.
-            'WHERE ts.taxauthid = 1 AND (ts.tidaccepted IN('.$tidStr.')) AND ti.SortSequence < 500 '.
+            'WHERE (ts.tidaccepted IN('.$tidStr.')) AND ti.SortSequence < 500 '.
             'ORDER BY ti.sortsequence';
         //echo $sql; exit;
         $result = $this->taxonCon->query($sql);

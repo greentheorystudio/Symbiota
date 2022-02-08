@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -41,7 +41,7 @@ $headingArr = $charManager->getHeadingArr();
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <script src="../../js/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value === ""){

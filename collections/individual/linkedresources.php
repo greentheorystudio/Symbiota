@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -18,7 +18,7 @@ $indManager->setOccid($occid);
         <?php
         $vClArr = $indManager->getVoucherChecklists();
         if($vClArr){
-            echo '<div style="font-weight:bold"><u>Specimen voucher of the following checklists</u></div>';
+            echo '<div style="font-weight:bold"><u>Occurrence voucher of the following checklists</u></div>';
             echo '<ul style="margin:15px 0 25px 0;">';
             foreach($vClArr as $id => $clName){
                 echo '<li>';

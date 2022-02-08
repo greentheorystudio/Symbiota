@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -82,7 +82,7 @@ $_SESSION['statsOrderArr'] = $orderArr;
 					?>
 				</table>
 				<div style="margin-top:10px;float:left;">
-					<b>Total Specimens with Order:</b> <?php echo number_format($total); ?><br />
+					<b>Total Occurrences with Order:</b> <?php echo number_format($total); ?><br />
 					Specimens without Order: <?php echo number_format($totalCnt-$total); ?><br />
 				</div>
 				<div style='float:left;margin-left:25px;margin-top:10px;width:16px;height:16px;padding:2px;' title="Save CSV">

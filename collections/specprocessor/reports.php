@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 
@@ -49,7 +49,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 				?>
 				<div style="margin:10px;height:400px;">
 					<div style="margin:5px;">
-						<b>Total Specimens:</b>
+						<b>Total Occurrences:</b>
 						<?php
 						echo $statsArr['total'];
 						if($statsArr['total']){
@@ -60,7 +60,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 						?>
 					</div>
 					<div style="margin:5px;">
-						<b>Specimens without linked images:</b>
+						<b>Occurrences without linked images:</b>
 						<?php
 						echo $statsArr['noimg'];
 						if($statsArr['noimg']){

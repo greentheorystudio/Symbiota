@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/VoucherManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -128,7 +128,7 @@ $clArray = $vManager->getChecklistData();
 				self.close();
 			}
 		</script>
-		<script type="text/javascript" src="../js/symb/shared.js?ver=20210621"></script>
+		<script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
 	</head>
 	<body onload="<?php  echo (!$status?$followUpAction:''); ?>" >
 		<div id='innertext'>
@@ -250,80 +250,74 @@ $clArray = $vManager->getChecklistData();
 						</form>
 					</div>
 					<div id="voucherdiv">
-						<?php 
-						if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE']){
-							?>
-							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
-									<i style='width:15px;height:15px;' class="fas fa-link"></i>
-								</a>
-							</div>
-							<h3>Voucher Information</h3>
-							<?php
-							$vArray = $vManager->getVoucherData();
-							if(!$vArray){
-								echo '<div>No vouchers for this species has been assigned to checklist </div>';
-							}
-							?>
-							<ul>
-							<?php 
-							foreach($vArray as $occid => $iArray){
-							?>
-								<li>
-								
-									<a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo $occid; ?>','indpane')"><?php echo $occid; ?></a>: 
-									<?php
-									if($iArray['catalognumber']) {
+                        <div style="float:right;margin-top:10px;">
+                            <a href="../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $vManager->getTaxonName(). '&targetclid=' .$vManager->getClid(). '&targettid=' .$tid;?>">
+                                <i style='width:15px;height:15px;' class="fas fa-link"></i>
+                            </a>
+                        </div>
+                        <h3>Voucher Information</h3>
+                        <?php
+                        $vArray = $vManager->getVoucherData();
+                        if(!$vArray){
+                            echo '<div>No vouchers for this species has been assigned to checklist </div>';
+                        }
+                        ?>
+                        <ul>
+                            <?php
+                            foreach($vArray as $occid => $iArray){
+                                ?>
+                                <li>
+
+                                    <a href="#" onclick="openPopup('../collections/individual/index.php?occid=<?php echo $occid; ?>','indpane')"><?php echo $occid; ?></a>:
+                                    <?php
+                                    if($iArray['catalognumber']) {
                                         echo $iArray['catalognumber'] . ', ';
                                     }
-									echo '<b>'.$iArray['collector'].'</b>, ';
-									if($iArray['eventdate']) {
+                                    echo '<b>'.$iArray['collector'].'</b>, ';
+                                    if($iArray['eventdate']) {
                                         echo $iArray['eventdate'] . ', ';
                                     }
-									if($iArray['sciname']) {
+                                    if($iArray['sciname']) {
                                         echo $iArray['sciname'];
                                     }
-									echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
-									?>
-									<a href="#" onclick="toggle('vouch-<?php echo $occid;?>')"><i style='width:15px;height:15px;' class="far fa-edit"></i></a>
-									<form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this voucher record?');">
-										<input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
-										<input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
-										<input type='hidden' name='oiddel' id='oiddel' value="<?php echo $occid;?>" />
-										<input type='hidden' name='tabindex' value="1" />
+                                    echo ($iArray['notes']?', '.$iArray['notes']:'').($iArray['editornotes']?', '.$iArray['editornotes']:'');
+                                    ?>
+                                    <a href="#" onclick="toggle('vouch-<?php echo $occid;?>')"><i style='width:15px;height:15px;' class="far fa-edit"></i></a>
+                                    <form action="clsppeditor.php" method='post' name='delform' style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this voucher record?');">
+                                        <input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
+                                        <input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
+                                        <input type='hidden' name='oiddel' id='oiddel' value="<?php echo $occid;?>" />
+                                        <input type='hidden' name='tabindex' value="1" />
                                         <input type='hidden' name='action' value="Delete Voucher" />
-										<button style="margin:0;padding:2px;" type="submit" title="Delete Voucher"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
-									</form>
-									<div id="vouch-<?php echo $occid;?>" style='margin:10px;clear:both;display:none;'>
-										<form action="clsppeditor.php" method='post' name='editvoucher'>
-											<fieldset style='margin:5px 0 5px 5px;'>
-												<legend><b>Edit Voucher</b></legend>
-												<input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
-												<input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
-												<input type='hidden' name='occid' value="<?php echo $occid;?>" />
-												<input type='hidden' name='tabindex' value="1" />
-												<div style='margin-top:0.5em;'>
-													<b>Notes:</b>
-													<input name='notes' type='text' value="<?php echo $iArray['notes'];?>" size='60' maxlength='250' />
-												</div>
-												<div style='margin-top:0.5em;'>
-													<b>Editor Notes (editor display only):</b>
-													<input name='editornotes' type='text' value="<?php echo $iArray['editornotes'];?>" size='30' maxlength='50' />
-												</div>
-												<div style='margin-top:0.5em;'>
-													<input type='submit' name='action' value='Submit Voucher Edits' />
-												</div>
-											</fieldset>
-										</form>
-									</div>
-								</li>
-								<?php 
-							} 
-							?>
-							</ul>
-							<?php 
-						} 
-						?>
+                                        <button style="margin:0;padding:2px;" type="submit" title="Delete Voucher"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>
+                                    </form>
+                                    <div id="vouch-<?php echo $occid;?>" style='margin:10px;clear:both;display:none;'>
+                                        <form action="clsppeditor.php" method='post' name='editvoucher'>
+                                            <fieldset style='margin:5px 0 5px 5px;'>
+                                                <legend><b>Edit Voucher</b></legend>
+                                                <input type='hidden' name='tid' value="<?php echo $vManager->getTid();?>" />
+                                                <input type='hidden' name='clid' value="<?php echo $vManager->getClid();?>" />
+                                                <input type='hidden' name='occid' value="<?php echo $occid;?>" />
+                                                <input type='hidden' name='tabindex' value="1" />
+                                                <div style='margin-top:0.5em;'>
+                                                    <b>Notes:</b>
+                                                    <input name='notes' type='text' value="<?php echo $iArray['notes'];?>" size='60' maxlength='250' />
+                                                </div>
+                                                <div style='margin-top:0.5em;'>
+                                                    <b>Editor Notes (editor display only):</b>
+                                                    <input name='editornotes' type='text' value="<?php echo $iArray['editornotes'];?>" size='30' maxlength='50' />
+                                                </div>
+                                                <div style='margin-top:0.5em;'>
+                                                    <input type='submit' name='action' value='Submit Voucher Edits' />
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                </li>
+                                <?php
+                            }
+                            ?>
+                        </ul>
 					</div>
 				</div>
 				<?php 

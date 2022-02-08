@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -227,7 +227,7 @@ if($isEditor && $formSubmit){
 				<?php 
 			}
 			else{
-				echo '<div style="font-weight:bold;">There are no specimen records linked to this exsiccati title</div>';
+				echo '<div style="font-weight:bold;">There are no occurrence records linked to this exsiccati title</div>';
 			}
 		}
 		else{

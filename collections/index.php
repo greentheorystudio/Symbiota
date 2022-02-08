@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -26,7 +26,7 @@ $otherCatArr = $collManager->getOccurVoucherProjects();
 		<link href="../css/jquery-ui.css" type="text/css" rel="stylesheet" />
 		<script src="../js/jquery.js" type="text/javascript"></script>
 		<script src="../js/jquery-ui.js" type="text/javascript"></script>
-		<script src="../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
         <script src="../js/symb/search.term.manager.js?ver=20211104" type="text/javascript"></script>
         <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
         <script type="text/javascript">

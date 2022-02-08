@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyCleaner.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -152,7 +152,7 @@ elseif($activeCollArr){
 				return true;
 			}
 		</script>
-		<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php
@@ -169,7 +169,7 @@ elseif($activeCollArr){
 			}
 			else{
 				?>
-				<a href="../../profile/viewprofile.php?tabindex=1">Specimen Management</a> &gt;&gt;
+				<a href="../../profile/viewprofile.php?tabindex=1">Occurrence Management</a> &gt;&gt;
 				<?php
 			}
 			?>
@@ -313,7 +313,7 @@ elseif($activeCollArr){
 									</div>
 									<div style="margin:10px">
 										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-										<button name="submitaction" type="submit" value="deepindex">Deep Index Specimen Taxa</button>
+										<button name="submitaction" type="submit" value="deepindex">Deep Index Occurrence Taxa</button>
 									</div>
 								</div>
 							</form>

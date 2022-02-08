@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -127,11 +127,7 @@ if($isEditor){
                         d = dateTokens[1];
                         y = dateTokens[2];
                         if (y.length === 2) {
-                            if (y < 20) {
-                                y = "20" + y;
-                            } else {
-                                y = "19" + y;
-                            }
+                            y = 0;
                         }
                     } else if (validformat3.test(dateStr)) {
                         dateTokens = dateStr.split(" ");
@@ -139,11 +135,7 @@ if($isEditor){
                         mText = dateTokens[1];
                         y = dateTokens[2];
                         if (y.length === 2) {
-                            if (y < 15) {
-                                y = "20" + y;
-                            } else {
-                                y = "19" + y;
-                            }
+                            y = 0;
                         }
                         mText = mText.substring(0, 3);
                         mText = mText.toLowerCase();

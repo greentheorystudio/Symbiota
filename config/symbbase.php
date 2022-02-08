@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../classes/Encryption.php');
+include_once(__DIR__ . '/../classes/ConfigurationManager.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 include_once(__DIR__ . '/../classes/Sanitizer.php');
 Sanitizer::validateRequestPath();
@@ -10,89 +11,29 @@ if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['
 }
 session_start();
 
-if(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
-    $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
-}
-if(substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
-    $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
+$confManager = new ConfigurationManager();
+$confManager->setGlobalArr();
+$confManager->setGlobalCssVersion();
+
+if(!isset($_SESSION['PARAMS_ARR'])){
+    $confManager->readClientCookies();
 }
 
-$GLOBALS['PARAMS_ARR'] = array();
-$GLOBALS['USER_RIGHTS'] = array();
-if(!isset($_SESSION['userparams'])){
-    if((isset($_COOKIE['SymbiotaCrumb']) && (!isset($_REQUEST['submit']) || $_REQUEST['submit'] !== 'logout'))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
-        if($tokenArr){
-            $pHandler = new ProfileManager();
-            if($pHandler->setUserName($tokenArr[0])){
-                $pHandler->setRememberMe(true);
-                $pHandler->setToken($tokenArr[1]);
-                $pHandler->setTokenAuthSql();
-                if(!$pHandler->authenticate()){
-                    $pHandler->reset();
-                }
-            }
-            $pHandler->__destruct();
-        }
-    }
-
-    if((isset($_COOKIE['SymbiotaCrumb']) && ((isset($_REQUEST['submit']) && $_REQUEST['submit'] === 'logout') || isset($_REQUEST['loginas'])))){
-        $tokenArr = json_decode(Encryption::decrypt($_COOKIE['SymbiotaCrumb']), true);
-        if($tokenArr){
-            $pHandler = new ProfileManager();
-            $uid = $pHandler->getUid($tokenArr[0]);
-            $pHandler->deleteToken($uid,$tokenArr[1]);
-            $pHandler->__destruct();
-        }
-    }
+if(isset($_SESSION['PARAMS_ARR'])){
+    $GLOBALS['PARAMS_ARR'] = $_SESSION['PARAMS_ARR'];
 }
 
-if(isset($_SESSION['userparams'])){
-    $GLOBALS['PARAMS_ARR'] = $_SESSION['userparams'];
+if(isset($_SESSION['USER_RIGHTS'])){
+    $GLOBALS['USER_RIGHTS'] = $_SESSION['USER_RIGHTS'];
 }
 
-if(isset($_SESSION['userrights'])){
-    $GLOBALS['USER_RIGHTS'] = $_SESSION['userrights'];
-}
-
-$GLOBALS['CSS_VERSION'] = '20210621';
-if(isset($GLOBALS['CSS_VERSION_LOCAL']) && ($GLOBALS['CSS_VERSION_LOCAL'] > $GLOBALS['CSS_VERSION'])) {
-    $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
-}
-if(!isset($GLOBALS['EML_PROJECT_ADDITIONS'])) {
-    $GLOBALS['EML_PROJECT_ADDITIONS'] = array();
-}
-if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE'])) {
-    $GLOBALS['MAX_UPLOAD_FILESIZE'] = 20000000;
-}
 $GLOBALS['USER_DISPLAY_NAME'] = (array_key_exists('dn',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['dn']: '');
 $GLOBALS['USERNAME'] = (array_key_exists('un',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['un']:0);
 $GLOBALS['SYMB_UID'] = (array_key_exists('uid',$GLOBALS['PARAMS_ARR'])?$GLOBALS['PARAMS_ARR']['uid']:0);
 $GLOBALS['IS_ADMIN'] = (array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS'])?1:0);
 $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
-$GLOBALS['FIELDGUIDE_ACTIVE'] = (isset($GLOBALS['ACTIVATE_FIELDGUIDE']) && $GLOBALS['ACTIVATE_FIELDGUIDE']);
 $GLOBALS['BROADGEOREFERENCE'] = (isset($GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']) && $GLOBALS['GEOREFERENCE_POLITICAL_DIVISIONS']);
-
-$LANG_TAG = 'en';
-if(isset($_REQUEST['lang']) && $_REQUEST['lang']){
-    $LANG_TAG = $_REQUEST['lang'];
-
-    $_SESSION['lang'] = $LANG_TAG;
-    setcookie('lang', $LANG_TAG, time() + (3600 * 24 * 30));
-}
-else if(isset($_SESSION['lang']) && $_SESSION['lang']){
-    $LANG_TAG = $_SESSION['lang'];
-}
-else if(isset($_COOKIE['lang']) && $_COOKIE['lang']){
-    $LANG_TAG = $_COOKIE['lang'];
-}
-else if(strlen($GLOBALS['DEFAULT_LANG']) === 2) {
-    $LANG_TAG = $GLOBALS['DEFAULT_LANG'];
-}
-if(!$LANG_TAG || strlen($LANG_TAG) !== 2) {
-    $LANG_TAG = 'en';
-}
 
 $GLOBALS['RIGHTS_TERMS_DEFS'] = array(
     'http://creativecommons.org/publicdomain/zero/1.0/' => array(

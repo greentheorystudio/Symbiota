@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ObservationSubmitManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
@@ -71,7 +71,7 @@ if($collMap){
 	<script src="../../js/jquery.js" type="text/javascript"></script>
 	<script src="../../js/jquery-ui.js" type="text/javascript"></script>
 	<script src="../../js/symb/collections.coordinateValidation.js?ver=20210218" type="text/javascript"></script>
-	<script src="../../js/symb/collections.observationsubmit.js?ver=20210313" type="text/javascript"></script>
+	<script src="../../js/symb/collections.observationsubmit.js?ver=20220112" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
@@ -324,7 +324,7 @@ if($collMap){
 							Establishment Means:
 							<input type="text" name="establishmentmeans" tabindex="100" maxlength="32" style="width:140px;" value="" />
 						</span>
-						<span style="margin-left:15px;" title="Click if specimen was cultivated ">
+						<span style="margin-left:15px;" title="Click if occurrence was cultivated ">
 							<input type="checkbox" name="cultivationstatus" tabindex="102" style="" value="" />
 							Cultivated
 						</span>

@@ -5,7 +5,7 @@ include_once(__DIR__ . '/Sanitizer.php');
 
 class OccurrenceMaintenance {
 
-	private $conn;
+	protected $conn;
 	private $destructConn = true;
 	private $verbose = false;	// 0 = silent, 1 = echo as list item
 	private $errorArr = array();
@@ -137,7 +137,7 @@ class OccurrenceMaintenance {
 			$this->outputMsg('Updating null families using taxonomic thesaurus... ', 1);
 		}
 		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
-			'WHERE o.collid IN('.$collId.') AND (ts.taxauthid = 1) AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
+			'WHERE o.collid IN('.$collId.') AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
 		$rs1 = $this->conn->query($sql1);
 		$occidArr5 = array();
 		while($r1 = $rs1->fetch_object()){
@@ -209,7 +209,7 @@ class OccurrenceMaintenance {
 		$rs->free();
 		$sql2 = 'SELECT DISTINCT ts.tid '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-			'WHERE (ts.taxauthid = 1) AND (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
+			'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
 			$sensitiveArr[] = $r2->tid;
@@ -242,8 +242,7 @@ class OccurrenceMaintenance {
 			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 			'INNER JOIN fmchecklists c ON o.stateprovince = c.locality '. 
 			'INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid AND ts2.tid = cl.tid '.
-			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (c.type = "rarespp") '.
-			'AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
+			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (c.type = "rarespp") ';
 		if($collid) {
 			$sql .= ' AND o.collid IN(' . $collid . ') ';
 		}
@@ -269,6 +268,55 @@ class OccurrenceMaintenance {
 		}
 		return $status;
 	}
+
+    public function protectGlobalSpecies($collid = null){
+        $status = 0;
+        if($this->verbose) {
+            $this->outputMsg('Protecting globally rare species... ', 1);
+        }
+        $sensitiveArr = $this->getSensitiveTaxa();
+
+        if($sensitiveArr){
+            $sql = 'UPDATE omoccurrences '.
+                'SET LocalitySecurity = 1 '.
+                'WHERE (LocalitySecurity IS NULL OR LocalitySecurity = 0) AND (localitySecurityReason IS NULL) AND (tidinterpreted IN('.implode(',',$sensitiveArr).')) ';
+            if($collid) {
+                $sql .= 'AND (collid = ' . $collid . ') ';
+            }
+            if($this->conn->query($sql)){
+                $status += $this->conn->affected_rows;
+            }
+            else{
+                $errStr = 'WARNING: unable to protect globally rare species; '.$this->conn->error;
+                $this->errorArr[] = $errStr;
+                if($this->verbose) {
+                    $this->outputMsg($errStr, 2);
+                }
+                $status = false;
+            }
+        }
+        return $status;
+    }
+
+    private function getSensitiveTaxa(): array
+    {
+        $sensitiveArr = array();
+        $sql = 'SELECT DISTINCT tid FROM taxa WHERE (SecurityStatus > 0)';
+        $rs = $this->conn->query($sql);
+        while($r = $rs->fetch_object()){
+            $sensitiveArr[] = $r->tid;
+        }
+        $rs->free();
+        $sql2 = 'SELECT DISTINCT ts.tid '.
+            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
+            'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
+        $rs2 = $this->conn->query($sql2);
+        while($r2 = $rs2->fetch_object()){
+            $sensitiveArr[] = $r2->tid;
+        }
+        $rs2->free();
+        return $sensitiveArr;
+    }
 
 	public function updateCollectionStats($collid, $full = null): bool
 	{

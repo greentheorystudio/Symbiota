@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/InventoryProjectManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -77,7 +77,7 @@ if(!$researchList && !$editMode){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Inventory Projects</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
         a.boxclose{
@@ -446,9 +446,9 @@ include(__DIR__ . '/../footer.php');
     <div style="margin:15px;">
         Research checklists are pre-compiled by biologists.
         This is a very controlled method for building a species list, which allows for
-        specific specimens to be linked to the species names within the checklist and thus serve as vouchers.
-        Specimen vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
-        can inspect these specimens for verification or annotate the identification when necessary.
+        specific occurrences to be linked to the species names within the checklist and thus serve as vouchers.
+        Occurrence vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
+        can inspect these occurrences for verification or annotate the identification when necessary.
     </div>
 </div>
 </body>

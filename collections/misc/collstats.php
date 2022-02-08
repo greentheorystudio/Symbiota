@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -928,7 +928,7 @@ if($action !== 'Update Statistics'){
 										?>
 									</table>
 									<div style="margin-top:10px;">
-										<b>Total Specimens with Family:</b> <?php echo number_format($total); ?><br />
+										<b>Total Occurrences with Family:</b> <?php echo number_format($total); ?><br />
 										Specimens without Family: <?php echo number_format($results['SpecimenCount']-$total); ?><br />
 									</div>
 								</fieldset>
@@ -965,7 +965,7 @@ if($action !== 'Update Statistics'){
 										?>
 									</table>
 									<div style="margin-top:10px;">
-										<b>Total Specimens with Country:</b> <?php echo number_format($total); ?><br />
+										<b>Total Occurrences with Country:</b> <?php echo number_format($total); ?><br />
 										Specimens without Country or Georeferencing: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']); ?><br />
 									</div>
 								</fieldset>

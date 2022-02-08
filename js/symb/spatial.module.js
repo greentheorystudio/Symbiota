@@ -139,12 +139,7 @@ for (let z = 0; z < 16; ++z) {
     resolutions[z] = maxResolution / Math.pow(2, z);
 }
 
-const baselayer = new ol.layer.Tile({
-    source: new ol.source.XYZ({
-        url: 'http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}',
-        crossOrigin: 'anonymous'
-    })
-});
+const baselayer = new ol.layer.Tile();
 
 function addLayerToSelList(layer,title){
     const origValue = document.getElementById("selectlayerselect").value;
@@ -3272,32 +3267,6 @@ function setInputFormBySearchTermsArr(){
         document.getElementById("noshapecriteria").style.display = "none";
         document.getElementById("shapecriteria").style.display = "block";
     }
-}
-
-function setLayersTable(){
-    const http = new XMLHttpRequest();
-    const url = "rpc/getlayersarr.php";
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            let layerArr;
-            const jsonReturn = false;
-            try{
-                layerArr = JSON.parse(http.responseText);
-            }catch(e){
-                return false;
-            }
-            for(let i in layerArr){
-                if(layerArr.hasOwnProperty(i) && String(layerArr[i])){
-                    buildLayerTableRow(layerArr[i],false);
-                }
-            }
-        }
-        toggleLayerTable();
-    };
-    http.send();
 }
 
 function setLoadingTimer(){

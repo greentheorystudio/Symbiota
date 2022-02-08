@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceEditorManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -22,6 +22,7 @@ $occMediaArr = $occManager->getMediaMap();
         if(file){
             f.accessuri.value = '';
             const fileType = file.type;
+            const fileName = file.name;
             if(videoTypes.includes(fileType) || audioTypes.includes(fileType)){
                 f.format.value = fileType;
                 if(videoTypes.includes(fileType)){
@@ -30,6 +31,9 @@ $occMediaArr = $occManager->getMediaMap();
                 if(audioTypes.includes(fileType)){
                     f.type.value = 'Sound';
                 }
+            }
+            else if(fileName.endsWith(".zc")){
+                f.type.value = 'Sound';
             }
             else{
                 f.type.value = '';
@@ -47,6 +51,7 @@ $occMediaArr = $occManager->getMediaMap();
             url.endsWith(".webm") ||
             url.endsWith(".ogg") ||
             url.endsWith(".mp3") ||
+            url.endsWith(".zc") ||
             url.endsWith(".wav")
         ){
             if(url.endsWith(".mp4")){
@@ -68,6 +73,9 @@ $occMediaArr = $occManager->getMediaMap();
             if(url.endsWith(".wav")){
                 f.type.value = 'Sound';
                 f.format.value = 'audio/wav';
+            }
+            if(url.endsWith(".zc")){
+                f.type.value = 'Sound';
             }
         }
         else{
@@ -222,6 +230,9 @@ $occMediaArr = $occManager->getMediaMap();
                                 echo '<audio style="width:300px;" controls>';
                                 echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
                                 echo '</audio>';
+                            }
+                            elseif(substr($medUrl, -3) === '.zc'){
+                                echo '<a href="'.$medUrl.'">Download File</a>';
                             }
 							?>
 						</td>

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ChecklistVoucherAdmin.php');
 
 $clid = (int)$_REQUEST['clid'];
@@ -10,7 +10,7 @@ if(!$clid){
 	echo 'ERROR: Checklist ID is null';
 }
 elseif(!$occArr){
-	echo 'ERROR: Specimen identifiers are missing';
+	echo 'ERROR: Occurrence identifiers are missing';
 }
 elseif(!$tid){
 	echo 'ERROR: Problem with taxon name (null tid), contact administrator';

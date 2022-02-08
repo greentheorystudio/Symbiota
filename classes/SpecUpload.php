@@ -29,7 +29,7 @@ class SpecUpload{
 	private $logFH;
 	protected $errorStr;
 
-	protected $DIRECTUPLOAD = 1, $DIGIRUPLOAD = 2, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9;
+	protected $DIRECTUPLOAD = 1, $FILEUPLOAD = 3, $STOREDPROCEDURE = 4, $SCRIPTUPLOAD = 5, $DWCAUPLOAD = 6, $SKELETAL = 7, $IPTUPLOAD = 8, $NFNUPLOAD = 9, $SYMBIOTA = 10;
 	
 	public function __construct() {
 		$connection = new DbConnection();
@@ -76,9 +76,6 @@ class SpecUpload{
 				if($uploadType === $this->DIRECTUPLOAD){
 					$uploadStr = 'Direct Upload';
 				}
-				elseif($uploadType === $this->DIGIRUPLOAD){
-					$uploadStr = 'DiGIR Provider Upload';
-				}
 				elseif($uploadType === $this->FILEUPLOAD){
 					$uploadStr = 'File Upload';
 				}
@@ -86,7 +83,7 @@ class SpecUpload{
 					$uploadStr = 'Skeletal File Upload';
 				}
 				elseif($uploadType === $this->NFNUPLOAD){
-					$uploadStr = 'NfN File Upload';
+					$uploadStr = 'Notes for Nature File Upload';
 				}
 				elseif($uploadType === $this->STOREDPROCEDURE){
 					$uploadStr = 'Stored Procedure';
@@ -97,6 +94,9 @@ class SpecUpload{
 				elseif($uploadType === $this->IPTUPLOAD){
 					$uploadStr = 'IPT Resource';
 				}
+                elseif($uploadType === $this->SYMBIOTA){
+                    $uploadStr = 'Symbiota Portal';
+                }
 				$returnArr[$row->uspid]['title'] = $row->title.' ('.$uploadStr.' - #'.$row->uspid.')';
 				$returnArr[$row->uspid]['uploadtype'] = $row->uploadtype;
 			}

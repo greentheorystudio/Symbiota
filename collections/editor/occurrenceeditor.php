@@ -1,6 +1,6 @@
 <?php
 /** @var array $processingStatusArr */
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
@@ -503,7 +503,7 @@ else{
     }
     else{
         ?>
-        <link href="../../css/occureditor.css?ver=170604" type="text/css" rel="stylesheet" id="editorCssLink" />
+        <link href="../../css/occureditor.css?ver=20220110" type="text/css" rel="stylesheet" id="editorCssLink" />
         <?php
         if(isset($CSSARR)){
             foreach($CSSARR as $cssVal){
@@ -554,8 +554,8 @@ else{
         }
     </script>
     <script type="text/javascript" src="../../js/symb/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211118"></script>
-    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20210313"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220112"></script>
+    <script type="text/javascript" src="../../js/symb/collections.occureditortools.js?ver=20220110"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorimgtools.js?ver=170310"></script>
     <script type="text/javascript" src="../../js/symb/collections.occureditorshare.js?ver=20210901"></script>
 </head>
@@ -840,11 +840,7 @@ else{
                                                     <?php echo (defined('DAYOFYEARLABEL')?DAYOFYEARLABEL:'Day of Year'); ?>:
                                                     <a href="#" onclick="return dwcDoc('startDayOfYear')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
                                                     <input type="text" name="startdayofyear" tabindex="24" value="<?php echo array_key_exists('startdayofyear',$occArr)?$occArr['startdayofyear']:''; ?>" onchange="inputIsNumeric(this, 'Start Day of Year');fieldChanged('startdayofyear');" title="Start Day of Year" /> -
-                                                    <input type="text" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
-                                                </div>
-                                                <div id="endDateDiv">
-                                                    <?php echo (defined('ENDDATELABEL')?ENDDATELABEL:'Calculate End Day of Year'); ?>:
-                                                    <input type="text" id="endDate" value="" onchange="endDateChanged();" />
+                                                    <input type="text" id="enddayofyear" name="enddayofyear" tabindex="26" value="<?php echo array_key_exists('enddayofyear',$occArr)?$occArr['enddayofyear']:''; ?>" onchange="inputIsNumeric(this, 'End Day of Year');fieldChanged('enddayofyear');" title="End Day of Year" />
                                                 </div>
                                             </div>
                                             <?php
@@ -1206,18 +1202,6 @@ else{
                                                 <br/>
                                                 <input type="text" name="substrate" tabindex="82" maxlength="500" value="<?php echo array_key_exists('substrate',$occArr)?$occArr['substrate']:''; ?>" onchange="fieldChanged('substrate');" />
                                             </div>
-                                            <?php
-                                            if(isset($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) && $GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
-                                                $quickHostArr = $occManager->getQuickHost($occId);
-                                                ?>
-                                                <div id="hostDiv">
-                                                    <?php echo (defined('HOSTLABEL')?HOSTLABEL:'Host'); ?><br/>
-                                                    <input type="text" name="host" id="quickhost" tabindex="82" maxlength="500" value="<?php echo ($quickHostArr?$quickHostArr['verbatimsciname']:''); ?>" onchange="fieldChanged('host');" />
-                                                    <input type="hidden" name="hostassocid" value="<?php echo ($quickHostArr?$quickHostArr['associd']:''); ?>" />
-                                                </div>
-                                                <?php
-                                            }
-                                            ?>
                                             <div id="associatedTaxaDiv">
                                                 <?php echo (defined('ASSOCIATEDTAXALABEL')?ASSOCIATEDTAXALABEL:'Associated Taxa'); ?>
                                                 <a href="#" onclick="return dwcDoc('associatedTaxa')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a>
@@ -1282,7 +1266,7 @@ else{
                                                     <input type="text" name="preparations" tabindex="97" maxlength="100" value="<?php echo array_key_exists('preparations',$occArr)?$occArr['preparations']:''; ?>" onchange="fieldChanged('preparations');" />
                                                 </div>
                                                 <div id="reproductiveConditionDiv">
-                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Phenology'); ?>
+                                                    <?php echo (defined('REPRODUCTIVECONDITIONLABEL')?REPRODUCTIVECONDITIONLABEL:'Reproductive Condition'); ?>
                                                     <a href="#" onclick="return dwcDoc('reproductiveCondition')"><i style="height:15px;width:15px;" class="far fa-question-circle"></i></a><br/>
                                                     <?php
                                                     if(isset($REPRODUCTIVE_CONDITION_TERMS)){

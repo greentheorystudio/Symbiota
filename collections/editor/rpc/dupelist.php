@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -39,7 +39,7 @@ $dupArr = $dupeManager->getDupeList($recordedBy, $recordNumber, $eventDate, $cat
 <body>
 	<div id="innertext">
 		<fieldset style="padding:15px;">
-			<legend><b>Link New Specimen</b></legend>
+			<legend><b>Link New Occurrence</b></legend>
 			<form name="adddupform" method="post" action="dupelist.php">
 				<div style="margin:3px;">
 					<b>Last Name:</b>

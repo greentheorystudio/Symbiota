@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceAttributes.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -161,7 +161,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 			}
 		</script>
 		<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 	</head>
 	<body style="width:900px">
 		<?php

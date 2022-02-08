@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
@@ -44,8 +44,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 <div id="innertext" style="background-color:white;">
 	<h2>Possible Voucher Conflicts</h2>
 	<div style="margin-bottom:10px;">
-		List of specimen vouchers where the current identifications conflict with the checklist. 
-		Voucher conflicts are typically due to recent annotations of specimens located within collection.
+		List of vouchers where the current identifications conflict with the checklist.
+		Voucher conflicts are typically due to identification changes for records.
 		Click on Checklist ID to open the editing pane for that record. 
 	</div>
 	<?php 
@@ -57,8 +57,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 				<tr>
 					<th><input type="checkbox" onclick="selectAll(this)" /></th>
 					<th><b>Checklist ID</b></th>
-					<th><b>Voucher Specimen</b></th>
-					<th><b>Corrected Specimen ID</b></th>
+					<th><b>Voucher Occurrence</b></th>
+					<th><b>Corrected Occurrence ID</b></th>
 					<th><b>Identified By</b></th>
 				</tr>
 				<?php

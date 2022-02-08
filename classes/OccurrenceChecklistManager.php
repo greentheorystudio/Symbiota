@@ -10,7 +10,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
 		return $this->checklistTaxaCnt;
 	}
 
-	public function getChecklist($taxonAuthorityId): array
+	public function getChecklist(): array
 	{
 		$returnVec = array();
 		$this->checklistTaxaCnt = 0;
@@ -21,13 +21,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         $sql .= ' AND (o.sciname IS NOT NULL) ';
-        if($taxonAuthorityId && is_numeric($taxonAuthorityId)){
-            $sql .= ' AND (ts.taxauthid = '.$taxonAuthorityId.') ';
-        }
-        else{
-            $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
-        }
-		//echo "<div>".$sql."</div>";
+        //echo "<div>".$sql."</div>";
         $result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
 			$family = strtoupper($row->family);
@@ -52,7 +46,7 @@ class OccurrenceChecklistManager extends OccurrenceManager{
             'FROM (taxstatus AS ts1 LEFT JOIN taxa AS t ON ts1.TidAccepted = t.Tid) '.
             'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
             'WHERE ts1.tid IN('.$tidStr.') '.
-            'AND ts1.taxauthid = '.$taxonFilter.' AND ts.taxauthid = '.$taxonFilter.' AND t.RankId > 140 ';
+            'AND t.RankId > 140 ';
         //echo "<div>".$sql."</div>";
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -77,20 +71,13 @@ class OccurrenceChecklistManager extends OccurrenceManager{
         }
 		$dynClid = 0;
 		$sqlCreateCl = 'INSERT INTO fmdynamicchecklists ( name, details, uid, type, notes, expiration ) '.
-			"VALUES ('Specimen Checklist #".time()."', 'Generated ".date('d-m-Y H:i:s')."', '".$GLOBALS['SYMB_UID']."', 'Specimen Checklist', '', '".$expirationTime."') ";
+			"VALUES ('Occurrence Checklist #".time()."', 'Generated ".date('d-m-Y H:i:s')."', '".$GLOBALS['SYMB_UID']."', 'Occurrence Checklist', '', '".$expirationTime."') ";
 		if($this->conn->query($sqlCreateCl)){
 			$dynClid = $this->conn->insert_id;
 			$sqlTaxaInsert = 'INSERT IGNORE INTO fmdyncltaxalink ( tid, dynclid ) ';
 			if($tidStr){
-                if(is_numeric($taxonAuthorityId)){
-                    $sqlTaxaInsert .= 'SELECT DISTINCT t.tid, '.$dynClid.' '.
-                        'FROM taxstatus AS ts INNER JOIN taxa AS t ON ts.TidAccepted = t.Tid '.
-                        'WHERE ts.tid IN('.$tidStr.') AND ts.taxauthid = '.$taxonAuthorityId.' AND t.RankId > 180';
-                }
-                else{
-                    $sqlTaxaInsert .= 'SELECT DISTINCT t.tid, '.$dynClid.' FROM taxa AS t '.
-                        'WHERE t.tid IN('.$tidStr.') AND t.RankId > 180 ';
-                }
+                $sqlTaxaInsert .= 'SELECT DISTINCT t.tid, '.$dynClid.' FROM taxa AS t '.
+                    'WHERE t.tid IN('.$tidStr.') AND t.RankId > 180 ';
             }
             else{
             	$sqlWhere = $this->getSqlWhere();
@@ -100,12 +87,6 @@ class OccurrenceChecklistManager extends OccurrenceManager{
                 $sqlTaxaInsert .= $this->setTableJoins($sqlWhere);
                 $sqlTaxaInsert .= $sqlWhere;
                 $sqlTaxaInsert .= ' AND (t.tid IS NOT NULL) ';
-                if($taxonAuthorityId && is_numeric($taxonAuthorityId)){
-                    $sqlTaxaInsert .= ' AND (ts.taxauthid IS NOT NULL AND ts.taxauthid = '.$taxonAuthorityId.') ';
-                }
-                else{
-                    $sqlTaxaInsert .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
-                }
             }
 			//echo "sqlTaxaInsert: ".$sqlTaxaInsert;
 			$this->conn->query($sqlTaxaInsert);

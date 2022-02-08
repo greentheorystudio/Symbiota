@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -19,7 +19,7 @@ if(file_exists($GLOBALS['SERVER_ROOT'].'/config/includes/searchVarCustom.php')){
     <script src="../js/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/symb/shared.js?ver=20210621"></script>
+    <script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
     <script type="text/javascript" src="../js/symb/collections.harvestparams.js?ver=20211104"></script>
     <script type="text/javascript" src="../js/symb/search.term.manager.js?ver=20211104"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
@@ -219,15 +219,6 @@ include(__DIR__ . '/../header.php');
             <?php echo $GLOBALS['SEARCHTEXT']['ELEV_INPUT_1']; ?> <input type="text" id="elevlow" size="10" name="elevlow" onchange="processTextParamChange();" /> <?php echo $GLOBALS['SEARCHTEXT']['ELEV_INPUT_2']; ?>
             <input type="text" id="elevhigh" size="10" name="elevhigh" onchange="processTextParamChange();" />
         </div>
-        <?php
-        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
-            ?>
-            <div>
-                <?php echo $GLOBALS['SEARCHTEXT']['ASSOC_HOST_INPUT']; ?> <input type="text" id="assochost" size="43" name="assochost" onchange="processTextParamChange();" title="<?php echo $GLOBALS['SEARCHTEXT']['TITLE_TEXT_1']; ?>" />
-            </div>
-            <?php
-        }
-        ?>
         <div style="margin:10px 0 10px 0;">
             <hr>
             <h1><?php echo $GLOBALS['SEARCHTEXT']['LAT_LNG_HEADER']; ?></h1>

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -46,7 +46,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 		<script src="../../js/jquery.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 		<script src="../../js/symb/geolocate.js?ver=1.0" type="text/javascript"></script>
 	</head>
 	<body>
@@ -59,8 +59,8 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 						<fieldset>
 							<legend><b>GeoLocate Community Toolkit</b></legend>
 							<div style="margin:15px;">
-								This module extracts specimen records that have text locality details but lack decimal coordinates.
-								These specimens are packaged and delivered directly into the GeoLocate Community Tools.
+								This module extracts occurrence records that have text locality details but lack decimal coordinates.
+								These records are packaged and delivered directly into the GeoLocate Community Tools.
 							</div>
 							<table>
 								<tr>

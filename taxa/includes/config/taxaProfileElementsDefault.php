@@ -4,7 +4,6 @@
 /** @var string $styleClass */
 /** @var string $spDisplay */
 /** @var string $projValue */
-/** @var string $taxAuthId */
 /** @var string $ambiguous */
 /** @var array $synonymArr */
 /** @var string $acceptedName */
@@ -44,9 +43,9 @@ if($taxonRank > 180){
         </span>
         <?php echo $taxonManager->getAuthor(); ?>
         <?php
-        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+        $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue;
         echo "<a href='".$parentLink."'><i id='parenttaxonicon' style='height:15px;width:15px;' title='Go to Parent' class='fas fa-level-up-alt'></i></a>";
-        if($taxAuthId && ($taxonManager->getTid() !== $taxonManager->getSubmittedTid())){
+        if($taxonManager->getTid() !== $taxonManager->getSubmittedTid()){
             echo '<span id="redirectedfrom"> (redirected from: <i>'.$taxonManager->getSubmittedSciName().'</i>)</span>';
         }
         ?>
@@ -63,7 +62,7 @@ else{
         }
         $displayName .= ' ' . $taxonManager->getAuthor().' ';
         if($taxonRank > 140){
-            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue. '&taxauthid=' .$taxAuthId;
+            $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&cl=' .$taxonManager->getClid(). '&proj=' .$projValue;
             $displayName .= ' <a href="'.$parentLink.'">';
             $displayName .= '<i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i>';
             $displayName .= '</a>';
@@ -80,7 +79,7 @@ if($ambiguous){
     $synLinkStr = '';
     $explanationStr = '';
     foreach($synonymArr as $synTid => $sName){
-        $synLinkStr .= '<a href="index.php?taxon='.$synTid.'&taxauthid='.$taxAuthId.'&cl='.$clValue.'&proj='.$projValue.'&lang='.$lang.'">'.$sName.'</a>, ';
+        $synLinkStr .= '<a href="index.php?taxon='.$synTid.'&cl='.$clValue.'&proj='.$projValue.'&lang='.$lang.'">'.$sName.'</a>, ';
     }
     $synLinkStr = substr($synLinkStr,0,-2);
     if($acceptedName){
@@ -255,7 +254,7 @@ $descTabsDiv = ob_get_clean();
 ob_start();
 $url = '';
 $mAnchor = '';
-if($GLOBALS['OCCURRENCE_MOD_IS_ACTIVE'] && $displayLocality){
+if($displayLocality){
     $mAnchor = "openMapPopup('".$taxonManager->getSciName()."',true)";
     if($mapSrc = $taxonManager->getMapArr()){
         $url = array_shift($mapSrc);
@@ -289,16 +288,22 @@ $imgDiv = ob_get_clean();
 
 ob_start();
 ?>
-<div id="img-tab-div" style="display:<?php echo ((($taxonManager->getImageCount() > 6) && !$showAllImages)?'block':'none');?>;">
+<div id="img-tab-div" style="clear:both;display:<?php echo ((($taxonManager->getImageCount() > 6) && !$showAllImages)?'block':'none');?>;">
     <?php
     if($taxonManager->getImageCount() > 100){
+        if($taxonRank < 140){
+            $taxonType = 4;
+        }
+        else{
+            $taxonType = 2;
+        }
         ?>
         <div id="img-tab-expand">
             <a href="#" onclick="expandExtraImages();return false;">
                 <?php echo 'Click to Display<br/>100 Initial Images'; ?>
             </a><br/>
             - - - - -<br/>
-            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"2","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"<?php echo $taxonType; ?>","taxa":"<?php echo $taxonManager->getSciName(); ?>"}' target="_blank">
                 <?php echo 'View All '.$taxonManager->getImageCount().' Images'; ?>
             </a>
         </div>
@@ -326,7 +331,7 @@ ob_start();
         echo '<legend>';
         echo 'Species within <b>'.$taxonManager->getClName().'</b>&nbsp;&nbsp;';
         if($taxonManager->getParentClid()){
-            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'&taxauthid='.$taxAuthId.'" title="Go to '.$taxonManager->getParentName().' checklist"><i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i></a>';
+            echo '<a href="index.php?taxon='.$taxonValue.'&cl='.$taxonManager->getParentClid().'" title="Go to '.$taxonManager->getParentName().' checklist"><i id="parenttaxonicon" style="height:15px;width:15px;" title="Go to Parent" class="fas fa-level-up-alt"></i></a>';
         }
         echo '</legend>';
     }
@@ -340,14 +345,14 @@ ob_start();
             foreach($sppArr as $sciNameKey => $subArr){
                 echo "<div class='spptaxon'>";
                 echo "<div class='spptaxonbox'>";
-                echo "<a href='index.php?taxon=".$subArr['tid']. '&taxauthid=' .$taxAuthId.($clValue? '&cl=' .$clValue: '')."'>";
+                echo "<a href='index.php?taxon=".$subArr['tid'].($clValue? '&cl=' .$clValue: '')."'>";
                 echo '<i>' .$sciNameKey. '</i>';
                 echo "</a></div>\n";
                 echo "<div class='sppimg'>";
 
                 if(array_key_exists('url',$subArr)){
                     $imgUrl = $subArr['url'];
-                    echo "<a href='index.php?taxon=".$subArr['tid']. '&taxauthid=' .$taxAuthId.($clValue? '&cl=' .$clValue: '')."'>";
+                    echo "<a href='index.php?taxon=".$subArr['tid'].($clValue? '&cl=' .$clValue: '')."'>";
                     if($subArr['thumbnailurl']){
                         $imgUrl = $subArr['thumbnailurl'];
                     }
@@ -409,7 +414,7 @@ if($taxonRank > 180 && $links) {
 }
 
 if($taxonRank > 140){
-    $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid(). '&taxauthid=' .$taxAuthId;
+    $parentLink = 'index.php?taxon=' .$taxonManager->getParentTid();
     if($clValue) {
         $parentLink .= '&cl=' . $taxonManager->getClid();
     }

@@ -241,7 +241,7 @@ $(document).ready(function() {
 function toggleStyle(){
 	const cssObj = document.getElementById('editorCssLink');
 	if(cssObj.href === "../../css/occureditorcrowdsource.css?ver=20150402"){
-		cssObj.href = "../../css/occureditor.css?ver=20150402";
+		cssObj.href = "../../css/occureditor.css?ver=20220110";
 	}
 	else{
 		cssObj.href = "../../css/occureditorcrowdsource.css?ver=20150402";
@@ -794,7 +794,7 @@ function verifyAssocVouchers(occidIn){
 		data: { occid: occidIn }
 	}).done(function( vList ) {
 		document.getElementById("delvervouspan").style.display = "none";
-		if(vList !== ''){
+		if(!vList.hasOwnProperty('length')){
 			document.getElementById("delvoulistdiv").style.display = "block";
 			let strOut = "";
 			for(const key in vList){
@@ -825,6 +825,7 @@ function eventDateChanged(eventDateInput){
 		const dateArr = parseDate(dateStr);
 		if(dateArr['y'] == 0){
 			alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
+			eventDateInput.value = "";
 			return false;
 		}
 		else{
@@ -833,6 +834,7 @@ function eventDateChanged(eventDateInput){
 				const today = new Date();
 				if(testDate > today){
 					alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
+					eventDateInput.value = "";
 					return false;
 				}
 			}
@@ -840,6 +842,7 @@ function eventDateChanged(eventDateInput){
 	
 			if(dateArr['m'] > 12){
 				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
+				eventDateInput.value = "";
 				return false;
 			}
 	
@@ -848,6 +851,7 @@ function eventDateChanged(eventDateInput){
 					|| (dateArr['d'] == 30 && dateArr['m'] == 2)
 					|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
+					eventDateInput.value = "";
 					return false;
 				}
 			}
@@ -861,7 +865,9 @@ function eventDateChanged(eventDateInput){
 				dStr = "0" + dStr;
 			}
 			eventDateInput.value = dateArr['y'] + "-" + mStr + "-" + dStr;
-			if(dateArr['y'] > 0) distributeEventDate(dateArr['y'],dateArr['m'],dateArr['d']);
+			if(dateArr['y'] > 0) {
+				distributeEventDate(dateArr['y'], dateArr['m'], dateArr['d']);
+			}
 		}
 	}
 	fieldChanged('eventdate');
@@ -903,70 +909,20 @@ function distributeEventDate(y,m,d){
 				const onejan = new Date(y, 0, 1);
 				f.startdayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
 				fieldChanged("startdayofyear");
+				calculateEndDate(y);
 			}
 		}
 	} catch (e) {}
 }
 
-function endDateChanged(){
-	const dateStr = document.getElementById("endDate").value;
-	let eDate;
-	if (dateStr !== "") {
-		const dateArr = parseDate(dateStr);
-		if (dateArr['y'] === 0) {
-			alert("Unable to interpret Date. Please use the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-			return false;
-		} else {
-			try {
-				const testDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
-				const today = new Date();
-				if (testDate > today) {
-					alert("Was this plant really collected in the future? The date you entered has not happened yet. Please revise.");
-					return false;
-				}
-			} catch (e) {
-			}
-
-			if (dateArr['m'] > 12) {
-				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-				return false;
-			}
-
-			if (dateArr['d'] > 28) {
-				if (dateArr['d'] > 31
-					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))) {
-					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-					return false;
-				}
-			}
-
-			let mStr = dateArr['m'];
-			if (mStr.length === 1) {
-				mStr = "0" + mStr;
-			}
-			let dStr = dateArr['d'];
-			if (dStr.length === 1) {
-				dStr = "0" + dStr;
-			}
-			document.getElementById("endDate").value = dateArr['y'] + "-" + mStr + "-" + dStr;
-			if (dateArr['y'] > 0) {
-				const f = document.fullform;
-				f.enddayofyear.value = "";
-				try {
-					if (dateArr['m'] === 0 || dateArr['d'] === 0) {
-						f.enddayofyear.value = "";
-					} else {
-						eDate = new Date(dateArr['y'], dateArr['m'] - 1, dateArr['d']);
-						if (eDate instanceof Date) {
-							const onejan = new Date(dateArr['y'], 0, 1);
-							f.enddayofyear.value = Math.ceil((eDate - onejan) / 86400000) + 1;
-							fieldChanged("enddayofyear");
-						}
-					}
-				} catch (e) {}
-			}
+function calculateEndDate(year){
+	eDate = new Date(year, 11, 31);
+	if (eDate instanceof Date) {
+		const onejan = new Date(year, 0, 1);
+		if(document.getElementById("enddayofyear")){
+			document.getElementById("enddayofyear").value = Math.ceil((eDate - onejan) / 86400000) + 1;
 		}
+		fieldChanged("enddayofyear");
 	}
     return true;
 }
@@ -993,11 +949,7 @@ function parseDate(dateStr){
 			d = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 20) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 		} else if (validformat3.test(dateStr)) {
 			dateTokens = dateStr.split(" ");
@@ -1005,11 +957,7 @@ function parseDate(dateStr){
 			mText = dateTokens[1];
 			y = dateTokens[2];
 			if (y.length === 2) {
-				if (y < 15) {
-					y = "20" + y;
-				} else {
-					y = "19" + y;
-				}
+				y = 0;
 			}
 			mText = mText.substring(0, 3);
 			mText = mText.toLowerCase();

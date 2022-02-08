@@ -265,10 +265,6 @@ else{
 					'sciname'=>'Scientific Name','sex'=>'Sex','specificEpithet'=>'Specific Epithet','stateProvince'=>'State/Province',
 					'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
 					'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation','`year`'=>'Year');
-				if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-                    $insertIndex = array_search('habitat', array_keys($advFieldArr), true);
-                    $advFieldArr = array_merge(array_slice($advFieldArr,0,$insertIndex+1),array('verbatimsciname'=>'Host'),array_slice($advFieldArr,$insertIndex+1,null));
-                }
 			}
 			?>
 			<div style="margin:2px 0;">
@@ -498,6 +494,7 @@ else{
 			<div style="margin:5px;">
 				<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 				<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
+                <input type="hidden" name="displayquery" value="1" />
 				<input type="hidden" name="occid" value="" />
 				<input type="hidden" name="occindex" value="0" />
                 <input type="hidden" name="submitaction" value="" />

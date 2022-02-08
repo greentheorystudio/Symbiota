@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -69,8 +69,6 @@ $isGeneralObservation = ($labelManager->getMetaDataTerm('colltype') === 'General
         .fieldset-block{ width:800px }
         .field-block{ margin:3px 0px }
         .labelFormat{ font-weight: bold; }
-        .field-value{  }
-        .field-inline{  }
     </style>
     <script src="../../js/all.min.js" type="text/javascript"></script>
     <script src="../../js/jquery.js" type="text/javascript"></script>
@@ -693,7 +691,6 @@ include(__DIR__ . '/../../header.php');
                                     <option value="2" <?php echo ((int)$pageLayout === 2?'selected':''); ?>>2 columns per page</option>
                                     <option value="3" <?php echo ((int)$pageLayout === 3?'selected':''); ?>>3 columns per page</option>
                                     <option value="4" <?php echo ((int)$pageLayout === 4?'selected':''); ?>>4 columns per page</option>
-                                    <option value="packet" <?php echo ($pageLayout === 'packet'?'selected':''); ?>>Packet labels</option>
                                 </select>
                             </div>
                         </fieldset>
@@ -928,7 +925,6 @@ include(__DIR__ . '/../../header.php');
                                 <option value="2" selected>2 columns per page</option>
                                 <option value="3">3 columns per page</option>
                                 <option value="4">4 columns per page</option>
-                                <option value="packet">Packet labels</option>
                             </select>
                         </div>
                     </fieldset>

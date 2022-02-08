@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -113,7 +113,7 @@ if($isEditor){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../../css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
     <link href="../../css/jquery-ui.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         a.boxclose{
@@ -130,7 +130,7 @@ if($isEditor){
     <script type="text/javascript" src="../../js/jquery.js"></script>
     <script type="text/javascript" src="../../js/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/jquery.popupoverlay.js"></script>
-    <script type="text/javascript" src="../../js/symb/shared.js?ver=20210621"></script>
+    <script type="text/javascript" src="../../js/symb/shared.js?ver=20211227"></script>
     <script type="text/javascript" src="../../js/symb/search.term.manager.js?ver=20211104"></script>
     <script type="text/javascript">
         let stArr = {};
@@ -332,7 +332,7 @@ include(__DIR__ . '/../../header.php');
                             </div>
                             <table class="styledtable" style="font-family:Arial,serif;font-size:12px;">
                                 <tr>
-                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all Specimens" /></th>
+                                    <th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="Select/Deselect all occurrences" /></th>
                                     <th>catalog #</th>
                                     <th>Collector</th>
                                     <th>Scientific Name</th>
@@ -521,7 +521,6 @@ include(__DIR__ . '/../../header.php');
         <input id="dh-filename" name="dh-filename" type="hidden" />
         <input id="dh-contentType" name="dh-contentType" type="hidden" />
         <input id="dh-selections" name="dh-selections" type="hidden" />
-        <input id="dh-taxonFilterCode" name="dh-taxonFilterCode" type="hidden" />
         <input id="schemacsv" name="schemacsv" type="hidden" />
         <input id="identificationscsv" name="identificationscsv" type="hidden" />
         <input id="imagescsv" name="imagescsv" type="hidden" />

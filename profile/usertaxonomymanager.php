@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/UserTaxonomy.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -70,7 +70,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			return true;
 		}
 	</script>
-	<script type="text/javascript" src="../js/symb/shared.js?ver=20210621"></script>
+	<script type="text/javascript" src="../js/symb/shared.js?ver=20211227"></script>
 </head>
 <body>
 	<?php

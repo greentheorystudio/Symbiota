@@ -6,7 +6,7 @@
 /** @var string $eMode */
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20211118"></script>
+<script type="text/javascript" src="../../js/symb/collections.occureditormain.js?ver=20220112"></script>
 <div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>
@@ -94,7 +94,7 @@ $specList = $loanManager->getSpecList($loanId);
 					</div>
 					<div style="padding-top:15px;margin-left:20px;float:left;">
 						<span>
-							<b>Specimen Total:</b> <input type="text" name="totalspecimens" tabindex="100" maxlength="32" style="width:80px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="<?php echo count($specList); ?>" onchange=" " disabled />
+							<b>Occurrence Total:</b> <input type="text" name="totalspecimens" tabindex="100" maxlength="32" style="width:80px;border:2px solid black;text-align:center;font-weight:bold;color:black;" value="<?php echo count($specList); ?>" onchange=" " disabled />
 						</span>
 					</div>
 					<div style="margin-left:20px;float:left;">

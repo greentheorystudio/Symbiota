@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 
 $otherCatNum = array_key_exists('othercatnum',$_POST)?trim($_POST['othercatnum']):'';

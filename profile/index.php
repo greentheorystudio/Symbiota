@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ProfileManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -101,10 +101,6 @@ else{
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
 	<script type="text/javascript">
-		if(!navigator.cookieEnabled){
-			alert("Your browser cookies are disabled. To be able to login and access your profile, they must be enabled for this domain.");
-		}
-	
 		function resetPassword(){
 			if(document.getElementById("login").value === ""){
 				alert("Enter your login name in the Login field and leave the password blank");
@@ -122,7 +118,7 @@ else{
 			return true;
 		}
 	</script>
-	<script src="../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+	<script src="../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 </head>
 <body>
 

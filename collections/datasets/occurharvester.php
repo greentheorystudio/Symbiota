@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -124,10 +124,9 @@ if($isEditor && $action === 'Download Records') {
 		<a href='../../index.php'>Home</a> &gt;&gt; 
 		<b>Occurrence Harvester</b>
 	</div>
-	<!-- This is inner text! -->
 	<div id="innertext">
 		<div style="margin:15px">
-			Scan or type barcode number into field below and then hit enter or tab to add the specimen to the list. 
+			Scan or type barcode number into field below and then hit enter or tab to add the record to the list.
 			Once list is complete, you can enter your catalog number in the text field and then transfer to your collection 
 			or file export to a file that can be imported into your local database. 
 		</div>
@@ -137,7 +136,7 @@ if($isEditor && $action === 'Download Records') {
 		<div style="width:450px;float:right;">
 			<form name="dlform" method="post" action="occurharvester.php" target="_blank">
 				<fieldset>
-					<legend><b>Specimen Queue</b></legend>
+					<legend><b>Occurrence Queue</b></legend>
 					<div id="emptylistdiv" style="margin:20px;">
 						<b>List Empty: </b>enter barcode in field to left
 					</div>

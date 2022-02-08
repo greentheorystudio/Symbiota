@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: SAMEORIGIN');
@@ -49,7 +49,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
         <script src="../../js/all.min.js" type="text/javascript"></script>
 		<script src="../../js/jquery.js" type="text/javascript"></script>
 		<script src="../../js/jquery-ui.js" type="text/javascript"></script>
-		<script src="../../js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="../../js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 		<script>
 
 			$(function() {
@@ -108,7 +108,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 				</fieldset>
 			</div>
 			<div style="padding:15px 0;">
-				This download module is designed to aid collection managers in extracting specimen data
+				This download module is designed to aid collection managers in extracting occurrence data
 				for import into local management or research systems.
 				<?php
 				if($collMeta['manatype'] === 'Snapshot'){
@@ -118,14 +118,14 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 						The export module is particularly useful for extracting data that has been added
 						using the digitization tools built into the web portal (crowdsourcing, OCR/NLP, basic data entry, etc).
 						Records imported from a local database are linked to the primary record
-						through a specimen unique identifier (barcode, primary key, UUID, etc).
+						through a unique identifier (barcode, primary key, UUID, etc).
 						This identifier is stored in the web portal database and gives collection managers the ability to update local records
 						with information added within the web portal.
 						New records digitized directly into the web portal (e.g. image to record data entry workflow) will have a null unique identifier,
 						which identifies the record as new and not yet synchronized to the central database.
 						When new records are extracted from the portal, imported into the central database,
 						and then the portal's data snapshot is refreshed, the catalog number will be used to automatically synchronized
-						the portal specimen records with those in the central database. Note that synchronization will only work if the primary identifier is
+						the portal occurrence records with those in the central database. Note that synchronization will only work if the primary identifier is
 						enforced as unique (e.g. no duplicates) within the local, central database.
 					</span>
 					<?php
@@ -232,9 +232,9 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					?>
 					<form name="expgeoform" action="../download/downloadhandler.php" method="post" onsubmit="return validateExpGeoForm(this);">
 						<fieldset>
-							<legend><b>Export Specimens Lacking Georeferencing Data</b></legend>
+							<legend><b>Export Occurrences Lacking Georeferencing Data</b></legend>
 							<div style="margin:15px;">
-								This module extracts specimens that lack decimal coordinates or have coordinates that needs to be verified.
+								This module extracts occurrences that lack decimal coordinates or have coordinates that needs to be verified.
 								This download will result in a Darwin Core Archive containing a UTF-8 encoded CSV file containing
 								only georeferencing relevant data columns for the occurrences. By default, occurrences
 								will be limited to records containing locality information but no decimal coordinates.
@@ -327,7 +327,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 					?>
 					<form name="downloadform" action="../download/downloadhandler.php" method="post" onsubmit="return validateDownloadForm(this);">
 						<fieldset>
-							<legend><b>Download Specimen Records</b></legend>
+							<legend><b>Download Occurrence Records</b></legend>
 							<table>
 								<tr>
 									<td>

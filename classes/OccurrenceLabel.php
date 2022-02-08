@@ -189,7 +189,7 @@ class OccurrenceLabel{
                     'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
                     'LEFT JOIN taxstatus AS ts ON t.tid = ts.tid '.
                     'LEFT JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
-                    $sqlWhere.' AND ts.taxauthid = 1 ';
+                    $sqlWhere.' ';
                 //echo $sql1; exit;
                 if($rs1 = $this->conn->query($sql1)){
                     while($row1 = $rs1->fetch_object()){
@@ -507,7 +507,7 @@ class OccurrenceLabel{
                 'INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
                 'INNER JOIN taxstatus AS ts ON t.tid = ts.tid '.
                 'INNER JOIN taxa AS t2 ON ts.parenttid = t2.tid '.
-                $sqlWhere.' AND t.rankid > 220 AND ts.taxauthid = 1 ';
+                $sqlWhere.' AND t.rankid > 220 ';
             if(!$speciesAuthors){
                 $sql1 .= 'AND t.unitname2 = t.unitname3 ';
             }

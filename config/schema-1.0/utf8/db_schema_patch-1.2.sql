@@ -194,13 +194,14 @@ COLUMN `footprintpoly`;
 
 ALTER TABLE `omoccurrences`
     ADD INDEX `Index_occurrenceRemarks`(`occurrenceRemarks`(100)),
-  CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
-DROP INDEX `idx_occrecordedby`,
-  MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
-  ADD INDEX `Index_locationID`(`locationID`),
-  ADD INDEX `Index_eventID`(`eventID`),
-  ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
-  ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`);
+    CHANGE COLUMN `labelProject` `labelProject` varchar(250) DEFAULT NULL,
+    DROP INDEX `idx_occrecordedby`,
+    MODIFY COLUMN `georeferenceRemarks` varchar(500) NULL DEFAULT NULL AFTER `georeferenceVerificationStatus`,
+    ADD INDEX `Index_locationID`(`locationID`),
+    ADD INDEX `Index_eventID`(`eventID`),
+    ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
+    ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`),
+    ADD INDEX `Index_ labelProject`(`labelProject`);
 
 REPLACE
 omoccurrencesfulltext(occid,locality,recordedby)
@@ -514,7 +515,8 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `paleoJSON` text NULL AFTER `exsiccatiNotes`,
     ADD INDEX `Index_uploadspec_othercatalognumbers`(`otherCatalogNumbers`),
     ADD INDEX `Index_decimalLatitude`(`decimalLatitude`),
-    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`);
+    ADD INDEX `Index_ decimalLongitude`(`decimalLongitude`),
+    ADD INDEX `Index_ institutionCode`(`institutionCode`);
 
 CREATE TABLE `uploadspectemppoints`
 (
@@ -526,47 +528,16 @@ CREATE TABLE `uploadspectemppoints`
     SPATIAL KEY `point` (`point`)
 ) ENGINE=MyISAM;
 
-DELIMITER
-//
-CREATE TRIGGER `uploadspectemp_insert`
-    AFTER INSERT
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
+CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		INSERT INTO uploadspectemppoints (`upspid`,`point`)
 		VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
-END IF;
-END
-//
+    END IF;
+END;
 
-CREATE TRIGGER `uploadspectemp_update`
-    AFTER UPDATE
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
-    IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
-		IF EXISTS (SELECT `upspid` FROM uploadspectemppoints WHERE `upspid`=NEW.`upspid`) THEN
-    UPDATE uploadspectemppoints
-    SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
-    WHERE `upspid` = NEW.`upspid`;
-    ELSE
-			INSERT INTO uploadspectemppoints (`upspid`,`point`)
-			VALUES (NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
-END IF;
-END IF;
-END
-//
-
-CREATE TRIGGER `uploadspectemp_delete`
-    BEFORE DELETE
-    ON `uploadspectemp`
-    FOR EACH ROW
-BEGIN
+CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EACH ROW BEGIN
     DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
-END //
-
-DELIMITER;
+END;
 
 ALTER TABLE `uploadtaxa`
 DROP INDEX `UNIQUE_sciname` ,
@@ -612,3 +583,24 @@ ON u.uid = ul.uid
         u.lastlogindate = ul.lastlogindate;
 
 DROP TABLE IF EXISTS `userlogin`;
+
+DELETE te.* FROM taxaenumtree AS te LEFT JOIN taxauthority AS ta ON te.taxauthid = ta.taxauthid
+WHERE ta.isprimary <> 1;
+
+ALTER TABLE `taxaenumtree` DROP FOREIGN KEY `FK_tet_taxauth`;
+
+ALTER TABLE `taxaenumtree`
+    DROP COLUMN `taxauthid`,
+    DROP INDEX `FK_tet_taxauth`;
+
+DELETE ts.* FROM taxstatus AS ts LEFT JOIN taxauthority AS ta ON ts.taxauthid = ta.taxauthid
+WHERE ta.isprimary <> 1;
+
+ALTER TABLE `taxstatus` DROP FOREIGN KEY `FK_taxstatus_taid`;
+
+ALTER TABLE `taxstatus`
+    DROP COLUMN `taxauthid`,
+    DROP INDEX `FK_taxstatus_taid`;
+
+ALTER TABLE `configurations`
+    ADD UNIQUE INDEX `configurationname`(`configurationname`);

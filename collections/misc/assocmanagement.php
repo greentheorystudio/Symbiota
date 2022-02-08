@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../../config/symbini.php');
+require_once(__DIR__ . '/../../config/symbbase.php');
 require_once(__DIR__ . '/../../classes/OccurrenceAssociations.php');
 require_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -45,7 +45,7 @@ if($GLOBALS['SYMB_UID']){
 		<script type="text/javascript">
 
 		</script>
-		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20210621" type="text/javascript"></script>
+		<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/symb/shared.js?ver=20211227" type="text/javascript"></script>
 	</head>
 	<body>
 		<?php

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;

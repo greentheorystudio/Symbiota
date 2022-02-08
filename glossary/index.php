@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -139,7 +139,7 @@ $indTermUrl = 'individual.php';
 		}
 
 	</script>
-	<script src="../js/symb/glossary.index.js?ver=20160720" type="text/javascript"></script>
+	<script src="../js/symb/glossary.index.js?ver=20220113" type="text/javascript"></script>
 </head>
 <body>
 	<?php
