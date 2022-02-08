@@ -137,7 +137,7 @@ class OccurrenceMaintenance {
 			$this->outputMsg('Updating null families using taxonomic thesaurus... ', 1);
 		}
 		$sql1 = 'SELECT o.occid FROM omoccurrences o INNER JOIN taxstatus ts ON o.tidinterpreted = ts.tid '.
-			'WHERE o.collid IN('.$collId.') AND (ts.taxauthid = 1) AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
+			'WHERE o.collid IN('.$collId.') AND (ts.family IS NOT NULL) AND (o.family IS NULL)';
 		$rs1 = $this->conn->query($sql1);
 		$occidArr5 = array();
 		while($r1 = $rs1->fetch_object()){
@@ -209,7 +209,7 @@ class OccurrenceMaintenance {
 		$rs->free();
 		$sql2 = 'SELECT DISTINCT ts.tid '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-			'WHERE (ts.taxauthid = 1) AND (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
+			'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
 			$sensitiveArr[] = $r2->tid;
@@ -242,8 +242,7 @@ class OccurrenceMaintenance {
 			'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 			'INNER JOIN fmchecklists c ON o.stateprovince = c.locality '. 
 			'INNER JOIN fmchklsttaxalink cl ON c.clid = cl.clid AND ts2.tid = cl.tid '.
-			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (c.type = "rarespp") '.
-			'AND (ts1.taxauthid = 1) AND (ts2.taxauthid = 1) ';
+			'WHERE (o.localitysecurity IS NULL OR o.localitysecurity = 0) AND (o.localitySecurityReason IS NULL) AND (c.type = "rarespp") ';
 		if($collid) {
 			$sql .= ' AND o.collid IN(' . $collid . ') ';
 		}
@@ -310,7 +309,7 @@ class OccurrenceMaintenance {
         $rs->free();
         $sql2 = 'SELECT DISTINCT ts.tid '.
             'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-            'WHERE (ts.taxauthid = 1) AND (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
+            'WHERE (t.SecurityStatus > 0) AND (t.tid != ts.tid)';
         $rs2 = $this->conn->query($sql2);
         while($r2 = $rs2->fetch_object()){
             $sensitiveArr[] = $r2->tid;

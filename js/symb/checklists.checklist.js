@@ -11,8 +11,7 @@ $(document).ready(function() {
 			$.getJSON( "../webservices/autofillsciname.php", {
 				term: request.term,
 				limit: 10,
-				hideauth: true,
-				taid: 1
+				hideauth: true
 			}, response );
 		}
 	},{ minLength: 3 });

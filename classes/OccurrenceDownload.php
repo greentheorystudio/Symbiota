@@ -376,41 +376,14 @@ class OccurrenceDownload{
         $sql = '';
 		if($this->schemaType === 'checklist'){
             if($GLOBALS['SOLR_MODE'] && ($this->tidArr || $this->occArr)){
-                if($this->taxonFilter){
-                    $tidStr = implode(',',$this->tidArr);
-                    $sql = 'SELECT DISTINCT ts.family, t.sciname AS scientificName, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-                        'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-                        'FROM taxstatus AS ts INNER JOIN taxa AS t ON ts.TidAccepted = t.Tid '.
-                        'WHERE ts.tid IN('.$tidStr.') AND (ts.taxauthid = '.$this->taxonFilter.') '.
-                        'ORDER BY ts.family, t.SciName ';
-                }
-                else{
-                    $occStr = implode(',',$this->occArr);
-                    $sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-                        'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-                        'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
-                        'WHERE o.occid IN('.$occStr.') AND o.sciname IS NOT NULL '.
-                        'ORDER BY IFNULL(o.family,"not entered"), o.sciname ';
-                }
+                $occStr = implode(',',$this->occArr);
+                $sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
+                    'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
+                    'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.tid '.
+                    'WHERE o.occid IN('.$occStr.') AND o.sciname IS NOT NULL '.
+                    'ORDER BY IFNULL(o.family,"not entered"), o.sciname ';
             }
-            else if($this->taxonFilter){
-				$sql = 'SELECT DISTINCT ts.family, t.sciname AS scientificName, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
-					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
-					'FROM omoccurrences o INNER JOIN taxstatus ts ON o.TidInterpreted = ts.Tid '.
-					'INNER JOIN taxa t ON ts.TidAccepted = t.Tid ';
-				$sql .= $this->setTableJoins($this->sqlWhere);
-				$sql .= $this->sqlWhere.'AND t.RankId > 140 AND (ts.taxauthid = '.$this->taxonFilter.') ';
-				if($this->redactLocalities){
-					if($this->rareReaderArr){
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL OR c.collid IN('.implode(',',$this->rareReaderArr).')) ';
-					}
-					else{
-						$sql .= 'AND (o.localitySecurity = 0 OR o.localitySecurity IS NULL) ';
-					}
-				}
-				$sql .= 'ORDER BY ts.family, t.SciName ';
-			}
-			else{
+            else{
 				$sql = 'SELECT DISTINCT IFNULL(o.family,"not entered") AS family, o.sciname, CONCAT_WS(" ",t.unitind1,t.unitname1) AS genus, '.
 					'CONCAT_WS(" ",t.unitind2,t.unitname2) AS specificEpithet, t.unitind3 AS taxonRank, t.unitname3 AS infraSpecificEpithet, t.author AS scientificNameAuthorship '.
 					'FROM omoccurrences o LEFT JOIN taxa t ON o.tidinterpreted = t.tid ';
@@ -664,13 +637,6 @@ class OccurrenceDownload{
 	{
 		if($cond === 0 || $cond === false){
 			$this->redactLocalities = false;
-		}
-	}
-
-	public function setTaxonFilter($filter): void
-	{
-		if(is_numeric($filter)){
-			$this->taxonFilter = $filter;
 		}
 	}
 

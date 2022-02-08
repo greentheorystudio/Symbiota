@@ -141,8 +141,7 @@ class OccurrenceAPIManager{
         if($prevDet !== $sciname){
             $sql = 'SELECT ts.tidaccepted, ts.family, t.Author '.
                 'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-                'LEFT JOIN taxauthority AS ta ON ts.taxauthid = ta.taxauthid '.
-                'WHERE t.SciName = "'.$sciname.'" AND ta.isprimary = 1 ';
+                'WHERE t.SciName = "'.$sciname.'" ';
             //echo "<div>Sql: ".$sql."</div>";
             $result = $this->conn->query($sql);
             while($row = $result->fetch_object()){

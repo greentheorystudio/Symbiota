@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../config/includes/searchVarDefault.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../classes/SpatialModuleManager.php');
@@ -77,7 +77,7 @@ $dbArr = array();
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Spatial Module</title>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?<?php echo $GLOBALS['CSS_VERSION_LOCAL']; ?>" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.mobile-1.4.0.min.css?ver=20210817" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
@@ -85,7 +85,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=17" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220203" type="text/css" rel="stylesheet" />
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
@@ -132,10 +132,6 @@ $dbArr = array();
         });
 
         $(document).ready(function() {
-            if(document.getElementById("layercontroltable")){
-                setLayersTable();
-            }
-
             if(document.getElementById("taxa")){
                 $( "#taxa" )
                     .bind( "keydown", function( event ) {
@@ -675,34 +671,6 @@ $dbArr = array();
         }
     });
 
-    function editVectorLayers(c,title){
-        const layer = c.value;
-        if(c.checked === true){
-            const layerName = '<?php echo ($GLOBALS['GEOSERVER_LAYER_WORKSPACE'] ?? ''); ?>:'+layer;
-            const layerSourceName = layer + 'Source';
-            layersArr[layerSourceName] = new ol.source.ImageWMS({
-                url: 'rpc/GeoServerConnector.php',
-                params: {'LAYERS':layerName, 'datatype':'vector'},
-                serverType: 'geoserver',
-                crossOrigin: 'anonymous',
-                imageLoadFunction: function(image, src) {
-                    imagePostFunction(image, src);
-                }
-            });
-            layersArr[layer] = new ol.layer.Image({
-                source: layersArr[layerSourceName]
-            });
-            layersArr[layer].setOpacity(0.3);
-            map.addLayer(layersArr[layer]);
-            refreshLayerOrder();
-            addLayerToSelList(layer,title);
-        }
-        else{
-            map.removeLayer(layersArr[layer]);
-            removeLayerToSelList(layer);
-        }
-    }
-
     const mapView = new ol.View({
         zoom: <?php echo $mapZoom; ?>,
         projection: 'EPSG:3857',
@@ -731,6 +699,8 @@ $dbArr = array();
         overlays: [popupoverlay,finderpopupoverlay],
         renderer: 'canvas'
     });
+
+    changeBaseMap();
 
     const scaleLineControl_us = new ol.control.ScaleLine({
         target: document.getElementById('mapscale_us'),
@@ -1124,11 +1094,6 @@ $dbArr = array();
                         }
                     });
                 }
-                else{
-                    viewResolution = (mapView.getResolution());
-                    url = layersArr[layerIndex].getGetFeatureInfoUrl(evt.coordinate, viewResolution, 'EPSG:3857', {'INFO_FORMAT': 'application/json'});
-                    selectObjectFromID(url, activeLayer);
-                }
             }
         }
     });
@@ -1161,28 +1126,6 @@ $dbArr = array();
             transformInteraction.setCenter(evt.features.getArray()[0].getGeometry().getFirstCoordinate());
         }
     });
-
-    function selectObjectFromID(url,selectLayer){
-        $.ajax({
-            type: "GET",
-            url: url,
-            async: true
-        }).done(function(msg) {
-            if(msg){
-                const infoArr = JSON.parse(msg);
-                const objID = infoArr['features'][0]['id'];
-                const url = 'rpc/GeoServerConnector.php?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=<?php echo ($GLOBALS['GEOSERVER_LAYER_WORKSPACE'] ?? ''); ?>:'+selectLayer+'&featureid='+objID+'&outputFormat=application/json&srsname=EPSG:3857';
-                $.get(url, function(data){
-                    const features = new ol.format.GeoJSON().readFeatures(data);
-                    if(features){
-                        selectsource.addFeatures(features);
-                        document.getElementById("selectlayerselect").value = 'select';
-                        setActiveLayer();
-                    }
-                });
-            }
-        });
-    }
 
     typeSelect.onchange = function() {
         map.removeInteraction(draw);

@@ -35,7 +35,11 @@ class OccurrenceListManager extends OccurrenceManager{
             'CONCAT_WS("-",o.minimumElevationInMeters, o.maximumElevationInMeters) AS elev, o.observeruid, '.
             'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
         $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
-        $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.$this->setTableJoins($sqlWhere).$sqlWhere;
+        $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+        $sql .= $this->setTableJoins($sqlWhere);
+        $sql .= $sqlWhere;
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
             $sortFields = array('Collection' => 'collection','Catalog Number' => 'o.CatalogNumber','Family' => 'o.family',
                 'Scientific Name' => 'o.sciname','Collector' => 'o.recordedBy','Number' => 'o.recordNumber','Event Date' => 'o.eventDate',
@@ -147,7 +151,10 @@ class OccurrenceListManager extends OccurrenceManager{
 
     private function setRecordCnt($sqlWhere): void
     {
-        $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences AS o '.$this->setTableJoins($sqlWhere).$sqlWhere;
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+        $sql .= $this->setTableJoins($sqlWhere);
+        $sql .= $sqlWhere;
         //echo "<div>Count sql: ".$sql."</div>";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){

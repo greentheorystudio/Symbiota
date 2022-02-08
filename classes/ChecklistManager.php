@@ -129,18 +129,6 @@ class ChecklistManager {
 		return $retArr;
 	}
 
-	public function getTaxonAuthorityList(): array
-	{
-    	$taxonAuthList = array();
-		$sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta WHERE (ta.isactive <> 0)';
- 		$rs = $this->conn->query($sql);
-		while ($row = $rs->fetch_object()){
-			$taxonAuthList[$row->taxauthid] = $row->name;
-		}
-		$rs->free();
-		return $taxonAuthList;
-	}
-
 	public function getTaxaList($pageNumber, $retLimit){
 		if($this->clid || $this->dynClid) {
             $speciesPrev = '';
@@ -288,7 +276,7 @@ class ChecklistManager {
 				'(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN images i ON ts2.tid = i.tid '.
-				'WHERE i.sortsequence < 500 AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+				'WHERE i.sortsequence < 500 '.
 				'AND (ts1.tid IN('.implode(',',$tidReturn).')) '.
 				'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
 			//echo $sql;
@@ -306,7 +294,7 @@ class ChecklistManager {
 					'(SELECT ts1.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 					'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 					'INNER JOIN images i ON ts2.tid = i.tid '.
-					'WHERE i.sortsequence < 500 AND ts1.taxauthid = 1 AND ts2.taxauthid = 1 '.
+					'WHERE i.sortsequence < 500 '.
 					'AND (ts1.parenttid IN('.implode(',',$missingArr).')) '.
 					'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid';
 				//echo $sql;
@@ -326,7 +314,7 @@ class ChecklistManager {
 			$sql = 'SELECT ts1.tid, v.vernacularname '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
 				'INNER JOIN taxavernaculars v ON ts2.tid = v.tid '.
-				'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tidReturn).')) ';
+				'WHERE (ts1.tid IN('.implode(',',$tidReturn).')) ';
 			$sql .= 'ORDER BY v.sortsequence DESC ';
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
@@ -470,26 +458,17 @@ class ChecklistManager {
 			if($this->childClidArr){
 				$clidStr .= ','.implode(',',$this->childClidArr);
 			}
-			if($this->thesFilter){
-				$this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,ts.family) AS family, '.
-					't.sciname, t.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
-					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
-					'INNER JOIN fmchklsttaxalink ctl ON ts.tid = ctl.tid '.
-			  		'WHERE (ts.taxauthid = '.$this->thesFilter.') AND (ctl.clid IN ('.$clidStr.')) ';
-			}
-			else{
-				$this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,ts.family) AS family, '.
-					't.sciname, t.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
-					'FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
-					'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			  		'WHERE (ts.taxauthid = 1) AND (ctl.clid IN ('.$clidStr.')) ';
-			}
+            $this->basicSql = 'SELECT DISTINCT t.tid, IFNULL(ctl.familyoverride,ts.family) AS family, '.
+                't.sciname, t.author, ctl.habitat, ctl.abundance, ctl.notes, ctl.source '.
+                'FROM taxa t INNER JOIN fmchklsttaxalink ctl ON t.tid = ctl.tid '.
+                'INNER JOIN taxstatus ts ON t.tid = ts.tid '.
+                'WHERE (ctl.clid IN ('.$clidStr.')) ';
 		}
 		else{
 			$this->basicSql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
 				'INNER JOIN fmdyncltaxalink ctl ON t.tid = ctl.tid '.
-    	  		'WHERE (ts.taxauthid = '.($this->thesFilter?:'1').') AND (ctl.dynclid = '.$this->dynClid.') ';
+    	  		'WHERE (ctl.dynclid = '.$this->dynClid.') ';
 		}
 		if($this->taxonFilter){
 			if($this->searchCommon){
@@ -506,7 +485,7 @@ class ChecklistManager {
 				}
 				$sqlWhere .= 'OR (t.tid IN(SELECT e.tid '.
 					'FROM taxa t3 INNER JOIN taxaenumtree e ON t3.tid = e.parenttid '.
-					'WHERE (e.taxauthid = '.($this->thesFilter?:'1').') AND (t3.sciname = "'.$this->taxonFilter.'")))';
+					'WHERE (t3.sciname = "'.$this->taxonFilter.'")))';
 				if($sqlWhere) {
 					$this->basicSql .= 'AND (' . substr($sqlWhere, 2) . ') ';
 				}
@@ -572,16 +551,6 @@ class ChecklistManager {
 			$retArr[0] = $tempArr;
 		}
 		return $retArr;
-	}
-
-	public function setThesFilter($filt): void
-	{
-		$this->thesFilter = (int)$filt;
-	}
-
-	public function getThesFilter(): int
-	{
-		return $this->thesFilter;
 	}
 
 	public function setTaxonFilter($tFilter): void

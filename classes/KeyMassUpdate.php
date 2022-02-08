@@ -53,14 +53,14 @@ class KeyMassUpdate extends KeyManager{
 		$sqlWhere = '';
 		if($tidFilter){
 			$sqlBase .= 'INNER JOIN taxaenumtree e ON ts.tid = e.tid ';
-			$sqlWhere .= 'AND (e.taxauthid = '.$this->taxAuthId.') AND (e.parenttid = '.$tidFilter.') ';
+			$sqlWhere .= 'AND (e.parenttid = '.$tidFilter.') ';
 		}
 		if(!$generaOnly){
 			$sql = 'SELECT DISTINCT t.tid, t.sciname, ts2.parenttid '.
 				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
 				'INNER JOIN taxstatus ts2 ON t.tid = ts2.tid '.
 				'INNER JOIN fmchklsttaxalink c ON ts.tid = c.tid '.$sqlBase.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (t.rankid = 220) AND (c.clid = '.$this->clid.') '.$sqlWhere;
+				'WHERE (t.rankid = 220) AND (c.clid = '.$this->clid.') '.$sqlWhere;
 			//echo $sql; exit;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -76,8 +76,7 @@ class KeyMassUpdate extends KeyManager{
 			'INNER JOIN taxstatus ts2 ON t.tid = ts2.tid '.
 			'INNER JOIN taxstatus ts ON e2.tid = ts.tidaccepted '.
 			'INNER JOIN fmchklsttaxalink c ON ts.tid = c.tid '.$sqlBase.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (e2.taxauthid = '.$this->taxAuthId.') '.
-			'AND (t.rankid <= 220) AND (t.rankid >= 140) AND (c.clid = '.$this->clid.') '.$sqlWhere;
+			'WHERE (t.rankid <= 220) AND (t.rankid >= 140) AND (c.clid = '.$this->clid.') '.$sqlWhere;
 		//echo $sql2; exit;
 		$rs2 = $this->conn->query($sql2);
 		while($r2 = $rs2->fetch_object()){
@@ -219,7 +218,7 @@ class KeyMassUpdate extends KeyManager{
 		$sql = 'SELECT DISTINCT t.tid, t.sciname '. 
 			'FROM fmchklsttaxalink c INNER JOIN taxaenumtree e ON c.tid = e.tid '.
 			'INNER JOIN taxa t ON e.parenttid = t.tid '.
-			'WHERE (c.clid = '.$this->clid.') AND (t.rankid >= 140) AND (t.rankid < 180) AND (e.taxauthid = 1) '.
+			'WHERE (c.clid = '.$this->clid.') AND (t.rankid >= 140) AND (t.rankid < 180) '.
 			'ORDER BY t.sciname ';
 		//echo $sql;
 		$rs = $this->conn->query($sql);

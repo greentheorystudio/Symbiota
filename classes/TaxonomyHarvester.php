@@ -9,7 +9,6 @@ class TaxonomyHarvester extends Manager{
 
     private $taxonomicResource = '';
     private $tidAccepted = 0;
-    private $taxAuthId = 1;
     private $defaultAuthor;
     private $defaultFamily;
     private $kingdomName;
@@ -68,7 +67,7 @@ class TaxonomyHarvester extends Manager{
 				$parentTid = $this->getTid($parentArr);
 				if($parentTid){
 					$taxonArr['parent']['tid'] = $parentTid;
-					$parentTidAccepted = (new TaxonomyUtilities)->getTidAccepted($parentTid,$this->taxAuthId);
+					$parentTidAccepted = (new TaxonomyUtilities)->getTidAccepted($parentTid);
 					if($parentTidAccepted === $parentTid){
 						$tid = $this->loadNewTaxon($taxonArr);
 					}
@@ -666,7 +665,7 @@ class TaxonomyHarvester extends Manager{
             $rs->free();
             $loadTaxon = true;
             if($newTid){
-                $sql = 'SELECT tidaccepted FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$newTid.')';
+                $sql = 'SELECT tidaccepted FROM taxstatus WHERE (tid = '.$newTid.')';
                 $rs = $this->conn->query($sql);
                 if($r = $rs->fetch_object()){
                     $tidAccepted = (int)$r->tidaccepted;
@@ -713,18 +712,18 @@ class TaxonomyHarvester extends Manager{
                         if(!$tidAccepted) {
                             $tidAccepted = $newTid;
                         }
-                        $sqlInsert2 = 'INSERT INTO taxstatus(tid,tidAccepted,taxAuthId,parentTid,UnacceptabilityReason) '.
-                            'VALUES('.$newTid.','.$tidAccepted.','.$this->taxAuthId.','.$parentTid.','.
+                        $sqlInsert2 = 'INSERT INTO taxstatus(tid,tidAccepted,parentTid,UnacceptabilityReason) '.
+                            'VALUES('.$newTid.','.$tidAccepted.','.$parentTid.','.
                             (isset($taxonArr['acceptanceReason']) && $taxonArr['acceptanceReason']?'"'.$taxonArr['acceptanceReason'].'"':'NULL').')';
                         //echo $sqlInsert2.'<br/><br/>';
                         if($this->conn->query($sqlInsert2)){
-                            $sqlHier = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-                                'VALUES('.$newTid.','.$parentTid.','.$this->taxAuthId.')';
+                            $sqlHier = 'INSERT INTO taxaenumtree(tid,parenttid) '.
+                                'VALUES('.$newTid.','.$parentTid.')';
                             if(!$this->conn->query($sqlHier)){
                                 echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 1).</li>';
                             }
-                            $sqlHier2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) '.
-                                'SELECT '.$newTid.' AS tid, parenttid, taxauthid FROM taxaenumtree WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$parentTid.')';
+                            $sqlHier2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+                                'SELECT '.$newTid.' AS tid, parenttid FROM taxaenumtree WHERE (tid = '.$parentTid.')';
                             if(!$this->conn->query($sqlHier2)){
                                 echo '<li style="margin-left:15px;">ERROR adding new tid to taxaenumtree (step 2).</li>';
                             }
@@ -732,7 +731,7 @@ class TaxonomyHarvester extends Manager{
                                 'INNER JOIN taxa AS t2 ON e.parenttid = t2.tid '.
                                 'LEFT JOIN taxonkingdoms AS k ON t2.sciname = k.kingdom_name '.
                                 'SET t.kingdomname = k.kingdom_name, t.kingdomId = k.kingdom_id '.
-                                'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (t.tid = '.$newTid.') AND (t2.rankid = 10)';
+                                'WHERE (t.tid = '.$newTid.') AND (t2.rankid = 10)';
                             if(!$this->conn->query($sqlKing)){
                                 echo '<li style="margin-left:15px;">ERROR updating kingdom string.</li>';
                             }
@@ -874,7 +873,7 @@ class TaxonomyHarvester extends Manager{
 		if(!$this->kingdomName || !$this->kingdomTid){
 			$sql = 'SELECT t.sciname, t.tid, COUNT(e.tid) as cnt '.
 				'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
-				'WHERE (t.rankid = 10) AND (e.taxauthid = '.$this->taxAuthId.') '.
+				'WHERE (t.rankid = 10) '.
 				'GROUP BY t.sciname '.
 				'ORDER BY cnt desc';
 			$rs = $this->conn->query($sql);
@@ -1077,7 +1076,7 @@ class TaxonomyHarvester extends Manager{
                 elseif(count($tidArr) > 1){
                     $sqlPar = 'SELECT DISTINCT e.tid, t.tid AS parenttid, t.sciname, t.rankid '.
                         'FROM taxaenumtree e INNER JOIN taxa t ON e.parenttid = t.tid '.
-                        'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (e.tid IN('.implode(',',array_keys($tidArr)).')) AND (t.rankid IN (10,140)) ';
+                        'WHERE (e.tid IN('.implode(',',array_keys($tidArr)).')) AND (t.rankid IN (10,140)) ';
                     $rsPar = $this->conn->query($sqlPar);
                     while($rPar = $rsPar->fetch_object()){
                         if($r->rankid === 10) {
@@ -1134,13 +1133,6 @@ class TaxonomyHarvester extends Manager{
 	public function getTidAccepted(): int
     {
 		return $this->tidAccepted;
-	}
-
-    public function setTaxAuthId($id): void
-	{
-		if(is_numeric($id)){
-			$this->taxAuthId = $id;
-		}
 	}
 
     public function setKingdomTid($id): void

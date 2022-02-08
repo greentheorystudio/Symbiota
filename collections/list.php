@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -28,7 +28,7 @@ if($stArrJson){
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet" />
-    <link href="../css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="../css/bootstrap.css?ver=20220202" type="text/css" rel="stylesheet" />
     <link type="text/css" href="../css/jquery-ui.css" rel="stylesheet" />
     <style type="text/css">
         .ui-tabs .ui-tabs-nav li { width:32%; }
@@ -121,13 +121,12 @@ if($stArrJson){
             http.send(params);
         }
 
-        function getTaxaList(val){
-            document.getElementById("dh-taxonFilterCode").value = val;
+        function getTaxaList(){
             document.getElementById("taxalist").innerHTML = "<p>Loading...</p>";
             const http = new XMLHttpRequest();
             const url = "rpc/getchecklist.php";
             const jsonStarr = encodeURIComponent(JSON.stringify(stArr));
-            const params = 'starr='+jsonStarr+'&taxonfilter='+val;
+            const params = 'starr='+jsonStarr;
             //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -140,12 +139,10 @@ if($stArrJson){
         }
 
         function submitInteractiveKeyFormTaxaList(){
-            document.getElementById("interactiveKeyFormTaxonfilter").value = document.getElementById("taxonfilter").value;
             document.getElementById('interactiveKeyForm').submit();
         }
 
         function submitChecklistExplorerFormTaxaList(){
-            document.getElementById("checklistExplorerFormTaxonfilter").value = document.getElementById("taxonfilter").value;
             document.getElementById('checklistExplorerForm').submit();
         }
     </script>
@@ -188,7 +185,6 @@ echo '</div>';
         <input id="dh-filename" name="dh-filename" type="hidden" />
         <input id="dh-contentType" name="dh-contentType" type="hidden" />
         <input id="dh-selections" name="dh-selections" type="hidden" />
-        <input id="dh-taxonFilterCode" name="dh-taxonFilterCode" type="hidden" />
         <input id="schemacsv" name="schemacsv" type="hidden" />
         <input id="identificationscsv" name="identificationscsv" type="hidden" />
         <input id="imagescsv" name="imagescsv" type="hidden" />

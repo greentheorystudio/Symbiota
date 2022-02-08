@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceListManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
 
@@ -140,9 +140,6 @@ if($recArr){
     $recordListHtml .= '<th>Decimal Latitude</th>';
     $recordListHtml .= '<th>Decimal Longitude</th>';
     $recordListHtml .= '<th>Habitat</th>';
-    if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']) {
-        $recordListHtml .= '<th>Host</th>';
-    }
     $recordListHtml .= '<th>Substrate</th>';
     $recordListHtml .= '<th>Elevation</th>';
     $recordListHtml .= '<th>Associated Taxa</th>';
@@ -196,14 +193,6 @@ if($recArr){
         }
         else{
             $recordListHtml .= '<td></td>'."\n";
-        }
-        if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-            if(array_key_exists('assochost',$occArr)){
-                $recordListHtml .= '<td>'.((strlen($occArr['assochost'])>80)?substr($occArr['assochost'],0,80).'...':$occArr['assochost']).'</td>'."\n";
-            }
-            else{
-                $recordListHtml .= '<td></td>'."\n";
-            }
         }
         if(array_key_exists('substrate',$occArr)){
             $recordListHtml .= '<td>'.((strlen($occArr['substrate'])>80)?substr($occArr['substrate'],0,80).'...':$occArr['substrate']).'</td>'."\n";
