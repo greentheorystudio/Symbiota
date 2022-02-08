@@ -18,11 +18,11 @@ date_default_timezone_set('America/Phoenix');
 
 require_once(__DIR__ . '/ImageBatchConf.php');
 if(file_exists('../../../config/symbini.php')){
-	include_once(__DIR__ . '/../../../config/symbini.php');
+	include_once(__DIR__ . '/../../../config/symbbase.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
 }
 elseif(isset($GLOBALS['SERVER_ROOT']) && $GLOBALS['SERVER_ROOT']){
-	include_once(__DIR__ . '/../../../config/symbini.php');
+	include_once(__DIR__ . '/../../../config/symbbase.php');
 	@include(__DIR__ . '/../../../collections/specprocessor/standalone_scripts/ImageBatchConnectionFactory.php');
 	require_once(__DIR__ . '/../../../classes/ImageBatchProcessor.php');
 }

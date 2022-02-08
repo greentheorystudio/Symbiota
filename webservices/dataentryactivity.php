@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceDownload.php');
 
 $format = array_key_exists('format',$_REQUEST)?$_REQUEST['format']:'rss';

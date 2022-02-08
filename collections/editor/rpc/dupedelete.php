@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbbase.php');
 include_once(__DIR__ . '/../../../classes/OccurrenceDuplicate.php');
 
 $dupid = array_key_exists('dupid',$_REQUEST)?(int)$_REQUEST['dupid']:0;

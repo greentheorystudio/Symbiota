@@ -13,7 +13,7 @@
  * 
  */
 
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 require_once(__DIR__ . '/../classes/WsOccurEditor.php');
 
 $occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;

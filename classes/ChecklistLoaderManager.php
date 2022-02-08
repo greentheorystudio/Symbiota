@@ -24,7 +24,7 @@ class ChecklistLoaderManager {
 		}
 	}
 
-	public function uploadCsvList($thesId): int
+	public function uploadCsvList(): int
 	{
 		set_time_limit(300);
 		ini_set('max_input_time',300);
@@ -56,19 +56,10 @@ class ChecklistLoaderManager {
                         $rankId = 0;
                         $family = '';
                         $sciNameArr = (new TaxonomyUtilities)->parseScientificName($sciNameStr);
-                        if($thesId && is_numeric($thesId)){
-                            $sql = 'SELECT t2.tid, t.sciname, ts.family, t2.rankid '.
-                                'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) '.
-                                'INNER JOIN taxa t2 ON ts.tidaccepted = t2.tid '.
-                                'WHERE (ts.taxauthid = '.$thesId.') ';
-                        }
-                        else{
-                            $sql = 'SELECT t.tid, t.sciname, ts.family, t.rankid '.
-                                'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-                                'WHERE ts.taxauthid = 1 ';
-                        }
+                        $sql = 'SELECT t.tid, t.sciname, ts.family, t.rankid '.
+                            'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid ';
                         $cleanSciName = $this->encodeString($sciNameArr['sciname']);
-                        $sql .= 'AND (t.sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
+                        $sql .= 'WHERE (t.sciname IN("'.$sciNameStr.'"'.($cleanSciName?',"'.$cleanSciName.'"':'').'))';
                         $rs = $this->conn->query($sql);
                         if($rs){
                             while($row = $rs->fetch_object()){
@@ -214,17 +205,6 @@ class ChecklistLoaderManager {
 	public function getChecklistMetadata(): array
 	{
 		return $this->clMeta;
-	}
-
-	public function getThesauri(): array
-	{
-		$retArr = array();
-		$sql = 'SELECT taxauthid, name FROM taxauthority WHERE isactive = 1';
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$retArr[$row->taxauthid] = $row->name;
-		}
-		return $retArr;
 	}
 
 	private function encodeString($inStr): string

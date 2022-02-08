@@ -29,10 +29,10 @@ class TaxonProfileMap {
 			$taxonValue = $this->conn->real_escape_string($tValue);
 			$sql = 'SELECT t.tid, t.sciname FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted ';
 			if(is_numeric($taxonValue)){
-				$sql .= 'WHERE (ts.tid = '.$taxonValue.') AND (ts.taxauthid = 1)';
+				$sql .= 'WHERE (ts.tid = '.$taxonValue.')';
 			}
 			else{
-				$sql .= 'INNER JOIN taxa t2 ON ts.tid = t2.tid WHERE (t2.sciname = "'.$taxonValue.'") AND (ts.taxauthid = 1)';
+				$sql .= 'INNER JOIN taxa t2 ON ts.tid = t2.tid WHERE (t2.sciname = "'.$taxonValue.'")';
 			}
 			//echo '<div>'.$sql.'</div>';
 			$result = $this->conn->query($sql);
@@ -56,7 +56,7 @@ class TaxonProfileMap {
 		$retArr = array();
 		if($inArr){
 			$sql = 'SELECT t.tid, t.sciname FROM taxstatus ts INNER JOIN taxa t ON ts.tid = t.tid '.
-				'WHERE ts.taxauthid = 1 AND ts.parenttid IN('.implode(',',$inArr).') AND (ts.tid = ts.tidaccepted)';
+				'WHERE ts.parenttid IN('.implode(',',$inArr).') AND (ts.tid = ts.tidaccepted)';
 			//echo '<div>SQL: '.$sql.'</div>';
 	        $rs = $this->conn->query($sql);
 	        while($r = $rs->fetch_object()){
@@ -75,7 +75,7 @@ class TaxonProfileMap {
 	{
 		if($inArray){
 			$sql = 'SELECT s.tid, s.tidaccepted, t.SciName FROM taxa t LEFT JOIN taxstatus s on t.TID = s.tid '.
-				'WHERE s.taxauthid = 1 AND s.tidaccepted IN('.implode(',',$inArray).') AND (s.tid <> s.tidaccepted)';
+				'WHERE s.tidaccepted IN('.implode(',',$inArray).') AND (s.tid <> s.tidaccepted)';
 			//echo '<div>SQL: '.$sql.'</div>';
 	        $rs = $this->conn->query($sql);
 	        while($r = $rs->fetch_object()){

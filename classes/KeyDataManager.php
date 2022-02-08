@@ -75,7 +75,6 @@ class KeyDataManager extends Manager{
 				'INNER JOIN fmchklstprojlink clpl ON cl.CLID = clpl.clid ' .
 				'WHERE (clpl.pid = ' .$this->pid. ') ';
 		}
-		$sql .= 'AND (ts.taxauthid = 1)';
 		//echo $sql.'<br/>'; exit;
 		$result = $this->conn->query($sql);
 		while($row = $result->fetch_object()){
@@ -447,7 +446,7 @@ class KeyDataManager extends Manager{
             if($this->dynClid){
                 $sqlFromBase = 'INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
 					'INNER JOIN fmdyncltaxalink clk ON t.tid = clk.tid ';
-                $sqlWhere = 'WHERE (clk.dynclid = ' .$this->dynClid. ') AND ts.taxauthid = 1 AND t.RankId = 220 ';
+                $sqlWhere = 'WHERE (clk.dynclid = ' .$this->dynClid. ') AND t.RankId = 220 ';
             }
             else{
                 $sqlFromBase = 'INNER JOIN taxstatus ts ON t.tid = ts.tid) ';
@@ -458,10 +457,10 @@ class KeyDataManager extends Manager{
                     $sqlFromBase .= 'INNER JOIN fmchklsttaxalink clk ON t.tid = clk.tid ';
                 }
                 if($this->clType === 'dynamic'){
-                    $sqlWhere = 'WHERE ts.taxauthid = 1 AND t.RankId = 220 AND (' .$this->dynamicSql. ') ';
+                    $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->dynamicSql. ') ';
                 }
                 else{
-                    $sqlWhere = 'WHERE (clk.clid = ' .$this->clid. ') AND ts.taxauthid = 1 AND t.RankId = 220 ';
+                    $sqlWhere = 'WHERE (clk.clid = ' .$this->clid. ') AND t.RankId = 220 ';
                 }
             }
             if($this->commonDisplay){

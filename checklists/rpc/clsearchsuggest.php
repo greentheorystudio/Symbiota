@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 
@@ -24,7 +24,7 @@ if(is_numeric($clid)){
 	
 	$sql = 'SELECT DISTINCT ts.family '. 
 		'FROM fmchklsttaxalink cl INNER JOIN taxstatus ts ON cl.tid = ts.tid '.
-		'WHERE ts.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' AND ts.taxauthid = 1 ';
+		'WHERE ts.family LIKE "'.$queryString.'%" AND cl.clid = '.$clid.' ';
 	//echo $sql;
 	$result = $conn->query($sql);
 	while ($r = $result->fetch_object()) {
