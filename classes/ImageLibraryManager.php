@@ -8,15 +8,11 @@ class ImageLibraryManager{
     private $searchTermsArr = array();
     private $recordCount = 0;
     protected $conn;
-    private $tidFocus;
     private $sqlWhere = '';
 
     public function __construct() {
         $connection = new DbConnection();
         $this->conn = $connection->getConnection();
-        if($GLOBALS['TID_FOCUS'] && preg_match('/^[\d,]+$/', $GLOBALS['TID_FOCUS'])){
-            $this->tidFocus = $GLOBALS['TID_FOCUS'];
-        }
     }
 
     public function __destruct(){
@@ -96,9 +92,6 @@ class ImageLibraryManager{
         if(array_key_exists('keywords',$this->searchTermsArr) && $this->searchTermsArr['keywords']){
             $sql .= 'INNER JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
-        if($this->tidFocus) {
-            $sql .= 'INNER JOIN taxaenumtree AS e ON ts.tid = e.tid ';
-        }
         if($this->sqlWhere){
             $sql .= $this->sqlWhere.' AND ';
         }
@@ -106,9 +99,6 @@ class ImageLibraryManager{
             $sql .= 'WHERE ';
         }
         $sql .= '(i.sortsequence < 500) AND (t.RankId > 219) ';
-        if($this->tidFocus) {
-            $sql .= 'AND (e.parenttid IN(' . $this->tidFocus . ')) ';
-        }
         return $sql;
     }
 
@@ -124,10 +114,6 @@ class ImageLibraryManager{
         $rs->free();
         $sql = 'SELECT o.collid, COUNT(i.imgid) AS imgcnt '.
             'FROM images i INNER JOIN omoccurrences o ON i.occid = o.occid ';
-        if($this->tidFocus){
-            $sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid '.
-                'WHERE (e.parenttid IN('.$this->tidFocus.')) ';
-        }
         $sql .= 'GROUP BY o.collid ';
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
@@ -149,10 +135,6 @@ class ImageLibraryManager{
         $retArr = array();
         $sql = 'SELECT u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as pname, CONCAT_WS(", ", u.firstname, u.lastname) as fullname, u.email, Count(ti.imgid) AS imgcnt '.
             'FROM users u INNER JOIN images ti ON u.uid = ti.photographeruid ';
-        if($this->tidFocus){
-            $sql .= 'INNER JOIN taxaenumtree e ON ti.tid = e.tid '.
-                'WHERE (e.parenttid IN('.$this->tidFocus.')) ';
-        }
         $sql .= 'GROUP BY u.uid '.
             'ORDER BY u.lastname, u.firstname';
         $result = $this->conn->query($sql);

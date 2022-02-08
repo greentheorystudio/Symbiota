@@ -21,45 +21,6 @@ class SpatialModuleManager{
         }
     }
 
-    public function getLayersArr(): array{
-        $url = $GLOBALS['GEOSERVER_URL'].'/wms?service=wms&version=2.0.0&request=GetCapabilities';
-        $xml = simplexml_load_string(file_get_contents($url));
-        $layers = $xml->Capability->Layer->Layer;
-        $retArr = Array();
-        foreach ($layers as $l){
-            $nameArr = explode(':',(string)$l->Name);
-            if($nameArr){
-                $workspace = $nameArr[0];
-                $layername = $nameArr[1];
-                if($workspace === $GLOBALS['GEOSERVER_LAYER_WORKSPACE']){
-                    $i = strtolower((string)$l->Title);
-                    $retArr[$i]['Name'] = $layername;
-                    $retArr[$i]['Title'] = (string)$l->Title;
-                    $retArr[$i]['Abstract'] = (string)$l->Abstract;
-                    $crsArr = $l->CRS;
-                    foreach ($crsArr as $c){
-                        if(strpos($c, 'EPSG:') !== false) {
-                            $retArr[$i]['DefaultCRS'] = (string)$c;
-                        }
-                    }
-                    $keywordArr = $l->KeywordList->Keyword;
-                    foreach ($keywordArr as $k){
-                        if($k === 'features') {
-                            $retArr[$i]['layerType'] = 'vector';
-                        }
-                        elseif($k === 'GeoTIFF') {
-                            $retArr[$i]['layerType'] = 'raster';
-                        }
-                    }
-                    $retArr[$i]['legendUrl'] = (string)$l->Style->LegendURL->OnlineResource->attributes('xlink', TRUE)->href;
-                }
-            }
-        }
-        ksort($retArr);
-
-        return $retArr;
-    }
-
     public function getOccStrFromGeoJSON($json): string{
         $occArr = array();
         $jsonArr = json_decode($json, true);
@@ -205,7 +166,6 @@ class SpatialModuleManager{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR ISNULL(o.LocalitySecurity)) ';
             }
         }
-        $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
         $sql .= 'LIMIT ' .($pageRequest ?: 0). ',' .$cntPerPage;
         //return '<div>SQL: ' .$sql. '</div>';
         $result = $this->conn->query($sql);
@@ -269,7 +229,6 @@ class SpatialModuleManager{
                 $sql .= ' AND (o.LocalitySecurity = 0 OR o.LocalitySecurity IS NULL) ';
             }
         }
-        $sql .= ' AND (ts.taxauthid = 1 OR ISNULL(ts.taxauthid)) ';
         if($pageRequest && $cntPerPage){
             $sql .= 'LIMIT ' .$pageRequest. ',' .$cntPerPage;
         }
@@ -418,76 +377,6 @@ class SpatialModuleManager{
         $result->close();
         return $retArr;
         //return $sql;
-    }
-
-    private function formatDate($inDate){
-        $inDate = trim($inDate);
-        $retDate = '';
-        $y=''; $m=''; $d='';
-        if(preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/',$inDate)){
-            $dateTokens = explode('-',$inDate);
-            if($dateTokens){
-                $y = $dateTokens[0];
-                $m = $dateTokens[1];
-                $d = $dateTokens[2];
-            }
-        }
-        elseif(preg_match('/^\d{1,2}\/*\d{0,2}\/\d{2,4}$/',$inDate)){
-            $dateTokens = explode('/',$inDate);
-            if($dateTokens){
-                $m = $dateTokens[0];
-                if(count($dateTokens) === 3){
-                    $d = $dateTokens[1];
-                    $y = $dateTokens[2];
-                }
-                else{
-                    $d = '00';
-                    $y = $dateTokens[1];
-                }
-            }
-        }
-        elseif(preg_match('/^\d{0,2}\s*\D+\s*\d{2,4}$/',$inDate)){
-            $dateTokens = explode(' ',$inDate);
-            if($dateTokens){
-                if(count($dateTokens) === 3){
-                    $y = $dateTokens[2];
-                    $mText = substr($dateTokens[1],0,3);
-                    $d = $dateTokens[0];
-                }
-                else{
-                    $y = $dateTokens[1];
-                    $mText = substr($dateTokens[0],0,3);
-                    $d = '00';
-                }
-                $mText = strtolower($mText);
-                $mNames = Array('ene' =>1, 'jan' =>1, 'feb' =>2, 'mar' =>3, 'abr' =>4, 'apr' =>4, 'may' =>5, 'jun' =>6, 'jul' =>7, 'aug' =>8, 'sep' =>9, 'oct' =>10, 'nov' =>11, 'dec' =>12);
-                $m = $mNames[$mText];
-            }
-        }
-        elseif(preg_match('/^\s*\d{4}\s*$/',$inDate)){
-            $retDate = $inDate.'-00-00';
-        }
-        elseif($dateObj = strtotime($inDate)){
-            $retDate = date('Y-m-d',$dateObj);
-        }
-        if(!$retDate && $y){
-            if(strlen($y) === 2){
-                if($y < 20){
-                    $y = '20' .$y;
-                }
-                else{
-                    $y = '19' .$y;
-                }
-            }
-            if(strlen($m) === 1){
-                $m = '0'.$m;
-            }
-            if(strlen($d) === 1){
-                $d = '0'.$d;
-            }
-            $retDate = $y.'-'.$m.'-'.$d;
-        }
-        return $retDate;
     }
 
     protected function setSynonyms(): void

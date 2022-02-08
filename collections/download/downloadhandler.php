@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
@@ -8,7 +8,6 @@ ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'symbiota';
 $cSet = array_key_exists('cset',$_POST)?htmlspecialchars($_POST['cset']):'';
-$taxonFilterCode = array_key_exists('taxonFilterCode',$_POST)?(int)$_POST['taxonFilterCode']:0;
 $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 
 $dlManager = new OccurrenceDownload();
@@ -26,15 +25,8 @@ if($stArrJson){
         if($GLOBALS['SOLR_MODE']){
             $solrManager->setSearchTermsArr($stArr);
             if($schema === 'checklist'){
-                if($taxonFilterCode){
-                    $solrArr = $solrManager->getTaxaArr();
-                    $tidArr = $solrManager->getSOLRTidList($solrArr);
-                    $dlManager->setTidArr($tidArr);
-                }
-                else{
-                    $occArr = $solrManager->getOccArr();
-                    $dlManager->setOccArr($occArr);
-                }
+                $occArr = $solrManager->getOccArr();
+                $dlManager->setOccArr($occArr);
             }
             elseif($schema === 'georef'){
                 $occArr = $solrManager->getOccArr(true);
@@ -137,7 +129,6 @@ else{
 		$dlManager->setCharSetOut($cSet);
 		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
-		$dlManager->setTaxonFilter($taxonFilterCode);
 		$dlManager->downloadData();
 	}
 	else{

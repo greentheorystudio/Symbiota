@@ -25,7 +25,7 @@ class EOLManager {
 		$tidCnt = 0;
 		$sql = 'SELECT COUNT(t.tid) as tidcnt '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE t.rankid IN(220,230,240,260) AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
+			'WHERE t.rankid IN(220,230,240,260) AND ts.tid = ts.tidaccepted '.
 			'AND t.TID NOT IN (SELECT tid FROM taxalinks WHERE title = "Encyclopedia of Life" AND sourceidentifier IS NOT NULL) ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -59,7 +59,7 @@ class EOLManager {
 		}
 		$sql = 'SELECT t.tid, t.sciname '.
 			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'WHERE t.rankid IN(220,230,240,260) AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
+			'WHERE t.rankid IN(220,230,240,260) AND ts.tid = ts.tidaccepted '.
 			'AND t.tid NOT IN (SELECT tid FROM taxalinks WHERE title = "Encyclopedia of Life" AND sourceidentifier IS NOT NULL) ';
 		if($startingTid) {
 			$sql .= 'AND t.tid > ' . $startingTid . ' ';
@@ -136,8 +136,7 @@ class EOLManager {
 		$sql = 'SELECT COUNT(t.tid) AS tidcnt '.
 			'FROM taxa t INNER JOIN taxalinks l ON t.tid = l.tid '.
 			'WHERE t.rankid IN(220,230,240,260) AND l.owner = "EOL" '.
-			'AND t.tid NOT IN (SELECT ts1.tidaccepted FROM images ii INNER JOIN taxstatus ts1 ON ii.tid = ts1.tid '.
-			'WHERE ts1.taxauthid = 1)';
+			'AND t.tid NOT IN (SELECT ts1.tidaccepted FROM images ii INNER JOIN taxstatus ts1 ON ii.tid = ts1.tid) ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$tidCnt = $r->tidcnt;
@@ -172,8 +171,7 @@ class EOLManager {
 		$sql = 'SELECT t.tid, t.sciname, l.sourceidentifier '.
 			'FROM taxa t INNER JOIN taxalinks l ON t.tid = l.tid '.
 			'WHERE t.rankid IN(220,230,240,260) AND l.owner = "EOL" '.
-			'AND t.tid NOT IN (SELECT ts1.tidaccepted FROM images ii INNER JOIN taxstatus ts1 ON ii.tid = ts1.tid '.
-			'WHERE ts1.taxauthid = 1) ';
+			'AND t.tid NOT IN (SELECT ts1.tidaccepted FROM images ii INNER JOIN taxstatus ts1 ON ii.tid = ts1.tid) ';
 		if($startingTid) {
 			$sql .= 'AND t.tid >= ' . $startingTid . ' ';
 		}

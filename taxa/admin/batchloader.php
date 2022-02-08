@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -12,7 +12,6 @@ ini_set('max_execution_time', 7200);
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
 $ulFileName = array_key_exists('ulfilename',$_REQUEST)?$_REQUEST['ulfilename']: '';
 $ulOverride = array_key_exists('uloverride',$_REQUEST)?$_REQUEST['uloverride']: '';
-$taxAuthId = array_key_exists('taxauthid',$_REQUEST)?(int)$_REQUEST['taxauthid']:1;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
@@ -21,7 +20,6 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']))
 
 $loaderManager = new TaxonomyUpload();
 $taxaUtilities = new TaxonomyUtilities();
-$loaderManager->setTaxaAuthId($taxAuthId);
 
 $status = '';
 $fieldMap = array();
@@ -163,7 +161,6 @@ if($isEditor){
 						<div style="margin:10px;">
 							<input type="submit" name="action" value="Verify Mapping" />
 							<input type="submit" name="action" value="Upload Taxa" />
-							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
 							<input type="hidden" name="ulfilename" value="<?php echo $loaderManager->getFileName();?>" />
 						</div>
 					</fieldset>
@@ -223,7 +220,6 @@ if($isEditor){
 							?>
 						</div>
 						<div style="margin:10px;">
-							<input type="hidden" name="taxauthid" value="<?php echo $taxAuthId;?>" />
 							<input type="submit" name="action" value="Activate Taxa" />
 						</div>
 						<div style="float:right;margin:10px;">
@@ -236,7 +232,7 @@ if($isEditor){
 			elseif($action === 'Activate Taxa'){
 				echo '<ul>';
 				$loaderManager->transferUpload();
-                $taxaUtilities->buildHierarchyEnumTree($taxAuthId);
+                $taxaUtilities->buildHierarchyEnumTree();
 				echo '<li>Taxa upload appears to have been successful.</li>';
 				echo "<li>Go to the <a href='taxonomydynamicdisplay.php'>Taxonomy Explorer</a> to search for a loaded name.</li>";
 				echo '</ul>';
@@ -273,17 +269,6 @@ if($isEditor){
 									</div>
 								</div>
 								<div style="margin:10px;">
-									Target Thesaurus:
-									<select name="taxauthid">
-										<?php
-										$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
-										foreach($taxonAuthArr as $k => $v){
-											echo '<option value="'.$k.'" '.((int)$k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
-										}
-										?>
-									</select>
-								</div>
-								<div style="margin:10px;">
 									<input type="submit" name="action" value="Map Input File" />
 								</div>
 								<div style="float:right;" >
@@ -300,17 +285,6 @@ if($isEditor){
 							<div style="margin:10px;">
 								If taxa information was loaded into the UploadTaxa table using other means,
 								one can use this form to clean and analyze taxa names in preparation to loading into the taxonomic tables (taxa, taxstatus).
-							</div>
-							<div style="margin:10px;">
-								Target Thesaurus:
-								<select name="taxauthid">
-									<?php
-									$taxonAuthArr = $loaderManager->getTaxAuthorityArr();
-									foreach($taxonAuthArr as $k => $v){
-										echo '<option value="'.$k.'" '.((int)$k === $taxAuthId?'SELECTED':'').'>'.$v.'</option>'."\n";
-									}
-									?>
-								</select>
 							</div>
 							<div style="margin:10px;">
 								<input type="submit" name="action" value="Analyze Taxa" />

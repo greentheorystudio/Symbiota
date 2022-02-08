@@ -103,7 +103,7 @@ class KeyCharDeficitManager{
 		$targetTid = $t;
 		$parentList[] = $targetTid;
 		while($targetTid){
-			$sql = 'SELECT ts.ParentTID FROM taxstatus ts WHERE (ts.TID = '.$targetTid.') AND ts.taxauthid = 1';
+			$sql = 'SELECT ts.ParentTID FROM taxstatus ts WHERE (ts.TID = '.$targetTid.')';
 			//echo $sql;
 			$result = $this->con->query($sql);
 		    if ($row = $result->fetch_object()){
@@ -127,7 +127,7 @@ class KeyCharDeficitManager{
 		$sql = 'SELECT DISTINCT t.TID, ts.Family, t.SciName ' .
 			'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
 			'LEFT JOIN (SELECT DISTINCT d1.TID FROM kmdescr d1 WHERE (d1.CID = ' .$cidVal. ')) AS d ON t.TID = d.TID ' .
-			'WHERE (ts.taxauthid = 1) AND (t.TID IN (' .$sppStr. ') AND (d.TID) Is Null) ' .
+			'WHERE (t.TID IN (' .$sppStr. ') AND (d.TID) Is Null) ' .
 			'ORDER BY ts.Family, t.SciName';
 		//echo $sql;
 		$result = $this->con->query($sql);
@@ -162,7 +162,7 @@ class KeyCharDeficitManager{
 				'FROM (taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid) ' .
 				'LEFT JOIN (SELECT ctl.tid, ctl.clid From fmchklsttaxalink ctl WHERE (ctl.clid = ' .$clVal. ')) AS cl ' .
 				'ON ts.TID = cl.tid ' .
-				'WHERE ts.taxauthid = 1 AND (ts.ParentTID IN(' .$targetStr. ')) ';
+				'WHERE (ts.ParentTID IN(' .$targetStr. ')) ';
 			if($excludeStr) {
 				$sql .= 'AND (t.TID NOT IN(' . $excludeStr . '))';
 			}

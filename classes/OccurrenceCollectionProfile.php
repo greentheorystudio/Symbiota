@@ -915,7 +915,7 @@ class OccurrenceCollectionProfile {
             while($r = $rs->fetch_object()){
                 $pTID = $r->TID;
             }
-            $sqlWhere .= 'AND ((o.sciname = "'.$taxon.'") OR (o.tidinterpreted IN(SELECT DISTINCT tid FROM taxaenumtree WHERE taxauthid = 1 AND parenttid IN('.$pTID.')))) ';
+            $sqlWhere .= 'AND ((o.sciname = "'.$taxon.'") OR (o.tidinterpreted IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid IN('.$pTID.')))) ';
         }
         if($country){
             $sqlWhere .= 'AND o.country = "'.$country.'" ';
@@ -1095,7 +1095,7 @@ class OccurrenceCollectionProfile {
             'FROM omoccurrences AS o LEFT JOIN taxaenumtree AS e ON o.tidinterpreted = e.tid '.
             'LEFT JOIN taxa AS t ON e.parenttid = t.TID '.
             'LEFT JOIN taxa AS t2 ON o.tidinterpreted = t2.TID '.
-            'WHERE (o.collid IN('.$collId.')) AND (t.RankId = 100 OR t2.RankId = 100) AND e.taxauthid = 1 '.
+            'WHERE (o.collid IN('.$collId.')) AND (t.RankId = 100 OR t2.RankId = 100) '.
             'GROUP BY SciName ';
         $rs = $this->conn->query($sql);
         //echo $sql;

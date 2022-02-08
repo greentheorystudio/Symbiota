@@ -129,7 +129,7 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 		$sql = 'SELECT t.tid, t.kingdomId, t.sciname, t.author, t.unitname1, t.unitname2, t.unitind3, t.unitname3, t.rankid, c.familyoverride '.
 			'FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid '.
 			'INNER JOIN taxstatus ts ON c.tid = ts.tid '.
-			'WHERE (ts.taxauthid = 1) AND (c.clid IN('.$clidStr.')) '.
+			'WHERE (c.clid IN('.$clidStr.')) '.
 			'ORDER BY IFNULL(c.familyoverride, ts.family), t.sciname';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -177,7 +177,7 @@ class ChecklistVoucherPensoft extends ChecklistVoucherAdmin {
 			'FROM fmchklsttaxalink c INNER JOIN taxa t ON c.tid = t.tid '.
 			'INNER JOIN taxaenumtree e ON c.tid = e.tid '.
 			'INNER JOIN taxa t2 ON e.parenttid = t2.tid '.
-			'WHERE (e.taxauthid = 1) AND (c.clid IN('.$clidStr.'))';
+			'WHERE (c.clid IN('.$clidStr.'))';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$clArr[$r->tid][$r->rankid] = $this->encodeStr($r->parentstr);

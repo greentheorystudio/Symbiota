@@ -224,11 +224,7 @@ class DwcArchiverOccurrence{
         $occurFieldArr['dateEntered'] = 'o.dateEntered';
         $occurTermArr['dateLastModified'] = 'http://rs.tdwg.org/dwc/terms/dateLastModified';
         $occurFieldArr['dateLastModified'] = 'o.datelastmodified';
-		if($GLOBALS['QUICK_HOST_ENTRY_IS_ACTIVE']){
-            $occurTermArr['host'] = 'http://symbiota.org/terms/host';
-            $occurFieldArr['host'] = 'oas.verbatimsciname';
-        }
-        $occurTermArr['rights'] = 'http://purl.org/dc/elements/1.1/rights';
+		$occurTermArr['rights'] = 'http://purl.org/dc/elements/1.1/rights';
 		$occurFieldArr['rights'] = 'c.rights';
 		$occurTermArr['rightsHolder'] = 'http://purl.org/dc/terms/rightsHolder';
 		$occurFieldArr['rightsHolder'] = 'c.rightsHolder';

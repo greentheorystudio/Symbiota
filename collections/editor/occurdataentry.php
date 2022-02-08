@@ -1,7 +1,7 @@
 <?php
 /** @var array $occArr */
 /** @var int $goToMode */
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
 include_once(__DIR__ . '/../../classes/ProfileManager.php');
 include_once(__DIR__ . '/../../classes/SOLRManager.php');
