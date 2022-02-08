@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpecifyUpdateManager.php');
 include_once(__DIR__ . '/../../classes/SpecifyDwcArchiverOccurrence.php');
 include_once(__DIR__ . '/../../classes/SpecUploadBase.php');
