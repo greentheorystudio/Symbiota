@@ -95,7 +95,7 @@ class ChecklistFGExportManager {
         $sql = 'SELECT DISTINCT t.tid, ts.family, t.sciname, t.author '.
             'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxstatus AS ts ON ctl.tid = ts.tid '.
             'LEFT JOIN taxa AS t ON ts.tidaccepted = t.TID '.
-            'WHERE (ts.taxauthid = '.$this->thesFilter.') AND '.$this->sqlWhereVar.' '.
+            'WHERE '.$this->sqlWhereVar.' '.
             'ORDER BY ts.family, t.sciname ';
         if($this->index || $this->recLimit) {
             $sql .= 'LIMIT ' . $this->index . ',' . $this->recLimit;
@@ -119,7 +119,7 @@ class ChecklistFGExportManager {
         if($this->sqlTaxaStr){
             $sql = 'SELECT te.tid, t.SciName AS taxonOrder '.
                 'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
-                'WHERE te.taxauthid = '.$this->thesFilter.' AND t.RankId = 100 AND te.tid IN('.$this->sqlTaxaStr.') ';
+                'WHERE t.RankId = 100 AND te.tid IN('.$this->sqlTaxaStr.') ';
             //echo $sql; exit;
             $rs = $this->conn->query($sql);
             while($row = $rs->fetch_object()){
@@ -184,7 +184,7 @@ class ChecklistFGExportManager {
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN users AS u2 ON ti.username = u2.username '.
                 'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
-                'WHERE ts.taxauthid = '.$this->thesFilter.' AND ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
+                'WHERE ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
             if($photogNameStr || $photogIdStr){
                 $tempSql = 'AND (';
                 if($photogNameStr) {
@@ -283,7 +283,7 @@ class ChecklistFGExportManager {
         $sql = 'SELECT DISTINCT ti.photographeruid, ti.photographer, u.firstname, u.lastname '.
             'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
             'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
-            'WHERE ts.taxauthid = '.$this->thesFilter.' AND ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
+            'WHERE ti.tid IN('.$this->sqlTaxaStr.') AND ti.SortSequence < 500 ';
         //echo $sql;
         $rs = $this->conn->query($sql);
         while ($row = $rs->fetch_object()){
@@ -303,12 +303,7 @@ class ChecklistFGExportManager {
         return $photogList;
     }
 
-    public function setThesFilter($filt): void
-    {
-		$this->thesFilter = $filt;
-	}
-
-	public function getClid(){
+    public function getClid(){
 		return $this->clid;
 	}
 

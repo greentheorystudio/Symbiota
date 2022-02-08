@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../config/symbini.php');
+include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
 header('X-Frame-Options: DENY');
@@ -69,8 +69,7 @@ if($targetTid){
                         term: request.term,
                         limit: 10,
                         rlimit: 100,
-                        hideauth: false,
-                        taid: 1
+                        hideauth: false
                     }, response );
                 },
                 select: function( event, ui ) {
@@ -89,8 +88,7 @@ if($targetTid){
                         term: request.term,
                         limit: 10,
                         rlimit: 140,
-                        hideauth: false,
-                        taid: 1
+                        hideauth: false
                     }, response );
                 },
                 select: function( event, ui ) {
@@ -108,8 +106,7 @@ if($targetTid){
                     $.getJSON( "../webservices/autofillsciname.php", {
                         term: request.term,
                         limit: 10,
-                        hideauth: false,
-                        taid: 1
+                        hideauth: false
                     }, response );
                 },
                 select: function( event, ui ) {

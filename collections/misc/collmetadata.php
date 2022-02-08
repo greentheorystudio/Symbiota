@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
 include_once(__DIR__ . '/../../classes/Sanitizer.php');
 header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
@@ -90,7 +90,7 @@ if($collid){
             font-size: 16px;
         }
         .field-block {
-            margin: 5px 0px;
+            margin: 5px 0;
         }
         .field-label {
             font-size: 16px;

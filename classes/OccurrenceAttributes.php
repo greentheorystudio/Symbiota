@@ -117,7 +117,7 @@ class OccurrenceAttributes extends Manager {
 			$tidArr = array();
 			$sql = 'SELECT ts1.tid '.
 				'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '. 
-				'WHERE ts2.tid = '.$this->tidFilter.' AND ts1.taxauthid = 1 AND ts2.taxauthid = 1';
+				'WHERE ts2.tid = '.$this->tidFilter.'';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$tidArr[] = $r->tid;
@@ -127,7 +127,7 @@ class OccurrenceAttributes extends Manager {
 				'INNER JOIN taxaenumtree e ON i.tid = e.tid '.
 				'LEFT JOIN tmattributes a ON i.occid = a.occid '.
 				'WHERE (e.parenttid IN('.$this->tidFilter.') OR e.tid IN('.implode(',',$tidArr).')) '.
-				'AND (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') AND (e.taxauthid = 1) ';
+				'AND (a.occid IS NULL) AND (o.collid = '.$this->collidStr.') ';
 		}
 	}
 
@@ -551,7 +551,7 @@ class OccurrenceAttributes extends Manager {
 		$sql .= 'WHERE (o.'.$fieldName.' IS NOT NULL) '.
 			'AND (o.occid NOT IN(SELECT t.occid FROM tmattributes t INNER JOIN tmstates s ON t.stateid = s.stateid WHERE s.traitid = '.$traitID.')) ';
 		if($tidFilter){
-			$sql .= 'AND (e.taxauthid = 1) AND (e.parenttid = '.$tidFilter.' OR o.tidinterpreted = '.$tidFilter.') ';
+			$sql .= 'AND (e.parenttid = '.$tidFilter.' OR o.tidinterpreted = '.$tidFilter.') ';
 		}
 		if($this->collidStr !== 'all'){
 			$sql .= 'AND (o.collid IN('.$this->collidStr.')) ';

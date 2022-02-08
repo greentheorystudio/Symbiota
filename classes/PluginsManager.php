@@ -46,8 +46,7 @@ return <<<EOD
                             $.getJSON( "$clientRoot/webservices/autofillsciname.php", {
                                 term: request.term,
                                 limit: 10,
-                                hideauth: true,
-                                taid: 1
+                                hideauth: true
                             }, response );
                         }
                     },
@@ -73,8 +72,7 @@ return <<<EOD
                         $.getJSON( "$clientRoot/webservices/autofillsciname.php", {
                             term: request.term,
                             limit: 10,
-                            hideauth: true,
-                            taid: 1
+                            hideauth: true
                         }, response );
                     }
                 },

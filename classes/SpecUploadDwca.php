@@ -183,24 +183,21 @@ class SpecUploadDwca extends SpecUploadBase{
         $zip = new ZipArchive;
         $targetPath = $this->uploadTargetPath.$this->baseFolderName;
         $zip->open($targetPath.'dwca.zip');
-        if($zip->extractTo($targetPath)){
+        if(@$zip->extractTo($targetPath)){
             $this->locateBaseFolder($targetPath);
+            $zip->close();
         }
         else{
-            $err = $zip->getStatusString();
-            if(!$err){
-                if($this->uploadType === $this->IPTUPLOAD){
-                    $err = 'target path does not appear to be a valid IPT instance';
-                }
-                else{
-                    $err = 'Upload file or target path does not lead to a valid zip file';
-                }
+            if($this->uploadType === $this->IPTUPLOAD){
+                $err = 'target path does not appear to be a valid IPT instance';
+            }
+            else{
+                $err = 'Upload file or target path does not lead to a valid zip file';
             }
             $this->outputMsg('<li>ERROR unpacking archive file: '.$err.'</li>');
             $this->errorStr = 'ERROR unpacking archive file: '.$err;
             $status = false;
         }
-        $zip->close();
         return $status;
     }
 

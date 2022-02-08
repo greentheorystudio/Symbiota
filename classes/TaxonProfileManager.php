@@ -8,7 +8,6 @@ class TaxonProfileManager {
     private $submittedAuthor;
     private $tid;
     private $sciName;
-    private $taxAuthId;
     private $author;
     private $parentTid;
     private $taxonNotes;
@@ -43,7 +42,6 @@ class TaxonProfileManager {
     public function __construct(){
         $connection = new DbConnection();
         $this->con = $connection->getConnection();
-        $this->taxAuthId = 1;
     }
 
     public function __destruct(){
@@ -55,15 +53,14 @@ class TaxonProfileManager {
     public function setTaxon($t,$isFinal=null): void
     {
         $t = trim($t);
-        $sql = 'SELECT t.TID, ts.family, t.SciName, t.Author, t.RankId, t.Source, t.Notes, ts.ParentTID, t.SecurityStatus, ts.TidAccepted, t2.SciName AS synName '.
+        $sql = 'SELECT DISTINCT t.TID, ts.family, t.SciName, t.Author, t.RankId, t.Source, t.Notes, ts.ParentTID, t.SecurityStatus, ts.TidAccepted, t2.SciName AS synName '.
             'FROM taxstatus AS ts INNER JOIN taxa AS t ON ts.tid = t.TID '.
-            'LEFT JOIN taxa AS t2 ON ts.TidAccepted = t2.TID '.
-            'WHERE (ts.taxauthid = '.($this->taxAuthId?:'1').') ';
+            'LEFT JOIN taxa AS t2 ON ts.TidAccepted = t2.TID ';
         if(is_numeric($t)){
-            $sql .= 'AND (t.TID = '.$this->con->real_escape_string($t).') ';
+            $sql .= 'WHERE (t.TID = '.$this->con->real_escape_string($t).') ';
         }
         else{
-            $sql .= 'AND (t.SciName = "'.$this->con->real_escape_string($t).'") ';
+            $sql .= 'WHERE (t.SciName = "'.$this->con->real_escape_string($t).'") ';
         }
         $sql .= 'ORDER BY synName ';
         //echo $sql;
@@ -149,18 +146,16 @@ class TaxonProfileManager {
         $this->acceptedTaxa = array();
         $sql = 'SELECT t.Tid, ts.family, t.SciName, t.Author, t.RankId, ts.ParentTID, t.SecurityStatus ' .
             'FROM taxstatus ts INNER JOIN taxa t ON ts.TidAccepted = t.TID ' .
-            'WHERE (ts.taxauthid = ' .($this->taxAuthId?: '1'). ') AND (ts.Tid = ' .$this->submittedTid. ') ORDER BY t.SciName';
+            'WHERE (ts.Tid = ' .$this->submittedTid. ') ORDER BY t.SciName';
         $result = $this->con->query($sql);
         while($row = $result->fetch_object()){
             $this->sciName = $row->SciName;
             $a = $row->Author;
             $this->acceptedTaxa[$row->Tid] = '<i>$this->sciName</i> ' . $a;
-            if($this->taxAuthId){
-                $this->rankId = $row->RankId;
-                $this->author = $a;
-                $this->parentTid = $row->ParentTID;
-                $this->securityStatus = $row->SecurityStatus;
-            }
+            $this->rankId = $row->RankId;
+            $this->author = $a;
+            $this->parentTid = $row->ParentTID;
+            $this->securityStatus = $row->SecurityStatus;
         }
         $result->close();
     }
@@ -199,7 +194,7 @@ class TaxonProfileManager {
     }
 
     public function getDisplayName(){
-        if(!$this->taxAuthId){
+        if(!$this->sciName){
             return $this->submittedSciName;
         }
 
@@ -207,7 +202,7 @@ class TaxonProfileManager {
     }
 
     public function getAuthor(){
-        if(!$this->taxAuthId){
+        if(!$this->author){
             return $this->submittedAuthor;
         }
 
@@ -220,13 +215,6 @@ class TaxonProfileManager {
 
     public function getSubmittedSciName(){
         return $this->submittedSciName;
-    }
-
-    public function setTaxAuthId($id): void
-    {
-        if(is_numeric($id)){
-            $this->taxAuthId = $this->con->real_escape_string($id);
-        }
     }
 
     public function setSppData(): void
@@ -246,7 +234,7 @@ class TaxonProfileManager {
             $sql = 'SELECT t.tid, t.sciname, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN fmchklsttaxalink ctl ON ctl.TID = t.tid '.
-                'WHERE (ctl.clid = '.$this->clid.')'.$sqlWhereRank.' AND (te.taxauthid = 1) AND (te.parenttid = '.$this->tid.')';
+                'WHERE (ctl.clid = '.$this->clid.')'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
         }
         elseif($this->pid){
             $sql = 'SELECT DISTINCT t.tid, t.sciname, t.securitystatus '.
@@ -254,14 +242,14 @@ class TaxonProfileManager {
                 'INNER JOIN taxstatus ts ON t.tid = ts.tidaccepted '.
                 'INNER JOIN fmchklsttaxalink ctl ON ts.Tid = ctl.TID '.
                 'INNER JOIN fmchklstprojlink cpl ON ctl.clid = cpl.clid '.
-                'WHERE (ts.taxauthid = 1) AND (te.taxauthid = 1) AND (cpl.pid = '.$this->pid.') '.
+                'WHERE (cpl.pid = '.$this->pid.') '.
                 'AND (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
         }
         else{
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxaenumtree te ON t.tid = te.tid '.
                 'INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
         }
         //echo $sql; exit;
 
@@ -280,7 +268,7 @@ class TaxonProfileManager {
             $sql = 'SELECT DISTINCT t.sciname, t.tid, t.securitystatus '.
                 'FROM taxa t INNER JOIN taxstatus ts ON t.Tid = ts.tidaccepted '.
                 'INNER JOIN taxaenumtree te ON ts.tid = te.tid '.
-                'WHERE (te.taxauthid = 1) AND (ts.taxauthid = 1)'.$sqlWhereRank.' AND (te.parenttid = '.$this->tid.')';
+                'WHERE (te.parenttid = '.$this->tid.')'.$sqlWhereRank;
             //echo $sql;
 
             $result = $this->con->query($sql);
@@ -300,7 +288,7 @@ class TaxonProfileManager {
                 '(SELECT ts1.tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
                 'FROM taxstatus ts1 INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.tidaccepted '.
                 'INNER JOIN images i ON ts2.tid = i.tid '.
-                'WHERE ts1.taxauthid = 1 AND ts2.taxauthid = 1 AND (ts1.tid IN('.implode(',',$tids).')) '.
+                'WHERE (ts1.tid IN('.implode(',',$tids).')) '.
                 'GROUP BY ts1.tid) i2 ON i.imgid = i2.imgid '.
                 'INNER JOIN taxa t ON i2.tid = t.tid '.
                 'LEFT JOIN users u ON i.photographeruid = u.uid ';
@@ -343,7 +331,7 @@ class TaxonProfileManager {
             $this->vernaculars = array();
             $sql = 'SELECT v.vid, v.VernacularName, v.language '.
                 'FROM taxavernaculars v INNER JOIN taxstatus ts ON v.tid = ts.tidaccepted '.
-                'WHERE (ts.TID = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.') AND (v.SortSequence < 90) '.
+                'WHERE (ts.TID = '.$this->tid.') AND (v.SortSequence < 90) '.
                 'ORDER BY v.SortSequence,v.VernacularName';
             //echo $sql;
             $result = $this->con->query($sql);
@@ -394,8 +382,7 @@ class TaxonProfileManager {
             $this->synonyms = array();
             $sql = 'SELECT t.tid, t.SciName, t.Author '.
                 'FROM taxstatus ts INNER JOIN taxa t ON ts.Tid = t.TID '.
-                'WHERE (ts.TidAccepted = '.$this->tid.') AND (ts.taxauthid = '.
-                ($this->taxAuthId?:'1').') AND ts.SortSequence < 90 '.
+                'WHERE (ts.TidAccepted = '.$this->tid.') AND ts.SortSequence < 90 '.
                 'ORDER BY ts.SortSequence, t.SciName';
             //echo $sql;
             $result = $this->con->query($sql);
@@ -403,7 +390,7 @@ class TaxonProfileManager {
                 $this->synonyms[$row->tid] = '<i>'.$row->SciName.'</i> '.$row->Author;
             }
             $result->close();
-            if(!$this->taxAuthId && ($this->tid !== $this->submittedTid)){
+            if(($this->tid !== $this->submittedTid)){
                 unset($this->synonyms[$this->submittedTid]);
             }
             else{
@@ -445,7 +432,7 @@ class TaxonProfileManager {
             $tidArr = Array($this->tid);
             $sql1 = 'SELECT DISTINCT ts.tid '.
                 'FROM taxstatus AS ts LEFT JOIN taxaenumtree AS tn ON ts.tid = tn.tid '.
-                'WHERE tn.taxauthid = 1 AND ts.taxauthid = 1 AND ts.tid = ts.tidaccepted '.
+                'WHERE ts.tid = ts.tidaccepted '.
                 'AND tn.parenttid = '.$this->tid;
             $rs1 = $this->con->query($sql1);
             while($r1 = $rs1->fetch_object()){
@@ -459,7 +446,7 @@ class TaxonProfileManager {
                 'FROM images AS ti LEFT JOIN users AS u ON ti.photographeruid = u.uid '.
                 'LEFT JOIN taxstatus AS ts ON ti.tid = ts.tid '.
                 'LEFT JOIN taxa AS t ON ti.tid = t.tid '.
-                'WHERE ts.taxauthid = 1 AND ts.tidaccepted IN ('.$tidStr.') AND ti.SortSequence < 500 AND ti.thumbnailurl IS NOT NULL ';
+                'WHERE ts.tidaccepted IN ('.$tidStr.') AND ti.SortSequence < 500 AND ti.thumbnailurl IS NOT NULL ';
             if(!$this->displayLocality) {
                 $sql .= 'AND ISNULL(ti.occid) ';
             }
@@ -578,7 +565,7 @@ class TaxonProfileManager {
         $links = array();
         if($this->tid){
             $parArr = array($this->tid);
-            $rsPar = $this->con->query('SELECT parenttid FROM taxaenumtree WHERE tid = '.$this->tid.' AND taxauthid = 1');
+            $rsPar = $this->con->query('SELECT parenttid FROM taxaenumtree WHERE tid = '.$this->tid);
             while($rPar = $rsPar->fetch_object()){
                 $parArr[] = $rPar->parenttid;
             }
@@ -641,7 +628,7 @@ class TaxonProfileManager {
                 'tds.tdsid, tds.heading, tds.statement, tds.displayheader, tdb.language '.
                 'FROM taxstatus ts INNER JOIN taxadescrblock tdb ON ts.tid = tdb.tid '.
                 'INNER JOIN taxadescrstmts tds ON tdb.tdbid = tds.tdbid '.
-                'WHERE (ts.tidaccepted = '.$this->tid.') AND (ts.taxauthid = 1) '.
+                'WHERE (ts.tidaccepted = '.$this->tid.') '.
                 'ORDER BY tdb.displaylevel,tds.sortsequence';
             //echo $sql; exit;
             $rs = $this->con->query($sql);
@@ -729,7 +716,7 @@ class TaxonProfileManager {
     {
         $returnArr = array();
         $sql = 'SELECT parenttid FROM taxaenumtree ' .
-            'WHERE taxauthid = ' .($this->taxAuthId?: '1'). ' AND tid = ' .$this->tid. ' ';
+            'WHERE tid = ' .$this->tid. ' ';
         $result = $this->con->query($sql);
         while($row = $result->fetch_object()){
             $returnArr[] = $row->parenttid;
@@ -743,7 +730,7 @@ class TaxonProfileManager {
         $family = '';
         $sql = 'SELECT t.SciName ' .
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
-            'WHERE te.taxauthid = ' .($this->taxAuthId?: '1'). ' AND te.tid = ' .$this->tid. ' AND t.RankId = 140 ';
+            'WHERE te.tid = ' .$this->tid. ' AND t.RankId = 140 ';
         //echo $sql;
         $result = $this->con->query($sql);
         while($row = $result->fetch_object()){

@@ -655,7 +655,7 @@ class SOLRManager extends OccurrenceManager{
                             $tidArr = $valueArray['tid'];
                             $sql = 'SELECT DISTINCT t.sciname '.
                                 'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid '.
-                                'WHERE t.rankid = 140 AND e.taxauthid = 1 AND e.parenttid IN('.implode(',',$tidArr).')';
+                                'WHERE t.rankid = 140 AND e.parenttid IN('.implode(',',$tidArr).')';
                             $rs = $this->conn->query($sql);
                             while($r = $rs->fetch_object()){
                                 $famArr[] = $r->family;

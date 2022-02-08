@@ -4,7 +4,6 @@ include_once(__DIR__ . '/DbConnection.php');
 class KeyManager{
 
 	protected $conn;
-	protected $taxAuthId = 1;
 	protected $language = 'English';
 
 	public function __construct(){
@@ -68,7 +67,7 @@ class KeyManager{
 				'INNER JOIN taxstatus ts2 ON ts1.tidaccepted = ts2.ParentTID '.
 				'INNER JOIN taxa t2 ON ts2.tid = t2.tid '.
 				'LEFT JOIN kmdescr d2 ON (d1.CID = d2.CID) AND (t2.TID = d2.TID) '.
-				'WHERE (ts1.taxauthid = '.$this->taxAuthId.') AND (ts2.taxauthid = '.$this->taxAuthId.') AND (ts2.tid = ts2.tidaccepted) '.
+				'WHERE (ts2.tid = ts2.tidaccepted) '.
 				'AND (d1.cid IN('.$cidStr.')) AND (t2.tid IN('.$childrenStr.')) AND (d2.CID Is Null) AND (t2.RankId <= 220)';
 			//echo $sql.'<br/><br/>';
 			if(!$this->conn->query($sql)){
@@ -91,7 +90,7 @@ class KeyManager{
 				$targetList = array();
 				$sql = 'SELECT t.tid '.
 					'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-					'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.ParentTID In ('.$targetStr.')) AND (ts.tid = ts.tidaccepted)';
+					'WHERE (ts.ParentTID In ('.$targetStr.')) AND (ts.tid = ts.tidaccepted)';
 				$rs = $this->conn->query($sql);
 				while($row = $rs->fetch_object()){
 					$targetList[] = $row->tid;
@@ -114,7 +113,7 @@ class KeyManager{
 			$targetTid = $tid;
 			while($targetTid){
 				$sql = 'SELECT parenttid FROM taxstatus '.
-					'WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$targetTid.')';
+					'WHERE (tid = '.$targetTid.')';
 				//echo $sql;
 				$rs = $this->conn->query($sql);
 			    if($row = $rs->fetch_object()){
@@ -130,13 +129,6 @@ class KeyManager{
 			}
 		}
 		return $retArr;
-	}
-
-	public function setTaxAuthId($id): void
-	{
-		if(is_numeric($id)) {
-			$this->taxAuthId = $id;
-		}
 	}
 
 	public function setLanguage($lang): void
