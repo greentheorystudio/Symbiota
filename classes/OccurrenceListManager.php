@@ -36,8 +36,8 @@ class OccurrenceListManager extends OccurrenceManager{
             'o.associatedtaxa, o.substrate, o.individualCount, o.lifeStage, o.sex, c.sortseq ';
         $sql .= (array_key_exists('assochost',$this->searchTermsArr)?', oas.verbatimsciname ':' ');
         $sql .= 'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         if($this->sortField1 || $this->sortField2 || $this->sortOrder){
@@ -151,8 +151,8 @@ class OccurrenceListManager extends OccurrenceManager{
 
     private function setRecordCnt($sqlWhere): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins($sqlWhere);
         $sql .= $sqlWhere;
         //echo "<div>Count sql: ".$sql."</div>";

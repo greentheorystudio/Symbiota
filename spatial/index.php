@@ -82,7 +82,7 @@ $dbArr = array();
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery.symbiota.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui_accordian.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/jquery-ui.css" type="text/css" rel="stylesheet" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=2" type="text/css" rel="stylesheet" />
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol.css?ver=20220209" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/ol-ext.min.css" type="text/css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialbase.css?ver=20220203" type="text/css" rel="stylesheet" />
@@ -91,7 +91,7 @@ $dbArr = array();
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/jquery.popupoverlay.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol.js?ver=4" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol/ol.js?ver=20220209222" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ol-ext.min.js" type="text/javascript"></script>
     <script src="https://npmcdn.com/@turf/turf/turf.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js" type="text/javascript"></script>
@@ -696,8 +696,7 @@ $dbArr = array();
             layersArr['heat'],
             layersArr['spider']
         ],
-        overlays: [popupoverlay,finderpopupoverlay],
-        renderer: 'canvas'
+        overlays: [popupoverlay,finderpopupoverlay]
     });
 
     changeBaseMap();
@@ -880,34 +879,30 @@ $dbArr = array();
     });
 
     function loadPointWFSLayer(index){
-        pointvectorsource = new ol.source.Vector({
-            loader: function(extent, resolution, projection) {
-                let processed = 0;
-                do{
-                    lazyLoadPoints(index,function(res){
-                        const format = new ol.format.GeoJSON();
-                        let features = format.readFeatures(res, {
-                            featureProjection: 'EPSG:3857'
-                        });
-                        if(toggleSelectedPoints){
-                            features = features.filter(function (feature){
-                                const occid = Number(feature.get('occid'));
-                                return (selections.indexOf(occid) !== -1);
-                            });
-                        }
-                        primeSymbologyData(features);
-                        pointvectorsource.addFeatures(features);
-                        if(loadPointsEvent){
-                            const pointextent = pointvectorsource.getExtent();
-                            map.getView().fit(pointextent,map.getSize());
-                        }
+        let processed = 0;
+        do{
+            lazyLoadPoints(index,function(res){
+                const format = new ol.format.GeoJSON();
+                let features = format.readFeatures(res, {
+                    featureProjection: 'EPSG:3857'
+                });
+                if(toggleSelectedPoints){
+                    features = features.filter(function (feature){
+                        const occid = Number(feature.get('occid'));
+                        return (selections.indexOf(occid) !== -1);
                     });
-                    processed = processed + lazyLoadCnt;
-                    index++;
                 }
-                while(processed < queryRecCnt);
-            }
-        });
+                primeSymbologyData(features);
+                pointvectorsource.addFeatures(features);
+                if(loadPointsEvent){
+                    const pointextent = pointvectorsource.getExtent();
+                    map.getView().fit(pointextent,map.getSize());
+                }
+            });
+            processed = processed + lazyLoadCnt;
+            index++;
+        }
+        while(processed < queryRecCnt);
 
         clustersource = new ol.source.PropertyCluster({
             distance: clusterDistance,

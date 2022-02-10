@@ -2,11 +2,13 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DbConnection.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 
 $connection = new DbConnection();
 $con = $connection->getConnection();
 
 $spatialManager = new SpatialModuleManager();
+$occManager = new OccurrenceManager();
 
 $taxaArrJson = array_key_exists('taxajson',$_REQUEST)?$_REQUEST['taxajson']:'';
 $taxonType = array_key_exists('type',$_REQUEST)?(int)$_REQUEST['type']:0;
@@ -74,14 +76,16 @@ if($tempTaxaArr){
         foreach($taxaArr as $key => $value){
             if(array_key_exists('scinames',$value)){
                 if(!in_array('no records', $value['scinames'], true)){
-                    $synArr = $spatialManager->getSynonyms($value['scinames']);
+                    $occManager->getSynonyms($value['scinames']);
+                    $synArr = $occManager->getSearchSynArr();
                     if($synArr) {
                         $taxaArr[$key]['synonyms'] = $synArr;
                     }
                 }
             }
             else{
-                $synArr = $spatialManager->getSynonyms($key);
+                $occManager->getSynonyms($key);
+                $synArr = $occManager->getSearchSynArr();
                 if($synArr) {
                     $taxaArr[$key]['synonyms'] = $synArr;
                 }

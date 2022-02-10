@@ -58,7 +58,7 @@ if($stArrJson){
         $(document).ready(function() {
 			let qtaxaArr;
             $('#tabs').tabs({
-				beforeLoad: function( event, ui ) {
+                beforeLoad: function( event, ui ) {
 					$(ui.panel).html("<p>Loading...</p>");
 				}
 			});
@@ -126,6 +126,8 @@ if($stArrJson){
                 setParamsForm();
                 setCollectionForms();
                 if(validateSearchTermsArr(stArr)){
+                    document.getElementById('imagetab').style.display = "block";
+                    $('#tabs').tabs({ active: 2 });
                     changeImagePage("",stArr['imagedisplay'],1);
                 }
                 <?php
