@@ -97,10 +97,7 @@ class OccurrenceManager{
             $this->setSearchTids();
             foreach($this->taxaArr as $key => $valueArray){
                 if($this->taxaSearchType === 4){
-                    if($image){
-                        $sqlWhereTaxa = 'OR (t.sciname = "'.Sanitizer::cleanInStr($key).'") ';
-                    }
-                    else{
+                    if(!$image){
                         $sqlWhereTaxa = 'OR (o.sciname = "'.Sanitizer::cleanInStr($key).'") ';
                     }
                 }
@@ -121,8 +118,7 @@ class OccurrenceManager{
                     }
                     if($famArr){
                         $famArr = array_unique($famArr);
-                        $sqlWhereTaxa .= 'OR (o.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) ';
-                        $sqlWhereTaxa .= 'OR (ts.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) ';
+                        $sqlWhereTaxa .= 'OR (ts.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) OR (ISNULL(o.tidinterpreted) AND o.family IN("'.Sanitizer::cleanInStr(implode('","',$famArr)).'")) ';
                     }
                     if(array_key_exists('scinames',$valueArray)){
                         foreach($valueArray['scinames'] as $sciName){
@@ -132,10 +128,7 @@ class OccurrenceManager{
                 }
                 else{
                     if($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($key,-5)) === 'aceae' || strtolower(substr($key,-4)) === 'idae'))){
-                        $sqlWhereTaxa .= "OR (o.family = '".Sanitizer::cleanInStr($key)."') ";
-                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($key)."') ";
-                        $sqlWhereTaxa .= "OR (o.sciname = '".Sanitizer::cleanInStr($key)."') ";
-                        $sqlWhereTaxa .= "OR (t.sciname = '".Sanitizer::cleanInStr($key)."') ";
+                        $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($key)."') OR (ISNULL(o.tidinterpreted) AND (o.family = '".Sanitizer::cleanInStr($key)."' OR o.sciname = '".Sanitizer::cleanInStr($key)."')) ";
                     }
                     if($this->taxaSearchType === 3 || ($this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
                         $sqlWhereTaxa .= "OR (o.sciname LIKE '".Sanitizer::cleanInStr($key)."%') ";
@@ -146,8 +139,7 @@ class OccurrenceManager{
                 if($this->taxaSearchType === 1 || $this->taxaSearchType === 2 || $this->taxaSearchType === 5){
                     foreach($this->searchSynArr as $synTid => $sciName){
                         if(strpos($sciName,'aceae') || strpos($sciName,'idae')){
-                            $sqlWhereTaxa .= "OR (o.family = '".Sanitizer::cleanInStr($sciName)."') ";
-                            $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($sciName)."') ";
+                            $sqlWhereTaxa .= "OR (ts.family = '".Sanitizer::cleanInStr($sciName)."') OR (ISNULL(o.tidinterpreted) AND o.family = '".Sanitizer::cleanInStr($sciName)."') ";
                         }
                     }
                 }
@@ -656,6 +648,14 @@ class OccurrenceManager{
     protected function setSearchTids(): void
     {
         foreach($this->taxaArr as $key => $valueArray){
+            if($this->taxaSearchType !== 3 && $this->taxaSearchType !== 5){
+                $sql = 'SELECT DISTINCT TID FROM taxa '.
+                    "WHERE SciName = '".Sanitizer::cleanInStr($key)."'";
+                $rs = $this->conn->query($sql);
+                while($r = $rs->fetch_object()){
+                    $this->searchTidArr[] = $r->TID;
+                }
+            }
             if($this->taxaSearchType === 4){
                 $sql = 'SELECT DISTINCT te.tid '.
                     'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
@@ -663,10 +663,10 @@ class OccurrenceManager{
                     "WHERE (t.sciname = '".Sanitizer::cleanInStr($key)."')";
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
-                    $this->searchTidArr[] = $r->family;
+                    $this->searchTidArr[] = $r->tid;
                 }
             }
-            elseif($this->taxaSearchType === 5 && array_key_exists('scinames',$valueArray)){
+            if($this->taxaSearchType === 5 && array_key_exists('scinames',$valueArray)){
                 foreach($valueArray['scinames'] as $sciName){
                     $sql = 'SELECT DISTINCT TID FROM taxa '.
                         "WHERE SciName LIKE '".Sanitizer::cleanInStr($sciName)."%'";
@@ -676,7 +676,7 @@ class OccurrenceManager{
                     }
                 }
             }
-            elseif($this->taxaSearchType === 3 || ($this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
+            if($this->taxaSearchType === 3 || ($this->taxaSearchType === 1 && strtolower(substr($key,-5)) !== 'aceae' && strtolower(substr($key,-4)) !== 'idae')){
                 $sql = 'SELECT DISTINCT TID FROM taxa '.
                     "WHERE SciName LIKE '".Sanitizer::cleanInStr($key)."%'";
                 $rs = $this->conn->query($sql);
@@ -1123,7 +1123,7 @@ class OccurrenceManager{
             $rankId = 0;
             $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
                 'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
-                'WHERE ts.tid IN('.implode(',',$targetTidArr).') OR ts.tidaccepted IN('.implode(',',$targetTidArr).') ';
+                'WHERE (ts.tid IN('.implode(',',$targetTidArr).') OR ts.tidaccepted IN('.implode(',',$targetTidArr).')) AND t.sciname NOT IN("'.$searchStr.'") ';
             $rs2 = $this->conn->query($sql2);
             while($r2 = $rs2->fetch_object()){
                 $this->searchSynArr[$r2->tid] = $r2->sciname;
