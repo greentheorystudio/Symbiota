@@ -1613,45 +1613,61 @@ function downloadShapesLayer(){
 }
 
 function exportMapPNG(filename,zip){
-    map.once('rendercomplete', function() {
-        const currentCanvas = document.getElementsByTagName('canvas').item(0);
-        let mapCanvas = document.createElement('canvas');
-        mapCanvas.width = currentCanvas.width;
-        mapCanvas.height = currentCanvas.height;
-        const mapContext = mapCanvas.getContext('2d');
-        Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), function(canvas) {
+    let mapCanvas = document.createElement('canvas');
+    const size = map.getSize();
+    mapCanvas.width = size[0];
+    mapCanvas.height = size[1];
+    const mapContext = mapCanvas.getContext('2d');
+    Array.prototype.forEach.call(
+        map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer'),
+        function (canvas) {
             if (canvas.width > 0) {
-                const opacity = canvas.parentNode.style.opacity;
+                const opacity =
+                    canvas.parentNode.style.opacity || canvas.style.opacity;
                 mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+
+                const backgroundColor = canvas.parentNode.style.backgroundColor;
+                if (backgroundColor) {
+                    mapContext.fillStyle = backgroundColor;
+                    mapContext.fillRect(0, 0, canvas.width, canvas.height);
+                }
+
+                let matrix;
                 const transform = canvas.style.transform;
-                const matrix = transform.match(/^matrix\(([^(]*)\)$/)[1].split(',').map(Number);
-                CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                if (transform) {
+                    matrix = transform
+                        .match(/^matrix\(([^\(]*)\)$/)[1]
+                        .split(',')
+                        .map(Number);
+                }
+                else {
+                    matrix = [
+                        parseFloat(canvas.style.width) / canvas.width,
+                        0,
+                        0,
+                        parseFloat(canvas.style.height) / canvas.height,
+                        0,
+                        0,
+                    ];
+                }
+                CanvasRenderingContext2D.prototype.setTransform.apply(
+                    mapContext,
+                    matrix
+                );
                 mapContext.drawImage(canvas, 0, 0);
             }
+        }
+    );
+    if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(mapCanvas.msToBlob(), filename);
+        mapCanvas = '';
+    }
+    else {
+        mapCanvas.toBlob(function(blob) {
+            saveAs(blob,filename);
+            mapCanvas = '';
         });
-        if(zip){
-            const image = mapCanvas.toDataURL('image/png', 1.0);
-            mapCanvas = '';
-            zipFolder.file(filename, image.substr(image.indexOf(',')+1), {base64: true});
-            if(dsAnimImageSave && dsAnimStop){
-                zipFile.generateAsync({type:"blob"}).then(function(content) {
-                    const zipfilename = 'dateanimationimages_' + getDateTimeString() + '.zip';
-                    saveAs(content,zipfilename);
-                });
-            }
-        }
-        else if(navigator.msSaveBlob) {
-            navigator.msSaveBlob(mapCanvas.msToBlob(),filename);
-            mapCanvas = '';
-        }
-        else{
-            mapCanvas.toBlob(function(blob) {
-                saveAs(blob,filename);
-                mapCanvas = '';
-            });
-        }
-    });
-    map.renderSync();
+    }
 }
 
 function exportTaxaCSV(){
@@ -2210,9 +2226,7 @@ function loadPoints(){
         dsNewestDate = '';
         removeDateSlider();
         showWorking();
-        pointvectorsource = new ol.source.Vector({
-            wrapX: false
-        });
+        pointvectorsource.clear(true);
         layersArr['pointv'].setSource(pointvectorsource);
         getQueryRecCnt(function() {
             if(queryRecCnt > 0){
@@ -2844,11 +2858,7 @@ function removeUserLayer(layerID){
         clearSelections();
         adjustSelectionsTab();
         removeDateSlider();
-        pointvectorsource = new ol.source.Vector({
-            wrapX: false
-        });
-        layersArr['pointv'].setSource(pointvectorsource);
-        layersArr['heat'].setSource(pointvectorsource);
+        pointvectorsource.clear(true);
         layersArr['heat'].setVisible(false);
         clustersource = '';
         $('#criteriatab').tabs({active: 0});
