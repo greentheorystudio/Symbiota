@@ -315,6 +315,9 @@ class SpatialModuleManager{
     protected function setTableJoins(): string
     {
         $sqlJoin = '';
+        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
+            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+        }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }

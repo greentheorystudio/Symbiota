@@ -97,8 +97,14 @@ class OccurrenceManager{
             $this->setSearchTids();
             foreach($this->taxaArr as $key => $valueArray){
                 if($this->taxaSearchType === 4){
-                    if(!$image){
-                        $sqlWhereTaxa = 'OR (o.sciname = "'.Sanitizer::cleanInStr($key).'") ';
+                    $rs1 = $this->conn->query("SELECT ts.tidaccepted FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tid WHERE (t.sciname = '".Sanitizer::cleanInStr($key)."')");
+                    if($r1 = $rs1->fetch_object()){
+                        if($image){
+                            $sqlWhereTaxa = 'OR (te.parenttid = '.$r1->tidaccepted.' OR te.tid = '.$r1->tidaccepted.') ';
+                        }
+                        else{
+                            $sqlWhereTaxa = 'OR (te.parenttid = '.$r1->tidaccepted.' OR te.tid = '.$r1->tidaccepted.') OR (ISNULL(o.tidinterpreted) AND o.sciname = "'.Sanitizer::cleanInStr($key).'") ';
+                        }
                     }
                 }
                 elseif($this->taxaSearchType === 5){
@@ -592,6 +598,9 @@ class OccurrenceManager{
     protected function setTableJoins($sqlWhere): string
     {
         $sqlJoin = '';
+        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
+            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tidinterpreted = te.tid ';
+        }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
@@ -654,16 +663,6 @@ class OccurrenceManager{
                 $rs = $this->conn->query($sql);
                 while($r = $rs->fetch_object()){
                     $this->searchTidArr[] = $r->TID;
-                }
-            }
-            if($this->taxaSearchType === 4){
-                $sql = 'SELECT DISTINCT te.tid '.
-                    'FROM taxa AS t LEFT JOIN taxstatus AS ts ON t.TID = ts.tid '.
-                    'LEFT JOIN taxaenumtree AS te ON ts.tidaccepted = te.parenttid '.
-                    "WHERE (t.sciname = '".Sanitizer::cleanInStr($key)."')";
-                $rs = $this->conn->query($sql);
-                while($r = $rs->fetch_object()){
-                    $this->searchTidArr[] = $r->tid;
                 }
             }
             if($this->taxaSearchType === 5 && array_key_exists('scinames',$valueArray)){
