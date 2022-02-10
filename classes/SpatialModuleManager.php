@@ -31,73 +31,6 @@ class SpatialModuleManager{
         return implode(',',$occArr);
     }
 
-    public function getSynonyms($searchTarget): array{
-        $synArr = array();
-        $targetTidArr = array();
-        $searchStr = '';
-        if(is_array($searchTarget)){
-            if(is_numeric(current($searchTarget))){
-                $targetTidArr[] = $searchTarget;
-            }
-            else{
-                $searchStr = implode('","',$searchTarget);
-            }
-        }
-        else if(is_numeric($searchTarget)){
-            $targetTidArr[] = $searchTarget;
-        }
-        else{
-            $searchStr = $searchTarget;
-        }
-        if($searchStr){
-            $sql1 = 'SELECT tid FROM taxa WHERE sciname IN("'.Sanitizer::cleanInStr($searchStr).'")';
-            $rs1 = $this->conn->query($sql1);
-            while($r1 = $rs1->fetch_object()){
-                $targetTidArr[] = $r1->tid;
-            }
-            $rs1->free();
-        }
-
-        if($targetTidArr){
-            $accArr = array();
-            $rankId = 0;
-            $sql2 = 'SELECT DISTINCT t.tid, t.sciname, t.rankid '.
-                'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.TID = ts.tidaccepted '.
-                'WHERE (ts.tid IN('.implode(',',$targetTidArr).')) ';
-            $rs2 = $this->conn->query($sql2);
-            while($r2 = $rs2->fetch_object()){
-                $accArr[] = $r2->tid;
-                $rankId = $r2->rankid;
-                $synArr[$r2->tid] = $r2->sciname;
-            }
-            $rs2->free();
-
-            if($accArr){
-                $sql3 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                    'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid ' .
-                    'WHERE (ts.tidaccepted IN(' . implode('', $accArr) . ')) ';
-                $rs3 = $this->conn->query($sql3);
-                while ($r3 = $rs3->fetch_object()) {
-                    $synArr[$r3->tid] = $r3->sciname;
-                }
-                $rs3->free();
-
-                if ($rankId === 220) {
-                    $sql4 = 'SELECT DISTINCT t.tid, t.sciname ' .
-                        'FROM taxa AS t INNER JOIN taxstatus AS ts ON t.tid = ts.tid ' .
-                        'WHERE (ts.parenttid IN(' . implode('', $accArr) . ')) ' .
-                        'AND (ts.tidaccepted = ts.tid)';
-                    $rs4 = $this->conn->query($sql4);
-                    while ($r4 = $rs4->fetch_object()) {
-                        $synArr[$r4->tid] = $r4->sciname;
-                    }
-                    $rs4->free();
-                }
-            }
-        }
-        return $synArr;
-    }
-
     public function writeGPXFromGeoJSON($json): string{
         $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
             'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="Symbiota">';
@@ -151,8 +84,8 @@ class SpatialModuleManager{
             'o.decimalLatitude, o.decimalLongitude, c.CollectionName, c.CollType, ts.family AS accFamily, '.
             'c.InstitutionCode, o.catalogNumber, o.recordedBy, o.recordNumber, o.eventDate AS displayDate '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -214,8 +147,8 @@ class SpatialModuleManager{
             'c.InstitutionCode, c.CollectionCode, c.CollectionName, IFNULL(ts.family,o.family) AS family, o.fieldnumber, '.
             'o.occurrenceRemarks, o.dynamicProperties, o.reproductiveCondition, o.lifeStage, o.sex, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         if(strncmp($this->sqlWhere, 'WHERE ', 6) !== 0){
             $sql .= 'WHERE ';
@@ -297,8 +230,8 @@ class SpatialModuleManager{
 
     public function setRecordCnt(): void
     {
-        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID ';
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS cnt FROM omoccurrences AS o INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid '.
+            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -324,8 +257,8 @@ class SpatialModuleManager{
             'o.eventdate, o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county) AS locality, o.DecimalLatitude, o.DecimalLongitude, '.
             'IFNULL(o.LocalitySecurity,0) AS LocalitySecurity, o.localitysecurityreason '.
             'FROM omoccurrences o LEFT JOIN omcollections c ON o.collid = c.collid '.
-            'LEFT JOIN taxa AS t ON o.tidinterpreted = t.TID '.
-            'LEFT JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
+            'INNER JOIN taxa AS t ON o.tidinterpreted = t.TID '.
+            'INNER JOIN taxstatus AS ts ON o.tidinterpreted = ts.tid ';
         $sql .= $this->setTableJoins();
         $sql .= $this->sqlWhere;
         if(!array_key_exists('SuperAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
@@ -377,58 +310,6 @@ class SpatialModuleManager{
         $result->close();
         return $retArr;
         //return $sql;
-    }
-
-    protected function setSynonyms(): void
-    {
-        foreach($this->taxaArr as $key => $value){
-            if(array_key_exists('scinames',$value)){
-                if(!in_array('no records', $value['scinames'], true)){
-                    $synArr = $this->getSynonyms($value['scinames']);
-                    if($synArr) {
-                        $this->taxaArr[$key]['synonyms'] = $synArr;
-                    }
-                }
-            }
-            else{
-                $synArr = $this->getSynonyms($key);
-                if($synArr) {
-                    $this->taxaArr[$key]['synonyms'] = $synArr;
-                }
-            }
-        }
-    }
-
-    protected function setSciNamesByVerns(): void
-    {
-        $sql = 'SELECT DISTINCT v.VernacularName, t.tid, t.sciname, ts.family, t.rankid ' .
-            'FROM taxstatus AS ts LEFT JOIN taxavernaculars AS v ON ts.TID = v.TID ' .
-            'LEFT JOIN taxa AS t ON t.TID = ts.tidaccepted ';
-        $whereStr = '';
-        foreach($this->taxaArr as $key => $value){
-            $whereStr .= "OR v.VernacularName = '".$key."' ";
-        }
-        $sql .= 'WHERE (' .substr($whereStr,3). ') ORDER BY t.rankid LIMIT 20';
-        //echo "<div>sql: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($result->num_rows){
-            while($row = $result->fetch_object()){
-                $vernName = strtolower($row->VernacularName);
-                if($row->rankid < 140){
-                    $this->taxaArr[$vernName]['tid'][] = $row->tid;
-                }
-                elseif($row->rankid === 140){
-                    $this->taxaArr[$vernName]['families'][] = $row->sciname;
-                }
-                else{
-                    $this->taxaArr[$vernName]['scinames'][] = $row->sciname;
-                }
-            }
-        }
-        else{
-            $this->taxaArr['no records']['scinames'][] = 'no records';
-        }
-        $result->close();
     }
 
     protected function setTableJoins(): string
