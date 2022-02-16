@@ -1,0 +1,70 @@
+{
+  "name": "node-symbiota",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A node version of Green Theory Studio's Symbiota.",
+  "author": {
+    "name": "Green Theory Studio"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "start": "nodemon app.js & npm run serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "main": "app.js",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.3.0",
+    "@fortawesome/free-solid-svg-icons": "^6.0.0",
+    "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "axios": "^0.26.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.1",
+    "bootstrap": "^4.6.0",
+    "core-js": "^3.6.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "jquery": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.3",
+    "popper.js": "^1.16.1",
+    "sequelize": "^6.16.1",
+    "sequelize-auto": "^0.8.8",
+    "uuid": "^8.3.2",
+    "vee-validate": "^4.5.8",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.12",
+    "vuex": "^4.0.2",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0",
+    "nodemon": "^2.0.15"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
