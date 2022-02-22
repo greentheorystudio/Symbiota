@@ -1,4 +1,5 @@
 let spatialModuleInitialising = false;
+const coreLayers = ['base','uncertainty','select','pointv','heat','spider','radius','vector'];
 let inputResponseData = {};
 let geoPolyArr = [];
 let geoCircleArr = [];
@@ -86,14 +87,14 @@ for (let z = 0; z < 16; ++z) {
 
 const baselayer = new ol.layer.Tile();
 
-function addLayerToSelList(layer,title){
+function addLayerToSelList(layer,title,active){
     const origValue = document.getElementById("selectlayerselect").value;
     let selectionList = document.getElementById("selectlayerselect").innerHTML;
     const optionId = "lsel-" + layer;
     const newOption = '<option id="lsel-' + optionId + '" value="' + layer + '">' + title + '</option>';
     selectionList += newOption;
     document.getElementById("selectlayerselect").innerHTML = selectionList;
-    if(layer !== 'select'){
+    if(active){
         document.getElementById("selectlayerselect").value = layer;
         setActiveLayer();
     }
@@ -308,14 +309,17 @@ function processAddLayerControllerElement(lArr,parentElement,active){
             $( sortingScrollerId ).spinner({
                 step: 1,
                 min: 1,
+                disabled: !active,
                 numberFormat: "n"
             });
             if(active){
                 layerOrderArr.push(lArr['id']);
-                setLayerOrderScrollers();
+                setLayersOrder();
             }
         }
-        addLayerToSelList(lArr['id'], lArr['layerName']);
+        if(active){
+            addLayerToSelList(lArr['id'], lArr['layerName'], active);
+        }
     }
     else{
         document.getElementById("selectlayerselect").value = lArr['id'];
@@ -356,7 +360,7 @@ function processAddLayerControllerGroup(lArr,parentElement){
                 processAddLayerControllerElement(layersArr[i],layerGroupContainerDiv,false)
             }
         }
-        $(('#' + layerGroupdDivId)).accordion("refresh");
+        //$(('#' + layerGroupdDivId)).accordion("refresh");
     }
     toggleLayerDisplayMessage();
 }
@@ -465,7 +469,7 @@ function buildLayerControllerLayerElement(lArr,active){
     visibilityCheckbox.setAttribute("style","margin:0 5px;");
     let visibilityOnchangeVal;
     if(lArr['type'] === 'userLayer'){
-        visibilityOnchangeVal = "toggleUserLayerVisibility('" + lArr['id'] + "',this.checked);";
+        visibilityOnchangeVal = "toggleUserLayerVisibility('" + lArr['id'] + "','" + lArr['layerName'] + "',this.checked);";
     }
     else{
         visibilityOnchangeVal = "toggleServerLayerVisibility('" + lArr['id'] + "','" + lArr['file'] + "',this.checked);";
@@ -3844,16 +3848,24 @@ function toggleLayerSymbology(layerID){
     }
 }
 
-function toggleUploadLayer(c,title){
-    let layer = c.value;
-    if(layer === 'pointv' && showHeatMap) layer = 'heat';
-    if(c.checked === true){
-        layersArr[layer].setVisible(true);
-        addLayerToSelList(c.value,title);
+function toggleUserLayerVisibility(id,name,visible){
+    let layerId = id;
+    if(id === 'pointv' && showHeatMap) {
+        layerId = 'heat';
+    }
+    if(visible === true){
+        layersArr[layerId].setVisible(true);
+        addLayerToSelList(id,name,false);
+        if(!coreLayers.includes(id)){
+            addLayerToLayerOrderArr(id);
+        }
     }
     else{
-        layersArr[layer].setVisible(false);
-        removeLayerToSelList(c.value);
+        layersArr[layerId].setVisible(false);
+        removeLayerToSelList(id);
+        if(!coreLayers.includes(id)){
+            removeLayerFromLayerOrderArr(id);
+        }
     }
 }
 

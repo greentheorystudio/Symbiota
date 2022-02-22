@@ -152,13 +152,54 @@ $dbArr = array();
             return retStr;
         }
 
-        function setLayerOrderScrollers() {
+        function addLayerToLayerOrderArr(layerId) {
+            layerOrderArr.push(layerId);
+            const sortingScrollerId = 'layerOrder-' + layerId;
+            $( ('#' + sortingScrollerId) ).spinner( "enable" );
+            setLayersOrder();
+        }
+
+        function removeLayerFromLayerOrderArr(layerId) {
+            const index = layerOrderArr.indexOf(layerId);
+            layerOrderArr.splice(index,1);
+            const sortingScrollerId = 'layerOrder-' + layerId;
+            $( ('#' + sortingScrollerId) ).spinner( "value", null );
+            $( ('#' + sortingScrollerId) ).spinner( "disable" );
+            setLayersOrder();
+        }
+
+        function setLayersOrder() {
+            const layersArrLength = layersArr.length;
             for(let i in layerOrderArr){
                 if(layerOrderArr.hasOwnProperty(i)){
-                    const index = i + 1;
+                    const index = (layerOrderArr.indexOf(layerOrderArr[i])) + 1;
+                    layersArr[layerOrderArr[i]].setZIndex(index);
                     const sortingScrollerId = 'layerOrder-' + layerOrderArr[i];
-                    document.getElementById(sortingScrollerId).value = Number(index);
+                    $( ('#' + sortingScrollerId) ).spinner( "value", index );
+                    $( ('#' + sortingScrollerId) ).spinner( "option", "max", layerOrderArr.length );
                 }
+            }
+            layersArr['base'].setZIndex(0);
+            if(layersArr.hasOwnProperty('uncertainty')){
+                layersArr['uncertainty'].setZIndex((layersArrLength - 4));
+            }
+            if(layersArr.hasOwnProperty('select')){
+                layersArr['select'].setZIndex((layersArrLength - 3));
+            }
+            if(layersArr.hasOwnProperty('pointv')){
+                layersArr['pointv'].setZIndex((layersArrLength - 2));
+            }
+            if(layersArr.hasOwnProperty('heat')){
+                layersArr['heat'].setZIndex((layersArrLength - 1));
+            }
+            if(layersArr.hasOwnProperty('spider')){
+                layersArr['spider'].setZIndex(layersArrLength);
+            }
+            if(layersArr.hasOwnProperty('radius')){
+                layersArr['radius'].setZIndex((layersArrLength - 1));
+            }
+            if(layersArr.hasOwnProperty('vector')){
+                layersArr['vector'].setZIndex(layersArrLength);
             }
         }
 
